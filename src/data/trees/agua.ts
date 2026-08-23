@@ -1,0 +1,337 @@
+import { Tree } from "@/lib/types";
+
+export const AGUA_TREE: Tree = {
+  id: "agua",
+  name: "Magia de Água",
+  category: "magia",
+  subgroup: "Magia Ofensiva",
+  hpDieMax: 4,
+  ranks: [
+    {
+      rank: "Principiante",
+      hpDiceFormula: "1d4+1",
+      mpPerRank: 4,
+      talents: [
+        {
+          id: "condutor-de-gelo",
+          name: "Condutor de Gelo",
+          paCost: 1,
+          description:
+            "Sempre que você conjurar uma magia de gelo em um alvo que esteja Molhado, o alvo sofre Desvantagem no teste de resistência.",
+        },
+        {
+          id: "nascente-de-mana",
+          name: "Nascente de Mana",
+          paCost: 1,
+          description: "Sua maestria com a fundação da magia relaxa sua mente. Você recebe +4 PM máximos passivamente.",
+        },
+      ],
+      abilities: [
+        {
+          id: "bola-de-agua",
+          name: "Bola de Água",
+          paCost: 1,
+          pmCost: 1,
+          range: "18 metros",
+          actions: { normal: 2, encurtada: 1, silenciosa: "bônus" },
+          damage: { normal: "1d6 + mod. de Magia (contundente)", encurtada: "1d4 + mod. de Magia (contundente)" },
+          effect: "Ataque mágico à distância. O alvo é empurrado 1,5m para trás e fica Molhado.",
+          incantation:
+            "Que a grande proteção da água esteja no lugar que buscas. Eu clamo por um riacho refrescante e borbulhante aqui e agora. Bola de Água.",
+        },
+        {
+          id: "escudo-de-agua",
+          name: "Escudo de Água",
+          paCost: 1,
+          pmCost: 2,
+          range: "6 metros",
+          actions: { normal: 1, encurtada: 0, silenciosa: "reação" },
+          damage: { normal: "sem dano (defensiva)" },
+          effect:
+            "Ergue uma barreira de água de 3m de largura por 2 turnos. Aliados atrás recebem Cobertura Superior (+5 CA) contra físicos/projéteis. Dano de fogo que atravessa é reduzido à metade.",
+          incantation:
+            "Espírito das correntes, erga-se da terra e forme a muralha que me protege do calor. Escudo de Água!",
+        },
+        {
+          id: "flecha-de-agua",
+          name: "Flecha de Água",
+          paCost: 1,
+          pmCost: 1,
+          range: "27 metros",
+          actions: { normal: 2, encurtada: 1, silenciosa: "bônus" },
+          damage: { normal: "1d8 + mod. de Magia (perfurante)", encurtada: "1d6 + mod. de Magia (perfurante)" },
+          effect: "Ataque mágico à distância. Se acertar, o alvo fica Molhado.",
+          incantation: "Água que flui, tome a forma perfurante da caçada e atinja meu inimigo. Flecha de Água!",
+        },
+        {
+          id: "impacto-de-gelo",
+          name: "Impacto de Gelo",
+          paCost: 1,
+          pmCost: 2,
+          range: "18 metros",
+          actions: { normal: 2, encurtada: 1, silenciosa: "bônus" },
+          damage: { normal: "1d4 contundente + 1d6 de frio", encurtada: "1d4 contundente + 1d4 de frio" },
+          effect: "Teste de resistência de Destreza. Falha reduz deslocamento em 3m. (Dano dobrado se Molhado.)",
+          incantation:
+            "Coloco diante de ti um berço de gelo como desejas, agora libere tuas correntes glaciais, Impacto de Gelo!",
+        },
+        {
+          id: "lamina-de-gelo",
+          name: "Lâmina de Gelo",
+          paCost: 1,
+          pmCost: 1,
+          range: "Corpo a Corpo (1,5m)",
+          actions: { normal: 2, encurtada: 1, silenciosa: "bônus" },
+          damage: {
+            normal: "1d8 + mod. de Magia (cortante) + 1d4 de frio",
+            encurtada: "1d6 + mod. de Magia (cortante) + 1 de frio",
+          },
+          effect: "Cria uma espada de gelo que dura 1 minuto para ataques corpo a corpo.",
+          incantation: "Frio cortante do inverno, esculpa a arma que ceifará os meus inimigos. Lâmina de Gelo!",
+        },
+      ],
+    },
+    {
+      rank: "Intermediário",
+      hpDiceFormula: "1d4+1",
+      mpPerRank: 4,
+      talents: [
+        {
+          id: "fluidez-defensiva",
+          name: "Fluidez Defensiva",
+          paCost: 1,
+          description:
+            "Gastando sua Ação de Movimento e 2 PM, você conjura água sob seus pés e desliza imediatamente 4,5m para trás sem provocar ataques de oportunidade.",
+        },
+        {
+          id: "pressao-profunda",
+          name: "Pressão Profunda",
+          paCost: 1,
+          description:
+            "Magias de água que empurram o inimigo agora empurram o dobro da distância original. Se colidir com uma parede, sofre 1d6 de dano contundente extra.",
+        },
+      ],
+      abilities: [
+        {
+          id: "canhao-de-agua",
+          name: "Canhão de Água",
+          paCost: 1,
+          pmCost: 3,
+          range: "Linha de 18 metros (1,5m largura)",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "3d6 contundente", encurtada: "2d6 contundente" },
+          effect: "Teste de Força. Falha = empurradas 4,5m e Molhadas.",
+          incantation: "Flexível espírito da água... varra todas as coisas com seu poder oculto. Canhão de Água!",
+        },
+        {
+          id: "pilar-de-gelo",
+          name: "Pilar de Gelo",
+          paCost: 1,
+          pmCost: 3,
+          range: "18 metros",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "2d6 contundente" },
+          effect:
+            "Cria coluna de gelo (1,5m raio, 3m altura). Teste de Destreza; falha joga o alvo para cima. Pilar dura 10min (Cobertura Superior +5 CA).",
+          incantation: "Águas adormecidas sob a terra, congelem e ergam-se subitamente para os céus. Pilar de Gelo!",
+        },
+        {
+          id: "respingos-de-agua",
+          name: "Respingos de Água",
+          paCost: 1,
+          pmCost: 2,
+          range: "Esfera de 9m de raio",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "sem dano" },
+          effect: "Toda criatura na área recebe Molhado e o chão vira terreno difícil.",
+          incantation: "Espalhe as gotas que caem, cubra o mundo em água. Respingos de Água!",
+        },
+        {
+          id: "enxurrada",
+          name: "Enxurrada",
+          paCost: 1,
+          pmCost: 3,
+          range: "Cone de 9 metros",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "2d6 contundente", encurtada: "1d6 contundente" },
+          effect: "Teste de Força. Falha = empurrão de 4,5m e Caído. Terreno difícil.",
+        },
+        {
+          id: "lanca-de-gelo",
+          name: "Lança de Gelo",
+          paCost: 1,
+          pmCost: 3,
+          range: "27 metros",
+          actions: { normal: 2, encurtada: 1 },
+          damage: {
+            normal: "1d8 + mod. Magia (perfurante) + 2d8 de frio",
+            encurtada: "1d8 + mod. Magia (perfurante) + 1d8 de frio",
+          },
+          effect: "Ataque mágico à distância.",
+        },
+      ],
+    },
+    {
+      rank: "Avançado",
+      hpDiceFormula: "1d4+1",
+      mpPerRank: 4,
+      talents: [
+        {
+          id: "zero-perfurante",
+          name: "Zero Perfurante",
+          paCost: 1,
+          description: "Seu gelo ignora Resistência a dano de frio.",
+        },
+        {
+          id: "mestre-da-adaptacao",
+          name: "Mestre da Adaptação",
+          paCost: 1,
+          description: "Suas magias de Água Encurtadas não sofrem redução no dano.",
+        },
+      ],
+      abilities: [
+        {
+          id: "campo-de-gelo",
+          name: "Campo de Gelo",
+          paCost: 1,
+          pmCost: 4,
+          range: "Esfera de 9m de raio",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "4d6 de frio" },
+          effect: "Teste de Constituição. Falha = deslocamento reduzido a 0.",
+          incantation: "Deusa Azul que desce dos céus, empunhe seu cajado e cubra este mundo em geada! Campo de Gelo!",
+        },
+        {
+          id: "quebra-de-gelo",
+          name: "Quebra de Gelo",
+          paCost: 1,
+          pmCost: 3,
+          range: "27 metros",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "3d8 + mod. Magia (perfurante) + 3d6 de frio" },
+          effect: "Ataque mágico à distância avassalador.",
+        },
+        {
+          id: "corte-de-gelo",
+          name: "Corte de Gelo",
+          paCost: 1,
+          pmCost: 4,
+          range: "Linha de 18 metros",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "4d8 + mod. Magia (cortante) + 2d6 de frio" },
+          effect: "Lâmina em crescente. Ataque mágico contra todos na linha.",
+        },
+        {
+          id: "nevasca",
+          name: "Nevasca",
+          paCost: 1,
+          pmCost: 5,
+          range: "Explosão de 9 metros (centrada no usuário)",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "4d6 perfurante + 4d6 de frio" },
+          effect: "Teste de Destreza. Falha = empurrado 3m.",
+        },
+        {
+          id: "tempestade",
+          name: "Tempestade",
+          paCost: 1,
+          pmCost: 5,
+          range: "1 km de raio",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "sem dano" },
+          effect: "Chuvas pesadas por 1 hora; todos expostos ficam Molhados permanentemente na área.",
+        },
+        {
+          id: "fortaleza-de-gelo",
+          name: "Fortaleza de Gelo",
+          paCost: 1,
+          pmCost: 5,
+          range: "Toque",
+          actions: { normal: 2, encurtada: 1, silenciosa: "reação" },
+          damage: { normal: "sem dano (defensiva)" },
+          effect: "Cria uma parede enorme de 100 PV. Cobertura Total para aliados. Dura 10 minutos.",
+        },
+      ],
+    },
+    {
+      rank: "Santo",
+      hpDiceFormula: "1d4+1",
+      mpPerRank: 4,
+      talents: [
+        {
+          id: "olho-da-tempestade",
+          name: "Olho da Tempestade",
+          paCost: 1,
+          description:
+            "Imune aos efeitos de clima prejudiciais de suas próprias magias. Visão perfeita na chuva/névoa. Pode poupar aliados do dano de área.",
+        },
+      ],
+      abilities: [
+        {
+          id: "cumulonimbus",
+          name: "Cumulonimbus",
+          paCost: 1,
+          pmCost: 10,
+          range: "1,5 km de raio",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "5d10 elétrico (com Ação Bônus, relâmpago em teste de Destreza)" },
+          effect: "Nuvem apocalíptica por 1 minuto. Todos ficam Molhados.",
+        },
+      ],
+    },
+    {
+      rank: "Rei",
+      hpDiceFormula: "1d4+1",
+      mpPerRank: 4,
+      talents: [
+        {
+          id: "soberania-eletrica",
+          name: "Soberania Elétrica",
+          paCost: 1,
+          description:
+            "Dano elétrico contra alvo Molhado impõe Desvantagem no teste. Falha = Atordoado 1 turno.",
+        },
+      ],
+      abilities: [
+        {
+          id: "relampago",
+          name: "Relâmpago",
+          paCost: 1,
+          pmCost: 12,
+          range: "Ligado ao Cumulonimbus ativo",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "10d10 + mod. de Magia (elétrico)" },
+          effect:
+            "Pré-requisito: Cumulonimbus ativo. Ignora bônus de CA por Touki. Alvos com armadura metálica sofrem Crítico automático.",
+        },
+      ],
+    },
+    {
+      rank: "Imperador",
+      hpDiceFormula: "1d4+1",
+      mpPerRank: 4,
+      talents: [
+        {
+          id: "essencia-do-inverno",
+          name: "Essência do Inverno",
+          paCost: 1,
+          description:
+            "Seu dano de frio ignora Imunidade e Resistência. Inimigos mortos por gelo viram pó de diamante (impede ressurreição).",
+        },
+      ],
+      abilities: [
+        {
+          id: "zero-absoluto",
+          name: "Zero Absoluto",
+          paCost: 1,
+          pmCost: 20,
+          range: "Esfera de 45 metros",
+          actions: { normal: 2, encurtada: 1 },
+          damage: { normal: "15d12 de frio" },
+          effect:
+            "Teste de Constituição (Desvantagem). Aliados não são afetados. Se zerar os PVs, alvo é Petrificado (Congelado) eternamente.",
+        },
+      ],
+    },
+  ],
+};
