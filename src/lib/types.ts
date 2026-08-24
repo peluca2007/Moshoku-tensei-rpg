@@ -46,10 +46,17 @@ export const RANK_REQUIREMENTS: Record<RankName, { knowledgeRequired: number; pa
   Imperador: { knowledgeRequired: 6, paCost: 3 },
 };
 
+/** Cap. 1, seção 2: no point-buy da criação o máximo por atributo é 4. Acima disso, cada ponto custa PA. */
+export const ATTRIBUTE_CREATION_MAX = 4;
+export const ATTRIBUTE_PA_COST_PER_POINT = 2;
+export const ATTRIBUTE_HARD_CAP = 8;
+
 export interface FlatBonuses {
   attributes?: Partial<Record<AttributeKey, number>>;
   maxHp?: number;
   maxMp?: number;
+  /** Ex: Miko "Maldição do Ódio" concede +2 CA (aura primordial). */
+  armorClass?: number;
 }
 
 export interface Race {
@@ -141,7 +148,24 @@ export interface UnlockedRank {
   rank: RankName;
 }
 
-/** Dados de uma ficha de personagem — o site suporta várias, uma por vez ativa. */
+export interface InventoryItem {
+  id: string;
+  name: string;
+  type: "arma" | "armadura" | "geral";
+  description?: string;
+  /** Bônus de CA se for vestido/empunhado — só se aplica a armadura. */
+  acBonus?: number;
+  equipped: boolean;
+}
+
+/** Cap. 1, seção 2: 1 PA = +5 PV ou +5 PM Máximos permanentes, além do PA de árvore. */
+export const HP_MP_PA_COST_PER_FIVE = 1;
+
+/**
+ * Dados de uma ficha de personagem — o site suporta várias, uma por vez ativa.
+ * Não guarda um "saldo de PA": o Mestre controla quanto cada ficha tem fora do
+ * site, então o sistema só soma e mostra quanto já foi gasto (ver getPaSpent).
+ */
 export interface CharacterData {
   id: string;
   name: string;
@@ -152,7 +176,11 @@ export interface CharacterData {
   startingTreeId: string | null;
   unlockedRanks: UnlockedRank[];
   purchasedAbilities: PurchasedAbility[];
-  startingGold: number;
-  /** PA concedidos pelo Mestre (3 iniciais na criação, Cap. 1 seção 2 + recompensas depois). */
-  paEarned: number;
+  gold: number;
+  inventory: InventoryItem[];
+  /** Perícias além das automáticas de raça/antecedente (Cap. 1, seção 4). */
+  skills: string[];
+  /** PV/PM Máximos comprados com PA (Cap. 1, seção 2: 1 PA = +5), fora da árvore. */
+  bonusHp: number;
+  bonusMp: number;
 }

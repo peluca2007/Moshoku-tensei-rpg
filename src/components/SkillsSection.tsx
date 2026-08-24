@@ -1,0 +1,89 @@
+"use client";
+
+import { useState } from "react";
+import { GraduationCap, Plus, X } from "lucide-react";
+import { useCharacterStore } from "@/store/useCharacterStore";
+import { Background, Race } from "@/lib/types";
+
+export default function SkillsSection({
+  race,
+  background,
+  skills,
+}: {
+  race?: Race;
+  background?: Background;
+  skills: string[];
+}) {
+  const [draft, setDraft] = useState("");
+
+  const fixedSkills = Array.from(new Set([...(race?.fixedSkills ?? []), ...(background?.fixedSkills ?? [])]));
+  const bonusChoices = (race?.bonusSkillChoices ?? 0) + (background?.bonusSkillChoices ?? 0);
+  const manualSkills = skills.filter((s) => !fixedSkills.includes(s));
+
+  function addSkill() {
+    if (!draft.trim()) return;
+    useCharacterStore.getState().addSkill(draft.trim());
+    setDraft("");
+  }
+
+  return (
+    <section className="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
+      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-50">
+        <GraduationCap className="h-5 w-5 text-sky-500" /> Perícias
+      </h2>
+
+      {bonusChoices > manualSkills.length && (
+        <p className="mb-2 text-xs text-amber-600 dark:text-amber-400">
+          Você ainda pode escolher {bonusChoices - manualSkills.length} perícia(s) de raça/antecedente.
+        </p>
+      )}
+
+      <div className="mb-3 flex flex-wrap gap-2">
+        {fixedSkills.map((skill) => (
+          <span
+            key={skill}
+            title="Automática (raça/antecedente)"
+            className="rounded-full bg-sky-500/10 px-2.5 py-1 text-xs font-medium text-sky-600 ring-1 ring-sky-500/30 dark:text-sky-400"
+          >
+            {skill}
+          </span>
+        ))}
+        {manualSkills.map((skill) => (
+          <span
+            key={skill}
+            className="flex items-center gap-1 rounded-full bg-slate-900/5 px-2.5 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-900/10 dark:bg-white/5 dark:text-slate-200 dark:ring-white/10"
+          >
+            {skill}
+            <button
+              type="button"
+              onClick={() => useCharacterStore.getState().removeSkill(skill)}
+              className="text-slate-400 hover:text-rose-500"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </span>
+        ))}
+        {fixedSkills.length === 0 && manualSkills.length === 0 && (
+          <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma perícia ainda.</p>
+        )}
+      </div>
+
+      <div className="flex gap-2">
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addSkill()}
+          placeholder="Ex: Arcanismo"
+          className="flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-sky-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+        />
+        <button
+          type="button"
+          onClick={addSkill}
+          className="flex items-center gap-1 rounded-lg bg-sky-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-sky-500"
+        >
+          <Plus className="h-4 w-4" /> Adicionar
+        </button>
+      </div>
+    </section>
+  );
+}

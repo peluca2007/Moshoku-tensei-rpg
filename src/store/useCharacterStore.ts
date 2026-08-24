@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AttributeKey, CharacterData, PurchasedAbility, RankName } from "@/lib/types";
+import { AttributeKey, CharacterData, InventoryItem, PurchasedAbility, RankName } from "@/lib/types";
 import { canPurchaseAbility, canUnlockRank } from "./selectors";
 
 const DEFAULT_ATTRIBUTES: Record<AttributeKey, number> = {
@@ -22,13 +22,16 @@ function blankCharacter(id: string, name: string): CharacterData {
     startingTreeId: null,
     unlockedRanks: [],
     purchasedAbilities: [],
-    startingGold: 0,
-    paEarned: 3,
+    gold: 0,
+    inventory: [],
+    skills: [],
+    bonusHp: 0,
+    bonusMp: 0,
   };
 }
 
-function makeId() {
-  return `char_${Math.random().toString(36).slice(2, 10)}`;
+function makeId(prefix: string) {
+  return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
 interface RosterState {
@@ -48,12 +51,17 @@ interface RosterState {
   setSubtableEntry: (entryId: string | null) => void;
   setAttribute: (key: AttributeKey, value: number) => void;
   setStartingTree: (treeId: string | null) => void;
-  setStartingGold: (value: number) => void;
-  setPaEarned: (value: number) => void;
-  addPa: (amount: number) => void;
+  setGold: (value: number) => void;
+  setBonusHp: (value: number) => void;
+  setBonusMp: (value: number) => void;
+  addSkill: (name: string) => void;
+  removeSkill: (name: string) => void;
+  addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
+  removeItem: (itemId: string) => void;
+  toggleEquipped: (itemId: string) => void;
   /** Retorna false (e não muda nada) se a regra de desbloqueio do Cap. 1 não for satisfeita. */
   unlockRank: (treeId: string, rank: RankName) => boolean;
-  /** Retorna false (e não muda nada) se o rank não estiver desbloqueado, já foi comprado, ou falta PA. */
+  /** Retorna false (e não muda nada) se o rank não estiver desbloqueado ou já foi comprado. */
   purchaseAbility: (ability: PurchasedAbility) => boolean;
   removeAbility: (treeId: string, id: string) => void;
 }
@@ -78,7 +86,7 @@ export const useCharacterStore = create<RosterState>()(
       activeId: null,
 
       createCharacter: (name = "Novo Personagem") => {
-        const id = makeId();
+        const id = makeId("char");
         const character = blankCharacter(id, name);
         set((state) => ({
           characters: { ...state.characters, [id]: character },
@@ -123,9 +131,29 @@ export const useCharacterStore = create<RosterState>()(
       setAttribute: (key, value) =>
         updateActive(get, set, (c) => ({ ...c, attributeBase: { ...c.attributeBase, [key]: value } })),
       setStartingTree: (startingTreeId) => updateActive(get, set, (c) => ({ ...c, startingTreeId })),
-      setStartingGold: (startingGold) => updateActive(get, set, (c) => ({ ...c, startingGold })),
-      setPaEarned: (paEarned) => updateActive(get, set, (c) => ({ ...c, paEarned })),
-      addPa: (amount) => updateActive(get, set, (c) => ({ ...c, paEarned: c.paEarned + amount })),
+      setGold: (gold) => updateActive(get, set, (c) => ({ ...c, gold })),
+      setBonusHp: (bonusHp) => updateActive(get, set, (c) => ({ ...c, bonusHp })),
+      setBonusMp: (bonusMp) => updateActive(get, set, (c) => ({ ...c, bonusMp })),
+
+      addSkill: (name) =>
+        updateActive(get, set, (c) =>
+          c.skills.includes(name) ? c : { ...c, skills: [...c.skills, name] }
+        ),
+      removeSkill: (name) =>
+        updateActive(get, set, (c) => ({ ...c, skills: c.skills.filter((s) => s !== name) })),
+
+      addItem: (item) =>
+        updateActive(get, set, (c) => ({
+          ...c,
+          inventory: [...c.inventory, { ...item, id: makeId("item"), equipped: false }],
+        })),
+      removeItem: (itemId) =>
+        updateActive(get, set, (c) => ({ ...c, inventory: c.inventory.filter((i) => i.id !== itemId) })),
+      toggleEquipped: (itemId) =>
+        updateActive(get, set, (c) => ({
+          ...c,
+          inventory: c.inventory.map((i) => (i.id === itemId ? { ...i, equipped: !i.equipped } : i)),
+        })),
 
       unlockRank: (treeId, rank) => {
         const state = get();
@@ -151,7 +179,14 @@ export const useCharacterStore = create<RosterState>()(
           purchasedAbilities: c.purchasedAbilities.filter((a) => !(a.treeId === treeId && a.id === id)),
         })),
     }),
-    { name: "mushoku-tensei-roster", skipHydration: true }
+    {
+      name: "mushoku-tensei-roster",
+      skipHydration: true,
+      // v3: adicionou skills/bonusHp/bonusMp e description em InventoryItem.
+      // Sem usuários reais ainda, então uma versão antiga simplesmente reseta o roster.
+      version: 3,
+      migrate: () => ({ characters: {}, order: [], activeId: null }),
+    }
   )
 );
 

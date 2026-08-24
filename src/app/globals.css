@@ -3,6 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Sem isso, o navegador renderiza <select>/<option> nativos sempre no tema
+     claro do SO, ilegível (texto claro em fundo claro) quando a página está
+     escura. Isso avisa o navegador pra desenhar os controles nativos no tema
+     certo. */
+  color-scheme: light;
 }
 
 @theme inline {
@@ -16,6 +21,7 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    color-scheme: dark;
   }
 }
 

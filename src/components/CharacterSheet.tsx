@@ -4,12 +4,27 @@ import { useMemo } from "react";
 import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
-import { getPaRemaining } from "@/store/selectors";
-import { getRaceById } from "@/data/races";
-import { getBackgroundById } from "@/data/backgrounds";
+import { getPaSpent } from "@/store/selectors";
+import { RACES, getRaceById } from "@/data/races";
+import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
-import { AbilityDef, ATTRIBUTES, PurchasedAbility, RANK_BONUS, RANKS, RankName, TalentDef, Tree } from "@/lib/types";
+import {
+  AbilityDef,
+  ATTRIBUTE_CREATION_MAX,
+  ATTRIBUTE_HARD_CAP,
+  ATTRIBUTE_PA_COST_PER_POINT,
+  ATTRIBUTES,
+  PurchasedAbility,
+  RANK_BONUS,
+  RANKS,
+  RankName,
+  TalentDef,
+  Tree,
+} from "@/lib/types";
 import { RANK_COLORS } from "@/lib/rankColors";
+import InventorySection from "./InventorySection";
+import RaceBackgroundDetails from "./RaceBackgroundDetails";
+import SkillsSection from "./SkillsSection";
 
 interface ResolvedAbility {
   kind: "ability" | "talent";
@@ -36,35 +51,73 @@ function StatCard({
   label,
   value,
   tone,
+  extra,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string | number;
   tone: string;
+  extra?: React.ReactNode;
 }) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/70 p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone}`}>{icon}</div>
-      <div>
+      <div className="min-w-0 flex-1">
         <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
           {label}
         </p>
         <p className="text-lg font-bold leading-tight text-slate-900 dark:text-slate-50">{value}</p>
       </div>
+      {extra}
     </div>
+  );
+}
+
+function BonusInput({ value, onChange }: { value: number; onChange: (value: number) => void }) {
+  return (
+    <label className="flex shrink-0 flex-col items-center text-[10px] font-semibold uppercase text-slate-400">
+      +PA
+      <input
+        type="number"
+        min={0}
+        step={5}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        title="Comprado com PA (Cap. 1: 1 PA = +5)"
+        className="w-12 rounded border border-slate-200 bg-white px-1 text-center text-xs text-slate-700 outline-none focus:ring-2 focus:ring-sky-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200"
+      />
+    </label>
   );
 }
 
 export default function CharacterSheet() {
   const character = useActiveCharacter();
-  const { name, raceId, backgroundId, startingGold, startingTreeId, purchasedAbilities, unlockedRanks } = character;
-  const paRemaining = getPaRemaining(character);
+  const {
+    name,
+    raceId,
+    backgroundId,
+    subtableEntryId,
+    gold,
+    startingTreeId,
+    purchasedAbilities,
+    unlockedRanks,
+    attributeBase,
+    inventory,
+    skills,
+    bonusHp,
+    bonusMp,
+  } = character;
+  const paSpent = getPaSpent(character);
 
   const { attributes, maxHp, maxMp, armorClass, initiative } = useCharacterDerived();
 
   const race = getRaceById(raceId);
   const background = getBackgroundById(backgroundId);
   const startingTree = getTreeById(startingTreeId);
+  const subtableOptions = background?.requiresSubtable === "miko" ? MIKO_TABLE : background?.requiresSubtable === "olho" ? OLHO_TABLE : null;
+  const chosenSubtable = background?.requiresSubtable
+    ? getSubtableEntryById(background.requiresSubtable, subtableEntryId)
+    : undefined;
 
   const abilitiesByTree = useMemo(() => {
     const grouped = new Map<string, PurchasedAbility[]>();
@@ -97,18 +150,64 @@ export default function CharacterSheet() {
           placeholder="Nome do personagem"
           className="w-full rounded-lg bg-transparent text-3xl font-black tracking-tight text-slate-900 outline-none placeholder:text-slate-300 focus:ring-2 focus:ring-sky-400 dark:text-slate-50 dark:placeholder:text-slate-700"
         />
-        <div className="mt-2 flex flex-wrap gap-2 text-sm">
-          <span className="rounded-full bg-slate-900/5 px-3 py-1 font-medium text-slate-700 ring-1 ring-slate-900/10 dark:bg-white/5 dark:text-slate-200 dark:ring-white/10">
-            {race?.name ?? "Raça não definida"}
-          </span>
-          <span className="rounded-full bg-slate-900/5 px-3 py-1 font-medium text-slate-700 ring-1 ring-slate-900/10 dark:bg-white/5 dark:text-slate-200 dark:ring-white/10">
-            {background?.name ?? "Antecedente não definido"}
-          </span>
-          <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1 font-medium text-amber-600 ring-1 ring-amber-500/30 dark:text-amber-400">
-            <Coins className="h-3.5 w-3.5" /> {startingGold} PO
-          </span>
-          <span className="flex items-center gap-1 rounded-full bg-violet-500/10 px-3 py-1 font-medium text-violet-600 ring-1 ring-violet-500/30 dark:text-violet-400">
-            <Gem className="h-3.5 w-3.5" /> {paRemaining} PA disponíveis
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
+          <select
+            value={raceId ?? ""}
+            onChange={(e) => useCharacterStore.getState().setRace(e.target.value || null)}
+            className="rounded-full border-0 bg-slate-900/5 px-3 py-1 font-medium text-slate-700 outline-none ring-1 ring-slate-900/10 dark:bg-white/5 dark:text-slate-200 dark:ring-white/10"
+          >
+            <option value="">Raça não definida</option>
+            {RACES.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={backgroundId ?? ""}
+            onChange={(e) => useCharacterStore.getState().setBackground(e.target.value || null)}
+            className="rounded-full border-0 bg-slate-900/5 px-3 py-1 font-medium text-slate-700 outline-none ring-1 ring-slate-900/10 dark:bg-white/5 dark:text-slate-200 dark:ring-white/10"
+          >
+            <option value="">Antecedente não definido</option>
+            {BACKGROUNDS.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+
+          {subtableOptions && (
+            <select
+              value={subtableEntryId ?? ""}
+              onChange={(e) => useCharacterStore.getState().setSubtableEntry(e.target.value || null)}
+              className="rounded-full border-0 bg-violet-500/10 px-3 py-1 font-medium text-violet-600 outline-none ring-1 ring-violet-500/30 dark:text-violet-400"
+            >
+              <option value="">Escolher resultado...</option>
+              {subtableOptions.map((entry) => (
+                <option key={entry.id} value={entry.id}>
+                  {entry.roll}. {entry.name}
+                </option>
+              ))}
+            </select>
+          )}
+
+          <label className="flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1 font-medium text-amber-600 ring-1 ring-amber-500/30 dark:text-amber-400">
+            <Coins className="h-3.5 w-3.5" />
+            <input
+              type="number"
+              value={gold}
+              onChange={(e) => useCharacterStore.getState().setGold(Number(e.target.value))}
+              className="w-14 bg-transparent outline-none"
+            />
+            PO
+          </label>
+
+          <span
+            title="Só informativo — quem controla quanto PA você tem é o Mestre."
+            className="flex items-center gap-1 rounded-full bg-violet-500/10 px-3 py-1 font-medium text-violet-600 ring-1 ring-violet-500/30 dark:text-violet-400"
+          >
+            <Gem className="h-3.5 w-3.5" /> {paSpent} PA gastos
           </span>
         </div>
       </header>
@@ -121,20 +220,35 @@ export default function CharacterSheet() {
               Atributos
             </h2>
             <div className="grid grid-cols-5 gap-2 lg:grid-cols-3">
-              {ATTRIBUTES.map(({ key, short, label }) => (
-                <div
-                  key={key}
-                  title={label}
-                  className="flex flex-col items-center justify-center rounded-full border-2 border-slate-300 bg-slate-50 p-2 aspect-square dark:border-slate-700 dark:bg-slate-800/80"
-                >
-                  <span className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">
-                    {short}
-                  </span>
-                  <span className="text-lg font-black text-slate-900 dark:text-slate-50">
-                    {attributes[key] >= 0 ? `+${attributes[key]}` : attributes[key]}
-                  </span>
-                </div>
-              ))}
+              {ATTRIBUTES.map(({ key, short, label }) => {
+                const base = attributeBase[key] ?? 0;
+                const final = attributes[key];
+                const pointsAbove = Math.max(0, base - ATTRIBUTE_CREATION_MAX);
+                const paCost = pointsAbove * ATTRIBUTE_PA_COST_PER_POINT;
+                return (
+                  <div
+                    key={key}
+                    title={label}
+                    className="flex flex-col items-center justify-center rounded-2xl border-2 border-slate-300 bg-slate-50 p-2 dark:border-slate-700 dark:bg-slate-800/80"
+                  >
+                    <span className="text-[10px] font-bold uppercase text-slate-500 dark:text-slate-400">
+                      {short}
+                    </span>
+                    <input
+                      type="number"
+                      min={-2}
+                      max={ATTRIBUTE_HARD_CAP}
+                      value={base}
+                      onChange={(e) => useCharacterStore.getState().setAttribute(key, Number(e.target.value))}
+                      className="w-12 bg-transparent text-center text-lg font-black text-slate-900 outline-none dark:text-slate-50"
+                    />
+                    {final !== base && (
+                      <span className="text-[10px] text-slate-400">Final {final >= 0 ? `+${final}` : final}</span>
+                    )}
+                    {paCost > 0 && <span className="text-[10px] font-semibold text-violet-500">{paCost} PA</span>}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -144,12 +258,18 @@ export default function CharacterSheet() {
               label="PV Máximo"
               value={maxHp}
               tone="bg-rose-500"
+              extra={
+                <BonusInput value={bonusHp} onChange={(v) => useCharacterStore.getState().setBonusHp(v)} />
+              }
             />
             <StatCard
               icon={<Droplets className="h-5 w-5 text-white" />}
               label="PM Máximo"
               value={maxMp}
               tone="bg-sky-500"
+              extra={
+                <BonusInput value={bonusMp} onChange={(v) => useCharacterStore.getState().setBonusMp(v)} />
+              }
             />
             <StatCard
               icon={<Shield className="h-5 w-5 text-white" />}
@@ -179,6 +299,9 @@ export default function CharacterSheet() {
 
         {/* Corpo principal: Grimório */}
         <main className="space-y-4">
+          <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
+          <SkillsSection race={race} background={background} skills={skills} />
+
           <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-50">
             <Sparkles className="h-5 w-5 text-sky-500" /> Grimório &amp; Habilidades
           </h2>
@@ -252,6 +375,8 @@ export default function CharacterSheet() {
               </div>
             );
           })}
+
+          <InventorySection inventory={inventory} />
         </main>
       </div>
 

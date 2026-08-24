@@ -6,7 +6,7 @@ import { Plus, Trash2, User, Check } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById } from "@/data/races";
 import { getBackgroundById } from "@/data/backgrounds";
-import { getPaRemaining } from "@/store/selectors";
+import { getPaSpent } from "@/store/selectors";
 
 export default function CharacterRoster() {
   const router = useRouter();
@@ -74,7 +74,7 @@ export default function CharacterRoster() {
               </div>
               <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
                 {race?.name ?? "Raça não definida"} · {background?.name ?? "Antecedente não definido"} ·{" "}
-                {getPaRemaining(character)} PA
+                {getPaSpent(character)} PA gastos
               </p>
               <div className="flex gap-2">
                 <button

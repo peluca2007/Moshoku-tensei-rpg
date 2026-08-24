@@ -195,7 +195,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     id: "odio",
     roll: 8,
     name: "Maldição do Ódio",
-    bonuses: { maxHp: 10 },
+    bonuses: { maxHp: 10, armorClass: 2 },
     traits: [
       "Abençoada: +2 na CA e +10 PV Máximos (aura primordial).",
       "Maldição: todo ser que sinta mana sofre ódio instintivo e paranóico ao te ver.",
