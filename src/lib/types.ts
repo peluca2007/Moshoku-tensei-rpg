@@ -97,21 +97,38 @@ export interface TalentDef {
   description: string;
 }
 
+/** Maestria: passiva automática e gratuita concedida ao desbloquear o rank (Cap. 2, seção 5). Não conta como conhecimento. */
+export interface MasteryDef {
+  name: string;
+  description: string;
+}
+
 /**
- * Cobre magias (com PM) e técnicas de Touki (sem PM — classes de Touki
- * recebem 0 PM em suas progressões, Cap. 4). pmCost ausente = técnica física.
+ * Cobre magias (com PM), técnicas de Touki (com PT, Árvore do Corpo) e
+ * técnicas de Utilidade (com PP). Nenhum custo de recurso presente = efeito
+ * puramente passivo/gratuito além do PA.
  */
 export interface AbilityDef {
   id: string;
   name: string;
   paCost: number;
   pmCost?: number;
+  /** Custo em Pontos de Touki (Árvore do Corpo, Cap. 3). */
+  ptCost?: number;
+  /** Custo em Pontos de Preparação (Árvore de Utilidade, Cap. 3). */
+  ppCost?: number;
+  /** Magia ou Técnica Assinatura (◆) do rank — já reflete o +1 PA extra no paCost. */
+  signature?: boolean;
+  /** Ritual: não pode ser encurtado, geralmente custa mais Ações. */
+  ritual?: boolean;
   range: string;
   actions: {
     normal: number;
     encurtada?: number;
-    silenciosa?: number | "bônus" | "reação";
+    silenciosa?: number | "reação";
   };
+  /** true = o "normal" custo é 1 Reação em vez de X Ações. */
+  reaction?: boolean;
   damage?: { normal: string; encurtada?: string };
   effect: string;
   incantation?: string;
@@ -121,6 +138,14 @@ export interface TreeRankDef {
   rank: RankName;
   hpDiceFormula: string;
   mpPerRank: number;
+  /** Árvore do Corpo: PT ganhos ao alcançar este rank (Cap. 3, "PT Pleno"). */
+  ptGained?: number;
+  /** Árvore de Utilidade: PP ganhos ao alcançar este rank (+1 a partir do 3º patamar). */
+  ppGained?: number;
+  /** Árvore do Corpo: degraus ganhos na Escada de Dados de Arma neste rank. */
+  weaponDieSteps?: number;
+  /** Maestria gratuita concedida ao desbloquear o rank. */
+  mastery?: MasteryDef;
   talents: TalentDef[];
   abilities: AbilityDef[];
 }
@@ -130,9 +155,14 @@ export interface Tree {
   name: string;
   category: "magia" | "corpo" | "utilidade";
   subgroup: string;
-  hpDieMax: number;
   /** Nome cosmético do rank nesta árvore (ex: Armas Pesadas usa "Briguento" em vez de "Principiante"). Mecânica (RANK_BONUS/RANK_REQUIREMENTS) é sempre a do RankName real. */
   rankLabels?: Partial<Record<RankName, string>>;
+  /** Atributo(s) que alimentam o BC/CD desta árvore (texto livre — ex: "Força ou Agilidade"). */
+  keyAttributeLabel?: string;
+  /** Recurso gasto pela árvore, pra exibição (PM, PT, PP, ou "—" pra Utilidade fora de PP). */
+  resourceLabel?: string;
+  /** Curta descrição de identidade da árvore, usada no painel de detalhes. */
+  tagline?: string;
   ranks: TreeRankDef[];
 }
 

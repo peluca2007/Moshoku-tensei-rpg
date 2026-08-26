@@ -1,6 +1,7 @@
 import { getRaceById } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
+import { diceAverage, diceMax } from "@/lib/dice";
 import {
   ATTRIBUTE_CREATION_MAX,
   ATTRIBUTE_PA_COST_PER_POINT,
@@ -13,6 +14,24 @@ import {
   RANKS,
   RankName,
 } from "@/lib/types";
+
+/** Cap. 4, seção 1: +8 fixos somados ao PV Inicial de todo personagem, além de Vigor x3 e do dado da Árvore Inicial. */
+const RESILIENCIA_BASE = 8;
+
+/** Cap. 3, "PT — as duas reservas": Cavalaria e Escudos concede +2 PT por patamar 3º+ em vez de +1. */
+const PT_PLENO_WEIGHT: Record<string, number> = { "cavalaria-e-escudos": 2 };
+
+/** Cap. 3: o Deus da Espada acorda o Touki Pleno no 2º patamar (Intermediário); as demais árvores do Corpo, no 3º (Avançado). */
+function ptPlenoThresholdIndex(treeId: string): number {
+  return treeId === "deus-da-espada" ? RANKS.indexOf("Intermediário") : RANKS.indexOf("Avançado");
+}
+
+/** Cap. 3: atributo-chave de cada árvore de Utilidade, usado no cálculo de PP. */
+const UTILITY_KEY_ATTRIBUTE: Record<string, AttributeKey> = {
+  "furtividade-e-armadilhas": "agilidade",
+  "bardo-e-interacao": "espirito",
+  "navegacao-e-lideranca": "intelecto",
+};
 
 type StoreState = CharacterData;
 
@@ -66,19 +85,45 @@ export function getHighestUnlockedRank(state: StoreState, treeId: string): RankN
 }
 
 /**
- * PV Máximos (Nível 1): valor máximo do dado da Árvore Inicial + Vigor final
- * + bônus fixos de raça/antecedente/sub-tabela + PV comprado com PA.
+ * PV Máximos (Cap. 4, seção 1): max(Vigor x3, 6) + valor MÁXIMO do dado do 1º
+ * patamar da Árvore Inicial + 8 de Resiliência Base — isso é o "PV Inicial".
+ * Ranks desbloqueados depois disso (na Árvore Inicial ou em qualquer outra)
+ * somam a MÉDIA do dado daquele rank, espelhando a soma de PM por rank
+ * (Cap. 3: "PV: somam de todas as árvores"). O 1º patamar da Árvore Inicial
+ * não é somado de novo aqui — ele já virou o PV Inicial acima.
  */
 export function getMaxHp(state: StoreState): number {
-  const startingTree = getTreeById(state.startingTreeId);
-  const treeDie = startingTree?.hpDieMax ?? 0;
   const vigor = getFinalAttribute(state, "vigor");
-  return treeDie + vigor + getFlatBonusSum(state, "maxHp") + state.bonusHp;
+  const baseVigor = Math.max(vigor * 3, 6);
+
+  const startingTree = getTreeById(state.startingTreeId);
+  const startingFirstRank = startingTree?.ranks[0];
+  const startingDieMax = startingFirstRank ? diceMax(startingFirstRank.hpDiceFormula) : 0;
+
+  const progression = state.unlockedRanks.reduce((total, unlocked) => {
+    const tree = getTreeById(unlocked.treeId);
+    const rankDef = tree?.ranks.find((r) => r.rank === unlocked.rank);
+    if (!rankDef) return total;
+    const isStartingFirstRank = tree?.id === state.startingTreeId && rankDef === startingFirstRank;
+    if (isStartingFirstRank) return total;
+    return total + diceAverage(rankDef.hpDiceFormula);
+  }, 0);
+
+  return baseVigor + startingDieMax + RESILIENCIA_BASE + progression + getFlatBonusSum(state, "maxHp") + state.bonusHp;
+}
+
+/** Cap. 1, "Os Dois Atributos do Mago": +Espírito uma vez por patamar numérico novo alcançado em QUALQUER escola de Magia (no máximo 6 vezes). */
+export function getReservaInataBonus(state: StoreState): number {
+  const espirito = getFinalAttribute(state, "espirito");
+  const patamaresAlcancados = RANKS.filter((rank) =>
+    state.unlockedRanks.some((u) => u.rank === rank && getTreeById(u.treeId)?.category === "magia")
+  ).length;
+  return patamaresAlcancados * espirito;
 }
 
 /**
  * PM Máximos: soma do PM por rank de CADA rank desbloqueado em CADA árvore
- * + bônus fixos de raça/antecedente/sub-tabela + PM comprado com PA.
+ * + Reserva Inata + bônus fixos de raça/antecedente/sub-tabela + PM comprado com PA.
  */
 export function getMaxMp(state: StoreState): number {
   const treeMp = state.unlockedRanks.reduce((total, unlocked) => {
@@ -86,7 +131,54 @@ export function getMaxMp(state: StoreState): number {
     const rankDef = tree?.ranks.find((r) => r.rank === unlocked.rank);
     return total + (rankDef?.mpPerRank ?? 0);
   }, 0);
-  return treeMp + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+  return treeMp + getReservaInataBonus(state) + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+}
+
+/**
+ * Pontos de Touki (Cap. 3 e Cap. 4): sem nenhum patamar do Corpo, 0. Com pelo
+ * menos um patamar mas nenhum "Pleno" ainda, PT Menor = max(Vigor, 1). A
+ * partir do Touki Pleno (3º patamar em geral; 2º na Espada), PT = Espírito +
+ * Vigor + 1 por patamar Pleno em qualquer árvore do Corpo (+2 em Escudos).
+ */
+export function getPtPool(state: StoreState): number {
+  const corpoRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "corpo");
+  if (corpoRanks.length === 0) return 0;
+
+  const vigor = getFinalAttribute(state, "vigor");
+  const espirito = getFinalAttribute(state, "espirito");
+
+  let plenoWeight = 0;
+  let hasPleno = false;
+  for (const u of corpoRanks) {
+    if (RANKS.indexOf(u.rank) >= ptPlenoThresholdIndex(u.treeId)) {
+      hasPleno = true;
+      plenoWeight += PT_PLENO_WEIGHT[u.treeId] ?? 1;
+    }
+  }
+
+  if (!hasPleno) return Math.max(vigor, 1);
+  return espirito + vigor + plenoWeight;
+}
+
+/**
+ * Pontos de Preparação (Cap. 3): sem nenhum patamar de Utilidade, 0. Senão,
+ * Intelecto + o maior atributo-chave entre suas árvores de Utilidade
+ * (mínimo 1), +1 por patamar de 3º ou superior em qualquer uma delas.
+ */
+export function getPpPool(state: StoreState): number {
+  const utilRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "utilidade");
+  if (utilRanks.length === 0) return 0;
+
+  const intelecto = getFinalAttribute(state, "intelecto");
+  let maxKeyAttribute = 0;
+  let patamarBonus = 0;
+  for (const u of utilRanks) {
+    const key = UTILITY_KEY_ATTRIBUTE[u.treeId];
+    if (key) maxKeyAttribute = Math.max(maxKeyAttribute, getFinalAttribute(state, key));
+    if (RANKS.indexOf(u.rank) >= RANKS.indexOf("Avançado")) patamarBonus += 1;
+  }
+
+  return Math.max(intelecto + maxKeyAttribute, 1) + patamarBonus;
 }
 
 /**

@@ -1,0 +1,292 @@
+import { Tree } from "@/lib/types";
+
+export const ESPADA_TREE: Tree = {
+  id: "deus-da-espada",
+  name: "Estilo Deus da Espada",
+  category: "corpo",
+  subgroup: "Espadachim",
+  keyAttributeLabel: "Força",
+  resourceLabel: "PT",
+  tagline:
+    "\"A vitória é de quem se move primeiro.\" Sem defesa, sem contra-ataque, o maior dano do livro. Doutrina: sem armadura média/pesada (perde tudo se vestir), CA base -2, nenhuma técnica concede Reações defensivas — exceto a Reversão de Luz.",
+  ranks: [
+    {
+      rank: "Principiante",
+      hpDiceFormula: "1d10+4",
+      mpPerRank: 0,
+      mastery: {
+        name: "Quem Se Move Primeiro",
+        description:
+          "Empates de Iniciativa sempre são seus. No primeiro turno de qualquer combate, seu primeiro ataque tem Vantagem e rola o Dado de Arma uma vez a mais. Você nunca fica Surpreso enquanto empunhar espada e estiver consciente.",
+      },
+      talents: [
+        { id: "braco-de-ferro", name: "Braço de Ferro", paCost: 1, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de patamares neste estilo." },
+        { id: "fio-perfeito", name: "Fio Perfeito", paCost: 1, description: "Sua arma nunca lasca, entorta ou quebra por meios mundanos, e ataques contra objetos/estruturas causam dano dobrado." },
+        { id: "pavio-curto-espada", name: "Pavio Curto", paCost: 1, description: "Vantagem em Intimidação, Desvantagem em qualquer teste social que exija paciência." },
+      ],
+      abilities: [
+        {
+          id: "corte-de-braco",
+          name: "Corte de Braço",
+          signature: true,
+          paCost: 2,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          effect:
+            "Ataque. Se acertar, o alvo faz teste de Vigor (CD 8 + Força + Rank): falha larga o que segura e não usa aquele braço até o fim do próximo turno. Contra rank Santo ou superior, apenas larga a arma.",
+        },
+        {
+          id: "investida-espada",
+          name: "Investida",
+          paCost: 1,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          damage: { normal: "+1 Dado de Arma se percorreu 9m ou mais" },
+          effect: "Avance até o dobro do Deslocamento em linha reta e ataque ao final. Sem Reações até seu próximo turno.",
+        },
+        {
+          id: "golpe-continuo",
+          name: "Golpe Contínuo",
+          paCost: 1,
+          ptCost: 1,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          effect: "Se o ataque anterior neste turno acertou, este não pode errar por menos de 5.",
+        },
+        {
+          id: "roupa-leve",
+          name: "Roupa Leve",
+          paCost: 1,
+          range: "Passivo",
+          actions: { normal: 0 },
+          effect: "Sem armadura: +3m de Deslocamento e +2 na CA nos turnos em que você se moveu 3m ou mais. Vestir qualquer armadura desliga isto.",
+        },
+        {
+          id: "sem-recuo",
+          name: "Sem Recuo",
+          paCost: 1,
+          range: "Passivo",
+          actions: { normal: 0 },
+          effect: "Você é imune a Amedrontado e a qualquer efeito que force recuo ou fuga.",
+        },
+      ],
+    },
+    {
+      rank: "Intermediário",
+      hpDiceFormula: "1d12+4",
+      mpPerRank: 0,
+      ptGained: 1,
+      mastery: {
+        name: "Aura Precoce",
+        description:
+          "Exceção do livro: o Deus da Espada acorda o Touki no 2º patamar, não no 3º. Você recebe Pontos de Touki e pode usar Touki Concentrado e Lâmina de Touki. Ainda não recebe o Manto de Touki completo (chega no Avançado).",
+      },
+      talents: [
+        { id: "punho-duplo", name: "Punho Duplo", paCost: 1, description: "Você empunha arma de duas mãos com uma só, sem penalidade, e ganha +1 grau de Dado quando usa as duas mãos." },
+        { id: "aco-rapido", name: "Aço Rápido", paCost: 1, description: "+2 PT Máximos." },
+        { id: "cavaleiro-vencido", name: "Cavaleiro Vencido", paCost: 1, description: "Contra soldados, guardas e cavaleiros comuns, seus ataques acertam automaticamente com resultado 10 ou mais no dado." },
+      ],
+      abilities: [
+        {
+          id: "passo-encurtado",
+          name: "Passo Encurtado",
+          signature: true,
+          paCost: 2,
+          ptCost: 1,
+          range: "9 metros",
+          actions: { normal: 1 },
+          effect: "Desloque-se até 9m em linha reta, atravessando espaço de criaturas sem provocar oportunidade, e ataque imediatamente. Contra alvo que ainda não agiu, Vantagem.",
+        },
+        {
+          id: "dois-cortes",
+          name: "Dois Cortes",
+          paCost: 1,
+          ptCost: 1,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          damage: { normal: "Segundo ataque: um degrau abaixo" },
+          effect: "Dois ataques contra o mesmo alvo. Se ambos acertarem, o alvo fica Caído.",
+        },
+        {
+          id: "quebra-armadura",
+          name: "Quebra-Armadura",
+          paCost: 1,
+          ptCost: 1,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          damage: { normal: "+2 Dados de Arma contra armadura completa" },
+          effect: "Ataque que ignora metade da CA de armadura não-mágica e de escudos.",
+        },
+        {
+          id: "leitura-de-abertura",
+          name: "Leitura de Abertura",
+          paCost: 1,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          effect: "Observe uma criatura por um turno inteiro sem atacar. No próximo turno, seu primeiro ataque contra ela tem Vantagem e crítico em 19-20.",
+        },
+      ],
+    },
+    {
+      rank: "Avançado",
+      hpDiceFormula: "1d12+5",
+      mpPerRank: 0,
+      ptGained: 1,
+      mastery: {
+        name: "Velocidade Encarnada",
+        description:
+          "Você recebe o Manto de Touki completo. Dois degraus de Dado de Arma neste patamar. Se você não se mover no turno, recebe 1 Ação adicional só para atacar.",
+      },
+      talents: [
+        { id: "folego-de-aco", name: "Fôlego de Aço", paCost: 2, description: "+3 PT Máximos." },
+        { id: "mira-no-osso", name: "Mira no Osso", paCost: 2, description: "Seus acertos críticos rolam o Dado de Arma três vezes em vez de duas." },
+        { id: "espada-emprestada", name: "Espada Emprestada", paCost: 2, description: "Você recebe uma espada de qualidade superior: +1 degrau de Dado de Arma permanente, e ela conta como mágica." },
+      ],
+      abilities: [
+        {
+          id: "espada-do-silencio",
+          name: "Espada do Silêncio",
+          signature: true,
+          paCost: 3,
+          ptCost: 2,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          damage: { normal: "+2 Dados de Arma" },
+          effect: "Ataque que não pode ser alvo de Reação alguma. Não faz som algum — quem não estiver olhando não percebe que houve um ataque.",
+        },
+        {
+          id: "corte-ascendente",
+          name: "Corte Ascendente",
+          paCost: 2,
+          ptCost: 1,
+          range: "Corpo a corpo",
+          actions: { normal: 1 },
+          effect: "Ataque que lança o alvo 4,5m para cima. Ele cai no fim do turno dele com dano de queda e Caído, a menos que voe. Vantagem contra ele enquanto no ar.",
+        },
+        {
+          id: "sede",
+          name: "Sede",
+          paCost: 2,
+          range: "Passivo",
+          actions: { normal: 0 },
+          effect: "Sempre que reduzir uma criatura a 0 PV, recupere imediatamente 1 PT e gaste 1 Ação extra ainda neste turno.",
+        },
+      ],
+    },
+    {
+      rank: "Santo",
+      hpDiceFormula: "2d6+5",
+      mpPerRank: 0,
+      ptGained: 1,
+      mastery: {
+        name: "Controle Absoluto",
+        description:
+          "Seus acertos críticos ocorrem em 19-20. Touki Concentrado passa a ser gratuito uma vez por turno. Quando for alvo de efeito de área com teste para metade do dano, um sucesso resulta em nenhum dano.",
+      },
+      talents: [],
+      abilities: [
+        {
+          id: "espada-de-luz",
+          name: "Espada de Luz",
+          signature: true,
+          paCost: 4,
+          ptCost: 3,
+          range: "Corpo a corpo",
+          actions: { normal: 2 },
+          damage: { normal: "Dado de arma rolado três vezes (dobrado contra armadura pesada/estrutura)" },
+          effect:
+            "Ataque com Vantagem que ignora todo bônus de CA de armadura, escudo e Cobertura. Não pode ser alvo de Reação, exceto a Reversão de Luz. Preço: sua CA cai em 5 até o início do próximo turno. Pré-requisito para o rank Rei da Espada.",
+        },
+      ],
+    },
+    {
+      rank: "Rei",
+      hpDiceFormula: "2d6+6",
+      mpPerRank: 0,
+      ptGained: 1,
+      mastery: {
+        name: "A Lâmina do Deus",
+        description:
+          "Dois degraus de Dado de Arma. Você recebe uma espada da coleção do Deus da Espada: arma mágica, indestrutível, ignora Resistência a cortante. Sua Espada de Luz passa a custar 2 PT, e a penalidade de CA cai para -3.",
+      },
+      talents: [],
+      abilities: [
+        {
+          id: "reversao-de-luz",
+          name: "Reversão de Luz",
+          signature: true,
+          reaction: true,
+          paCost: 5,
+          ptCost: 3,
+          range: "3 metros",
+          actions: { normal: 1 },
+          effect:
+            "A única Reação da árvore inteira: 1 Reação quando alguém usar Espada de Luz contra você ou aliado a 3m. Anula por completo e ataca o conjurador — se acertar, ele perde permanentemente o uso da mão até receber Cura de rank Santo ou superior.",
+        },
+        {
+          id: "corte-do-horizonte",
+          name: "Corte do Horizonte",
+          paCost: 4,
+          ptCost: 3,
+          range: "Linha de 27m",
+          actions: { normal: 1 },
+          effect: "Corte em linha reta de 27m por 1,5m. Cada criatura sofre dano completo, teste de Agilidade para metade. Corta paredes, portões e barreiras mágicas com PV ao meio.",
+        },
+        {
+          id: "um-so-movimento",
+          name: "Um Só Movimento",
+          paCost: 4,
+          ptCost: 2,
+          range: "4,5 metros",
+          actions: { normal: 1 },
+          effect: "Uma vez por combate: ataque todas as criaturas hostis dentro de 4,5m com uma única rolagem, comparada contra a CA de cada. Dano completo em todas.",
+        },
+      ],
+    },
+    {
+      rank: "Imperador",
+      hpDiceFormula: "2d8+6",
+      mpPerRank: 0,
+      ptGained: 1,
+      mastery: {
+        name: "A Vitória de Quem Se Move Primeiro",
+        description:
+          "Três degraus de Dado de Arma. Críticos ocorrem em 18-20. A primeira vez em cada combate que acertar uma criatura com PV cheios, role o Dado de Arma duas vezes o normal. Você não pode ser Atrasado, Lentificado nem ter a Iniciativa reduzida.",
+      },
+      talents: [],
+      abilities: [
+        {
+          id: "espada-de-luz-verdadeira",
+          name: "Espada de Luz Verdadeira",
+          signature: true,
+          paCost: 6,
+          ptCost: 5,
+          range: "Corpo a corpo",
+          actions: { normal: 2 },
+          damage: { normal: "Dado de arma rolado cinco vezes" },
+          effect:
+            "Uma vez por combate: acerta automaticamente, sem rolagem. Ignora CA, Cobertura, Manto de Touki, armadura mágica e barreira física. Só responde à Reversão de Luz de rank Rei ou superior (com Desvantagem). Preço: sua CA cai para 10 até o início do próximo turno, sem Reações.",
+        },
+        {
+          id: "sem-segunda-vez",
+          name: "Sem Segunda Vez",
+          reaction: true,
+          paCost: 5,
+          ptCost: 3,
+          range: "9 metros",
+          actions: { normal: 1 },
+          effect:
+            "1 Reação, quando uma criatura a até 9m tentar fugir, teleportar, curar acima de metade dos PV, ou conjurar magia Santo ou superior. Ataque automático; se o dano igualar/superar metade dos PV atuais dela, a ação é cancelada e o recurso gasto se perde.",
+        },
+        {
+          id: "heranca-de-gal",
+          name: "Herança de Gal",
+          paCost: 5,
+          range: "Passivo",
+          actions: { normal: 0 },
+          effect: "Escolha uma técnica de rank Santo ou inferior de qualquer estilo marcial. Você a possui, com o seu próprio Bônus de Rank do Deus da Espada.",
+        },
+      ],
+    },
+  ],
+};

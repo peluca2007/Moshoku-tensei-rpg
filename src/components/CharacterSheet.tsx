@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { getPaSpent } from "@/store/selectors";
@@ -109,7 +109,7 @@ export default function CharacterSheet() {
   } = character;
   const paSpent = getPaSpent(character);
 
-  const { attributes, maxHp, maxMp, armorClass, initiative } = useCharacterDerived();
+  const { attributes, maxHp, maxMp, maxPt, maxPp, armorClass, initiative } = useCharacterDerived();
 
   const race = getRaceById(raceId);
   const background = getBackgroundById(backgroundId);
@@ -271,6 +271,22 @@ export default function CharacterSheet() {
                 <BonusInput value={bonusMp} onChange={(v) => useCharacterStore.getState().setBonusMp(v)} />
               }
             />
+            {maxPt > 0 && (
+              <StatCard
+                icon={<Flame className="h-5 w-5 text-white" />}
+                label="PT Máximo (Touki)"
+                value={maxPt}
+                tone="bg-orange-500"
+              />
+            )}
+            {maxPp > 0 && (
+              <StatCard
+                icon={<Compass className="h-5 w-5 text-white" />}
+                label="PP Máximo (Preparação)"
+                value={maxPp}
+                tone="bg-emerald-500"
+              />
+            )}
             <StatCard
               icon={<Shield className="h-5 w-5 text-white" />}
               label="Classe de Armadura"
@@ -316,6 +332,8 @@ export default function CharacterSheet() {
             const tree = getTreeById(treeId);
             if (!tree) return null;
             const resolved = resolveAbilities(tree, purchases);
+            const highestRank = highestRankByTree.get(treeId);
+            const highestRankDef = highestRank ? tree.ranks.find((r) => r.rank === highestRank) : undefined;
 
             return (
               <div
@@ -324,16 +342,25 @@ export default function CharacterSheet() {
               >
                 <h3 className="mb-3 flex items-center gap-2 text-base font-bold text-slate-900 dark:text-slate-50">
                   {tree.name}
-                  {highestRankByTree.get(treeId) && (
+                  {highestRank && (
                     <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${
-                        RANK_COLORS[highestRankByTree.get(treeId)!]
-                      }`}
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${RANK_COLORS[highestRank]}`}
                     >
-                      {highestRankByTree.get(treeId)}
+                      {highestRank}
                     </span>
                   )}
                 </h3>
+
+                {highestRankDef?.mastery && (
+                  <div className="mb-3 rounded-xl border border-violet-200 bg-violet-50/60 p-3 text-sm dark:border-violet-900 dark:bg-violet-950/30">
+                    <span className="font-semibold text-violet-700 dark:text-violet-400">
+                      ◈ Maestria: {highestRankDef.mastery.name}
+                    </span>
+                    <p className="mt-0.5 text-xs text-violet-900/80 dark:text-violet-200/80">
+                      {highestRankDef.mastery.description}
+                    </p>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {resolved.map(({ kind, rank, def }) => (
@@ -342,7 +369,10 @@ export default function CharacterSheet() {
                       className="rounded-xl border border-slate-200 bg-slate-50/80 p-3 dark:border-slate-800 dark:bg-slate-950/50"
                     >
                       <div className="mb-1 flex items-start justify-between gap-2">
-                        <span className="font-semibold text-slate-900 dark:text-slate-50">{def.name}</span>
+                        <span className="font-semibold text-slate-900 dark:text-slate-50">
+                          {kind === "ability" && (def as AbilityDef).signature && "◆ "}
+                          {def.name}
+                        </span>
                         <span
                           className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${RANK_COLORS[rank]}`}
                         >
@@ -354,7 +384,14 @@ export default function CharacterSheet() {
                         {kind === "ability" && (() => {
                           const ability = def as AbilityDef;
                           const pm = ability.pmCost !== undefined ? ` · ${ability.pmCost} PM` : "";
-                          return `${pm} · ${ability.actions.normal} Ações`;
+                          const pt = ability.ptCost !== undefined ? ` · ${ability.ptCost} PT` : "";
+                          const pp = ability.ppCost !== undefined ? ` · ${ability.ppCost} PP` : "";
+                          const actionLabel = ability.reaction
+                            ? "1 Reação"
+                            : ability.actions.normal === 0
+                              ? "Passivo"
+                              : `${ability.actions.normal} Ação${ability.actions.normal > 1 ? "ões" : ""}`;
+                          return `${pm}${pt}${pp} · ${actionLabel}`;
                         })()}
                       </p>
                       {kind === "ability" ? (

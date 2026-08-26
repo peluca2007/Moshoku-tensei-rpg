@@ -1,27 +1,41 @@
 import { Tree } from "@/lib/types";
 import { AGUA_TREE } from "./agua";
-import { PLACEHOLDER_TREES } from "./placeholders";
+import { FOGO_TREE } from "./fogo";
+import { VENTO_TREE } from "./vento";
+import { TERRA_TREE } from "./terra";
+import { CURA_TREE } from "./cura";
+import { DESINTOXICACAO_TREE } from "./desintoxicacao";
+import { BARREIRA_TREE } from "./barreira";
+import { INVOCACAO_TREE } from "./invocacao";
+import { ESPADA_TREE } from "./espada";
+import { SUISHIN_TREE } from "./suishin";
+import { NORTE_TREE } from "./norte";
+import { LUTADOR_TREE } from "./lutador";
+import { ESCUDOS_TREE } from "./escudos";
+import { ARQUEARIA_TREE } from "./arquearia";
+import { LADINO_TREE } from "./ladino";
+import { BARDO_TREE } from "./bardo";
+import { TATICO_TREE } from "./tatico";
 
-const byId = new Map(PLACEHOLDER_TREES.map((t) => [t.id, t]));
-
-/** Ordem de exibição = mesma ordem do grafo de árvores (Magia -> Corpo -> Utilidade). */
+/** Ordem de exibição = mesma ordem do grafo de árvores (Magia -> Corpo -> Utilidade), igual ao "Mapa Completo das Árvores" do livro. */
 export const TREES: Tree[] = [
-  byId.get("fogo")!,
+  FOGO_TREE,
   AGUA_TREE,
-  byId.get("vento")!,
-  byId.get("terra")!,
-  byId.get("cura")!,
-  byId.get("barreira")!,
-  byId.get("invocacao")!,
-  byId.get("deus-da-espada")!,
-  byId.get("deus-da-agua-corpo")!,
-  byId.get("deus-do-norte")!,
-  byId.get("armas-pesadas")!,
-  byId.get("cavalaria-e-escudos")!,
-  byId.get("arquearia")!,
-  byId.get("furtividade-e-armadilhas")!,
-  byId.get("bardo-e-interacao")!,
-  byId.get("navegacao-e-lideranca")!,
+  VENTO_TREE,
+  TERRA_TREE,
+  CURA_TREE,
+  DESINTOXICACAO_TREE,
+  BARREIRA_TREE,
+  INVOCACAO_TREE,
+  ESPADA_TREE,
+  SUISHIN_TREE,
+  NORTE_TREE,
+  LUTADOR_TREE,
+  ESCUDOS_TREE,
+  ARQUEARIA_TREE,
+  LADINO_TREE,
+  BARDO_TREE,
+  TATICO_TREE,
 ];
 
 export function getTreeById(id: string | null): Tree | undefined {

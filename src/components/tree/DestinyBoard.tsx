@@ -324,16 +324,29 @@ function AbilityListItem({
   const ability = kind === "ability" ? (def as AbilityDef) : undefined;
   const talent = kind === "talent" ? (def as TalentDef) : undefined;
 
+  const actionLabel = ability
+    ? ability.reaction
+      ? "1 Reação"
+      : ability.actions.normal === 0
+        ? "Passivo"
+        : `${ability.actions.normal} Ação${ability.actions.normal > 1 ? "ões" : ""}`
+    : undefined;
+
   return (
     <div className="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5 dark:border-slate-800 dark:bg-slate-950/50">
       <div className="mb-0.5 flex items-start justify-between gap-2">
-        <span className="text-sm font-semibold text-slate-900 dark:text-slate-50">{def.name}</span>
+        <span className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+          {ability?.signature && "◆ "}
+          {def.name}
+        </span>
         {owned && <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />}
       </div>
       <p className="text-xs text-slate-500 dark:text-slate-400">
         {kind === "ability" ? "Habilidade" : "Talento"} · {def.paCost} PA
         {ability &&
-          ` · ${ability.pmCost !== undefined ? `${ability.pmCost} PM · ` : ""}${ability.range} · ${ability.actions.normal} Ações`}
+          ` · ${ability.pmCost !== undefined ? `${ability.pmCost} PM · ` : ""}${
+            ability.ptCost !== undefined ? `${ability.ptCost} PT · ` : ""
+          }${ability.ppCost !== undefined ? `${ability.ppCost} PP · ` : ""}${ability.range} · ${actionLabel}`}
       </p>
       {ability ? (
         <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
@@ -404,7 +417,17 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
         {empty ? (
           <p>Em Breve — conteúdo desta árvore ainda não foi escrito.</p>
         ) : (
-          <p>Conhecimentos adquiridos: {knowledge}. Continue seguindo a linha pra ver os ranks.</p>
+          <>
+            {meta.tree.tagline && <p className="italic text-slate-500 dark:text-slate-400">{meta.tree.tagline}</p>}
+            {(meta.tree.keyAttributeLabel || meta.tree.resourceLabel) && (
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {meta.tree.keyAttributeLabel && <>Atributo-chave: <span className="font-medium">{meta.tree.keyAttributeLabel}</span></>}
+                {meta.tree.keyAttributeLabel && meta.tree.resourceLabel && " · "}
+                {meta.tree.resourceLabel && <>Recurso: <span className="font-medium">{meta.tree.resourceLabel}</span></>}
+              </p>
+            )}
+            <p>Conhecimentos adquiridos: {knowledge}. Continue seguindo a linha pra ver os ranks.</p>
+          </>
         )}
       </PanelShell>
     );
@@ -429,6 +452,16 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
       subtitle={`${meta.tree.name} · Rank ${meta.rank} · Bônus +${RANK_BONUS[meta.rank]}`}
       accentClass={accent.text}
     >
+      {rankDef?.mastery && (
+        <div className="rounded-lg border border-violet-200 bg-violet-50/60 p-2.5 dark:border-violet-900 dark:bg-violet-950/30">
+          <span className="text-sm font-semibold text-violet-700 dark:text-violet-400">
+            ◈ Maestria: {rankDef.mastery.name}
+          </span>
+          <p className="mt-0.5 text-xs text-violet-900/80 dark:text-violet-200/80">{rankDef.mastery.description}</p>
+          {!unlocked && <p className="mt-1 text-[11px] italic text-violet-700/70 dark:text-violet-400/70">Gratuita ao desbloquear o rank.</p>}
+        </div>
+      )}
+
       {!unlocked && (
         <>
           <p>
