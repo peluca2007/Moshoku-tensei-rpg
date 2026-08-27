@@ -324,42 +324,44 @@ export default function CharacterSheet() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
       {/* Cabeçalho */}
-      <header className="rounded-2xl border border-parchment-300 bg-gradient-to-br from-wine-50 via-parchment-50 to-parchment-50 p-6 shadow-sm dark:border-parchment-800 dark:from-parchment-900 dark:via-parchment-950 dark:to-parchment-900">
-        <div className="flex items-start gap-3">
+      <header className="rounded-2xl border border-parchment-300 bg-gradient-to-br from-wine-50 via-parchment-50 to-parchment-50 p-4 shadow-sm sm:p-6 dark:border-parchment-800 dark:from-parchment-900 dark:via-parchment-950 dark:to-parchment-900">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <input
             value={name}
             onChange={(e) => useCharacterStore.getState().setName(e.target.value)}
             placeholder="Nome do personagem"
             aria-label="Nome do personagem"
-            className="min-w-0 flex-1 rounded-lg bg-transparent text-3xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700"
+            className="w-full min-w-0 rounded-lg bg-transparent text-2xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700 sm:flex-1 sm:text-3xl"
           />
-          <button
-            type="button"
-            onClick={() => useCharacterStore.getState().undo()}
-            disabled={!canUndo}
-            title="Desfazer a última alteração nesta ficha"
-            className="mt-1.5 flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
-          >
-            <Undo2 className="h-3.5 w-3.5" /> Desfazer
-          </button>
-          <button
-            type="button"
-            onClick={handleDownloadPdf}
-            disabled={pdfState === "loading"}
-            title="Baixar a ficha completa em PDF (via Typst)"
-            className="mt-1.5 flex shrink-0 items-center gap-1.5 rounded-full bg-wine-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {pdfState === "loading" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5" />}
-            {pdfState === "loading" ? "Gerando..." : "Baixar PDF"}
-          </button>
-          <button
-            type="button"
-            onClick={handleExportJson}
-            title="Exportar esta ficha como arquivo JSON (backup, ou pra importar em outro navegador)"
-            className="mt-1.5 flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
-          >
-            <FileJson className="h-3.5 w-3.5" /> Exportar JSON
-          </button>
+          <div className="flex flex-wrap gap-2 sm:shrink-0">
+            <button
+              type="button"
+              onClick={() => useCharacterStore.getState().undo()}
+              disabled={!canUndo}
+              title="Desfazer a última alteração nesta ficha"
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900 sm:mt-1.5"
+            >
+              <Undo2 className="h-3.5 w-3.5" /> Desfazer
+            </button>
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={pdfState === "loading"}
+              title="Baixar a ficha completa em PDF (via Typst)"
+              className="flex shrink-0 items-center gap-1.5 rounded-full bg-wine-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-60 sm:mt-1.5"
+            >
+              {pdfState === "loading" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5" />}
+              {pdfState === "loading" ? "Gerando..." : "Baixar PDF"}
+            </button>
+            <button
+              type="button"
+              onClick={handleExportJson}
+              title="Exportar esta ficha como arquivo JSON (backup, ou pra importar em outro navegador)"
+              className="flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900 sm:mt-1.5"
+            >
+              <FileJson className="h-3.5 w-3.5" /> Exportar JSON
+            </button>
+          </div>
         </div>
         {pdfState === "error" && (
           <p className="mt-1 text-xs text-rose-500">Não deu pra gerar o PDF agora. Tente de novo em instantes.</p>
