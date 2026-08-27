@@ -48,11 +48,38 @@ export default function Chapter2() {
           em um terço. O BC continua sendo somado integralmente — a maestria não some, só a estrutura do
           feitiço fica instável.
         </Warning>
-        <Aside title="A Flexibilidade da Conjuração Silenciosa">
+        <Aside title="Conjuração Silenciosa — regra completa, sem exceção escondida">
           <P>
-            Além de mais rápida, ela é moldável: ajuste tamanho, velocidade e formato do feitiço na hora.
-            Ao conjurar em silêncio, escolha um benefício — dobrar o alcance, mudar a forma da área (linha
-            ↔ cone ↔ esfera), ou segurar o disparo por até 1 turno. Em troca, o dano é o da versão Encurtada.
+            Conjurar em silêncio sempre faz exatamente estas quatro coisas ao mesmo tempo, nesta ordem de
+            leitura:
+          </P>
+          <List
+            items={[
+              <span key="1">
+                <b>Custo de Ação:</b> sempre usa a coluna &quot;Silenciosa&quot; da tabela da seção 3 —
+                sempre mais rápida que Padrão e Encurtada, sem exceção.
+              </span>,
+              <span key="2">
+                <b>Dano:</b> metade dos dados, arredondado pra baixo — o mesmo valor do Encantamento
+                Encurtado, nunca mais que isso por padrão.
+              </span>,
+              <span key="3">
+                <b>Área:</b> reduzida em um terço — de novo, o mesmo valor do Encantamento Encurtado.
+              </span>,
+              <span key="4">
+                <b>Bônus de Forma (sempre incluso, nunca opcional de pagar):</b> escolha um, de graça, toda
+                vez que conjurar em silêncio — dobrar o alcance, mudar o formato da área (linha ↔ cone ↔
+                esfera), ou segurar o disparo por até 1 turno.
+              </span>,
+            ]}
+          />
+          <P>
+            <b>Quando um talento ou Antecedente diz &quot;sem sofrer a penalidade de dano/área&quot;</b>, ele
+            remove só o item 2 e/ou o item 3 — exatamente os que ele nomear. Os itens 1 e 4 nunca são
+            removidos por nada, porque eles não são a penalidade: são a definição estrutural do próprio
+            método. Um personagem com &quot;Conjuração Silenciosa sem penalidade de dano nem de área&quot;
+            (ex: Antecedente Gênio) continua com o custo de Ação reduzido do item 1 <i>e</i> ainda escolhe o
+            bônus de forma do item 4 — ele não perde nada, só ganha a remoção explícita do que foi citado.
           </P>
           <P>
             A Conjuração Silenciosa não é comprável com PA — vem de um Antecedente, de uma raça, ou de uma
