@@ -76,3 +76,61 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*
+ * O livro agora mora no site (Cap. livro-web) — este bloco prepara o /livro
+ * pra virar PDF via um script simples (Chrome headless print-to-PDF), sem
+ * depender do Typst. Regras:
+ * - Esconde nav/menu, ThemeToggle e qualquer botão de UI que não faça
+ *   sentido numa página impressa.
+ * - Força todo <details> do catálogo de árvores a aparecer aberto, mesmo
+ *   fechado na tela — senão o PDF sairia sem o conteúdo das magias.
+ * - Tipografia serifada (mais "livro"), sempre no tema claro (pergaminho),
+ *   e quebras de página antes de cada capítulo.
+ */
+@media print {
+  nav,
+  .print-hide {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fdf6e3 !important;
+    color: #2b1810 !important;
+  }
+
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  main {
+    max-width: none !important;
+  }
+
+  details > *:not(summary) {
+    display: block !important;
+  }
+
+  details summary {
+    cursor: default;
+  }
+
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  h1 {
+    break-before: page;
+  }
+
+  table,
+  details {
+    break-inside: avoid;
+  }
+}

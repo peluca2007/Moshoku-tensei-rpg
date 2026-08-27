@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { TREES } from "@/data/trees";
+import { TREES, CATEGORY_LABELS } from "@/data/trees";
 import { RANK_BONUS, RANKS } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import TreeCatalog from "./TreeCatalog";
 
 export default function Chapter3() {
   const rankLabelTrees = TREES.filter((t) => t.rankLabels);
@@ -16,13 +17,14 @@ export default function Chapter3() {
         esgrima, mais armas pesadas, escudos e arquearia — recurso PT) e a <b>Árvore de Utilidade</b> (os
         especialistas em mundo — funciona por perícia, posicionamento e usos por descanso).
       </P>
-      <Warning title="O conteúdo completo de cada árvore está na página de Árvores">
-        Este capítulo cobre as regras <i>compartilhadas</i> entre árvores do mesmo pilar. As magias,
-        talentos, técnicas e Maestrias de cada uma das 17 sub-árvores estão todas navegáveis no{" "}
+      <Warning title="O catálogo completo está logo abaixo, seção 'Todas as Sub-árvores'">
+        Este capítulo primeiro cobre as regras <i>compartilhadas</i> entre árvores do mesmo pilar, e termina
+        com o catálogo completo de magias, talentos, técnicas e Maestrias das 17 sub-árvores — o mesmo dado
+        que alimenta a ficha, então nunca diverge dela. Prefere navegar visualmente? O{" "}
         <Link href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-400">
           mapa de Árvores
         </Link>{" "}
-        — clique em qualquer rank pra ver o que ele desbloqueia.
+        mostra o mesmo conteúdo ligado ao progresso do seu personagem.
       </Warning>
 
       <Section>
@@ -242,20 +244,32 @@ export default function Chapter3() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap3-todas">Todas as Sub-árvores</SectionTitle>
-        <P>Magias, talentos, técnicas e Maestrias completas — clique numa árvore no mapa pra abrir o painel de rank.</P>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {TREES.map((t) => (
-            <Link
-              key={t.id}
-              href="/arvores"
-              className="rounded-lg border border-parchment-300 bg-parchment-100/60 p-2.5 text-sm transition-colors hover:border-wine-300 hover:bg-wine-50/60 dark:border-parchment-800 dark:bg-parchment-900/40 dark:hover:border-wine-800 dark:hover:bg-wine-950/30"
-            >
-              <p className="font-semibold text-parchment-900 dark:text-parchment-50">{t.name}</p>
-              <p className="text-xs text-parchment-500 dark:text-parchment-400">{t.subgroup}</p>
-            </Link>
-          ))}
-        </div>
+        <SectionTitle id="cap3-todas">Todas as Sub-árvores — Catálogo Completo</SectionTitle>
+        <P>
+          Magias, talentos, técnicas e Maestrias de cada uma das 17 sub-árvores, rank por rank. Clique no
+          nome de uma árvore pra abrir o catálogo dela.
+        </P>
+        {(["magia", "corpo", "utilidade"] as const).map((category) => (
+          <div key={category} className="space-y-3">
+            <h3 className="scroll-mt-24 text-base font-bold text-wine-700 dark:text-wine-400" id={`cap3-todas-${category}`}>
+              {CATEGORY_LABELS[category]}
+            </h3>
+            {TREES.filter((t) => t.category === category).map((tree) => (
+              <details key={tree.id} className="rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
+                <summary className="scroll-mt-24 cursor-pointer list-none rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
+                  <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
+                  <span className="ml-2 text-xs text-parchment-500 dark:text-parchment-400">{tree.subgroup}</span>
+                  {tree.tagline && (
+                    <span className="mt-0.5 block text-xs italic text-parchment-500 dark:text-parchment-400">{tree.tagline}</span>
+                  )}
+                </summary>
+                <div className="border-t border-parchment-300 p-3 dark:border-parchment-800">
+                  <TreeCatalog tree={tree} />
+                </div>
+              </details>
+            ))}
+          </div>
+        ))}
       </Section>
     </div>
   );

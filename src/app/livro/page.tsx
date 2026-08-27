@@ -118,7 +118,7 @@ export default function LivroPage() {
       </header>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr]">
-        <aside className="hidden lg:block">
+        <aside className="print-hide hidden lg:block">
           <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
               Sumário
@@ -127,7 +127,7 @@ export default function LivroPage() {
           </div>
         </aside>
 
-        <details className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60 lg:hidden">
+        <details className="print-hide rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60 lg:hidden">
           <summary className="cursor-pointer text-sm font-semibold text-parchment-800 dark:text-parchment-200">Sumário</summary>
           <div className="mt-3">
             <TocNav />
