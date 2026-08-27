@@ -20,7 +20,7 @@ export default function Chapter2() {
         </P>
         <P>
           A Magia de Ataque se divide nos quatro elementos clássicos — Água, Fogo, Terra e Vento. A Magia de
-          Cura se divide em Cura, Desintoxicação, Barreira e Golpe Divino.
+          Cura se divide em Cura, Desintoxicação, Barreira e Invocação.
         </P>
         <Aside title="Quão raro é um mago">
           Apenas 1 em cada 20 pessoas nasce com capacidade de manipular mana. Dessas, apenas 1 em cada 20

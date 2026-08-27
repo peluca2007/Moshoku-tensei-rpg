@@ -213,7 +213,6 @@ export const VENDAVAL_TREE: Tree = {
       hpDiceFormula: "1d12+4",
       weaponDieSteps: 1,
       ptGained: 1,
-      unlockPaCostOverride: 2,
       mastery: {
         name: "Lâmina Sem Fronteira",
         description:

@@ -342,10 +342,20 @@ export function getHpMpPaCost(state: StoreState): number {
  * + PV/PM comprados.
  */
 export function getPaSpent(state: StoreState): number {
-  const rankCost = state.unlockedRanks.reduce(
-    (sum, u) => sum + getRankUnlockPaCost(u.treeId, u.rank),
-    0
-  );
+  // Cap. 1, §8, "Custo de Abertura": desbloquear o Principiante de uma árvore
+  // nova custa PA igual à posição de abertura (1ª árvore = 1 PA, 2ª = 2 PA, ...),
+  // não o custo fixo de RANK_REQUIREMENTS.Principiante — senão a regra que o
+  // livro descreve como "corrigida" (impedir abrir 5 árvores por 5 PA de graça)
+  // nunca é aplicada de fato. A ordem de state.unlockedRanks já é cronológica
+  // (só cresce por append em unlockRank), então dá pra usar direto.
+  const openedTrees = new Set<string>();
+  const rankCost = state.unlockedRanks.reduce((sum, u) => {
+    if (u.rank === "Principiante" && !openedTrees.has(u.treeId)) {
+      openedTrees.add(u.treeId);
+      return sum + openedTrees.size;
+    }
+    return sum + getRankUnlockPaCost(u.treeId, u.rank);
+  }, 0);
   const abilityCost = state.purchasedAbilities.reduce((sum, a) => {
     const def = findAbilityOrTalentDef(a.treeId, a.rank, a.kind, a.id);
     return sum + (def?.paCost ?? 0);
@@ -366,9 +376,16 @@ const GUILD_RANK_THRESHOLDS: { rank: GuildRank; min: number }[] = [
   { rank: "F", min: 0 },
 ];
 
+/** Retorna o Rank fixado pelo Mestre (overrides.guildRank) se existir; senão, uma estimativa por PA gasto (Cap. 5, §2: só um chute inicial, nunca a regra real). */
 export function getGuildRank(state: StoreState): GuildRank {
+  if (state.overrides.guildRank) return state.overrides.guildRank;
   const paSpent = getPaSpent(state);
   return GUILD_RANK_THRESHOLDS.find((t) => paSpent >= t.min)?.rank ?? "F";
+}
+
+/** true quando o Rank exibido é só a estimativa por PA — não uma decisão do Mestre já registrada. */
+export function isGuildRankEstimated(state: StoreState): boolean {
+  return !state.overrides.guildRank;
 }
 
 /**

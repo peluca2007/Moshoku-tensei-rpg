@@ -71,7 +71,9 @@ interface RosterState {
   setCurrentPt: (value: number | null) => void;
   setCurrentPp: (value: number | null) => void;
   /** value === null apaga a sobrescrita e volta a usar o valor calculado. */
-  setOverride: (stat: keyof CharacterData["overrides"], value: number | null) => void;
+  setOverride: (stat: keyof Omit<CharacterData["overrides"], "guildRank">, value: number | null) => void;
+  /** Rank de Guilda (Cap. 5, §2) é decisão do Mestre, não fórmula — value === null volta a mostrar a estimativa por PA. */
+  setGuildRankOverride: (value: CharacterData["overrides"]["guildRank"] | null) => void;
   addSkill: (name: string) => void;
   removeSkill: (name: string) => void;
   addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
@@ -183,6 +185,13 @@ export const useCharacterStore = create<RosterState>()(
           const overrides = { ...c.overrides };
           if (value === null) delete overrides[stat];
           else overrides[stat] = value;
+          return { ...c, overrides };
+        }),
+      setGuildRankOverride: (value) =>
+        updateActive(get, set, (c) => {
+          const overrides = { ...c.overrides };
+          if (value === null) delete overrides.guildRank;
+          else overrides.guildRank = value;
           return { ...c, overrides };
         }),
 

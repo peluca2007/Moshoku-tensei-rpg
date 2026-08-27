@@ -285,7 +285,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
             <option value="">Buscar árvore...</option>
             {TREES.map((t) => (
               <option key={t.id} value={t.id}>
-                {t.name}
+                {t.prerequisiteNote ? `${t.name} (pré-requisito)` : t.name}
               </option>
             ))}
           </select>
@@ -463,6 +463,12 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
           <p>Em Breve — conteúdo desta árvore ainda não foi escrito.</p>
         ) : (
           <>
+            {meta.tree.prerequisiteNote && (
+              <p className="rounded-lg border border-wine-300 bg-wine-50/60 p-2 text-xs text-wine-800 dark:border-wine-900 dark:bg-wine-950/30 dark:text-wine-200">
+                <b>Pré-requisito: </b>
+                {meta.tree.prerequisiteNote}
+              </p>
+            )}
             {meta.tree.tagline && <p className="italic text-parchment-500 dark:text-parchment-400">{meta.tree.tagline}</p>}
             {(meta.tree.keyAttributeLabel || meta.tree.resourceLabel) && (
               <p className="text-xs text-parchment-500 dark:text-parchment-400">

@@ -55,7 +55,7 @@ export default function Chapter3() {
         />
         <Aside title="Escolas Formais e Ofícios">
           <P>
-            As sete escolas de magia e os três Estilos Divinos são <b>Escolas Formais</b>: têm mestres vivos,
+            As oito escolas de magia e os três Estilos Divinos são <b>Escolas Formais</b>: têm mestres vivos,
             sedes, hierarquia e títulos reconhecidos no mundo inteiro — usam os nomes canônicos de rank
             (Principiante → Imperador) e conferem status social. As demais seis são <b>Ofícios</b> aprendidos
             na estrada, sem diploma: mecanicamente idênticos (mesmo Bônus de Rank, mesmos custos de PA,
@@ -144,8 +144,9 @@ export default function Chapter3() {
         <SubTitle id="cap3-touki">2. Touki (Aura de Batalha)</SubTitle>
         <P>
           O Touki é uma camada de mana que o guerreiro veste sobre o próprio corpo — endurece a pele como
-          aço, reforça o fio da lâmina e amplifica força, velocidade e reflexos. Rank Avançado é o mais alto
-          que alguém alcança sem Touki: do Santo em diante, todo guerreiro veste aura.
+          aço, reforça o fio da lâmina e amplifica força, velocidade e reflexos. Rank Intermediário é o mais
+          alto que alguém alcança sem Touki: do Avançado em diante (2º patamar no Deus da Espada), todo
+          guerreiro veste aura.
         </P>
         <Aside title="Pontos de Touki (PT) — as duas reservas">
           <P>

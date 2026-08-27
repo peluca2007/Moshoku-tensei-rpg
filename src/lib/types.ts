@@ -234,7 +234,7 @@ export interface CharacterData {
   inventory: InventoryItem[];
   /** Perícias além das automáticas de raça/antecedente (Cap. 1, seção 4). */
   skills: string[];
-  /** PV/PM Máximos comprados com PA (Cap. 1, seção 2: 1 PA = +5), fora da árvore. */
+  /** PV/PM Máximos comprados com PA (Cap. 1, seção 2: 2 PA = +12), fora da árvore. */
   bonusHp: number;
   bonusMp: number;
   /**
@@ -260,5 +260,7 @@ export interface CharacterData {
     maxPp?: number;
     armorClass?: number;
     initiative?: number;
+    /** Cap. 5, §2: Rank de Guilda é decisão do Mestre, nunca uma fórmula — isto é o valor que ele fixou. Sem isso, o site mostra uma estimativa por PA gasto, só como chute inicial. */
+    guildRank?: "F" | "E" | "D" | "C" | "B" | "A" | "S";
   };
 }

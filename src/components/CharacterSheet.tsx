@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2 } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
-import { getGuildRank, getPaSpent } from "@/store/selectors";
+import { getGuildRank, getPaSpent, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
+
+const GUILD_RANKS: GuildRank[] = ["F", "E", "D", "C", "B", "A", "S"];
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById, getTreeGroups } from "@/data/trees";
@@ -212,6 +214,7 @@ export default function CharacterSheet() {
   } = character;
   const paSpent = getPaSpent(character);
   const guildRank = getGuildRank(character);
+  const guildRankEstimated = isGuildRankEstimated(character);
   const [grimoireQuery, setGrimoireQuery] = useState("");
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "error">("idle");
 
@@ -426,12 +429,29 @@ export default function CharacterSheet() {
             <Gem className="h-3.5 w-3.5" /> {paSpent} PA gastos
           </span>
 
-          <span
-            title="Rank de Aventureiro na Guilda — referência de reputação (Cap. 5, §2), não trava mecânica. Quem decide de verdade é o Mestre."
+          <label
+            title="Rank de Aventureiro na Guilda (Cap. 5, §2) é decisão do Mestre, não fórmula. Deixe em 'estimar por PA' pra só ver um chute inicial, ou fixe aqui o Rank que o Mestre decidiu."
             className="flex items-center gap-1 rounded-full bg-wine-500/10 px-3 py-1 font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300"
           >
-            <BookOpen className="h-3.5 w-3.5" /> Rank {guildRank} na Guilda
-          </span>
+            <BookOpen className="h-3.5 w-3.5" />
+            <select
+              value={overrides.guildRank ?? ""}
+              onChange={(e) =>
+                useCharacterStore
+                  .getState()
+                  .setGuildRankOverride(e.target.value ? (e.target.value as GuildRank) : null)
+              }
+              className="bg-transparent outline-none"
+            >
+              <option value="">Rank {guildRank} (estimado)</option>
+              {GUILD_RANKS.map((r) => (
+                <option key={r} value={r}>
+                  Fixar Rank {r}
+                </option>
+              ))}
+            </select>
+            {!guildRankEstimated && <span className="text-[10px] uppercase tracking-wide">fixado</span>}
+          </label>
         </div>
       </header>
 
