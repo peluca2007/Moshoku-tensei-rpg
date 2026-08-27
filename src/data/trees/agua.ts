@@ -29,7 +29,7 @@ export const AGUA_TREE: Tree = {
           id: "nascente-de-mana",
           name: "Nascente de Mana",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "+6 PM máximos. Comprável várias vezes, limitado ao seu número de patamares em Água.",
+          description: "+2 PM por patamar seu em Água. Comprável várias vezes, até o número de patamares.",
         },
         {
           id: "mao-firme",

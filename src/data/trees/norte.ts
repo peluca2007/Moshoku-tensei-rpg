@@ -20,7 +20,7 @@ export const NORTE_TREE: Tree = {
       },
       talents: [
         { id: "tres-bainhas", name: "Três Bainhas", paCost: 1, description: "Você carrega armas escondidas. Sacar uma arma nova é livre, e você nunca fica realmente desarmado." },
-        { id: "osso-duro", name: "Osso Duro", paCost: 1, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de Ranks do Norte." },
+        { id: "osso-duro", name: "Osso Duro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
         { id: "pes-no-chao", name: "Pés no Chão", paCost: 1, description: "Você não sofre penalidade de deslocamento em terreno difícil, escombros ou gelo." },
       ],
       abilities: [
@@ -37,7 +37,6 @@ export const NORTE_TREE: Tree = {
         {
           id: "arremesso-de-espada",
           name: "Arremesso de Espada",
-          reaction: true,
           paCost: 1,
           range: "18 metros",
           actions: { normal: 1 },
@@ -51,7 +50,7 @@ export const NORTE_TREE: Tree = {
           paCost: 1,
           range: "Cone de 3m",
           actions: { normal: 1 },
-          effect: "Requer um saco de temperos preparado. Teste de Vigor (CD 8 + Agilidade + Rank) ou o alvo fica Cego até o fim do próximo turno.",
+          effect: "Requer um saco de temperos preparado (2 PO na cidade, ou 1 hora colhendo ervas). Teste de Vigor (CD 8 + Agilidade + Rank) ou o alvo fica Cego até o fim do próximo turno.",
         },
         {
           id: "primeiros-socorros-de-campo",
@@ -121,7 +120,7 @@ export const NORTE_TREE: Tree = {
           paCost: 1,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          effect: "Disputa de Força ou Agilidade. Se vencer, a arma do alvo voa 3m. Se vencer por 10+, você a pega no ar.",
+          effect: "Disputa de Força ou Agilidade. Se vencer, a arma do alvo voa 3m. Se vencer por 10+, você a pega no ar e passa a usá-la com todos os seus degraus de Dado de Arma.",
         },
         {
           id: "passo-do-terreno",
@@ -176,7 +175,7 @@ export const NORTE_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "3d10 (contundente)" },
-          effect: "Requer cenário utilizável. Teste de Agilidade (CD 8 + Força + Rank). Falha: dano e Preso até gastar 1 Ação para se soltar.",
+          effect: "Requer cenário utilizável. Teste de Agilidade (CD 8 + Força + Rank). Falha: dano e Preso até gastar 1 Ação para se soltar. Sucesso: metade do dano e não fica Preso.",
         },
         {
           id: "quebra-guarda",
@@ -282,7 +281,7 @@ export const NORTE_TREE: Tree = {
           range: "Linha de 27 metros",
           actions: { normal: 1 },
           damage: { normal: "+5d10, dado de arma" },
-          effect: "Libera o Touki como lâmina em linha. Teste de Agilidade para metade. Corta estruturas de pedra e madeira no caminho.",
+          effect: "Libera o Touki como lâmina em linha. Teste de Agilidade (CD 8 + Força + Rank) para metade. Corta estruturas de pedra e madeira no caminho.",
         },
       ],
     },

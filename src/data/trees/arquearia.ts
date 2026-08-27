@@ -30,7 +30,7 @@ export const ARQUEARIA_TREE: Tree = {
       talents: [
         { id: "aljava-cheia", name: "Aljava Cheia", paCost: 1, description: "Você nunca fica sem flechas em terreno com madeira, e fabrica munição durante um Descanso Curto." },
         { id: "passo-e-tiro", name: "Passo e Tiro", paCost: 1, description: "Disparar não provoca ataques de oportunidade." },
-        { id: "braco-firme", name: "Braço Firme", paCost: 1, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de patamares nesta árvore." },
+        { id: "braco-firme", name: "Braço Firme", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
       ],
       abilities: [
         {
@@ -80,7 +80,7 @@ export const ARQUEARIA_TREE: Tree = {
           "A condição Marcado passa a durar o combate inteiro. Você pode Marcar sem atacar (1 Ação de observação). Contra criaturas Marcadas, sabe automaticamente PV aproximado, resistências e se ela veste Touki.",
       },
       talents: [
-        { id: "leitura-de-presa", name: "Leitura de Presa", paCost: 1, description: "Vantagem em Sobrevivência e Percepção para rastrear e emboscar." },
+        { id: "leitura-de-presa", name: "Leitura de Presa", paCost: 1, description: "Vantagem em Sobrevivência e Percepção para rastrear e emboscar. (Se você já tem isto pelo Tático ou pelo Norte, escolha outro talento — o mesmo bônus não empilha.)" },
         { id: "corda-rapida", name: "Corda Rápida", paCost: 1, description: "Recarregar besta deixa de custar Ação." },
         { id: "distancia-e-seguranca", name: "Distância É Segurança", paCost: 1, description: "Contra criaturas a mais de 18 metros, você recebe +2 na CA." },
       ],

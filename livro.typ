@@ -191,7 +191,7 @@ Você usa seus PA para comprar absolutamente tudo no sistema:
 #quadro(titulo: [O Padrão das Reservas])[
 Todo talento de árvore que compra reserva vale exatamente o mesmo, custe onde custar: *1 PA = +2 PM por patamar seu naquela árvore*, ou *+4 PV por patamar seu naquela árvore*. Comprável tantas vezes quantos forem os seus patamares.
 
-No 1º patamar isso é +3 PM ou +4 PV, e é pouco. No 6º é +18 PM ou +24 PV, e vale a compra. *O talento cresce junto com a ficha* — do contrário, no topo ele viraria letra morta, e todo talento morto é um item de lista que só confunde a mesa.
+No 1º patamar isso é +2 PM ou +4 PV, e é pouco. No 6º é +12 PM ou +24 PV, e vale a compra. *O talento cresce junto com a ficha* — do contrário, no topo ele viraria letra morta, e todo talento morto é um item de lista que só confunde a mesa.
 
 Isso existe para que a resposta a _"qual escola dá mais vida de graça?"_ seja *nenhuma*. Escolas se diferenciam pela curva de progressão e pelas Maestrias, nunca por um talento genérico valer mais em uma do que na outra.
 ]

@@ -28,7 +28,7 @@ export const ESCUDOS_TREE: Tree = {
           "Você desbloqueia 'Sob Minha Guarda': designe aliados (até seu Bônus de Rank) como protegidos; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim por PT). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo, e com escudo recebe +2 na CA além do normal.",
       },
       talents: [
-        { id: "ombro-de-pedra", name: "Ombro de Pedra", paCost: 1, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de patamares nesta árvore." },
+        { id: "ombro-de-pedra", name: "Ombro de Pedra", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
         { id: "montaria", name: "Montaria", paCost: 1, description: "Você monta, treina e acalma qualquer besta de carga. Sobre ela, você não cai por efeito que permita teste, e sua montaria também está Sob Sua Guarda." },
         { id: "sono-de-ferro", name: "Sono de Ferro", paCost: 1, description: "Você dorme de armadura completa sem penalidade e acorda pronto. Vantagem contra Exaustão por marcha ou vigília." },
       ],
@@ -65,7 +65,7 @@ export const ESCUDOS_TREE: Tree = {
           paCost: 1,
           range: "Visão",
           actions: { normal: 1 },
-          effect: "Teste de Espírito (CD 8 + Vigor + Rank). Falha: no próximo turno da criatura, ataques contra qualquer um que não seja você têm Desvantagem.",
+          effect: "Teste de Espírito (CD 8 + Vigor + Rank). Falha: no próximo turno da criatura, ataques contra qualquer um que não seja você têm Desvantagem. (Não é a Provocação do Suishin-ryū, que força o ataque pra alimentar contragolpe — aqui você só torna caro ignorar você.)",
         },
       ],
     },

@@ -21,7 +21,7 @@ export const CURA_TREE: Tree = {
       },
       talents: [
         { id: "maos-firmes-cura", name: "Mãos Firmes", paCost: RANK_PA_COST.talent.Principiante, description: "Você conjura magias de Cura sem sofrer Desvantagem por corpo a corpo, chuva, escuro ou inimigo adjacente." },
-        { id: "reserva-do-curandeiro", name: "Reserva do Curandeiro", paCost: RANK_PA_COST.talent.Principiante, description: "+6 PM máximos. Comprável várias vezes, limitado ao seu número de patamares em Cura." },
+        { id: "reserva-do-curandeiro", name: "Reserva do Curandeiro", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Cura. Comprável várias vezes, até o número de patamares." },
         {
           id: "juramento",
           name: "Juramento",
@@ -157,6 +157,7 @@ export const CURA_TREE: Tree = {
       talents: [
         { id: "mao-silenciosa", name: "Mão Silenciosa", paCost: RANK_PA_COST.talent.Avançado, description: "Você conjura magias de Cura de rank Principiante e Intermediário em Conjuração Silenciosa, sem penalidade alguma." },
         { id: "sangue-trocado-cura", name: "Sangue Trocado", paCost: RANK_PA_COST.talent.Avançado, description: "Transferência passa a mover o dobro do dano e alcança 9 metros." },
+        { id: "maos-repartidas", name: "Mãos Repartidas", paCost: RANK_PA_COST.talent.Avançado, description: "Ao conjurar Cura Suprema, você pode dividir os dados rolados entre até duas criaturas ao seu alcance, em vez de concentrar tudo em uma só. Cada uma ainda dobra individualmente se estiver com Ferida Fresca." },
       ],
       abilities: [
         {
@@ -320,7 +321,7 @@ export const CURA_TREE: Tree = {
           paCost: RANK_PA_COST.common.Imperador,
           pmCost: 20,
           range: "Esfera de 30m",
-          actions: MAGIC_ACTIONS.Imperador,
+          actions: { normal: 4 },
           effect:
             "Ritual (4 Ações). 1 minuto: nenhuma criatura viva na área pode morrer — ainda caem a 0 PV, mas não recebem Marcas da Morte e não podem ser mortas por efeito abaixo de rank Deus. Quando acaba, todo o dano acumulado é aplicado de uma vez. Você não pode conjurar outra magia enquanto ativo.",
         },

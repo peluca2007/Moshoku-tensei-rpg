@@ -29,7 +29,7 @@ export const FOGO_TREE: Tree = {
           id: "folego-de-forja",
           name: "Fôlego de Forja",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "+6 PM máximos. Comprável várias vezes, limitado ao número de patamares em Fogo.",
+          description: "+2 PM por patamar seu em Fogo. Comprável várias vezes, até o número de patamares.",
         },
         {
           id: "maos-de-ferreiro",

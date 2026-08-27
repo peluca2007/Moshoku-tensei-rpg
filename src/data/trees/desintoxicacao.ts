@@ -20,7 +20,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           "Tocando, cheirando ou provando qualquer substância, você sabe exatamente o que ela é, e identifica a Profundidade de qualquer aflição que veja, inclusive em cadáveres. Você é imune a veneno mundano.",
       },
       talents: [
-        { id: "reserva-do-purificador", name: "Reserva do Purificador", paCost: RANK_PA_COST.talent.Principiante, description: "+6 PM máximos. Comprável várias vezes, limitado ao número de patamares nesta árvore." },
+        { id: "reserva-do-purificador", name: "Reserva do Purificador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Desintoxicação. Comprável várias vezes, até o número de patamares." },
         { id: "herborista", name: "Herborista", paCost: RANK_PA_COST.talent.Principiante, description: "Fora de combate, com uma hora e material, reduza a Profundidade de uma aflição em 1 sem gastar PM." },
         { id: "mao-que-nao-contamina", name: "Mão que Não Contamina", paCost: RANK_PA_COST.talent.Principiante, description: "Você não pode ser envenenado, infectado ou amaldiçoado por contato ao manusear aquilo que está tratando ou extraindo." },
       ],

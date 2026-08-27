@@ -20,7 +20,7 @@ export const SUISHIN_TREE: Tree = {
           "Reação: quando uma criatura adjacente erra um ataque corpo a corpo contra você, você contra-ataca imediatamente com dano de arma normal, sem custo de PT. No Principiante, uma vez por rodada.",
       },
       talents: [
-        { id: "casco-de-tartaruga", name: "Casco de Tartaruga", paCost: 1, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de patamares neste estilo." },
+        { id: "casco-de-tartaruga", name: "Casco de Tartaruga", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
         { id: "olho-na-mao", name: "Olho na Mão", paCost: 1, description: "Vantagem em Intuição para prever a próxima ação de uma criatura; o Mestre é obrigado a dar uma dica honesta." },
         { id: "paciencia-de-pedra", name: "Paciência de Pedra", paCost: 1, description: "Você é imune a Amedrontado e a efeitos que forcem você a agir contra a vontade. Provocação não funciona em você." },
       ],
@@ -163,7 +163,7 @@ export const SUISHIN_TREE: Tree = {
           ptCost: 1,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Cada contra-ataque de Fluxo que acertar na mesma rodada causa +1 Dado de Arma cumulativo.",
+          effect: "Cada contra-ataque de Fluxo que acertar na mesma rodada causa +1 Dado de Arma cumulativo: o terceiro do turno causa dois dados extras, o quarto causa três.",
         },
         {
           id: "peso-da-agua",
@@ -199,7 +199,7 @@ export const SUISHIN_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           effect:
-            "Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica condição; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso).",
+            "Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica uma condição — Caído, Preso, Desarmado ou Atordoado; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso).",
         },
         {
           id: "espelho-suishin",

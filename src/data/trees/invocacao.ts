@@ -28,7 +28,7 @@ export const INVOCACAO_TREE: Tree = {
         { id: "pacto-corvo-mensageiro", name: "Pacto: Corvo Mensageiro", paCost: RANK_PA_COST.talent.Principiante, description: "Frágil (metade dos PV), voa 18m. Você vê e ouve pelo que ele vê e ouve a qualquer distância. Não luta." },
         { id: "pacto-salamandra", name: "Pacto: Salamandra", paCost: RANK_PA_COST.talent.Principiante, description: "2d8 mordida + 2d6 ígneo, imune a fogo, aplica Em Chamas. Acende fogueiras e derrete fechaduras; do tamanho de um gato." },
         { id: "pacto-espirito-de-pedra", name: "Pacto: Espírito de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "3d6 soco, Resistência a dano físico, Deslocamento 6m. Não recua nunca. Serve para segurar uma porta." },
-        { id: "reserva-do-invocador", name: "Reserva do Invocador", paCost: RANK_PA_COST.talent.Principiante, description: "+6 PM máximos. Comprável várias vezes, limitado ao número de patamares nesta árvore." },
+        { id: "reserva-do-invocador", name: "Reserva do Invocador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Invocação. Comprável várias vezes, até o número de patamares." },
         { id: "traco-rapido", name: "Traço Rápido", paCost: RANK_PA_COST.talent.Principiante, description: "Desenhar um círculo em combate passa a custar o PM normal, sem o dobro." },
         { id: "circulo-guardado", name: "Círculo Guardado", paCost: RANK_PA_COST.talent.Principiante, description: "Você carrega um círculo pré-desenhado. Usá-lo dispensa o tempo de desenho, e ele aguenta três invocações antes de se apagar." },
       ],
@@ -120,6 +120,7 @@ export const INVOCACAO_TREE: Tree = {
         { id: "pacto-espirito-da-chama-antiga", name: "Pacto: Espírito da Chama Antiga", paCost: RANK_PA_COST.talent.Santo, description: "8d8 de dano ígneo em área de 6m por turno, sem gastar suas Ações. Não obedece bem: role Espírito (CD 15) a cada turno, ou ele escolhe o próprio alvo." },
         { id: "pacto-sentinela-de-aco", name: "Pacto: Sentinela de Aço", paCost: RANK_PA_COST.talent.Santo, description: "Enorme, 100 PV além do normal, intercepta ataques contra aliados adjacentes automaticamente. Não ataca." },
         { id: "pacto-mensageiro-do-alto", name: "Pacto: Mensageiro do Alto", paCost: RANK_PA_COST.talent.Santo, description: "Atravessa continentes numa hora, entrega qualquer coisa a qualquer pessoa que você já tenha visto, e volta." },
+        { id: "o-nome-verdadeiro", name: "O Nome Verdadeiro", paCost: RANK_PA_COST.talent.Santo, description: "Você aprende o nome verdadeiro de um invocado. Ele passa a obedecer qualquer ordem sem teste, inclusive ordens suicidas — e passa a te odiar em silêncio." },
       ],
       abilities: [
         {
@@ -144,8 +145,8 @@ export const INVOCACAO_TREE: Tree = {
           "5 Pactos ativos. Um invocado à sua escolha fica permanentemente ao seu lado, sem custo de PM e sem limite de tempo — ele come, dorme e tem opinião. Círculos que você desenhar em pedra ou metal duram para sempre e podem ser usados por outras pessoas, se souberem o nome certo.",
       },
       talents: [
-        { id: "pacto-fera-ancestral", name: "Pacto: Fera Ancestral", paCost: RANK_PA_COST.talent.Rei, description: "Gigantesca. 12d10 por golpe, três golpes por turno, voa, e respira um elemento à sua escolha em cone de 18m. Ela concorda em vir; não concorda em ficar." },
-        { id: "pacto-espirito-do-contrato", name: "Pacto: Espírito do Contrato", paCost: RANK_PA_COST.talent.Rei, description: "Não luta e não pode ser ferido. Enquanto existir, qualquer acordo verbal na presença dele é vinculante: quem quebrar sofre 10d10 de dano psíquico, onde estiver." },
+        { id: "pacto-fera-ancestral", name: "Pacto: Fera Ancestral", paCost: RANK_PA_COST.common.Rei, description: "Gigantesca. 12d10 por golpe, três golpes por turno, voa, e respira um elemento à sua escolha em cone de 18m. Ela concorda em vir; não concorda em ficar." },
+        { id: "pacto-espirito-do-contrato", name: "Pacto: Espírito do Contrato", paCost: RANK_PA_COST.common.Rei, description: "Não luta e não pode ser ferido. Enquanto existir, qualquer acordo verbal na presença dele é vinculante: quem quebrar sofre 10d10 de dano psíquico, onde estiver." },
         { id: "legiao", name: "Legião", paCost: RANK_PA_COST.talent.Rei, description: "Ao invocar, você pode chamar três cópias de um mesmo Pacto de patamar Avançado ou inferior, pagando o PM uma vez." },
       ],
       abilities: [
@@ -180,7 +181,7 @@ export const INVOCACAO_TREE: Tree = {
           ritual: true,
           paCost: RANK_PA_COST.signature.Imperador,
           pmCost: 22,
-          range: "Ritual (6 Ações)",
+          range: "Ilimitado (em qualquer lugar do mundo)",
           actions: { normal: 6 },
           effect:
             "Você invoca uma criatura com quem não tem Pacto — qualquer criatura de rank Rei ou inferior que já tenha visto, viva ou morta. Teste de Espírito com Desvantagem: se falhar, obedece por 1 minuto; se passar, vem mesmo assim, furiosa, e o Mestre decide o que ela faz.",
