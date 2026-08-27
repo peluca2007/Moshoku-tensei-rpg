@@ -108,6 +108,14 @@ body {
     max-width: none !important;
   }
 
+  /* O layout de duas colunas (sumário + conteúdo) só faz sentido na tela — na
+     impressão o sumário já está escondido (.print-hide acima), mas sem isso o
+     grid continuava reservando a coluna de 240px vazia e empurrava o livro
+     inteiro pra uma faixa estreita de texto, quebrando o PDF exportado. */
+  .livro-shell {
+    display: block !important;
+  }
+
   details > *:not(summary) {
     display: block !important;
   }
@@ -129,8 +137,31 @@ body {
     break-before: page;
   }
 
+  /* "avoid" só em blocos curtos (tabelas e cada card individual de habilidade/
+     talento/Maestria). Um <details> inteiro pode ser uma árvore com 6 ranks —
+     páginas de conteúdo — e pedir pra não quebrar isso gera páginas em branco
+     enormes ou corta conteúdo em vez de simplesmente virar a página. */
   table,
-  details {
+  .print-avoid-break {
     break-inside: avoid;
+  }
+
+  /* Tabelas largas (ex: Mapa Completo das Árvores, Dano por Turno) rolam
+     horizontalmente na tela (overflow-x-auto) — impresso isso cortava as
+     colunas da direita fora da página em vez de rolar. Forçar a tabela a
+     caber na largura da página deixa o texto quebrar linha em vez de sumir. */
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  table {
+    width: 100% !important;
+    min-width: 0 !important;
+    table-layout: fixed;
+  }
+
+  td,
+  th {
+    word-break: break-word;
   }
 }
