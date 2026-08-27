@@ -1147,6 +1147,24 @@ Chuva por três dias sem intervalo. Rios saem do leito. Estradas viram lama intr
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
 #block(breakable: false)[
+==== ◈ Rank Deus (Água)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ O Mar Que Obedece])[
+O patamar Divino da Magia de Água não lança uma magia maior. Ele remove a pergunta "onde a água está" da equação — porque a resposta passa a ser *"onde eu quiser."*
+
+Um mago neste patamar já foi registrado secando um porto inteiro numa única noite, sem deixar um peixe vivo, e enchendo-o de volta na manhã seguinte só para provar que podia. Rios mudam de curso a um gesto. Um cerco naval termina antes de começar, porque o mar debaixo da frota simplesmente deixa de existir por tempo suficiente.
+
+Não é uma magia de dano. É a autoridade final sobre um elemento inteiro, e nenhum exército planeja uma campanha perto da costa sem primeiro descobrir se esse mago está vivo.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o tipo de evento que reescreve mapas, e o mundo deve mudar por causa disso.
+]
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
 === Magia de Fogo
 
 A escola de Água pergunta onde a luta acontece. A de Fogo não pergunta nada.
@@ -1429,6 +1447,24 @@ Você comprime ar, calor e mana num ponto do tamanho de uma maçã e solta. O qu
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
 #block(breakable: false)[
+==== ◈ Rank Deus (Fogo)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ A Chama Sem Fim])[
+Toda magia de Fogo deste livro, até o _Sol Menor_, ainda apaga — com tempo, com água suficiente, com rank Santo ou superior. O patamar Divino acende uma chama que não aceita nenhuma das duas coisas: uma vez ateada, ela queima *para sempre*, e ninguém — nem o próprio conjurador — sabe apagá-la de volta.
+
+Existem, no Mundo de Seis Faces, três lugares assim: uma floresta que ardeu por uma geração inteira, uma cratera que ainda emite calor décadas depois, e uma cidade que ninguém reconstruiu, porque o chão continua incandescente.
+
+É por isso que nenhuma escola trata este patamar como uma recompensa. Um mago de Fogo que alcança o Divino é, na prática, uma arma que a própria escola reza para nunca precisar usar.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É uma decisão que o Mestre e a mesa tomam juntos sabendo que ela pode custar uma região inteira do mapa.
+]
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
 === Magia de Vento
 
 Vento não manipula ar. *Vento manipula gases* — e isso é uma frase muito mais assustadora quando você percebe o que está dentro dos pulmões de alguém.
@@ -1705,6 +1741,24 @@ _(Requer 1 patamar em Fogo.)_ A magia combinada mais perigosa já registrada: ar
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
 #block(breakable: false)[
+==== ◈ Rank Deus (Vento)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ O Golpe Sem Distância])[
+_Nada Toca Você_, a marca do Imperador, já torna a distância irrelevante para quem tenta atacar o mago. O patamar Divino inverte a mão: o mago deixa de precisar de distância nenhuma para atacar qualquer coisa.
+
+Um golpe de Vento em rank Deus chega ao alvo antes do som de tê-lo desferido — porque, para todos os efeitos práticos, ele não viajou: o espaço entre o mago e o alvo simplesmente deixou de contar. Não existe cobertura, muralha ou continente que sirva de defesa contra alguém que já resolveu essa equação.
+
+Não há registro de ninguém vivo hoje que domine este patamar — e a escola prefere assim. Um duelo entre dois magos de Vento Divino, dizem os mestres, aconteceria e terminaria sem que ninguém no mundo visse o meio dele.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o clímax de uma campanha, e o mundo deve mudar por causa disso.
+]
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
 === Magia de Terra
 
 Terra gera e manipula rocha, solo e *minerais* — e é a escola menos glamourosa e mais vencedora do livro.
@@ -1974,6 +2028,24 @@ Você não derruba nada em cima deles. Você abaixa o mundo em volta e sobe o mu
 #block(sticky: true)[*Talento Imperador* — _4 PA_]
 
 - *Aquele que Move Montanhas:* uma vez por Descanso Longo, você conjura qualquer magia de Terra pagando *metade do PM*, arredondado para baixo. Com a menor reserva de mana do jogo, este talento é o que torna o Imperador de Terra jogável.
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
+==== ◈ Rank Deus (Terra)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ Onde Havia Mar])[
+_Cordilheira_, a marca do Imperador, já ergue montanhas e abre vales numa região. O patamar Divino trabalha em outra escala: continentes.
+
+A lenda mais repetida sobre este patamar é a de um mago de Terra que ergueu uma ponte de rocha viva atravessando um estreito que separava dois continentes — e de outro, séculos depois, que a afundou de volta ao fundo do oceano numa única noite, porque um exército a estava atravessando. Nenhuma das duas histórias tem confirmação de testemunha viva. Nenhuma das duas foi desmentida.
+
+Isto não é dano. É geografia, e geografia não se desfaz.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É a fundação de um mito que dura mais que qualquer reinado, e o mundo deve mudar por causa disso.
+]
+]
 
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
@@ -2910,6 +2982,24 @@ A escola destranca o elemento secundário, e ele é a negação pura.
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
 #block(breakable: false)[
+==== ◈ Rank Deus (Barreira)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ O Silêncio Permanente])[
+_Mundo Fechado_, a marca do Imperador, cancela toda magia numa esfera por uma hora. O patamar Divino remove o limite de tempo — e o de espaço.
+
+Existem regiões no Mundo de Seis Faces, do tamanho de um vale ou de um pequeno reino, onde magia simplesmente não funciona, para ninguém, há gerações. Nenhum mago vivo hoje sabe desfazer essas zonas; a única coisa que se sabe é que alguém, um dia, as fez — e escolheu não voltar para desfazê-las.
+
+*Barreira Viva*, o talento do Imperador, já avisa que as barreiras deste mago sobrevivem à própria morte dele. No patamar Divino, elas sobrevivem à própria escola: selar magia deixa de ser um efeito e passa a ser uma *regra do lugar*.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É uma cicatriz permanente no mapa, e o mundo deve mudar por causa disso.
+]
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
 === Magia de Invocação
 
 A menor lista de feitiços do mundo, e a mais difícil de aprender.
@@ -3134,6 +3224,22 @@ Você compreendeu o que um Espírito realmente é: uma consciência alojada num 
 #block(sticky: true)[*Talento Imperador* — _4 PA_]
 
 - *Ninguém Chega Sozinho:* todos os seus invocados em campo recebem *+2 na CA, +2 no acerto e imunidade a efeitos de dissipação* de patamar Rei ou inferior. Um Imperador de Invocação não entra em lugar nenhum sozinho — ele entra com um exército pequeno e muito bem tratado.
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
+==== ◈ Rank Deus (Invocação)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ O Pacto Que Não Deveria Existir])[
+A Magia de Invocação nunca foi sobre feitiços — é sobre relações. O patamar Divino é a relação definitiva: um Pacto firmado com algo que, por definição, não deveria conseguir ser vinculado por ninguém. Um Superd ancião. Um espírito elementar velho o bastante para ter nome próprio em três idiomas mortos. Ou, segundo um único registro que o Grande Templo de Millis se recusa a confirmar ou negar, algo maior que isso.
+
+*Ninguém Chega Sozinho*, a marca do Imperador, já entra em qualquer lugar com um pequeno exército de invocados fiéis. Quem chega ao Divino nunca mais precisa perguntar se alguém vai atender ao chamado — porque o que foi pactuado *não pode recusar*, e a dívida corre nos dois sentidos.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o tipo de aliança que campanhas inteiras giram em torno de honrar ou de trair, e o mundo deve mudar por causa disso.
+]
+]
 
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
@@ -4563,6 +4669,24 @@ Você não mira nela. Você mira no ponto do futuro em que ela vai estar, e a fl
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
 #block(breakable: false)[
+==== ◈ Rank Deus (Arquearia)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ A Flecha do Destino])[
+_A Flecha que Não Erra_, a técnica Lenda da Flecha, já acerta qualquer lugar que o arqueiro tenha visto. O patamar Divino dispensa até isso: a flecha encontra um alvo que o arqueiro *descreveu*, mesmo sem nunca tê-lo visto, mesmo que o alvo ainda não exista no momento em que a corda é solta.
+
+A lenda mais citada — e mais discutida nas guildas de caçadores — é a de uma flecha disparada contra "quem quer que erga a espada contra a cidade", solta antes de qualquer cerco começar, que só encontrou seu alvo *anos depois*, atravessando uma armadura que na época do disparo ainda nem tinha sido forjada.
+
+Ninguém sabe reproduzir isso de propósito. É por isso que continua sendo lenda, e não uma técnica.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o tipo de tiro que uma campanha inteira é construída para explicar, e o mundo deve mudar por causa disso.
+]
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
 === Lutador
 
 _Armas Pesadas e Luta Corpo a Corpo — Briguento → Lenda Viva_
@@ -4811,6 +4935,24 @@ O Touki deixa de revestir a arma e passa a *estendê-la*.
 #block(sticky: true)[*Talento Lenda Viva* — _4 PA_]
 
 - *Sem Arma Nenhuma:* seus ataques desarmados sobem para o mesmo Dado de Arma de um montante (d10 base) e contam como mágicos, de cerco e adamantinos. Você entra desarmado em qualquer lugar do mundo e continua sendo a coisa mais perigosa da sala.
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
+==== ◈ Rank Deus (Lutador)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ O Punho Que Não Precisa Bater])[
+O Lutador nunca foi sobre matar rápido — é sobre degradar o oponente até que continuar seja impossível. O patamar Divino leva essa lógica ao extremo: a *ameaça* do golpe já basta.
+
+Existe um único combatente na história registrada que encerrou uma disputa inteira levantando o punho fechado e esperando. O oponente — um veterano de dezenas de guerras — largou a arma sozinho. Perguntado depois por que, ele só respondeu que "o corpo entendeu antes da cabeça".
+
+Não é intimidação comum, e nenhum talento deste livro reproduz o efeito. É o corpo de outra pessoa reconhecendo, num nível que a mente não controla, que a luta já acabou.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o fim de uma lenda pessoal contada por décadas, e o mundo deve mudar por causa disso.
+]
+]
 
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
@@ -5071,6 +5213,22 @@ Isso vale mesmo quando você não faz nada. É o patamar em que a sua presença 
 #block(sticky: true)[*Talento Bastião* — _4 PA_]
 
 - *Nome na Porta:* aliados Sob Sua Guarda ficam imunes a _Amedrontado_, e inimigos que tentarem atravessar a sua linha e falharem ficam *Abalados* — Desvantagem em tudo até o fim do próximo turno deles. Exércitos já recuaram por causa de uma pessoa parada numa ponte, e você é essa pessoa.
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
+==== ◈ Rank Deus (Cavalaria e Escudos)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ A Muralha Que Nunca Caiu])[
+_Aço Inquebrável_ e o sacrifício de "nenhum aliado seu pode morrer" já mostram do que um Imperador de Escudos é capaz por um minuto, ao custo da própria vida. O patamar Divino estica esse minuto até cobrir uma batalha inteira — e uma cidade inteira atrás de si.
+
+Toda muralha física cai, cedo ou tarde. As poucas que "nunca caíram" na história do Mundo de Seis Faces não eram de pedra: eram uma pessoa, parada num único ponto, que decidiu que nada passaria por ali enquanto estivesse de pé. Nenhuma delas está viva hoje. Todas cumpriram a promessa até o fim.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É provavelmente o último capítulo da história desse personagem, e o mundo deve mudar por causa disso.
+]
+]
 
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
@@ -5437,6 +5595,24 @@ A sua preparação deixou de precisar de você.
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
 #block(breakable: false)[
+==== ◈ Rank Deus (Furtividade e Armadilhas)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ O Roubo Impossível])[
+_O Homem Que Nunca Esteve Lá_, a técnica Lenda Oculta, já decide que um inimigo perdeu antes de a cena acabar. O patamar Divino rouba coisas que a técnica nem alcança: não objetos, não pessoas — *fatos*.
+
+Existe um só roubo registrado neste patamar, e nenhuma guilda de ladrões consegue confirmar os detalhes: alguém entrou em um lugar que ninguém deveria conseguir entrar e saiu levando uma coisa que ninguém deveria conseguir levar — uma dívida que todo um reino devia a outro, uma lembrança que uma cidade inteira guardava sobre uma batalha, o próprio nome de um deus menor. Quem perdeu nunca percebeu que faltava alguma coisa, porque a ausência também foi levada.
+
+Não existe cofre, ritual ou guarda contra isso, porque a defesa pressupõe saber o que está sendo protegido — e este ladrão já decidiu, antes de entrar, que aquilo nunca existiu.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o tipo de golpe que muda o que o mundo inteiro acredita ter acontecido, e a mesa deve mudar por causa disso.
+]
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
 === Bardo e Interação
 
 _Aprendiz → Voz do Mundo_
@@ -5639,6 +5815,24 @@ Você não registra o que aconteceu. Você *decide qual versão o mundo acredita
 - *Efeito:* você encerra a batalha declarando publicamente *por que ela não faz mais sentido*. A causa acabou, o rei já capitulou, o irmão que eles vieram vingar está vivo, o pagamento nunca vai chegar.
 - Todas as criaturas hostis capazes de ouvir e de raciocinar fazem teste de Espírito com *Desvantagem*. Quem falhar *encerra as hostilidades* e não pode ser convencido a retomá-las nesta cena por nada.
 - *Limitação:* exige que exista uma razão real, e você precisa ter tido acesso a ela — via Preparação, via Escopo, ou via história. Não funciona em quem luta por prazer, por fome ou por ordem divina.
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
+==== ◈ Rank Deus (Bardo e Interação)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ A Palavra que Vira Verdade])[
+_O Fim da Canção_, a técnica Voz do Mundo, encerra uma batalha convencendo quem luta de que ela não faz mais sentido. O patamar Divino não convence ninguém de uma verdade — ele decide qual é a verdade, e o mundo se ajusta para que sempre tenha sido assim.
+
+A lenda mais antiga do ofício fala de uma canção cantada uma única vez, sobre um covarde que nunca existiu, e que hoje aparece em três línguas diferentes, em três continentes diferentes, como fato histórico incontestável — com nome, data e testemunhas que juram ter estado lá. Ninguém sabe mais dizer se a canção descreveu algo real ou se o mundo simplesmente decidiu que sim, porque a Bardo pediu.
+
+Nenhum talento deste livro chega perto disso. É a diferença entre contar uma história bem contada e ser a razão de ela ser verdade.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É reescrever a história que todo mundo lembra, e o mundo deve mudar por causa disso.
+]
 ]
 
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
@@ -5859,6 +6053,24 @@ Você opera em escala de campanha, e o jogo reconhece isso.
   - O terreno muda a seu favor: a ponte cede, a maré sobe, a neblina desce, o fogo começa onde você quer.
   - O comandante inimigo já não confia no próprio segundo em comando. Um deles age contra o outro no próximo turno.
 - *Limitação:* exige inimigos com organização, cadeia de comando e objetivo. *Contra um monstro solitário, esta técnica não faz absolutamente nada.*
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+#block(breakable: false)[
+==== ◈ Rank Deus (Navegação e Liderança)
+
+_Narrativo. Não se compra._
+
+#quadro(titulo: [◈ A Guerra no Dia Certo])[
+_A Batalha Que Você Escolheu_, a técnica Senhor da Guerra, já decide o formato de um único confronto. O patamar Divino decide algo maior: *quando*, dentre todas as guerras que ainda vão acontecer, a próxima realmente começa.
+
+Não existe magia nem técnica marcial que faça isso — porque não é sobre poder de combate, é sobre logística, alianças, colheitas, tratados e o clima de uma estação inteira, todos puxados na direção certa até que só reste um dia possível para o primeiro golpe ser dado. Historiadores discordam sobre se algum Tático já alcançou isto de propósito ou se, olhando para trás, decidiram que sim.
+
+Um general assim nunca precisa vencer a batalha mais difícil. Ele só precisa garantir que ela nunca aconteça no dia em que perderia.
+
+Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o tipo de decisão que define o resultado de uma campanha inteira antes da primeira espada ser desembainhada, e o mundo deve mudar por causa disso.
+]
 ]
 
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
