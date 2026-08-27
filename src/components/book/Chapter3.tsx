@@ -28,15 +28,21 @@ export default function Chapter3() {
       <Section>
         <SectionTitle id="cap3-mapa">O Mapa Completo das Árvores</SectionTitle>
         <P>
-          O sistema comporta dezesseis sub-árvores (mais Cavalaria e Escudos, dezessete no total). Nenhuma
-          delas é uma classe: você compra Ranks em quantas quiser, na ordem que quiser, e seu personagem é
-          simplesmente a soma do que ele estudou.
+          O sistema comporta dezessete sub-árvores. Nenhuma delas é uma classe: você compra Ranks em quantas
+          quiser, na ordem que quiser, e seu personagem é simplesmente a soma do que ele estudou. Clique no
+          nome de qualquer sub-árvore na tabela abaixo pra abrir ela direto no mapa.
         </P>
         <BookTable
           headers={["Pilar", "Sub-árvore", "Atributo-chave", "Recurso", "Identidade em uma linha"]}
           rows={TREES.map((t) => [
             t.category === "magia" ? "Magia" : t.category === "corpo" ? "Corpo" : "Utilidade",
-            t.name,
+            <Link
+              key={t.id}
+              href={`/arvores?arvore=${t.id}`}
+              className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-400"
+            >
+              {t.name}
+            </Link>,
             t.keyAttributeLabel ?? "—",
             t.resourceLabel ?? "—",
             t.tagline ?? "",
