@@ -20,7 +20,7 @@ export const LUTADOR_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d10+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "O Corpo é a Arma",
         description:
@@ -81,7 +81,7 @@ export const LUTADOR_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d10+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "Não Para de Vir",
         description:
@@ -136,7 +136,7 @@ export const LUTADOR_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d12+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Nada Segura",
@@ -184,8 +184,8 @@ export const LUTADOR_TREE: Tree = {
     },
     {
       rank: "Santo",
-      hpDiceFormula: "2d6+5",
-      mpPerRank: 0,
+      hpDiceFormula: "1d12+4",
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Ainda Estou Aqui",
@@ -218,8 +218,8 @@ export const LUTADOR_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "2d6+6",
-      mpPerRank: 0,
+      hpDiceFormula: "2d6+5",
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Arma Viva",
@@ -253,7 +253,7 @@ export const LUTADOR_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "2d6+5",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Nada Fica de Pé",

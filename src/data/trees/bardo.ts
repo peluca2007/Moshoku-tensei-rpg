@@ -22,7 +22,6 @@ export const BARDO_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d6+1",
-      mpPerRank: 0,
       mastery: {
         name: "A Plateia",
         description:
@@ -51,7 +50,6 @@ export const BARDO_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 0,
       mastery: {
         name: "Ler a Sala",
         description:
@@ -80,7 +78,6 @@ export const BARDO_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 0,
       ppGained: 1,
       mastery: {
         name: "A Canção Não Para",
@@ -109,7 +106,6 @@ export const BARDO_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 0,
       ppGained: 1,
       mastery: {
         name: "Precede Você",
@@ -138,7 +134,6 @@ export const BARDO_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 0,
       ppGained: 1,
       mastery: {
         name: "Voz que Comanda",
@@ -167,7 +162,6 @@ export const BARDO_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 0,
       ppGained: 1,
       mastery: {
         name: "A História Oficial",

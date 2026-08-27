@@ -13,7 +13,6 @@ export const VENTO_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d4+2",
-      mpPerRank: 4,
       mastery: {
         name: "Brisa",
         description:
@@ -79,7 +78,6 @@ export const VENTO_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 6,
       mastery: {
         name: "Sem Peso",
         description:
@@ -137,7 +135,6 @@ export const VENTO_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 10,
       mastery: {
         name: "Voo",
         description:
@@ -195,7 +192,6 @@ export const VENTO_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d6+3",
-      mpPerRank: 14,
       mastery: {
         name: "Senhor do Céu",
         description:
@@ -231,7 +227,6 @@ export const VENTO_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 19,
       mastery: {
         name: "Som e Vácuo",
         description:
@@ -267,7 +262,6 @@ export const VENTO_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d8+4",
-      mpPerRank: 26,
       mastery: {
         name: "A Atmosfera é Sua",
         description:

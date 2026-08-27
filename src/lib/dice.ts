@@ -1,8 +1,12 @@
-/** Parseia fórmulas simples do livro, tipo "1d4+1" ou "2d6+5". */
+/**
+ * Parseia fórmulas simples do livro, tipo "1d4+1" ou "2d6+5" — e também a
+ * notação curta sem contagem explícita ("d10", "d12"), usada na Escada de
+ * Dados do Cap. 3, que vale como "1d10".
+ */
 function parseDice(formula: string): { count: number; sides: number; mod: number } {
-  const match = formula.replace(/\s/g, "").match(/^(\d+)d(\d+)([+-]\d+)?$/);
+  const match = formula.replace(/\s/g, "").match(/^(\d+)?d(\d+)([+-]\d+)?$/);
   if (!match) return { count: 0, sides: 0, mod: 0 };
-  return { count: Number(match[1]), sides: Number(match[2]), mod: match[3] ? Number(match[3]) : 0 };
+  return { count: match[1] ? Number(match[1]) : 1, sides: Number(match[2]), mod: match[3] ? Number(match[3]) : 0 };
 }
 
 /** Valor máximo possível da fórmula (Cap. 4: PV iniciais sempre usam o máximo do dado da Árvore Inicial). */

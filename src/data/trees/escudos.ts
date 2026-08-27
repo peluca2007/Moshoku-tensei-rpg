@@ -21,7 +21,7 @@ export const ESCUDOS_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "Interpor",
         description:
@@ -72,7 +72,7 @@ export const ESCUDOS_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d12+4",
-      mpPerRank: 0,
+      weaponDieSteps: 0,
       mastery: {
         name: "Peso do Aço",
         description:
@@ -126,7 +126,7 @@ export const ESCUDOS_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d12+5",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 2,
       mastery: {
         name: "Escudo Estendido",
@@ -175,7 +175,7 @@ export const ESCUDOS_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "2d6+5",
-      mpPerRank: 0,
+      weaponDieSteps: 0,
       ptGained: 2,
       mastery: {
         name: "Aegis",
@@ -209,7 +209,7 @@ export const ESCUDOS_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "2d6+6",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 2,
       mastery: {
         name: "Ninguém Passa",
@@ -242,7 +242,7 @@ export const ESCUDOS_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "2d8+6",
-      mpPerRank: 0,
+      weaponDieSteps: 0,
       ptGained: 2,
       mastery: {
         name: "Enquanto Eu Estiver de Pé",

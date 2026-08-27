@@ -3,10 +3,10 @@ import { Background, Race, SubtableEntry } from "@/lib/types";
 
 function TraitList({ traits }: { traits: string[] }) {
   return (
-    <ul className="space-y-1 text-sm text-slate-700 dark:text-slate-300">
+    <ul className="space-y-1 text-sm text-parchment-700 dark:text-parchment-300">
       {traits.map((trait) => (
         <li key={trait} className="flex gap-2">
-          <Sparkle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sky-500" />
+          <Sparkle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-wine-500" />
           <span>{trait}</span>
         </li>
       ))}
@@ -31,11 +31,11 @@ function Block({
 }) {
   return (
     <div>
-      <h3 className="mb-1 text-sm font-bold text-slate-900 dark:text-slate-50">{title}</h3>
-      {description && <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">{description}</p>}
+      <h3 className="mb-1 text-sm font-bold text-parchment-900 dark:text-parchment-50">{title}</h3>
+      {description && <p className="mb-2 text-xs text-parchment-500 dark:text-parchment-400">{description}</p>}
       {traits.length > 0 && <TraitList traits={traits} />}
       {(fixedSkills?.length || bonusSkillChoices || extra) && (
-        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+        <p className="mt-2 text-xs text-parchment-500 dark:text-parchment-400">
           {fixedSkills?.length ? `Perícia(s) fixa(s): ${fixedSkills.join(", ")}. ` : ""}
           {bonusSkillChoices ? `+${bonusSkillChoices} perícia(s) à escolha. ` : ""}
           {extra ?? ""}
@@ -57,8 +57,8 @@ export default function RaceBackgroundDetails({
   if (!race && !background) return null;
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+    <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
         Passivas de Raça &amp; Antecedente
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -82,7 +82,7 @@ export default function RaceBackgroundDetails({
         )}
       </div>
       {subtable && (
-        <div className="mt-3 border-t border-slate-200 pt-3 dark:border-slate-800">
+        <div className="mt-3 border-t border-parchment-300 pt-3 dark:border-parchment-800">
           <Block title={subtable.name} traits={subtable.traits} />
         </div>
       )}

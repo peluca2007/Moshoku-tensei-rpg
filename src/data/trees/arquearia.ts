@@ -21,7 +21,7 @@ export const ARQUEARIA_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d8+2",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "Olho do Caçador",
         description:
@@ -73,7 +73,7 @@ export const ARQUEARIA_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d8+2",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "A Marca Fica",
         description:
@@ -127,7 +127,7 @@ export const ARQUEARIA_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Aura na Corda",
@@ -174,7 +174,7 @@ export const ARQUEARIA_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d10+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "A Distância Não Existe",
@@ -217,7 +217,7 @@ export const ARQUEARIA_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "A Flecha que Fura",
@@ -254,7 +254,7 @@ export const ARQUEARIA_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d12+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "O Tiro Que Já Aconteceu",

@@ -13,7 +13,7 @@ export const ESPADA_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "Quem Se Move Primeiro",
         description:
@@ -74,7 +74,7 @@ export const ESPADA_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d12+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Aura Precoce",
@@ -130,7 +130,7 @@ export const ESPADA_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d12+5",
-      mpPerRank: 0,
+      weaponDieSteps: 2,
       ptGained: 1,
       mastery: {
         name: "Velocidade Encarnada",
@@ -176,7 +176,7 @@ export const ESPADA_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "2d6+5",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Controle Absoluto",
@@ -202,7 +202,7 @@ export const ESPADA_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "2d6+6",
-      mpPerRank: 0,
+      weaponDieSteps: 2,
       ptGained: 1,
       mastery: {
         name: "A Lâmina do Deus",
@@ -246,7 +246,7 @@ export const ESPADA_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "2d8+6",
-      mpPerRank: 0,
+      weaponDieSteps: 2,
       ptGained: 1,
       mastery: {
         name: "A Vitória de Quem Se Move Primeiro",

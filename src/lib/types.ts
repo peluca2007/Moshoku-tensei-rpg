@@ -40,10 +40,10 @@ export const RANK_BONUS: Record<RankName, number> = {
 export const RANK_REQUIREMENTS: Record<RankName, { knowledgeRequired: number; paCost: number }> = {
   Principiante: { knowledgeRequired: 0, paCost: 1 },
   Intermediário: { knowledgeRequired: 2, paCost: 1 },
-  Avançado: { knowledgeRequired: 3, paCost: 2 },
-  Santo: { knowledgeRequired: 4, paCost: 2 },
-  Rei: { knowledgeRequired: 5, paCost: 2 },
-  Imperador: { knowledgeRequired: 6, paCost: 3 },
+  Avançado: { knowledgeRequired: 4, paCost: 2 },
+  Santo: { knowledgeRequired: 6, paCost: 2 },
+  Rei: { knowledgeRequired: 8, paCost: 3 },
+  Imperador: { knowledgeRequired: 10, paCost: 3 },
 };
 
 /** Cap. 1, seção 2: no point-buy da criação o máximo por atributo é 4. Acima disso, cada ponto custa PA. */
@@ -137,13 +137,14 @@ export interface AbilityDef {
 export interface TreeRankDef {
   rank: RankName;
   hpDiceFormula: string;
-  mpPerRank: number;
   /** Árvore do Corpo: PT ganhos ao alcançar este rank (Cap. 3, "PT Pleno"). */
   ptGained?: number;
   /** Árvore de Utilidade: PP ganhos ao alcançar este rank (+1 a partir do 3º patamar). */
   ppGained?: number;
   /** Árvore do Corpo: degraus ganhos na Escada de Dados de Arma neste rank. */
   weaponDieSteps?: number;
+  /** Exceção pontual ao custo de RANK_REQUIREMENTS (ex: Cap. 3 — Rei do Norte custa 2 PA em vez de 3, por ter quase 50 titulares vivos). */
+  unlockPaCostOverride?: number;
   /** Maestria gratuita concedida ao desbloquear o rank. */
   mastery?: MasteryDef;
   talents: TalentDef[];
@@ -185,11 +186,15 @@ export interface InventoryItem {
   description?: string;
   /** Bônus de CA se for vestido/empunhado — só se aplica a armadura. */
   acBonus?: number;
+  /** Dado Base da arma (Cap. 3: "O Dado de Arma"), ex: "d6", "2d8" — só se aplica a arma. */
+  baseDie?: string;
+  /** Atributo usado no dano (Força, ou Agilidade pra armas leves — Cap. 3, "As Fórmulas Marciais"). Padrão: Força. */
+  damageAttribute?: AttributeKey;
   equipped: boolean;
 }
 
-/** Cap. 1, seção 2: 1 PA = +5 PV ou +5 PM Máximos permanentes, além do PA de árvore. */
-export const HP_MP_PA_COST_PER_FIVE = 1;
+/** Cap. 1, seção 2 (Tabela de Custos Gerais): 2 PA = +12 PV ou +12 PM Máximos permanentes, além do PA de árvore. */
+export const HP_MP_BONUS_PER_TWO_PA = 12;
 
 /**
  * Dados de uma ficha de personagem — o site suporta várias, uma por vez ativa.
@@ -213,4 +218,28 @@ export interface CharacterData {
   /** PV/PM Máximos comprados com PA (Cap. 1, seção 2: 1 PA = +5), fora da árvore. */
   bonusHp: number;
   bonusMp: number;
+  /**
+   * PV/PM/PT/PP atuais (o que sobrou depois de gastar/sofrer dano em jogo).
+   * `null` = ainda não tocado nesta ficha, mostra igual ao máximo calculado.
+   * Uma vez definido, fica independente do máximo — subir de nível não cura
+   * retroativamente, igual numa mesa de verdade.
+   */
+  currentHp: number | null;
+  currentMp: number | null;
+  currentPt: number | null;
+  currentPp: number | null;
+  /**
+   * Sobrescreve o valor calculado quando não-nulo/indefinido — válvula de
+   * escape pra itens, maldições ou exceções de mesa que o site não modela.
+   * Sempre opcional: por padrão tudo continua 100% calculado a partir da
+   * ficha (raça/antecedente/árvores/atributos).
+   */
+  overrides: {
+    maxHp?: number;
+    maxMp?: number;
+    maxPt?: number;
+    maxPp?: number;
+    armorClass?: number;
+    initiative?: number;
+  };
 }

@@ -2,24 +2,20 @@ import { getRaceById } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
 import { diceAverage, diceMax } from "@/lib/dice";
+import { escalateWeaponDie } from "@/lib/weaponDie";
 import {
   ATTRIBUTE_CREATION_MAX,
   ATTRIBUTE_PA_COST_PER_POINT,
   AttributeKey,
   ATTRIBUTES,
   CharacterData,
-  HP_MP_PA_COST_PER_FIVE,
+  HP_MP_BONUS_PER_TWO_PA,
   RANK_BONUS,
   RANK_REQUIREMENTS,
   RANKS,
   RankName,
+  Tree,
 } from "@/lib/types";
-
-/** Cap. 4, seção 1: +8 fixos somados ao PV Inicial de todo personagem, além de Vigor x3 e do dado da Árvore Inicial. */
-const RESILIENCIA_BASE = 8;
-
-/** Cap. 3, "PT — as duas reservas": Cavalaria e Escudos concede +2 PT por patamar 3º+ em vez de +1. */
-const PT_PLENO_WEIGHT: Record<string, number> = { "cavalaria-e-escudos": 2 };
 
 /** Cap. 3: o Deus da Espada acorda o Touki Pleno no 2º patamar (Intermediário); as demais árvores do Corpo, no 3º (Avançado). */
 function ptPlenoThresholdIndex(treeId: string): number {
@@ -84,80 +80,84 @@ export function getHighestUnlockedRank(state: StoreState, treeId: string): RankN
   return RANKS_DESCENDING.find((r) => unlocked.has(r));
 }
 
+/** Maior Bônus de Rank (Cap. 1, seção 7) entre os ranks desbloqueados de árvores que passem no filtro — 0 se nenhuma. */
+function getHighestRankBonus(state: StoreState, categoryFilter?: Tree["category"]): number {
+  return state.unlockedRanks.reduce((max, u) => {
+    const tree = getTreeById(u.treeId);
+    if (!tree) return max;
+    if (categoryFilter && tree.category !== categoryFilter) return max;
+    return Math.max(max, RANK_BONUS[u.rank]);
+  }, 0);
+}
+
 /**
- * PV Máximos (Cap. 4, seção 1): max(Vigor x3, 6) + valor MÁXIMO do dado do 1º
- * patamar da Árvore Inicial + 8 de Resiliência Base — isso é o "PV Inicial".
- * Ranks desbloqueados depois disso (na Árvore Inicial ou em qualquer outra)
- * somam a MÉDIA do dado daquele rank, espelhando a soma de PM por rank
- * (Cap. 3: "PV: somam de todas as árvores"). O 1º patamar da Árvore Inicial
- * não é somado de novo aqui — ele já virou o PV Inicial acima.
+ * PV Máximos (Cap. 4, "Cálculos Vitais"): Constituição Base + Progressão + Vitalidade.
+ * - Constituição Base = 10 + Vigor×3, mínimo 13.
+ * - Progressão = soma de TODOS os dados de PV concedidos por toda árvore desbloqueada, DOBRADA.
+ *   Na criação, o dado do 1º patamar da Árvore Inicial é sempre o valor MÁXIMO; os demais usam a média.
+ * - Vitalidade = Vigor × Maior Bônus de Rank (de QUALQUER árvore) × 4.
  */
 export function getMaxHp(state: StoreState): number {
   const vigor = getFinalAttribute(state, "vigor");
-  const baseVigor = Math.max(vigor * 3, 6);
+  const constituicaoBase = Math.max(10 + vigor * 3, 13);
 
   const startingTree = getTreeById(state.startingTreeId);
   const startingFirstRank = startingTree?.ranks[0];
-  const startingDieMax = startingFirstRank ? diceMax(startingFirstRank.hpDiceFormula) : 0;
 
-  const progression = state.unlockedRanks.reduce((total, unlocked) => {
+  const progressaoBruta = state.unlockedRanks.reduce((total, unlocked) => {
     const tree = getTreeById(unlocked.treeId);
     const rankDef = tree?.ranks.find((r) => r.rank === unlocked.rank);
     if (!rankDef) return total;
     const isStartingFirstRank = tree?.id === state.startingTreeId && rankDef === startingFirstRank;
-    if (isStartingFirstRank) return total;
-    return total + diceAverage(rankDef.hpDiceFormula);
+    return total + (isStartingFirstRank ? diceMax(rankDef.hpDiceFormula) : diceAverage(rankDef.hpDiceFormula));
   }, 0);
 
-  return baseVigor + startingDieMax + RESILIENCIA_BASE + progression + getFlatBonusSum(state, "maxHp") + state.bonusHp;
-}
+  const vitalidade = vigor * getHighestRankBonus(state) * 4;
 
-/** Cap. 1, "Os Dois Atributos do Mago": +Espírito uma vez por patamar numérico novo alcançado em QUALQUER escola de Magia (no máximo 6 vezes). */
-export function getReservaInataBonus(state: StoreState): number {
-  const espirito = getFinalAttribute(state, "espirito");
-  const patamaresAlcancados = RANKS.filter((rank) =>
-    state.unlockedRanks.some((u) => u.rank === rank && getTreeById(u.treeId)?.category === "magia")
-  ).length;
-  return patamaresAlcancados * espirito;
+  const computed = constituicaoBase + progressaoBruta * 2 + vitalidade + getFlatBonusSum(state, "maxHp") + state.bonusHp;
+  return state.overrides.maxHp ?? computed;
 }
 
 /**
- * PM Máximos: soma do PM por rank de CADA rank desbloqueado em CADA árvore
- * + Reserva Inata + bônus fixos de raça/antecedente/sub-tabela + PM comprado com PA.
+ * PM Máximos (Cap. 4): (Espírito × Maior Bônus de Rank DE MAGIA × 2) + 8.
+ * Escolas de magia não concedem PM — a reserva inteira vem só desta fórmula.
  */
 export function getMaxMp(state: StoreState): number {
-  const treeMp = state.unlockedRanks.reduce((total, unlocked) => {
-    const tree = getTreeById(unlocked.treeId);
-    const rankDef = tree?.ranks.find((r) => r.rank === unlocked.rank);
-    return total + (rankDef?.mpPerRank ?? 0);
-  }, 0);
-  return treeMp + getReservaInataBonus(state) + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+  const espirito = getFinalAttribute(state, "espirito");
+  const maiorBonusMagia = getHighestRankBonus(state, "magia");
+  const computed = espirito * maiorBonusMagia * 2 + 8 + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+  return state.overrides.maxMp ?? computed;
 }
 
 /**
  * Pontos de Touki (Cap. 3 e Cap. 4): sem nenhum patamar do Corpo, 0. Com pelo
  * menos um patamar mas nenhum "Pleno" ainda, PT Menor = max(Vigor, 1). A
- * partir do Touki Pleno (3º patamar em geral; 2º na Espada), PT = Espírito +
- * Vigor + 1 por patamar Pleno em qualquer árvore do Corpo (+2 em Escudos).
+ * partir do Touki Pleno (3º patamar em geral; 2º na Espada):
+ * PT = Vigor + (Espírito × Maior Bônus de Rank do Corpo) — Cavalaria e Escudos
+ * soma o próprio Bônus de Rank mais uma vez, por gastar mais rápido que as demais.
  */
 export function getPtPool(state: StoreState): number {
   const corpoRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "corpo");
-  if (corpoRanks.length === 0) return 0;
 
-  const vigor = getFinalAttribute(state, "vigor");
-  const espirito = getFinalAttribute(state, "espirito");
+  function computeNatural(): number {
+    if (corpoRanks.length === 0) return 0;
 
-  let plenoWeight = 0;
-  let hasPleno = false;
-  for (const u of corpoRanks) {
-    if (RANKS.indexOf(u.rank) >= ptPlenoThresholdIndex(u.treeId)) {
-      hasPleno = true;
-      plenoWeight += PT_PLENO_WEIGHT[u.treeId] ?? 1;
-    }
+    const vigor = getFinalAttribute(state, "vigor");
+    const espirito = getFinalAttribute(state, "espirito");
+
+    const plenoRanks = corpoRanks.filter((u) => RANKS.indexOf(u.rank) >= ptPlenoThresholdIndex(u.treeId));
+    if (plenoRanks.length === 0) return Math.max(vigor, 1);
+
+    const maiorBonusCorpo = getHighestRankBonus(state, "corpo");
+    const escudosBonusExtra = Math.max(
+      0,
+      ...plenoRanks.filter((u) => u.treeId === "cavalaria-e-escudos").map((u) => RANK_BONUS[u.rank])
+    );
+
+    return vigor + espirito * (maiorBonusCorpo + escudosBonusExtra);
   }
 
-  if (!hasPleno) return Math.max(vigor, 1);
-  return espirito + vigor + plenoWeight;
+  return state.overrides.maxPt ?? computeNatural();
 }
 
 /**
@@ -167,18 +167,23 @@ export function getPtPool(state: StoreState): number {
  */
 export function getPpPool(state: StoreState): number {
   const utilRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "utilidade");
-  if (utilRanks.length === 0) return 0;
 
-  const intelecto = getFinalAttribute(state, "intelecto");
-  let maxKeyAttribute = 0;
-  let patamarBonus = 0;
-  for (const u of utilRanks) {
-    const key = UTILITY_KEY_ATTRIBUTE[u.treeId];
-    if (key) maxKeyAttribute = Math.max(maxKeyAttribute, getFinalAttribute(state, key));
-    if (RANKS.indexOf(u.rank) >= RANKS.indexOf("Avançado")) patamarBonus += 1;
+  function computeNatural(): number {
+    if (utilRanks.length === 0) return 0;
+
+    const intelecto = getFinalAttribute(state, "intelecto");
+    let maxKeyAttribute = 0;
+    let patamarBonus = 0;
+    for (const u of utilRanks) {
+      const key = UTILITY_KEY_ATTRIBUTE[u.treeId];
+      if (key) maxKeyAttribute = Math.max(maxKeyAttribute, getFinalAttribute(state, key));
+      if (RANKS.indexOf(u.rank) >= RANKS.indexOf("Avançado")) patamarBonus += 1;
+    }
+
+    return Math.max(intelecto + maxKeyAttribute, 1) + patamarBonus;
   }
 
-  return Math.max(intelecto + maxKeyAttribute, 1) + patamarBonus;
+  return state.overrides.maxPp ?? computeNatural();
 }
 
 /**
@@ -190,16 +195,96 @@ export function getArmorClass(state: StoreState): number {
     (sum, item) => sum + (item.equipped && item.type === "armadura" ? (item.acBonus ?? 0) : 0),
     0
   );
-  return 10 + getFinalAttribute(state, "agilidade") + getFlatBonusSum(state, "armorClass") + equippedBonus;
+  const computed = 10 + getFinalAttribute(state, "agilidade") + getFlatBonusSum(state, "armorClass") + equippedBonus;
+  return state.overrides.armorClass ?? computed;
 }
 
 /** Iniciativa = 1d20 + Agilidade; Escudeiro/Treino Precoce dá Vantagem. */
 export function getInitiative(state: StoreState): { bonus: number; hasAdvantage: boolean } {
   const background = getBackgroundById(state.backgroundId);
   return {
-    bonus: getFinalAttribute(state, "agilidade"),
+    bonus: state.overrides.initiative ?? getFinalAttribute(state, "agilidade"),
     hasAdvantage: background?.grantsInitiativeAdvantage ?? false,
   };
+}
+
+export interface WeaponDamageInfo {
+  treeId: string;
+  treeName: string;
+  rank: RankName;
+  rankLabel: string;
+  rankBonus: number;
+  steps: number;
+  baseDie: string;
+  escalatedDie: string;
+  attribute: AttributeKey;
+  attributeValue: number;
+  averageDamage: number;
+}
+
+/**
+ * Fórmula de dano marcial (Cap. 3): Dado de Arma (escalado) + Atributo + Bônus
+ * do Rank do Estilo. "Um ataque comum usa os degraus do seu maior patamar
+ * entre as árvores do Corpo" (Apêndice E) — por isso a escalada usa sempre a
+ * árvore do Corpo onde o personagem tem o rank mais alto, não uma em particular.
+ */
+export function getWeaponDamage(
+  state: StoreState,
+  baseDie: string,
+  attribute: AttributeKey = "forca"
+): WeaponDamageInfo | null {
+  const corpoRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "corpo");
+  if (corpoRanks.length === 0 || !baseDie) return null;
+
+  let bestTreeId = corpoRanks[0].treeId;
+  let bestRankIndex = -1;
+  for (const u of corpoRanks) {
+    const idx = RANKS.indexOf(u.rank);
+    if (idx > bestRankIndex) {
+      bestRankIndex = idx;
+      bestTreeId = u.treeId;
+    }
+  }
+
+  const tree = getTreeById(bestTreeId);
+  if (!tree) return null;
+  const rank = RANKS[bestRankIndex];
+
+  const steps = tree.ranks
+    .filter((r) => RANKS.indexOf(r.rank) <= bestRankIndex)
+    .reduce((sum, r) => sum + (r.weaponDieSteps ?? 0), 0);
+
+  const escalatedDie = escalateWeaponDie(baseDie, steps);
+  const rankBonus = RANK_BONUS[rank];
+  const attributeValue = getFinalAttribute(state, attribute);
+
+  return {
+    treeId: tree.id,
+    treeName: tree.name,
+    rank,
+    rankLabel: tree.rankLabels?.[rank] ?? rank,
+    rankBonus,
+    steps,
+    baseDie,
+    escalatedDie,
+    attribute,
+    attributeValue,
+    averageDamage: diceAverage(escalatedDie) + attributeValue + rankBonus,
+  };
+}
+
+/** PV/PM/PT/PP atuais: `null` (ainda não tocado) mostra igual ao máximo calculado; senão, o valor salvo. */
+export function getCurrentHp(state: StoreState): number {
+  return state.currentHp ?? getMaxHp(state);
+}
+export function getCurrentMp(state: StoreState): number {
+  return state.currentMp ?? getMaxMp(state);
+}
+export function getCurrentPt(state: StoreState): number {
+  return state.currentPt ?? getPtPool(state);
+}
+export function getCurrentPp(state: StoreState): number {
+  return state.currentPp ?? getPpPool(state);
 }
 
 /** CD da Habilidade = 8 + Atributo + Bônus do Rank daquela árvore (Cap. 1, seção 7). */
@@ -228,6 +313,12 @@ function findAbilityOrTalentDef(treeId: string, rank: RankName, kind: "ability" 
     : rankDef?.talents.find((t) => t.id === id);
 }
 
+/** Custo em PA pra desbloquear um rank numa árvore: RANK_REQUIREMENTS, a menos que a árvore declare unlockPaCostOverride (ex: Rei do Norte = 2 PA). */
+export function getRankUnlockPaCost(treeId: string, rank: RankName): number {
+  const rankDef = getTreeById(treeId)?.ranks.find((r) => r.rank === rank);
+  return rankDef?.unlockPaCostOverride ?? RANK_REQUIREMENTS[rank].paCost;
+}
+
 /** Cap. 1, seção 2: acima do máximo de criação (4), cada ponto de atributo custa PA (limite 8). */
 export function getAttributePaCost(state: StoreState): number {
   return ATTRIBUTES.reduce((sum, { key }) => {
@@ -237,10 +328,10 @@ export function getAttributePaCost(state: StoreState): number {
   }, 0);
 }
 
-/** Cap. 1, seção 2: 1 PA = +5 PV ou +5 PM Máximos (arredonda pra cima). */
+/** Cap. 1, seção 2: 2 PA = +12 PV ou +12 PM Máximos (arredonda pra cima). */
 export function getHpMpPaCost(state: StoreState): number {
-  const hpCost = Math.ceil(state.bonusHp / 5) * HP_MP_PA_COST_PER_FIVE;
-  const mpCost = Math.ceil(state.bonusMp / 5) * HP_MP_PA_COST_PER_FIVE;
+  const hpCost = Math.ceil(state.bonusHp / HP_MP_BONUS_PER_TWO_PA) * 2;
+  const mpCost = Math.ceil(state.bonusMp / HP_MP_BONUS_PER_TWO_PA) * 2;
   return Math.max(0, hpCost) + Math.max(0, mpCost);
 }
 
@@ -252,7 +343,7 @@ export function getHpMpPaCost(state: StoreState): number {
  */
 export function getPaSpent(state: StoreState): number {
   const rankCost = state.unlockedRanks.reduce(
-    (sum, u) => sum + RANK_REQUIREMENTS[u.rank].paCost,
+    (sum, u) => sum + getRankUnlockPaCost(u.treeId, u.rank),
     0
   );
   const abilityCost = state.purchasedAbilities.reduce((sum, a) => {

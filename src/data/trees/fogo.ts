@@ -13,7 +13,6 @@ export const FOGO_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d4+1",
-      mpPerRank: 4,
       mastery: {
         name: "Chama Viva",
         description:
@@ -95,7 +94,6 @@ export const FOGO_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d4+1",
-      mpPerRank: 6,
       mastery: {
         name: "Propagação",
         description:
@@ -168,7 +166,6 @@ export const FOGO_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 9,
       mastery: {
         name: "Termodinâmica Inversa",
         description:
@@ -238,7 +235,6 @@ export const FOGO_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 12,
       mastery: {
         name: "Domínio da Combustão",
         description:
@@ -281,7 +277,6 @@ export const FOGO_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 17,
       mastery: {
         name: "Plasma",
         description:
@@ -323,7 +318,6 @@ export const FOGO_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 23,
       mastery: {
         name: "A Segunda Estrela",
         description:

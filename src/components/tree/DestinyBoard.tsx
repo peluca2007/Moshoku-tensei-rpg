@@ -1,13 +1,14 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Crown, Wand2, Swords, Compass, Circle, Lock, CheckCircle2, ZoomIn, ZoomOut, Maximize } from "lucide-react";
+import { Crown, Wand2, Swords, Compass, Circle, Lock, CheckCircle2, ZoomIn, ZoomOut, Maximize, Search } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
-import { canPurchaseAbility, canUnlockRank, getKnowledgeCount } from "@/store/selectors";
-import { CATEGORY_LABELS, getTreeGroups, isTreeEmpty } from "@/data/trees";
+import { canPurchaseAbility, canUnlockRank, getKnowledgeCount, getRankUnlockPaCost } from "@/store/selectors";
+import { CATEGORY_LABELS, getTreeGroups, isTreeEmpty, TREES } from "@/data/trees";
 import { AbilityDef, CharacterData, RANK_BONUS, RANK_REQUIREMENTS, RANKS, RankName, TalentDef, Tree } from "@/lib/types";
 import { CATEGORY_ACCENT, RANK_ACCENT } from "@/lib/rankColors";
 import { layoutRadialTree, RadialInputNode } from "@/lib/radialLayout";
+import { CastingBreakdown, IncantationBlock, RitualBadge } from "@/components/AbilityDetail";
 
 type NodeMeta =
   | { kind: "root"; label: string }
@@ -119,6 +120,18 @@ export default function DestinyBoard() {
     });
   }
 
+  /** Busca rápida: seleciona uma árvore e centraliza o mapa nela, sem precisar navegar manualmente pelas 17 opções. */
+  function focusOnTree(treeId: string) {
+    const node = posById.get(treeId);
+    const el = viewportRef.current;
+    if (!node || !el) return;
+    const { width, height } = el.getBoundingClientRect();
+    const nextZoom = 0.7;
+    setSelectedId(treeId);
+    setZoom(nextZoom);
+    setPan({ x: width / 2 - (center + node.x) * nextZoom, y: height / 2 - (center + node.y) * nextZoom });
+  }
+
   function handlePointerDown(e: React.PointerEvent) {
     (e.target as Element).setPointerCapture(e.pointerId);
     dragRef.current = { startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y };
@@ -150,33 +163,33 @@ export default function DestinyBoard() {
       case "rank":
         return isRankUnlocked(meta.tree.id, meta.rank)
           ? `${RANK_ACCENT[meta.rank].stroke} opacity-80`
-          : "stroke-slate-300 dark:stroke-slate-700 opacity-25";
+          : "stroke-parchment-300 dark:stroke-parchment-700 opacity-25";
       default:
-        return "stroke-slate-400 opacity-30";
+        return "stroke-parchment-400 opacity-30";
     }
   }
 
   function nodeVisual(meta: NodeMeta) {
     switch (meta.kind) {
       case "root":
-        return { Icon: Crown, className: "bg-slate-800 border-amber-300 text-amber-300 shadow-lg" };
+        return { Icon: Crown, className: "bg-parchment-800 border-amber-300 text-amber-300 shadow-lg" };
       case "category":
         return {
           Icon: iconForCategory(meta.category),
-          className: `${CATEGORY_ACCENT[meta.category].solidBg} border-white/80 text-white shadow-md dark:border-slate-950`,
+          className: `${CATEGORY_ACCENT[meta.category].solidBg} border-white/80 text-white shadow-md dark:border-parchment-950`,
         };
       case "subgroup":
         return {
           Icon: Circle,
-          className: `bg-white dark:bg-slate-900 ${CATEGORY_ACCENT[meta.category].text} ${CATEGORY_ACCENT[meta.category].border}`,
+          className: `bg-parchment-50 dark:bg-parchment-900 ${CATEGORY_ACCENT[meta.category].text} ${CATEGORY_ACCENT[meta.category].border}`,
         };
       case "tree": {
         const empty = isTreeEmpty(meta.tree);
         return {
           Icon: iconForCategory(meta.tree.category),
           className: empty
-            ? "bg-slate-100 dark:bg-slate-900 text-slate-300 dark:text-slate-700 border-slate-200 dark:border-slate-800"
-            : `${CATEGORY_ACCENT[meta.tree.category].solidBg} text-white border-white/80 shadow dark:border-slate-950`,
+            ? "bg-parchment-100 dark:bg-parchment-900 text-parchment-300 dark:text-parchment-700 border-parchment-300 dark:border-parchment-800"
+            : `${CATEGORY_ACCENT[meta.tree.category].solidBg} text-white border-white/80 shadow dark:border-parchment-950`,
         };
       }
       case "rank": {
@@ -185,8 +198,8 @@ export default function DestinyBoard() {
         return {
           Icon: unlocked ? CheckCircle2 : Lock,
           className: unlocked
-            ? `${accent.solidBg} text-white border-white shadow ${accent.glow} dark:border-slate-950`
-            : "bg-slate-100 dark:bg-slate-900 text-slate-300 dark:text-slate-700 border-slate-200 dark:border-slate-800",
+            ? `${accent.solidBg} text-white border-white shadow ${accent.glow} dark:border-parchment-950`
+            : "bg-parchment-100 dark:bg-parchment-900 text-parchment-300 dark:text-parchment-700 border-parchment-300 dark:border-parchment-800",
         };
       }
     }
@@ -195,7 +208,7 @@ export default function DestinyBoard() {
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
       <div
-        className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm dark:border-slate-800 dark:bg-slate-950"
+        className="relative overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 shadow-sm dark:border-parchment-800 dark:bg-parchment-950"
         style={{ height: 640 }}
       >
         <div
@@ -245,8 +258,8 @@ export default function DestinyBoard() {
                   type="button"
                   onClick={() => setSelectedId(node.id)}
                   style={{ left: center + node.x, top: center + node.y, width: size, height: size }}
-                  className={`absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 transition-transform hover:scale-110 ${className} ${
-                    isSelected ? "ring-4 ring-white dark:ring-slate-200" : ""
+                  className={`absolute flex -tranparchment-x-1/2 -tranparchment-y-1/2 items-center justify-center rounded-full border-2 transition-transform hover:scale-110 ${className} ${
+                    isSelected ? "ring-4 ring-white dark:ring-parchment-200" : ""
                   }`}
                 >
                   <Icon style={{ width: size * 0.5, height: size * 0.5 }} />
@@ -256,25 +269,43 @@ export default function DestinyBoard() {
           </div>
         </div>
 
+        <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-lg border border-parchment-300 bg-parchment-100/90 px-2.5 py-1.5 shadow dark:border-parchment-700 dark:bg-parchment-800/90">
+          <Search className="h-3.5 w-3.5 shrink-0 text-parchment-400" />
+          <select
+            value=""
+            onChange={(e) => {
+              if (e.target.value) focusOnTree(e.target.value);
+            }}
+            className="max-w-[160px] bg-transparent text-xs text-parchment-600 outline-none dark:text-parchment-300 sm:max-w-none"
+          >
+            <option value="">Buscar árvore...</option>
+            {TREES.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
           <button
             type="button"
             onClick={() => zoomBy(1.25)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white/90 text-slate-600 shadow hover:bg-white dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-300"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-parchment-300 bg-parchment-100/90 text-parchment-600 shadow hover:bg-parchment-50 dark:border-parchment-700 dark:bg-parchment-800/90 dark:text-parchment-300"
           >
             <ZoomIn className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={() => zoomBy(0.8)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white/90 text-slate-600 shadow hover:bg-white dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-300"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-parchment-300 bg-parchment-100/90 text-parchment-600 shadow hover:bg-parchment-50 dark:border-parchment-700 dark:bg-parchment-800/90 dark:text-parchment-300"
           >
             <ZoomOut className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={recenter}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white/90 text-slate-600 shadow hover:bg-white dark:border-slate-700 dark:bg-slate-800/90 dark:text-slate-300"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-parchment-300 bg-parchment-100/90 text-parchment-600 shadow hover:bg-parchment-50 dark:border-parchment-700 dark:bg-parchment-800/90 dark:text-parchment-300"
           >
             <Maximize className="h-4 w-4" />
           </button>
@@ -298,10 +329,10 @@ function PanelShell({
   children: React.ReactNode;
 }) {
   return (
-    <aside className="sticky top-4 h-fit max-h-[640px] overflow-y-auto rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
-      <h3 className={`text-base font-bold ${accentClass ?? "text-slate-900 dark:text-slate-50"}`}>{title}</h3>
-      {subtitle && <p className="mb-2 text-xs text-slate-500 dark:text-slate-400">{subtitle}</p>}
-      <div className="mt-2 space-y-2 text-sm text-slate-700 dark:text-slate-300">{children}</div>
+    <aside className="sticky top-4 h-fit max-h-[640px] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+      <h3 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h3>
+      {subtitle && <p className="mb-2 text-xs text-parchment-500 dark:text-parchment-400">{subtitle}</p>}
+      <div className="mt-2 space-y-2 text-sm text-parchment-700 dark:text-parchment-300">{children}</div>
     </aside>
   );
 }
@@ -333,15 +364,18 @@ function AbilityListItem({
     : undefined;
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50/80 p-2.5 dark:border-slate-800 dark:bg-slate-950/50">
+    <div className="rounded-lg border border-parchment-300 bg-parchment-100/80 p-2.5 dark:border-parchment-800 dark:bg-parchment-950/50">
       <div className="mb-0.5 flex items-start justify-between gap-2">
-        <span className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+        <span className="text-sm font-semibold text-parchment-900 dark:text-parchment-50">
           {ability?.signature && "◆ "}
           {def.name}
         </span>
-        {owned && <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />}
+        <div className="flex shrink-0 items-center gap-1">
+          {ability && <RitualBadge ability={ability} />}
+          {owned && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+        </div>
       </div>
-      <p className="text-xs text-slate-500 dark:text-slate-400">
+      <p className="text-xs text-parchment-500 dark:text-parchment-400">
         {kind === "ability" ? "Habilidade" : "Talento"} · {def.paCost} PA
         {ability &&
           ` · ${ability.pmCost !== undefined ? `${ability.pmCost} PM · ` : ""}${
@@ -349,12 +383,16 @@ function AbilityListItem({
           }${ability.ppCost !== undefined ? `${ability.ppCost} PP · ` : ""}${ability.range} · ${actionLabel}`}
       </p>
       {ability ? (
-        <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
-          {ability.damage?.normal && <span className="font-medium">{ability.damage.normal}. </span>}
-          {ability.effect}
-        </p>
+        <>
+          <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-300">
+            {ability.damage?.normal && <span className="font-medium">{ability.damage.normal}. </span>}
+            {ability.effect}
+          </p>
+          <CastingBreakdown ability={ability} />
+          <IncantationBlock ability={ability} />
+        </>
       ) : (
-        <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">{talent?.description}</p>
+        <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-300">{talent?.description}</p>
       )}
       {!owned && (
         <>
@@ -362,7 +400,7 @@ function AbilityListItem({
             type="button"
             disabled={!check.ok}
             onClick={() => useCharacterStore.getState().purchaseAbility({ treeId, rank, kind, id: def.id })}
-            className="mt-2 w-full rounded-lg bg-sky-600 px-2 py-1.5 text-xs font-semibold text-white transition-colors enabled:hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-40"
+            className="mt-2 w-full rounded-lg bg-wine-600 px-2 py-1.5 text-xs font-semibold text-white transition-colors enabled:hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Comprar ({def.paCost} PA)
           </button>
@@ -418,9 +456,9 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
           <p>Em Breve — conteúdo desta árvore ainda não foi escrito.</p>
         ) : (
           <>
-            {meta.tree.tagline && <p className="italic text-slate-500 dark:text-slate-400">{meta.tree.tagline}</p>}
+            {meta.tree.tagline && <p className="italic text-parchment-500 dark:text-parchment-400">{meta.tree.tagline}</p>}
             {(meta.tree.keyAttributeLabel || meta.tree.resourceLabel) && (
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-parchment-500 dark:text-parchment-400">
                 {meta.tree.keyAttributeLabel && <>Atributo-chave: <span className="font-medium">{meta.tree.keyAttributeLabel}</span></>}
                 {meta.tree.keyAttributeLabel && meta.tree.resourceLabel && " · "}
                 {meta.tree.resourceLabel && <>Recurso: <span className="font-medium">{meta.tree.resourceLabel}</span></>}
@@ -437,6 +475,7 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
   const accent = RANK_ACCENT[meta.rank];
   const unlocked = character.unlockedRanks.some((r) => r.treeId === meta.tree.id && r.rank === meta.rank);
   const requirement = RANK_REQUIREMENTS[meta.rank];
+  const unlockPaCost = getRankUnlockPaCost(meta.tree.id, meta.rank);
   const unlockCheck = canUnlockRank(character, meta.tree.id, meta.rank);
   const rankDef = meta.tree.ranks.find((r) => r.rank === meta.rank);
   const items = rankDef
@@ -453,12 +492,12 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
       accentClass={accent.text}
     >
       {rankDef?.mastery && (
-        <div className="rounded-lg border border-violet-200 bg-violet-50/60 p-2.5 dark:border-violet-900 dark:bg-violet-950/30">
-          <span className="text-sm font-semibold text-violet-700 dark:text-violet-400">
+        <div className="rounded-lg border border-gold-200 bg-gold-50/60 p-2.5 dark:border-gold-900 dark:bg-gold-950/30">
+          <span className="text-sm font-semibold text-gold-700 dark:text-gold-400">
             ◈ Maestria: {rankDef.mastery.name}
           </span>
-          <p className="mt-0.5 text-xs text-violet-900/80 dark:text-violet-200/80">{rankDef.mastery.description}</p>
-          {!unlocked && <p className="mt-1 text-[11px] italic text-violet-700/70 dark:text-violet-400/70">Gratuita ao desbloquear o rank.</p>}
+          <p className="mt-0.5 text-xs text-gold-900/80 dark:text-gold-200/80">{rankDef.mastery.description}</p>
+          {!unlocked && <p className="mt-1 text-[11px] italic text-gold-700/70 dark:text-gold-400/70">Gratuita ao desbloquear o rank.</p>}
         </div>
       )}
 
@@ -466,15 +505,15 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
         <>
           <p>
             Requer {requirement.knowledgeRequired} conhecimento(s) nesta árvore
-            {meta.rank !== "Principiante" && " e o rank anterior desbloqueado"}. Custa {requirement.paCost} PA.
+            {meta.rank !== "Principiante" && " e o rank anterior desbloqueado"}. Custa {unlockPaCost} PA.
           </p>
           <button
             type="button"
             disabled={!unlockCheck.ok}
             onClick={() => useCharacterStore.getState().unlockRank(meta.tree.id, meta.rank)}
-            className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition-colors enabled:hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-slate-900"
+            className="w-full rounded-lg bg-parchment-900 px-3 py-2 text-sm font-semibold text-white transition-colors enabled:hover:bg-parchment-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-parchment-900"
           >
-            Desbloquear ({requirement.paCost} PA)
+            Desbloquear ({unlockPaCost} PA)
           </button>
           {!unlockCheck.ok && unlockCheck.reason && <p className="text-xs text-rose-500">{unlockCheck.reason}</p>}
         </>
