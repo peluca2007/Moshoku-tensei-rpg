@@ -5232,7 +5232,25 @@ No início de cada um dos seus turnos em que estiver a 0 PV, role *1d20 + Vigor*
 
 Se acumular *3 Marcas da Morte*, você morre permanentemente.
 
-Qualquer magia de cura ou poção aplicada por um aliado remove todas as Marcas da Morte instantaneamente e você acorda. Porém, acordar do trauma cobra um preço: você volta com a condição *Exaustão* (Desvantagem em todos os testes de atributo) até fazer um Descanso Longo.
+Qualquer magia de cura ou poção aplicada por um aliado remove todas as Marcas da Morte instantaneamente e você acorda. Porém, acordar do trauma cobra um preço: você volta com *1 nível de Exaustão* (regras completas na seção 6 deste capítulo) até fazer um Descanso Longo.
+
+=== Cicatrizes de Quase-Morte
+
+#quadro(titulo: [Quando a Morte Quase Ganha])[
+Toda vez que você acumular *2 Marcas da Morte* antes de ser resgatado, o corpo guarda a lembrança mesmo depois de curado. Além da Exaustão de sempre, role *1d6* na tabela abaixo (ou escolha, com o Mestre) e ganhe a Cicatriz *permanentemente*. Se tirar uma que já tem, ela atinge outro membro ou sentido, à escolha do Mestre.
+
+#tbl(2, (left, left),
+  [d6], [Cicatriz],
+  [1], [*Braço Perdido:* Desvantagem em testes de Força e em Atletismo. Não consegue usar armas de duas mãos, nem empunhar arma e escudo ao mesmo tempo.],
+  [2], [*Perna Manca:* Deslocamento *-3m*, permanente.],
+  [3], [*Olho Perdido:* Desvantagem em Percepção e em qualquer ataque à distância além do alcance curto.],
+  [4], [*Voz Quebrada:* não consegue mais usar Conjuração Silenciosa (Cap. 2). Desvantagem em Atuação e Persuasão.],
+  [5], [*Mão Trêmula:* Desvantagem em Ladinagem, em Ofícios manuais e em Iniciativa.],
+  [6], [*A Sombra Não Sai:* nenhuma penalidade de combate, mas Desvantagem em testes de resistência de Espírito contra Medo — o corpo lembra de ter morrido, mesmo que a mente negue.],
+)
+
+*A única cura conhecida é* _Corpo Íntegro_ (Cura, Rank Imperador, Cap. 3) — ela relê o corpo por inteiro e apaga a Cicatriz junto com qualquer outra sequela física. Fora disso, ela é permanente: nenhum Descanso, magia de rank inferior ou poção a remove. É o preço de ter quase morrido, e ele pesa na ficha pelo resto da campanha — não só naquela sessão.
+]
 
 === Descanso Curto e Longo
 
@@ -5253,6 +5271,42 @@ Uma noite inteira de sono devolve ao seu guerreiro talvez dez pontos de vida. El
 A consequência é direta e proposital: *um grupo sem curandeiro não perde combates — perde a campanha.* Ele vence a primeira luta, sangra na segunda, e na terceira decide voltar para a cidade porque o guerreiro está com um terço da vida e não existe descanso que resolva.
 
 É por isso que toda caravana do Mundo de Seis Faces paga caro por um mago de Cura, mesmo um Principiante que só sabe fechar corte. E é por isso que a escola de Cura não é uma opção de suporte: é infraestrutura.
+]
+
+#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+
+== 6. Exaustão, Fome, Sede e Clima Extremo
+
+O sistema já usa a condição _Exaustão_ em dezenas de talentos, doenças e maldições sem nunca fechar o que ela faz de fato. Esta seção fecha essa conta.
+
+#quadro(titulo: [Exaustão Tem 6 Níveis, e Eles Empilham])[
+#tbl(2, (center, left),
+  [Nível], [Penalidade],
+  [1], [Desvantagem em testes de atributo e em rolagens de ataque.],
+  [2], [Deslocamento reduzido à metade.],
+  [3], [Desvantagem em testes de resistência.],
+  [4], [PV Máximos reduzidos à metade.],
+  [5], [Deslocamento reduzido a 0.],
+  [6], [Morte — a menos que a fonte diga o contrário (_Fome Vermelha_, Apêndice D, transforma em vez de matar).],
+)
+
+Os efeitos *somam*: no Nível 3, você já soma a Desvantagem de atributo e de ataque do Nível 1 com a de resistência deste nível, além de andar na metade da velocidade.
+
+*Removendo Exaustão:* um Descanso Longo remove *1 nível*, desde que a causa não esteja mais ativa (você comeu, bebeu, saiu do frio). Se a causa continuar, o nível não cai. Magia específica de Cura (_Mão que Acalma_, Cap. 3) remove 1 nível de Exaustão *de origem física* — ferimento, trauma, ter acordado do Fio da Vida — a qualquer momento, mas nunca a de fome, sede, frio ou marcha forçada: isso não é ferimento, é privação, e só sai resolvendo a causa.
+]
+
+=== Fome e Sede
+
+- *Fome:* ficar um dia inteiro sem nenhuma refeição dá *1 nível de Exaustão* ao anoitecer. Comer qualquer refeição, por menor que seja, zera essa contagem — mas não remove a Exaustão que já acumulou.
+- *Sede:* mais urgente. Ficar sem beber água por mais de algumas horas em clima ameno, ou desde o início em calor extremo, dá *1 nível de Exaustão a cada 4 horas* depois da primeira falta.
+- *Ração de aventureiro* (item comum, poucas moedas de cobre por dia) resolve as duas ao mesmo tempo — é por isso que toda caravana carrega mais ração do que ouro.
+
+=== Clima Extremo
+
+Calor ou frio além do que roupas comuns aguentam — deserto ao meio-dia, nevasca, altitude alta — força um teste de *Vigor* a cada poucas horas de exposição. O Mestre define a CD pela severidade: *8* para desconfortável, *14* para perigoso, *18* para letal. Falha: *1 nível de Exaustão*. Equipamento adequado (manto, abrigo, magia de proteção) dá Vantagem no teste ou remove a necessidade dele por completo, a critério do Mestre.
+
+#quadro(titulo: [Por que isso é leve de propósito])[
+Fome, sede e clima não são o ponto da campanha — são o relógio de fundo que torna uma travessia longa real sem virar planilha. Numa masmorra de um dia, ignore a seção inteira. Numa travessia de duas semanas pela Grande Floresta sem suprimentos, ela decide se o grupo chega ao destino em pé ou arrastando um Nível 4.
 ]
 
 #pagebreak(weak: true)
@@ -5408,6 +5462,9 @@ O grimório de rank Deus que curaria isso existe, está catalogado no Grande Tem
 - *Ritmo:* uma aflição de Profundidade 2 pegada no primeiro dia de viagem chega a 5 em três dias. *É esse relógio, e não o combate, que cria a urgência de uma campanha longa.*
 - *Múltiplas aflições:* elas sobem de Profundidade *independentemente*. Um personagem envenenado e doente ao mesmo tempo rola dois relógios separados, e cada um precisa da escola certa para parar.
 - *Extração como oportunidade de aventura:* toda aflição extraída (Maestria de Desintoxicação, Intermediário) é um item físico. O Mestre é encorajado a fazer NPCs quererem comprá-lo, roubá-lo ou proibi-lo — é assim que um antídoto vira o motivo da próxima sessão.
+- *Duas camadas, quase sempre juntas:* uma aflição de Profundidade (o relógio desta página) é diferente de uma *condição* de combate curta como _Envenenado_ (Desvantagem em ataques e testes de atributo, Cap. 4) — mas a maioria dos venenos e maldições de verdade no jogo aplica as duas ao mesmo tempo: a condição incomoda agora, a Profundidade mata depois. Quando uma magia só cita uma das duas, é proposital.
+- *Maldição não é uma escola separada — é um rótulo narrativo* para qualquer aflição que se comporte como as desta página (resiste à Cura comum, não cai sozinha, exige um especialista pra tratar). Mecanicamente, quem "amaldiçoa" alguém é magia de Desintoxicação de Rank Rei ou Imperador (_Toque do Fim_, Cap. 3) — não existe uma árvore de "magia negra" à parte, e é assim de propósito: quem sabe curar maldição é a única escola que sabe infligir uma de verdade.
+- *Como tirar proveito de uma aflição que você aplicou:* Profundidade sobe sozinha mesmo fora de combate — um veneno de Profundidade 2 aplicado no início de uma perseguição já pode estar em Profundidade 4 quando a luta de verdade começar. É a ferramenta certa contra um alvo que você não derruba em dano direto (Rank alto demais, chefe com regeneração): plante a aflição, ganhe distância, e deixe o relógio desta página fazer o trabalho por você.
 ]
 
 #pagebreak(weak: true)
@@ -5517,5 +5574,37 @@ Não. PP declara fatos sobre o mundo, o passado e as pessoas — nunca reescreve
 
 *Dois jogadores de Utilidade podem preparar o mesmo fato?*
 Não faz sentido narrativo, e o Mestre deve recusar por Domínio: se o Ladino já revelou que a fechadura estava limada, o Tático não pode gastar PP para revelar a mesma coisa de novo. Cada árvore cobre o que as outras duas não cobrem — é para isso que a Regra da Faixa existe.]
+
+#pagebreak(weak: true)
+
+#largo-inline[
+= Apêndice F: Tempo Livre e Downtime
+
+Toda campanha tem trechos sem masmorra: a viagem de volta, a estação chuvosa, o mês esperando uma audiência com o rei. Esta seção existe para que esse tempo produza algo na ficha, sem virar burocracia.
+
+== O Bloco de Tempo
+
+Downtime é contado em *blocos de 1 semana* — a mesma unidade que o Repouso Longo (Cap. 4) já usa para curar todos os PV. No fim de cada semana livre, cada personagem escolhe *uma* atividade da lista abaixo. Uma campanha pode se resolver em zero blocos (aventura non-stop) ou em vinte (uma reconstrução de reino) — quanto tempo "passa" entre cenas é decisão do Mestre.
+
+== Atividades
+
+#tbl(2, (left, left),
+  [Atividade], [Efeito],
+  [*Treinar*], [Ganhe Vantagem no próximo teste de uma Perícia à escolha, ligada à sua Árvore Inicial ou a uma Perícia que você já tenha — dura até ser usado ou até 1 mês passar. Não concede PA: é ensaio, não estudo formal.],
+  [*Recuperar-se*], [Como o Repouso Longo de uma semana do Cap. 4: todos os PV são restaurados, e mais 1 nível de Exaustão é removido além do normal — desde que a semana seja de descanso de verdade, sem viagem e sem combate.],
+  [*Trabalhar*], [Ganhe PO igual a *2d6 × seu maior Bônus de Rank* (mínimo 2d6), pelo seu Ofício, sua fama ou um trabalho comum da cidade. Um Principiante sem árvore nenhuma ainda ganha o mínimo — todo mundo sabe fazer alguma coisa.],
+  [*Cultivar um Contato*], [Anote um NPC nomeado e uma cidade ou facção. Da próxima vez que você precisar de uma informação, um favor pequeno ou uma porta fechada, o Mestre pode deixar esse contato resolver — sem PP, sem teste — porque a relação já foi construída fora de cena.],
+  [*Estudar um Ofício ou Ritual*], [Se você tem a Perícia de Ofícios (Cap. 1) ligada ao que quer fazer (forjar, alquimizar, encantar), gaste o bloco pra produzir um item mundano ou preparar os materiais de um ritual que você já pode conjurar. O Mestre define o custo em PO dos materiais — normalmente metade do preço de mercado.],
+  [*Vigiar as Costas do Grupo*], [Sem efeito mecânico próprio, mas concede a *outro* personagem Vantagem na atividade dele nesta semana, cobrindo os riscos enquanto ele treina ou trabalha desprotegido.],
+)
+
+#quadro(titulo: [Downtime Não Compra Progressão])[
+Nenhuma atividade acima concede PA, magia, talento ou Rank — isso continua vindo só de jogar a campanha (Cap. 1, seção 2). Downtime existe para que o tempo entre aventuras *pareça* vivido, não para virar uma segunda forma de subir de patamar sem risco.
+]
+
+== Downtime Interrompido
+
+Se uma aflição (Apêndice D) estiver ativa em alguém do grupo, a Profundidade dela continua subindo normalmente durante o downtime — um bloco de "Recuperar-se" não pausa o relógio de um veneno ou de uma doença. É assim que uma semana de descanso mal planejada vira a razão de a próxima cena começar com alguém pior do que quando a sessão anterior terminou.
+]
 
 
