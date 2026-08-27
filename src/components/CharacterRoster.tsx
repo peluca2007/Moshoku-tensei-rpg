@@ -64,9 +64,9 @@ export default function CharacterRoster() {
           <Link
             href="/criar"
             className="flex items-center gap-1 rounded-lg border border-wine-400 px-3 py-2 text-sm font-medium text-wine-600 transition-colors hover:bg-wine-50 dark:border-wine-600 dark:text-wine-300 dark:hover:bg-wine-950/40"
-            title="Passo a passo guiado pra quem está criando o primeiro personagem"
+            title="Escolha entre criação manual, roleta ou entrevista do destino"
           >
-            <Wand2 className="h-4 w-4" /> Criação Guiada
+            <Wand2 className="h-4 w-4" /> Criar com Guia
           </Link>
           <button
             type="button"
