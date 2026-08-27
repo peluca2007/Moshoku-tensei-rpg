@@ -6364,6 +6364,20 @@ A consequência é direta e proposital: *um grupo sem curandeiro não perde comb
 É por isso que toda caravana do Mundo de Seis Faces paga caro por um mago de Cura, mesmo um Principiante que só sabe fechar corte. E é por isso que a escola de Cura não é uma opção de suporte: é infraestrutura.
 ]
 
+#block(breakable: false)[
+=== Trauma de Combate
+
+#quadro(titulo: [Quando o Corpo Sobrevive mas a Mente Cobra a Conta])[
+Sobreviver não é sair ileso. Sempre que você chegar a *0 PV*, testemunhar a morte de um aliado a até 9 metros, ou matar alguém que implorava por clemência, ganhe *1 ponto de Trauma* — a critério do Mestre, sem precisar contar cada goblin da estrada.
+
+*Efeito, por ponto de Trauma acumulado:* Desvantagem em testes de Espírito feitos *fora de combate* (persuasão calma, negociação, criar confiança, dormir sem pesadelo). Trauma não afeta nada dentro do combate — na hora da luta, o corpo simplesmente age.
+
+*Removendo Trauma:* gaste uma semana de Downtime (Apêndice F) na atividade *Recuperar-se* acompanhado de alguém de confiança, ou resolva a causa de frente na narrativa — voltar ao lugar, encarar quem sobrou, fazer as pazes com o que aconteceu. Cada semana ou cada cena assim resolvida remove *1 ponto*. Sem isso, o Trauma não passa sozinho: não existe teste de resistência nem Descanso Longo que apague o que aconteceu.
+
+Isto não é um sistema de sanidade: não há loucura, não há tabela de fobias, e não há perda de controle do personagem. É só o lembrete mecânico de que continuar lutando tem custo — e mais um motivo pro pilar de Utilidade importar entre uma masmorra e outra.
+]
+]
+
 #v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
 
 == 6. Exaustão, Fome, Sede e Clima Extremo
