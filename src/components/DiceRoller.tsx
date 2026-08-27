@@ -157,6 +157,7 @@ export default function DiceRoller() {
         onClick={() => setOpen((v) => !v)}
         className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
         title="Rolador de Dados (atalho: R)"
+        aria-label="Abrir rolador de dados"
       >
         <Dices className="h-6 w-6" />
       </button>
@@ -167,7 +168,12 @@ export default function DiceRoller() {
             <h2 className="flex items-center gap-2 text-sm font-bold text-parchment-900 dark:text-parchment-50">
               <Dices className="h-4 w-4 text-wine-500" /> Rolador de Dados
             </h2>
-            <button type="button" onClick={() => setOpen(false)} className="text-parchment-400 hover:text-rose-500">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Fechar rolador de dados"
+              className="text-parchment-400 hover:text-rose-500"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -378,6 +384,7 @@ export default function DiceRoller() {
                   value={damageFormula}
                   onChange={(e) => setDamageFormula(e.target.value)}
                   placeholder="ex: 2d6"
+                  aria-label="Fórmula de dano"
                   className="flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
                 />
                 <span className="text-sm text-parchment-400">+</span>
@@ -385,6 +392,7 @@ export default function DiceRoller() {
                   type="number"
                   value={damageModifier}
                   onChange={(e) => setDamageModifier(Number(e.target.value))}
+                  aria-label="Modificador de dano"
                   className="w-16 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
                 />
               </div>
@@ -420,6 +428,7 @@ export default function DiceRoller() {
                         type="button"
                         onClick={() => removeMacro(macro.id)}
                         title="Apagar macro"
+                        aria-label={`Apagar macro ${macro.label}`}
                         className="shrink-0 text-parchment-400 hover:text-rose-500"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -434,6 +443,7 @@ export default function DiceRoller() {
                   value={macroLabel}
                   onChange={(e) => setMacroLabel(e.target.value)}
                   placeholder="Nome (ex: Bola de Fogo)"
+                  aria-label="Nome do macro"
                   className="min-w-0 flex-[2] rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
                 />
                 <input
@@ -441,6 +451,7 @@ export default function DiceRoller() {
                   value={macroFormula}
                   onChange={(e) => setMacroFormula(e.target.value)}
                   placeholder="2d10+5"
+                  aria-label="Fórmula do macro"
                   className="w-20 shrink-0 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
                 />
                 <button
@@ -448,6 +459,7 @@ export default function DiceRoller() {
                   onClick={handleAddMacro}
                   disabled={!macroFormula.trim()}
                   title="Salvar macro"
+                  aria-label="Salvar macro"
                   className="shrink-0 rounded-lg bg-parchment-800 p-1.5 text-white transition-colors hover:bg-parchment-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-parchment-200 dark:text-parchment-900 dark:hover:bg-parchment-300"
                 >
                   <Plus className="h-4 w-4" />

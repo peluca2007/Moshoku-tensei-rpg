@@ -204,6 +204,7 @@ export default function InitiativeTracker() {
                     <button
                       type="button"
                       onClick={() => useInitiativeStore.getState().removeCombatant(c.id)}
+                      aria-label={`Remover ${c.name} do combate`}
                       className="ml-auto text-parchment-400 hover:text-rose-500"
                     >
                       <X className="h-4 w-4" />
@@ -232,6 +233,7 @@ export default function InitiativeTracker() {
                         <button
                           type="button"
                           onClick={() => useInitiativeStore.getState().removeCondition(c.id, cond.id)}
+                          aria-label={`Remover condição ${cond.name} de ${c.name}`}
                           className="hover:text-rose-500"
                         >
                           <X className="h-2.5 w-2.5" />
@@ -245,6 +247,7 @@ export default function InitiativeTracker() {
                       }
                       onKeyDown={(e) => e.key === "Enter" && handleAddCondition(c.id)}
                       placeholder="+ condição"
+                      aria-label={`Nova condição para ${c.name}`}
                       className="w-24 rounded-full border border-dashed border-parchment-300 bg-transparent px-2 py-0.5 text-[11px] outline-none focus:border-wine-400 dark:border-parchment-700"
                     />
                     <input
@@ -255,6 +258,7 @@ export default function InitiativeTracker() {
                       onKeyDown={(e) => e.key === "Enter" && handleAddCondition(c.id)}
                       placeholder="rodadas"
                       type="number"
+                      aria-label={`Duração da condição em rodadas para ${c.name}`}
                       className="w-16 rounded-full border border-dashed border-parchment-300 bg-transparent px-2 py-0.5 text-[11px] outline-none focus:border-wine-400 dark:border-parchment-700"
                     />
                   </div>

@@ -107,6 +107,7 @@ function ResourceCard({
               type="button"
               onClick={onResetMax}
               title="Voltar ao valor calculado automaticamente"
+              aria-label={`Voltar máximo de ${label} ao valor calculado`}
               className="text-parchment-400 hover:text-wine-500 dark:hover:text-wine-400"
             >
               <RotateCcw className="h-3 w-3" />
@@ -162,6 +163,7 @@ function EditableStatCard({
               type="button"
               onClick={onReset}
               title="Voltar ao valor calculado automaticamente"
+              aria-label={`Voltar ${label} ao valor calculado`}
               className="text-parchment-400 hover:text-wine-500 dark:hover:text-wine-400"
             >
               <RotateCcw className="h-3 w-3" />
@@ -328,6 +330,7 @@ export default function CharacterSheet() {
             value={name}
             onChange={(e) => useCharacterStore.getState().setName(e.target.value)}
             placeholder="Nome do personagem"
+            aria-label="Nome do personagem"
             className="min-w-0 flex-1 rounded-lg bg-transparent text-3xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700"
           />
           <button
@@ -606,12 +609,14 @@ export default function CharacterSheet() {
                   value={grimoireQuery}
                   onChange={(e) => setGrimoireQuery(e.target.value)}
                   placeholder="Buscar magia, talento ou árvore..."
+                  aria-label="Buscar no grimório"
                   className="w-56 rounded-full border border-parchment-300 bg-parchment-50 py-1.5 pl-8 pr-7 text-xs text-parchment-700 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200"
                 />
                 {grimoireQuery && (
                   <button
                     type="button"
                     onClick={() => setGrimoireQuery("")}
+                    aria-label="Limpar busca"
                     className="absolute right-2 top-1/2 -tranparchment-y-1/2 text-parchment-400 hover:text-parchment-600 dark:hover:text-parchment-200"
                   >
                     <X className="h-3.5 w-3.5" />

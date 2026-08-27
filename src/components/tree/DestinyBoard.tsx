@@ -263,6 +263,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
                   key={node.id}
                   type="button"
                   onClick={() => setSelectedId(node.id)}
+                  aria-label={`Selecionar ${node.meta.label}`}
                   style={{ left: center + node.x, top: center + node.y, width: size, height: size }}
                   className={`absolute flex -tranparchment-x-1/2 -tranparchment-y-1/2 items-center justify-center rounded-full border-2 transition-transform hover:scale-110 ${className} ${
                     isSelected ? "ring-4 ring-white dark:ring-parchment-200" : ""
@@ -297,6 +298,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
           <button
             type="button"
             onClick={() => zoomBy(1.25)}
+            aria-label="Aumentar zoom"
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-parchment-300 bg-parchment-100/90 text-parchment-600 shadow hover:bg-parchment-50 dark:border-parchment-700 dark:bg-parchment-800/90 dark:text-parchment-300"
           >
             <ZoomIn className="h-4 w-4" />
@@ -304,6 +306,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
           <button
             type="button"
             onClick={() => zoomBy(0.8)}
+            aria-label="Diminuir zoom"
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-parchment-300 bg-parchment-100/90 text-parchment-600 shadow hover:bg-parchment-50 dark:border-parchment-700 dark:bg-parchment-800/90 dark:text-parchment-300"
           >
             <ZoomOut className="h-4 w-4" />
@@ -311,6 +314,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
           <button
             type="button"
             onClick={recenter}
+            aria-label="Centralizar mapa"
             className="flex h-9 w-9 items-center justify-center rounded-lg border border-parchment-300 bg-parchment-100/90 text-parchment-600 shadow hover:bg-parchment-50 dark:border-parchment-700 dark:bg-parchment-800/90 dark:text-parchment-300"
           >
             <Maximize className="h-4 w-4" />

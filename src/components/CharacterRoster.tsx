@@ -143,6 +143,7 @@ export default function CharacterRoster() {
                   <button
                     type="button"
                     onClick={() => setConfirmingId(id)}
+                    aria-label={`Apagar ${character.name || "personagem sem nome"}`}
                     className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 transition-colors hover:border-rose-300 hover:text-rose-500 dark:border-parchment-700"
                   >
                     <Trash2 className="h-4 w-4" />

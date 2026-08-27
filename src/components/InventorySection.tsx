@@ -312,6 +312,7 @@ export default function InventorySection() {
                   type="button"
                   onClick={() => startEdit(item)}
                   title="Editar item"
+                  aria-label={`Editar ${item.name}`}
                   className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 transition-colors hover:border-wine-300 hover:text-wine-500 dark:border-parchment-700"
                 >
                   <Pencil className="h-3.5 w-3.5" />
@@ -320,6 +321,7 @@ export default function InventorySection() {
                   type="button"
                   onClick={() => useCharacterStore.getState().removeItem(item.id)}
                   title="Remover item"
+                  aria-label={`Remover ${item.name}`}
                   className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 transition-colors hover:border-rose-300 hover:text-rose-500 dark:border-parchment-700"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
