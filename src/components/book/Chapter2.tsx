@@ -1,6 +1,6 @@
 import { RANKS } from "@/lib/types";
 import { MAGIC_ACTIONS } from "@/data/trees/shared";
-import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 function actionsCell(rank: (typeof RANKS)[number]) {
   const a = MAGIC_ACTIONS[rank];
@@ -113,7 +113,14 @@ export default function Chapter2() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap2-4">4. Magia Combinada</SectionTitle>
+        <SectionTitle id="cap2-4">4. Combinações entre Árvores</SectionTitle>
+        <P>
+          Duas árvores em Rank Avançado ou superior não competem pelo mesmo personagem — elas se somam. Esta
+          seção cobre a versão mais canônica disso (Magia Combinada) e depois abre a mesma lógica pro resto
+          do livro: Corpo, Utilidade, e as combinações entre pilares diferentes.
+        </P>
+
+        <SubTitle>Magia Combinada</SubTitle>
         <P>
           Magias Combinadas são feitiços compostos por duas ou mais magias de ataque conjuradas em
           sequência, cujo resultado é maior que a soma das partes. Nova Congelante é literalmente Vento +
@@ -137,12 +144,40 @@ export default function Chapter2() {
             ["Tempestade + qualquer magia de Fogo", "Névoa Escaldante", "Esfera de 18m de vapor. Escuridão total + 1d6 de dano ígneo por turno a quem estiver dentro."],
             ["Canhão de Água + Lâmina de Gelo", "Serra d'Água", "A linha do Canhão passa a causar dano cortante e ignora metade da CA de armaduras não-mágicas."],
             ["Cumulonimbus + Nevasca", "Inverno Rasgado", "A tempestade vira granizo. Toda criatura na área de 1,5 km sofre 2d6 de frio por turno, sem teste."],
+            ["Muralha de Pedra + qualquer magia de Fogo", "Vidro Cortante", "A muralha derrete e resolidifica em lâminas de vidro. Quem tocar ou atravessar sofre 3d8 cortante; a muralha perde metade dos PV Máximos."],
+            ["Lama Viva (Terra) + Respingos de Água", "Areia Movediça Instantânea", "Esfera de 9m vira lodo: Deslocamento reduzido à metade e teste de Força (CD 8 + BC) ou fica Atolado até a cintura, sem teste de dano."],
+            ["Cordilheira (Terra) + Ciclone (Vento)", "Tempestade de Poeira", "Esfera de 18m: Cego pra quem estiver dentro, e projéteis mundanos erram automaticamente até a poeira baixar (1 minuto)."],
           ]}
         />
         <Aside title="Regra de Ouro para o Mestre">
           Se o jogador descrever uma combinação que faz sentido físico, deixe funcionar e invente o efeito na
           hora. Este sistema recompensa quem pensa como cientista — foi assim que Rudeus criou metade do
-          arsenal dele.
+          arsenal dele. A mesma regra vale pra toda a seção abaixo, não só pra Magia Combinada.
+        </Aside>
+
+        <SubTitle>Combinações Além da Magia</SubTitle>
+        <P>
+          A mesma lógica funciona entre <i>qualquer</i> duas árvores em Rank Avançado ou superior, mesmo
+          cruzando pilares diferentes (Magia + Corpo, Magia + Utilidade, Corpo + Utilidade) — o livro só não
+          documentava isso antes. O requisito e o custo são os mesmos: Avançado ou superior nas duas árvores
+          envolvidas, e você paga o custo de cada lado inteiro (Ação, PM, PT ou PP, o que for de cada árvore).
+          O efeito nunca é permanente, a menos que a tabela diga o contrário.
+        </P>
+        <BookTable
+          headers={["Combinação", "Resultado", "Efeito"]}
+          rows={[
+            ["Deus da Espada + Magia de Fogo", "Lâmina em Chamas", "Gaste a Ação e o PM de uma magia de Fogo de rank Avançado ou inferior, mais 1 PT: por 1 minuto, seu Dado de Arma causa +1d8 de dano ígneo extra."],
+            ["Tático (Navegação e Liderança) + Magia de Terra", "Terreno Escolhido", "Antes de um combate previsto, gaste 1 PP pra declarar que já preparou o chão. Se a luta acontecer lá, sua próxima magia de Terra no combate tem +50% de área."],
+            ["Ladino (Furtividade e Armadilhas) + Magia de Invocação", "Familiar Furtivo", "Sua próxima invocação nasce com o seu Bônus de Rank de Ladino em Furtividade, e reporta o que viu sem gastar sua Ação pra perguntar."],
+            ["Bardo e Interação + Magia de Cura", "Canção que Cura", "Enquanto sustentar uma Canção, cada magia de Cura que você conjurar recupera +1d8 extra em todos os alvos afetados."],
+            ["Cavalaria e Escudos + Magia de Barreira", "Escudo Vivo", "Uma vez por combate, gaste 1 PM: seu escudo físico ganha uma barreira extra de PV temporários igual ao seu Bônus de Rank, que absorve dano antes da CA importar."],
+          ]}
+        />
+        <Aside title="Quando a combinação vira uma árvore própria">
+          Às vezes duas árvores em Rank Avançado se encaixam bem demais pra caber numa única habilidade — o
+          Estilo Deus do Norte com a Magia de Vento, por exemplo, virou o <b>Estilo Vendaval</b>, uma
+          décima oitava sub-árvore inteira que só se revela pra quem cumpriu os dois pré-requisitos (Cap. 1,
+          §8, pergunta 7; catálogo completo no Cap. 3). Isso não é a regra — é o teto dela.
         </Aside>
       </Section>
 
