@@ -36,6 +36,8 @@
 
 - **2026-08-27** — **Botão "Desfazer" na ficha** (`src/store/useCharacterStore.ts`, `CharacterSheet.tsx`): toda edição de campo já passava pelo único ponto central `updateActive()` — bastou empilhar ali o estado anterior do personagem ativo antes de aplicar a mudança (`history: Record<charId, CharacterData[]>`, capado em 30 entradas por ficha) e adicionar a ação `undo()` que desempilha e restaura. O histórico é **por personagem** (trocar de ficha não mistura pilhas) e **não é salvo no `localStorage`** (`partialize` no persist exclui `history`) — é só uma conveniência da sessão atual, não faz sentido duplicar fichas inteiras no armazenamento permanente. Cobre edições de campo (nome, atributos, itens, perícias, ranks desbloqueados, habilidades compradas); não cobre criar/apagar/trocar de personagem, que são operações de outra natureza. Lógica verificada com um script isolado (sem React) simulando sequência de edições + desfazer, limite da pilha, personagem sem histórico e isolamento entre duas fichas diferentes — todos os casos bateram. `tsc`/`eslint` limpos; confirmado por `curl` que o botão aparece na página renderizada.
 
+- **2026-08-27** — **Macros de rolagem + atalho de teclado no Rolador de Dados** (`src/store/useMacroStore.ts`, `DiceRoller.tsx`): nova seção "Macros" no painel do rolador — o jogador salva uma fórmula nomeada (ex.: "Bola de Fogo" → `2d10+5`) e rola com um clique, sem reconfigurar tudo de novo toda vez; lista persistida em `localStorage`, independente de personagem (rehidratada em `StoreHydration.tsx` como as outras stores). Atalho de teclado: apertar **R** abre/fecha o painel do rolador — o listener ignora o atalho quando o foco está em `input`/`textarea`/`select`/campo editável, pra nunca disparar enquanto o jogador está digitando em outro campo da ficha (nome, item, perícia etc.).
+
 ## Roadmap de Longo Prazo (brainstorm 2026-08-27 — Dev Sênior + Mestre de Game Design)
 
 Visão panorâmica do que falta pro sistema e pro site chegarem num nível "produto acabado". Prioridade combinada com o usuário: **rolador de dados + tracker de iniciativa** são o próximo passo imediato; o resto entra por ordem de impacto.
@@ -70,7 +72,7 @@ Visão panorâmica do que falta pro sistema e pro site chegarem num nível "prod
 - [x] ~~Log de mudanças na ficha / desfazer.~~
 - [x] ~~Exportar/importar ficha em JSON (backup fora do localStorage).~~ Feito em 2026-08-27 (ver Changelog).
 - [ ] Modo apresentação (tela grande pra mesa física, escondendo info só do jogador).
-- [ ] Atalhos de teclado e macros de rolagem customizados.
+- [x] ~~Atalhos de teclado e macros de rolagem customizados.~~
 - [ ] Acessibilidade (contraste, tamanho de fonte, leitor de tela).
 - [x] ~~Colocar no site as arvores tbm, na parte do livro de regras, assim fica melhor.~~
 
