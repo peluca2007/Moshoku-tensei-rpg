@@ -8,6 +8,21 @@ export const ATTRIBUTES: { key: AttributeKey; label: string; short: string }[] =
   { key: "espirito", label: "Espírito", short: "ESP" },
 ];
 
+const ATTRIBUTE_KEY_BY_LABEL: Record<string, AttributeKey> = {
+  Força: "forca",
+  Agilidade: "agilidade",
+  Vigor: "vigor",
+  Intelecto: "intelecto",
+  Espírito: "espirito",
+};
+
+/** Cap. 1, seção 7: o rótulo do atributo-chave de uma árvore ("Força ou Agilidade") pode citar mais de um — usa sempre o primeiro. */
+export function attributeKeyFromLabel(label: string | undefined): AttributeKey | null {
+  if (!label) return null;
+  const first = label.split(/\s+ou\s+/i)[0].trim();
+  return ATTRIBUTE_KEY_BY_LABEL[first] ?? null;
+}
+
 export type RankName =
   | "Principiante"
   | "Intermediário"

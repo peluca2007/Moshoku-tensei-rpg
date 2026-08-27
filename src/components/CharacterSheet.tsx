@@ -30,6 +30,7 @@ import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
+import DiceRoller from "./DiceRoller";
 
 interface ResolvedAbility {
   kind: "ability" | "talent";
@@ -732,6 +733,8 @@ export default function CharacterSheet() {
           </p>
         </div>
       </footer>
+
+      <DiceRoller />
     </div>
   );
 }

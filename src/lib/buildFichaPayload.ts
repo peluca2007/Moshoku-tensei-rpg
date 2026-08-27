@@ -3,6 +3,7 @@ import { getAttackBonus, getPaSpent, getSpellDC } from "@/store/selectors";
 import type { FichaPdfPayload } from "@/lib/typstFicha";
 import {
   AbilityDef,
+  attributeKeyFromLabel,
   ATTRIBUTES,
   AttributeKey,
   Background,
@@ -14,21 +15,6 @@ import {
   SubtableEntry,
   TalentDef,
 } from "@/lib/types";
-
-const ATTRIBUTE_KEY_BY_LABEL: Record<string, AttributeKey> = {
-  Força: "forca",
-  Agilidade: "agilidade",
-  Vigor: "vigor",
-  Intelecto: "intelecto",
-  Espírito: "espirito",
-};
-
-/** Cap. 1, seção 7: BC só existe pra árvores de Magia — o rótulo do atributo-chave da árvore já diz qual usar. */
-function attributeKeyFromLabel(label: string | undefined): AttributeKey | null {
-  if (!label) return null;
-  const first = label.split(/\s+ou\s+/i)[0].trim();
-  return ATTRIBUTE_KEY_BY_LABEL[first] ?? null;
-}
 
 function actionLabel(ability: AbilityDef): string {
   if (ability.reaction) return "1 Reação";

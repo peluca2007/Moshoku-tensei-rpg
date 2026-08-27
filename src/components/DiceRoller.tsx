@@ -1,0 +1,420 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { Dices, Sparkles, Swords, X, Trash2 } from "lucide-react";
+import { useActiveCharacter } from "@/store/useCharacterStore";
+import { getAttackBonus, getFinalAttribute, getSpellDC, getWeaponDamage } from "@/store/selectors";
+import { getTreeById } from "@/data/trees";
+import { ATTRIBUTES, attributeKeyFromLabel, AttributeKey } from "@/lib/types";
+import {
+  ADVANTAGE_LABELS,
+  AdvantageMode,
+  D20RollResult,
+  DiceRollResult,
+  nextRollId,
+  rollD20,
+  rollFormula,
+  RollLogEntry,
+} from "@/lib/rollEngine";
+
+const ADVANTAGE_MODES: AdvantageMode[] = ["desvantagemAbsoluta", "desvantagem", "normal", "vantagem", "vantagemAbsoluta"];
+
+type TestSource = "manual" | "atributo" | "magia" | "marcial";
+
+function d20Detail(result: D20RollResult): string {
+  const rollsText = result.rolls.join(", ");
+  const modText = result.modifier === 0 ? "" : ` ${result.modifier >= 0 ? "+" : ""}${result.modifier}`;
+  const diceLabel = result.rolls.length > 1 ? `${result.rolls.length}d20 (${rollsText}) → ${result.kept}` : `d20 (${result.kept})`;
+  return `${diceLabel}${modText}`;
+}
+
+function diceDetail(result: DiceRollResult): string {
+  if (result.rolls.length === 0) return `${result.modifier >= 0 ? "+" : ""}${result.modifier}`;
+  const rollsText = result.rolls.join(" + ");
+  const modText = result.modifier === 0 ? "" : ` ${result.modifier >= 0 ? "+" : ""}${result.modifier}`;
+  return `${result.count}d${result.sides} (${rollsText})${modText}`;
+}
+
+export default function DiceRoller() {
+  const character = useActiveCharacter();
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<AdvantageMode>("normal");
+  const [testSource, setTestSource] = useState<TestSource>("manual");
+  const [attributeKey, setAttributeKey] = useState<AttributeKey>("forca");
+  const [magicTreeId, setMagicTreeId] = useState<string>("");
+  const [marcialTreeId, setMarcialTreeId] = useState<string>("");
+  const [marcialAttribute, setMarcialAttribute] = useState<AttributeKey>("forca");
+  const [testModifier, setTestModifier] = useState(0);
+  const [damageFormula, setDamageFormula] = useState("2d6");
+  const [damageModifier, setDamageModifier] = useState(0);
+  const [selectedWeaponId, setSelectedWeaponId] = useState<string>("");
+  const [log, setLog] = useState<RollLogEntry[]>([]);
+  const [lastResult, setLastResult] = useState<{ total: number; critical?: "sucesso" | "falha" | null } | null>(null);
+
+  const magicTrees = useMemo(
+    () =>
+      character.unlockedRanks
+        .map((r) => getTreeById(r.treeId))
+        .filter((t): t is NonNullable<typeof t> => !!t && t.category === "magia")
+        .filter((t, i, arr) => arr.findIndex((x) => x.id === t.id) === i),
+    [character.unlockedRanks]
+  );
+  const corpoTrees = useMemo(
+    () =>
+      character.unlockedRanks
+        .map((r) => getTreeById(r.treeId))
+        .filter((t): t is NonNullable<typeof t> => !!t && t.category === "corpo")
+        .filter((t, i, arr) => arr.findIndex((x) => x.id === t.id) === i),
+    [character.unlockedRanks]
+  );
+  const weapons = useMemo(() => character.inventory.filter((i) => i.type === "arma" && i.baseDie), [character.inventory]);
+
+  function applySource(source: TestSource, attrKey = attributeKey, treeId = magicTreeId, marcialTree = marcialTreeId, marcialAttr = marcialAttribute) {
+    if (source === "atributo") setTestModifier(getFinalAttribute(character, attrKey));
+    else if (source === "magia" && treeId) {
+      const tree = getTreeById(treeId);
+      const attr = attributeKeyFromLabel(tree?.keyAttributeLabel) ?? "intelecto";
+      setTestModifier(getAttackBonus(character, treeId, attr));
+    } else if (source === "marcial" && marcialTree) {
+      setTestModifier(getAttackBonus(character, marcialTree, marcialAttr));
+    }
+  }
+
+  function pushLog(entry: Omit<RollLogEntry, "id" | "timestamp">) {
+    setLog((prev) => [{ ...entry, id: nextRollId(), timestamp: Date.now() }, ...prev].slice(0, 40));
+    setLastResult({ total: entry.total, critical: entry.critical });
+  }
+
+  function handleRollD20() {
+    const result = rollD20(mode, testModifier);
+    let label = "Teste";
+    if (testSource === "atributo") label = `Teste de ${ATTRIBUTES.find((a) => a.key === attributeKey)?.label}`;
+    else if (testSource === "magia" && magicTreeId) label = `Ataque Mágico (${getTreeById(magicTreeId)?.name})`;
+    else if (testSource === "marcial" && marcialTreeId) label = `Ataque Marcial (${getTreeById(marcialTreeId)?.name})`;
+    if (mode !== "normal") label += ` — ${ADVANTAGE_LABELS[mode]}`;
+    pushLog({ label, detail: d20Detail(result), total: result.total, critical: result.critical });
+  }
+
+  function handleSelectWeapon(id: string) {
+    setSelectedWeaponId(id);
+    const item = weapons.find((w) => w.id === id);
+    if (!item || !item.baseDie) return;
+    const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca");
+    if (info) {
+      setDamageFormula(info.escalatedDie);
+      setDamageModifier(info.attributeValue + info.rankBonus);
+    }
+  }
+
+  function handleRollDamage() {
+    const result = rollFormula(damageFormula, damageModifier);
+    const weapon = weapons.find((w) => w.id === selectedWeaponId);
+    const label = weapon ? `Dano — ${weapon.name}` : "Dano";
+    pushLog({ label, detail: diceDetail(result), total: result.total });
+  }
+
+  const spellDcInfo =
+    testSource === "magia" && magicTreeId
+      ? getSpellDC(character, magicTreeId, attributeKeyFromLabel(getTreeById(magicTreeId)?.keyAttributeLabel) ?? "intelecto")
+      : null;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
+        title="Rolador de Dados"
+      >
+        <Dices className="h-6 w-6" />
+      </button>
+
+      {open && (
+        <div className="fixed bottom-24 right-5 z-40 flex max-h-[80vh] w-[22rem] flex-col overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 shadow-2xl dark:border-parchment-700 dark:bg-parchment-950">
+          <div className="flex items-center justify-between border-b border-parchment-300 bg-parchment-100 px-4 py-3 dark:border-parchment-800 dark:bg-parchment-900">
+            <h2 className="flex items-center gap-2 text-sm font-bold text-parchment-900 dark:text-parchment-50">
+              <Dices className="h-4 w-4 text-wine-500" /> Rolador de Dados
+            </h2>
+            <button type="button" onClick={() => setOpen(false)} className="text-parchment-400 hover:text-rose-500">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            {lastResult && (
+              <div
+                className={`mb-4 rounded-xl border p-3 text-center ${
+                  lastResult.critical === "sucesso"
+                    ? "border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/40"
+                    : lastResult.critical === "falha"
+                      ? "border-rose-400 bg-rose-50 dark:border-rose-700 dark:bg-rose-950/40"
+                      : "border-parchment-300 bg-parchment-100 dark:border-parchment-700 dark:bg-parchment-900"
+                }`}
+              >
+                <div className="text-3xl font-black text-parchment-900 dark:text-parchment-50">{lastResult.total}</div>
+                {lastResult.critical && (
+                  <div
+                    className={`text-xs font-bold uppercase tracking-wide ${
+                      lastResult.critical === "sucesso" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                    }`}
+                  >
+                    {lastResult.critical === "sucesso" ? "Crítico!" : "Falha Crítica!"}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <section className="mb-5">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+                Teste (1d20)
+              </h3>
+              <div className="mb-2 grid grid-cols-4 gap-1">
+                {(["manual", "atributo", "magia", "marcial"] as TestSource[]).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => {
+                      setTestSource(s);
+                      applySource(s);
+                    }}
+                    className={`rounded-lg px-1.5 py-1 text-[11px] font-medium capitalize transition-colors ${
+                      testSource === s
+                        ? "bg-wine-600 text-white"
+                        : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300"
+                    }`}
+                  >
+                    {s === "manual" ? "Livre" : s === "atributo" ? "Atributo" : s === "magia" ? "Magia" : "Marcial"}
+                  </button>
+                ))}
+              </div>
+
+              {testSource === "atributo" && (
+                <div className="mb-2 grid grid-cols-5 gap-1">
+                  {ATTRIBUTES.map((a) => (
+                    <button
+                      key={a.key}
+                      type="button"
+                      onClick={() => {
+                        setAttributeKey(a.key);
+                        applySource("atributo", a.key);
+                      }}
+                      className={`rounded-lg px-1 py-1 text-[11px] font-semibold ${
+                        attributeKey === a.key
+                          ? "bg-wine-500/20 text-wine-700 ring-1 ring-wine-500 dark:text-wine-300"
+                          : "bg-parchment-100 text-parchment-500 dark:bg-parchment-900"
+                      }`}
+                    >
+                      {a.short}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {testSource === "magia" && (
+                <div className="mb-2">
+                  <select
+                    value={magicTreeId}
+                    onChange={(e) => {
+                      setMagicTreeId(e.target.value);
+                      applySource("magia", attributeKey, e.target.value);
+                    }}
+                    className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                  >
+                    <option value="">Escolha uma árvore de Magia…</option>
+                    {magicTrees.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </select>
+                  {spellDcInfo !== null && (
+                    <p className="mt-1 flex items-center gap-1 text-[11px] text-parchment-500 dark:text-parchment-400">
+                      <Sparkles className="h-3 w-3" /> CD desta escola: <span className="font-semibold">{spellDcInfo}</span>
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {testSource === "marcial" && (
+                <div className="mb-2 space-y-1.5">
+                  <select
+                    value={marcialTreeId}
+                    onChange={(e) => {
+                      setMarcialTreeId(e.target.value);
+                      applySource("marcial", attributeKey, magicTreeId, e.target.value);
+                    }}
+                    className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                  >
+                    <option value="">Escolha uma árvore do Corpo…</option>
+                    {corpoTrees.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="grid grid-cols-2 gap-1">
+                    {(["forca", "agilidade"] as AttributeKey[]).map((k) => (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => {
+                          setMarcialAttribute(k);
+                          applySource("marcial", attributeKey, magicTreeId, marcialTreeId, k);
+                        }}
+                        className={`rounded-lg px-1.5 py-1 text-[11px] font-medium ${
+                          marcialAttribute === k
+                            ? "bg-wine-500/20 text-wine-700 ring-1 ring-wine-500 dark:text-wine-300"
+                            : "bg-parchment-100 text-parchment-500 dark:bg-parchment-900"
+                        }`}
+                      >
+                        {k === "forca" ? "Força" : "Agilidade"}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="flex items-center gap-1 text-[11px] text-parchment-500 dark:text-parchment-400">
+                    <Swords className="h-3 w-3" /> Acerto Físico = 1d20 + Atributo + Bônus do Rank
+                  </p>
+                </div>
+              )}
+
+              <div className="mb-2 flex items-center gap-2">
+                <label className="text-xs text-parchment-500 dark:text-parchment-400">Modificador</label>
+                <input
+                  type="number"
+                  value={testModifier}
+                  onChange={(e) => setTestModifier(Number(e.target.value))}
+                  className="w-20 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                />
+              </div>
+
+              <div className="mb-2 grid grid-cols-5 gap-1">
+                {ADVANTAGE_MODES.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setMode(m)}
+                    title={ADVANTAGE_LABELS[m]}
+                    className={`rounded-lg px-1 py-1.5 text-[10px] font-medium leading-tight ${
+                      mode === m
+                        ? "bg-wine-600 text-white"
+                        : "bg-parchment-100 text-parchment-500 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-400"
+                    }`}
+                  >
+                    {m === "desvantagemAbsoluta"
+                      ? "Desv. Abs."
+                      : m === "desvantagem"
+                        ? "Desv."
+                        : m === "normal"
+                          ? "Normal"
+                          : m === "vantagem"
+                            ? "Vant."
+                            : "Vant. Abs."}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                onClick={handleRollD20}
+                className="w-full rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500"
+              >
+                Rolar 1d20
+              </button>
+            </section>
+
+            <section className="mb-5">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+                Dano
+              </h3>
+              {weapons.length > 0 && (
+                <select
+                  value={selectedWeaponId}
+                  onChange={(e) => handleSelectWeapon(e.target.value)}
+                  className="mb-2 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                >
+                  <option value="">Dado livre…</option>
+                  {weapons.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      {w.name} ({w.baseDie})
+                    </option>
+                  ))}
+                </select>
+              )}
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={damageFormula}
+                  onChange={(e) => setDamageFormula(e.target.value)}
+                  placeholder="ex: 2d6"
+                  className="flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                />
+                <span className="text-sm text-parchment-400">+</span>
+                <input
+                  type="number"
+                  value={damageModifier}
+                  onChange={(e) => setDamageModifier(Number(e.target.value))}
+                  className="w-16 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleRollDamage}
+                className="mt-2 w-full rounded-lg bg-parchment-800 py-2 text-sm font-bold text-white transition-colors hover:bg-parchment-700 dark:bg-parchment-200 dark:text-parchment-900 dark:hover:bg-parchment-300"
+              >
+                Rolar Dano
+              </button>
+            </section>
+
+            <section>
+              <div className="mb-1 flex items-center justify-between">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+                  Histórico
+                </h3>
+                {log.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLog([]);
+                      setLastResult(null);
+                    }}
+                    className="flex items-center gap-1 text-[11px] text-parchment-400 hover:text-rose-500"
+                  >
+                    <Trash2 className="h-3 w-3" /> Limpar
+                  </button>
+                )}
+              </div>
+              {log.length === 0 ? (
+                <p className="text-xs text-parchment-400 dark:text-parchment-500">Nenhuma rolagem ainda.</p>
+              ) : (
+                <ul className="space-y-1">
+                  {log.map((entry) => (
+                    <li
+                      key={entry.id}
+                      className="flex items-center justify-between gap-2 rounded-lg bg-parchment-100 px-2 py-1.5 text-xs dark:bg-parchment-900"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-parchment-800 dark:text-parchment-200">{entry.label}</p>
+                        <p className="truncate text-[11px] text-parchment-500 dark:text-parchment-400">{entry.detail}</p>
+                      </div>
+                      <span
+                        className={`shrink-0 text-base font-bold ${
+                          entry.critical === "sucesso"
+                            ? "text-emerald-600 dark:text-emerald-400"
+                            : entry.critical === "falha"
+                              ? "text-rose-600 dark:text-rose-400"
+                              : "text-parchment-900 dark:text-parchment-50"
+                        }`}
+                      >
+                        {entry.total}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
