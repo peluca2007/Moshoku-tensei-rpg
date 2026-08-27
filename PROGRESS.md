@@ -54,6 +54,8 @@
 
 - **2026-08-27** — **Wizard de Criação Guiada** (`/criar`, `src/components/CreationWizard.tsx`): passo a passo em 8 etapas (Nome → Raça → Antecedente → Atributos → Árvore Inicial → Perícias → Equipamento → Pronto) pra quem acha a ficha completa intimidante na primeira vez. Cria um personagem novo ao entrar na página e escreve direto nas mesmas ações do `useCharacterStore` que a ficha livre já usa — nada de estado paralelo, o personagem final é idêntico ao que sairia editando a ficha manualmente, e pode ser reeditado livremente depois (mantém a Regra 2). Reaproveita `RaceBackgroundDetails` e `SkillsSection` como estão. **Passo de Atributos** implementa o sistema de defeitos do Cap. 1 (4 pontos base, +1 se reduzir um atributo a -1, +2 se reduzir outro a -2, no máximo um de cada) com um `attributeBudget()` isolado e verificado por script (7 casos: orçamento base, gasto exato, cada defeito isolado, os dois juntos, e estourar o orçamento). **Bug real encontrado no processo**: `setStartingTree` existia no store desde sessões anteriores mas *nenhum componente da UI jamais o chamava* — não havia como escolher a Árvore Inicial em lugar nenhum do site, apesar do campo existir no modelo de dados e ser exibido quando presente. Corrigido em dois lugares: o wizard (passo dedicado, que também desbloqueia o 1º patamar Principiante automaticamente) e a própria ficha (`CharacterSheet.tsx` — o antigo bloco "Árvore Inicial", que só exibia quando já preenchido, virou um `<select>` sempre visível, agrupado por pilar/subgrupo). Link "Criação Guiada" adicionado em `/personagens` ao lado de "Criar Ficha". `tsc`/`eslint` limpos; `curl` confirmou 200 e o texto esperado em `/criar`, `/personagens` e `/`.
 
+- **2026-08-27** — **Modo Apresentação** (`/apresentacao`, `src/components/PresentationMode.tsx`): tela grande e escura, pensada pra projetar num monitor/TV compartilhado na mesa física durante o combate — fundo escuro, fontes grandes, sem os controles de edição do Mestre (esses continuam em `/iniciativa`). Lê os mesmos combatentes do `useInitiativeStore` (somente leitura), ordena por Iniciativa, destaca quem está no turno atual com uma borda e a etiqueta "Agora", mostra barra de PV colorida (verde/âmbar/vermelho) e badges de condição com a duração restante. Botão de Tela Cheia usando a Fullscreen API do navegador. Estado vazio ("Aguardando o Mestre iniciar um combate") quando não há combatentes. Link "Apresentação" adicionado na navegação principal.
+
 ## Roadmap de Longo Prazo (brainstorm 2026-08-27 — Dev Sênior + Mestre de Game Design)
 
 Visão panorâmica do que falta pro sistema e pro site chegarem num nível "produto acabado". Prioridade combinada com o usuário: **rolador de dados + tracker de iniciativa** são o próximo passo imediato; o resto entra por ordem de impacto.
@@ -87,7 +89,7 @@ Visão panorâmica do que falta pro sistema e pro site chegarem num nível "prod
 - [x] ~~Wizard de criação guiada (já citado abaixo, em "O que falta" antigo).~~
 - [x] ~~Log de mudanças na ficha / desfazer.~~
 - [x] ~~Exportar/importar ficha em JSON (backup fora do localStorage).~~ Feito em 2026-08-27 (ver Changelog).
-- [ ] Modo apresentação (tela grande pra mesa física, escondendo info só do jogador).
+- [x] ~~Modo apresentação (tela grande pra mesa física, escondendo info só do jogador).~~
 - [x] ~~Atalhos de teclado e macros de rolagem customizados.~~
 - [ ] Acessibilidade (contraste, tamanho de fonte, leitor de tela).
 - [x] ~~Colocar no site as arvores tbm, na parte do livro de regras, assim fica melhor.~~
