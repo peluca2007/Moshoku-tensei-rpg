@@ -190,7 +190,7 @@ export default function Chapter4() {
         <P>
           Se acumular <b>3 Marcas da Morte</b>, você morre permanentemente. Qualquer magia de cura ou poção
           aplicada por um aliado remove todas as Marcas da Morte instantaneamente e você acorda — mas
-          acordar do Fio da Vida cobra um preço: você volta com <b>1 nível de Exaustão</b> (seção 7 deste
+          acordar do Fio da Vida cobra um preço: você volta com <b>1 nível de Exaustão</b> (seção 8 deste
           capítulo) até fazer um Descanso Longo.
         </P>
 
@@ -271,7 +271,111 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-7">7. Exaustão, Fome, Sede e Clima Extremo</SectionTitle>
+        <SectionTitle id="cap4-aflicoes">7. Aflições do Mundo de Seis Faces</SectionTitle>
+        <P>
+          Toda aflição tem uma Profundidade de 1 a 5 que sobe sozinha enquanto ninguém trata, e um mago de
+          Desintoxicação só purga o que estiver dentro do Bônus de Rank dele. Venenos agudos sobem 1 de
+          Profundidade por hora; doenças, maldições e petrificações sobem 1 por dia. Nada disso cai sozinho.
+        </P>
+
+        <SubTitle>Venenos</SubTitle>
+        <BookTable
+          headers={["Aflição", "Prof.", "Origem", "Efeito"]}
+          rows={[
+            ["Baba de Sapo-Lodo", "1", "Pântanos do Continente Central", "Envenenado por 1 hora. A primeira coisa que um aventureiro novato pega."],
+            ["Espinho da Rosa-Preta", "1", "Planta cultivada em Asura", "Sono profundo em 10 minutos. Não causa dano."],
+            ["Peçonha de Serpente-do-Pântano", "2", "Serpentes grandes", "2d6 por hora e Desvantagem em Vigor. Mata um camponês em cinco horas."],
+            ["Toxina de Aranha Gigante", "2", "Cavernas, ruínas", "Paralisia progressiva: -3m de Deslocamento por hora, cumulativo até 0."],
+            ["Fel de Wyvern", "3", "Feras voadoras do Continente Demônio", "4d8 por dia. Cega em 48 horas."],
+            ["Sombra Líquida", "4", "Assassinos profissionais", "Sem sintoma por três dias. No quarto, o coração para."],
+          ]}
+        />
+
+        <SubTitle>Aplicando um Veneno em Combate ou em Segredo</SubTitle>
+        <P>
+          A tabela acima diz o que um veneno faz depois de estar ativo. Esta seção diz como ele entra no
+          corpo de alguém — porque isso é o que a mesa realmente precisa resolver, e o que faltava aqui.
+        </P>
+        <BookTable
+          headers={["Via de aplicação", "Custo", "Como funciona"]}
+          rows={[
+            [
+              "Untar uma arma",
+              "1 Ação",
+              "Uma dose cobre uma arma corpo a corpo ou até 3 munições de longe. A dose se gasta no primeiro acerto que causar dano — acertos seguintes já saem limpos, a menos que unte de novo.",
+            ],
+            [
+              "Ingestão",
+              "Nenhum custo em Ação — é preparado fora de cena",
+              "A dose vai em comida ou bebida. Exige oportunidade e, normalmente, um teste de Enganação ou Furtividade oposto à Percepção do alvo pra passar despercebida.",
+            ],
+            [
+              "Inalação",
+              "1 Ação pra romper um frasco ou saquinho em área",
+              "Afeta todo mundo sem proteção respiratória num raio de 4,5m. Vento forte ou uma porta fechada dispersa a nuvem em 1 rodada.",
+            ],
+          ]}
+        />
+        <P>
+          Em qualquer via, a vítima só é afetada se sofrer dano da arma untada, ingerir a dose ou respirar a
+          nuvem. Nesse momento ela faz um <b>teste de resistência de Vigor</b> contra <b>CD 8 + (2 × a
+          Profundidade do veneno)</b> — a mesma lógica de CD já usada para contágio de doenças nesta seção.
+          Sucesso: a aflição some por completo, sem efeito nenhum. Falha: a aflição começa exatamente na
+          Profundidade listada na tabela e sobe sozinha a partir daí, 1 ponto por hora.
+        </P>
+        <Aside title="Exemplo rápido">
+          Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Profundidade 2) e acerta um golpe surpresa.
+          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, já entra Envenenada na Profundidade 2 — 2d6 por
+          hora e Desvantagem em Vigor — e esse relógio corre até alguém tratar com Desintoxicação ou um
+          Antídoto (Cap. 5, §4).
+        </Aside>
+
+        <SubTitle>Doenças</SubTitle>
+        <BookTable
+          headers={["Aflição", "Prof.", "Contágio", "Efeito"]}
+          rows={[
+            ["Febre de Estrada", "1", "Água parada", "1 nível de Exaustão. A mais comum do mundo."],
+            ["Podridão de Ferida", "2", "Ferimento não tratado", "PV máximos caem 5 por dia."],
+            ["Tosse Cinzenta", "2", "Ar, entre pessoas", "Desvantagem em tudo que exija fôlego."],
+            ["Peste dos Portos", "3", "Ratos, carga, navios", "3d6 por dia e contagia 1d4 pessoas próximas por dia."],
+            ["Febre de Mana", "3", "Esgotar PM a zero repetidamente", "PM máximos caem 10% por dia."],
+            ["Praga do Continente Demônio", "4", "Contato com terreno corrompido", "Pele endurece e racha. -1 em todos os atributos por semana, cumulativo."],
+          ]}
+        />
+
+        <SubTitle>Maldições e Transformações</SubTitle>
+        <BookTable
+          headers={["Aflição", "Prof.", "Origem", "Efeito"]}
+          rows={[
+            ["Marca do Sepulcro", "3", "Profanar um túmulo", "Não recupera PV por meio nenhum enquanto durar. Nem magia."],
+            ["Olhar de Basilisco", "4", "A criatura", "Petrificação em 4 turnos."],
+            ["Fome Vermelha", "4", "Mordida de certos mortos-vivos", "1 nível de Exaustão por dia que não some. Ao chegar a 6, vira o que o mordeu."],
+            ["Nome Roubado", "5", "Pactos mal fechados", "Ninguém consegue lembrar quem você é. Só um Imperador desfaz."],
+          ]}
+        />
+
+        <Warning title="O Teto — Doença da Pedra Mágica (Profundidade 6)">
+          A carne vira minério, devagar, começando pelas extremidades. Nenhum patamar deste livro alcança
+          Profundidade 6 — um Imperador de Desintoxicação consegue Selar a Maldição e congelar o avanço, e é
+          só isso que o mundo tem a oferecer. O grimório de rank Deus que curaria isso existe, catalogado no
+          Grande Templo de Millis, e ninguém consegue ler o primeiro verso.
+        </Warning>
+
+        <Aside title="Regras de Mesa">
+          <List
+            items={[
+              "Definindo a Profundidade: se a aflição não estiver na tabela, use 1 (incômodo), 2 (perigoso), 3 (grave), 4 (fatal) ou 5 (lendário).",
+              "Diagnóstico (Cura, 1º patamar) diz de que categoria é o problema. Paladar (Desintoxicação, 1º patamar) diz exatamente qual e a Profundidade.",
+              "Cura não trata nada desta seção, em rank nenhum — fecha o ferimento por onde a coisa entrou, e só. Desintoxicação, na direção oposta, também não trata dano físico: ela remove a causa (veneno, doença, maldição, petrificação), mas não fecha o corte — a carne continua aberta até Cura, uma poção ou repouso cuidarem dela.",
+              "Contágio: se uma aflição contagiosa estiver ativa no grupo ao fim de um Descanso Longo, cada personagem que dormiu perto faz teste de Vigor (CD 8 + Profundidade atual).",
+              "Ritmo: uma aflição de Profundidade 2 pegada no primeiro dia de viagem chega a 5 em três dias — é esse relógio, não o combate, que cria a urgência de uma campanha longa.",
+            ]}
+          />
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap4-8">8. Exaustão, Fome, Sede e Clima Extremo</SectionTitle>
         <P>
           O sistema já usa a condição Exaustão em dezenas de talentos, doenças e maldições sem nunca fechar
           o que ela faz de fato. Esta seção fecha essa conta.
@@ -285,7 +389,7 @@ export default function Chapter4() {
               ["3", "Desvantagem em testes de resistência."],
               ["4", "PV Máximos reduzidos à metade."],
               ["5", "Deslocamento reduzido a 0."],
-              ["6", "Morte — a menos que a fonte diga o contrário (Fome Vermelha, Apêndice D, transforma em vez de matar)."],
+              ["6", "Morte — a menos que a fonte diga o contrário (Fome Vermelha, seção 7 deste capítulo, transforma em vez de matar)."],
             ]}
           />
           <P>
