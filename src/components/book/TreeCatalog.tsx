@@ -21,7 +21,7 @@ function EntryCard({ kind, def }: { kind: "ability" | "talent"; def: AbilityDef 
   const ability = isAbility(def) ? def : null;
   const description = isAbility(def) ? def.effect : def.description;
   return (
-    <div className="rounded-lg border border-parchment-300 bg-parchment-50/80 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-950/40">
+    <div className="print-avoid-break rounded-lg border border-parchment-300 bg-parchment-50/80 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-950/40">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <p className="font-bold text-parchment-900 dark:text-parchment-50">
           {ability?.signature && <span className="text-gold-600 dark:text-gold-400">◆ </span>}
@@ -90,7 +90,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
               {label} <span className="font-normal text-parchment-500 dark:text-parchment-400">(Bônus +{RANK_BONUS[rankDef.rank]})</span>
             </SubTitle>
             {rankDef.mastery && (
-              <div className="rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
+              <div className="print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
                 <p className="font-bold text-gold-700 dark:text-gold-400">◈ Maestria: {rankDef.mastery.name}</p>
                 <p className="mt-1 text-gold-900/80 dark:text-gold-200/80">{rankDef.mastery.description}</p>
               </div>
@@ -108,7 +108,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
         <div className="space-y-2">
           <SubTitle id={`${tree.id}-rank-deus`}>◈ Rank Deus</SubTitle>
           <p className="text-xs italic text-parchment-500 dark:text-parchment-400">Narrativo. Não se compra.</p>
-          <div className="rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
+          <div className="print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
             <p className="font-bold text-gold-700 dark:text-gold-400">◈ {rankDeus.title}</p>
             {rankDeus.body.map((paragraph, i) => (
               <p key={i} className="mt-2 leading-relaxed text-gold-900/80 dark:text-gold-200/80">
