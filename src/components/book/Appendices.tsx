@@ -165,6 +165,16 @@ export default function Appendices() {
           q="Posso preparar algo no meio de um combate?"
           a="Pode. O fato é sempre passado — você está revelando, não fazendo. Mas ele tem que caber no que você teve tempo e motivo de fazer antes da cena começar."
         />
+
+        <SubTitle>Sobre a Guilda e Combinações Novas</SubTitle>
+        <QA
+          q="Meu Rank de Guilda sobe sozinho conforme eu gasto PA?"
+          a="Não. Rank de Guilda é decisão do Mestre sobre feitos públicos (Cap. 5, §2) — PA gasto não move esse marcador, só o das suas Árvores de Progressão."
+        />
+        <QA
+          q="Posso combinar uma magia com uma técnica de Corpo ou Utilidade, não só magia com magia?"
+          a="Pode — desde Rank Avançado nas duas árvores envolvidas, pagando o custo de cada lado (Cap. 2, §4, 'Combinações Além da Magia')."
+        />
       </Section>
 
       <Section>
