@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mushoku Tensei RPG
 
-## Getting Started
+Sistema de RPG de mesa homebrew ambientado no mundo de _Mushoku Tensei_, com uma ficha digital feita pra apoiar a mesa (não substituir o livro).
 
-First, run the development server:
+## Estrutura do projeto
+
+- **`livro.typ`** — o livro de regras completo, em [Typst](https://typst.app). É a **única fonte de verdade** do sistema: toda regra, magia, talento, raça e ponto de balanceamento nasce aqui. Compile em [typst.app](https://typst.app) ou localmente (`npx typst compile livro.typ`) pra gerar o PDF.
+- **Site** (Next.js) — ficha de personagem digital com foco em qualidade de vida pra Mestre e jogadores: edição livre de qualquer valor, cálculo automático de PV/PM/PT/CA/dano, mapa de árvores de progressão navegável, grimório com busca, exportação de ficha em PDF, e um livro de regras navegável (`/livro`) que espelha o `livro.typ` sem duplicar o conteúdo.
+- **`PROGRESS.md`** — changelog e roadmap do projeto: o que já foi feito, o que está pendente e as decisões de design tomadas ao longo do caminho. Consulte antes de propor uma mudança grande — é provável que a motivação de uma regra já esteja documentada ali.
+
+## Rodando o site localmente
+
+Requer Node.js 20+.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000). A ficha ativa fica salva no navegador (`localStorage`) — nada é enviado a um servidor.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Outros comandos úteis:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build   # build de produção
+npm run lint    # eslint
+npx tsc --noEmit -p .   # typecheck
+```
 
-## Learn More
+## Principais rotas
 
-To learn more about Next.js, take a look at the following resources:
+| Rota | O que é |
+|---|---|
+| `/` | Ficha do personagem ativo |
+| `/personagens` | Lista de fichas (criar, abrir, renomear, excluir) |
+| `/arvores` | Mapa radial das árvores de progressão |
+| `/livro` | Livro de regras navegável (Cap. 1, 2, 4, Apêndices) |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Next.js (App Router) + TypeScript + Tailwind CSS v4 + Zustand (com persistência em `localStorage`). Exportação de PDF via o pacote [`typst`](https://www.npmjs.com/package/typst) (binário nativo, sem precisar de Rust instalado).
 
-## Deploy on Vercel
+## Contribuindo
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Qualquer regra, magia, talento ou número de balanceamento nasce em `livro.typ` — nunca hardcoded só no código do site. Se uma mudança no site expõe uma lacuna de regra (ex: falta uma proficiência, uma perícia não existe na lista oficial), a correção é feita **no livro primeiro**, e o site só reflete o que já está escrito lá.
