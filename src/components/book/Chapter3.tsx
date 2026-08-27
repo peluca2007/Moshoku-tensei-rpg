@@ -283,6 +283,49 @@ export default function Chapter3() {
             ]}
           />
         </Aside>
+
+        <SubTitle id="cap3-utilidade-combate">As Três Árvores em Combate</SubTitle>
+        <P>
+          A pergunta que todo jogador de Utilidade faz na terceira sessão é &ldquo;e eu, faço o quê?&rdquo;.
+          Aqui está a resposta, lado a lado.
+        </P>
+        <BookTable
+          headers={["Turno", "Ladino", "Bardo", "Tático"]}
+          rows={[
+            ["Antes", "Já sabotou o ambiente.", "Já sabe o que cada um quer.", "Já escolheu o terreno."],
+            ["1º", "Primeiro Golpe — seu pico de dano do combate inteiro.", "Canção de Guerra — e ela dura o resto da luta de graça.", "Primeiro a Ver — o grupo age antes e na ordem que você quis."],
+            ["2º", "Ponto Cego — derruba a viga, tranca os reforços.", "Insulto que Fica — puxa o inimigo mais perigoso para longe do mago.", "Manobra — reposiciona três aliados sem gastar as Ações deles."],
+            ["3º", "Veneno, roubo do item-chave, Dano Furtivo.", "Coro — pavor, fúria ou devoção em 18 metros.", "Avante — Ação extra para o grupo inteiro."],
+            ["4º", "Passo Vazio e reposicionamento.", "Sustenta, inspira, mantém todos de pé.", "Foco de Fogo e leitura da ordem de Iniciativa."],
+            ["Nunca", "Trocar golpes na linha de frente.", "Ficar ao alcance de quem ele provocou.", "Achar que precisa causar dano."],
+          ]}
+        />
+        <P>
+          <b>A régua honesta:</b> contra um Norte Imperador batendo 81 por turno, os três juntos talvez somem
+          30 de dano direto na luta inteira. E ainda assim eles são a razão de o combate ter começado com o
+          grupo em cima do telhado, os reforços trancados do lado de fora, metade dos inimigos apavorados, e o
+          chefe já sabendo que perdeu.
+        </P>
+        <P>
+          <b>O teste do Apêndice B, aplicado às três:</b> cada árvore precisa ter, no patamar alto, ao menos
+          uma habilidade que um mago Imperador não replica com magia nenhuma. Não Estive Aqui derrota
+          adivinhação divina. A História Oficial decide o que o mundo acredita. A Guerra Já Acabou cancela um
+          confronto antes de ele existir. Zero Absoluto não te consegue um informante, não te dá reputação, e
+          não impede que o exército chegue.
+        </P>
+        <Aside title="Para o Mestre: como recompensar os três">
+          <P>
+            Dano é fácil de medir — está na ficha, em números. O valor da Utilidade não está, e por isso é
+            fácil um Mestre esquecer de recompensá-lo. Três hábitos resolvem isso:
+          </P>
+          <List
+            items={[
+              "Narre a ausência do problema. Se o Ladino sabotou os reforços, diga em voz alta que eles não vieram — não deixe o efeito passar em silêncio.",
+              "Dê PA por Preparação bem usada, do mesmo jeito que se dá por dano bem causado. A régua é a mesma: fez a mesa avançar, mereceu.",
+              "Cobre a complicação que você mesmo anexou. Se o Mestre disse que o informante viu o Ladino, esse informante precisa aparecer de novo — e virar problema, mais cedo ou mais tarde.",
+            ]}
+          />
+        </Aside>
       </Section>
 
       <Section>
