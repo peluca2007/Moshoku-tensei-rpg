@@ -200,6 +200,7 @@ export default function CreationWizard() {
                       <button
                         type="button"
                         onClick={() => adjustAttribute(key, -1)}
+                        aria-label={`Diminuir ${label}`}
                         className="flex h-7 w-7 items-center justify-center rounded-full bg-parchment-200 font-bold text-parchment-700 hover:bg-parchment-300 dark:bg-parchment-800 dark:text-parchment-200"
                       >
                         −
@@ -208,6 +209,7 @@ export default function CreationWizard() {
                       <button
                         type="button"
                         onClick={() => adjustAttribute(key, 1)}
+                        aria-label={`Aumentar ${label}`}
                         className="flex h-7 w-7 items-center justify-center rounded-full bg-wine-500/20 font-bold text-wine-700 hover:bg-wine-500/30 dark:text-wine-300"
                       >
                         +

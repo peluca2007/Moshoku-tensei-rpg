@@ -72,6 +72,7 @@ export default function SkillsSection({
             <button
               type="button"
               onClick={() => useCharacterStore.getState().removeSkill(skill)}
+              aria-label={`Remover perícia ${skill}`}
               className="text-parchment-400 hover:text-rose-500"
             >
               <X className="h-3 w-3" />
@@ -91,6 +92,7 @@ export default function SkillsSection({
           onKeyDown={(e) => e.key === "Enter" && addSkill()}
           placeholder="Ex: Arcanismo"
           title="Escolha da Lista Mestre (Cap. 1) ou digite uma perícia de homebrew"
+          aria-label="Nova perícia"
           className="flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
         />
         <datalist id="skill-master-list">

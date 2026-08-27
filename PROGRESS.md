@@ -56,6 +56,8 @@
 
 - **2026-08-27** — **Modo Apresentação** (`/apresentacao`, `src/components/PresentationMode.tsx`): tela grande e escura, pensada pra projetar num monitor/TV compartilhado na mesa física durante o combate — fundo escuro, fontes grandes, sem os controles de edição do Mestre (esses continuam em `/iniciativa`). Lê os mesmos combatentes do `useInitiativeStore` (somente leitura), ordena por Iniciativa, destaca quem está no turno atual com uma borda e a etiqueta "Agora", mostra barra de PV colorida (verde/âmbar/vermelho) e badges de condição com a duração restante. Botão de Tela Cheia usando a Fullscreen API do navegador. Estado vazio ("Aguardando o Mestre iniciar um combate") quando não há combatentes. Link "Apresentação" adicionado na navegação principal.
 
+- **2026-08-27** — **Acessibilidade: auditoria de nome acessível em botões só-com-ícone (parcial).** Um agente de pesquisa mapeou todo `<button>`/`<input>` do site: nenhum `<div onClick>`/`role="button"` fora de elemento nativo (bom sinal), mas `aria-label` era usado **zero vezes** em todo o código — todo botão que só tem um ícone lucide (fechar painel, remover item, zoom, apagar macro, etc.) ficava mudo pra leitor de tela, mesmo quando tinha `title`. Corrigidos ~20 casos em `DestinyBoard.tsx`, `DiceRoller.tsx`, `InitiativeTracker.tsx`, `SkillsSection.tsx`, `CharacterSheet.tsx`, `CharacterRoster.tsx`, `ThemeToggle.tsx`, `InventorySection.tsx` e `CreationWizard.tsx` — cada `aria-label` usa o nome específico do item quando disponível (ex.: "Remover Sapo-Lodo Gigante do combate", não só "Remover"), em vez de um rótulo genérico repetido. Também adicionado `aria-label` aos inputs mais visíveis que dependiam só de `placeholder` (nome do personagem, busca do grimório, fórmula/modificador de dano, nome/fórmula de macro, condição de combate). **Não incluído nesta passada** (registrado como pendência, não como feito): `htmlFor`/`id` pairing nos formulários que já têm `<label>` visível mas só por proximidade no DOM (`InventorySection.tsx`, `CharacterSheet.tsx`, `InitiativeTracker.tsx`), contraste de cores, tamanho de fonte ajustável, e teste real com leitor de tela — nenhum desses foi verificado nem implementado. `tsc`/`eslint` limpos; `curl` confirmou os `aria-label` presentes no HTML renderizado.
+
 ## Roadmap de Longo Prazo (brainstorm 2026-08-27 — Dev Sênior + Mestre de Game Design)
 
 Visão panorâmica do que falta pro sistema e pro site chegarem num nível "produto acabado". Prioridade combinada com o usuário: **rolador de dados + tracker de iniciativa** são o próximo passo imediato; o resto entra por ordem de impacto.
@@ -91,7 +93,7 @@ Visão panorâmica do que falta pro sistema e pro site chegarem num nível "prod
 - [x] ~~Exportar/importar ficha em JSON (backup fora do localStorage).~~ Feito em 2026-08-27 (ver Changelog).
 - [x] ~~Modo apresentação (tela grande pra mesa física, escondendo info só do jogador).~~
 - [x] ~~Atalhos de teclado e macros de rolagem customizados.~~
-- [ ] Acessibilidade (contraste, tamanho de fonte, leitor de tela).
+- [ ] Acessibilidade (contraste, tamanho de fonte, leitor de tela). **Parcial em 2026-08-27** — ver changelog: auditoria de nome acessível em botões só-com-ícone concluída; contraste, tamanho de fonte ajustável e leitura de tela seguem em aberto.
 - [x] ~~Colocar no site as arvores tbm, na parte do livro de regras, assim fica melhor.~~
 
 ## O que já está pronto
