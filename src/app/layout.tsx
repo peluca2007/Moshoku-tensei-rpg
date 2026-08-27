@@ -47,6 +47,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/mestre" className="hover:text-wine-600 dark:hover:text-wine-400">
               Mestre
             </Link>
+            <Link href="/apresentacao" className="hover:text-wine-600 dark:hover:text-wine-400">
+              Apresentação
+            </Link>
             <Link href="/livro" className="hover:text-wine-600 dark:hover:text-wine-400">
               Livro de Regras
             </Link>
