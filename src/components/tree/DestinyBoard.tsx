@@ -213,10 +213,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
 
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_320px]">
-      <div
-        className="relative overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 shadow-sm dark:border-parchment-800 dark:bg-parchment-950"
-        style={{ height: 640 }}
-      >
+      <div className="relative h-[70vh] min-h-[420px] overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 shadow-sm dark:border-parchment-800 dark:bg-parchment-950 sm:h-[640px]">
         <div
           ref={viewportRef}
           className="h-full w-full cursor-grab touch-none active:cursor-grabbing"
