@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, Sparkles, ScrollText } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById, RACES } from "@/data/races";
-import { getBackgroundById, BACKGROUNDS } from "@/data/backgrounds";
+import { getBackgroundById, getSubtableEntryById, BACKGROUNDS } from "@/data/backgrounds";
 import { drawInterviewQuestions, resolveInterview, InterviewQuestion, InterviewOption } from "@/data/interview";
-import { rollRandomAttributes } from "@/lib/randomCharacter";
+import { rollRandomAttributes, rollRandomSubtableEntry } from "@/lib/randomCharacter";
 import { ATTRIBUTES } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
@@ -35,6 +35,9 @@ export default function CreationInterview() {
   const character = useActiveCharacter();
   const race = getRaceById(character.raceId);
   const background = getBackgroundById(character.backgroundId);
+  const chosenSubtable = background?.requiresSubtable
+    ? getSubtableEntryById(background.requiresSubtable, character.subtableEntryId)
+    : undefined;
 
   function answer(option: InterviewOption) {
     const nextAnswers = [...answers, option];
@@ -47,6 +50,10 @@ export default function CreationInterview() {
     const result = resolveInterview(nextAnswers, RACE_IDS, BACKGROUND_IDS);
     useCharacterStore.getState().setRace(result.raceId);
     useCharacterStore.getState().setBackground(result.backgroundId);
+    const resultBackground = BACKGROUNDS.find((b) => b.id === result.backgroundId);
+    if (resultBackground?.requiresSubtable) {
+      useCharacterStore.getState().setSubtableEntry(rollRandomSubtableEntry(resultBackground.requiresSubtable));
+    }
     const attrs = rollRandomAttributes();
     for (const { key } of ATTRIBUTES) {
       useCharacterStore.getState().setAttribute(key, attrs[key]);
@@ -114,7 +121,7 @@ export default function CreationInterview() {
             <div className="mb-4 rounded-xl bg-wine-500/10 p-3 text-sm text-wine-700 dark:text-wine-300">
               O Destino falou: <b>{race?.name}</b>, <b>{background?.name}</b>.
             </div>
-            <RaceBackgroundDetails race={race} background={background} />
+            <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
             <h2 className="mb-1 mt-4 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha sua Árvore Inicial</h2>
             <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
               Cap. 1, seção 4 — desbloqueia o 1º patamar dela de graça e libera um kit de equipamento inicial.

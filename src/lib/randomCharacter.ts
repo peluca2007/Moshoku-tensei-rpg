@@ -1,10 +1,37 @@
 import { AttributeKey, ATTRIBUTES, ATTRIBUTE_CREATION_MAX } from "./types";
 import { RACES } from "@/data/races";
-import { BACKGROUNDS } from "@/data/backgrounds";
+import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
 
-/** Sorteia um resultado de raça pra Via 2/3 de criação — todas as raças têm o mesmo peso, como um dado justo. */
+/**
+ * Peso de sorteio por raça — quanto mais forte mecanicamente, mais raro sortear (Via 2/3).
+ * Raças míticas (peso 0) nunca saem no sorteio: só dá pra pegá-las na Via 1 (Manual), com
+ * aprovação do Mestre, exatamente como o próprio texto da Raça Dragão já exige.
+ */
+const RACE_WEIGHT: Record<string, number> = {
+  humano: 5,
+  hobbit: 5,
+  oceano: 5,
+  elfo: 3,
+  anao: 3,
+  "raca-fera": 3,
+  celestial: 3,
+  migurd: 2,
+  superd: 2,
+  ogro: 2,
+  "demonio-imortal": 2,
+  dragao: 0,
+};
+
+/** Sorteia um resultado de raça pra Via 2/3 — pesado por raridade (ver RACE_WEIGHT), nunca uniforme. */
 export function rollRandomRace(): string {
-  return RACES[Math.floor(Math.random() * RACES.length)].id;
+  const pool = RACES.filter((r) => (RACE_WEIGHT[r.id] ?? 1) > 0);
+  const totalWeight = pool.reduce((sum, r) => sum + (RACE_WEIGHT[r.id] ?? 1), 0);
+  let roll = Math.random() * totalWeight;
+  for (const race of pool) {
+    roll -= RACE_WEIGHT[race.id] ?? 1;
+    if (roll <= 0) return race.id;
+  }
+  return pool[pool.length - 1].id;
 }
 
 /** Rola 1d100 na tabela de Antecedentes do Cap. 1 (mesmo rollRange já usado no livro) — respeita o peso canônico de cada resultado. */
@@ -51,17 +78,28 @@ export function rollRandomAttributes(): Record<AttributeKey, number> {
   return base;
 }
 
+/** Rola a subtabela de Miko (1d8) ou Olho Místico (1d10) — cada resultado tem o mesmo peso, como o dado físico que ela representa. */
+export function rollRandomSubtableEntry(table: "miko" | "olho"): string {
+  const source = table === "miko" ? MIKO_TABLE : OLHO_TABLE;
+  return source[Math.floor(Math.random() * source.length)].id;
+}
+
 export interface RandomCharacterResult {
   raceId: string;
   backgroundId: string;
+  /** Preenchido só quando o Antecedente sorteado exige subtabela (Miko ou Olho Místico). */
+  subtableEntryId: string | null;
   attributeBase: Record<AttributeKey, number>;
 }
 
-/** Via 2 (Roleta): gira raça, antecedente e atributos de uma vez — o jogador só escolheu Árvore Inicial e Perícias antes disso. */
+/** Via 2 (Roleta): gira raça, antecedente, subtabela (se aplicável) e atributos de uma vez. */
 export function rollRandomCharacter(): RandomCharacterResult {
+  const backgroundId = rollRandomBackground();
+  const background = BACKGROUNDS.find((b) => b.id === backgroundId);
   return {
     raceId: rollRandomRace(),
-    backgroundId: rollRandomBackground(),
+    backgroundId,
+    subtableEntryId: background?.requiresSubtable ? rollRandomSubtableEntry(background.requiresSubtable) : null,
     attributeBase: rollRandomAttributes(),
   };
 }
