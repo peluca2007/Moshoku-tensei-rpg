@@ -115,6 +115,45 @@ export default function Appendices() {
           ]}
         />
 
+        <SubTitle>Aplicando um Veneno em Combate ou em Segredo</SubTitle>
+        <P>
+          A tabela acima diz o que um veneno faz depois de estar ativo. Esta seção diz como ele entra no
+          corpo de alguém — porque isso é o que a mesa realmente precisa resolver, e o que faltava aqui.
+        </P>
+        <BookTable
+          headers={["Via de aplicação", "Custo", "Como funciona"]}
+          rows={[
+            [
+              "Untar uma arma",
+              "1 Ação",
+              "Uma dose cobre uma arma corpo a corpo ou até 3 munições de longe. A dose se gasta no primeiro acerto que causar dano — acertos seguintes já saem limpos, a menos que unte de novo.",
+            ],
+            [
+              "Ingestão",
+              "Nenhum custo em Ação — é preparado fora de cena",
+              "A dose vai em comida ou bebida. Exige oportunidade e, normalmente, um teste de Enganação ou Furtividade oposto à Percepção do alvo pra passar despercebida.",
+            ],
+            [
+              "Inalação",
+              "1 Ação pra romper um frasco ou saquinho em área",
+              "Afeta todo mundo sem proteção respiratória num raio de 4,5m. Vento forte ou uma porta fechada dispersa a nuvem em 1 rodada.",
+            ],
+          ]}
+        />
+        <P>
+          Em qualquer via, a vítima só é afetada se sofrer dano da arma untada, ingerir a dose ou respirar a
+          nuvem. Nesse momento ela faz um <b>teste de resistência de Vigor</b> contra <b>CD 8 + (2 × a
+          Profundidade do veneno)</b> — a mesma lógica de CD já usada para contágio de doenças neste
+          apêndice. Sucesso: a aflição some por completo, sem efeito nenhum. Falha: a aflição começa
+          exatamente na Profundidade listada na tabela e sobe sozinha a partir daí, 1 ponto por hora.
+        </P>
+        <Aside title="Exemplo rápido">
+          Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Profundidade 2) e acerta um golpe surpresa.
+          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, já entra Envenenada na Profundidade 2 — 2d6 por
+          hora e Desvantagem em Vigor — e esse relógio corre até alguém tratar com Desintoxicação ou um
+          Antídoto (Apêndice L).
+        </Aside>
+
         <SubTitle>Doenças</SubTitle>
         <BookTable
           headers={["Aflição", "Prof.", "Contágio", "Efeito"]}
@@ -431,6 +470,31 @@ export default function Appendices() {
           Ao fim do Desfecho: o lado com Moral 0 foge ou se rende, mesmo vencendo em Força; o lado com Força
           0 está destruído; se nenhum chegar a 0, vence quem tiver a maior soma de Força + Moral.
         </P>
+
+        <SubTitle>Exemplo Resolvido — O Cerco de Roa</SubTitle>
+        <P>
+          O grupo defende a cidade portuária de Roa contra um exército invasor. <b>Defensores:</b> Força 6,
+          Moral 6, Suprimento 3 (a cidade, abastecida). <b>Invasores:</b> Força 8, Moral 5, Suprimento 2 (vieram
+          de longe, e a comida já está curta).
+        </P>
+        <List
+          items={[
+            "Abertura — Antes do primeiro golpe, o Ladino do grupo já havia sabotado o comboio de suprimentos inimigo durante o Downtime (Apêndice F). O Mestre zera o Suprimento invasor: Suprimento 0.",
+            "Abertura, efeito automático de fase — com Suprimento 0, o invasor perde 1 de Força automaticamente. Invasores: Força 7, Moral 5, Suprimento 0.",
+            "Embate — o mago de Fogo do grupo conjura uma magia de área Imperador contra a linha de frente inimiga: -3 de Força. Invasores: Força 4.",
+            "Embate — o Bardo do grupo canta pros defensores na muralha: +2 de Moral própria. Defensores: Moral 8 (o Mestre trava o teto narrativo em 8, já que a escala nasceu de 6).",
+            "Embate, resposta do Mestre — o comandante invasor manda um grupo de elite escalar a muralha à noite pra forçar um combate pessoal contra o grupo, tentando virar o jogo antes do Desfecho.",
+            "Esse combate de elite é resolvido com as regras normais do Capítulo 4, não com os três números do exército — é exatamente o caso que o aviso abaixo cobre. O grupo vence o duelo.",
+            "Desfecho — vencer o duelo em público custa -3 de Moral ao invasor: Moral 2. Suprimento continua 0, então o invasor perde mais 1 de Força: Força 3.",
+            "Resultado final — Defensores: Força 6, Moral 8, Suprimento 3. Invasores: Força 3, Moral 2, Suprimento 0. Nenhum lado chegou a 0, mas a diferença (14 contra 5) é grande o bastante pro Mestre narrar a retirada invasora sem precisar de mais uma fase.",
+          ]}
+        />
+        <Aside title="O que esse exemplo mostra">
+          Nenhum dado de exército foi rolado — cada mudança veio de uma escolha de um personagem específico
+          (sabotagem, magia de área, canção, duelo) traduzida num número fixo pelo Mestre. É assim que o
+          apêndice deve rodar na mesa: a ficção decide o número, o número nunca decide a ficção.
+        </Aside>
+
         <Warning title="Isto não substitui o Capítulo 4">
           Se um personagem entra em combate individual contra um alvo específico, resolva com as regras
           normais de combate. O sistema de exército só existe pra tudo em volta que não vale a pena virar
@@ -479,30 +543,45 @@ export default function Appendices() {
 
       <Section>
         <SectionTitle id="apendice-l">L. Crafting e Alquimia</SectionTitle>
+        <SubTitle>Como Funciona o Crafting</SubTitle>
         <P>
-          Quem tem a Perícia de Ofícios ligada ao que quer fazer já pode produzir coisas fora de combate,
-          usando a atividade Estudar um Ofício ou Ritual do Downtime (Apêndice F).
+          Quatro perguntas resolvem qualquer fabricação deste apêndice: quem pode fazer, quanto tempo leva,
+          quanto custa em materiais e o que acontece se o teste falhar. As respostas são sempre as mesmas
+          quatro regras abaixo — as tabelas de Poções, Venenos e Encantamentos só preenchem os números.
         </P>
+        <List
+          items={[
+            "Quem: qualquer personagem com a Perícia de Ofícios (especializada em Alquimia, pra Poções e Venenos) ligada ao item. Encantamento é diferente — exige um encantador vivo no Rank de árvore listado na tabela, não a Perícia de Ofícios.",
+            "Tempo: 1 bloco de Downtime (Apêndice F, atividade Estudar um Ofício ou Ritual) por item, salvo quando a tabela disser outro valor.",
+            "Custo em materiais: metade do valor listado na coluna de Custo — a mesma proporção que a regra de Downtime já usa pra qualquer produção. O valor cheio da coluna é o preço de venda, não o de fabricação.",
+            "Teste: role Ofícios (ou o teste do encantador) contra a CD da tabela ao fim do bloco. Sucesso: o item fica pronto. Falha: os materiais se perdem, mas o bloco de Downtime já foi gasto — tente de novo no próximo. Falha crítica (1 no dado): metade dos materiais é recuperável.",
+          ]}
+        />
         <SubTitle>Poções</SubTitle>
         <P>Uma poção reproduz o efeito de uma magia de Cura ou Desintoxicação já existente no livro, engarrafado.</P>
         <BookTable
-          headers={["Poção", "Custo em PO", "Efeito"]}
+          headers={["Poção", "CD de Ofícios", "Custo (venda / fabricação)", "Efeito"]}
           rows={[
-            ["Poção Menor de Cura", "15 PO", "Reproduz uma magia de Cura de rank Principiante ou Intermediário, sem precisar de mago presente."],
-            ["Poção de Antídoto", "25 PO", "Remove 1 ponto de Profundidade de uma única aflição (Apêndice D)."],
-            ["Poção Maior de Cura", "60 PO", "Reproduz uma magia de Cura de rank Avançado ou Santo."],
-            ["Elixir de Foco", "40 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
+            ["Poção Menor de Cura", "11", "15 PO / 8 PO", "Reproduz uma magia de Cura de rank Principiante ou Intermediário, sem precisar de mago presente."],
+            ["Poção de Antídoto", "13", "25 PO / 13 PO", "Remove 1 ponto de Profundidade de uma única aflição (Apêndice D)."],
+            ["Poção Maior de Cura", "15", "60 PO / 30 PO", "Reproduz uma magia de Cura de rank Avançado ou Santo."],
+            ["Elixir de Foco", "13", "40 PO / 20 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
           ]}
         />
         <SubTitle>Venenos</SubTitle>
-        <P>Fabricar veneno é conseguir uma dose de uma aflição já catalogada no Apêndice D.</P>
+        <P>
+          Fabricar veneno é produzir uma dose de uma aflição já catalogada no Apêndice D — a CD de Ofícios
+          sobe junto com a Profundidade, porque manusear algo mais perigoso sem se envenenar no processo é
+          mais difícil. Como aplicar a dose em alguém está no Apêndice D, seção &ldquo;Aplicando um Veneno em
+          Combate ou em Segredo&rdquo;.
+        </P>
         <BookTable
-          headers={["Profundidade", "Exemplo", "Custo típico"]}
+          headers={["Profundidade", "Exemplo", "CD de Ofícios", "Custo (venda / fabricação)"]}
           rows={[
-            ["1", "Baba de Sapo-Lodo", "5 PO"],
-            ["2", "Peçonha de Serpente-do-Pântano", "20 PO"],
-            ["3", "Fel de Wyvern", "80 PO"],
-            ["4+", "Praga do Continente Demônio", "Não está à venda — só se rouba, caça ou herda."],
+            ["1", "Baba de Sapo-Lodo", "10", "5 PO / 3 PO"],
+            ["2", "Peçonha de Serpente-do-Pântano", "12", "20 PO / 10 PO"],
+            ["3", "Fel de Wyvern", "14", "80 PO / 40 PO"],
+            ["4+", "Praga do Continente Demônio", "16+", "Não está à venda — só se rouba, caça ou herda."],
           ]}
         />
         <Warning title="A lei e o veneno">
@@ -510,13 +589,28 @@ export default function Appendices() {
           Reputação (Apêndice I) com a facção local automaticamente.
         </Warning>
         <SubTitle>Encantamento de Arma e Armadura</SubTitle>
+        <P>
+          Encantar não é uma Perícia de Ofícios — é um serviço prestado por um mago que já alcançou o Rank
+          exigido numa árvore compatível com o efeito (dano elemental pede a Magia daquele elemento;
+          resistência e CA pedem Barreira; qualquer efeito genérico aceita Invocação). Um personagem só
+          encanta os próprios itens se tiver esse Rank; caso contrário, é preciso encontrar e pagar um NPC
+          encantador — o que normalmente é um gancho de campanha, não uma visita à loja.
+        </P>
         <BookTable
-          headers={["Efeito", "Rank exigido no encantador", "Custo em PO"]}
+          headers={["Efeito", "Rank exigido no encantador", "Tempo", "Custo em PO"]}
           rows={[
-            ["+1 no Dado de Arma ou +1 na CA", "Avançado", "150 PO"],
-            ["Dano elemental extra (+1d6, tipo à escolha)", "Santo", "300 PO"],
-            ["Ignora Resistência a um tipo de dano", "Rei", "600 PO"],
-            ["+1 no Bônus de Rank pra fins de Dado de Arma", "Imperador", "1500 PO"],
+            ["+1 no Dado de Arma ou +1 na CA", "Avançado", "1 bloco", "150 PO"],
+            ["Dano elemental extra (+1d6, tipo à escolha)", "Santo", "2 blocos", "300 PO"],
+            ["Ignora Resistência a um tipo de dano", "Rei", "4 blocos", "600 PO"],
+            ["+1 no Bônus de Rank pra fins de Dado de Arma", "Imperador", "8 blocos", "1500 PO"],
+          ]}
+        />
+        <List
+          items={[
+            "Um item só carrega um encantamento por vez. Encantar de novo substitui o anterior — o efeito antigo não some primeiro para depois voltar; some pra sempre.",
+            "O custo em PO acima já é o total (materiais + o trabalho do encantador) — não se aplica a divisão por metade do Downtime comum, porque não é o próprio personagem fazendo o trabalho manual.",
+            "O item-base (a arma ou armadura sem encantamento) precisa existir e estar em posse do encantador durante todo o tempo listado — ele não trabalha à distância.",
+            "Não existe teste de falha aqui: se o encantador tem o Rank exigido, tempo e PO cobrem o serviço inteiro. O único jeito de um encantamento falhar é o Mestre decidir que os materiais raros da campanha ainda não foram conseguidos — nesse caso, PO sozinho não compra o item.",
           ]}
         />
         <SubTitle>Itens Mágicos Únicos — O Anel de Teleporte como Prova de Conceito</SubTitle>
