@@ -167,6 +167,52 @@ Visão panorâmica do que falta pro sistema e pro site chegarem num nível "prod
 
 ## O que falta / pendente
 
+### 2026-08-27 — Achados em aberto da "Revisão dos Quatro Especialistas"
+
+Revisão completa do livro (Cap. 1-5 + Apêndices A-G) e do site inteiro, feita em 5 passes
+paralelos (Game Designer, Revisor Didático, Diretor Criativo, Full Stack). Os bugs confirmados
+já foram corrigidos e commitados na própria sessão (ver entradas de changelog acima, datadas
+2026-08-27, a partir de "Bug real corrigido: exportação em PDF"). **Esta lista é só o que ficou
+de fato pendente** — coisas que pedem uma decisão de design ou um esforço maior, não bugs.
+Relatório completo com todo o detalhe e o texto pronto pra cada item:
+[artifact "Revisão dos Quatro Especialistas"](https://claude.ai/code/artifact/2f066569-aba4-4900-b445-6dd89763bba3)
+(ou `action: "list"`/`"read"` na tool de Artifact se o link expirar).
+
+**Decisões de design que pedem escolha do usuário (não são "certo/errado"):**
+- Cap. 2 §3: Conjuração Silenciosa Principiante diz "a 1ª Ação do turno é gratuita", mas o Cap. 4
+  §3 diz "não existe ação bônus neste sistema" — contradição real. Recomendação: tratar como
+  exceção documentada (como a exceção do Deus da Espada com Touki), citando-a no Cap. 4 §3, em
+  vez de cortar a regra.
+- Cap. 4 §6: CD 10 fixa do Fio da Vida fica trivial em rank alto (Imperador quase nunca falha) —
+  o oposto do esperado. Sugestão: `CD 10, ou 8 + Bônus de Rank de quem derrubou você (o maior)`.
+- Cap. 4 §8: Exaustão Nível 6 (Morte) é o único mecanismo letal do capítulo sem teste de
+  resistência nenhum. Ou adicionar um teste de Vigor na transição 5→6, ou declarar a exceção
+  explicitamente.
+- Cap. 1 §2: curva de PA de Talento (`RANK_PA_COST.talent`) tem um platô em Rei=Santo=3, a única
+  das 3 colunas que não sobe estritamente por rank.
+
+**Conteúdo novo que vale escrever (maior esforço, não é ajuste de frase):**
+- Estilo Vendaval (`vendaval.ts`) é a única árvore do Corpo sem um quadro de Rank Deus/caminho de
+  ascensão — as outras 17 têm. Precisa do mesmo nível de trabalho autoral dos 14 quadros já
+  escritos (`src/data/rankDeus.ts`).
+- Apêndice G (Bestiário): falta uma criatura de 6º patamar (Lenda) — só tem até o 5º. Conceito já
+  esboçado no relatório ("Ancião Demônio Esquecido").
+- Cap. 5 §3 (Reputação): falta a Universidade de Ranoa como 4ª facção — precisa de uma linha nova
+  em duas tabelas.
+- `DiceRoller.tsx`: macros só suportam fórmula de Dano, não Teste (1d20 com Vantagem/Desvantagem)
+  — limita bastante o ganho de velocidade em combate. Precisa mudar o shape salvo em
+  `useMacroStore` (persistido em `localStorage`) + migração leve pros macros já salvos.
+
+**Polimento de texto/didático, baixo risco, texto já pronto no relatório** (não aplicado só por
+volume, não por dúvida): Aside "nem toda árvore chega ao Rank Deus" no Cap. 1 §3; geografia das
+raças no Cap. 1 §5; "O Que Ser Miko Significa" no Cap. 1 §6; convite explícito pro Mestre criar
+mais árvores híbridas no Cap. 1 §8; "categorias sem rosto" e combo lendário no Cap. 2; quotes de
+Água/Norte no Triângulo dos Estilos (Cap. 3); reescrita em bullets do "PT Pleno" (Cap. 3); exemplo
+de Exaustão empilhando e frases de sabor em 4 condições (Cap. 4 §2/§8); Aside sobre "Trabalhar" não
+ser caminho pra Encantamentos (Cap. 5 §4); Apêndice C sem o Estilo Vendaval na tabela comparativa;
+código morto (`MAGIC_ACTIONS.silenciosa` nunca usa `"reação"`, apesar do branch existir em
+`Chapter2.tsx`).
+
 - **Auditoria linha a linha das ~400 magias/técnicas/talentos** — a auditoria desta sessão focou nas tabelas de progressão (PV/PM/PT/PP) e nos números do Cap. 1, que são os que alimentam os cálculos da ficha. O texto de cada magia individual (dano, efeito, encantamento) foi conferido a fundo só em Água, Fogo e Deus da Espada — as outras 14 árvores não tiveram cada habilidade comparada palavra por palavra com o livro.
 - **Visualizador de PDF** do livro original — o `/livro` cobre o texto navegável, mas não uma visualização do PDF em si.
 - **Fluxo guiado de criação de ficha** — hoje a ficha é só formulário livre (edita tudo direto); não existe um "wizard" passo a passo pra quem prefere ser guiado.
