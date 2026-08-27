@@ -37,6 +37,7 @@ Visão panorâmica do que falta pro sistema e pro site chegarem num nível "prod
 - [ ] Rank Deus generalizado pras 13 árvores que ainda não têm parágrafo próprio (hoje só Água, Cura, Desintoxicação e Espada têm).
 - [ ] Regras de cerco/batalha em escala de exército (o "Senhor da Guerra" do Tático já aponta pra isso e não tem sistema por trás).
 - [x] ~~Auditoria linha a linha das ~400 magias/talentos das 14 árvores ainda não conferidas palavra por palavra (só Água, Fogo e Deus da Espada foram).~~ Concluída em 2026-08-27 — as 17 árvores conferidas (ver Changelog).
+- [ ] Ver o arquivo Moshoku tensei rpg livro.pdf e ver como ele esta na questão de espaços em brancos, ele não esta formatado corretamente. sempre que atualizar o arquivo livro.typ imediatamente ver como ele ira ficar em pdf.
 
 ### Site (Next.js/TypeScript/Zustand — QoL e UX)
 

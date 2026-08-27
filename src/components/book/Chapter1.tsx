@@ -4,6 +4,7 @@ import { RANK_BONUS, RANK_REQUIREMENTS, RANKS } from "@/lib/types";
 import { RANK_PA_COST } from "@/data/trees/shared";
 import { SKILLS } from "@/data/skills";
 import { STARTING_KITS } from "@/data/startingKits";
+import { TREES } from "@/data/trees";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 const SKILL_ATTRIBUTE_LABEL: Record<string, string> = {
@@ -219,9 +220,9 @@ export default function Chapter1() {
           e além do dinheiro do Antecedente (seção 6): as duas coisas não competem entre si.
         </P>
         <BookTable
-          headers={["Subgrupo da Árvore Inicial", "Kit Inicial"]}
+          headers={["Árvore Inicial", "Kit Inicial"]}
           rows={STARTING_KITS.map((kit) => [
-            kit.subgroup,
+            TREES.filter((t) => t.subgroup === kit.subgroup).map((t) => t.name).join(", "),
             kit.items.map((i) => i.name + (i.description ? ` (${i.description})` : "")).join(" · "),
           ])}
         />
