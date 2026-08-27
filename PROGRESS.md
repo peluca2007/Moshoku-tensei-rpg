@@ -44,6 +44,8 @@
 
 - **2026-08-27** — **`livro.typ`: Apêndice H — Viagem entre Continentes.** Régua rápida de travessia longa pro Mestre, reaproveitando os blocos de 1 semana do Downtime (Apêndice F) como unidade de tempo em vez de inventar uma nova. **Rotas e Tempo de Travessia**: Central↔Millis (1 bloco, rota comercial), Central↔Begaritt (2 blocos por terra com Clima Extremo o trajeto inteiro, ou 1 por mar), Millis↔Continente Demônio (2 blocos, sem tratado de livre passagem), Central/Millis↔Continente Divino (3 blocos, a maioria dos pedidos de acesso é recusada), e a nota de que não existe rota terrestre pro Continente Demônio — ele é isolado por água. **Perigo por Região**: Grande Floresta, Deserto de Begaritt, Continente Demônio e Mar Aberto, cada um com CD de Clima (reaproveitando Cap. 4 §6) e chance de encontro por semana — pensado pra resolver uma travessia em segundos quando ela não é o foco da sessão, não pra virar uma sequência obrigatória de rolagens (dito explicitamente no quadro de fechamento). Usado `#largo` (mesma decisão do Apêndice G) porque as células de "Nota"/"Risco" têm prosa média — cabe inteiro em 1 página.
 
+- **2026-08-27** — **`livro.typ`: Apêndice I — Reputação com Facções.** Escala narrativa de 5 degraus (Inimigo -2 a Aliado +2) por facção, independente entre si — subir com o Reino Asura não move a Igreja de Millis. Tabela cruzando os 5 níveis com as 3 facções nomeadas no roadmap (Reino Asura, Igreja de Millis, Deuses Demônios/Imperatriz Kishirika), cada célula com consequência concreta e específica daquela facção em vez de um efeito genérico repetido (ex.: Millis recusa cura/bênção quando desconfiada; Asura manda espiões da coroa; os Demônios toleram só fora do território de um clã) — amarrado a elementos que já existiam no livro (Ars, Kishirika, Grande Templo de Millis, Cap. 1 Raça Demônio). Dois quadros de fechamento: como o Mestre deve mover o marcador (por ato público, nunca por PA/sessão) e o lembrete de que "Reino Asura" e "Igreja de Millis" têm política interna — um personagem pode ser Aliado de uma ala e Inimigo de outra dentro da mesma facção nominal. `#largo` de novo, mesmo motivo dos Apêndices G/H; coube inteiro numa página.
+
 ## Roadmap de Longo Prazo (brainstorm 2026-08-27 — Dev Sênior + Mestre de Game Design)
 
 Visão panorâmica do que falta pro sistema e pro site chegarem num nível "produto acabado". Prioridade combinada com o usuário: **rolador de dados + tracker de iniciativa** são o próximo passo imediato; o resto entra por ordem de impacto.
@@ -60,7 +62,7 @@ Visão panorâmica do que falta pro sistema e pro site chegarem num nível "prod
 - [ ] Bestiário: NPCs e monstros prontos por patamar/rank de criatura — hoje o Mestre não tem nada pronto do lado dele.
 - [ ] Crafting/Alquimia: poções, venenos, encantamento de arma/armadura, itens mágicos (o Anel de Teleporte do anime como prova de conceito).
 - [x] ~~Rank de Aventureiro na Guilda, formalizado em tabela (hoje é só referência narrativa).~~
-- [ ] Reputação com facções (Reino Asura, Millis, Deuses Demônios).
+- [x] ~~Reputação com facções (Reino Asura, Millis, Deuses Demônios).~~
 - [x] ~~Rank Deus generalizado pras árvores que ainda não tinham parágrafo próprio.~~
 - [ ] Regras de cerco/batalha em escala de exército (o "Senhor da Guerra" do Tático já aponta pra isso e não tem sistema por trás).
 - [x] ~~Auditoria linha a linha das ~400 magias/talentos das 14 árvores ainda não conferidas palavra por palavra (só Água, Fogo e Deus da Espada foram).~~ Concluída em 2026-08-27 — as 17 árvores conferidas (ver Changelog).

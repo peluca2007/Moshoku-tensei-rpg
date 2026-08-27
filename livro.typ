@@ -6792,4 +6792,44 @@ Estas tabelas existem pra resolver uma travessia em trinta segundos quando ela n
 ]
 ]
 
+#pagebreak(weak: true)
+
+#largo[
+= Apêndice I: Reputação com Facções
+
+Nem toda consequência de uma campanha cabe em PA ou em Rank de Aventureiro (Apêndice G) — às vezes o que muda é *quem abre a porta pra você*. Este apêndice trata reputação como uma escala narrativa de cinco degraus, uma por facção, movida pelo Mestre conforme os atos públicos do grupo.
+
+== A Escala
+
+Cada facção relevante da campanha tem sua própria reputação, independente das outras — ajudar o Reino Asura não melhora automaticamente sua posição com a Igreja de Millis, e às vezes piora.
+
+#tbl(2, (left, left),
+  [Nível], [O que significa, em qualquer facção],
+  [*Inimigo (-2)*], [A facção age ativamente contra o grupo, sempre que puder fazer isso sem custo alto pra ela.],
+  [*Desconfiado (-1)*], [Portas se fecham por precaução. Nenhum ataque direto, mas nenhuma ajuda também.],
+  [*Neutro (0)*], [Ponto de partida padrão — a facção nem sabe quem vocês são, ou sabe e não se importa.],
+  [*Respeitado (+1)*], [Contratos, favores e informação ficam mais fáceis de conseguir dentro do território da facção.],
+  [*Aliado (+2)*], [A facção arrisca recursos reais pelo grupo — tropas, magos, dinheiro — porque considera a causa dela também.],
+)
+
+== As Três Facções deste Livro
+
+#tbl(4, (left, left, left, left),
+  [Nível], [Reino Asura], [Igreja de Millis], [Deuses Demônios (Continente Demônio)],
+  [*Inimigo*], [Mandado de captura ativo — a guarda ataca de vista em qualquer cidade do reino.], [Excomungado. Templos recusam cura, abrigo e até água.], [Marcado como inimigo pela Imperatriz Kishirika — Superd caçam o grupo por conta própria.],
+  [*Desconfiado*], [Vigiados: espiões da coroa relatam cada movimento em Ars.], [Sacerdotes recusam bênção e informação, mas não interferem.], [Tolerados, desde que fiquem fora do território de um clã específico.],
+  [*Neutro*], [Só mais um grupo de aventureiros no registro da capital.], [Nenhum templo conhece o grupo pelo nome.], [O grupo é estrangeiro — cuidado padrão, nada pessoal.],
+  [*Respeitado*], [Acesso à corte menor; nobres oferecem contratos diretos, sem passar pela Guilda.], [Curas gratuitas em templos menores; acesso à biblioteca de um mosteiro.], [Um clã específico garante passagem segura pelo seu território.],
+  [*Aliado*], [Audiência com a coroa por pedido. Tropas reais em campanhas de escala regional.], [O Grande Templo de Millis abre arquivos que nem todo sacerdote tem permissão de ler.], [A Imperatriz Kishirika reconhece o grupo — abre portas que nenhum humano jamais teve.],
+)
+
+#quadro(titulo: [Como o Mestre move o marcador])[
+Não existe fórmula. Reputação sobe ou desce por *atos públicos*, não por PA gasto ou sessões jogadas — matar um general renegado do Reino Asura em praça pública sobe reputação com a coroa, mesmo que o grupo nunca tenha "farmado" isso de propósito. Sugestão prática: mude só *um* degrau por vez, e só quando o ato for grande o bastante pra virar boato ou registro oficial. Gentileza pequena não sobe Rank — só o que a facção realmente perceberia.
+]
+
+#quadro(titulo: [Facções não são unânimes])[
+"Reino Asura" e "Igreja de Millis" têm política interna — nobres de facções rivais na corte, ou sacerdotes conservadores contra reformistas. Nada impede um personagem de ser Aliado de uma ala e Inimigo de outra dentro da mesma facção nominal; isso é ferramenta de enredo, não exceção à regra. O mesmo vale pro Continente Demônio: "Deuses Demônios" cobre dezenas de clãs de Superd que raramente concordam entre si (Cap. 1, Raça Demônio).
+]
+]
+
 
