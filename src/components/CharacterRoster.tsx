@@ -6,7 +6,7 @@ import { Plus, Trash2, User, Check, Upload } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById } from "@/data/races";
 import { getBackgroundById } from "@/data/backgrounds";
-import { getPaSpent } from "@/store/selectors";
+import { getGuildRank, getPaSpent } from "@/store/selectors";
 
 export default function CharacterRoster() {
   const router = useRouter();
@@ -110,7 +110,7 @@ export default function CharacterRoster() {
               </div>
               <p className="mb-3 text-xs text-parchment-500 dark:text-parchment-400">
                 {race?.name ?? "Raça não definida"} · {background?.name ?? "Antecedente não definido"} ·{" "}
-                {getPaSpent(character)} PA gastos
+                {getPaSpent(character)} PA gastos · Rank {getGuildRank(character)} na Guilda
               </p>
               <div className="flex gap-2">
                 <button

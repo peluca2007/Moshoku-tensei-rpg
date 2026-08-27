@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2 } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
-import { getPaSpent } from "@/store/selectors";
+import { getGuildRank, getPaSpent } from "@/store/selectors";
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
@@ -209,6 +209,7 @@ export default function CharacterSheet() {
     overrides,
   } = character;
   const paSpent = getPaSpent(character);
+  const guildRank = getGuildRank(character);
   const [grimoireQuery, setGrimoireQuery] = useState("");
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "error">("idle");
 
@@ -418,6 +419,13 @@ export default function CharacterSheet() {
             className="flex items-center gap-1 rounded-full bg-gold-500/10 px-3 py-1 font-medium text-gold-600 ring-1 ring-gold-500/30 dark:text-gold-400"
           >
             <Gem className="h-3.5 w-3.5" /> {paSpent} PA gastos
+          </span>
+
+          <span
+            title="Rank de Aventureiro na Guilda — referência de reputação (Apêndice G), não trava mecânica. Quem decide de verdade é o Mestre."
+            className="flex items-center gap-1 rounded-full bg-wine-500/10 px-3 py-1 font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300"
+          >
+            <BookOpen className="h-3.5 w-3.5" /> Rank {guildRank} na Guilda
           </span>
         </div>
       </header>
