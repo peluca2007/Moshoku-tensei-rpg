@@ -13,7 +13,7 @@ export const SUISHIN_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "Fluxo",
         description:
@@ -74,7 +74,7 @@ export const SUISHIN_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "A Armadura Não Pesa",
         description:
@@ -131,7 +131,7 @@ export const SUISHIN_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "A Postura",
@@ -180,7 +180,7 @@ export const SUISHIN_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Ler o Fluxo",
@@ -216,7 +216,7 @@ export const SUISHIN_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d12+5",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "A Arte da Provocação",
@@ -260,7 +260,7 @@ export const SUISHIN_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d12+5",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Domínio Absoluto",

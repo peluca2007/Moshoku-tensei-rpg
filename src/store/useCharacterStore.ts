@@ -27,6 +27,11 @@ function blankCharacter(id: string, name: string): CharacterData {
     skills: [],
     bonusHp: 0,
     bonusMp: 0,
+    currentHp: null,
+    currentMp: null,
+    currentPt: null,
+    currentPp: null,
+    overrides: {},
   };
 }
 
@@ -54,10 +59,18 @@ interface RosterState {
   setGold: (value: number) => void;
   setBonusHp: (value: number) => void;
   setBonusMp: (value: number) => void;
+  setCurrentHp: (value: number | null) => void;
+  setCurrentMp: (value: number | null) => void;
+  setCurrentPt: (value: number | null) => void;
+  setCurrentPp: (value: number | null) => void;
+  /** value === null apaga a sobrescrita e volta a usar o valor calculado. */
+  setOverride: (stat: keyof CharacterData["overrides"], value: number | null) => void;
   addSkill: (name: string) => void;
   removeSkill: (name: string) => void;
   addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
   removeItem: (itemId: string) => void;
+  /** Edição livre de qualquer campo do item (nome, dado, +CA, descrição...), sem precisar apagar e recriar. */
+  updateItem: (itemId: string, patch: Partial<Omit<InventoryItem, "id">>) => void;
   toggleEquipped: (itemId: string) => void;
   /** Retorna false (e não muda nada) se a regra de desbloqueio do Cap. 1 não for satisfeita. */
   unlockRank: (treeId: string, rank: RankName) => boolean;
@@ -134,6 +147,17 @@ export const useCharacterStore = create<RosterState>()(
       setGold: (gold) => updateActive(get, set, (c) => ({ ...c, gold })),
       setBonusHp: (bonusHp) => updateActive(get, set, (c) => ({ ...c, bonusHp })),
       setBonusMp: (bonusMp) => updateActive(get, set, (c) => ({ ...c, bonusMp })),
+      setCurrentHp: (currentHp) => updateActive(get, set, (c) => ({ ...c, currentHp })),
+      setCurrentMp: (currentMp) => updateActive(get, set, (c) => ({ ...c, currentMp })),
+      setCurrentPt: (currentPt) => updateActive(get, set, (c) => ({ ...c, currentPt })),
+      setCurrentPp: (currentPp) => updateActive(get, set, (c) => ({ ...c, currentPp })),
+      setOverride: (stat, value) =>
+        updateActive(get, set, (c) => {
+          const overrides = { ...c.overrides };
+          if (value === null) delete overrides[stat];
+          else overrides[stat] = value;
+          return { ...c, overrides };
+        }),
 
       addSkill: (name) =>
         updateActive(get, set, (c) =>
@@ -149,6 +173,11 @@ export const useCharacterStore = create<RosterState>()(
         })),
       removeItem: (itemId) =>
         updateActive(get, set, (c) => ({ ...c, inventory: c.inventory.filter((i) => i.id !== itemId) })),
+      updateItem: (itemId, patch) =>
+        updateActive(get, set, (c) => ({
+          ...c,
+          inventory: c.inventory.map((i) => (i.id === itemId ? { ...i, ...patch } : i)),
+        })),
       toggleEquipped: (itemId) =>
         updateActive(get, set, (c) => ({
           ...c,
@@ -182,9 +211,9 @@ export const useCharacterStore = create<RosterState>()(
     {
       name: "mushoku-tensei-roster",
       skipHydration: true,
-      // v3: adicionou skills/bonusHp/bonusMp e description em InventoryItem.
+      // v4: adicionou currentHp/currentMp/currentPt/currentPp e overrides (CA/máximos editáveis).
       // Sem usuários reais ainda, então uma versão antiga simplesmente reseta o roster.
-      version: 3,
+      version: 4,
       migrate: () => ({ characters: {}, order: [], activeId: null }),
     }
   )

@@ -18,7 +18,6 @@ export const INVOCACAO_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 4,
       mastery: {
         name: "O Primeiro Círculo",
         description:
@@ -51,7 +50,6 @@ export const INVOCACAO_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 6,
       mastery: {
         name: "Vínculo",
         description:
@@ -82,7 +80,6 @@ export const INVOCACAO_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d6+3",
-      mpPerRank: 9,
       mastery: {
         name: "Círculo Rápido",
         description:
@@ -114,7 +111,6 @@ export const INVOCACAO_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 13,
       mastery: {
         name: "Corpos Artificiais",
         description:
@@ -142,7 +138,6 @@ export const INVOCACAO_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d8+4",
-      mpPerRank: 18,
       mastery: {
         name: "Círculo Permanente",
         description:
@@ -169,7 +164,6 @@ export const INVOCACAO_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 25,
       mastery: {
         name: "O Grande Círculo",
         description:

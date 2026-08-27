@@ -12,7 +12,7 @@ export const NORTE_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d8+2",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "Sobreviver é Vencer",
         description:
@@ -84,7 +84,7 @@ export const NORTE_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       mastery: {
         name: "O Corpo Ferido",
         description:
@@ -144,7 +144,7 @@ export const NORTE_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d10+3",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "O Despertar do Touki",
@@ -200,7 +200,7 @@ export const NORTE_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d10+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Estilo Pessoal",
@@ -245,8 +245,9 @@ export const NORTE_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d12+4",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
+      unlockPaCostOverride: 2,
       mastery: {
         name: "Leitura de Batalha",
         description:
@@ -288,7 +289,7 @@ export const NORTE_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d12+5",
-      mpPerRank: 0,
+      weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
         name: "Nada é Regra",

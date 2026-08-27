@@ -14,7 +14,6 @@ export const DESINTOXICACAO_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 4,
       mastery: {
         name: "Paladar",
         description:
@@ -79,7 +78,6 @@ export const DESINTOXICACAO_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 6,
       mastery: {
         name: "Extração",
         description:
@@ -133,7 +131,6 @@ export const DESINTOXICACAO_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d6+3",
-      mpPerRank: 8,
       mastery: {
         name: "Contra a Maré",
         description:
@@ -189,7 +186,6 @@ export const DESINTOXICACAO_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 11,
       mastery: {
         name: "Estado Anulado",
         description:
@@ -225,7 +221,6 @@ export const DESINTOXICACAO_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 15,
       mastery: {
         name: "Veneno",
         description:
@@ -262,7 +257,6 @@ export const DESINTOXICACAO_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d8+4",
-      mpPerRank: 21,
       mastery: {
         name: "O Corpo Limpo",
         description:

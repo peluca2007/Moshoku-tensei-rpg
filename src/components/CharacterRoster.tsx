@@ -28,20 +28,20 @@ export default function CharacterRoster() {
   return (
     <div className="mx-auto max-w-4xl p-4 sm:p-6">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-2xl font-black text-slate-900 dark:text-slate-50">
-          <User className="h-6 w-6 text-sky-500" /> Meus Personagens
+        <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
+          <User className="h-6 w-6 text-wine-500" /> Meus Personagens
         </h1>
         <button
           type="button"
           onClick={createAndOpen}
-          className="flex items-center gap-1 rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-sky-500"
+          className="flex items-center gap-1 rounded-lg bg-wine-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-wine-500"
         >
           <Plus className="h-4 w-4" /> Criar Ficha
         </button>
       </header>
 
       {order.length === 0 && (
-        <p className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
+        <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
           Nenhuma ficha ainda. Clique em &quot;Criar Ficha&quot; pra começar.
         </p>
       )}
@@ -60,19 +60,19 @@ export default function CharacterRoster() {
               key={id}
               className={`rounded-2xl border p-4 shadow-sm transition-colors ${
                 isActive
-                  ? "border-sky-400 bg-sky-50/60 dark:border-sky-500 dark:bg-sky-950/30"
-                  : "border-slate-200 bg-white/70 dark:border-slate-800 dark:bg-slate-900/60"
+                  ? "border-wine-400 bg-wine-50/60 dark:border-wine-500 dark:bg-wine-950/30"
+                  : "border-parchment-300 bg-parchment-100/70 dark:border-parchment-800 dark:bg-parchment-900/60"
               }`}
             >
               <div className="mb-1 flex items-start justify-between gap-2">
-                <h2 className="font-bold text-slate-900 dark:text-slate-50">{character.name || "Sem nome"}</h2>
+                <h2 className="font-bold text-parchment-900 dark:text-parchment-50">{character.name || "Sem nome"}</h2>
                 {isActive && (
-                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-sky-500/10 px-2 py-0.5 text-[11px] font-semibold text-sky-600 dark:text-sky-400">
+                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-wine-500/10 px-2 py-0.5 text-[11px] font-semibold text-wine-600 dark:text-wine-400">
                     <Check className="h-3 w-3" /> Ativa
                   </span>
                 )}
               </div>
-              <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
+              <p className="mb-3 text-xs text-parchment-500 dark:text-parchment-400">
                 {race?.name ?? "Raça não definida"} · {background?.name ?? "Antecedente não definido"} ·{" "}
                 {getPaSpent(character)} PA gastos
               </p>
@@ -80,7 +80,7 @@ export default function CharacterRoster() {
                 <button
                   type="button"
                   onClick={() => openCharacter(id)}
-                  className="flex-1 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900"
+                  className="flex-1 rounded-lg bg-parchment-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-parchment-700 dark:bg-white dark:text-parchment-900"
                 >
                   Abrir Ficha
                 </button>
@@ -99,7 +99,7 @@ export default function CharacterRoster() {
                   <button
                     type="button"
                     onClick={() => setConfirmingId(id)}
-                    className="rounded-lg border border-slate-200 p-1.5 text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500 dark:border-slate-700"
+                    className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 transition-colors hover:border-rose-300 hover:text-rose-500 dark:border-parchment-700"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

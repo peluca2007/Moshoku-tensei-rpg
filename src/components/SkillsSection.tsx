@@ -4,6 +4,15 @@ import { useState } from "react";
 import { GraduationCap, Plus, X } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { Background, Race } from "@/lib/types";
+import { SKILLS, getSkillByName } from "@/data/skills";
+
+const ATTRIBUTE_SHORT: Record<string, string> = {
+  forca: "FOR",
+  agilidade: "AGI",
+  vigor: "VIG",
+  intelecto: "INT",
+  espirito: "ESP",
+};
 
 export default function SkillsSection({
   race,
@@ -27,9 +36,9 @@ export default function SkillsSection({
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white/70 p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900/60">
-      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-50">
-        <GraduationCap className="h-5 w-5 text-sky-500" /> Perícias
+    <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+      <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-parchment-900 dark:text-parchment-50">
+        <GraduationCap className="h-5 w-5 text-wine-500" /> Perícias
       </h2>
 
       {bonusChoices > manualSkills.length && (
@@ -43,7 +52,7 @@ export default function SkillsSection({
           <span
             key={skill}
             title="Automática (raça/antecedente)"
-            className="rounded-full bg-sky-500/10 px-2.5 py-1 text-xs font-medium text-sky-600 ring-1 ring-sky-500/30 dark:text-sky-400"
+            className="rounded-full bg-wine-500/10 px-2.5 py-1 text-xs font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-400"
           >
             {skill}
           </span>
@@ -51,35 +60,50 @@ export default function SkillsSection({
         {manualSkills.map((skill) => (
           <span
             key={skill}
-            className="flex items-center gap-1 rounded-full bg-slate-900/5 px-2.5 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-900/10 dark:bg-white/5 dark:text-slate-200 dark:ring-white/10"
+            title={getSkillByName(skill)?.description}
+            className="flex items-center gap-1 rounded-full bg-parchment-900/5 px-2.5 py-1 text-xs font-medium text-parchment-700 ring-1 ring-parchment-900/10 dark:bg-white/5 dark:text-parchment-200 dark:ring-white/10"
           >
             {skill}
+            {getSkillByName(skill) && (
+              <span className="text-[10px] font-bold text-parchment-400 dark:text-parchment-500">
+                {ATTRIBUTE_SHORT[getSkillByName(skill)!.attribute]}
+              </span>
+            )}
             <button
               type="button"
               onClick={() => useCharacterStore.getState().removeSkill(skill)}
-              className="text-slate-400 hover:text-rose-500"
+              className="text-parchment-400 hover:text-rose-500"
             >
               <X className="h-3 w-3" />
             </button>
           </span>
         ))}
         {fixedSkills.length === 0 && manualSkills.length === 0 && (
-          <p className="text-sm text-slate-500 dark:text-slate-400">Nenhuma perícia ainda.</p>
+          <p className="text-sm text-parchment-500 dark:text-parchment-400">Nenhuma perícia ainda.</p>
         )}
       </div>
 
       <div className="flex gap-2">
         <input
+          list="skill-master-list"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addSkill()}
           placeholder="Ex: Arcanismo"
-          className="flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-sky-400 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          title="Escolha da Lista Mestre (Cap. 1) ou digite uma perícia de homebrew"
+          className="flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
         />
+        <datalist id="skill-master-list">
+          {SKILLS.map((s) => (
+            <option key={s.name} value={s.name}>
+              {ATTRIBUTE_SHORT[s.attribute]} — {s.description}
+            </option>
+          ))}
+        </datalist>
         <button
           type="button"
           onClick={addSkill}
-          className="flex items-center gap-1 rounded-lg bg-sky-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-sky-500"
+          className="flex items-center gap-1 rounded-lg bg-wine-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-wine-500"
         >
           <Plus className="h-4 w-4" /> Adicionar
         </button>

@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
+/* Ativa a variante `dark:` por classe (`.dark` na <html>, controlada pelo
+   ThemeProvider/next-themes) em vez de só seguir prefers-color-scheme — é o
+   que permite o botão de tema sobrepor a preferência do sistema. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdf6e3;
+  --foreground: #2b1810;
   /* Sem isso, o navegador renderiza <select>/<option> nativos sempre no tema
      claro do SO, ilegível (texto claro em fundo claro) quando a página está
      escura. Isso avisa o navegador pra desenhar os controles nativos no tema
@@ -10,19 +15,60 @@
   color-scheme: light;
 }
 
+.dark {
+  --background: #1a1210;
+  --foreground: #ede3d0;
+  color-scheme: dark;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Paleta temática — pergaminho (neutro, substitui slate) + vinho (acento
+     primário, substitui sky) + dourado (acento secundário/especial, substitui
+     violet). Mesma identidade da ficha em PDF (Typst). */
+  --color-parchment-50: #fdf6e3;
+  --color-parchment-100: #f7eeda;
+  --color-parchment-200: #eee0c4;
+  --color-parchment-300: #dfcba3;
+  --color-parchment-400: #c7ae80;
+  --color-parchment-500: #a88e63;
+  --color-parchment-600: #85704c;
+  --color-parchment-700: #64543a;
+  --color-parchment-800: #43392a;
+  --color-parchment-900: #2b1810;
+  --color-parchment-950: #1a1210;
+
+  --color-wine-50: #fbeef3;
+  --color-wine-100: #f6d9e4;
+  --color-wine-200: #ecb3c9;
+  --color-wine-300: #dd86a9;
+  --color-wine-400: #c9527a;
+  --color-wine-500: #8e2f55;
+  --color-wine-600: #4a0e2e;
+  --color-wine-700: #3a0a24;
+  --color-wine-800: #2c071b;
+  --color-wine-900: #1f0513;
+  --color-wine-950: #14030c;
+
+  --color-gold-50: #fcf6e8;
+  --color-gold-100: #f7e8c4;
+  --color-gold-200: #eed28d;
+  --color-gold-300: #e2ba5e;
+  --color-gold-400: #d4a94e;
+  --color-gold-500: #b8862e;
+  --color-gold-600: #8a6318;
+  --color-gold-700: #6b4c12;
+  --color-gold-800: #4d370d;
+  --color-gold-900: #332408;
+  --color-gold-950: #1f1505;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    color-scheme: dark;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {

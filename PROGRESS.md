@@ -1,17 +1,71 @@
 # Mushoku Tensei RPG — Progresso do Site
 
-Última atualização: revisão geral após reenvio do livro (Cap. 1–4 + Água completa).
+Última atualização: auditoria completa do livro (5241 linhas) contra o código + livro de regras navegável + grimório completo + busca/QoL + identidade visual (pergaminho/vinho) com dark mode manual + exportação de ficha em PDF via Typst.
+
+## Changelog (o que foi feito, sessão a sessão)
+
+> Regra da casa: toda vez que algo deste roadmap for implementado, a entrada correspondente é riscada (~~assim~~) nas listas abaixo **e** ganha uma linha aqui com a data, o que mudou e onde (arquivo do livro ou do site).
+
+- **2026-08-27** — Auditoria e correção de `livro.typ`: fix de contagem (16→17 sub-árvores, 7→8 escolas de magia), categorização da Magia de Invocação no Cap. 2, talento duplicado "Mão Silenciosa" na Cura, e uma extensa limpeza de layout (dezenas de `#pagebreak`/`{{wide}}` forçando páginas quase em branco — ver histórico da conversa pra detalhe página a página). Mesmas correções replicadas em `livro em txt.txt`.
+- **2026-08-27** — Site: PV/PM/PT reescritos em `src/store/selectors.ts` pra bater com a fórmula *atual* do livro (o site estava rodando a fórmula antiga, pré-rebalanceamento, que o próprio livro documenta como quebrada). `mpPerRank` removido de `src/lib/types.ts` e das 17 árvores de magia (ficou obsoleto).
+- **2026-08-27** — Site: Dado de Arma implementado de ponta a ponta. `weaponDieSteps` preenchido nas 6 árvores do Corpo (`src/data/trees/{norte,espada,suishin,arquearia,lutador,escudos}.ts`), escada de dados em `src/lib/weaponDie.ts`, cálculo de dano em `getWeaponDamage` (`src/store/selectors.ts`), UI em `InventorySection.tsx` (escolha de dado base + atributo, mostra dano calculado). Bug real encontrado e corrigido no caminho: `src/lib/dice.ts` não reconhecia a notação curta "d10" (só aceitava "1d10").
+- **2026-08-27** — Site: edição in-line de itens do inventário (`updateItem` em `useCharacterStore.ts` + UI de editar em `InventorySection.tsx`) — antes só dava pra apagar e recriar.
+- **2026-08-27** — Livro + Site: fechadas as três lacunas de criação de personagem apontadas pelo usuário (perícia, proficiência, equipamento inicial). Em `livro.typ`, Cap. 1 seção 4: **Lista Mestre de Perícias** (20 perícias fechadas, tabela por atributo — Vigor não governa nenhuma), **Proficiências: Armas e Armaduras** (armas simples/armadura leve = todo mundo; marciais/média/pesada/escudo exigem árvore ou talento; penalidade de Desvantagem sem proficiência) e **Equipamento Inicial e a Árvore Inicial** (regra: desbloquear o 1º patamar de uma árvore na criação = Árvore Inicial, e ela dá um kit de graça, somado ao dinheiro do Antecedente, não em vez dele — tabela com 10 kits por subgrupo). No site: `src/data/skills.ts` (as 20 perícias, usada como datalist guiado em `SkillsSection.tsx`) e `src/data/startingKits.ts` (os 10 kits, usados no botão "Adicionar Kit Inicial ao Inventário" em `CharacterSheet.tsx`). `/livro` (`src/components/book/Chapter1.tsx`) atualizado pra espelhar as três subseções novas do livro — fonte de verdade e site sincronizados.
+- **2026-08-27** — Bug real corrigido: **Maestrias só mostravam a do Rank mais alto**, tanto no Grimório da ficha quanto no PDF exportado. O livro (Cap. 2, seção 5, e talentos de rank alto tipo "Corpo de Corrente" que citam "estende sua Maestria de Intermediário") deixa claro que Maestria é cumulativa — você mantém a de todo Rank que já passou, não só a atual. `CharacterSheet.tsx` (`unlockedRanksByTree`) e `buildFichaPayload.ts` agora listam a Maestria de cada Rank desbloqueado por árvore, não só a mais alta.
+- **2026-08-27** — Bug real corrigido: **PDF exportado cortava o texto das magias/talentos em 260 caracteres** (`truncate()` em `typstFicha.ts`, com "…" no final) e não incluía Maestrias, o detalhamento Padrão/Encurtada/Silenciosa nem o encantamento — por isso parecia "resumido" comparado à ficha no site. Removido o corte (card agora cresce em altura com o conteúdo, `height: auto` em vez de `145pt` fixo com `clip: true`) e `buildFichaPayload.ts` agora inclui as Maestrias como cards próprios e anexa o detalhamento de conjuração + o encantamento ao texto de cada magia. Testado gerando um PDF de exemplo com efeito de 400+ caracteres e duas Maestrias da mesma árvore — nada cortado, ambas aparecem.
+
+## Roadmap de Longo Prazo (brainstorm 2026-08-27 — Dev Sênior + Mestre de Game Design)
+
+Visão panorâmica do que falta pro sistema e pro site chegarem num nível "produto acabado". Prioridade combinada com o usuário: **rolador de dados + tracker de iniciativa** são o próximo passo imediato; o resto entra por ordem de impacto.
+
+### Livro (`livro.typ` — todo conteúdo/regra nova nasce aqui, nunca hardcoded só no site)
+
+- [x] ~~**Criação de personagem — lacunas identificadas pelo usuário (prioridade alta, ver seção própria abaixo)**: lista mestre de perícias fechada, proficiência de armas/armaduras, equipamento inicial por árvore.~~ Feito em 2026-08-27 (ver Changelog).
+- [ ] Downtime entre sessões (treinar, estudar, forjar, cultivar contatos) usando o tempo de jogo, não só PA.
+- [ ] Viagem entre continentes: rotas, tempo de travessia, tabela de perigo por região (Grande Floresta, Begaritt, Continente Demônio).
+- [ ] Exaustão em níveis (1–6, escalando penalidade) — hoje é binário; reaproveitar o padrão de Profundidade de aflição.
+- [ ] Fome, sede e clima extremo como mecânica leve.
+- [ ] Cicatrizes/sequelas permanentes após quase-morte (3 Marcas da Morte e sobreviveu).
+- [ ] Trauma/Espírito pós-combate (mecânica curta, não um sistema de sanidade pesado).
+- [ ] Bestiário: NPCs e monstros prontos por patamar/rank de criatura — hoje o Mestre não tem nada pronto do lado dele.
+- [ ] Crafting/Alquimia: poções, venenos, encantamento de arma/armadura, itens mágicos (o Anel de Teleporte do anime como prova de conceito).
+- [ ] Rank de Aventureiro na Guilda, formalizado em tabela (hoje é só referência narrativa).
+- [ ] Reputação com facções (Reino Asura, Millis, Deuses Demônios).
+- [ ] Rank Deus generalizado pras 13 árvores que ainda não têm parágrafo próprio (hoje só Água, Cura, Desintoxicação e Espada têm).
+- [ ] Regras de cerco/batalha em escala de exército (o "Senhor da Guerra" do Tático já aponta pra isso e não tem sistema por trás).
+- [ ] Auditoria linha a linha das ~400 magias/talentos das 14 árvores ainda não conferidas palavra por palavra (só Água, Fogo e Deus da Espada foram).
+
+### Site (Next.js/TypeScript/Zustand — QoL e UX)
+
+- [ ] **Rolador de dados integrado** — próximo passo combinado. Puxa BC/Bônus de Ataque/dano de arma/CD automaticamente, modificadores continuam editáveis.
+- [ ] **Tracker de iniciativa** — ordem de turno, PV visível da mesa toda, condições ativas com ícone/duração.
+- [ ] Painel do Mestre — visão consolidada de PV/PM/PT de todos os personagens numa tela só.
+- [ ] PWA / modo offline — mesa física não pode depender de internet.
+- [ ] Sincronização em tempo real (WebSocket) pra jogar online com a ficha atualizando ao vivo pra todo mundo.
+- [ ] Botão de rolar direto em cada magia/talento do Grimório.
+- [ ] Wizard de criação guiada (já citado abaixo, em "O que falta" antigo).
+- [ ] Log de mudanças na ficha / desfazer.
+- [ ] Exportar/importar ficha em JSON (backup fora do localStorage).
+- [ ] Modo apresentação (tela grande pra mesa física, escondendo info só do jogador).
+- [ ] Atalhos de teclado e macros de rolagem customizados.
+- [ ] Acessibilidade (contraste, tamanho de fonte, leitor de tela).
 
 ## O que já está pronto
 
 **Stack:** Next.js 16 (App Router) + TypeScript + Tailwind v4 + Zustand com persistência em `localStorage`.
 
 **Dados do sistema** (`src/lib/types.ts`, `src/data/`)
-- Atributos, ranks (Principiante→Imperador), bônus de rank, requisitos de desbloqueio (Cap. 1).
+- Atributos, ranks (Principiante→Imperador), bônus de rank, requisitos de desbloqueio (Cap. 1) — **resincronizados com o livro atual**: conhecimentos exigidos por rank eram 3/4/5/6 e passaram a 4/6/8/10 (Avançado→Imperador); bônus de PV/PM extra fora de árvore era tratado como "1 PA = +5" e passou a "2 PA = +12", conforme a Tabela de Custos Gerais do Cap. 1.
 - 12 raças completas, com bônus fixos (atributo/PV/PM/CA) e traços em texto.
 - 13 antecedentes (tabela d100) + sub-tabela de Miko (1d8) + sub-tabela de Olho Místico (1d10).
-- Árvore de Magia de Água completa (6 ranks, todos os talentos/magias do livro).
-- Esqueleto das outras 15 árvores do grafo (Fogo, Vento, Terra, Cura, Barreira, Invocação, Deus da Espada/Água/Norte, Armas Pesadas, Cavalaria e Escudos, Arquearia, Furtividade e Armadilhas, Bardo e Interação, Navegação e Liderança) — aparecem travadas como "Em Breve" até eu receber o conteúdo.
+- **As 17 sub-árvores completas** (não só Água): Água, Fogo, Vento, Terra, Cura, Desintoxicação, Barreira, Invocação, Deus da Espada, Deus da Água (Suishin), Deus do Norte, Lutador, Cavalaria e Escudos, Arquearia, Furtividade e Armadilhas (Ladino), Bardo e Interação, Navegação e Liderança (Tático) — todos os ranks, magias/técnicas, talentos e Maestrias do livro.
+- Auditoria de progressão de PV/PM/PT/PP rank a rank de todas as 17 árvores contra o livro: encontrados e corrigidos erros de transcrição no Lutador (PV de Santo/Rei trocados) e no Tático (PV de Avançado/Rei/Imperador deslocados). Adicionado suporte a exceção pontual de custo de desbloqueio (`unlockPaCostOverride`) para o Rei do Norte, que custa 2 PA em vez de 3 no livro.
+- **Livro de regras navegável** (`/livro`): sumário + Capítulos 1, 2, 4 e Apêndices A-E transcritos fielmente, com Raças/Antecedentes/Rank Bonus/Tempo de Conjuração puxados ao vivo dos mesmos dados da ficha (uma fonte só, nunca dessincroniza). O Capítulo 3 traz as regras compartilhadas (Dado de Arma, Touki, Triângulo dos Estilos, PP e As Três Faixas) e linka pra `/arvores` em vez de duplicar o catálogo de magias/técnicas.
+- **Grimório completo na ficha**: cada magia comprada agora mostra o encantamento e a tabela Padrão/Encurtada/Silenciosa (Ações e redução de dano/área de cada uma), além de um selo "Ritual" quando aplicável — mesmo componente reusado no painel de compra das Árvores.
+- **Busca/QoL**: campo de busca no Grimório da ficha (filtra por magia/talento/árvore) e busca rápida de árvore no mapa radial (`/arvores`, centraliza e seleciona a árvore escolhida sem precisar navegar manualmente pelas 17 opções). Cards do grimório agora têm acento de cor por pilar (Magia/Corpo/Utilidade), reaproveitando a mesma paleta do mapa de árvores.
+- **Identidade visual pergaminho/vinho** (`src/app/globals.css`): paleta própria (`parchment`/`wine`/`gold`, tokens Tailwind v4 via `@theme`) substituindo o slate/sky/violet genérico — mesmas cores da ficha em PDF do usuário (`#4A0E2E` vinho sobre `#FDF6E3` pergaminho), pra site e PDF terem a mesma cara. `RANK_COLORS`/`CATEGORY_ACCENT` (`src/lib/rankColors.ts`) foram mantidos como estão de propósito — servem pra diferenciar rank/pilar funcionalmente, não são "cor de marca".
+- **Dark mode manual** via `next-themes` (`src/components/ThemeProvider.tsx`, `ThemeToggle.tsx`): escuro por padrão pra todo mundo, botão ☀️/🌙 na nav sobrepõe e persiste a escolha no navegador. `@custom-variant dark` no CSS troca a estratégia do Tailwind de `prefers-color-scheme` pra classe (`.dark` na `<html>`).
+- **Exportar ficha em PDF via Typst** (botão "Baixar PDF" no cabeçalho da ficha): `src/lib/typstFicha.ts` gera o código-fonte `.typ` (mesma estrutura de 3 páginas do molde que o usuário desenhou — identidade/atributos, combate/inventário, grimório em paisagem com 9 cards por página, paginando automaticamente pro tanto de magias/talentos comprados), `src/lib/buildFichaPayload.ts` monta os dados a partir da ficha ativa, e `src/app/api/ficha-pdf/route.ts` compila com o pacote `typst` (binário nativo, baixado automaticamente no `npm install`, sem precisar de Rust) e devolve o PDF puro. Fonte usada: "Libertinus Serif" (sucessora oficial da Linux Libertine, já embutida no Typst — zero configuração de fonte).
 
 **Várias fichas** (`/personagens`)
 - Criar, abrir, renomear (na própria ficha), excluir (confirmação em 2 cliques).
@@ -21,7 +75,7 @@
 - Nome, raça, antecedente (com sub-tabela Miko/Olho quando aplicável) — tudo editável livremente, a qualquer momento.
 - Atributos editáveis diretamente; acima de 4 (o máximo da criação) mostra quanto custa em PA (Cap. 1: 2 PA por ponto, até 8).
 - PO editável livremente.
-- PV/PM Máximos calculados automaticamente (dado da árvore inicial + Vigor / PM por rank desbloqueado) + campo pra comprar bônus extra com PA (Cap. 1: 1 PA = +5).
+- PV/PM Máximos calculados automaticamente (dado da árvore inicial + Vigor / PM por rank desbloqueado) + campo pra comprar bônus extra com PA (Cap. 1: 2 PA = +12).
 - CA = 10 + Agilidade + bônus fixo de raça/antecedente/sub-tabela (ex: Miko "Maldição do Ódio" +2 CA) + item de armadura equipado.
 - Card de passivas: mostra todos os traços de raça, antecedente e sub-tabela escolhida, perícias fixas e quantas perícias à escolha cada um concede.
 - Perícias: perícias automáticas de raça/antecedente aparecem fixas; lista livre pra adicionar/remover as demais.
@@ -36,15 +90,13 @@
 
 ## O que falta / pendente
 
-- **Conteúdo das outras 15 árvores** — só Água está escrita; o resto é esqueleto vazio esperando o texto do livro.
-- **Grimório "completo"** — você pediu isso especificamente: cada magia no grimório da ficha deve mostrar tudo (ações normal/encurtada/silenciosa, encantamento, dano de cada variação), não só o resumo atual (dano normal + efeito). Ainda não implementado — combinado que eu esperaria você confirmar antes de mexer nisso.
-- **Regra da "toda magia custa no mínimo 3 ações"** — ainda pendente de definição (se mantém Normal/Encurtada/Silenciosa com custos maiores, ou vira um valor fixo único) e não foi aplicada em nenhum dado ainda.
-- **Livro/regras navegável no site** (sumário + capítulos em HTML/CSS) e visualizador de PDF — pedido original do projeto, ainda não construído.
+- **Auditoria linha a linha das ~400 magias/técnicas/talentos** — a auditoria desta sessão focou nas tabelas de progressão (PV/PM/PT/PP) e nos números do Cap. 1, que são os que alimentam os cálculos da ficha. O texto de cada magia individual (dano, efeito, encantamento) foi conferido a fundo só em Água, Fogo e Deus da Espada — as outras 14 árvores não tiveram cada habilidade comparada palavra por palavra com o livro.
+- **Visualizador de PDF** do livro original — o `/livro` cobre o texto navegável, mas não uma visualização do PDF em si.
 - **Fluxo guiado de criação de ficha** — hoje a ficha é só formulário livre (edita tudo direto); não existe um "wizard" passo a passo pra quem prefere ser guiado.
-- **Lista mestre de perícias** — hoje é campo de texto livre; não existe um catálogo fechado com as perícias oficiais do livro pra escolher de uma lista.
-- **Vantagem de Resistência comprável** (Cap. 1: 2 PA = Vantagem em testes de resistência de 1 atributo à escolha) — ainda não representada na ficha.
+- **Vantagem de Resistência comprável** (Cap. 1: 3 PA = Vantagem em testes de resistência de 1 atributo à escolha) — ainda não representada na ficha.
 - **Magias inatas de raça** (ex: Howling da Raça Fera) — hoje aparecem só como texto no card de passivas, não como uma habilidade de verdade no grimório com botão/detalhe.
-- **Dano de arma** — itens do tipo "arma" no inventário ainda não entram em nenhum cálculo de ataque/dano; é só um registro.
+- **Tradução PT-BR/EN** — ideia levantada pelo usuário pra mais adiante, ainda não iniciada.
+- **PDF via Typst — polimento visual** — a estrutura e paginação já funcionam (testado com ficha vazia e com 20 habilidades = 5 páginas), mas o layout ainda não recebeu uma rodada de revisão visual fina do usuário (ex: densidade de texto nos cards, se "Deslocamento" devia refletir traços de raça em vez de sempre "9m", se o campo BC devia mostrar mais de uma árvore quando o personagem é multiclasse).
 
 ## Decisões de design (pra não esquecer o porquê)
 
@@ -52,3 +104,8 @@
 - **Atributo acima de 4 custa PA (2 por ponto, até 8)** — regra literal do Cap. 1, seção 2. Attribute inputs não têm trava dura, só mostram o custo.
 - **`AbilityDef.pmCost` é opcional** de propósito: cobre tanto magia (com PM) quanto técnica de Touki (sem PM, Cap. 4) com o mesmo tipo, sem duplicar estrutura.
 - **Layout radial das árvores**: cada rank só tem o próximo rank como filho (não os filhos de habilidade) — é isso que garante a linha reta. Se algum dia quisermos voltar a mostrar nós de magia/talento no mapa, isso vai reintroduzir o desalinhamento a menos que o algoritmo de ângulo mude.
+- **`/livro` não duplica o catálogo de magias/técnicas.** O Capítulo 3 do livro original lista todas as 17 árvores por extenso; o site já tem esse conteúdo em `src/data/trees/*.ts` e exibido em `/arvores`, então a página do livro só cobre as regras *compartilhadas* (Cap. 1, 2, 4, Apêndices, e os frameworks comuns do Cap. 3 — Dado de Arma/Touki/Triângulo, PP/Três Faixas) e linka pra `/arvores` pro resto. Isso evita ter duas fontes de verdade pro mesmo texto.
+- **`unlockPaCostOverride` em `TreeRankDef`** existe só pra exceções pontuais de custo de desbloqueio (hoje, só o Rei do Norte = 2 PA em vez de 3). `getRankUnlockPaCost` centraliza a leitura disso; qualquer nova exceção do livro deve passar por essa função, não por `RANK_REQUIREMENTS` direto.
+- **Paleta pergaminho/vinho veio da própria ficha em Typst do usuário**, não foi inventada — reusar os mesmos hex (`#4A0E2E`/`#FDF6E3`/`#C9527A`/`#1A1210`) garante que site e PDF exportado tenham a mesma identidade sem precisar sincronizar manualmente. `RANK_COLORS`/`CATEGORY_ACCENT` ficaram de fora do rebranding de propósito — são código funcional (diferenciar 6 ranks / 3 pilares), não decoração.
+- **PDF gerado no servidor com o pacote `typst` (binário nativo), não no navegador.** A alternativa seria compilar Typst via WASM no cliente (`typst.ts`), mas isso exige embutir fontes e um bundle grande; como o site já não tinha nenhuma rota de API, adicionar uma rota Node (`/api/ficha-pdf`) que chama o binário é bem mais simples e robusto, e o pacote `typst` baixa o binário certo pro Windows sozinho no `npm install` (sem precisar de Rust instalado).
+- **`typstFicha.ts` nunca interpola dado dinâmico direto em marcação Typst.** Todo valor vindo da ficha passa por um argumento de string (`tstr()`, que só escapa `\` e `"`) e é impresso via `#valor` — Typst trata strings interpoladas assim como texto literal, não como marcação, então nomes/efeitos com `*`, `_`, `#`, `[`, etc. não quebram a compilação. Testado com efeito de magia contendo esses caracteres de propósito antes de integrar no botão.

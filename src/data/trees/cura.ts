@@ -14,7 +14,6 @@ export const CURA_TREE: Tree = {
     {
       rank: "Principiante",
       hpDiceFormula: "1d4+2",
-      mpPerRank: 4,
       mastery: {
         name: "Diagnóstico",
         description:
@@ -85,7 +84,6 @@ export const CURA_TREE: Tree = {
     {
       rank: "Intermediário",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 6,
       mastery: {
         name: "Alcance da Compaixão",
         description:
@@ -151,7 +149,6 @@ export const CURA_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d6+2",
-      mpPerRank: 9,
       mastery: {
         name: "A Ferida Mortal",
         description:
@@ -207,7 +204,6 @@ export const CURA_TREE: Tree = {
     {
       rank: "Santo",
       hpDiceFormula: "1d6+3",
-      mpPerRank: 13,
       mastery: {
         name: "A Luz que Reconecta",
         description:
@@ -252,7 +248,6 @@ export const CURA_TREE: Tree = {
     {
       rank: "Rei",
       hpDiceFormula: "1d8+3",
-      mpPerRank: 18,
       mastery: {
         name: "Golpe Divino",
         description:
@@ -297,7 +292,6 @@ export const CURA_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "1d8+4",
-      mpPerRank: 25,
       mastery: {
         name: "Nada é Irreversível",
         description:

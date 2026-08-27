@@ -1,0 +1,256 @@
+import Link from "next/link";
+import { TREES } from "@/data/trees";
+import { RANK_BONUS, RANKS } from "@/lib/types";
+import { Aside, BookTable, ChapterTitle, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+
+export default function Chapter3() {
+  const rankLabelTrees = TREES.filter((t) => t.rankLabels);
+
+  return (
+    <div className="space-y-8">
+      <ChapterTitle id="cap3">Capítulo 3 — As Árvores de Progressão</ChapterTitle>
+      <P>
+        Não existem classes engessadas ou papéis que limitam suas escolhas. O sistema funciona através de
+        Árvores de Progressão, divididas em três grandes pilares: a <b>Árvore da Magia</b> (feitiços de
+        ataque, suporte e invocação — recurso PM), a <b>Árvore do Corpo</b> (os três Estilos Divinos de
+        esgrima, mais armas pesadas, escudos e arquearia — recurso PT) e a <b>Árvore de Utilidade</b> (os
+        especialistas em mundo — funciona por perícia, posicionamento e usos por descanso).
+      </P>
+      <Warning title="O conteúdo completo de cada árvore está na página de Árvores">
+        Este capítulo cobre as regras <i>compartilhadas</i> entre árvores do mesmo pilar. As magias,
+        talentos, técnicas e Maestrias de cada uma das 17 sub-árvores estão todas navegáveis no{" "}
+        <Link href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-400">
+          mapa de Árvores
+        </Link>{" "}
+        — clique em qualquer rank pra ver o que ele desbloqueia.
+      </Warning>
+
+      <Section>
+        <SectionTitle id="cap3-mapa">O Mapa Completo das Árvores</SectionTitle>
+        <P>
+          O sistema comporta dezesseis sub-árvores (mais Cavalaria e Escudos, dezessete no total). Nenhuma
+          delas é uma classe: você compra Ranks em quantas quiser, na ordem que quiser, e seu personagem é
+          simplesmente a soma do que ele estudou.
+        </P>
+        <BookTable
+          headers={["Pilar", "Sub-árvore", "Atributo-chave", "Recurso", "Identidade em uma linha"]}
+          rows={TREES.map((t) => [
+            t.category === "magia" ? "Magia" : t.category === "corpo" ? "Corpo" : "Utilidade",
+            t.name,
+            t.keyAttributeLabel ?? "—",
+            t.resourceLabel ?? "—",
+            t.tagline ?? "",
+          ])}
+        />
+        <Aside title="Escolas Formais e Ofícios">
+          <P>
+            As sete escolas de magia e os três Estilos Divinos são <b>Escolas Formais</b>: têm mestres vivos,
+            sedes, hierarquia e títulos reconhecidos no mundo inteiro — usam os nomes canônicos de rank
+            (Principiante → Imperador) e conferem status social. As demais seis são <b>Ofícios</b> aprendidos
+            na estrada, sem diploma: mecanicamente idênticos (mesmo Bônus de Rank, mesmos custos de PA,
+            mesma contagem de conhecimentos), mas os nomes dos patamares mudam.
+          </P>
+        </Aside>
+        <BookTable
+          headers={["Patamar", "Bônus", ...rankLabelTrees.map((t) => t.name)]}
+          rows={RANKS.map((rank, i) => [
+            String(i + 1),
+            `+${RANK_BONUS[rank]}`,
+            ...rankLabelTrees.map((t) => t.rankLabels?.[rank] ?? rank),
+          ]).concat([["7", "+8", ...rankLabelTrees.map(() => "—")]])}
+        />
+        <Aside title="Ofícios não têm patamar Deus">
+          O sétimo degrau existe só nas Escolas Formais, e mesmo lá é narrativo. Um Ofício termina no sexto
+          patamar.
+        </Aside>
+        <Aside title="Quem veste Touki">
+          Toda sub-árvore da Árvore do Corpo desbloqueia o Touki no terceiro patamar — inclusive Arquearia,
+          inclusive Escudos. A única exceção é o Estilo Deus da Espada, que desperta a aura no segundo
+          patamar (a doutrina inteira dele é velocidade). As árvores de Magia e de Utilidade nunca recebem
+          Touki nem Pontos de Touki, por mais alto que seja o rank.
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap3-corpo">A Árvore do Corpo — Sistemas Compartilhados</SectionTitle>
+        <P>
+          Antes de qualquer estilo específico, três sistemas governam todos os guerreiros: o Dado de Arma, o
+          Touki e o Triângulo dos Estilos.
+        </P>
+        <Aside title="Espadachim ou Guerreiro">
+          Apenas quem estudou uma das Três Grandes Escolas — Deus da Espada, Deus da Água e Deus do Norte —
+          é chamado de Espadachim. Todos os outros, mesmo empunhando espada, são apenas Guerreiros.
+        </Aside>
+
+        <SubTitle id="cap3-dado-arma">1. O Dado de Arma e a Escalada de Maestria</SubTitle>
+        <P>
+          O dano de um guerreiro vem da arma, não do corpo. Conforme você sobe de Rank num estilo, o Dado
+          Base sobe degraus nesta escada:
+        </P>
+        <P>
+          <code className="rounded bg-parchment-100 px-2 py-1 text-xs dark:bg-parchment-800">
+            d4 → d6 → d8 → d10 → d12 → 2d8 → 2d10 → 2d12 → 3d10 → 3d12 → 4d10
+          </code>
+        </P>
+        <BookTable
+          headers={["Rank no Estilo", "Degraus Ganhos", "Espada Curta (d6) vira", "Espada Longa (d8) vira"]}
+          rows={[
+            ["Principiante", "+1", "d8", "d10"],
+            ["Intermediário", "+2", "d10", "d12"],
+            ["Avançado", "+3", "d12", "2d8"],
+            ["Santo", "+4", "2d8", "2d10"],
+            ["Rei", "+5", "2d10", "2d12"],
+            ["Imperador", "+6", "2d12", "3d10"],
+          ]}
+        />
+        <P>
+          Fórmula de dano marcial: <b>Dado de Arma (escalado) + Força + Bônus do Rank do Estilo</b>. Os
+          degraus vêm do seu Rank naquele estilo específico — um Norte Santo usando uma técnica do Deus da
+          Espada em que é apenas Principiante aplicaria só 1 degrau.
+        </P>
+
+        <SubTitle id="cap3-touki">2. Touki (Aura de Batalha)</SubTitle>
+        <P>
+          O Touki é uma camada de mana que o guerreiro veste sobre o próprio corpo — endurece a pele como
+          aço, reforça o fio da lâmina e amplifica força, velocidade e reflexos. Rank Avançado é o mais alto
+          que alguém alcança sem Touki: do Santo em diante, todo guerreiro veste aura.
+        </P>
+        <Aside title="Pontos de Touki (PT) — as duas reservas">
+          <P>
+            <b>PT Menor</b> — do 1º patamar em diante: PT iguais ao seu Vigor (mínimo 1). Não é aura, é
+            fôlego — paga técnicas, e nada mais.
+          </P>
+          <P>
+            <b>PT Pleno</b> — a partir do 3º patamar (2º no Deus da Espada): a reserva passa a ser Espírito +
+            Vigor, e você desbloqueia o Manto de Touki e as manobras de gasto abaixo. Crescimento: +1 PT por
+            patamar 3º+ em qualquer árvore do Corpo (Cavalaria e Escudos concede +2, por gastar mais rápido).
+          </P>
+          <List
+            items={[
+              "PT são recuperados integralmente em um Descanso Curto.",
+              "PT não podem ser convertidos em PM, nem PM em PT.",
+              "Um personagem com Ranks em mais de um estilo marcial usa uma reserva única de PT.",
+            ]}
+          />
+        </Aside>
+        <P>
+          <b>O Manto de Touki (passivo, gratuito)</b> — a partir do Rank Avançado, enquanto consciente e não
+          Exausto: +CA igual à metade do Bônus de Rank (arred. pra cima); Redução contra projéteis mundanos
+          igual ao dobro do Bônus de Rank (e nunca sofre crítico deles); ataques desarmados e com objetos
+          improvisados contam como mágicos.
+        </P>
+        <BookTable
+          headers={["Custo", "Manobra", "Efeito"]}
+          rows={[
+            ["1 PT", "Touki Concentrado", "Sem Ação. Até o fim do turno, some seu Bônus de Rank ao dano de novo e reduza todo dano físico recebido pelo mesmo valor."],
+            ["1 PT", "Lâmina de Touki", "Sem Ação. Por 1 minuto, sua arma corta pedra e aço, conta como mágica e ignora Resistência a cortante/perfurante."],
+            ["2 PT", "Golpe Estendido", "1 Ação. Clarão da lâmina que atinge um alvo a até 9m. Dano de arma normal."],
+            ["2 PT", "Aguentar", "1 Reação. Ao sofrer dano que te levaria a 0 PV, fica com 1 PV em vez disso. Uma vez por combate."],
+            ["3 PT", "Explosão de Aura", "1 Ação. Criaturas a 3m fazem teste de Força (CD 8 + Força + Rank) ou são arremessadas 4,5m e ficam Caídas."],
+          ]}
+        />
+
+        <SubTitle id="cap3-triangulo">3. O Triângulo dos Estilos</SubTitle>
+        <Quote attribution="Lema do Estilo Deus da Espada">A vitória é de quem se move primeiro.</Quote>
+        <BookTable
+          headers={["Estilo", "Filosofia", "Vence contra", "Perde para"]}
+          rows={[
+            ["Deus da Espada", "Velocidade e agressão; matar em um golpe. Sem defesa, sem contra-ataque.", "Deus do Norte", "Deus da Água"],
+            ["Deus da Água", "Defesa e contragolpe. Deixa o inimigo atacar e devolve.", "Deus da Espada", "Deus do Norte"],
+            ["Deus do Norte", "Sobreviver e vencer por qualquer meio. Truques, terreno, improviso.", "Deus da Água", "Deus da Espada"],
+          ]}
+        />
+        <Aside title="Regra da Vantagem de Estilo">
+          Quando você luta contra um praticante do estilo que o seu contra-ataca, e ambos possuem Rank
+          naqueles estilos: você rola com Vantagem em todas as Disputas contra ele, e as Reações defensivas
+          dele falham automaticamente contra sua primeira Ação de cada turno. Se o Rank dele for dois ou
+          mais acima do seu, a vantagem se anula — treino bruto supera a tabela de tipos.
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap3-utilidade">A Árvore de Utilidade — Sistemas Compartilhados</SectionTitle>
+        <P>
+          O terceiro pilar não compete em dano — um Lenda Oculta não bate mais forte que um Norte
+          Principiante. O que a Utilidade faz é decidir as <b>condições</b> em que a luta, a negociação ou o
+          roubo acontecem.
+        </P>
+        <List
+          items={[
+            <span key="1"><b>Sem Escada de Dados:</b> árvores de Utilidade não recebem degraus no Dado de Arma.</span>,
+            <span key="2"><b>Sem Touki, nunca:</b> nenhum patamar de Utilidade concede Manto de Touki nem PT.</span>,
+            <span key="3"><b>O Rank soma nas Perícias:</b> seu Bônus de Rank é somado a todo teste de perícia coberto pela sua árvore, exatamente como o BC é somado ao dano de um mago.</span>,
+          ]}
+        />
+
+        <SubTitle id="cap3-pp">Pontos de Preparação (PP)</SubTitle>
+        <P>
+          Magos gastam PM pra fazer algo acontecer agora. Guerreiros gastam PT pra aguentar o que está
+          acontecendo agora. A Utilidade gasta um recurso que nenhum dos dois tem: PP serve pra declarar que
+          algo <i>já aconteceu antes</i>.
+        </P>
+        <Aside title="Pontos de Preparação">
+          <P>
+            PP Máximos = Intelecto + o atributo-chave da sua árvore (mínimo 1), +1 por patamar a partir do
+            terceiro. Ladino usa Agilidade, Bardo usa Espírito, Tático usa Intelecto. Com mais de uma árvore
+            de Utilidade, a reserva é única — use o maior atributo-chave. Recupera-se tudo em Descanso Longo.
+          </P>
+        </Aside>
+        <P>
+          Gastando 1 PP, você declara em voz alta um fato sobre o passado que passa a ser verdade no jogo.
+          Cinco condições: (1) precisa caber no seu Escopo; (2) precisa caber no seu Domínio; (3) é sempre
+          pretérito; (4) custa 2 PP se resolver o obstáculo central da cena; (5) o Mestre não pode negar, mas
+          pode anexar uma complicação.
+        </P>
+
+        <SubTitle id="cap3-faixas">As Três Faixas</SubTitle>
+        <P>
+          A solução pra três árvores não virarem &ldquo;a mesma pessoa com roupa diferente&rdquo;: dividir o passado em
+          três domínios que não se tocam, cada um travado numa faixa exclusiva de combate.
+        </P>
+        <BookTable
+          headers={["", "Ladino", "Bardo", "Tático"]}
+          rows={[
+            ["Atributo-chave", "Agilidade", "Espírito", "Intelecto"],
+            ["Domínio da Preparação", "Coisas e lugares.", "Pessoas e reputação.", "Tempo e logística."],
+            ["Exemplo de fato", "“Essa fechadura eu já limei.”", "“O capitão da guarda me deve um favor.”", "“O suprimento deles acabou anteontem.”"],
+            ["Faixa exclusiva", "Dano Furtivo.", "Estado emocional.", "Economia de ação."],
+            ["A pergunta dele", "Como eu entro?", "Quem eu convenço?", "Onde e quando isso acontece?"],
+          ]}
+        />
+        <Aside title="A Regra da Faixa">
+          Nenhuma habilidade pode invadir a faixa de outra árvore de Utilidade — um talento que dê Dano
+          Furtivo a um Bardo, ou que deixe um Ladino conceder uma Ação, está errado. A Faixa vale só entre
+          Ladino, Bardo e Tático; árvores do Corpo e de Magia cruzam essas linhas livremente.
+        </Aside>
+        <Aside title="Nota de Custo — Utilidade é mais barata">
+          <BookTable
+            headers={["Patamar", "Talento", "Técnica Assinatura ◆"]}
+            rows={[
+              ["1º e 2º", "1 PA", "2 PA"],
+              ["3º e 4º", "2 PA", "3 PA"],
+              ["5º e 6º", "3 PA", "4 PA"],
+            ]}
+          />
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap3-todas">Todas as Sub-árvores</SectionTitle>
+        <P>Magias, talentos, técnicas e Maestrias completas — clique numa árvore no mapa pra abrir o painel de rank.</P>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {TREES.map((t) => (
+            <Link
+              key={t.id}
+              href="/arvores"
+              className="rounded-lg border border-parchment-300 bg-parchment-100/60 p-2.5 text-sm transition-colors hover:border-wine-300 hover:bg-wine-50/60 dark:border-parchment-800 dark:bg-parchment-900/40 dark:hover:border-wine-800 dark:hover:bg-wine-950/30"
+            >
+              <p className="font-semibold text-parchment-900 dark:text-parchment-50">{t.name}</p>
+              <p className="text-xs text-parchment-500 dark:text-parchment-400">{t.subgroup}</p>
+            </Link>
+          ))}
+        </div>
+      </Section>
+    </div>
+  );
+}
