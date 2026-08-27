@@ -6757,4 +6757,39 @@ O Rank de Aventureiro é a ferramenta mais simples deste livro pra calibrar difi
 ]
 ]
 
+#pagebreak(weak: true)
+
+#largo[
+= Apêndice H: Viagem entre Continentes
+
+O Mundo de Seis Faces tem seis continentes, e cruzar de um pro outro nunca é rápido nem barato — é exatamente por isso que cada um desenvolveu magia, política e bestas diferentes. Este apêndice dá ao Mestre uma régua rápida pra travessias longas, reaproveitando os *blocos de 1 semana* do Downtime (Apêndice F) como unidade de tempo.
+
+== Rotas e Tempo de Travessia
+
+#tbl(4, (left, left, center, left),
+  [Rota], [Meio], [Tempo], [Risco],
+  [Central ↔ Millis], [Navio de linha, porto grande], [1 bloco], [Baixo — a rota comercial mais movimentada do mundo.],
+  [Central ↔ Begaritt], [Caravana pelo deserto, ou navio contornando a costa], [2 blocos por terra · 1 por mar], [Médio — quem vai por terra enfrenta Clima Extremo (Cap. 4) o trajeto inteiro.],
+  [Millis ↔ Continente Demônio], [Travessia do Estreito — poucos portos autorizam a rota], [2 blocos], [Alto — águas raramente patrulhadas, e não existe tratado de livre passagem entre os dois.],
+  [Central/Millis ↔ Continente Divino], [Só por convite ou peregrinação religiosa registrada], [3 blocos], [Baixo em trânsito, altíssimo em *acesso* — a maioria dos pedidos é recusada antes de sair do porto.],
+  [Qualquer rota ↔ Continente Demônio por terra], [Não existe.], [—], [O Continente Demônio é isolado por água em todas as direções conhecidas — chegar lá é sempre por mar.],
+)
+
+== Perigo por Região
+
+Uma região perigosa não precisa de um encontro roteirizado pra cobrar seu preço — muitas vezes a região em si já é o desafio (Cap. 4, seção 6: Exaustão, Fome, Sede e Clima Extremo). Use esta tabela pra decidir a frequência de testes de Clima e a chance de encontro por bloco de viagem, sem precisar inventar na hora.
+
+#tbl(4, (left, center, center, left),
+  [Região], [Teste de Clima], [Chance de encontro / semana], [Nota],
+  [Grande Floresta (Millis)], [Nenhum — clima ameno], [Alta (1d6: 1-2 = encontro)], [Território de feras territoriais e comunidades élficas fechadas. Perder-se é o perigo real, não o combate.],
+  [Deserto de Begaritt], [CD 14 (perigoso) ao meio-dia], [Média (1d6: 1 = encontro)], [Sem ração de sobra, a Sede sozinha mata uma caravana despreparada antes de qualquer monstro.],
+  [Continente Demônio], [CD 8 a 18, conforme a sub-região], [Alta (1d6: 1-3 = encontro)], [Nenhuma lei unificada protege viajantes — o risco não é o clima, é não ter a quem recorrer se algo der errado.],
+  [Mar aberto (qualquer rota)], [Nenhum, exceto tempestade (CD do Mestre)], [Baixa (1d10: 1 = encontro)], [O maior risco é o navio, não o grupo — poucos personagens têm como agir se o casco furar em alto-mar.],
+)
+
+#quadro(titulo: [Não é sobre rolar toda semana])[
+Estas tabelas existem pra resolver uma travessia em trinta segundos quando ela não é o foco da sessão: "vocês levam 2 blocos, testem Clima uma vez no meio do caminho, aqui está o resultado" — não pra virar uma sequência obrigatória de rolagens. Se a travessia *é* o foco da sessão, ignore a tabela e narre cena a cena.
+]
+]
+
 
