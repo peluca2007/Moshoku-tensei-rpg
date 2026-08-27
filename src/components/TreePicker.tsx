@@ -9,7 +9,9 @@ export default function TreePicker({
   selectedTreeId: string | null;
   onSelect: (treeId: string) => void;
 }) {
-  const treeGroups = getTreeGroups();
+  const treeGroups = getTreeGroups()
+    .map((group) => ({ ...group, trees: group.trees.filter((t) => !t.hiddenFromCreation) }))
+    .filter((group) => group.trees.length > 0);
   const selectedTree = getTreeById(selectedTreeId);
 
   return (

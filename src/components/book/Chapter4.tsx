@@ -122,7 +122,7 @@ export default function Chapter4() {
       <Section>
         <SectionTitle id="cap4-4">4. Regras de Empilhamento</SectionTitle>
         <P>
-          Com dezessete árvores no jogo, um grupo bem construído consegue empilhar bônus até quebrar a
+          Com dezoito árvores no jogo, um grupo bem construído consegue empilhar bônus até quebrar a
           matemática. Estas regras impedem isso sem tirar a graça da combinação.
         </P>
         <Aside title="Bônus do mesmo tipo não somam">

@@ -16,6 +16,7 @@ import { ARQUEARIA_TREE } from "./arquearia";
 import { LADINO_TREE } from "./ladino";
 import { BARDO_TREE } from "./bardo";
 import { TATICO_TREE } from "./tatico";
+import { VENDAVAL_TREE } from "./vendaval";
 
 /** Ordem de exibição = mesma ordem do grafo de árvores (Magia -> Corpo -> Utilidade), igual ao "Mapa Completo das Árvores" do livro. */
 export const TREES: Tree[] = [
@@ -32,6 +33,7 @@ export const TREES: Tree[] = [
   NORTE_TREE,
   LUTADOR_TREE,
   ESCUDOS_TREE,
+  VENDAVAL_TREE,
   ARQUEARIA_TREE,
   LADINO_TREE,
   BARDO_TREE,

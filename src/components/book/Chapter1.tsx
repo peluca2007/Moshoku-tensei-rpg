@@ -392,6 +392,13 @@ export default function Chapter1() {
           Sempre narrativo e sempre de uma árvore. Ninguém no Mundo de Seis Faces jamais alcançou o patamar
           Deus em duas coisas ao mesmo tempo — o livro trata isso como impossível, não como difícil.
         </Aside>
+        <Aside title="7. E se eu for fundo em duas árvores ao mesmo tempo?">
+          Algumas combinações de Rank Avançado ou superior revelam uma <b>árvore híbrida</b> que não existe
+          pra ninguém que não cumpriu os dois pré-requisitos — o Estilo Vendaval (Cap. 3, catálogo da Árvore
+          do Corpo) é a primeira: emerge de já dominar o Estilo Deus do Norte e a Magia de Vento. Ela não
+          aparece na escolha da Árvore Inicial, e o desbloqueio dela não é travado por código nenhum — o
+          Mestre decide, do mesmo jeito que já decide a Raça Dragão e o Rank Deus.
+        </Aside>
       </Section>
     </div>
   );
