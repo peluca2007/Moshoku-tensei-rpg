@@ -6923,4 +6923,75 @@ As seis criaturas acima bastam pra maioria dos encontros. Reserve uma ficha comp
 ]
 ]
 
+#pagebreak(weak: true)
+
+#largo[
+= Apêndice L: Crafting e Alquimia
+
+Quem tem a Perícia de Ofícios (Cap. 1) ligada ao que quer fazer já pode produzir coisas fora de combate, usando a atividade *Estudar um Ofício ou Ritual* do Downtime (Apêndice F). Este apêndice lista o que sai dessa bancada, do mais simples ao mais lendário.
+
+== Poções
+
+Uma poção reproduz o efeito de uma magia de Cura ou Desintoxicação já existente no livro, engarrafado — ela não inventa efeito novo, só empacota um que já está nas listas dos Caps. 2 e 3.
+
+#tbl((1.3fr, 0.8fr, 2fr), (left, center, left),
+  [Poção], [Custo em PO], [Efeito],
+  [*Poção Menor de Cura*], [15 PO], [Reproduz uma magia de Cura de rank Principiante ou Intermediário à escolha do alquimista, sem precisar de mago presente.],
+  [*Poção de Antídoto*], [25 PO], [Remove 1 ponto de Profundidade de uma única aflição (Apêndice D) — o mesmo que um teste de Desintoxicação de rank baixo faria.],
+  [*Poção Maior de Cura*], [60 PO], [Reproduz uma magia de Cura de rank Avançado ou Santo à escolha do alquimista.],
+  [*Elixir de Foco*], [40 PO], [Vantagem no próximo teste de resistência de Espírito. Ajuda a resistir Trauma (Cap. 4) num momento específico — não remove pontos já acumulados.],
+)
+
+#quadro(titulo: [Fabricar, não só comprar])[
+Um personagem com a Perícia de Ofícios (Alquimia) e acesso a um mago de Cura ou Desintoxicação do rank exigido pode *fabricar* qualquer poção acima gastando metade do custo em PO como material — regra padrão do Downtime (Apêndice F) — em vez de comprar pronta. Sem a Perícia, só resta comprar de um alquimista da cidade, se houver um.
+]
+
+== Venenos
+
+Fabricar veneno é conseguir uma dose de uma aflição já catalogada no Apêndice D. O custo em PO reflete a Profundidade inicial dela — venenos mais fundos são mais raros e mais controlados por lei.
+
+#tbl((0.8fr, 1.6fr, 1fr), (center, left, center),
+  [Profundidade], [Exemplo (Apêndice D)], [Custo típico],
+  [1], [Baba de Sapo-Lodo], [5 PO],
+  [2], [Peçonha de Serpente-do-Pântano], [20 PO],
+  [3], [Fel de Wyvern], [80 PO],
+  [4+], [Praga do Continente Demônio], [Não está à venda — só se rouba, caça ou herda.],
+)
+
+#quadro(titulo: [A lei e o veneno])[
+Vender veneno de Profundidade 3 ou superior sem licença de Guilda de Alquimistas é crime em Millis e no Reino Asura — um personagem flagrado perde Reputação (Apêndice I) com a facção local automaticamente, sem precisar de julgamento.
+]
+
+== Encantamento de Arma e Armadura
+
+Encantar um item existente exige Perícia de Ofícios (Encantamento — especialização de Arcanismo) e um mago com o Rank exigido presente durante o processo. O item recebe *um* efeito da tabela abaixo, permanentemente.
+
+#tbl((1.6fr, 1fr, 1fr), (left, center, center),
+  [Efeito], [Rank exigido no encantador], [Custo em PO],
+  [*+1 no Dado de Arma ou +1 na CA*], [Avançado], [150 PO],
+  [*Dano elemental extra (+1d6, tipo à escolha)*], [Santo], [300 PO],
+  [*Ignora Resistência a um tipo de dano*], [Rei], [600 PO],
+  [*+1 no Bônus de Rank pra fins de Dado de Arma (empilha com o do personagem)*], [Imperador], [1500 PO],
+)
+
+#quadro(titulo: [Por que isso não quebra o Apêndice C])[
+Os valores da Tabela Comparativa de Dano por Turno já assumem equipamento comum. Um item encantado empurra um personagem *um pouco* acima da régua dele — de propósito, porque custou meses de PO que o grupo não gastou em outra coisa. Se um item começar a valer mais que um Rank inteiro de árvore, o preço está baixo demais; suba.
+]
+
+== Itens Mágicos Únicos — O Anel de Teleporte como Prova de Conceito
+
+Nem todo item mágico cabe numa tabela de preço. Alguns são *artefatos*: peças únicas, com nome próprio, cuja fabricação é evento de campanha, não compra de ficha — exatamente como o Rank Deus (Cap. 1 e 3) e o grimório trancado de Desintoxicação (Cap. 3). O exemplo mais citado do cânone é o *Anel de Teleporte*.
+
+#quadro(titulo: [O Anel de Teleporte])[
+*O que faz:* teleporta o portador — e quem ele tocar — para um de até *três destinos gravados*, sem custo de PM, sem teste, uma vez ativado. Depois de usado, o anel precisa de *1 semana* pra recarregar.
+
+*Por que não está na tabela acima:*
+- Exige um encantador de Invocação de *rank Deus* — narrativamente, não é uma compra: é um favor de alguém que raramente concede favores.
+- Os materiais incluem um componente que só existe em circunstâncias específicas da campanha, a critério do Mestre — não se compra em loja nenhuma do Mundo de Seis Faces.
+- O anel, uma vez feito, é *irrepetível*: gravar um novo destino nele exige voltar ao mesmo encantador.
+
+Se a sua mesa quer um item deste calibre em jogo, trate a fabricação dele como o final de um arco inteiro — a receita é a campanha, não uma linha de PO.
+]
+]
+
 
