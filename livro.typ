@@ -6877,4 +6877,50 @@ Se um personagem entra em combate individual contra um alvo específico — um c
 ]
 ]
 
+#pagebreak(weak: true)
+
+#largo[
+= Apêndice K: Bestiário — Criaturas por Patamar
+
+O Mestre não precisa de uma ficha completa pra cada monstro — precisa de números que já batem com a régua do Cap. 4 e do Apêndice C sem trabalho extra. Este apêndice dá o molde por patamar e um punhado de criaturas prontas pra reskinar.
+
+== O Molde por Patamar
+
+#tbl((1.2fr, 0.8fr, 0.8fr, 1.2fr, 1.2fr, 1.3fr), (left, center, center, center, center, center),
+  [Patamar], [PV], [CA], [Bônus de Ataque], [Dano por turno], [CD de resistência],
+  [*1º — Comum*], [20], [12], [+3], [~10], [11],
+  [*2º — Perigosa*], [45], [13], [+4], [~20], [13],
+  [*3º — Ameaça*], [90], [14], [+6], [~35], [15],
+  [*4º — Elite*], [150], [15], [+8], [~55], [17],
+  [*5º — Terror*], [220], [16], [+10], [~80], [19],
+  [*6º — Lenda*], [320], [17], [+12], [~120], [21],
+)
+
+#quadro(titulo: [De onde vêm esses números])[
+PV e Dano seguem a mesma curva da Tabela de Referência do Cap. 4 (uma ficha em cada patamar) e da Tabela Comparativa de Dano por Turno (Apêndice C) — uma criatura deste patamar aguenta e causa aproximadamente o que um personagem daquele patamar aguenta e causa, um pouco abaixo pra sustentar encontros com mais de uma criatura. CA e CD sobem devagar de propósito: neste sistema, a diferença entre patamares é *quantas rodadas o combate dura*, não "acerta sempre" contra "erra sempre".
+]
+
+#quadro(titulo: [Ajustando pra cima ou pra baixo])[
+- *Grupo de criaturas fracas* (uma horda): use metade do PV e do dano do patamar, mas multiplique o número de criaturas — três "1º — Comum" já é uma cena inteira.
+- *Chefe único*: dobre o PV da linha do patamar dele e mantenha o dano — ele precisa durar mais rodadas que os capangas, não bater mais forte que um personagem do mesmo patamar.
+- *Fera sem inteligência* (a maioria do Bestiário): sem Perícias sociais, sem resistência a Persuasão/Enganação — role só o Atributo puro nesses casos, como o Cap. 1 já define pra qualquer teste fora da lista fechada de Perícias.
+]
+
+== Seis Criaturas Prontas
+
+#tbl(3, (left, center, left),
+  [Criatura], [Patamar], [O que a torna perigosa],
+  [*Sapo-Lodo Gigante*], [1º — Comum], [Língua pegajosa (_Preso_, CD 11) e a _Baba de Sapo-Lodo_ (Apêndice D) em cada mordida. Comum nos pântanos do Continente Central.],
+  [*Serpente-do-Pântano*], [2º — Perigosa], [_Peçonha de Serpente-do-Pântano_ (Apêndice D) em cada picada bem-sucedida — o veneno mata mais gente do que as presas.],
+  [*Aranha Gigante das Cavernas*], [2º — Perigosa], [Teia que aplica _Preso_ em área antes do combate começar; ataca de emboscada com Vantagem no primeiro turno.],
+  [*Wyvern*], [3º — Ameaça], [Voa, mergulha pra morder e volta a 18 metros de altura no mesmo turno — só um Arqueiro ou um mago à distância acompanha o ritmo dela.],
+  [*Ogro de Guerra (Onizoku)*], [4º — Elite], [Um único golpe de maça rola o Dado de Arma duas vezes; se acertar um alvo _Caído_, o dano é *triplicado*.],
+  [*Superd Renegado*], [5º — Terror], [Usa o Terceiro Olho (Cap. 1) pra nunca ser flanqueado e conjura Magia de Água até o patamar Rei — trate como um NPC completo se ele reaparecer mais de uma vez na campanha.],
+)
+
+#quadro(titulo: [Quando vale a pena fazer uma ficha completa])[
+As seis criaturas acima bastam pra maioria dos encontros. Reserve uma ficha completa (como o Apêndice A) pra qualquer criatura que vá reaparecer — um vilão recorrente, um dragão nomeado, o líder de uma facção (Apêndice I). Tudo que aparece uma vez só, morre na mesma cena.
+]
+]
+
 
