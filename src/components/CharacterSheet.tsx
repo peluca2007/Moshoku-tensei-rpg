@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2 } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { getPaSpent } from "@/store/selectors";
@@ -192,6 +192,7 @@ function BonusInput({ value, onChange }: { value: number; onChange: (value: numb
 
 export default function CharacterSheet() {
   const character = useActiveCharacter();
+  const canUndo = useCharacterStore((s) => (s.activeId ? (s.history[s.activeId]?.length ?? 0) > 0 : false));
   const {
     name,
     raceId,
@@ -328,6 +329,15 @@ export default function CharacterSheet() {
             placeholder="Nome do personagem"
             className="min-w-0 flex-1 rounded-lg bg-transparent text-3xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700"
           />
+          <button
+            type="button"
+            onClick={() => useCharacterStore.getState().undo()}
+            disabled={!canUndo}
+            title="Desfazer a última alteração nesta ficha"
+            className="mt-1.5 flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+          >
+            <Undo2 className="h-3.5 w-3.5" /> Desfazer
+          </button>
           <button
             type="button"
             onClick={handleDownloadPdf}

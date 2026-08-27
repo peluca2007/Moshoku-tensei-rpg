@@ -39,10 +39,15 @@ function makeId(prefix: string) {
   return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
+/** Quantas edições passadas guardamos por ficha para o "Desfazer" — não persiste entre recarregamentos. */
+const HISTORY_LIMIT = 30;
+
 interface RosterState {
   characters: Record<string, CharacterData>;
   order: string[];
   activeId: string | null;
+  /** Pilha de estados anteriores da ficha ativa, por id de personagem (mais recente por último). Não é salva no localStorage. */
+  history: Record<string, CharacterData[]>;
 
   createCharacter: (name?: string) => string;
   /** Importa uma ficha exportada em JSON como um personagem NOVO (nunca sobrescreve um existente) — gera um id novo, mantém o resto dos dados. */
@@ -79,6 +84,9 @@ interface RosterState {
   /** Retorna false (e não muda nada) se o rank não estiver desbloqueado ou já foi comprado. */
   purchaseAbility: (ability: PurchasedAbility) => boolean;
   removeAbility: (treeId: string, id: string) => void;
+
+  /** Desfaz a última edição de campo na ficha ativa (não desfaz criar/apagar/trocar de personagem). */
+  undo: () => void;
 }
 
 function updateActive(
@@ -90,7 +98,12 @@ function updateActive(
   if (!state.activeId) return;
   const current = state.characters[state.activeId];
   if (!current) return;
-  set({ characters: { ...state.characters, [state.activeId]: updater(current) } });
+  const previousStack = state.history[state.activeId] ?? [];
+  const nextStack = [...previousStack, current].slice(-HISTORY_LIMIT);
+  set({
+    characters: { ...state.characters, [state.activeId]: updater(current) },
+    history: { ...state.history, [state.activeId]: nextStack },
+  });
 }
 
 export const useCharacterStore = create<RosterState>()(
@@ -99,6 +112,7 @@ export const useCharacterStore = create<RosterState>()(
       characters: {},
       order: [],
       activeId: null,
+      history: {},
 
       createCharacter: (name = "Novo Personagem") => {
         const id = makeId("char");
@@ -220,6 +234,18 @@ export const useCharacterStore = create<RosterState>()(
           ...c,
           purchasedAbilities: c.purchasedAbilities.filter((a) => !(a.treeId === treeId && a.id === id)),
         })),
+
+      undo: () => {
+        const state = get();
+        if (!state.activeId) return;
+        const stack = state.history[state.activeId];
+        if (!stack || stack.length === 0) return;
+        const previous = stack[stack.length - 1];
+        set({
+          characters: { ...state.characters, [state.activeId]: previous },
+          history: { ...state.history, [state.activeId]: stack.slice(0, -1) },
+        });
+      },
     }),
     {
       name: "mushoku-tensei-roster",
@@ -228,6 +254,9 @@ export const useCharacterStore = create<RosterState>()(
       // Sem usuários reais ainda, então uma versão antiga simplesmente reseta o roster.
       version: 4,
       migrate: () => ({ characters: {}, order: [], activeId: null }),
+      // history é só uma conveniência de sessão pro botão "Desfazer" — não faz sentido inchar o
+      // localStorage guardando fichas inteiras duplicadas, e não precisa sobreviver a um recarregamento.
+      partialize: (state) => ({ characters: state.characters, order: state.order, activeId: state.activeId }),
     }
   )
 );
