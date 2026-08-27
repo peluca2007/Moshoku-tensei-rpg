@@ -39,3 +39,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# PDFs derivados (o livro.typ é a fonte de verdade; PDF é sempre gerado a
+# partir dele, no typst.app ou pelo botão "Baixar PDF" da ficha — não faz
+# sentido versionar binário que muda a cada exportação)
+*.pdf
+
+# rascunho antigo do livro (Homebrewery/Markdown), substituído por livro.typ
+livro em txt.txt
