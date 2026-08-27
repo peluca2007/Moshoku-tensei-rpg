@@ -51,11 +51,13 @@ export default function Chapter1() {
             <b>Espírito</b> — a Reserva: define quanto de mana o corpo consegue armazenar.
           </P>
           <P>
-            Sempre que você alcançar um patamar numérico novo em qualquer escola de magia, além dos PM da
-            escola, você ganha PM adicionais iguais ao seu Espírito — a <b>Reserva Inata</b>. Ela é ganha uma
-            vez por degrau, no máximo seis vezes na vida (a primeira vez que alcança um 1º patamar de magia,
-            ganha; a primeira vez que alcança um 2º, ganha de novo — abrir o 1º patamar de sete escolas
-            diferentes rende uma Reserva Inata, não sete).
+            <b>Escolas de magia não concedem PM.</b> A sua reserva inteira é{" "}
+            <b>(Espírito × Maior Bônus de Rank de magia × 2) + 8</b>, calculada uma vez e recalculada sempre
+            que o seu maior patamar de magia sobe — não há bônus extra por número de escolas abertas.
+          </P>
+          <P>
+            Abrir oito escolas no 1º patamar não te dá mana nenhuma a mais. Subir <b>uma</b> escola até o
+            Imperador multiplica tudo. É por isso que o mago que vai fundo conjura e o que espalha assiste.
           </P>
           <P>
             Existem dois magos legítimos: o cirurgião (Intelecto alto — poucos tiros, todos letais) e o
@@ -77,17 +79,27 @@ export default function Chapter1() {
           rows={[
             ["1 PA", "2 Perícias à sua escolha."],
             ["1 PA", "Desbloqueia 1 Técnica Marcial ou 1 Talento de rank baixo."],
-            ["2 PA", "+12 PV Máximos (melhoria física permanente)."],
-            ["2 PA", "+12 PM Máximos (melhoria mágica permanente)."],
+            ["2 PA", "+PV iguais ao dobro do seu maior Bônus de Rank (melhoria física permanente)."],
+            ["2 PA", "+PM iguais ao seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
             ["2 PA", "Aumenta 1 ponto em qualquer Atributo Base permanentemente (limite de 8)."],
             ["3 PA", "Vantagem permanente em todos os Testes de Resistência de 1 Atributo à sua escolha."],
             ["Variável", "Magias e Talentos de Árvore — o custo escala com o Rank."],
           ]}
         />
+        <Aside title="Por que essas duas melhorias escalam com o Bônus de Rank">
+          <P>
+            +PV e +PM da tabela acima não são um número fixo — eles crescem junto com o seu maior Bônus de
+            Rank (Principiante +1, até Imperador +6). Um Principiante gastando 2 PA ganha pouco; um Imperador
+            gastando os mesmos 2 PA ganha seis vezes mais. Isso evita que a compra vire golpe de sorte na
+            criação e lixo de ficha no topo — ela sempre pesa a mesma fração do que você já é.
+          </P>
+        </Aside>
         <Aside title="O Padrão das Reservas">
           <P>
-            Todo talento de árvore que compra reserva vale o mesmo, custe onde custar: 1 PA = +6 PM Máximos
-            ou +8 PV Máximos, comprável tantas vezes quantos forem os seus patamares naquela árvore. Isso
+            Todo talento de árvore que compra reserva vale exatamente o mesmo, custe onde custar: 1 PA = +2
+            PM por patamar seu naquela árvore, ou +4 PV por patamar seu naquela árvore — comprável tantas
+            vezes quantos forem os seus patamares. No 1º patamar isso é +2 PM ou +4 PV, e é pouco; no 6º é
+            +12 PM ou +24 PV, e vale a compra. Isso
             existe pra que nenhuma escola dê mais vida de graça — escolas se diferenciam pela curva de
             progressão e pelas Maestrias, nunca por um talento genérico valer mais numa do que na outra.
           </P>
