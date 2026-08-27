@@ -58,7 +58,7 @@ export const CURA_TREE: Tree = {
           pmCost: 1,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
-          effect: "O dano escolhido permanece Fresco por 1 hora, mesmo depois de o turno passar — permite curar em dobro mais tarde.",
+          effect: "O dano escolhido conta como Ferida Fresca por 1 hora, mesmo depois de o turno em que ocorreu passar — qualquer magia de Cura conjurada nesse dano nessa 1 hora ainda cura em dobro.",
         },
         {
           id: "vigor-emprestado",

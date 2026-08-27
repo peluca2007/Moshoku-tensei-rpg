@@ -7,42 +7,44 @@ export default function Chapter4() {
       <P>Quando a diplomacia falha e as espadas são desembainhadas, o sistema adota um combate rápido, letal e tático.</P>
 
       <Section>
-        <SectionTitle id="cap4-1">1. Cálculos Vitais (Criação de Personagem)</SectionTitle>
+        <SectionTitle id="cap4-1">1. Cálculos Vitais</SectionTitle>
         <P>
-          Como é obrigatório desbloquear pelo menos um Rank Principiante na criação, sua Árvore Inicial
-          define Vida e Mana.
+          PV e PM não são calculados só na criação — eles crescem toda vez que você desbloqueia um Rank novo
+          em qualquer árvore. As fórmulas abaixo são as que valem sempre, do 1º patamar ao Imperador; a ficha
+          recalcula os dois números automaticamente a cada Rank novo.
         </P>
+        <Aside title="PV Máximos = Constituição Base + Progressão + Vitalidade">
+          <List
+            items={[
+              <span key="cb"><b>Constituição Base = 10 + (Vigor × 3)</b>, mínimo 13. É o corpo com que você nasceu, antes de qualquer treino.</span>,
+              <span key="pg">
+                <b>Progressão =</b> a soma de <b>todos</b> os dados de PV que suas árvores concederam, <b>dobrada</b>. No 1º patamar da sua Árvore Inicial, use sempre o valor <b>máximo</b> do dado (é o único dado rolado com garantia de máximo no livro); em qualquer outro patamar, de qualquer árvore, use a <b>média</b> do dado.
+              </span>,
+              <span key="vt"><b>Vitalidade = Vigor × Maior Bônus de Rank × 4.</b> O corpo endurecido pelo treino — um Imperador (Bônus +6) com Vigor 6 carrega 144 PV só disto.</span>,
+            ]}
+          />
+        </Aside>
+        <Aside title="PM Máximos = (Espírito × Maior Bônus de Rank de Magia × 2) + 8">
+          <P>
+            Uma fórmula só, e mais nada. <b>Escolas de magia não concedem PM nenhum</b> — a reserva inteira
+            vem do seu Espírito e de quão fundo você foi numa escola. Árvores do Corpo e de Utilidade
+            concedem <b>0 PM, sempre</b>, mesmo em rank Imperador — em troca, o Corpo recebe PT (Cap. 3).
+          </P>
+        </Aside>
         <List
           items={[
-            <span key="pv">
-              <b>PV Iniciais:</b> multiplique o Vigor por 3 (mínimo garantido 6). Some o valor{" "}
-              <b>máximo</b> do dado de PV do 1º patamar da Árvore Inicial + 8 de Resiliência Base.
-            </span>,
-            <span key="pm">
-              <b>PM Iniciais:</b> o PM do Rank Principiante da sua escola, mais o Espírito (Reserva Inata),
-              mais bônus raciais e de Antecedente. Árvores do Corpo recebem 0 PM (nem PM de escola, nem
-              Reserva Inata) — em troca, recebem PT.
-            </span>,
-            <span key="pt">
-              <b>PT:</b> Vigor (mínimo 1) desde o 1º patamar de árvore do Corpo. A partir do 3º (2º no Deus
-              da Espada), passa a Espírito + Vigor, +1 por patamar 3º+ (+2 em Cavalaria e Escudos).
-              Recuperados em Descanso Curto.
-            </span>,
             <span key="ca"><b>Classe de Armadura (CA):</b> Base 10 + Agilidade. Cresce com armaduras, talentos e habilidades defensivas.</span>,
             <span key="ini"><b>Iniciativa:</b> 1d20 + Agilidade.</span>,
             <span key="desl"><b>Deslocamento:</b> 9 metros, exceto onde a raça indicar outro valor.</span>,
           ]}
         />
-        <Aside title="Por que a Resiliência Base existe">
+        <Aside title="Por que a fórmula é essa, e não uma soma simples">
           <P>
-            Sem ela, a conta antiga dava 8 PV a um mago iniciante — e um Principiante do Deus da Espada
-            causa cerca de 24 de dano no primeiro turno (com Vantagem e um dado extra, pela Maestria dele).
-            Dois personagens recém-criados, do mesmo patamar, se matavam antes de o segundo agir. Não era
-            letalidade, era o jogo acabar antes de começar.
-          </P>
-          <P>
-            Com a correção, o mago frágil aguenta um turno cheio de agressão e o guerreiro aguenta dois. O
-            combate continua rápido e assustador — o tom certo pra este mundo — mas passa a existir.
+            Com uma fórmula ingênua (só somar os dados), um Norte de Vigor 5 chegava ao Imperador com pouco
+            mais de 70 PV, contra um Imperador da Espada causando perto de 130 de dano por turno — o combate
+            acabava antes de o segundo personagem agir. Dobrar a Progressão e multiplicar a Vitalidade pelo
+            Bônus de Rank resolve isso: o mesmo Norte chega ao Imperador com mais de 220 PV, e o combate dura
+            de duas a três rodadas em qualquer patamar — tempo pro curandeiro agir e pro Escudos se interpor.
           </P>
         </Aside>
       </Section>
