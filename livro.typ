@@ -6832,4 +6832,49 @@ Não existe fórmula. Reputação sobe ou desce por *atos públicos*, não por P
 ]
 ]
 
+#pagebreak(weak: true)
+
+#largo[
+= Apêndice J: Cerco e Batalha em Escala de Exército
+
+O patamar *Senhor da Guerra* (Tático, Cap. 3) já aponta pra isso: guerra em escala de reino não se resolve rolando Iniciativa pra cada soldado. Este apêndice dá ao Mestre uma forma rápida de rodar um cerco ou uma batalha de exércitos usando três números por lado, não uma ficha por soldado.
+
+== Os Três Números de um Exército
+
+#tbl(2, (left, left),
+  [Recurso], [O que mede],
+  [*Força*], [Poder de combate efetivo. Chega a 0: o exército está destruído ou capturado — não existe recuo organizado depois disso.],
+  [*Moral*], [Vontade de continuar lutando. Chega a 0: o exército foge ou se rende, mesmo com Força de sobra.],
+  [*Suprimento*], [Comida, munição, reforços em trânsito. Chega a 0: o exército perde *1 de Força* automaticamente a cada fase, até algo mudar.],
+)
+
+Um exército comum (uma guarnição de cidade média, uma horda de saqueadores) começa com *Força 6, Moral 6, Suprimento 3*. Ajuste pra cima ou pra baixo conforme tamanho e preparação — uma tropa de elite ou muito maior pode começar com Força e Moral 10; uma milícia mal treinada pode começar com Moral 3.
+
+== As Três Fases
+
+Toda batalha ou cerco corre em três fases — *Abertura*, *Embate* e *Desfecho*. Em cada fase, o Mestre decide um punhado de eventos (2 a 4) que mudam Força, Moral ou Suprimento de um ou de ambos os lados. É aí que o grupo entra.
+
+#quadro(titulo: [Onde os personagens entram])[
+Cada ação notável de um personagem na batalha vira um evento de fase, não uma rolagem individual contra cem soldados:
+
+- *Magia de área em escala Imperador ou Deus* (Fogo, Terra, Água) pode valer sozinha *-2 a -4 de Força* inimiga numa fase — é por isso que reinos recrutam magos antes de soldados.
+- *Um Senhor da Guerra* usando _A Batalha Que Você Escolheu_ ou uma Preparação prévia pode negar reforços, mudar o terreno a favor do próprio lado, ou dar *+1 de Moral* ao próprio exército por fase.
+- *Um Bardo* usando _O Fim da Canção_ ou uma Preparação de discurso pode custar *-2 de Moral* inimiga ou *+2 de Moral* própria numa fase.
+- *Um Ladino* sabotando suprimentos antes do cerco começar pode zerar o *Suprimento* inimigo já na Abertura.
+- *Combate pessoal contra o comandante inimigo*, resolvido com as regras normais do Cap. 4, pode causar *-3 de Moral* inimiga se o grupo vencer em público — ou *-3 de Moral* própria se perder.
+]
+
+== Resolvendo o Desfecho
+
+Ao fim da fase de Desfecho, compare Força e Moral dos dois lados:
+
++ O lado com *Moral 0* foge ou se rende, mesmo vencendo em Força.
++ O lado com *Força 0* está destruído.
++ Se nenhum dos dois chegar a 0, vence o embate quem tiver a maior soma de *Força + Moral* — o outro recua com o que sobrou, pronto pra outra rodada de fases numa sessão futura, se a guerra continuar.
+
+#quadro(titulo: [Isto não substitui o Capítulo 4])[
+Se um personagem entra em combate individual contra um alvo específico — um campeão inimigo, o comandante, uma torre de cerco — resolva aquilo com as regras normais de combate. O sistema de exército só existe pra tudo em volta que não vale a pena virar Iniciativa: os outros milhares de pessoas no campo.
+]
+]
+
 
