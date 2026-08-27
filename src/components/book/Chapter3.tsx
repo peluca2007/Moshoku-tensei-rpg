@@ -112,9 +112,30 @@ export default function Chapter3() {
           ]}
         />
         <P>
-          Fórmula de dano marcial: <b>Dado de Arma (escalado) + Força + Bônus do Rank do Estilo</b>. Os
-          degraus vêm do seu Rank naquele estilo específico — um Norte Santo usando uma técnica do Deus da
-          Espada em que é apenas Principiante aplicaria só 1 degrau.
+          Fórmula de dano marcial: <b>Dado de Arma (escalado) + Força + Bônus do Rank</b>. Qual Rank conta
+          depende do tipo de ataque, e a regra tem exatamente dois casos — nunca um terceiro:
+        </P>
+        <List
+          items={[
+            <span key="comum">
+              <b>Ataque comum (golpe simples, sem nome, sem técnica):</b> use o <b>maior</b> Rank que você
+              tiver entre todas as suas árvores do Corpo. Um personagem com Norte Santo e Espada Principiante
+              rola os degraus do Norte Santo (o maior dos dois) em qualquer golpe comum, não importa com qual
+              arma.
+            </span>,
+            <span key="tecnica">
+              <b>Técnica nomeada (qualquer habilidade comprada de uma árvore específica):</b> use sempre o
+              Rank <b>daquela árvore que concedeu a técnica</b>, mesmo que seja menor que o seu maior Rank
+              geral. O mesmo personagem usando a Espada de Luz (técnica do Deus da Espada) rola só os degraus
+              do Rank Principiante — é por isso que ela sai fraca na mão dele, apesar do Norte Santo.
+            </span>,
+          ]}
+        />
+        <P>
+          A mesma lógica dos dois casos vale pra <b>qualquer</b> talento ou regra do livro que mencione
+          &ldquo;seu Bônus de Rank&rdquo; sem dizer de qual árvore: se a regra foi concedida por uma árvore
+          específica, é o Rank daquela árvore; se for uma regra genérica do sistema (não amarrada a nenhuma
+          árvore), use o maior Rank que você tiver em qualquer árvore.
         </P>
 
         <SubTitle id="cap3-touki">2. Touki (Aura de Batalha)</SubTitle>
@@ -130,8 +151,11 @@ export default function Chapter3() {
           </P>
           <P>
             <b>PT Pleno</b> — a partir do 3º patamar (2º no Deus da Espada): a reserva passa a ser Espírito +
-            Vigor, e você desbloqueia o Manto de Touki e as manobras de gasto abaixo. Crescimento: +1 PT por
-            patamar 3º+ em qualquer árvore do Corpo (Cavalaria e Escudos concede +2, por gastar mais rápido).
+            Vigor, e você desbloqueia o Manto de Touki e as manobras de gasto abaixo. <b>Crescimento:</b> +1
+            PT por patamar que já tenha PT Pleno em qualquer árvore do Corpo — o 2º patamar do Deus da Espada
+            já conta pra essa soma (é o único caso do livro em que o PT Pleno começa antes do 3º patamar, e a
+            exceção vale exatamente pra essa conta também, não só pro desbloqueio do Manto). Cavalaria e
+            Escudos concede +2 por patamar em vez de +1, por gastar PT mais rápido que qualquer outra árvore.
           </P>
           <List
             items={[
@@ -142,10 +166,12 @@ export default function Chapter3() {
           />
         </Aside>
         <P>
-          <b>O Manto de Touki (passivo, gratuito)</b> — a partir do Rank Avançado, enquanto consciente e não
-          Exausto: +CA igual à metade do Bônus de Rank (arred. pra cima); Redução contra projéteis mundanos
-          igual ao dobro do Bônus de Rank (e nunca sofre crítico deles); ataques desarmados e com objetos
-          improvisados contam como mágicos.
+          <b>O Manto de Touki (passivo, gratuito, independente de PT)</b> — a partir do Rank Avançado,
+          enquanto consciente e não Exausto: +CA igual à metade do Bônus de Rank (arred. pra cima); Redução
+          contra projéteis mundanos igual ao dobro do Bônus de Rank (e nunca sofre crítico deles); ataques
+          desarmados e com objetos improvisados contam como mágicos. <b>O Manto não consome PT e continua
+          ativo mesmo com a reserva de PT em 0</b> — ele é vestido pelo Rank, não comprado com o recurso; só
+          PT paga as manobras de gasto da tabela abaixo, nunca a existência do Manto em si.
         </P>
         <BookTable
           headers={["Custo", "Manobra", "Efeito"]}
@@ -187,9 +213,25 @@ export default function Chapter3() {
           items={[
             <span key="1"><b>Sem Escada de Dados:</b> árvores de Utilidade não recebem degraus no Dado de Arma.</span>,
             <span key="2"><b>Sem Touki, nunca:</b> nenhum patamar de Utilidade concede Manto de Touki nem PT.</span>,
-            <span key="3"><b>O Rank soma nas Perícias:</b> seu Bônus de Rank é somado a todo teste de perícia coberto pela sua árvore, exatamente como o BC é somado ao dano de um mago.</span>,
+            <span key="3">
+              <b>O Rank soma só nas Perícias que a sua árvore cobre</b> — nunca em todas as Perícias do jogo,
+              exatamente como o BC é somado só ao dano do elemento de um mago, não ao de qualquer magia:
+            </span>,
           ]}
         />
+        <BookTable
+          headers={["Árvore", "Perícias cobertas pelo Bônus de Rank"]}
+          rows={[
+            ["Ladino (Furtividade e Armadilhas)", "Furtividade, Ladinagem, Percepção, Acrobacia, Enganação (disfarce)."],
+            ["Bardo e Interação", "Atuação, Persuasão, Intuição, História."],
+            ["Tático (Navegação e Liderança)", "Sobrevivência, Natureza, Investigação, Percepção (rastreio)."],
+          ]}
+        />
+        <P>
+          Duas árvores de Utilidade cobrem <b>Percepção</b> (Ladino, num sentido; Tático, noutro). Se você
+          tiver Rank em ambas, use o <b>maior</b> Bônus de Rank entre as duas — nunca some os dois juntos, e
+          nunca use os dois pra dobrar a vantagem no mesmo teste.
+        </P>
 
         <SubTitle id="cap3-pp">Pontos de Preparação (PP)</SubTitle>
         <P>
