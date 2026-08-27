@@ -427,7 +427,7 @@ export default function CharacterSheet() {
           </span>
 
           <span
-            title="Rank de Aventureiro na Guilda — referência de reputação (Apêndice G), não trava mecânica. Quem decide de verdade é o Mestre."
+            title="Rank de Aventureiro na Guilda — referência de reputação (Cap. 5, §2), não trava mecânica. Quem decide de verdade é o Mestre."
             className="flex items-center gap-1 rounded-full bg-wine-500/10 px-3 py-1 font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300"
           >
             <BookOpen className="h-3.5 w-3.5" /> Rank {guildRank} na Guilda

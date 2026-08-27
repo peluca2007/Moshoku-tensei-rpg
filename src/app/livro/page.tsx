@@ -4,6 +4,7 @@ import Chapter1 from "@/components/book/Chapter1";
 import Chapter2 from "@/components/book/Chapter2";
 import Chapter3 from "@/components/book/Chapter3";
 import Chapter4 from "@/components/book/Chapter4";
+import Chapter5 from "@/components/book/Chapter5";
 import Appendices from "@/components/book/Appendices";
 import ExportBookButton from "@/components/book/ExportBookButton";
 
@@ -63,7 +64,18 @@ const TOC: TocEntry[] = [
       { id: "cap4-4", label: "4. Empilhamento" },
       { id: "cap4-5", label: "5. Críticos e Touki" },
       { id: "cap4-6", label: "6. Sangrando e Morrendo" },
-      { id: "cap4-7", label: "7. Exaustão, Fome, Sede e Clima" },
+      { id: "cap4-aflicoes", label: "7. Aflições do Mundo de Seis Faces" },
+      { id: "cap4-8", label: "8. Exaustão, Fome, Sede e Clima" },
+    ],
+  },
+  {
+    id: "cap5",
+    label: "Cap. 5 — Entre Aventuras",
+    children: [
+      { id: "cap5-1", label: "1. Tempo Livre e Downtime" },
+      { id: "cap5-2", label: "2. A Guilda de Aventureiros" },
+      { id: "cap5-3", label: "3. Reputação com Facções" },
+      { id: "cap5-4", label: "4. Crafting e Alquimia" },
     ],
   },
   {
@@ -73,15 +85,10 @@ const TOC: TocEntry[] = [
       { id: "apendice-a", label: "A. Ficha de Exemplo" },
       { id: "apendice-b", label: "B. Molde p/ Novas Escolas" },
       { id: "apendice-c", label: "C. Dano por Turno" },
-      { id: "apendice-d", label: "D. Aflições" },
-      { id: "apendice-e", label: "E. Ambiguidades Resolvidas" },
-      { id: "apendice-f", label: "F. Downtime" },
-      { id: "apendice-g", label: "G. Guilda de Aventureiros" },
-      { id: "apendice-h", label: "H. Viagem entre Continentes" },
-      { id: "apendice-i", label: "I. Reputação com Facções" },
-      { id: "apendice-j", label: "J. Cerco e Batalha em Exército" },
-      { id: "apendice-k", label: "K. Bestiário" },
-      { id: "apendice-l", label: "L. Crafting e Alquimia" },
+      { id: "apendice-d", label: "D. Ambiguidades Resolvidas" },
+      { id: "apendice-e", label: "E. Viagem entre Continentes" },
+      { id: "apendice-f", label: "F. Cerco e Batalha em Exército" },
+      { id: "apendice-g", label: "G. Bestiário" },
     ],
   },
 ];
@@ -152,6 +159,7 @@ export default function LivroPage() {
           <Chapter2 />
           <Chapter3 />
           <Chapter4 />
+          <Chapter5 />
           <Appendices />
         </main>
       </div>

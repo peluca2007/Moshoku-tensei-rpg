@@ -225,7 +225,7 @@ export interface WeaponDamageInfo {
 /**
  * Fórmula de dano marcial (Cap. 3): Dado de Arma (escalado) + Atributo + Bônus
  * do Rank do Estilo. "Um ataque comum usa os degraus do seu maior patamar
- * entre as árvores do Corpo" (Apêndice E) — por isso a escalada usa sempre a
+ * entre as árvores do Corpo" (Apêndice D, Ambiguidades Resolvidas) — por isso a escalada usa sempre a
  * árvore do Corpo onde o personagem tem o rank mais alto, não uma em particular.
  */
 export function getWeaponDamage(
@@ -355,7 +355,7 @@ export function getPaSpent(state: StoreState): number {
 
 export type GuildRank = "F" | "E" | "D" | "C" | "B" | "A" | "S";
 
-/** Apêndice G: faixas de PA usadas como referência pro Rank de Aventureiro — não é regra travada, só o chute inicial que o livro dá ao Mestre. */
+/** Cap. 5, §2 (Guilda de Aventureiros): faixas de PA usadas como referência pro Rank de Aventureiro — não é regra travada, só o chute inicial que o livro dá ao Mestre. */
 const GUILD_RANK_THRESHOLDS: { rank: GuildRank; min: number }[] = [
   { rank: "S", min: 110 },
   { rank: "A", min: 75 },

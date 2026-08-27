@@ -22,7 +22,7 @@ export const RACES: Race[] = [
     traits: [
       "Sentido da Floresta: Vantagem em Percepção auditiva e em Sobrevivência para navegação.",
       "+1 em Agilidade e +8 PM Máximos, permanentes.",
-      "Sangue Longevo: Vantagem em testes de resistência de Vigor contra veneno e doença (Apêndice D) — séculos de vida ensinam o corpo a esperar o pior.",
+      "Sangue Longevo: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §7) — séculos de vida ensinam o corpo a esperar o pior.",
     ],
   },
   {
@@ -35,7 +35,7 @@ export const RACES: Race[] = [
     traits: [
       "Sangue da Forja: magias de Terra e Fogo custam 1 PM a menos para conjurar (mínimo 1). Não pode aprender magias de Água ou Vento.",
       "+6 PV Máximos, permanentes.",
-      "Fígado de Pedra: imune a ficar Embriagado e tem Vantagem em testes de resistência de Vigor contra Exaustão por privação (Cap. 4, seção 6).",
+      "Fígado de Pedra: imune a ficar Embriagado e tem Vantagem em testes de resistência de Vigor contra Exaustão por privação (Cap. 4, seção 8).",
     ],
   },
   {
@@ -128,7 +128,7 @@ export const RACES: Race[] = [
     traits: [
       "Regeneração Profunda: regenera +3 PV no início do seu turno, desde que esteja com mais de 0 PV.",
       "+8 PV Máximos, permanentes.",
-      "Descendência Divina: Vantagem em testes de resistência de Vigor contra veneno e doença (Apêndice D).",
+      "Descendência Divina: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §7).",
     ],
   },
   {
