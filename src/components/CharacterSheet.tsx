@@ -8,7 +8,7 @@ import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { getGuildRank, getPaSpent } from "@/store/selectors";
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
-import { getTreeById } from "@/data/trees";
+import { getTreeById, getTreeGroups } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
 import {
   AbilityDef,
@@ -542,32 +542,52 @@ export default function CharacterSheet() {
             />
           </div>
 
-          {startingTree && (
-            <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-              <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
-                Árvore Inicial
-              </h2>
-              <p className="font-semibold text-parchment-800 dark:text-parchment-100">{startingTree.name}</p>
-              {startingKit && (
-                <>
-                  <ul className="mt-2 space-y-0.5 text-xs text-parchment-600 dark:text-parchment-400">
-                    {startingKit.items.map((item) => (
-                      <li key={item.name}>· {item.name}</li>
-                    ))}
-                  </ul>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      for (const item of startingKit.items) useCharacterStore.getState().addItem(item);
-                    }}
-                    className="mt-2 flex items-center gap-1 rounded-lg bg-wine-600 px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-wine-500"
-                  >
-                    <Plus className="h-3.5 w-3.5" /> Adicionar Kit Inicial ao Inventário
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+            <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+              Árvore Inicial
+            </h2>
+            <select
+              value={startingTreeId ?? ""}
+              onChange={(e) => {
+                const treeId = e.target.value || null;
+                useCharacterStore.getState().setStartingTree(treeId);
+                if (treeId && !unlockedRanks.some((u) => u.treeId === treeId && u.rank === "Principiante")) {
+                  useCharacterStore.getState().unlockRank(treeId, "Principiante");
+                }
+              }}
+              title="Desbloqueia o 1º patamar dela de graça e libera o kit de equipamento inicial (Cap. 1, seção 4)"
+              className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-semibold text-parchment-800 outline-none dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+            >
+              <option value="">Nenhuma escolhida ainda</option>
+              {getTreeGroups().map((group) => (
+                <optgroup key={`${group.category}-${group.subgroup}`} label={`${CATEGORY_LABELS[group.category]} — ${group.subgroup}`}>
+                  {group.trees.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            {startingTree && startingKit && (
+              <>
+                <ul className="mt-2 space-y-0.5 text-xs text-parchment-600 dark:text-parchment-400">
+                  {startingKit.items.map((item) => (
+                    <li key={item.name}>· {item.name}</li>
+                  ))}
+                </ul>
+                <button
+                  type="button"
+                  onClick={() => {
+                    for (const item of startingKit.items) useCharacterStore.getState().addItem(item);
+                  }}
+                  className="mt-2 flex items-center gap-1 rounded-lg bg-wine-600 px-2.5 py-1 text-xs font-semibold text-white transition-colors hover:bg-wine-500"
+                >
+                  <Plus className="h-3.5 w-3.5" /> Adicionar Kit Inicial ao Inventário
+                </button>
+              </>
+            )}
+          </div>
         </aside>
 
         {/* Corpo principal: Grimório */}
