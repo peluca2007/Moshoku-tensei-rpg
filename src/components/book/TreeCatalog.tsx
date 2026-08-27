@@ -1,6 +1,7 @@
 import { AbilityDef, RANK_BONUS, TalentDef, Tree } from "@/lib/types";
+import { getRankDeusForTree } from "@/data/rankDeus";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "../AbilityDetail";
-import { SubTitle } from "./BookUI";
+import { BookTable, SubTitle } from "./BookUI";
 
 function isAbility(def: AbilityDef | TalentDef): def is AbilityDef {
   return "actions" in def;
@@ -45,9 +46,25 @@ function EntryCard({ kind, def }: { kind: "ability" | "talent"; def: AbilityDef 
   );
 }
 
-/** Catálogo completo de uma árvore — todo Rank, toda Maestria, todo Talento/Técnica/Magia, direto da mesma fonte que alimenta a ficha (nunca diverge). */
+/** Tabela de progressão por Rank — PV, e (conforme a árvore) PT/Escada de Arma ou PP, direto de TreeRankDef (nunca diverge da ficha). */
+function ProgressionTable({ tree }: { tree: Tree }) {
+  const isCorpo = tree.category === "corpo";
+  const isUtilidade = tree.category === "utilidade";
+  const headers = ["Rank", "Bônus", "PV Ganhos", ...(isCorpo ? ["PT Ganhos", "Escada de Arma"] : []), ...(isUtilidade ? ["PP Ganhos"] : [])];
+  const rows = tree.ranks.map((rankDef) => {
+    const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;
+    const base = [label, `+${RANK_BONUS[rankDef.rank]}`, rankDef.hpDiceFormula];
+    if (isCorpo) base.push(rankDef.ptGained ? `+${rankDef.ptGained}` : "—", rankDef.weaponDieSteps ? `+${rankDef.weaponDieSteps} degrau(s)` : "—");
+    if (isUtilidade) base.push(rankDef.ppGained ? `+${rankDef.ppGained}` : "—");
+    return base;
+  });
+  return <BookTable headers={headers} rows={rows} />;
+}
+
+/** Catálogo completo de uma árvore — progressão, todo Rank, toda Maestria, todo Talento/Técnica/Magia e o patamar Divino, direto da mesma fonte que alimenta a ficha (nunca diverge). */
 export default function TreeCatalog({ tree }: { tree: Tree }) {
   const nonEmptyRanks = tree.ranks.filter((r) => r.mastery || r.talents.length > 0 || r.abilities.length > 0);
+  const rankDeus = getRankDeusForTree(tree.id);
   if (nonEmptyRanks.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-parchment-300 p-3 text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
@@ -58,6 +75,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
 
   return (
     <div className="space-y-4">
+      <ProgressionTable tree={tree} />
       {nonEmptyRanks.map((rankDef) => {
         const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;
         return (
@@ -80,6 +98,20 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
           </div>
         );
       })}
+      {rankDeus && (
+        <div className="space-y-2">
+          <SubTitle id={`${tree.id}-rank-deus`}>◈ Rank Deus</SubTitle>
+          <p className="text-xs italic text-parchment-500 dark:text-parchment-400">Narrativo. Não se compra.</p>
+          <div className="rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
+            <p className="font-bold text-gold-700 dark:text-gold-400">◈ {rankDeus.title}</p>
+            {rankDeus.body.map((paragraph, i) => (
+              <p key={i} className="mt-2 leading-relaxed text-gold-900/80 dark:text-gold-200/80">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
