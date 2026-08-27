@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { Sparkles, Gem } from "lucide-react";
 import { useActiveCharacter } from "@/store/useCharacterStore";
 import { getPaSpent } from "@/store/selectors";
@@ -8,6 +9,8 @@ import DestinyBoard from "./DestinyBoard";
 export default function TreeBrowser() {
   const character = useActiveCharacter();
   const paSpent = getPaSpent(character);
+  const searchParams = useSearchParams();
+  const initialFocusTreeId = searchParams.get("arvore") ?? undefined;
 
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
@@ -23,7 +26,7 @@ export default function TreeBrowser() {
         </span>
       </header>
 
-      <DestinyBoard />
+      <DestinyBoard initialFocusTreeId={initialFocusTreeId} />
     </div>
   );
 }

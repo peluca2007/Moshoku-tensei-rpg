@@ -74,7 +74,7 @@ function sizeForDepth(depth: number) {
   return 20;
 }
 
-export default function DestinyBoard() {
+export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeId?: string }) {
   const destinyTree = useMemo(() => buildDestinyTree(), []);
   const { nodes, edges, maxRadius } = useMemo(() => layoutRadialTree(destinyTree, RING_SPACING), [destinyTree]);
   const posById = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
@@ -104,6 +104,12 @@ export default function DestinyBoard() {
     recenter();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvasSize]);
+
+  /** Deep-link vindo do livro de regras (`/arvores?arvore=<id>`) — centraliza direto na árvore em vez do centro genérico. */
+  useLayoutEffect(() => {
+    if (initialFocusTreeId) focusOnTree(initialFocusTreeId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFocusTreeId]);
 
   function zoomBy(factor: number) {
     const el = viewportRef.current;
