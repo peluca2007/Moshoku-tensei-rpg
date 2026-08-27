@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Dices, Sparkles } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById } from "@/data/races";
-import { getBackgroundById } from "@/data/backgrounds";
+import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { rollRandomCharacter } from "@/lib/randomCharacter";
 import { ATTRIBUTES } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
@@ -30,6 +30,9 @@ export default function CreationRoulette() {
 
   const race = getRaceById(character.raceId);
   const background = getBackgroundById(character.backgroundId);
+  const chosenSubtable = background?.requiresSubtable
+    ? getSubtableEntryById(background.requiresSubtable, character.subtableEntryId)
+    : undefined;
 
   function next() {
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
@@ -49,6 +52,7 @@ export default function CreationRoulette() {
     const result = rollRandomCharacter();
     useCharacterStore.getState().setRace(result.raceId);
     useCharacterStore.getState().setBackground(result.backgroundId);
+    useCharacterStore.getState().setSubtableEntry(result.subtableEntryId);
     for (const { key } of ATTRIBUTES) {
       useCharacterStore.getState().setAttribute(key, result.attributeBase[key]);
     }
@@ -104,7 +108,7 @@ export default function CreationRoulette() {
             >
               <Dices className="h-5 w-5" /> {hasRolled ? "Girar de Novo" : "Girar a Roleta do Destino"}
             </button>
-            {hasRolled && <RaceBackgroundDetails race={race} background={background} />}
+            {hasRolled && <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />}
           </div>
         )}
 
