@@ -322,30 +322,29 @@ export default function Appendices() {
           contratos e a Guilda sabe o nome deles.
         </P>
         <BookTable
-          headers={["Rank", "PA total já ganho (referência, não trava)", "O que muda"]}
+          headers={["Rank", "Feito representativo (não é checklist)", "O que muda"]}
           rows={[
-            ["F", "0 – 5", "Recém-registrado. Só pega contrato de mural público, sem escolta nem garantia."],
-            ["E", "6 – 14", "Sobrevive ao trabalho de rotina: escolta de caravana, extermínio de pragas, entrega em estrada segura."],
-            ["D", "15 – 29", "Aceita contratos fora da cidade-sede. Pagamento sobe; a Guilda passa a cobrar 10% de taxa de intermediação."],
-            ["C", "30 – 49", "Pode liderar um grupo de Ranks inferiores num contrato — e responde por eles se algo sair errado. Acesso ao arquivo de bestas da sede local."],
-            ["B", "50 – 74", "Contratos de nobreza e de guerra pequena passam pela sua mesa. Seu nome começa a aparecer em relatórios que sobem pra capital."],
-            ["A", "75 – 109", "Reconhecido em qualquer continente que tenha Guilda. Recusar um contrato de escala regional exige justificativa formal."],
-            ["S", "110+", "Menos de dez vivos por continente, normalmente. Contratado direto por reinos e Guildas de outras nações. Vira assunto de história, não de mural."],
+            ["F", "Recém-registrado — ainda não fez nada que a sede saiba.", "Só pega contrato de mural público, sem escolta nem garantia."],
+            ["E", "Sobreviveu ao trabalho de rotina algumas vezes.", "Escolta de caravana, extermínio de pragas, entrega em estrada segura."],
+            ["D", "Resolveu algo fora da cidade-sede sem apoio da Guilda.", "Aceita contratos fora da cidade-sede. Pagamento sobe; a Guilda cobra 10% de taxa de intermediação."],
+            ["C", "Liderou outros aventureiros num contrato e todos voltaram.", "Pode liderar um grupo de Ranks inferiores — e responde por eles se algo sair errado. Acesso ao arquivo de bestas da sede local."],
+            ["B", "Resolveu algo que chegou aos ouvidos de um nobre ou general.", "Contratos de nobreza e de guerra pequena passam pela sua mesa. Seu nome aparece em relatórios que sobem pra capital."],
+            ["A", "Fez algo que virou boato em mais de uma cidade.", "Reconhecido em qualquer continente que tenha Guilda. Recusar um contrato regional exige justificativa formal."],
+            ["S", "Fez algo que devia ter sido impossível.", "Menos de dez vivos por continente, normalmente. Contratado direto por reinos e Guildas de outras nações — vira assunto de história, não de mural."],
           ]}
         />
-        <Aside title={'Por que "referência, não trava"'}>
-          O número de PA na tabela acima é um palpite calibrado, não uma regra de desbloqueio — ao contrário
-          do Rank das Árvores, não existe teste nem compra pra subir de Rank na Guilda. Quem decide é o
-          Mestre, olhando pro que o grupo <i>fez</i> publicamente: um personagem com 40 PA gastos todos em
-          Perícias discretas de Ladino pode continuar Rank F de propósito — ele é forte, só não é famoso. A
-          tabela existe pra dar um chute inicial ao Mestre, não pra tirar a decisão dele.
+        <Aside title="A tabela é exemplo, não fórmula">
+          Não existe PA, teste ou compra que suba o Rank de Aventureiro — ao contrário do Rank das suas
+          Árvores, essa decisão nunca sai de uma conta. <b>O Mestre fala quando o personagem sobe</b>, olhando
+          pro que o grupo <i>fez</i> publicamente, não pro que gastou na ficha: um Deus da Espada que resolveu
+          tudo em segredo pode morrer Rank F — ele é forte, só não é famoso. Os &ldquo;feitos representativos&rdquo;
+          acima são só uma régua de bolso pro Mestre calibrar o tamanho do que já rolou, não uma lista pra
+          marcar.
         </Aside>
         <SubTitle>Subindo de Rank e Obrigações</SubTitle>
         <P>
-          Sobe-se de Rank completando contratos marcados pela Guilda como do Rank seguinte ou superior, sendo
-          indicado por alguém de Rank mais alto, ou por um feito público grande o bastante pra virar história
-          contada em taverna. A promoção nunca é automática: exige voltar à sede, ser avaliado, e — a partir
-          de Rank C — pagar uma taxa de registro em PO.
+          A promoção nunca é automática, mesmo depois do Mestre decidir que o feito foi grande o bastante:
+          exige voltar à sede, ser avaliado, e — a partir de Rank C — pagar uma taxa de registro em PO.
         </P>
         <P>
           A partir de <b>Rank C</b>, recusar um contrato marcado como emergência sem justificativa perde
@@ -356,6 +355,30 @@ export default function Appendices() {
           O Rank de Aventureiro é a ferramenta mais simples deste livro pra calibrar dificuldade sem inventar
           números: se o grupo é Rank D, o mural tem contratos de Rank D pra cima. Nenhuma tabela de
           dificuldade de monstro é necessária além disso.
+        </Aside>
+
+        <SubTitle>A Loja da Guilda</SubTitle>
+        <P>
+          Rank de Aventureiro não é só fama — é a credencial que abre a porta do que a Guilda deixa você
+          comprar ou encomendar. Cada Rank libera o próximo andar do catálogo do Apêndice L; abaixo do seu
+          Rank, o item simplesmente não está à venda ali, por mais PO que você tenha.
+        </P>
+        <BookTable
+          headers={["Rank mínimo", "O que a Guilda libera"]}
+          rows={[
+            ["F", "Poção Menor de Cura, equipamento mundano comum."],
+            ["E", "Poção de Antídoto e Elixir de Foco; veneno de Profundidade 1."],
+            ["D", "Encomenda de Encantamento nível Avançado (+1 no Dado de Arma ou na CA)."],
+            ["C", "Poção Maior de Cura; veneno de Profundidade 2, com licença registrada."],
+            ["B", "Encomenda de Encantamento nível Santo (dano elemental extra)."],
+            ["A", "Encomenda de Encantamento nível Rei (ignora Resistência); veneno de Profundidade 3, sob vigilância da sede."],
+            ["S", "Encomenda de Encantamento nível Imperador; a sede intermedia contato com um encantador de rank Deus pra um Item Mágico Único (Apêndice L) — abre a porta, não garante o resultado."],
+          ]}
+        />
+        <Aside title="Por que isso importa">
+          Antes, um personagem rico conseguia qualquer item do Apêndice L cedo demais, só juntando PO. Agora
+          o Rank de Aventureiro é o segundo portão — o dinheiro compra o item, mas só depois que a Guilda
+          confia em você o bastante pra deixar você chegar perto dele.
         </Aside>
       </Section>
 
