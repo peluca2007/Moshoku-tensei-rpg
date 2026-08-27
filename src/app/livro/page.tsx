@@ -39,7 +39,7 @@ const TOC: TocEntry[] = [
       { id: "cap2-1", label: "1. Categorias da Magia" },
       { id: "cap2-2", label: "2. Encantamentos" },
       { id: "cap2-3", label: "3. Tempo de Conjuração" },
-      { id: "cap2-4", label: "4. Magia Combinada" },
+      { id: "cap2-4", label: "4. Combinações entre Árvores" },
       { id: "cap2-5", label: "5. Maestrias" },
     ],
   },
