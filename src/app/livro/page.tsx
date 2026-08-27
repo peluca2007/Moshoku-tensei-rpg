@@ -57,10 +57,12 @@ const TOC: TocEntry[] = [
     label: "Cap. 4 — Combate e Sobrevivência",
     children: [
       { id: "cap4-1", label: "1. Cálculos Vitais" },
-      { id: "cap4-2", label: "2. Economia de Ações" },
-      { id: "cap4-3", label: "3. Empilhamento" },
-      { id: "cap4-4", label: "4. Críticos e Touki" },
-      { id: "cap4-5", label: "5. Sangrando e Morrendo" },
+      { id: "cap4-condicoes", label: "2. Glossário de Condições" },
+      { id: "cap4-3-acoes", label: "3. Economia de Ações" },
+      { id: "cap4-4", label: "4. Empilhamento" },
+      { id: "cap4-5", label: "5. Críticos e Touki" },
+      { id: "cap4-6", label: "6. Sangrando e Morrendo" },
+      { id: "cap4-7", label: "7. Exaustão, Fome, Sede e Clima" },
     ],
   },
   {

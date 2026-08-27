@@ -50,7 +50,39 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-2">2. A Economia de Ações (As 3 Ações)</SectionTitle>
+        <SectionTitle id="cap4-condicoes">2. Glossário de Condições</SectionTitle>
+        <Warning title="Toda condição usada no livro está aqui, com número — nenhuma fica só no nome">
+          Dezenas de magias e técnicas aplicam uma condição pelo nome (&ldquo;o alvo fica Amedrontado&rdquo;)
+          sem repetir o efeito toda vez — é aqui, e só aqui, que cada uma delas tem sua definição completa.
+          Se uma habilidade específica alterar o efeito padrão, a habilidade sempre vence.
+        </Warning>
+        <BookTable
+          headers={["Condição", "Efeito"]}
+          rows={[
+            ["Agarrado", "Deslocamento reduzido a 0. Desvantagem em ataques contra qualquer criatura que não seja quem te agarrou. Termina se quem te agarrou for incapacitado, ou gastando 1 Ação num teste de Força ou Agilidade (Disputa) contra quem segura."],
+            ["Amedrontado", "Desvantagem em testes de atributo e em ataques enquanto a fonte do medo estiver visível. Não pode se mover voluntariamente pra mais perto dela."],
+            ["Atolado", "Deslocamento reduzido à metade nesse terreno; gastar o dobro de Deslocamento pra sair dele. Não afeta ataques nem testes."],
+            ["Atordoado", "Perde todas as Ações e a Reação até o fim do próximo turno. Ataques contra você têm Vantagem, e você falha automaticamente em testes de resistência de Força e Agilidade."],
+            ["Caído", "Desvantagem em qualquer ataque que você faça. Ataques corpo a corpo contra você têm Vantagem; ataques à distância contra você têm Desvantagem. Levantar-se custa metade do seu Deslocamento."],
+            ["Cego", "Falha automaticamente em qualquer teste que dependa de visão. Seus ataques têm Desvantagem; ataques contra você têm Vantagem."],
+            ["Congelado", "Deslocamento reduzido a 0 e Desvantagem em testes de resistência de Agilidade, até quebrar o gelo (1 Ação, teste de Força CD 8 + BC de quem congelou) ou sofrer dano de fogo."],
+            ["Desequilibrado", "Deslocamento reduzido à metade, não pode usar mais de uma Reação por rodada, e sofre Desvantagem em ataques de oportunidade. Dura até o fim do próximo turno do alvo, salvo instrução contrária da habilidade."],
+            ["Em Chamas", "No início de cada um dos seus turnos, sofre 1d6 de dano ígneo (ou o valor que a habilidade que ateou o fogo especificar). Apaga submergindo em água, ficando Molhado, ou gastando 1 Ação inteira rolando no chão (teste de Agilidade CD 10)."],
+            ["Envenenado", "Desvantagem em ataques e em testes de atributo enquanto durar."],
+            ["Incapacitado", "Não pode tomar Ações nem Reações. Mais severo que Atordoado: não termina sozinho no fim do turno — só quando a fonte específica disser como remover."],
+            ["Marcado", "Quem te marcou sabe seu PV aproximado, suas resistências e se você veste Touki, e ignora Cobertura parcial ao te atacar. Dura até ser removido pela habilidade que o concedeu, ou até você ficar fora do alcance dela por um Descanso Longo inteiro."],
+            ["Molhado", "Dano de frio contra você é dobrado. Desvantagem em testes de resistência contra magias de gelo de quem te molhou. Fogo aplicado a um alvo Molhado evapora a água em vez de acender."],
+            ["Paralisado", "Incapaz de agir e de se mover; falha automaticamente em testes de resistência de Força e Agilidade. Ataques corpo a corpo contra você são críticos automáticos se o atacante estiver adjacente."],
+            ["Petrificado", "Vira pedra (ou material equivalente): Incapacitado, imune a veneno e doença, e Resistência a todo dano enquanto durar. Reverter exige a fonte específica que petrificou, ou magia de rank igual ou superior."],
+            ["Preso", "Deslocamento reduzido a 0. Ataques contra você têm Vantagem; seus ataques têm Desvantagem. Solta-se gastando 1 Ação num teste (Atributo e CD definidos por quem prendeu)."],
+            ["Quebrantado", "Acumulável: cada acúmulo dá −1 na CA e −1 no dano de todos os seus ataques, até o máximo do Bônus de Rank de quem aplicou. Não é ferimento — magia de Cura não remove. Some com um Descanso Curto, ou dura até o fim do combate, o que vier primeiro."],
+            ["Surdo", "Falha automaticamente em testes que dependam de audição. Não consegue usar Conjuração Padrão nem Encurtada (exigem cântico verbal) — só Conjuração Silenciosa continua funcionando pra você."],
+          ]}
+        />
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap4-3-acoes">3. A Economia de Ações (As 3 Ações)</SectionTitle>
         <P>
           No seu turno você possui 3 Ações, além de 1 Reação (usada fora do seu turno, em situações
           específicas). Não existe ação bônus neste sistema — tudo é medido em Ações.
@@ -88,7 +120,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-3">3. Regras de Empilhamento</SectionTitle>
+        <SectionTitle id="cap4-4">4. Regras de Empilhamento</SectionTitle>
         <P>
           Com dezessete árvores no jogo, um grupo bem construído consegue empilhar bônus até quebrar a
           matemática. Estas regras impedem isso sem tirar a graça da combinação.
@@ -122,7 +154,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-4">4. Críticos, Touki e o Fio da Vida</SectionTitle>
+        <SectionTitle id="cap4-5">5. Críticos, Touki e o Fio da Vida</SectionTitle>
         <List
           items={[
             <span key="20"><b>20 Natural (Crítico):</b> acerta automaticamente, independente da CA ou resistência do inimigo. Role os dados de dano duas vezes e some os bônus fixos uma vez só.</span>,
@@ -141,7 +173,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-5">5. Sangrando e Morrendo</SectionTitle>
+        <SectionTitle id="cap4-6">6. Sangrando e Morrendo</SectionTitle>
         <P>
           Magia de cura pode fechar feridas, mas ressurreição beira o mito divino. Se seus Pontos de Vida
           chegarem a 0, você cai Inconsciente e entra em estado de Morte.
@@ -157,14 +189,43 @@ export default function Chapter4() {
         />
         <P>
           Se acumular <b>3 Marcas da Morte</b>, você morre permanentemente. Qualquer magia de cura ou poção
-          aplicada por um aliado remove todas as Marcas da Morte instantaneamente e você acorda — mas com a
-          condição Exaustão (Desvantagem em todos os testes de atributo) até fazer um Descanso Longo.
+          aplicada por um aliado remove todas as Marcas da Morte instantaneamente e você acorda — mas
+          acordar do Fio da Vida cobra um preço: você volta com <b>1 nível de Exaustão</b> (seção 7 deste
+          capítulo) até fazer um Descanso Longo.
         </P>
+
+        <SubTitle id="cap4-cicatrizes">Cicatrizes de Quase-Morte</SubTitle>
+        <Warning title="Quando a Morte Quase Ganha">
+          <P>
+            Toda vez que você acumular <b>2 Marcas da Morte</b> antes de ser resgatado, o corpo guarda a
+            lembrança mesmo depois de curado. Além da Exaustão de sempre, role 1d6 na tabela abaixo (ou
+            escolha, com o Mestre) e ganhe a Cicatriz <b>permanentemente</b>. Se tirar uma que já tem, ela
+            atinge outro membro ou sentido, à escolha do Mestre.
+          </P>
+          <BookTable
+            headers={["d6", "Cicatriz"]}
+            rows={[
+              ["1", "Braço Perdido: Desvantagem em testes de Força e em Atletismo. Não consegue usar armas de duas mãos, nem empunhar arma e escudo ao mesmo tempo."],
+              ["2", "Perna Manca: Deslocamento −3m, permanente."],
+              ["3", "Olho Perdido: Desvantagem em Percepção e em qualquer ataque à distância além do alcance curto."],
+              ["4", "Voz Quebrada: não consegue mais usar Conjuração Silenciosa (Cap. 2). Desvantagem em Atuação e Persuasão."],
+              ["5", "Mão Trêmula: Desvantagem em Ladinagem, em Ofícios manuais e em Iniciativa."],
+              ["6", "A Sombra Não Sai: nenhuma penalidade de combate, mas Desvantagem em testes de resistência de Espírito contra Medo — o corpo lembra de ter morrido, mesmo que a mente negue."],
+            ]}
+          />
+          <P>
+            A única cura conhecida é <i>Corpo Íntegro</i> (Cura, Rank Imperador) — ela relê o corpo por
+            inteiro e apaga a Cicatriz junto com qualquer outra sequela física. Fora disso, ela é permanente:
+            nenhum Descanso, magia de rank inferior ou poção a remove. É o preço de ter quase morrido, e ele
+            pesa na ficha pelo resto da campanha — não só naquela sessão.
+          </P>
+        </Warning>
+
         <BookTable
           headers={["Descanso", "Recupera"]}
           rows={[
-            ["Curto (1-2 horas)", "25% de PM, PT e PP máximos (arredondado pra baixo). Não recupera PV nenhum."],
-            ["Longo (8 horas de sono seguro)", "50% de PM, PT e PP; remove um nível de Exaustão; recupera PV = Vigor × (1d10+Vigor), mínimo 1."],
+            ["Curto (1 a 2 horas)", "Metade dos seus PM e PT máximos, arredondado pra baixo. Não recupera PV nem PP."],
+            ["Longo (8 horas de sono seguro)", "Todos os PM, PT e PP; remove 1 nível de Exaustão; recupera PV iguais ao seu Vigor + 1d8 (mínimo 2)."],
           ]}
         />
         <Warning title="A Carne Não Fecha Sozinha">
@@ -182,6 +243,87 @@ export default function Chapter4() {
             não existe descanso que resolva.
           </P>
         </Warning>
+
+        <SubTitle id="cap4-trauma">Trauma de Combate</SubTitle>
+        <Aside title="Quando o Corpo Sobrevive mas a Mente Cobra a Conta">
+          <P>
+            Sobreviver não é sair ileso. Sempre que você chegar a <b>0 PV</b>, testemunhar a morte de um
+            aliado a até 9 metros, ou matar alguém que implorava por clemência, ganhe <b>1 ponto de Trauma</b>{" "}
+            — a critério do Mestre, sem precisar contar cada goblin da estrada.
+          </P>
+          <P>
+            <b>Efeito, por ponto de Trauma acumulado:</b> Desvantagem em testes de Espírito feitos{" "}
+            <b>fora de combate</b> (persuasão calma, negociação, criar confiança, dormir sem pesadelo).
+            Trauma não afeta nada dentro do combate — na hora da luta, o corpo simplesmente age.
+          </P>
+          <P>
+            <b>Removendo Trauma:</b> gaste uma semana de Downtime na atividade Recuperar-se acompanhado de
+            alguém de confiança, ou resolva a causa de frente na narrativa — voltar ao lugar, encarar quem
+            sobrou, fazer as pazes com o que aconteceu. Cada semana ou cada cena assim resolvida remove{" "}
+            <b>1 ponto</b>. Sem isso, o Trauma não passa sozinho: não existe teste de resistência nem
+            Descanso Longo que apague o que aconteceu.
+          </P>
+          <P>
+            Isto não é um sistema de sanidade: não há loucura, não há tabela de fobias, e não há perda de
+            controle do personagem. É só o lembrete mecânico de que continuar lutando tem custo.
+          </P>
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap4-7">7. Exaustão, Fome, Sede e Clima Extremo</SectionTitle>
+        <P>
+          O sistema já usa a condição Exaustão em dezenas de talentos, doenças e maldições sem nunca fechar
+          o que ela faz de fato. Esta seção fecha essa conta.
+        </P>
+        <Warning title="Exaustão Tem 6 Níveis, e Eles Empilham">
+          <BookTable
+            headers={["Nível", "Penalidade"]}
+            rows={[
+              ["1", "Desvantagem em testes de atributo e em rolagens de ataque."],
+              ["2", "Deslocamento reduzido à metade."],
+              ["3", "Desvantagem em testes de resistência."],
+              ["4", "PV Máximos reduzidos à metade."],
+              ["5", "Deslocamento reduzido a 0."],
+              ["6", "Morte — a menos que a fonte diga o contrário (Fome Vermelha, Apêndice D, transforma em vez de matar)."],
+            ]}
+          />
+          <P>
+            Os efeitos <b>somam</b>: no Nível 3, você já soma a Desvantagem de atributo e de ataque do Nível
+            1 com a de resistência deste nível, além de andar na metade da velocidade.
+          </P>
+          <P>
+            <b>Removendo Exaustão:</b> um Descanso Longo remove 1 nível, desde que a causa não esteja mais
+            ativa (você comeu, bebeu, saiu do frio). Se a causa continuar, o nível não cai. Magia específica
+            de Cura (<i>Mão que Acalma</i>) remove 1 nível de Exaustão de origem <b>física</b> — ferimento,
+            trauma, ter acordado do Fio da Vida — a qualquer momento, mas nunca a de fome, sede, frio ou
+            marcha forçada: isso não é ferimento, é privação, e só sai resolvendo a causa.
+          </P>
+        </Warning>
+
+        <SubTitle id="cap4-fome-sede">Fome e Sede</SubTitle>
+        <List
+          items={[
+            "Fome: ficar um dia inteiro sem nenhuma refeição dá 1 nível de Exaustão ao anoitecer. Comer qualquer refeição, por menor que seja, zera essa contagem — mas não remove a Exaustão que já acumulou.",
+            "Sede: mais urgente. Ficar sem beber água por mais de algumas horas em clima ameno, ou desde o início em calor extremo, dá 1 nível de Exaustão a cada 4 horas depois da primeira falta.",
+            "Ração de aventureiro (item comum, poucas moedas de cobre por dia) resolve as duas ao mesmo tempo — é por isso que toda caravana carrega mais ração do que ouro.",
+          ]}
+        />
+
+        <SubTitle id="cap4-clima">Clima Extremo</SubTitle>
+        <P>
+          Calor ou frio além do que roupas comuns aguentam — deserto ao meio-dia, nevasca, altitude alta —
+          força um teste de Vigor a cada poucas horas de exposição. O Mestre define a CD pela severidade: 8
+          para desconfortável, 14 para perigoso, 18 para letal. Falha: 1 nível de Exaustão. Equipamento
+          adequado (manto, abrigo, magia de proteção) dá Vantagem no teste ou remove a necessidade dele por
+          completo, a critério do Mestre.
+        </P>
+        <Aside title="Por que isso é leve de propósito">
+          Fome, sede e clima não são o ponto da campanha — são o relógio de fundo que torna uma travessia
+          longa real sem virar planilha. Numa masmorra de um dia, ignore a seção inteira. Numa travessia de
+          duas semanas pela Grande Floresta sem suprimentos, ela decide se o grupo chega ao destino em pé ou
+          arrastando um Nível 4.
+        </Aside>
       </Section>
     </div>
   );
