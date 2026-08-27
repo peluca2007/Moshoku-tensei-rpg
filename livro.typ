@@ -5903,6 +5903,7 @@ Dano é fácil de medir — está na ficha, em números. O valor da Utilidade n�
 
 Quando a diplomacia falha e as espadas são desembainhadas, o sistema adota um combate rápido, letal e tático.
 
+#largo[
 == 1. Cálculos Vitais
 
 As três reservas do sistema — vida, mana e aura — são *multiplicativas*. Cada uma pertence a um atributo, e cada uma cresce com o seu patamar. Isso é intencional: um atributo que só soma um número fixo vira decoração, e o sistema tinha três atributos assim.
@@ -5970,7 +5971,6 @@ PP é a única reserva *não* multiplicativa, e de propósito: ele compra fatos 
 ]
 ]
 
-#largo[
 #block(breakable: false)[
 === Os Outros Números
 
