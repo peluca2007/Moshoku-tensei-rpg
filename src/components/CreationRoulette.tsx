@@ -108,7 +108,19 @@ export default function CreationRoulette() {
             >
               <Dices className="h-5 w-5" /> {hasRolled ? "Girar de Novo" : "Girar a Roleta do Destino"}
             </button>
-            {hasRolled && <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />}
+            {hasRolled && (
+              <>
+                <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
+                <div className="mt-3 grid grid-cols-5 gap-2 text-center">
+                  {ATTRIBUTES.map(({ key, label }) => (
+                    <div key={key} className="rounded-lg border border-parchment-300 bg-parchment-50 p-2 dark:border-parchment-700 dark:bg-parchment-900">
+                      <p className="text-[10px] uppercase tracking-wide text-parchment-500 dark:text-parchment-400">{label}</p>
+                      <p className="text-lg font-bold text-parchment-900 dark:text-parchment-50">{character.attributeBase[key]}</p>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         )}
 

@@ -126,7 +126,7 @@ export default function Chapter1() {
             `${RANK_PA_COST.common[rank]} PA`,
             `${RANK_PA_COST.signature[rank]} PA`,
             `${RANK_PA_COST.talent[rank]} PA`,
-          ]).concat([["Deus", "Narrativa", "13", "—", "—", "—"]])}
+          ]).concat([["Deus", "Narrativa", "—", "—", "—", "—"]])}
         />
         <Aside title="Magia Assinatura ◆">
           Dentro de cada Rank existe uma magia que define aquele patamar — a que os magos daquele nível são
@@ -315,7 +315,7 @@ export default function Chapter1() {
         </P>
         <BookTable
           headers={["Rank na Árvore", "Bônus Numérico"]}
-          rows={RANKS.map((r) => [r, `+${RANK_BONUS[r]}`]).concat([["Deus", "+8"]])}
+          rows={RANKS.map((r) => [r, `+${RANK_BONUS[r]}`]).concat([["Deus", "—"]])}
         />
         <Aside title="O Bônus Depende da Ação!">
           O Bônus Numérico é específico da árvore em uso no momento. Se você atacar com Magia de Água, usa

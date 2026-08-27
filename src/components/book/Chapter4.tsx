@@ -319,9 +319,10 @@ export default function Chapter4() {
         <P>
           Em qualquer via, a vítima só é afetada se sofrer dano da arma untada, ingerir a dose ou respirar a
           nuvem. Nesse momento ela faz um <b>teste de resistência de Vigor</b> contra <b>CD 8 + (2 × a
-          Profundidade do veneno)</b> — a mesma lógica de CD já usada para contágio de doenças nesta seção.
-          Sucesso: a aflição some por completo, sem efeito nenhum. Falha: a aflição começa exatamente na
-          Profundidade listada na tabela e sobe sozinha a partir daí, 1 ponto por hora.
+          Profundidade do veneno)</b> — veneno é exposição direta e ativa, por isso a CD é mais alta que a de
+          contágio passivo de uma doença (mais adiante, nas Regras de Mesa desta seção). Sucesso: a aflição
+          some por completo, sem efeito nenhum. Falha: a aflição começa exatamente na Profundidade listada na
+          tabela e sobe sozinha a partir daí, 1 ponto por hora.
         </P>
         <Aside title="Exemplo rápido">
           Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Profundidade 2) e acerta um golpe surpresa.

@@ -13,9 +13,9 @@ export default function Appendices() {
         </P>
         <List
           items={[
-            "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 · Espírito 5",
-            "PV: (Vigor 2 × 2 = 4) + progressão de 4 ranks de Água + Terra/Vento ≈ 38 PV",
-            "PM: Água (4+7+11+16=38) + Terra (22) + Vento (22) + Cura (11) + Reserva Inata (4 patamares × Espírito 5 = 20) + traço Migurd (+6) ≈ 119 PM",
+            "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
+            "PV (Cap. 4, §1): Constituição Base (10 + Vigor 2×3 = 16) + Progressão (soma dos dados de PV dos 12 ranks dela, em todas as 4 árvores, dobrada = 150) + Vitalidade (Vigor 2 × Bônus do Santo 4 × 4 = 32) = 198 PV",
+            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) × 2 + 8 = 48, mais os +10 PM fixos da raça Migurd = 58 PM",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
             "Maestrias de Água: Afinidade Aquática, Cântico Fluido, Termodinâmica Aplicada, Domínio Climático",
@@ -25,10 +25,12 @@ export default function Appendices() {
         />
         <P>
           Leitura da ficha: ela acerta praticamente qualquer coisa, tem uma reserva de mana que sustenta um
-          combate longo inteiro, e cai em três golpes de qualquer espadachim decente. É exatamente isso que
-          ela é na história — uma professora genial dentro de um corpo frágil, que sobrevive porque nunca
-          deixa ninguém chegar perto. Se a sua ficha de mago não estiver produzindo esse perfil (acerto
-          altíssimo, mana enorme, vida ridícula), algum número precisa de ajuste.
+          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 198 PV é bastante
+          numa conta isolada, mas fica baixo perto de um personagem do Corpo com a mesma quantidade de Ranks
+          investidos, cujos dados de PV por patamar são bem maiores. É exatamente isso que ela é na história —
+          uma professora genial dentro de um corpo frágil, que sobrevive porque nunca deixa ninguém chegar
+          perto. Se a sua ficha de mago não estiver produzindo esse perfil (acerto altíssimo, mana generosa,
+          vida baixa pro nível dela), algum número precisa de ajuste.
         </P>
       </Section>
 

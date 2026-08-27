@@ -51,6 +51,9 @@ export default function DiceRoller() {
   const [selectedWeaponId, setSelectedWeaponId] = useState<string>("");
   const [log, setLog] = useState<RollLogEntry[]>([]);
   const [lastResult, setLastResult] = useState<{ total: number; critical?: "sucesso" | "falha" | null } | null>(null);
+  /** null = segue o último teste automaticamente; true/false = jogador sobrescreveu manualmente pra esta rolagem. */
+  const [criticalDamageOverride, setCriticalDamageOverride] = useState<boolean | null>(null);
+  const criticalDamage = criticalDamageOverride ?? lastResult?.critical === "sucesso";
   const macros = useMacroStore((s) => s.macros);
   const addMacro = useMacroStore((s) => s.addMacro);
   const removeMacro = useMacroStore((s) => s.removeMacro);
@@ -125,10 +128,32 @@ export default function DiceRoller() {
   }
 
   function handleRollDamage() {
-    const result = rollFormula(damageFormula, damageModifier);
     const weapon = weapons.find((w) => w.id === selectedWeaponId);
-    const label = weapon ? `Dano — ${weapon.name}` : "Dano";
-    pushLog({ label, detail: diceDetail(result), total: result.total });
+    const baseLabel = weapon ? `Dano — ${weapon.name}` : "Dano";
+    // Recalcula na hora em vez de confiar no snapshot de handleSelectWeapon — se o Bônus de
+    // Rank do personagem mudou desde que a arma foi escolhida no dropdown, o dado e o
+    // modificador aqui já saem atualizados, sem exigir reabrir o dropdown.
+    let liveFormula = damageFormula;
+    let liveModifier = damageModifier;
+    if (weapon && weapon.baseDie) {
+      const info = getWeaponDamage(character, weapon.baseDie, weapon.damageAttribute ?? "forca");
+      if (info) {
+        liveFormula = info.escalatedDie;
+        liveModifier = info.attributeValue + info.rankBonus;
+      }
+    }
+    if (criticalDamage) {
+      // Cap. 4, §5: crítico rola os dados de dano duas vezes; os bônus fixos somam uma vez só.
+      const first = rollFormula(liveFormula, 0);
+      const second = rollFormula(liveFormula, 0);
+      const total = first.total + second.total + liveModifier;
+      const detail = `${diceDetail(first)} + ${diceDetail(second)} (crítico) + ${liveModifier}`;
+      pushLog({ label: `${baseLabel} (Crítico)`, detail, total });
+    } else {
+      const result = rollFormula(liveFormula, liveModifier);
+      pushLog({ label: baseLabel, detail: diceDetail(result), total: result.total });
+    }
+    setCriticalDamageOverride(null);
   }
 
   function handleRollMacro(macroId: string) {
@@ -396,6 +421,15 @@ export default function DiceRoller() {
                   className="w-16 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
                 />
               </div>
+              <label className="mt-2 flex items-center gap-2 text-xs text-parchment-600 dark:text-parchment-400">
+                <input
+                  type="checkbox"
+                  checked={criticalDamage}
+                  onChange={(e) => setCriticalDamageOverride(e.target.checked)}
+                  className="h-3.5 w-3.5"
+                />
+                Crítico — dobrar os dados de dano (Cap. 4, §5)
+              </label>
               <button
                 type="button"
                 onClick={handleRollDamage}
