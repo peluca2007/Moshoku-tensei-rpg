@@ -30,6 +30,10 @@ export default function Chapter4() {
             vem do seu Espírito e de quão fundo você foi numa escola. Árvores do Corpo e de Utilidade
             concedem <b>0 PM, sempre</b>, mesmo em rank Imperador — em troca, o Corpo recebe PT (Cap. 3).
           </P>
+          <P>
+            Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6×2+8 = <b>80 PM</b> — o suficiente
+            pra sustentar uma Nova Congelante (6 PM) doze vezes seguidas antes de secar.
+          </P>
         </Aside>
         <List
           items={[
@@ -273,7 +277,8 @@ export default function Chapter4() {
       <Section>
         <SectionTitle id="cap4-aflicoes">7. Aflições do Mundo de Seis Faces</SectionTitle>
         <P>
-          Toda aflição tem uma Profundidade de 1 a 5 que sobe sozinha enquanto ninguém trata, e um mago de
+          Além do dano que se vê na hora, o corpo pode ser atacado por caminhos mais lentos — veneno, doença,
+          maldição. Toda aflição tem uma Profundidade de 1 a 5 que sobe sozinha enquanto ninguém trata, e um mago de
           Desintoxicação só purga o que estiver dentro do Bônus de Rank dele. Venenos agudos sobem 1 de
           Profundidade por hora; doenças, maldições e petrificações sobem 1 por dia. Nada disso cai sozinho.
         </P>

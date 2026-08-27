@@ -13,9 +13,7 @@ export default function Chapter5() {
       <Section>
         <SectionTitle id="cap5-1">1. Tempo Livre e Downtime</SectionTitle>
         <P>
-          Toda campanha tem trechos sem masmorra: a viagem de volta, a estação chuvosa, o mês esperando uma
-          audiência com o rei. Esta seção existe pra que esse tempo produza algo na ficha, sem virar
-          burocracia.
+          Esta seção existe pra que esse tempo produza algo na ficha, sem virar burocracia.
         </P>
         <SubTitle>O Bloco de Tempo</SubTitle>
         <P>
@@ -130,6 +128,12 @@ export default function Chapter5() {
           capítulo) — às vezes o que muda é quem abre a porta pra você. Reputação é uma escala narrativa de
           cinco degraus, uma por facção, movida pelo Mestre conforme os atos públicos do grupo.
         </P>
+        <Aside title="Guilda ou Reputação — qual eu uso?">
+          As duas medem &ldquo;quão bem o mundo te trata&rdquo;, mas em escalas diferentes: a <b>Guilda</b> (seção 2) é
+          uma fama profissional única, a mesma em qualquer cidade que tenha uma sede. <b>Reputação</b> é por
+          facção específica — dá pra ser Aliado do Reino Asura e Inimigo da Igreja de Millis ao mesmo tempo,
+          e nenhuma das duas mexe na outra.
+        </Aside>
         <BookTable
           headers={["Nível", "O que significa, em qualquer facção"]}
           rows={[
