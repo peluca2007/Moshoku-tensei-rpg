@@ -45,6 +45,8 @@ interface RosterState {
   activeId: string | null;
 
   createCharacter: (name?: string) => string;
+  /** Importa uma ficha exportada em JSON como um personagem NOVO (nunca sobrescreve um existente) — gera um id novo, mantém o resto dos dados. */
+  importCharacter: (data: CharacterData) => string;
   deleteCharacter: (id: string) => void;
   renameCharacter: (id: string, name: string) => void;
   setActiveCharacter: (id: string) => void;
@@ -101,6 +103,17 @@ export const useCharacterStore = create<RosterState>()(
       createCharacter: (name = "Novo Personagem") => {
         const id = makeId("char");
         const character = blankCharacter(id, name);
+        set((state) => ({
+          characters: { ...state.characters, [id]: character },
+          order: [...state.order, id],
+          activeId: id,
+        }));
+        return id;
+      },
+
+      importCharacter: (data) => {
+        const id = makeId("char");
+        const character: CharacterData = { ...data, id };
         set((state) => ({
           characters: { ...state.characters, [id]: character },
           order: [...state.order, id],

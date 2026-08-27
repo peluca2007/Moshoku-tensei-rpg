@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, Loader2, RotateCcw, Plus } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { getPaSpent } from "@/store/selectors";
@@ -272,6 +272,18 @@ export default function CharacterSheet() {
     }
   }
 
+  function handleExportJson() {
+    const blob = new Blob([JSON.stringify(character, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${(name || "ficha").trim() || "ficha"}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   const abilitiesByTree = useMemo(() => {
     const grouped = new Map<string, PurchasedAbility[]>();
     for (const ability of purchasedAbilities) {
@@ -325,6 +337,14 @@ export default function CharacterSheet() {
           >
             {pdfState === "loading" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5" />}
             {pdfState === "loading" ? "Gerando..." : "Baixar PDF"}
+          </button>
+          <button
+            type="button"
+            onClick={handleExportJson}
+            title="Exportar esta ficha como arquivo JSON (backup, ou pra importar em outro navegador)"
+            className="mt-1.5 flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+          >
+            <FileJson className="h-3.5 w-3.5" /> Exportar JSON
           </button>
         </div>
         {pdfState === "error" && (

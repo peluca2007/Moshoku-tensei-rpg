@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, User, Check } from "lucide-react";
+import { Plus, Trash2, User, Check, Upload } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById } from "@/data/races";
 import { getBackgroundById } from "@/data/backgrounds";
@@ -14,6 +14,8 @@ export default function CharacterRoster() {
   const characters = useCharacterStore((s) => s.characters);
   const activeId = useCharacterStore((s) => s.activeId);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function openCharacter(id: string) {
     useCharacterStore.getState().setActiveCharacter(id);
@@ -25,20 +27,54 @@ export default function CharacterRoster() {
     router.push("/");
   }
 
+  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setImportError(null);
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!data || typeof data !== "object" || !("attributeBase" in data)) {
+        throw new Error("Arquivo não parece ser uma ficha exportada deste site.");
+      }
+      useCharacterStore.getState().importCharacter(data);
+      router.push("/");
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : "Não foi possível ler esse arquivo.");
+    }
+  }
+
   return (
     <div className="mx-auto max-w-4xl p-4 sm:p-6">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
           <User className="h-6 w-6 text-wine-500" /> Meus Personagens
         </h1>
-        <button
-          type="button"
-          onClick={createAndOpen}
-          className="flex items-center gap-1 rounded-lg bg-wine-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-wine-500"
-        >
-          <Plus className="h-4 w-4" /> Criar Ficha
-        </button>
+        <div className="flex items-center gap-2">
+          <input ref={fileInputRef} type="file" accept="application/json" onChange={handleImportFile} className="hidden" />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-1 rounded-lg border border-parchment-300 px-3 py-2 text-sm font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+          >
+            <Upload className="h-4 w-4" /> Importar JSON
+          </button>
+          <button
+            type="button"
+            onClick={createAndOpen}
+            className="flex items-center gap-1 rounded-lg bg-wine-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-wine-500"
+          >
+            <Plus className="h-4 w-4" /> Criar Ficha
+          </button>
+        </div>
       </header>
+
+      {importError && (
+        <p className="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-2 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300">
+          {importError}
+        </p>
+      )}
 
       {order.length === 0 && (
         <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
