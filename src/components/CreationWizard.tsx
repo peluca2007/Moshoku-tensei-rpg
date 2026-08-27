@@ -6,11 +6,12 @@ import { ChevronLeft, ChevronRight, Plus, Sparkles, Check } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
-import { getTreeGroups, getTreeById, CATEGORY_LABELS } from "@/data/trees";
+import { getTreeById } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
 import { ATTRIBUTES, ATTRIBUTE_CREATION_MAX, AttributeKey } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
+import TreePicker from "./TreePicker";
 
 const STEPS = ["Nome", "Raça", "Antecedente", "Atributos", "Árvore Inicial", "Perícias", "Equipamento", "Pronto"];
 
@@ -46,7 +47,6 @@ export default function CreationWizard() {
   const startingTree = getTreeById(character.startingTreeId);
   const startingKit = startingTree ? getStartingKit(startingTree.subgroup) : undefined;
   const { budget, remaining } = attributeBudget(character.attributeBase);
-  const treeGroups = getTreeGroups();
 
   function next() {
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
@@ -228,36 +228,7 @@ export default function CreationWizard() {
             <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
               Cap. 1, seção 4 — desbloqueia o 1º patamar dela de graça e libera um kit de equipamento inicial.
             </p>
-            <div className="space-y-3">
-              {treeGroups.map((group) => (
-                <div key={`${group.category}-${group.subgroup}`}>
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
-                    {CATEGORY_LABELS[group.category]} — {group.subgroup}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {group.trees.map((t) => (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => selectStartingTree(t.id)}
-                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                          character.startingTreeId === t.id
-                            ? "bg-wine-600 text-white"
-                            : "bg-parchment-50 text-parchment-600 ring-1 ring-parchment-300 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300 dark:ring-parchment-700"
-                        }`}
-                      >
-                        {t.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-            {startingTree && (
-              <p className="mt-3 flex items-center gap-1 text-sm font-semibold text-wine-600 dark:text-wine-400">
-                <Check className="h-4 w-4" /> Árvore Inicial: {startingTree.name}
-              </p>
-            )}
+            <TreePicker selectedTreeId={character.startingTreeId} onSelect={selectStartingTree} />
           </div>
         )}
 
