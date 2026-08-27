@@ -75,6 +75,12 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
 
   return (
     <div className="space-y-4">
+      {tree.prerequisiteNote && (
+        <div className="rounded-lg border border-wine-300 bg-wine-50/60 p-3 text-sm text-wine-800 dark:border-wine-900 dark:bg-wine-950/30 dark:text-wine-200">
+          <b>Pré-requisito: </b>
+          {tree.prerequisiteNote}
+        </div>
+      )}
       <ProgressionTable tree={tree} />
       {nonEmptyRanks.map((rankDef) => {
         const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;

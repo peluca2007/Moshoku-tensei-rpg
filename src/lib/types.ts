@@ -179,6 +179,10 @@ export interface Tree {
   resourceLabel?: string;
   /** Curta descrição de identidade da árvore, usada no painel de detalhes. */
   tagline?: string;
+  /** true = não aparece no seletor de Árvore Inicial (criação); só some acessível depois, desbloqueando na tela de Árvores como qualquer multiclasse (ex: árvores híbridas com pré-requisito de outras duas). */
+  hiddenFromCreation?: boolean;
+  /** Nota exibida no topo do catálogo (TreeCatalog) explicando um pré-requisito narrativo — não é uma trava de código, o Mestre que decide. */
+  prerequisiteNote?: string;
   ranks: TreeRankDef[];
 }
 

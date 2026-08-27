@@ -19,7 +19,7 @@ export default function Chapter3() {
       </P>
       <Warning title="O catálogo completo está logo abaixo, seção 'Todas as Sub-árvores'">
         Este capítulo primeiro cobre as regras <i>compartilhadas</i> entre árvores do mesmo pilar, e termina
-        com o catálogo completo de magias, talentos, técnicas e Maestrias das 17 sub-árvores — o mesmo dado
+        com o catálogo completo de magias, talentos, técnicas e Maestrias das 18 sub-árvores — o mesmo dado
         que alimenta a ficha, então nunca diverge dela. Prefere navegar visualmente? O{" "}
         <Link href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-400">
           mapa de Árvores
@@ -30,9 +30,12 @@ export default function Chapter3() {
       <Section>
         <SectionTitle id="cap3-mapa">O Mapa Completo das Árvores</SectionTitle>
         <P>
-          O sistema comporta dezessete sub-árvores. Nenhuma delas é uma classe: você compra Ranks em quantas
-          quiser, na ordem que quiser, e seu personagem é simplesmente a soma do que ele estudou. Clique no
-          nome de qualquer sub-árvore na tabela abaixo pra abrir ela direto no mapa.
+          O sistema comporta dezessete sub-árvores escolhíveis desde o primeiro dia, mais uma décima oitava
+          que não se escolhe — ela só se revela pra quem já domina Rank Avançado em duas árvores
+          específicas (ver a nota de pré-requisito no catálogo dela, mais abaixo). Nenhuma delas é uma
+          classe: você compra Ranks em quantas quiser, na ordem que quiser, e seu personagem é simplesmente
+          a soma do que ele estudou. Clique no nome de qualquer sub-árvore na tabela abaixo pra abrir ela
+          direto no mapa.
         </P>
         <BookTable
           headers={["Pilar", "Sub-árvore", "Atributo-chave", "Recurso", "Identidade em uma linha"]}
@@ -331,7 +334,7 @@ export default function Chapter3() {
       <Section>
         <SectionTitle id="cap3-todas">Todas as Sub-árvores — Catálogo Completo</SectionTitle>
         <P>
-          Magias, talentos, técnicas e Maestrias de cada uma das 17 sub-árvores, rank por rank. Clique no
+          Magias, talentos, técnicas e Maestrias de cada uma das 18 sub-árvores, rank por rank. Clique no
           nome de uma árvore pra abrir o catálogo dela.
         </P>
         {(["magia", "corpo", "utilidade"] as const).map((category) => (
