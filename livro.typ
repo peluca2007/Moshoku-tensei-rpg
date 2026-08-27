@@ -5146,8 +5146,9 @@ Gastando *1 PP*, você declara em voz alta um fato sobre o passado que passa a s
 Sem ela, PP vira "o Mestre deixa ou não deixa", e o jogador para de usar. Com ela, PP vira uma negociação: *você compra o fato, o Mestre compra o gancho.* Toda preparação que gera uma complicação está gerando a próxima sessão de graça.
 ]
 
-#v(0.4em) #line(length: 100%, stroke: 0.5pt + linha) #v(0.3em)
+#pagebreak(weak: true)
 
+#largo[
 == As Três Faixas
 
 Esta é a seção mais importante do pilar. Sem ela, as três árvores viram a mesma pessoa com roupa diferente — porque todas as três declaram fatos, e "declarar fatos" é uma mecânica larga demais para três personagens dividirem.
@@ -5194,6 +5195,7 @@ Esta é a regra que garante que os três possam estar na mesma mesa sem que ning
 #linebreak() 
 
 _Compare: *Mago de Água* 36 · *Bardo* 40 · *Ladino* 42 · *Tático* 46 · *Deus do Norte* 54 · *Deus da Espada* ~72. O Tático tem mais vida porque marcha com tropa e usa armadura; o Bardo tem menos porque a arma dele é a boca._
+]
 
 #pagebreak(weak: true)
 
