@@ -6718,4 +6718,43 @@ Nenhuma atividade acima concede PA, magia, talento ou Rank — isso continua vin
 Se uma aflição (Apêndice D) estiver ativa em alguém do grupo, a Profundidade dela continua subindo normalmente durante o downtime — um bloco de "Recuperar-se" não pausa o relógio de um veneno ou de uma doença. É assim que uma semana de descanso mal planejada vira a razão de a próxima cena começar com alguém pior do que quando a sessão anterior terminou.
 ]
 
+#pagebreak(weak: true)
+
+#largo[
+= Apêndice G: A Guilda de Aventureiros
+
+Toda cidade com mais de um poço tem uma sede da Guilda, e é lá que a maioria dos personagens deste livro começa. Este apêndice formaliza o que até aqui era só referência narrativa (Cap. 1, seção 2): como funciona o Rank de Aventureiro, e o que ele realmente muda na mesa.
+
+== O Rank Não É o Patamar
+
+*O Rank de Aventureiro (F a S) mede reputação, não poder de combate.* Ele não aparece em nenhuma fórmula deste livro, não dá bônus de ataque, e não é igual ao Rank das suas Árvores de Progressão (Cap. 1). Um Deus da Espada desconhecido que nunca aceitou um contrato formal pode ser Rank F. Um grupo de Rank A pode ter só um patamar Avançado cada — a diferença é que eles já resolveram cem contratos e a Guilda sabe o nome deles.
+
+#tbl(3, (center, center, left),
+  [Rank], [PA total já ganho _(referência, não trava)_], [O que muda],
+  [*F*], [0 – 5], [Recém-registrado. Só pega contrato de mural público, sem escolta nem garantia — a Guilda não te conhece o bastante pra arriscar o nome dela.],
+  [*E*], [6 – 14], [Sobrevive ao trabalho de rotina: escolta de caravana, extermínio de pragas, entrega em estrada segura.],
+  [*D*], [15 – 29], [Aceita contratos fora da cidade-sede. Pagamento sobe; a Guilda passa a cobrar 10% de taxa de intermediação.],
+  [*C*], [30 – 49], [Pode liderar um grupo de Ranks inferiores num contrato — e responde por eles se algo sair errado. Acesso ao arquivo de bestas da sede local.],
+  [*B*], [50 – 74], [Contratos de nobreza e de guerra pequena passam pela sua mesa. Seu nome começa a aparecer em relatórios que sobem pra capital.],
+  [*A*], [75 – 109], [Reconhecido em qualquer continente que tenha Guilda. Recusar um contrato de escala regional exige justificativa formal — a Guilda cobra satisfação.],
+  [*S*], [110+], [Menos de dez vivos por continente, normalmente. Contratado direto por reinos e Guildas de outras nações, não por clientes. Vira assunto de história, não de mural.],
+)
+
+#quadro(titulo: [Por que "referência, não trava"])[
+O número de PA na tabela acima é um *palpite calibrado*, não uma regra de desbloqueio — ao contrário do Rank das Árvores (Cap. 1, seção 3), não existe teste nem compra pra subir de Rank na Guilda. Quem decide é o Mestre, olhando pro que o grupo *fez* publicamente: um personagem com 40 PA gastos todos em Perícias e talentos discretos de Ladino pode continuar Rank F de propósito — ele é forte, só não é famoso. E um personagem com 20 PA que matou um Superd em praça pública pode virar Rank C da noite pro dia. A tabela existe pra dar um chute inicial ao Mestre, não pra tirar a decisão dele.
+]
+
+== Subindo de Rank
+
+Sobe-se de Rank completando contratos marcados pela Guilda como *do Rank seguinte ou superior*, sendo indicado por alguém de Rank mais alto, ou por um feito público grande o bastante pra virar história contada em taverna — matar algo que a Guilda já tinha desistido de resolver, salvar uma cidade inteira. A promoção nunca é automática: exige voltar à sede, ser avaliado, e — a partir de Rank C — pagar uma taxa de registro em PO.
+
+== Obrigações do Rank
+
+Rank alto não é só privilégio. A partir de *Rank C*, recusar um contrato marcado como *emergência* sem justificativa perde Rank — a Guilda entende recusa como o aventureiro decidindo, sozinho, que a vida de quem pediu ajuda vale menos que a dele. A partir de *Rank A*, a morte do aventureiro em contrato é investigada formalmente pela sede, e o grupo que estava com ele presta depoimento.
+
+#quadro(titulo: [Gancho pro Mestre])[
+O Rank de Aventureiro é a ferramenta mais simples deste livro pra calibrar dificuldade sem inventar números: se o grupo é Rank D, o mural tem contratos de Rank D pra cima — o próprio nome do contrato já avisa o jogador que ele está escolhendo desafiar algo acima do normal. Nenhuma tabela de dificuldade de monstro é necessária além disso.
+]
+]
+
 

@@ -353,6 +353,24 @@ export function getPaSpent(state: StoreState): number {
   return rankCost + abilityCost + getAttributePaCost(state) + getHpMpPaCost(state);
 }
 
+export type GuildRank = "F" | "E" | "D" | "C" | "B" | "A" | "S";
+
+/** Apêndice G: faixas de PA usadas como referência pro Rank de Aventureiro — não é regra travada, só o chute inicial que o livro dá ao Mestre. */
+const GUILD_RANK_THRESHOLDS: { rank: GuildRank; min: number }[] = [
+  { rank: "S", min: 110 },
+  { rank: "A", min: 75 },
+  { rank: "B", min: 50 },
+  { rank: "C", min: 30 },
+  { rank: "D", min: 15 },
+  { rank: "E", min: 6 },
+  { rank: "F", min: 0 },
+];
+
+export function getGuildRank(state: StoreState): GuildRank {
+  const paSpent = getPaSpent(state);
+  return GUILD_RANK_THRESHOLDS.find((t) => paSpent >= t.min)?.rank ?? "F";
+}
+
 /**
  * Pode desbloquear este rank? Exige (Cap. 1, seção 3): rank anterior já
  * desbloqueado na mesma árvore e conhecimentos suficientes. PA não é
