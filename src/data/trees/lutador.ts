@@ -27,7 +27,7 @@ export const LUTADOR_TREE: Tree = {
           "Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência com toda arma pesada, de duas mãos e improvisada; empunhar arma de duas mãos com uma só custa apenas um degrau a menos. Você aplica a condição Quebrantado e usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar).",
       },
       talents: [
-        { id: "couro-grosso", name: "Couro Grosso", paCost: 1, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de patamares nesta árvore." },
+        { id: "couro-grosso", name: "Couro Grosso", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
         { id: "punho-de-mineiro", name: "Punho de Mineiro", paCost: 1, description: "Seus ataques desarmados causam dano letal e contam como arma pesada para qualquer efeito." },
         { id: "sem-vergonha", name: "Sem Vergonha", paCost: 1, description: "Você pega qualquer objeto do cenário e o usa como arma pesada (d6, todos os seus degraus); ele quebra depois de três acertos." },
       ],
@@ -48,7 +48,7 @@ export const LUTADOR_TREE: Tree = {
           paCost: 1,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          effect: "Disputa de Força. Vencendo, o alvo fica Agarrado (Deslocamento 0, Desvantagem contra outros). Enquanto agarrado, seus ataques desarmados contra ele acertam automaticamente.",
+          effect: "Disputa de Força. Vencendo, o alvo fica Agarrado (Deslocamento 0, Desvantagem contra outros) e você o arrasta 3m por turno. Enquanto agarrado, seus ataques desarmados contra ele acertam automaticamente.",
         },
         {
           id: "golpe-circular",
@@ -101,7 +101,7 @@ export const LUTADOR_TREE: Tree = {
           range: "9 metros",
           actions: { normal: 1 },
           damage: { normal: "4d8 + Força (contundente)" },
-          effect: "Requer alvo Agarrado. Arremesse até 9m: fica Caído, e quem estiver no ponto de queda faz teste de Agilidade ou também sofre metade e cai.",
+          effect: "Requer alvo Agarrado, de até duas categorias de tamanho acima da sua. Arremesse até 9m: fica Caído, e quem estiver no ponto de queda faz teste de Agilidade ou também sofre metade e cai.",
         },
         {
           id: "golpe-ascendente-lutador",

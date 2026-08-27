@@ -20,7 +20,7 @@ export const ESPADA_TREE: Tree = {
           "Empates de Iniciativa sempre são seus. No primeiro turno de qualquer combate, seu primeiro ataque tem Vantagem e rola o Dado de Arma uma vez a mais. Você nunca fica Surpreso enquanto empunhar espada e estiver consciente.",
       },
       talents: [
-        { id: "braco-de-ferro", name: "Braço de Ferro", paCost: 1, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de patamares neste estilo." },
+        { id: "braco-de-ferro", name: "Braço de Ferro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
         { id: "fio-perfeito", name: "Fio Perfeito", paCost: 1, description: "Sua arma nunca lasca, entorta ou quebra por meios mundanos, e ataques contra objetos/estruturas causam dano dobrado." },
         { id: "pavio-curto-espada", name: "Pavio Curto", paCost: 1, description: "Vantagem em Intimidação, Desvantagem em qualquer teste social que exija paciência." },
       ],

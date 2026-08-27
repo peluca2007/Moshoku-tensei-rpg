@@ -20,7 +20,7 @@ export const BARREIRA_TREE: Tree = {
           "Você desenha barreiras (1 Ação + PM da magia), esferas centradas num ponto à sua escolha. Sustenta uma por vez, aplicando Selado e a condição de Fluxo Interrompido que você escolher. Você vê mana: barreiras, encantamentos, itens mágicos e invisibilidade mágica aparecem como contorno luminoso, sem custo.",
       },
       talents: [
-        { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+6 PM máximos. Comprável várias vezes, limitado ao número de patamares nesta árvore." },
+        { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Barreira. Comprável várias vezes, até o número de patamares." },
         { id: "circulo-portatil", name: "Círculo Portátil", paCost: RANK_PA_COST.talent.Principiante, description: "Sua barreira passa a se mover com você, centrada no seu corpo, em vez de ficar fixa num ponto." },
         { id: "mao-de-giz", name: "Mão de Giz", paCost: RANK_PA_COST.talent.Principiante, description: "Você desenha círculos permanentes em superfícies. Leva 1 hora e o dobro do PM, mas a barreira fica lá depois que você for embora." },
       ],

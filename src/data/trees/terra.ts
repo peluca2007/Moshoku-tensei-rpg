@@ -19,7 +19,7 @@ export const TERRA_TREE: Tree = {
           "Sem PM e sem Ação, você molda terra, areia, argila e pedra macia num raio de 9 metros: abrir/fechar buraco, degrau, tigela, parede baixa. Em 10 minutos você ergue um abrigo fortificado pro grupo inteiro.",
       },
       talents: [
-        { id: "pele-de-pedra", name: "Pele de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "+8 PV Máximos. Comprável várias vezes, limitado ao número de patamares em Terra." },
+        { id: "pele-de-pedra", name: "Pele de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "+4 PV por patamar seu em Terra. Comprável várias vezes, até o número de patamares." },
         { id: "sentido-sismico", name: "Sentido Sísmico", paCost: RANK_PA_COST.talent.Principiante, description: "Você percebe pelo chão qualquer criatura em contato com o solo num raio de 18m, mesmo invisível ou escondida." },
         { id: "mineralogista", name: "Mineralogista", paCost: RANK_PA_COST.talent.Principiante, description: "Você identifica minérios e pedras preciosas, e sabe, ao tocar uma parede, o que existe atrás dela." },
       ],
@@ -105,7 +105,7 @@ export const TERRA_TREE: Tree = {
         {
           id: "terremoto-menor",
           name: "Terremoto Menor",
-          paCost: RANK_PA_COST.talent.Intermediário,
+          paCost: RANK_PA_COST.common.Intermediário,
           pmCost: 4,
           range: "Esfera de 12m de raio",
           actions: MAGIC_ACTIONS.Intermediário,
@@ -115,7 +115,7 @@ export const TERRA_TREE: Tree = {
         {
           id: "carcere",
           name: "Cárcere",
-          paCost: RANK_PA_COST.talent.Intermediário,
+          paCost: RANK_PA_COST.common.Intermediário,
           pmCost: 3,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Intermediário,
@@ -124,7 +124,7 @@ export const TERRA_TREE: Tree = {
         {
           id: "fortaleza-rapida",
           name: "Fortaleza Rápida",
-          paCost: RANK_PA_COST.talent.Intermediário,
+          paCost: RANK_PA_COST.common.Intermediário,
           pmCost: 4,
           range: "Raio de 9m",
           actions: MAGIC_ACTIONS.Intermediário,
@@ -161,7 +161,7 @@ export const TERRA_TREE: Tree = {
         {
           id: "prisao-de-pedra",
           name: "Prisão de Pedra",
-          paCost: RANK_PA_COST.talent.Avançado,
+          paCost: RANK_PA_COST.common.Avançado,
           pmCost: 6,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
@@ -170,7 +170,7 @@ export const TERRA_TREE: Tree = {
         {
           id: "lamina-de-aco",
           name: "Lâmina de Aço",
-          paCost: RANK_PA_COST.talent.Avançado,
+          paCost: RANK_PA_COST.common.Avançado,
           pmCost: 5,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
@@ -180,7 +180,7 @@ export const TERRA_TREE: Tree = {
         {
           id: "colapso",
           name: "Colapso",
-          paCost: RANK_PA_COST.talent.Avançado,
+          paCost: RANK_PA_COST.common.Avançado,
           pmCost: 6,
           range: "45 metros",
           actions: MAGIC_ACTIONS.Avançado,

@@ -21,7 +21,7 @@ export const VENTO_TREE: Tree = {
       talents: [
         { id: "pes-leves", name: "Pés Leves", paCost: RANK_PA_COST.talent.Principiante, description: "+3 metros de Deslocamento, e você não deixa pegadas nem faz ruído ao andar." },
         { id: "ouvido-do-vento", name: "Ouvido do Vento", paCost: RANK_PA_COST.talent.Principiante, description: "Você escuta qualquer conversa a até 60 metros, desde que exista ar entre vocês. Vantagem em Percepção auditiva." },
-        { id: "reserva-de-ar", name: "Reserva de Ar", paCost: RANK_PA_COST.talent.Principiante, description: "+6 PM máximos. Comprável várias vezes, limitado ao número de patamares em Vento." },
+        { id: "reserva-de-ar", name: "Reserva de Ar", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Vento. Comprável várias vezes, até o número de patamares." },
       ],
       abilities: [
         {
@@ -104,7 +104,7 @@ export const VENTO_TREE: Tree = {
         {
           id: "foice-de-vacuo",
           name: "Foice de Vácuo",
-          paCost: RANK_PA_COST.talent.Intermediário,
+          paCost: RANK_PA_COST.common.Intermediário,
           pmCost: 3,
           range: "36 metros",
           actions: MAGIC_ACTIONS.Intermediário,
@@ -114,7 +114,7 @@ export const VENTO_TREE: Tree = {
         {
           id: "ciclone",
           name: "Ciclone",
-          paCost: RANK_PA_COST.talent.Intermediário,
+          paCost: RANK_PA_COST.common.Intermediário,
           pmCost: 4,
           range: "Esfera de 9m de raio",
           actions: MAGIC_ACTIONS.Intermediário,
@@ -124,7 +124,7 @@ export const VENTO_TREE: Tree = {
         {
           id: "asas-emprestadas",
           name: "Asas Emprestadas",
-          paCost: RANK_PA_COST.talent.Intermediário,
+          paCost: RANK_PA_COST.common.Intermediário,
           pmCost: 3,
           range: "Toque",
           actions: MAGIC_ACTIONS.Intermediário,
