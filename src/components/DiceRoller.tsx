@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Dices, Sparkles, Swords, X, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Dices, Sparkles, Swords, X, Trash2, Star, Plus } from "lucide-react";
 import { useActiveCharacter } from "@/store/useCharacterStore";
 import { getAttackBonus, getFinalAttribute, getSpellDC, getWeaponDamage } from "@/store/selectors";
 import { getTreeById } from "@/data/trees";
 import { ATTRIBUTES, attributeKeyFromLabel, AttributeKey } from "@/lib/types";
+import { useMacroStore } from "@/store/useMacroStore";
 import {
   ADVANTAGE_LABELS,
   AdvantageMode,
@@ -50,6 +51,23 @@ export default function DiceRoller() {
   const [selectedWeaponId, setSelectedWeaponId] = useState<string>("");
   const [log, setLog] = useState<RollLogEntry[]>([]);
   const [lastResult, setLastResult] = useState<{ total: number; critical?: "sucesso" | "falha" | null } | null>(null);
+  const macros = useMacroStore((s) => s.macros);
+  const addMacro = useMacroStore((s) => s.addMacro);
+  const removeMacro = useMacroStore((s) => s.removeMacro);
+  const [macroLabel, setMacroLabel] = useState("");
+  const [macroFormula, setMacroFormula] = useState("");
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key.toLowerCase() !== "r" || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target?.isContentEditable) return;
+      setOpen((v) => !v);
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const magicTrees = useMemo(
     () =>
@@ -113,6 +131,20 @@ export default function DiceRoller() {
     pushLog({ label, detail: diceDetail(result), total: result.total });
   }
 
+  function handleRollMacro(macroId: string) {
+    const macro = macros.find((m) => m.id === macroId);
+    if (!macro) return;
+    const result = rollFormula(macro.formula);
+    pushLog({ label: macro.label, detail: diceDetail(result), total: result.total });
+  }
+
+  function handleAddMacro() {
+    if (!macroFormula.trim()) return;
+    addMacro(macroLabel, macroFormula);
+    setMacroLabel("");
+    setMacroFormula("");
+  }
+
   const spellDcInfo =
     testSource === "magia" && magicTreeId
       ? getSpellDC(character, magicTreeId, attributeKeyFromLabel(getTreeById(magicTreeId)?.keyAttributeLabel) ?? "intelecto")
@@ -124,7 +156,7 @@ export default function DiceRoller() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
-        title="Rolador de Dados"
+        title="Rolador de Dados (atalho: R)"
       >
         <Dices className="h-6 w-6" />
       </button>
@@ -363,6 +395,64 @@ export default function DiceRoller() {
               >
                 Rolar Dano
               </button>
+            </section>
+
+            <section className="mb-5">
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+                Macros
+              </h3>
+              {macros.length > 0 && (
+                <ul className="mb-2 space-y-1">
+                  {macros.map((macro) => (
+                    <li key={macro.id} className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleRollMacro(macro.id)}
+                        className="flex flex-1 items-center justify-between gap-2 rounded-lg bg-parchment-100 px-2 py-1.5 text-left text-xs font-medium text-parchment-700 transition-colors hover:bg-wine-500/10 hover:text-wine-700 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:text-wine-300"
+                      >
+                        <span className="flex min-w-0 items-center gap-1.5">
+                          <Star className="h-3 w-3 shrink-0 text-gold-500" />
+                          <span className="truncate">{macro.label}</span>
+                        </span>
+                        <span className="shrink-0 text-[11px] text-parchment-400 dark:text-parchment-500">{macro.formula}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeMacro(macro.id)}
+                        title="Apagar macro"
+                        className="shrink-0 text-parchment-400 hover:text-rose-500"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="text"
+                  value={macroLabel}
+                  onChange={(e) => setMacroLabel(e.target.value)}
+                  placeholder="Nome (ex: Bola de Fogo)"
+                  className="min-w-0 flex-[2] rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                />
+                <input
+                  type="text"
+                  value={macroFormula}
+                  onChange={(e) => setMacroFormula(e.target.value)}
+                  placeholder="2d10+5"
+                  className="w-20 shrink-0 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddMacro}
+                  disabled={!macroFormula.trim()}
+                  title="Salvar macro"
+                  className="shrink-0 rounded-lg bg-parchment-800 p-1.5 text-white transition-colors hover:bg-parchment-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-parchment-200 dark:text-parchment-900 dark:hover:bg-parchment-300"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
             </section>
 
             <section>

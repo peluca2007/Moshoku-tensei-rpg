@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
+import { useMacroStore } from "@/store/useMacroStore";
 
 /**
  * A store usa skipHydration (persist não lê o localStorage sozinho) pra
@@ -17,6 +18,7 @@ export default function StoreHydration() {
       useCharacterStore.getState().ensureActiveCharacter();
     });
     useInitiativeStore.persist.rehydrate();
+    useMacroStore.persist.rehydrate();
   }, []);
 
   return null;
