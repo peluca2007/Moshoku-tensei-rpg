@@ -74,6 +74,13 @@ const TOC: TocEntry[] = [
       { id: "apendice-c", label: "C. Dano por Turno" },
       { id: "apendice-d", label: "D. Aflições" },
       { id: "apendice-e", label: "E. Ambiguidades Resolvidas" },
+      { id: "apendice-f", label: "F. Downtime" },
+      { id: "apendice-g", label: "G. Guilda de Aventureiros" },
+      { id: "apendice-h", label: "H. Viagem entre Continentes" },
+      { id: "apendice-i", label: "I. Reputação com Facções" },
+      { id: "apendice-j", label: "J. Cerco e Batalha em Exército" },
+      { id: "apendice-k", label: "K. Bestiário" },
+      { id: "apendice-l", label: "L. Crafting e Alquimia" },
     ],
   },
 ];

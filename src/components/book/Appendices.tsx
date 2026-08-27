@@ -229,6 +229,313 @@ export default function Appendices() {
           a="Pode. O fato é sempre passado — você está revelando, não fazendo. Mas ele tem que caber no que você teve tempo e motivo de fazer antes da cena começar."
         />
       </Section>
+
+      <Section>
+        <SectionTitle id="apendice-f">F. Tempo Livre e Downtime</SectionTitle>
+        <P>
+          Toda campanha tem trechos sem masmorra: a viagem de volta, a estação chuvosa, o mês esperando uma
+          audiência com o rei. Esta seção existe pra que esse tempo produza algo na ficha, sem virar
+          burocracia.
+        </P>
+        <SubTitle>O Bloco de Tempo</SubTitle>
+        <P>
+          Downtime é contado em <b>blocos de 1 semana</b> — a mesma unidade que o Descanso Longo (Cap. 4) já
+          usa pra curar todos os PV. No fim de cada semana livre, cada personagem escolhe <b>uma</b> atividade
+          da lista abaixo.
+        </P>
+        <BookTable
+          headers={["Atividade", "Efeito"]}
+          rows={[
+            ["Treinar", "Ganhe Vantagem no próximo teste de uma Perícia à escolha, ligada à sua Árvore Inicial ou a uma Perícia que você já tenha — dura até ser usado ou até 1 mês passar. Não concede PA."],
+            ["Recuperar-se", "Como o Descanso Longo de uma semana (Cap. 4): todos os PV são restaurados, e mais 1 nível de Exaustão é removido além do normal."],
+            ["Trabalhar", "Ganhe PO igual a 2d6 × seu maior Bônus de Rank (mínimo 2d6), pelo seu Ofício, sua fama ou um trabalho comum da cidade."],
+            ["Cultivar um Contato", "Anote um NPC nomeado e uma cidade ou facção. Da próxima vez que precisar de uma informação ou um favor pequeno, o Mestre pode deixar esse contato resolver — sem PP, sem teste."],
+            ["Estudar um Ofício ou Ritual", "Com a Perícia de Ofícios ligada ao que quer fazer, produza um item mundano ou prepare os materiais de um ritual que já pode conjurar. O Mestre define o custo em PO — normalmente metade do preço de mercado."],
+            ["Vigiar as Costas do Grupo", "Sem efeito próprio, mas concede a outro personagem Vantagem na atividade dele nesta semana."],
+          ]}
+        />
+        <Warning title="Downtime Não Compra Progressão">
+          Nenhuma atividade acima concede PA, magia, talento ou Rank — isso só vem de jogar a campanha (Cap.
+          1, seção 2). Downtime existe pra que o tempo entre aventuras pareça vivido, não pra virar uma
+          segunda forma de subir de patamar sem risco.
+        </Warning>
+        <SubTitle>Downtime Interrompido</SubTitle>
+        <P>
+          Se uma aflição (Apêndice D) estiver ativa em alguém do grupo, a Profundidade dela continua subindo
+          normalmente durante o downtime — um bloco de &ldquo;Recuperar-se&rdquo; não pausa o relógio de um
+          veneno ou de uma doença.
+        </P>
+      </Section>
+
+      <Section>
+        <SectionTitle id="apendice-g">G. A Guilda de Aventureiros</SectionTitle>
+        <P>
+          Toda cidade com mais de um poço tem uma sede da Guilda, e é lá que a maioria dos personagens deste
+          livro começa. Este apêndice formaliza o que até aqui era só referência narrativa: como funciona o
+          Rank de Aventureiro, e o que ele realmente muda na mesa.
+        </P>
+        <SubTitle>O Rank Não É o Patamar</SubTitle>
+        <P>
+          <b>O Rank de Aventureiro (F a S) mede reputação, não poder de combate.</b> Ele não aparece em
+          nenhuma fórmula deste livro, não dá bônus de ataque, e não é igual ao Rank das suas Árvores de
+          Progressão. Um Deus da Espada desconhecido que nunca aceitou um contrato formal pode ser Rank F. Um
+          grupo de Rank A pode ter só um patamar Avançado cada — a diferença é que eles já resolveram cem
+          contratos e a Guilda sabe o nome deles.
+        </P>
+        <BookTable
+          headers={["Rank", "PA total já ganho (referência, não trava)", "O que muda"]}
+          rows={[
+            ["F", "0 – 5", "Recém-registrado. Só pega contrato de mural público, sem escolta nem garantia."],
+            ["E", "6 – 14", "Sobrevive ao trabalho de rotina: escolta de caravana, extermínio de pragas, entrega em estrada segura."],
+            ["D", "15 – 29", "Aceita contratos fora da cidade-sede. Pagamento sobe; a Guilda passa a cobrar 10% de taxa de intermediação."],
+            ["C", "30 – 49", "Pode liderar um grupo de Ranks inferiores num contrato — e responde por eles se algo sair errado. Acesso ao arquivo de bestas da sede local."],
+            ["B", "50 – 74", "Contratos de nobreza e de guerra pequena passam pela sua mesa. Seu nome começa a aparecer em relatórios que sobem pra capital."],
+            ["A", "75 – 109", "Reconhecido em qualquer continente que tenha Guilda. Recusar um contrato de escala regional exige justificativa formal."],
+            ["S", "110+", "Menos de dez vivos por continente, normalmente. Contratado direto por reinos e Guildas de outras nações. Vira assunto de história, não de mural."],
+          ]}
+        />
+        <Aside title={'Por que "referência, não trava"'}>
+          O número de PA na tabela acima é um palpite calibrado, não uma regra de desbloqueio — ao contrário
+          do Rank das Árvores, não existe teste nem compra pra subir de Rank na Guilda. Quem decide é o
+          Mestre, olhando pro que o grupo <i>fez</i> publicamente: um personagem com 40 PA gastos todos em
+          Perícias discretas de Ladino pode continuar Rank F de propósito — ele é forte, só não é famoso. A
+          tabela existe pra dar um chute inicial ao Mestre, não pra tirar a decisão dele.
+        </Aside>
+        <SubTitle>Subindo de Rank e Obrigações</SubTitle>
+        <P>
+          Sobe-se de Rank completando contratos marcados pela Guilda como do Rank seguinte ou superior, sendo
+          indicado por alguém de Rank mais alto, ou por um feito público grande o bastante pra virar história
+          contada em taverna. A promoção nunca é automática: exige voltar à sede, ser avaliado, e — a partir
+          de Rank C — pagar uma taxa de registro em PO.
+        </P>
+        <P>
+          A partir de <b>Rank C</b>, recusar um contrato marcado como emergência sem justificativa perde
+          Rank. A partir de <b>Rank A</b>, a morte do aventureiro em contrato é investigada formalmente pela
+          sede.
+        </P>
+        <Aside title="Gancho pro Mestre">
+          O Rank de Aventureiro é a ferramenta mais simples deste livro pra calibrar dificuldade sem inventar
+          números: se o grupo é Rank D, o mural tem contratos de Rank D pra cima. Nenhuma tabela de
+          dificuldade de monstro é necessária além disso.
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="apendice-h">H. Viagem entre Continentes</SectionTitle>
+        <P>
+          O Mundo de Seis Faces tem seis continentes, e cruzar de um pro outro nunca é rápido nem barato —
+          cada um desenvolveu magia, política e bestas diferentes. Este apêndice dá ao Mestre uma régua
+          rápida pra travessias longas, reaproveitando os blocos de 1 semana do Downtime (Apêndice F).
+        </P>
+        <SubTitle>Rotas e Tempo de Travessia</SubTitle>
+        <BookTable
+          headers={["Rota", "Meio", "Tempo", "Risco"]}
+          rows={[
+            ["Central ↔ Millis", "Navio de linha, porto grande", "1 bloco", "Baixo — a rota comercial mais movimentada do mundo."],
+            ["Central ↔ Begaritt", "Caravana pelo deserto, ou navio contornando a costa", "2 blocos por terra · 1 por mar", "Médio — por terra enfrenta Clima Extremo o trajeto inteiro."],
+            ["Millis ↔ Continente Demônio", "Travessia do Estreito — poucos portos autorizam", "2 blocos", "Alto — águas raramente patrulhadas, sem tratado de livre passagem."],
+            ["Central/Millis ↔ Continente Divino", "Só por convite ou peregrinação registrada", "3 blocos", "Baixo em trânsito, altíssimo em acesso — maioria dos pedidos é recusada."],
+            ["Qualquer rota ↔ Continente Demônio por terra", "Não existe.", "—", "O Continente Demônio é isolado por água em todas as direções conhecidas."],
+          ]}
+        />
+        <SubTitle>Perigo por Região</SubTitle>
+        <P>
+          Uma região perigosa não precisa de um encontro roteirizado pra cobrar seu preço. Use esta tabela
+          pra decidir a frequência de testes de Clima e a chance de encontro por bloco de viagem.
+        </P>
+        <BookTable
+          headers={["Região", "Teste de Clima", "Chance de encontro / semana", "Nota"]}
+          rows={[
+            ["Grande Floresta (Millis)", "Nenhum — clima ameno", "Alta (1d6: 1-2)", "Perder-se é o perigo real, não o combate."],
+            ["Deserto de Begaritt", "CD 14 (perigoso) ao meio-dia", "Média (1d6: 1)", "Sem ração de sobra, a Sede sozinha mata uma caravana despreparada."],
+            ["Continente Demônio", "CD 8 a 18, conforme a sub-região", "Alta (1d6: 1-3)", "O risco não é o clima, é não ter a quem recorrer se algo der errado."],
+            ["Mar aberto (qualquer rota)", "Nenhum, exceto tempestade (CD do Mestre)", "Baixa (1d10: 1)", "O maior risco é o navio, não o grupo."],
+          ]}
+        />
+        <Aside title="Não é sobre rolar toda semana">
+          Estas tabelas existem pra resolver uma travessia em trinta segundos quando ela não é o foco da
+          sessão. Se a travessia <i>é</i> o foco da sessão, ignore a tabela e narre cena a cena.
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="apendice-i">I. Reputação com Facções</SectionTitle>
+        <P>
+          Nem toda consequência de uma campanha cabe em PA ou em Rank de Aventureiro (Apêndice G) — às vezes
+          o que muda é quem abre a porta pra você. Reputação é uma escala narrativa de cinco degraus, uma por
+          facção, movida pelo Mestre conforme os atos públicos do grupo.
+        </P>
+        <BookTable
+          headers={["Nível", "O que significa, em qualquer facção"]}
+          rows={[
+            ["Inimigo (-2)", "A facção age ativamente contra o grupo, sempre que puder fazer isso sem custo alto pra ela."],
+            ["Desconfiado (-1)", "Portas se fecham por precaução. Nenhum ataque direto, mas nenhuma ajuda também."],
+            ["Neutro (0)", "Ponto de partida padrão — a facção nem sabe quem vocês são, ou sabe e não se importa."],
+            ["Respeitado (+1)", "Contratos, favores e informação ficam mais fáceis de conseguir dentro do território da facção."],
+            ["Aliado (+2)", "A facção arrisca recursos reais pelo grupo — tropas, magos, dinheiro."],
+          ]}
+        />
+        <SubTitle>As Três Facções deste Livro</SubTitle>
+        <BookTable
+          headers={["Nível", "Reino Asura", "Igreja de Millis", "Deuses Demônios"]}
+          rows={[
+            ["Inimigo", "Mandado de captura ativo — a guarda ataca de vista.", "Excomungado. Templos recusam cura, abrigo e água.", "Marcado como inimigo pela Imperatriz Kishirika."],
+            ["Desconfiado", "Vigiados: espiões da coroa relatam cada movimento em Ars.", "Sacerdotes recusam bênção e informação, mas não interferem.", "Tolerados, desde que fiquem fora do território de um clã específico."],
+            ["Neutro", "Só mais um grupo de aventureiros no registro da capital.", "Nenhum templo conhece o grupo pelo nome.", "O grupo é estrangeiro — cuidado padrão, nada pessoal."],
+            ["Respeitado", "Acesso à corte menor; contratos diretos, sem passar pela Guilda.", "Curas gratuitas em templos menores; acesso à biblioteca de um mosteiro.", "Um clã garante passagem segura pelo seu território."],
+            ["Aliado", "Audiência com a coroa por pedido; tropas reais em campanhas regionais.", "O Grande Templo de Millis abre arquivos restritos.", "A Imperatriz Kishirika reconhece o grupo."],
+          ]}
+        />
+        <Aside title="Como o Mestre move o marcador">
+          Não existe fórmula. Reputação sobe ou desce por atos públicos, não por PA gasto ou sessões jogadas.
+          Mude só um degrau por vez, e só quando o ato for grande o bastante pra virar boato ou registro
+          oficial.
+        </Aside>
+        <Aside title="Facções não são unânimes">
+          &ldquo;Reino Asura&rdquo; e &ldquo;Igreja de Millis&rdquo; têm política interna — nada impede um
+          personagem de ser Aliado de uma ala e Inimigo de outra dentro da mesma facção nominal.
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="apendice-j">J. Cerco e Batalha em Escala de Exército</SectionTitle>
+        <P>
+          O patamar Senhor da Guerra (Tático) já aponta pra isso: guerra em escala de reino não se resolve
+          rolando Iniciativa pra cada soldado. Este apêndice dá ao Mestre uma forma rápida de rodar um cerco
+          ou uma batalha de exércitos usando três números por lado, não uma ficha por soldado.
+        </P>
+        <BookTable
+          headers={["Recurso", "O que mede"]}
+          rows={[
+            ["Força", "Poder de combate efetivo. Chega a 0: o exército está destruído ou capturado."],
+            ["Moral", "Vontade de continuar lutando. Chega a 0: o exército foge ou se rende, mesmo com Força de sobra."],
+            ["Suprimento", "Comida, munição, reforços em trânsito. Chega a 0: o exército perde 1 de Força automaticamente a cada fase."],
+          ]}
+        />
+        <P>
+          Um exército comum começa com <b>Força 6, Moral 6, Suprimento 3</b>. Toda batalha corre em três
+          fases — Abertura, Embate e Desfecho — e em cada uma o Mestre decide eventos que mudam esses números.
+        </P>
+        <Aside title="Onde os personagens entram">
+          <List
+            items={[
+              "Magia de área em escala Imperador ou Deus pode valer sozinha -2 a -4 de Força inimiga numa fase.",
+              "Um Senhor da Guerra pode negar reforços, mudar o terreno, ou dar +1 de Moral ao próprio exército por fase.",
+              "Um Bardo pode custar -2 de Moral inimiga ou +2 de Moral própria numa fase.",
+              "Um Ladino sabotando suprimentos antes do cerco pode zerar o Suprimento inimigo já na Abertura.",
+              "Combate pessoal contra o comandante inimigo pode causar -3 de Moral inimiga se o grupo vencer em público.",
+            ]}
+          />
+        </Aside>
+        <P>
+          Ao fim do Desfecho: o lado com Moral 0 foge ou se rende, mesmo vencendo em Força; o lado com Força
+          0 está destruído; se nenhum chegar a 0, vence quem tiver a maior soma de Força + Moral.
+        </P>
+        <Warning title="Isto não substitui o Capítulo 4">
+          Se um personagem entra em combate individual contra um alvo específico, resolva com as regras
+          normais de combate. O sistema de exército só existe pra tudo em volta que não vale a pena virar
+          Iniciativa.
+        </Warning>
+      </Section>
+
+      <Section>
+        <SectionTitle id="apendice-k">K. Bestiário — Criaturas por Patamar</SectionTitle>
+        <P>
+          Em vez de um manual de monstros exaustivo, um molde por patamar calibrado com a curva que já existe
+          no livro, mais seis criaturas prontas pra reskinar.
+        </P>
+        <BookTable
+          headers={["Patamar", "PV", "CA", "Bônus de Ataque", "Dano por turno", "CD de resistência"]}
+          rows={[
+            ["1º — Comum", "20", "12", "+3", "~10", "11"],
+            ["2º — Perigosa", "45", "13", "+4", "~20", "13"],
+            ["3º — Ameaça", "90", "14", "+6", "~35", "15"],
+            ["4º — Elite", "150", "15", "+8", "~55", "17"],
+            ["5º — Terror", "220", "16", "+10", "~80", "19"],
+            ["6º — Lenda", "320", "17", "+12", "~120", "21"],
+          ]}
+        />
+        <Aside title="Ajustando pra cima ou pra baixo">
+          <List
+            items={[
+              "Grupo de criaturas fracas: use metade do PV e do dano do patamar, mas multiplique o número de criaturas.",
+              "Chefe único: dobre o PV da linha do patamar dele e mantenha o dano.",
+              "Fera sem inteligência: role só o Atributo puro em testes sociais (sem Perícia).",
+            ]}
+          />
+        </Aside>
+        <BookTable
+          headers={["Criatura", "Patamar", "O que a torna perigosa"]}
+          rows={[
+            ["Sapo-Lodo Gigante", "1º — Comum", "Língua pegajosa (Preso, CD 11) e a Baba de Sapo-Lodo (Apêndice D) em cada mordida."],
+            ["Serpente-do-Pântano", "2º — Perigosa", "Peçonha de Serpente-do-Pântano (Apêndice D) em cada picada bem-sucedida."],
+            ["Aranha Gigante das Cavernas", "2º — Perigosa", "Teia que aplica Preso em área antes do combate começar; ataca de emboscada com Vantagem."],
+            ["Wyvern", "3º — Ameaça", "Voa, mergulha pra morder e volta a 18m de altura no mesmo turno."],
+            ["Ogro de Guerra (Onizoku)", "4º — Elite", "Um golpe de maça rola o Dado de Arma duas vezes; contra alvo Caído, dano triplicado."],
+            ["Superd Renegado", "5º — Terror", "Usa o Terceiro Olho pra nunca ser flanqueado e conjura Magia de Água até o patamar Rei."],
+          ]}
+        />
+      </Section>
+
+      <Section>
+        <SectionTitle id="apendice-l">L. Crafting e Alquimia</SectionTitle>
+        <P>
+          Quem tem a Perícia de Ofícios ligada ao que quer fazer já pode produzir coisas fora de combate,
+          usando a atividade Estudar um Ofício ou Ritual do Downtime (Apêndice F).
+        </P>
+        <SubTitle>Poções</SubTitle>
+        <P>Uma poção reproduz o efeito de uma magia de Cura ou Desintoxicação já existente no livro, engarrafado.</P>
+        <BookTable
+          headers={["Poção", "Custo em PO", "Efeito"]}
+          rows={[
+            ["Poção Menor de Cura", "15 PO", "Reproduz uma magia de Cura de rank Principiante ou Intermediário, sem precisar de mago presente."],
+            ["Poção de Antídoto", "25 PO", "Remove 1 ponto de Profundidade de uma única aflição (Apêndice D)."],
+            ["Poção Maior de Cura", "60 PO", "Reproduz uma magia de Cura de rank Avançado ou Santo."],
+            ["Elixir de Foco", "40 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
+          ]}
+        />
+        <SubTitle>Venenos</SubTitle>
+        <P>Fabricar veneno é conseguir uma dose de uma aflição já catalogada no Apêndice D.</P>
+        <BookTable
+          headers={["Profundidade", "Exemplo", "Custo típico"]}
+          rows={[
+            ["1", "Baba de Sapo-Lodo", "5 PO"],
+            ["2", "Peçonha de Serpente-do-Pântano", "20 PO"],
+            ["3", "Fel de Wyvern", "80 PO"],
+            ["4+", "Praga do Continente Demônio", "Não está à venda — só se rouba, caça ou herda."],
+          ]}
+        />
+        <Warning title="A lei e o veneno">
+          Vender veneno de Profundidade 3 ou superior sem licença é crime em Millis e no Reino Asura — perde
+          Reputação (Apêndice I) com a facção local automaticamente.
+        </Warning>
+        <SubTitle>Encantamento de Arma e Armadura</SubTitle>
+        <BookTable
+          headers={["Efeito", "Rank exigido no encantador", "Custo em PO"]}
+          rows={[
+            ["+1 no Dado de Arma ou +1 na CA", "Avançado", "150 PO"],
+            ["Dano elemental extra (+1d6, tipo à escolha)", "Santo", "300 PO"],
+            ["Ignora Resistência a um tipo de dano", "Rei", "600 PO"],
+            ["+1 no Bônus de Rank pra fins de Dado de Arma", "Imperador", "1500 PO"],
+          ]}
+        />
+        <SubTitle>Itens Mágicos Únicos — O Anel de Teleporte como Prova de Conceito</SubTitle>
+        <P>
+          Nem todo item mágico cabe numa tabela de preço. Alguns são artefatos: peças únicas cuja fabricação
+          é evento de campanha, não compra de ficha — exatamente como o Rank Deus.
+        </P>
+        <Aside title="O Anel de Teleporte">
+          <P>
+            <b>O que faz:</b> teleporta o portador — e quem ele tocar — pra um de até três destinos gravados,
+            sem custo de PM, sem teste. Depois de usado, precisa de 1 semana pra recarregar.
+          </P>
+          <P>
+            <b>Por que não está na tabela acima:</b> exige um encantador de Invocação de rank Deus, materiais
+            que só existem em circunstâncias específicas da campanha, e é irrepetível — gravar um novo
+            destino exige voltar ao mesmo encantador. Trate a fabricação como o final de um arco inteiro.
+          </P>
+        </Aside>
+      </Section>
     </div>
   );
 }
