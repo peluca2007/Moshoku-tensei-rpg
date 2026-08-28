@@ -69,9 +69,6 @@ export default function CreationInterview() {
 
   function selectStartingTree(treeId: string) {
     useCharacterStore.getState().setStartingTree(treeId);
-    if (!character.unlockedRanks.some((u) => u.treeId === treeId && u.rank === "Principiante")) {
-      useCharacterStore.getState().unlockRank(treeId, "Principiante");
-    }
   }
 
   const progress =

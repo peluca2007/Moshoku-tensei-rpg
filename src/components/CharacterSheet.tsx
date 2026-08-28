@@ -619,11 +619,7 @@ export default function CharacterSheet() {
             <select
               value={startingTreeId ?? ""}
               onChange={(e) => {
-                const treeId = e.target.value || null;
-                useCharacterStore.getState().setStartingTree(treeId);
-                if (treeId && !unlockedRanks.some((u) => u.treeId === treeId && u.rank === "Principiante")) {
-                  useCharacterStore.getState().unlockRank(treeId, "Principiante");
-                }
+                useCharacterStore.getState().setStartingTree(e.target.value || null);
               }}
               title="Desbloqueia o 1º patamar dela de graça e libera o kit de equipamento inicial (Cap. 1, seção 4)"
               className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-semibold text-parchment-800 outline-none dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
