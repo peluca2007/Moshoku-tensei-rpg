@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 const LINKS = [
-  { href: "/", label: "Ficha" },
+  { href: "/ficha", label: "Ficha" },
   { href: "/arvores", label: "Árvores" },
   { href: "/personagens", label: "Personagens" },
   { href: "/iniciativa", label: "Iniciativa" },
@@ -33,6 +33,13 @@ export default function Nav() {
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
+        <Link
+          href="/"
+          className="shrink-0 whitespace-nowrap font-black text-parchment-900 hover:text-wine-600 dark:text-parchment-50 dark:hover:text-wine-400"
+        >
+          Mushoku Tensei RPG
+        </Link>
+
         <div className="hidden min-w-0 flex-1 items-center gap-4 overflow-x-auto sm:flex">
           {LINKS.map((link) => (
             <Link
@@ -46,8 +53,6 @@ export default function Nav() {
             </Link>
           ))}
         </div>
-
-        <span className="sm:hidden">Mushoku Tensei RPG</span>
 
         <span className="ml-auto shrink-0">
           <ThemeToggle />
