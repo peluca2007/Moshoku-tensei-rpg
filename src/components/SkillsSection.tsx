@@ -42,7 +42,7 @@ export default function SkillsSection({
       </h2>
 
       {bonusChoices > manualSkills.length && (
-        <p className="mb-2 text-xs text-amber-600 dark:text-amber-400">
+        <p className="mb-2 text-xs text-gold-700 dark:text-gold-300">
           Você ainda pode escolher {bonusChoices - manualSkills.length} perícia(s) de raça/antecedente.
         </p>
       )}
@@ -52,7 +52,7 @@ export default function SkillsSection({
           <span
             key={skill}
             title="Automática (raça/antecedente)"
-            className="rounded-full bg-wine-500/10 px-2.5 py-1 text-xs font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-400"
+            className="rounded-full bg-wine-500/10 px-2.5 py-1 text-xs font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300"
           >
             {skill}
           </span>
@@ -80,7 +80,7 @@ export default function SkillsSection({
           </span>
         ))}
         {fixedSkills.length === 0 && manualSkills.length === 0 && (
-          <p className="text-sm text-parchment-500 dark:text-parchment-400">Nenhuma perícia ainda.</p>
+          <p className="text-sm text-parchment-600 dark:text-parchment-400">Nenhuma perícia ainda.</p>
         )}
       </div>
 

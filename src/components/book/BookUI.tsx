@@ -5,18 +5,25 @@ export function ChapterTitle({ id, children }: { id: string; children: ReactNode
   return (
     <h1
       id={id}
-      className="scroll-mt-24 border-b border-parchment-300 pb-3 text-2xl font-black tracking-tight text-parchment-900 dark:border-parchment-800 dark:text-parchment-50"
+      className="scroll-mt-24 border-b border-parchment-300 pb-3 text-3xl font-black tracking-tight text-parchment-900 sm:text-4xl dark:border-parchment-800 dark:text-parchment-50"
     >
       {children}
     </h1>
   );
 }
 
+/*
+ * Escala tipográfica aberta em 2026-08-28. Era 2xl / lg / base — três degraus
+ * quase colados num documento de cinco capítulos e sete apêndices, então
+ * capítulo, seção e subseção pareciam o mesmo nível e o sumário era a única
+ * forma de saber onde você estava. Agora 4xl / 2xl / lg dá orientação local
+ * sem depender do sumário.
+ */
 export function SectionTitle({ id, children }: { id: string; children: ReactNode }) {
   return (
     <h2
       id={id}
-      className="scroll-mt-24 text-lg font-bold text-parchment-900 dark:text-parchment-50"
+      className="scroll-mt-24 text-xl font-bold text-parchment-900 sm:text-2xl dark:text-parchment-50"
     >
       {children}
     </h2>
@@ -27,7 +34,7 @@ export function SubTitle({ id, children }: { id?: string; children: ReactNode })
   return (
     <h3
       id={id}
-      className="scroll-mt-24 text-base font-semibold text-parchment-800 dark:text-parchment-200"
+      className="scroll-mt-24 text-lg font-semibold text-parchment-800 dark:text-parchment-200"
     >
       {children}
     </h3>
@@ -48,19 +55,24 @@ export function Aside({ title, children }: { title?: string; children: ReactNode
   );
 }
 
-/** Caixa de aviso/exceção — pros avisos mais "atenção" do livro (ex: "O que a Cura NÃO faz"). */
+/**
+ * Caixa de aviso/exceção — pros avisos mais "atenção" do livro (ex: "O que a
+ * Cura NÃO faz"). Usa `gold-*` da paleta do projeto; até 2026-08-28 usava
+ * `amber-*`, que é o padrão do Tailwind e não pertence à identidade
+ * pergaminho/vinho/dourado — era a única cor do livro fora da paleta.
+ */
 export function Warning({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3 text-sm dark:border-amber-900 dark:bg-amber-950/30">
-      {title && <p className="mb-1 font-semibold text-amber-800 dark:text-amber-300">{title}</p>}
-      <div className="space-y-1.5 text-amber-950/80 dark:text-amber-100/80">{children}</div>
+    <div className="rounded-xl border border-gold-200 bg-gold-50/70 p-3 text-sm dark:border-gold-800 dark:bg-gold-950/40">
+      {title && <p className="mb-1 font-semibold text-gold-800 dark:text-gold-200">{title}</p>}
+      <div className="space-y-1.5 text-parchment-800 dark:text-gold-100/85">{children}</div>
     </div>
   );
 }
 
 export function Quote({ children, attribution }: { children: ReactNode; attribution?: string }) {
   return (
-    <blockquote className="border-l-2 border-parchment-300 pl-3 text-sm italic text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+    <blockquote className="border-l-2 border-parchment-300 pl-3 text-sm italic text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
       {children}
       {attribution && <footer className="mt-1 not-italic text-xs">— {attribution}</footer>}
     </blockquote>

@@ -85,7 +85,7 @@ export default function CharacterRoster() {
       )}
 
       {order.length === 0 && (
-        <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+        <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
           Nenhuma ficha ainda. Clique em &quot;Criar Ficha&quot; pra começar.
         </p>
       )}
@@ -111,12 +111,12 @@ export default function CharacterRoster() {
               <div className="mb-1 flex items-start justify-between gap-2">
                 <h2 className="font-bold text-parchment-900 dark:text-parchment-50">{character.name || "Sem nome"}</h2>
                 {isActive && (
-                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-wine-500/10 px-2 py-0.5 text-[11px] font-semibold text-wine-600 dark:text-wine-400">
+                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-wine-500/10 px-2 py-0.5 text-[11px] font-semibold text-wine-600 dark:text-wine-300">
                     <Check className="h-3 w-3" /> Ativa
                   </span>
                 )}
               </div>
-              <p className="mb-3 text-xs text-parchment-500 dark:text-parchment-400">
+              <p className="mb-3 text-xs text-parchment-600 dark:text-parchment-400">
                 {race?.name ?? "Raça não definida"} · {background?.name ?? "Antecedente não definido"} ·{" "}
                 {getPaSpent(character)} PA gastos · Rank {getGuildRank(character)} na Guilda
               </p>

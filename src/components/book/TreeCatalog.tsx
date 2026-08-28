@@ -26,13 +26,13 @@ function EntryCard({ kind, def }: { kind: "ability" | "talent"; def: AbilityDef 
         <p className="font-bold text-parchment-900 dark:text-parchment-50">
           {ability?.signature && <span className="text-gold-600 dark:text-gold-400">◆ </span>}
           {def.name}
-          <span className="ml-1 text-xs font-normal text-parchment-500 dark:text-parchment-400">
+          <span className="ml-1 text-xs font-normal text-parchment-600 dark:text-parchment-400">
             — {kind === "talent" ? "Talento" : "Técnica/Magia"} · {costLabel(def)}
           </span>
         </p>
         {ability && <RitualBadge ability={ability} />}
       </div>
-      {ability?.range && <p className="mt-1 text-xs text-parchment-500 dark:text-parchment-400">Alcance: {ability.range}</p>}
+      {ability?.range && <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">Alcance: {ability.range}</p>}
       <p className="mt-1 leading-relaxed text-parchment-700 dark:text-parchment-300">{description}</p>
       {ability?.damage && (
         <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">
@@ -67,7 +67,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
   const rankDeus = getRankDeusForTree(tree.id);
   if (nonEmptyRanks.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-parchment-300 p-3 text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+      <div className="rounded-xl border border-dashed border-parchment-300 p-3 text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
         Em breve — conteúdo desta árvore ainda não foi escrito.
       </div>
     );
@@ -87,7 +87,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
         return (
           <div key={rankDef.rank} className="space-y-2">
             <SubTitle id={`${tree.id}-${rankDef.rank}`}>
-              {label} <span className="font-normal text-parchment-500 dark:text-parchment-400">(Bônus +{RANK_BONUS[rankDef.rank]})</span>
+              {label} <span className="font-normal text-parchment-600 dark:text-parchment-400">(Bônus +{RANK_BONUS[rankDef.rank]})</span>
             </SubTitle>
             {rankDef.mastery && (
               <div className="print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
@@ -107,7 +107,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
       {rankDeus && (
         <div className="space-y-2">
           <SubTitle id={`${tree.id}-rank-deus`}>◈ Rank Deus</SubTitle>
-          <p className="text-xs italic text-parchment-500 dark:text-parchment-400">Narrativo. Não se compra.</p>
+          <p className="text-xs italic text-parchment-600 dark:text-parchment-400">Narrativo. Não se compra.</p>
           <div className="print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
             <p className="font-bold text-gold-700 dark:text-gold-400">◈ {rankDeus.title}</p>
             {rankDeus.body.map((paragraph, i) => (

@@ -59,7 +59,7 @@ export default function InitiativeTracker() {
           <Swords className="h-6 w-6 text-wine-500" /> Tracker de Iniciativa
         </h1>
         <div className="flex items-center gap-3">
-          <span className="rounded-full bg-wine-500/10 px-3 py-1 text-sm font-bold text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-400">
+          <span className="rounded-full bg-wine-500/10 px-3 py-1 text-sm font-bold text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300">
             Rodada {round}
           </span>
           <button
@@ -73,12 +73,12 @@ export default function InitiativeTracker() {
       </header>
 
       <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+        <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
           Adicionar Combatente
         </h2>
         <div className="mb-3 flex flex-wrap items-end gap-2">
           <div className="flex-1 min-w-[10rem]">
-            <label className="mb-1 block text-xs text-parchment-500 dark:text-parchment-400">Nome</label>
+            <label className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">Nome</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -87,7 +87,7 @@ export default function InitiativeTracker() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-parchment-500 dark:text-parchment-400">Iniciativa</label>
+            <label className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">Iniciativa</label>
             <input
               type="number"
               value={initiative}
@@ -96,7 +96,7 @@ export default function InitiativeTracker() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-parchment-500 dark:text-parchment-400">PV Máximo</label>
+            <label className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">PV Máximo</label>
             <input
               type="number"
               value={maxHp}
@@ -131,7 +131,7 @@ export default function InitiativeTracker() {
               type="button"
               onClick={handleImport}
               disabled={!importId}
-              className="flex items-center gap-1 rounded-lg border border-wine-500 px-3 py-1.5 text-sm font-medium text-wine-600 transition-colors hover:bg-wine-500/10 disabled:opacity-40 dark:text-wine-400"
+              className="flex items-center gap-1 rounded-lg border border-wine-500 px-3 py-1.5 text-sm font-medium text-wine-600 transition-colors hover:bg-wine-500/10 disabled:opacity-40 dark:text-wine-300"
             >
               <Download className="h-4 w-4" /> Rolar e Importar
             </button>
@@ -140,7 +140,7 @@ export default function InitiativeTracker() {
       </section>
 
       {sorted.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+        <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
           Nenhum combatente ainda. Adicione personagens ou NPCs acima pra começar.
         </p>
       ) : (
@@ -226,7 +226,7 @@ export default function InitiativeTracker() {
                     {c.conditions.map((cond) => (
                       <span
                         key={cond.id}
-                        className="flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-700 ring-1 ring-amber-500/30 dark:text-amber-400"
+                        className="flex items-center gap-1 rounded-full bg-gold-500/10 px-2 py-0.5 text-[11px] font-medium text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300"
                       >
                         {cond.name}
                         {cond.duration !== undefined && <span className="opacity-70">({cond.duration})</span>}

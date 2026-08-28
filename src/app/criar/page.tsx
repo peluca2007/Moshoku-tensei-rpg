@@ -31,7 +31,7 @@ export default function CriarPage() {
         <h1 className="flex items-center justify-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
           <Sparkles className="h-6 w-6 text-wine-500" /> Como seu personagem vai nascer?
         </h1>
-        <p className="mt-2 text-sm text-parchment-500 dark:text-parchment-400">
+        <p className="mt-2 text-sm text-parchment-600 dark:text-parchment-400">
           Três formas de criar uma ficha — todas terminam no mesmo lugar: uma ficha completa, livre pra editar
           depois como quiser.
         </p>

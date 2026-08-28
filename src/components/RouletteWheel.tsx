@@ -228,7 +228,7 @@ export function WheelLegend({ options, highlightId }: { options: WheelOption[]; 
                   style={{ width: `${Math.max(6, (option.probability / maxProbability) * 100)}%` }}
                 />
               </span>
-              <span className="w-11 shrink-0 text-right text-xs font-semibold tabular-nums text-parchment-500 dark:text-parchment-400">
+              <span className="w-11 shrink-0 text-right text-xs font-semibold tabular-nums text-parchment-600 dark:text-parchment-400">
                 {(option.probability * 100).toFixed(1)}%
               </span>
             </span>

@@ -45,7 +45,7 @@ export default function Nav() {
               key={link.href}
               href={link.href}
               className={`shrink-0 whitespace-nowrap hover:text-wine-600 dark:hover:text-wine-400 ${
-                pathname === link.href ? "font-bold text-wine-600 dark:text-wine-400" : ""
+                pathname === link.href ? "font-bold text-wine-600 dark:text-wine-300" : ""
               }`}
             >
               {link.label}
@@ -67,7 +67,7 @@ export default function Nav() {
               onClick={() => setOpen(false)}
               className={`rounded-lg px-3 py-2.5 ${
                 pathname === link.href
-                  ? "bg-wine-500/10 font-bold text-wine-600 dark:text-wine-400"
+                  ? "bg-wine-500/10 font-bold text-wine-600 dark:text-wine-300"
                   : "hover:bg-parchment-900/5 dark:hover:bg-white/5"
               }`}
             >
