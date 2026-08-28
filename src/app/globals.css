@@ -219,10 +219,28 @@ body {
   animation: birth-reveal 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
 
+/* Rolador de Dados: números trocando rápido antes de assentar no resultado real
+   (já calculado na hora — isso é só apresentação, ver DiceRoller.tsx). Desligável
+   pelo toggle "modo rápido" no painel, além de respeitar prefers-reduced-motion. */
+@keyframes dice-spin-number {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.14) rotate(-4deg);
+  }
+}
+
+.animate-dice-spin {
+  animation: dice-spin-number 0.14s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-slide-in,
   .animate-birth-flash,
-  .animate-birth-reveal {
+  .animate-birth-reveal,
+  .animate-dice-spin {
     animation: none !important;
   }
 }

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { useMacroStore } from "@/store/useMacroStore";
+import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 
 /**
  * A store usa skipHydration (persist não lê o localStorage sozinho) pra
@@ -19,6 +20,7 @@ export default function StoreHydration() {
     });
     useInitiativeStore.persist.rehydrate();
     useMacroStore.persist.rehydrate();
+    useDiceRollerStore.persist.rehydrate();
   }, []);
 
   return null;
