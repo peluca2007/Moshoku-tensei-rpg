@@ -181,7 +181,27 @@ export const ARQUEARIA_TREE: Tree = {
         description:
           "Você acerta qualquer alvo que consiga ver, sem limite de alcance. Enxerga com precisão perfeita a até 1 km, atravessando neblina, escuridão e chuva. Contra alvos Marcados, seus disparos ignoram Cobertura Total, desde que exista qualquer trajetória física.",
       },
-      talents: [],
+      talents: [
+        {
+          id: "marca-perene",
+          name: "Marca Perene",
+          paCost: 2,
+          description:
+            "A condição Marcado passa a durar até o próximo Descanso Longo, mesmo se a criatura fugir, se esconder ou atravessar o continente. Você a encontra de novo.",
+        },
+        {
+          id: "contra-bateria",
+          name: "Contra-Bateria",
+          paCost: 2,
+          description: "Quando um inimigo te atacar à distância, você sabe exatamente onde ele está e o Marca automaticamente.",
+        },
+        {
+          id: "peso-da-aljava",
+          name: "Peso da Aljava",
+          paCost: 2,
+          description: "Suas flechas causam +1d8 contra criaturas Grandes ou maiores.",
+        },
+      ],
       abilities: [
         {
           id: "um-alvo-um-tiro",

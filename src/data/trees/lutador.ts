@@ -192,7 +192,20 @@ export const LUTADOR_TREE: Tree = {
         description:
           "Você não pode ser derrubado, empurrado, agarrado, arremessado nem movido contra a vontade por nada de patamar igual ou inferior. Ao ser reduzido a 0 PV, termina o turno atual antes de cair, com todas as Ações restantes (1x/combate). Imune a Amedrontado e Atordoado.",
       },
-      talents: [],
+      talents: [
+        {
+          id: "colheita",
+          name: "Colheita",
+          paCost: 3,
+          description: "Cada criatura reduzida a 0 PV por você devolve 1 PT e permite mover-se 3m sem gastar Ação.",
+        },
+        {
+          id: "peso-absoluto-lutador",
+          name: "Peso Absoluto",
+          paCost: 3,
+          description: "O Arremesso alcança 18m e o dano dobra.",
+        },
+      ],
       abilities: [
         {
           id: "ruina",
