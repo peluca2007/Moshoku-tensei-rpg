@@ -1,0 +1,88 @@
+name: ⚖️ Desequilíbrio de regra
+description: Uma regra funciona como escrito, mas quebra o jogo — forte demais, fraca demais, ou explorável.
+title: "[balance] "
+labels: ["balanceamento"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **O site está certo, o livro está certo, e mesmo assim a mesa quebrou.** É disto que este
+        template trata.
+
+        Balanceamento não se decide por opinião — se decide por número. Quanto mais concreto o seu
+        caso, mais rápido ele vira mudança no livro. "O Deus da Espada é forte demais" não move nada.
+        "Um Deus da Espada Imperador com espadão já satura o 4d10 no Rei, e a Maestria de Imperador
+        não dá nada" vira commit no mesmo dia.
+
+  - type: input
+    id: alvo
+    attributes:
+      label: O que está desbalanceado
+      description: Nome exato da magia, talento, técnica, fórmula ou item. Um por issue.
+      placeholder: "Espada de Luz Verdadeira (Deus da Espada, Imperador)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: direcao
+    attributes:
+      label: Direção do problema
+      options:
+        - Forte demais (domina a mesa / trivializa encontros)
+        - Fraca demais (ninguém compra, é PA jogado fora)
+        - Exploit (combo que o livro claramente não previu)
+        - Beco sem saída (a build fica matematicamente impossível de jogar)
+        - Ritmo (o combate fica longo/letal demais por causa disto)
+    validations:
+      required: true
+
+  - type: textarea
+    id: a-conta
+    attributes:
+      label: A conta
+      description: |
+        O número, mostrado. Compare com a régua que o livro já tem — **Apêndice C** (Dano por Turno)
+        e **Apêndice G** (Bestiário) existem exatamente pra isso.
+      value: |
+        **Situação:** (rank, atributos, árvores envolvidas)
+
+        **A conta:**
+        ```
+        ex: 4d10 (média 22) × 5 rolagens + Força 8 + Rank 6 = 124 de dano em 2 Ações
+        ```
+
+        **A régua do livro:** Apêndice C diz que Espada no 6º patamar deveria fazer ~120 **por turno inteiro**.
+
+        **A diferença:** ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: mesa
+    attributes:
+      label: Isso aconteceu numa mesa de verdade?
+      description: Teoria vale. Mesa vale mais — e vale ainda mais com quantas sessões.
+      placeholder: "Sim, 3 sessões. O grupo parou de usar qualquer outra técnica porque nada compete."
+
+  - type: textarea
+    id: proposta
+    attributes:
+      label: Proposta de correção
+      description: |
+        Opcional, mas muito bem-vindo. Prefira o ajuste **cirúrgico** — mudar um número — a
+        reescrever a habilidade. E diga o que a sua proposta **quebra**: toda mudança quebra alguma
+        coisa, e saber o quê é metade da decisão.
+      placeholder: |
+        Trocar "role o Dado de Arma cinco vezes" por "três vezes" → 80 de dano, dentro da régua.
+        Quebra: enfraquece a fantasia de "o golpe que encerra a luta". Alternativa: manter as 5
+        rolagens e travar em 1x por Descanso Longo em vez de 1x por combate.
+
+  - type: checkboxes
+    id: checou
+    attributes:
+      label: Antes de enviar
+      options:
+        - label: Conferi no `/livro` que a regra ainda está escrita assim (o livro muda com frequência).
+          required: true
+        - label: Comparei com o Apêndice C ou o Apêndice G, e não só com a minha impressão.
+          required: false

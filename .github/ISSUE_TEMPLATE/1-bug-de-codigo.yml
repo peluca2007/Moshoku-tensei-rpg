@@ -1,0 +1,88 @@
+name: 🐛 Bug de código
+description: O site fez algo errado — cálculo furado, botão quebrado, layout torto, erro no console.
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Isto é pra quando o _site_ erra.** Se o site está fazendo exatamente o que o livro manda e o
+        problema é que a *regra* está ruim, use o template **⚖️ Desequilíbrio de regra**.
+
+        Regra de bolso: se o livro (`/livro`) e a ficha discordam, é bug. Se os dois concordam e o
+        resultado ainda é absurdo na mesa, é desequilíbrio.
+
+  - type: textarea
+    id: o-que-aconteceu
+    attributes:
+      label: O que aconteceu
+      description: O comportamento que você viu, sem interpretação.
+      placeholder: "A ficha mostrou 42 PT num personagem Imperador com Vigor 6 e Espírito 6."
+    validations:
+      required: true
+
+  - type: textarea
+    id: o-que-deveria
+    attributes:
+      label: O que deveria ter acontecido
+      description: E, se possível, **onde o livro diz isso** — capítulo e seção.
+      placeholder: "Deveria mostrar ~17. Cap. 3, 'Pontos de Touki': PT Pleno = Espírito + Vigor + Crescimento, fórmula aditiva."
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Como reproduzir
+      description: Passo a passo do zero. Se der, cole o JSON da ficha (`/ficha` → Exportar JSON) — é o jeito mais rápido de reproduzir exatamente o seu caso.
+      value: |
+        1. Abrir `/criar/manual`
+        2. ...
+        3. ...
+
+        <details><summary>JSON da ficha (opcional, mas ajuda muito)</summary>
+
+        ```json
+        cole aqui
+        ```
+
+        </details>
+    validations:
+      required: true
+
+  - type: dropdown
+    id: onde
+    attributes:
+      label: Onde
+      multiple: true
+      options:
+        - /ficha (ficha de personagem)
+        - /criar (as três vias de criação)
+        - /arvores (mapa radial)
+        - /livro (livro de regras)
+        - /loja (Loja da Guilda)
+        - /iniciativa (tracker de combate)
+        - /personagens (lista de fichas)
+        - Exportação em PDF
+        - Rolador de dados
+        - Outro / não sei
+    validations:
+      required: true
+
+  - type: dropdown
+    id: dispositivo
+    attributes:
+      label: Dispositivo
+      description: O projeto é mobile-first — bug que só acontece no celular é prioridade, não detalhe.
+      options:
+        - Celular
+        - Desktop
+        - Os dois
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Print, vídeo ou erro do console
+      description: Arraste imagens aqui. Erro do console (F12 → Console) resolve metade dos casos sozinho.

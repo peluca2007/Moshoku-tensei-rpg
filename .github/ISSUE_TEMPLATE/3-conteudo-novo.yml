@@ -1,0 +1,67 @@
+name: ✨ Conteúdo novo
+description: Uma magia, talento, árvore, item, criatura ou regra que ainda não existe.
+title: "[conteúdo] "
+labels: ["conteúdo"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        O livro tem um molde pra isso. O **Apêndice B — Molde para Novas Escolas** lista os oito itens
+        que toda escola nova precisa ter, e o **Apêndice C** dá a régua de dano com que ela vai ser
+        medida. Conteúdo que não passa pelos dois costuma não entrar.
+
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo
+      options:
+        - Magia / técnica / talento numa árvore existente
+        - Sub-árvore nova
+        - Item, poção ou encantamento (Loja da Guilda)
+        - Criatura (Apêndice G — Bestiário)
+        - Regra ou subsistema novo
+        - Conteúdo de mundo (facção, região, evento)
+    validations:
+      required: true
+
+  - type: input
+    id: onde
+    attributes:
+      label: Onde entra
+      description: Árvore e rank, capítulo, ou patamar do bestiário.
+      placeholder: "Magia de Vento, rank Santo"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposta
+    attributes:
+      label: A proposta
+      description: Nome, custo (PA e PM/PT/PP), alcance, Ações, dano e efeito — no mesmo formato dos cards do `/livro`.
+      value: |
+        **Nome:**
+        **Custo:** X PA · Y PM/PT/PP
+        **Alcance:**
+        **Ações:**
+        **Dano:**
+        **Efeito:**
+    validations:
+      required: true
+
+  - type: textarea
+    id: porque
+    attributes:
+      label: Por que o livro precisa disto
+      description: |
+        A pergunta difícil, e a única que decide. O que esta adição faz que **nada no livro já faz**?
+        Se outra árvore já resolve o mesmo problema, isto provavelmente não entra.
+      placeholder: "Vento não tem nenhuma forma de tirar um aliado do alcance corpo a corpo sem gastar o turno dele. Nenhuma das 18 árvores faz isso hoje."
+    validations:
+      required: true
+
+  - type: textarea
+    id: regua
+    attributes:
+      label: Onde isso cai na régua do Apêndice C
+      description: Se causa dano, compare com a coluna e o patamar equivalentes. Se não causa, diga qual é o valor dela.
+      placeholder: "~45 por turno no 4º patamar — Vento no 4º já está em ~45, então não infla a coluna."
