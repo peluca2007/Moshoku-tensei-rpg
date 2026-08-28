@@ -182,7 +182,22 @@ export const ESCUDOS_TREE: Tree = {
         description:
           "Aliados Sob Sua Guarda recebem, passivamente e sem custo: redução de dano igual ao seu Bônus de Rank contra todo dano recebido, imunidade a acertos críticos, e o direito de repetir um teste de resistência falho por turno.",
       },
-      talents: [],
+      talents: [
+        {
+          id: "aco-vivo",
+          name: "Aço Vivo",
+          paCost: 3,
+          description:
+            "Sua armadura e escudo se reparam sozinhos após cada Descanso Curto e não podem ser destruídos por efeito algum de patamar inferior ao seu.",
+        },
+        {
+          id: "contagem-de-corpos",
+          name: "Contagem de Corpos",
+          paCost: 3,
+          description:
+            "Para cada aliado Sob Sua Guarda que não tenha sofrido dano neste combate, você recebe +1 na CA, cumulativo.",
+        },
+      ],
       abilities: [
         {
           id: "custe-o-que-custar",
