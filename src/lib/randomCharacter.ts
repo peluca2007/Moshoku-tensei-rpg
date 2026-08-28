@@ -22,9 +22,13 @@ const RACE_WEIGHT: Record<string, number> = {
   dragao: 0,
 };
 
+function rollableRacePool() {
+  return RACES.filter((r) => (RACE_WEIGHT[r.id] ?? 1) > 0);
+}
+
 /** Sorteia um resultado de raça pra Via 2/3 — pesado por raridade (ver RACE_WEIGHT), nunca uniforme. */
 export function rollRandomRace(): string {
-  const pool = RACES.filter((r) => (RACE_WEIGHT[r.id] ?? 1) > 0);
+  const pool = rollableRacePool();
   const totalWeight = pool.reduce((sum, r) => sum + (RACE_WEIGHT[r.id] ?? 1), 0);
   let roll = Math.random() * totalWeight;
   for (const race of pool) {
@@ -32,6 +36,18 @@ export function rollRandomRace(): string {
     if (roll <= 0) return race.id;
   }
   return pool[pool.length - 1].id;
+}
+
+/** IDs das raças que podem realmente sair no sorteio (peso > 0) — usado pra desenhar a Roleta do Destino sem duplicar a tabela de pesos. */
+export function getRollableRaceIds(): string[] {
+  return rollableRacePool().map((r) => r.id);
+}
+
+/** Chance real (0–1) de cada raça sortável sair na Roleta — mesma tabela de pesos usada em rollRandomRace, só que exposta pra UI mostrar a probabilidade em vez de escondê-la. */
+export function getRaceProbabilities(): { id: string; probability: number }[] {
+  const pool = rollableRacePool();
+  const totalWeight = pool.reduce((sum, r) => sum + (RACE_WEIGHT[r.id] ?? 1), 0);
+  return pool.map((r) => ({ id: r.id, probability: (RACE_WEIGHT[r.id] ?? 1) / totalWeight }));
 }
 
 /** Rola 1d100 na tabela de Antecedentes do Cap. 1 (mesmo rollRange já usado no livro) — respeita o peso canônico de cada resultado. */

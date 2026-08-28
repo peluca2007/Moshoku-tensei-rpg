@@ -165,3 +165,64 @@ body {
     word-break: break-word;
   }
 }
+
+/* Micro-animações de entrada usadas na criação de personagem (Via 2 — Roleta
+   — e Via 3 — Entrevista). Só CSS, sem lib externa: fade-slide em cada nova
+   pergunta e um "flash" no momento em que raça/antecedente são revelados —
+   o instante em que o personagem "nasce". Respeita prefers-reduced-motion. */
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes birth-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  45% {
+    opacity: 0.9;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+@keyframes birth-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade-slide-in {
+  animation: fade-slide-in 0.35s ease-out both;
+}
+
+.animate-birth-flash {
+  animation: birth-flash 0.9s ease-out both;
+}
+
+.animate-birth-reveal {
+  animation: birth-reveal 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-slide-in,
+  .animate-birth-flash,
+  .animate-birth-reveal {
+    animation: none !important;
+  }
+}

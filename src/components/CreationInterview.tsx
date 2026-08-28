@@ -94,7 +94,7 @@ export default function CreationInterview() {
 
       <div className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
         {phase === "perguntas" && (
-          <div>
+          <div key={questionIndex} className="animate-fade-slide-in">
             <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
               Pergunta {questionIndex + 1} de {questions.length}
             </p>
@@ -118,8 +118,14 @@ export default function CreationInterview() {
 
         {phase === "arvore" && (
           <div>
-            <div className="mb-4 rounded-xl bg-wine-500/10 p-3 text-sm text-wine-700 dark:text-wine-300">
-              O Destino falou: <b>{race?.name}</b>, <b>{background?.name}</b>.
+            <div className="relative mb-4 overflow-hidden rounded-xl bg-wine-500/10 p-3 text-sm text-wine-700 dark:text-wine-300">
+              <div
+                className="animate-birth-flash pointer-events-none absolute inset-0 rounded-full bg-gold-400/40 blur-xl"
+                aria-hidden
+              />
+              <div className="animate-birth-reveal relative">
+                O Destino falou: <b>{race?.name}</b>, <b>{background?.name}</b>.
+              </div>
             </div>
             <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
             <h2 className="mb-1 mt-4 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha sua Árvore Inicial</h2>
@@ -152,7 +158,7 @@ export default function CreationInterview() {
         )}
 
         {phase === "pronto" && (
-          <div className="flex flex-col items-center justify-center py-8 text-center">
+          <div className="animate-birth-reveal flex flex-col items-center justify-center py-8 text-center">
             <Sparkles className="mb-3 h-10 w-10 text-wine-500" />
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">
               {character.name || "Seu personagem"} tem uma história agora.
