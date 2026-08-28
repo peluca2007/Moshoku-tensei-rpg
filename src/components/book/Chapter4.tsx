@@ -24,11 +24,15 @@ export default function Chapter4() {
             ]}
           />
         </Aside>
-        <Aside title="PM Máximos = (Espírito × Maior Bônus de Rank de Magia) + 8">
+        <Aside title="PM Máximos = (Espírito × Maior Bônus de Rank de Magia) + 8, com piso">
           <P>
             Uma fórmula só, e mais nada. <b>Escolas de magia não concedem PM nenhum</b> — a reserva inteira
             vem do seu Espírito e de quão fundo você foi numa escola. Árvores do Corpo e de Utilidade
             concedem <b>0 PM, sempre</b>, mesmo em rank Imperador — em troca, o Corpo recebe PT (Cap. 3).
+          </P>
+          <P>
+            <b>O piso:</b> sua reserva nunca fica abaixo de <b>(Maior Bônus de Rank de Magia × 4) + 8</b>.
+            Um Imperador tem no mínimo 32 PM, um Santo no mínimo 24, mesmo com Espírito 0 ou negativo.
           </P>
           <P>
             Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6+8 = <b>44 PM</b> — o suficiente
@@ -36,13 +40,45 @@ export default function Chapter4() {
             assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, com troco pra mais nada.
           </P>
         </Aside>
+        <Aside title="Por que existe um piso de PM">
+          <P>
+            O Capítulo 1 promete dois magos legítimos: o <b>cirurgião</b> (Intelecto alto, poucos tiros,
+            todos letais) e o <b>reator</b> (Espírito alto, bombardeia o dia inteiro). Sem o piso, o
+            primeiro não existia no rank alto — e não por ser fraco, mas por ser impossível.
+          </P>
+          <P>
+            A conta: um Fogo Imperador com Espírito 2 teria 2×6+8 = <b>20 PM</b>. <i>Sol Menor</i>, a magia
+            de assinatura da escola dele, custa <b>22 PM</b>. Ele nunca conseguiria conjurar a própria
+            assinatura, em nenhum descanso, por mais que jogasse. A causa é o descompasso entre as duas
+            curvas: o custo mediano de uma magia cresce <b>dez vezes</b> do 1º ao 6º patamar (2 PM → 20
+            PM), enquanto a reserva cresce menos de três vezes. O piso corrige exatamente esse fundo, e
+            some sozinho pra quem tem Espírito 4 ou mais — o teto de quem investe em Espírito não muda em
+            nada.
+          </P>
+        </Aside>
         <List
           items={[
             <span key="ca"><b>Classe de Armadura (CA):</b> Base 10 + Agilidade. Cresce com armaduras, talentos e habilidades defensivas.</span>,
             <span key="ini"><b>Iniciativa:</b> 1d20 + Agilidade.</span>,
+            <span key="res"><b>Teste de Resistência:</b> 1d20 + Atributo + <b>metade do seu maior Bônus de Rank</b> (arredondado pra cima), de qualquer árvore.</span>,
             <span key="desl"><b>Deslocamento:</b> 9 metros, exceto onde a raça indicar outro valor.</span>,
           ]}
         />
+        <Aside title="Por que o Rank entra no teste de resistência">
+          <P>
+            Ele não entrava, e essa era a única fórmula do livro em que o seu treino não contava pra nada.
+            O problema aparecia ao longo de uma campanha inteira: a CD das criaturas do Apêndice G sobe{" "}
+            <b>+10</b> do 1º ao 6º patamar, e o seu teste subia <b>+4</b> no mesmo período — só o
+            crescimento do atributo. A chance de resistir despencava de 70% pra 40%, e um personagem que
+            tivesse largado aquele atributo no Sistema de Defeitos chegava ao fim da campanha resistindo a
+            5% — falhando em dezenove de vinte efeitos.
+          </P>
+          <P>
+            Metade do Bônus de Rank (o mesmo valor que o Manto de Touki já usa, +1 no Principiante até +3
+            no Imperador) devolve a curva pra algo em torno de 70% → 60%: você melhora, o mundo melhora
+            mais, e a diferença deixa de ser abismo.
+          </P>
+        </Aside>
         <Aside title="Por que a fórmula é essa, e não uma soma simples">
           <P>
             Com uma fórmula ingênua (só somar os dados), um Norte de Vigor 5 chegava ao Imperador com pouco
@@ -187,7 +223,11 @@ export default function Chapter4() {
           chegarem a 0, você cai Inconsciente e entra em estado de Morte.
         </P>
         <SubTitle>O Teste do Fio da Vida</SubTitle>
-        <P>No início de cada um dos seus turnos a 0 PV, role 1d20 + Vigor contra CD 10:</P>
+        <P>
+          No início de cada um dos seus turnos a 0 PV, role 1d20 + Vigor contra{" "}
+          <b>CD 8 + o Bônus de Rank de quem te derrubou</b> (CD 9 contra um Principiante, CD 14 contra
+          um Imperador; use 10 se não houver um responsável claro, como uma queda ou um desabamento):
+        </P>
         <List
           items={[
             "Sucesso: você estabiliza temporariamente — não está morto, mas continua desacordado.",
@@ -195,6 +235,15 @@ export default function Chapter4() {
             "Falha Crítica (1 Natural): você recebe 2 Marcas da Morte.",
           ]}
         />
+        <Aside title="Por que a CD não é fixa">
+          <P>
+            Era CD 10 fixa, e no rank alto isso deixava de ser um teste: um Imperador com Vigor 6 passava
+            em 80% das rolagens, e morrer virava estatisticamente quase impossível justamente quando os
+            inimigos ficavam mais letais. Amarrar a CD a quem te derrubou mantém o goblin de estrada
+            sendo um susto (CD 9) e faz o Rei-Demônio ser o que ele deveria ser (CD 14, 60% de sucesso
+            com o mesmo Vigor 6): tenso, sem virar sentença.
+          </P>
+        </Aside>
         <P>
           Se acumular <b>3 Marcas da Morte</b>, você morre permanentemente. Qualquer magia de cura ou poção
           aplicada por um aliado remove todas as Marcas da Morte instantaneamente e você acorda — mas
@@ -399,9 +448,15 @@ export default function Chapter4() {
               ["3", "Desvantagem em testes de resistência."],
               ["4", "PV Máximos reduzidos à metade."],
               ["5", "Deslocamento reduzido a 0."],
-              ["6", "Morte — a menos que a fonte diga o contrário (Fome Vermelha, seção 7 deste capítulo, transforma em vez de matar)."],
+              ["6", "Morte — mas nunca sem uma última rolagem: ver abaixo. (A menos que a fonte diga o contrário; Fome Vermelha, seção 7 deste capítulo, transforma em vez de matar.)"],
             ]}
           />
+          <P>
+            <b>A última rolagem:</b> ao passar do Nível 5 para o Nível 6, faça um teste de Vigor{" "}
+            <b>CD 15</b>. Sucesso: você fica no Nível 5 e ganha o Nível 6 só na próxima vez que a causa
+            cobrar de novo. Falha: você morre. Nenhuma morte neste sistema acontece sem um dado — o Fio
+            da Vida dá três chances, e a Exaustão dá esta.
+          </P>
           <P>
             Os efeitos <b>somam</b>: no Nível 3, você já soma a Desvantagem de atributo e de ataque do Nível
             1 com a de resistência deste nível, além de andar na metade da velocidade.

@@ -21,7 +21,7 @@ export default function Chapter3() {
         Este capítulo primeiro cobre as regras <i>compartilhadas</i> entre árvores do mesmo pilar, e termina
         com o catálogo completo de magias, talentos, técnicas e Maestrias das 18 sub-árvores — o mesmo dado
         que alimenta a ficha, então nunca diverge dela. Prefere navegar visualmente? O{" "}
-        <Link href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-400">
+        <Link href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">
           mapa de Árvores
         </Link>{" "}
         mostra o mesmo conteúdo ligado ao progresso do seu personagem.
@@ -44,7 +44,7 @@ export default function Chapter3() {
             <Link
               key={t.id}
               href={`/arvores?arvore=${t.id}`}
-              className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-400"
+              className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300"
             >
               {t.name}
             </Link>,
@@ -100,7 +100,7 @@ export default function Chapter3() {
         </P>
         <P>
           <code className="rounded bg-parchment-100 px-2 py-1 text-xs dark:bg-parchment-800">
-            d4 → d6 → d8 → d10 → d12 → 2d8 → 2d10 → 2d12 → 3d10 → 3d12 → 4d10
+            d4 → d6 → d8 → d10 → d12 → 2d8 → 2d10 → 2d12 → 3d10 → 3d12 → 4d10 → 4d12 → 5d10 → 5d12
           </code>
         </P>
         <BookTable
@@ -114,11 +114,25 @@ export default function Chapter3() {
             ["Imperador", "+6", "2d12", "3d10"],
           ]}
         />
+        <Aside title="Os três últimos degraus, e o que acontece acima deles">
+          <P>
+            A escada terminava no 4d10, e isso quebrava a ponta da progressão. O Estilo Deus da Espada
+            acumula nove degraus até o Imperador: um Espadão (d10, que já começa no 4º degrau) batia no
+            teto <b>já no Rei</b>, e a Maestria de Imperador — que promete três degraus, o degrau mais caro
+            do livro — não entregava absolutamente nada. Pior: adaga, espada curta e espadão convergiam
+            todos pro mesmo 4d10, e a escolha de arma deixava de existir no rank alto.
+          </P>
+          <P>
+            <b>Excedente vira dano fixo:</b> se um talento ou Maestria te der um degrau acima do 5d12
+            (Espada Emprestada e Punho Duplo são os dois casos do livro), cada degrau excedente vale{" "}
+            <b>+2 de dano fixo</b> em vez de sumir. Nenhum PA gasto em degrau é jogado fora.
+          </P>
+        </Aside>
         <Warning title="Esta tabela é a progressão padrão, não universal">
           A maioria das árvores do Corpo sobe exatamente +1 degrau por Rank (total +6 no Imperador), mas não
           é regra fixa — cada árvore define os próprios degraus por patamar no catálogo dela (Cap. 3,
-          &ldquo;Todas as Sub-árvores&rdquo;). O Deus da Espada sobe mais rápido (chega no teto da escada, 4d10,
-          antes do Imperador, de propósito — é a identidade da árvore: &ldquo;o maior dano do livro&rdquo;); Cavalaria e
+          &ldquo;Todas as Sub-árvores&rdquo;). O Deus da Espada sobe mais rápido (nove degraus no total, de
+          propósito — é a identidade da árvore: &ldquo;o maior dano do livro&rdquo;); Cavalaria e
           Escudos sobe mais devagar, porque o valor dela está em proteger o grupo, não em dano. Confira o
           catálogo da árvore específica antes de calcular o dado final de alguém.
         </Warning>
@@ -348,16 +362,16 @@ export default function Chapter3() {
         </P>
         {(["magia", "corpo", "utilidade"] as const).map((category) => (
           <div key={category} className="space-y-3">
-            <h3 className="scroll-mt-24 text-base font-bold text-wine-700 dark:text-wine-400" id={`cap3-todas-${category}`}>
+            <h3 className="scroll-mt-24 text-base font-bold text-wine-700 dark:text-wine-300" id={`cap3-todas-${category}`}>
               {CATEGORY_LABELS[category]}
             </h3>
             {TREES.filter((t) => t.category === category).map((tree) => (
               <details key={tree.id} className="rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
                 <summary className="scroll-mt-24 cursor-pointer list-none rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
                   <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
-                  <span className="ml-2 text-xs text-parchment-500 dark:text-parchment-400">{tree.subgroup}</span>
+                  <span className="ml-2 text-xs text-parchment-600 dark:text-parchment-400">{tree.subgroup}</span>
                   {tree.tagline && (
-                    <span className="mt-0.5 block text-xs italic text-parchment-500 dark:text-parchment-400">{tree.tagline}</span>
+                    <span className="mt-0.5 block text-xs italic text-parchment-600 dark:text-parchment-400">{tree.tagline}</span>
                   )}
                 </summary>
                 <div className="border-t border-parchment-300 p-3 dark:border-parchment-800">

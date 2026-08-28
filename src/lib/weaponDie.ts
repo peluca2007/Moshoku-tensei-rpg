@@ -14,7 +14,26 @@ export const WEAPON_DIE_LADDER = [
   "3d10",
   "3d12",
   "4d10",
+  // Três degraus acrescentados em 2026-08-28 (auditoria de balanceamento). Sem
+  // eles a escada terminava no 4d10 e saturava antes do fim da progressão: o
+  // Deus da Espada acumula 9 degraus, então um Espadão (d10, 4º degrau) batia
+  // no teto já no Rei e a Maestria de Imperador ("Três degraus de Dado de
+  // Arma") — o degrau mais caro do livro — não entregava nada. Pior: adaga
+  // (d4), espada curta (d6) e espadão (d10) convergiam todos pro mesmo 4d10 no
+  // Imperador, e a escolha de arma deixava de existir no rank alto.
+  "4d12",
+  "5d10",
+  "5d12",
 ] as const;
+
+/**
+ * Cap. 3: degrau acima do teto da escada não é perdido — vira dano fixo. Com a
+ * escada estendida até 5d12 isso quase nunca dispara em progressão normal (o
+ * Deus da Espada, que sobe mais rápido, para no 12º de 13 degraus partindo de
+ * um d10), mas talentos que dão degrau avulso (Espada Emprestada, Punho Duplo)
+ * ainda podem estourar — e sem esta regra eles viravam PA jogado fora.
+ */
+export const EXCESS_STEP_DAMAGE = 2;
 
 /** Dados base do Cap. 3, seção "O Dado de Arma", pra preencher o seletor de armas. */
 export const WEAPON_PRESETS: { name: string; die: string }[] = [
@@ -36,13 +55,20 @@ export const WEAPON_PRESETS: { name: string; die: string }[] = [
 ];
 
 /**
- * Sobe `steps` degraus na Escada de Dados a partir de `baseDie`. Além do
- * teto do 4d10 (não existe degrau acima dele), também não desce abaixo do
- * d4 pra graus negativos — a escada é só pra cima.
+ * Sobe `steps` degraus na Escada de Dados a partir de `baseDie`. Nunca desce
+ * abaixo do d4 pra graus negativos — a escada é só pra cima. Degraus que
+ * passariam do topo (5d12) viram `EXCESS_STEP_DAMAGE` de dano fixo cada, e a
+ * fórmula devolvida já sai com esse bônus embutido ("5d12+4") — `diceAverage`,
+ * `diceMax` e `rollFormula` todos entendem essa notação, então nenhum ponto de
+ * uso precisa saber que houve excedente.
  */
 export function escalateWeaponDie(baseDie: string, steps: number): string {
   const index = WEAPON_DIE_LADDER.indexOf(baseDie as (typeof WEAPON_DIE_LADDER)[number]);
   if (index === -1) return baseDie; // dado fora da escada (homebrew) — devolve como está, sem escalar
-  const target = Math.min(WEAPON_DIE_LADDER.length - 1, Math.max(0, index + Math.max(0, steps)));
-  return WEAPON_DIE_LADDER[target];
+  const top = WEAPON_DIE_LADDER.length - 1;
+  const raw = index + Math.max(0, steps);
+  const target = Math.min(top, Math.max(0, raw));
+  const excess = Math.max(0, raw - top);
+  const die = WEAPON_DIE_LADDER[target];
+  return excess > 0 ? `${die}+${excess * EXCESS_STEP_DAMAGE}` : die;
 }

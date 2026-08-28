@@ -6,19 +6,30 @@ import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
  * Peso de sorteio por raça — quanto mais forte mecanicamente, mais raro sortear (Via 2/3).
  * Raças míticas (peso 0) nunca saem no sorteio: só dá pra pegá-las na Via 1 (Manual), com
  * aprovação do Mestre, exatamente como o próprio texto da Raça Dragão já exige.
+ *
+ * Os pesos foram reordenados na auditoria de balanceamento de 2026-08-28 pra bater com o
+ * poder MEDIDO no rank Imperador (a régua e a conta de cada raça estão no cabeçalho de
+ * `src/data/races.ts`). Antes eles seguiam a intuição de raridade da obra, não a mecânica, e
+ * o resultado estava invertido em quatro pontos: o Celestial (voo — o traço mais forte fora
+ * da raça mítica, 3,20 pontos de criação) era mais comum que o Superd; a Raça do Oceano era
+ * do tier comum sendo o pacote mais fraco do livro em campanha terrestre; e Migurd e Demônio
+ * Imortal ocupavam o tier raro com 2,2, abaixo de raças do tier médio. Três faixas limpas:
+ *   5 = comum (~13,9%)  · humano 1,50 · hobbit 1,85 · raça fera 1,85
+ *   3 = incomum (~8,3%) · anão 1,75 · demônio imortal 2,23 · migurd 2,25 · elfo 2,32 · oceano 2,35
+ *   2 = raro (~5,6%)    · superd 2,70 · ogro 2,80 · celestial 3,20
  */
-const RACE_WEIGHT: Record<string, number> = {
+export const RACE_WEIGHT: Record<string, number> = {
   humano: 5,
   hobbit: 5,
-  oceano: 5,
+  "raca-fera": 5,
   elfo: 3,
   anao: 3,
-  "raca-fera": 3,
-  celestial: 3,
-  migurd: 2,
+  oceano: 3,
+  migurd: 3,
+  "demonio-imortal": 3,
+  celestial: 2,
   superd: 2,
   ogro: 2,
-  "demonio-imortal": 2,
   dragao: 0,
 };
 

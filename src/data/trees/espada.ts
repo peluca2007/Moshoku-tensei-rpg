@@ -251,7 +251,7 @@ export const ESPADA_TREE: Tree = {
       mastery: {
         name: "A Vitória de Quem Se Move Primeiro",
         description:
-          "Três degraus de Dado de Arma. Críticos ocorrem em 18-20. A primeira vez em cada combate que acertar uma criatura com PV cheios, role o Dado de Arma duas vezes o normal. Você não pode ser Atrasado, Lentificado nem ter a Iniciativa reduzida.",
+          "Três degraus de Dado de Arma. Críticos ocorrem em 18-20. A primeira vez em cada combate que acertar uma criatura com PV cheios, role o Dado de Arma duas vezes o normal — isto NÃO se aplica a técnicas que já multiplicam o Dado de Arma por três ou mais (Espada de Luz, Espada de Luz Verdadeira): elas já são o pico do estilo e não empilham com esta Maestria. Você não pode ser Atrasado, Lentificado nem ter a Iniciativa reduzida.",
       },
       talents: [],
       abilities: [

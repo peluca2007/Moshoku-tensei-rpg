@@ -243,7 +243,7 @@ export const SUISHIN_TREE: Tree = {
           ptCost: 3,
           range: "Postura",
           actions: { normal: 1 },
-          effect: "Requer Postura. Até o início do próximo turno, todo ataque corpo a corpo que errar você dispara Fluxo automaticamente, sem limite de Reações.",
+          effect: "Requer Postura. Até o início do próximo turno, todo ataque corpo a corpo que errar você dispara Fluxo automaticamente, até um número de Reações igual ao seu Bônus de Rank por rodada (continua sendo a maior contagem de Reações do livro).",
         },
         {
           id: "nada-passa",
