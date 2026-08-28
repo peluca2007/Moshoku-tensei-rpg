@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2 } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { getGuildRank, getPaSpent, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
@@ -80,8 +80,8 @@ function ResourceCard({
   extra?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone}`}>{icon}</div>
+    <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm transition-shadow hover:shadow-md dark:border-parchment-800 dark:bg-parchment-900/60">
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
           {label}
@@ -143,8 +143,8 @@ function EditableStatCard({
   suffix?: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${tone}`}>{icon}</div>
+    <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm transition-shadow hover:shadow-md dark:border-parchment-800 dark:bg-parchment-900/60">
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
           {label}
@@ -327,8 +327,10 @@ export default function CharacterSheet() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
       {/* Cabeçalho */}
-      <header className="rounded-2xl border border-parchment-300 bg-gradient-to-br from-wine-50 via-parchment-50 to-parchment-50 p-4 shadow-sm sm:p-6 dark:border-parchment-800 dark:from-parchment-900 dark:via-parchment-950 dark:to-parchment-900">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+      <header className="relative overflow-hidden rounded-2xl border border-parchment-300 bg-gradient-to-br from-wine-50 via-parchment-50 to-parchment-50 p-4 shadow-sm sm:p-6 dark:border-parchment-800 dark:from-parchment-900 dark:via-parchment-950 dark:to-parchment-900">
+        <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-gold-500/10 blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-wine-500/10 blur-3xl" aria-hidden />
+        <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start">
           <input
             value={name}
             onChange={(e) => useCharacterStore.getState().setName(e.target.value)}
@@ -459,8 +461,8 @@ export default function CharacterSheet() {
         {/* Sidebar esquerda */}
         <aside className="space-y-4">
           <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
-              Atributos
+            <h2 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+              <Activity className="h-3.5 w-3.5 text-wine-500" /> Atributos
             </h2>
             <div className="grid grid-cols-5 gap-2 lg:grid-cols-3">
               {ATTRIBUTES.map(({ key, short, label }) => {
@@ -472,7 +474,7 @@ export default function CharacterSheet() {
                   <div
                     key={key}
                     title={label}
-                    className="flex flex-col items-center justify-center rounded-2xl border-2 border-parchment-300 bg-parchment-50 p-2 dark:border-parchment-700 dark:bg-parchment-800/80"
+                    className="flex flex-col items-center justify-center rounded-2xl border-2 border-parchment-300 bg-parchment-50 p-2 transition-colors hover:border-wine-400 dark:border-parchment-700 dark:bg-parchment-800/80 dark:hover:border-wine-600"
                   >
                     <span className="text-[10px] font-bold uppercase text-parchment-500 dark:text-parchment-400">
                       {short}
@@ -568,8 +570,8 @@ export default function CharacterSheet() {
           </div>
 
           <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-            <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
-              Árvore Inicial
+            <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+              <Sprout className="h-3.5 w-3.5 text-wine-500" /> Árvore Inicial
             </h2>
             <select
               value={startingTreeId ?? ""}
@@ -787,7 +789,7 @@ export default function CharacterSheet() {
       </div>
 
       {/* Painel de regras rápidas */}
-      <footer className="rounded-2xl border border-parchment-300 bg-parchment-900 p-4 text-parchment-100 shadow-sm dark:border-parchment-800">
+      <footer className="rounded-2xl border border-t-4 border-parchment-300 border-t-gold-500 bg-parchment-900 p-4 text-parchment-100 shadow-sm dark:border-parchment-800 dark:border-t-gold-600">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-parchment-400">
             <Target className="h-4 w-4" /> Regras Rápidas
