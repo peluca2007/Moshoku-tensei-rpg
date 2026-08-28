@@ -24,15 +24,16 @@ export default function Chapter4() {
             ]}
           />
         </Aside>
-        <Aside title="PM Máximos = (Espírito × Maior Bônus de Rank de Magia × 2) + 8">
+        <Aside title="PM Máximos = (Espírito × Maior Bônus de Rank de Magia) + 8">
           <P>
             Uma fórmula só, e mais nada. <b>Escolas de magia não concedem PM nenhum</b> — a reserva inteira
             vem do seu Espírito e de quão fundo você foi numa escola. Árvores do Corpo e de Utilidade
             concedem <b>0 PM, sempre</b>, mesmo em rank Imperador — em troca, o Corpo recebe PT (Cap. 3).
           </P>
           <P>
-            Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6×2+8 = <b>80 PM</b> — o suficiente
-            pra sustentar uma Nova Congelante (6 PM) doze vezes seguidas antes de secar.
+            Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6+8 = <b>44 PM</b> — o suficiente
+            pra sustentar uma Nova Congelante (6 PM) sete vezes seguidas antes de secar, ou pra bancar a
+            assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, com troco pra mais nada.
           </P>
         </Aside>
         <List
@@ -131,8 +132,11 @@ export default function Chapter4() {
         </P>
         <Aside title="Bônus do mesmo tipo não somam">
           Se dois efeitos seus dão bônus ao mesmo número (CA, acerto, dano, deslocamento), use apenas o
-          maior. <b>Exceção:</b> bônus concedidos por aliados diferentes que gastaram Ações somam
-          normalmente — o Bardo cantando e o Tático apontando o alvo estão os dois trabalhando; ambos contam.
+          maior. <b>Exceção 1:</b> bônus concedidos por aliados diferentes que gastaram Ações somam
+          normalmente — o Bardo cantando e o Tático apontando o alvo estão os dois trabalhando; ambos contam.{" "}
+          <b>Exceção 2:</b> um Escudo empunhado soma com a armadura de corpo vestida — são equipamentos em
+          slots diferentes, não dois efeitos competindo pelo mesmo bônus (é por isso que o kit inicial de
+          Tank do Cap. 1 já vem com os dois juntos).
         </Aside>
         <Aside title="Teto de Auxílio +5">
           Nenhum personagem recebe mais de +5 somados em bônus numéricos vindos de habilidades de aliados no

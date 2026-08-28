@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Dices, ScrollText, Shield, Sparkles, Swords, TreePine, Users } from "lucide-react";
+import { BookOpen, Dices, ScrollText, Shield, Sparkles, Store, Swords, TreePine, Users } from "lucide-react";
 
 const FEATURES = [
   {
@@ -30,7 +30,12 @@ const FEATURES = [
   {
     icon: Shield,
     title: "Feito pra mesa de verdade",
-    description: "Tracker de iniciativa, painel do Mestre e modo apresentação pra projetar durante o combate.",
+    description: "Tracker de iniciativa pra acompanhar o combate direto do site.",
+  },
+  {
+    icon: Store,
+    title: "Loja da Guilda",
+    description: "Armas, poções, venenos e ferramentas mágicas com preço e Rank mínimo — comprar já manda direto pra ficha.",
   },
 ];
 

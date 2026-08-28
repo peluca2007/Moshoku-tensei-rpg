@@ -7,6 +7,7 @@ import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore
 import { getRaceById, RACES } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById, BACKGROUNDS } from "@/data/backgrounds";
 import { drawInterviewQuestions, resolveInterview, InterviewQuestion, InterviewOption } from "@/data/interview";
+import { buildInterviewLore } from "@/lib/interviewLore";
 import { rollRandomAttributes, rollRandomSubtableEntry } from "@/lib/randomCharacter";
 import { ATTRIBUTES } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
@@ -50,10 +51,14 @@ export default function CreationInterview() {
     const result = resolveInterview(nextAnswers, RACE_IDS, BACKGROUND_IDS);
     useCharacterStore.getState().setRace(result.raceId);
     useCharacterStore.getState().setBackground(result.backgroundId);
+    const resultRace = getRaceById(result.raceId);
     const resultBackground = BACKGROUNDS.find((b) => b.id === result.backgroundId);
     if (resultBackground?.requiresSubtable) {
       useCharacterStore.getState().setSubtableEntry(rollRandomSubtableEntry(resultBackground.requiresSubtable));
     }
+    useCharacterStore
+      .getState()
+      .setLore(buildInterviewLore(nextAnswers, resultRace?.name ?? "", resultBackground?.name ?? ""));
     const attrs = rollRandomAttributes();
     for (const { key } of ATTRIBUTES) {
       useCharacterStore.getState().setAttribute(key, attrs[key]);

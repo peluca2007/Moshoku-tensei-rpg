@@ -52,7 +52,7 @@ export default function Chapter1() {
           </P>
           <P>
             <b>Escolas de magia não concedem PM.</b> A sua reserva inteira é{" "}
-            <b>(Espírito × Maior Bônus de Rank de magia × 2) + 8</b>, calculada uma vez e recalculada sempre
+            <b>(Espírito × Maior Bônus de Rank de magia) + 8</b>, calculada uma vez e recalculada sempre
             que o seu maior patamar de magia sobe — não há bônus extra por número de escolas abertas.
           </P>
           <P>
@@ -128,6 +128,10 @@ export default function Chapter1() {
             `${RANK_PA_COST.talent[rank]} PA`,
           ]).concat([["Deus", "Narrativa", "—", "—", "—", "—"]])}
         />
+        <P className="text-sm">
+          Esta é a tabela padrão, usada por Magia e pelo Corpo. <b>Árvores de Utilidade são mais baratas</b> —
+          ver a tabela própria delas no Cap. 3, &ldquo;Sistemas Compartilhados&rdquo;.
+        </P>
         <Aside title="Magia Assinatura ◆">
           Dentro de cada Rank existe uma magia que define aquele patamar — a que os magos daquele nível são
           reconhecidos por saber, marcada com o símbolo ◆ nas listas. Ela custa +1 PA a mais que uma magia
@@ -350,7 +354,7 @@ export default function Chapter1() {
         <P>
           Este sistema não tem classes — nada impede você de ser Trovador de Bardo, Rastreador do Tático,
           Intermediário de Fogo e Principiante do Norte ao mesmo tempo. É intencional e é o coração do jogo.
-          Seis perguntas, seis respostas:
+          Sete perguntas, sete respostas:
         </P>
         <Aside title="1. Qual Bônus de Rank eu uso?">
           O da árvore que concedeu a habilidade, sempre. Exceção: quando uma regra genérica pedir seu Bônus
@@ -365,7 +369,7 @@ export default function Chapter1() {
             items={[
               "PV somam de todas as árvores.",
               "PM somam apenas das escolas de magia.",
-              "PT: reserva única, mesmo com vários estilos marciais. PT = Espírito + Vigor, +1 por patamar marcial 3º ou superior (contando todas as árvores do Corpo).",
+              "PT: reserva única, mesmo com vários estilos marciais. Resumo: PT Pleno = Espírito + Vigor, +1 por patamar com Pleno já desbloqueado (contando todas as árvores do Corpo) — fórmula completa, incluindo o PT Menor de antes do Pleno e a exceção do Cavalaria e Escudos, no Cap. 3, \"Pontos de Touki\".",
               "PP: reserva única, mesmo com várias árvores de Utilidade. PP = Intelecto + o maior atributo-chave entre suas árvores de Utilidade, +1 por patamar 3º ou superior em qualquer uma delas.",
             ]}
           />

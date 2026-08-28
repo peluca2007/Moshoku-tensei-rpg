@@ -7,8 +7,7 @@ import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { getGuildRank, getPaSpent, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
-
-const GUILD_RANKS: GuildRank[] = ["F", "E", "D", "C", "B", "A", "S"];
+import { GUILD_RANK_ORDER } from "@/lib/types";
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById, getTreeGroups } from "@/data/trees";
@@ -29,6 +28,7 @@ import {
 import { RANK_COLORS, CATEGORY_ACCENT } from "@/lib/rankColors";
 import { CATEGORY_LABELS } from "@/data/trees";
 import InventorySection from "./InventorySection";
+import LoreSection from "./LoreSection";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
@@ -242,6 +242,7 @@ export default function CharacterSheet() {
   const canUndo = useCharacterStore((s) => (s.activeId ? (s.history[s.activeId]?.length ?? 0) > 0 : false));
   const {
     name,
+    lore,
     raceId,
     backgroundId,
     subtableEntryId,
@@ -489,7 +490,7 @@ export default function CharacterSheet() {
               className="bg-transparent outline-none"
             >
               <option value="">Rank {guildRank} (estimado)</option>
-              {GUILD_RANKS.map((r) => (
+              {GUILD_RANK_ORDER.map((r) => (
                 <option key={r} value={r}>
                   Fixar Rank {r}
                 </option>
@@ -828,6 +829,7 @@ export default function CharacterSheet() {
           })()}
 
           <InventorySection />
+          <LoreSection lore={lore} />
         </main>
       </div>
 
