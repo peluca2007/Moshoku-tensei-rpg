@@ -1,9 +1,10 @@
 # Mushoku Tensei RPG — Progresso do Site
 
-Última atualização: 2026-08-28 — Roleta (Via 2) com visual v2: maior, fatias só com número,
-legenda ao lado com nome completo + chance real de cada raça/antecedente, ordenada da mais comum
-pra mais rara. Auditoria nova do livro encontrou e corrigiu 3 sub-árvores com talentos de Rank
-Santo faltando (ver "O que já está pronto").
+Última atualização: 2026-08-28 — Landing page em `/`, ficha movida pra `/ficha`, rolagem inline
+de dano (arma e magias), tentativa de correção do PDF na Vercel, e um bug real corrigido: trocar
+a Árvore Inicial durante a criação (Manual/Roleta/Entrevista) deixava a árvore antiga com o
+Principiante desbloqueado pra sempre — agora `setStartingTree` limpa a escolha anterior sozinho
+(ver "O que já está pronto").
 
 > Histórico detalhado sessão a sessão vive no `git log` (cada commit já conta o que mudou e
 > onde). Este arquivo guarda só o **estado atual**, o **que falta** e o **porquê** das decisões
@@ -21,12 +22,25 @@ Santo faltando (ver "O que já está pronto").
       pra todo mundo.
 - [ ] Acessibilidade: contraste, tamanho de fonte ajustável, teste real com leitor de tela (nome
       acessível em botões só-com-ícone já foi feito).
-- [ ] Botão de rolar direto no Grimório — bloqueado até `AbilityDef.damage` ganhar um campo de
-      dado estruturado separado do texto livre descritivo (ver Decisões de design).
 - [ ] Auditoria linha a linha das ~400 magias/talentos/técnicas — Água, Fogo e Deus da Espada
       conferidas por completo; Escudos, Arquearia e Lutador tiveram só o Rank Santo reconferido
       (achou os 3 bugs corrigidos em 2026-08-28, ver changelog); as demais 11 árvores seguem sem
       auditoria linha a linha.
+- [ ] **Confirmar se o fix do PDF em produção resolveu de verdade** (2026-08-28) — só dá pra saber
+      depois do próximo deploy na Vercel; ver Decisões de design pro diagnóstico.
+- [ ] **Reformular a Entrevista (Via 3)** (pedido do usuário, 2026-08-28) — escopo definido,
+      **ainda não implementado de propósito** (pedido explícito de só documentar por ora):
+  - Banco de perguntas cresce de 14 pra ~20 (`src/data/interview.ts`).
+  - Cada pergunta ganha **6 respostas possíveis** em vez de 4 fixas; só **4 aparecem** por vez,
+    sorteadas entre as 6 com alguma chance — nunca sempre as mesmas 4 pra mesma pergunta.
+  - Ao abrir a Entrevista, o jogador escolhe entre **2 modos** antes da 1ª pergunta: "Raça e
+    Antecedente juntos" (comportamento atual, `resolveInterview` decide os dois) ou "Só
+    Antecedente" (as respostas passam a pesar só a loteria de Antecedente — como a Raça seria
+    escolhida nesse modo ainda não foi decidido: manual? roleta separada? perguntar ao usuário
+    quando for implementar).
+  - A lógica de pontos/loteria pesada por resposta (todo id começa com 1 bilhete, resposta que
+    empurra ganha +2) continua a mesma — só muda a cardinalidade de respostas e a existência dos
+    2 modos.
 
 ## O que já está pronto
 
@@ -50,8 +64,16 @@ Lutador (Colheita, Peso Absoluto).
 - **Entrevista** (`/criar/entrevista`) — 10 de 14 perguntas abstratas sobre a infância, resolução
   por loteria pesada; transições com fade e um flash no momento em que o Destino é revelado.
 
-**Ficha de personagem** (`/`) — atributos, PV/PM/PT/PP/CA calculados automaticamente, inventário,
-Grimório completo, edição livre de qualquer campo, Desfazer, exportar em PDF (Typst) e JSON.
+**Landing page** (`/`) — apresentação do projeto (disclaimer de fã, sem vínculo com a obra
+original), destaque das features, botões pra criar personagem ou abrir uma ficha existente.
+
+**Ficha de personagem** (`/ficha`) — atributos, PV/PM/PT/PP/CA calculados automaticamente,
+inventário, Grimório completo, edição livre de qualquer campo, Desfazer, exportar em PDF (Typst)
+e JSON. Trocar a Árvore Inicial (na ficha ou durante qualquer uma das 3 vias) agora limpa o
+Principiante da árvore anterior sozinho — antes cada árvore que você clicava ficava desbloqueada
+pra sempre, mesmo trocando de ideia (bug real, corrigido em 2026-08-28, `setStartingTree` em
+`useCharacterStore.ts`). Arma do Inventário e magia do Grimório ganharam um botão/campo de
+rolagem inline que abre o Rolador de Dados já pronto pra rolar (editável antes).
 
 **Árvore de progressão** (`/arvores`) — mapa radial estilo Destiny Board, pan/zoom, compra de
 magia/talento reflete na ficha na hora.
@@ -118,6 +140,15 @@ um.
   rebranding (são código funcional pra diferenciar rank/pilar, não decoração).
 - **PDF gerado no servidor com o pacote `typst`** (binário nativo via `/api/ficha-pdf`), não WASM
   no navegador — mais simples e robusto, sem precisar embutir fontes num bundle grande.
+- **Exportar PDF funcionava local mas falhava na Vercel** (relatado pelo usuário, 2026-08-28) —
+  diagnóstico: o pacote `typst` resolve o binário certo por SO via
+  `import.meta.resolve("@typst-community/typst-<os>-<arch>")`
+  (`node_modules/typst/dist/lib/getTypstPath.js`), que não é um `import` estático — o rastreador
+  de arquivos do Next (`@vercel/nft`) não via essa dependência sozinho, então a função serverless
+  de `/api/ficha-pdf` subia na Vercel sem o binário. Fix: `outputFileTracingIncludes` em
+  `next.config.ts` forçando `node_modules/@typst-community/typst-*/**/*` pra dentro do bundle da
+  rota — confirmado localmente que o binário passou a entrar no `.nft.json` gerado, mas **só um
+  deploy real confirma se resolveu de verdade** (não dá pra testar Vercel a partir daqui).
 - **`typstFicha.ts` nunca interpola dado dinâmico direto em marcação Typst** — todo valor passa
   por `tstr()` e é impresso via `#valor`, então efeitos com `*`/`_`/`#`/`[` não quebram a
   compilação.
