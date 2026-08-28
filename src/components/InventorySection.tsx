@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Backpack, Plus, Trash2, ShieldCheck, Pencil, Swords, Check, X } from "lucide-react";
+import { Backpack, Plus, Trash2, ShieldCheck, Pencil, Swords, Check, X, Dices } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
+import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { getWeaponDamage } from "@/store/selectors";
 import { AttributeKey, InventoryItem } from "@/lib/types";
 import { WEAPON_PRESETS } from "@/lib/weaponDie";
@@ -183,6 +184,7 @@ function useItemForm(initial?: Partial<InventoryItem>) {
 
 function WeaponDamageBadge({ item }: { item: InventoryItem }) {
   const character = useActiveCharacter();
+  const requestDamageRoll = useDiceRollerStore((s) => s.requestDamageRoll);
   if (item.type !== "arma" || !item.baseDie) return null;
 
   const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca");
@@ -195,10 +197,24 @@ function WeaponDamageBadge({ item }: { item: InventoryItem }) {
   }
 
   return (
-    <p className="mt-1 flex items-center gap-1 text-xs font-medium text-wine-700 dark:text-wine-300">
+    <p className="mt-1 flex flex-wrap items-center gap-1 text-xs font-medium text-wine-700 dark:text-wine-300">
       <Swords className="h-3 w-3" />
       {info.escalatedDie} + {DAMAGE_ATTRIBUTE_LABELS[info.attribute]} + Rank ({info.treeName} {info.rankLabel}, +
       {info.rankBonus}) · média {info.averageDamage}
+      <button
+        type="button"
+        onClick={() =>
+          requestDamageRoll({
+            formula: info.escalatedDie,
+            modifier: info.attributeValue + info.rankBonus,
+            label: item.name,
+          })
+        }
+        title="Abrir o Rolador de Dados já com esse dano pronto pra rolar (dá pra editar antes)"
+        className="ml-1 flex items-center gap-1 rounded-full bg-wine-600 px-2 py-0.5 text-[11px] font-semibold text-white transition-colors hover:bg-wine-500"
+      >
+        <Dices className="h-3 w-3" /> Rolar
+      </button>
     </p>
   );
 }

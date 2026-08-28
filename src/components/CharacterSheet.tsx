@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
+import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { getGuildRank, getPaSpent, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
 
 const GUILD_RANKS: GuildRank[] = ["F", "E", "D", "C", "B", "A", "S"];
@@ -173,6 +174,48 @@ function EditableStatCard({
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/** Dano de magia é texto livre ("2d8 + BC", "Vigor + 1d8 em PV"...) — não dá pra confiar num parser automático (ver PROGRESS.md). Em vez disso: sugere o primeiro NdM que achar no texto como ponto de partida, mas o campo fica sempre editável antes de rolar. */
+function guessDiceFormula(text?: string): string {
+  return text?.match(/\d{0,2}d\d{1,3}/i)?.[0] ?? "";
+}
+
+function AbilityQuickRoll({ label, hintText }: { label: string; hintText?: string }) {
+  const requestDamageRoll = useDiceRollerStore((s) => s.requestDamageRoll);
+  const [formula, setFormula] = useState(() => guessDiceFormula(hintText));
+  const [modifier, setModifier] = useState(0);
+
+  return (
+    <div className="mt-2 flex items-center gap-1.5">
+      <Dices className="h-3.5 w-3.5 shrink-0 text-parchment-400" />
+      <input
+        value={formula}
+        onChange={(e) => setFormula(e.target.value)}
+        placeholder="ex: 2d8"
+        title="Dado que você vai rolar pra esta magia — confira contra o texto acima antes de rolar"
+        aria-label={`Dado pra rolar de ${label}`}
+        className="w-20 rounded-lg border border-parchment-300 bg-parchment-50 px-1.5 py-1 text-xs outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+      />
+      <span className="text-xs text-parchment-400">+</span>
+      <input
+        type="number"
+        value={modifier}
+        onChange={(e) => setModifier(Number(e.target.value))}
+        aria-label={`Modificador pra rolar de ${label}`}
+        className="w-12 rounded-lg border border-parchment-300 bg-parchment-50 px-1.5 py-1 text-xs outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+      />
+      <button
+        type="button"
+        onClick={() => formula.trim() && requestDamageRoll({ formula: formula.trim(), modifier, label })}
+        disabled={!formula.trim()}
+        title="Abrir o Rolador de Dados já com esse dado pronto pra rolar"
+        className="flex items-center gap-1 rounded-full bg-wine-600 px-2 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        Rolar
+      </button>
     </div>
   );
 }
@@ -770,6 +813,10 @@ export default function CharacterSheet() {
                           </p>
                           <CastingBreakdown ability={def as AbilityDef} />
                           <IncantationBlock ability={def as AbilityDef} />
+                          <AbilityQuickRoll
+                            label={def.name}
+                            hintText={(def as AbilityDef).damage?.normal ?? (def as AbilityDef).effect}
+                          />
                         </>
                       ) : (
                         <p className="mt-1 text-sm text-parchment-700 dark:text-parchment-300">

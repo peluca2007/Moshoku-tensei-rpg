@@ -7,6 +7,7 @@ import { getAttackBonus, getFinalAttribute, getSpellDC, getWeaponDamage } from "
 import { getTreeById } from "@/data/trees";
 import { ATTRIBUTES, attributeKeyFromLabel, AttributeKey } from "@/lib/types";
 import { useMacroStore } from "@/store/useMacroStore";
+import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import {
   ADVANTAGE_LABELS,
   AdvantageMode,
@@ -38,7 +39,11 @@ function diceDetail(result: DiceRollResult): string {
 
 export default function DiceRoller() {
   const character = useActiveCharacter();
-  const [open, setOpen] = useState(false);
+  const open = useDiceRollerStore((s) => s.open);
+  const setOpen = useDiceRollerStore((s) => s.setOpen);
+  const toggleOpen = useDiceRollerStore((s) => s.toggleOpen);
+  const pendingRoll = useDiceRollerStore((s) => s.pending);
+  const [handledPendingRoll, setHandledPendingRoll] = useState(pendingRoll);
   const [mode, setMode] = useState<AdvantageMode>("normal");
   const [testSource, setTestSource] = useState<TestSource>("manual");
   const [attributeKey, setAttributeKey] = useState<AttributeKey>("forca");
@@ -49,6 +54,7 @@ export default function DiceRoller() {
   const [damageFormula, setDamageFormula] = useState("2d6");
   const [damageModifier, setDamageModifier] = useState(0);
   const [selectedWeaponId, setSelectedWeaponId] = useState<string>("");
+  const [pendingLabel, setPendingLabel] = useState<string | null>(null);
   const [log, setLog] = useState<RollLogEntry[]>([]);
   const [lastResult, setLastResult] = useState<{ total: number; critical?: "sucesso" | "falha" | null } | null>(null);
   /** null = segue o último teste automaticamente; true/false = jogador sobrescreveu manualmente pra esta rolagem. */
@@ -66,11 +72,24 @@ export default function DiceRoller() {
       const target = e.target as HTMLElement | null;
       const tag = target?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target?.isContentEditable) return;
-      setOpen((v) => !v);
+      toggleOpen();
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [toggleOpen]);
+
+  // Alguém de fora pediu uma rolagem pronta (arma do Inventário, magia do Grimório) — ajusta a
+  // seção de Dano durante o render (em vez de useEffect) toda vez que chega um pedido novo;
+  // cada requestDamageRoll() cria um objeto novo, então a comparação por identidade já basta,
+  // sem precisar "limpar" a store depois de consumir. Ver
+  // https://react.dev/learn/you-might-not-need-an-effect.
+  if (pendingRoll && pendingRoll !== handledPendingRoll) {
+    setHandledPendingRoll(pendingRoll);
+    setDamageFormula(pendingRoll.formula);
+    setDamageModifier(pendingRoll.modifier);
+    setSelectedWeaponId("");
+    setPendingLabel(pendingRoll.label);
+  }
 
   const magicTrees = useMemo(
     () =>
@@ -179,7 +198,7 @@ export default function DiceRoller() {
     <>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={toggleOpen}
         className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
         title="Rolador de Dados (atalho: R)"
         aria-label="Abrir rolador de dados"
@@ -389,6 +408,11 @@ export default function DiceRoller() {
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
                 Dano
               </h3>
+              {pendingLabel && (
+                <p className="mb-2 flex items-center gap-1 text-[11px] font-medium text-wine-600 dark:text-wine-400">
+                  <Sparkles className="h-3 w-3" /> Pronto pra rolar: {pendingLabel} — confira o dado antes de rolar.
+                </p>
+              )}
               {weapons.length > 0 && (
                 <select
                   value={selectedWeaponId}
