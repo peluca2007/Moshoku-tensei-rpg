@@ -86,6 +86,20 @@ export default function Chapter2() {
             Maestria de Rank alto.
           </P>
         </Aside>
+        <Warning title="A única exceção à regra de &ldquo;não existe ação bônus&rdquo;">
+          <P>
+            O Capítulo 4 §3 diz que tudo neste sistema é medido em Ações e que <b>não existe ação bônus</b>.
+            A Conjuração Silenciosa de rank Principiante é a única exceção nomeada do livro: a primeira
+            delas em cada turno é <b>gratuita</b>.
+          </P>
+          <P>
+            Ela existe porque, sem ela, conjurar em silêncio num rank baixo custaria uma Ação inteira pra
+            entregar metade dos dados e dois terços da área — ninguém usaria nunca, e o método mais
+            característico do mundo de Mushoku Tensei morreria na ficha. Vale só pro rank Principiante,
+            só pra primeira do turno, e o livro não abre nenhuma outra: se você encontrar qualquer outra
+            coisa que se comporte como ação bônus, é erro de texto, não regra.
+          </P>
+        </Warning>
       </Section>
 
       <Section>
@@ -195,7 +209,7 @@ export default function Chapter2() {
         <P>
           As Maestrias são listadas dentro de cada árvore, em cada Rank, marcadas com o símbolo ◈ — confira
           na{" "}
-          <a href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-400">
+          <a href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">
             página de Árvores
           </a>
           .

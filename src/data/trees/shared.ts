@@ -17,7 +17,10 @@ export const MAGIC_ACTIONS: Record<RankName, AbilityDef["actions"]> = {
 export const RANK_PA_COST = {
   common: { Principiante: 1, Intermediário: 1, Avançado: 2, Santo: 3, Rei: 4, Imperador: 5 } as Record<RankName, number>,
   signature: { Principiante: 2, Intermediário: 2, Avançado: 3, Santo: 4, Rei: 5, Imperador: 6 } as Record<RankName, number>,
-  talent: { Principiante: 1, Intermediário: 1, Avançado: 2, Santo: 3, Rei: 3, Imperador: 4 } as Record<RankName, number>,
+  // Rei subiu de 3 pra 4 em 2026-08-28 (auditoria): era o único ponto
+  // não-monotônico das três colunas — Santo e Rei custavam o mesmo, então o
+  // patamar 5 saía de graça em relação ao 4. Agora acompanha a coluna comum.
+  talent: { Principiante: 1, Intermediário: 1, Avançado: 2, Santo: 3, Rei: 4, Imperador: 4 } as Record<RankName, number>,
 };
 
 /** Cap. 3, "Nota de Custo": tabela mais barata usada pelas três árvores de Utilidade. */

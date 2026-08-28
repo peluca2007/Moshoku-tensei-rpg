@@ -121,19 +121,33 @@ export function getMaxHp(state: StoreState): number {
 }
 
 /**
- * PM Máximos (Cap. 4): (Espírito × Maior Bônus de Rank DE MAGIA) + 8.
+ * PM Máximos (Cap. 4): (Espírito × Maior Bônus de Rank DE MAGIA) + 8, com um
+ * PISO de (Maior Bônus de magia × 4) + 8.
+ *
  * Escolas de magia não concedem PM — a reserva inteira vem só desta fórmula.
  * Sem o ×2 que a fórmula usou até 2026-08-28: com ele, um Espírito alto
  * (até o teto de 8, Cap. 1 §2) rendia PM sobrando pra 4-7 casts da magia mais
  * forte do rank Imperador (custo até 20 PM) — bem acima do "no máximo umas 2
- * vezes" pretendido pro golpe mais forte de um personagem. Sem o ×2, o mesmo
- * personagem maximizado fica perto de 2-3 casts, e sem investir em Espírito
- * fica perto de 1 cast cheio + troco pra magias menores.
+ * vezes" pretendido pro golpe mais forte de um personagem.
+ *
+ * O piso entrou em 2026-08-28 (auditoria de balanceamento) e conserta o outro
+ * extremo, que passou despercebido: sem ele, o mago "cirurgião" que o Cap. 1
+ * §1 promete explicitamente (Intelecto alto, Espírito baixo — "poucos tiros,
+ * todos letais") ficava matematicamente impossível no rank alto. Com Espírito
+ * 2, um Imperador tinha 2×6+8 = 20 PM, e a magia de assinatura da própria
+ * escola custava mais que isso (Sol Menor 22, Corpo Íntegro 25) — ele
+ * simplesmente não conseguia conjurá-la, nunca. A causa é o descompasso de
+ * curva: o custo mediano das magias cresce ×10 do 1º ao 6º patamar (2 → 20
+ * PM) e a reserva com Espírito 4 cresce só ×2,7 (12 → 32). O piso põe o
+ * Imperador em 32 PM mesmo com Espírito 0, e é INVISÍVEL pra qualquer ficha
+ * com Espírito >= 4 — o teto calibrado acima (Espírito 8 = 56 PM, ~2,2 casts
+ * da magia mais cara) não muda em nada.
  */
 export function getMaxMp(state: StoreState): number {
   const espirito = getFinalAttribute(state, "espirito");
   const maiorBonusMagia = getHighestRankBonus(state, "magia");
-  const computed = espirito * maiorBonusMagia + 8 + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+  const natural = Math.max(espirito * maiorBonusMagia, maiorBonusMagia * 4) + 8;
+  const computed = natural + getFlatBonusSum(state, "maxMp") + state.bonusMp;
   return state.overrides.maxMp ?? computed;
 }
 
@@ -337,20 +351,32 @@ export function getAttributePaCost(state: StoreState): number {
 }
 
 /**
- * Cap. 1, seção 2: 2 PA = +PV iguais ao dobro do Maior Bônus de Rank (qualquer
- * árvore), ou +PM iguais ao Maior Bônus de Rank de magia — escala com o Rank
- * de propósito (o Aside do livro explica: um Imperador rende 6× mais por PA
- * que um Principiante). Corrigido em 2026-08-28: a taxa antiga aqui era fixa
- * em 12 pra qualquer Rank — coincidência nenhuma ela valer exatamente `2 × 6`,
- * o Bônus só de um Imperador; personagens de Rank mais baixo pagavam PA de
- * menos pelo bônus. `bonusHp`/`bonusMp`
- * continuam sendo o valor de PV/PM que o jogador digita direto na ficha
- * (Cap. 1: "PA é informativo, não travado") — só o cálculo do custo em PA
- * mostrado passou a usar a taxa certa pro Rank atual do personagem.
+ * Cap. 1, seção 2: 2 PA = +PV iguais a QUATRO VEZES o Maior Bônus de Rank
+ * (qualquer árvore), ou +PM iguais ao DOBRO do Maior Bônus de Rank de magia —
+ * escala com o Rank de propósito (o Aside do livro explica: um Imperador rende
+ * 6× mais por PA que um Principiante). `bonusHp`/`bonusMp` continuam sendo o
+ * valor de PV/PM que o jogador digita direto na ficha (Cap. 1: "PA é
+ * informativo, não travado") — só o cálculo do custo em PA mostrado usa a taxa.
+ *
+ * Duas correções, ambas achadas comparando esta compra com o que as árvores
+ * já ofereciam:
+ * - 2026-08-28 (revisão com agentes): a taxa era fixa em 12 pra qualquer Rank
+ *   — exatamente `2 × 6`, o Bônus só de um Imperador; Rank mais baixo pagava
+ *   PA de menos pelo mesmo bônus. Passou a escalar com o Rank.
+ * - 2026-08-28 (auditoria de balanceamento): mesmo já escalando, esta compra
+ *   era 4× pior que o talento de reserva recomprável que 12 árvores têm
+ *   (Braço de Ferro, Osso Duro, Pele de Pedra...). Um Imperador com 6
+ *   patamares comprava o talento por 1 PA e levava +4×6 = 24 PV; a tabela do
+ *   Cap. 1 pedia 2 PA por 2×6 = 12 PV. A linha de PV/PM da tabela era, na
+ *   prática, uma armadilha: sempre a pior compra disponível pra quem tem
+ *   qualquer árvore aberta. Dobrar as duas taxas empata o VALOR por compra
+ *   (24 PV / 12 PM no Imperador); o talento continua melhor por PA, e isso é
+ *   proposital — ele é travado no número de patamares de UMA árvore, enquanto
+ *   esta compra é incondicional e não tem teto.
  */
 export function getHpMpPaCost(state: StoreState): number {
-  const hpRate = Math.max(1, getHighestRankBonus(state) * 2);
-  const mpRate = Math.max(1, getHighestRankBonus(state, "magia"));
+  const hpRate = Math.max(1, getHighestRankBonus(state) * 4);
+  const mpRate = Math.max(1, getHighestRankBonus(state, "magia") * 2);
   const hpCost = Math.ceil(state.bonusHp / hpRate) * 2;
   const mpCost = Math.ceil(state.bonusMp / mpRate) * 2;
   return Math.max(0, hpCost) + Math.max(0, mpCost);

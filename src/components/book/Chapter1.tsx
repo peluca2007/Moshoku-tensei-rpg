@@ -52,8 +52,11 @@ export default function Chapter1() {
           </P>
           <P>
             <b>Escolas de magia não concedem PM.</b> A sua reserva inteira é{" "}
-            <b>(Espírito × Maior Bônus de Rank de magia) + 8</b>, calculada uma vez e recalculada sempre
-            que o seu maior patamar de magia sobe — não há bônus extra por número de escolas abertas.
+            <b>(Espírito × Maior Bônus de Rank de magia) + 8</b>, com um piso de{" "}
+            <b>(Maior Bônus de magia × 4) + 8</b> — calculada uma vez e recalculada sempre que o seu maior
+            patamar de magia sobe. Não há bônus extra por número de escolas abertas. O piso existe pra que
+            o cirurgião abaixo continue sendo uma build jogável no rank alto, e não muda nada pra quem tem
+            Espírito 4 ou mais (regra completa e a conta no Cap. 4, §1).
           </P>
           <P>
             Abrir oito escolas no 1º patamar não te dá mana nenhuma a mais. Subir <b>uma</b> escola até o
@@ -79,8 +82,8 @@ export default function Chapter1() {
           rows={[
             ["1 PA", "2 Perícias à sua escolha."],
             ["1 PA", "Desbloqueia 1 Técnica Marcial ou 1 Talento de rank baixo."],
-            ["2 PA", "+PV iguais ao dobro do seu maior Bônus de Rank (melhoria física permanente)."],
-            ["2 PA", "+PM iguais ao seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
+            ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente)."],
+            ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
             ["2 PA", "Aumenta 1 ponto em qualquer Atributo Base permanentemente (limite de 8)."],
             ["3 PA", "Vantagem permanente em todos os Testes de Resistência de 1 Atributo à sua escolha."],
             ["Variável", "Magias e Talentos de Árvore — o custo escala com o Rank."],
@@ -92,6 +95,16 @@ export default function Chapter1() {
             Rank (Principiante +1, até Imperador +6). Um Principiante gastando 2 PA ganha pouco; um Imperador
             gastando os mesmos 2 PA ganha seis vezes mais. Isso evita que a compra vire golpe de sorte na
             criação e lixo de ficha no topo — ela sempre pesa a mesma fração do que você já é.
+          </P>
+          <P>
+            <b>As taxas dobraram</b> depois de comparar esta linha com o que as árvores já vendiam. Doze
+            árvores têm um talento de reserva recomprável (Braço de Ferro, Osso Duro, Pele de Pedra…) que
+            custa 1 PA e dá +4 PV por patamar: um Imperador com seis patamares levava <b>+24 PV por 1 PA</b>{" "}
+            ali, enquanto esta tabela pedia 2 PA por +12 PV. A compra genérica era, na prática, uma armadilha
+            — sempre a pior opção disponível pra quem tivesse qualquer árvore aberta. Agora as duas entregam
+            o mesmo valor por compra. O talento continua rendendo mais por PA, e isso é proposital: ele é
+            travado no número de patamares de <i>uma</i> árvore, enquanto esta compra é incondicional e não
+            tem teto.
           </P>
         </Aside>
         <Aside title="O Padrão das Reservas">

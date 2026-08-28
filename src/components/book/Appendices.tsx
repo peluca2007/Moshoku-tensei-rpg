@@ -15,7 +15,7 @@ export default function Appendices() {
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
             "PV (Cap. 4, §1): Constituição Base (10 + Vigor 2×3 = 16) + Progressão (soma dos dados de PV dos 12 ranks dela, em todas as 4 árvores, dobrada = 150) + Vitalidade (Vigor 2 × Bônus do Santo 4 × 4 = 32) = 198 PV",
-            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os +10 PM fixos da raça Migurd = 38 PM",
+            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os +6 PM fixos da raça Migurd = 34 PM",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
             "Maestrias de Água: Afinidade Aquática, Cântico Fluido, Termodinâmica Aplicada, Domínio Climático",
@@ -71,14 +71,30 @@ export default function Appendices() {
         <BookTable
           headers={["Patamar", "Espada", "Norte", "Suishin", "Arco", "Lutador", "Escudos", "Utilidade"]}
           rows={[
-            ["1º", "~24", "~19", "~11", "~22", "~21", "~7", "~15 (1º turno)"],
+            ["1º", "~25", "~19", "~11", "~22", "~21", "~7", "~15 (1º turno)"],
             ["2º", "~34", "~25", "~26", "~34", "~32", "~9", "~18"],
-            ["3º", "~46", "~34", "~40", "~48", "~44", "~11", "~22"],
-            ["4º", "~58", "~42", "~60", "~62", "~58", "~13", "~26"],
-            ["5º", "~76", "~55", "~85", "~78", "~74", "~15", "~30"],
-            ["6º", "~120", "~81", "0 a ∞", "~91", "~95", "~18", "~31"],
+            ["3º", "~62", "~34", "~40", "~48", "~44", "~11", "~22"],
+            ["4º", "~78", "~42", "~60", "~62", "~58", "~13", "~26"],
+            ["5º", "~98", "~55", "~85", "~78", "~74", "~15", "~30"],
+            ["6º", "~118", "~87", "0 a ∞", "~91", "~95", "~18", "~31"],
           ]}
         />
+        <Warning title="A coluna da Espada foi corrigida — ela estava subestimada em 25%">
+          <P>
+            Do 3º ao 5º patamar os valores antigos (~46 / ~58 / ~76) esqueciam a <b>4ª Ação</b> que a
+            Maestria do Avançado (&ldquo;Velocidade Encarnada&rdquo;) concede a quem não se move no
+            turno. Recalculando a partir do dado real das árvores, são <b>~62 / ~78 / ~98</b>. Isso
+            importa além da tabela: era com esses números baixos que a calibragem de PV vinha sendo
+            conferida, então a margem de sobrevivência parecia mais folgada do que é.
+          </P>
+          <P>
+            Duas leituras que a tabela não deixa óbvias: a linha de <b>Escudos</b> pressupõe que ele
+            gastou todas as Ações defendendo — um Defensor Imperador que <i>escolha</i> atacar faz perto
+            de 48 por turno, não 18. E os números de <b>magia</b> não são amortizados pelas Ações: uma
+            magia de Imperador custa 6 Ações, ou seja dois turnos inteiros, então o Sol Menor entrega
+            ~65 por turno, não ~130. Compare marcial com marcial e magia com magia.
+          </P>
+        </Warning>
         <Aside title="Como ler esta tabela">
           <P>Número alto não significa personagem melhor. Significa personagem mais estreito.</P>
           <List
@@ -288,16 +304,33 @@ export default function Appendices() {
           no livro, mais seis criaturas prontas pra reskinar.
         </P>
         <BookTable
-          headers={["Patamar", "PV", "CA", "Bônus de Ataque", "Dano por turno", "CD de resistência"]}
+          headers={["Patamar", "PV", "CA", "Bônus de Ataque", "Dano por turno", "CD de resistência", "Bônus de Resistência"]}
           rows={[
-            ["1º — Comum", "20", "12", "+3", "~10", "11"],
-            ["2º — Perigosa", "45", "13", "+4", "~20", "13"],
-            ["3º — Ameaça", "90", "14", "+6", "~35", "15"],
-            ["4º — Elite", "150", "15", "+8", "~55", "17"],
-            ["5º — Terror", "220", "16", "+10", "~80", "19"],
-            ["6º — Lenda", "320", "17", "+12", "~120", "21"],
+            ["1º — Comum", "20", "12", "+3", "~10", "11", "+2"],
+            ["2º — Perigosa", "45", "14", "+4", "~20", "13", "+2"],
+            ["3º — Ameaça", "90", "16", "+6", "~35", "15", "+3"],
+            ["4º — Elite", "150", "18", "+8", "~55", "17", "+4"],
+            ["5º — Terror", "220", "20", "+10", "~80", "19", "+5"],
+            ["6º — Lenda", "320", "22", "+12", "~120", "21", "+6"],
           ]}
         />
+        <Aside title="As duas colunas que mudaram, e por quê">
+          <P>
+            <b>CA</b> subia +1 por patamar, e o bônus de ataque de um personagem sobe +1 de Rank <i>mais</i>{" "}
+            o crescimento do atributo. O resultado era uma chance de acerto congelada: 70% com atributo 4,
+            90% com atributo 8 — a mesma coisa no 1º e no 6º patamar. A CA da criatura simplesmente não
+            importava. Agora ela sobe +2 por patamar, e o personagem maximizado sai de 90% pra 70% ao longo
+            da campanha: o teto de atributo continua valendo o PA que custou, sem apagar a defesa do monstro.
+          </P>
+          <P>
+            <b>Bônus de Resistência</b> não existia. A tabela dizia tudo de que a criatura precisava pra{" "}
+            <i>atacar</i>, e nada pra quando ela <i>resiste</i> — mas metade das habilidades deste livro
+            pede um teste do alvo, e o Mestre não tinha número nenhum pra rolar. Ele improvisava, e o efeito
+            comprado pelo jogador virava aposta. O valor é metade do Bônus de Ataque, arredondado pra cima;
+            contra a CD de um personagem do mesmo patamar isso põe a criatura resistindo perto de 40% das
+            vezes.
+          </P>
+        </Aside>
         <Aside title="Ajustando pra cima ou pra baixo">
           <List
             items={[
