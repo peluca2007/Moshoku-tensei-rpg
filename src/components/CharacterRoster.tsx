@@ -20,12 +20,12 @@ export default function CharacterRoster() {
 
   function openCharacter(id: string) {
     useCharacterStore.getState().setActiveCharacter(id);
-    router.push("/");
+    router.push("/ficha");
   }
 
   function createAndOpen() {
     useCharacterStore.getState().createCharacter();
-    router.push("/");
+    router.push("/ficha");
   }
 
   async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -40,7 +40,7 @@ export default function CharacterRoster() {
         throw new Error("Arquivo não parece ser uma ficha exportada deste site.");
       }
       useCharacterStore.getState().importCharacter(data);
-      router.push("/");
+      router.push("/ficha");
     } catch (err) {
       setImportError(err instanceof Error ? err.message : "Não foi possível ler esse arquivo.");
     }

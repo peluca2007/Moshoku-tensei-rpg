@@ -168,7 +168,7 @@ export default function CreationInterview() {
             </p>
             <button
               type="button"
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/ficha")}
               className="rounded-lg bg-wine-600 px-5 py-2 font-semibold text-white transition-colors hover:bg-wine-500"
             >
               Ir para a Ficha
