@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Dúvida de regra ("como isso funciona na mesa?")
+    url: https://github.com/peluca2007/Moshoku-tensei-rpg/discussions
+    about: Não sabe como aplicar uma regra? Pergunte em Discussions. Issue é pra quando a regra está errada, não pra quando ela está confusa — se a resposta revelar que o livro é ambíguo, aí sim abrimos uma issue de Desequilíbrio.
+  - name: 📖 Ler o livro de regras
+    url: https://mushoku-tensei-rpg.vercel.app/livro
+    about: O livro completo, sempre na versão mais recente. Confira aqui antes de reportar — a regra pode já ter mudado.

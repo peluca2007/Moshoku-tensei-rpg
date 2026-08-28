@@ -75,13 +75,77 @@ npx tsc --noEmit -p .   # typecheck
 
 ## Stack
 
-**Next.js 16** (App Router) · **TypeScript** · **Tailwind CSS v4** · **Zustand** (persistência em `localStorage`).
+| Camada | Tecnologia | Por que esta |
+|---|---|---|
+| Framework | **Next.js 16** (App Router, Turbopack) | Rotas como arquivos, Server Components por padrão, e uma rota de API pro PDF sem precisar de um servidor separado |
+| Linguagem | **TypeScript 5** | O sistema tem 18 árvores e ~400 habilidades — os tipos em `src/lib/types.ts` são o que impede uma magia mal formada de chegar na ficha |
+| Estilo | **Tailwind CSS v4** | Paleta temática declarada como tokens em `@theme` (`globals.css`), sem arquivo de config |
+| Estado | **Zustand** + `persist` | Ficha inteira no `localStorage`, com store versionada e migração a cada mudança de formato |
+| Ícones | **lucide-react** | — |
+| Tema | **next-themes** | Dark mode manual (classe `.dark`), não só `prefers-color-scheme` |
+| PDF da ficha | **[`typst`](https://www.npmjs.com/package/typst)** | Binário nativo via `/api/ficha-pdf`; layout de ficha em Typst, sem WASM no navegador |
+| PDF do livro | Impressão nativa do navegador | `@media print` dedicado em `globals.css` — abre todos os `<details>`, esconde a nav, força serifa |
 
-Exportação de ficha em PDF via o pacote [`typst`](https://www.npmjs.com/package/typst) (binário nativo, sem precisar de Rust instalado); exportação do livro em PDF via a impressão nativa do navegador, com CSS dedicado em `globals.css`.
+### Como o estado flui
+
+```
+src/data/*.ts          →  fonte de verdade mecânica (números, magias, itens)
+        ↓
+src/store/selectors.ts →  TODA fórmula do sistema (PV, PM, PT, PP, CA, dano, CD)
+        ↓
+   ┌────┴─────────────────────────┐
+   ↓                              ↓
+/ficha, /arvores, /loja        /livro
+(consomem o cálculo)           (renderiza o mesmo dado como tabela)
+```
+
+`selectors.ts` é o gargalo de propósito: nenhuma fórmula é reimplementada numa página. É por isso que o livro nunca pode divergir da ficha — os dois leem o mesmo `getMaxHp`, o mesmo `TREES`.
+
+`useCharacterStore` guarda o roster inteiro (várias fichas, uma ativa) e é a única coisa que escreve no `localStorage`. Mudou o formato de `CharacterData`? Sobe a `version` e escreve a migração — já existem fichas reais de mesa salvas.
 
 ## Contribuindo
 
 Toda regra, magia, talento ou número de balanceamento nasce em `src/data/*.ts` e no texto correspondente em `src/components/book/*.tsx` — nunca só num lugar. Se uma mudança na ficha expõe uma lacuna de regra, a correção sai primeiro no livro (`/livro`) e a ficha só reflete o que já está escrito lá.
+
+## Issues: como reportar
+
+Este repositório trata **bug de código** e **desequilíbrio de regra** como duas coisas diferentes, com dois formulários diferentes. Confundir os dois é o erro mais comum — e o que mais atrasa a correção.
+
+> **A pergunta que separa os dois:** o site está fazendo o que o livro manda?
+>
+> - **Não** → o site errou. É **🐛 bug de código**.
+> - **Sim, e o resultado ainda é absurdo** → o livro errou. É **⚖️ desequilíbrio de regra**.
+
+| Template | Use quando | Exemplo real |
+|---|---|---|
+| 🐛 **Bug de código** | O site discorda do livro, quebra, ou calcula errado | *"A ficha mostra 42 PT num Imperador; o Cap. 3 diz que a fórmula é aditiva e dá ~17."* |
+| ⚖️ **Desequilíbrio de regra** | A regra funciona como escrita e mesmo assim quebra a mesa | *"Um espadão já satura o 4d10 no Rei — a Maestria de Imperador não entrega nada."* |
+| ✨ **Conteúdo novo** | Falta uma magia, item, criatura ou árvore | *"Vento não tem como tirar um aliado do corpo a corpo."* |
+| 💬 **Discussions** | Você não entendeu uma regra | *"Manto de Touki soma com Postura de Água?"* |
+
+### O que faz uma issue de balanceamento virar commit
+
+Balanceamento não se decide por opinião — se decide por número. O livro já traz duas réguas prontas, e uma issue que as usa costuma virar mudança no mesmo dia:
+
+- **Apêndice C — Tabela de Dano por Turno:** quanto cada árvore deve causar em cada patamar. Se a sua conta estoura a coluna, você tem um caso.
+- **Apêndice G — Bestiário:** PV, CA, bônus de ataque e CD esperados por patamar. É contra isso que se mede se um efeito é forte demais.
+
+Três coisas que transformam um relato em correção:
+
+1. **A conta, escrita.** `4d10 (média 22) × 5 + Força 8 + Rank 6 = 124 em 2 Ações` diz mais que qualquer adjetivo.
+2. **O JSON da ficha.** `/ficha` → *Exportar JSON*. Reproduz o seu caso exato em segundos.
+3. **O que a sua proposta quebra.** Toda mudança quebra alguma coisa. Dizer o quê é metade da decisão — e é o que separa uma sugestão de um patch.
+
+### Labels
+
+| Label | Significa |
+|---|---|
+| `bug` | O site discorda do livro |
+| `balanceamento` | O livro discorda da mesa |
+| `conteúdo` | Falta alguma coisa |
+| `precisa-de-numero` | O caso é plausível, mas ninguém fez a conta ainda |
+| `precisa-de-mesa` | A conta fecha, mas falta ver acontecer numa sessão real |
+| `decisão-de-design` | Não é erro; é uma escolha que o dono do sistema precisa fazer |
 
 <div align="center">
 

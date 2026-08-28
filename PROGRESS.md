@@ -1,6 +1,17 @@
 # Mushoku Tensei RPG — Progresso do Site
 
-Última atualização: 2026-08-28 — Landing page em `/`, ficha movida pra `/ficha`, rolagem inline
+Última atualização: 2026-08-28 (2ª sessão do dia) — **Auditoria de balanceamento + acessibilidade**,
+com as fórmulas recalculadas a partir de `src/data/` em vez das tabelas escritas à mão do livro. Sete
+correções de regra e seis de UI, todas aplicadas; `.github/` criado do zero. Detalhes de cada uma em
+"Decisões de design". Os dois achados que mais importam: **um mago de Espírito baixo no rank
+Imperador não conseguia conjurar a magia de assinatura da própria escola** (20 PM de reserva contra
+22-25 PM de custo — a build "cirurgião" que o Cap. 1 promete era matematicamente impossível), e **a
+Escada de Dados saturava no 4d10 antes do fim da progressão** (o Espadão de um Deus da Espada batia
+no teto já no Rei, a Maestria de Imperador não entregava nada, e adaga/espada curta/espadão
+convergiam todos pro mesmo dado). Relatório completo da auditoria:
+[artifact "Auditoria do Mundo de Seis Faces"](https://claude.ai/code/artifact/f1da5918-b786-4ae5-a2d9-ba187a53970d).
+
+Contexto da sessão anterior — Landing page em `/`, ficha movida pra `/ficha`, rolagem inline
 de dano (arma e magias), animação de dado girando no Rolador (com toggle de modo rápido),
 tentativa de correção do PDF na Vercel, um bug real corrigido (trocar a Árvore Inicial durante a
 criação deixava a árvore antiga com o Principiante desbloqueado pra sempre — `setStartingTree`
@@ -49,19 +60,19 @@ reproduz) — ver "Decisões de design" e "O que já está pronto" pros detalhes
       auditoria linha a linha.
 - [ ] **Confirmar se o fix do PDF em produção resolveu de verdade** (2026-08-28) — só dá pra saber
       depois do próximo deploy na Vercel; ver Decisões de design pro diagnóstico.
-- [ ] **Reformular a Entrevista (Via 3)** (pedido do usuário, 2026-08-28) — escopo definido,
-      **ainda não implementado de propósito** (pedido explícito de só documentar por ora):
-  - Banco de perguntas cresce de 14 pra ~20 (`src/data/interview.ts`).
-  - Cada pergunta ganha **6 respostas possíveis** em vez de 4 fixas; só **4 aparecem** por vez,
-    sorteadas entre as 6 com alguma chance — nunca sempre as mesmas 4 pra mesma pergunta.
-  - Ao abrir a Entrevista, o jogador escolhe entre **2 modos** antes da 1ª pergunta: "Raça e
-    Antecedente juntos" (comportamento atual, `resolveInterview` decide os dois) ou "Só
-    Antecedente" (as respostas passam a pesar só a loteria de Antecedente — como a Raça seria
-    escolhida nesse modo ainda não foi decidido: manual? roleta separada? perguntar ao usuário
-    quando for implementar).
-  - A lógica de pontos/loteria pesada por resposta (todo id começa com 1 bilhete, resposta que
-    empurra ganha +2) continua a mesma — só muda a cardinalidade de respostas e a existência dos
-    2 modos.
+- [ ] **Reformular a Entrevista (Via 3)** (pedido do usuário, 2026-08-28) — **os 2 modos já
+      foram implementados** (2ª sessão do dia); o que falta é só o banco de perguntas:
+  - [ ] Banco de perguntas cresce de 14 pra ~20 (`src/data/interview.ts`).
+  - [ ] Cada pergunta ganha **6 respostas possíveis** em vez de 4 fixas; só **4 aparecem** por vez,
+        sorteadas entre as 6 com alguma chance — nunca sempre as mesmas 4 pra mesma pergunta.
+  - [x] ~~Escolha de 2 modos antes da 1ª pergunta~~ — feito. A pergunta que estava em aberto
+        ("como a Raça é escolhida no modo Só Antecedente?") foi resolvida como **escolha manual**:
+        uma fase `raca` nova mostra um grid das raças sorteáveis antes da 1ª pergunta. Raças de
+        peso 0 (Dragão) ficam de fora dela, igual no sorteio — quem quiser continua indo pela Via 1
+        com aval do Mestre.
+  - [x] ~~Lógica de loteria pesada continua a mesma~~ — o `+2 por resposta que empurra` continua,
+        mas o **peso base deixou de ser 1 fixo** (ver "Loteria da Entrevista" em Decisões de design):
+        era um bug que fazia a Via 3 ignorar raridade e conseguir sortear Dragão.
 - [x] ~~Animação no Rolador de Dados~~ — implementado 2026-08-28, ver "O que já está pronto".
 
 ## O que já está pronto
@@ -163,15 +174,14 @@ hamburger abaixo de `sm`, sem overflow horizontal).
 Relatório completo com o texto pronto pra cada item:
 [artifact "Revisão dos Quatro Especialistas"](https://claude.ai/code/artifact/2f066569-aba4-4900-b445-6dd89763bba3).
 
-**Decisões de design que pedem escolha do usuário:**
+**Decisões de design que pediam escolha do usuário — todas resolvidas em 2026-08-28 (2ª sessão),
+ver "Auditoria de balanceamento" em Decisões de design:**
 
-- Cap. 2 §3 vs Cap. 4 §3: Conjuração Silenciosa Principiante ("1ª Ação grátis") contradiz "não
-  existe ação bônus neste sistema". Recomendação: documentar como exceção.
-- Cap. 4 §6: CD 10 fixa do Fio da Vida fica trivial em rank alto. Sugestão:
-  `8 + Bônus de Rank de quem derrubou você`.
-- Cap. 4 §8: Exaustão Nível 6 (Morte) é letal sem teste de resistência nenhum. Decidir se entra
-  um teste de Vigor na transição 5→6.
-- Cap. 1 §2: curva de PA de Talento tem um platô em Rei=Santo=3.
+- [x] ~~Cap. 2 §3 vs Cap. 4 §3: Conjuração Silenciosa Principiante contradiz "não existe ação
+  bônus"~~ — documentada como exceção nomeada no Cap. 2.
+- [x] ~~Cap. 4 §6: CD 10 fixa do Fio da Vida~~ — virou `8 + Bônus de Rank de quem te derrubou`.
+- [x] ~~Cap. 4 §8: Exaustão Nível 6 sem teste~~ — entrou teste de Vigor CD 15 na transição 5→6.
+- [x] ~~Cap. 1 §2: platô de PA de Talento em Rei=Santo=3~~ — Rei subiu pra 4.
 
 **Conteúdo novo que vale escrever:**
 
@@ -196,6 +206,203 @@ um.
   (densidade de texto nos cards, Deslocamento refletindo raça, BC quando multiclasse).
 
 ## Decisões de design (pra não esquecer o porquê)
+
+### Auditoria de balanceamento (2026-08-28, 2ª sessão)
+
+Todas achadas recalculando as fórmulas a partir de `src/data/`, não lendo as tabelas do livro — é
+exatamente nesse espaço, entre o número escrito à mão e o número computado, que todas elas moravam.
+
+- **PM Máximo ganhou um piso: `max(Espírito × MB, MB × 4) + 8`.** O ajuste de `× 2` feito mais cedo
+  hoje resolveu o teto (magia de Imperador saindo 4-7 vezes) mas expôs o fundo. Sem piso, um Fogo
+  Imperador com Espírito 2 tinha 20 PM e *Sol Menor*, a assinatura da própria escola, custa 22 —
+  ele nunca conseguiria conjurá-la, em descanso nenhum. *Corpo Íntegro* (Cura) custa 25. Ou seja: a
+  build "cirurgião" (Intelecto alto/Espírito baixo) que o Cap. 1 §1 endossa por escrito — "Roxy
+  Migurdia é o primeiro" — era impossível, não fraca. A causa é descompasso de curva: custo mediano
+  de magia cresce ×10 do 1º ao 6º patamar (2 → 20 PM), reserva com Espírito 4 cresce ×2,7 (12 → 32).
+  O piso põe o Imperador em 32 PM mesmo com Espírito 0 e **é invisível pra Espírito ≥ 4** — o teto
+  calibrado (Espírito 8 = 56 PM) não mudou em nada.
+- **Escada de Dados estendida com `4d12 → 5d10 → 5d12`, e excedente vira +2 de dano fixo.** Terminava
+  no 4d10 e saturava antes do fim da progressão: o Deus da Espada acumula 9 degraus, então um Espadão
+  (d10, 4º degrau) batia no teto **já no Rei** e a Maestria de Imperador ("Três degraus") entregava
+  zero. Pior: adaga (d4), espada curta (d6) e espadão (d10) convergiam todos pro mesmo 4d10 — a
+  escolha de arma deixava de existir no rank alto. Agora d4→3d12, d8→4d12, d10→5d10 no Imperador. O
+  excedente em dano fixo (`escalateWeaponDie` devolve `"5d12+2"`, notação que `diceAverage`/
+  `diceMax`/`rollFormula` já entendem) existe pros talentos de degrau avulso (Espada Emprestada,
+  Punho Duplo) nunca virarem PA jogado fora.
+- **Teste de resistência agora soma metade do maior Bônus de Rank (arred. pra cima).** Era a única
+  fórmula do livro em que o treino do personagem não contava. A CD do bestiário sobe +10 do 1º ao 6º
+  patamar e o teste subia +4 (só o crescimento do atributo): a chance de resistir caía de 70% pra
+  40%, e com o atributo largado no Sistema de Defeitos chegava a 5%. Com a correção fica 75% → 55%.
+  Usa a mesma fração que o Manto de Touki já usava, pra não inventar uma terceira escala.
+- **Bestiário (Apêndice G): CA passou a subir +2 por patamar (12→22) e ganhou coluna de Bônus de
+  Resistência.** A CA subia +1 enquanto o ataque do jogador subia +1 de Rank *mais* atributo — a
+  chance de acerto ficava congelada (70% com atributo 4, 90% com 8, igual no 1º e no 6º patamar) e a
+  CA da criatura não importava. E o molde não tinha **nenhum** número pra quando a criatura *resiste*:
+  metade das ~400 habilidades pede teste do alvo e o Mestre improvisava, então o efeito comprado pelo
+  jogador virava aposta. Bônus de Resistência = metade do Bônus de Ataque (+2/+2/+3/+4/+5/+6).
+- **A compra de PV/PM da tabela do Cap. 1 dobrou (2 PA = 4× MB de PV, 2× MB de PM).** Era 4× pior que
+  o talento de reserva recomprável que 12 árvores têm: no Imperador o talento dava +24 PV por 1 PA e
+  a tabela pedia 2 PA por +12 PV. A linha era, na prática, uma armadilha — sempre a pior compra
+  disponível pra quem tivesse qualquer árvore aberta. Agora empatam em **valor por compra**; o
+  talento continua melhor por PA de propósito, porque é travado no número de patamares de *uma*
+  árvore enquanto a compra genérica é incondicional e sem teto.
+- **Fio da Vida: CD 10 fixa → `8 + Bônus de Rank de quem te derrubou`** (10 quando não há responsável
+  claro, tipo queda). CD 10 no rank alto não era teste: Vigor 6 passava em 80%, e morrer virava quase
+  impossível justamente quando os inimigos ficavam letais. Agora goblin = CD 9, Imperador = CD 14.
+- **Exaustão nível 5→6 pede teste de Vigor CD 15.** Era a única morte do livro sem nenhuma rolagem —
+  o Fio da Vida dá três chances e a Exaustão não dava nenhuma.
+- **Suishin "Maré de Retorno" teve teto de Reações.** Dizia "sem limite de Reações"; contra oito
+  inimigos eram oito contragolpes num turno que não é seu. O Apêndice C já registrava o dano dele
+  como "0 a ∞", mas admitir não é limitar. Agora é o Bônus de Rank por rodada (6 no Imperador —
+  continua sendo a maior contagem do livro).
+- **`RANK_PA_COST.talent.Rei` 3 → 4.** Era o único ponto não-monotônico das três colunas (Santo e Rei
+  custavam igual, então o 5º patamar saía de graça em relação ao 4º).
+- **Conjuração Silenciosa Principiante documentada como exceção nomeada** (Cap. 2), em vez de
+  contradizer em silêncio o "não existe ação bônus" do Cap. 4 §3. Sem a Ação grátis, conjurar em
+  silêncio num rank baixo custaria uma Ação inteira pra entregar metade dos dados e dois terços da
+  área — ninguém usaria, e o método mais característico da obra morreria na ficha.
+- **PV não foi tocado.** Reconferido duas vezes (a segunda já com a escada estendida, por auditoria
+  dedicada): a razão PV / dano-sustentado fica entre **1,94 e 3,10 turnos** nos seis patamares e não
+  degrada com o rank. Simular Vitalidade ×5 ou ×6 só empurra o 2º patamar pra fora da faixa pelo
+  outro lado. É o número mais bem calibrado do livro — o problema, quando aparece, é sempre
+  multiplicador de habilidade, nunca a fórmula de PV.
+- **A Maestria de Imperador do Deus da Espada deixou de empilhar com técnicas multi-rolagem** — e
+  isto foi consertar uma regressão que a própria extensão da escada (item acima) criou. A Maestria
+  manda "role o Dado de Arma duas vezes o normal", e a Espada de Luz Verdadeira já rola **cinco
+  vezes**: o produto é 10× o dado. Como cada degrau novo da escada entra multiplicado por dez, o
+  golpe passou de 238-274 (escada antiga, contra 272 PV — ficava no fio) pra **289**, e virou um
+  **one-shot com acerto automático que ignora CA, Cobertura, Manto de Touki, armadura mágica e
+  barreira**, sem defesa possível a não ser a Reversão de Luz de rank Rei+ com Desvantagem. Matava
+  qualquer Imperador do livro com Vigor 4. Com a Maestria travada em técnicas de até 2 rolagens o
+  golpe volta pra **152** (56% do PV de um par: dramático, não decisivo), e nem a build mais
+  otimizada — Espada Emprestada + Punho Duplo, 5d12+2 — chega a matar (187). **Lição:** ao mexer numa
+  escada de dados, procurar antes tudo que multiplica aquele dado; o efeito não é linear.
+- **Apêndice C: a coluna da Espada estava subestimada em ~25% do 3º ao 5º patamar** (~46/~58/~76 →
+  ~62/~78/~98). O autor original esqueceu a 4ª Ação da Maestria do Avançado ("Velocidade
+  Encarnada"). Importa mais do que parece: era contra esses números baixos que a calibragem de PV
+  vinha sendo conferida, então a margem de sobrevivência parecia mais folgada do que era de fato.
+  Norte 6º também subiu (~81 → ~87). Ficou documentado no próprio apêndice, junto de duas leituras
+  que a tabela não deixava óbvias: a linha de Escudos pressupõe todas as Ações gastas defendendo, e
+  a metade mágica não amortiza pelas Ações (Sol Menor custa 6 Ações = 2 turnos, logo ~65/turno, não
+  ~130 — comparar magia com marcial direto na tabela engana).
+
+### Balanceamento de raças e antecedentes (2026-08-28, 2ª sessão)
+
+Auditados numa moeda comum — **ponto de criação (PC)**, onde 1 PC = +1 atributo = 2 PA pela tabela do
+Cap. 1 §2 — e medidos em **dois ranks**, porque é aí que estava o problema estrutural.
+
+- **A descoberta que organiza todo o resto: bônus fixo de PV/PM decai, bônus de atributo não.** PV e
+  PM entram na fórmula multiplicados pelo Bônus de Rank (`Vigor × MB × 4`, `Espírito × MB`), então
+  +1 de atributo mantém a mesma fração do total do Principiante ao Imperador, enquanto um `maxHp: 6`
+  fixo vale +18% no 1º patamar e **+3,1%** no 6º. Era por isso que quase todo outlier do livro era um
+  bônus de PM, e quase todo pacote fraco era um bônus fixo de PV.
+- **Outliers fortes cortados:** Fator Laplace `maxMp 20 → 8` (os 20 PM sozinhos valiam 10 PC — duas
+  vezes e meia o orçamento de criação inteiro — e triplicavam a reserva de um mago recém-criado, de
+  12 pra 32); Estudioso Precoce `14 → 8`; Miko "Acúmulo" `15 → 10`; Migurd `10 → 6`; Elfo `8 → 5`;
+  Miko "Força Sobre-humana" `forca 3 → 2` (era 75% do orçamento de criação num único traço, pondo o
+  personagem em Força 7 na 1ª sessão — +7 no acerto **e** no dano — e a "maldição" não pagava, porque
+  o Cap. 1 §4 diz que Vigor não governa perícia nenhuma).
+- **Outliers fracos levantados, sempre trocando número fixo por atributo:** Plebeu (o resultado
+  **mais comum** da tabela, 15%, era o mais fraco no Imperador com 0,73 PC) `maxHp 3` → `+1 Vigor`;
+  Raça do Oceano idem (era peso comum valendo ~0,30 PC em campanha terrestre — respirar sob água,
+  terreno aquático e correnteza são todos condicionais); Anão ganhou `+1 Vigor` (saía de 1,40 na
+  criação pra **0,15** no Imperador — o único pacote que podia zerar, já que a proibição de Água e
+  Vento fecha 2 das 8 escolas pra sempre e o desconto de PM só paga quem já for mago); Acólito
+  `maxMp 6` → `+1 Espírito, maxMp 4` (mesmo valor de criação, mas Espírito alimenta a reserva **e** o
+  BC das quatro escolas de templo, e ainda serve pro acólito que virou guerreiro); Sobrevivente e
+  Gênio ganharam `+1 Espírito`.
+- **Duas tabelas inteiras não mexiam em número nenhum.** As 8 entradas de Miko tinham 5 com
+  `bonuses: {}` e as 10 de Olho Místico tinham **todas as 10** — o segundo resultado mais raro do
+  d100 (2%) não alterava um único valor da ficha, e ainda era autocontraditório: todo Magan roda a PM
+  (até 10 PM por uso) num personagem que tem 12 PM no total. Piso aplicado no antecedente, não entrada
+  por entrada: Miko ganha `+1 Espírito`, Olho Místico ganha `+1 Intelecto, maxMp 6`. Levanta as
+  dezoito entradas de uma vez sem achatar a variância que é o ponto delas.
+- **`RACE_WEIGHT` reordenado por poder medido, não por intuição.** Havia quatro inversões: o Celestial
+  (voo irrestrito, o traço mais forte fora da raça mítica, 3,20 PC) era mais comum que o Superd; a
+  Raça do Oceano era tier comum sendo o pacote mais fraco; Migurd e Demônio Imortal ocupavam o tier
+  raro com ~2,2, **abaixo** de raças do tier médio. Três faixas limpas agora: 5 comum (humano,
+  hobbit, raça fera) · 3 incomum (anão, elfo, oceano, migurd, demônio imortal) · 2 raro (celestial,
+  superd, ogro) · 0 mítica (dragão). O voo do Celestial também passou a ser travado por armadura
+  média/pesada e carga — ele escolhe entre voar e ser tanque.
+- **Três bugs de regra, não de balanceamento:** o **Dragão prometia "Defesa Base altíssima" sem número
+  nenhum** — `bonuses` não concedia CA, então a ficha de um Dragão saía com exatamente a mesma CA de
+  um Hobbit (agora `armorClass: 2`, o valor da Armadura Média do Cap. 5 §2); **"Ação Bônus"/"Ação
+  Livre" apareciam em 5 traços** (Howling, Terceiro Olho e três Olhos Místicos) contra o Cap. 4 §3, e
+  eram os últimos do repositório inteiro; e a regeneração do **Demônio Imortal era fixa em 3 PV**, ou
+  seja +8,8% da vida de um Principiante e **+1,5%** da de um Imperador — a habilidade de assinatura
+  sumia justo no rank em que "imortal" deveria significar alguma coisa (agora escala com o Bônus de
+  Rank).
+- **Apêndice A (ficha da Roxy) era o único texto do livro com número de raça escrito à mão** —
+  "+10 PM fixos da raça Migurd = 38 PM" virou "+6 … = 34 PM". Cap. 1 §5/§6 e as duas sub-tabelas
+  renderizam 100% a partir dos dados, então o resto acompanhou sozinho.
+- **Ficaram intocados de propósito:** Hobbit e Ogro (já na faixa da própria raridade) e o grupo de
+  referência dos antecedentes (Órfão, Criança Selvagem, Mercador, Treino Precoce, Sangue Nobre) —
+  2,00 a 2,65 PC no Imperador, banda apertada e estável. É contra eles que o resto foi medido.
+
+### Entrevista v2 — modos e loteria (2026-08-28, 2ª sessão)
+
+- **Dois modos, escolhidos antes da 1ª pergunta** (`InterviewMode` em `interview.ts`): "Raça e
+  Antecedente" (comportamento antigo) e "Só o Antecedente". No segundo, `resolveInterview` devolve
+  `raceId: null` e o jogador escolhe a Raça na mão numa fase `raca` nova, antes das perguntas. O
+  fecho da lore muda de voz junto (`buildInterviewLore` recebe o modo): no modo manual ela diz que a
+  raça "nunca esteve em jogo" e que a infância decidiu só o resto.
+- **Loteria da Entrevista passou a respeitar raridade — era um bug.** O peso base de todo candidato
+  era **1 fixo**, então a Via 3 ignorava raridade por completo: um Migurd saía tanto quanto um
+  Humano, e um Antecedente de faixa d100 95-96 (2% na tabela do Cap. 1 §6) empatava com um de faixa
+  01-20 (20%). Pior: **dava pra nascer Dragão numa Entrevista**, coisa que a Via 2 nunca permitiu —
+  `RACE_WEIGHT.dragao` é 0 justamente pra isso, e `resolveInterview` recebia `RACES.map(r => r.id)`
+  cru, dando 1 bilhete pro Dragão como pra qualquer outro. Agora as duas vias usam a mesma noção de
+  raridade: `RACE_WEIGHT` pras raças (com peso 0 = fora do sorteio) e a **largura do `rollRange`
+  d100** pros antecedentes, que já É a raridade deles no livro. O `+2 bilhetes por resposta que
+  empurra` continua igual.
+- **Animação de sorteio** (`DestinyDraw`): antes de revelar, os nomes candidatos passam por ~1,9s
+  enquanto o dado gira — mesmo princípio do Rolador, o resultado já está decidido e a animação é só
+  suspense (`resolveInterview` só roda quando ela termina). No modo "Só o Antecedente" cicla um nome
+  só. Respeita `prefers-reduced-motion` pulando direto pro resultado.
+- **Cuidado de performance que custou caro descobrir:** a primeira versão animava
+  `transform: scale()` num elemento com `blur-2xl`, e isso **travou o renderizador do Chrome** —
+  duas capturas de tela seguidas deram timeout de 30s durante a animação. Desfoque grande + transform
+  obriga o navegador a redesenhar o blur inteiro a cada frame. A versão final anima **só `opacity`**
+  (composta na GPU, não repinta), reduziu o blur pra `blur-xl` e tirou o `animate-dice-spin` que
+  estava empilhado no texto — a troca de conteúdo a cada 110ms já é o efeito. Numa mesa de celular
+  isso teria sido bem pior que um timeout de screenshot.
+
+### Auditoria de UI e acessibilidade (2026-08-28, 2ª sessão)
+
+- **O site inteiro renderizava em Arial.** `layout.tsx` carregava Geist + Geist Mono e `globals.css`
+  declarava `--font-sans: var(--font-geist-sans)` — e então a regra de `body` sobrescrevia tudo com
+  `font-family: Arial`. As duas fontes eram baixadas em toda visita e **nenhuma chegava à tela**.
+  Agora: Geist na UI (ficha, loja, controles), **Fraunces** nos títulos (`h1/h2/h3`) e **Literata** no
+  corpo do livro (escopado em `.livro-shell`, pra não serifar ficha e rolador junto). Atenção ao
+  nomear: as variáveis do `next/font` são `--font-fraunces`/`--font-literata` de propósito — usar o
+  mesmo nome do token do tema (`--font-display: var(--font-display)`) é referência circular e a fonte
+  nunca aplica.
+- **`--color-parchment-600` escurecido de `#85704c` pra `#726040`.** Como texto secundário sobre
+  pergaminho dava 4,41:1, abaixo do mínimo AA de 4,5:1 — e é o tom de praticamente todo texto de apoio
+  do site. Agora 5,62:1 sobre o 50, 5,26 sobre o 100, 4,65 sobre o 200. **Não quebra a paridade com o
+  PDF**: `typstFicha.ts` só usa `4A0E2E` e `FDF6E3` da paleta, nada mais.
+- **`text-parchment-500` (93 usos) → `600` e `dark:text-wine-400` (17) → `wine-300`.** O 500 sobre
+  pergaminho dava 2,90:1; o wine-400 no dark dava 4,37:1. A troca foi feita com lookbehind negativo
+  (`(?<!dark:)`) pra não escurecer as variantes de dark mode, onde texto claro sobre fundo escuro já
+  passava.
+- **Foco de teclado global em `globals.css`.** Só 5 dos ~30 componentes tinham estilo de foco — nav,
+  rolador de dados, loja, tracker e o livro inteiro eram navegáveis por Tab sem indicação visual
+  nenhuma.
+- **`Warning` do livro saiu de `amber-*` pra `gold-*`**, e os "pills" de ouro (PO, PA gastos, Rank de
+  Guilda) em `Shop`/`AbilityDetail`/`InitiativeTracker`/`SkillsSection` também. Eram Tailwind padrão
+  tentando parecer o dourado da paleta. **`rankColors.ts` continua fora do rebranding** (decisão
+  antiga: é código funcional pra diferenciar rank/pilar), e as cores semânticas de estado
+  (emerald/rose na barra de PV do tracker, no crítico/falha do rolador, no botão de excluir) também
+  ficaram — verde/vermelho ali comunicam estado, não marca.
+- **Ícones de recurso da ficha realinhados à paleta.** PV era `rose-500`, PT `orange-500`, PP
+  `emerald-500`, Iniciativa `amber-500` — quatro paletas do Tailwind na tela mais importante do site,
+  bem visível no light mode. Agora vinho/dourado/pergaminho, mantendo os seis recursos distinguíveis
+  entre si.
+- **Escala tipográfica do livro aberta** de `2xl / lg / base` pra `3xl-4xl / xl-2xl / lg`. Três
+  degraus quase colados num documento de 5 capítulos + 7 apêndices faziam capítulo, seção e subseção
+  parecerem o mesmo nível.
+
+### Decisões anteriores
 
 - **PA é informativo, não um orçamento travado.** Quem decide quanto PA cada ficha tem é o
   Mestre, fora do site. `canUnlockRank`/`canPurchaseAbility` só checam pré-requisito, nunca saldo.
