@@ -1,23 +1,45 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Sparkles, ScrollText } from "lucide-react";
+import { ChevronLeft, Dices, Sparkles, ScrollText, UserRoundCheck } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById, RACES } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById, BACKGROUNDS } from "@/data/backgrounds";
-import { drawInterviewQuestions, resolveInterview, InterviewQuestion, InterviewOption } from "@/data/interview";
+import {
+  drawInterviewQuestions,
+  resolveInterview,
+  InterviewMode,
+  InterviewQuestion,
+  InterviewOption,
+  LotteryEntry,
+} from "@/data/interview";
 import { buildInterviewLore } from "@/lib/interviewLore";
-import { rollRandomAttributes, rollRandomSubtableEntry } from "@/lib/randomCharacter";
+import { RACE_WEIGHT, rollRandomAttributes, rollRandomSubtableEntry } from "@/lib/randomCharacter";
 import { ATTRIBUTES } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import TreePicker from "./TreePicker";
 
-const RACE_IDS = RACES.map((r) => r.id);
-const BACKGROUND_IDS = BACKGROUNDS.map((b) => b.id);
+/**
+ * Pools da loteria com o peso de raridade de cada candidato. Raça usa `RACE_WEIGHT`
+ * (peso 0 = fora do sorteio, caso do Dragão — só na Via 1 com aval do Mestre); Antecedente
+ * usa a largura da faixa d100 da tabela do Cap. 1 §6, que já É a raridade dele no livro.
+ * Antes de 2026-08-28 os dois eram peso 1 fixo e a Entrevista ignorava raridade — dava pra
+ * nascer Dragão numa entrevista, coisa que a Roleta nunca permitiu.
+ */
+const RACE_POOL: LotteryEntry[] = RACES.map((r) => ({ id: r.id, weight: RACE_WEIGHT[r.id] ?? 1 }));
+const BACKGROUND_POOL: LotteryEntry[] = BACKGROUNDS.map((b) => ({
+  id: b.id,
+  weight: Math.max(1, b.rollRange[1] - b.rollRange[0] + 1),
+}));
 
-type Phase = "perguntas" | "arvore" | "pericias" | "pronto";
+/** Só as raças que o sorteio pode entregar — as mesmas que o jogador pode escolher no modo "antecedente". */
+const PICKABLE_RACES = RACES.filter((r) => (RACE_WEIGHT[r.id] ?? 1) > 0);
+
+type Phase = "modo" | "raca" | "perguntas" | "sorteio" | "arvore" | "pericias" | "pronto";
+
+const SORTEIO_MS = 1900;
 
 export default function CreationInterview() {
   const router = useRouter();
@@ -25,7 +47,10 @@ export default function CreationInterview() {
   const [questions] = useState<InterviewQuestion[]>(() => drawInterviewQuestions());
   const [answers, setAnswers] = useState<InterviewOption[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [phase, setPhase] = useState<Phase>("perguntas");
+  const [phase, setPhase] = useState<Phase>("modo");
+  const [mode, setMode] = useState<InterviewMode>("ambos");
+  /** Raça escolhida na mão no modo "antecedente" (null no modo "ambos", onde ela é sorteada). */
+  const [pickedRaceId, setPickedRaceId] = useState<string | null>(null);
 
   useEffect(() => {
     if (startedCreation.current) return;
@@ -40,6 +65,33 @@ export default function CreationInterview() {
     ? getSubtableEntryById(background.requiresSubtable, character.subtableEntryId)
     : undefined;
 
+  /** Aplica o resultado do Destino na ficha. Chamado só depois da animação de sorteio. */
+  const commitDestiny = useCallback(
+    (finalAnswers: InterviewOption[]) => {
+      const store = useCharacterStore.getState();
+      const result = resolveInterview(finalAnswers, RACE_POOL, BACKGROUND_POOL, mode);
+
+      // No modo "antecedente" a raça já foi escolhida na fase "raca" e result.raceId é null.
+      if (result.raceId) store.setRace(result.raceId);
+      store.setBackground(result.backgroundId);
+
+      const resultBackground = BACKGROUNDS.find((b) => b.id === result.backgroundId);
+      if (resultBackground?.requiresSubtable) {
+        store.setSubtableEntry(rollRandomSubtableEntry(resultBackground.requiresSubtable));
+      }
+
+      // No modo "antecedente" a raça veio da fase "raca", então já está na ficha.
+      const finalRaceName = getRaceById(result.raceId ?? pickedRaceId)?.name ?? "";
+      store.setLore(buildInterviewLore(finalAnswers, finalRaceName, resultBackground?.name ?? "", mode));
+
+      const attrs = rollRandomAttributes();
+      for (const { key } of ATTRIBUTES) store.setAttribute(key, attrs[key]);
+
+      setPhase("arvore");
+    },
+    [mode, pickedRaceId]
+  );
+
   function answer(option: InterviewOption) {
     const nextAnswers = [...answers, option];
     setAnswers(nextAnswers);
@@ -47,23 +99,9 @@ export default function CreationInterview() {
       setQuestionIndex((i) => i + 1);
       return;
     }
-    // Última pergunta: resolve o Destino e já aplica raça, antecedente e atributos sorteados.
-    const result = resolveInterview(nextAnswers, RACE_IDS, BACKGROUND_IDS);
-    useCharacterStore.getState().setRace(result.raceId);
-    useCharacterStore.getState().setBackground(result.backgroundId);
-    const resultRace = getRaceById(result.raceId);
-    const resultBackground = BACKGROUNDS.find((b) => b.id === result.backgroundId);
-    if (resultBackground?.requiresSubtable) {
-      useCharacterStore.getState().setSubtableEntry(rollRandomSubtableEntry(resultBackground.requiresSubtable));
-    }
-    useCharacterStore
-      .getState()
-      .setLore(buildInterviewLore(nextAnswers, resultRace?.name ?? "", resultBackground?.name ?? ""));
-    const attrs = rollRandomAttributes();
-    for (const { key } of ATTRIBUTES) {
-      useCharacterStore.getState().setAttribute(key, attrs[key]);
-    }
-    setPhase("arvore");
+    // Última pergunta: entra na animação de sorteio, que decide quando aplicar o Destino.
+    setAnswers(nextAnswers);
+    setPhase("sorteio");
   }
 
   function backOneQuestion() {
@@ -72,12 +110,30 @@ export default function CreationInterview() {
     setAnswers((prev) => prev.slice(0, -1));
   }
 
-  function selectStartingTree(treeId: string) {
-    useCharacterStore.getState().setStartingTree(treeId);
+  function chooseMode(next: InterviewMode) {
+    setMode(next);
+    setPhase(next === "antecedente" ? "raca" : "perguntas");
+  }
+
+  function chooseRace(raceId: string) {
+    setPickedRaceId(raceId);
+    useCharacterStore.getState().setRace(raceId);
   }
 
   const progress =
-    phase === "perguntas" ? questionIndex / questions.length : phase === "arvore" ? 0.7 : phase === "pericias" ? 0.85 : 1;
+    phase === "modo"
+      ? 0
+      : phase === "raca"
+        ? 0.05
+        : phase === "perguntas"
+          ? 0.1 + (questionIndex / questions.length) * 0.55
+          : phase === "sorteio"
+            ? 0.68
+            : phase === "arvore"
+              ? 0.78
+              : phase === "pericias"
+                ? 0.9
+                : 1;
 
   return (
     <div className="mx-auto max-w-2xl p-4 sm:p-6">
@@ -85,37 +141,124 @@ export default function CreationInterview() {
         <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
           <ScrollText className="h-6 w-6 text-wine-500" /> Via 3 — A Entrevista (O Destino)
         </h1>
-        <p className="mt-1 text-sm text-parchment-500 dark:text-parchment-400">
+        <p className="mt-1 text-sm text-parchment-600 dark:text-parchment-400">
           Perguntas sobre uma infância que não é bem a sua — mas que decide, junto com um pouco de sorte, quem
           seu personagem nasceu sendo.
         </p>
         <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-parchment-300 dark:bg-parchment-800">
-          <div className="h-full rounded-full bg-wine-500 transition-all" style={{ width: `${Math.round(progress * 100)}%` }} />
+          <div
+            className="h-full rounded-full bg-wine-500 transition-all duration-500"
+            style={{ width: `${Math.round(progress * 100)}%` }}
+          />
         </div>
       </header>
 
       <div className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+        {phase === "modo" && (
+          <div className="animate-fade-slide-in">
+            <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">
+              O que você quer deixar nas mãos do Destino?
+            </h2>
+            <p className="mb-4 text-sm text-parchment-600 dark:text-parchment-400">
+              As perguntas são as mesmas nos dois modos. O que muda é o quanto das respostas vira sorteio.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <ModeCard
+                icon={<Dices className="h-6 w-6" />}
+                title="Raça e Antecedente"
+                subtitle="Tudo nas mãos do Destino"
+                description="Suas respostas pesam as duas loterias. Você descobre o que nasceu sendo e de onde veio ao mesmo tempo."
+                onClick={() => chooseMode("ambos")}
+              />
+              <ModeCard
+                icon={<UserRoundCheck className="h-6 w-6" />}
+                title="Só o Antecedente"
+                subtitle="Você escolhe a Raça"
+                description="Você já sabe o que seu personagem é. As respostas decidem só a infância dele — de onde veio e o que isso deixou."
+                onClick={() => chooseMode("antecedente")}
+              />
+            </div>
+          </div>
+        )}
+
+        {phase === "raca" && (
+          <div className="animate-fade-slide-in">
+            <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha a Raça</h2>
+            <p className="mb-4 text-sm text-parchment-600 dark:text-parchment-400">
+              Cap. 1, seção 5. Raças míticas ficam de fora aqui — elas só entram na criação Manual, com aval do
+              Mestre.
+            </p>
+            <div className="grid max-h-80 gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
+              {PICKABLE_RACES.map((r) => {
+                const selected = character.raceId === r.id;
+                return (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => chooseRace(r.id)}
+                    aria-pressed={selected}
+                    className={`rounded-xl border p-3 text-left transition-colors ${
+                      selected
+                        ? "border-wine-500 bg-wine-500/10"
+                        : "border-parchment-300 bg-parchment-50 hover:border-wine-400 dark:border-parchment-700 dark:bg-parchment-900"
+                    }`}
+                  >
+                    <span className="block text-sm font-semibold text-parchment-900 dark:text-parchment-50">
+                      {r.name}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-parchment-600 dark:text-parchment-400">
+                      {r.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setPhase("modo")}
+                className="flex items-center gap-1 rounded-lg border border-parchment-300 px-3 py-2 text-sm font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+              >
+                <ChevronLeft className="h-4 w-4" /> Voltar
+              </button>
+              <button
+                type="button"
+                onClick={() => setPhase("perguntas")}
+                disabled={!character.raceId}
+                className="flex-1 rounded-lg bg-wine-600 py-2 text-sm font-semibold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Começar a Entrevista
+              </button>
+            </div>
+          </div>
+        )}
+
         {phase === "perguntas" && (
           <div key={questionIndex} className="animate-fade-slide-in">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
               Pergunta {questionIndex + 1} de {questions.length}
             </p>
             <h2 className="mb-4 text-lg font-bold text-parchment-900 dark:text-parchment-50">
               {questions[questionIndex].prompt}
             </h2>
             <div className="space-y-2">
-              {questions[questionIndex].options.map((option) => (
+              {questions[questionIndex].options.map((option, i) => (
                 <button
                   key={option.id}
                   type="button"
                   onClick={() => answer(option)}
-                  className="w-full rounded-xl border border-parchment-300 bg-parchment-50 p-3 text-left text-sm text-parchment-700 transition-colors hover:border-wine-400 hover:bg-wine-50 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:bg-wine-950/30"
+                  style={{ animationDelay: `${i * 55}ms` }}
+                  className="animate-fade-slide-in w-full rounded-xl border border-parchment-300 bg-parchment-50 p-3 text-left text-sm text-parchment-700 transition-colors hover:border-wine-400 hover:bg-wine-50 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:bg-wine-950/30"
                 >
                   {option.text}
                 </button>
               ))}
             </div>
           </div>
+        )}
+
+        {phase === "sorteio" && (
+          <DestinyDraw mode={mode} onDone={() => commitDestiny(answers)} />
         )}
 
         {phase === "arvore" && (
@@ -126,15 +269,23 @@ export default function CreationInterview() {
                 aria-hidden
               />
               <div className="animate-birth-reveal relative">
-                O Destino falou: <b>{race?.name}</b>, <b>{background?.name}</b>.
+                {mode === "antecedente" ? (
+                  <>
+                    O Destino falou: <b>{background?.name}</b>. A Raça, essa foi escolha sua — <b>{race?.name}</b>.
+                  </>
+                ) : (
+                  <>
+                    O Destino falou: <b>{race?.name}</b>, <b>{background?.name}</b>.
+                  </>
+                )}
               </div>
             </div>
             <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
             <h2 className="mb-1 mt-4 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha sua Árvore Inicial</h2>
-            <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
               Cap. 1, seção 4 — desbloqueia o 1º patamar dela de graça e libera um kit de equipamento inicial.
             </p>
-            <TreePicker selectedTreeId={character.startingTreeId} onSelect={selectStartingTree} />
+            <TreePicker selectedTreeId={character.startingTreeId} onSelect={(treeId) => useCharacterStore.getState().setStartingTree(treeId)} />
             <button
               type="button"
               onClick={() => setPhase("pericias")}
@@ -165,7 +316,7 @@ export default function CreationInterview() {
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">
               {character.name || "Seu personagem"} tem uma história agora.
             </h2>
-            <p className="mb-5 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-5 text-sm text-parchment-600 dark:text-parchment-400">
               Dê um nome a ele e ajuste qualquer detalhe livremente na ficha completa.
             </p>
             <button
@@ -188,6 +339,96 @@ export default function CreationInterview() {
           <ChevronLeft className="h-4 w-4" /> Pergunta anterior
         </button>
       )}
+    </div>
+  );
+}
+
+function ModeCard({
+  icon,
+  title,
+  subtitle,
+  description,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  description: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex flex-col rounded-xl border border-parchment-300 bg-parchment-50 p-4 text-left transition-all hover:-translate-y-0.5 hover:border-wine-400 hover:shadow-md dark:border-parchment-700 dark:bg-parchment-900 dark:hover:border-wine-600"
+    >
+      <span className="mb-2 text-wine-500 transition-transform group-hover:scale-110">{icon}</span>
+      <span className="text-base font-bold text-parchment-900 dark:text-parchment-50">{title}</span>
+      <span className="mb-2 text-xs font-semibold uppercase tracking-wide text-gold-700 dark:text-gold-300">
+        {subtitle}
+      </span>
+      <span className="text-sm text-parchment-600 dark:text-parchment-400">{description}</span>
+    </button>
+  );
+}
+
+/**
+ * Animação do sorteio: nomes de raça/antecedente passando rápido antes de assentar,
+ * mesmo princípio do dado girando no Rolador — o resultado já está decidido, isto é só
+ * suspense. Nada aqui influencia a loteria: `onDone` é que chama `resolveInterview`.
+ * Respeita `prefers-reduced-motion` pulando direto pro resultado.
+ */
+function DestinyDraw({ mode, onDone }: { mode: InterviewMode; onDone: () => void }) {
+  const [tick, setTick] = useState(0);
+  const done = useRef(false);
+
+  const reduced = useMemo(
+    () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+    []
+  );
+
+  useEffect(() => {
+    if (done.current) return;
+    if (reduced) {
+      done.current = true;
+      onDone();
+      return;
+    }
+    const spin = setInterval(() => setTick((t) => t + 1), 110);
+    const finish = setTimeout(() => {
+      done.current = true;
+      clearInterval(spin);
+      onDone();
+    }, SORTEIO_MS);
+    return () => {
+      clearInterval(spin);
+      clearTimeout(finish);
+    };
+  }, [reduced, onDone]);
+
+  const raceName = PICKABLE_RACES[tick % PICKABLE_RACES.length]?.name ?? "";
+  const backgroundName = BACKGROUNDS[(tick * 3) % BACKGROUNDS.length]?.name ?? "";
+
+  return (
+    <div className="flex min-h-[18rem] flex-col items-center justify-center gap-4 text-center" aria-live="polite">
+      <div className="relative">
+        <span className="animate-destiny-pulse absolute inset-0 -m-5 rounded-full bg-gold-400/25 blur-xl" aria-hidden />
+        <Dices className="animate-destiny-spin relative h-12 w-12 text-wine-500" aria-hidden />
+      </div>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-parchment-600 dark:text-parchment-400">
+        O Destino está decidindo
+      </p>
+      {/* Sem animação CSS aqui de propósito: a troca de texto a cada 110ms JÁ é o efeito, e
+          empilhar um keyframe de scale/rotate por cima repinta texto todo frame sem ganho. */}
+      <div className="space-y-1.5 font-mono text-lg font-bold text-parchment-900 tabular dark:text-parchment-50">
+        {mode === "ambos" && <p>{raceName}</p>}
+        <p>{backgroundName}</p>
+      </div>
+      <p className="max-w-xs text-xs text-parchment-600 dark:text-parchment-400">
+        {mode === "antecedente"
+          ? "Suas respostas pesaram a loteria, mas nunca a decidiram sozinhas."
+          : "Suas respostas pesaram as duas loterias, mas nunca as decidiram sozinhas."}
+      </p>
     </div>
   );
 }
