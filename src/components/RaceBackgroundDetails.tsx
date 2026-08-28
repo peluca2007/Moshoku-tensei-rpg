@@ -32,10 +32,10 @@ function Block({
   return (
     <div>
       <h3 className="mb-1 text-sm font-bold text-parchment-900 dark:text-parchment-50">{title}</h3>
-      {description && <p className="mb-2 text-xs text-parchment-500 dark:text-parchment-400">{description}</p>}
+      {description && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{description}</p>}
       {traits.length > 0 && <TraitList traits={traits} />}
       {(fixedSkills?.length || bonusSkillChoices || extra) && (
-        <p className="mt-2 text-xs text-parchment-500 dark:text-parchment-400">
+        <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">
           {fixedSkills?.length ? `Perícia(s) fixa(s): ${fixedSkills.join(", ")}. ` : ""}
           {bonusSkillChoices ? `+${bonusSkillChoices} perícia(s) à escolha. ` : ""}
           {extra ?? ""}
@@ -58,7 +58,7 @@ export default function RaceBackgroundDetails({
 
   return (
     <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+      <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
         Passivas de Raça &amp; Antecedente
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

@@ -74,7 +74,7 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <p className="mx-auto mt-10 max-w-xl rounded-2xl border border-parchment-300 bg-parchment-50/80 p-4 text-xs leading-relaxed text-parchment-500 dark:border-parchment-800 dark:bg-parchment-900/60 dark:text-parchment-400">
+          <p className="mx-auto mt-10 max-w-xl rounded-2xl border border-parchment-300 bg-parchment-50/80 p-4 text-xs leading-relaxed text-parchment-600 dark:border-parchment-800 dark:bg-parchment-900/60 dark:text-parchment-400">
             Este é um projeto de fã, sem fins lucrativos e sem vínculo com Rifujin na Magonote, a editora ou
             qualquer detentor dos direitos de <i>Mushoku Tensei</i>. Todo o sistema de regras aqui é uma
             criação homebrew original, feita só pra jogar com amigos — nomes e ambientação da obra original
@@ -100,21 +100,21 @@ export default function LandingPage() {
         <div className="mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-4">
           <Link
             href="/livro"
-            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-400 dark:hover:text-wine-300"
+            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-300 dark:hover:text-wine-300"
           >
             <BookOpen className="h-4 w-4" /> Ler o livro de regras
           </Link>
           <span className="hidden text-parchment-300 dark:text-parchment-700 sm:inline">·</span>
           <Link
             href="/arvores"
-            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-400 dark:hover:text-wine-300"
+            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-300 dark:hover:text-wine-300"
           >
             <TreePine className="h-4 w-4" /> Explorar as árvores de progressão
           </Link>
           <span className="hidden text-parchment-300 dark:text-parchment-700 sm:inline">·</span>
           <Link
             href="/criar/entrevista"
-            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-400 dark:hover:text-wine-300"
+            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-300 dark:hover:text-wine-300"
           >
             <ScrollText className="h-4 w-4" /> Fazer a Entrevista do Destino
           </Link>

@@ -84,7 +84,7 @@ function ResourceCard({
     <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm transition-shadow hover:shadow-md dark:border-parchment-800 dark:bg-parchment-900/60">
       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+        <p className="text-xs font-medium uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
           {label}
         </p>
         <div className="flex items-baseline gap-1">
@@ -102,7 +102,7 @@ function ResourceCard({
             onChange={(e) => onMaxChange(Number(e.target.value))}
             title="Máximo calculado — edite pra sobrescrever (item, exceção de mesa, etc.)"
             className={`w-12 rounded bg-transparent text-sm font-semibold outline-none focus:ring-2 focus:ring-wine-400 ${
-              maxOverridden ? "text-gold-600 dark:text-gold-400" : "text-parchment-500 dark:text-parchment-400"
+              maxOverridden ? "text-gold-600 dark:text-gold-400" : "text-parchment-600 dark:text-parchment-400"
             }`}
           />
           {maxOverridden && (
@@ -147,7 +147,7 @@ function EditableStatCard({
     <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm transition-shadow hover:shadow-md dark:border-parchment-800 dark:bg-parchment-900/60">
       <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+        <p className="text-xs font-medium uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
           {label}
         </p>
         <div className="flex items-center gap-1.5">
@@ -160,7 +160,7 @@ function EditableStatCard({
               overridden ? "text-gold-600 dark:text-gold-400" : "text-parchment-900 dark:text-parchment-50"
             }`}
           />
-          {suffix && <span className="text-xs text-parchment-500 dark:text-parchment-400">{suffix}</span>}
+          {suffix && <span className="text-xs text-parchment-600 dark:text-parchment-400">{suffix}</span>}
           {overridden && (
             <button
               type="button"
@@ -413,7 +413,7 @@ export default function CharacterSheet() {
           </div>
         </div>
         {pdfState === "error" && (
-          <p className="mt-1 text-xs text-rose-500">Não deu pra gerar o PDF agora. Tente de novo em instantes.</p>
+          <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra gerar o PDF agora. Tente de novo em instantes.</p>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
           <select
@@ -457,7 +457,7 @@ export default function CharacterSheet() {
             </select>
           )}
 
-          <label className="flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1 font-medium text-amber-600 ring-1 ring-amber-500/30 dark:text-amber-400">
+          <label className="flex items-center gap-1 rounded-full bg-gold-500/10 px-3 py-1 font-medium text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
             <Coins className="h-3.5 w-3.5" />
             <input
               type="number"
@@ -505,7 +505,7 @@ export default function CharacterSheet() {
         {/* Sidebar esquerda */}
         <aside className="space-y-4">
           <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-            <h2 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+            <h2 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
               <Activity className="h-3.5 w-3.5 text-wine-500" /> Atributos
             </h2>
             <div className="grid grid-cols-5 gap-2 lg:grid-cols-3">
@@ -520,7 +520,7 @@ export default function CharacterSheet() {
                     title={label}
                     className="flex flex-col items-center justify-center rounded-2xl border-2 border-parchment-300 bg-parchment-50 p-2 transition-colors hover:border-wine-400 dark:border-parchment-700 dark:bg-parchment-800/80 dark:hover:border-wine-600"
                   >
-                    <span className="text-[10px] font-bold uppercase text-parchment-500 dark:text-parchment-400">
+                    <span className="text-[10px] font-bold uppercase text-parchment-600 dark:text-parchment-400">
                       {short}
                     </span>
                     <input
@@ -545,7 +545,7 @@ export default function CharacterSheet() {
             <ResourceCard
               icon={<Heart className="h-5 w-5 text-white" />}
               label="PV (atual / máximo)"
-              tone="bg-rose-500"
+              tone="bg-wine-600"
               current={currentHp}
               max={maxHp}
               maxOverridden={overrides.maxHp !== undefined}
@@ -570,7 +570,7 @@ export default function CharacterSheet() {
               <ResourceCard
                 icon={<Flame className="h-5 w-5 text-white" />}
                 label="PT (atual / máximo, Touki)"
-                tone="bg-orange-500"
+                tone="bg-gold-600"
                 current={currentPt}
                 max={maxPt}
                 maxOverridden={overrides.maxPt !== undefined}
@@ -583,7 +583,7 @@ export default function CharacterSheet() {
               <ResourceCard
                 icon={<Compass className="h-5 w-5 text-white" />}
                 label="PP (atual / máximo, Preparação)"
-                tone="bg-emerald-500"
+                tone="bg-parchment-600"
                 current={currentPp}
                 max={maxPp}
                 maxOverridden={overrides.maxPp !== undefined}
@@ -595,7 +595,7 @@ export default function CharacterSheet() {
             <EditableStatCard
               icon={<Shield className="h-5 w-5 text-white" />}
               label="Classe de Armadura"
-              tone="bg-parchment-500"
+              tone="bg-parchment-700"
               value={armorClass}
               overridden={overrides.armorClass !== undefined}
               onChange={(v) => useCharacterStore.getState().setOverride("armorClass", v)}
@@ -604,7 +604,7 @@ export default function CharacterSheet() {
             <EditableStatCard
               icon={<Swords className="h-5 w-5 text-white" />}
               label="Iniciativa"
-              tone="bg-amber-500"
+              tone="bg-gold-700"
               value={initiative.bonus}
               overridden={overrides.initiative !== undefined}
               onChange={(v) => useCharacterStore.getState().setOverride("initiative", v)}
@@ -614,7 +614,7 @@ export default function CharacterSheet() {
           </div>
 
           <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-            <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+            <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
               <Sprout className="h-3.5 w-3.5 text-wine-500" /> Árvore Inicial
             </h2>
             <select
@@ -691,7 +691,7 @@ export default function CharacterSheet() {
           </div>
 
           {abilitiesByTree.size === 0 && (
-            <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+            <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
               Nenhuma magia ou talento comprado ainda.
             </p>
           )}
@@ -716,7 +716,7 @@ export default function CharacterSheet() {
 
             if (query && entries.length === 0) {
               return (
-                <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+                <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
                   Nada encontrado para “{grimoireQuery}”.
                 </p>
               );
@@ -785,7 +785,7 @@ export default function CharacterSheet() {
                           </span>
                         </div>
                       </div>
-                      <p className="text-xs text-parchment-500 dark:text-parchment-400">
+                      <p className="text-xs text-parchment-600 dark:text-parchment-400">
                         {kind === "ability" ? "Habilidade" : "Talento"} · {def.paCost} PA
                         {kind === "ability" && (() => {
                           const ability = def as AbilityDef;

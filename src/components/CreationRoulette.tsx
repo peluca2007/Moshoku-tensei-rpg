@@ -110,7 +110,7 @@ function WheelBlock({
                 ? "Girar de Novo"
                 : "Sem mais tentativas"}
         </button>
-        <p className="mt-2 text-xs text-parchment-500 dark:text-parchment-400">
+        <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">
           {attemptsLeft > 0 ? `${attemptsLeft} de ${WHEEL_MAX_ATTEMPTS} tentativas restantes` : "O Destino já decidiu."}
         </p>
         {resultLabel && wheel.result && (
@@ -186,7 +186,7 @@ export default function CreationRoulette() {
         <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
           <Dices className="h-6 w-6 text-wine-500" /> Via 2 — Roleta do Destino
         </h1>
-        <p className="mt-1 text-sm text-parchment-500 dark:text-parchment-400">
+        <p className="mt-1 text-sm text-parchment-600 dark:text-parchment-400">
           Você escolhe sua Árvore Inicial e suas Perícias. Raça e Antecedente são sorteados em roletas
           separadas — quanto mais forte o resultado, mais rara a fatia. Só {WHEEL_MAX_ATTEMPTS} giros por
           roleta: depois disso, o Destino decidiu e o resultado atual fica valendo.
@@ -208,7 +208,7 @@ export default function CreationRoulette() {
         {step === 0 && (
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha sua Árvore Inicial</h2>
-            <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
               Cap. 1, seção 4 — desbloqueia o 1º patamar dela de graça e libera um kit de equipamento inicial.
             </p>
             <TreePicker selectedTreeId={character.startingTreeId} onSelect={selectStartingTree} />
@@ -232,7 +232,7 @@ export default function CreationRoulette() {
 
             <div className="flex flex-col items-center text-center">
               <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Atributos</h2>
-              <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
+              <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
                 Sorteia a distribuição de pontos e defeitos do Cap. 1 — sem limite de tentativas.
               </p>
               <button
@@ -246,7 +246,7 @@ export default function CreationRoulette() {
                 <div className="mt-4 grid w-full grid-cols-5 gap-2 text-center">
                   {ATTRIBUTES.map(({ key, label }) => (
                     <div key={key} className="rounded-lg border border-parchment-300 bg-parchment-50 p-2 dark:border-parchment-700 dark:bg-parchment-900">
-                      <p className="text-[10px] uppercase tracking-wide text-parchment-500 dark:text-parchment-400">{label}</p>
+                      <p className="text-[10px] uppercase tracking-wide text-parchment-600 dark:text-parchment-400">{label}</p>
                       <p className="text-lg font-bold text-parchment-900 dark:text-parchment-50">{character.attributeBase[key]}</p>
                     </div>
                   ))}
@@ -268,7 +268,7 @@ export default function CreationRoulette() {
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">
               {character.name || "Seu personagem"} nasceu.
             </h2>
-            <p className="mb-5 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-5 text-sm text-parchment-600 dark:text-parchment-400">
               Dê um nome a ele e ajuste qualquer detalhe livremente na ficha completa.
             </p>
             <button

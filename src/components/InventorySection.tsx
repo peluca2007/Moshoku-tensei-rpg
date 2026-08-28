@@ -53,7 +53,7 @@ function ItemFields({
   return (
     <div className="flex flex-wrap items-end gap-2">
       <div className="flex-1 min-w-[140px]">
-        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-500 dark:text-parchment-400">
+        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
           Nome
         </label>
         <input
@@ -64,7 +64,7 @@ function ItemFields({
         />
       </div>
       <div className="flex-1 min-w-[160px]">
-        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-500 dark:text-parchment-400">
+        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
           Descrição (opcional)
         </label>
         <input
@@ -75,7 +75,7 @@ function ItemFields({
         />
       </div>
       <div>
-        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-500 dark:text-parchment-400">
+        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
           Tipo
         </label>
         <select
@@ -90,7 +90,7 @@ function ItemFields({
       </div>
       {type === "armadura" && (
         <div className="w-20">
-          <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-500 dark:text-parchment-400">
+          <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
             +CA
           </label>
           <input
@@ -105,7 +105,7 @@ function ItemFields({
       {type === "arma" && (
         <>
           <div className="w-36">
-            <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-500 dark:text-parchment-400">
+            <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
               Dado Base
             </label>
             <input
@@ -125,7 +125,7 @@ function ItemFields({
             </datalist>
           </div>
           <div className="w-28">
-            <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-500 dark:text-parchment-400">
+            <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
               Atributo
             </label>
             <select
@@ -190,7 +190,7 @@ function WeaponDamageBadge({ item }: { item: InventoryItem }) {
   const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca");
   if (!info) {
     return (
-      <p className="mt-1 flex items-center gap-1 text-xs text-parchment-500 dark:text-parchment-400">
+      <p className="mt-1 flex items-center gap-1 text-xs text-parchment-600 dark:text-parchment-400">
         <Swords className="h-3 w-3" /> {item.baseDie} — desbloqueie um Rank do Corpo pra calcular o dano.
       </p>
     );
@@ -255,7 +255,7 @@ export default function InventorySection() {
       </h2>
 
       {inventory.length === 0 && (
-        <p className="mb-3 rounded-xl border border-dashed border-parchment-300 p-4 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+        <p className="mb-3 rounded-xl border border-dashed border-parchment-300 p-4 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
           Nenhum item ainda.
         </p>
       )}
@@ -299,7 +299,7 @@ export default function InventorySection() {
             >
               <div className="min-w-0">
                 <p className="truncate font-medium text-parchment-900 dark:text-parchment-50">{item.name}</p>
-                <p className="text-xs text-parchment-500 dark:text-parchment-400">
+                <p className="text-xs text-parchment-600 dark:text-parchment-400">
                   {TYPE_LABELS[item.type]}
                   {item.type === "armadura" && item.acBonus ? ` · +${item.acBonus} CA` : ""}
                   {item.type === "arma" && item.baseDie ? ` · Dado Base ${item.baseDie}` : ""}

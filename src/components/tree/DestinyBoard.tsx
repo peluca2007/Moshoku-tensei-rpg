@@ -338,7 +338,7 @@ function PanelShell({
   return (
     <aside className="sticky top-4 h-fit max-h-[640px] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
       <h3 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h3>
-      {subtitle && <p className="mb-2 text-xs text-parchment-500 dark:text-parchment-400">{subtitle}</p>}
+      {subtitle && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{subtitle}</p>}
       <div className="mt-2 space-y-2 text-sm text-parchment-700 dark:text-parchment-300">{children}</div>
     </aside>
   );
@@ -382,7 +382,7 @@ function AbilityListItem({
           {owned && <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
         </div>
       </div>
-      <p className="text-xs text-parchment-500 dark:text-parchment-400">
+      <p className="text-xs text-parchment-600 dark:text-parchment-400">
         {kind === "ability" ? "Habilidade" : "Talento"} · {def.paCost} PA
         {ability &&
           ` · ${ability.pmCost !== undefined ? `${ability.pmCost} PM · ` : ""}${
@@ -469,9 +469,9 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
                 {meta.tree.prerequisiteNote}
               </p>
             )}
-            {meta.tree.tagline && <p className="italic text-parchment-500 dark:text-parchment-400">{meta.tree.tagline}</p>}
+            {meta.tree.tagline && <p className="italic text-parchment-600 dark:text-parchment-400">{meta.tree.tagline}</p>}
             {(meta.tree.keyAttributeLabel || meta.tree.resourceLabel) && (
-              <p className="text-xs text-parchment-500 dark:text-parchment-400">
+              <p className="text-xs text-parchment-600 dark:text-parchment-400">
                 {meta.tree.keyAttributeLabel && <>Atributo-chave: <span className="font-medium">{meta.tree.keyAttributeLabel}</span></>}
                 {meta.tree.keyAttributeLabel && meta.tree.resourceLabel && " · "}
                 {meta.tree.resourceLabel && <>Recurso: <span className="font-medium">{meta.tree.resourceLabel}</span></>}

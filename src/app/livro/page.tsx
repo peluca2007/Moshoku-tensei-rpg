@@ -110,7 +110,7 @@ function TocNav() {
                 <li key={c.id}>
                   <a
                     href={`#${c.id}`}
-                    className="block py-0.5 text-parchment-500 hover:text-wine-600 dark:text-parchment-400 dark:hover:text-wine-400"
+                    className="block py-0.5 text-parchment-600 hover:text-wine-600 dark:text-parchment-400 dark:hover:text-wine-400"
                   >
                     {c.label}
                   </a>
@@ -132,7 +132,7 @@ export default function LivroPage() {
           <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight text-parchment-900 dark:text-parchment-50">
             <BookOpen className="h-6 w-6 text-wine-500" /> Sistema de RPG Mushoku Tensei
           </h1>
-          <p className="mt-1 text-sm text-parchment-500 dark:text-parchment-400">O Mundo de Seis Faces — livro de regras completo, navegável.</p>
+          <p className="mt-1 text-sm text-parchment-600 dark:text-parchment-400">O Mundo de Seis Faces — livro de regras completo, navegável.</p>
         </div>
         <ExportBookButton />
       </header>
@@ -140,7 +140,7 @@ export default function LivroPage() {
       <div className="livro-shell grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr]">
         <aside className="print-hide hidden lg:block">
           <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
               Sumário
             </p>
             <TocNav />

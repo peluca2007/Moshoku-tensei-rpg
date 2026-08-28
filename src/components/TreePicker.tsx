@@ -19,7 +19,7 @@ export default function TreePicker({
       <div className="space-y-3">
         {treeGroups.map((group) => (
           <div key={`${group.category}-${group.subgroup}`}>
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-500 dark:text-parchment-400">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
               {CATEGORY_LABELS[group.category]} — {group.subgroup}
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -42,7 +42,7 @@ export default function TreePicker({
         ))}
       </div>
       {selectedTree && (
-        <p className="mt-3 flex items-center gap-1 text-sm font-semibold text-wine-600 dark:text-wine-400">
+        <p className="mt-3 flex items-center gap-1 text-sm font-semibold text-wine-600 dark:text-wine-300">
           <Check className="h-4 w-4" /> Árvore Inicial: {selectedTree.name}
         </p>
       )}

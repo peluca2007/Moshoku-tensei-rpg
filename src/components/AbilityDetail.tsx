@@ -16,7 +16,7 @@ export function CastingBreakdown({ ability }: { ability: AbilityDef }) {
   if (ability.reaction || !hasCasting) return null;
 
   return (
-    <dl className="mt-1.5 grid grid-cols-1 gap-x-3 gap-y-0.5 border-t border-dashed border-parchment-300 pt-1.5 text-[11px] text-parchment-500 dark:border-parchment-800 dark:text-parchment-400 sm:grid-cols-3">
+    <dl className="mt-1.5 grid grid-cols-1 gap-x-3 gap-y-0.5 border-t border-dashed border-parchment-300 pt-1.5 text-[11px] text-parchment-600 dark:border-parchment-800 dark:text-parchment-400 sm:grid-cols-3">
       <div>
         <dt className="inline font-semibold text-parchment-600 dark:text-parchment-300">Padrão </dt>
         <dd className="inline">{actionText(actions.normal)} · dano cheio</dd>
@@ -48,7 +48,7 @@ export function CastingBreakdown({ ability }: { ability: AbilityDef }) {
 export function IncantationBlock({ ability }: { ability: AbilityDef }) {
   if (!ability.incantation) return null;
   return (
-    <p className="mt-1.5 border-l-2 border-wine-300/70 pl-2 text-[11px] italic text-parchment-500 dark:border-wine-800 dark:text-parchment-400">
+    <p className="mt-1.5 border-l-2 border-wine-300/70 pl-2 text-[11px] italic text-parchment-600 dark:border-wine-800 dark:text-parchment-400">
       “{ability.incantation}”
     </p>
   );
@@ -58,7 +58,7 @@ export function IncantationBlock({ ability }: { ability: AbilityDef }) {
 export function RitualBadge({ ability }: { ability: AbilityDef }) {
   if (!ability.ritual) return null;
   return (
-    <span className="shrink-0 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold text-amber-600 ring-1 ring-amber-500/30 dark:text-amber-400">
+    <span className="shrink-0 rounded-full bg-gold-500/10 px-2 py-0.5 text-[10px] font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
       Ritual
     </span>
   );

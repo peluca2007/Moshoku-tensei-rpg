@@ -91,7 +91,7 @@ export default function CreationWizard() {
             />
           ))}
         </div>
-        <p className="mt-2 text-xs font-medium text-parchment-500 dark:text-parchment-400">
+        <p className="mt-2 text-xs font-medium text-parchment-600 dark:text-parchment-400">
           Passo {step + 1} de {STEPS.length} — {STEPS[step]}
         </p>
       </header>
@@ -100,7 +100,7 @@ export default function CreationWizard() {
         {step === 0 && (
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Qual é o nome do seu personagem?</h2>
-            <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">Pode trocar depois, a qualquer momento, na ficha.</p>
+            <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Pode trocar depois, a qualquer momento, na ficha.</p>
             <input
               autoFocus
               value={character.name}
@@ -115,7 +115,7 @@ export default function CreationWizard() {
           <div className="space-y-4">
             <div>
               <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha uma raça</h2>
-              <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">Cap. 1, seção 5 — cada raça dá perícias e traços próprios.</p>
+              <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Cap. 1, seção 5 — cada raça dá perícias e traços próprios.</p>
               <select
                 value={character.raceId ?? ""}
                 onChange={(e) => useCharacterStore.getState().setRace(e.target.value || null)}
@@ -137,7 +137,7 @@ export default function CreationWizard() {
           <div className="space-y-4">
             <div>
               <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha um antecedente</h2>
-              <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">Cap. 1, seção 6 — o Destino e a Infância. Define dinheiro inicial e perícias extras.</p>
+              <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Cap. 1, seção 6 — o Destino e a Infância. Define dinheiro inicial e perícias extras.</p>
               <select
                 value={character.backgroundId ?? ""}
                 onChange={(e) => useCharacterStore.getState().setBackground(e.target.value || null)}
@@ -175,12 +175,12 @@ export default function CreationWizard() {
         {step === 3 && (
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Distribua seus atributos</h2>
-            <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
               Cap. 1, seção 1 — 4 pontos pra distribuir, máximo {ATTRIBUTE_CREATION_MAX} por atributo na criação. Reduzir um atributo a -1 dá +1
               ponto extra; reduzir um (outro) a -2 dá +2 pontos extras.
             </p>
             <p
-              className={`mb-3 text-sm font-bold ${remaining < 0 ? "text-rose-600 dark:text-rose-400" : "text-wine-600 dark:text-wine-400"}`}
+              className={`mb-3 text-sm font-bold ${remaining < 0 ? "text-rose-600 dark:text-rose-400" : "text-wine-600 dark:text-wine-300"}`}
             >
               Pontos restantes: {remaining} de {budget}
             </p>
@@ -222,7 +222,7 @@ export default function CreationWizard() {
         {step === 4 && (
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha sua Árvore Inicial</h2>
-            <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
               Cap. 1, seção 4 — desbloqueia o 1º patamar dela de graça e libera um kit de equipamento inicial.
             </p>
             <TreePicker selectedTreeId={character.startingTreeId} onSelect={selectStartingTree} />
@@ -236,7 +236,7 @@ export default function CreationWizard() {
         {step === 6 && (
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Equipamento inicial</h2>
-            <p className="mb-3 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
               O dinheiro do seu antecedente ({background?.startingGold ?? "—"} PO) soma com o kit de graça da sua Árvore Inicial — não é
               um ou outro.
             </p>
@@ -259,7 +259,7 @@ export default function CreationWizard() {
                 </button>
               </div>
             ) : (
-              <p className="text-sm text-parchment-500 dark:text-parchment-400">
+              <p className="text-sm text-parchment-600 dark:text-parchment-400">
                 Volte e escolha uma Árvore Inicial pra liberar um kit de graça — ou pule esta etapa e monte o inventário direto na ficha.
               </p>
             )}
@@ -272,7 +272,7 @@ export default function CreationWizard() {
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">
               {character.name || "Seu personagem"} está pronto pra jogar.
             </h2>
-            <p className="mb-5 text-sm text-parchment-500 dark:text-parchment-400">
+            <p className="mb-5 text-sm text-parchment-600 dark:text-parchment-400">
               Tudo aqui pode ser reeditado livremente na ficha completa a qualquer momento.
             </p>
             <button

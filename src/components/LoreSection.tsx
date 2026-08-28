@@ -9,7 +9,7 @@ export default function LoreSection({ lore }: { lore: string }) {
       <h2 className="mb-1 flex items-center gap-2 text-lg font-bold text-parchment-900 dark:text-parchment-50">
         <ScrollText className="h-5 w-5 text-wine-500" /> Lore & Anotações
       </h2>
-      <p className="mb-3 text-xs text-parchment-500 dark:text-parchment-400">
+      <p className="mb-3 text-xs text-parchment-600 dark:text-parchment-400">
         História de fundo, anotações de mesa, o que quiser — sai também no PDF exportado.
       </p>
       <textarea

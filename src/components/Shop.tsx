@@ -62,17 +62,17 @@ export default function Shop() {
         <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
           <Store className="h-6 w-6 text-wine-500" /> Loja da Guilda
         </h1>
-        <p className="text-sm text-parchment-500 dark:text-parchment-400">
+        <p className="text-sm text-parchment-600 dark:text-parchment-400">
           Comprar aqui debita o PO e manda o item direto pro inventário de{" "}
           <b className="text-parchment-700 dark:text-parchment-300">{character.name || "Sem nome"}</b>. Preço
           completo e o que cada Rank libera também estão no{" "}
-          <Link href="/livro#cap5-2" className="text-wine-600 underline hover:text-wine-500 dark:text-wine-400">
+          <Link href="/livro#cap5-2" className="text-wine-600 underline hover:text-wine-500 dark:text-wine-300">
             Livro de Regras
           </Link>
           .
         </p>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1 font-medium text-amber-600 ring-1 ring-amber-500/30 dark:text-amber-400">
+          <span className="flex items-center gap-1 rounded-full bg-gold-500/10 px-3 py-1 font-medium text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
             <Coins className="h-3.5 w-3.5" /> {character.gold} PO
           </span>
           <span className="flex items-center gap-1 rounded-full bg-wine-500/10 px-3 py-1 font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300">
@@ -147,7 +147,7 @@ export default function Shop() {
       </div>
 
       {items.length === 0 && (
-        <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-500 dark:border-parchment-700 dark:text-parchment-400">
+        <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
           Nenhum item nesse Tipo + Rank. Tente afrouxar um dos dois filtros.
         </p>
       )}
@@ -172,7 +172,7 @@ export default function Shop() {
                 <h2 className="flex items-center gap-1.5 font-bold text-parchment-900 dark:text-parchment-50">
                   <Icon className="h-4 w-4 shrink-0 text-wine-500" /> {item.name}
                 </h2>
-                <span className="shrink-0 rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                <span className="shrink-0 rounded-full bg-gold-500/10 px-2 py-0.5 text-xs font-semibold text-gold-700 dark:text-gold-300">
                   {item.price} PO
                 </span>
               </div>
@@ -186,13 +186,13 @@ export default function Shop() {
                   </span>
                 )}
               </p>
-              <p className="mb-3 flex-1 text-xs text-parchment-500 dark:text-parchment-400">{item.description}</p>
+              <p className="mb-3 flex-1 text-xs text-parchment-600 dark:text-parchment-400">{item.description}</p>
               <button
                 type="button"
                 onClick={() => handleBuy(item)}
                 disabled={!canBuy}
                 title={!rankOk ? `Precisa de Rank ${item.guildRankRequired} na Guilda` : !goldOk ? "PO insuficiente" : undefined}
-                className="flex items-center justify-center gap-1.5 rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:bg-parchment-300 disabled:text-parchment-500 dark:disabled:bg-parchment-800 dark:disabled:text-parchment-500"
+                className="flex items-center justify-center gap-1.5 rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:bg-parchment-300 disabled:text-parchment-600 dark:disabled:bg-parchment-800 dark:disabled:text-parchment-600"
               >
                 {justBought ? (
                   <>
