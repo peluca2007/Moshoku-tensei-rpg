@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Dices, Sparkles, Swords, X, Trash2, Star, Plus } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Dices, Sparkles, Swords, X, Trash2, Star, Plus, Zap, ZapOff } from "lucide-react";
 import { useActiveCharacter } from "@/store/useCharacterStore";
 import { getAttackBonus, getFinalAttribute, getSpellDC, getWeaponDamage } from "@/store/selectors";
 import { getTreeById } from "@/data/trees";
@@ -20,6 +20,11 @@ import {
 } from "@/lib/rollEngine";
 
 const ADVANTAGE_MODES: AdvantageMode[] = ["desvantagemAbsoluta", "desvantagem", "normal", "vantagem", "vantagemAbsoluta"];
+
+/** Só um número pra piscar durante a animação de "dado girando" — não tem relação com o resultado real. */
+function randomPreviewFace(): number {
+  return 1 + Math.floor(Math.random() * 20);
+}
 
 type TestSource = "manual" | "atributo" | "magia" | "marcial";
 
@@ -43,6 +48,8 @@ export default function DiceRoller() {
   const setOpen = useDiceRollerStore((s) => s.setOpen);
   const toggleOpen = useDiceRollerStore((s) => s.toggleOpen);
   const pendingRoll = useDiceRollerStore((s) => s.pending);
+  const diceAnimationEnabled = useDiceRollerStore((s) => s.diceAnimationEnabled);
+  const setDiceAnimationEnabled = useDiceRollerStore((s) => s.setDiceAnimationEnabled);
   const [handledPendingRoll, setHandledPendingRoll] = useState(pendingRoll);
   const [mode, setMode] = useState<AdvantageMode>("normal");
   const [testSource, setTestSource] = useState<TestSource>("manual");
@@ -65,6 +72,19 @@ export default function DiceRoller() {
   const removeMacro = useMacroStore((s) => s.removeMacro);
   const [macroLabel, setMacroLabel] = useState("");
   const [macroFormula, setMacroFormula] = useState("");
+  const [isRolling, setIsRolling] = useState(false);
+  const [rollingPreview, setRollingPreview] = useState(1);
+  const rollAnimationRef = useRef<{ interval: ReturnType<typeof setInterval>; timeout: ReturnType<typeof setTimeout> } | null>(null);
+
+  useEffect(
+    () => () => {
+      if (rollAnimationRef.current) {
+        clearInterval(rollAnimationRef.current.interval);
+        clearTimeout(rollAnimationRef.current.timeout);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -125,6 +145,33 @@ export default function DiceRoller() {
     setLastResult({ total: entry.total, critical: entry.critical });
   }
 
+  /**
+   * O resultado (`entry`) já foi calculado de forma síncrona antes de chegar aqui — isto só
+   * atrasa a apresentação com números girando por um instante, puramente cosmético. Com a
+   * animação desligada (toggle no cabeçalho, persistido), cai direto no pushLog de sempre.
+   */
+  function animateRoll(entry: Omit<RollLogEntry, "id" | "timestamp">) {
+    if (rollAnimationRef.current) {
+      clearInterval(rollAnimationRef.current.interval);
+      clearTimeout(rollAnimationRef.current.timeout);
+      rollAnimationRef.current = null;
+    }
+    if (!diceAnimationEnabled) {
+      pushLog(entry);
+      return;
+    }
+    setIsRolling(true);
+    setRollingPreview(randomPreviewFace());
+    const interval = setInterval(() => setRollingPreview(randomPreviewFace()), 70);
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+      rollAnimationRef.current = null;
+      setIsRolling(false);
+      pushLog(entry);
+    }, 600);
+    rollAnimationRef.current = { interval, timeout };
+  }
+
   function handleRollD20() {
     const result = rollD20(mode, testModifier);
     let label = "Teste";
@@ -132,7 +179,7 @@ export default function DiceRoller() {
     else if (testSource === "magia" && magicTreeId) label = `Ataque Mágico (${getTreeById(magicTreeId)?.name})`;
     else if (testSource === "marcial" && marcialTreeId) label = `Ataque Marcial (${getTreeById(marcialTreeId)?.name})`;
     if (mode !== "normal") label += ` — ${ADVANTAGE_LABELS[mode]}`;
-    pushLog({ label, detail: d20Detail(result), total: result.total, critical: result.critical });
+    animateRoll({ label, detail: d20Detail(result), total: result.total, critical: result.critical });
   }
 
   function handleSelectWeapon(id: string) {
@@ -167,10 +214,10 @@ export default function DiceRoller() {
       const second = rollFormula(liveFormula, 0);
       const total = first.total + second.total + liveModifier;
       const detail = `${diceDetail(first)} + ${diceDetail(second)} (crítico) + ${liveModifier}`;
-      pushLog({ label: `${baseLabel} (Crítico)`, detail, total });
+      animateRoll({ label: `${baseLabel} (Crítico)`, detail, total });
     } else {
       const result = rollFormula(liveFormula, liveModifier);
-      pushLog({ label: baseLabel, detail: diceDetail(result), total: result.total });
+      animateRoll({ label: baseLabel, detail: diceDetail(result), total: result.total });
     }
     setCriticalDamageOverride(null);
   }
@@ -179,7 +226,7 @@ export default function DiceRoller() {
     const macro = macros.find((m) => m.id === macroId);
     if (!macro) return;
     const result = rollFormula(macro.formula);
-    pushLog({ label: macro.label, detail: diceDetail(result), total: result.total });
+    animateRoll({ label: macro.label, detail: diceDetail(result), total: result.total });
   }
 
   function handleAddMacro() {
@@ -193,6 +240,14 @@ export default function DiceRoller() {
     testSource === "magia" && magicTreeId
       ? getSpellDC(character, magicTreeId, attributeKeyFromLabel(getTreeById(magicTreeId)?.keyAttributeLabel) ?? "intelecto")
       : null;
+
+  const resultCritical = isRolling ? null : (lastResult?.critical ?? null);
+  const resultBoxClass =
+    resultCritical === "sucesso"
+      ? "border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/40"
+      : resultCritical === "falha"
+        ? "border-rose-400 bg-rose-50 dark:border-rose-700 dark:bg-rose-950/40"
+        : "border-parchment-300 bg-parchment-100 dark:border-parchment-700 dark:bg-parchment-900";
 
   return (
     <>
@@ -212,35 +267,51 @@ export default function DiceRoller() {
             <h2 className="flex items-center gap-2 text-sm font-bold text-parchment-900 dark:text-parchment-50">
               <Dices className="h-4 w-4 text-wine-500" /> Rolador de Dados
             </h2>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Fechar rolador de dados"
-              className="text-parchment-400 hover:text-rose-500"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setDiceAnimationEnabled(!diceAnimationEnabled)}
+                title={
+                  diceAnimationEnabled
+                    ? "Animação do dado ligada — clique pro modo rápido (sem animação, útil em combate)"
+                    : "Modo rápido ligado (sem animação) — clique pra religar a animação do dado"
+                }
+                aria-label={diceAnimationEnabled ? "Desligar animação do dado" : "Ligar animação do dado"}
+                aria-pressed={diceAnimationEnabled}
+                className={`rounded-lg p-1.5 transition-colors ${
+                  diceAnimationEnabled
+                    ? "text-wine-500 hover:text-wine-600 dark:hover:text-wine-400"
+                    : "text-parchment-400 hover:text-parchment-600 dark:hover:text-parchment-300"
+                }`}
+              >
+                {diceAnimationEnabled ? <Zap className="h-4 w-4" /> : <ZapOff className="h-4 w-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Fechar rolador de dados"
+                className="text-parchment-400 hover:text-rose-500"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4">
-            {lastResult && (
-              <div
-                className={`mb-4 rounded-xl border p-3 text-center ${
-                  lastResult.critical === "sucesso"
-                    ? "border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/40"
-                    : lastResult.critical === "falha"
-                      ? "border-rose-400 bg-rose-50 dark:border-rose-700 dark:bg-rose-950/40"
-                      : "border-parchment-300 bg-parchment-100 dark:border-parchment-700 dark:bg-parchment-900"
-                }`}
-              >
-                <div className="text-3xl font-black text-parchment-900 dark:text-parchment-50">{lastResult.total}</div>
-                {lastResult.critical && (
+            {(isRolling || lastResult) && (
+              <div className={`mb-4 rounded-xl border p-3 text-center ${resultBoxClass}`}>
+                <div
+                  className={`text-3xl font-black text-parchment-900 dark:text-parchment-50 ${isRolling ? "animate-dice-spin" : ""}`}
+                >
+                  {isRolling ? rollingPreview : lastResult?.total}
+                </div>
+                {resultCritical && (
                   <div
                     className={`text-xs font-bold uppercase tracking-wide ${
-                      lastResult.critical === "sucesso" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                      resultCritical === "sucesso" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                     }`}
                   >
-                    {lastResult.critical === "sucesso" ? "Crítico!" : "Falha Crítica!"}
+                    {resultCritical === "sucesso" ? "Crítico!" : "Falha Crítica!"}
                   </div>
                 )}
               </div>
@@ -398,7 +469,8 @@ export default function DiceRoller() {
               <button
                 type="button"
                 onClick={handleRollD20}
-                className="w-full rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500"
+                disabled={isRolling}
+                className="w-full rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Rolar 1d20
               </button>
@@ -457,7 +529,8 @@ export default function DiceRoller() {
               <button
                 type="button"
                 onClick={handleRollDamage}
-                className="mt-2 w-full rounded-lg bg-parchment-800 py-2 text-sm font-bold text-white transition-colors hover:bg-parchment-700 dark:bg-parchment-200 dark:text-parchment-900 dark:hover:bg-parchment-300"
+                disabled={isRolling}
+                className="mt-2 w-full rounded-lg bg-parchment-800 py-2 text-sm font-bold text-white transition-colors hover:bg-parchment-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-parchment-200 dark:text-parchment-900 dark:hover:bg-parchment-300"
               >
                 Rolar Dano
               </button>
@@ -474,7 +547,8 @@ export default function DiceRoller() {
                       <button
                         type="button"
                         onClick={() => handleRollMacro(macro.id)}
-                        className="flex flex-1 items-center justify-between gap-2 rounded-lg bg-parchment-100 px-2 py-1.5 text-left text-xs font-medium text-parchment-700 transition-colors hover:bg-wine-500/10 hover:text-wine-700 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:text-wine-300"
+                        disabled={isRolling}
+                        className="flex flex-1 items-center justify-between gap-2 rounded-lg bg-parchment-100 px-2 py-1.5 text-left text-xs font-medium text-parchment-700 transition-colors hover:bg-wine-500/10 hover:text-wine-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:text-wine-300"
                       >
                         <span className="flex min-w-0 items-center gap-1.5">
                           <Star className="h-3 w-3 shrink-0 text-gold-500" />
