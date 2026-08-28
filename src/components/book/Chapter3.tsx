@@ -114,17 +114,10 @@ export default function Chapter3() {
             ["Imperador", "+6", "2d12", "3d10"],
           ]}
         />
-        <Aside title="Os três últimos degraus, e o que acontece acima deles">
+        <Aside title="Acima do topo da escada">
           <P>
-            A escada terminava no 4d10, e isso quebrava a ponta da progressão. O Estilo Deus da Espada
-            acumula nove degraus até o Imperador: um Espadão (d10, que já começa no 4º degrau) batia no
-            teto <b>já no Rei</b>, e a Maestria de Imperador — que promete três degraus, o degrau mais caro
-            do livro — não entregava absolutamente nada. Pior: adaga, espada curta e espadão convergiam
-            todos pro mesmo 4d10, e a escolha de arma deixava de existir no rank alto.
-          </P>
-          <P>
-            <b>Excedente vira dano fixo:</b> se um talento ou Maestria te der um degrau acima do 5d12
-            (Espada Emprestada e Punho Duplo são os dois casos do livro), cada degrau excedente vale{" "}
+            O 5d12 é o último degrau. Se um talento ou Maestria te der um degrau além dele — Espada
+            Emprestada e Punho Duplo são os dois casos do livro — cada degrau excedente vira{" "}
             <b>+2 de dano fixo</b> em vez de sumir. Nenhum PA gasto em degrau é jogado fora.
           </P>
         </Aside>

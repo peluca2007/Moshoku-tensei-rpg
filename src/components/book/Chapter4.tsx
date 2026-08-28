@@ -40,20 +40,18 @@ export default function Chapter4() {
             assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, com troco pra mais nada.
           </P>
         </Aside>
-        <Aside title="Por que existe um piso de PM">
+        <Aside title="O piso protege o mago de Intelecto">
           <P>
             O Capítulo 1 promete dois magos legítimos: o <b>cirurgião</b> (Intelecto alto, poucos tiros,
-            todos letais) e o <b>reator</b> (Espírito alto, bombardeia o dia inteiro). Sem o piso, o
-            primeiro não existia no rank alto — e não por ser fraco, mas por ser impossível.
+            todos letais) e o <b>reator</b> (Espírito alto, bombardeia o dia inteiro). Sem o piso o primeiro
+            não conseguiria nem conjurar a assinatura da própria escola no rank alto — o custo das magias
+            cresce dez vezes ao longo da progressão, e a reserva de quem não investe em Espírito não
+            acompanha.
           </P>
           <P>
-            A conta: um Fogo Imperador com Espírito 2 teria 2×6+8 = <b>20 PM</b>. <i>Sol Menor</i>, a magia
-            de assinatura da escola dele, custa <b>22 PM</b>. Ele nunca conseguiria conjurar a própria
-            assinatura, em nenhum descanso, por mais que jogasse. A causa é o descompasso entre as duas
-            curvas: o custo mediano de uma magia cresce <b>dez vezes</b> do 1º ao 6º patamar (2 PM → 20
-            PM), enquanto a reserva cresce menos de três vezes. O piso corrige exatamente esse fundo, e
-            some sozinho pra quem tem Espírito 4 ou mais — o teto de quem investe em Espírito não muda em
-            nada.
+            Na prática: se você tem Espírito 4 ou mais, o piso nunca entra na conta e você pode ignorá-lo.
+            Ele só existe pra quem largou Espírito pra investir em Intelecto — e garante que essa ficha
+            continue jogável até o Imperador.
           </P>
         </Aside>
         <List
@@ -64,19 +62,17 @@ export default function Chapter4() {
             <span key="desl"><b>Deslocamento:</b> 9 metros, exceto onde a raça indicar outro valor.</span>,
           ]}
         />
-        <Aside title="Por que o Rank entra no teste de resistência">
+        <Aside title="O Rank conta no teste de resistência">
           <P>
-            Ele não entrava, e essa era a única fórmula do livro em que o seu treino não contava pra nada.
-            O problema aparecia ao longo de uma campanha inteira: a CD das criaturas do Apêndice G sobe{" "}
-            <b>+10</b> do 1º ao 6º patamar, e o seu teste subia <b>+4</b> no mesmo período — só o
-            crescimento do atributo. A chance de resistir despencava de 70% pra 40%, e um personagem que
-            tivesse largado aquele atributo no Sistema de Defeitos chegava ao fim da campanha resistindo a
-            5% — falhando em dezenove de vinte efeitos.
+            Metade do Bônus de Rank, arredondada pra cima: <b>+1</b> no Principiante, <b>+2</b> do Avançado
+            ao Santo, <b>+3</b> no Imperador. É o mesmo valor que o Manto de Touki usa, de propósito — não
+            existe uma terceira escala pra decorar.
           </P>
           <P>
-            Metade do Bônus de Rank (o mesmo valor que o Manto de Touki já usa, +1 no Principiante até +3
-            no Imperador) devolve a curva pra algo em torno de 70% → 60%: você melhora, o mundo melhora
-            mais, e a diferença deixa de ser abismo.
+            Ele entra porque as CDs do mundo crescem mais rápido que os seus atributos: as criaturas do
+            Apêndice G sobem <b>+10</b> de CD entre o 1º e o 6º patamar, e um atributo vai de 4 a 8 no mesmo
+            período. Sem o Rank na conta, um veterano resistiria pior que um novato — e um personagem que
+            tenha largado aquele atributo no Sistema de Defeitos falharia em quase tudo no fim da campanha.
           </P>
         </Aside>
         <Aside title="Por que a fórmula é essa, e não uma soma simples">
@@ -235,13 +231,11 @@ export default function Chapter4() {
             "Falha Crítica (1 Natural): você recebe 2 Marcas da Morte.",
           ]}
         />
-        <Aside title="Por que a CD não é fixa">
+        <Aside title="Quem te derrubou decide o quanto é difícil voltar">
           <P>
-            Era CD 10 fixa, e no rank alto isso deixava de ser um teste: um Imperador com Vigor 6 passava
-            em 80% das rolagens, e morrer virava estatisticamente quase impossível justamente quando os
-            inimigos ficavam mais letais. Amarrar a CD a quem te derrubou mantém o goblin de estrada
-            sendo um susto (CD 9) e faz o Rei-Demônio ser o que ele deveria ser (CD 14, 60% de sucesso
-            com o mesmo Vigor 6): tenso, sem virar sentença.
+            Um goblin de estrada te deixa em CD 9 — você quase sempre estabiliza. Um Rei-Demônio te deixa em
+            CD 14, e aí cada turno caído é uma aposta de verdade. É a mesma ferida; o que muda é a força que
+            a abriu.
           </P>
         </Aside>
         <P>

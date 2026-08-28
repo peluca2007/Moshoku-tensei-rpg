@@ -79,20 +79,21 @@ export default function Appendices() {
             ["6º", "~118", "~87", "0 a ∞", "~91", "~95", "~18", "~31"],
           ]}
         />
-        <Warning title="A coluna da Espada foi corrigida — ela estava subestimada em 25%">
+        <Warning title="Três coisas que a tabela não diz sozinha">
           <P>
-            Do 3º ao 5º patamar os valores antigos (~46 / ~58 / ~76) esqueciam a <b>4ª Ação</b> que a
-            Maestria do Avançado (&ldquo;Velocidade Encarnada&rdquo;) concede a quem não se move no
-            turno. Recalculando a partir do dado real das árvores, são <b>~62 / ~78 / ~98</b>. Isso
-            importa além da tabela: era com esses números baixos que a calibragem de PV vinha sendo
-            conferida, então a margem de sobrevivência parecia mais folgada do que é.
+            <b>A Espada conta 4 Ações do Avançado em diante.</b> A Maestria &ldquo;Velocidade
+            Encarnada&rdquo; dá uma Ação extra a quem não se move no turno, e os números dela já assumem
+            isso. Ela é a única coluna com uma 4ª Ação antes do Imperador.
           </P>
           <P>
-            Duas leituras que a tabela não deixa óbvias: a linha de <b>Escudos</b> pressupõe que ele
-            gastou todas as Ações defendendo — um Defensor Imperador que <i>escolha</i> atacar faz perto
-            de 48 por turno, não 18. E os números de <b>magia</b> não são amortizados pelas Ações: uma
-            magia de Imperador custa 6 Ações, ou seja dois turnos inteiros, então o Sol Menor entrega
-            ~65 por turno, não ~130. Compare marcial com marcial e magia com magia.
+            <b>Escudos pressupõe todas as Ações gastas defendendo.</b> Um Defensor Imperador que{" "}
+            <i>escolha</i> atacar faz perto de 48 por turno, não 18. A coluna mede o que ele faz no papel
+            dele, não o teto dele.
+          </P>
+          <P>
+            <b>Magia não está amortizada pelas Ações.</b> Uma magia de Imperador custa 6 Ações — dois
+            turnos inteiros. O Sol Menor aparece como ~130, mas entrega ~65 por turno. Compare marcial com
+            marcial e magia com magia; cruzar as duas metades desta tabela engana.
           </P>
         </Warning>
         <Aside title="Como ler esta tabela">

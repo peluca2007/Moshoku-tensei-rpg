@@ -54,9 +54,7 @@ export default function Chapter1() {
             <b>Escolas de magia não concedem PM.</b> A sua reserva inteira é{" "}
             <b>(Espírito × Maior Bônus de Rank de magia) + 8</b>, com um piso de{" "}
             <b>(Maior Bônus de magia × 4) + 8</b> — calculada uma vez e recalculada sempre que o seu maior
-            patamar de magia sobe. Não há bônus extra por número de escolas abertas. O piso existe pra que
-            o cirurgião abaixo continue sendo uma build jogável no rank alto, e não muda nada pra quem tem
-            Espírito 4 ou mais (regra completa e a conta no Cap. 4, §1).
+            patamar de magia sobe. Não há bônus extra por número de escolas abertas.
           </P>
           <P>
             Abrir oito escolas no 1º patamar não te dá mana nenhuma a mais. Subir <b>uma</b> escola até o
@@ -97,14 +95,10 @@ export default function Chapter1() {
             criação e lixo de ficha no topo — ela sempre pesa a mesma fração do que você já é.
           </P>
           <P>
-            <b>As taxas dobraram</b> depois de comparar esta linha com o que as árvores já vendiam. Doze
-            árvores têm um talento de reserva recomprável (Braço de Ferro, Osso Duro, Pele de Pedra…) que
-            custa 1 PA e dá +4 PV por patamar: um Imperador com seis patamares levava <b>+24 PV por 1 PA</b>{" "}
-            ali, enquanto esta tabela pedia 2 PA por +12 PV. A compra genérica era, na prática, uma armadilha
-            — sempre a pior opção disponível pra quem tivesse qualquer árvore aberta. Agora as duas entregam
-            o mesmo valor por compra. O talento continua rendendo mais por PA, e isso é proposital: ele é
-            travado no número de patamares de <i>uma</i> árvore, enquanto esta compra é incondicional e não
-            tem teto.
+            Comparando com o talento de reserva que doze árvores vendem (Braço de Ferro, Osso Duro, Pele de
+            Pedra…): o talento rende mais por PA, mas é travado no número de patamares de <i>uma</i> árvore.
+            Esta compra rende menos por PA e não tem teto nem pré-requisito. As duas entregam o mesmo tanto
+            por compra — escolha pela trava, não pelo número.
           </P>
         </Aside>
         <Aside title="O Padrão das Reservas">

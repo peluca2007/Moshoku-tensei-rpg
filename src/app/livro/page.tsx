@@ -7,16 +7,12 @@ import Chapter4 from "@/components/book/Chapter4";
 import Chapter5 from "@/components/book/Chapter5";
 import Appendices from "@/components/book/Appendices";
 import ExportBookButton from "@/components/book/ExportBookButton";
+import BookShell from "@/components/book/BookShell";
+import type { TocEntry } from "@/components/book/BookToc";
 
 export const metadata: Metadata = {
   title: "Livro de Regras — Mushoku Tensei RPG",
 };
-
-interface TocEntry {
-  id: string;
-  label: string;
-  children?: TocEntry[];
-}
 
 const TOC: TocEntry[] = [
   {
@@ -93,37 +89,6 @@ const TOC: TocEntry[] = [
   },
 ];
 
-function TocNav() {
-  return (
-    <nav className="space-y-3 text-sm">
-      {TOC.map((chapter) => (
-        <div key={chapter.id}>
-          <a
-            href={`#${chapter.id}`}
-            className="font-semibold text-parchment-800 hover:text-wine-600 dark:text-parchment-200 dark:hover:text-wine-400"
-          >
-            {chapter.label}
-          </a>
-          {chapter.children && (
-            <ul className="mt-1 space-y-0.5 border-l border-parchment-300 pl-3 dark:border-parchment-800">
-              {chapter.children.map((c) => (
-                <li key={c.id}>
-                  <a
-                    href={`#${c.id}`}
-                    className="block py-0.5 text-parchment-600 hover:text-wine-600 dark:text-parchment-400 dark:hover:text-wine-400"
-                  >
-                    {c.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      ))}
-    </nav>
-  );
-}
-
 export default function LivroPage() {
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
@@ -137,32 +102,14 @@ export default function LivroPage() {
         <ExportBookButton />
       </header>
 
-      <div className="livro-shell grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr]">
-        <aside className="print-hide hidden lg:block">
-          <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
-              Sumário
-            </p>
-            <TocNav />
-          </div>
-        </aside>
-
-        <details className="print-hide rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60 lg:hidden">
-          <summary className="cursor-pointer text-sm font-semibold text-parchment-800 dark:text-parchment-200">Sumário</summary>
-          <div className="mt-3">
-            <TocNav />
-          </div>
-        </details>
-
-        <main className="min-w-0 space-y-14 rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm sm:p-6 dark:border-parchment-800 dark:bg-parchment-900/60">
-          <Chapter1 />
-          <Chapter2 />
-          <Chapter3 />
-          <Chapter4 />
-          <Chapter5 />
-          <Appendices />
-        </main>
-      </div>
+      <BookShell toc={TOC}>
+        <Chapter1 />
+        <Chapter2 />
+        <Chapter3 />
+        <Chapter4 />
+        <Chapter5 />
+        <Appendices />
+      </BookShell>
     </div>
   );
 }
