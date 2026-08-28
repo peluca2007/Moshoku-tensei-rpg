@@ -114,6 +114,14 @@ export default function Chapter3() {
             ["Imperador", "+6", "2d12", "3d10"],
           ]}
         />
+        <Warning title="Esta tabela é a progressão padrão, não universal">
+          A maioria das árvores do Corpo sobe exatamente +1 degrau por Rank (total +6 no Imperador), mas não
+          é regra fixa — cada árvore define os próprios degraus por patamar no catálogo dela (Cap. 3,
+          &ldquo;Todas as Sub-árvores&rdquo;). O Deus da Espada sobe mais rápido (chega no teto da escada, 4d10,
+          antes do Imperador, de propósito — é a identidade da árvore: &ldquo;o maior dano do livro&rdquo;); Cavalaria e
+          Escudos sobe mais devagar, porque o valor dela está em proteger o grupo, não em dano. Confira o
+          catálogo da árvore específica antes de calcular o dado final de alguém.
+        </Warning>
         <P>
           Fórmula de dano marcial: <b>Dado de Arma (escalado) + Força + Bônus do Rank</b>. Qual Rank conta
           depende do tipo de ataque, e a regra tem exatamente dois casos — nunca um terceiro:

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AttributeKey, CharacterData, InventoryItem, PurchasedAbility, RankName } from "@/lib/types";
-import { canPurchaseAbility, canUnlockRank } from "./selectors";
+import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
+import { canPurchaseAbility, canUnlockRank, getGuildRank } from "./selectors";
 
 const DEFAULT_ATTRIBUTES: Record<AttributeKey, number> = {
   forca: 0,
@@ -15,6 +15,7 @@ function blankCharacter(id: string, name: string): CharacterData {
   return {
     id,
     name,
+    lore: "",
     raceId: null,
     backgroundId: null,
     subtableEntryId: null,
@@ -58,6 +59,7 @@ interface RosterState {
   ensureActiveCharacter: () => void;
 
   setName: (name: string) => void;
+  setLore: (lore: string) => void;
   setRace: (raceId: string | null) => void;
   setBackground: (backgroundId: string | null) => void;
   setSubtableEntry: (entryId: string | null) => void;
@@ -77,6 +79,8 @@ interface RosterState {
   addSkill: (name: string) => void;
   removeSkill: (name: string) => void;
   addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
+  /** Loja da Guilda (Cap. 5, §2): debita `price` de `gold` e adiciona o item numa única operação. Retorna false (e não muda nada) se faltar PO ou se `requiredGuildRank` for maior que o Rank de Guilda atual. */
+  buyItem: (item: Omit<InventoryItem, "id" | "equipped">, price: number, requiredGuildRank: GuildRank) => boolean;
   removeItem: (itemId: string) => void;
   /** Edição livre de qualquer campo do item (nome, dado, +CA, descrição...), sem precisar apagar e recriar. */
   updateItem: (itemId: string, patch: Partial<Omit<InventoryItem, "id">>) => void;
@@ -129,7 +133,8 @@ export const useCharacterStore = create<RosterState>()(
 
       importCharacter: (data) => {
         const id = makeId("char");
-        const character: CharacterData = { ...data, id };
+        // JSON exportado antes do campo `lore` existir não traz essa chave — preenche vazio.
+        const character: CharacterData = { ...data, id, lore: data.lore ?? "" };
         set((state) => ({
           characters: { ...state.characters, [id]: character },
           order: [...state.order, id],
@@ -166,6 +171,7 @@ export const useCharacterStore = create<RosterState>()(
       },
 
       setName: (name) => updateActive(get, set, (c) => ({ ...c, name })),
+      setLore: (lore) => updateActive(get, set, (c) => ({ ...c, lore })),
       setRace: (raceId) => updateActive(get, set, (c) => ({ ...c, raceId })),
       setBackground: (backgroundId) =>
         updateActive(get, set, (c) => ({ ...c, backgroundId, subtableEntryId: null })),
@@ -233,6 +239,18 @@ export const useCharacterStore = create<RosterState>()(
           ...c,
           inventory: [...c.inventory, { ...item, id: makeId("item"), equipped: false }],
         })),
+      buyItem: (item, price, requiredGuildRank) => {
+        const state = get();
+        const active = state.activeId ? state.characters[state.activeId] : null;
+        if (!active || active.gold < price) return false;
+        if (!meetsGuildRank(getGuildRank(active), requiredGuildRank)) return false;
+        updateActive(get, set, (c) => ({
+          ...c,
+          gold: c.gold - price,
+          inventory: [...c.inventory, { ...item, id: makeId("item"), equipped: false }],
+        }));
+        return true;
+      },
       removeItem: (itemId) =>
         updateActive(get, set, (c) => ({ ...c, inventory: c.inventory.filter((i) => i.id !== itemId) })),
       updateItem: (itemId, patch) =>
@@ -285,10 +303,21 @@ export const useCharacterStore = create<RosterState>()(
     {
       name: "mushoku-tensei-roster",
       skipHydration: true,
-      // v4: adicionou currentHp/currentMp/currentPt/currentPp e overrides (CA/máximos editáveis).
-      // Sem usuários reais ainda, então uma versão antiga simplesmente reseta o roster.
-      version: 4,
-      migrate: () => ({ characters: {}, order: [], activeId: null }),
+      // v5: adicionou `lore` (texto livre) em CharacterData — preserva o roster e só completa o
+      // campo novo, porque a partir daqui já existem fichas reais salvas (loja, PO, inventário
+      // testados em sessão real). Versões anteriores a v4 continuam resetando: o formato de antes
+      // (sem currentHp/overrides) é velho o bastante pra não valer a pena migrar de verdade.
+      version: 5,
+      migrate: (persistedState, version) => {
+        if (version < 4) return { characters: {}, order: [], activeId: null };
+        const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
+        return {
+          ...prev,
+          characters: Object.fromEntries(
+            Object.entries(prev.characters).map(([id, c]) => [id, { ...c, lore: c.lore ?? "" }])
+          ),
+        };
+      },
       // history é só uma conveniência de sessão pro botão "Desfazer" — não faz sentido inchar o
       // localStorage guardando fichas inteiras duplicadas, e não precisa sobreviver a um recarregamento.
       partialize: (state) => ({ characters: state.characters, order: state.order, activeId: state.activeId }),

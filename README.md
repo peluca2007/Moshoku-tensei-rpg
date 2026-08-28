@@ -24,11 +24,12 @@ Um único site que é ao mesmo tempo o **livro de regras** e a **mesa de jogo** 
 | | |
 |---|---|
 | 📖 **`/livro`** | O livro de regras inteiro (5 capítulos + 7 apêndices), navegável, com sumário fixo e exportação em PDF num clique. |
-| 📝 **Ficha de personagem** | Cálculo automático de PV/PM/PT/PP/CA/dano, inventário com Dado de Arma escalável, grimório com busca, exportação em PDF e JSON. |
-| 🎲 **Três vias de criação** | Manual, Roleta do Destino (raça/antecedente/atributos sorteados) e A Entrevista (perguntas que inclinam o sorteio sem nunca garantir o resultado). |
+| 📝 **`/ficha`** | Cálculo automático de PV/PM/PT/PP/CA/dano, inventário com Dado de Arma escalável, grimório com busca, campo de lore/anotações, exportação em PDF e JSON. |
+| 🎲 **Três vias de criação** | Manual, Roleta do Destino (raça/antecedente/atributos sorteados) e A Entrevista (perguntas que inclinam o sorteio sem nunca garantir o resultado, e ainda geram um rascunho de lore pro personagem). |
 | 🕸️ **`/arvores`** | Mapa radial navegável das 18 árvores de progressão do jogo, incluindo árvores híbridas que só se revelam a quem já domina outras duas. |
-| ⚔️ **`/iniciativa`** e **`/mestre`** | Tracker de combate e painel de acompanhamento pro Mestre. |
-| 🎯 **Rolador de dados** | Testes, dano e macros salváveis, com atalho de teclado (`R`). |
+| 🛒 **`/loja`** | Loja da Guilda: compra item, debita PO e manda direto pro inventário da ficha ativa — catálogo com o mesmo dado que o livro lista em preço, filtro por Tipo e por Rank de Guilda. |
+| ⚔️ **`/iniciativa`** | Tracker de combate por rodada, com condições e PV por combatente. |
+| 🎯 **Rolador de dados** | Testes, dano e macros salváveis, com atalho de teclado (`R`) e animação opcional de dado girando. |
 
 Tudo mobile-first: a leitura do livro, a ficha e o rolador de dados funcionam sem zoom e sem quebra de layout num celular.
 
@@ -63,13 +64,14 @@ npx tsc --noEmit -p .   # typecheck
 
 | Rota | O que é |
 |---|---|
-| `/` | Ficha do personagem ativo |
+| `/` | Landing page — apresentação do projeto, botões pra criar personagem ou abrir uma ficha |
+| `/ficha` | Ficha do personagem ativo |
 | `/personagens` | Lista de fichas (criar, abrir, renomear, excluir, importar/exportar JSON) |
 | `/criar` | As três vias de criação de personagem |
 | `/arvores` | Mapa radial das árvores de progressão |
 | `/livro` | Livro de regras completo, navegável e exportável em PDF |
+| `/loja` | Loja da Guilda — comprar item manda direto pro inventário da ficha ativa |
 | `/iniciativa` | Tracker de combate |
-| `/mestre` | Painel de acompanhamento pro Mestre |
 
 ## Stack
 

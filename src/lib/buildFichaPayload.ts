@@ -207,6 +207,9 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
     spellcasting,
     trees,
     traits,
+    // Parágrafos separados por linha em branco — cada um vira um bloco próprio no Typst
+    // (loreBlock em typstFicha.ts), em vez de tentar interpretar `\n` dentro de um único texto.
+    lore: (character.lore ?? "").split(/\n{2,}/).map((p) => p.trim()).filter(Boolean),
     weapons,
     inventory,
     abilityCards,

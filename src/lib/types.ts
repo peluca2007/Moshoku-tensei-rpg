@@ -212,8 +212,16 @@ export interface InventoryItem {
   equipped: boolean;
 }
 
-/** Cap. 1, seção 2 (Tabela de Custos Gerais): 2 PA = +12 PV ou +12 PM Máximos permanentes, além do PA de árvore. */
-export const HP_MP_BONUS_PER_TWO_PA = 12;
+/** Cap. 5, §2: Rank de Aventureiro na Guilda — mede reputação, não poder de combate (RANKS acima). */
+export type GuildRank = "F" | "E" | "D" | "C" | "B" | "A" | "S";
+
+/** Ordem crescente de prestígio na Guilda — usada pra comparar "Rank X já libera itens até aqui". */
+export const GUILD_RANK_ORDER: GuildRank[] = ["F", "E", "D", "C", "B", "A", "S"];
+
+/** true se `have` já alcança (ou supera) `required` na escada de Rank de Guilda. */
+export function meetsGuildRank(have: GuildRank, required: GuildRank): boolean {
+  return GUILD_RANK_ORDER.indexOf(have) >= GUILD_RANK_ORDER.indexOf(required);
+}
 
 /**
  * Dados de uma ficha de personagem — o site suporta várias, uma por vez ativa.
@@ -223,6 +231,8 @@ export const HP_MP_BONUS_PER_TWO_PA = 12;
 export interface CharacterData {
   id: string;
   name: string;
+  /** Texto livre — história de fundo e anotações de mesa. A Entrevista (Via 3) pré-preenche com um rascunho a partir das respostas; o jogador edita à vontade em /ficha. Também sai no PDF exportado. */
+  lore: string;
   raceId: string | null;
   backgroundId: string | null;
   subtableEntryId: string | null;
@@ -261,6 +271,6 @@ export interface CharacterData {
     armorClass?: number;
     initiative?: number;
     /** Cap. 5, §2: Rank de Guilda é decisão do Mestre, nunca uma fórmula — isto é o valor que ele fixou. Sem isso, o site mostra uma estimativa por PA gasto, só como chute inicial. */
-    guildRank?: "F" | "E" | "D" | "C" | "B" | "A" | "S";
+    guildRank?: GuildRank;
   };
 }

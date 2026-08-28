@@ -9,13 +9,15 @@ import {
   AttributeKey,
   ATTRIBUTES,
   CharacterData,
-  HP_MP_BONUS_PER_TWO_PA,
+  GuildRank,
   RANK_BONUS,
   RANK_REQUIREMENTS,
   RANKS,
   RankName,
   Tree,
 } from "@/lib/types";
+
+export type { GuildRank };
 
 /** Cap. 3: o Deus da Espada acorda o Touki Pleno no 2º patamar (Intermediário); as demais árvores do Corpo, no 3º (Avançado). */
 function ptPlenoThresholdIndex(treeId: string): number {
@@ -119,22 +121,32 @@ export function getMaxHp(state: StoreState): number {
 }
 
 /**
- * PM Máximos (Cap. 4): (Espírito × Maior Bônus de Rank DE MAGIA × 2) + 8.
+ * PM Máximos (Cap. 4): (Espírito × Maior Bônus de Rank DE MAGIA) + 8.
  * Escolas de magia não concedem PM — a reserva inteira vem só desta fórmula.
+ * Sem o ×2 que a fórmula usou até 2026-08-28: com ele, um Espírito alto
+ * (até o teto de 8, Cap. 1 §2) rendia PM sobrando pra 4-7 casts da magia mais
+ * forte do rank Imperador (custo até 20 PM) — bem acima do "no máximo umas 2
+ * vezes" pretendido pro golpe mais forte de um personagem. Sem o ×2, o mesmo
+ * personagem maximizado fica perto de 2-3 casts, e sem investir em Espírito
+ * fica perto de 1 cast cheio + troco pra magias menores.
  */
 export function getMaxMp(state: StoreState): number {
   const espirito = getFinalAttribute(state, "espirito");
   const maiorBonusMagia = getHighestRankBonus(state, "magia");
-  const computed = espirito * maiorBonusMagia * 2 + 8 + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+  const computed = espirito * maiorBonusMagia + 8 + getFlatBonusSum(state, "maxMp") + state.bonusMp;
   return state.overrides.maxMp ?? computed;
 }
 
 /**
- * Pontos de Touki (Cap. 3 e Cap. 4): sem nenhum patamar do Corpo, 0. Com pelo
- * menos um patamar mas nenhum "Pleno" ainda, PT Menor = max(Vigor, 1). A
- * partir do Touki Pleno (3º patamar em geral; 2º na Espada):
- * PT = Vigor + (Espírito × Maior Bônus de Rank do Corpo) — Cavalaria e Escudos
- * soma o próprio Bônus de Rank mais uma vez, por gastar mais rápido que as demais.
+ * Pontos de Touki (Cap. 3, "Pontos de Touki (PT) — as duas reservas"): sem
+ * nenhum patamar do Corpo, 0. Com pelo menos um patamar mas nenhum "Pleno"
+ * ainda, PT Menor = max(Vigor, 1). A partir do Touki Pleno (3º patamar em
+ * geral; 2º no Deus da Espada, que também conta pra soma de Crescimento):
+ * PT = Vigor + Espírito + Crescimento, onde Crescimento soma +1 por patamar
+ * com Pleno já desbloqueado (+2 por patamar em Cavalaria e Escudos, que gasta
+ * PT mais rápido que qualquer outra árvore). Corrigido em 2026-08-28: a
+ * fórmula antiga daqui (Vigor + Espírito×Maior Bônus, multiplicativa) não
+ * batia com o livro e deixava PT bem mais generoso que o pretendido.
  */
 export function getPtPool(state: StoreState): number {
   const corpoRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "corpo");
@@ -148,13 +160,9 @@ export function getPtPool(state: StoreState): number {
     const plenoRanks = corpoRanks.filter((u) => RANKS.indexOf(u.rank) >= ptPlenoThresholdIndex(u.treeId));
     if (plenoRanks.length === 0) return Math.max(vigor, 1);
 
-    const maiorBonusCorpo = getHighestRankBonus(state, "corpo");
-    const escudosBonusExtra = Math.max(
-      0,
-      ...plenoRanks.filter((u) => u.treeId === "cavalaria-e-escudos").map((u) => RANK_BONUS[u.rank])
-    );
+    const crescimento = plenoRanks.reduce((sum, u) => sum + (u.treeId === "cavalaria-e-escudos" ? 2 : 1), 0);
 
-    return vigor + espirito * (maiorBonusCorpo + escudosBonusExtra);
+    return vigor + espirito + crescimento;
   }
 
   return state.overrides.maxPt ?? computeNatural();
@@ -328,10 +336,23 @@ export function getAttributePaCost(state: StoreState): number {
   }, 0);
 }
 
-/** Cap. 1, seção 2: 2 PA = +12 PV ou +12 PM Máximos (arredonda pra cima). */
+/**
+ * Cap. 1, seção 2: 2 PA = +PV iguais ao dobro do Maior Bônus de Rank (qualquer
+ * árvore), ou +PM iguais ao Maior Bônus de Rank de magia — escala com o Rank
+ * de propósito (o Aside do livro explica: um Imperador rende 6× mais por PA
+ * que um Principiante). Corrigido em 2026-08-28: a taxa antiga aqui era fixa
+ * em 12 pra qualquer Rank — coincidência nenhuma ela valer exatamente `2 × 6`,
+ * o Bônus só de um Imperador; personagens de Rank mais baixo pagavam PA de
+ * menos pelo bônus. `bonusHp`/`bonusMp`
+ * continuam sendo o valor de PV/PM que o jogador digita direto na ficha
+ * (Cap. 1: "PA é informativo, não travado") — só o cálculo do custo em PA
+ * mostrado passou a usar a taxa certa pro Rank atual do personagem.
+ */
 export function getHpMpPaCost(state: StoreState): number {
-  const hpCost = Math.ceil(state.bonusHp / HP_MP_BONUS_PER_TWO_PA) * 2;
-  const mpCost = Math.ceil(state.bonusMp / HP_MP_BONUS_PER_TWO_PA) * 2;
+  const hpRate = Math.max(1, getHighestRankBonus(state) * 2);
+  const mpRate = Math.max(1, getHighestRankBonus(state, "magia"));
+  const hpCost = Math.ceil(state.bonusHp / hpRate) * 2;
+  const mpCost = Math.ceil(state.bonusMp / mpRate) * 2;
   return Math.max(0, hpCost) + Math.max(0, mpCost);
 }
 
@@ -362,8 +383,6 @@ export function getPaSpent(state: StoreState): number {
   }, 0);
   return rankCost + abilityCost + getAttributePaCost(state) + getHpMpPaCost(state);
 }
-
-export type GuildRank = "F" | "E" | "D" | "C" | "B" | "A" | "S";
 
 /** Cap. 5, §2 (Guilda de Aventureiros): faixas de PA usadas como referência pro Rank de Aventureiro — não é regra travada, só o chute inicial que o livro dá ao Mestre. */
 const GUILD_RANK_THRESHOLDS: { rank: GuildRank; min: number }[] = [

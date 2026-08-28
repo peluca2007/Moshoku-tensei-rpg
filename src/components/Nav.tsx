@@ -11,8 +11,7 @@ const LINKS = [
   { href: "/arvores", label: "Árvores" },
   { href: "/personagens", label: "Personagens" },
   { href: "/iniciativa", label: "Iniciativa" },
-  { href: "/mestre", label: "Mestre" },
-  { href: "/apresentacao", label: "Apresentação" },
+  { href: "/loja", label: "Loja" },
   { href: "/livro", label: "Livro de Regras" },
 ];
 

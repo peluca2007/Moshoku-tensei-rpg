@@ -63,6 +63,8 @@ export interface FichaPdfPayload {
   spellcasting: FichaSpellcastingRow[];
   trees: FichaTreePillar[];
   traits: string[];
+  /** Parágrafos de lore/anotações (já quebrados por parágrafo — ver buildFichaPayload). */
+  lore: string[];
   weapons: FichaWeaponRow[];
   inventory: FichaInventoryRow[];
   abilityCards: FichaAbilityCard[];
@@ -122,6 +124,11 @@ const PREAMBLE = `
 #let filled-line(value) = block(
   stroke: (bottom: 0.5pt + silver), width: 100%, inset: (bottom: 3pt, top: 3pt),
   text(size: 8.5pt)[#value]
+)
+
+#let lore-paragraph(value) = block(
+  width: 100%, inset: (bottom: 6pt),
+  text(size: 9pt)[#value]
 )
 
 #let ability-card(name, cost, time, range, effect) = block(
@@ -240,6 +247,28 @@ function traitsBlock(traits: string[]): string {
 #block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
   #grid(columns: 1fr, row-gutter: 5pt,
   ${lines}
+  )
+]`;
+}
+
+function loreBlock(paragraphs: string[]): string {
+  if (paragraphs.length === 0) {
+    return `
+#section-title("LORE E ANOTAÇÕES")
+#v(4pt)
+#block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
+  #text(size: 8pt, fill: gray)[Nada escrito ainda — edite em /ficha.]
+]`;
+  }
+  // Sem breakable: false de propósito — ao contrário do ability-card, um texto de lore pode ser
+  // longo o bastante pra precisar quebrar entre páginas, e isso é permitido por padrão em Typst.
+  const paras = paragraphs.map((para) => `lore-paragraph(${tstr(para)})`).join(",\n  ");
+  return `
+#section-title("LORE E ANOTAÇÕES")
+#v(4pt)
+#block(stroke: 1pt + gray, radius: 4pt, inset: 10pt, width: 100%)[
+  #grid(columns: 1fr, row-gutter: 2pt,
+  ${paras}
   )
 ]`;
 }
@@ -371,6 +400,9 @@ ${inventoryBlock(p.inventory)}
     #blank-lines(2, spacing: 16pt)
   ]
 ]
+#v(10pt)
+
+${loreBlock(p.lore)}
 
 // ==========================================
 // MAGIAS E HABILIDADES (DEITADA) — sempre começa em página nova por causa

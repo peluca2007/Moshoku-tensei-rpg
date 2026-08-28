@@ -1,4 +1,5 @@
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import ShopCatalog from "./ShopCatalog";
 
 export default function Chapter5() {
   return (
@@ -119,6 +120,9 @@ export default function Chapter5() {
           Rank de Aventureiro é o segundo portão — o dinheiro compra o item, mas só depois que a Guilda
           confia em você o bastante pra deixar você chegar perto dele.
         </Aside>
+
+        <SubTitle>Catálogo da Loja</SubTitle>
+        <ShopCatalog />
       </Section>
 
       <Section>
@@ -191,6 +195,10 @@ export default function Chapter5() {
             ["Poção de Antídoto", "13", "25 PO / 13 PO", "Remove 1 ponto de Profundidade de uma única aflição (Cap. 4, §7)."],
             ["Poção Maior de Cura", "15", "60 PO / 30 PO", "Reproduz uma magia de Cura de rank Avançado ou Santo."],
             ["Elixir de Foco", "13", "40 PO / 20 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
+            ["Poção de Vigor Passageiro", "14", "45 PO / 23 PO", "Vantagem no próximo teste de resistência de Vigor — a versão física do Elixir de Foco."],
+            ["Poção Régia de Cura", "17", "120 PO / 60 PO", "Reproduz uma magia de Cura de rank Rei — um degrau acima da Poção Maior."],
+            ["Elixir de Regeneração", "18", "200 PO / 100 PO", "Remove toda a Exaustão acumulada de quem bebe (Cap. 4, §8) — não cura PV nem PM, só o cansaço acumulado."],
+            ["Poção Imperial de Cura", "20", "400 PO / 200 PO", "Reproduz uma magia de Cura de rank Imperador — o topo da escada, engarrafado."],
           ]}
         />
         <SubTitle>Venenos</SubTitle>

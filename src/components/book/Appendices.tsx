@@ -15,7 +15,7 @@ export default function Appendices() {
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
             "PV (Cap. 4, §1): Constituição Base (10 + Vigor 2×3 = 16) + Progressão (soma dos dados de PV dos 12 ranks dela, em todas as 4 árvores, dobrada = 150) + Vitalidade (Vigor 2 × Bônus do Santo 4 × 4 = 32) = 198 PV",
-            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) × 2 + 8 = 48, mais os +10 PM fixos da raça Migurd = 58 PM",
+            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os +10 PM fixos da raça Migurd = 38 PM",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
             "Maestrias de Água: Afinidade Aquática, Cântico Fluido, Termodinâmica Aplicada, Domínio Climático",
@@ -168,8 +168,8 @@ export default function Appendices() {
 
         <SubTitle>Sobre a Guilda e Combinações Novas</SubTitle>
         <QA
-          q="Meu Rank de Guilda sobe sozinho conforme eu gasto PA?"
-          a="Não. Rank de Guilda é decisão do Mestre sobre feitos públicos (Cap. 5, §2) — PA gasto não move esse marcador, só o das suas Árvores de Progressão."
+          q="Meu Rank de Aventureiro sobe sozinho conforme eu gasto PA?"
+          a="Não. Rank de Aventureiro é decisão do Mestre sobre feitos públicos (Cap. 5, §2) — PA gasto não move esse marcador, só o das suas Árvores de Progressão."
         />
         <QA
           q="Posso combinar uma magia com uma técnica de Corpo ou Utilidade, não só magia com magia?"
