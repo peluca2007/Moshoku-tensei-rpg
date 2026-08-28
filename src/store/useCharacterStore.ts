@@ -172,7 +172,33 @@ export const useCharacterStore = create<RosterState>()(
       setSubtableEntry: (subtableEntryId) => updateActive(get, set, (c) => ({ ...c, subtableEntryId })),
       setAttribute: (key, value) =>
         updateActive(get, set, (c) => ({ ...c, attributeBase: { ...c.attributeBase, [key]: value } })),
-      setStartingTree: (startingTreeId) => updateActive(get, set, (c) => ({ ...c, startingTreeId })),
+      // Trocar a Árvore Inicial (Cap. 1 §4: desbloqueia o 1º patamar dela de graça) não pode
+      // deixar a escolha anterior "comprada" pra sempre — se o jogador mudou de ideia antes de
+      // mexer em mais nada naquela árvore (nada comprado, nenhum rank além do Principiante),
+      // o Principiante antigo sai e o da nova árvore entra. Se ele já tinha progredido de
+      // verdade na árvore anterior (fora do fluxo de criação), isso fica intocado.
+      setStartingTree: (startingTreeId) =>
+        updateActive(get, set, (c) => {
+          const previous = c.startingTreeId;
+          const previousUntouched =
+            previous &&
+            previous !== startingTreeId &&
+            !c.purchasedAbilities.some((a) => a.treeId === previous) &&
+            c.unlockedRanks.filter((u) => u.treeId === previous).every((u) => u.rank === "Principiante");
+          const unlockedRanks = previousUntouched
+            ? c.unlockedRanks.filter((u) => u.treeId !== previous)
+            : c.unlockedRanks;
+          const alreadyUnlocked =
+            !startingTreeId || unlockedRanks.some((u) => u.treeId === startingTreeId && u.rank === "Principiante");
+          return {
+            ...c,
+            startingTreeId,
+            unlockedRanks:
+              startingTreeId && !alreadyUnlocked
+                ? [...unlockedRanks, { treeId: startingTreeId, rank: "Principiante" as RankName }]
+                : unlockedRanks,
+          };
+        }),
       setGold: (gold) => updateActive(get, set, (c) => ({ ...c, gold })),
       setBonusHp: (bonusHp) => updateActive(get, set, (c) => ({ ...c, bonusHp })),
       setBonusMp: (bonusMp) => updateActive(get, set, (c) => ({ ...c, bonusMp })),
