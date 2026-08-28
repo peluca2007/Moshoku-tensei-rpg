@@ -164,8 +164,25 @@ export const INTERVIEW_QUESTIONS: InterviewQuestion[] = [
 
 export const INTERVIEW_QUESTION_COUNT = 10;
 
+/**
+ * Modo da Entrevista, escolhido antes da 1ª pergunta (pedido do usuário, 2026-08-28):
+ * - "ambos": comportamento original — as respostas pesam a loteria de Raça E de Antecedente.
+ * - "antecedente": o jogador escolhe a Raça na mão antes de começar, e as respostas
+ *   pesam só a loteria de Antecedente. Serve pra quem já sabe o que quer ser, mas
+ *   quer descobrir de onde veio.
+ */
+export type InterviewMode = "ambos" | "antecedente";
+
+/** Um candidato da loteria com o peso de raridade dele (ver `weightedPick`). */
+export interface LotteryEntry {
+  id: string;
+  /** Peso base = quão comum o resultado é no mundo. 0 = fora do sorteio (ex: Dragão). */
+  weight: number;
+}
+
 export interface InterviewResult {
-  raceId: string;
+  /** null no modo "antecedente" — a Raça já foi escolhida na mão, não sorteada. */
+  raceId: string | null;
   backgroundId: string;
   raceWeights: Record<string, number>;
   backgroundWeights: Record<string, number>;
@@ -182,26 +199,41 @@ export function drawInterviewQuestions(count = INTERVIEW_QUESTION_COUNT): Interv
 }
 
 /**
- * Loteria pesada: todo id (raça ou antecedente) começa com 1 "bilhete" só de existir — a
- * loteria do nascimento nunca é zero — e ganha +2 bilhetes por resposta que o empurrou.
- * Isso significa que responder tudo "certo" pra um resultado aumenta muito a chance dele,
- * mas nunca a garante, e um resultado nunca-empurrado ainda pode sair.
+ * Loteria pesada. Cada candidato começa com bilhetes iguais à raridade dele no mundo
+ * (`LotteryEntry.weight`) e ganha **+2 bilhetes por resposta que o empurrou**. Responder
+ * tudo "certo" pra um resultado aumenta muito a chance dele, mas nunca a garante — e um
+ * resultado nunca-empurrado ainda pode sair.
+ *
+ * Corrigido em 2026-08-28: o peso base era **1 fixo pra todo mundo**, então a Entrevista
+ * ignorava a raridade por completo — um Migurd (raro) saía tanto quanto um Humano (comum),
+ * e um Antecedente de faixa 95-96 no d100 (2% na tabela do livro) empatava com um de faixa
+ * 01-20 (20%). Isso contradizia diretamente a Via 2, onde a regra das 3 tentativas existe
+ * justamente "pra que raça/antecedente raros continuem raros de verdade". Agora as duas
+ * vias usam a mesma noção de raridade: `RACE_WEIGHT` pras raças, a largura do `rollRange`
+ * d100 pros antecedentes.
  */
-function weightedPick(allIds: string[], weights: Record<string, number>): string {
-  const tickets = allIds.map((id) => 1 + 2 * (weights[id] ?? 0));
+function weightedPick(pool: LotteryEntry[], pushes: Record<string, number>): string {
+  const rollable = pool.filter((e) => e.weight > 0);
+  const entries = rollable.length > 0 ? rollable : pool;
+  const tickets = entries.map((e) => Math.max(1, e.weight) + 2 * (pushes[e.id] ?? 0));
   const total = tickets.reduce((sum, t) => sum + t, 0);
   let roll = Math.random() * total;
-  for (let i = 0; i < allIds.length; i++) {
+  for (let i = 0; i < entries.length; i++) {
     roll -= tickets[i];
-    if (roll <= 0) return allIds[i];
+    if (roll <= 0) return entries[i].id;
   }
-  return allIds[allIds.length - 1];
+  return entries[entries.length - 1].id;
 }
 
+/**
+ * Resolve o Destino. No modo "antecedente" a Raça não é sorteada (o jogador já escolheu
+ * na mão) e `raceId` volta null — as respostas pesam só a loteria de Antecedente.
+ */
 export function resolveInterview(
   answers: InterviewOption[],
-  allRaceIds: string[],
-  allBackgroundIds: string[]
+  racePool: LotteryEntry[],
+  backgroundPool: LotteryEntry[],
+  mode: InterviewMode = "ambos"
 ): InterviewResult {
   const raceWeights: Record<string, number> = {};
   const backgroundWeights: Record<string, number> = {};
@@ -210,8 +242,8 @@ export function resolveInterview(
     for (const id of answer.backgroundIds ?? []) backgroundWeights[id] = (backgroundWeights[id] ?? 0) + 1;
   }
   return {
-    raceId: weightedPick(allRaceIds, raceWeights),
-    backgroundId: weightedPick(allBackgroundIds, backgroundWeights),
+    raceId: mode === "ambos" ? weightedPick(racePool, raceWeights) : null,
+    backgroundId: weightedPick(backgroundPool, backgroundWeights),
     raceWeights,
     backgroundWeights,
   };
