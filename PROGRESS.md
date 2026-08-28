@@ -41,6 +41,20 @@ Principiante desbloqueado pra sempre — agora `setStartingTree` limpa a escolha
   - A lógica de pontos/loteria pesada por resposta (todo id começa com 1 bilhete, resposta que
     empurra ganha +2) continua a mesma — só muda a cardinalidade de respostas e a existência dos
     2 modos.
+- [ ] **Animação no Rolador de Dados** (pedido do usuário, 2026-08-28) — escopo definido,
+      **ainda não implementado de propósito** (só documentar por ora):
+  - Ao rolar (Teste 1d20, Dano, Macro), o resultado já é calculado na hora (`rollD20`/
+    `rollFormula` em `src/lib/rollEngine.ts` são síncronos) — a ideia é só **exibir** isso com um
+    breve efeito de dado girando/números trocando antes de assentar no valor real, em vez de
+    aparecer instantâneo como hoje. Não muda a lógica de rolagem, só a apresentação em
+    `DiceRoller.tsx`.
+  - Precisa de uma **opção de desativar** a animação (modo rápido, resultado aparece na hora) —
+    útil em combate, quando não dá pra esperar a animação toda rodada. Provavelmente um toggle
+    persistido (ex: `localStorage`, parecido com o padrão já usado em `useMacroStore`), visível
+    no próprio painel do rolador.
+  - Reaproveitar o padrão de animação já usado na Roleta do Destino (`RouletteWheel.tsx`,
+    `globals.css`) e na Entrevista (fade/flash) onde fizer sentido, em vez de inventar um
+    mecanismo novo do zero.
 
 ## O que já está pronto
 
