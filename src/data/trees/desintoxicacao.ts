@@ -10,6 +10,11 @@ export const DESINTOXICACAO_TREE: Tree = {
   resourceLabel: "PM",
   tagline:
     "Trata veneno, doença, maldição e petrificação — a única escola cuja dificuldade cresce sozinha (Profundidade). O Rank Deus (a Doença da Pedra Mágica) é puramente narrativo.",
+  proficiencies: {
+    armas: "Nenhuma além do padrão (armas simples, armadura leve).",
+    pericias: "Medicina e Ofícios (Alquimia) são as perícias da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Escola Formal de Magia. Conjura com Espírito.",
+  },
   ranks: [
     {
       rank: "Principiante",

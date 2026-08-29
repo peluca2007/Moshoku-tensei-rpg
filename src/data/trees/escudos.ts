@@ -17,6 +17,11 @@ export const ESCUDOS_TREE: Tree = {
     Rei: "Muralha",
     Imperador: "Bastião",
   },
+  proficiencies: {
+    armas: "Toda arma de uma mão, TODO escudo, e armadura leve, média e pesada — o pacote de proficiência mais completo do livro em defesa.",
+    pericias: "Atletismo e Percepção são as perícias do ofício; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Ofício do Corpo (sem patamar Deus).",
+  },
   ranks: [
     {
       rank: "Principiante",

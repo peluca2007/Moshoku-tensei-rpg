@@ -1,4 +1,4 @@
-import { Background, SubtableEntry } from "@/lib/types";
+import { Background, SubtableEntry, SubtableId } from "@/lib/types";
 
 /**
  * Balanceamento dos Antecedentes — mesma régua das Raças (ver o cabeçalho de
@@ -155,20 +155,26 @@ export const BACKGROUNDS: Background[] = [
     id: "fator-laplace",
     name: "Fator Laplace / Linhagem Antiga",
     rollRange: [87, 92],
-    // O maior outlier de todo o livro: 14,75 PC na criação, mais que o dobro do
-    // segundo colocado, com os +20 PM sozinhos valendo 10 PC — DUAS VEZES E MEIA
-    // o orçamento inicial inteiro do jogador. Na prática o antecedente
-    // TRIPLICAVA a reserva de um mago recém-criado (12 → 32) num resultado de 6%
-    // da tabela. Cortar pra 8 põe o bônus em +67%, na mesma faixa do Estudioso
-    // Precoce, e não mexe no que realmente define esta linhagem — o +2 de
-    // Espírito, a Conjuração Silenciosa inata e as duas Vantagens continuam
-    // fazendo dele o antecedente mais forte no rank Imperador (3,92 PC), que é
-    // onde ele DEVE ganhar: raro, e forte no fim, não impossível no começo.
-    bonuses: { attributes: { espirito: 2 }, maxMp: 8, maxHp: 6 },
+    // 2026-08-29: todos os bônus fixos saíram e o antecedente passou a rolar 1d4
+    // na LAPLACE_TABLE. Duas razões.
+    //
+    // A primeira é a que o usuário apontou: o Fator Laplace (6% da tabela) estava
+    // mecanicamente ACIMA do Gênio (2%, o resultado mais raro do livro). Um
+    // antecedente três vezes mais comum não pode ser o mais forte — a curva de
+    // raridade e a de poder têm que apontar pro mesmo lado.
+    //
+    // A segunda é de identidade. "Linhagem Antiga" é a única entrada da tabela
+    // cujo texto promete algo IMPREVISÍVEL acordando no sangue, e ela era a mais
+    // previsível de todas: sempre os mesmos +2/+8/+6. Uma sub-tabela de 1d4 faz
+    // dois Fatores Laplace na mesma mesa serem coisas diferentes, que é o que a
+    // ficção sempre disse. Cada mutação vale +1 de atributo (que não decai) mais
+    // um traço que também não decai — abaixo do Gênio nas quatro faces.
+    bonuses: {},
+    requiresSubtable: "laplace",
     startingGold: "1d4",
     traits: [
-      "+2 em Espírito, +8 PM Máximos e +6 PV Máximos, permanentes — seu corpo nasceu acostumado a segurar mais mana e mais dor do que deveria ser possível.",
-      "Conjuração Silenciosa desde o nascimento (Cap. 2, seção 2): você manipula mana sem palavra alguma — ninguém te ensinou, você nunca soube fazer diferente.",
+      "Role 1d4 na Tabela do Fator Laplace: a linhagem acordou de um jeito, e não é o mesmo em dois portadores. A mutação sorteada é permanente.",
+      "Conjuração Silenciosa desde o nascimento (Cap. 2, seção 2): você manipula mana sem palavra alguma — ninguém te ensinou, você nunca soube fazer diferente. Sofre as penalidades normais do método (metade dos dados, área reduzida em um terço); quem não as sofre é o Gênio, e só ele.",
       "Vantagem em testes de resistência de Espírito contra Medo, Amedrontado e qualquer efeito que tente controlar sua mente: o que quer que exista na sua linhagem, não se deixa comandar.",
       "Desvantagem em Persuasão com desconhecidos — pessoas comuns sentem, mesmo sem saber o porquê, que algo em você quer distância.",
     ],
@@ -221,17 +227,28 @@ export const BACKGROUNDS: Background[] = [
     id: "genio",
     name: "Gênio (Conjuração Silenciosa)",
     rollRange: [99, 100],
-    // 99-100 é o resultado mais raro da tabela inteira e valia 2,35 PC — menos
-    // que Sangue Nobre (2,65), que é três vezes e meia mais comum. O Gênio é o
-    // único antecedente cujo pacote inteiro já não decaía com o Rank, então o
-    // ajuste certo era subir o piso, não empilhar mais um número fixo: +1 de
-    // Espírito é o segundo atributo do mago (Cap. 1 §1, "Os Dois Atributos do
-    // Mago") e fecha o par com o Intelecto que ele já tinha — o prodígio que
-    // manipula mana sem palavra alguma tem as duas metades, não só a precisão.
+    // 99-100 é o resultado mais raro da tabela inteira (2%) e precisa ser o mais
+    // forte, sem discussão — foi o pedido explícito do usuário em 2026-08-29,
+    // depois de o Fator Laplace (6%) estar acima dele.
+    //
+    // Onde o Gênio ganha, e por que é definitivo: ele é o ÚNICO personagem do
+    // livro que conjura em silêncio com dano cheio e área cheia. Pela regra do
+    // Cap. 2 §2, a Conjuração Silenciosa custa menos Ações que a Padrão E dá um
+    // Bônus de Forma grátis — o preço disso são metade dos dados e um terço da
+    // área. O Gênio simplesmente não paga esse preço. Na prática ele conjura a
+    // versão completa de qualquer magia pelo custo de Ação da versão reduzida,
+    // com um bônus de forma de brinde, a campanha inteira.
+    //
+    // A extensão de 2026-08-29 (Silenciosa gratuita até o Avançado, contra só o
+    // Principiante de todo mundo) é o que torna a superioridade IMPOSSÍVEL de
+    // discutir sem inflar número nenhum: é economia de ação, o recurso mais caro
+    // do sistema (Cap. 4 §4 tem um teto explícito pra ele), e cresce em valor
+    // conforme as magias ficam caras em Ações.
     bonuses: { attributes: { intelecto: 1, espirito: 1 } },
     startingGold: "2d4",
     traits: [
-      "Conjuração Silenciosa (Cap. 2, seção 2) sem sofrer a redução de dano nem a redução de área — só a limitação de forma continua valendo, e mesmo essa você pode escolher mudar como qualquer outro conjurador silencioso.",
+      "Conjuração Silenciosa (Cap. 2, seção 2) sem sofrer a redução de dano nem a redução de área — você é o único no livro que conjura em silêncio com o feitiço inteiro. O custo de Ação reduzido e o Bônus de Forma gratuito continuam valendo: você não perde nada e ganha os dois.",
+      "Prodígio: a Conjuração Silenciosa gratuita da primeira magia de cada turno vale até o rank AVANÇADO, não só o Principiante (Cap. 2, §2). Todo outro conjurador silencioso do mundo tem essa cortesia só no patamar mais baixo que conhece.",
       "+1 em Intelecto e +1 em Espírito, permanentes — precisão e reserva ao mesmo tempo, que é o que fez de você um gênio antes de qualquer aula.",
     ],
   },
@@ -356,10 +373,75 @@ export function getBackgroundById(id: string | null): Background | undefined {
   return BACKGROUNDS.find((b) => b.id === id);
 }
 
+/**
+ * Tabela do Fator Laplace (1d4) — Cap. 1, §6. Criada em 2026-08-29 pra substituir
+ * os bônus fixos do antecedente.
+ *
+ * Régua das quatro faces: cada uma dá +1 de atributo (que multiplica e não decai)
+ * mais UM traço permanente de natureza diferente — reserva, sobrevivência,
+ * conhecimento e presença. Nenhuma toca em Conjuração Silenciosa: o que separa o
+ * Fator Laplace do Gênio é justamente isso, e diluir essa fronteira desfaria a
+ * correção inteira. Nenhuma face chega perto do pacote do Gênio, de propósito:
+ * 6% da tabela não pode competir com 2%.
+ */
+export const LAPLACE_TABLE: SubtableEntry[] = [
+  {
+    id: "veias-abertas",
+    roll: 1,
+    name: "Veias Abertas",
+    bonuses: { attributes: { espirito: 1 } },
+    traits: [
+      "+1 em Espírito, permanente.",
+      "A mana corre solta em você e não fica parada: ao terminar um Descanso Curto, recupere PM adicionais iguais ao seu Maior Bônus de Rank de magia, além do que o descanso já devolve.",
+      "O corpo não fecha a torneira: você não consegue esconder que é um conjurador de quem enxerga mana (todo Superd, todo mago Avançado ou superior).",
+    ],
+  },
+  {
+    id: "carne-que-lembra",
+    roll: 2,
+    name: "Carne que Lembra",
+    bonuses: { attributes: { vigor: 1 } },
+    traits: [
+      "+1 em Vigor, permanente.",
+      "Uma vez por combate, ao chegar a 0 PV, você estabiliza automaticamente sem rolar o Fio da Vida (Cap. 4, §6) — a carne fecha antes de você decidir. Continua Inconsciente; só não morre.",
+      "Toda cicatriz sua reabre quando a linhagem é mencionada em voz alta perto de você. Não causa dano; causa perguntas.",
+    ],
+  },
+  {
+    id: "memoria-da-linhagem",
+    roll: 3,
+    name: "Memória da Linhagem",
+    bonuses: { attributes: { intelecto: 1 } },
+    traits: [
+      "+1 em Intelecto, permanente.",
+      "Vantagem Absoluta (Cap. 1, §4) em Arcanismo e História sobre qualquer coisa anterior ao seu nascimento — você não deduz, você LEMBRA, e as lembranças não são suas.",
+      "Nada disso vale pro presente: sobre o que aconteceu depois de você nascer, seus testes são normais como os de qualquer um.",
+    ],
+  },
+  {
+    id: "presenca-errada",
+    roll: 4,
+    name: "Presença Errada",
+    bonuses: { attributes: { agilidade: 1 } },
+    traits: [
+      "+1 em Agilidade, permanente.",
+      "Bestas, insetos gigantes e mortos-vivos sem mente não atacam você por iniciativa própria — algo neles reconhece o que você carrega e recua. Perdem o medo se você atacar primeiro, ou se alguém com mente os obrigar.",
+      "Animais domésticos fogem de você. Cavalo não te aceita; cão late até você sair de vista.",
+    ],
+  },
+];
+
+/** Toda sub-tabela de antecedente do livro, num registro só — acrescentar uma é uma linha aqui, e nenhuma no resto do código. */
+export const SUBTABLES: Record<SubtableId, { name: string; die: string; entries: SubtableEntry[] }> = {
+  miko: { name: "Miko e Amaldiçoados", die: "1d8", entries: MIKO_TABLE },
+  olho: { name: "Olhos Demoníacos / Místicos", die: "1d10", entries: OLHO_TABLE },
+  laplace: { name: "Fator Laplace", die: "1d4", entries: LAPLACE_TABLE },
+};
+
 export function getSubtableEntryById(
-  table: "miko" | "olho",
+  table: SubtableId,
   id: string | null
 ): SubtableEntry | undefined {
-  const source = table === "miko" ? MIKO_TABLE : OLHO_TABLE;
+  const source = SUBTABLES[table].entries;
   return source.find((e) => e.id === id);
 }

@@ -1,5 +1,5 @@
 import { RACES } from "@/data/races";
-import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
+import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
 import { RANK_BONUS, RANK_REQUIREMENTS, RANKS } from "@/lib/types";
 import { RANK_PA_COST } from "@/data/trees/shared";
 import { SKILLS } from "@/data/skills";
@@ -280,6 +280,33 @@ export default function Chapter1() {
           sua linhagem pra determinar traços genéticos e mecânicos — os detalhes de cada uma também aparecem
           direto na ficha ao selecionar a raça.
         </P>
+        <Aside title="Três formas de bônus racial, e por que elas são diferentes">
+          <List
+            items={[
+              <span key="a">
+                <b>Bônus de atributo</b> (a maioria das raças): entra multiplicado em tudo que importa — PV
+                pelo Fator de Vigor, PM pelo Bônus de Rank, acerto e dano direto. <b>Nunca decai.</b>
+              </span>,
+              <span key="b">
+                <b>Bônus fixo de PV</b> (só o Anão, +10): somado <i>depois</i> do Fator de Vigor (Cap. 4,
+                §1). Vale muito no 1º patamar e pouco no Imperador — é um bônus de começo de campanha, de
+                propósito.
+              </span>,
+              <span key="c">
+                <b>Bônus escalar de PM</b> (Elfo ×2, Migurd ×3): multiplica o seu <b>Maior Bônus de Rank de
+                magia</b>, então vale a mesma fração da reserva do 1º patamar ao Imperador. Em compensação,
+                vale <b>zero</b> pra quem nunca abriu uma escola de magia — é mana, não vida.
+              </span>,
+            ]}
+          />
+          <P>
+            Duas raças fogem do padrão de propósito. O <b>Humano</b> não recebe número nenhum fixo: recebe{" "}
+            <b>+1 num atributo à escolha do jogador</b> — é a única raça do livro cujo bônus muda de ficha
+            pra ficha, e é literalmente o que &ldquo;adaptabilidade&rdquo; significa. O <b>Povo Pequeno</b> é
+            a única com uma <b>melhoria comprável</b> (Sombra Absoluta, 3 PA): não vem de graça, o jogador
+            decide se investe.
+          </P>
+        </Aside>
         <div className="space-y-2.5">
           {RACES.map((race) => (
             <div key={race.id} className="rounded-xl border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40">
@@ -315,6 +342,31 @@ export default function Chapter1() {
             `${bg.startingGold} PO`,
           ])}
         />
+
+        <SubTitle id="cap1-6-laplace">Tabela do Fator Laplace (1d4)</SubTitle>
+        <P>
+          O Fator Laplace não é um pacote fixo — é uma linhagem antiga acordando, e ela não acorda igual em
+          dois portadores. Quem tirar este Antecedente rola <b>1d4</b> aqui pra saber o que despertou. A
+          mutação é permanente, e vem <i>além</i> da Conjuração Silenciosa inata e das duas Vantagens que o
+          Antecedente já concede.
+        </P>
+        <BookTable
+          headers={["1d4", "Mutação", "Efeito"]}
+          rows={LAPLACE_TABLE.map((e) => [String(e.roll), e.name, e.traits.join(" ")])}
+        />
+        <Aside title="Laplace e Gênio não são a mesma coisa">
+          <P>
+            Os dois nascem conjurando em silêncio, e é aí que a semelhança termina. O <b>Fator Laplace</b>{" "}
+            sofre as penalidades normais do método (metade dos dados, área reduzida em um terço) — ele apenas
+            nunca precisou aprender. O <b>Gênio</b> não sofre nenhuma das duas, e é o único personagem do
+            livro que conjura em silêncio com o feitiço inteiro.
+          </P>
+          <P>
+            É de propósito que o mais raro seja o mais forte: Gênio sai em 2 de 100 rolagens, Fator Laplace
+            em 6. Até 2026-08-29 estava invertido — o Laplace carregava +2 de Espírito, +8 PM e +6 PV fixos e
+            era, com folga, o melhor resultado da tabela apesar de ser três vezes mais comum.
+          </P>
+        </Aside>
 
         <SubTitle id="cap1-6-miko">Tabela de Miko e Amaldiçoados (1d8)</SubTitle>
         <P>

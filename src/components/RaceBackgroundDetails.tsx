@@ -1,5 +1,9 @@
-import { Sparkle } from "lucide-react";
-import { Background, Race, SubtableEntry } from "@/lib/types";
+"use client";
+
+import { Check, Sparkle } from "lucide-react";
+import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
+import { getPendingRaceAttributeChoices, hasRacialUpgrade } from "@/store/selectors";
+import { ATTRIBUTES, AttributeKey, Background, Race, SubtableEntry } from "@/lib/types";
 
 function TraitList({ traits }: { traits: string[] }) {
   return (
@@ -45,6 +49,101 @@ function Block({
   );
 }
 
+/**
+ * Duas escolhas raciais que não são texto: o +1 livre do Humano e a compra de
+ * 3 PA do Povo Pequeno (2026-08-29). Ficam aqui, e não no assistente de criação,
+ * porque este bloco é o único que as quatro vias (Manual, Roleta, Entrevista e a
+ * própria ficha) já renderizam — um jogador que caiu de Humano na Roleta precisa
+ * conseguir escolher o atributo sem voltar pro assistente.
+ */
+function RaceChoices({ race }: { race: Race }) {
+  const character = useActiveCharacter();
+  const setChoice = useCharacterStore((s) => s.setRaceAttributeChoice);
+  const toggleUpgrade = useCharacterStore((s) => s.toggleRacialUpgrade);
+
+  const total = race.attributeChoices ?? 0;
+  const pendentes = getPendingRaceAttributeChoices(character);
+  const escolhas = character.raceAttributeChoices ?? [];
+  const upgrades = race.upgrades ?? [];
+
+  if (total === 0 && upgrades.length === 0) return null;
+
+  return (
+    <div className="mt-3 space-y-3 border-t border-parchment-300 pt-3 dark:border-parchment-800">
+      {total > 0 && (
+        <div>
+          <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+            Bônus livre de raça
+            {pendentes > 0 && (
+              <span className="ml-2 rounded-full bg-gold-500/20 px-2 py-0.5 text-[10px] font-bold normal-case text-gold-600 dark:text-gold-400">
+                {pendentes} ponto(s) a distribuir
+              </span>
+            )}
+          </p>
+          {Array.from({ length: total }).map((_, i) => (
+            <div key={i} className="mb-1.5 flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-parchment-600 dark:text-parchment-400">+1 em</span>
+              {ATTRIBUTES.map(({ key, label, short }) => {
+                const ativo = escolhas[i] === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    title={label}
+                    onClick={() => setChoice(i, ativo ? null : (key as AttributeKey))}
+                    className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
+                      ativo
+                        ? "bg-wine-600 text-white"
+                        : "bg-parchment-200 text-parchment-700 hover:bg-parchment-300 dark:bg-parchment-800 dark:text-parchment-200 dark:hover:bg-parchment-700"
+                    }`}
+                  >
+                    {short}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {upgrades.length > 0 && (
+        <div>
+          <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+            Melhoria racial (custa PA)
+          </p>
+          {upgrades.map((u) => {
+            const comprado = hasRacialUpgrade(character, u.id);
+            return (
+              <button
+                key={u.id}
+                type="button"
+                onClick={() => toggleUpgrade(u.id)}
+                className={`flex w-full items-start gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition-colors ${
+                  comprado
+                    ? "border-wine-500 bg-wine-500/10 text-parchment-800 dark:text-parchment-100"
+                    : "border-parchment-300 text-parchment-600 hover:border-wine-400 dark:border-parchment-700 dark:text-parchment-400"
+                }`}
+              >
+                <span
+                  className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
+                    comprado ? "border-wine-500 bg-wine-600 text-white" : "border-parchment-400"
+                  }`}
+                >
+                  {comprado && <Check className="h-3 w-3" />}
+                </span>
+                <span>
+                  <b>{u.name}</b> <span className="text-gold-600 dark:text-gold-400">({u.paCost} PA)</span> —{" "}
+                  {u.description}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function RaceBackgroundDetails({
   race,
   background,
@@ -81,6 +180,7 @@ export default function RaceBackgroundDetails({
           />
         )}
       </div>
+      {race && <RaceChoices race={race} />}
       {subtable && (
         <div className="mt-3 border-t border-parchment-300 pt-3 dark:border-parchment-800">
           <Block title={subtable.name} traits={subtable.traits} />

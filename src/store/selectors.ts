@@ -51,8 +51,19 @@ export function getFinalAttribute(state: StoreState, key: AttributeKey): number 
   const raceBonus = race?.bonuses.attributes?.[key] ?? 0;
   const backgroundBonus = background?.bonuses.attributes?.[key] ?? 0;
   const subtableBonus = subtable?.bonuses.attributes?.[key] ?? 0;
+  // Bônus livre de raça (Humano). Limitado ao que a raça concede, pra uma ficha
+  // importada ou uma troca de raça não carregarem escolhas que não existem mais.
+  const escolhaLivre = (state.raceAttributeChoices ?? [])
+    .slice(0, race?.attributeChoices ?? 0)
+    .filter((k) => k === key).length;
 
-  return base + raceBonus + backgroundBonus + subtableBonus;
+  return base + raceBonus + backgroundBonus + subtableBonus + escolhaLivre;
+}
+
+/** Quantos pontos do bônus livre da raça ainda faltam distribuir (0 se a raça não tem nenhum). */
+export function getPendingRaceAttributeChoices(state: StoreState): number {
+  const total = getRaceById(state.raceId)?.attributeChoices ?? 0;
+  return Math.max(0, total - (state.raceAttributeChoices ?? []).length);
 }
 
 export function getFinalAttributes(state: StoreState): Record<AttributeKey, number> {
@@ -200,8 +211,17 @@ export function getMaxMp(state: StoreState): number {
   const espirito = getFinalAttribute(state, "espirito");
   const maiorBonusMagia = getHighestRankBonus(state, "magia");
   const natural = Math.max(espirito, 4) * maiorBonusMagia + 8;
+  // Bônus racial ESCALAR (Elfo ×2, Migurd ×3): multiplica o Maior Bônus de Rank
+  // de magia em vez de somar um número fixo, então vale a mesma fração da
+  // reserva do 1º patamar ao Imperador — e vale zero pra quem nunca abriu uma
+  // escola, que é o comportamento certo pra um bônus de mana.
+  const escalarRacial = (getRaceById(state.raceId)?.bonuses.mpPerMagicRank ?? 0) * maiorBonusMagia;
   const computed =
-    natural + getTalentReserve(state, "mpPerRank") + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+    natural +
+    escalarRacial +
+    getTalentReserve(state, "mpPerRank") +
+    getFlatBonusSum(state, "maxMp") +
+    state.bonusMp;
   return state.overrides.maxMp ?? computed;
 }
 
@@ -438,6 +458,20 @@ export function getAttributePaCost(state: StoreState): number {
   return Math.max(0, soma - ATTRIBUTE_CREATION_POINTS) * ATTRIBUTE_PA_COST_PER_POINT;
 }
 
+/** Melhorias raciais compradas (Cap. 1, §5) — hoje só a do Povo Pequeno, a 3 PA. */
+export function getRacialUpgradePaCost(state: StoreState): number {
+  const upgrades = getRaceById(state.raceId)?.upgrades ?? [];
+  return (state.racialUpgrades ?? []).reduce(
+    (sum, id) => sum + (upgrades.find((u) => u.id === id)?.paCost ?? 0),
+    0
+  );
+}
+
+/** true se a ficha já comprou aquela melhoria racial. */
+export function hasRacialUpgrade(state: StoreState, upgradeId: string): boolean {
+  return (state.racialUpgrades ?? []).includes(upgradeId);
+}
+
 /**
  * Cap. 1, seção 2: 2 PA = +PV iguais a QUATRO VEZES o Maior Bônus de Rank
  * (qualquer árvore), ou +PM iguais ao DOBRO do Maior Bônus de Rank de magia —
@@ -495,7 +529,13 @@ export function getPaSpent(state: StoreState): number {
     const def = findAbilityOrTalentDef(a.treeId, a.rank, a.kind, a.id);
     return sum + (def?.paCost ?? 0);
   }, 0);
-  return rankCost + abilityCost + getAttributePaCost(state) + getHpMpPaCost(state);
+  return (
+    rankCost +
+    abilityCost +
+    getAttributePaCost(state) +
+    getHpMpPaCost(state) +
+    getRacialUpgradePaCost(state)
+  );
 }
 
 /** Cap. 5, §2 (Guilda de Aventureiros): faixas de PA usadas como referência pro Rank de Aventureiro — não é regra travada, só o chute inicial que o livro dá ao Mestre. */

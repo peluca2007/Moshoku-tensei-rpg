@@ -18,6 +18,11 @@ export const VENDAVAL_TREE: Tree = {
   hiddenFromCreation: true,
   prerequisiteNote:
     "Pré-requisito narrativo: Rank Avançado ou superior em Estilo Deus do Norte E em Magia de Vento. Não é uma árvore que se escolhe na criação — é o que emerge de já ter dominado as outras duas. O jogo não impede a compra de outro jeito; o Mestre nega até os dois pré-requisitos estarem cumpridos, do mesmo jeito que já faz com a Raça Dragão e o Rank Deus.",
+  proficiencies: {
+    armas: "Toda espada e toda arma de haste. Armadura leve apenas — o estilo inteiro depende de deslocamento.",
+    pericias: "Acrobacia e Percepção são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Árvore híbrida do Corpo — exige Avançado em Deus do Norte E em Magia de Vento.",
+  },
   ranks: [
     {
       rank: "Principiante",

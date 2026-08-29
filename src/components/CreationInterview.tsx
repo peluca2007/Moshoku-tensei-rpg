@@ -15,20 +15,25 @@ import {
   LotteryEntry,
 } from "@/data/interview";
 import { buildInterviewLore } from "@/lib/interviewLore";
-import { RACE_WEIGHT, rollRandomAttributes, rollRandomSubtableEntry } from "@/lib/randomCharacter";
+import { applyDragonChance, RACE_WEIGHT, rollRandomAttributes, rollRandomSubtableEntry } from "@/lib/randomCharacter";
 import { ATTRIBUTES } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import TreePicker from "./TreePicker";
 
 /**
- * Pools da loteria com o peso de raridade de cada candidato. Raça usa `RACE_WEIGHT`
- * (peso 0 = fora do sorteio, caso do Dragão — só na Via 1 com aval do Mestre); Antecedente
- * usa a largura da faixa d100 da tabela do Cap. 1 §6, que já É a raridade dele no livro.
- * Antes de 2026-08-28 os dois eram peso 1 fixo e a Entrevista ignorava raridade — dava pra
- * nascer Dragão numa entrevista, coisa que a Roleta nunca permitiu.
+ * Pools da loteria com o peso de raridade de cada candidato. Antecedente usa a
+ * largura da faixa d100 da tabela do Cap. 1 §6, que já É a raridade dele no livro.
+ *
+ * O Dragão fica FORA desta pool: desde 2026-08-29 ele existe no sorteio, mas com
+ * chance fixa de 1% (`applyDragonChance`), rolada por fora e depois da loteria.
+ * Se ele entrasse aqui com peso, o viés das respostas mexeria nessa chance — e o
+ * pedido era 1% exato, não "1% em média".
  */
-const RACE_POOL: LotteryEntry[] = RACES.map((r) => ({ id: r.id, weight: RACE_WEIGHT[r.id] ?? 1 }));
+const RACE_POOL: LotteryEntry[] = RACES.filter((r) => r.id !== "dragao").map((r) => ({
+  id: r.id,
+  weight: RACE_WEIGHT[r.id] ?? 1,
+}));
 const BACKGROUND_POOL: LotteryEntry[] = BACKGROUNDS.map((b) => ({
   id: b.id,
   weight: Math.max(1, b.rollRange[1] - b.rollRange[0] + 1),
@@ -72,7 +77,8 @@ export default function CreationInterview() {
       const result = resolveInterview(finalAnswers, RACE_POOL, BACKGROUND_POOL, mode);
 
       // No modo "antecedente" a raça já foi escolhida na fase "raca" e result.raceId é null.
-      if (result.raceId) store.setRace(result.raceId);
+      // A raça sorteada passa pela chance de 1% do Dragão antes de entrar na ficha.
+      if (result.raceId) store.setRace(applyDragonChance(result.raceId));
       store.setBackground(result.backgroundId);
 
       const resultBackground = BACKGROUNDS.find((b) => b.id === result.backgroundId);

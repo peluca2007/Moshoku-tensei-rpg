@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Plus, Sparkles, Check } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { RACES, getRaceById } from "@/data/races";
-import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
+import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
 import { ATTRIBUTES, ATTRIBUTE_CREATION_MAX, ATTRIBUTE_FLOOR, AttributeKey, getVigorFactor } from "@/lib/types";
@@ -40,7 +40,7 @@ export default function CreationWizard() {
   const race = getRaceById(character.raceId);
   const background = getBackgroundById(character.backgroundId);
   const subtableOptions =
-    background?.requiresSubtable === "miko" ? MIKO_TABLE : background?.requiresSubtable === "olho" ? OLHO_TABLE : null;
+    background?.requiresSubtable ? SUBTABLES[background.requiresSubtable].entries : null;
   const chosenSubtable = background?.requiresSubtable
     ? getSubtableEntryById(background.requiresSubtable, character.subtableEntryId)
     : undefined;

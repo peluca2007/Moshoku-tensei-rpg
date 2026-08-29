@@ -16,6 +16,11 @@ export const LUTADOR_TREE: Tree = {
     Rei: "Mestre de Guerra",
     Imperador: "Lenda Viva",
   },
+  proficiencies: {
+    armas: "Ataque desarmado (Dado Base d6), toda arma pesada, de duas mãos e improvisada. Armadura leve, média e pesada.",
+    pericias: "Atletismo e Intimidação são as perícias do ofício; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Ofício do Corpo (sem patamar Deus).",
+  },
   ranks: [
     {
       rank: "Principiante",

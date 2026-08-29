@@ -9,7 +9,7 @@ import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { getGuildRank, getPaSpent, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
 import { GUILD_RANK_ORDER } from "@/lib/types";
 import { RACES, getRaceById } from "@/data/races";
-import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
+import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById, getTreeGroups } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
 import {
@@ -282,7 +282,7 @@ export default function CharacterSheet() {
   const background = getBackgroundById(backgroundId);
   const startingTree = getTreeById(startingTreeId);
   const startingKit = startingTree ? getStartingKit(startingTree.subgroup) : undefined;
-  const subtableOptions = background?.requiresSubtable === "miko" ? MIKO_TABLE : background?.requiresSubtable === "olho" ? OLHO_TABLE : null;
+  const subtableOptions = background?.requiresSubtable ? SUBTABLES[background.requiresSubtable].entries : null;
   const chosenSubtable = background?.requiresSubtable
     ? getSubtableEntryById(background.requiresSubtable, subtableEntryId)
     : undefined;
