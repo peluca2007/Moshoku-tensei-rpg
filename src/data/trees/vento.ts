@@ -9,6 +9,11 @@ export const VENTO_TREE: Tree = {
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PM",
   tagline: "Corte, som e mobilidade — a escola que anula a distância, inclusive a sua própria.",
+  proficiencies: {
+    armas: "Nenhuma além do padrão (armas simples, armadura leve).",
+    pericias: "Arcanismo é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
+  },
   ranks: [
     {
       rank: "Principiante",

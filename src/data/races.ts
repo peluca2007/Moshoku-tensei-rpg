@@ -31,17 +31,20 @@ export const RACES: Race[] = [
     name: "Humano (Jinzoku)",
     description:
       "A raça dominante do mundo. Físico relativamente fraco e vida curta (70-100 anos), mas altíssima inteligência e versatilidade.",
-    // Os +6 PM só existiam pra metade das builds: um humano que abre uma árvore
-    // do Corpo nunca conjura nada e recebia, na prática, só as 2 perícias — a
-    // raça cuja identidade inteira é "versatilidade" era a única com bônus
-    // numérico que servia pra um arquétipo só. Dividir em +4 PV / +4 PM mantém o
-    // mesmo valor de criação (4 PV = 1,0 PC e 4 PM = 2,0 PC no Principiante,
-    // contra os 3,0 PC dos 6 PM antigos) e faz metade do pacote valer pra
-    // qualquer ficha, que é literalmente o que adaptabilidade quer dizer.
-    bonuses: { maxHp: 4, maxMp: 4 },
+    // 2026-08-29: saíram os +4 PV / +4 PM fixos, entrou +1 atributo à ESCOLHA do
+    // jogador. É a correção mais direta possível pro problema que a raça sempre
+    // teve: metade do pacote numérico servia pra um arquétipo só (um humano
+    // guerreiro nunca gastava os PM), e bônus fixo de PV/PM decai com o Rank —
+    // 4 PV valem +11% da vida de um Principiante e +2,8% da de um Imperador.
+    // Um ponto de atributo entra multiplicado no que importa (PV pelo Fator de
+    // Vigor, PM pelo Bônus de Rank, acerto e dano direto) e o JOGADOR escolhe
+    // onde. É literalmente o que "adaptabilidade" quer dizer, e é a única raça
+    // do livro cujo bônus muda de ficha pra ficha.
+    bonuses: {},
+    attributeChoices: 1,
     bonusSkillChoices: 2,
     traits: [
-      "Adaptabilidade: 2 Perícias extras à escolha, +4 PV e +4 PM Máximos.",
+      "Adaptabilidade: 2 Perícias extras à escolha e +1 em UM atributo à sua escolha, permanente — nenhuma outra raça deixa você decidir onde o sangue pesa.",
       "Determinação Humana: uma vez por sessão, repita um teste de Atributo (não de Perícia, não de dano) que tenha acabado de falhar e use o novo resultado — humanos vivem menos que qualquer raça deste livro e aprenderam a não desperdiçar a única tentativa que têm.",
     ],
   },
@@ -50,15 +53,17 @@ export const RACES: Race[] = [
     name: "Elfo (Erufu)",
     description:
       "Habitantes da Grande Floresta. Corpos esguios, orelhas longas, fertilidade baixa e vida longuíssima.",
-    // +8 PM eram +67% da reserva de um Principiante (12 → 20) e, pela taxa do
-    // Cap. 1 §2, valiam sozinhos 8 PA — o DOBRO dos 4 pontos que o jogador
-    // distribui na criação inteira. Com o +1 de Agilidade em cima, o Elfo valia
-    // 5,9 PC, mais que qualquer raça rara do sorteio, sendo de raridade média.
-    // 5 PM o põem em +42%, na mesma ordem de grandeza do Migurd e do Acólito.
-    bonuses: { attributes: { agilidade: 1 }, maxMp: 5 },
+    // 2026-08-29: os 5 PM fixos viraram ESCALARES (Maior Bônus de Rank de magia
+    // × 2). Fixo, o bônus valia +42% da reserva de um Principiante e +11% da de
+    // um Imperador — o traço mágico de uma raça que vive séculos evaporava
+    // exatamente na idade em que ela deveria estar no auge. Escalar, ele entrega
+    // 2 PM no 1º patamar e 12 no 6º, mantendo a mesma fração a campanha inteira.
+    // E vale 0 pra um elfo que nunca abriu escola de magia — correto: é mana,
+    // não vida.
+    bonuses: { attributes: { agilidade: 1 }, mpPerMagicRank: 2 },
     traits: [
       "Sentido da Floresta: Vantagem em Percepção auditiva e em Sobrevivência para navegação.",
-      "+1 em Agilidade e +5 PM Máximos, permanentes.",
+      "+1 em Agilidade, permanente, e PM Máximos iguais ao DOBRO do seu Maior Bônus de Rank de magia (+2 no Principiante, +12 no Imperador) — séculos de convivência com a mana da Grande Floresta. Sem nenhuma escola de magia aberta, este bônus é 0.",
       "Sangue Longevo: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §7) — séculos de vida ensinam o corpo a esperar o pior.",
     ],
   },
@@ -75,11 +80,16 @@ export const RACES: Race[] = [
     // raridade média com poder de lanterna é a pior combinação possível. +1 de
     // Vigor é o único bônus que não evapora com o Rank e é exatamente o que a
     // descrição ("alta resistência") já prometia em texto sem entregar em número.
-    bonuses: { attributes: { vigor: 1 }, maxHp: 6 },
+    // 2026-08-29: 6 → 10 PV fixos, a pedido do usuário. Bônus fixo de PV entra
+    // FORA do Fator de Vigor (Cap. 4, §1), então vale +28% da vida de um anão
+    // recém-criado e ~+7% da de um Imperador: é um bônus de começo de campanha,
+    // de propósito. O que segura o Anão no rank alto continua sendo o +1 de
+    // Vigor, que multiplica.
+    bonuses: { attributes: { vigor: 1 }, maxHp: 10 },
     fixedSkills: ["Ofícios (Forja)"],
     traits: [
       "Sangue da Forja: magias de Terra e Fogo custam 1 PM a menos para conjurar (mínimo 1). Não pode aprender magias de Água ou Vento.",
-      "+1 em Vigor e +6 PV Máximos, permanentes.",
+      "+1 em Vigor e +10 PV Máximos, permanentes — o corpo mais denso do livro.",
       "Fígado de Pedra: imune a ficar Embriagado e tem Vantagem em testes de resistência de Vigor contra Exaustão por privação (Cap. 4, seção 8).",
     ],
   },
@@ -89,9 +99,25 @@ export const RACES: Race[] = [
     description:
       "Vivem na Grande Floresta e em cidades como Millishion. Estatura e aparência de criança humana por toda a vida.",
     bonuses: { attributes: { agilidade: 1 } },
+    // A compra de 3 PA é a primeira melhoria racial do livro (ver Race.upgrades).
+    // Vantagem Absoluta é 3d20-escolha-o-maior: pela régua do Cap. 1 §2 (3 PA =
+    // Vantagem permanente nos saves de 1 atributo), 3 PA por um upgrade que só
+    // vale em DUAS perícias é o preço certo — e é opcional, então não infla a
+    // raça pra quem não comprar.
+    upgrades: [
+      {
+        id: "hobbit-sombra-absoluta",
+        name: "Sombra Absoluta",
+        paCost: 3,
+        description:
+          "A Vantagem racial em Enganação e Furtividade vira Vantagem Absoluta (3d20, escolha o maior). Só afeta essas duas perícias — não é Vantagem Absoluta em mais nada.",
+      },
+    ],
     traits: [
       "Deslocamento base reduzido: 7,5m.",
       "Aparência Enganosa: Vantagem em Enganação e Furtividade.",
+      "Pequeno Demais pra Atrapalhar: você pode ocupar o mesmo espaço de outra criatura, desde que ela permita — passar por baixo, subir no ombro, se enfiar atrás das pernas dela. Não concede Cobertura automática nem impede que você seja alvo; só deixa vocês dois no mesmo quadrado.",
+      "Sombra Absoluta (opcional, 3 PA): transforme a Vantagem racial acima em Vantagem Absoluta (Cap. 1, §4). É uma compra, não um bônus grátis — e é a única melhoria racial comprável do livro.",
       "+1 em Agilidade, permanente.",
       "Sorte do Povo Pequeno: uma vez por Descanso Longo, transforme uma Falha Crítica (1 Natural) sua em um resultado normal — o dado ainda rola, mas o desastre automático não acontece.",
     ],
@@ -106,7 +132,15 @@ export const RACES: Race[] = [
       "Sentidos Selvagens: Vantagem para rastrear pelo olfato; Desvantagem em resistência a fumaça/odores fortes.",
       // Cap. 4 §3: "Não existe ação bônus neste sistema — tudo é medido em Ações".
       // O texto antigo cobrava uma Ação Bônus pelo modo rastreio, que não existe.
-      "Magia Inerente: nasce sabendo conjurar Howling (2 PM, 1 Ação — ataque sônico ou rastreio).",
+      // 2026-08-29: a mecânica estava resumida a uma linha entre parênteses e a
+      // mesa não tinha como arbitrar nada — nem alcance, nem CD, nem dano, nem
+      // duração. Escrita por inteiro abaixo. O dano escala com o Maior Bônus de
+      // Rank pra não virar lixo no rank alto, e o modo ofensivo é 1x por combate
+      // porque Atordoado em área por 2 PM no 1º patamar seria, disparado, o
+      // melhor efeito por PM do livro inteiro.
+      "Magia Inerente — HOWLING (2 PM, 1 Ação): você nasce sabendo, sem gastar PA e sem precisar de escola aberta. Ao conjurar, escolha UM dos dois modos.",
+      "Howling · Grito de Guerra (ataque sônico): cone de 9 metros. Cada criatura na área faz teste de resistência de Vigor contra CD 8 + Espírito + seu Maior Bônus de Rank. Falha: sofre 1d6 de dano sônico por ponto do seu Maior Bônus de Rank (1d6 no Principiante, 6d6 no Imperador) e fica Atordoada até o fim do próximo turno dela. Sucesso: metade do dano e nada mais. Uma vez por combate — depois do primeiro uivo, ninguém mais é pego de surpresa.",
+      "Howling · Eco de Caça (ecolocalização): o uivo volta e desenha o que tocou. Por 1 minuto você sabe a posição exata de toda criatura a até 30 metros, mesmo no escuro total, mesmo sob invisibilidade mágica, mesmo através de porta, mato ou parede fina. Você sabe ONDE, nunca O QUÊ: tamanho aproximado e posição, não identidade nem intenção. Pedra maciça, chumbo e qualquer barreira mágica bloqueiam o eco. Sem limite de usos.",
       "+1 em Força, permanente.",
       "Instinto de Caçada: Vantagem em Iniciativa contra qualquer criatura que você tenha farejado, rastreado ou observado antes do combate começar.",
     ],
@@ -162,9 +196,14 @@ export const RACES: Race[] = [
     // número que não escala) e a mesma correção: 6 PM tiram o pico da criação, e
     // a Vantagem abaixo — que não decai — segura o valor no rank alto. É também o
     // traço óbvio pra uma espécie que cresce conversando por telepatia.
-    bonuses: { attributes: { intelecto: 1 }, maxMp: 6 },
+    // 2026-08-29: mesma correção do Elfo, um degrau acima (×3 contra ×2), que é
+    // o que separa "convive com mana" de "nasce falando por ela". Os 6 PM fixos
+    // valiam +50% da reserva de um Principiante e +13% da de um Imperador; ×3
+    // entrega 3 PM no 1º patamar e 18 no 6º, sem o pico de criação e sem o
+    // desabamento no fim que este comentário descrevia em 2026-08-28.
+    bonuses: { attributes: { intelecto: 1 }, mpPerMagicRank: 3 },
     traits: [
-      "+1 em Intelecto e +6 PM Máximos, permanentes.",
+      "+1 em Intelecto, permanente, e PM Máximos iguais ao TRIPLO do seu Maior Bônus de Rank de magia (+3 no Principiante, +18 no Imperador) — a maior reserva racial do livro, e a única que não decai. Sem nenhuma escola de magia aberta, este bônus é 0.",
       "Telepatia curta com outros Migurds ou seres com telepatia.",
       "Mente Fechada: Vantagem em testes de resistência de Espírito contra qualquer efeito que leia, controle ou confunda a mente — quem nasce falando por telepatia aprende a trancar a própria porta antes de aprender a andar.",
     ],
@@ -173,12 +212,16 @@ export const RACES: Race[] = [
     id: "superd",
     name: "Superd",
     description: "Pele pálida, cabelos verdes, cauda bifurcada que vira lança tridente.",
-    bonuses: { attributes: { intelecto: 1 } },
+    // 2026-08-29: saiu o +1 de Intelecto e o Terceiro Olho deixou de atravessar
+    // parede. Ver através de parede não é forte demais — é DESTRUTIVO pro design
+    // de masmorra: mapa, emboscada, porta secreta e "o que tem do outro lado"
+    // deixam de existir como perguntas na mesa inteira, todo turno, de graça.
+    // A Previsão de Movimento entrega o mesmo fantasy (o Superd lê mana e sabe o
+    // que vem) num eixo que só afeta combate, que é onde o Ruijerd usa.
+    bonuses: {},
     traits: [
-      // Cap. 4 §3: não existe ação bônus neste sistema. Custando 1 das 3 Ações do
-      // turno, o Terceiro Olho continua sendo o melhor sensor do livro sem ser de graça.
-      "Terceiro Olho: gastando 1 Ação, enxerga seres vivos, fluxos de mana e invisibilidade mágica através de paredes num raio de 9m, por 1 minuto.",
-      "+1 em Intelecto, permanente.",
+      "Previsão de Movimento (1 Ação): escolha uma criatura a até 18m que você possa ver e leia o fluxo de mana dela por 1 minuto — você enxerga o golpe antes de ele sair. Enquanto durar: os ataques dela contra você têm Desvantagem, você tem Vantagem nos testes de resistência contra as habilidades dela, e ela nunca te pega Surpreso.",
+      "Previsão de Movimento — limites: uma leitura por vez (trocar de alvo custa outra Ação), e não funciona contra o que não move mana: construto inerte, armadilha mecânica, uma pedra caindo. Ler o fluxo não é ver o futuro; é ver a intenção antes de ela virar movimento.",
       "Sofre Desvantagem em interações sociais com humanos comuns (preconceito antigo, Cap. 1) — mas Vantagem Absoluta em Intuição para perceber a intenção real de quem esconde algo, porque o Terceiro Olho não mente.",
     ],
   },
@@ -186,11 +229,16 @@ export const RACES: Race[] = [
     id: "ogro",
     name: "Ogro (Onizoku)",
     description: "Extremamente altos e musculosos, machos chegam a 3 metros de altura.",
-    bonuses: { attributes: { forca: 2 }, maxHp: 6 },
+    // 2026-08-29: removidos os +6 PV Máximos. O Ogro já carrega o maior bônus de
+    // atributo do livro (+2 de Força), e Força entra no acerto E no dano de todo
+    // golpe — somar vida fixa em cima empilhava dois eixos numa raça que já era
+    // a mais direta de jogar. Sem os PV fixos ele continua sendo o pacote mais
+    // forte do tier raro, só que por uma via só.
+    bonuses: { attributes: { forca: 2 } },
     traits: [
       "Brutamontes: Vantagem em testes de Força bruta.",
       "Limite de carga dobrado.",
-      "+2 em Força e +6 PV Máximos, permanentes.",
+      "+2 em Força, permanente — o maior bônus de atributo de qualquer raça do livro.",
     ],
   },
   {
@@ -217,17 +265,31 @@ export const RACES: Race[] = [
     name: "Raça Dragão (Ryuzoku)",
     description:
       "Raça mítica (requer aprovação do Mestre). Fisicamente a mais poderosa da existência, pode viver mais de 100.000 anos.",
-    // "Defesa Base altíssima" era a única promessa numérica do livro sem número
-    // nenhum atrás dela: `bonuses` não concedia CA, então a ficha de um Dragão
-    // saía com exatamente a mesma CA de um Hobbit (10 + Agilidade). +2 é o valor
-    // da Armadura Média do Cap. 5 §2 — a escama vale uma armadura, e continua
-    // empilhando com a que ele resolver vestir por cima.
-    bonuses: { attributes: { forca: 1 }, maxHp: 5, armorClass: 2 },
+    // 2026-08-29 — buff, e o Dragão entrou no sorteio com 1% exato (ver
+    // DRAGON_CHANCE em src/lib/randomCharacter.ts). Antes ele era uma raça
+    // "mítica" com o pacote de uma raça rara comum: +1 Força e +5 PV fixos, o
+    // mesmo patamar do Celestial, sendo a única que exige aprovação do Mestre.
+    //
+    // Três mudanças de forma, não só de número:
+    // 1. Os +5 PV fixos viraram +1 Vigor. Sob a fórmula nova (Cap. 4, §1) PV
+    //    fixo entra FORA do Fator de Vigor e decai; +1 Vigor multiplica a vida
+    //    inteira por 1,2 e não decai nunca. Sozinho, isso já vale mais que os 5
+    //    PV em qualquer patamar acima do 1º.
+    // 2. As garras entraram na Escada de Dados (Cap. 3) em vez de ficarem
+    //    travadas em 1d8 pra sempre — um Dragão Imperador desarmado agora bate
+    //    como quem empunha arma marcial, que é o mínimo pro fantasy.
+    // 3. Ganhou o Sopro, que é a única coisa que uma pessoa espera de um dragão
+    //    e que a raça não tinha. Escala com o Maior Bônus de Rank e é limitado
+    //    por Descanso Curto, então não vira o recurso principal de ninguém.
+    bonuses: { attributes: { forca: 2, vigor: 1 }, armorClass: 3 },
     traits: [
-      "Escamas Dracônicas: +2 na CA (permanente, empilha com armadura) e resistência natural a ataques cortantes simples.",
-      "Aura Primordial e Garras: ataques desarmados causam 1d8 + Força de dano cortante (letal mágico).",
-      "+1 em Força e +5 PV Máximos, permanentes, e Resistência a um elemento à escolha (Fogo, Gelo ou Eletricidade).",
-      "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão, Lábia ou Diplomacia — nada que já foi um deus finge ser gente comum de verdade.",
+      "Escamas Dracônicas: +3 na CA (permanente, empilha com armadura) e Resistência a dano cortante e perfurante não-mágico.",
+      "Garras e Presas: seus ataques desarmados usam Dado Base d10, contam como arma marcial mágica e sobem na Escada de Dados (Cap. 3) junto com o seu maior patamar do Corpo — um Dragão desarmado nunca está desarmado.",
+      "Sopro Dracônico (1 Ação, 1 vez por Descanso Curto): cone de 12 metros do elemento que você escolheu ao criar o personagem. Dano igual a 1d10 por ponto do seu Maior Bônus de Rank (1d10 no Principiante, 6d10 no Imperador). Teste de resistência de Agilidade contra CD 8 + Vigor + Maior Bônus de Rank para metade do dano.",
+      "Asas: Deslocamento de Voo igual ao dobro do seu Deslocamento de caminhada, sem restrição de armadura ou carga — as asas de um Ryuzoku erguem aço sem esforço.",
+      "+2 em Força e +1 em Vigor, permanentes, e IMUNIDADE (não Resistência) a um elemento à escolha: Fogo, Gelo ou Eletricidade. É o mesmo elemento do seu Sopro.",
+      "Cem Mil Anos: você não envelhece de forma perceptível, é imune a doença comum, e tem Vantagem em testes de resistência de Espírito contra qualquer efeito de Medo ou de controle mental.",
+      "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão, Lábia ou Diplomacia — nada que já foi um deus finge ser gente comum de verdade. É o único preço que a raça cobra, e ele é permanente.",
     ],
   },
 ];

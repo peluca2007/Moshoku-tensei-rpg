@@ -18,6 +18,11 @@ export const BARDO_TREE: Tree = {
     Rei: "Maestro",
     Imperador: "Voz do Mundo",
   },
+  proficiencies: {
+    armas: "Adaga, espada curta e rapieira, mais todo instrumento musical. Armadura leve apenas.",
+    pericias: "O Bônus de Rank soma em Atuação, Persuasão, Intuição e História, e em mais nada (Cap. 3).",
+    nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
+  },
   ranks: [
     {
       rank: "Principiante",

@@ -8,6 +8,11 @@ export const NORTE_TREE: Tree = {
   keyAttributeLabel: "Força ou Agilidade",
   resourceLabel: "PT",
   tagline: "Não é esgrima refinada — é um método para continuar vivo. Truques, improviso e terreno; a maioria dos aventureiros aprende Norte.",
+  proficiencies: {
+    armas: "Proficiência UNIVERSAL: qualquer arma ou objeto improvisado, sem penalidade (objetos usam d6 base). Toda armadura, inclusive pesada, e escudos.",
+    pericias: "Sobrevivência e Enganação são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Escola Formal do Corpo — a única com proficiência irrestrita.",
+  },
   ranks: [
     {
       rank: "Principiante",

@@ -18,6 +18,11 @@ export const TATICO_TREE: Tree = {
     Rei: "Comandante",
     Imperador: "Senhor da Guerra",
   },
+  proficiencies: {
+    armas: "Armas simples, arco curto e lança. Armadura leve e média.",
+    pericias: "O Bônus de Rank soma em Sobrevivência, Natureza, Investigação e Percepção (rastreio), e em mais nada (Cap. 3).",
+    nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
+  },
   ranks: [
     {
       rank: "Principiante",

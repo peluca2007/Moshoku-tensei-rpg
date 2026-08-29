@@ -477,6 +477,22 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
                 {meta.tree.resourceLabel && <>Recurso: <span className="font-medium">{meta.tree.resourceLabel}</span></>}
               </p>
             )}
+            {meta.tree.proficiencies && (
+              // Mesma informação que o livro mostra no topo do catálogo (Cap. 3):
+              // "posso usar essa arma?" é a primeira pergunta ao abrir uma árvore,
+              // e o mapa não pode ser o único lugar que não responde.
+              <div className="rounded-lg border border-parchment-400 bg-parchment-100 p-2 text-xs dark:border-parchment-700 dark:bg-parchment-900/70">
+                <p className="mb-1 font-bold uppercase tracking-wide text-wine-700 dark:text-wine-300">
+                  Proficiências
+                </p>
+                <p className="text-parchment-700 dark:text-parchment-300">
+                  <b>Armas e armaduras:</b> {meta.tree.proficiencies.armas}
+                </p>
+                <p className="mt-1 text-parchment-700 dark:text-parchment-300">
+                  <b>Perícias:</b> {meta.tree.proficiencies.pericias}
+                </p>
+              </div>
+            )}
             <p>Conhecimentos adquiridos: {knowledge}. Continue seguindo a linha pra ver os ranks.</p>
           </>
         )}

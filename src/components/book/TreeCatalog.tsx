@@ -61,6 +61,42 @@ function ProgressionTable({ tree }: { tree: Tree }) {
   return <BookTable headers={headers} rows={rows} />;
 }
 
+/**
+ * O que a árvore concede de proficiência, ANTES de qualquer patamar. Fica no
+ * topo de propósito: é a primeira pergunta que a mesa faz ao abrir uma árvore
+ * ("posso usar essa arma? posso vestir essa armadura?"), e até 2026-08-29 a
+ * resposta estava enterrada no meio do texto de algumas Maestrias de 1º patamar
+ * — quando estava em algum lugar.
+ */
+function ProficiencyCard({ tree }: { tree: Tree }) {
+  const p = tree.proficiencies;
+  if (!p) return null;
+  const linhas: [string, string][] = [
+    ["Armas e armaduras", p.armas],
+    ["Perícias", p.pericias],
+  ];
+  return (
+    <div className="print-avoid-break rounded-lg border border-parchment-400 bg-parchment-100 p-3 text-sm dark:border-parchment-700 dark:bg-parchment-900/70">
+      <p className="mb-2 text-xs font-bold uppercase tracking-wide text-wine-700 dark:text-wine-300">
+        Proficiências desta árvore
+      </p>
+      <dl className="space-y-1.5">
+        {linhas.map(([rotulo, texto]) => (
+          <div key={rotulo} className="flex flex-col gap-0.5 sm:flex-row sm:gap-2">
+            <dt className="shrink-0 font-semibold text-parchment-800 dark:text-parchment-200 sm:w-40">
+              {rotulo}
+            </dt>
+            <dd className="text-parchment-700 dark:text-parchment-300">{texto}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-2 border-t border-parchment-300 pt-2 text-xs italic text-parchment-600 dark:border-parchment-800 dark:text-parchment-400">
+        {p.nota}
+      </p>
+    </div>
+  );
+}
+
 /** Catálogo completo de uma árvore — progressão, todo Rank, toda Maestria, todo Talento/Técnica/Magia e o patamar Divino, direto da mesma fonte que alimenta a ficha (nunca diverge). */
 export default function TreeCatalog({ tree }: { tree: Tree }) {
   const nonEmptyRanks = tree.ranks.filter((r) => r.mastery || r.talents.length > 0 || r.abilities.length > 0);
@@ -81,6 +117,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
           {tree.prerequisiteNote}
         </div>
       )}
+      <ProficiencyCard tree={tree} />
       <ProgressionTable tree={tree} />
       {nonEmptyRanks.map((rankDef) => {
         const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;

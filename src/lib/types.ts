@@ -123,8 +123,31 @@ export interface FlatBonuses {
   attributes?: Partial<Record<AttributeKey, number>>;
   maxHp?: number;
   maxMp?: number;
+  /**
+   * PM que ESCALAM com o Maior Bônus de Rank de magia, em vez de serem um
+   * número fixo (Elfo ×2, Migurd ×3 — 2026-08-29).
+   *
+   * Existe porque bônus fixo de PM é o pior tipo de bônus deste livro: ele vale
+   * +67% da reserva de um Principiante e +18% da de um Imperador, então a raça
+   * inteira é um pico de criação que evapora. Amarrado ao Bônus de Rank, o
+   * mesmo traço vale a mesma fração do começo ao fim — e vale ZERO pra quem
+   * nunca abriu uma escola de magia, que é exatamente o certo pra um bônus de
+   * mana.
+   */
+  mpPerMagicRank?: number;
   /** Ex: Miko "Maldição do Ódio" concede +2 CA (aura primordial). */
   armorClass?: number;
+}
+
+/**
+ * Melhoria racial comprável com PA (Cap. 1, §5) — não vem de graça com a raça,
+ * o jogador decide se investe. Hoje só o Povo Pequeno tem uma.
+ */
+export interface RacialUpgrade {
+  id: string;
+  name: string;
+  paCost: number;
+  description: string;
 }
 
 export interface Race {
@@ -134,6 +157,13 @@ export interface Race {
   bonuses: FlatBonuses;
   fixedSkills?: string[];
   bonusSkillChoices?: number;
+  /**
+   * Quantos pontos de atributo de +1 o jogador distribui livremente ao escolher
+   * esta raça (Humano: 1). Diferente de `bonuses.attributes`, que é fixo.
+   */
+  attributeChoices?: number;
+  /** Melhorias raciais que podem ser compradas com PA depois da criação. */
+  upgrades?: RacialUpgrade[];
   traits: string[];
 }
 
@@ -146,9 +176,12 @@ export interface Background {
   bonusSkillChoices?: number;
   startingGold: string;
   grantsInitiativeAdvantage?: boolean;
-  requiresSubtable?: "miko" | "olho";
+  requiresSubtable?: SubtableId;
   traits: string[];
 }
+
+/** Sub-tabelas de antecedente (Cap. 1, §6). O registro com nome, dado e entradas de cada uma vive em src/data/backgrounds.ts (SUBTABLES). */
+export type SubtableId = "miko" | "olho" | "laplace";
 
 export interface SubtableEntry {
   id: string;
@@ -257,6 +290,25 @@ export interface Tree {
   hiddenFromCreation?: boolean;
   /** Nota exibida no topo do catálogo (TreeCatalog) explicando um pré-requisito narrativo — não é uma trava de código, o Mestre que decide. */
   prerequisiteNote?: string;
+  /**
+   * O que esta árvore concede de proficiência e a quais perícias o Bônus de
+   * Rank dela se aplica (2026-08-29).
+   *
+   * O Cap. 1 §4 já dizia que "toda árvore do Corpo concede proficiência com o
+   * que ela usa — várias Maestrias de 1º patamar dizem isso explicitamente".
+   * "Várias" era exatamente o problema: a informação estava enterrada no meio do
+   * texto de algumas Maestrias, ausente nas outras, e nenhuma árvore de Magia ou
+   * de Utilidade declarava nada. A mesa tinha que deduzir se um mago de Terra
+   * pode vestir cota de malha. Agora as 18 declaram, no topo, antes do 1º patamar.
+   */
+  proficiencies?: {
+    /** Armas e armaduras que a árvore libera, e as que ela proíbe. */
+    armas: string;
+    /** Perícias ligadas à árvore — e, na Utilidade, em quais o Bônus de Rank soma. */
+    pericias: string;
+    /** Uma linha de enquadramento: Escola Formal ou Ofício, atributo de conjuração, recurso. */
+    nota: string;
+  };
   ranks: TreeRankDef[];
 }
 
@@ -311,6 +363,18 @@ export interface CharacterData {
   backgroundId: string | null;
   subtableEntryId: string | null;
   attributeBase: Record<AttributeKey, number>;
+  /**
+   * Atributos escolhidos pelo bônus livre da raça (Cap. 1, §5 — hoje só o
+   * Humano tem um). Um item por ponto: `Race.attributeChoices` diz quantos, e
+   * repetir o mesmo atributo é permitido se a raça der mais de um.
+   *
+   * Separado de `attributeBase` de propósito: o custo em PA de atributo se mede
+   * pela soma do point-buy (Cap. 1, §2), e um bônus de raça não é ponto
+   * comprado — misturá-los faria a raça cobrar PA do jogador.
+   */
+  raceAttributeChoices: AttributeKey[];
+  /** Ids de RacialUpgrade já comprados com PA (ex: "hobbit-sombra-absoluta"). */
+  racialUpgrades: string[];
   startingTreeId: string | null;
   unlockedRanks: UnlockedRank[];
   purchasedAbilities: PurchasedAbility[];

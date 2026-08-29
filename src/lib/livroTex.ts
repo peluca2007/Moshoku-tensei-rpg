@@ -9,7 +9,7 @@
  * do site lê, então o PDF e o site nunca discordam de um valor.
  */
 import { RACES } from "@/data/races";
-import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
+import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
 import { SKILLS } from "@/data/skills";
 import { SHOP_ITEMS, SHOP_CATEGORY_LABELS, SHOP_CATEGORY_ORDER } from "@/data/shopItems";
 import { STARTING_KITS } from "@/data/startingKits";
@@ -230,6 +230,13 @@ export function buildAntecedentes(): string {
       "Olhos Demoníacos / Místicos (1d10)",
       ["1d10", "Olho", "Mecânica"],
       OLHO_TABLE.map((e) => [String(e.roll), tex(e.name), tex(e.traits.join(" "))])
+    ),
+    "",
+    table(
+      "C{1.1cm} L{3.6cm} L{9cm}",
+      "Fator Laplace / Linhagem Antiga (1d4)",
+      ["1d4", "Mutação", "Efeito"],
+      LAPLACE_TABLE.map((e) => [String(e.roll), tex(e.name), tex(e.traits.join(" "))])
     )
   );
 }
@@ -394,6 +401,17 @@ export function buildArvores(): string {
           tex(tree.tagline ?? ""),
           tree.prerequisiteNote
             ? `\\par\\medskip\\textbf{Pré-requisito:} ${tex(tree.prerequisiteNote)}`
+            : "",
+          // As proficiências vêm ANTES do 1º patamar, igual ao catálogo do site:
+          // "posso usar essa arma? posso vestir essa armadura?" é a primeira
+          // pergunta da mesa ao abrir uma árvore, e até 2026-08-29 a resposta
+          // estava enterrada no meio do texto de algumas Maestrias.
+          tree.proficiencies
+            ? [
+                `\\par\\medskip\\textbf{Armas e armaduras:} ${tex(tree.proficiencies.armas)}`,
+                `\\par\\textbf{Perícias:} ${tex(tree.proficiencies.pericias)}`,
+                `\\par\\smallskip{\\itshape ${tex(tree.proficiencies.nota)}}`,
+              ].join("")
             : "",
           `\\end{arvorecard}`
         ),

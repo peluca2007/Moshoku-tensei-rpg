@@ -241,7 +241,7 @@ export default function Chapter3() {
         <BookTable
           headers={["Árvore", "Perícias cobertas pelo Bônus de Rank"]}
           rows={[
-            ["Ladino (Furtividade e Armadilhas)", "Furtividade, Ladinagem, Percepção, Acrobacia, Enganação (disfarce)."],
+            ["Ladino (Furtividade e Armadilhas)", "Furtividade e Percepção — só essas duas."],
             ["Bardo e Interação", "Atuação, Persuasão, Intuição, História."],
             ["Tático (Navegação e Liderança)", "Sobrevivência, Natureza, Investigação, Percepção (rastreio)."],
           ]}
@@ -251,6 +251,20 @@ export default function Chapter3() {
           tiver Rank em ambas, use o <b>maior</b> Bônus de Rank entre as duas — nunca some os dois juntos, e
           nunca use os dois pra dobrar a vantagem no mesmo teste.
         </P>
+        <Aside title="Por que o Ladino cobre só duas perícias">
+          <P>
+            Até 2026-08-29 ele somava o Bônus de Rank em cinco (Furtividade, Ladinagem, Percepção, Acrobacia
+            e Enganação) — mais que qualquer outra árvore do pilar — e a Maestria de 1º patamar ainda dava
+            detecção <i>automática</i> de armadilhas e gatilhos, sem teste nenhum. As duas coisas juntas
+            faziam o Ladino resolver a metade de exploração de uma sessão sozinho, de graça, desde a primeira
+            sessão.
+          </P>
+          <P>
+            Agora são <b>Furtividade e Percepção</b>, as duas que ele de fato É, mais o Dano Furtivo, que é a
+            Faixa exclusiva dele. Achar armadilha continua sendo trabalho dele e ele continua disparado o
+            melhor nisso — Percepção com o Bônus de Rank somado. Só não acontece mais sozinho.
+          </P>
+        </Aside>
 
         <SubTitle id="cap3-pp">Pontos de Preparação (PP)</SubTitle>
         <P>

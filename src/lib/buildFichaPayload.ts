@@ -1,5 +1,5 @@
 import { TREES } from "@/data/trees";
-import { getAttackBonus, getPaSpent, getSpellDC } from "@/store/selectors";
+import { getAttackBonus, getPaSpent, getSpellDC, getWeaponDamage } from "@/store/selectors";
 import type { FichaPdfPayload } from "@/lib/typstFicha";
 import {
   AbilityDef,
@@ -101,7 +101,48 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
   if (fixedSkills.length > 0) traits.push(`Perícias fixas: ${fixedSkills.join(", ")}.`);
   if (manualSkills.length > 0) traits.push(`Perícias: ${manualSkills.join(", ")}.`);
 
-  const weapons = character.inventory.filter((i) => i.type === "arma").map((i) => ({ name: i.name }));
+  /**
+   * Cap. 3, "As Fórmulas Marciais": Dado de Arma escalado + Atributo + Bônus do
+   * Rank. Antes de 2026-08-29 este mapa devolvia só `{ name }` e a tabela do PDF
+   * imprimia quatro células vazias — o jogador levava pra mesa uma ficha que não
+   * dizia com quanto ele acerta nem quanto ele causa.
+   *
+   * Sem nenhum patamar do Corpo, `getWeaponDamage` devolve null: a arma continua
+   * aparecendo, com o Dado Base e o atributo, e as colunas de Rank saem com "—".
+   * É o valor correto — quem não treinou estilo nenhum não escala dado nem soma
+   * Bônus de Rank.
+   */
+  const weapons = character.inventory
+    .filter((i) => i.type === "arma")
+    .map((item) => {
+      const attribute = item.damageAttribute ?? "forca";
+      const attributeShort = ATTRIBUTES.find((a) => a.key === attribute)?.short ?? "FOR";
+      const info = item.baseDie ? getWeaponDamage(character, item.baseDie, attribute) : null;
+      const attributeValue = info?.attributeValue ?? attributes[attribute] ?? 0;
+      const sinal = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
+
+      if (!info) {
+        return {
+          name: item.name,
+          baseDie: item.baseDie ?? "—",
+          steps: "—",
+          attack: `1d20${sinal(attributeValue)}`,
+          damage: item.baseDie ? `${item.baseDie}${sinal(attributeValue)} (${attributeShort})` : "—",
+          description: item.description ?? "",
+        };
+      }
+
+      const bonus = attributeValue + info.rankBonus;
+      const media = Math.round(info.averageDamage);
+      return {
+        name: item.name,
+        baseDie: item.baseDie ?? "—",
+        steps: `+${info.steps} (${info.rankLabel}) → ${info.escalatedDie}`,
+        attack: `1d20${sinal(bonus)}`,
+        damage: `${info.escalatedDie}${sinal(bonus)} · méd. ${media}`,
+        description: item.description ?? "",
+      };
+    });
   const inventory = character.inventory.map((i) => ({
     text: `${i.name}${i.equipped ? " (equipado)" : ""}${i.type === "armadura" && i.acBonus ? ` +${i.acBonus} CA` : ""}${i.description ? ` — ${i.description}` : ""}`,
   }));

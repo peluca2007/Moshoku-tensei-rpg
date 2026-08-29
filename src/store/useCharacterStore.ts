@@ -20,6 +20,8 @@ function blankCharacter(id: string, name: string): CharacterData {
     backgroundId: null,
     subtableEntryId: null,
     attributeBase: DEFAULT_ATTRIBUTES,
+    raceAttributeChoices: [],
+    racialUpgrades: [],
     startingTreeId: null,
     unlockedRanks: [],
     purchasedAbilities: [],
@@ -61,6 +63,10 @@ interface RosterState {
   setName: (name: string) => void;
   setLore: (lore: string) => void;
   setRace: (raceId: string | null) => void;
+  /** Define o bônus livre de atributo da raça (Humano). Índice = qual dos pontos concedidos. */
+  setRaceAttributeChoice: (index: number, key: AttributeKey | null) => void;
+  /** Compra/desfaz uma melhoria racial (Cap. 1, §5) — o custo em PA entra em getPaSpent. */
+  toggleRacialUpgrade: (upgradeId: string) => void;
   setBackground: (backgroundId: string | null) => void;
   setSubtableEntry: (entryId: string | null) => void;
   setAttribute: (key: AttributeKey, value: number) => void;
@@ -172,7 +178,27 @@ export const useCharacterStore = create<RosterState>()(
 
       setName: (name) => updateActive(get, set, (c) => ({ ...c, name })),
       setLore: (lore) => updateActive(get, set, (c) => ({ ...c, lore })),
-      setRace: (raceId) => updateActive(get, set, (c) => ({ ...c, raceId })),
+      // Trocar de raça zera as escolhas dependentes dela: o +1 livre e as compras
+      // raciais pertencem à raça anterior e não fazem sentido na nova.
+      setRace: (raceId) =>
+        updateActive(get, set, (c) => ({ ...c, raceId, raceAttributeChoices: [], racialUpgrades: [] })),
+      setRaceAttributeChoice: (index, key) =>
+        updateActive(get, set, (c) => {
+          const next = [...(c.raceAttributeChoices ?? [])];
+          if (key === null) next.splice(index, 1);
+          else next[index] = key;
+          return { ...c, raceAttributeChoices: next.filter(Boolean) };
+        }),
+      toggleRacialUpgrade: (upgradeId) =>
+        updateActive(get, set, (c) => {
+          const atuais = c.racialUpgrades ?? [];
+          return {
+            ...c,
+            racialUpgrades: atuais.includes(upgradeId)
+              ? atuais.filter((id) => id !== upgradeId)
+              : [...atuais, upgradeId],
+          };
+        }),
       setBackground: (backgroundId) =>
         updateActive(get, set, (c) => ({ ...c, backgroundId, subtableEntryId: null })),
       setSubtableEntry: (subtableEntryId) => updateActive(get, set, (c) => ({ ...c, subtableEntryId })),
@@ -307,14 +333,26 @@ export const useCharacterStore = create<RosterState>()(
       // campo novo, porque a partir daqui já existem fichas reais salvas (loja, PO, inventário
       // testados em sessão real). Versões anteriores a v4 continuam resetando: o formato de antes
       // (sem currentHp/overrides) é velho o bastante pra não valer a pena migrar de verdade.
-      version: 5,
+      // v6 (2026-08-29): o balanceamento racial trouxe dois campos novos —
+      // `raceAttributeChoices` (o +1 livre do Humano) e `racialUpgrades` (a
+      // Vantagem Absoluta do Povo Pequeno, 3 PA). Ficha antiga entra com os dois
+      // vazios, que é exatamente o estado correto: ninguém escolheu nada ainda.
+      version: 6,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
         return {
           ...prev,
           characters: Object.fromEntries(
-            Object.entries(prev.characters).map(([id, c]) => [id, { ...c, lore: c.lore ?? "" }])
+            Object.entries(prev.characters).map(([id, c]) => [
+              id,
+              {
+                ...c,
+                lore: c.lore ?? "",
+                raceAttributeChoices: c.raceAttributeChoices ?? [],
+                racialUpgrades: c.racialUpgrades ?? [],
+              },
+            ])
           ),
         };
       },

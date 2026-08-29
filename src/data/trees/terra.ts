@@ -9,6 +9,11 @@ export const TERRA_TREE: Tree = {
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PM",
   tagline: "Construção, cerco e projétil pesado — a única escola que constrói, e o mago com mais PV do jogo.",
+  proficiencies: {
+    armas: "Nenhuma além do padrão (armas simples, armadura leve).",
+    pericias: "Arcanismo e Ofícios (construção) são as perícias da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
+  },
   ranks: [
     {
       rank: "Principiante",

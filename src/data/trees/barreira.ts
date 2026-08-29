@@ -10,6 +10,11 @@ export const BARREIRA_TREE: Tree = {
   resourceLabel: "PM",
   tagline:
     "Anti-magia medida em regras, não em dano. Fraqueza estrutural: barreiras distorcem mana, e aço não é mana — quase nada contra o pilar do Corpo.",
+  proficiencies: {
+    armas: "Nenhuma além do padrão (armas simples, armadura leve).",
+    pericias: "Arcanismo é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    nota: "Escola Formal de Magia. Conjura com Espírito.",
+  },
   ranks: [
     {
       rank: "Principiante",

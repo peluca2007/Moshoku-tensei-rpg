@@ -22,8 +22,27 @@ export interface FichaTreePillar {
   rows: FichaTreeRow[];
 }
 
+/**
+ * Uma linha da tabela "ARMAS E ATAQUES MARCIAIS" do PDF.
+ *
+ * Até 2026-08-29 esta interface tinha SÓ `name`, e `weaponsTable` emitia
+ * `[], [], [], []` nas outras quatro colunas — ou seja, o Dado Base, os degraus,
+ * o acerto e o dano saíam permanentemente em branco no documento gerado, e a
+ * descrição da arma não aparecia em lugar nenhum do PDF. Os campos abaixo são
+ * exatamente os que o cabeçalho da tabela sempre prometeu.
+ */
 export interface FichaWeaponRow {
   name: string;
+  /** Dado Base da arma, como está no inventário ("d8", "2d6"). */
+  baseDie: string;
+  /** Degraus acumulados na Escada de Dados e o dado já escalado ("+4 Santo → 2d10"). */
+  steps: string;
+  /** Bônus de acerto pronto pra rolar ("1d20+7"). */
+  attack: string;
+  /** Dano total já somado ("2d10+7 · méd. 18"). */
+  damage: string;
+  /** Texto livre do item, quando houver. */
+  description: string;
 }
 
 export interface FichaInventoryRow {
@@ -274,23 +293,43 @@ function loreBlock(paragraphs: string[]): string {
 }
 
 function weaponsTable(weapons: FichaWeaponRow[]): string {
+  // Sempre pelo menos 5 linhas: as que sobram saem em branco de propósito, pra
+  // escrever à mão numa ficha impressa.
   const dataRowCount = Math.max(5, weapons.length + 1);
   const rows: string[] = [];
   for (let i = 0; i < dataRowCount; i++) {
-    const name = weapons[i]?.name ?? "";
-    rows.push(`${tstr(name)}, [], [], [], []`);
+    const w = weapons[i];
+    rows.push(
+      [w?.name ?? "", w?.baseDie ?? "", w?.steps ?? "", w?.attack ?? "", w?.damage ?? ""]
+        .map(tstr)
+        .join(", ")
+    );
   }
+
+  // A descrição não cabe numa célula de 28pt sem espremer as outras colunas, e
+  // era justamente ela que sumia por completo do PDF. Vai como notas de rodapé
+  // da tabela, uma linha por arma que tenha texto.
+  const notas = weapons.filter((w) => w.description.trim().length > 0);
+  const notasBloco = notas.length
+    ? `
+#v(3pt)
+#block(width: 100%, inset: (x: 2pt))[
+  #set text(size: 7.5pt)
+  ${notas.map((w) => `#strong(${tstr(w.name)}) + ${tstr(` — ${w.description}`)}`).join("\n  #linebreak()\n  ")}
+]`
+    : "";
+
   return `
 #section-title("ARMAS E ATAQUES MARCIAIS")
 #v(4pt)
 #table(
-  columns: (2fr, 1fr, 1fr, 1fr, 2fr),
+  columns: (2fr, 1fr, 1.2fr, 1fr, 2fr),
   rows: (auto, ..range(${dataRowCount}).map(i => 28pt)),
   stroke: 0.5pt + gray,
   align: center + horizon,
   [*Arma / Manobra*], [*Dado Base*], [*Degraus (Rank)*], [*Acerto*], [*Dano Total (Dados + Bônus)*],
   ${rows.join(",\n  ")}
-)`;
+)${notasBloco}`;
 }
 
 function inventoryBlock(items: FichaInventoryRow[]): string {

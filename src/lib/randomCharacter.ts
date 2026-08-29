@@ -1,6 +1,6 @@
-import { AttributeKey, ATTRIBUTES, ATTRIBUTE_CREATION_MAX } from "./types";
+import { AttributeKey, ATTRIBUTES, ATTRIBUTE_CREATION_MAX, SubtableId } from "./types";
 import { RACES } from "@/data/races";
-import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
+import { BACKGROUNDS, SUBTABLES } from "@/data/backgrounds";
 
 /**
  * Peso de sorteio por raça — quanto mais forte mecanicamente, mais raro sortear (Via 2/3).
@@ -33,13 +33,28 @@ export const RACE_WEIGHT: Record<string, number> = {
   dragao: 0,
 };
 
-function rollableRacePool() {
-  return RACES.filter((r) => (RACE_WEIGHT[r.id] ?? 1) > 0);
+/**
+ * Cap. 1, §5: a Raça Dragão entra no sorteio (2026-08-29) com chance FIXA de 1%,
+ * fora da tabela de pesos.
+ *
+ * É tratada separadamente de propósito. Encaixá-la em RACE_WEIGHT exigiria um
+ * peso fracionário (0,36 no total de 36) ou multiplicar todos os outros pesos
+ * por 11 pra a conta fechar em 400 — nos dois casos o número "1%" ficaria
+ * escondido numa divisão, e a primeira mudança de peso de qualquer outra raça o
+ * quebraria em silêncio. Aqui ele é literal e não depende de mais nada.
+ */
+export const DRAGON_CHANCE = 0.01;
+const DRAGON_ID = "dragao";
+
+/** As raças da tabela de pesos — o Dragão fica de fora, ver DRAGON_CHANCE. */
+function weightedRacePool() {
+  return RACES.filter((r) => r.id !== DRAGON_ID && (RACE_WEIGHT[r.id] ?? 1) > 0);
 }
 
 /** Sorteia um resultado de raça pra Via 2/3 — pesado por raridade (ver RACE_WEIGHT), nunca uniforme. */
 export function rollRandomRace(): string {
-  const pool = rollableRacePool();
+  if (Math.random() < DRAGON_CHANCE) return DRAGON_ID;
+  const pool = weightedRacePool();
   const totalWeight = pool.reduce((sum, r) => sum + (RACE_WEIGHT[r.id] ?? 1), 0);
   let roll = Math.random() * totalWeight;
   for (const race of pool) {
@@ -49,16 +64,35 @@ export function rollRandomRace(): string {
   return pool[pool.length - 1].id;
 }
 
-/** IDs das raças que podem realmente sair no sorteio (peso > 0) — usado pra desenhar a Roleta do Destino sem duplicar a tabela de pesos. */
-export function getRollableRaceIds(): string[] {
-  return rollableRacePool().map((r) => r.id);
+/**
+ * Aplica a chance fixa de 1% da Raça Dragão sobre um resultado que já veio de
+ * outra via de sorteio. Existe pra Entrevista do Destino (Via 3), que tem
+ * loteria própria — enviesada pelas respostas — e por isso não pode simplesmente
+ * chamar `rollRandomRace`. Rolar o 1% por fora garante que ele seja exatamente
+ * 1% em qualquer combinação de respostas, em vez de variar com o viés.
+ */
+export function applyDragonChance(raceId: string): string {
+  return Math.random() < DRAGON_CHANCE ? DRAGON_ID : raceId;
 }
 
-/** Chance real (0–1) de cada raça sortável sair na Roleta — mesma tabela de pesos usada em rollRandomRace, só que exposta pra UI mostrar a probabilidade em vez de escondê-la. */
+/** IDs das raças que podem realmente sair no sorteio — usado pra desenhar a Roleta do Destino sem duplicar a tabela de pesos. */
+export function getRollableRaceIds(): string[] {
+  return [...weightedRacePool().map((r) => r.id), DRAGON_ID];
+}
+
+/** Chance real (0–1) de cada raça sortável sair na Roleta — mesma tabela usada em rollRandomRace, só que exposta pra UI mostrar a probabilidade em vez de escondê-la. */
 export function getRaceProbabilities(): { id: string; probability: number }[] {
-  const pool = rollableRacePool();
+  const pool = weightedRacePool();
   const totalWeight = pool.reduce((sum, r) => sum + (RACE_WEIGHT[r.id] ?? 1), 0);
-  return pool.map((r) => ({ id: r.id, probability: (RACE_WEIGHT[r.id] ?? 1) / totalWeight }));
+  // O Dragão come 1% fechado; as demais dividem os 99% restantes na proporção
+  // dos pesos, então a soma da lista continua sendo exatamente 1.
+  return [
+    ...pool.map((r) => ({
+      id: r.id,
+      probability: ((RACE_WEIGHT[r.id] ?? 1) / totalWeight) * (1 - DRAGON_CHANCE),
+    })),
+    { id: DRAGON_ID, probability: DRAGON_CHANCE },
+  ];
 }
 
 /** Rola 1d100 na tabela de Antecedentes do Cap. 1 (mesmo rollRange já usado no livro) — respeita o peso canônico de cada resultado. */
@@ -105,9 +139,9 @@ export function rollRandomAttributes(): Record<AttributeKey, number> {
   return base;
 }
 
-/** Rola a subtabela de Miko (1d8) ou Olho Místico (1d10) — cada resultado tem o mesmo peso, como o dado físico que ela representa. */
-export function rollRandomSubtableEntry(table: "miko" | "olho"): string {
-  const source = table === "miko" ? MIKO_TABLE : OLHO_TABLE;
+/** Rola qualquer sub-tabela de antecedente (Miko 1d8, Olho 1d10, Fator Laplace 1d4) — cada resultado tem o mesmo peso, como o dado físico que ela representa. */
+export function rollRandomSubtableEntry(table: SubtableId): string {
+  const source = SUBTABLES[table].entries;
   return source[Math.floor(Math.random() * source.length)].id;
 }
 

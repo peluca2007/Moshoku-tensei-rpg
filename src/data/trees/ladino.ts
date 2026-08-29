@@ -18,6 +18,11 @@ export const LADINO_TREE: Tree = {
     Rei: "Fantasma",
     Imperador: "Lenda Oculta",
   },
+  proficiencies: {
+    armas: "Adaga, punhal, espada curta, funda e besta leve. Armadura leve apenas.",
+    pericias: "O Bônus de Rank soma em FURTIVIDADE e PERCEPÇÃO, e em mais nada (Cap. 3).",
+    nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
+  },
   ranks: [
     {
       rank: "Principiante",
@@ -25,8 +30,20 @@ export const LADINO_TREE: Tree = {
       ppGained: 0,
       mastery: {
         name: "Olho Treinado e Dano Furtivo",
+        // 2026-08-29 (nerf pedido pelo usuário): a Maestria concedia DUAS coisas
+        // grandes de uma vez — a detecção automática de armadilhas ("não pedem
+        // teste... você simplesmente os vê") e o Dano Furtivo. A primeira apagava
+        // um pilar inteiro de exploração já no 1º patamar, de graça e sem
+        // rolagem: armadilha deixava de ser uma decisão de mesa e virava um aviso
+        // automático. O Bônus de Rank do Ladino também cobria cinco perícias,
+        // mais que qualquer outra árvore de Utilidade.
+        // Ficou o que define a árvore: as duas perícias que o Ladino É
+        // (Furtividade e Percepção) e o Dano Furtivo, que é a Faixa exclusiva
+        // dele pelo Cap. 3. Achar armadilha continua sendo dele — com Percepção
+        // e o Bônus de Rank somado, ele ainda é disparado o melhor nisso; só não
+        // é mais de graça.
         description:
-          "Escopo: um objeto, um cômodo, uma pessoa comum. Armadilhas e gatilhos não pedem teste para serem percebidos — você simplesmente os vê. Uma vez por turno, ao acertar um alvo desprevenido, cego, imobilizado ou contra o qual tenha Vantagem, some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
+          "Escopo: um objeto, um cômodo, uma pessoa comum. Seu Bônus de Rank soma nos testes de Furtividade e de Percepção — e em mais nenhuma perícia. Uma vez por turno, ao acertar um alvo desprevenido, cego, imobilizado ou contra o qual tenha Vantagem, some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
       },
       talents: [
         { id: "maos-rapidas", name: "Mãos Rápidas", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você tira e coloca objetos em bolsos alheios com teste de Agilidade contra a Percepção do alvo. Em combate, 1 Ação para roubar item não empunhado." },
