@@ -58,63 +58,13 @@ export default function Chapter4() {
                   : `+${v.vigor * 20}% de vida sobre o corpo comum.`,
           ])}
         />
-        <Warning title="Vigor Negativo: as regras estritas">
-          <P>
-            Largar Vigor não é escolher um número menor — é escolher uma condição permanente, com nome e
-            com efeito nas duas coisas que o atributo governa: a <b>Vida</b> e a <b>Resistência</b>.
-          </P>
-          <BookTable
-            headers={["", "Vigor 0 — Corpo Comum", "Vigor -1 — Constituição Frágil", "Vigor -2 — Corpo Quebrado"]}
-            rows={[
-              ["Vida", "×1,00. A referência do livro.", "×0,75 — você perde 25% de tudo.", "×0,40 — você perde 60% de tudo."],
-              [
-                "Resistência de Vigor (veneno, doença, clima, fome, Exaustão)",
-                "Rola normal: 1d20 + Vigor + metade do Bônus de Rank.",
-                "Rola com Desvantagem.",
-                "Rola com Desvantagem e NÃO soma metade do Bônus de Rank — o veterano de Corpo Quebrado resiste como um novato até o fim da campanha.",
-              ],
-              [
-                "Fio da Vida (seção 6)",
-                "Três chances antes de morrer.",
-                "Rola com Desvantagem, como toda resistência de Vigor.",
-                "Desvantagem, sem o Bônus de Rank, e a Falha Crítica acontece em 1 ou 2 no dado — duas Marcas de uma vez.",
-              ],
-              [
-                "Descanso Longo",
-                "Recupera Vigor + 1d8 PV (mínimo 2).",
-                "Recupera 1d8 − 1 PV (mínimo 2).",
-                "Recupera sempre o mínimo: 2 PV. Um corpo quebrado não se conserta dormindo.",
-              ],
-            ]}
-          />
-        </Warning>
-        <Aside title="Por que 0 é muito melhor que -1, e -1 muito melhor que -2">
-          <P>
-            Porque o corte é <b>proporcional e crescente</b>, não uma subtração fixa. O primeiro ponto
-            negativo custa <b>25%</b> da sua vida. O segundo custa mais <b>47% do que tinha sobrado</b> —
-            quase o dobro do primeiro. E como o fator multiplica o corpo inteiro, a punição vale igual no 1º
-            patamar e no Imperador: não existe mais &ldquo;levo o defeito agora, o mundo cobra daqui a vinte
-            sessões&rdquo;.
-          </P>
-          <P>
-            Na prática, para o mesmo espadachim: no 1º patamar, 40 PV com Vigor 0, <b>30</b> com -1,{" "}
-            <b>16</b> com -2. No Imperador, 166 PV com Vigor 0, <b>124</b> com -1, <b>66</b> com -2. Um
-            Corpo Quebrado de rank Imperador tem menos vida que um Corpo Comum de rank Santo.
-          </P>
-          <P>
-            <b>O que essa escala corrigiu:</b> a fórmula anterior tinha um piso (&ldquo;Constituição Base,
-            mínimo 13&rdquo;) que dava o <i>mesmo</i> valor de base para Vigor 1, 0, -1 e -2. Somado ao fato
-            de Vigor não governar perícia nenhuma, largá-lo em -2 na criação custava 8 PV e pagava 2 pontos
-            de atributo permanentes — era, matematicamente, a melhor jogada de <i>qualquer</i> ficha do
-            livro. Não é mais.
-          </P>
-        </Aside>
+       
 
         <Aside title="PM Máximos = (o maior entre o seu Espírito e 4) × Maior Bônus de Rank de Magia, + 8">
           <P>
             Uma linha, um &ldquo;o que for maior&rdquo;, e mais nada. <b>Escolas de magia não concedem PM
-            nenhum</b> — a reserva inteira sai daqui. Árvores do Corpo e de Utilidade concedem <b>0 PM,
-            sempre</b>, mesmo em rank Imperador; em troca, o Corpo recebe PT (Cap. 3). Sem nenhum patamar de
+              nenhum</b> — a reserva inteira sai daqui. Árvores do Corpo e de Utilidade concedem <b>0 PM,
+                sempre</b>, mesmo em rank Imperador; em troca, o Corpo recebe PT (Cap. 3). Sem nenhum patamar de
             magia, o Bônus é 0 e você fica com os 8 PM de base.
           </P>
           <P>
@@ -160,14 +110,7 @@ export default function Chapter4() {
             e a luta dura de duas a três rodadas em qualquer patamar: tempo pro curandeiro agir e pro Escudos
             se interpor. Os 20 de base são o que sustenta um personagem de 1º patamar antes de o treino pesar.
           </P>
-          <P>
-            <b>O que esta fórmula substituiu:</b> até 2026-08-29 os PV eram a soma de três termos diferentes
-            — uma &ldquo;Constituição Base&rdquo; com piso, uma &ldquo;Progressão&rdquo; dobrada que ainda
-            tinha uma exceção só pro primeiro dado da Árvore Inicial, e uma &ldquo;Vitalidade&rdquo;
-            multiplicada pelo Bônus de Rank. Três contas, um piso e um caso especial pra chegar num número
-            que esta faz em um passo, com diferença média de 9 PV. A curva do jogo é a mesma; o que sumiu foi
-            a chance de errar a conta.
-          </P>
+       
         </Aside>
       </Section>
 
@@ -277,8 +220,8 @@ export default function Chapter4() {
           slots diferentes, não dois efeitos competindo pelo mesmo bônus (é por isso que o kit inicial de
           Tank do Cap. 1 já vem com os dois juntos).
         </Aside>
-        <Aside title="Teto de Auxílio +5">
-          Nenhum personagem recebe mais de +5 somados em bônus numéricos vindos de habilidades de aliados no
+        <Aside title="Teto de Auxílio +6">
+          Nenhum personagem recebe mais de +6 somados em bônus numéricos vindos de habilidades de aliados no
           mesmo turno. Acima disso, o excedente é ignorado.
         </Aside>
         <Aside title="Teto de Ações: 5, no máximo 2 externas">
@@ -286,11 +229,10 @@ export default function Chapter4() {
           externas (Avante, Antecipação, Comando). Sem esta regra, um Norte Imperador (4 Ações) com um
           Tático Comandante na mesa chega a 7 Ações por turno, e o combate deixa de existir.
         </Aside>
-        <Aside title="Uma Salvação por Combate">
-          O livro tem quatro formas de impedir que alguém morra — Aguentar (Touki), Rejeitar a Morte (Cura),
-          Sem Baixas (Tático) e Custe o Que Custar (Escudos). Cada criatura só pode ser salva por um desses
-          efeitos por combate; a segunda tentativa, de qualquer fonte, falha e não consome o recurso de quem
-          tentou.
+        <Aside title="Duas Salvações por Combate">
+          O livro tem quatro formas de impedir que alguém morra — Aguentar (Touki), Rejeitar a Morte (Cura), Sem Baixas (Tático) e Custe o Que Custar (Escudos).
+          Cada criatura pode ser salva no máximo duas vezes por combate, e você não pode usar o mesmo método duas vezes no mesmo alvo.
+          Qualquer terceira tentativa de salvação, de qualquer fonte, falha automaticamente, mas não consome o recurso de quem a ativou.
         </Aside>
         <Aside title="Vantagem é binária">
           Vantagem não empilha: dez fontes de Vantagem continuam sendo 2d20. Vantagem Absoluta (3d20) só vem
@@ -357,9 +299,8 @@ export default function Chapter4() {
 
         <Aside title="Ferida Fresca">
           <P>
-            Toda a Magia de Cura cura <b>em dobro</b> contra uma Ferida Fresca, e o termo aparecia em oito
-            habilidades sem nunca ser definido. Ferida Fresca é o dano sofrido <b>no turno atual ou no turno
-            imediatamente anterior</b> — a janela em que a carne ainda não começou a fechar sozinha.
+            Toda a Magia de Cura cura <b>em dobro</b> contra uma Ferida Fresca. Ferida Fresca é o dano sofrido <b>no turno atual ou no turno
+              imediatamente anterior</b> — a janela em que a carne ainda não começou a fechar sozinha.
           </P>
           <P>
             É por isso que o curandeiro age cedo, e não depois: a mesma magia que devolve 55 PV a quem caiu
@@ -372,35 +313,47 @@ export default function Chapter4() {
         <SubTitle id="cap4-cicatrizes">Cicatrizes de Quase-Morte</SubTitle>
         <Warning title="Quando a Morte Quase Ganha">
           <P>
-            Toda vez que você acumular <b>2 Marcas da Morte</b> antes de ser resgatado, o corpo guarda a
-            lembrança mesmo depois de curado. Além da Exaustão de sempre, role 1d6 na tabela abaixo (ou
-            escolha, com o Mestre) e ganhe a Cicatriz <b>permanentemente</b>. Se tirar uma que já tem, ela
-            atinge outro membro ou sentido, à escolha do Mestre.
+            Sempre que você acumular <b>2 Marcas da Morte</b> antes de ser estabilizado, o trauma vai além do limite físico, deixando marcas profundas na carne ou na mente. Além de sofrer a Exaustão padrão, role 1d12 na tabela abaixo (ou escolha em conjunto com o Mestre) para adquirir uma Cicatriz. Caso o resultado seja uma sequela que você já possui, ela atinge um novo membro ou sentido.
           </P>
+
           <BookTable
-            headers={["d6", "Cicatriz"]}
+            headers={["d12", "Cicatriz"]}
             rows={[
-              ["1", "Braço Perdido: Desvantagem em testes de Força e em Atletismo. Não consegue usar armas de duas mãos, nem empunhar arma e escudo ao mesmo tempo."],
-              ["2", "Perna Manca: Deslocamento −3m, permanente."],
-              ["3", "Olho Perdido: Desvantagem em Percepção e em qualquer ataque à distância além do alcance curto."],
-              ["4", "Voz Quebrada: não consegue mais usar Conjuração Silenciosa (Cap. 2). Desvantagem em Atuação e Persuasão."],
-              ["5", "Mão Trêmula: Desvantagem em Ladinagem, em Ofícios manuais e em Iniciativa."],
-              ["6", "A Sombra Não Sai: nenhuma penalidade de combate, mas Desvantagem em testes de resistência de Espírito contra Medo — o corpo lembra de ter morrido, mesmo que a mente negue."],
+              ["1", "Ferimento Reaberto: A ferida arde sob esforço extremo. Desvantagem em testes de Constituição (Vigor) para evitar Exaustão ou fadiga."],
+              ["2", "Articulação Rígida: Movimentos bruscos causam fisgadas de dor. Desvantagem em testes de Acrobacia e Furtividade."],
+              ["3", "Fôlego Curto: Seus pulmões perderam capacidade. Desvantagem em testes de Atletismo focados em natação, apneia ou corrida prolongada."],
+              ["4", "Zumbido Constante: Um tinido persistente atrapalha sua audição. Desvantagem em testes de Percepção que dependam puramente de som."],
+              ["5", "Visão Desfocada: Dificuldade em focar os olhos após picos de adrenalina. Você sofre -2 de penalidade em todos os testes de Iniciativa."],
+              ["6", "Nervo Pinçado: Suas mãos tremem de forma involuntária. Desvantagem em testes de Ladinagem e Ofícios que exijam coordenação motora fina."],
+              ["7", "Trauma Noturno: O corpo recusa o relaxamento profundo. Ao fazer um Descanso Longo, role 1d20; com 5 ou menos, você recupera apenas metade dos seus Pontos de Magia e recursos diários."],
+              ["8", "A Sombra Não Sai: Nenhuma penalidade física, mas Desvantagem em testes de resistência de Espírito contra Medo — o corpo lembra da morte, mesmo que a mente negue."],
+              ["9", "Voz Quebrada: As cordas vocais foram gravemente danificadas. Você não consegue mais usar Conjuração encurtada e tem Desvantagem em Atuação e Persuasão."],
+              ["10", "Perna Manca: Os ossos não colaram direito e a musculatura atrofiou. Seu Deslocamento base sofre uma penalidade permanente de −3m."],
+              ["11", "Olho Perdido: A visão periférica e de profundidade se foram. Desvantagem em Percepção visual e em qualquer ataque à distância além do alcance curto."],
+              ["12", "Membro Perdido (Braço/Mão): Desvantagem em testes de Força e Atletismo. Você não consegue usar armas de duas mãos, nem empunhar arma e escudo ao mesmo tempo."],
             ]}
           />
+
           <P>
-            A única cura conhecida é <i>Corpo Íntegro</i> (Cura, Rank Imperador) — ela relê o corpo por
-            inteiro e apaga a Cicatriz junto com qualquer outra sequela física. Fora disso, ela é permanente:
-            nenhum Descanso, magia de rank inferior ou poção a remove. É o preço de ter quase morrido, e ele
-            pesa na ficha pelo resto da campanha — não só naquela sessão.
+            A gravidade da sequela dita o limite do seu tratamento:
           </P>
+          <ul>
+            <li><b>Cicatrizes Menores (1 a 7):</b> Causam incômodos mecânicos e narrativos, mas o corpo ainda pode se recuperar. Elas são totalmente apagadas caso o personagem receba uma magia de <b>Cura de Rank Avançado</b>.</li>
+            <li><b>Ferimentos Críticos (8 a 12):</b> Deixam marcas irreversíveis na estrutura do aventureiro. A única salvação conhecida é <i>Corpo Íntegro</i> (Cura, Rank Rei/Imperador) — capaz de reler o alvo por inteiro, apagando a Cicatriz e recriando membros perdidos. Sem esse milagre, nenhuma poção, descanso ou magia inferior resolverá o problema. É o preço da sobrevivência, e ele pesará na sua ficha pelo resto da campanha.</li>
+          </ul>
         </Warning>
 
         <BookTable
           headers={["Descanso", "Recupera"]}
           rows={[
-            ["Curto (1 a 2 horas)", "Metade dos seus PM máximos e TODOS os seus PT (arredondado pra baixo). Não recupera PV nem PP. No máximo dois Descansos Curtos entre dois Descansos Longos."],
-            ["Longo (8 horas de sono seguro)", "Todos os PM, PT e PP; remove 1 nível de Exaustão; recupera PV iguais ao seu Vigor + 1d8 (mínimo 2). Corpo Quebrado (Vigor -2) recupera sempre o mínimo — ver A Escala do Vigor, seção 1."],
+            [
+              "Curto (1 a 2 horas)",
+              "Recupera 25% dos seus PM, PP e PT máximos (arredondado para baixo). Não recupera Pontos de Vida (0%)."
+            ],
+            [
+              "Longo (8 horas de sono seguro)",
+              "Recupera 50% dos seus PM, PP e PT máximos (arredondado para baixo). Recupera 25% dos seus PV máximos + ((Vigor)d10%(minimo 5%)),"
+            ],
           ]}
         />
         <Warning title="Dois Curtos por dia, e nem um a mais">
@@ -513,7 +466,7 @@ export default function Chapter4() {
         <P>
           Em qualquer via, a vítima só é afetada se sofrer dano da arma untada, ingerir a dose ou respirar a
           nuvem. Nesse momento ela faz um <b>teste de resistência de Vigor</b> contra <b>CD 8 + (2 × a
-          Profundidade do veneno)</b> — veneno é exposição direta e ativa, por isso a CD é mais alta que a de
+            Profundidade do veneno)</b> — veneno é exposição direta e ativa, por isso a CD é mais alta que a de
           contágio passivo de uma doença (mais adiante, nas Regras de Mesa desta seção). Sucesso: a aflição
           some por completo, sem efeito nenhum. Falha: a aflição começa exatamente na Profundidade listada na
           tabela e sobe sozinha a partir daí, 1 ponto por hora.

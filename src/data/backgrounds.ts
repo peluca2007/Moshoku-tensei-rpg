@@ -151,10 +151,34 @@ export const BACKGROUNDS: Background[] = [
       "+1 em Vigor e +1 em Espírito, permanentes — o corpo que sobreviveu ao pior já não se assusta com o segundo pior, e a vontade que o carregou até aqui não some junto com as cicatrizes.",
     ],
   },
+ 
   {
+    id: "miko",
+    name: "Miko (Abençoada/Amaldiçoada)",
+    rollRange: [87, 92],
+    // Cinco das oito entradas da MIKO_TABLE têm `bonuses: {}` — não mexem em
+    // número nenhum da ficha — e três delas carregam maldições pesadas o
+    // bastante pra sair NEGATIVAS (Esquecimento, Telepatia, Confiança Absoluta).
+    // Resultado: o antecedente com 4% de chance, que o próprio texto descreve
+    // como "cerca de 10 no mundo inteiro", valia em média 1,74 PC na criação e
+    // 0,70 no Imperador — o pior da tabela d100, atrás do Plebeu de 15%. Um
+    // piso de +1 Espírito no PRÓPRIO antecedente (a anomalia de mana que causa
+    // a mutação também engrossa a alma que a carrega) levanta as oito entradas
+    // de uma vez sem tocar em nenhuma, e é o que impede as duas piores
+    // (Esquecimento, Telepatia) de valerem literalmente zero. A variância entre
+    // os 1d8 continua enorme de propósito: abençoada ou amaldiçoada é o ponto.
+    bonuses: { attributes: { espirito: 1 } },
+    startingGold: "2d4",
+    requiresSubtable: "miko",
+    traits: [
+      "+1 em Espírito, permanente — a anomalia de mana que produz a mutação não fica só no poder: ela engrossa a alma que o carrega.",
+      "Role 1d8 na Tabela de Miko para definir a mutação mágica.",
+    ],
+  },
+   {
     id: "fator-laplace",
     name: "Fator Laplace / Linhagem Antiga",
-    rollRange: [87, 92],
+    rollRange: [92, 94],
     // 2026-08-29: todos os bônus fixos saíram e o antecedente passou a rolar 1d4
     // na LAPLACE_TABLE. Duas razões.
     //
@@ -179,33 +203,11 @@ export const BACKGROUNDS: Background[] = [
       "Desvantagem em Persuasão com desconhecidos — pessoas comuns sentem, mesmo sem saber o porquê, que algo em você quer distância.",
     ],
   },
-  {
-    id: "miko",
-    name: "Miko (Abençoada/Amaldiçoada)",
-    rollRange: [93, 96],
-    // Cinco das oito entradas da MIKO_TABLE têm `bonuses: {}` — não mexem em
-    // número nenhum da ficha — e três delas carregam maldições pesadas o
-    // bastante pra sair NEGATIVAS (Esquecimento, Telepatia, Confiança Absoluta).
-    // Resultado: o antecedente com 4% de chance, que o próprio texto descreve
-    // como "cerca de 10 no mundo inteiro", valia em média 1,74 PC na criação e
-    // 0,70 no Imperador — o pior da tabela d100, atrás do Plebeu de 15%. Um
-    // piso de +1 Espírito no PRÓPRIO antecedente (a anomalia de mana que causa
-    // a mutação também engrossa a alma que a carrega) levanta as oito entradas
-    // de uma vez sem tocar em nenhuma, e é o que impede as duas piores
-    // (Esquecimento, Telepatia) de valerem literalmente zero. A variância entre
-    // os 1d8 continua enorme de propósito: abençoada ou amaldiçoada é o ponto.
-    bonuses: { attributes: { espirito: 1 } },
-    startingGold: "2d4",
-    requiresSubtable: "miko",
-    traits: [
-      "+1 em Espírito, permanente — a anomalia de mana que produz a mutação não fica só no poder: ela engrossa a alma que o carrega.",
-      "Role 1d8 na Tabela de Miko para definir a mutação mágica.",
-    ],
-  },
+
   {
     id: "olho-mistico",
     name: "Olho Místico Inato",
-    rollRange: [97, 98],
+    rollRange: [94, 98],
     // As DEZ entradas da OLHO_TABLE têm `bonuses: {}`: o segundo resultado mais
     // raro do livro (2 em 100) não mexia em um único número da ficha. Pior, era
     // autocontraditório — todo olho roda a PM (Previsão 3 PM/turno, Vazio
@@ -226,7 +228,7 @@ export const BACKGROUNDS: Background[] = [
   {
     id: "genio",
     name: "Gênio (Conjuração Silenciosa)",
-    rollRange: [99, 100],
+    rollRange: [98, 100],
     // 99-100 é o resultado mais raro da tabela inteira (2%) e precisa ser o mais
     // forte, sem discussão — foi o pedido explícito do usuário em 2026-08-29,
     // depois de o Fator Laplace (6%) estar acima dele.
