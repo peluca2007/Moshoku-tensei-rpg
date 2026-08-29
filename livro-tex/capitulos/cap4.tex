@@ -1,0 +1,515 @@
+% ===========================================================================
+%  Capítulo 4 — O Combate e a Sobrevivência
+% ===========================================================================
+\chapter{O Combate e a Sobrevivência}
+
+Quando a diplomacia falha e as espadas são desembainhadas, o sistema adota um combate
+rápido, letal e tático.
+
+% ---------------------------------------------------------------------------
+\section{Cálculos Vitais}
+
+PV e PM não são calculados só na criação --- eles crescem toda vez que você desbloqueia um
+Rank novo em qualquer árvore. As fórmulas abaixo valem sempre, do 1º patamar ao Imperador.
+
+\begin{formula}
+    \textbf{PV Máximos $=$ ($20 + $ o dobro dos seus Dados de PV) $\times$ Fator de Vigor}
+\end{formula}
+
+Uma linha, dois passos, nenhuma exceção:
+
+\begin{enumerate}
+    \item \textbf{O corpo treinado.} Some os Dados de PV de \textbf{todos} os patamares que
+          você desbloqueou, em todas as árvores (use a média de cada dado, ou role, se a
+          mesa preferir), \textbf{dobre o resultado} e some \textbf{20}. Esses 20 são o corpo
+          com que todo mundo nasce.
+    \item \textbf{O Fator de Vigor.} Multiplique tudo aquilo pelo fator da tabela do
+          Capítulo 1, e arredonde pra baixo. \textbf{Cada ponto positivo de Vigor soma 20\%
+          à sua vida inteira.}
+\end{enumerate}
+
+É só isso. Não existe piso, não existe um dado que conta em dobro, e nenhum patamar novo
+muda a forma da conta --- desbloquear um Rank só acrescenta mais um Dado de PV ao passo 1.
+
+\begin{nota}{Por que o dobro, e por que 20}
+    Somar os dados crus não funciona: um Norte de Vigor 5 chegaria ao Imperador com pouco
+    mais de 70 PV, contra um Imperador da Espada causando perto de 130 de dano por turno ---
+    o combate acabaria antes de o segundo personagem agir. Com o dobro, o mesmo Norte chega
+    ao Imperador perto de 240 PV, e a luta dura de duas a três rodadas em qualquer patamar:
+    tempo pro curandeiro agir e pro Escudos se interpor. Os 20 de base são o que sustenta um
+    personagem de 1º patamar antes de o treino pesar.
+\end{nota}
+
+\subsection{A Escala do Vigor}
+
+Vigor não governa nenhuma perícia (Cap. 1, §4): ele é a sua vida e a sua resistência, e nada
+mais. Por isso ele é o atributo mais fácil de largar no Sistema de Defeitos --- e por isso a
+escala é \textbf{deliberadamente assimétrica}. Subir é linear; descer, não. A tabela de
+fatores está no Capítulo 1, junto das outras tabelas de referência.
+
+\begin{aviso}{Vigor Negativo: as regras estritas}
+    Largar Vigor não é escolher um número menor --- é escolher uma condição permanente, com
+    nome e com efeito nas duas coisas que o atributo governa: a \textbf{Vida} e a
+    \textbf{Resistência}.
+
+    \begin{tabelalivro}{L{2.6cm} L{3.4cm} L{3.4cm} L{3.4cm}}{}
+    \cabtabela{ & \textbf{Vigor 0} \newline Corpo Comum & \textbf{Vigor $-1$} \newline Constituição Frágil & \textbf{Vigor $-2$} \newline Corpo Quebrado}
+    Vida & $\times$1,00. A referência do livro. & $\times$0,75 --- você perde 25\% de tudo. & $\times$0,40 --- você perde 60\% de tudo. \\
+    Resistência de Vigor (veneno, doença, clima, fome, Exaustão) & Rola normal: 1d20 $+$ Vigor $+$ metade do Bônus de Rank. & Rola com Desvantagem. & Desvantagem, e NÃO soma metade do Bônus de Rank --- resiste como um novato até o fim da campanha. \\
+    Fio da Vida (§6) & Três chances antes de morrer. & Rola com Desvantagem, como toda resistência de Vigor. & Desvantagem, sem o Bônus de Rank, e a Falha Crítica acontece em 1 ou 2 --- duas Marcas de uma vez. \\
+    Descanso Longo & Recupera Vigor $+$ 1d8 PV (mínimo 2). & Recupera 1d8 $-$ 1 PV (mínimo 2). & Recupera sempre o mínimo: 2 PV. Um corpo quebrado não se conserta dormindo. \\
+    \end{tabelalivro}
+\end{aviso}
+
+\begin{nota}{Por que 0 é muito melhor que $-1$, e $-1$ muito melhor que $-2$}
+    Porque o corte é \textbf{proporcional e crescente}, não uma subtração fixa. O primeiro
+    ponto negativo custa \textbf{25\%} da sua vida. O segundo custa mais \textbf{47\% do que
+    tinha sobrado} --- quase o dobro do primeiro. E como o fator multiplica o corpo inteiro,
+    a punição vale igual no 1º patamar e no Imperador: não existe mais \enquote{levo o
+    defeito agora, o mundo cobra daqui a vinte sessões}.
+
+    \medskip
+    Na prática, para o mesmo espadachim: no 1º patamar, 36 PV com Vigor 0, \textbf{27} com
+    $-1$, \textbf{14} com $-2$. No Imperador, 144 PV com Vigor 0, \textbf{108} com $-1$,
+    \textbf{57} com $-2$. Um Corpo Quebrado de rank Imperador tem menos vida que um Corpo
+    Comum de rank Avançado.
+\end{nota}
+
+\begin{formula}
+    \textbf{PM Máximos $=$ (o maior entre o seu Espírito e 4) $\times$ Maior Bônus de Rank
+    de Magia, $+$ 8}
+\end{formula}
+
+Uma linha, um \enquote{o que for maior}, e mais nada. \textbf{Escolas de magia não concedem
+PM nenhum} --- a reserva inteira sai daqui. Árvores do Corpo e de Utilidade concedem
+\textbf{0 PM, sempre}, mesmo em rank Imperador; em troca, o Corpo recebe PT. Sem nenhum
+patamar de magia, o Bônus é 0 e você fica com os 8 PM de base.
+
+\begin{nota}{O \enquote{maior entre Espírito e 4}}
+    É o que mantém jogável o mago que o Cap. 1 promete como \textbf{cirurgião} (Intelecto
+    alto, Espírito baixo --- poucos tiros, todos letais). O custo das magias cresce dez vezes
+    do 1º ao 6º patamar; sem esse mínimo, um Imperador de Espírito 2 teria 20 PM e a
+    assinatura da própria escola custaria mais que isso --- ele nunca conseguiria conjurá-la.
+    Se você tem Espírito 4 ou mais, essa metade da regra nunca entra na conta: é só
+    \textbf{Espírito $\times$ Bônus $+$ 8}.
+
+    \medskip
+    Exemplo: uma Água Imperador (Bônus $+6$) com Espírito 6 tem $6\times6+8 = $ \textbf{44
+    PM} --- o suficiente pra bancar Zero Absoluto (20 PM) duas vezes, com troco pra mais nada.
+\end{nota}
+
+\begin{itemize}
+    \item \textbf{Classe de Armadura (CA):} Base 10 $+$ Agilidade. Cresce com armaduras,
+          talentos e habilidades defensivas.
+    \item \textbf{Iniciativa:} 1d20 $+$ Agilidade.
+    \item \textbf{Teste de Resistência:} 1d20 $+$ Atributo $+$ \textbf{metade do seu maior
+          Bônus de Rank} (arredondado pra cima), de qualquer árvore.
+    \item \textbf{Deslocamento:} 9 metros, exceto onde a raça indicar outro valor.
+\end{itemize}
+
+\begin{nota}{O Rank conta no teste de resistência}
+    Metade do Bônus de Rank, arredondada pra cima: $+1$ no Principiante, $+2$ do Avançado ao
+    Santo, $+3$ no Imperador. É o mesmo valor que o Manto de Touki usa, de propósito --- não
+    existe uma terceira escala pra decorar.
+
+    \medskip
+    Ele entra porque as CDs do mundo crescem mais rápido que os seus atributos: as criaturas
+    do Apêndice de Bestiário sobem $+10$ de CD entre o 1º e o 6º patamar, e um atributo vai
+    de 4 a 8 no mesmo período. Sem o Rank na conta, um veterano resistiria pior que um novato.
+\end{nota}
+
+% ---------------------------------------------------------------------------
+\section{Glossário de Condições}
+
+\begin{aviso}{Toda condição usada no livro está aqui, com número}
+    Dezenas de magias e técnicas aplicam uma condição pelo nome (\enquote{o alvo fica
+    Amedrontado}) sem repetir o efeito toda vez --- é aqui, e só aqui, que cada uma tem sua
+    definição completa. Se uma habilidade específica alterar o efeito padrão, a habilidade
+    sempre vence.
+\end{aviso}
+
+\begin{tabelalivro}{L{3.2cm} L{10.6cm}}{}
+\cabtabela{\textbf{Condição} & \textbf{Efeito}}
+\cond{Agarrado} & Deslocamento 0. Desvantagem em ataques contra qualquer criatura que não seja quem te agarrou. Termina se quem te agarrou for incapacitado, ou gastando 1 Ação numa Disputa de Força ou Agilidade. \\
+\cond{Amedrontado} & Desvantagem em testes de atributo e em ataques enquanto a fonte do medo estiver visível. Não pode se mover voluntariamente pra mais perto dela. \\
+\cond{Atolado} & Deslocamento reduzido à metade nesse terreno; gastar o dobro de Deslocamento pra sair. Não afeta ataques nem testes. \\
+\cond{Atordoado} & Perde todas as Ações e a Reação até o fim do próximo turno. Ataques contra você têm Vantagem, e você falha automaticamente em resistências de Força e Agilidade. \\
+\cond{Caído} & Desvantagem em qualquer ataque que você faça. Ataques corpo a corpo contra você têm Vantagem; à distância, Desvantagem. Levantar custa metade do Deslocamento. \\
+\cond{Cego} & Falha automaticamente em qualquer teste que dependa de visão. Seus ataques têm Desvantagem; ataques contra você têm Vantagem. \\
+\cond{Congelado} & Deslocamento 0 e Desvantagem em resistências de Agilidade, até quebrar o gelo (1 Ação, teste de Força CD 8 $+$ BC de quem congelou) ou sofrer dano de fogo. \\
+\cond{Desequilibrado} & Deslocamento reduzido à metade, não pode usar mais de uma Reação por rodada, e Desvantagem em ataques de oportunidade. Dura até o fim do próximo turno do alvo. \\
+\cond{Em Chamas} & No início de cada um dos seus turnos, sofre 1d6 de dano ígneo (ou o valor que a habilidade especificar). Apaga submergindo, ficando Molhado, ou gastando 1 Ação rolando no chão (Agilidade CD 10). \\
+\cond{Envenenado} & Desvantagem em ataques e em testes de atributo enquanto durar. \\
+\cond{Estagnação} & Uma das duas faces do Fluxo Interrompido. Dentro da barreira, toda magia custa $+1$ PM por Bônus de Rank de quem a ergueu, e ninguém recupera PM por meio nenhum --- nem descanso, nem item, nem habilidade. \\
+\cond{Fluxo Interrompido} & A barreira decide como a mana se move lá dentro. Ao erguê-la você escolhe uma das duas faces --- Estagnação ou Fonte --- e ela vale pela duração inteira. Nunca as duas. \\
+\cond{Fonte} & A outra face do Fluxo Interrompido. Você e seus aliados dentro da barreira recuperam 1 PM no início de cada um dos seus turnos; quem não é seu aliado sofre Estagnação normalmente. \\
+\cond{Incapacitado} & Não pode tomar Ações nem Reações. Mais severo que Atordoado: não termina sozinho no fim do turno --- só quando a fonte específica disser como remover. \\
+\cond{Marcado} & Quem te marcou sabe seu PV aproximado, suas resistências e se você veste Touki, e ignora Cobertura parcial ao te atacar. Dura até ser removido, ou até você ficar fora do alcance por um Descanso Longo inteiro. \\
+\cond{Molhado} & Dano de frio contra você é dobrado. Desvantagem em resistências contra magias de gelo de quem te molhou. Fogo aplicado a um alvo Molhado evapora a água em vez de acender. \\
+\cond{Paralisado} & Incapaz de agir e de se mover; falha automaticamente em resistências de Força e Agilidade. Ataques corpo a corpo contra você são críticos automáticos se o atacante estiver adjacente. \\
+\cond{Petrificado} & Vira pedra: Incapacitado, imune a veneno e doença, e Resistência a todo dano enquanto durar. Reverter exige a fonte específica que petrificou, ou magia de rank igual ou superior. \\
+\cond{Preso} & Deslocamento 0. Ataques contra você têm Vantagem; seus ataques têm Desvantagem. Solta-se gastando 1 Ação num teste (Atributo e CD definidos por quem prendeu). \\
+\cond{Quebrantado} & Acumulável: cada acúmulo dá $-1$ na CA e $-1$ no dano de todos os seus ataques, até o máximo do Bônus de Rank de quem aplicou. Não é ferimento --- magia de Cura não remove. Some com um Descanso Curto, ou dura até o fim do combate. \\
+\cond{Selado} & Dentro da barreira, nenhuma criatura conjura magia de rank \emph{superior} ao rank em Barreira de quem a ergueu --- um Selado Avançado permite magia até Avançado e barra Santo pra cima. Tentar mesmo assim gasta as Ações e o PM e falha. Não impede Touki, armas nem Utilidade: Selado é sobre mana, e só. \\
+\cond{Surdo} & Falha automaticamente em testes que dependam de audição. Não consegue usar Conjuração Padrão nem Encurtada (exigem cântico verbal) --- só a Silenciosa continua funcionando. \\
+\end{tabelalivro}
+
+% ---------------------------------------------------------------------------
+\section{A Economia de Ações}
+
+No seu turno você possui \textbf{3 Ações}, além de \textbf{1 Reação} (usada fora do seu
+turno). \textbf{Não existe ação bônus} neste sistema --- tudo é medido em Ações.
+
+\begin{itemize}
+    \item \textbf{Andar (1 Ação):} mova-se até o Deslocamento. Gastando as 3 Ações, corra o
+          triplo da distância.
+    \item \textbf{Atacar com Arma (1 Ação):} um golpe corpo a corpo ou um projétil.
+    \item \textbf{Conjurar Magia (custo variável):} o rank da magia dita quantas Ações.
+    \item \textbf{Usar Item (1 Ação):} beber uma poção, aplicar curativo, sacar uma arma.
+    \item \textbf{Interagir / Ajudar / Se Esconder (1 Ação).}
+\end{itemize}
+
+\begin{nota}{A Regra de Ouro: Conjuração Contínua e Dividida}
+    Magias poderosas exigem mais Ações do que você tem num turno --- o sistema permite
+    dividir o cântico. Exemplo: gaste 1 Ação recitando neste turno, 1 Ação andando pra trás
+    de uma árvore, 1 Ação recitando de novo; no próximo turno, gaste mais 2 e solte a magia.
+
+    \medskip
+    \textbf{Perda de Foco:} pra manter a mana canalizada, você é obrigado a gastar pelo menos
+    1 Ação por turno recitando. Se passar um turno inteiro sem dedicar nenhuma, a magia
+    falha, a mana se perde, e você recomeça do zero.
+
+    \medskip
+    \textbf{Interrupção:} se sofrer dano enquanto conjura, faça um teste de Espírito contra
+    \textbf{CD 10 $+$ o Bônus de Rank de quem te acertou} (CD 11 contra um Principiante, CD
+    16 contra um Imperador; use 12 se não houver um responsável claro). Falhar significa
+    perder o cântico e o PM investido.
+\end{nota}
+
+\begin{nota}{Por que a CD de interrupção não é metade do dano}
+    A regra antiga era \enquote{CD 10 ou metade do dano sofrido, o que for maior}. Ela não
+    sobrevive à própria progressão do livro: o dano cresce sem teto (uma criatura de patamar
+    Imperador bate perto de 120 por turno), enquanto o teste cresce até um limite duro ---
+    Espírito no teto (8) mais metade do Bônus de Rank (3) dá $+11$, num d20. Qualquer golpe
+    acima de 62 de dano exigia 20 natural; acima de 82, nada bastava.
+
+    \medskip
+    O resultado era que magia de 4, 5 e 6 Ações --- que este capítulo passa uma seção inteira
+    ensinando a dividir entre turnos --- ficava impossível de conjurar exatamente nos
+    patamares em que ela existe. Amarrar a CD ao \emph{Rank} de quem acertou mantém a tensão
+    sem transformar o Imperador de magia numa classe que não pode agir.
+\end{nota}
+
+\begin{nota}{Testes Resistidos (Disputas)}
+    Nem todo conflito envolve uma CD estática. Empurrar um inimigo de um penhasco, disputar
+    uma queda de braço, arrancar um item das mãos de alguém: ambos rolam 1d20 $+$ Atributo
+    puro. Quem tirar o maior total vence. Em empate, a situação se mantém inalterada.
+\end{nota}
+
+% ---------------------------------------------------------------------------
+\section{Regras de Empilhamento}
+
+Com dezoito árvores no jogo, um grupo bem construído consegue empilhar bônus até quebrar a
+matemática. Estas regras impedem isso sem tirar a graça da combinação.
+
+\begin{description}
+    \item[Bônus do mesmo tipo não somam] Se dois efeitos seus dão bônus ao mesmo número (CA,
+          acerto, dano, deslocamento), use apenas o maior. \textbf{Exceção 1:} bônus
+          concedidos por aliados diferentes que gastaram Ações somam normalmente.
+          \textbf{Exceção 2:} um Escudo empunhado soma com a armadura de corpo vestida ---
+          são slots diferentes, não dois efeitos competindo pelo mesmo bônus.
+
+    \item[Teto de Auxílio $+5$] Nenhum personagem recebe mais de $+5$ somados em bônus
+          numéricos vindos de habilidades de aliados no mesmo turno. Acima disso, o excedente
+          é ignorado. \textbf{Exceção nomeada:} o Dado de Inspiração e a Maestria A Plateia
+          (Bardo) não contam pra este teto --- sem essa cláusula, a progressão inteira da
+          árvore congelava no 1º patamar.
+
+    \item[Teto de Ações: 5, no máximo 2 externas] Nenhum personagem age mais de 5 vezes num
+          turno, e no máximo 2 dessas Ações podem vir de fontes externas. Sem esta regra, um
+          Norte Imperador (4 Ações) com um Tático Comandante na mesa chega a 7 Ações por
+          turno, e o combate deixa de existir.
+
+    \item[Uma Salvação por Combate] O livro tem quatro formas de impedir que alguém morra ---
+          Aguentar (Touki), Rejeitar a Morte (Cura), Sem Baixas (Tático) e Custe o Que
+          Custar (Escudos). Cada criatura só pode ser salva por um desses efeitos por
+          combate; a segunda tentativa, de qualquer fonte, falha e não consome o recurso de
+          quem tentou. Santuário Menor (Cura) também conta para esta regra.
+
+    \item[Vantagem é binária] Vantagem não empilha: dez fontes continuam sendo 2d20. Vantagem
+          Absoluta (3d20) só vem de efeitos que digam \enquote{Absoluta} --- não existe 4d20
+          neste jogo. Vantagem e Desvantagem se cancelam uma a uma.
+\end{description}
+
+% ---------------------------------------------------------------------------
+\section{Críticos e Touki}
+
+\begin{itemize}
+    \item \textbf{20 Natural (Crítico):} acerta automaticamente, independente da CA ou
+          resistência. Role os dados de dano duas vezes e some os bônus fixos uma vez só.
+    \item \textbf{1 Natural (Falha Crítica):} você erra pateticamente. O Mestre tem controle
+          total sobre o seu destino.
+\end{itemize}
+
+O Touki não gasta PM --- consome Pontos de Touki (PT), e é desbloqueado no terceiro patamar
+de qualquer árvore do Corpo (regras completas no Capítulo 3).
+
+\begin{nota}{Por que magos temem espadachins}
+    Um espadachim de rank Santo cruza 9 metros e decapita um mago antes que ele termine o
+    segundo verso de uma magia Avançada. É por isso que a escola de Água investe tanto em
+    barreiras, terreno difícil e empurrões --- cada metro de distância é um verso a mais
+    recitado vivo.
+\end{nota}
+
+% ---------------------------------------------------------------------------
+\section{Sangrando e Morrendo}
+
+Magia de cura pode fechar feridas, mas ressurreição beira o mito divino. Se seus Pontos de
+Vida chegarem a 0, você cai Inconsciente e entra em estado de Morte.
+
+\subsection{O Teste do Fio da Vida}
+
+No início de cada um dos seus turnos a 0 PV, role 1d20 $+$ Vigor contra \textbf{CD 8 $+$ o
+Bônus de Rank de quem te derrubou} (CD 9 contra um Principiante, CD 14 contra um Imperador;
+use 10 se não houver um responsável claro, como uma queda). É um teste de resistência de
+Vigor como qualquer outro, então \textbf{A Escala do Vigor} (§1) vale aqui.
+
+\begin{itemize}
+    \item \textbf{Sucesso:} você estabiliza temporariamente --- não está morto, mas continua
+          desacordado.
+    \item \textbf{Falha:} você recebe 1 \termo{Marca da Morte}.
+    \item \textbf{Falha Crítica (1 Natural):} você recebe 2 Marcas da Morte.
+\end{itemize}
+
+Se acumular \textbf{3 Marcas da Morte}, você morre permanentemente. Qualquer magia de cura
+ou poção aplicada por um aliado remove todas as Marcas instantaneamente e você acorda ---
+mas acordar do Fio da Vida cobra um preço: você volta com \textbf{1 nível de Exaustão} até
+fazer um Descanso Longo.
+
+\begin{nota}{Ferida Fresca}
+    Toda a Magia de Cura cura \textbf{em dobro} contra uma Ferida Fresca. Ferida Fresca é o
+    dano sofrido \textbf{no turno atual ou no turno imediatamente anterior} --- a janela em
+    que a carne ainda não começou a fechar sozinha.
+
+    \medskip
+    É por isso que o curandeiro age cedo, e não depois: a mesma magia que devolve 55 PV a
+    quem caiu agora devolve 27 a quem caiu há três turnos. \emph{Selar a Ferida} (Cura, 1º
+    patamar) existe exatamente pra esticar essa janela para uma hora --- e sim, uma Ferida
+    Selada continua contando como Fresca.
+\end{nota}
+
+\subsection{Cicatrizes de Quase-Morte}
+
+\begin{aviso}{Quando a Morte Quase Ganha}
+    Toda vez que você acumular \textbf{2 Marcas da Morte} antes de ser resgatado, o corpo
+    guarda a lembrança mesmo depois de curado. Além da Exaustão de sempre, role 1d6 na tabela
+    abaixo e ganhe a Cicatriz \textbf{permanentemente}.
+
+    \begin{tabelalivro}{C{1cm} L{11.4cm}}{}
+    \cabtabela{\textbf{d6} & \textbf{Cicatriz}}
+    1 & \textbf{Braço Perdido:} Desvantagem em Força e Atletismo. Não usa armas de duas mãos, nem arma e escudo ao mesmo tempo. \\
+    2 & \textbf{Perna Manca:} Deslocamento $-3$m, permanente. \\
+    3 & \textbf{Olho Perdido:} Desvantagem em Percepção e em ataque à distância além do alcance curto. \\
+    4 & \textbf{Voz Quebrada:} não consegue mais usar Conjuração Silenciosa. Desvantagem em Atuação e Persuasão. \\
+    5 & \textbf{Mão Trêmula:} Desvantagem em Ladinagem, em Ofícios manuais e em Iniciativa. \\
+    6 & \textbf{A Sombra Não Sai:} nenhuma penalidade de combate, mas Desvantagem em resistências de Espírito contra Medo. \\
+    \end{tabelalivro}
+
+    A única cura conhecida é \emph{Corpo Íntegro} (Cura, Imperador). Fora dela, é permanente:
+    nenhum Descanso, magia de rank inferior ou poção a remove.
+\end{aviso}
+
+\subsection{Descanso}
+
+\begin{tabelalivro}{L{4.2cm} L{9.6cm}}{}
+\cabtabela{\textbf{Descanso} & \textbf{Recupera}}
+Curto (1 a 2 horas) & Metade dos seus PM máximos e \textbf{todos} os seus PT (arredondado pra baixo). Não recupera PV nem PP. \textbf{No máximo dois Descansos Curtos entre dois Descansos Longos.} \\
+Longo (8 horas de sono seguro) & Todos os PM, PT e PP; remove 1 nível de Exaustão; recupera PV iguais ao seu Vigor $+$ 1d8 (mínimo 2). Corpo Quebrado (Vigor $-2$) recupera sempre o mínimo. \\
+\end{tabelalivro}
+
+\begin{aviso}{Dois Curtos por dia, e nem um a mais}
+    Sem esse teto, o Descanso Curto quebra o livro inteiro: ele devolve metade da reserva de
+    PM, e a Magia de Cura converte PM em PV. Um curandeiro de 1º patamar com \emph{Juramento}
+    cura 14 PV por 1 PM --- a reserva de 12 PM vira 168 PV, e cada Curto acrescenta mais 84,
+    indefinidamente. Um grupo de quatro personagens de 1º patamar tem cerca de 144 PV
+    somados: bastava descansar duas horas a mais e a mesa voltava inteira.
+
+    \medskip
+    Com dois Curtos por dia, PV volta a ser finito, e o Aviso abaixo volta a ser verdade.
+    \textbf{PT são a exceção} e voltam inteiros em qualquer Descanso Curto: o Touki é fôlego,
+    não mana --- recupera-se sentando.
+\end{aviso}
+
+\begin{aviso}{A Carne Não Fecha Sozinha}
+    Um corte não some porque você dormiu. As três únicas formas de recuperar PV de verdade:
+
+    \begin{itemize}
+        \item \textbf{Magia de Cura} --- rápida, cara em PM, do rank certo pro ferimento.
+        \item \textbf{Poções} --- caras em dinheiro, limitadas em estoque.
+        \item \textbf{Repouso longo} --- uma semana inteira em cama, em lugar seguro,
+              devolve todos os PV.
+    \end{itemize}
+
+    Um grupo sem curandeiro não perde combates --- perde a campanha: vence a primeira luta,
+    sangra na segunda, e na terceira decide voltar pra cidade porque o guerreiro está com um
+    terço da vida e não existe descanso que resolva.
+\end{aviso}
+
+\subsection{Trauma de Combate}
+
+Sempre que você chegar a \textbf{0 PV}, testemunhar a morte de um aliado a até 9 metros, ou
+matar alguém que implorava por clemência, ganhe \textbf{1 ponto de Trauma} --- a critério do
+Mestre, sem precisar contar cada goblin da estrada.
+
+\textbf{Efeito, por ponto acumulado:} Desvantagem em testes de Espírito feitos \textbf{fora
+de combate} (persuasão calma, negociação, criar confiança, dormir sem pesadelo). Trauma não
+afeta nada dentro do combate --- na hora da luta, o corpo simplesmente age.
+
+\textbf{Removendo:} gaste uma semana de Downtime na atividade Recuperar-se acompanhado de
+alguém de confiança, ou resolva a causa de frente na narrativa. Cada semana ou cena assim
+remove \textbf{1 ponto}. Não existe teste de resistência nem Descanso Longo que apague o que
+aconteceu.
+
+Isto não é um sistema de sanidade: não há loucura, não há tabela de fobias, e não há perda
+de controle do personagem. É só o lembrete mecânico de que continuar lutando tem custo.
+
+% ---------------------------------------------------------------------------
+\section{Aflições do Mundo de Seis Faces}
+
+Além do dano que se vê na hora, o corpo pode ser atacado por caminhos mais lentos --- veneno,
+doença, maldição. Toda aflição tem uma \termo{Profundidade} de 1 a 5 que sobe sozinha
+enquanto ninguém trata, e um mago de Desintoxicação só purga o que estiver dentro do Bônus
+de Rank dele. Venenos agudos sobem 1 de Profundidade por hora; doenças, maldições e
+petrificações sobem 1 por dia. Nada disso cai sozinho.
+
+\begin{tabelalivro}{L{4cm} C{1.2cm} L{3.4cm} L{5cm}}{Venenos}
+\cabtabela{\textbf{Aflição} & \textbf{Prof.} & \textbf{Origem} & \textbf{Efeito}}
+Baba de Sapo-Lodo & 1 & Pântanos do Continente Central & Envenenado por 1 hora. A primeira coisa que um novato pega. \\
+Espinho da Rosa-Preta & 1 & Planta cultivada em Asura & Sono profundo em 10 minutos. Não causa dano. \\
+Peçonha de Serpente-do-Pântano & 2 & Serpentes grandes & 2d6 por hora e Desvantagem em Vigor. Mata um camponês em cinco horas. \\
+Toxina de Aranha Gigante & 2 & Cavernas, ruínas & Paralisia progressiva: $-3$m de Deslocamento por hora, cumulativo até 0. \\
+Fel de Wyvern & 3 & Feras voadoras do Continente Demônio & 4d8 por dia. Cega em 48 horas. \\
+Sombra Líquida & 4 & Assassinos profissionais & Sem sintoma por três dias. No quarto, o coração para. \\
+\end{tabelalivro}
+
+\subsection{Aplicando um Veneno}
+
+\begin{tabelalivro}{L{3.2cm} L{3.4cm} L{7cm}}{}
+\cabtabela{\textbf{Via} & \textbf{Custo} & \textbf{Como funciona}}
+Untar uma arma & 1 Ação & Uma dose cobre uma arma corpo a corpo ou até 3 munições. A dose se gasta no primeiro acerto que causar dano. \\
+Ingestão & Nenhum custo em Ação & A dose vai em comida ou bebida. Exige oportunidade e, normalmente, um teste de Enganação ou Furtividade oposto à Percepção do alvo. \\
+Inalação & 1 Ação pra romper um frasco & Afeta todo mundo sem proteção respiratória num raio de 4,5m. Vento forte dispersa a nuvem em 1 rodada. \\
+\end{tabelalivro}
+
+Em qualquer via, a vítima só é afetada se sofrer dano da arma untada, ingerir a dose ou
+respirar a nuvem. Nesse momento ela faz um \textbf{teste de resistência de Vigor} contra
+\textbf{CD 8 $+$ (2 $\times$ a Profundidade do veneno)}. Sucesso: a aflição some por completo.
+Falha: começa exatamente na Profundidade listada e sobe 1 ponto por hora.
+
+\begin{exemplo}{Exemplo rápido}
+    Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Profundidade 2) e acerta um
+    golpe surpresa. A vítima faz Vigor contra CD 12 ($8 + 2\times2$). Se falhar, já entra
+    Envenenada na Profundidade 2 --- 2d6 por hora e Desvantagem em Vigor --- e esse relógio
+    corre até alguém tratar com Desintoxicação ou um Antídoto.
+\end{exemplo}
+
+\begin{tabelalivro}{L{4cm} C{1.2cm} L{3.4cm} L{5cm}}{Doenças}
+\cabtabela{\textbf{Aflição} & \textbf{Prof.} & \textbf{Contágio} & \textbf{Efeito}}
+Febre de Estrada & 1 & Água parada & 1 nível de Exaustão. A mais comum do mundo. \\
+Podridão de Ferida & 2 & Ferimento não tratado & PV máximos caem 5 por dia. \\
+Tosse Cinzenta & 2 & Ar, entre pessoas & Desvantagem em tudo que exija fôlego. \\
+Peste dos Portos & 3 & Ratos, carga, navios & 3d6 por dia e contagia 1d4 pessoas próximas por dia. \\
+Febre de Mana & 3 & Esgotar PM a zero repetidamente & PM máximos caem 10\% por dia. \\
+Praga do Continente Demônio & 4 & Contato com terreno corrompido & Pele endurece e racha. $-1$ em todos os atributos por semana, cumulativo. \\
+\end{tabelalivro}
+
+\begin{tabelalivro}{L{4cm} C{1.2cm} L{3.4cm} L{5cm}}{Maldições e Transformações}
+\cabtabela{\textbf{Aflição} & \textbf{Prof.} & \textbf{Origem} & \textbf{Efeito}}
+Marca do Sepulcro & 3 & Profanar um túmulo & Não recupera PV por meio nenhum enquanto durar. Nem magia. \\
+Olhar de Basilisco & 4 & A criatura & Petrificação em 4 turnos. \\
+Fome Vermelha & 4 & Mordida de certos mortos-vivos & 1 nível de Exaustão por dia que não some. Ao chegar a 6, vira o que o mordeu. \\
+Nome Roubado & 5 & Pactos mal fechados & Ninguém consegue lembrar quem você é. Só um Imperador desfaz. \\
+\end{tabelalivro}
+
+\begin{aviso}{O Teto --- Doença da Pedra Mágica (Profundidade 6)}
+    A carne vira minério, devagar, começando pelas extremidades. Nenhum patamar deste livro
+    alcança Profundidade 6 --- um Imperador de Desintoxicação consegue Selar a Maldição e
+    congelar o avanço, e é só isso que o mundo tem a oferecer. O grimório de rank Deus que
+    curaria isso existe, catalogado no Grande Templo de Millis, e ninguém consegue ler o
+    primeiro verso.
+\end{aviso}
+
+\begin{nota}{Regras de Mesa}
+    \begin{itemize}
+        \item \textbf{Definindo a Profundidade:} se a aflição não estiver na tabela, use 1
+              (incômodo), 2 (perigoso), 3 (grave), 4 (fatal) ou 5 (lendário).
+        \item \textbf{Diagnóstico} (Cura, 1º patamar) diz de que categoria é o problema.
+              \textbf{Paladar} (Desintoxicação, 1º patamar) diz exatamente qual e a
+              Profundidade.
+        \item \textbf{Cura não trata nada desta seção}, em rank nenhum --- fecha o ferimento
+              por onde a coisa entrou, e só. Desintoxicação, na direção oposta, remove a
+              causa mas não fecha o corte.
+        \item \textbf{Contágio:} se uma aflição contagiosa estiver ativa no grupo ao fim de
+              um Descanso Longo, cada personagem que dormiu perto faz teste de Vigor (CD 8
+              $+$ Profundidade atual).
+        \item \textbf{Ritmo:} uma aflição de Profundidade 2 pegada no primeiro dia de viagem
+              chega a 5 em três dias --- é esse relógio, não o combate, que cria a urgência
+              de uma campanha longa.
+    \end{itemize}
+\end{nota}
+
+% ---------------------------------------------------------------------------
+\section{Exaustão, Fome, Sede e Clima Extremo}
+
+\begin{aviso}{Exaustão tem 6 níveis, e eles empilham}
+    \begin{tabelalivro}{C{1.4cm} L{11cm}}{}
+    \cabtabela{\textbf{Nível} & \textbf{Penalidade}}
+    1 & Desvantagem em testes de atributo e em rolagens de ataque. \\
+    2 & Deslocamento reduzido à metade. \\
+    3 & Desvantagem em testes de resistência. \\
+    4 & PV Máximos reduzidos à metade. \\
+    5 & Deslocamento reduzido a 0. \\
+    6 & Morte --- mas nunca sem uma última rolagem. \\
+    \end{tabelalivro}
+
+    \textbf{A última rolagem:} ao passar do Nível 5 para o Nível 6, faça um teste de Vigor
+    \textbf{CD 15}. Sucesso: você fica no Nível 5 e ganha o 6 só na próxima vez que a causa
+    cobrar. Falha: você morre. Nenhuma morte neste sistema acontece sem um dado.
+
+    \medskip
+    Os efeitos \textbf{somam}: no Nível 3, você já soma a Desvantagem de atributo e de ataque
+    do Nível 1 com a de resistência deste nível, além de andar na metade da velocidade.
+
+    \medskip
+    \textbf{Removendo:} um Descanso Longo remove 1 nível, desde que a causa não esteja mais
+    ativa. Se a causa continuar, o nível não cai. \emph{Mão que Acalma} (Cura) remove 1 nível
+    de origem \textbf{física} a qualquer momento, mas nunca a de fome, sede, frio ou marcha
+    forçada: isso não é ferimento, é privação, e só sai resolvendo a causa.
+\end{aviso}
+
+\subsection{Fome e Sede}
+
+\begin{itemize}
+    \item \textbf{Fome:} ficar um dia inteiro sem nenhuma refeição dá 1 nível de Exaustão ao
+          anoitecer. Comer qualquer refeição zera a contagem --- mas não remove a Exaustão já
+          acumulada.
+    \item \textbf{Sede:} mais urgente. Sem beber por mais de algumas horas em clima ameno, ou
+          desde o início em calor extremo, 1 nível de Exaustão a cada 4 horas depois da
+          primeira falta.
+    \item \textbf{Ração de aventureiro} (poucas moedas de cobre por dia) resolve as duas ---
+          é por isso que toda caravana carrega mais ração do que ouro.
+\end{itemize}
+
+\subsection{Clima Extremo}
+
+Calor ou frio além do que roupas comuns aguentam força um teste de Vigor a cada poucas horas
+de exposição. O Mestre define a CD pela severidade: \textbf{8} para desconfortável,
+\textbf{14} para perigoso, \textbf{18} para letal. Falha: 1 nível de Exaustão. Equipamento
+adequado dá Vantagem no teste ou remove a necessidade dele.
+
+\begin{nota}{Por que isso é leve de propósito}
+    Fome, sede e clima não são o ponto da campanha --- são o relógio de fundo que torna uma
+    travessia longa real sem virar planilha. Numa masmorra de um dia, ignore a seção inteira.
+    Numa travessia de duas semanas pela Grande Floresta sem suprimentos, ela decide se o
+    grupo chega ao destino em pé ou arrastando um Nível 4.
+\end{nota}

@@ -81,6 +81,13 @@ export default function Chapter5() {
           acima são só uma régua de bolso pro Mestre calibrar o tamanho do que já rolou, não uma lista pra
           marcar.
         </Aside>
+        <Warning title="O palpite que a ficha mostra não é esta regra">
+          A ficha digital exibe um Rank de Aventureiro estimado a partir do PA já gasto, porque uma ficha em
+          branco precisa mostrar <i>alguma coisa</i> naquele campo. <b>Esse número não é regra</b> — ele
+          contradiz tudo o que esta seção diz, e existe só como palpite inicial pra mesa que ainda não
+          decidiu. Assim que o Mestre fixar o Rank, ele passa a valer e a estimativa some. Se a sua mesa
+          quiser, ignore o campo inteiro: nada no livro lê o Rank de Aventureiro pra calcular coisa alguma.
+        </Warning>
         <SubTitle>Subindo de Rank e Obrigações</SubTitle>
         <P>
           A promoção nunca é automática, mesmo depois do Mestre decidir que o feito foi grande o bastante:
@@ -181,11 +188,26 @@ export default function Chapter5() {
         <List
           items={[
             "Quem: qualquer personagem com a Perícia de Ofícios (especializada em Alquimia, pra Poções e Venenos) ligada ao item. Encantamento é diferente — exige um encantador vivo no Rank de árvore listado na tabela, não a Perícia de Ofícios.",
+            "Até onde: uma poção que reproduz magia de rank X exige que o alquimista tenha um patamar igual ou superior a X em Cura (ou em Desintoxicação, pros antídotos). Um veneno de Profundidade X exige um patamar igual ou superior a X em Desintoxicação, ou material colhido de uma criatura daquele porte. Sem isso, a receita simplesmente não é legível — não é uma CD mais alta, é um teste que você não pode tentar.",
             "Tempo: 1 bloco de Downtime (seção 1 deste capítulo, atividade Estudar um Ofício ou Ritual) por item, salvo quando a tabela disser outro valor.",
             "Custo em materiais: metade do valor listado na coluna de Custo — a mesma proporção que a regra de Downtime já usa pra qualquer produção. O valor cheio da coluna é o preço de venda, não o de fabricação.",
             "Teste: role Ofícios (ou o teste do encantador) contra a CD da tabela ao fim do bloco. Sucesso: o item fica pronto. Falha: os materiais se perdem, mas o bloco de Downtime já foi gasto — tente de novo no próximo. Falha crítica (1 no dado): metade dos materiais é recuperável.",
           ]}
         />
+        <Aside title="Por que existe um portão de Rank, e não só uma CD alta">
+          <P>
+            Sem ele, a CD era o único obstáculo — e a Perícia de Ofícios dá Vantagem (2d20). Um alquimista de
+            1º patamar com Intelecto 4 batia a CD 20 da Poção Imperial de Cura em pouco mais da metade das
+            tentativas, e um grupo com uma semana livre por arco engarrafava cura de rank Imperador antes de
+            conhecer um mago de rank Avançado. O portão da Guilda (seção 2) cobria só a <i>compra</i>; a
+            fabricação passava por baixo dele.
+          </P>
+          <P>
+            É a mesma lógica que o Encantamento já usava — lá o portão sempre foi o Rank do encantador, nunca
+            uma rolagem. Agora as duas metades da seção 4 cobram a mesma coisa: você fabrica o que você
+            entende, e paga em PO o que você não entende.
+          </P>
+        </Aside>
         <SubTitle>Poções</SubTitle>
         <P>Uma poção reproduz o efeito de uma magia de Cura ou Desintoxicação já existente no livro, engarrafado.</P>
         <BookTable
@@ -197,7 +219,7 @@ export default function Chapter5() {
             ["Elixir de Foco", "13", "40 PO / 20 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
             ["Poção de Vigor Passageiro", "14", "45 PO / 23 PO", "Vantagem no próximo teste de resistência de Vigor — a versão física do Elixir de Foco."],
             ["Poção Régia de Cura", "17", "120 PO / 60 PO", "Reproduz uma magia de Cura de rank Rei — um degrau acima da Poção Maior."],
-            ["Elixir de Regeneração", "18", "200 PO / 100 PO", "Remove toda a Exaustão acumulada de quem bebe (Cap. 4, §8) — não cura PV nem PM, só o cansaço acumulado."],
+            ["Elixir de Regeneração", "18", "200 PO / 100 PO", "Remove 2 níveis de Exaustão de quem bebe (Cap. 4, §8) — não cura PV nem PM, só o cansaço acumulado. Não remove Exaustão cuja causa ainda esteja ativa: quem não comeu continua com fome."],
             ["Poção Imperial de Cura", "20", "400 PO / 200 PO", "Reproduz uma magia de Cura de rank Imperador — o topo da escada, engarrafado."],
           ]}
         />
@@ -235,12 +257,12 @@ export default function Chapter5() {
             ["+1 no Dado de Arma ou +1 na CA", "Avançado", "1 bloco", "150 PO"],
             ["Dano elemental extra (+1d6, tipo à escolha)", "Santo", "2 blocos", "300 PO"],
             ["Ignora Resistência a um tipo de dano", "Rei", "4 blocos", "600 PO"],
-            ["+1 no Bônus de Rank pra fins de Dado de Arma", "Imperador", "8 blocos", "1500 PO"],
+            ["+1 degrau na Escada de Dados de Arma (Cap. 3), acumulável com o do Avançado", "Imperador", "8 blocos", "1500 PO"],
           ]}
         />
         <List
           items={[
-            "Um item só carrega um encantamento por vez. Encantar de novo substitui o anterior — o efeito antigo não some primeiro para depois voltar; some pra sempre.",
+            "Um item só carrega um encantamento por vez. Encantar de novo substitui o anterior — o efeito antigo não some primeiro para depois voltar; some pra sempre. O encantamento de Imperador é a única exceção parcial: ele sobe um degrau da Escada, e um item que já tinha o +1 do Avançado sobe dois no total.",
             "O custo em PO acima já é o total (materiais + o trabalho do encantador) — não se aplica a divisão por metade do Downtime comum, porque não é o próprio personagem fazendo o trabalho manual.",
             "O item-base (a arma ou armadura sem encantamento) precisa existir e estar em posse do encantador durante todo o tempo listado — ele não trabalha à distância.",
             "Não existe teste de falha aqui: se o encantador tem o Rank exigido, tempo e PO cobrem o serviço inteiro. O único jeito de um encantamento falhar é o Mestre decidir que os materiais raros da campanha ainda não foram conseguidos — nesse caso, PO sozinho não compra o item.",

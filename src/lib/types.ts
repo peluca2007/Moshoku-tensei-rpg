@@ -61,10 +61,63 @@ export const RANK_REQUIREMENTS: Record<RankName, { knowledgeRequired: number; pa
   Imperador: { knowledgeRequired: 10, paCost: 3 },
 };
 
-/** Cap. 1, seção 2: no point-buy da criação o máximo por atributo é 4. Acima disso, cada ponto custa PA. */
+/** Cap. 1, §1: teto por atributo no point-buy da criação. */
 export const ATTRIBUTE_CREATION_MAX = 4;
+/**
+ * Cap. 1, §1: pontos distribuídos na criação. O Sistema de Defeitos NÃO muda
+ * este número — largar um atributo em -1 devolve 1 ponto e largar outro em -2
+ * devolve 2, então a SOMA dos cinco atributos base fecha em 4 de qualquer
+ * jeito. É por isso que o custo em PA de atributo se mede pela soma (ver
+ * getAttributePaCost) e não atributo a atributo.
+ */
+export const ATTRIBUTE_CREATION_POINTS = 4;
 export const ATTRIBUTE_PA_COST_PER_POINT = 2;
 export const ATTRIBUTE_HARD_CAP = 8;
+/** Cap. 1, §1: o Sistema de Defeitos deixa um atributo em -1 e outro em -2. Nada desce abaixo disso. */
+export const ATTRIBUTE_FLOOR = -2;
+
+/** Cap. 4, "Cálculos Vitais": a constante da fórmula de PV — o corpo com que todo mundo nasce, antes de treino nenhum. */
+export const PV_BASE = 20;
+
+/**
+ * Cap. 4, "A Escala do Vigor": todo o efeito do Vigor sobre os PV, num fator só.
+ *
+ * Cada ponto POSITIVO soma 20% — calibrado (não chutado) contra a fórmula de
+ * três termos que vigorou até 2026-08-28: medindo `PV_antigo / (PV_BASE + 2×dados)`
+ * nas 18 árvores × 6 patamares, o fator implícito da fórmula antiga era 1,14 /
+ * 1,38 / 1,61 / 1,84 / 2,07 / 2,31 pra Vigor 1..6 — quase exatamente 1 + 0,20×V,
+ * e notavelmente estável entre patamares (era essa estabilidade que provava que
+ * a forma multiplicativa cabia). A troca preserva a curva de PV do jogo dentro
+ * de ~9 PV em média.
+ *
+ * O lado NEGATIVO é a mudança de verdade, e é deliberadamente não-linear: -1
+ * custa 25% (não 20%) e -2 custa mais 47% do que sobrou. Na fórmula antiga o
+ * castigo era perfeitamente linear (4 × Bônus de Rank por ponto) e, pior, o
+ * piso de "Constituição Base mínimo 13" achatava Vigor -2, -1, 0 e 1 no MESMO
+ * valor de base — no 1º patamar, largar Vigor a -2 custava 8 PV e pagava 2
+ * pontos de atributo. Vigor não governa nenhuma perícia (Cap. 1, §4), então
+ * ele era o dump stat matematicamente ótimo de toda ficha do livro.
+ */
+export function getVigorFactor(vigor: number): number {
+  if (vigor <= -2) return 0.4;
+  if (vigor === -1) return 0.75;
+  return 1 + 0.2 * vigor;
+}
+
+/** A Escala do Vigor como o livro a imprime (Cap. 4, §1) — a mesma função acima, tabelada pros valores alcançáveis. */
+export const VIGOR_FACTOR_TABLE: { vigor: number; factor: number; label: string }[] = [
+  { vigor: -2, factor: 0.4, label: "Corpo Quebrado" },
+  { vigor: -1, factor: 0.75, label: "Constituição Frágil" },
+  { vigor: 0, factor: 1, label: "Corpo Comum" },
+  { vigor: 1, factor: 1.2, label: "Saudável" },
+  { vigor: 2, factor: 1.4, label: "Robusto" },
+  { vigor: 3, factor: 1.6, label: "Endurecido" },
+  { vigor: 4, factor: 1.8, label: "Inquebrável" },
+  { vigor: 5, factor: 2.0, label: "Sobre-humano" },
+  { vigor: 6, factor: 2.2, label: "Monstruoso" },
+  { vigor: 7, factor: 2.4, label: "Lendário" },
+  { vigor: 8, factor: 2.6, label: "Divino" },
+];
 
 export interface FlatBonuses {
   attributes?: Partial<Record<AttributeKey, number>>;
@@ -105,11 +158,32 @@ export interface SubtableEntry {
   traits: string[];
 }
 
+/**
+ * Reserva concedida por um talento de árvore, em forma legível pelo motor.
+ *
+ * Existe desde 2026-08-29: até então os 21 talentos de reserva do livro (Braço
+ * de Ferro, Reserva do Curandeiro, Aço Rápido…) eram só texto — nenhum deles
+ * mexia num único número da ficha, e o jogador tinha que digitar o resultado à
+ * mão no campo de PV/PM avulsos. O Capítulo 1 chama isso de "O Padrão das
+ * Reservas" e promete que todo talento desse tipo vale exatamente o mesmo em
+ * qualquer árvore; agora o código é quem garante.
+ */
+export interface ReserveGrant {
+  /** +N PV por patamar desbloqueado NA MESMA árvore do talento. */
+  hpPerRank?: number;
+  /** +N PM por patamar desbloqueado NA MESMA árvore do talento. */
+  mpPerRank?: number;
+  /** +N PT Máximos, valor fixo. */
+  pt?: number;
+}
+
 export interface TalentDef {
   id: string;
   name: string;
   paCost: number;
   description: string;
+  /** Reserva que este talento concede, quando concede (Cap. 1, "O Padrão das Reservas"). */
+  grants?: ReserveGrant;
 }
 
 /** Maestria: passiva automática e gratuita concedida ao desbloquear o rank (Cap. 2, seção 5). Não conta como conhecimento. */

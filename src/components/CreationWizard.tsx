@@ -8,7 +8,7 @@ import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, MIKO_TABLE, OLHO_TABLE, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
-import { ATTRIBUTES, ATTRIBUTE_CREATION_MAX, AttributeKey } from "@/lib/types";
+import { ATTRIBUTES, ATTRIBUTE_CREATION_MAX, ATTRIBUTE_FLOOR, AttributeKey, getVigorFactor } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import TreePicker from "./TreePicker";
@@ -58,7 +58,7 @@ export default function CreationWizard() {
   function adjustAttribute(key: AttributeKey, delta: number) {
     const current = character.attributeBase[key] ?? 0;
     const nextValue = current + delta;
-    if (nextValue < -2 || nextValue > ATTRIBUTE_CREATION_MAX) return;
+    if (nextValue < ATTRIBUTE_FLOOR || nextValue > ATTRIBUTE_CREATION_MAX) return;
     if (nextValue === -1 && Object.entries(character.attributeBase).some(([k, v]) => k !== key && v === -1)) return;
     if (nextValue === -2 && Object.entries(character.attributeBase).some(([k, v]) => k !== key && v === -2)) return;
     if (delta > 0 && remaining <= 0) return;
@@ -177,8 +177,18 @@ export default function CreationWizard() {
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Distribua seus atributos</h2>
             <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
               Cap. 1, seção 1 — 4 pontos pra distribuir, máximo {ATTRIBUTE_CREATION_MAX} por atributo na criação. Reduzir um atributo a -1 dá +1
-              ponto extra; reduzir um (outro) a -2 dá +2 pontos extras.
+              ponto extra; reduzir um (outro) a -2 dá +2 pontos extras. Depois da criação, cada ponto novo custa 2 PA —
+              inclusive pra desfazer um defeito.
             </p>
+            {/* Vigor não governa perícia nenhuma (Cap. 1, §4), então era o dump stat ótimo de toda ficha. A Escala do Vigor (Cap. 4) é o contrapeso, e o jogador precisa vê-la ANTES de largar o atributo, não depois. */}
+            {(character.attributeBase.vigor ?? 0) < 0 && (
+              <p className="mb-3 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-700 dark:text-rose-300">
+                <b>Vigor {character.attributeBase.vigor}</b> — a Escala do Vigor (Cap. 4) multiplica seus PV Máximos por{" "}
+                <b>×{getVigorFactor(character.attributeBase.vigor ?? 0).toFixed(2).replace(".", ",")}</b>, e o corte não é
+                linear: o 1º ponto negativo tira 25% da sua vida, o 2º tira quase metade do que sobrou. Você também joga
+                com Desvantagem em toda resistência de Vigor — veneno, doença, clima, Exaustão e o Fio da Vida.
+              </p>
+            )}
             <p
               className={`mb-3 text-sm font-bold ${remaining < 0 ? "text-rose-600 dark:text-rose-400" : "text-wine-600 dark:text-wine-300"}`}
             >

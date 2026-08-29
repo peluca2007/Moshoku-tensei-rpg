@@ -29,7 +29,8 @@ export const FOGO_TREE: Tree = {
           id: "folego-de-forja",
           name: "Fôlego de Forja",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "+2 PM por patamar seu em Fogo. Comprável várias vezes, até o número de patamares.",
+          description: "+2 PM por patamar seu em Fogo. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.",
+          grants: { mpPerRank: 2 },
         },
         {
           id: "maos-de-ferreiro",
@@ -139,7 +140,7 @@ export const FOGO_TREE: Tree = {
           pmCost: 4,
           range: "Esfera de 6 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          damage: { normal: "3d6 + BC de explosão (dobra contra alvos Em Chamas)" },
+          damage: { normal: "3d6 + BC de explosão (+3d6 contra alvos Em Chamas)" },
           effect: "Teste de Resistência de Agilidade (CD 8 + BC), metade se passar. Falha: arremessadas 3m.",
         },
         {
@@ -195,7 +196,7 @@ export const FOGO_TREE: Tree = {
           pmCost: 6,
           range: "Esfera de 12m de raio",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "6d6 + BC (ígneo)" },
+          damage: { normal: "6d8 + BC (ígneo)" },
           effect:
             "Teste de Agilidade (CD 8 + BC), metade se passar. Falha: Em Chamas. A área continua queimando 1 minuto: quem começar o turno dentro sofre +2d6.",
           incantation: "Vento que alimenta e chama que devora, girem juntos até que não reste ar nem nome neste lugar. Tempestade de Fogo!",

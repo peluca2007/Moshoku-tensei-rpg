@@ -42,8 +42,25 @@ export default function Chapter1() {
           <P>
             <b>Sistema de Defeitos:</b> você pode reduzir atributos pra ganhar pontos extras. As regras são
             estritas: apenas um atributo pode ficar em -1 (ganha 1 Ponto Extra) e apenas um em -2 (ganha 2
-            Pontos Extras).
+            Pontos Extras). Nada desce abaixo de -2.
           </P>
+          <P>
+            Repare que o defeito <b>não cria pontos</b>: ele os empresta. Com os dois defeitos você distribui
+            7 pontos, mas dois atributos ficam em -1 e -2, então a <b>soma dos seus cinco atributos fecha em
+            4</b> de qualquer jeito. É essa soma — não cada atributo isolado — que a seção 2 usa pra cobrar
+            PA por pontos comprados depois da criação. Consequência direta: <b>desfazer um defeito custa os
+            mesmos 2 PA por ponto</b> que qualquer outro aumento. Você não pega -2 na criação e sobe de volta
+            de graça.
+          </P>
+          <Warning title="Antes de largar o Vigor, leia isto">
+            Vigor é o único atributo que não governa perícia nenhuma (seção 4), o que faz dele o alvo óbvio
+            do Sistema de Defeitos. É de propósito que ele seja também o único cuja escala negativa é{" "}
+            <b>desproporcional</b>: a Escala do Vigor (Cap. 4, §1) multiplica seus PV Máximos por{" "}
+            <b>×0,75</b> em -1 e por <b>×0,40</b> em -2 — o primeiro ponto tira um quarto da sua vida, o
+            segundo tira quase metade do que sobrou — e ainda te dá Desvantagem em toda resistência de Vigor:
+            veneno, doença, clima, fome, Exaustão e o Fio da Vida. Largar Força ou Intelecto custa um número
+            na rolagem; largar Vigor custa o personagem.
+          </Warning>
         </Aside>
         <Aside title="Os Dois Atributos do Mago">
           <P>
@@ -52,9 +69,10 @@ export default function Chapter1() {
           </P>
           <P>
             <b>Escolas de magia não concedem PM.</b> A sua reserva inteira é{" "}
-            <b>(Espírito × Maior Bônus de Rank de magia) + 8</b>, com um piso de{" "}
-            <b>(Maior Bônus de magia × 4) + 8</b> — calculada uma vez e recalculada sempre que o seu maior
-            patamar de magia sobe. Não há bônus extra por número de escolas abertas.
+            <b>(o maior entre o seu Espírito e 4) × Maior Bônus de Rank de magia, + 8</b> — recalculada
+            sempre que o seu maior patamar de magia sobe. Não há bônus extra por número de escolas abertas.
+            O &ldquo;maior entre Espírito e 4&rdquo; é invisível pra quem tem Espírito 4 ou mais; ele existe
+            pro cirurgião do parágrafo abaixo (Cap. 4, §1).
           </P>
           <P>
             Abrir oito escolas no 1º patamar não te dá mana nenhuma a mais. Subir <b>uma</b> escola até o
@@ -79,12 +97,11 @@ export default function Chapter1() {
           headers={["Custo", "O que você recebe"]}
           rows={[
             ["1 PA", "2 Perícias à sua escolha."],
-            ["1 PA", "Desbloqueia 1 Técnica Marcial ou 1 Talento de rank baixo."],
             ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente)."],
             ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
-            ["2 PA", "Aumenta 1 ponto em qualquer Atributo Base permanentemente (limite de 8)."],
-            ["3 PA", "Vantagem permanente em todos os Testes de Resistência de 1 Atributo à sua escolha."],
-            ["Variável", "Magias e Talentos de Árvore — o custo escala com o Rank."],
+            ["2 PA", "+1 ponto de Atributo Base permanente (teto 8) — medido pela soma dos cinco, então desfazer um defeito custa o mesmo."],
+            ["3 PA", "Vantagem permanente em todos os Testes de Resistência de 1 Atributo à sua escolha (uma vez por atributo)."],
+            ["Variável", "Magias, Técnicas e Talentos de Árvore — o custo escala com o Rank (tabela na seção 3)."],
           ]}
         />
         <Aside title="Por que essas duas melhorias escalam com o Bônus de Rank">
@@ -374,10 +391,10 @@ export default function Chapter1() {
         <Aside title="3. Como somam PV, PT e PP?">
           <List
             items={[
-              "PV somam de todas as árvores.",
+              "PV: uma reserva só, calculada de uma vez. Os Dados de PV de TODAS as suas árvores entram no mesmo somatório do Cap. 4, §1 — abrir uma segunda árvore acrescenta dados novos à mesma conta, não uma segunda barra de vida.",
               "PM somam apenas das escolas de magia.",
               "PT: reserva única, mesmo com vários estilos marciais. Resumo: PT Pleno = Espírito + Vigor, +1 por patamar com Pleno já desbloqueado (contando todas as árvores do Corpo) — fórmula completa, incluindo o PT Menor de antes do Pleno e a exceção do Cavalaria e Escudos, no Cap. 3, \"Pontos de Touki\".",
-              "PP: reserva única, mesmo com várias árvores de Utilidade. PP = Intelecto + o maior atributo-chave entre suas árvores de Utilidade, +1 por patamar 3º ou superior em qualquer uma delas.",
+              "PP: reserva única, mesmo com várias árvores de Utilidade. PP = Intelecto + o maior atributo-chave entre suas árvores de Utilidade, +1 por patamar 3º ou superior em qualquer uma delas. No Tático, cujo atributo-chave já é Intelecto, o segundo termo vira o Bônus de Rank — ver Cap. 3, \"Pontos de Preparação\".",
             ]}
           />
           Você nunca tem duas reservas do mesmo tipo.
@@ -395,9 +412,22 @@ export default function Chapter1() {
           </P>
         </Aside>
         <Aside title="5. Largura ou profundidade?">
-          Ir fundo numa árvore custa 12 PA até o Imperador e entrega Bônus de Rank +6, seis Maestrias e
-          magias de patamar alto. Ir largo entrega muitas Maestrias de 1º patamar, versatilidade e nenhum
-          teto. O sistema cobra pelos dois caminhos, mas não deixa que largura seja simplesmente melhor.
+          <P>
+            <b>Profundidade custa 34 PA</b>, não 12. Os 12 PA são só os desbloqueios (1+1+2+2+3+3); pra ter
+            <i>direito</i> de comprá-los você precisa acumular 10 conhecimentos naquela mesma árvore (seção
+            3), e os 10 mais baratos possíveis custam outros 22 PA — dois de cada patamar, a 1, 1, 2, 3 e 4
+            PA. Em troca: Bônus de Rank +6, seis Maestrias, e as magias que só existem lá em cima.
+          </P>
+          <P>
+            <b>Largura custa 15 PA</b> por cinco árvores (Custo de Abertura 1+2+3+4+5, pergunta 4 abaixo) e
+            entrega cinco Maestrias de 1º patamar, versatilidade e nenhum teto — mas trava seu Bônus de Rank
+            em +1, o que significa errar mais, causar menos dano e ter CDs que qualquer coisa resiste.
+          </P>
+          <P>
+            Ou seja: largura é <b>mais barata</b>, profundidade é <b>mais forte</b>. O sistema cobra pelos
+            dois caminhos e não deixa nenhum ser simplesmente melhor — mas é bom saber qual dos dois está
+            pedindo mais da sua ficha antes de escolher.
+          </P>
         </Aside>
         <Aside title="6. E o Rank Deus?">
           Sempre narrativo e sempre de uma árvore. Ninguém no Mundo de Seis Faces jamais alcançou o patamar

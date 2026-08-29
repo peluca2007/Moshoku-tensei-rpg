@@ -14,8 +14,8 @@ export default function Appendices() {
         <List
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
-            "PV (Cap. 4, §1): Constituição Base (10 + Vigor 2×3 = 16) + Progressão (soma dos dados de PV dos 12 ranks dela, em todas as 4 árvores, dobrada = 150) + Vitalidade (Vigor 2 × Bônus do Santo 4 × 4 = 32) = 198 PV",
-            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os +6 PM fixos da raça Migurd = 34 PM",
+            "PV (Cap. 4, §1): corpo treinado (20 + o dobro dos dados de PV dos 12 ranks dela, nas 4 árvores = 20 + 142 = 162) × Fator de Vigor 2 (×1,40) = 226 PV",
+            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — o maior entre Espírito 5 e 4, vezes o Bônus do Santo de Água (4), + 8 = 28, mais os +6 PM fixos da raça Migurd = 34 PM",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
             "Maestrias de Água: Afinidade Aquática, Cântico Fluido, Termodinâmica Aplicada, Domínio Climático",
@@ -31,6 +31,12 @@ export default function Appendices() {
           uma professora genial dentro de um corpo frágil, que sobrevive porque nunca deixa ninguém chegar
           perto. Se a sua ficha de mago não estiver produzindo esse perfil (acerto altíssimo, mana generosa,
           vida baixa pro nível dela), algum número precisa de ajuste.
+        </P>
+        <P>
+          Repare no que o Fator de Vigor faz aqui: com Vigor 2 ela multiplica por 1,40. Se tivesse largado
+          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 162 viraria 64 PV —
+          e um único golpe de espadachim Santo resolveria a luta. É o tipo de troca que a Escala do Vigor
+          (Cap. 4, §1) existe pra tornar visível antes de a ficha ser fechada.
         </P>
       </Section>
 

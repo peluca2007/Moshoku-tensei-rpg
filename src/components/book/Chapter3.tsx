@@ -178,7 +178,7 @@ export default function Chapter3() {
           </P>
           <List
             items={[
-              "PT são recuperados integralmente em um Descanso Curto.",
+              "PT são recuperados integralmente em um Descanso Curto — e são o único recurso que volta inteiro nele (PM voltam pela metade). O Cap. 4, §6 limita a dois Descansos Curtos entre dois Longos.",
               "PT não podem ser convertidos em PM, nem PM em PT.",
               "Um personagem com Ranks em mais de um estilo marcial usa uma reserva única de PT.",
             ]}
@@ -260,9 +260,15 @@ export default function Chapter3() {
         </P>
         <Aside title="Pontos de Preparação">
           <P>
-            PP Máximos = Intelecto + o atributo-chave da sua árvore (mínimo 1), +1 por patamar a partir do
-            terceiro. Ladino usa Agilidade, Bardo usa Espírito, Tático usa Intelecto. Com mais de uma árvore
-            de Utilidade, a reserva é única — use o maior atributo-chave. Recupera-se tudo em Descanso Longo.
+            <b>PP Máximos = Intelecto + o atributo-chave da sua árvore</b> (mínimo 1), +1 por patamar a
+            partir do terceiro. Ladino usa Agilidade, Bardo usa Espírito. Com mais de uma árvore de
+            Utilidade, a reserva é única — use o maior atributo-chave. Recupera-se tudo em Descanso Longo.
+          </P>
+          <P>
+            <b>Navegação e Liderança é a exceção</b>, porque o atributo-chave dela <i>é</i> Intelecto: nesse
+            caso ele não conta duas vezes — some, no lugar, o seu <b>Bônus de Rank</b> naquela árvore. Sem
+            essa cláusula o Tático tinha a maior reserva de PP do livro (20 no Imperador, contra 15 do Bardo)
+            investindo <i>um</i> atributo onde as outras duas árvores de Utilidade investem dois.
           </P>
         </Aside>
         <P>

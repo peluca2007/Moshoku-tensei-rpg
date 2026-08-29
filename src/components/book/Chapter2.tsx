@@ -15,12 +15,24 @@ export default function Chapter2() {
       <Section>
         <SectionTitle id="cap2-1">1. As Categorias da Magia</SectionTitle>
         <P>
-          As magias se dividem em três categorias principais: Magia de Ataque, Magia de Cura e Magia de
-          Invocação. A de Ataque possui a maior quantidade de feitiços disponíveis; a de Invocação, a menor.
+          O pilar da Magia tem <b>oito escolas</b>, divididas em dois grupos:
         </P>
-        <P>
-          A Magia de Ataque se divide nos quatro elementos clássicos — Água, Fogo, Terra e Vento. A Magia de
-          Cura se divide em Cura, Desintoxicação, Barreira e Invocação.
+        <List
+          items={[
+            <span key="of">
+              <b>Magia Ofensiva (4 escolas):</b> os quatro elementos clássicos — Água, Fogo, Terra e Vento. É
+              onde mora a maior quantidade de feitiços do livro.
+            </span>,
+            <span key="su">
+              <b>Magia de Suporte (4 escolas):</b> Cura, Desintoxicação, Barreira e Invocação. Invocação é a
+              menor lista de feitiços do livro, e a única cujo efeito principal age sozinho depois de
+              conjurado.
+            </span>,
+          ]}
+        />
+        <P className="text-sm">
+          Os dois grupos usam exatamente as mesmas regras: a mesma tabela de PM, o mesmo tempo de conjuração,
+          o mesmo Bônus de Rank. A divisão é de assunto, não de mecânica.
         </P>
         <Aside title="Quão raro é um mago">
           Apenas 1 em cada 20 pessoas nasce com capacidade de manipular mana. Dessas, apenas 1 em cada 20
@@ -57,7 +69,9 @@ export default function Chapter2() {
             items={[
               <span key="1">
                 <b>Custo de Ação:</b> sempre usa a coluna &quot;Silenciosa&quot; da tabela da seção 3 —
-                sempre mais rápida que Padrão e Encurtada, sem exceção.
+                sempre mais rápida que a Padrão, e <b>nunca mais lenta</b> que a Encurtada. Nos dois
+                primeiros patamares as duas empatam em 1 Ação (e no Principiante a Silenciosa ainda ganha a
+                primeira do turno de graça); do Avançado em diante a Silenciosa abre vantagem de verdade.
               </span>,
               <span key="2">
                 <b>Dano:</b> metade dos dados, arredondado pra baixo — o mesmo valor do Encantamento
@@ -98,6 +112,11 @@ export default function Chapter2() {
             característico do mundo de Mushoku Tensei morreria na ficha. Vale só pro rank Principiante,
             só pra primeira do turno, e o livro não abre nenhuma outra: se você encontrar qualquer outra
             coisa que se comporte como ação bônus, é erro de texto, não regra.
+          </P>
+          <P>
+            <b>E ela não conta no Teto de Ações</b> (Cap. 4, §4: 5 por turno, no máximo 2 externas). Ela não
+            gasta Ação nenhuma, então não há Ação pra contar — mas ela também não é uma das 2 externas, e um
+            Imperador de magia continua limitado a uma por turno, do rank mais fraco que ele conhece.
           </P>
         </Warning>
       </Section>
@@ -141,8 +160,10 @@ export default function Chapter2() {
           Água/Gelo; Vapor Seco é Vento + Fogo.
         </P>
         <P>
-          <b>Requisito:</b> ser rank Avançado em pelo menos uma escola de Magia de Ataque — o portão canônico.
-          Nenhum mago abaixo de Avançado consegue combinar escolas.
+          <b>Requisito:</b> rank Avançado ou superior em <b>ambas</b> as escolas envolvidas — o mesmo portão
+          que a seção seguinte usa pra qualquer par de árvores. Nenhum mago abaixo de Avançado combina coisa
+          nenhuma, e não existe combinar uma escola que você domina com outra que você mal começou: a magia
+          composta exige que as duas metades estejam maduras.
         </P>
         <List
           items={[

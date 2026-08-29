@@ -1,4 +1,5 @@
 import { Tree } from "@/lib/types";
+import { RANK_PA_COST } from "./shared";
 
 export const ARQUEARIA_TREE: Tree = {
   id: "arquearia",
@@ -30,7 +31,7 @@ export const ARQUEARIA_TREE: Tree = {
       talents: [
         { id: "aljava-cheia", name: "Aljava Cheia", paCost: 1, description: "Você nunca fica sem flechas em terreno com madeira, e fabrica munição durante um Descanso Curto." },
         { id: "passo-e-tiro", name: "Passo e Tiro", paCost: 1, description: "Disparar não provoca ataques de oportunidade." },
-        { id: "braco-firme", name: "Braço Firme", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
+        { id: "braco-firme", name: "Braço Firme", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
       ],
       abilities: [
         {
@@ -41,7 +42,7 @@ export const ARQUEARIA_TREE: Tree = {
           range: "Alcance da arma",
           actions: { normal: 1 },
           damage: { normal: "Segundo disparo: um degrau abaixo" },
-          effect: "Dois disparos contra o mesmo alvo ou alvos diferentes. Se ambos acertarem o mesmo alvo, ele fica Marcado e Caído.",
+          effect: "Dois disparos contra o mesmo alvo ou alvos diferentes. Se ambos acertarem o mesmo alvo, ele fica Marcado; e faz um teste de Vigor (CD 8 + Agilidade + Bônus de Rank) ou também fica Caído.",
         },
         {
           id: "tiro-de-contencao",
@@ -135,7 +136,7 @@ export const ARQUEARIA_TREE: Tree = {
           "Você recebe o Manto de Touki completo e a reserva de PT. Seus disparos contam como mágicos e ignoram Resistência a perfurante — mas ainda não furam o Manto de Touki de ninguém. O alcance de todas as suas armas de disparo dobra.",
       },
       talents: [
-        { id: "folego-estavel", name: "Fôlego Estável", paCost: 2, description: "+3 PT Máximos." },
+        { id: "folego-estavel", name: "Fôlego Estável", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
         { id: "tres-na-corda", name: "Três na Corda", paCost: 2, description: "Disparo Duplo passa a ser triplo, com o terceiro disparo dois degraus abaixo." },
         { id: "nunca-aqui", name: "Nunca Aqui", paCost: 2, description: "Depois de atirar, gaste 1 PT para se mover 9m sem provocar oportunidade e refazer Furtividade imediatamente." },
       ],
@@ -185,20 +186,20 @@ export const ARQUEARIA_TREE: Tree = {
         {
           id: "marca-perene",
           name: "Marca Perene",
-          paCost: 2,
+          paCost: RANK_PA_COST.talent.Santo,
           description:
             "A condição Marcado passa a durar até o próximo Descanso Longo, mesmo se a criatura fugir, se esconder ou atravessar o continente. Você a encontra de novo.",
         },
         {
           id: "contra-bateria",
           name: "Contra-Bateria",
-          paCost: 2,
+          paCost: RANK_PA_COST.talent.Santo,
           description: "Quando um inimigo te atacar à distância, você sabe exatamente onde ele está e o Marca automaticamente.",
         },
         {
           id: "peso-da-aljava",
           name: "Peso da Aljava",
-          paCost: 2,
+          paCost: RANK_PA_COST.talent.Santo,
           description: "Suas flechas causam +1d8 contra criaturas Grandes ou maiores.",
         },
       ],
@@ -226,7 +227,7 @@ export const ARQUEARIA_TREE: Tree = {
         {
           id: "flecha-amarrada",
           name: "Flecha Amarrada",
-          paCost: 2,
+          paCost: RANK_PA_COST.common.Santo,
           ptCost: 1,
           range: "Alcance da arma",
           actions: { normal: 1 },
@@ -245,19 +246,19 @@ export const ARQUEARIA_TREE: Tree = {
           "O patamar que o arqueiro esperou a campanha inteira: gastando 3 PT (Flecha de Touki), um único disparo ignora completamente o Manto de Touki do alvo e toda redução de dano contra projéteis. É caro de propósito, e não existe segunda forma.",
       },
       talents: [
-        { id: "aljava-divina", name: "Aljava Divina", paCost: 3, description: "A Flecha de Touki passa a custar 2 PT em vez de 3." },
+        { id: "aljava-divina", name: "Aljava Divina", paCost: RANK_PA_COST.talent.Rei, description: "A Flecha de Touki passa a custar 2 PT em vez de 3." },
       ],
       abilities: [
         {
           id: "cacada",
           name: "Caçada",
           signature: true,
-          paCost: 4,
+          paCost: RANK_PA_COST.signature.Rei,
           ptCost: 2,
           range: "Alcance da arma",
           actions: { normal: 1 },
           effect:
-            "Escolha um alvo Marcado. Até o fim do combate, seus disparos contra ele têm Vantagem, critam em 18-20, e cada disparo consecutivo que acertar causa +1d10 cumulativo. Trocar de alvo encerra o efeito.",
+            "Escolha um alvo Marcado. Até o fim do combate, seus disparos contra ele têm Vantagem e critam em 18-20; e o primeiro disparo de cada turno que acertar causa +1d10 cumulativo, até o máximo de +3d10. Trocar de alvo encerra o efeito.",
         },
         {
           id: "flecha-do-fim-da-estrada",
@@ -279,10 +280,10 @@ export const ARQUEARIA_TREE: Tree = {
       mastery: {
         name: "O Tiro Que Já Aconteceu",
         description:
-          "Você recebe 1 Ação adicional por turno, só para disparar. Seus disparos não podem ser aparados, bloqueados nem interceptados por efeito de rank Rei ou inferior, incluindo o Fluxo Verdadeiro. Criaturas Marcadas por você não conseguem se esconder de você, nem por magia.",
+          "Você recebe 1 Ação adicional por turno, usável apenas para um único disparo — nunca para Disparo Duplo, Três na Corda ou qualquer técnica nomeada. Seus disparos não podem ser aparados, bloqueados nem interceptados por efeito de rank Rei ou inferior, incluindo o Fluxo Verdadeiro. Criaturas Marcadas por você não conseguem se esconder de você, nem por magia.",
       },
       talents: [
-        { id: "nenhum-deles-chegou-perto", name: "Nenhum Deles Chegou Perto", paCost: 4, description: "Enquanto tiver ao menos 1 PT e linha de visão, criaturas hostis não conseguem se aproximar a menos de 9 metros sem passar num teste de Espírito." },
+        { id: "nenhum-deles-chegou-perto", name: "Nenhum Deles Chegou Perto", paCost: 4, description: "Enquanto tiver ao menos 1 PT e linha de visão, criaturas hostis não conseguem se aproximar a menos de 9 metros sem passar num teste de Espírito (CD 8 + Agilidade + Bônus de Rank)." },
       ],
       abilities: [
         {

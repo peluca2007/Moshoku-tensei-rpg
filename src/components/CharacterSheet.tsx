@@ -14,7 +14,8 @@ import { getTreeById, getTreeGroups } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
 import {
   AbilityDef,
-  ATTRIBUTE_CREATION_MAX,
+  ATTRIBUTE_CREATION_POINTS,
+  ATTRIBUTE_FLOOR,
   ATTRIBUTE_HARD_CAP,
   ATTRIBUTE_PA_COST_PER_POINT,
   ATTRIBUTES,
@@ -257,6 +258,7 @@ export default function CharacterSheet() {
     overrides,
   } = character;
   const paSpent = getPaSpent(character);
+  const attributeSum = ATTRIBUTES.reduce((sum, { key }) => sum + (attributeBase[key] ?? 0), 0);
   const guildRank = getGuildRank(character);
   const guildRankEstimated = isGuildRankEstimated(character);
   const [grimoireQuery, setGrimoireQuery] = useState("");
@@ -512,8 +514,6 @@ export default function CharacterSheet() {
               {ATTRIBUTES.map(({ key, short, label }) => {
                 const base = attributeBase[key] ?? 0;
                 const final = attributes[key];
-                const pointsAbove = Math.max(0, base - ATTRIBUTE_CREATION_MAX);
-                const paCost = pointsAbove * ATTRIBUTE_PA_COST_PER_POINT;
                 return (
                   <div
                     key={key}
@@ -525,7 +525,7 @@ export default function CharacterSheet() {
                     </span>
                     <input
                       type="number"
-                      min={-2}
+                      min={ATTRIBUTE_FLOOR}
                       max={ATTRIBUTE_HARD_CAP}
                       value={base}
                       onChange={(e) => useCharacterStore.getState().setAttribute(key, Number(e.target.value))}
@@ -534,11 +534,23 @@ export default function CharacterSheet() {
                     {final !== base && (
                       <span className="text-[10px] text-parchment-400">Final {final >= 0 ? `+${final}` : final}</span>
                     )}
-                    {paCost > 0 && <span className="text-[10px] font-semibold text-gold-500">{paCost} PA</span>}
                   </div>
                 );
               })}
             </div>
+            {/* O custo em PA de atributo é da SOMA dos cinco, não de cada um (Cap. 1, §2) — mostrar por atributo escondia o total e sugeria que subir de -2 até 4 era grátis. */}
+            <p className="mt-2 text-[11px] leading-snug text-parchment-500 dark:text-parchment-400">
+              Soma {attributeSum} de {ATTRIBUTE_CREATION_POINTS} da criação
+              {attributeSum > ATTRIBUTE_CREATION_POINTS ? (
+                <>
+                  {" · "}
+                  <span className="font-semibold text-gold-500">
+                    {(attributeSum - ATTRIBUTE_CREATION_POINTS) * ATTRIBUTE_PA_COST_PER_POINT} PA
+                  </span>{" "}
+                  em {attributeSum - ATTRIBUTE_CREATION_POINTS} ponto(s) comprado(s)
+                </>
+              ) : null}
+            </p>
           </div>
 
           <div className="space-y-2">

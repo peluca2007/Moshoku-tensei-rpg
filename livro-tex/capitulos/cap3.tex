@@ -1,0 +1,253 @@
+% ===========================================================================
+%  Capítulo 3 — As Árvores de Progressão
+%  Prosa à mão; o catálogo das 18 árvores vem de gen/arvores.tex.
+% ===========================================================================
+\chapter{As Árvores de Progressão}
+
+Não existem classes engessadas. O sistema funciona através de Árvores de Progressão,
+divididas em três grandes pilares:
+
+\begin{description}
+    \item[Árvore da Magia] feitiços de ataque, suporte e invocação. Recurso: \rec{PM}.
+    \item[Árvore do Corpo] os três Estilos Divinos de esgrima, mais armas pesadas, escudos,
+          arquearia e a híbrida do vento. Recurso: \rec{PT}.
+    \item[Árvore de Utilidade] os especialistas em mundo. Recurso: \rec{PP}.
+\end{description}
+
+Este capítulo cobre primeiro as regras \emph{compartilhadas} entre árvores do mesmo pilar,
+e termina com o catálogo completo --- magias, técnicas, talentos e Maestrias das 18
+sub-árvores, o mesmo dado que alimenta a ficha do site, então nunca diverge dela.
+
+\begin{nota}{Escolas Formais e Ofícios}
+    As oito escolas de magia e os três Estilos Divinos são \termo{Escolas Formais}: têm
+    mestres vivos, sedes, hierarquia e títulos reconhecidos no mundo inteiro --- usam os
+    nomes canônicos de rank (Principiante $\to$ Imperador) e conferem status social. As
+    demais são \termo{Ofícios} aprendidos na estrada, sem diploma: mecanicamente idênticos
+    (mesmo Bônus de Rank, mesmos custos de PA, mesma contagem de conhecimentos), mas os
+    nomes dos patamares mudam.
+
+    \medskip
+    O sétimo degrau (Deus) existe só nas Escolas Formais, e mesmo lá é narrativo. Um Ofício
+    termina no sexto patamar.
+\end{nota}
+
+\begin{nota}{Quem veste Touki}
+    Toda sub-árvore da Árvore do Corpo desbloqueia o Touki no \textbf{terceiro} patamar ---
+    inclusive Arquearia, inclusive Escudos. A única exceção é o Estilo Deus da Espada, que
+    desperta a aura no \textbf{segundo} patamar (a doutrina inteira dele é velocidade). As
+    árvores de Magia e de Utilidade nunca recebem Touki nem Pontos de Touki, por mais alto
+    que seja o rank.
+\end{nota}
+
+% ---------------------------------------------------------------------------
+\section{A Árvore do Corpo --- Sistemas Compartilhados}
+
+Antes de qualquer estilo específico, três sistemas governam todos os guerreiros: o Dado de
+Arma, o Touki e o Triângulo dos Estilos.
+
+\begin{nota}{Espadachim ou Guerreiro}
+    Apenas quem estudou uma das Três Grandes Escolas --- Deus da Espada, Deus da Água e Deus
+    do Norte --- é chamado de \termo{Espadachim}. Todos os outros, mesmo empunhando espada,
+    são apenas \termo{Guerreiros}.
+\end{nota}
+
+\subsection{O Dado de Arma e a Escalada de Maestria}
+
+O dano de um guerreiro vem da arma, não do corpo. Conforme você sobe de Rank num estilo, o
+Dado Base sobe degraus na Escada de Dados --- a tabela completa está no Capítulo 1, junto
+das outras tabelas de referência.
+
+\begin{formula}
+    \textbf{Dano marcial $=$ Dado de Arma (escalado) $+$ Atributo $+$ Bônus do Rank}
+\end{formula}
+
+Qual Rank conta depende do tipo de ataque, e a regra tem exatamente dois casos --- nunca um
+terceiro:
+
+\begin{itemize}
+    \item \textbf{Ataque comum} (golpe simples, sem nome, sem técnica): use o \textbf{maior}
+          Rank que você tiver entre todas as suas árvores do Corpo. Um personagem com Norte
+          Santo e Espada Principiante rola os degraus do Norte Santo em qualquer golpe
+          comum, não importa com qual arma.
+    \item \textbf{Técnica nomeada} (qualquer habilidade comprada de uma árvore específica):
+          use sempre o Rank \textbf{daquela árvore que concedeu a técnica}, mesmo que seja
+          menor que o seu maior Rank geral. O mesmo personagem usando a Espada de Luz rola
+          só os degraus do Rank Principiante --- é por isso que ela sai fraca na mão dele,
+          apesar do Norte Santo.
+\end{itemize}
+
+A mesma lógica dos dois casos vale pra \emph{qualquer} talento ou regra do livro que
+mencione \enquote{seu Bônus de Rank} sem dizer de qual árvore.
+
+\begin{nota}{Acima do topo da escada}
+    O 5d12 é o último degrau. Se um talento ou Maestria te der um degrau além dele --- Espada
+    Emprestada e Punho Duplo são os dois casos do livro --- cada degrau excedente vira
+    \textbf{$+2$ de dano fixo} em vez de sumir. Nenhum PA gasto em degrau é jogado fora.
+\end{nota}
+
+\begin{aviso}{A progressão de degraus é padrão, não universal}
+    A maioria das árvores do Corpo sobe exatamente $+1$ degrau por Rank (total $+6$ no
+    Imperador), mas não é regra fixa --- cada árvore define os próprios degraus por patamar
+    no catálogo dela. O Deus da Espada sobe mais rápido (nove degraus no total, de propósito
+    --- é a identidade da árvore); Cavalaria e Escudos sobe mais devagar, porque o valor
+    dela está em proteger o grupo, não em dano. Confira o catálogo da árvore específica
+    antes de calcular o dado final de alguém.
+\end{aviso}
+
+\subsection{Touki (Aura de Batalha)}
+
+O Touki é uma camada de mana que o guerreiro veste sobre o próprio corpo --- endurece a pele
+como aço, reforça o fio da lâmina e amplifica força, velocidade e reflexos. Rank
+Intermediário é o mais alto que alguém alcança sem Touki.
+
+\begin{nota}{Pontos de Touki (PT) --- as duas reservas}
+    \textbf{PT Menor} --- do 1º patamar em diante: PT iguais ao seu \textbf{Vigor} (mínimo
+    1). Não é aura, é fôlego --- paga técnicas, e nada mais.
+
+    \medskip
+    \textbf{PT Pleno} --- a partir do 3º patamar (2º no Deus da Espada): a reserva passa a
+    ser \textbf{Espírito $+$ Vigor}, e você desbloqueia o Manto de Touki e as manobras de
+    gasto abaixo. \textbf{Crescimento:} $+1$ PT por patamar que já tenha PT Pleno em
+    qualquer árvore do Corpo. Cavalaria e Escudos concede $+2$ por patamar em vez de $+1$,
+    por gastar PT mais rápido que qualquer outra árvore.
+
+    \begin{itemize}
+        \item PT são recuperados \textbf{integralmente} em um Descanso Curto --- e são o
+              único recurso que volta inteiro nele (PM voltam pela metade). O Cap. 4, §6
+              limita a dois Descansos Curtos entre dois Longos.
+        \item PT não podem ser convertidos em PM, nem PM em PT.
+        \item Um personagem com Ranks em mais de um estilo marcial usa uma reserva única.
+    \end{itemize}
+\end{nota}
+
+\textbf{O Manto de Touki} (passivo, gratuito, independente de PT) --- a partir do Rank
+Avançado, enquanto consciente e não Exausto: $+$CA igual à metade do Bônus de Rank
+(arredondado pra cima); Redução contra projéteis mundanos igual ao dobro do Bônus de Rank (e
+nunca sofre crítico deles); ataques desarmados e com objetos improvisados contam como
+mágicos. \textbf{O Manto não consome PT e continua ativo mesmo com a reserva em 0} --- ele é
+vestido pelo Rank, não comprado com o recurso.
+
+\begin{tabelalivro}{C{1.6cm} L{3.6cm} L{8.6cm}}{Manobras de Touki (custam PT)}
+\cabtabela{\textbf{Custo} & \textbf{Manobra} & \textbf{Efeito}}
+1 PT & Touki Concentrado & Sem Ação. Até o fim do turno, some seu Bônus de Rank ao dano de novo e reduza todo dano físico recebido pelo mesmo valor. \\
+1 PT & Lâmina de Touki & Sem Ação. Por 1 minuto, sua arma corta pedra e aço, conta como mágica e ignora Resistência a cortante/perfurante. \\
+2 PT & Golpe Estendido & 1 Ação. Clarão da lâmina que atinge um alvo a até 9m. Dano de arma normal. \\
+2 PT & Aguentar & 1 Reação. Ao sofrer dano que te levaria a 0 PV, fica com 1 PV em vez disso. Uma vez por combate. \\
+3 PT & Explosão de Aura & 1 Ação. Criaturas a 3m fazem teste de Força (CD 8 $+$ Força $+$ Rank) ou são arremessadas 4,5m e ficam Caídas. \\
+\end{tabelalivro}
+
+\begin{aviso}{\enquote{Aguentar} é esta manobra, e só ela}
+    Toda árvore do Corpo tem acesso à manobra acima. A técnica de Cavalaria e Escudos que
+    intercepta dano por 1 PT chama-se \textbf{Aguentar o Baque} --- nome diferente, de
+    propósito, porque um personagem de Escudos tem as duas na ficha e \enquote{gastei
+    Aguentar} precisava ser uma frase sem ambiguidade.
+\end{aviso}
+
+\subsection{O Triângulo dos Estilos}
+
+\begin{tabelalivro}{L{3cm} L{6.6cm} C{2.2cm} C{2.2cm}}{As Três Grandes Escolas}
+\cabtabela{\textbf{Estilo} & \textbf{Filosofia} & \textbf{Vence} & \textbf{Perde}}
+Deus da Espada & Velocidade e agressão; matar em um golpe. Sem defesa, sem contra-ataque. & Deus do Norte & Deus da Água \\
+Deus da Água & Defesa e contragolpe. Deixa o inimigo atacar e devolve. & Deus da Espada & Deus do Norte \\
+Deus do Norte & Sobreviver e vencer por qualquer meio. Truques, terreno, improviso. & Deus da Água & Deus da Espada \\
+\end{tabelalivro}
+
+\begin{nota}{Regra da Vantagem de Estilo}
+    Quando você luta contra um praticante do estilo que o seu contra-ataca, e ambos possuem
+    Rank naqueles estilos: você rola com Vantagem em todas as Disputas contra ele, e as
+    Reações defensivas dele falham automaticamente contra sua primeira Ação de cada turno.
+    Se o Rank dele for dois ou mais acima do seu, a vantagem se anula --- treino bruto supera
+    a tabela de tipos.
+\end{nota}
+
+% ---------------------------------------------------------------------------
+\section{A Árvore de Utilidade --- Sistemas Compartilhados}
+
+O terceiro pilar não compete em dano. O que a Utilidade faz é decidir as \textbf{condições}
+em que a luta, a negociação ou o roubo acontecem.
+
+\begin{itemize}
+    \item \textbf{Sem Escada de Dados:} árvores de Utilidade não recebem degraus no Dado de
+          Arma.
+    \item \textbf{Sem Touki, nunca:} nenhum patamar de Utilidade concede Manto de Touki nem
+          PT.
+    \item \textbf{O Rank soma só nas Perícias que a sua árvore cobre} --- nunca em todas as
+          Perícias do jogo.
+\end{itemize}
+
+\begin{tabelalivro}{L{5cm} L{9cm}}{Perícias cobertas pelo Bônus de Rank}
+\cabtabela{\textbf{Árvore} & \textbf{Perícias cobertas}}
+Furtividade e Armadilhas (Ladino) & Furtividade, Ladinagem, Percepção, Acrobacia, Enganação (disfarce). \\
+Bardo e Interação & Atuação, Persuasão, Intuição, História. \\
+Navegação e Liderança (Tático) & Sobrevivência, Natureza, Investigação, Percepção (rastreio). \\
+\end{tabelalivro}
+
+Duas árvores cobrem \textbf{Percepção}. Se você tiver Rank em ambas, use o \textbf{maior}
+Bônus de Rank entre as duas --- nunca some os dois, e nunca use os dois pra dobrar a vantagem
+no mesmo teste.
+
+\subsection{Pontos de Preparação (PP)}
+
+Magos gastam PM pra fazer algo acontecer agora. Guerreiros gastam PT pra aguentar o que está
+acontecendo agora. A Utilidade gasta um recurso que nenhum dos dois tem: \rec{PP} serve pra
+declarar que algo \emph{já aconteceu antes}.
+
+\begin{formula}
+    \textbf{PP Máximos $=$ Intelecto $+$ atributo-chave da árvore} (mínimo 1),\\
+    $+1$ por patamar a partir do terceiro
+\end{formula}
+
+Ladino usa Agilidade, Bardo usa Espírito. Com mais de uma árvore de Utilidade, a reserva é
+única --- use o maior atributo-chave. Recupera-se tudo em Descanso Longo.
+
+\begin{aviso}{Navegação e Liderança é a exceção}
+    O atributo-chave do Tático \emph{é} Intelecto: nesse caso ele não conta duas vezes ---
+    some, no lugar, o seu \textbf{Bônus de Rank} naquela árvore. Sem essa cláusula o Tático
+    tinha a maior reserva de PP do livro (20 no Imperador, contra 15 do Bardo) investindo
+    \emph{um} atributo onde as outras duas árvores de Utilidade investem dois.
+\end{aviso}
+
+Gastando 1 PP, você declara em voz alta um fato sobre o passado que passa a ser verdade no
+jogo. Cinco condições: (1) precisa caber no seu Escopo; (2) precisa caber no seu Domínio;
+(3) é sempre pretérito; (4) custa 2 PP se resolver o obstáculo central da cena; (5) o Mestre
+não pode negar, mas pode anexar uma complicação.
+
+\subsection{As Três Faixas}
+
+A solução pra três árvores não virarem \enquote{a mesma pessoa com roupa diferente}: dividir
+o passado em três domínios que não se tocam, cada um travado numa faixa exclusiva de combate.
+
+\begin{tabelalivro}{L{3.2cm} L{3.6cm} L{3.6cm} L{3.6cm}}{As Três Faixas}
+\cabtabela{ & \textbf{Ladino} & \textbf{Bardo} & \textbf{Tático}}
+Atributo-chave & Agilidade & Espírito & Intelecto \\
+Domínio & Coisas e lugares. & Pessoas e reputação. & Tempo e logística. \\
+Exemplo de fato & \enquote{Essa fechadura eu já limei.} & \enquote{O capitão da guarda me deve um favor.} & \enquote{O suprimento deles acabou anteontem.} \\
+Faixa exclusiva & Dano Furtivo. & Estado emocional. & Economia de ação. \\
+A pergunta dele & Como eu entro? & Quem eu convenço? & Onde e quando isso acontece? \\
+\end{tabelalivro}
+
+\begin{aviso}{A Regra da Faixa}
+    Nenhuma habilidade pode invadir a faixa de outra árvore de Utilidade --- um talento que dê
+    Dano Furtivo a um Bardo, ou que deixe um Ladino conceder uma Ação, está errado. A Faixa
+    vale só entre Ladino, Bardo e Tático; árvores do Corpo e de Magia cruzam essas linhas
+    livremente.
+\end{aviso}
+
+\begin{nota}{A régua honesta}
+    Contra um Norte Imperador batendo 81 por turno, os três juntos talvez somem 30 de dano
+    direto na luta inteira. E ainda assim eles são a razão de o combate ter começado com o
+    grupo em cima do telhado, os reforços trancados do lado de fora, metade dos inimigos
+    apavorados, e o chefe já sabendo que perdeu.
+\end{nota}
+
+% ---------------------------------------------------------------------------
+\chapter*{Catálogo: Todas as Sub-árvores}
+\addcontentsline{toc}{chapter}{Catálogo: Todas as Sub-árvores}
+\markboth{Catálogo das Sub-árvores}{Catálogo das Sub-árvores}
+
+As páginas a seguir são geradas diretamente dos dados do sistema. Cada patamar lista, nesta
+ordem: a \simbmaestria{} \textbf{Maestria} (gratuita, automática, não conta como
+conhecimento), os \textbf{Talentos}, e as \textbf{Magias} ou \textbf{Técnicas} --- com
+\assinatura{} marcando a Assinatura do patamar.
+
+\input{gen/arvores}

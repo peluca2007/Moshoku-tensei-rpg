@@ -20,7 +20,7 @@ export const NORTE_TREE: Tree = {
       },
       talents: [
         { id: "tres-bainhas", name: "Três Bainhas", paCost: 1, description: "Você carrega armas escondidas. Sacar uma arma nova é livre, e você nunca fica realmente desarmado." },
-        { id: "osso-duro", name: "Osso Duro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
+        { id: "osso-duro", name: "Osso Duro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "pes-no-chao", name: "Pés no Chão", paCost: 1, description: "Você não sofre penalidade de deslocamento em terreno difícil, escombros ou gelo." },
       ],
       abilities: [
@@ -151,7 +151,7 @@ export const NORTE_TREE: Tree = {
           "Você passa a vestir Touki conscientemente: recebe o Manto de Touki e a reserva de Pontos de Touki (Cap. 3). Exclusivo do Norte: você pode aplicar Touki a objetos improvisados — uma cadeira revestida de aura parte um escudo de aço.",
       },
       talents: [
-        { id: "folego-longo-norte", name: "Fôlego Longo", paCost: 2, description: "+3 PT Máximos." },
+        { id: "folego-longo-norte", name: "Fôlego Longo", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
         { id: "mao-trocada", name: "Mão Trocada", paCost: 2, description: "Você usa Empunhadura Dupla sem redução de degrau na arma secundária." },
         { id: "instinto-de-presa", name: "Instinto de Presa", paCost: 2, description: "Você não pode ser surpreendido enquanto consciente, e rola Iniciativa com Vantagem." },
       ],
@@ -280,7 +280,7 @@ export const NORTE_TREE: Tree = {
           ptCost: 3,
           range: "Linha de 27 metros",
           actions: { normal: 1 },
-          damage: { normal: "+5d10, dado de arma" },
+          damage: { normal: "+2d10, somados ao dano de arma normal" },
           effect: "Libera o Touki como lâmina em linha. Teste de Agilidade (CD 8 + Força + Rank) para metade. Corta estruturas de pedra e madeira no caminho.",
         },
       ],
@@ -305,8 +305,8 @@ export const NORTE_TREE: Tree = {
           ptCost: 4,
           range: "Corpo a corpo",
           actions: { normal: 3 },
-          damage: { normal: "Dado de arma rolado quatro vezes + Força + Bônus de Rank + 4d12" },
-          effect: "Acerta automaticamente, ignora Touki, Cobertura e armadura. Se o alvo estiver com metade ou menos dos PV, dano dobrado.",
+          damage: { normal: "Dado de arma rolado quatro vezes + 4d12" },
+          effect: "Uma vez por combate. Acerta automaticamente, ignora Touki, Cobertura e armadura. Se o alvo estiver com metade ou menos dos PV, dano dobrado.",
         },
         {
           id: "aura-de-comando-norte",

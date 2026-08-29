@@ -12,14 +12,14 @@ export const TERRA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d8+2",
+      hpDiceFormula: "1d6+2",
       mastery: {
         name: "Moldar",
         description:
           "Sem PM e sem Ação, você molda terra, areia, argila e pedra macia num raio de 9 metros: abrir/fechar buraco, degrau, tigela, parede baixa. Em 10 minutos você ergue um abrigo fortificado pro grupo inteiro.",
       },
       talents: [
-        { id: "pele-de-pedra", name: "Pele de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "+4 PV por patamar seu em Terra. Comprável várias vezes, até o número de patamares." },
+        { id: "pele-de-pedra", name: "Pele de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "+4 PV por patamar seu em Terra. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "sentido-sismico", name: "Sentido Sísmico", paCost: RANK_PA_COST.talent.Principiante, description: "Você percebe pelo chão qualquer criatura em contato com o solo num raio de 18m, mesmo invisível ou escondida." },
         { id: "mineralogista", name: "Mineralogista", paCost: RANK_PA_COST.talent.Principiante, description: "Você identifica minérios e pedras preciosas, e sabe, ao tocar uma parede, o que existe atrás dela." },
       ],
@@ -62,7 +62,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 2,
           range: "9 metros",
           actions: MAGIC_ACTIONS.Principiante,
-          damage: { normal: "2d6 + BC (perfurante)" },
+          damage: { normal: "2d6 (perfurante)" },
           effect: "Estacas irrompem sob até três criaturas. Teste de Agilidade (CD 8 + BC): falha sofre o dano e fica Atolado.",
         },
         {
@@ -78,7 +78,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d6+3",
       mastery: {
         name: "Compressão",
         description:
@@ -98,7 +98,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 3,
           range: "90 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          damage: { normal: "4d8 + BC (contundente/perfurante)" },
+          damage: { normal: "3d8 + BC (contundente/perfurante)" },
           effect: "Ataque mágico à distância. Ignora metade da CA de armadura não-mágica. Contra alvo Atolado, acerta automaticamente e crita em 19-20.",
           incantation: "Pedra, esqueça que é pedra. Seja a bala. Canhão de Pedra!",
         },
@@ -134,7 +134,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Avançado",
-      hpDiceFormula: "1d10+3",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "Domínio Mineral",
         description:
@@ -191,7 +191,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Santo",
-      hpDiceFormula: "1d10+4",
+      hpDiceFormula: "1d8+4",
       mastery: {
         name: "O Chão Obedece",
         description:
@@ -209,7 +209,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 11,
           range: "Linha de 90m × 6m",
           actions: MAGIC_ACTIONS.Santo,
-          damage: { normal: "8d10 de dano de queda" },
+          damage: { normal: "10d10 de dano de queda" },
           effect: "Teste de Agilidade com Desvantagem. Falha: cai na fenda e fica Presa no fundo. Sucesso: fica na borda, Atolada e Caída. Estruturas atravessadas desabam; a fenda é permanente.",
           incantation: "Placa que dorme há dez mil anos, acorde por dois segundos. Só dois. Falha Geológica!",
         },
@@ -226,7 +226,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d12+4",
+      hpDiceFormula: "1d10+4",
       mastery: {
         name: "Metal e Magma",
         description:
@@ -265,7 +265,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "1d12+5",
+      hpDiceFormula: "1d10+5",
       mastery: {
         name: "O Continente é Seu",
         description:
