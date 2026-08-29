@@ -1,5 +1,12 @@
 import { TREES } from "@/data/trees";
-import { getAttackBonus, getPaSpent, getSpellDC, getTreeGrantedSkills, getWeaponDamage } from "@/store/selectors";
+import {
+  getAttackBonus,
+  getPaSpent,
+  getSpellDC,
+  getTreeGrantedSkills,
+  getWeaponDamage,
+  hasSaveAdvantage,
+} from "@/store/selectors";
 import type { FichaPdfPayload } from "@/lib/typstFicha";
 import {
   AbilityDef,
@@ -246,7 +253,12 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
     raceName: race?.name ?? "",
     backgroundName: background?.name ?? "",
     gold: String(character.gold),
-    attributes: ATTRIBUTES.map((a) => ({ short: a.short, label: a.label, value: attributes[a.key] })),
+    attributes: ATTRIBUTES.map((a) => ({
+      short: a.short,
+      label: a.label,
+      value: attributes[a.key],
+      saveAdvantage: hasSaveAdvantage(character, a.key),
+    })),
     maxHp: String(maxHp),
     maxMp: String(maxMp),
     maxPt: String(maxPt),

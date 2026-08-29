@@ -22,6 +22,7 @@ function blankCharacter(id: string, name: string): CharacterData {
     attributeBase: DEFAULT_ATTRIBUTES,
     raceAttributeChoices: [],
     racialUpgrades: [],
+    saveAdvantages: [],
     startingTreeId: null,
     unlockedRanks: [],
     purchasedAbilities: [],
@@ -73,6 +74,8 @@ interface RosterState {
   removeProficiency: (name: string) => void;
   /** Compra/desfaz uma melhoria racial (Cap. 1, §5) — o custo em PA entra em getPaSpent. */
   toggleRacialUpgrade: (upgradeId: string) => void;
+  /** Cap. 1, §2: liga/desliga a Vantagem permanente nos saves de um atributo (2 PA). */
+  toggleSaveAdvantage: (key: AttributeKey) => void;
   setBackground: (backgroundId: string | null) => void;
   setSubtableEntry: (entryId: string | null) => void;
   setAttribute: (key: AttributeKey, value: number) => void;
@@ -214,6 +217,16 @@ export const useCharacterStore = create<RosterState>()(
           ...c,
           proficiencies: (c.proficiencies ?? []).filter((p) => p !== name),
         })),
+      toggleSaveAdvantage: (key) =>
+        updateActive(get, set, (c) => {
+          const atuais = c.saveAdvantages ?? [];
+          return {
+            ...c,
+            saveAdvantages: atuais.includes(key)
+              ? atuais.filter((k) => k !== key)
+              : [...atuais, key],
+          };
+        }),
       toggleRacialUpgrade: (upgradeId) =>
         updateActive(get, set, (c) => {
           const atuais = c.racialUpgrades ?? [];
@@ -373,7 +386,10 @@ export const useCharacterStore = create<RosterState>()(
       // de proficiências/línguas (1 PA compra 3). Ficha antiga entra com os dois
       // vazios — as perícias fixas da Árvore Inicial são derivadas, não salvas,
       // então aparecem sozinhas na ficha de quem já tinha uma árvore escolhida.
-      version: 7,
+      // v8 (2026-08-29): `saveAdvantages` — a compra de Vantagem permanente em
+      // Testes de Resistência (Cap. 1, §2), que existia no livro desde sempre e
+      // nunca existiu na ficha. Baixou de 3 pra 2 PA na mesma passada.
+      version: 8,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
@@ -389,6 +405,7 @@ export const useCharacterStore = create<RosterState>()(
                 racialUpgrades: c.racialUpgrades ?? [],
                 treeSkillChoices: c.treeSkillChoices ?? [],
                 proficiencies: c.proficiencies ?? [],
+                saveAdvantages: c.saveAdvantages ?? [],
               },
             ])
           ),

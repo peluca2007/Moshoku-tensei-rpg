@@ -1,6 +1,6 @@
 import { RACES } from "@/data/races";
 import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
-import { RANK_BONUS, RANK_REQUIREMENTS, RANKS } from "@/lib/types";
+import { RANK_BONUS, RANK_REQUIREMENTS, RANKS, SAVE_ADVANTAGE_PA_COST } from "@/lib/types";
 import { RANK_PA_COST } from "@/data/trees/shared";
 import { SKILLS } from "@/data/skills";
 import { STARTING_KITS } from "@/data/startingKits";
@@ -102,7 +102,7 @@ export default function Chapter1() {
             ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente)."],
             ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
             ["2 PA", "+1 ponto de Atributo Base permanente (teto 8) — medido pela soma dos cinco, então desfazer um defeito custa o mesmo."],
-            ["3 PA", "Vantagem permanente em todos os Testes de Resistência de 1 Atributo à sua escolha (uma vez por atributo)."],
+            [`${SAVE_ADVANTAGE_PA_COST} PA`, "Vantagem permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha — uma vez por atributo, então no máximo 5 compras. Marcada na ficha e no PDF."],
             ["Variável", "Magias, Técnicas e Talentos de Árvore — o custo escala com o Rank (tabela na seção 3)."],
           ]}
         />

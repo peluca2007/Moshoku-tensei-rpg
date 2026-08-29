@@ -6,6 +6,9 @@ import { escalateWeaponDie } from "@/lib/weaponDie";
 import {
   ATTRIBUTE_CREATION_POINTS,
   ATTRIBUTE_PA_COST_PER_POINT,
+  PROFICIENCIES_PER_PA,
+  SAVE_ADVANTAGE_PA_COST,
+  SKILLS_PER_PA,
   AttributeKey,
   ATTRIBUTES,
   CharacterData,
@@ -504,6 +507,44 @@ export function getAttributePaCost(state: StoreState): number {
   return Math.max(0, soma - ATTRIBUTE_CREATION_POINTS) * ATTRIBUTE_PA_COST_PER_POINT;
 }
 
+/** Cap. 1, §2: Vantagem permanente nos saves de um atributo — 2 PA por atributo. */
+export function getSaveAdvantagePaCost(state: StoreState): number {
+  return (state.saveAdvantages ?? []).length * SAVE_ADVANTAGE_PA_COST;
+}
+
+/** true se os Testes de Resistência deste atributo têm Vantagem permanente. */
+export function hasSaveAdvantage(state: StoreState, key: AttributeKey): boolean {
+  return (state.saveAdvantages ?? []).includes(key);
+}
+
+/**
+ * PA gasto em Perícias e em Proficiências/Línguas (Cap. 1, §2 e §4).
+ *
+ * As perícias que vêm de graça não contam: as fixas de raça/antecedente e as da
+ * Árvore Inicial nunca entram em `state.skills`, e as escolhas de bônus de
+ * raça/antecedente (`bonusSkillChoices`) são abatidas aqui. O que sobra foi
+ * comprado, a 2 por PA.
+ *
+ * Antes de 2026-08-29 nenhuma das duas linhas entrava no total de PA gasto —
+ * o livro cobrava e a ficha não contava.
+ */
+export function getSkillPaCost(state: StoreState): number {
+  const race = getRaceById(state.raceId);
+  const background = getBackgroundById(state.backgroundId);
+  const gratuitas = new Set([
+    ...(race?.fixedSkills ?? []),
+    ...(background?.fixedSkills ?? []),
+    ...getTreeGrantedSkills(state),
+  ]);
+  const escolhasDeBonus = (race?.bonusSkillChoices ?? 0) + (background?.bonusSkillChoices ?? 0);
+  const compradas = Math.max(0, state.skills.filter((s) => !gratuitas.has(s)).length - escolhasDeBonus);
+  return Math.ceil(compradas / SKILLS_PER_PA);
+}
+
+export function getProficiencyPaCost(state: StoreState): number {
+  return Math.ceil((state.proficiencies ?? []).length / PROFICIENCIES_PER_PA);
+}
+
 /** Melhorias raciais compradas (Cap. 1, §5) — hoje só a do Povo Pequeno, a 3 PA. */
 export function getRacialUpgradePaCost(state: StoreState): number {
   const upgrades = getRaceById(state.raceId)?.upgrades ?? [];
@@ -580,7 +621,10 @@ export function getPaSpent(state: StoreState): number {
     abilityCost +
     getAttributePaCost(state) +
     getHpMpPaCost(state) +
-    getRacialUpgradePaCost(state)
+    getRacialUpgradePaCost(state) +
+    getSaveAdvantagePaCost(state) +
+    getSkillPaCost(state) +
+    getProficiencyPaCost(state)
   );
 }
 
