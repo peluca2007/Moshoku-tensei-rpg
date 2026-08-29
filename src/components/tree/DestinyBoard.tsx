@@ -8,6 +8,7 @@ import { CATEGORY_LABELS, getTreeGroups, isTreeEmpty, TREES } from "@/data/trees
 import { AbilityDef, CharacterData, RANK_BONUS, RANK_REQUIREMENTS, RANKS, RankName, TalentDef, Tree } from "@/lib/types";
 import { CATEGORY_ACCENT, RANK_ACCENT } from "@/lib/rankColors";
 import { layoutRadialTree, RadialInputNode } from "@/lib/radialLayout";
+import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "@/components/AbilityDetail";
 
 type NodeMeta =
@@ -488,8 +489,21 @@ function DetailPanel({ meta, character }: { meta: NodeMeta; character: Character
                 <p className="text-parchment-700 dark:text-parchment-300">
                   <b>Armas e armaduras:</b> {meta.tree.proficiencies.armas}
                 </p>
+                {describeGrantedSkills(meta.tree) && (
+                  <p className="mt-1 text-parchment-700 dark:text-parchment-300">
+                    <b>Ensina:</b> {describeGrantedSkills(meta.tree)}{" "}
+                    <span className="text-parchment-600 dark:text-parchment-400">
+                      Só se esta for a sua Árvore Inicial.
+                    </span>
+                    {describeMasteryException(meta.tree) && (
+                      <span className="ml-1 font-semibold text-wine-700 dark:text-wine-300">
+                        {describeMasteryException(meta.tree)}
+                      </span>
+                    )}
+                  </p>
+                )}
                 <p className="mt-1 text-parchment-700 dark:text-parchment-300">
-                  <b>Perícias:</b> {meta.tree.proficiencies.pericias}
+                  <b>Bônus de Rank:</b> {meta.tree.proficiencies.pericias}
                 </p>
               </div>
             )}

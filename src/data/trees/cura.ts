@@ -12,7 +12,7 @@ export const CURA_TREE: Tree = {
     "Não cura veneno, doença nem maldição (isso é Desintoxicação) — mas decide quem sobrevive à campanha. O Rank Deus (Ressurreição de recém-mortos) é puramente narrativo, sem custo em PA.",
   proficiencies: {
     armas: "Nenhuma além do padrão (armas simples, armadura leve).",
-    pericias: "Medicina é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Espírito (Cap. 1, §7).",
   },
   grantedSkills: {

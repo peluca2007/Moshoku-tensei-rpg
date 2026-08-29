@@ -16,6 +16,7 @@ import { STARTING_KITS } from "@/data/startingKits";
 import { TREES, CATEGORY_LABELS, getTreeGroups } from "@/data/trees";
 import { MAGIC_ACTIONS } from "@/data/trees/shared";
 import { WEAPON_DIE_LADDER, WEAPON_PRESETS } from "@/lib/weaponDie";
+import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import {
   AbilityDef,
   RANK_BONUS,
@@ -170,6 +171,20 @@ export function buildTabelasNucleo(): string {
       "Dados Base de arma",
       ["Arma", "Dado"],
       WEAPON_PRESETS.map((w) => [tex(w.name), `\\dado{${tex(w.die)}}`])
+    ),
+    "",
+    // As dezoito numa tabela só. É o jeito mais direto de a regra ficar
+    // inegável: nenhuma árvore fica de fora, e dá pra conferir de relance que
+    // TODAS ensinam alguma coisa.
+    table(
+      "C{1.8cm} L{4.2cm} L{7.6cm}",
+      "Perícias de Árvore — o que cada uma das 18 ensina (Cap. 1, §4)",
+      ["Pilar", "Árvore", "Ensina, se for a sua Árvore Inicial"],
+      TREES.map((t) => [
+        t.category === "magia" ? "Magia" : t.category === "corpo" ? "Corpo" : "Utilidade",
+        tex(t.name),
+        tex([describeGrantedSkills(t) ?? "—", describeMasteryException(t)].filter(Boolean).join(" ")),
+      ])
     )
   );
 }
@@ -414,22 +429,16 @@ export function buildArvores(): string {
               ].join("")
             : "",
           // Cap. 1, §4: perícias que a árvore ENSINA — e só se ela for a Inicial.
-          // Não confundir com a linha "Perícias" acima, que é onde o Bônus de
-          // Rank soma; as duas são independentes.
-          tree.grantedSkills
-            ? `\\par\\smallskip\\textbf{Ensina (só como Árvore Inicial):} ${tex(
-                tree.grantedSkills.fixed.join(", ")
+          // Mesma frase do catálogo do site e do mapa de árvores
+          // (src/lib/treeSkills.ts), pra as três superfícies nunca divergirem
+          // numa palavra. Não confundir com a linha de Bônus de Rank acima: onde
+          // o bônus soma e o que você sabe fazer são coisas independentes.
+          describeGrantedSkills(tree)
+            ? `\\par\\smallskip\\textbf{Ensina:} ${tex(describeGrantedSkills(tree))} ${tex(
+                "Você só recebe estas perícias se esta for a sua Árvore Inicial — a primeira que você abriu; elas entram na ficha sozinhas, sem gastar PA."
               )}${
-                tree.grantedSkills.choose
-                  ? tex(
-                      `, mais ${tree.grantedSkills.choose.count} à escolha entre ${tree.grantedSkills.choose.from.join(", ")}`
-                    )
-                  : ""
-              }.${
-                tree.masterySkillsWhenNotFirst
-                  ? ` \\textbf{Exceção:} a Maestria de 1º patamar ensina ${tex(
-                      tree.masterySkillsWhenNotFirst.join(" e ")
-                    )} mesmo a quem chegou depois.`
+                describeMasteryException(tree)
+                  ? ` \\textbf{${tex(describeMasteryException(tree))}}`
                   : ""
               }`
             : "",

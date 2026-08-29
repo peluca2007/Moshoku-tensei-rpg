@@ -5,6 +5,7 @@ import { RANK_PA_COST } from "@/data/trees/shared";
 import { SKILLS } from "@/data/skills";
 import { STARTING_KITS } from "@/data/startingKits";
 import { TREES } from "@/data/trees";
+import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 const SKILL_ATTRIBUTE_LABEL: Record<string, string> = {
@@ -197,11 +198,16 @@ export default function Chapter1() {
           ]}
         />
 
-        <Warning title="Perícias de Árvore — só a Árvore Inicial ensina">
+        <Warning title="Perícias de Árvore — as 18 ensinam, e só a Árvore Inicial entrega">
           <P>
-            Toda árvore deste livro ensina perícias, e elas entram na sua ficha <b>automaticamente</b>, sem
-            gastar PA. Mas <b>só a sua Árvore Inicial faz isso</b> — a primeira que você abriu, aquela que
-            também decidiu o seu kit.
+            <b>TODAS as dezoito árvores deste livro ensinam perícias</b> — as oito de Magia, as sete do Corpo
+            e as três de Utilidade, sem exceção. Não existe árvore que não ensine nada. Elas entram na sua
+            ficha <b>automaticamente</b>, sem gastar PA e sem você precisar pedir.
+          </P>
+          <P>
+            A condição é uma só: <b>você recebe as perícias da árvore que for a sua Árvore Inicial</b> — a
+            primeira que você abriu, aquela que também decidiu o seu kit. A tabela abaixo lista as dezoito e
+            o que cada uma ensina.
           </P>
           <P>
             O motivo é de ficção, não de balanço: a Árvore Inicial é onde você passou a infância e a
@@ -221,6 +227,15 @@ export default function Chapter1() {
             mesmo 1 PA de valor, pelo outro caminho.
           </P>
         </Warning>
+
+        <BookTable
+          headers={["Pilar", "Árvore", "Ensina, se for a sua Árvore Inicial"]}
+          rows={TREES.map((t) => [
+            t.category === "magia" ? "Magia" : t.category === "corpo" ? "Corpo" : "Utilidade",
+            t.name,
+            [describeGrantedSkills(t) ?? "—", describeMasteryException(t)].filter(Boolean).join(" "),
+          ])}
+        />
 
         <Aside title="Perícia, Proficiência e Bônus de Rank são três coisas">
           <List

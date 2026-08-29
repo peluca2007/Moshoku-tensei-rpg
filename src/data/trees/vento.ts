@@ -11,7 +11,7 @@ export const VENTO_TREE: Tree = {
   tagline: "Corte, som e mobilidade — a escola que anula a distância, inclusive a sua própria.",
   proficiencies: {
     armas: "Nenhuma além do padrão (armas simples, armadura leve).",
-    pericias: "Arcanismo é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
   },
   grantedSkills: {

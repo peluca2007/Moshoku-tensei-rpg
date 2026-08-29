@@ -11,7 +11,7 @@ export const TERRA_TREE: Tree = {
   tagline: "Construção, cerco e projétil pesado — a única escola que constrói, e o mago com mais PV do jogo.",
   proficiencies: {
     armas: "Nenhuma além do padrão (armas simples, armadura leve).",
-    pericias: "Arcanismo e Ofícios (construção) são as perícias da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
   },
   grantedSkills: {
