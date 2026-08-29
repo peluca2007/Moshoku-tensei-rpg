@@ -16,7 +16,7 @@ export const INVOCACAO_TREE: Tree = {
   tagline: "A menor lista de feitiços do mundo — o que você compra aqui não são feitiços, são relações (Pactos).",
   proficiencies: {
     armas: "Nenhuma além do padrão (armas simples, armadura leve).",
-    pericias: "Arcanismo e Natureza são as perícias da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Espírito.",
   },
   grantedSkills: {

@@ -1,5 +1,6 @@
 import { AbilityDef, RANK_BONUS, TalentDef, Tree } from "@/lib/types";
 import { getRankDeusForTree } from "@/data/rankDeus";
+import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "../AbilityDetail";
 import { BookTable, SubTitle } from "./BookUI";
 
@@ -71,19 +72,38 @@ function ProgressionTable({ tree }: { tree: Tree }) {
 function ProficiencyCard({ tree }: { tree: Tree }) {
   const p = tree.proficiencies;
   if (!p) return null;
-  const linhas: [string, string][] = [
+  const ensina = describeGrantedSkills(tree);
+  const excecao = describeMasteryException(tree);
+  const linhas: [string, React.ReactNode][] = [
     ["Armas e armaduras", p.armas],
-    ["Perícias", p.pericias],
+    [
+      // A linha que faltava: TODA árvore ensina perícias, e o texto é gerado de
+      // `grantedSkills` justamente pra as dezoito dizerem a mesma coisa.
+      "Ensina (Árvore Inicial)",
+      ensina ? (
+        <>
+          {ensina}{" "}
+          <span className="text-parchment-600 dark:text-parchment-400">
+            Você só recebe estas perícias se esta for a sua <b>Árvore Inicial</b> — a primeira que você
+            abriu. Elas entram na ficha sozinhas, sem gastar PA.
+          </span>
+          {excecao && <span className="ml-1 font-semibold text-wine-700 dark:text-wine-300">{excecao}</span>}
+        </>
+      ) : (
+        "—"
+      ),
+    ],
+    ["Bônus de Rank", p.pericias],
   ];
   return (
     <div className="print-avoid-break rounded-lg border border-parchment-400 bg-parchment-100 p-3 text-sm dark:border-parchment-700 dark:bg-parchment-900/70">
       <p className="mb-2 text-xs font-bold uppercase tracking-wide text-wine-700 dark:text-wine-300">
-        Proficiências desta árvore
+        Proficiências e perícias desta árvore
       </p>
       <dl className="space-y-1.5">
         {linhas.map(([rotulo, texto]) => (
           <div key={rotulo} className="flex flex-col gap-0.5 sm:flex-row sm:gap-2">
-            <dt className="shrink-0 font-semibold text-parchment-800 dark:text-parchment-200 sm:w-40">
+            <dt className="shrink-0 font-semibold text-parchment-800 dark:text-parchment-200 sm:w-44">
               {rotulo}
             </dt>
             <dd className="text-parchment-700 dark:text-parchment-300">{texto}</dd>

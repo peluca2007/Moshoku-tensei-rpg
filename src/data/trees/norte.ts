@@ -10,7 +10,7 @@ export const NORTE_TREE: Tree = {
   tagline: "Não é esgrima refinada — é um método para continuar vivo. Truques, improviso e terreno; a maioria dos aventureiros aprende Norte.",
   proficiencies: {
     armas: "Proficiência UNIVERSAL em ARMAS, sem exceção: toda arma simples, toda arma marcial, toda arma exótica, arma de haste, arma de arremesso, arma à distância, arma de outra cultura que você nunca viu antes — e qualquer objeto improvisado, que usa Dado Base d6. O Deus do Norte é a única árvore do livro sem uma única arma proibida: se dá pra empunhar, você é proficiente. Também toda armadura (leve, média e pesada) e todo escudo.",
-    pericias: "Sobrevivência e Enganação são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal do Corpo — a única com proficiência irrestrita.",
   },
   grantedSkills: {

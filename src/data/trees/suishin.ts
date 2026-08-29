@@ -11,7 +11,7 @@ export const SUISHIN_TREE: Tree = {
     "Aparar e devolver. Considerado o mais fraco dos três estilos porque um Deus da Água que enfrenta quem não ataca não faz nada — mas é o único que mantém outras pessoas vivas. Sem relação com a Magia de Água — chamado Suishin-ryū nas referências cruzadas.",
   proficiencies: {
     armas: "Toda espada, mais escudo leve. Proficiência com armadura leve e média ('Peso Não Atrapalha').",
-    pericias: "Intuição e Percepção são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal do Corpo.",
   },
   grantedSkills: {

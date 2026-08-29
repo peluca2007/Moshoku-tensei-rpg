@@ -19,7 +19,7 @@ export const ESCUDOS_TREE: Tree = {
   },
   proficiencies: {
     armas: "Toda arma de uma mão, TODO escudo, e armadura leve, média e pesada — o pacote de proficiência mais completo do livro em defesa.",
-    pericias: "Atletismo e Percepção são as perícias do ofício; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },
   grantedSkills: {

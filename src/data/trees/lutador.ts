@@ -18,7 +18,7 @@ export const LUTADOR_TREE: Tree = {
   },
   proficiencies: {
     armas: "Ataque desarmado (Dado Base d6), toda arma pesada, de duas mãos e improvisada. Armadura leve, média e pesada.",
-    pericias: "Atletismo e Intimidação são as perícias do ofício; o Bônus de Rank NÃO soma em perícia nenhuma.",
+    pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },
   grantedSkills: {
