@@ -22,6 +22,9 @@ export const ESCUDOS_TREE: Tree = {
     pericias: "Atletismo e Percepção são as perícias do ofício; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },
+  grantedSkills: {
+    fixed: ["Atletismo", "Percepção"],
+  },
   ranks: [
     {
       rank: "Principiante",

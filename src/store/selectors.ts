@@ -60,6 +60,52 @@ export function getFinalAttribute(state: StoreState, key: AttributeKey): number 
   return base + raceBonus + backgroundBonus + subtableBonus + escolhaLivre;
 }
 
+/**
+ * Perícias que entram na ficha SOZINHAS por causa das árvores (Cap. 1, §4 —
+ * "Perícias de Árvore"). Duas fontes, e só duas:
+ *
+ * 1. A **Árvore Inicial** ensina as `grantedSkills.fixed` dela, mais as que o
+ *    jogador escolheu do `choose`. Nenhuma outra árvore ensina perícia — abrir
+ *    a segunda árvore te dá técnicas, não hábitos: você já era alguém quando
+ *    chegou nela.
+ * 2. A **exceção do Ladino** (`masterySkillsWhenNotFirst`): a Maestria de 1º
+ *    patamar de Furtividade e Armadilhas ensina Furtividade e Percepção a quem
+ *    chegou DEPOIS. Se ela já for a Árvore Inicial, essas duas já vieram pelo
+ *    caminho 1, e a Maestria entrega outra coisa no lugar (ver a descrição dela).
+ */
+export function getTreeGrantedSkills(state: StoreState): string[] {
+  const skills: string[] = [];
+
+  const inicial = getTreeById(state.startingTreeId);
+  if (inicial?.grantedSkills) {
+    skills.push(...inicial.grantedSkills.fixed);
+    const permitidas = inicial.grantedSkills.choose;
+    if (permitidas) {
+      skills.push(
+        ...(state.treeSkillChoices ?? [])
+          .slice(0, permitidas.count)
+          .filter((s) => permitidas.from.includes(s))
+      );
+    }
+  }
+
+  for (const treeId of new Set(state.unlockedRanks.map((u) => u.treeId))) {
+    if (treeId === state.startingTreeId) continue;
+    const tree = getTreeById(treeId);
+    if (tree?.masterySkillsWhenNotFirst) skills.push(...tree.masterySkillsWhenNotFirst);
+  }
+
+  return Array.from(new Set(skills));
+}
+
+/** Quantas escolhas do `choose` da Árvore Inicial ainda faltam (0 se ela não tem nenhuma). */
+export function getPendingTreeSkillChoices(state: StoreState): number {
+  const choose = getTreeById(state.startingTreeId)?.grantedSkills?.choose;
+  if (!choose) return 0;
+  const validas = (state.treeSkillChoices ?? []).filter((s) => choose.from.includes(s));
+  return Math.max(0, choose.count - validas.length);
+}
+
 /** Quantos pontos do bônus livre da raça ainda faltam distribuir (0 se a raça não tem nenhum). */
 export function getPendingRaceAttributeChoices(state: StoreState): number {
   const total = getRaceById(state.raceId)?.attributeChoices ?? 0;

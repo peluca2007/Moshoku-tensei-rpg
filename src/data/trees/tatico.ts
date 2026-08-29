@@ -23,6 +23,10 @@ export const TATICO_TREE: Tree = {
     pericias: "O Bônus de Rank soma em Sobrevivência, Natureza, Investigação e Percepção (rastreio), e em mais nada (Cap. 3).",
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
   },
+  grantedSkills: {
+    fixed: ["Sobrevivência", "Investigação"],
+    choose: { count: 1, from: ["Natureza", "Percepção"] },
+  },
   ranks: [
     {
       rank: "Principiante",

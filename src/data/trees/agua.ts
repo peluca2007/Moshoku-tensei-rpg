@@ -14,6 +14,10 @@ export const AGUA_TREE: Tree = {
     pericias: "Arcanismo é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
   },
+  grantedSkills: {
+    fixed: ["Arcanismo"],
+    choose: { count: 1, from: ["Medicina", "Natureza", "Percepção"] },
+  },
   ranks: [
     {
       rank: "Principiante",

@@ -14,6 +14,10 @@ export const FOGO_TREE: Tree = {
     pericias: "Arcanismo é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma (isso é exclusivo da Utilidade).",
     nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
   },
+  grantedSkills: {
+    fixed: ["Arcanismo"],
+    choose: { count: 1, from: ["Ofícios", "Intimidação", "Atletismo"] },
+  },
   ranks: [
     {
       rank: "Principiante",

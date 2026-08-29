@@ -19,6 +19,10 @@ export const INVOCACAO_TREE: Tree = {
     pericias: "Arcanismo e Natureza são as perícias da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal de Magia. Conjura com Espírito.",
   },
+  grantedSkills: {
+    fixed: ["Arcanismo"],
+    choose: { count: 1, from: ["Natureza", "Lidar com Animais", "Religião"] },
+  },
   ranks: [
     {
       rank: "Principiante",

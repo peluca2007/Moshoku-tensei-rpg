@@ -309,6 +309,33 @@ export interface Tree {
     /** Uma linha de enquadramento: Escola Formal ou Ofício, atributo de conjuração, recurso. */
     nota: string;
   };
+  /**
+   * As perícias que esta árvore ENSINA (Cap. 1, §4 — "Perícias de Árvore").
+   *
+   * Elas só entram na ficha se a árvore for a sua ÁRVORE INICIAL. Uma árvore
+   * aberta depois ensina técnicas, não hábitos: você já era alguém quando chegou
+   * nela. É por isso que `masterySkillsWhenNotFirst` existe como exceção
+   * declarada, e não como regra geral.
+   *
+   * Importante não confundir com `proficiencies.pericias`, que é onde o Bônus de
+   * Rank SOMA. As duas coisas são independentes: o Bônus de Rank de uma árvore
+   * de Utilidade cobre quatro ou cinco perícias, mas o personagem não fica
+   * treinado em todas elas — ele escolhe quais aprende.
+   */
+  grantedSkills?: {
+    /** Perícias garantidas quando esta é a Árvore Inicial. */
+    fixed: string[];
+    /** Além das fixas, o jogador escolhe `count` desta lista (também só se for a Inicial). */
+    choose?: { count: number; from: string[] };
+  };
+  /**
+   * Exceção do Ladino: perícias que a Maestria de 1º patamar ensina a quem
+   * chegou DEPOIS — ou seja, entram só quando a árvore NÃO é a Inicial (nesse
+   * caso `grantedSkills` já as teria dado). É a única árvore do livro que ensina
+   * as próprias perícias a um recém-chegado; em troca, quem a tem como Inicial
+   * recebe outra coisa (ver a descrição da Maestria).
+   */
+  masterySkillsWhenNotFirst?: string[];
   ranks: TreeRankDef[];
 }
 
@@ -380,8 +407,21 @@ export interface CharacterData {
   purchasedAbilities: PurchasedAbility[];
   gold: number;
   inventory: InventoryItem[];
-  /** Perícias além das automáticas de raça/antecedente (Cap. 1, seção 4). */
+  /** Perícias além das automáticas de raça/antecedente/Árvore Inicial (Cap. 1, §4). */
   skills: string[];
+  /**
+   * As perícias escolhidas dentro do `grantedSkills.choose` da Árvore Inicial —
+   * a parte "escolha 1 destas três" que as árvores de Utilidade usam.
+   * Separada de `skills` porque não é comprada com PA: vem da árvore.
+   */
+  treeSkillChoices: string[];
+  /**
+   * Proficiências e línguas (Cap. 1, §4). São coisa diferente de perícia: cobrem
+   * um instrumento, uma ferramenta, um tipo de arma ou um idioma, e por isso são
+   * mais baratas — 1 PA compra TRÊS, contra 2 perícias pelo mesmo 1 PA.
+   * Texto livre, porque a lista do mundo é aberta.
+   */
+  proficiencies: string[];
   /** PV/PM Máximos comprados com PA (Cap. 1, seção 2: 2 PA = +12), fora da árvore. */
   bonusHp: number;
   bonusMp: number;

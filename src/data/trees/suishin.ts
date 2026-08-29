@@ -14,6 +14,9 @@ export const SUISHIN_TREE: Tree = {
     pericias: "Intuição e Percepção são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal do Corpo.",
   },
+  grantedSkills: {
+    fixed: ["Intuição", "Percepção"],
+  },
   ranks: [
     {
       rank: "Principiante",

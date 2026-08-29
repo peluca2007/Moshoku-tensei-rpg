@@ -9,9 +9,12 @@ export const NORTE_TREE: Tree = {
   resourceLabel: "PT",
   tagline: "Não é esgrima refinada — é um método para continuar vivo. Truques, improviso e terreno; a maioria dos aventureiros aprende Norte.",
   proficiencies: {
-    armas: "Proficiência UNIVERSAL: qualquer arma ou objeto improvisado, sem penalidade (objetos usam d6 base). Toda armadura, inclusive pesada, e escudos.",
+    armas: "Proficiência UNIVERSAL em ARMAS, sem exceção: toda arma simples, toda arma marcial, toda arma exótica, arma de haste, arma de arremesso, arma à distância, arma de outra cultura que você nunca viu antes — e qualquer objeto improvisado, que usa Dado Base d6. O Deus do Norte é a única árvore do livro sem uma única arma proibida: se dá pra empunhar, você é proficiente. Também toda armadura (leve, média e pesada) e todo escudo.",
     pericias: "Sobrevivência e Enganação são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal do Corpo — a única com proficiência irrestrita.",
+  },
+  grantedSkills: {
+    fixed: ["Sobrevivência", "Enganação"],
   },
   ranks: [
     {
@@ -21,7 +24,7 @@ export const NORTE_TREE: Tree = {
       mastery: {
         name: "Sobreviver é Vencer",
         description:
-          "+1 degrau no Dado de Arma. Proficiência universal: qualquer arma ou objeto improvisado, sem penalidade (objetos usam d6 base). [Improviso] O Improviso: uma vez por combate, descreva uma manobra usando o cenário e role o atributo indicado pelo Mestre com Vantagem.",
+          "+1 degrau no Dado de Arma. Proficiência universal em ARMAS, sem uma única exceção: simples, marcial, exótica, de haste, de arremesso, à distância, de outra cultura que você nunca viu — e qualquer objeto improvisado (Dado Base d6). Se dá pra empunhar, você sabe usar. Também toda armadura e todo escudo. [Improviso] O Improviso: uma vez por combate, descreva uma manobra usando o cenário e role o atributo indicado pelo Mestre com Vantagem.",
       },
       talents: [
         { id: "tres-bainhas", name: "Três Bainhas", paCost: 1, description: "Você carrega armas escondidas. Sacar uma arma nova é livre, e você nunca fica realmente desarmado." },

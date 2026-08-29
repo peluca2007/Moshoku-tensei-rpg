@@ -14,6 +14,9 @@ export const ESPADA_TREE: Tree = {
     pericias: "Acrobacia e Intimidação são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal do Corpo. Armadura leve apenas. CA base −2.",
   },
+  grantedSkills: {
+    fixed: ["Acrobacia", "Intimidação"],
+  },
   ranks: [
     {
       rank: "Principiante",
