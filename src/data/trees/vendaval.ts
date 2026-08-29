@@ -23,6 +23,9 @@ export const VENDAVAL_TREE: Tree = {
     pericias: "Acrobacia e Percepção são as perícias do estilo; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Árvore híbrida do Corpo — exige Avançado em Deus do Norte E em Magia de Vento.",
   },
+  grantedSkills: {
+    fixed: ["Acrobacia", "Percepção"],
+  },
   ranks: [
     {
       rank: "Principiante",

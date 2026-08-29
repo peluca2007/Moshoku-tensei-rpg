@@ -23,6 +23,9 @@ export const ARQUEARIA_TREE: Tree = {
     pericias: "Percepção e Sobrevivência são as perícias do ofício; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },
+  grantedSkills: {
+    fixed: ["Percepção", "Sobrevivência"],
+  },
   ranks: [
     {
       rank: "Principiante",

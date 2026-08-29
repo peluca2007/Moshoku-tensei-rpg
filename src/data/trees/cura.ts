@@ -15,6 +15,10 @@ export const CURA_TREE: Tree = {
     pericias: "Medicina é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal de Magia. Conjura com Espírito (Cap. 1, §7).",
   },
+  grantedSkills: {
+    fixed: ["Medicina"],
+    choose: { count: 1, from: ["Religião", "Intuição", "Persuasão"] },
+  },
   ranks: [
     {
       rank: "Principiante",

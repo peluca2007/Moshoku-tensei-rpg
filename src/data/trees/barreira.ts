@@ -15,6 +15,10 @@ export const BARREIRA_TREE: Tree = {
     pericias: "Arcanismo é a perícia da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal de Magia. Conjura com Espírito.",
   },
+  grantedSkills: {
+    fixed: ["Arcanismo"],
+    choose: { count: 1, from: ["Religião", "Percepção", "Intuição"] },
+  },
   ranks: [
     {
       rank: "Principiante",

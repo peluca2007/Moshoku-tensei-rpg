@@ -14,6 +14,10 @@ export const TERRA_TREE: Tree = {
     pericias: "Arcanismo e Ofícios (construção) são as perícias da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
   },
+  grantedSkills: {
+    fixed: ["Arcanismo"],
+    choose: { count: 1, from: ["Ofícios", "Atletismo", "Natureza"] },
+  },
   ranks: [
     {
       rank: "Principiante",

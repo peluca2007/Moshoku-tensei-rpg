@@ -1,5 +1,5 @@
 import { TREES } from "@/data/trees";
-import { getAttackBonus, getPaSpent, getSpellDC, getWeaponDamage } from "@/store/selectors";
+import { getAttackBonus, getPaSpent, getSpellDC, getTreeGrantedSkills, getWeaponDamage } from "@/store/selectors";
 import type { FichaPdfPayload } from "@/lib/typstFicha";
 import {
   AbilityDef,
@@ -91,7 +91,15 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
     }),
   }));
 
-  const fixedSkills = Array.from(new Set([...(race?.fixedSkills ?? []), ...(background?.fixedSkills ?? [])]));
+  // Cap. 1, §4: perícia automática vem de raça, antecedente e ÁRVORE INICIAL —
+  // as da árvore faltavam aqui, então o PDF saía sem elas mesmo estando na ficha.
+  const fixedSkills = Array.from(
+    new Set([
+      ...(race?.fixedSkills ?? []),
+      ...(background?.fixedSkills ?? []),
+      ...getTreeGrantedSkills(character),
+    ])
+  );
   const manualSkills = character.skills.filter((s) => !fixedSkills.includes(s));
   const traits: string[] = [
     ...(race?.traits ?? []),
@@ -100,6 +108,8 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
   ];
   if (fixedSkills.length > 0) traits.push(`Perícias fixas: ${fixedSkills.join(", ")}.`);
   if (manualSkills.length > 0) traits.push(`Perícias: ${manualSkills.join(", ")}.`);
+  const proficiencias = character.proficiencies ?? [];
+  if (proficiencias.length > 0) traits.push(`Proficiências e Línguas: ${proficiencias.join(", ")}.`);
 
   /**
    * Cap. 3, "As Fórmulas Marciais": Dado de Arma escalado + Atributo + Bônus do

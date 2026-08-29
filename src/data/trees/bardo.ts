@@ -23,6 +23,10 @@ export const BARDO_TREE: Tree = {
     pericias: "O Bônus de Rank soma em Atuação, Persuasão, Intuição e História, e em mais nada (Cap. 3).",
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
   },
+  grantedSkills: {
+    fixed: ["Atuação", "Persuasão"],
+    choose: { count: 1, from: ["Intuição", "História"] },
+  },
   ranks: [
     {
       rank: "Principiante",

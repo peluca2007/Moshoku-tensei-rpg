@@ -413,6 +413,26 @@ export function buildArvores(): string {
                 `\\par\\smallskip{\\itshape ${tex(tree.proficiencies.nota)}}`,
               ].join("")
             : "",
+          // Cap. 1, §4: perícias que a árvore ENSINA — e só se ela for a Inicial.
+          // Não confundir com a linha "Perícias" acima, que é onde o Bônus de
+          // Rank soma; as duas são independentes.
+          tree.grantedSkills
+            ? `\\par\\smallskip\\textbf{Ensina (só como Árvore Inicial):} ${tex(
+                tree.grantedSkills.fixed.join(", ")
+              )}${
+                tree.grantedSkills.choose
+                  ? tex(
+                      `, mais ${tree.grantedSkills.choose.count} à escolha entre ${tree.grantedSkills.choose.from.join(", ")}`
+                    )
+                  : ""
+              }.${
+                tree.masterySkillsWhenNotFirst
+                  ? ` \\textbf{Exceção:} a Maestria de 1º patamar ensina ${tex(
+                      tree.masterySkillsWhenNotFirst.join(" e ")
+                    )} mesmo a quem chegou depois.`
+                  : ""
+              }`
+            : "",
           `\\end{arvorecard}`
         ),
         ...tree.ranks.map((r) => rankTex(tree, r))

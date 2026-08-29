@@ -97,6 +97,7 @@ export default function Chapter1() {
           headers={["Custo", "O que você recebe"]}
           rows={[
             ["1 PA", "2 Perícias à sua escolha."],
+            ["1 PA", "3 Proficiências ou Línguas à sua escolha — qualquer personagem, de qualquer árvore."],
             ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente)."],
             ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
             ["2 PA", "+1 ponto de Atributo Base permanente (teto 8) — medido pela soma dos cinco, então desfazer um defeito custa o mesmo."],
@@ -185,11 +186,62 @@ export default function Chapter1() {
               Perícias simultaneamente.
             </span>,
             <span key="b">
-              <b>Perícias de Árvore:</b> certas árvores de progressão e talentos concedem perícias
-              específicas como bônus por treinar aquele estilo.
+              <b>Proficiências e Línguas (1 PA = 3):</b> qualquer personagem, de qualquer árvore, a qualquer
+              momento. São mais baratas que Perícias porque são mais estreitas — cobrem um instrumento, uma
+              ferramenta, um tipo de arma ou um idioma, não um campo inteiro de ação.
+            </span>,
+            <span key="c">
+              <b>Perícias de Árvore:</b> a sua <b>Árvore Inicial</b> ensina perícias sozinha, e elas já
+              nascem na ficha. Regra completa no bloco abaixo.
             </span>,
           ]}
         />
+
+        <Warning title="Perícias de Árvore — só a Árvore Inicial ensina">
+          <P>
+            Toda árvore deste livro ensina perícias, e elas entram na sua ficha <b>automaticamente</b>, sem
+            gastar PA. Mas <b>só a sua Árvore Inicial faz isso</b> — a primeira que você abriu, aquela que
+            também decidiu o seu kit.
+          </P>
+          <P>
+            O motivo é de ficção, não de balanço: a Árvore Inicial é onde você passou a infância e a
+            adolescência. Uma árvore aberta depois te ensina <i>técnicas</i>, não <i>hábitos</i> — você já era
+            alguém quando chegou nela. O guerreiro que aprende Magia de Fogo aos trinta anos aprende a
+            conjurar; ele não vira estudioso de Arcanismo por isso.
+          </P>
+          <P>
+            Cada árvore ensina <b>duas perícias fixas</b>. As três de Utilidade ensinam ainda{" "}
+            <b>uma à sua escolha</b>, de uma lista curta — porque o Bônus de Rank delas cobre quatro ou cinco
+            perícias, e ninguém fica treinado em todas (ver Cap. 3, &ldquo;A Árvore de Utilidade&rdquo;).
+          </P>
+          <P>
+            <b>A única exceção do livro</b> é a Maestria de 1º patamar de Furtividade e Armadilhas: ela ensina
+            Furtividade e Percepção mesmo a quem chegou depois. Como quem já tem essa árvore como Inicial
+            receberia perícias que já possui, nesse caso ela entrega no lugar 3 Proficiências ou Línguas — o
+            mesmo 1 PA de valor, pelo outro caminho.
+          </P>
+        </Warning>
+
+        <Aside title="Perícia, Proficiência e Bônus de Rank são três coisas">
+          <List
+            items={[
+              <span key="p">
+                <b>Perícia</b> (as 20 da lista abaixo): um campo de ação. Ter uma dá <b>Vantagem</b> quando
+                ela se encaixa perfeitamente na situação.
+              </span>,
+              <span key="pr">
+                <b>Proficiência ou Língua:</b> uma ferramenta, um instrumento, um tipo de arma ou um idioma.
+                Não dá Vantagem — dá a capacidade de usar aquilo sem penalidade, ou de entender o que está
+                sendo dito. 1 PA compra três.
+              </span>,
+              <span key="br">
+                <b>Bônus de Rank em perícia</b> (só nas árvores de Utilidade): um número somado ao teste. Ele
+                soma nas perícias que aquela árvore cobre — mas <b>só naquelas que você realmente tem</b>. Se
+                você nunca aprendeu a perícia, não existe teste treinado onde somar o bônus.
+              </span>,
+            ]}
+          />
+        </Aside>
         <Aside title="Vantagem por Perícia">
           <P>
             Sempre que você for realizar uma ação e possuir uma Perícia que se encaixe perfeitamente na

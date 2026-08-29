@@ -241,7 +241,7 @@ export default function Chapter3() {
         <BookTable
           headers={["Árvore", "Perícias cobertas pelo Bônus de Rank"]}
           rows={[
-            ["Ladino (Furtividade e Armadilhas)", "Furtividade e Percepção — só essas duas."],
+            ["Ladino (Furtividade e Armadilhas)", "Furtividade, Ladinagem, Percepção, Acrobacia, Enganação (disfarce)."],
             ["Bardo e Interação", "Atuação, Persuasão, Intuição, História."],
             ["Tático (Navegação e Liderança)", "Sobrevivência, Natureza, Investigação, Percepção (rastreio)."],
           ]}
@@ -251,20 +251,24 @@ export default function Chapter3() {
           tiver Rank em ambas, use o <b>maior</b> Bônus de Rank entre as duas — nunca some os dois juntos, e
           nunca use os dois pra dobrar a vantagem no mesmo teste.
         </P>
-        <Aside title="Por que o Ladino cobre só duas perícias">
+        <Warning title="Onde o Bônus de Rank soma NÃO é o mesmo que quais perícias você tem">
           <P>
-            Até 2026-08-29 ele somava o Bônus de Rank em cinco (Furtividade, Ladinagem, Percepção, Acrobacia
-            e Enganação) — mais que qualquer outra árvore do pilar — e a Maestria de 1º patamar ainda dava
-            detecção <i>automática</i> de armadilhas e gatilhos, sem teste nenhum. As duas coisas juntas
-            faziam o Ladino resolver a metade de exploração de uma sessão sozinho, de graça, desde a primeira
-            sessão.
+            Esta é a confusão mais fácil de cometer no pilar inteiro, e ela custa caro na mesa. A tabela
+            acima diz onde o seu Bônus de Rank <b>soma</b>. Ela não diz que você <b>tem</b> essas perícias.
           </P>
           <P>
-            Agora são <b>Furtividade e Percepção</b>, as duas que ele de fato É, mais o Dano Furtivo, que é a
-            Faixa exclusiva dele. Achar armadilha continua sendo trabalho dele e ele continua disparado o
-            melhor nisso — Percepção com o Bônus de Rank somado. Só não acontece mais sozinho.
+            Um Ladino cujo Bônus de Rank cobre cinco perícias não é treinado nas cinco — ele soma o bônus
+            naquelas que possui. Perícia se ganha de três formas, e só três: pela <b>Árvore Inicial</b> (Cap.
+            1, §4), por raça/antecedente, ou comprando com PA. É por isso que cada árvore de Utilidade ensina
+            duas perícias fixas <i>mais uma à sua escolha</i> quando é a sua Árvore Inicial: a escolha existe
+            justamente porque a lista que o Rank cobre é maior do que o que um personagem consegue aprender.
           </P>
-        </Aside>
+          <P>
+            Na prática: se o seu Ladino nunca aprendeu Acrobacia, o Bônus de Rank dele não aparece em teste
+            nenhum de Acrobacia — não há teste treinado pra somar. Aprenda a perícia primeiro; o bônus vem
+            junto no mesmo instante.
+          </P>
+        </Warning>
 
         <SubTitle id="cap3-pp">Pontos de Preparação (PP)</SubTitle>
         <P>

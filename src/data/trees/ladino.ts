@@ -20,9 +20,14 @@ export const LADINO_TREE: Tree = {
   },
   proficiencies: {
     armas: "Adaga, punhal, espada curta, funda e besta leve. Armadura leve apenas.",
-    pericias: "O Bônus de Rank soma em FURTIVIDADE e PERCEPÇÃO, e em mais nada (Cap. 3).",
+    pericias: "O Bônus de Rank soma em Furtividade, Ladinagem, Percepção, Acrobacia e Enganação (disfarce). Como Árvore Inicial, ensina Furtividade e Percepção mais uma à escolha entre Ladinagem, Acrobacia e Enganação. Se NÃO for a sua Árvore Inicial, a Maestria de 1º patamar ainda ensina Furtividade e Percepção — exceção única do livro.",
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
   },
+  grantedSkills: {
+    fixed: ["Furtividade", "Percepção"],
+    choose: { count: 1, from: ["Ladinagem", "Acrobacia", "Enganação"] },
+  },
+  masterySkillsWhenNotFirst: ["Furtividade", "Percepção"],
   ranks: [
     {
       rank: "Principiante",
@@ -30,20 +35,21 @@ export const LADINO_TREE: Tree = {
       ppGained: 0,
       mastery: {
         name: "Olho Treinado e Dano Furtivo",
-        // 2026-08-29 (nerf pedido pelo usuário): a Maestria concedia DUAS coisas
-        // grandes de uma vez — a detecção automática de armadilhas ("não pedem
-        // teste... você simplesmente os vê") e o Dano Furtivo. A primeira apagava
-        // um pilar inteiro de exploração já no 1º patamar, de graça e sem
-        // rolagem: armadilha deixava de ser uma decisão de mesa e virava um aviso
-        // automático. O Bônus de Rank do Ladino também cobria cinco perícias,
-        // mais que qualquer outra árvore de Utilidade.
-        // Ficou o que define a árvore: as duas perícias que o Ladino É
-        // (Furtividade e Percepção) e o Dano Furtivo, que é a Faixa exclusiva
-        // dele pelo Cap. 3. Achar armadilha continua sendo dele — com Percepção
-        // e o Bônus de Rank somado, ele ainda é disparado o melhor nisso; só não
-        // é mais de graça.
+        // 2026-08-29: a Maestria dava detecção AUTOMÁTICA de armadilhas ("não
+        // pedem teste... você simplesmente os vê"), que apagava um pilar inteiro
+        // de exploração no 1º patamar, de graça — armadilha deixava de ser uma
+        // decisão de mesa e virava um aviso. No lugar entrou o que a árvore
+        // deveria sempre ter feito: ENSINAR as perícias.
+        //
+        // A regra de Perícias de Árvore (Cap. 1, §4) diz que só a Árvore Inicial
+        // ensina perícia. Esta Maestria é a única exceção declarada do livro —
+        // e por isso ela tem dois lados: pra quem chegou depois, ela ensina; pra
+        // quem já começou aqui, essas duas perícias já vieram de graça, então
+        // entregar de novo seria entregar nada. As 3 proficiências/línguas valem
+        // exatamente 1 PA, o mesmo que as 2 perícias do outro lado — os dois
+        // caminhos custam o mesmo, e é isso que faz a escolha ser de sabor.
         description:
-          "Escopo: um objeto, um cômodo, uma pessoa comum. Seu Bônus de Rank soma nos testes de Furtividade e de Percepção — e em mais nenhuma perícia. Uma vez por turno, ao acertar um alvo desprevenido, cego, imobilizado ou contra o qual tenha Vantagem, some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
+          "Escopo: um objeto, um cômodo, uma pessoa comum. Se Furtividade e Armadilhas NÃO for a sua Árvore Inicial, você aprende as perícias Furtividade e Percepção — esta é a única árvore do livro que ensina as próprias perícias a quem chegou depois. Se ELA for a sua Árvore Inicial, você já tem as duas; em vez delas, ganhe 3 proficiências ou línguas à sua escolha (a gíria de ladrão, as ferramentas de arrombamento, o kit de falsificação). Em qualquer um dos casos: uma vez por turno, ao acertar um alvo desprevenido, cego, imobilizado ou contra o qual tenha Vantagem, some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
       },
       talents: [
         { id: "maos-rapidas", name: "Mãos Rápidas", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você tira e coloca objetos em bolsos alheios com teste de Agilidade contra a Percepção do alvo. Em combate, 1 Ação para roubar item não empunhado." },

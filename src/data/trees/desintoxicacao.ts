@@ -15,6 +15,10 @@ export const DESINTOXICACAO_TREE: Tree = {
     pericias: "Medicina e Ofícios (Alquimia) são as perícias da escola; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Escola Formal de Magia. Conjura com Espírito.",
   },
+  grantedSkills: {
+    fixed: ["Medicina"],
+    choose: { count: 1, from: ["Natureza", "Ofícios", "Investigação"] },
+  },
   ranks: [
     {
       rank: "Principiante",

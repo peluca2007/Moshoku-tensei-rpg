@@ -28,6 +28,8 @@ function blankCharacter(id: string, name: string): CharacterData {
     gold: 0,
     inventory: [],
     skills: [],
+    treeSkillChoices: [],
+    proficiencies: [],
     bonusHp: 0,
     bonusMp: 0,
     currentHp: null,
@@ -65,6 +67,10 @@ interface RosterState {
   setRace: (raceId: string | null) => void;
   /** Define o bônus livre de atributo da raça (Humano). Índice = qual dos pontos concedidos. */
   setRaceAttributeChoice: (index: number, key: AttributeKey | null) => void;
+  /** Escolha do `grantedSkills.choose` da Árvore Inicial (Cap. 1, §4). */
+  setTreeSkillChoice: (index: number, skill: string | null) => void;
+  addProficiency: (name: string) => void;
+  removeProficiency: (name: string) => void;
   /** Compra/desfaz uma melhoria racial (Cap. 1, §5) — o custo em PA entra em getPaSpent. */
   toggleRacialUpgrade: (upgradeId: string) => void;
   setBackground: (backgroundId: string | null) => void;
@@ -189,6 +195,25 @@ export const useCharacterStore = create<RosterState>()(
           else next[index] = key;
           return { ...c, raceAttributeChoices: next.filter(Boolean) };
         }),
+      setTreeSkillChoice: (index, skill) =>
+        updateActive(get, set, (c) => {
+          const next = [...(c.treeSkillChoices ?? [])];
+          if (skill === null) next.splice(index, 1);
+          else next[index] = skill;
+          return { ...c, treeSkillChoices: next.filter(Boolean) };
+        }),
+      addProficiency: (name) =>
+        updateActive(get, set, (c) => {
+          const limpo = name.trim();
+          const atuais = c.proficiencies ?? [];
+          if (!limpo || atuais.some((p) => p.toLowerCase() === limpo.toLowerCase())) return c;
+          return { ...c, proficiencies: [...atuais, limpo] };
+        }),
+      removeProficiency: (name) =>
+        updateActive(get, set, (c) => ({
+          ...c,
+          proficiencies: (c.proficiencies ?? []).filter((p) => p !== name),
+        })),
       toggleRacialUpgrade: (upgradeId) =>
         updateActive(get, set, (c) => {
           const atuais = c.racialUpgrades ?? [];
@@ -209,6 +234,8 @@ export const useCharacterStore = create<RosterState>()(
       // mexer em mais nada naquela árvore (nada comprado, nenhum rank além do Principiante),
       // o Principiante antigo sai e o da nova árvore entra. Se ele já tinha progredido de
       // verdade na árvore anterior (fora do fluxo de criação), isso fica intocado.
+      // Trocar a Árvore Inicial zera as escolhas de perícia dela: elas pertenciam
+      // à árvore anterior, e o Cap. 1 §4 só concede perícias da Árvore INICIAL.
       setStartingTree: (startingTreeId) =>
         updateActive(get, set, (c) => {
           const previous = c.startingTreeId;
@@ -225,6 +252,10 @@ export const useCharacterStore = create<RosterState>()(
           return {
             ...c,
             startingTreeId,
+            // As escolhas de perícia pertenciam à árvore anterior; a nova tem
+            // outra lista (ou nenhuma). Manter significaria carregar uma perícia
+            // que a Árvore Inicial atual não ensina.
+            treeSkillChoices: startingTreeId === previous ? c.treeSkillChoices : [],
             unlockedRanks:
               startingTreeId && !alreadyUnlocked
                 ? [...unlockedRanks, { treeId: startingTreeId, rank: "Principiante" as RankName }]
@@ -337,7 +368,12 @@ export const useCharacterStore = create<RosterState>()(
       // `raceAttributeChoices` (o +1 livre do Humano) e `racialUpgrades` (a
       // Vantagem Absoluta do Povo Pequeno, 3 PA). Ficha antiga entra com os dois
       // vazios, que é exatamente o estado correto: ninguém escolheu nada ainda.
-      version: 6,
+      // v7 (2026-08-29): Perícias de Árvore. `treeSkillChoices` guarda a escolha
+      // do "escolha 1 destas três" da Árvore Inicial, e `proficiencies` a lista
+      // de proficiências/línguas (1 PA compra 3). Ficha antiga entra com os dois
+      // vazios — as perícias fixas da Árvore Inicial são derivadas, não salvas,
+      // então aparecem sozinhas na ficha de quem já tinha uma árvore escolhida.
+      version: 7,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
@@ -351,6 +387,8 @@ export const useCharacterStore = create<RosterState>()(
                 lore: c.lore ?? "",
                 raceAttributeChoices: c.raceAttributeChoices ?? [],
                 racialUpgrades: c.racialUpgrades ?? [],
+                treeSkillChoices: c.treeSkillChoices ?? [],
+                proficiencies: c.proficiencies ?? [],
               },
             ])
           ),

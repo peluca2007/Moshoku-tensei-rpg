@@ -21,6 +21,9 @@ export const LUTADOR_TREE: Tree = {
     pericias: "Atletismo e Intimidação são as perícias do ofício; o Bônus de Rank NÃO soma em perícia nenhuma.",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },
+  grantedSkills: {
+    fixed: ["Atletismo", "Intimidação"],
+  },
   ranks: [
     {
       rank: "Principiante",
