@@ -100,10 +100,11 @@ export const RACES: Race[] = [
       "Vivem na Grande Floresta e em cidades como Millishion. Estatura e aparência de criança humana por toda a vida.",
     bonuses: { attributes: { agilidade: 1 } },
     // A compra de 3 PA é a primeira melhoria racial do livro (ver Race.upgrades).
-    // Vantagem Absoluta é 3d20-escolha-o-maior: pela régua do Cap. 1 §2 (3 PA =
-    // Vantagem permanente nos saves de 1 atributo), 3 PA por um upgrade que só
-    // vale em DUAS perícias é o preço certo — e é opcional, então não infla a
-    // raça pra quem não comprar.
+    // Continua em 3 PA mesmo depois de a Vantagem em Resistência do Cap. 1 §2
+    // baixar de 3 pra 2 (2026-08-29): a régua não é o alcance, é a força. Aquela
+    // compra dá Vantagem (2d20) em todos os saves de UM atributo; esta dá
+    // Vantagem ABSOLUTA (3d20) em duas perícias. Um degrau a mais de dado vale o
+    // PA a mais, e a compra é opcional — não infla a raça de quem não comprar.
     upgrades: [
       {
         id: "hobbit-sombra-absoluta",

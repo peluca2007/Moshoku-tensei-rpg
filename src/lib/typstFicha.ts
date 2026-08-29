@@ -10,6 +10,12 @@ export interface FichaAttributeRow {
   short: string;
   label: string;
   value: number;
+  /**
+   * Cap. 1, §2: Vantagem permanente em todos os Testes de Resistência deste
+   * atributo (2 PA). Marcada no PDF com um losango ao lado da sigla — é
+   * informação de mesa, e quem joga com a folha impressa precisa vê-la.
+   */
+  saveAdvantage: boolean;
 }
 
 export interface FichaTreeRow {
@@ -165,9 +171,24 @@ const PREAMBLE = `
 `;
 
 function attributesBlock(rows: FichaAttributeRow[]): string {
+  // O losango entra na própria sigla ("VIG" -> "VIG ◆") pra não precisar mexer
+  // na geometria da caixa nem abrir uma coluna nova numa ficha que já é apertada.
   const boxes = rows
-    .map((r) => `stat-box-filled(${tstr(r.short)}, ${tstr(String(r.value))}, height: 38pt)`)
+    .map(
+      (r) =>
+        `stat-box-filled(${tstr(r.saveAdvantage ? `${r.short} ◆` : r.short)}, ${tstr(
+          String(r.value)
+        )}, height: 38pt)`
+    )
     .join(",\n      ");
+  const comVantagem = rows.filter((r) => r.saveAdvantage);
+  const legenda = comVantagem.length
+    ? `
+    #v(3pt)
+    #text(size: 7pt)[◆ Vantagem permanente em Testes de Resistência: ${comVantagem
+        .map((r) => r.label)
+        .join(", ")}]`
+    : "";
   return `
   [
     #section-title("ATRIBUTOS")
@@ -175,7 +196,7 @@ function attributesBlock(rows: FichaAttributeRow[]): string {
     #grid(
       columns: (1fr), gutter: 10pt,
       ${boxes}
-    )
+    )${legenda}
   ]`;
 }
 

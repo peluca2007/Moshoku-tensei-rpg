@@ -19,6 +19,7 @@ import {
   ATTRIBUTE_HARD_CAP,
   ATTRIBUTE_PA_COST_PER_POINT,
   ATTRIBUTES,
+  SAVE_ADVANTAGE_PA_COST,
   PurchasedAbility,
   RANK_BONUS,
   RANKS,
@@ -252,6 +253,7 @@ export default function CharacterSheet() {
     purchasedAbilities,
     unlockedRanks,
     attributeBase,
+    saveAdvantages,
     skills,
     bonusHp,
     bonusMp,
@@ -551,6 +553,43 @@ export default function CharacterSheet() {
                 </>
               ) : null}
             </p>
+
+            {/* Cap. 1, §2: Vantagem permanente nos Testes de Resistência de um
+                atributo, 2 PA cada. Fica colada nos atributos porque é a única
+                compra do livro que se aplica a um atributo específico. */}
+            <div className="mt-3 border-t border-parchment-300 pt-2 dark:border-parchment-800">
+              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+                Vantagem em Resistência
+                <span className="ml-1 font-normal normal-case">({SAVE_ADVANTAGE_PA_COST} PA por atributo)</span>
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {ATTRIBUTES.map(({ key, short, label }) => {
+                  const ativo = (saveAdvantages ?? []).includes(key);
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      title={`Vantagem permanente em todos os Testes de Resistência de ${label} — ${SAVE_ADVANTAGE_PA_COST} PA`}
+                      aria-pressed={ativo}
+                      onClick={() => useCharacterStore.getState().toggleSaveAdvantage(key)}
+                      className={`rounded-lg px-2 py-1 text-[11px] font-bold transition-colors ${
+                        ativo
+                          ? "bg-gold-600 text-white"
+                          : "bg-parchment-200 text-parchment-600 hover:bg-parchment-300 dark:bg-parchment-800 dark:text-parchment-400 dark:hover:bg-parchment-700"
+                      }`}
+                    >
+                      {short}
+                    </button>
+                  );
+                })}
+              </div>
+              {(saveAdvantages ?? []).length > 0 && (
+                <p className="mt-1 text-[11px] text-gold-600 dark:text-gold-400">
+                  {(saveAdvantages ?? []).length * SAVE_ADVANTAGE_PA_COST} PA · rola 2d20 e escolhe o maior
+                  nesses testes.
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="space-y-2">

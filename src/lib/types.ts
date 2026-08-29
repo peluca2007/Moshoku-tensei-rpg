@@ -72,6 +72,22 @@ export const ATTRIBUTE_CREATION_MAX = 4;
  */
 export const ATTRIBUTE_CREATION_POINTS = 4;
 export const ATTRIBUTE_PA_COST_PER_POINT = 2;
+
+/**
+ * Cap. 1, §2: Vantagem permanente em TODOS os Testes de Resistência de um
+ * atributo à sua escolha. Uma vez por atributo, então o teto é 5 compras.
+ *
+ * Baixou de 3 pra 2 PA em 2026-08-29. Ela também deixou de ser só uma linha da
+ * tabela: até então não existia em lugar nenhum do site — nenhum campo na ficha,
+ * nenhum PA contado, nada no PDF. Era uma compra que o livro vendia e o sistema
+ * não sabia que existia.
+ */
+export const SAVE_ADVANTAGE_PA_COST = 2;
+
+/** Cap. 1, §2: 1 PA compra 2 Perícias. */
+export const SKILLS_PER_PA = 2;
+/** Cap. 1, §4: 1 PA compra 3 Proficiências ou Línguas — mais baratas porque são mais estreitas. */
+export const PROFICIENCIES_PER_PA = 3;
 export const ATTRIBUTE_HARD_CAP = 8;
 /** Cap. 1, §1: o Sistema de Defeitos deixa um atributo em -1 e outro em -2. Nada desce abaixo disso. */
 export const ATTRIBUTE_FLOOR = -2;
@@ -101,7 +117,11 @@ export const PV_BASE = 20;
 export function getVigorFactor(vigor: number): number {
   if (vigor <= -2) return 0.4;
   if (vigor === -1) return 0.75;
-  return 1 + 0.2 * vigor;
+  // Arredondado a duas casas de propósito: `1 + 0.2 * 7` dá 2.4000000000000004
+  // em ponto flutuante, e a tabela que o livro imprime diz "×2,40". Sem isto, o
+  // motor multiplica por um número que o livro não contém — hoje o Math.floor
+  // dos PV esconde a diferença, mas "esconde" não é o mesmo que "não existe".
+  return Math.round((1 + 0.2 * vigor) * 100) / 100;
 }
 
 /** A Escala do Vigor como o livro a imprime (Cap. 4, §1) — a mesma função acima, tabelada pros valores alcançáveis. */
@@ -402,6 +422,11 @@ export interface CharacterData {
   raceAttributeChoices: AttributeKey[];
   /** Ids de RacialUpgrade já comprados com PA (ex: "hobbit-sombra-absoluta"). */
   racialUpgrades: string[];
+  /**
+   * Atributos cujos Testes de Resistência têm Vantagem permanente (Cap. 1, §2 —
+   * 2 PA cada, uma vez por atributo).
+   */
+  saveAdvantages: AttributeKey[];
   startingTreeId: string | null;
   unlockedRanks: UnlockedRank[];
   purchasedAbilities: PurchasedAbility[];
