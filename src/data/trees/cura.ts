@@ -21,7 +21,7 @@ export const CURA_TREE: Tree = {
       },
       talents: [
         { id: "maos-firmes-cura", name: "Mãos Firmes", paCost: RANK_PA_COST.talent.Principiante, description: "Você conjura magias de Cura sem sofrer Desvantagem por corpo a corpo, chuva, escuro ou inimigo adjacente." },
-        { id: "reserva-do-curandeiro", name: "Reserva do Curandeiro", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Cura. Comprável várias vezes, até o número de patamares." },
+        { id: "reserva-do-curandeiro", name: "Reserva do Curandeiro", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Cura. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
         {
           id: "juramento",
           name: "Juramento",
@@ -58,7 +58,7 @@ export const CURA_TREE: Tree = {
           pmCost: 1,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
-          effect: "O dano escolhido conta como Ferida Fresca por 1 hora, mesmo depois de o turno em que ocorreu passar — qualquer magia de Cura conjurada nesse dano nessa 1 hora ainda cura em dobro.",
+          effect: "Custa 1 PM por Bônus de Rank seu em Cura (1 no Principiante, 6 no Imperador). O dano escolhido conta como Ferida Fresca por 1 hora, mesmo depois de o turno em que ocorreu passar — qualquer magia de Cura conjurada nesse dano nessa 1 hora ainda cura em dobro.",
         },
         {
           id: "vigor-emprestado",
@@ -179,7 +179,7 @@ export const CURA_TREE: Tree = {
           range: "Esfera de 9m",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "2d6 + BC de PV por turno" },
-          effect: "1 minuto: todo aliado que começar o turno dentro da área recupera PV. Sustentada sem concentração, um círculo por vez.",
+          effect: "3 turnos: todo aliado que começar o turno dentro da área recupera PV. Sustentada sem concentração, um círculo por vez.",
         },
         {
           id: "rejeitar-a-morte",
@@ -233,7 +233,7 @@ export const CURA_TREE: Tree = {
           pmCost: 8,
           range: "Esfera de 9m",
           actions: MAGIC_ACTIONS.Santo,
-          effect: "1 minuto: nenhum aliado na área recebe Marcas da Morte, e todo aliado que chegaria a 0 PV fica com 1 PV — uma vez cada.",
+          effect: "1 minuto: nenhum aliado na área recebe Marcas da Morte, e todo aliado que chegaria a 0 PV fica com 1 PV — uma vez cada. Cada uma dessas salvações conta como a Salvação daquela criatura no combate (Cap. 4, §4, Uma Salvação por Combate).",
         },
         {
           id: "corpo-de-ferro",
@@ -242,7 +242,7 @@ export const CURA_TREE: Tree = {
           pmCost: 7,
           range: "Toque",
           actions: MAGIC_ACTIONS.Santo,
-          effect: "10 minutos: +20 PV máximos e imunidade a acertos críticos.",
+          effect: "10 minutos: +50 PV máximos e imunidade a acertos críticos.",
         },
       ],
     },

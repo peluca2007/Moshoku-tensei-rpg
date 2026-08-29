@@ -43,7 +43,7 @@ export const BARDO_TREE: Tree = {
           range: "Voz",
           actions: { normal: 1 },
           damage: { normal: "Dado de Inspiração: 1d6 (1º-2º patamar), 2d6 (3º-4º), 3d6 (5º-6º)" },
-          effect: "Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado.",
+          effect: "Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +5 (Cap. 4, §4).",
         },
       ],
     },
@@ -57,10 +57,10 @@ export const BARDO_TREE: Tree = {
       },
       talents: [
         { id: "cantiga-de-ninar", name: "Cantiga de Ninar", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Criaturas não-hostis que te ouvirem 10 minutos adormecem, salvo teste de Vigor. Não funciona em combate." },
-        { id: "mestre-de-cerimonias", name: "Mestre de Cerimônias", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você controla uma multidão: acalmar/iniciar tumulto, direcionar atenção. Teste de Espírito contra CD do Mestre." },
+        { id: "mestre-de-cerimonias", name: "Mestre de Cerimônias", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você controla uma multidão: acalmar, iniciar tumulto ou direcionar a atenção de todos. Teste de Espírito com Vantagem contra a CD do Mestre; num sucesso a multidão age como você quer por 1 minuto, e você escolhe uma pessoa nela que não é afetada." },
         { id: "a-mascara", name: "A Máscara", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Enquanto sustentar uma persona, testes pra detectar mentira em você têm Desvantagem. Dura uma noite." },
         { id: "nome-nas-bocas", name: "Nome nas Bocas", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Gastando 1 PP, planta um rumor numa comunidade. Em três dias, todo mundo acredita — não precisa ser verdade." },
-        { id: "duelo-de-cancoes", name: "Duelo de Canções", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você desafia alguém pra disputa artística/verbal. Recusar costuma ser desonra pública em várias culturas." },
+        { id: "duelo-de-cancoes", name: "Duelo de Canções", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você desafia alguém pra disputa artística/verbal; recusar é desonra pública. Vença uma disputa de Atuação e o perdedor fica Amedrontado por você até o fim da cena, e ninguém que assistiu testemunha contra você naquela comunidade." },
       ],
       abilities: [
         {
@@ -115,7 +115,7 @@ export const BARDO_TREE: Tree = {
       talents: [
         { id: "o-favor-antigo", name: "O Favor Antigo", paCost: UTILITY_PA_COST.talent.Santo, description: "Gastando 2 PP, uma pessoa importante na cena te deve algo — dá uma informação, passagem, ou benefício da dúvida." },
         { id: "elegia", name: "Elegia", paCost: UTILITY_PA_COST.talent.Santo, description: "Uma vez por combate, cante para um inimigo que perdeu aliados nesta luta: teste de Espírito com Desvantagem ou ele deixa o combate, sem morrer." },
-        { id: "a-corte-na-palma", name: "A Corte na Palma", paCost: UTILITY_PA_COST.talent.Santo, description: "Em ambientes formais, você não rola testes sociais: declara o resultado desejado, desde que não contrarie interesses vitais de alguém presente." },
+        { id: "a-corte-na-palma", name: "A Corte na Palma", paCost: UTILITY_PA_COST.talent.Santo, description: "Uma vez por cena, gastando 1 PP: em ambiente formal, você não rola o teste social — declara o resultado desejado, desde que não contrarie interesses vitais de alguém presente." },
       ],
       abilities: [
         {
@@ -166,7 +166,7 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A História Oficial",
         description:
-          "Escopo: um continente. Uma vez por Descanso Longo, gastando 4 PP, escolha um evento que testemunhou ou do qual participou: sua versão dele vira a verdade aceita. Desmentir exige provas materiais e testemunha de reputação equivalente.",
+          "Escopo: um continente. Uma vez por Descanso Longo, gastando 4 PP, escolha um evento que testemunhou ou do qual participou: sua versão dele vira a verdade aceita. Desmentir exige provas materiais e testemunha de reputação equivalente. Recupere 2 PP em Descanso Curto.",
       },
       talents: [
         { id: "nome-imortal", name: "Nome Imortal", paCost: UTILITY_PA_COST.talent.Imperador, description: "Escolha uma pessoa: ela entra pra história como herói ou monstro, permanentemente." },

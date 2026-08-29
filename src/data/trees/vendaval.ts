@@ -29,7 +29,7 @@ export const VENDAVAL_TREE: Tree = {
           "+3 metros de Deslocamento. Uma vez em cada um dos seus turnos, afastar-se de um inimigo não provoca ataque de oportunidade. Uma vez por combate, ao errar um ataque corpo a corpo, o vento absorve o impacto: reposicione-se até 3m sem gastar Ação.",
       },
       talents: [
-        { id: "folego-do-vendaval", name: "Fôlego do Vendaval", paCost: 1, description: "+2 PT Máximos." },
+        { id: "folego-do-vendaval", name: "Fôlego do Vendaval", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
         { id: "ouvido-do-vendaval", name: "Ouvido do Vendaval", paCost: 1, description: "Vantagem em Percepção auditiva, e você percebe magia de Vento sendo conjurada a até 60 metros." },
         { id: "pes-que-o-vento-segura", name: "Pés que o Vento Segura", paCost: 1, description: "Você nunca sofre penalidade de Deslocamento em terreno difícil, gelo ou vento contrário, e nunca escorrega." },
       ],
@@ -98,11 +98,11 @@ export const VENDAVAL_TREE: Tree = {
           effect: "Gire com sua arma, atacando cada criatura à escolha dentro de 3m, com rolagem separada para cada, sem Desvantagem por aliados na área — o vento abre espaço pra sua lâmina.",
         },
         {
-          id: "golpe-que-corta-o-ar",
+          id: "golpe-que-corta-o-ar",  // alcance 9m -> 18m: era mais curto que o Arremesso Cortante do patamar anterior
           name: "Golpe que Corta o Ar",
           paCost: 1,
           ptCost: 1,
-          range: "9 metros",
+          range: "18 metros",
           actions: { normal: 1 },
           damage: { normal: "Dado de arma normal (cortante)" },
           effect: "Ataque à distância com sua arma corpo a corpo, como se o fio dela se esticasse no vento. Se acertar, o alvo fica Desequilibrado.",
@@ -130,7 +130,7 @@ export const VENDAVAL_TREE: Tree = {
           "Enquanto vestir o Manto de Touki, sua arma ganha +3 metros de alcance em ataques corpo a corpo — o fio do golpe se estende pelo vento — e você ignora metade da CA de armaduras não-mágicas.",
       },
       talents: [
-        { id: "segunda-rajada", name: "Segunda Rajada", paCost: 2, description: "+3 PT Máximos." },
+        { id: "segunda-rajada", name: "Segunda Rajada", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
         { id: "vortice-pessoal", name: "Vórtice Pessoal", paCost: 2, description: "Ataques à distância mundanos contra você sofrem Desvantagem enquanto estiver se movendo, e você nunca sofre dano de queda." },
         { id: "leitura-do-vento", name: "Leitura do Vento", paCost: 2, description: "Vantagem em Iniciativa, e você identifica de onde veio qualquer ataque à distância que te acertou, mesmo escondido." },
       ],
@@ -272,7 +272,7 @@ export const VENDAVAL_TREE: Tree = {
           range: "Linha de 300 metros",
           actions: { normal: 3 },
           damage: { normal: "Dado de arma rolado quatro vezes + Força + Bônus de Rank + 4d10 (cortante)" },
-          effect: "Acerta automaticamente; o dano de arma e o bônus sempre acertam cheio. Muralhas, torres e florestas na trajetória são cortadas ao meio. Teste de Agilidade com Desvantagem pra metade do dano extra do vento (4d10).",
+          effect: "Uma vez por combate. Acerta automaticamente; o dano de arma e o bônus sempre acertam cheio. Muralhas, torres e florestas na trajetória são cortadas ao meio. Teste de Agilidade com Desvantagem pra metade do dano extra do vento (4d10).",
         },
         {
           id: "vendaval-de-aco",

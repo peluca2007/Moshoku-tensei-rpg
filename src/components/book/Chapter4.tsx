@@ -1,3 +1,4 @@
+import { VIGOR_FACTOR_TABLE } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 export default function Chapter4() {
@@ -13,45 +14,121 @@ export default function Chapter4() {
           em qualquer árvore. As fórmulas abaixo são as que valem sempre, do 1º patamar ao Imperador; a ficha
           recalcula os dois números automaticamente a cada Rank novo.
         </P>
-        <Aside title="PV Máximos = Constituição Base + Progressão + Vitalidade">
+        <Aside title="PV Máximos = (20 + o dobro dos seus Dados de PV) × Fator de Vigor">
+          <P>
+            Uma linha, dois passos, nenhuma exceção:
+          </P>
           <List
             items={[
-              <span key="cb"><b>Constituição Base = 10 + (Vigor × 3)</b>, mínimo 13. É o corpo com que você nasceu, antes de qualquer treino.</span>,
-              <span key="pg">
-                <b>Progressão =</b> a soma de <b>todos</b> os dados de PV que suas árvores concederam, <b>dobrada</b>. No 1º patamar da sua Árvore Inicial, use sempre o valor <b>máximo</b> do dado (é o único dado rolado com garantia de máximo no livro); em qualquer outro patamar, de qualquer árvore, use a <b>média</b> do dado.
+              <span key="c">
+                <b>1. O corpo treinado.</b> Some os Dados de PV de <b>todos</b> os patamares que você
+                desbloqueou, em todas as árvores (use a média de cada dado, ou role, se a mesa preferir),
+                <b> dobre o resultado</b> e some <b>20</b>. Esses 20 são o corpo com que todo mundo nasce.
               </span>,
-              <span key="vt"><b>Vitalidade = Vigor × Maior Bônus de Rank × 4.</b> O corpo endurecido pelo treino — um Imperador (Bônus +6) com Vigor 6 carrega 144 PV só disto.</span>,
+              <span key="v">
+                <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonde
+                pra baixo. <b>Cada ponto positivo de Vigor soma 20% à sua vida inteira.</b>
+              </span>,
             ]}
           />
-        </Aside>
-        <Aside title="PM Máximos = (Espírito × Maior Bônus de Rank de Magia) + 8, com piso">
           <P>
-            Uma fórmula só, e mais nada. <b>Escolas de magia não concedem PM nenhum</b> — a reserva inteira
-            vem do seu Espírito e de quão fundo você foi numa escola. Árvores do Corpo e de Utilidade
-            concedem <b>0 PM, sempre</b>, mesmo em rank Imperador — em troca, o Corpo recebe PT (Cap. 3).
+            É só isso. Não existe piso, não existe um dado que conta em dobro, e nenhum patamar novo muda a
+            forma da conta — desbloquear um Rank só acrescenta mais um Dado de PV ao passo 1.
+          </P>
+        </Aside>
+
+        <SubTitle id="cap4-vigor">A Escala do Vigor</SubTitle>
+        <P>
+          Vigor não governa nenhuma perícia (Cap. 1, §4): ele é a sua vida e a sua resistência, e nada mais.
+          Por isso ele é o atributo mais fácil de largar no Sistema de Defeitos — e por isso a escala abaixo
+          é <b>deliberadamente assimétrica</b>. Subir é linear; descer, não.
+        </P>
+        <BookTable
+          headers={["Vigor", "Nome", "Fator de PV", "O que isso significa"]}
+          rows={VIGOR_FACTOR_TABLE.map((v) => [
+            v.vigor >= 0 ? `+${v.vigor}` : String(v.vigor),
+            v.label,
+            `×${v.factor.toFixed(2).replace(".", ",")}`,
+            v.vigor === -2
+              ? "60% da vida de um corpo comum."
+              : v.vigor === -1
+                ? "75% da vida de um corpo comum."
+                : v.vigor === 0
+                  ? "A referência. Nenhum bônus, nenhuma penalidade."
+                  : `+${v.vigor * 20}% de vida sobre o corpo comum.`,
+          ])}
+        />
+        <Warning title="Vigor Negativo: as regras estritas">
+          <P>
+            Largar Vigor não é escolher um número menor — é escolher uma condição permanente, com nome e
+            com efeito nas duas coisas que o atributo governa: a <b>Vida</b> e a <b>Resistência</b>.
+          </P>
+          <BookTable
+            headers={["", "Vigor 0 — Corpo Comum", "Vigor -1 — Constituição Frágil", "Vigor -2 — Corpo Quebrado"]}
+            rows={[
+              ["Vida", "×1,00. A referência do livro.", "×0,75 — você perde 25% de tudo.", "×0,40 — você perde 60% de tudo."],
+              [
+                "Resistência de Vigor (veneno, doença, clima, fome, Exaustão)",
+                "Rola normal: 1d20 + Vigor + metade do Bônus de Rank.",
+                "Rola com Desvantagem.",
+                "Rola com Desvantagem e NÃO soma metade do Bônus de Rank — o veterano de Corpo Quebrado resiste como um novato até o fim da campanha.",
+              ],
+              [
+                "Fio da Vida (seção 6)",
+                "Três chances antes de morrer.",
+                "Rola com Desvantagem, como toda resistência de Vigor.",
+                "Desvantagem, sem o Bônus de Rank, e a Falha Crítica acontece em 1 ou 2 no dado — duas Marcas de uma vez.",
+              ],
+              [
+                "Descanso Longo",
+                "Recupera Vigor + 1d8 PV (mínimo 2).",
+                "Recupera 1d8 − 1 PV (mínimo 2).",
+                "Recupera sempre o mínimo: 2 PV. Um corpo quebrado não se conserta dormindo.",
+              ],
+            ]}
+          />
+        </Warning>
+        <Aside title="Por que 0 é muito melhor que -1, e -1 muito melhor que -2">
+          <P>
+            Porque o corte é <b>proporcional e crescente</b>, não uma subtração fixa. O primeiro ponto
+            negativo custa <b>25%</b> da sua vida. O segundo custa mais <b>47% do que tinha sobrado</b> —
+            quase o dobro do primeiro. E como o fator multiplica o corpo inteiro, a punição vale igual no 1º
+            patamar e no Imperador: não existe mais &ldquo;levo o defeito agora, o mundo cobra daqui a vinte
+            sessões&rdquo;.
           </P>
           <P>
-            <b>O piso:</b> sua reserva nunca fica abaixo de <b>(Maior Bônus de Rank de Magia × 4) + 8</b>.
-            Um Imperador tem no mínimo 32 PM, um Santo no mínimo 24, mesmo com Espírito 0 ou negativo.
+            Na prática, para o mesmo espadachim: no 1º patamar, 40 PV com Vigor 0, <b>30</b> com -1,{" "}
+            <b>16</b> com -2. No Imperador, 166 PV com Vigor 0, <b>124</b> com -1, <b>66</b> com -2. Um
+            Corpo Quebrado de rank Imperador tem menos vida que um Corpo Comum de rank Santo.
+          </P>
+          <P>
+            <b>O que essa escala corrigiu:</b> a fórmula anterior tinha um piso (&ldquo;Constituição Base,
+            mínimo 13&rdquo;) que dava o <i>mesmo</i> valor de base para Vigor 1, 0, -1 e -2. Somado ao fato
+            de Vigor não governar perícia nenhuma, largá-lo em -2 na criação custava 8 PV e pagava 2 pontos
+            de atributo permanentes — era, matematicamente, a melhor jogada de <i>qualquer</i> ficha do
+            livro. Não é mais.
+          </P>
+        </Aside>
+
+        <Aside title="PM Máximos = (o maior entre o seu Espírito e 4) × Maior Bônus de Rank de Magia, + 8">
+          <P>
+            Uma linha, um &ldquo;o que for maior&rdquo;, e mais nada. <b>Escolas de magia não concedem PM
+            nenhum</b> — a reserva inteira sai daqui. Árvores do Corpo e de Utilidade concedem <b>0 PM,
+            sempre</b>, mesmo em rank Imperador; em troca, o Corpo recebe PT (Cap. 3). Sem nenhum patamar de
+            magia, o Bônus é 0 e você fica com os 8 PM de base.
+          </P>
+          <P>
+            <b>O &ldquo;maior entre Espírito e 4&rdquo;</b> é o que mantém jogável o mago que o Cap. 1
+            promete como <b>cirurgião</b> (Intelecto alto, Espírito baixo — poucos tiros, todos letais). O
+            custo das magias cresce dez vezes do 1º ao 6º patamar; sem esse mínimo, um Imperador de Espírito
+            2 teria 20 PM e a assinatura da própria escola custaria mais que isso — ele nunca conseguiria
+            conjurá-la. Se você tem Espírito 4 ou mais, essa metade da regra nunca entra na conta: é só{" "}
+            <b>Espírito × Bônus + 8</b>.
           </P>
           <P>
             Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6+8 = <b>44 PM</b> — o suficiente
-            pra sustentar uma Nova Congelante (6 PM) sete vezes seguidas antes de secar, ou pra bancar a
-            assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, com troco pra mais nada.
-          </P>
-        </Aside>
-        <Aside title="O piso protege o mago de Intelecto">
-          <P>
-            O Capítulo 1 promete dois magos legítimos: o <b>cirurgião</b> (Intelecto alto, poucos tiros,
-            todos letais) e o <b>reator</b> (Espírito alto, bombardeia o dia inteiro). Sem o piso o primeiro
-            não conseguiria nem conjurar a assinatura da própria escola no rank alto — o custo das magias
-            cresce dez vezes ao longo da progressão, e a reserva de quem não investe em Espírito não
-            acompanha.
-          </P>
-          <P>
-            Na prática: se você tem Espírito 4 ou mais, o piso nunca entra na conta e você pode ignorá-lo.
-            Ele só existe pra quem largou Espírito pra investir em Intelecto — e garante que essa ficha
-            continue jogável até o Imperador.
+            pra bancar a assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, com troco pra
+            mais nada.
           </P>
         </Aside>
         <List
@@ -75,13 +152,21 @@ export default function Chapter4() {
             tenha largado aquele atributo no Sistema de Defeitos falharia em quase tudo no fim da campanha.
           </P>
         </Aside>
-        <Aside title="Por que a fórmula é essa, e não uma soma simples">
+        <Aside title="Por que o dobro, e por que 20">
           <P>
-            Com uma fórmula ingênua (só somar os dados), um Norte de Vigor 5 chegava ao Imperador com pouco
-            mais de 70 PV, contra um Imperador da Espada causando perto de 130 de dano por turno — o combate
-            acabava antes de o segundo personagem agir. Dobrar a Progressão e multiplicar a Vitalidade pelo
-            Bônus de Rank resolve isso: o mesmo Norte chega ao Imperador com mais de 220 PV, e o combate dura
-            de duas a três rodadas em qualquer patamar — tempo pro curandeiro agir e pro Escudos se interpor.
+            Somar os dados crus não funciona: um Norte de Vigor 5 chegaria ao Imperador com pouco mais de 70
+            PV, contra um Imperador da Espada causando perto de 130 de dano por turno — o combate acabaria
+            antes de o segundo personagem agir. Com o dobro, o mesmo Norte chega ao Imperador perto de 240 PV,
+            e a luta dura de duas a três rodadas em qualquer patamar: tempo pro curandeiro agir e pro Escudos
+            se interpor. Os 20 de base são o que sustenta um personagem de 1º patamar antes de o treino pesar.
+          </P>
+          <P>
+            <b>O que esta fórmula substituiu:</b> até 2026-08-29 os PV eram a soma de três termos diferentes
+            — uma &ldquo;Constituição Base&rdquo; com piso, uma &ldquo;Progressão&rdquo; dobrada que ainda
+            tinha uma exceção só pro primeiro dado da Árvore Inicial, e uma &ldquo;Vitalidade&rdquo;
+            multiplicada pelo Bônus de Rank. Três contas, um piso e um caso especial pra chegar num número
+            que esta faz em um passo, com diferença média de 9 PV. A curva do jogo é a mesma; o que sumiu foi
+            a chance de errar a conta.
           </P>
         </Aside>
       </Section>
@@ -106,11 +191,15 @@ export default function Chapter4() {
             ["Desequilibrado", "Deslocamento reduzido à metade, não pode usar mais de uma Reação por rodada, e sofre Desvantagem em ataques de oportunidade. Dura até o fim do próximo turno do alvo, salvo instrução contrária da habilidade."],
             ["Em Chamas", "No início de cada um dos seus turnos, sofre 1d6 de dano ígneo (ou o valor que a habilidade que ateou o fogo especificar). Apaga submergindo em água, ficando Molhado, ou gastando 1 Ação inteira rolando no chão (teste de Agilidade CD 10)."],
             ["Envenenado", "Desvantagem em ataques e em testes de atributo enquanto durar."],
+            ["Estagnação (Fluxo Interrompido)", "Uma das duas faces do Fluxo Interrompido. Dentro da barreira, toda magia custa +1 PM por Bônus de Rank de quem a ergueu, e ninguém recupera PM por meio nenhum — nem descanso, nem item, nem habilidade."],
+            ["Fonte (Fluxo Interrompido)", "A outra face do Fluxo Interrompido. Você e seus aliados dentro da barreira recuperam 1 PM no início de cada um dos seus turnos; quem não é seu aliado sofre Estagnação normalmente."],
+            ["Fluxo Interrompido", "A barreira decide como a mana se move lá dentro. Ao erguer uma barreira você escolhe uma das duas faces — Estagnação ou Fonte — e ela vale pela duração inteira. Nunca as duas."],
             ["Incapacitado", "Não pode tomar Ações nem Reações. Mais severo que Atordoado: não termina sozinho no fim do turno — só quando a fonte específica disser como remover."],
             ["Marcado", "Quem te marcou sabe seu PV aproximado, suas resistências e se você veste Touki, e ignora Cobertura parcial ao te atacar. Dura até ser removido pela habilidade que o concedeu, ou até você ficar fora do alcance dela por um Descanso Longo inteiro."],
             ["Molhado", "Dano de frio contra você é dobrado. Desvantagem em testes de resistência contra magias de gelo de quem te molhou. Fogo aplicado a um alvo Molhado evapora a água em vez de acender."],
             ["Paralisado", "Incapaz de agir e de se mover; falha automaticamente em testes de resistência de Força e Agilidade. Ataques corpo a corpo contra você são críticos automáticos se o atacante estiver adjacente."],
             ["Petrificado", "Vira pedra (ou material equivalente): Incapacitado, imune a veneno e doença, e Resistência a todo dano enquanto durar. Reverter exige a fonte específica que petrificou, ou magia de rank igual ou superior."],
+            ["Selado", "Dentro da barreira, nenhuma criatura conjura magia de rank SUPERIOR ao rank em Barreira de quem a ergueu — um Selado de rank Avançado permite magia até Avançado e barra Santo pra cima. Tentar mesmo assim gasta as Ações e o PM e falha. Não impede técnicas de Touki, ataques com arma nem habilidades de Utilidade: Selado é sobre mana, e só."],
             ["Preso", "Deslocamento reduzido a 0. Ataques contra você têm Vantagem; seus ataques têm Desvantagem. Solta-se gastando 1 Ação num teste (Atributo e CD definidos por quem prendeu)."],
             ["Quebrantado", "Acumulável: cada acúmulo dá −1 na CA e −1 no dano de todos os seus ataques, até o máximo do Bônus de Rank de quem aplicou. Não é ferimento — magia de Cura não remove. Some com um Descanso Curto, ou dura até o fim do combate, o que vier primeiro."],
             ["Surdo", "Falha automaticamente em testes que dependam de audição. Não consegue usar Conjuração Padrão nem Encurtada (exigem cântico verbal) — só Conjuração Silenciosa continua funcionando pra você."],
@@ -145,8 +234,26 @@ export default function Chapter4() {
             se perde, e você recomeça do zero.
           </P>
           <P>
-            <b>Interrupção:</b> se sofrer dano enquanto conjura, faça um teste de Espírito (CD 10 ou metade
-            do dano sofrido, o que for maior). Falhar significa perder o cântico e o PM investido.
+            <b>Interrupção:</b> se sofrer dano enquanto conjura, faça um teste de Espírito contra{" "}
+            <b>CD 10 + o Bônus de Rank de quem te acertou</b> (CD 11 contra um Principiante, CD 16 contra um
+            Imperador; use 12 se não houver um responsável claro). Falhar significa perder o cântico e o PM
+            investido. É a mesma lógica do Fio da Vida (seção 6): quem te acertou decide o quanto é difícil
+            continuar, não o tamanho do número que ele rolou.
+          </P>
+        </Aside>
+        <Aside title="Por que a CD não é metade do dano">
+          <P>
+            Até 2026-08-29 a regra acima era &ldquo;CD 10 ou metade do dano sofrido, o que for maior&rdquo;.
+            Ela não sobrevive à própria progressão do livro: o dano cresce sem teto (uma criatura de patamar
+            Imperador bate perto de 120 por turno, Apêndice G), enquanto o teste cresce até um limite duro —
+            Espírito no teto (8) mais metade do Bônus de Rank (3) dá +11, num d20. Qualquer golpe acima de 62
+            de dano exigia 20 natural; acima de 82, nada bastava.
+          </P>
+          <P>
+            O resultado era que magia de 4, 5 e 6 Ações — que este capítulo passa uma seção inteira ensinando
+            a dividir entre turnos — ficava impossível de conjurar exatamente nos patamares em que ela existe.
+            Amarrar a CD ao <i>Rank</i> de quem acertou mantém a tensão (você precisa mesmo de alguém segurando
+            a linha) sem transformar o Imperador de magia numa classe que não pode agir.
           </P>
         </Aside>
         <Aside title="Testes Resistidos (Disputas)">
@@ -222,7 +329,10 @@ export default function Chapter4() {
         <P>
           No início de cada um dos seus turnos a 0 PV, role 1d20 + Vigor contra{" "}
           <b>CD 8 + o Bônus de Rank de quem te derrubou</b> (CD 9 contra um Principiante, CD 14 contra
-          um Imperador; use 10 se não houver um responsável claro, como uma queda ou um desabamento):
+          um Imperador; use 10 se não houver um responsável claro, como uma queda ou um desabamento). É um
+          teste de resistência de Vigor como qualquer outro, então <b>A Escala do Vigor</b> (seção 1) vale
+          aqui: Constituição Frágil rola com Desvantagem, e Corpo Quebrado rola com Desvantagem, sem o Bônus
+          de Rank, e sofre a Falha Crítica em 1 ou 2.
         </P>
         <List
           items={[
@@ -244,6 +354,20 @@ export default function Chapter4() {
           acordar do Fio da Vida cobra um preço: você volta com <b>1 nível de Exaustão</b> (seção 8 deste
           capítulo) até fazer um Descanso Longo.
         </P>
+
+        <Aside title="Ferida Fresca">
+          <P>
+            Toda a Magia de Cura cura <b>em dobro</b> contra uma Ferida Fresca, e o termo aparecia em oito
+            habilidades sem nunca ser definido. Ferida Fresca é o dano sofrido <b>no turno atual ou no turno
+            imediatamente anterior</b> — a janela em que a carne ainda não começou a fechar sozinha.
+          </P>
+          <P>
+            É por isso que o curandeiro age cedo, e não depois: a mesma magia que devolve 55 PV a quem caiu
+            agora devolve 27 a quem caiu há três turnos. <i>Selar a Ferida</i> (Cura, 1º patamar) existe
+            exatamente pra esticar essa janela para uma hora — e sim, uma Ferida Selada continua contando
+            como Fresca.
+          </P>
+        </Aside>
 
         <SubTitle id="cap4-cicatrizes">Cicatrizes de Quase-Morte</SubTitle>
         <Warning title="Quando a Morte Quase Ganha">
@@ -275,10 +399,28 @@ export default function Chapter4() {
         <BookTable
           headers={["Descanso", "Recupera"]}
           rows={[
-            ["Curto (1 a 2 horas)", "Metade dos seus PM e PT máximos, arredondado pra baixo. Não recupera PV nem PP."],
-            ["Longo (8 horas de sono seguro)", "Todos os PM, PT e PP; remove 1 nível de Exaustão; recupera PV iguais ao seu Vigor + 1d8 (mínimo 2)."],
+            ["Curto (1 a 2 horas)", "Metade dos seus PM máximos e TODOS os seus PT (arredondado pra baixo). Não recupera PV nem PP. No máximo dois Descansos Curtos entre dois Descansos Longos."],
+            ["Longo (8 horas de sono seguro)", "Todos os PM, PT e PP; remove 1 nível de Exaustão; recupera PV iguais ao seu Vigor + 1d8 (mínimo 2). Corpo Quebrado (Vigor -2) recupera sempre o mínimo — ver A Escala do Vigor, seção 1."],
           ]}
         />
+        <Warning title="Dois Curtos por dia, e nem um a mais">
+          <P>
+            Sem esse teto, o Descanso Curto quebra o livro inteiro: ele devolve metade da reserva de PM, e a
+            Magia de Cura converte PM em PV. Um curandeiro de 1º patamar com <i>Juramento</i> cura 14 PV por
+            1 PM — a reserva de 12 PM vira 168 PV, e cada Curto acrescenta mais 84, indefinidamente. Um grupo
+            de quatro personagens de 1º patamar tem cerca de 144 PV somados: bastava descansar duas horas a
+            mais e a mesa voltava inteira.
+          </P>
+          <P>
+            Com dois Curtos por dia, a reserva diária do curandeiro fica em duas vezes o máximo dele, PV
+            volta a ser finito, e o Aviso abaixo — a promessa de que um grupo sem curandeiro sangra na
+            segunda luta — volta a ser verdade. É a premissa de que este capítulo inteiro depende.
+          </P>
+          <P>
+            <b>PT são a exceção</b>, e voltam inteiros em qualquer Descanso Curto: é o que o Capítulo 3 já
+            dizia, e a tabela acima contradizia. O Touki é fôlego, não mana — recupera-se sentando.
+          </P>
+        </Warning>
         <Warning title="A Carne Não Fecha Sozinha">
           <P>Um corte não some porque você dormiu. As três únicas formas de recuperar PV de verdade:</P>
           <List

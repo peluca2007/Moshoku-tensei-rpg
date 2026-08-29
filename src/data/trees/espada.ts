@@ -12,7 +12,7 @@ export const ESPADA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d10+4",
+      hpDiceFormula: "1d8+3",
       weaponDieSteps: 1,
       mastery: {
         name: "Quem Se Move Primeiro",
@@ -20,7 +20,7 @@ export const ESPADA_TREE: Tree = {
           "Empates de Iniciativa sempre são seus. No primeiro turno de qualquer combate, seu primeiro ataque tem Vantagem e rola o Dado de Arma uma vez a mais. Você nunca fica Surpreso enquanto empunhar espada e estiver consciente.",
       },
       talents: [
-        { id: "braco-de-ferro", name: "Braço de Ferro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
+        { id: "braco-de-ferro", name: "Braço de Ferro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "fio-perfeito", name: "Fio Perfeito", paCost: 1, description: "Sua arma nunca lasca, entorta ou quebra por meios mundanos, e ataques contra objetos/estruturas causam dano dobrado." },
         { id: "pavio-curto-espada", name: "Pavio Curto", paCost: 1, description: "Vantagem em Intimidação, Desvantagem em qualquer teste social que exija paciência." },
       ],
@@ -73,7 +73,7 @@ export const ESPADA_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d12+4",
+      hpDiceFormula: "1d10+3",
       weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
@@ -83,7 +83,7 @@ export const ESPADA_TREE: Tree = {
       },
       talents: [
         { id: "punho-duplo", name: "Punho Duplo", paCost: 1, description: "Você empunha arma de duas mãos com uma só, sem penalidade, e ganha +1 grau de Dado quando usa as duas mãos." },
-        { id: "aco-rapido", name: "Aço Rápido", paCost: 1, description: "+2 PT Máximos." },
+        { id: "aco-rapido", name: "Aço Rápido", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
         { id: "cavaleiro-vencido", name: "Cavaleiro Vencido", paCost: 1, description: "Contra soldados, guardas e cavaleiros comuns, seus ataques acertam automaticamente com resultado 10 ou mais no dado." },
       ],
       abilities: [
@@ -129,7 +129,7 @@ export const ESPADA_TREE: Tree = {
     },
     {
       rank: "Avançado",
-      hpDiceFormula: "1d12+5",
+      hpDiceFormula: "1d10+4",
       weaponDieSteps: 2,
       ptGained: 1,
       mastery: {
@@ -138,7 +138,7 @@ export const ESPADA_TREE: Tree = {
           "Você recebe o Manto de Touki completo. Dois degraus de Dado de Arma neste patamar. Se você não se mover no turno, recebe 1 Ação adicional só para atacar.",
       },
       talents: [
-        { id: "folego-de-aco", name: "Fôlego de Aço", paCost: 2, description: "+3 PT Máximos." },
+        { id: "folego-de-aco", name: "Fôlego de Aço", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
         { id: "mira-no-osso", name: "Mira no Osso", paCost: 2, description: "Seus acertos críticos rolam o Dado de Arma três vezes em vez de duas." },
         { id: "espada-emprestada", name: "Espada Emprestada", paCost: 2, description: "Você recebe uma espada de qualidade superior: +1 degrau de Dado de Arma permanente, e ela conta como mágica." },
       ],
@@ -169,13 +169,13 @@ export const ESPADA_TREE: Tree = {
           paCost: 2,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Sempre que reduzir uma criatura a 0 PV, recupere imediatamente 1 PT e gaste 1 Ação extra ainda neste turno.",
+          effect: "Sempre que reduzir uma criatura a 0 PV, recupere imediatamente 1 PT e gaste 1 Ação extra ainda neste turno. Uma vez por turno.",
         },
       ],
     },
     {
       rank: "Santo",
-      hpDiceFormula: "2d6+5",
+      hpDiceFormula: "1d12+4",
       weaponDieSteps: 1,
       ptGained: 1,
       mastery: {
@@ -201,7 +201,7 @@ export const ESPADA_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "2d6+6",
+      hpDiceFormula: "1d12+5",
       weaponDieSteps: 2,
       ptGained: 1,
       mastery: {
@@ -245,13 +245,13 @@ export const ESPADA_TREE: Tree = {
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "2d8+6",
+      hpDiceFormula: "2d6+5",
       weaponDieSteps: 2,
       ptGained: 1,
       mastery: {
         name: "A Vitória de Quem Se Move Primeiro",
         description:
-          "Três degraus de Dado de Arma. Críticos ocorrem em 18-20. A primeira vez em cada combate que acertar uma criatura com PV cheios, role o Dado de Arma duas vezes o normal — isto NÃO se aplica a técnicas que já multiplicam o Dado de Arma por três ou mais (Espada de Luz, Espada de Luz Verdadeira): elas já são o pico do estilo e não empilham com esta Maestria. Você não pode ser Atrasado, Lentificado nem ter a Iniciativa reduzida.",
+          "Dois degraus de Dado de Arma. Críticos ocorrem em 18-20. A primeira vez em cada combate que acertar uma criatura com PV cheios, role o Dado de Arma duas vezes o normal — isto NÃO se aplica a técnicas que já multiplicam o Dado de Arma por três ou mais (Espada de Luz, Espada de Luz Verdadeira): elas já são o pico do estilo e não empilham com esta Maestria. Você não pode ser Atrasado, Lentificado nem ter a Iniciativa reduzida.",
       },
       talents: [],
       abilities: [

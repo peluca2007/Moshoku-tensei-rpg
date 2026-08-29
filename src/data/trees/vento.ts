@@ -21,7 +21,7 @@ export const VENTO_TREE: Tree = {
       talents: [
         { id: "pes-leves", name: "Pés Leves", paCost: RANK_PA_COST.talent.Principiante, description: "+3 metros de Deslocamento, e você não deixa pegadas nem faz ruído ao andar." },
         { id: "ouvido-do-vento", name: "Ouvido do Vento", paCost: RANK_PA_COST.talent.Principiante, description: "Você escuta qualquer conversa a até 60 metros, desde que exista ar entre vocês. Vantagem em Percepção auditiva." },
-        { id: "reserva-de-ar", name: "Reserva de Ar", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Vento. Comprável várias vezes, até o número de patamares." },
+        { id: "reserva-de-ar", name: "Reserva de Ar", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Vento. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
       ],
       abilities: [
         {
@@ -174,7 +174,7 @@ export const VENTO_TREE: Tree = {
           pmCost: 5,
           range: "Linha de 45 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "6d8 + BC (cortante, dobra contra Desequilibrado)" },
+          damage: { normal: "5d8 + BC (cortante, +2d8 contra Desequilibrado)" },
           effect: "Corta madeira, corda e tecido com facilidade; não corta pedra.",
         },
         {
@@ -280,7 +280,7 @@ export const VENTO_TREE: Tree = {
           pmCost: 20,
           range: "Linha de 3 km",
           actions: MAGIC_ACTIONS.Imperador,
-          damage: { normal: "16d10 + BC de dano cortante (dobrado contra Desequilibrado)" },
+          damage: { normal: "16d10 + BC de dano cortante (+6d10 contra Desequilibrado)" },
           effect: "Teste de Agilidade com Desvantagem Absoluta. Muralhas, torres e florestas na trajetória são cortadas ao meio, permanentemente.",
           incantation: "Um traço. Um só. E que tudo o que estiver do lado errado dele aprenda que estava do lado errado. Lâmina do Horizonte!",
         },
@@ -291,7 +291,7 @@ export const VENTO_TREE: Tree = {
           pmCost: 18,
           range: "Esfera de 60m",
           actions: MAGIC_ACTIONS.Imperador,
-          damage: { normal: "18d12 dividido igualmente entre ígneo, sônico e contundente" },
+          damage: { normal: "12d12 dividido igualmente entre ígneo, sônico e contundente" },
           effect: "Requer 1 patamar em Fogo. Teste de Vigor com Desvantagem Absoluta para metade. Ignora Resistência aos três tipos. Não faz som no momento — ele chega depois, a quilômetros de distância.",
         },
       ],

@@ -1,15 +1,18 @@
 import { getRaceById } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
-import { diceAverage, diceMax } from "@/lib/dice";
+import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
 import {
-  ATTRIBUTE_CREATION_MAX,
+  ATTRIBUTE_CREATION_POINTS,
   ATTRIBUTE_PA_COST_PER_POINT,
   AttributeKey,
   ATTRIBUTES,
   CharacterData,
+  getVigorFactor,
+  ReserveGrant,
   GuildRank,
+  PV_BASE,
   RANK_BONUS,
   RANK_REQUIREMENTS,
   RANKS,
@@ -93,61 +96,112 @@ function getHighestRankBonus(state: StoreState, categoryFilter?: Tree["category"
 }
 
 /**
- * PV Máximos (Cap. 4, "Cálculos Vitais"): Constituição Base + Progressão + Vitalidade.
- * - Constituição Base = 10 + Vigor×3, mínimo 13.
- * - Progressão = soma de TODOS os dados de PV concedidos por toda árvore desbloqueada, DOBRADA.
- *   Na criação, o dado do 1º patamar da Árvore Inicial é sempre o valor MÁXIMO; os demais usam a média.
- * - Vitalidade = Vigor × Maior Bônus de Rank (de QUALQUER árvore) × 4.
+ * Soma dos Dados de PV de todos os patamares desbloqueados, DOBRADA — o "corpo
+ * treinado" da fórmula do Cap. 4, antes do Vigor entrar. Exportado porque a
+ * ficha mostra essa parcela separada do fator.
+ *
+ * O ×2 é o mesmo de sempre (Cap. 4 justifica: sem ele um Norte chega ao
+ * Imperador com ~70 PV contra ~130 de dano por turno e o combate acaba antes
+ * de o segundo personagem agir). O que saiu em 2026-08-29 foi o CASO ESPECIAL
+ * que existia aqui: o dado do 1º patamar da Árvore Inicial contava pelo valor
+ * máximo em vez da média. Além de ser a única exceção do livro a essa regra,
+ * ele fazia os PV Máximos dependerem de `startingTreeId` — trocar a Árvore
+ * Inicial numa ficha pronta mexia silenciosamente na vida. A constante
+ * PV_BASE (20, contra os 10..13 da Constituição Base antiga) absorve o que
+ * esse máximo entregava.
+ */
+/**
+ * Reserva concedida pelos talentos de árvore comprados (Cap. 1, "O Padrão das
+ * Reservas"). Até 2026-08-29 nenhum desses 24 talentos mexia num número da
+ * ficha: eram texto, e o jogador digitava o resultado à mão nos campos avulsos
+ * de PV/PM — o que também significava que a metade PT deles não tinha campo
+ * nenhum pra ser digitada.
+ *
+ * `hpPerRank`/`mpPerRank` escalam com quantos patamares você abriu NAQUELA
+ * árvore (é o que "por patamar seu nesta árvore" quer dizer); `pt` é fixo.
+ */
+function getTalentReserve(state: StoreState, field: keyof ReserveGrant): number {
+  return state.purchasedAbilities.reduce((sum, a) => {
+    if (a.kind !== "talent") return sum;
+    const def = getTreeById(a.treeId)
+      ?.ranks.find((r) => r.rank === a.rank)
+      ?.talents.find((t) => t.id === a.id);
+    const value = def?.grants?.[field];
+    if (!value) return sum;
+    if (field === "pt") return sum + value;
+    return sum + value * state.unlockedRanks.filter((u) => u.treeId === a.treeId).length;
+  }, 0);
+}
+
+export function getTrainedBody(state: StoreState): number {
+  const dados = state.unlockedRanks.reduce((total, unlocked) => {
+    const rankDef = getTreeById(unlocked.treeId)?.ranks.find((r) => r.rank === unlocked.rank);
+    return total + (rankDef ? diceAverage(rankDef.hpDiceFormula) : 0);
+  }, 0);
+  return PV_BASE + dados * 2;
+}
+
+/**
+ * PV Máximos (Cap. 4, "Cálculos Vitais") — UMA fórmula, sem piso e sem caso especial:
+ *
+ *   PV Máximos = (20 + 2 × soma dos Dados de PV dos seus patamares) × Fator de Vigor
+ *
+ * Substitui, em 2026-08-29, a soma de três termos heterogêneos (Constituição
+ * Base com piso + Progressão dobrada com exceção do 1º dado + Vitalidade
+ * multiplicada pelo Bônus de Rank). Ver getVigorFactor em types.ts pra
+ * calibragem e pro motivo de o lado negativo ser não-linear.
+ *
+ * Bônus fixos (raça, antecedente, sub-tabela) e PV comprados com PA entram
+ * DEPOIS do fator, de propósito: são placas de metal parafusadas no corpo, não
+ * constituição — se multiplicassem, um item viraria mais forte só por o dono
+ * ter Vigor alto.
  */
 export function getMaxHp(state: StoreState): number {
-  const vigor = getFinalAttribute(state, "vigor");
-  const constituicaoBase = Math.max(10 + vigor * 3, 13);
-
-  const startingTree = getTreeById(state.startingTreeId);
-  const startingFirstRank = startingTree?.ranks[0];
-
-  const progressaoBruta = state.unlockedRanks.reduce((total, unlocked) => {
-    const tree = getTreeById(unlocked.treeId);
-    const rankDef = tree?.ranks.find((r) => r.rank === unlocked.rank);
-    if (!rankDef) return total;
-    const isStartingFirstRank = tree?.id === state.startingTreeId && rankDef === startingFirstRank;
-    return total + (isStartingFirstRank ? diceMax(rankDef.hpDiceFormula) : diceAverage(rankDef.hpDiceFormula));
-  }, 0);
-
-  const vitalidade = vigor * getHighestRankBonus(state) * 4;
-
-  const computed = constituicaoBase + progressaoBruta * 2 + vitalidade + getFlatBonusSum(state, "maxHp") + state.bonusHp;
+  const fator = getVigorFactor(getFinalAttribute(state, "vigor"));
+  const natural = Math.floor(getTrainedBody(state) * fator);
+  // Talentos, bônus fixos e PV comprados com PA ficam FORA do Fator de Vigor: se
+  // entrassem, a mesma compra de 1 PA valeria 2,6× mais numa ficha de Vigor 8 —
+  // exatamente a "armadilha" que o Cap. 1 desenha contra ao padronizar reservas.
+  const computed =
+    natural + getTalentReserve(state, "hpPerRank") + getFlatBonusSum(state, "maxHp") + state.bonusHp;
   return state.overrides.maxHp ?? computed;
 }
 
 /**
- * PM Máximos (Cap. 4): (Espírito × Maior Bônus de Rank DE MAGIA) + 8, com um
- * PISO de (Maior Bônus de magia × 4) + 8.
+ * PM Máximos (Cap. 4) — UMA linha, sem cláusula escondida:
  *
- * Escolas de magia não concedem PM — a reserva inteira vem só desta fórmula.
- * Sem o ×2 que a fórmula usou até 2026-08-28: com ele, um Espírito alto
- * (até o teto de 8, Cap. 1 §2) rendia PM sobrando pra 4-7 casts da magia mais
- * forte do rank Imperador (custo até 20 PM) — bem acima do "no máximo umas 2
- * vezes" pretendido pro golpe mais forte de um personagem.
+ *   PM Máximos = (o maior entre o seu Espírito e 4) × Maior Bônus de Rank de Magia + 8
  *
- * O piso entrou em 2026-08-28 (auditoria de balanceamento) e conserta o outro
- * extremo, que passou despercebido: sem ele, o mago "cirurgião" que o Cap. 1
- * §1 promete explicitamente (Intelecto alto, Espírito baixo — "poucos tiros,
- * todos letais") ficava matematicamente impossível no rank alto. Com Espírito
- * 2, um Imperador tinha 2×6+8 = 20 PM, e a magia de assinatura da própria
- * escola custava mais que isso (Sol Menor 22, Corpo Íntegro 25) — ele
- * simplesmente não conseguia conjurá-la, nunca. A causa é o descompasso de
- * curva: o custo mediano das magias cresce ×10 do 1º ao 6º patamar (2 → 20
- * PM) e a reserva com Espírito 4 cresce só ×2,7 (12 → 32). O piso põe o
- * Imperador em 32 PM mesmo com Espírito 0, e é INVISÍVEL pra qualquer ficha
- * com Espírito >= 4 — o teto calibrado acima (Espírito 8 = 56 PM, ~2,2 casts
- * da magia mais cara) não muda em nada.
+ * Reescrita de 2026-08-29, e é uma reescrita de CLAREZA, não de balanceamento:
+ * a forma antiga era `max(Espírito × Bônus, Bônus × 4) + 8`, e como Bônus
+ * nunca é negativo, `max(E×B, 4B) ≡ B × max(E, 4)`. Os dois textos produzem
+ * exatamente o mesmo número pra toda ficha possível — a diferença é que este
+ * tem um "o que for maior" só, no lugar de um máximo entre dois produtos que
+ * a mesa precisava calcular duas vezes pra comparar.
+ *
+ * O porquê de cada metade continua valendo:
+ * - Sem o ×2 que a fórmula teve até 2026-08-28 — com ele, Espírito no teto (8)
+ *   rendia 4 a 7 casts da magia mais cara do Imperador, e o golpe mais forte
+ *   de um personagem deve sair "no máximo umas 2 vezes".
+ * - O `max(…, 4)` é o piso que mantém jogável o mago "cirurgião" que o Cap. 1
+ *   §1 promete (Intelecto alto, Espírito baixo). O custo mediano das magias
+ *   cresce ×10 do 1º ao 6º patamar (2 → 20 PM) e a reserva com Espírito 4
+ *   cresce só ×2,7; sem o piso, um Imperador de Espírito 2 tinha 20 PM e a
+ *   assinatura da própria escola custava mais que isso (Sol Menor 22, Corpo
+ *   Íntegro 25) — ele nunca conseguia conjurá-la. O piso é INVISÍVEL pra
+ *   qualquer ficha com Espírito >= 4.
+ *
+ * Escolas de magia não concedem PM: a reserva inteira vem daqui. Sem nenhum
+ * patamar de magia o Bônus é 0 e sobram os 8 PM de base — reserva latente que
+ * só serve pra itens e efeitos que peçam PM, já que um não-mago não tem magia
+ * nenhuma pra gastá-la.
  */
 export function getMaxMp(state: StoreState): number {
   const espirito = getFinalAttribute(state, "espirito");
   const maiorBonusMagia = getHighestRankBonus(state, "magia");
-  const natural = Math.max(espirito * maiorBonusMagia, maiorBonusMagia * 4) + 8;
-  const computed = natural + getFlatBonusSum(state, "maxMp") + state.bonusMp;
+  const natural = Math.max(espirito, 4) * maiorBonusMagia + 8;
+  const computed =
+    natural + getTalentReserve(state, "mpPerRank") + getFlatBonusSum(state, "maxMp") + state.bonusMp;
   return state.overrides.maxMp ?? computed;
 }
 
@@ -172,11 +226,18 @@ export function getPtPool(state: StoreState): number {
     const espirito = getFinalAttribute(state, "espirito");
 
     const plenoRanks = corpoRanks.filter((u) => RANKS.indexOf(u.rank) >= ptPlenoThresholdIndex(u.treeId));
-    if (plenoRanks.length === 0) return Math.max(vigor, 1);
+    if (plenoRanks.length === 0) return Math.max(vigor, 1) + getTalentReserve(state, "pt");
 
-    const crescimento = plenoRanks.reduce((sum, u) => sum + (u.treeId === "cavalaria-e-escudos" ? 2 : 1), 0);
+    // Crescimento vem do campo `ptGained` de cada patamar — antes era um
+    // `treeId === "cavalaria-e-escudos" ? 2 : 1` escrito à mão aqui, e o campo
+    // do dado ficava morto, só alimentando o catálogo. Os valores coincidiam,
+    // mas nada impedia que divergissem em silêncio numa edição futura.
+    const crescimento = plenoRanks.reduce((sum, u) => {
+      const rankDef = getTreeById(u.treeId)?.ranks.find((r) => r.rank === u.rank);
+      return sum + (rankDef?.ptGained ?? 1);
+    }, 0);
 
-    return vigor + espirito + crescimento;
+    return vigor + espirito + crescimento + getTalentReserve(state, "pt");
   }
 
   return state.overrides.maxPt ?? computeNatural();
@@ -194,15 +255,25 @@ export function getPpPool(state: StoreState): number {
     if (utilRanks.length === 0) return 0;
 
     const intelecto = getFinalAttribute(state, "intelecto");
-    let maxKeyAttribute = 0;
+    let segundoTermo = 0;
     let patamarBonus = 0;
     for (const u of utilRanks) {
       const key = UTILITY_KEY_ATTRIBUTE[u.treeId];
-      if (key) maxKeyAttribute = Math.max(maxKeyAttribute, getFinalAttribute(state, key));
+      if (key) {
+        // Quando o atributo-chave da árvore JÁ É Intelecto (Navegação e
+        // Liderança), ele não conta duas vezes — no lugar, entra o Bônus de
+        // Rank naquela árvore. Sem isso o Tático tinha a maior reserva de PP do
+        // livro (20 no Imperador, contra 15 do Bardo) investindo UM atributo
+        // onde as outras duas árvores de Utilidade investem dois.
+        segundoTermo = Math.max(
+          segundoTermo,
+          key === "intelecto" ? RANK_BONUS[u.rank] : getFinalAttribute(state, key)
+        );
+      }
       if (RANKS.indexOf(u.rank) >= RANKS.indexOf("Avançado")) patamarBonus += 1;
     }
 
-    return Math.max(intelecto + maxKeyAttribute, 1) + patamarBonus;
+    return Math.max(intelecto + segundoTermo, 1) + patamarBonus;
   }
 
   return state.overrides.maxPp ?? computeNatural();
@@ -341,13 +412,30 @@ export function getRankUnlockPaCost(treeId: string, rank: RankName): number {
   return rankDef?.unlockPaCostOverride ?? RANK_REQUIREMENTS[rank].paCost;
 }
 
-/** Cap. 1, seção 2: acima do máximo de criação (4), cada ponto de atributo custa PA (limite 8). */
+/**
+ * Cap. 1, §2: cada ponto de atributo comprado depois da criação custa 2 PA.
+ *
+ * Mede pela SOMA dos cinco atributos base contra os 4 pontos da criação, e
+ * não atributo a atributo. A versão anterior cobrava só o que passasse de 4
+ * em cada atributo isolado, e isso abria dois furos que a revisão do Cap. 1
+ * (2026-08-29) encontrou:
+ *
+ * 1. Um personagem com 4/4/4/4/4 — soma 20, contra os 4 pontos que a criação
+ *    distribui — custava ZERO PA, porque nenhum atributo passava de 4.
+ * 2. O Sistema de Defeitos virava lucro puro: largue Vigor em -2 na criação
+ *    pra embolsar 2 pontos, e depois suba Vigor de volta a 0 na ficha sem
+ *    pagar PA nenhum, porque o caminho de -2 até 4 era todo gratuito. O
+ *    defeito devolvia pontos permanentes e cobrava nada.
+ *
+ * Com a soma, subir qualquer atributo custa o mesmo em qualquer altura da
+ * escala, e recomprar um defeito custa exatamente os 2 PA por ponto que a
+ * tabela do Cap. 1 anuncia. ATTRIBUTE_CREATION_MAX continua sendo o teto por
+ * atributo na criação (checado no assistente), e ATTRIBUTE_HARD_CAP o teto
+ * absoluto de 8.
+ */
 export function getAttributePaCost(state: StoreState): number {
-  return ATTRIBUTES.reduce((sum, { key }) => {
-    const value = state.attributeBase[key] ?? 0;
-    const pointsAbove = Math.max(0, value - ATTRIBUTE_CREATION_MAX);
-    return sum + pointsAbove * ATTRIBUTE_PA_COST_PER_POINT;
-  }, 0);
+  const soma = ATTRIBUTES.reduce((sum, { key }) => sum + (state.attributeBase[key] ?? 0), 0);
+  return Math.max(0, soma - ATTRIBUTE_CREATION_POINTS) * ATTRIBUTE_PA_COST_PER_POINT;
 }
 
 /**

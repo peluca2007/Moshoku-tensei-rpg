@@ -115,7 +115,7 @@ export const TATICO_TREE: Tree = {
       talents: [
         { id: "foco-de-fogo", name: "Foco de Fogo", paCost: UTILITY_PA_COST.talent.Santo, description: "1 Ação: até o fim do turno, aliados que atacarem o alvo apontado somam seu Bônus de Rank ao dano." },
         { id: "prever-o-golpe", name: "Prever o Golpe", paCost: UTILITY_PA_COST.talent.Santo, description: "1 Reação: quando aliado a 18m for atingido, ele recebe +4 na CA contra aquele ataque, resolvido retroativamente." },
-        { id: "a-guerra-antes-da-guerra", name: "A Guerra Antes da Guerra", paCost: UTILITY_PA_COST.talent.Santo, description: "Gastando 2 PP, a força inimiga chegou em pior estado: reduza o número de inimigos em um terço, ou dê a todos 1 nível de Exaustão." },
+        { id: "a-guerra-antes-da-guerra", name: "A Guerra Antes da Guerra", paCost: UTILITY_PA_COST.talent.Santo, description: "Uma vez por Descanso Longo, gastando 2 PP: a força inimiga chegou em pior estado — reduza o número de inimigos em um terço, ou dê a todos 1 nível de Exaustão." },
         { id: "doutrina", name: "Doutrina", paCost: UTILITY_PA_COST.talent.Santo, description: "Escolha um estilo/escola: contra praticantes dele, aliados que ouvirem suas instruções recebem +2 na CA." },
       ],
       abilities: [

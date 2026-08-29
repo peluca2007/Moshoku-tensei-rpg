@@ -20,7 +20,7 @@ export const SUISHIN_TREE: Tree = {
           "Reação: quando uma criatura adjacente erra um ataque corpo a corpo contra você, você contra-ataca imediatamente com dano de arma normal, sem custo de PT. No Principiante, uma vez por rodada.",
       },
       talents: [
-        { id: "casco-de-tartaruga", name: "Casco de Tartaruga", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
+        { id: "casco-de-tartaruga", name: "Casco de Tartaruga", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "olho-na-mao", name: "Olho na Mão", paCost: 1, description: "Vantagem em Intuição para prever a próxima ação de uma criatura; o Mestre é obrigado a dar uma dica honesta." },
         { id: "paciencia-de-pedra", name: "Paciência de Pedra", paCost: 1, description: "Você é imune a Amedrontado e a efeitos que forcem você a agir contra a vontade. Provocação não funciona em você." },
       ],
@@ -82,7 +82,7 @@ export const SUISHIN_TREE: Tree = {
       },
       talents: [
         { id: "guarda-longa", name: "Guarda Longa", paCost: 1, description: "Seu alcance de Reação corpo a corpo aumenta para 3 metros." },
-        { id: "aco-calmo", name: "Aço Calmo", paCost: 1, description: "+2 PT Máximos." },
+        { id: "aco-calmo", name: "Aço Calmo", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
         { id: "nome-de-reidar", name: "Nome de Reidar", paCost: 1, description: "Seu cônjuge abandonou a própria casa pra estar com você — costume herdado da princesa. Você tem uma pessoa de lealdade absoluta no mundo." },
       ],
       abilities: [
@@ -161,9 +161,9 @@ export const SUISHIN_TREE: Tree = {
           name: "Correnteza",
           paCost: 2,
           ptCost: 1,
-          range: "Passivo",
+          range: "Contra-ataque de Fluxo",
           actions: { normal: 0 },
-          effect: "Cada contra-ataque de Fluxo que acertar na mesma rodada causa +1 Dado de Arma cumulativo: o terceiro do turno causa dois dados extras, o quarto causa três.",
+          effect: "Gaste 1 PT no início da sua rodada para ativar. Cada contra-ataque de Fluxo que acertar naquela rodada causa +1 Dado de Arma cumulativo, até o teto de +2 Dados de Arma num mesmo contra-ataque: o terceiro causa dois dados extras, e do quarto em diante o bônus permanece em dois.",
         },
         {
           id: "peso-da-agua",

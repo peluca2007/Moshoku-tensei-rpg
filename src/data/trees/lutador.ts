@@ -27,7 +27,7 @@ export const LUTADOR_TREE: Tree = {
           "Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência com toda arma pesada, de duas mãos e improvisada; empunhar arma de duas mãos com uma só custa apenas um degrau a menos. Você aplica a condição Quebrantado e usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar).",
       },
       talents: [
-        { id: "couro-grosso", name: "Couro Grosso", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
+        { id: "couro-grosso", name: "Couro Grosso", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "punho-de-mineiro", name: "Punho de Mineiro", paCost: 1, description: "Seus ataques desarmados causam dano letal e contam como arma pesada para qualquer efeito." },
         { id: "sem-vergonha", name: "Sem Vergonha", paCost: 1, description: "Você pega qualquer objeto do cenário e o usa como arma pesada (d6, todos os seus degraus); ele quebra depois de três acertos." },
       ],
@@ -89,7 +89,7 @@ export const LUTADOR_TREE: Tree = {
       },
       talents: [
         { id: "maos-grandes", name: "Mãos Grandes", paCost: 1, description: "Você agarra criaturas de qualquer tamanho e carrega o dobro de peso." },
-        { id: "folego-de-fosso", name: "Fôlego de Fosso", paCost: 1, description: "+2 PT Máximos." },
+        { id: "folego-de-fosso", name: "Fôlego de Fosso", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
         { id: "cicatriz-velha", name: "Cicatriz Velha", paCost: 1, description: "Enquanto estiver com metade ou menos dos PV, seus ataques ganham +1 Dado de Arma." },
       ],
       abilities: [
@@ -197,7 +197,7 @@ export const LUTADOR_TREE: Tree = {
           id: "colheita",
           name: "Colheita",
           paCost: 3,
-          description: "Cada criatura reduzida a 0 PV por você devolve 1 PT e permite mover-se 3m sem gastar Ação.",
+          description: "Cada criatura reduzida a 0 PV por você devolve 1 PT e permite mover-se 3m sem gastar Ação; uma vez por turno, permite também um ataque ou agarrão extra.",
         },
         {
           id: "peso-absoluto-lutador",
@@ -254,7 +254,7 @@ export const LUTADOR_TREE: Tree = {
         {
           id: "prensa",
           name: "Prensa [Impacto]",
-          paCost: 3,
+          paCost: 4,
           ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 1 },
@@ -285,13 +285,13 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 5,
           range: "Corpo a corpo",
           actions: { normal: 2 },
-          damage: { normal: "Dado de arma rolado cinco vezes + 1d12 por acúmulo de Quebrantado do alvo" },
+          damage: { normal: "Dado de arma rolado cinco vezes + 1d12 por acúmulo de Quebrantado do alvo, até o seu Bônus de Rank em acúmulos" },
           effect: "Uma vez por combate. Acerta automaticamente e ignora CA, Cobertura, escudo e Manto de Touki.",
         },
         {
           id: "terremoto-pessoal",
           name: "Terremoto Pessoal [Peso]",
-          paCost: 4,
+          paCost: 5,
           ptCost: 4,
           range: "Esfera de 18m",
           actions: { normal: 2 },

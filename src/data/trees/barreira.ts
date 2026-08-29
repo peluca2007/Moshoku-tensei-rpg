@@ -20,7 +20,7 @@ export const BARREIRA_TREE: Tree = {
           "Você desenha barreiras (1 Ação + PM da magia), esferas centradas num ponto à sua escolha. Sustenta uma por vez, aplicando Selado e a condição de Fluxo Interrompido que você escolher. Você vê mana: barreiras, encantamentos, itens mágicos e invisibilidade mágica aparecem como contorno luminoso, sem custo.",
       },
       talents: [
-        { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Barreira. Comprável várias vezes, até o número de patamares." },
+        { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Barreira. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
         { id: "circulo-portatil", name: "Círculo Portátil", paCost: RANK_PA_COST.talent.Principiante, description: "Sua barreira passa a se mover com você, centrada no seu corpo, em vez de ficar fixa num ponto." },
         { id: "mao-de-giz", name: "Mão de Giz", paCost: RANK_PA_COST.talent.Principiante, description: "Você desenha círculos permanentes em superfícies. Leva 1 hora e o dobro do PM, mas a barreira fica lá depois que você for embora." },
       ],
@@ -221,7 +221,7 @@ export const BARREIRA_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d10+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "Anulação",
         description:
@@ -250,13 +250,13 @@ export const BARREIRA_TREE: Tree = {
           pmCost: 14,
           range: "45 metros",
           actions: MAGIC_ACTIONS.Rei,
-          effect: "Teste de Espírito com Desvantagem (CD 8 + BC). Falha: selada numa redoma de 3m por 1 hora, isolada e sem agir. Só libertável por você ou por Dissipar de rank Imperador.",
+          effect: "Teste de Espírito com Desvantagem (CD 8 + BC). Falha: selada numa redoma de 3m por 1 hora, isolada e sem agir. Criaturas de patamar igual ou superior ao seu repetem o teste ao fim de cada um dos seus turnos. Só libertável por você ou por Dissipar de rank Imperador.",
         },
       ],
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "1d10+4",
+      hpDiceFormula: "1d8+4",
       mastery: {
         name: "Lei Local",
         description:

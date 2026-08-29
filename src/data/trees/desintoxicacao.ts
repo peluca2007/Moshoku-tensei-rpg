@@ -20,8 +20,8 @@ export const DESINTOXICACAO_TREE: Tree = {
           "Tocando, cheirando ou provando qualquer substância, você sabe exatamente o que ela é, e identifica a Profundidade de qualquer aflição que veja, inclusive em cadáveres. Você é imune a veneno mundano.",
       },
       talents: [
-        { id: "reserva-do-purificador", name: "Reserva do Purificador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Desintoxicação. Comprável várias vezes, até o número de patamares." },
-        { id: "herborista", name: "Herborista", paCost: RANK_PA_COST.talent.Principiante, description: "Fora de combate, com uma hora e material, reduza a Profundidade de uma aflição em 1 sem gastar PM." },
+        { id: "reserva-do-purificador", name: "Reserva do Purificador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Desintoxicação. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
+        { id: "herborista", name: "Herborista", paCost: RANK_PA_COST.talent.Principiante, description: "Fora de combate, com uma hora e material, reduza a Profundidade de uma aflição em 1 sem gastar PM. No máximo uma vez por aflição por Descanso Longo." },
         { id: "mao-que-nao-contamina", name: "Mão que Não Contamina", paCost: RANK_PA_COST.talent.Principiante, description: "Você não pode ser envenenado, infectado ou amaldiçoado por contato ao manusear aquilo que está tratando ou extraindo." },
       ],
       abilities: [
@@ -62,7 +62,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
           damage: { normal: "2d6 de dano ao alvo" },
-          effect: "Reduz em 1 a Profundidade de uma aflição sem removê-la, ao custo do dano acima.",
+          effect: "Reduz em 1 a Profundidade de uma aflição sem removê-la, ao custo do dano acima. No máximo uma vez por aflição por Descanso Longo.",
         },
         {
           id: "estomago-de-ferro",
@@ -97,7 +97,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 4,
           range: "9 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "Remove uma aflição de Profundidade 2 ou menor, ou reduz em 2 a Profundidade de qualquer aflição.",
+          effect: "Remove uma aflição de Profundidade 2 ou menor, ou reduz em 2 a Profundidade de qualquer aflição — a redução, no máximo uma vez por aflição por Descanso Longo.",
         },
         {
           id: "muro-esteril",
@@ -139,7 +139,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       talents: [
         { id: "purificador-de-guerra", name: "Purificador de Guerra", paCost: RANK_PA_COST.talent.Avançado, description: "Muro Estéril e Quarentena passam a cobrir o dobro da área e a durar o dobro do tempo." },
         { id: "extracao-refinada", name: "Extração Refinada", paCost: RANK_PA_COST.talent.Avançado, description: "Aflições extraídas por você sobem 1 de Profundidade ao serem aplicadas em outra criatura." },
-        { id: "corpo-recusado", name: "Corpo Recusado", paCost: RANK_PA_COST.talent.Avançado, description: "Você é imune a veneno e doença de qualquer origem, mágica ou não, e nunca sobe de Profundidade em nada." },
+        { id: "corpo-recusado", name: "Corpo Recusado", paCost: RANK_PA_COST.talent.Avançado, description: "Você é imune a veneno e doença não-mágicos, e a Profundidade de qualquer aflição sobe em você na metade da velocidade normal." },
       ],
       abilities: [
         {

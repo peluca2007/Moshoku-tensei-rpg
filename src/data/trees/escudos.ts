@@ -28,7 +28,7 @@ export const ESCUDOS_TREE: Tree = {
           "Você desbloqueia 'Sob Minha Guarda': designe aliados (até seu Bônus de Rank) como protegidos; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim por PT). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo, e com escudo recebe +2 na CA além do normal.",
       },
       talents: [
-        { id: "ombro-de-pedra", name: "Ombro de Pedra", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Comprável várias vezes, até o número de patamares." },
+        { id: "ombro-de-pedra", name: "Ombro de Pedra", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "montaria", name: "Montaria", paCost: 1, description: "Você monta, treina e acalma qualquer besta de carga. Sobre ela, você não cai por efeito que permita teste, e sua montaria também está Sob Sua Guarda." },
         { id: "sono-de-ferro", name: "Sono de Ferro", paCost: 1, description: "Você dorme de armadura completa sem penalidade e acorda pronto. Vantagem contra Exaustão por marcha ou vigília." },
       ],
@@ -38,6 +38,7 @@ export const ESCUDOS_TREE: Tree = {
           name: "Muralha de Um",
           signature: true,
           paCost: 2,
+          ptCost: 1,
           range: "3 metros",
           actions: { normal: 1 },
           effect: "Até o início do próximo turno, você não pode se mover, e aliados a até 3m recebem Cobertura Superior (+5 CA) e Resistência a dano de área. Você não recebe nenhum benefício.",
@@ -80,13 +81,13 @@ export const ESCUDOS_TREE: Tree = {
       },
       talents: [
         { id: "dois-escudos", name: "Dois Escudos", paCost: 1, description: "Você empunha um escudo em cada mão: +2 na CA adicional, e não pode atacar." },
-        { id: "folego-de-sentinela", name: "Fôlego de Sentinela", paCost: 1, description: "+2 PT Máximos." },
+        { id: "folego-de-sentinela", name: "Fôlego de Sentinela", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
         { id: "a-porta-sou-eu", name: "A Porta Sou Eu", paCost: 1, description: "Enquanto bloquear uma passagem de até 3m, criaturas Médias ou menores não atravessam sem antes te derrubar." },
       ],
       abilities: [
         {
           id: "aguentar",
-          name: "Aguentar",
+          name: "Aguentar o Baque",
           signature: true,
           reaction: true,
           paCost: 2,
@@ -136,7 +137,7 @@ export const ESCUDOS_TREE: Tree = {
       talents: [
         { id: "casco-escudos", name: "Casco", paCost: 2, description: "Você tem Resistência a dano físico de armas mundanas enquanto empunhar escudo." },
         { id: "guarda-ampla", name: "Guarda Ampla", paCost: 2, description: "O número de aliados Sob Sua Guarda passa a ser o dobro do seu Bônus de Rank." },
-        { id: "aco-paciente", name: "Aço Paciente", paCost: 2, description: "+4 PT Máximos." },
+        { id: "aco-paciente", name: "Aço Paciente", paCost: 2, description: "+4 PT Máximos." , grants: { pt: 4 } },
       ],
       abilities: [
         {
@@ -246,7 +247,7 @@ export const ESCUDOS_TREE: Tree = {
         {
           id: "ordem-de-recuo",
           name: "Ordem de Recuo",
-          paCost: 3,
+          paCost: 4,
           ptCost: 2,
           range: "18 metros",
           actions: { normal: 1 },
@@ -282,7 +283,7 @@ export const ESCUDOS_TREE: Tree = {
         {
           id: "aco-inquebravel",
           name: "Aço Inquebrável",
-          paCost: 4,
+          paCost: 5,
           ptCost: 4,
           range: "Pessoal",
           actions: { normal: 1 },
