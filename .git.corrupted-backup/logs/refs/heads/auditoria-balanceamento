@@ -1,0 +1,5 @@
+0000000000000000000000000000000000000000 0f5a97a2b5d5684842a7f2c050ec030d7cb90bad peluca2007 <peluca2007@users.noreply.github.com> 1787958551 -0300	branch: Created from HEAD
+0f5a97a2b5d5684842a7f2c050ec030d7cb90bad dc8fa5951e3142bd14b71b5259178e7237385d66 peluca2007 <peluca2007@users.noreply.github.com> 1787958591 -0300	commit: fix(regras): auditoria de balanceamento — PM, escada de dados, raças e antecedentes
+dc8fa5951e3142bd14b71b5259178e7237385d66 fcaa3c886ec65d5a78565d1d0c96a7b68a29b8a5 peluca2007 <peluca2007@users.noreply.github.com> 1787958626 -0300	commit: fix(ui): tipografia real, contraste AA e foco de teclado
+fcaa3c886ec65d5a78565d1d0c96a7b68a29b8a5 cbfed750cc2f26686371409012a1f3f0708a693e peluca2007 <peluca2007@users.noreply.github.com> 1787958648 -0300	commit: feat(criacao): Entrevista com dois modos, e loteria que respeita raridade
+cbfed750cc2f26686371409012a1f3f0708a693e 4da3408d6d5351678fc6ccba725cdd3bc30a37a4 peluca2007 <peluca2007@users.noreply.github.com> 1787958666 -0300	commit: docs: templates de issue/PR, README com stack comentada e o porquê de cada mudança

@@ -1,6 +1,6 @@
 # Mushoku Tensei RPG — Progresso do Site
 
-Última atualização: 2026-08-28 (2ª sessão do dia) — **Auditoria de balanceamento + acessibilidade**,
+Última atualização: 2026-08-31 — **Rework do Escudeiro (linha Puro Escudo) + Espíritos e Feras (Filhote Evolutivo + preparo estrito) + 9 Magias Combinadas oficiais**. O Escudeiro perdeu Escudo Robusto/Dois Escudos e ganhou o talento "Puro Escudo" (1 PA) que abre uma linha inteira de habilidades "Soberanas" em todos os ranks — quem compra Puro Escudo não empunha arma de dano (só escudo) e ganha versões mais fortes de Golpe de Escudo, Provocar Ódio, Aguentar, Não Ele, Custe o Que Custar e Muro Final. Os Pactos ganharam o "Filhote Evolutivo" (mais fraco que os outros Pactos no Principiante, evolui com PA nos ranks seguintes: Forma Média + Sentidos no Intermediário, Forma Suprema no Avançado). Invocação agora é estritamente por círculo desenhado (10 min de preparo) — o talento "Convocar sob Pressão" no Principiante (1 PA) libera invocação em combate a custo de 6 Ações e criatura com metade dos PV e um degrau a menos no dado; o talento "Convocação Aprimorada" no Avançado reduz pra 4 Ações sem penalidade. Por fim, 9 Magias Combinadas formais foram adicionadas ao livro (Magma, Gelo Tempestuoso, Relâmpago Santo, Barreira Incandescente, Tempestade de Cura, Pânico, Muralha de Espinhos, Nevasca Curativa, Meteoro) — antes a regra era 100% "Mestre inventa"; agora as fusões canônicas têm custo, dano e efeito definidos em `src/data/combinedSpells.ts`.
 com as fórmulas recalculadas a partir de `src/data/` em vez das tabelas escritas à mão do livro. Sete
 correções de regra e seis de UI, todas aplicadas; `.github/` criado do zero. Detalhes de cada uma em
 "Decisões de design". Os dois achados que mais importam: **um mago de Espírito baixo no rank
@@ -207,6 +207,29 @@ um.
 
 ## Decisões de design (pra não esquecer o porquê)
 
+### Rework Puro Escudo, Feras e Magias Combinadas (2026-08-31)
+
+- **Linha "Puro Escudo" no Escudeiro.** "Dois Escudos" e "Escudo Robusto" saíram. No lugar, o talento "Puro Escudo" (1 PA no Principiante) abre uma linha inteira de versões Soberanas em todos os ranks: Golpe de Escudo Soberano (P, 2d8 + empurra 6m + marca de cobertura), Provocar Ódio Soberano (P, CD+2 e dura 2 turnos), Aguentar Soberano (I, 2d10 e recupera PT se zerar), Escudo de Corpo Inteiro (I talento, +2 CA e Meia-Cobertura pra aliados adjacentes), Não Ele Soberano (A, alcança qualquer aliado e reduz 1d10+Vig), Custe Soberano (S, cura o aliado e dá 2d12 de absorção), Muro Final Soberano (Imp, 0 PT, 3 aliados imunes e você não morre: cai a 1 PV e explode em 4d10+Vig). Restrição: quem tem Puro Escudo NÃO pode empunhar arma de dano (só escudo/escudo grande).
+- **Filhote Evolutivo & Vínculo Concentrado (Espíritos e Feras).**
+  Adicionado no Principiante como Pacto mais fraco (1d4 garras, PV = 10×MB,
+  ajuda 1x/turno). Ranks seguintes trazem os talentos de evolução: "Evolução:
+  Forma Média" no Intermediário (garras 2d8+BC, 15×MB de PV, truque de
+  Derrubar/Desarmar), "Evolução: Sentidos Aguçados" no Intermediário (visão no
+  escuro 18m, faro com Vantagem, alerta telepático) e "Evolução: Forma Suprema"
+  no Avançado (4d8 elemental, 25×MB de PV, Resistência física e conjura magia
+  menor). No Intermediário, o talento **"Vínculo Concentrado"** permite gastar
+  o PM do limite máximo de invocados em um único bicho para torná-lo um mini-boss:
+  +2d de dano, +10 PV por Rank e Resistência Mágica.
+- **Invocação: regra estrita de círculo + talento de emergência.** Invocação
+  padrão agora exige círculo desenhado com antecedência (10 min fora de
+  combate). O talento "Convocar sob Pressão" no Principiante (1 PA) libera
+  invocar no meio da luta: custa 6 Ações (distribuíveis em turnos), o
+  invocado vem com metade dos PV e dado de dano reduzido em 1 degrau. "Traço
+  Rápido" permite desenhar círculo em 1 Ação pagando o dobro do PM. No Avançado,
+  o talento "Convocação Aprimorada" (2 PA) reduz o custo da emergência pra 4
+  Ações e remove as penalidades de PV e dano.
+- **9 Magias Combinadas oficiais.** Antes o livro só dizia "Mestre inventa". Agora `src/data/combinedSpells.ts` define nove fusões clássicas: Magma (Fogo+Terra Santo), Gelo Tempestuoso (Água+Vento Santo), Relâmpago Santo (Água+Cura Santo), Barreira Incandescente (Barreira+Fogo Santo), Tempestade de Cura (Cura+Água Santo), Pânico (Fogo+Vento Santo), Muralha de Espinhos (Terra+Fogo Santo), Nevasca Curativa (Água+Cura Rei) e Meteoro (Fogo+Terra Imperador). Cada uma com custo de PA, PM, Ações, dano e efeito fixos. Cap. 2 do livro agora puxa dessa tabela.
+
 ### Auditoria de balanceamento (2026-08-28, 2ª sessão)
 
 Todas achadas recalculando as fórmulas a partir de `src/data/`, não lendo as tabelas do livro — é
@@ -402,7 +425,61 @@ Cap. 1 §2 — e medidos em **dois ranks**, porque é aí que estava o problema 
   degraus quase colados num documento de 5 capítulos + 7 apêndices faziam capítulo, seção e subseção
   parecerem o mesmo nível.
 
-### Decisões anteriores
+### Nerf de criação (2026-08-30, 4 pedidos do usuário)
+
+Quatro ajustes cirúrgicos, todos no caminho entre criação e 2º patamar (onde a curva tava mais inflada):
+
+- **`PV_BASE` 20 → 14 + multiplicador `×2` → `×1.67`.** A fórmula original
+  (`PV_BASE + 2×dados`) inflava o Escudeiro em Vigor alto: com Vigor 4
+  (fator 1,8), `14 + 2×18 = 50`, `50×1,8 = 90 PV` com 5 PA — exatamente o
+  caso que o usuário mostrou. O `×1,67` é o meio-termo entre o `×2`
+  original e o `×1,5` testado (Escudeiro 73 PV no mesmo caso, queda de
+  19% sobre o original, ainda apertado pelo usuário). Mantém a
+  proporcionalidade entre classes (árvore com dado maior continua dando
+  mais PV) e tira o "andar pra cima e dobrar" que inflava a reserva
+  inteira. Tabela com Vigor 0, acumulado até o patamar: Escudeiro
+  27/44/64 PV (P→A); Lutador 28/43/61; Espada 27/41/57; Magia de Água
+  21/29/39; Terra 24/35/48.
+- **PM com cap nos 2 primeiros ranks.** A fórmula original
+  (`max(Espírito, 4) × MB + 8 + talentos + bônus`) virava 12-16 PM no
+  Principiante/Intermediário, e um mago que comprou talentos Nascente de
+  Mana/Reserva do Curandeiro + bônus PA chegava a 22-30 PM — bem acima
+  do "no máximo 4 casts" pedido. Agora, quando `MB ≤ 2`, o cap é
+  `4 × MB + 8 + talento + racial` (12-13 PM sem nada, 14-17 com talento,
+  até 17 com Migurd). O cap só corta o que vem "por fora": `bonusMp`
+  (PA avulso do Cap. 1 §2) e `maxMp` fixo de antecedente/sub-tabela.
+  Talentos de árvore (`mpPerRank`) e bônus racial ESCALAR (Elfo ×2,
+  Migurd ×3) entram normalmente — são investimento consciente da raça e
+  do rank, não compra avulsa. Acima do 2º patamar (`MB ≥ 3`), a fórmula
+  antiga entra inteira — o teto calibrado do Imperador (32 PM com
+  Espírito 4) não muda.
+- **Escudeiro (Cavalaria e Escudos) nerf + re-equilíbrio.** Quatro mudanças
+  no 1º/2º patamar, mais um talento novo e um buff simétrico:
+  - `1d10+4 → 1d8+3` no Principiante e `1d12+4 → 1d10+4` no Intermediário
+    (média 3,5 PV a menos no primeiro, 4 PV no segundo). Empatou com o
+    Lutador, não passou à frente.
+  - Maestria "Interpor" do Principiante: `+2 na CA com escudo` → `+1`, e
+    `proteger até Bônus de Rank aliados` → `1 aliado`. Sem o +2, um
+    Principiante de Agilidade 0 com escudo vai de CA 13 pra CA 12.
+  - Kit inicial: Armadura Média → Armadura Leve (+3 CA → +1 CA). O
+    "Escudeiro com CA 16 na primeira sessão" desapareceu — virou escolha
+    consciente (compra na loja com o dinheiro do antecedente), não
+    pacote grátis. Quem quer subir a CA compra talento ou compra a
+    armadura média de verdade.
+  - Limite de protegidos: 1 (P) / 2 (I) / 3 (A). Avançado+ mantém
+    como estava.
+  - **Buff "Ombro de Pedra":** `+2 PV por patamar` → `+4 PV por patamar +
+    +1 PT Máximo fixo`. É o talento-tank por contrato: 1 PA no P rende
+    +4 × 6 patamares + 1 PT até o Imperador. Compensa o nerf global de
+    PV sem inflar o piso.
+  - **Talento novo "Escudo Robusto" (Principiante, 1 PA):** empunhar
+    escudo grande com as duas mãos dá +3 CA adicional (não +2) e
+    Vantagem contra empurrão/agarrão/queda. Restrição: não dá pra
+    empunhar outra arma ao mesmo tempo, mas Golpe de Escudo continua
+    disponível. Coexiste com "Dois Escudos" do Intermediário, que
+    passou a empilhar +3 CA (não +2) em cima de Escudo Robusto — o
+    talento do P virou a forma base pra carregar dois.
+- **Point-buy de criação 4 → 2 pontos, sem desconto de Raça/Antecedente.** Antes, um Ogro (+2 For) com o Wizard podia abrir o jogo em Força 4 sem pagar nada pelo +2 que a raça dava — e ainda tinha 4 pontos livres pra distribuir em outros atributos. Resultado: a Raça mais forte saía do cap de criação sem tradeoff. Agora o jogador distribui 2 pontos e os bônus de Raça/Antecedente/sub-tabela são empilhados POR FORA (não consomem orçamento). O Ogro continua começando com Força alta, mas tem menos onde botar o resto. O Sistema de Defeitos continua devolvendo +1/+2 pelos -1/-2, então a soma dos cinco atributos base fecha em 2 de qualquer jeito — o cap do livro continua valendo, só que apertado.
 
 - **PA é informativo, não um orçamento travado.** Quem decide quanto PA cada ficha tem é o
   Mestre, fora do site. `canUnlockRank`/`canPurchaseAbility` só checam pré-requisito, nunca saldo.

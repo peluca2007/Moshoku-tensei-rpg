@@ -47,3 +47,6 @@ next-env.d.ts
 
 # rascunho antigo do livro (Homebrewery/Markdown), substituído por livro.typ
 livro em txt.txt
+
+# claude code - configuração local, não deve ser versionada
+.claude/settings.local.json

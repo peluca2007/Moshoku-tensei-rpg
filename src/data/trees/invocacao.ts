@@ -30,16 +30,17 @@ export const INVOCACAO_TREE: Tree = {
       mastery: {
         name: "O Primeiro Círculo",
         description:
-          "Você desenha círculos e mantém 1 Pacto ativo por vez. Um invocado permanece por 1 hora ou até 0 PV (não pode ser chamado de novo até o próximo Descanso Longo). Invocados têm PV = 10 × seu Bônus de Rank e usam o seu BC para acertar e para CD. Você entende e é entendido por qualquer criatura com Pacto, sem idioma comum.",
+          "Você aprende a fechar acordos com criaturas invocáveis e a desenhar círculos. Mantém 1 Pacto ativo por vez (sobe nos ranks seguintes). Um invocado permanece 1 hora ou até cair a 0 PV (não pode ser invocado de novo até o próximo Descanso Longo). PV do invocado = 10 × seu Bônus de Rank e eles usam o seu BC para acertar e para CD. Você entende e é entendido por qualquer criatura com quem tenha Pacto, sem idioma comum.",
       },
       talents: [
+        { id: "convocar-sob-pressao", name: "Convocar sob Pressão", paCost: RANK_PA_COST.talent.Principiante, description: "Você pode invocar um Pacto em combate sem círculo prévio: consome 6 Ações (distribuíveis em turnos), o invocado surge com metade dos PV normais e reduz seu dado de dano em um degrau. Sem este talento, a única forma de invocar em combate é já ter um círculo desenhado no chão." },
+        { id: "pacto-filhote", name: "Pacto: Filhote Evolutivo", paCost: RANK_PA_COST.talent.Principiante, description: "Você invoca um filhote de fera (1d4 garras, PV = 10 × seu Bônus de Rank). Ele não luta, mas pode executar uma Ação de ajuda por turno. Você pode gastar PA em ranks superiores pra evoluir o filhote." },
         { id: "pacto-lobo-cinzento", name: "Pacto: Lobo Cinzento", paCost: RANK_PA_COST.talent.Principiante, description: "3d8 mordida, deslocamento 12m, rastreia por cheiro com Vantagem. Se outro aliado estiver adjacente ao alvo, derruba." },
         { id: "pacto-corvo-mensageiro", name: "Pacto: Corvo Mensageiro", paCost: RANK_PA_COST.talent.Principiante, description: "Frágil (metade dos PV), voa 18m. Você vê e ouve pelo que ele vê e ouve a qualquer distância. Não luta." },
         { id: "pacto-salamandra", name: "Pacto: Salamandra", paCost: RANK_PA_COST.talent.Principiante, description: "2d8 mordida + 2d6 ígneo, imune a fogo, aplica Em Chamas. Acende fogueiras e derrete fechaduras; do tamanho de um gato." },
         { id: "pacto-espirito-de-pedra", name: "Pacto: Espírito de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "3d6 soco, Resistência a dano físico, Deslocamento 6m. Não recua nunca. Serve para segurar uma porta." },
         { id: "reserva-do-invocador", name: "Reserva do Invocador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Invocação. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
-        { id: "traco-rapido", name: "Traço Rápido", paCost: RANK_PA_COST.talent.Principiante, description: "Desenhar um círculo em combate passa a custar o PM normal, sem o dobro." },
-        { id: "circulo-guardado", name: "Círculo Guardado", paCost: RANK_PA_COST.talent.Principiante, description: "Você carrega um círculo pré-desenhado. Usá-lo dispensa o tempo de desenho, e ele aguenta três invocações antes de se apagar." },
+        { id: "traco-rapido", name: "Traço Rápido", paCost: RANK_PA_COST.talent.Principiante, description: "Você pode desenhar um círculo em combate como 1 Ação, gastando o dobro do PM normal da invocação. Não precisa do talento Convocar sob Pressão, mas ainda exige que a invocação pague o PM dobrado como penalidade." },
       ],
       abilities: [
         {
@@ -48,11 +49,11 @@ export const INVOCACAO_TREE: Tree = {
           signature: true,
           paCost: RANK_PA_COST.signature.Principiante,
           pmCost: 3,
-          range: "Círculo",
+          range: "Círculo desenhado",
           actions: { normal: 1 },
           effect:
-            "Invoca uma criatura com quem você tenha Pacto. Ela surge no círculo e age a partir do próximo turno. Invocar um Pacto acima do Principiante custa PM adicional: +3 PM por patamar de diferença (Intermediário 6, Avançado 9, Santo 12, Rei 15). Desenhar o círculo custa 10 minutos fora de combate, ou 1 Ação e o dobro do PM no meio da luta.",
-          incantation: "Eu desenhei o caminho e paguei a passagem. Venha, e o que for combinado será cumprido. Chamado!",
+            "Invoca uma criatura com quem você tenha Pacto. Por padrão, exige um círculo desenhado com antecedência (10 min de preparo fora de combate). O invocado surge e age a partir do próximo turno. Invocar um Pacto acima do Principiante custa +3 PM por patamar de diferença (Intermediário 6, Avançado 9, Santo 12, Rei 15).",
+          incantation: "O elo foi selado no solo. Venha a mim, força que atende ao meu chamado! Venha!",
         },
       ],
     },
@@ -65,13 +66,15 @@ export const INVOCACAO_TREE: Tree = {
           "2 Pactos ativos ao mesmo tempo. Você vê pelos olhos de qualquer invocado seu, gastando 1 Ação, a qualquer distância (seu corpo fica Cego enquanto isso). Ordens específicas passam a custar 1 Ação para todos os seus invocados de uma vez.",
       },
       talents: [
+        { id: "evolucao-forma-media", name: "Evolução: Forma Média", paCost: RANK_PA_COST.talent.Intermediário, description: "Requer Pacto: Filhote Evolutivo. Seu filhote cresce (Médio): garras 2d8 + BC, PV = 15 × seu Bônus de Rank, e aprende um truque de combate (pode Derrubar ou Desarmar com 1 Ação)." },
+        { id: "evolucao-sentidos-agucados", name: "Evolução: Sentidos Aguçados", paCost: RANK_PA_COST.talent.Intermediário, description: "Requer Pacto: Filhote Evolutivo. Seu filhote ganha visão no escuro 18m, faro aguçado (Vantagem em Percepção) e transmite alertas telepáticos pra você." },
+        { id: "vinculo-concentrado", name: "Vínculo Concentrado", paCost: RANK_PA_COST.talent.Intermediário, description: "Você pode focar toda a mana de múltiplos invocados em um único pacto ativo. Se invocar apenas uma criatura gastando o PM total que você teria disponível para o seu limite de invocação atual (ex: 2 invocados = gasta PM de 2), o bicho ganha: +2d no dado de dano, +10 PV por Bônus de Rank e Resistência a dano mágico." },
         { id: "pacto-urso-das-cavernas", name: "Pacto: Urso das Cavernas", paCost: RANK_PA_COST.talent.Intermediário, description: "4d10 garra, Grande, empurra 3m a cada acerto. Absorve dano por você." },
         { id: "pacto-serpente-de-nevoa", name: "Pacto: Serpente de Névoa", paCost: RANK_PA_COST.talent.Intermediário, description: "Ataque com veneno (Vigor ou Envenenado). Move-se por qualquer fresta; invisível em terreno enevoado." },
         { id: "pacto-espirito-do-vento", name: "Pacto: Espírito do Vento", paCost: RANK_PA_COST.talent.Intermediário, description: "Não ataca. Concede Voo (18m) a um aliado que ele toque, enquanto durar a invocação." },
         { id: "pacto-grifo", name: "Pacto: Grifo", paCost: RANK_PA_COST.talent.Intermediário, description: "Voa 24m, 3d10 garra, e carrega uma pessoa." },
         { id: "sangue-no-circulo", name: "Sangue no Círculo", paCost: RANK_PA_COST.talent.Intermediário, description: "Você pode pagar o PM de uma invocação com PV, na razão de 2 PV por 1 PM." },
         { id: "vontade-firme", name: "Vontade Firme", paCost: RANK_PA_COST.talent.Intermediário, description: "Invocados seus são imunes a Amedrontado e não podem ser dominados, expulsos ou dissipados por efeito de patamar inferior ao do próprio Pacto invocado." },
-        { id: "companhia", name: "Companhia", paCost: RANK_PA_COST.talent.Intermediário, description: "Um invocado à sua escolha permanece 8 horas em vez de 1." },
       ],
       abilities: [
         {
@@ -95,6 +98,8 @@ export const INVOCACAO_TREE: Tree = {
           "3 Pactos ativos. Invocar deixa de exigir círculo desenhado: gaste 1 Ação e trace no ar. Invocados passam a ter PV = 15 × seu Bônus de Rank e recebem seu Bônus de Rank no dano. Desbloqueia Magia Combinada.",
       },
       talents: [
+        { id: "convocacao-aprimorada", name: "Convocação Aprimorada", paCost: RANK_PA_COST.talent.Avançado, description: "Requer Convocar sob Pressão. A invocação de emergência custa apenas 4 Ações e o invocado NÃO sofre penalidade nos PV ou no dano." },
+        { id: "evolucao-forma-imortal", name: "Evolução: Forma Suprema", paCost: RANK_PA_COST.talent.Avançado, description: "Requer Evolução: Forma Média. Seu filhote atinge o auge (Grande ou Voador): 4d8 dano elementar ou físico, PV = 25 × seu Bônus de Rank, ganha Resistência a dano físico e pode conjurar uma magia menor da sua árvore." },
         { id: "pacto-quimera", name: "Pacto: Quimera", paCost: RANK_PA_COST.talent.Avançado, description: "Três cabeças, três ataques por turno de 2d8 cada, um deles com sopro elemental à sua escolha ao invocar." },
         { id: "pacto-espirito-antigo", name: "Pacto: Espírito Antigo", paCost: RANK_PA_COST.talent.Avançado, description: "Não luta. Responde uma pergunta por invocação sobre algo que aconteceu antes de você nascer — verdadeira, ainda que enviesada." },
         { id: "pacto-golem-de-guerra", name: "Pacto: Golem de Guerra", paCost: RANK_PA_COST.talent.Avançado, description: "Enorme, 6d8 por golpe, Resistência a todo dano físico, Deslocamento 6m. Não pode ser movido nem derrubado." },

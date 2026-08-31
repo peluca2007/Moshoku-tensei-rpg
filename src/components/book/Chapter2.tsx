@@ -1,6 +1,15 @@
 import { RANKS } from "@/lib/types";
 import { MAGIC_ACTIONS } from "@/data/trees/shared";
+import { COMBINED_SPELLS } from "@/data/combinedSpells";
+import { getTreeById } from "@/data/trees";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+
+function tex(s: string): string {
+  return s
+    .replace(/&/g, "&")
+    .replace(/</g, "<")
+    .replace(/>/g, ">");
+}
 
 function actionsCell(rank: (typeof RANKS)[number]) {
   const a = MAGIC_ACTIONS[rank];
@@ -156,38 +165,26 @@ export default function Chapter2() {
         <SubTitle>Magia Combinada</SubTitle>
         <P>
           Magias Combinadas são feitiços compostos por duas ou mais magias de ataque conjuradas em
-          sequência, cujo resultado é maior que a soma das partes. Nova Congelante é literalmente Vento +
-          Água/Gelo; Vapor Seco é Vento + Fogo.
+          sequência, cujo resultado é maior que a soma das partes. O sistema detalhado e os efeitos
+          fixos destas magias estão documentados na tabela abaixo — a fusão oficial de cada pilar.
         </P>
         <P>
-          <b>Requisito:</b> rank Avançado ou superior em <b>ambas</b> as escolas envolvidas — o mesmo portão
-          que a seção seguinte usa pra qualquer par de árvores. Nenhum mago abaixo de Avançado combina coisa
-          nenhuma, e não existe combinar uma escola que você domina com outra que você mal começou: a magia
-          composta exige que as duas metades estejam maduras.
+          <b>Requisito:</b> rank Avançado ou superior em <b>ambas</b> as escolas envolvidas.
+          Nenhuma destas magias é aprendida por PA; elas são destravadas pela Maestria do rank
+          Avançado e cada uma custa PA igual ao custo da assinatura na árvore-primária + 1.
         </P>
-        <List
-          items={[
-            "Conjure as duas magias no mesmo turno ou em turnos consecutivos.",
-            "Pague o PM e as Ações de ambas.",
-            "O resultado é uma terceira magia, com efeito próprio.",
-          ]}
-        />
         <BookTable
-          headers={["Combinação", "Resultado", "Efeito"]}
-          rows={[
-            ["Respingos de Água + Campo de Gelo", "Nova Congelante", "Todos na área ficam Molhados e imediatamente Congelados, sem teste. Dano 4d8 de frio."],
-            ["Tempestade + qualquer magia de Fogo", "Névoa Escaldante", "Esfera de 18m de vapor. Escuridão total + 1d6 de dano ígneo por turno a quem estiver dentro."],
-            ["Canhão de Água + Lâmina de Gelo", "Serra d'Água", "A linha do Canhão passa a causar dano cortante e ignora metade da CA de armaduras não-mágicas."],
-            ["Cumulonimbus + Nevasca", "Inverno Rasgado", "A tempestade vira granizo. Toda criatura na área de 1,5 km sofre 2d6 de frio por turno, sem teste."],
-            ["Muralha de Pedra + qualquer magia de Fogo", "Vidro Cortante", "A muralha derrete e resolidifica em lâminas de vidro. Quem tocar ou atravessar sofre 3d8 cortante; a muralha perde metade dos PV Máximos."],
-            ["Lama Viva (Terra) + Respingos de Água", "Areia Movediça Instantânea", "Esfera de 9m vira lodo: Deslocamento reduzido à metade e teste de Força (CD 8 + BC) ou fica Atolado até a cintura, sem teste de dano."],
-            ["Cordilheira (Terra) + Ciclone (Vento)", "Tempestade de Poeira", "Esfera de 18m: Cego pra quem estiver dentro, e projéteis mundanos erram automaticamente até a poeira baixar (1 minuto)."],
-          ]}
+          headers={["Combinação", "Primária", "Efeito"]}
+          rows={COMBINED_SPELLS.map((s) => [tex(s.name), tex(getTreeById(s.primaryTreeId)?.name ?? ""), tex(s.effect)])}
         />
+        <P>
+          Para combinações ad-hoc (não documentadas na tabela), a regra de ouro do Mestre vale:
+        </P>
         <Aside title="Regra de Ouro para o Mestre">
           Se o jogador descrever uma combinação que faz sentido físico, deixe funcionar e invente o efeito na
           hora. Este sistema recompensa quem pensa como cientista — foi assim que Rudeus criou metade do
-          arsenal dele. A mesma regra vale pra toda a seção abaixo, não só pra Magia Combinada.
+          arsenal dele. A mesma regra vale pra toda a seção abaixo (Combinações Além da Magia), não só pra
+          Magia Combinada.
         </Aside>
 
         <SubTitle>Combinações Além da Magia</SubTitle>

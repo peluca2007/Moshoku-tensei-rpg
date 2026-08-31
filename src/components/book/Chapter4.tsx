@@ -14,7 +14,7 @@ export default function Chapter4() {
           em qualquer árvore. As fórmulas abaixo são as que valem sempre, do 1º patamar ao Imperador; a ficha
           recalcula os dois números automaticamente a cada Rank novo.
         </P>
-        <Aside title="PV Máximos = (20 + o dobro dos seus Dados de PV) × Fator de Vigor">
+        <Aside title="PV Máximos = (14 + 1,67 × soma dos seus Dados de PV) × Fator de Vigor">
           <P>
             Uma linha, dois passos, nenhuma exceção:
           </P>
@@ -23,17 +23,23 @@ export default function Chapter4() {
               <span key="c">
                 <b>1. O corpo treinado.</b> Some os Dados de PV de <b>todos</b> os patamares que você
                 desbloqueou, em todas as árvores (use a média de cada dado, ou role, se a mesa preferir),
-                <b> dobre o resultado</b> e some <b>20</b>. Esses 20 são o corpo com que todo mundo nasce.
+                <b> multiplique por 1,67</b> e some <b>14</b>. Esses 14 são o corpo com que todo
+                mundo nasce.
               </span>,
               <span key="v">
-                <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonde
+                <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonte
                 pra baixo. <b>Cada ponto positivo de Vigor soma 20% à sua vida inteira.</b>
               </span>,
             ]}
           />
           <P>
-            É só isso. Não existe piso, não existe um dado que conta em dobro, e nenhum patamar novo muda a
-            forma da conta — desbloquear um Rank só acrescenta mais um Dado de PV ao passo 1.
+            É só isso. Não existe piso, e nenhum patamar novo muda a forma da conta — desbloquear um Rank só
+            acrescenta mais um Dado de PV ao passo 1. Os talentos de reserva (&ldquo;+N PV por
+            patamar&rdquo;) entram somados DEPOIS do Fator de Vigor: se multiplicassem, uma compra de 1 PA
+            valeria 2,6× mais numa ficha de Vigor 8 — exatamente a armadilha que o Cap. 1 desenha contra ao
+            padronizar reservas. Tabela de referência com Vigor 0 (acumulado até o
+            patamar): Escudeiro 27/44/64 PV (P→A); Lutador 28/43/61; Espada 27/41/57; Magia de Água
+            21/29/39; Terra 24/35/48.
           </P>
         </Aside>
 
@@ -74,6 +80,17 @@ export default function Chapter4() {
             2 teria 20 PM e a assinatura da própria escola custaria mais que isso — ele nunca conseguiria
             conjurá-la. Se você tem Espírito 4 ou mais, essa metade da regra nunca entra na conta: é só{" "}
             <b>Espírito × Bônus + 8</b>.
+          </P>
+          <P>
+            <b>Cap nos 2 primeiros ranks.</b> Enquanto o Maior Bônus de Rank de magia for 1 ou 2
+            (Principiante/Intermediário), a reserva TOTAL não pode passar de{" "}
+            <b>4 × MB + 8 + talento + racial</b> — o que dá 12 PM sem nada, 14 com Nascente de Mana, 17
+            com Migurd. É o equivalente numérico do &ldquo;no máximo 4 casts&rdquo; da assinatura do
+            rank (1 PM no Principiante, 3 PM no Intermediário). O cap corta só o que entra por fora da
+            árvore: PA avulso da seção 2, antecedente e sub-tabela. Talento de árvore
+            (mpPerRank) e bônus racial ESCALAR (Elfo ×2, Migurd ×3) entram normalmente. A partir do 3º
+            rank (Avançado, MB=3) o cap some e a fórmula antiga entra inteira — o teto do Imperador
+            (32 PM com Espírito 4) não muda.
           </P>
           <P>
             Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6+8 = <b>44 PM</b> — o suficiente
@@ -558,6 +575,23 @@ export default function Chapter4() {
             marcha forçada: isso não é ferimento, é privação, e só sai resolvendo a causa.
           </P>
         </Warning>
+
+        <SubTitle id="cap4-reacoes-combate">Reações e Ações Defensivas em Combate</SubTitle>
+        <P>
+          O combate do sistema tem 3 Ações por turno e 1 Reação por rodada. Abaixo estão as opções
+          básicas que qualquer personagem tem acesso, mesmo sem habilidades específicas:
+        </P>
+        <BookTable
+          headers={["Ação / Reação", "Custo", "Efeito"]}
+          rows={[
+            ["Ataque de Oportunidade", "1 Reação", "Disparado quando uma criatura hostil sai do seu alcance corpo a corpo sem usar a ação de Desengajar. Você realiza um ataque corpo a corpo comum."],
+            ["Desengajar", "1 Ação", "Seu movimento neste turno não provoca Ataques de Oportunidade."],
+            ["Esquivar", "1 Ação", "Até o início do seu próximo turno, você tem Vantagem em testes de resistência e o PRIMEIRO ataque contra você na rodada sofre Desvantagem. Demais ataques ocorrem normalmente."],
+            ["Defender / Absorver", "1 Ação", "Você foca em absorver o impacto. O atacante recebe Vantagem na rolagem de acerto do PRIMEIRO ataque contra você na rodada. Se acertado, o dano desse único ataque é reduzido por sua mitigação base: (Vigor × 2) + Bônus de Rank do maior Estilo de Corpo (ou 0 se não tiver). Demais ataques no turno causam dano integral."],
+            ["Bloquear com Escudo", "1 Reação", "Ao ser atingido por um ataque físico que você veja, gasta sua Reação para somar a CA do seu escudo contra aquele único ataque. Se isso fizer o ataque errar, o dano é anulado."],
+            ["Ajudar", "1 Ação", "Concede Vantagem no próximo teste de perícia ou de ataque de um aliado adjacente até o início do seu próximo turno."],
+          ]}
+        />
 
         <SubTitle id="cap4-fome-sede">Fome e Sede</SubTitle>
         <List

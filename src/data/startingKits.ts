@@ -32,10 +32,18 @@ export const STARTING_KITS: StartingKit[] = [
   },
   {
     subgroup: "Tank / Defensor",
+    // 2026-08-30: nerf — Armadura Média (+3 CA) caiu pra Armadura Leve (+1 CA).
+    // O Escudeiro já ganha +1 CA da Maestria "Interpor" no Principiante, então
+    // um Principiante de Agilidade 0 com escudo + armadura leve fica em
+    // CA 12, não CA 14 — uma diferença pequena em número, grande em chance
+    // de ser acertado. O investimento real em CA virou escolha consciente:
+    // pra subir, ou compra armadura média, ou compra talento (Dois Escudos
+    // no Intermediário, Escudo Robusto no Principiante), ou espera a
+    // Maestria de rank superior.
     items: [
       { name: "Escudo", type: "armadura", acBonus: 2 },
       { name: "Espada Curta", type: "arma", baseDie: "d6" },
-      { name: "Armadura Média", type: "armadura", acBonus: 3 },
+      { name: "Armadura Leve", type: "armadura", acBonus: 1 },
     ],
   },
   {
