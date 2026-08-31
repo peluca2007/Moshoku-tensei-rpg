@@ -14,8 +14,8 @@ export default function Appendices() {
         <List
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
-            "PV (Cap. 4, §1): corpo treinado (20 + o dobro dos dados de PV dos 12 ranks dela, nas 4 árvores = 20 + 142 = 162) × Fator de Vigor 2 (×1,40) = 226 PV",
-            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — o maior entre Espírito 5 e 4, vezes o Bônus do Santo de Água (4), + 8 = 28, mais os +6 PM fixos da raça Migurd = 34 PM",
+            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × soma dos dados de PV dos 12 ranks dela, nas 4 árvores ≈ 14 + 93 = 107) × Fator de Vigor 2 (×1,40) = 150 PV",
+            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os PM do Migurd (3 × MB = 12) = 40 PM (acima do cap de Santo, então vale inteiro)",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
             "Maestrias de Água: Afinidade Aquática, Cântico Fluido, Termodinâmica Aplicada, Domínio Climático",
@@ -25,7 +25,7 @@ export default function Appendices() {
         />
         <P>
           Leitura da ficha: ela acerta praticamente qualquer coisa, tem uma reserva de mana que sustenta um
-          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 198 PV é bastante
+          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 150 PV é bastante
           numa conta isolada, mas fica baixo perto de um personagem do Corpo com a mesma quantidade de Ranks
           investidos, cujos dados de PV por patamar são bem maiores. É exatamente isso que ela é na história —
           uma professora genial dentro de um corpo frágil, que sobrevive porque nunca deixa ninguém chegar
@@ -34,7 +34,7 @@ export default function Appendices() {
         </P>
         <P>
           Repare no que o Fator de Vigor faz aqui: com Vigor 2 ela multiplica por 1,40. Se tivesse largado
-          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 162 viraria 64 PV —
+          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 107 viraria 42 PV —
           e um único golpe de espadachim Santo resolveria a luta. É o tipo de troca que a Escala do Vigor
           (Cap. 4, §1) existe pra tornar visível antes de a ficha ser fechada.
         </P>

@@ -19,7 +19,10 @@ function attributeBudget(base: Record<AttributeKey, number>) {
   const values = Object.values(base);
   const hasMinusOne = values.some((v) => v === -1);
   const hasMinusTwo = values.some((v) => v === -2);
-  const budget = 4 + (hasMinusOne ? 1 : 0) + (hasMinusTwo ? 2 : 0);
+  // 2026-08-30: 2 pontos livres no point-buy. Bônus de Raça/Antecedente não
+  // entram aqui — são por fora do orçamento, não concorrem com ele. Sistema de
+  // Defeitos continua devolvendo +1/+2 pelos -1/-2 (fecha a soma em 2).
+  const budget = 2 + (hasMinusOne ? 1 : 0) + (hasMinusTwo ? 2 : 0);
   const spent = values.reduce((sum, v) => sum + Math.max(0, v), 0);
   return { budget, spent, remaining: budget - spent };
 }
@@ -176,9 +179,10 @@ export default function CreationWizard() {
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Distribua seus atributos</h2>
             <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">
-              Cap. 1, seção 1 — 4 pontos pra distribuir, máximo {ATTRIBUTE_CREATION_MAX} por atributo na criação. Reduzir um atributo a -1 dá +1
-              ponto extra; reduzir um (outro) a -2 dá +2 pontos extras. Depois da criação, cada ponto novo custa 2 PA —
-              inclusive pra desfazer um defeito.
+              Cap. 1, seção 1 — 2 pontos pra distribuir, máximo {ATTRIBUTE_CREATION_MAX} por atributo na criação. Bônus de Raça
+              e Antecedente não entram aqui, são por fora do orçamento (você RECEBE eles em cima do que distribuir).
+              Reduzir um atributo a -1 dá +1 ponto extra; reduzir um (outro) a -2 dá +2 pontos extras. Depois da criação, cada ponto
+              novo custa 2 PA — inclusive pra desfazer um defeito.
             </p>
             {/* Vigor não governa perícia nenhuma (Cap. 1, §4), então era o dump stat ótimo de toda ficha. A Escala do Vigor (Cap. 4) é o contrapeso, e o jogador precisa vê-la ANTES de largar o atributo, não depois. */}
             {(character.attributeBase.vigor ?? 0) < 0 && (

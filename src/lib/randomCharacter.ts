@@ -103,16 +103,19 @@ export function rollRandomBackground(): string {
 }
 
 /**
- * Sorteia uma distribuição de atributos respeitando o Cap. 1: 4 pontos base, com chance de
+ * Sorteia uma distribuição de atributos respeitando o Cap. 1: 2 pontos base, com chance de
  * pegar o defeito de -1 (ganha +1 ponto) e, só se já pegou o de -1, chance de pegar o de -2
  * num atributo diferente (ganha +2 pontos). Distribui o orçamento resultante aleatoriamente,
  * respeitando o teto de criação (4) por atributo.
+ *
+ * 2026-08-30: 4 → 2 pontos pra alinhar com o point-buy manual. Bônus de Raça/Antecedente
+ * NÃO entram aqui (são empilhados por fora, em sorteio separado ou escolha manual).
  */
 export function rollRandomAttributes(): Record<AttributeKey, number> {
   const keys = ATTRIBUTES.map((a) => a.key);
   const base: Record<AttributeKey, number> = { forca: 0, agilidade: 0, vigor: 0, intelecto: 0, espirito: 0 };
 
-  let budget = 4;
+  let budget = 2;
   const shuffled = [...keys].sort(() => Math.random() - 0.5);
   if (Math.random() < 0.35) {
     base[shuffled[0]] = -1;

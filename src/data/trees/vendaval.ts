@@ -17,7 +17,7 @@ export const VENDAVAL_TREE: Tree = {
   tagline: "O que sobra quando a sobrevivência do Norte para de precisar de distância — nascido de quem já domina o aço e o vento ao mesmo tempo.",
   hiddenFromCreation: true,
   prerequisiteNote:
-    "Pré-requisito narrativo: Rank Avançado ou superior em Estilo Deus do Norte E em Magia de Vento. Não é uma árvore que se escolhe na criação — é o que emerge de já ter dominado as outras duas. O jogo não impede a compra de outro jeito; o Mestre nega até os dois pré-requisitos estarem cumpridos, do mesmo jeito que já faz com a Raça Dragão e o Rank Deus.",
+    "Pré-requisito: Rank Avançado em Estilo Deus do Norte e em Magia de Vento. Não se escolhe na criação — surge da fusão das duas.",
   proficiencies: {
     armas: "Toda espada e toda arma de haste. Armadura leve apenas — o estilo inteiro depende de deslocamento.",
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",

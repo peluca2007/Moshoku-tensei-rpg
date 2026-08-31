@@ -540,9 +540,9 @@ export default function CharacterSheet() {
                 );
               })}
             </div>
-            {/* O custo em PA de atributo é da SOMA dos cinco, não de cada um (Cap. 1, §2) — mostrar por atributo escondia o total e sugeria que subir de -2 até 4 era grátis. */}
+            {/* O custo em PA de atributo é da SOMA dos cinco, não de cada um (Cap. 1, §2) — mostrar por atributo escondia o total e sugeria que subir de -2 até 4 era grátis. Bônus de Raça/Antecedente não entram na conta (são por fora do point-buy desde 2026-08-30). */}
             <p className="mt-2 text-[11px] leading-snug text-parchment-500 dark:text-parchment-400">
-              Soma {attributeSum} de {ATTRIBUTE_CREATION_POINTS} da criação
+              Soma {attributeSum} de {ATTRIBUTE_CREATION_POINTS} do point-buy (bônus de Raça/Antecedente não contam aqui)
               {attributeSum > ATTRIBUTE_CREATION_POINTS ? (
                 <>
                   {" · "}

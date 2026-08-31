@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BookOpen, Dices, ScrollText, Shield, Sparkles, Store, Swords, TreePine, Users } from "lucide-react";
+import PatchNotes from "@/components/PatchNotes";
 
 const FEATURES = [
   {
@@ -120,6 +121,8 @@ export default function LandingPage() {
           </Link>
         </div>
       </div>
+
+      <PatchNotes />
     </div>
   );
 }

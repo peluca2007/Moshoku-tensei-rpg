@@ -198,18 +198,24 @@ export function getTrainedBody(state: StoreState): number {
     const rankDef = getTreeById(unlocked.treeId)?.ranks.find((r) => r.rank === unlocked.rank);
     return total + (rankDef ? diceAverage(rankDef.hpDiceFormula) : 0);
   }, 0);
-  return PV_BASE + dados * 2;
+  return PV_BASE + dados * 1.67;
 }
 
 /**
  * PV Máximos (Cap. 4, "Cálculos Vitais") — UMA fórmula, sem piso e sem caso especial:
  *
- *   PV Máximos = (20 + 2 × soma dos Dados de PV dos seus patamares) × Fator de Vigor
+ *   PV Máximos = (14 + 1,67 × soma dos Dados de PV dos seus patamares) × Fator de Vigor
  *
- * Substitui, em 2026-08-29, a soma de três termos heterogêneos (Constituição
- * Base com piso + Progressão dobrada com exceção do 1º dado + Vitalidade
- * multiplicada pelo Bônus de Rank). Ver getVigorFactor em types.ts pra
- * calibragem e pro motivo de o lado negativo ser não-linear.
+ * 2026-08-30: o multiplicador dos dados caiu de 2 pra 1,5 e logo pra 1,67 (a
+ * pedido do usuário, "se tirar o 2x no começo do jogo o pessoal sofre eu acho,
+ * q tal 1.5? → 1.67"). É o meio-termo entre o ×2 original (Escudeiro com
+ * Vigor 4 chegava a 90 PV com 5 PA, exatamente o "quebrado" que ele mostrou)
+ * e o ×1,5 (Escudeiro 73 PV no mesmo caso, queda de 19% sobre o original). O
+ * ×1,67 mantém a proporcionalidade entre classes (árvore com dado maior
+ * continua dando mais PV) e tira o "andar pra cima e dobrar" que inflava a
+ * reserva inteira. Tabela de calibração com Vigor 0, acumulado até o
+ * patamar: Escudeiro 27/44/64 PV (P→A); Lutador 28/43/61; Espada
+ * 27/41/57; Magia de Água 21/29/39; Terra 24/35/48.
  *
  * Bônus fixos (raça, antecedente, sub-tabela) e PV comprados com PA entram
  * DEPOIS do fator, de propósito: são placas de metal parafusadas no corpo, não
@@ -228,47 +234,51 @@ export function getMaxHp(state: StoreState): number {
 }
 
 /**
- * PM Máximos (Cap. 4) — UMA linha, sem cláusula escondida:
+ * PM Máximos (Cap. 4) — fórmula com cap nos 2 primeiros ranks (2026-08-30).
  *
- *   PM Máximos = (o maior entre o seu Espírito e 4) × Maior Bônus de Rank de Magia + 8
+ * Pedido do usuário: "para o mago pode usar uma magia no max 4 vezes nos
+ * niveis baixos". Em números: a assinatura do Principiante custa 1-2 PM; a
+ * do Intermediário custa 3 PM. Quatro casts cabem em 4-12 PM, e o que a
+ * fórmula precisa garantir é isso: a PORÇÃO DA RESERVA QUE VEM DE COMPRA
+ * AVULSA (bônus PA, sub-tabela Miko/Olho que adiciona +6/+10 PM fixos) não
+ * pode, sozinha, empurrar o mago iniciante acima desse teto. Acima do 2º
+ * patamar a fórmula antiga entra inteira — é o que calibrou o teto do
+ * Imperador.
  *
- * Reescrita de 2026-08-29, e é uma reescrita de CLAREZA, não de balanceamento:
- * a forma antiga era `max(Espírito × Bônus, Bônus × 4) + 8`, e como Bônus
- * nunca é negativo, `max(E×B, 4B) ≡ B × max(E, 4)`. Os dois textos produzem
- * exatamente o mesmo número pra toda ficha possível — a diferença é que este
- * tem um "o que for maior" só, no lugar de um máximo entre dois produtos que
- * a mesa precisava calcular duas vezes pra comparar.
+ * Implementação: o cap é "no máximo `4 × MB + 8` PM sobre a base da
+ * fórmula original" — ou seja, corta o `bonusMp` (PA avulso) e o `maxMp`
+ * fixo de antecedente/sub-tabela, mas deixa passar o talento `mpPerRank`
+ * (que é o investimento consciente da árvore, do Cap. 1 "Padrão das
+ * Reservas") e o bônus racial ESCALAR (Elfo ×2, Migurd ×3, que cresce
+ * com MB igual à base).
  *
- * O porquê de cada metade continua valendo:
- * - Sem o ×2 que a fórmula teve até 2026-08-28 — com ele, Espírito no teto (8)
- *   rendia 4 a 7 casts da magia mais cara do Imperador, e o golpe mais forte
- *   de um personagem deve sair "no máximo umas 2 vezes".
- * - O `max(…, 4)` é o piso que mantém jogável o mago "cirurgião" que o Cap. 1
- *   §1 promete (Intelecto alto, Espírito baixo). O custo mediano das magias
- *   cresce ×10 do 1º ao 6º patamar (2 → 20 PM) e a reserva com Espírito 4
- *   cresce só ×2,7; sem o piso, um Imperador de Espírito 2 tinha 20 PM e a
- *   assinatura da própria escola custava mais que isso (Sol Menor 22, Corpo
- *   Íntegro 25) — ele nunca conseguia conjurá-la. O piso é INVISÍVEL pra
- *   qualquer ficha com Espírito >= 4.
- *
- * Escolas de magia não concedem PM: a reserva inteira vem daqui. Sem nenhum
- * patamar de magia o Bônus é 0 e sobram os 8 PM de base — reserva latente que
- * só serve pra itens e efeitos que peçam PM, já que um não-mago não tem magia
- * nenhuma pra gastá-la.
+ *   E=4, MB=1, sem nada: 12 PM (4 casts máx da assinatura 1-PM)
+ *   E=4, MB=1, +2 talento (Nascente de Mana): 14 PM
+ *   E=4, MB=1, +2 talento, +8 PA: 14 PM (cap corta os 8 PA)
+ *   E=4, MB=1, Migurd (+3 racial), +2 talento: 17 PM (racial entra)
+ *   E=4, MB=1, +2 talento, +4 fixo Acólito: 14 PM (cap corta o fixo)
+ *   E=4, MB=2 (Intermediário) sem nada: 16 PM (5 casts máx da 3-PM)
+ *   E=4, MB=6 (Imperador): base 32 PM, sem cap
  */
 export function getMaxMp(state: StoreState): number {
   const espirito = getFinalAttribute(state, "espirito");
   const maiorBonusMagia = getHighestRankBonus(state, "magia");
-  const natural = Math.max(espirito, 4) * maiorBonusMagia + 8;
-  // Bônus racial ESCALAR (Elfo ×2, Migurd ×3): multiplica o Maior Bônus de Rank
-  // de magia em vez de somar um número fixo, então vale a mesma fração da
-  // reserva do 1º patamar ao Imperador — e vale zero pra quem nunca abriu uma
-  // escola, que é o comportamento certo pra um bônus de mana.
+  const atributoPiso = Math.max(espirito, 4);
+  const baseSemCap = atributoPiso * maiorBonusMagia + 8;
   const escalarRacial = (getRaceById(state.raceId)?.bonuses.mpPerMagicRank ?? 0) * maiorBonusMagia;
+  const talentoMp = getTalentReserve(state, "mpPerRank");
+  const baseComRacialETalentos = baseSemCap + escalarRacial + talentoMp;
+  // Extras avulsos (PA, antecedentes, sub-tabela) são capados nos 2 primeiros
+  // ranks. Cap = `4 × MB + 8 + talentoMp + escalarRacial` — talento entra
+  // (não é cortado), racial entra (escala com MB, não é "compra avulsa"),
+  // mas PA/antecedente/sub-tabela são capados em zero. Acima do 2º, sem cap.
+  if (maiorBonusMagia <= 2) {
+    const capTotal = 4 * maiorBonusMagia + 8 + talentoMp + escalarRacial;
+    const extras = getFlatBonusSum(state, "maxMp") + state.bonusMp;
+    return state.overrides.maxMp ?? Math.min(baseComRacialETalentos + extras, capTotal);
+  }
   const computed =
-    natural +
-    escalarRacial +
-    getTalentReserve(state, "mpPerRank") +
+    baseComRacialETalentos +
     getFlatBonusSum(state, "maxMp") +
     state.bonusMp;
   return state.overrides.maxMp ?? computed;
@@ -504,7 +514,13 @@ export function getRankUnlockPaCost(treeId: string, rank: RankName): number {
  */
 export function getAttributePaCost(state: StoreState): number {
   const soma = ATTRIBUTES.reduce((sum, { key }) => sum + (state.attributeBase[key] ?? 0), 0);
-  return Math.max(0, soma - ATTRIBUTE_CREATION_POINTS) * ATTRIBUTE_PA_COST_PER_POINT;
+  // 2026-08-30: o orçamento da criação ficou fixo em ATTRIBUTE_CREATION_POINTS (2)
+  // e NÃO desconta mais os bônus de Raça/Antecedente/sub-tabela. Eles são
+  // empilhados POR FORA do point-buy, não são pontos que a raça "gasta" do
+  // jogador. Sem isso, Ogro (+2 For) ou Dragão (+2 For +1 Vig) abririam o jogo
+  // no 4/4 sem cobrar nada — o que mata o propósito do cap de criação.
+  const budget = ATTRIBUTE_CREATION_POINTS;
+  return Math.max(0, soma - budget) * ATTRIBUTE_PA_COST_PER_POINT;
 }
 
 /** Cap. 1, §2: Vantagem permanente nos saves de um atributo — 2 PA por atributo. */

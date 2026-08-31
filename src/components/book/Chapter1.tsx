@@ -37,8 +37,14 @@ export default function Chapter1() {
         </P>
         <Aside title="Distribuindo seus Pontos Iniciais">
           <P>
-            Ao criar o personagem, você recebe 4 Pontos para distribuir livremente entre os 5 atributos base.
-            O valor máximo por atributo na criação é 4.
+            Ao criar o personagem, você recebe <b>2 Pontos</b> para distribuir livremente entre os 5
+            atributos base. O valor máximo por atributo na criação é 4.
+          </P>
+          <P>
+            <b>Bônus de Raça e Antecedente não entram neste orçamento.</b> Eles são empilhados por fora —
+            você os recebe em cima do que distribuiu, não competem com seus 2 pontos. Um Ogro (+2 de
+            Força) sai do ponto-buy com os mesmos 2 pontos que todo mundo, e termina o personagem com a
+            Força que a Raça deu mais o que ele botou.
           </P>
           <P>
             <b>Sistema de Defeitos:</b> você pode reduzir atributos pra ganhar pontos extras. As regras são
@@ -47,8 +53,8 @@ export default function Chapter1() {
           </P>
           <P>
             Repare que o defeito <b>não cria pontos</b>: ele os empresta. Com os dois defeitos você distribui
-            7 pontos, mas dois atributos ficam em -1 e -2, então a <b>soma dos seus cinco atributos fecha em
-            4</b> de qualquer jeito. É essa soma — não cada atributo isolado — que a seção 2 usa pra cobrar
+            5 pontos, mas dois atributos ficam em -1 e -2, então a <b>soma dos seus cinco atributos base fecha
+            em 2</b> de qualquer jeito. É essa soma — não cada atributo isolado — que a seção 2 usa pra cobrar
             PA por pontos comprados depois da criação. Consequência direta: <b>desfazer um defeito custa os
             mesmos 2 PA por ponto</b> que qualquer outro aumento. Você não pega -2 na criação e sobe de volta
             de graça.
@@ -74,6 +80,15 @@ export default function Chapter1() {
             sempre que o seu maior patamar de magia sobe. Não há bônus extra por número de escolas abertas.
             O &ldquo;maior entre Espírito e 4&rdquo; é invisível pra quem tem Espírito 4 ou mais; ele existe
             pro cirurgião do parágrafo abaixo (Cap. 4, §1).
+          </P>
+          <P>
+            <b>Cap dos 2 primeiros ranks.</b> Enquanto o seu Maior Bônus de Rank de magia for 1 ou 2
+            (Principiante/Intermediário), a reserva <b>não pode passar de 4 × MB + 8 + talento + racial</b>
+            — o que dá 12 a 17 PM. É o equivalente numérico do &ldquo;no máximo 4 casts&rdquo; da
+            assinatura do rank: 1 PM no Principiante, 3 PM no Intermediário. O cap corta só o que entra
+            por fora da árvore (PA avulso da seção 2, antecedente e sub-tabela); talento de reserva e
+            bônus racial ESCALAR continuam valendo. A partir do 3º rank (Avançado, MB=3) o cap some e
+            a fórmula antiga entra inteira.
           </P>
           <P>
             Abrir oito escolas no 1º patamar não te dá mana nenhuma a mais. Subir <b>uma</b> escola até o

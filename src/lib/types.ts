@@ -61,16 +61,34 @@ export const RANK_REQUIREMENTS: Record<RankName, { knowledgeRequired: number; pa
   Imperador: { knowledgeRequired: 10, paCost: 3 },
 };
 
-/** Cap. 1, §1: teto por atributo no point-buy da criação. */
+/**
+ * Cap. 1, §1: teto por atributo no point-buy da criação.
+ *
+ * 2026-08-30: baixou de 4 pra 2 a pedido do usuário, e o bônus de Raça /
+ * Antecedente deixou de entrar no orçamento (ver ATTRIBUTE_CREATION_POINTS
+ * abaixo). A mudança de regime: antes era "distribua 4 pontos entre os 5
+ * atributos, e ainda ganhe +1 do Humano e +1 do Plebeu por cima". Um jogador
+ * podia abrir o jogo em Força 4/Agilidade 4/Vigor 2 (com o Anão em cima disso)
+ * já no 1º turno — corpo, mira e tanque no máximo da criação, sem nenhum
+ * tradeoff. Agora ele distribui 2 pontos livres e RECEBE os bônus de raça e
+ * antecedente por fora, igual a todo mundo: nenhum deles aumenta o orçamento,
+ * só o resultado final. A escolha ficou mais tensa e as raças ficaram
+ * relativamente mais fortes, porque elas não disputam mais os 2 pontos que a
+ * mesa inteira recebe.
+ */
 export const ATTRIBUTE_CREATION_MAX = 4;
 /**
- * Cap. 1, §1: pontos distribuídos na criação. O Sistema de Defeitos NÃO muda
- * este número — largar um atributo em -1 devolve 1 ponto e largar outro em -2
- * devolve 2, então a SOMA dos cinco atributos base fecha em 4 de qualquer
- * jeito. É por isso que o custo em PA de atributo se mede pela soma (ver
- * getAttributePaCost) e não atributo a atributo.
+ * Cap. 1, §1: pontos distribuídos na criação.
+ *
+ * 2026-08-30: 3 → 2. O Sistema de Defeitos continua devolvendo +1/+2 pelos
+ * -1/-2 e fechando a soma dos atributos base em 2 (de qualquer jeito). O que
+ * mudou: bônus de Raça/Antecedente/sub-tabela NUNCA entra neste orçamento —
+ * são por fora do point-buy, em cima do que o jogador distribui. É a única
+ * forma de evitar que uma Raça com +2 de atributo (Ogro, Dragão) ou
+ * Antecedente com +1 em dois atributos (Sobrevivente) simplesmente pulasse o
+ * cap e deixasse o jogador com 5/6 atributos no 4 sem nenhum custo.
  */
-export const ATTRIBUTE_CREATION_POINTS = 4;
+export const ATTRIBUTE_CREATION_POINTS = 2;
 export const ATTRIBUTE_PA_COST_PER_POINT = 2;
 
 /**
@@ -92,8 +110,19 @@ export const ATTRIBUTE_HARD_CAP = 8;
 /** Cap. 1, §1: o Sistema de Defeitos deixa um atributo em -1 e outro em -2. Nada desce abaixo disso. */
 export const ATTRIBUTE_FLOOR = -2;
 
-/** Cap. 4, "Cálculos Vitais": a constante da fórmula de PV — o corpo com que todo mundo nasce, antes de treino nenhum. */
-export const PV_BASE = 20;
+/** Cap. 4, "Cálculos Vitais": a constante da fórmula de PV — o corpo com que todo mundo nasce, antes de treino nenhum.
+ *
+ * 2026-08-30: 20 → 14, nerf geral pedido pelo usuário ("com 5 PA peguei 80 de
+ * vida"). A constante soma direto na fórmula, antes do Fator de Vigor e dos
+ * Dados de PV, então cada ponto a menos afeta TODOS os personagens
+ * uniformemente — sem distorcer a curva entre classes. O diagnóstico dele
+ * ("80 PV com 5 PA") é consistente com a fórmula antiga: Vigor 0 + 20 + 2
+ * dados médios = 60-70 PV, e os talentos de reserva (+2 por patamar)
+ * somavam mais 10-12 PV por 5 PA. 14 tira ~10 PV do piso e mostra que
+ * rank baixo é pra rank baixo: lutar no 1º patamar é pra ser arriscado,
+ * não confortável.
+ */
+export const PV_BASE = 14;
 
 /**
  * Cap. 4, "A Escala do Vigor": todo o efeito do Vigor sobre os PV, num fator só.

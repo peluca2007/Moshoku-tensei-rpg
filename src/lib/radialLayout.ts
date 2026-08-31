@@ -51,21 +51,45 @@ function countLeaves<TMeta>(node: RadialInputNode<TMeta>): number {
   return count;
 }
 
-export function layoutRadialTree<TMeta>(root: RadialInputNode<TMeta>, ringSpacing = 110): RadialLayoutResult<TMeta> {
+export function layoutRadialTree<TMeta>(
+  root: RadialInputNode<TMeta>, 
+  ringSpacing = 110, 
+  customPositions?: Map<string, { x: number; y: number }>,
+  angleAdjustments?: Map<string, number>
+): RadialLayoutResult<TMeta> {
   const nodes: PositionedNode<TMeta>[] = [];
   const edges: RadialEdge[] = [];
   let maxRadius = 0;
 
   function place(node: RadialInputNode<TMeta>, depth: number, angleStart: number, angleEnd: number) {
-    const angle = (angleStart + angleEnd) / 2;
+    let angle = (angleStart + angleEnd) / 2;
+    
+    // Aplicar ajuste de ângulo se houver
+    if (angleAdjustments && angleAdjustments.has(node.id)) {
+      angle += angleAdjustments.get(node.id)!;
+    }
+
     const radius = depth * ringSpacing;
     maxRadius = Math.max(maxRadius, radius);
+    
+    let x = round2(radius * Math.cos(angle));
+    let y = round2(radius * Math.sin(angle));
+    
+    // Se tem posição customizada, usa ela e calcula o ângulo visual para layout dos filhos
+    let visualAngle = angle;
+    if (customPositions && customPositions.has(node.id)) {
+      const pos = customPositions.get(node.id)!;
+      x = pos.x;
+      y = pos.y;
+      visualAngle = Math.atan2(y, x);
+    }
+
     nodes.push({
       id: node.id,
       meta: node.meta,
       depth,
-      x: round2(radius * Math.cos(angle)),
-      y: round2(radius * Math.sin(angle)),
+      x,
+      y,
     });
 
     if (node.children.length === 0) return;
@@ -76,8 +100,17 @@ export function layoutRadialTree<TMeta>(root: RadialInputNode<TMeta>, ringSpacin
       const share = countLeaves(child) / totalLeaves;
       const childAngleStart = cursor;
       const childAngleEnd = cursor + share * fullSpan;
+      
+      // Se o pai tem posição customizada, usa o ângulo visual do pai para os filhos
+      const childStart = customPositions && customPositions.has(node.id) 
+        ? visualAngle - (fullSpan * share) / 2 
+        : childAngleStart;
+      const childEnd = customPositions && customPositions.has(node.id)
+        ? visualAngle + (fullSpan * share) / 2
+        : childAngleEnd;
+      
       edges.push({ fromId: node.id, toId: child.id, depth: depth + 1 });
-      place(child, depth + 1, childAngleStart, childAngleEnd);
+      place(child, depth + 1, childStart, childEnd);
       cursor = childAngleEnd;
     }
   }
