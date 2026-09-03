@@ -74,8 +74,10 @@ export const INVOCACAO_TREE: Tree = {
           "2 Pactos ativos ao mesmo tempo. Você vê pelos olhos de qualquer invocado seu, gastando 1 Ação, a qualquer distância (seu corpo fica Cego enquanto isso). Ordens específicas passam a custar 1 Ação para todos os seus invocados de uma vez.",
       },
       talents: [
-        { id: "evolucao-forma-media", name: "Evolução: Forma Média", paCost: RANK_PA_COST.talent.Intermediário, description: "Requer Pacto: Filhote Evolutivo. Seu filhote cresce (Médio): garras 2d8 + BC, PV = 15 × seu Bônus de Rank, e aprende um truque de combate (pode Derrubar ou Desarmar com 1 Ação)." },
-        { id: "evolucao-sentidos-agucados", name: "Evolução: Sentidos Aguçados", paCost: RANK_PA_COST.talent.Intermediário, description: "Requer Pacto: Filhote Evolutivo. Seu filhote ganha visão no escuro 18m, faro aguçado (Vantagem em Percepção) e transmite alertas telepáticos pra você." },
+        { id: "evolucao-forma-media",
+          requires: ["pacto-filhote-evolutivo"], name: "Evolução: Forma Média", paCost: RANK_PA_COST.talent.Intermediário, description: "Requer Pacto: Filhote Evolutivo. Seu filhote cresce (Médio): garras 2d8 + BC, PV = 15 × seu Bônus de Rank, e aprende um truque de combate (pode Derrubar ou Desarmar com 1 Ação)." },
+        { id: "evolucao-sentidos-agucados",
+          requires: ["pacto-filhote-evolutivo"], name: "Evolução: Sentidos Aguçados", paCost: RANK_PA_COST.talent.Intermediário, description: "Requer Pacto: Filhote Evolutivo. Seu filhote ganha visão no escuro 18m, faro aguçado (Vantagem em Percepção) e transmite alertas telepáticos pra você." },
         { id: "vinculo-concentrado", name: "Vínculo Concentrado", paCost: RANK_PA_COST.talent.Intermediário, description: "Você pode focar toda a mana de múltiplos invocados em um único pacto ativo. Se invocar apenas uma criatura gastando o PM total que você teria disponível para o seu limite de invocação atual (ex: 2 invocados = gasta PM de 2), o bicho ganha: +2d no dado de dano, +10 PV por Bônus de Rank e Resistência a dano mágico." },
         { id: "pacto-urso-das-cavernas", name: "Pacto: Urso das Cavernas", paCost: RANK_PA_COST.talent.Intermediário, description: "4d10 garra, Grande, empurra 3m a cada acerto. Absorve dano por você." },
         { id: "pacto-serpente-de-nevoa", name: "Pacto: Serpente de Névoa", paCost: RANK_PA_COST.talent.Intermediário, description: "Ataque com veneno (Vigor ou Envenenado). Move-se por qualquer fresta; invisível em terreno enevoado." },
@@ -111,7 +113,8 @@ export const INVOCACAO_TREE: Tree = {
       },
       talents: [
         { id: "convocacao-aprimorada", name: "Convocação Aprimorada", paCost: RANK_PA_COST.talent.Avançado, description: "Requer Convocar sob Pressão. A invocação de emergência custa apenas 4 Ações e o invocado NÃO sofre penalidade nos PV ou no dano." },
-        { id: "evolucao-forma-imortal", name: "Evolução: Forma Suprema", paCost: RANK_PA_COST.talent.Avançado, description: "Requer Evolução: Forma Média. Seu filhote atinge o auge (Grande ou Voador): 4d8 dano elementar ou físico, PV = 25 × seu Bônus de Rank, ganha Resistência a dano físico e pode conjurar uma magia menor da sua árvore." },
+        { id: "evolucao-forma-imortal",
+          requires: ["evolucao-forma-media"], name: "Evolução: Forma Suprema", paCost: RANK_PA_COST.talent.Avançado, description: "Requer Evolução: Forma Média. Seu filhote atinge o auge (Grande ou Voador): 4d8 dano elementar ou físico, PV = 25 × seu Bônus de Rank, ganha Resistência a dano físico e pode conjurar uma magia menor da sua árvore." },
         { id: "pacto-quimera", name: "Pacto: Quimera", paCost: RANK_PA_COST.talent.Avançado, description: "Três cabeças, três ataques por turno de 2d8 cada, um deles com sopro elemental à sua escolha ao invocar." },
         { id: "pacto-espirito-antigo", name: "Pacto: Espírito Antigo", paCost: RANK_PA_COST.talent.Avançado, description: "Não luta. Responde uma pergunta por invocação sobre algo que aconteceu antes de você nascer — verdadeira, ainda que enviesada." },
         { id: "pacto-golem-de-guerra", name: "Pacto: Golem de Guerra", paCost: RANK_PA_COST.talent.Avançado, description: "Enorme, 6d8 por golpe, Resistência a todo dano físico, Deslocamento 6m. Não pode ser movido nem derrubado." },

@@ -120,7 +120,7 @@ export const LUTADOR_TREE: Tree = {
           paCost: 2,
           range: "9 metros",
           actions: { normal: 1 },
-          damage: { normal: "4d8 + Força (contundente)" },
+          damage: { normal: "4d8 + Força + Bônus de Rank (contundente)" },
           effect: "Requer alvo Agarrado, de até duas categorias de tamanho acima da sua. Arremesse até 9m: fica Caído, e quem estiver no ponto de queda faz teste de Agilidade ou também sofre metade e cai.",
         },
         {
@@ -278,7 +278,7 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "8d10 + Força (contundente, automático)" },
+          damage: { normal: "8d10 + Força + Bônus de Rank (contundente, automático)" },
           effect: "Requer alvo Agarrado. O alvo fica Quebrantado ao máximo instantaneamente. Se isso o reduzir a 0 PV, não pode ser estabilizado por meios mundanos.",
         },
       ],
