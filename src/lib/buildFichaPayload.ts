@@ -1,4 +1,5 @@
 import { getTreeById, TREES } from "@/data/trees";
+import { COMBINED_SPELLS } from "@/data/combinedSpells";
 import {
   getAttackBonus,
   getGuildRank,
@@ -257,6 +258,24 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
         });
       }
     }
+  }
+
+  // Cap. 2, §4: as Combinadas entram no MESMO bloco de cartas das magias — na
+  // mesa elas se usam como qualquer outra, e separá-las no PDF só faria o
+  // jogador procurar em dois lugares. O que as identifica é a linha de alcance,
+  // que diz de quais duas árvores elas vieram.
+  for (const spell of COMBINED_SPELLS) {
+    if (!(character.purchasedCombinedSpells ?? []).includes(spell.id)) continue;
+    abilityCards.push({
+      name: `◇ ${spell.name}`,
+      signature: false,
+      cost: `${spell.paCost} PA · ${spell.pmCost} PM`,
+      time: `${spell.actions} Ações`,
+      range: spell.requires
+        .map((r) => `${getTreeById(r.treeId)?.name ?? r.treeId} ${r.rank}`)
+        .join(" + "),
+      effect: `${spell.damage !== "—" ? spell.damage + ". " : ""}${spell.effect}`,
+    });
   }
 
   return {
