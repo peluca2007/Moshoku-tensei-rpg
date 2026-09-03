@@ -375,14 +375,53 @@ export default function Chapter2() {
           sequência, cujo resultado é maior que a soma das partes. O sistema detalhado e os efeitos
           fixos destas magias estão documentados na tabela abaixo — a fusão oficial de cada pilar.
         </P>
+        <Warning title="Duas portas, cada uma com o próprio rank">
+          <P>
+            Cada Magia Combinada exige <b>duas árvores em ranks específicos</b> — e os dois ranks são
+            diferentes entre si na maioria delas. O Meteoro quer <b>Fogo no Rei</b> e <b>Terra no
+              Avançado</b>; a Barreira Incandescente se contenta com <b>Barreira no Avançado</b> e{" "}
+            <b>Fogo no Intermediário</b>. Não existe um &ldquo;Avançado nas duas&rdquo; genérico que abra a
+            tabela inteira de uma vez.
+          </P>
+          <P>
+            Isso é o que faz a tabela ser uma <i>lista de escolhas</i> e não um bloco: duas fichas que
+            investiram fundo em escolas diferentes destravam Combinadas diferentes, e nenhuma delas
+            destrava todas.
+          </P>
+          <P>
+            <b>Elas custam PA</b>, como qualquer conhecimento — de 3 PA nas portas mais baixas a 8 PA no
+            Meteoro. O PA sai do mesmo bolso que compra magia, atributo e perícia.
+          </P>
+        </Warning>
         <P>
-          <b>Requisito:</b> rank Avançado ou superior em <b>ambas</b> as escolas envolvidas.
-          Nenhuma destas magias é aprendida por PA; elas são destravadas pela Maestria do rank
-          Avançado e cada uma custa PA igual ao custo da assinatura na árvore-primária + 1.
+          <b>Onde comprar:</b> no{" "}
+          <a href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">
+            mapa de Árvores
+          </a>
+          . O painel de Magias Combinadas mostra as nove o tempo inteiro — as que você já comprou, as que
+          estão abertas agora, e as trancadas <i>com as portas que faltam e o quanto falta em cada uma</i>.
+          Uma Combinada aparece como disponível no instante em que a segunda porta abre.
         </P>
+        <Aside title="Por que a Maestria do Avançado não basta mais">
+          <P>
+            Até a versão 0.0.9 a regra era &ldquo;rank Avançado nas duas escolas&rdquo;, e a Maestria do
+            Avançado dizia que destravava Magia Combinada. Na prática isso significava que chegar ao
+            Avançado em duas escolas quaisquer abria as nove de uma vez — e como nada no motor cobrava o
+            PA que o texto prometia, elas eram, na prática, gratuitas.
+          </P>
+          <P>
+            A Maestria continua sendo o que te dá o <i>direito</i> de aprender Magia Combinada. O que ela
+            deixou de ser é a única condição: cada magia tem a porta dela.
+          </P>
+        </Aside>
         <BookTable
-          headers={["Combinação", "Primária", "Efeito"]}
-          rows={COMBINED_SPELLS.map((s) => [tex(s.name), tex(getTreeById(s.primaryTreeId)?.name ?? ""), tex(s.effect)])}
+          headers={["Magia Combinada", "As duas portas", "Custo", "Efeito"]}
+          rows={COMBINED_SPELLS.map((s) => [
+            tex(s.name),
+            s.requires.map((r) => `${getTreeById(r.treeId)?.name ?? r.treeId} ${r.rank}`).join(" + "),
+            `${s.paCost} PA · ${s.pmCost} PM`,
+            tex(s.effect),
+          ])}
         />
         <P>
           Para combinações ad-hoc (não documentadas na tabela), a regra de ouro do Mestre vale:

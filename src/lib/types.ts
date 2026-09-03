@@ -650,6 +650,16 @@ export interface CharacterData {
   startingTreeId: string | null;
   unlockedRanks: UnlockedRank[];
   purchasedAbilities: PurchasedAbility[];
+  /**
+   * Ids de Magias Combinadas compradas (Cap. 2, §4) — 2026-09-03.
+   *
+   * Elas não cabem em `purchasedAbilities` porque não pertencem a UMA árvore:
+   * cada uma nasce do encontro de duas, e a ficha precisa saber disso pra
+   * mostrar as duas portas que a destravaram. Antes desta data elas existiam
+   * só como tabela impressa no livro — nada as comprava, nada as guardava, e o
+   * PA que o texto dizia que elas custavam nunca saía de lugar nenhum.
+   */
+  purchasedCombinedSpells: string[];
   gold: number;
   inventory: InventoryItem[];
   /** Perícias além das automáticas de raça/antecedente/Árvore Inicial (Cap. 1, §4). */

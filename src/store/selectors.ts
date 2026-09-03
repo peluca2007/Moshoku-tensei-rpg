@@ -1,6 +1,7 @@
 import { getRaceById } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
+import { COMBINED_SPELLS, getCombinedSpellById } from "@/data/combinedSpells";
 import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
 import {
@@ -610,6 +611,44 @@ export function getHpMpPaCost(state: StoreState): number {
   return Math.max(0, hpCost) + Math.max(0, mpCost);
 }
 
+
+/**
+ * Cap. 2, §4: uma Magia Combinada exige as DUAS portas abertas, cada uma no
+ * rank que ela pede. Não basta o rank Avançado genérico que a Maestria
+ * concede — Meteoro quer Fogo no Rei E Terra no Avançado, e é essa desigualdade
+ * que faz a tabela ser uma lista de escolhas em vez de um bloco que abre junto.
+ */
+export function canPurchaseCombinedSpell(state: StoreState, id: string): Check {
+  const spell = getCombinedSpellById(id);
+  if (!spell) return { ok: false, reason: "Magia Combinada desconhecida." };
+  if ((state.purchasedCombinedSpells ?? []).includes(id)) {
+    return { ok: false, reason: "Já adquirida." };
+  }
+  for (const req of spell.requires) {
+    const atual = getHighestUnlockedRank(state, req.treeId);
+    const nome = getTreeById(req.treeId)?.name ?? req.treeId;
+    if (!atual || RANKS.indexOf(atual) < RANKS.indexOf(req.rank)) {
+      return { ok: false, reason: `Exige ${nome} no rank ${req.rank}.` };
+    }
+  }
+  return { ok: true };
+}
+
+/** As Combinadas cujas duas portas já estão abertas — é isto que /arvores lista. */
+export function getAvailableCombinedSpells(state: StoreState) {
+  return COMBINED_SPELLS.filter((s) => {
+    const check = canPurchaseCombinedSpell(state, s.id);
+    return check.ok || check.reason === "Já adquirida.";
+  });
+}
+
+/** PA gasto em Magias Combinadas (Cap. 2, §4). */
+export function getCombinedSpellPaCost(state: StoreState): number {
+  return (state.purchasedCombinedSpells ?? []).reduce(
+    (sum, id) => sum + (getCombinedSpellById(id)?.paCost ?? 0),
+    0
+  );
+}
 /**
  * PA já gastos, só pra informar o jogador (o Mestre controla o quanto ele
  * tem fora do site — o sistema não trava compra por "saldo insuficiente"):
@@ -645,7 +684,8 @@ export function getPaSpent(state: StoreState): number {
     getRacialUpgradePaCost(state) +
     getSaveAdvantagePaCost(state) +
     getSkillPaCost(state) +
-    getProficiencyPaCost(state)
+    getProficiencyPaCost(state) +
+    getCombinedSpellPaCost(state)
   );
 }
 

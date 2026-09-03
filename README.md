@@ -12,8 +12,8 @@ são quatro leituras do mesmo `src/data/`.
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
-[![Versão do sistema](https://img.shields.io/badge/regras-0.0.9-8B1E3F)](PATCH_NOTES.md)
-[![Testes](https://img.shields.io/badge/testes-28%20passando-3FB950)](src/store/selectors.test.ts)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.1.0-8B1E3F)](PATCH_NOTES.md)
+[![Testes](https://img.shields.io/badge/testes-33%20passando-3FB950)](src/store/selectors.test.ts)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>

@@ -91,6 +91,7 @@ function ficha(
     startingTreeId: patch.unlockedRanks?.[0]?.treeId ?? null,
     unlockedRanks: [],
     purchasedAbilities: [],
+    purchasedCombinedSpells: [],
     gold: 0,
     inventory: [],
     skills: [],

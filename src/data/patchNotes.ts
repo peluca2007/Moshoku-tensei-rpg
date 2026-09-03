@@ -16,6 +16,32 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.0",
+    date: "2026-09-03",
+    title: "Duas Portas",
+    sections: [
+      {
+        heading: "Magias Combinadas — rework completo",
+        items: [
+          "Elas eram uma tabela impressa e nada mais: nenhuma era comprável em lugar nenhum, o motor não sabia que existiam, a ficha não as guardava, e o PA que o livro dizia que elas custavam nunca saía de lugar nenhum.",
+          "REQUISITO NOVO: cada combinação declara DUAS PORTAS, cada uma com o seu próprio rank. Meteoro exige Fogo no REI e Terra no AVANÇADO. Barreira Incandescente se contenta com Barreira Avançado e Fogo Intermediário. Não existe mais um \"Avançado nas duas\" genérico que abra as nove de uma vez.",
+          "Os requisitos são DESIGUAIS de propósito: duas fichas que investiram fundo em escolas diferentes destravam Combinadas diferentes, e nenhuma destrava todas. Isso é o que faz a tabela ser uma lista de escolhas em vez de um bloco.",
+          "ELAS CUSTAM PA de verdade agora — de 3 PA nas portas mais baixas a 8 PA no Meteoro — e o custo entra em getPaSpent junto com magia, atributo e perícia.",
+          "Painel novo em /arvores: mostra as nove o tempo inteiro. As compradas, as abertas agora, e as trancadas COM AS PORTAS QUE FALTAM e quanto falta em cada uma. Uma Combinada aparece como disponível no instante em que a segunda porta abre.",
+          "A Maestria do Avançado continua dando o DIREITO de aprender Magia Combinada. O que ela deixou de ser é a única condição.",
+        ],
+      },
+      {
+        heading: "Correções",
+        items: [
+          "TRÊS das nove magias apontavam para a árvore \"curar\", que nunca existiu — o id é \"cura\". O livro imprimia a coluna da árvore vazia nessas três, e nenhuma verificação pegava porque nada no código lia o campo. Um teste novo trava isso: toda porta de toda Combinada tem que apontar para uma árvore que existe.",
+          "Migração v11 do persist: fichas antigas entram com a lista de Combinadas vazia.",
+          "33 testes no total (eram 28), cinco deles cobrindo as duas portas, o PA e a compra duplicada.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.0.9",
     date: "2026-09-03",
     title: "Ganhar Duas Vezes a Mesma Coisa",
