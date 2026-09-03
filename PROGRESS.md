@@ -14,7 +14,7 @@ contradição que custou uma leitura manual inteira. Ver [`PATCH_NOTES.md`](PATC
 ## Estado atual
 
 **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind v4 · Zustand com persistência em `localStorage`
-(schema `version: 9`).
+(schema `version: 10`).
 
 **Fonte de verdade única:** `src/data/`. O livro (`src/components/book/*.tsx`), o mapa de árvores
 (`/arvores`), a loja (`/loja`) e o PDF exportado leem todos os mesmos arrays — nenhuma tabela é escrita à
@@ -50,11 +50,6 @@ mão duas vezes.
       Cura conferidas por completo. Barreira, Invocação e Bardo tiveram os **cânticos** auditados e
       reescritos em 0.0.4, mas não os números. Faltam por inteiro: Suishin, Norte, Lutador, Escudos,
       Arquearia, Ladino, Tático, Vendaval, Punho de Fogo.
-- [ ] **Decidir o patamar Deus do Punho de Fogo** — é a única árvore das 19 com um Rank Deus COMPRÁVEL
-      (13 habilidades, incluindo "reduz o alvo a 0 se falhar um teste CD 30"). As outras 18 tratam o Deus
-      como quadro narrativo, e o Cap. 1, §3 diz que ele "não possui custo mecânico de PA". Ou o capítulo
-      abre uma exceção nomeada, ou o patamar vira narrativo como os outros. **Não mexi: é conteúdo escrito
-      por você, e a escolha é de design, não de correção.**
 - [ ] **Validar Distância Roubada na mesa** (Vendaval, novo em 0.0.4) — a mecânica soma alcance a partir do
       movimento, e nenhuma outra árvore faz isso. Vale medir se 9m de bônus de alcance no Principiante não
       transforma a árvore num arqueiro corpo a corpo cedo demais.

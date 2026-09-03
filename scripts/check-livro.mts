@@ -97,14 +97,18 @@ for (const tree of TREES) {
     }
   }
 
-  const temPatamarDeus = tree.ranks.some((r) => r.rank === "Deus");
-  if (!getRankDeusForTree(tree.id) && !temPatamarDeus) {
-    falha(`árvore "${tree.name}" (${tree.id}) não tem quadro de Rank Deus nem caminho de ascensão`);
-  }
-  if (getRankDeusForTree(tree.id) && temPatamarDeus) {
-    aviso(
-      `"${tree.name}": tem patamar Deus comprável E quadro narrativo de Rank Deus — o catálogo mostra os dois`
+  // O patamar Divino é narrativo em TODA árvore (Cap. 1, §3: "não possui custo
+  // mecânico de PA"). Até 2026-09-03 o Punho de Fogo era a única exceção — tinha
+  // 13 habilidades compráveis no rank Deus. Virou quadro narrativo como as
+  // outras dezoito, e este check tranca a decisão.
+  if (tree.ranks.some((r) => r.rank === "Deus")) {
+    falha(
+      `árvore "${tree.name}" (${tree.id}) tem um patamar Deus COMPRÁVEL — o Cap. 1, §3 diz que o ` +
+        `Divino não tem custo em PA. Mova o conteúdo para o quadro narrativo em src/data/rankDeus.ts`
     );
+  }
+  if (!getRankDeusForTree(tree.id)) {
+    falha(`árvore "${tree.name}" (${tree.id}) não tem quadro de Rank Deus nem caminho de ascensão`);
   }
 }
 

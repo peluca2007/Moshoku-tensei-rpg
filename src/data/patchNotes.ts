@@ -16,6 +16,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.0.7",
+    date: "2026-09-03",
+    title: "O Divino Não Se Compra",
+    sections: [
+      {
+        heading: "Punho de Fogo — patamar Deus virou narrativo",
+        items: [
+          "O Punho de Fogo era a única das 19 árvores com um patamar Deus COMPRÁVEL: uma Maestria, um talento e três habilidades, custando PA como qualquer outro rank. Isso contradizia o Cap. 1, §3, que diz que o Divino \"não possui custo mecânico de PA\" e \"só pode ser alcançado através de intenso Roleplay e eventos lendários\".",
+          "O conteúdo não foi jogado fora. A Aura do Alfa e Ômega, o Big Bang Marcial, a Ignição da Alma e o Julgamento de Prometeu viraram o corpo do quadro narrativo A AURA DO ALFA E DO ÔMEGA. O que se perdeu foi o preço em PA e a rolagem — que é exatamente o que o livro diz que o patamar Divino não tem.",
+          "O Estilo Vendaval já tinha recebido o quadro narrativo dele na 0.0.6 (O Passo Que Não Termina). Agora as 19 árvores tratam o Divino do mesmo jeito, sem exceção.",
+          "MIGRAÇÃO v10: uma ficha salva que já tivesse comprado no patamar Deus do Punho de Fogo perde essas compras e o desbloqueio do rank — e o PA volta a ficar disponível, em vez de sumir do total sem nada explicando por quê.",
+        ],
+      },
+      {
+        heading: "Correções",
+        items: [
+          "A tabela de custos do Cap. 1, §3 imprimia DUAS linhas \"Deus\": uma cobrando 4 PA (vinda de RANK_REQUIREMENTS) e outra, escrita à mão logo abaixo, dizendo \"Narrativa\". As duas se contradiziam no meio da seção que existe justamente para explicar quanto cada rank custa. É o mesmo bug de linha duplicada que a tabela de patamares do Cap. 3 tinha.",
+          "O check:livro passou a tratar patamar Deus comprável como ERRO, não aviso — a decisão fica trancada, e a próxima árvore que tentar abrir exceção quebra o build.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.0.6",
     date: "2026-09-03",
     title: "A Mão Não Envelhece",

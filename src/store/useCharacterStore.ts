@@ -59,6 +59,20 @@ const RENAMED_SHOP_ITEM_IDS: Record<string, string> = {
   veneno_prof3: "veneno_avancado",
 };
 
+/**
+ * O patamar Deus do Punho de Fogo deixou de ser comprável em 2026-09-03 — virou
+ * quadro narrativo, como nas outras 18 árvores (Cap. 1, §3: o Divino não tem
+ * custo em PA). Uma ficha que já comprou ali fica com entradas que o motor não
+ * encontra mais: elas somem da tela, e o PA pago some junto do total, sem nada
+ * na ficha explicando por quê.
+ */
+const PUNHO_DE_FOGO_DEUS_IDS = [
+  "transcendencia-ignea",
+  "big-bang-marcial",
+  "ignicao-da-alma",
+  "julgamento-de-prometeu",
+];
+
 interface RosterState {
   characters: Record<string, CharacterData>;
   order: string[];
@@ -410,7 +424,10 @@ export const useCharacterStore = create<RosterState>()(
       // findAbilityOrTalentDef não encontra mais: ele some da tela, mas o PA
       // pago por ele some junto do getPaSpent — o jogador "ganharia" PA de
       // volta em silêncio, sem nada na ficha explicando por quê.
-      version: 9,
+      // v10 (2026-09-03): o patamar Deus do Punho de Fogo virou narrativo. As
+      // compras feitas nele e o desbloqueio do próprio rank saem da ficha — o PA
+      // volta a ficar disponível, em vez de sumir da conta em silêncio.
+      version: 10,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
@@ -427,15 +444,23 @@ export const useCharacterStore = create<RosterState>()(
                 treeSkillChoices: c.treeSkillChoices ?? [],
                 proficiencies: c.proficiencies ?? [],
                 saveAdvantages: c.saveAdvantages ?? [],
-                purchasedAbilities: (c.purchasedAbilities ?? []).map((a) =>
-                  a.treeId === "desintoxicacao" && a.id === "a-mao-que-nao-erra"
-                    ? { ...a, id: "maos-limpas" }
-                    : a
-                ),
+                purchasedAbilities: (c.purchasedAbilities ?? [])
+                  .map((a) =>
+                    a.treeId === "desintoxicacao" && a.id === "a-mao-que-nao-erra"
+                      ? { ...a, id: "maos-limpas" }
+                      : a
+                  )
+                  .filter(
+                    (a) =>
+                      !(a.treeId === "punho-de-fogo" && PUNHO_DE_FOGO_DEUS_IDS.includes(a.id))
+                  ),
                 inventory: (c.inventory ?? []).map((item) => ({
                   ...item,
                   id: RENAMED_SHOP_ITEM_IDS[item.id] ?? item.id,
                 })),
+                unlockedRanks: (c.unlockedRanks ?? []).filter(
+                  (u) => !(u.treeId === "punho-de-fogo" && u.rank === "Deus")
+                ),
               },
             ])
           ),
