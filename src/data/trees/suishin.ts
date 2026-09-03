@@ -102,7 +102,7 @@ export const SUISHIN_TREE: Tree = {
       },
       talents: [
         { id: "guarda-longa", name: "Guarda Longa", paCost: 1, description: "Seu alcance de Reação corpo a corpo aumenta para 3 metros." },
-        { id: "aco-calmo", name: "Aço Calmo", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
+        { id: "aco-calmo", name: "Aço Calmo", paCost: 1, description: "+1 PT por patamar seu no Estilo Deus da Água. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
         { id: "nome-de-reidar", name: "Nome de Reidar", paCost: 1, description: "Seu cônjuge abandonou a própria casa pra estar com você — costume herdado da princesa. Você tem uma pessoa de lealdade absoluta no mundo." },
       ],
       abilities: [

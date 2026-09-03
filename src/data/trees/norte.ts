@@ -171,7 +171,7 @@ export const NORTE_TREE: Tree = {
           "Você passa a vestir Touki conscientemente: recebe o Manto de Touki e a reserva de Pontos de Touki (Cap. 3). Exclusivo do Norte: você pode aplicar Touki a objetos improvisados — uma cadeira revestida de aura parte um escudo de aço.",
       },
       talents: [
-        { id: "folego-longo-norte", name: "Fôlego Longo", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
+        { id: "folego-longo-norte", name: "Fôlego Longo", paCost: 2, description: "+1 PT por patamar seu no Estilo Deus do Norte. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
         { id: "mao-trocada", name: "Mão Trocada", paCost: 2, description: "Você usa Empunhadura Dupla sem redução de degrau na arma secundária." },
         { id: "instinto-de-presa", name: "Instinto de Presa", paCost: 2, description: "Você não pode ser surpreendido enquanto consciente, e rola Iniciativa com Vantagem." },
       ],

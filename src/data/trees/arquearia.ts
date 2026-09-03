@@ -156,7 +156,7 @@ export const ARQUEARIA_TREE: Tree = {
           "Você recebe o Manto de Touki completo e a reserva de PT. Seus disparos contam como mágicos e ignoram Resistência a perfurante — mas ainda não furam o Manto de Touki de ninguém. O alcance de todas as suas armas de disparo dobra.",
       },
       talents: [
-        { id: "folego-estavel", name: "Fôlego Estável", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
+        { id: "folego-estavel", name: "Fôlego Estável", paCost: 2, description: "+1 PT por patamar seu em Arquearia. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { ptPerRank: 1 } },
         { id: "tres-na-corda", name: "Três na Corda", paCost: 2, description: "Disparo Duplo passa a ser triplo, com o terceiro disparo dois degraus abaixo." },
         { id: "nunca-aqui", name: "Nunca Aqui", paCost: 2, description: "Depois de atirar, gaste 1 PT para se mover 9m sem provocar oportunidade e refazer Furtividade imediatamente." },
       ],

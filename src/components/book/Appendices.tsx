@@ -336,11 +336,26 @@ export default function Appendices() {
             vezes.
           </P>
         </Aside>
+        <Aside title="Por que o chefe age mais de uma vez">
+          <P>
+            Dobrar o PV resolve a vida do chefe e não resolve o problema real, que é{" "}
+            <b>economia de ação</b>. Cinco personagens de 3º patamar agem quinze vezes por rodada; um chefe
+            age três. Com o PV dobrado ele continua morrendo antes de agir duas vezes — numa simulação de
+            2.000 combates, um grupo de cinco derrubou o chefe de <i>Elite</i> (um patamar acima deles) em
+            2,4 rodadas, perdendo 0,7 personagem. Isso não é um chefe: é um saco de pancada com bastante PV.
+          </P>
+          <P>
+            A rodada extra corrige a assimetria do lado certo. O chefe não fica mais difícil de matar — ele
+            fica <b>perigoso enquanto está vivo</b>, que é a única coisa que faz um combate contra um inimigo
+            só valer a mesa. Se o seu grupo tem três ou menos, a regra não se aplica: a rodada extra existe
+            pra compensar números, não pra punir grupos pequenos.
+          </P>
+        </Aside>
         <Aside title="Ajustando pra cima ou pra baixo">
           <List
             items={[
               "Grupo de criaturas fracas: use metade do PV e do dano do patamar, mas multiplique o número de criaturas.",
-              "Chefe único: dobre o PV da linha do patamar dele e mantenha o dano.",
+              "Chefe único: dobre o PV da linha do patamar dele, mantenha o dano — e dê a ele UMA RODADA INTEIRA A CADA DOIS PERSONAGENS do grupo, arredondado pra baixo, mínimo 1. Um grupo de cinco enfrenta um chefe que age duas vezes por rodada.",
               "Fera sem inteligência: role só o Atributo puro em testes sociais (sem Perícia).",
             ]}
           />

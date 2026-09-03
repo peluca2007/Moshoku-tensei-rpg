@@ -634,8 +634,10 @@ for (const chefe of CHEFES) {
         turno(c, [alvoChefe]);
       }
       if (pvChefe <= 0) break;
-      // chefe age: concentra o dano num alvo vivo por vez
-      let restante = chefe.danoPorTurno;
+      // Chefe age: uma rodada inteira a cada dois personagens do grupo
+      // (Apêndice G, "Ajustando pra cima"). Cinco personagens = duas rodadas.
+      const rodadasDoChefe = Math.max(1, Math.floor(grupo.length / 2));
+      let restante = chefe.danoPorTurno * rodadasDoChefe;
       for (const alvo of alvos) {
         if (restante <= 0) break;
         if (!alvo.vivo) continue;

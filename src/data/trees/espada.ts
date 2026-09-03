@@ -103,7 +103,7 @@ export const ESPADA_TREE: Tree = {
       },
       talents: [
         { id: "punho-duplo", name: "Punho Duplo", paCost: 1, description: "Você empunha arma de duas mãos com uma só, sem penalidade, e ganha +1 grau de Dado quando usa as duas mãos." },
-        { id: "aco-rapido", name: "Aço Rápido", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
+        { id: "aco-rapido", name: "Aço Rápido", paCost: 1, description: "+1 PT por patamar seu no Estilo Deus da Espada. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
         { id: "cavaleiro-vencido", name: "Cavaleiro Vencido", paCost: 1, description: "Contra soldados, guardas e cavaleiros comuns, seus ataques acertam automaticamente com resultado 10 ou mais no dado." },
       ],
       abilities: [
@@ -158,7 +158,7 @@ export const ESPADA_TREE: Tree = {
           "Você recebe o Manto de Touki completo. Dois degraus de Dado de Arma neste patamar. Se você não se mover no turno, recebe 1 Ação adicional só para atacar.",
       },
       talents: [
-        { id: "folego-de-aco", name: "Fôlego de Aço", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
+        { id: "folego-de-aco", name: "Fôlego de Aço", paCost: 2, description: "Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank no Estilo Deus da Espada. O estilo aposta tudo no primeiro turno; isto compra um segundo primeiro turno." },
         { id: "mira-no-osso", name: "Mira no Osso", paCost: 2, description: "Seus acertos críticos rolam o Dado de Arma três vezes em vez de duas." },
         { id: "espada-emprestada", name: "Espada Emprestada", paCost: 2, description: "Você recebe uma espada de qualidade superior: +1 degrau de Dado de Arma permanente, e ela conta como mágica." },
       ],

@@ -357,7 +357,26 @@ export interface ReserveGrant {
   hpPerRank?: number;
   /** +N PM por patamar desbloqueado NA MESMA árvore do talento. */
   mpPerRank?: number;
-  /** +N PT Máximos, valor fixo. */
+  /**
+   * +N PT por patamar desbloqueado NA MESMA árvore do talento (2026-09-03).
+   *
+   * PT era a única das três reservas fora do Padrão do Cap. 1: PV e PM já
+   * escalavam por patamar, e PT vinha como número fixo. A consequência não era
+   * só inconsistência — era redundância. Cinco árvores tinham DOIS talentos de
+   * PT em patamares diferentes fazendo a mesma coisa com um número diferente
+   * ("+2 PT Máximos" no Intermediário, "+3 PT Máximos" no Avançado), e comprar
+   * o segundo não mudava nada na mesa além do total.
+   *
+   * Com PT escalando, um talento só cobre a árvore inteira — e o segundo pôde
+   * virar outra coisa: recarga em vez de tanque maior.
+   */
+  ptPerRank?: number;
+  /**
+   * +N PT Máximos, valor fixo. Só sobrevive como RIDER em cima de outra
+   * reserva — o Ombro de Pedra dá +4 PV por patamar e +1 PT fixo. Nenhum
+   * talento deve existir só pra dar PT fixo: era exatamente essa a
+   * redundância que o rework de 2026-09-03 desfez.
+   */
   pt?: number;
 }
 
