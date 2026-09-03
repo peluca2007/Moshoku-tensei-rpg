@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BookOpen } from "lucide-react";
+import Chapter0 from "@/components/book/Chapter0";
 import Chapter1 from "@/components/book/Chapter1";
 import Chapter2 from "@/components/book/Chapter2";
 import Chapter3 from "@/components/book/Chapter3";
@@ -14,6 +15,18 @@ export const metadata: Metadata = {
 };
 
 const TOC: TocEntry[] = [
+  {
+    id: "cap0",
+    label: "Comece Aqui",
+    children: [
+      { id: "cap0-1", label: "1. O que é este jogo" },
+      { id: "cap0-2", label: "2. A ficha em seis números" },
+      { id: "cap0-3", label: "3. Um turno de combate" },
+      { id: "cap0-exemplo", label: "— Uma rodada jogada" },
+      { id: "cap0-4", label: "4. Criando um personagem" },
+      { id: "cap0-5", label: "5. Onde está cada coisa" },
+    ],
+  },
   {
     id: "cap1",
     label: "Cap. 1 — O Núcleo do Sistema",
@@ -108,6 +121,7 @@ export default function LivroPage() {
       </header>
 
       <BookShell toc={TOC}>
+        <Chapter0 />
         <Chapter1 />
         <Chapter2 />
         <Chapter3 />

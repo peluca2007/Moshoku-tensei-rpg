@@ -16,6 +16,39 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.0.5",
+    date: "2026-09-03",
+    title: "Comece Aqui",
+    sections: [
+      {
+        heading: "Novo capítulo de abertura",
+        items: [
+          "O livro ganhou um capítulo \"Comece Aqui\", antes do Capítulo 1: o que é o jogo, a ficha em seis números, um turno de combate, uma rodada jogada de ponta a ponta, criação em seis passos, e um índice de onde encontrar cada coisa.",
+          "Ele existe porque o livro abria em \"o sistema utiliza 5 atributos principais\" — quem nunca jogou via uma decisão de ficha antes de saber o que é um turno. Cinco minutos de leitura, uma vez só.",
+          "A rodada de exemplo mostra a Magia de Água preparando no 1º turno e cobrando em dobro no 2º, para ensinar a regra dos dois tempos com um caso concreto em vez de uma explicação.",
+        ],
+      },
+      {
+        heading: "Contradições de regra corrigidas",
+        items: [
+          "INTERRUPÇÃO DE CONJURAÇÃO: existiam duas regras conflitantes. O Cap. 2, §6 (novo na 0.0.4) usava CD 8 + metade do dano; o Cap. 4, §3 usava CD 10 + Bônus de Rank de quem acertou. Vale a do Cap. 4 — o próprio livro já explicava, desde 2026-08-29, por que a versão baseada em dano não sobrevive à progressão: o dano cresce sem teto e o teste trava em +11, então magia de 4 a 6 Ações ficaria impossível de conjurar nos patamares em que ela existe.",
+          "SALVAÇÕES: o Cap. 4, §4 diz \"Duas Salvações por Combate\", mas Santuário Menor (Cura, Santo) citava \"Uma Salvação por Combate\". Corrigido para duas.",
+          "A lista de formas de impedir uma morte passou de quatro para cinco — a Égide Lendária (item de Rank S) estava fora da contagem, apesar de o próprio item se declarar parte dela.",
+          "CONTAGEM DE ÁRVORES: o livro dizia 17 ou 18 em seis lugares diferentes. São 19 desde que o Punho de Fogo entrou, na 0.0.2.",
+          "A tabela de patamares do Cap. 3 renderizava uma linha 7 duplicada, com bônus +8 — valor que não existe em RANK_BONUS (o rank Deus é +7). Ofícios agora mostram \"—\" no 7º patamar, que é o correto: Ofício termina no sexto.",
+          "A contagem de Escolas Formais e Ofícios estava errada (dizia seis Ofícios; são sete, e o Estilo Vendaval é Escola Formal).",
+          "O Aside \"Por que o dobro, e por que 20\" (Cap. 4, §1) explicava uma fórmula que não existe mais: a constante é 14 e o multiplicador é 1,67 desde 2026-08-30. Reescrito com os valores reais e o motivo da mudança.",
+        ],
+      },
+      {
+        heading: "Site",
+        items: [
+          "\"Criar\" saiu da barra de navegação. Criar personagem não é um destino que se visita: é uma coisa que se faz a partir do roster, e /personagens já abre com o botão de criação ao lado das fichas existentes. A rota continua existindo e linkada da landing e do roster.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.0.4",
     date: "2026-09-03",
     title: "O Cântico Tem Preço",
@@ -33,7 +66,7 @@ export const PATCH_NOTES: PatchNote[] = [
       {
         heading: "Novas regras de magia (Cap. 2)",
         items: [
-          "INTERROMPER UMA CONJURAÇÃO — a regra que faltava. Ao sofrer dano enquanto conjura, faça teste de resistência de Espírito contra CD 8 + metade do dano sofrido. Falha: perde todas as Ações gastas e metade do PM da magia.",
+          "INTERROMPER UMA CONJURAÇÃO — o Cap. 2 ganhou uma seção inteira sobre isso. (A CD publicada aqui estava errada e foi corrigida na 0.0.5: vale CD 10 + Bônus de Rank de quem te acertou, a mesma do Cap. 4, §3.) Falha: perde todas as Ações gastas e metade do PM da magia.",
           "Enquanto está Conjurando você é visível e audível (o Mestre informa o rank aparente pelo tamanho do cântico), pode se mover metade do Deslocamento, e não pode atacar, usar item nem usar Reação — usar Reação encerra a conjuração.",
           "Atordoado, Paralisado, Incapacitado, Surdo e Soterrado interrompem SEM teste. Congelado e Atolado não interrompem: você continua falando.",
           "Ritual não se interrompe pela metade — se perde inteiro: PM cheio e todo o tempo investido. Em troca, ritual conduzido em paz nunca exige teste.",

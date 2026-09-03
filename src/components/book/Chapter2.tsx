@@ -215,11 +215,13 @@ export default function Chapter2() {
         />
 
         <SubTitle>O Teste de Concentração</SubTitle>
-        <Warning title="A regra">
+        <Warning title="A regra (a mesma do Cap. 4, §3)">
           <P>
             Sempre que você <b>sofrer dano</b> enquanto estiver Conjurando, faça um{" "}
-            <b>teste de resistência de Espírito</b> contra <b>CD 8 + metade do dano sofrido</b> (arredondado
-            pra baixo).
+            <b>teste de resistência de Espírito</b> contra{" "}
+            <b>CD 10 + o Bônus de Rank de quem te acertou</b> — CD 11 contra um Principiante, CD 16 contra um
+            Imperador. Use <b>12</b> quando não houver um responsável claro (uma queda, um desabamento, uma
+            armadilha sem dono).
           </P>
           <List
             items={[
@@ -227,19 +229,24 @@ export default function Chapter2() {
               <span key="f"><b>Falha:</b> a conjuração é interrompida. Você perde <b>todas as Ações já gastas</b> e <b>metade do PM</b> da magia, arredondado pra cima. A magia não acontece.</span>,
             ]}
           />
+          <P>
+            <b>Quem te acertou decide, não o quanto ele rolou.</b> É a mesma lógica do Fio da Vida (Cap. 4,
+            §6). O Cap. 4, §3 explica por que a CD NÃO é metade do dano: o dano cresce sem teto neste livro
+            (uma criatura Imperador bate perto de 120 por turno) e o teste cresce até +11 num d20 — amarrada
+            ao dano, a regra tornaria magia de 4 a 6 Ações impossível de conjurar exatamente nos patamares em
+            que ela existe.
+          </P>
         </Warning>
         <P>
-          <b>Meia dúzia de flechas não derruba um Imperador.</b> Um tiro de 6 de dano pede CD 11, que um
-          conjurador de rank alto passa quase sempre. Um Deus da Espada entregando 60 de dano num turno pede
-          CD 38, que ninguém passa. É exatamente esse o desenho: <b>o preço de conjurar devagar é ter alguém
-            segurando a linha de frente</b>, e a única coisa que realmente interrompe um apocalipse é outro
-          apocalipse.
+          <b>Perda de Foco</b> (Cap. 4, §3) é a outra metade disto: você precisa gastar <b>ao menos 1 Ação
+            por turno</b> recitando. Um turno inteiro sem dedicar nenhuma Ação derruba o cântico sozinho,
+          sem ninguém precisar te acertar.
         </P>
         <Aside title="Quatro coisas que a CD já resolve, pra não virarem regra nova">
           <List
             items={[
-              "Dano em área que atinge o conjurador conta uma vez, pelo total, não uma vez por fonte.",
-              "Dano contínuo (Em Chamas, veneno, magma) força o teste no início do turno, quando cobra.",
+              "Dano em área conta como UM acerto, e a CD vem do Rank de quem conjurou a área — não um teste por criatura atingida junto.",
+              "Dano contínuo (Em Chamas, veneno, magma) força o teste no início do turno, quando cobra, com a CD do Rank de quem aplicou a condição.",
               "Ficar Atordoado, Paralisado, Incapacitado, Surdo ou Soterrado interrompe SEM teste — o cântico exige voz e postura. Congelado e Atolado não interrompem: você continua falando.",
               "Ser empurrado, derrubado ou movido contra a vontade interrompe sem teste se você sair do alcance ou perder a linha de visão do alvo declarado.",
             ]}
@@ -408,7 +415,7 @@ export default function Chapter2() {
         <Aside title="Quando a combinação vira uma árvore própria">
           Às vezes duas árvores em Rank Avançado se encaixam bem demais pra caber numa única habilidade — o
           Estilo Deus do Norte com a Magia de Vento, por exemplo, virou o <b>Estilo Vendaval</b>, uma
-          décima oitava sub-árvore inteira que só se revela pra quem cumpriu os dois pré-requisitos (Cap. 1,
+          sub-árvore inteira que só se revela pra quem cumpriu os dois pré-requisitos (Cap. 1,
           §8, pergunta 7; catálogo completo no Cap. 3). Isso não é a regra — é o teto dela.
         </Aside>
       </Section>

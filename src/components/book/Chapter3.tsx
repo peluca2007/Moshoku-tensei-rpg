@@ -19,7 +19,7 @@ export default function Chapter3() {
       </P>
       <Warning title="O catálogo completo está logo abaixo, seção 'Todas as Sub-árvores'">
         Este capítulo primeiro cobre as regras <i>compartilhadas</i> entre árvores do mesmo pilar, e termina
-        com o catálogo completo de magias, talentos, técnicas e Maestrias das 18 sub-árvores — o mesmo dado
+        com o catálogo completo de magias, talentos, técnicas e Maestrias das 19 sub-árvores — o mesmo dado
         que alimenta a ficha, então nunca diverge dela. Prefere navegar visualmente? O{" "}
         <Link href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">
           mapa de Árvores
@@ -88,9 +88,9 @@ export default function Chapter3() {
       <Section>
         <SectionTitle id="cap3-mapa">O Mapa Completo das Árvores</SectionTitle>
         <P>
-          O sistema comporta dezessete sub-árvores escolhíveis desde o primeiro dia, mais uma décima oitava
-          que não se escolhe — ela só se revela pra quem já domina Rank Avançado em duas árvores
-          específicas (ver a nota de pré-requisito no catálogo dela, mais abaixo). Nenhuma delas é uma
+          O sistema comporta dezessete sub-árvores escolhíveis desde o primeiro dia, mais duas híbridas que não
+          se escolhem — elas só se revelam pra quem já cumpriu os pré-requisitos das duas árvores de origem
+          (ver a nota no catálogo de cada uma, mais abaixo). Nenhuma delas é uma
           classe: você compra Ranks em quantas quiser, na ordem que quiser, e seu personagem é simplesmente
           a soma do que ele estudou. Clique no nome de qualquer sub-árvore na tabela abaixo pra abrir ela
           direto no mapa.
@@ -113,11 +113,12 @@ export default function Chapter3() {
         />
         <Aside title="Escolas Formais e Ofícios">
           <P>
-            As oito escolas de magia e os três Estilos Divinos são <b>Escolas Formais</b>: têm mestres vivos,
-            sedes, hierarquia e títulos reconhecidos no mundo inteiro — usam os nomes canônicos de rank
-            (Principiante → Imperador) e conferem status social. As demais seis são <b>Ofícios</b> aprendidos
-            na estrada, sem diploma: mecanicamente idênticos (mesmo Bônus de Rank, mesmos custos de PA,
-            mesma contagem de conhecimentos), mas os nomes dos patamares mudam.
+            As oito escolas de magia, os três Estilos Divinos e o Estilo Vendaval (que nasce de um deles) são{" "}
+            <b>Escolas Formais</b>: têm mestres vivos, sedes, hierarquia e títulos reconhecidos no mundo
+            inteiro — usam os nomes canônicos de rank (Principiante → Imperador) e conferem status social.
+            As outras sete são <b>Ofícios</b> aprendidos na estrada, sem diploma: mecanicamente idênticos
+            (mesmo Bônus de Rank, mesmos custos de PA, mesma contagem de conhecimentos), mas os nomes dos
+            patamares mudam — e a tabela abaixo é a tradução entre eles.
           </P>
         </Aside>
         <BookTable
@@ -125,8 +126,10 @@ export default function Chapter3() {
           rows={RANKS.map((rank, i) => [
             String(i + 1),
             `+${RANK_BONUS[rank]}`,
-            ...rankLabelTrees.map((t) => t.rankLabels?.[rank] ?? rank),
-          ]).concat([["7", "+8", ...rankLabelTrees.map(() => "—")]])}
+            // Ofício não tem 7º patamar: onde a árvore não define rótulo pro Deus,
+            // a célula sai como "—" em vez de repetir o nome canônico do rank.
+            ...rankLabelTrees.map((t) => (rank === "Deus" ? "—" : t.rankLabels?.[rank] ?? rank)),
+          ])}
         />
         <Aside title="Ofícios não têm patamar Deus">
           O sétimo degrau existe só nas Escolas Formais, e mesmo lá é narrativo. Um Ofício termina no sexto
@@ -432,7 +435,7 @@ export default function Chapter3() {
       <Section>
         <SectionTitle id="cap3-todas">Todas as Sub-árvores — Catálogo Completo</SectionTitle>
         <P>
-          Magias, talentos, técnicas e Maestrias de cada uma das 18 sub-árvores, rank por rank. Clique no
+          Magias, talentos, técnicas e Maestrias de cada uma das 19 sub-árvores, rank por rank. Clique no
           nome de uma árvore pra abrir o catálogo dela.
         </P>
         {(["magia", "corpo", "utilidade"] as const).map((category) => (

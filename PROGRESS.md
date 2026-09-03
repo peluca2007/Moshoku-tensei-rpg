@@ -1,9 +1,10 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-03 — duas passadas. **0.0.3**: rework da Desintoxicação (a Profundidade foi
-apagada), condição Soterrado, custos de PA progressivos sincronizados entre motor, livro e ficha.
-**0.0.4**: piso de tamanho no Bônus de Recitação Perfeita (50 cânticos reescritos), regras de interrupção
-de conjuração, e a Mecânica Central declarada nas 19 árvores. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-03 — três passadas. **0.0.3**: rework da Desintoxicação (Profundidade
+apagada), condição Soterrado, custos de PA progressivos. **0.0.4**: piso de tamanho no Bônus de Recitação
+Perfeita (50 cânticos reescritos), regras de conjuração, Mecânica Central nas 19 árvores. **0.0.5**:
+capítulo "Comece Aqui" e sete contradições de regra corrigidas numa leitura completa do livro.
+Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
