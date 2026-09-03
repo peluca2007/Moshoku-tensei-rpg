@@ -29,6 +29,8 @@ export const PATCH_NOTES: PatchNote[] = [
           "ELAS CUSTAM PA de verdade agora — de 3 PA nas portas mais baixas a 8 PA no Meteoro — e o custo entra em getPaSpent junto com magia, atributo e perícia.",
           "Painel novo em /arvores: mostra as nove o tempo inteiro. As compradas, as abertas agora, e as trancadas COM AS PORTAS QUE FALTAM e quanto falta em cada uma. Uma Combinada aparece como disponível no instante em que a segunda porta abre.",
           "A Maestria do Avançado continua dando o DIREITO de aprender Magia Combinada. O que ela deixou de ser é a única condição.",
+          "NA FICHA: as Combinadas compradas ganham seção própria no Grimório de /ficha, com PM, Ações, alcance, dano e as duas portas que as destravaram. Ficam separadas das árvores de propósito — uma Combinada não pertence a nenhuma das duas escolas que a geraram, e listar o Meteoro dentro de Fogo faria o jogador procurá-lo em Terra na metade das vezes.",
+          "NO PDF: elas entram no mesmo bloco de cartas das magias, marcadas com ◇, e a linha de alcance mostra as duas árvores de origem. Na mesa elas se usam como qualquer outra magia; separá-las faria procurar em dois lugares.",
         ],
       },
       {

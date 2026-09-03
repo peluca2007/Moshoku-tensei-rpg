@@ -38,6 +38,14 @@ em vez de um bloco que abre junto.
 A Maestria do Avançado continua dando o **direito** de aprender Magia Combinada. O que ela deixou de ser é
 a única condição.
 
+**Onde elas aparecem depois de compradas:**
+
+- **`/ficha`** — seção própria no Grimório, com PM, Ações, alcance, dano e as duas portas que a
+  destravaram. Separada das árvores de propósito: uma Combinada não pertence a nenhuma das duas escolas que
+  a geraram, e listar o Meteoro dentro de Fogo faria procurá-lo em Terra na metade das vezes.
+- **PDF exportado** — no mesmo bloco de cartas das magias, marcadas com ◇, com as duas árvores de origem na
+  linha de alcance. Na mesa elas se usam como qualquer outra magia.
+
 ---
 
 ### 📖 Novas Regras e Simplificações

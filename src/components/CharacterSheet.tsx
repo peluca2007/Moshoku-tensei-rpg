@@ -31,6 +31,7 @@ import {
 } from "@/lib/types";
 import { RANK_COLORS, CATEGORY_ACCENT } from "@/lib/rankColors";
 import { CATEGORY_LABELS } from "@/data/trees";
+import CombinedSpellsSection from "./CombinedSpellsSection";
 import InventorySection from "./InventorySection";
 import LoreSection from "./LoreSection";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
@@ -253,6 +254,7 @@ export default function CharacterSheet() {
     gold,
     startingTreeId,
     purchasedAbilities,
+    purchasedCombinedSpells,
     unlockedRanks,
     attributeBase,
     saveAdvantages,
@@ -746,7 +748,7 @@ export default function CharacterSheet() {
             )}
           </div>
 
-          {abilitiesByTree.size === 0 && (
+          {abilitiesByTree.size === 0 && (purchasedCombinedSpells ?? []).length === 0 && (
             <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
               Nenhuma magia ou talento comprado ainda.
             </p>
@@ -883,6 +885,8 @@ export default function CharacterSheet() {
               );
             });
           })()}
+
+          <CombinedSpellsSection query={grimoireQuery} />
 
           <InventorySection />
           <LoreSection lore={lore} />

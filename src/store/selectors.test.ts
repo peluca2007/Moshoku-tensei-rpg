@@ -16,6 +16,7 @@ import {
 } from "./selectors";
 import { TREES } from "@/data/trees";
 import { COMBINED_SPELLS, getCombinedSpellById } from "@/data/combinedSpells";
+import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import {
   attributePaCostTotal,
   ATTRIBUTE_CREATION_POINTS,
@@ -470,5 +471,43 @@ describe("Magias Combinadas (Cap. 2, §4)", () => {
       purchasedCombinedSpells: ["magma"],
     });
     expect(canPurchaseCombinedSpell(c, "magma").ok).toBe(false);
+  });
+});
+
+describe("Magias Combinadas na ficha exportada", () => {
+  it("uma Combinada comprada sai no PDF, com as duas portas visíveis", () => {
+    // Elas fazem parte da ficha desde 2026-09-03; se o PDF não as leva, o
+    // jogador imprime uma folha que não sabe que ele as tem.
+    const c = ficha({ purchasedCombinedSpells: ["meteoro"] });
+    const payload = buildFichaPayload({
+      character: c,
+      attributes: { ...ZERO_ATTRS },
+      maxHp: 10,
+      maxMp: 8,
+      maxPt: 0,
+      maxPp: 0,
+      armorClass: 10,
+      initiativeBonus: 0,
+    });
+    const carta = payload.abilityCards.find((a) => a.name.includes("Meteoro"));
+    expect(carta).toBeDefined();
+    expect(carta!.range).toContain("Fogo Rei");
+    expect(carta!.range).toContain("Terra Avançado");
+    expect(carta!.cost).toContain("8 PA");
+  });
+
+  it("ficha sem Combinada não gera carta nenhuma delas", () => {
+    const payload = buildFichaPayload({
+      character: ficha(),
+      attributes: { ...ZERO_ATTRS },
+      maxHp: 10,
+      maxMp: 8,
+      maxPt: 0,
+      maxPp: 0,
+      armorClass: 10,
+      initiativeBonus: 0,
+    });
+    const nomes = COMBINED_SPELLS.map((s) => s.name);
+    expect(payload.abilityCards.filter((a) => nomes.some((n) => a.name.includes(n)))).toEqual([]);
   });
 });
