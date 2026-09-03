@@ -5,6 +5,65 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.0 — "Duas Portas" · 2026-09-03
+
+### ⚔️ Balanceamento
+
+**Magias Combinadas — rework completo.** Elas eram uma tabela impressa e nada mais: nenhuma era comprável
+em lugar nenhum, o motor não sabia que existiam, a ficha não as guardava, e o PA que o livro dizia que elas
+custavam **nunca saía de lugar nenhum**.
+
+O requisito era "rank Avançado nas duas escolas" — o que significava que chegar ao Avançado em duas
+escolas quaisquer abria **as nove de uma vez**, de graça. Agora cada uma declara **duas portas, cada uma
+com o seu próprio rank**:
+
+| Magia Combinada | As duas portas | PA |
+| --- | --- | --- |
+| Barreira Incandescente | Barreira **Avançado** + Fogo **Intermediário** | 3 |
+| Muralha de Espinhos | Terra **Avançado** + Fogo **Intermediário** | 3 |
+| Magma | Fogo **Avançado** + Terra **Avançado** | 4 |
+| Gelo Tempestuoso | Água **Avançado** + Vento **Avançado** | 4 |
+| Pânico | Fogo **Santo** + Vento **Avançado** | 5 |
+| Relâmpago Santo | Água **Santo** + Cura **Avançado** | 5 |
+| Tempestade de Cura | Cura **Santo** + Água **Avançado** | 5 |
+| Nevasca Curativa | Água **Rei** + Cura **Santo** | 7 |
+| Meteoro | Fogo **Rei** + Terra **Avançado** | 8 |
+
+Os requisitos são **desiguais de propósito**: duas fichas que investiram fundo em escolas diferentes
+destravam Combinadas diferentes, e nenhuma destrava todas. É o que faz a tabela ser uma *lista de escolhas*
+em vez de um bloco que abre junto.
+
+**Elas custam PA de verdade agora**, e o custo entra em `getPaSpent` junto com magia, atributo e perícia.
+
+A Maestria do Avançado continua dando o **direito** de aprender Magia Combinada. O que ela deixou de ser é
+a única condição.
+
+---
+
+### 📖 Novas Regras e Simplificações
+
+**Painel novo em `/arvores`.** Mostra as nove o tempo inteiro, em três estados:
+
+- **Comprada** — já está na ficha.
+- **Disponível** — as duas portas abriram; dá para comprar agora.
+- **Trancada** — mostra **quais portas faltam e quanto falta em cada uma**.
+
+É a parte que faz o painel valer: ele não esconde o que você ainda não alcançou, ele diz o caminho. E fica
+em `/arvores`, não na ficha, porque uma Combinada não pertence a *uma* árvore — ela nasce do encontro de
+duas, e é olhando o mapa que se entende por que ela apareceu.
+
+---
+
+### 🐛 Correções de Bugs
+
+- **Três das nove magias apontavam para a árvore `"curar"`, que nunca existiu** — o id é `"cura"`. O livro
+  imprimia a coluna da árvore-primária **vazia** nessas três, e nenhuma verificação pegava porque nada no
+  código lia o campo. Um teste novo trava isso: toda porta de toda Combinada precisa apontar para uma
+  árvore que existe.
+- **Migração v11** do persist: fichas antigas entram com a lista de Combinadas vazia.
+- **33 testes** no total (eram 28) — cinco cobrindo as duas portas, o PA e a compra duplicada.
+
+---
 ## 0.0.9 — "Ganhar Duas Vezes a Mesma Coisa" · 2026-09-03
 
 ### ⚔️ Balanceamento

@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Sparkles, Gem } from "lucide-react";
 import { useActiveCharacter } from "@/store/useCharacterStore";
 import { getPaSpent } from "@/store/selectors";
+import CombinedSpellsPanel from "./CombinedSpellsPanel";
 import DestinyBoard from "./DestinyBoard";
 
 export default function TreeBrowser() {
@@ -27,6 +28,8 @@ export default function TreeBrowser() {
       </header>
 
       <DestinyBoard initialFocusTreeId={initialFocusTreeId} />
+
+      <CombinedSpellsPanel />
     </div>
   );
 }

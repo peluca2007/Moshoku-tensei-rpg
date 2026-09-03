@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   canPurchaseAbility,
+  canPurchaseCombinedSpell,
+  getCombinedSpellPaCost,
   getArmorClass,
   getAttributePaCost,
   getMaxHp,
@@ -13,6 +15,7 @@ import {
   getTrainedBody,
 } from "./selectors";
 import { TREES } from "@/data/trees";
+import { COMBINED_SPELLS, getCombinedSpellById } from "@/data/combinedSpells";
 import {
   attributePaCostTotal,
   ATTRIBUTE_CREATION_POINTS,
@@ -63,6 +66,7 @@ function ficha(patch: Partial<CharacterData> = {}): CharacterData {
     startingTreeId: null,
     unlockedRanks: [],
     purchasedAbilities: [],
+    purchasedCombinedSpells: [],
     gold: 0,
     inventory: [],
     skills: [],
@@ -378,4 +382,93 @@ describe("Padrão das Reservas — PT escala como PV e PM (2026-09-03)", () => {
       }
     }
     expect(soPtFixo).toEqual([]);  });
+});
+
+describe("Magias Combinadas (Cap. 2, §4)", () => {
+  it("toda combinação aponta para árvores que existem", () => {
+    // Três delas apontavam para "curar" — id que nunca existiu; o certo é "cura".
+    // O livro imprimia a coluna vazia e nada pegava, porque nada lia o campo.
+    const orfas: string[] = [];
+    for (const s of COMBINED_SPELLS) {
+      for (const r of s.requires) {
+        if (!TREES.some((t) => t.id === r.treeId)) orfas.push(`${s.id} → ${r.treeId}`);
+      }
+    }
+    expect(orfas).toEqual([]);
+  });
+
+  it("exige as DUAS portas, cada uma no rank dela", () => {
+    // Meteoro: Fogo Rei + Terra Avançado.
+    const meteoro = getCombinedSpellById("meteoro")!;
+    expect(meteoro.requires).toHaveLength(2);
+
+    const soFogo = ficha({
+      unlockedRanks: [
+        { treeId: "fogo", rank: "Principiante" },
+        { treeId: "fogo", rank: "Intermediário" },
+        { treeId: "fogo", rank: "Avançado" },
+        { treeId: "fogo", rank: "Santo" },
+        { treeId: "fogo", rank: "Rei" },
+      ],
+    });
+    const negado = canPurchaseCombinedSpell(soFogo, "meteoro");
+    expect(negado.ok).toBe(false);
+    expect(negado.reason).toContain("Terra");
+
+    const comAsDuas = ficha({
+      ...soFogo,
+      unlockedRanks: [
+        ...soFogo.unlockedRanks,
+        { treeId: "terra", rank: "Principiante" },
+        { treeId: "terra", rank: "Intermediário" },
+        { treeId: "terra", rank: "Avançado" },
+      ],
+    });
+    expect(canPurchaseCombinedSpell(comAsDuas, "meteoro").ok).toBe(true);
+  });
+
+  it("rank alto numa porta não substitui a outra", () => {
+    // Avançado nas duas NÃO abre o Meteoro: ele quer Fogo no Rei.
+    const avancadoNasDuas = ficha({
+      unlockedRanks: [
+        { treeId: "fogo", rank: "Principiante" },
+        { treeId: "fogo", rank: "Intermediário" },
+        { treeId: "fogo", rank: "Avançado" },
+        { treeId: "terra", rank: "Principiante" },
+        { treeId: "terra", rank: "Intermediário" },
+        { treeId: "terra", rank: "Avançado" },
+      ],
+    });
+    expect(canPurchaseCombinedSpell(avancadoNasDuas, "meteoro").ok).toBe(false);
+    // ...mas abre o Magma, que pede Avançado nas duas.
+    expect(canPurchaseCombinedSpell(avancadoNasDuas, "magma").ok).toBe(true);
+  });
+
+  it("o PA da Combinada entra no total gasto", () => {
+    const magma = getCombinedSpellById("magma")!;
+    const base = ficha({
+      unlockedRanks: [
+        { treeId: "fogo", rank: "Principiante" },
+        { treeId: "terra", rank: "Principiante" },
+      ],
+    });
+    const comMagma = ficha({ ...base, purchasedCombinedSpells: ["magma"] });
+    expect(getCombinedSpellPaCost(comMagma)).toBe(magma.paCost);
+    expect(getPaSpent(comMagma) - getPaSpent(base)).toBe(magma.paCost);
+  });
+
+  it("não dá pra comprar duas vezes", () => {
+    const c = ficha({
+      unlockedRanks: [
+        { treeId: "fogo", rank: "Principiante" },
+        { treeId: "fogo", rank: "Intermediário" },
+        { treeId: "fogo", rank: "Avançado" },
+        { treeId: "terra", rank: "Principiante" },
+        { treeId: "terra", rank: "Intermediário" },
+        { treeId: "terra", rank: "Avançado" },
+      ],
+      purchasedCombinedSpells: ["magma"],
+    });
+    expect(canPurchaseCombinedSpell(c, "magma").ok).toBe(false);
+  });
 });

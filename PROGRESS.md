@@ -1,8 +1,8 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-03 — cinco passadas (0.0.3 a 0.0.8). A última fecha o buraco estrutural:
-`selectors.ts` tinha 35 funções e zero testes; agora tem 23. O Apêndice C saiu da prosa e virou dado
-verificado. E o lint está limpo pela primeira vez. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-03 — **0.1.0**: rework das Magias Combinadas. Elas eram uma tabela
+impressa que nada comprava; viraram nove conhecimentos com duas portas cada, custo em PA e painel próprio
+em `/arvores`. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
@@ -13,7 +13,7 @@ verificado. E o lint está limpo pela primeira vez. Ver [`PATCH_NOTES.md`](PATCH
 ## Estado atual
 
 **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind v4 · Zustand com persistência em `localStorage`
-(schema `version: 10`).
+(schema `version: 11`).
 
 **Fonte de verdade única:** `src/data/`. O livro (`src/components/book/*.tsx`), o mapa de árvores
 (`/arvores`), a loja (`/loja`) e o PDF exportado leem todos os mesmos arrays — nenhuma tabela é escrita à

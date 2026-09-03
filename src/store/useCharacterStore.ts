@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
-import { canPurchaseAbility, canUnlockRank, getGuildRank } from "./selectors";
+import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank } from "./selectors";
 
 const DEFAULT_ATTRIBUTES: Record<AttributeKey, number> = {
   forca: 0,
@@ -26,6 +26,7 @@ function blankCharacter(id: string, name: string): CharacterData {
     startingTreeId: null,
     unlockedRanks: [],
     purchasedAbilities: [],
+    purchasedCombinedSpells: [],
     gold: 0,
     inventory: [],
     skills: [],
@@ -129,6 +130,9 @@ interface RosterState {
   unlockRank: (treeId: string, rank: RankName) => boolean;
   /** Retorna false (e não muda nada) se o rank não estiver desbloqueado ou já foi comprado. */
   purchaseAbility: (ability: PurchasedAbility) => boolean;
+  /** Cap. 2, §4: compra uma Magia Combinada. Retorna false se as duas portas não estiverem abertas. */
+  purchaseCombinedSpell: (id: string) => boolean;
+  removeCombinedSpell: (id: string) => void;
   removeAbility: (treeId: string, id: string) => void;
 
   /** Desfaz a última edição de campo na ficha ativa (não desfaz criar/apagar/trocar de personagem). */
@@ -383,6 +387,23 @@ export const useCharacterStore = create<RosterState>()(
           purchasedAbilities: c.purchasedAbilities.filter((a) => !(a.treeId === treeId && a.id === id)),
         })),
 
+      purchaseCombinedSpell: (id) => {
+        const state = get();
+        const active = state.activeId ? state.characters[state.activeId] : null;
+        if (!active || !canPurchaseCombinedSpell(active, id).ok) return false;
+        updateActive(get, set, (c) => ({
+          ...c,
+          purchasedCombinedSpells: [...(c.purchasedCombinedSpells ?? []), id],
+        }));
+        return true;
+      },
+
+      removeCombinedSpell: (id) =>
+        updateActive(get, set, (c) => ({
+          ...c,
+          purchasedCombinedSpells: (c.purchasedCombinedSpells ?? []).filter((x) => x !== id),
+        })),
+
       undo: () => {
         const state = get();
         if (!state.activeId) return;
@@ -427,7 +448,10 @@ export const useCharacterStore = create<RosterState>()(
       // v10 (2026-09-03): o patamar Deus do Punho de Fogo virou narrativo. As
       // compras feitas nele e o desbloqueio do próprio rank saem da ficha — o PA
       // volta a ficar disponível, em vez de sumir da conta em silêncio.
-      version: 10,
+      // v11 (2026-09-03): `purchasedCombinedSpells`. As Magias Combinadas
+      // passaram a ser compradas com PA e guardadas na ficha; ficha antiga
+      // entra com a lista vazia.
+      version: 11,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
@@ -444,6 +468,7 @@ export const useCharacterStore = create<RosterState>()(
                 treeSkillChoices: c.treeSkillChoices ?? [],
                 proficiencies: c.proficiencies ?? [],
                 saveAdvantages: c.saveAdvantages ?? [],
+                purchasedCombinedSpells: c.purchasedCombinedSpells ?? [],
                 purchasedAbilities: (c.purchasedAbilities ?? [])
                   .map((a) =>
                     a.treeId === "desintoxicacao" && a.id === "a-mao-que-nao-erra"
