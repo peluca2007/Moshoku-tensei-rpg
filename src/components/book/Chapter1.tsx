@@ -1,7 +1,7 @@
 import { RACES } from "@/data/races";
 import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
-import { RANK_BONUS, RANK_REQUIREMENTS, RANKS, SAVE_ADVANTAGE_PA_COST } from "@/lib/types";
-import { RANK_PA_COST } from "@/data/trees/shared";
+import { RANK_BONUS, RANK_REQUIREMENTS, RANKS } from "@/lib/types";
+import { DESINTOX_PA_COST, RANK_PA_COST } from "@/data/trees/shared";
 import { SKILLS } from "@/data/skills";
 import { STARTING_KITS } from "@/data/startingKits";
 import { TREES } from "@/data/trees";
@@ -55,9 +55,10 @@ export default function Chapter1() {
             Repare que o defeito <b>não cria pontos</b>: ele os empresta. Com os dois defeitos você distribui
             5 pontos, mas dois atributos ficam em -1 e -2, então a <b>soma dos seus cinco atributos base fecha
             em 2</b> de qualquer jeito. É essa soma — não cada atributo isolado — que a seção 2 usa pra cobrar
-            PA por pontos comprados depois da criação. Consequência direta: <b>desfazer um defeito custa os
-            mesmos 2 PA por ponto</b> que qualquer outro aumento. Você não pega -2 na criação e sobe de volta
-            de graça.
+            PA por pontos comprados depois da criação. Consequência direta: <b>desfazer um defeito entra na
+              mesma escada progressiva</b> que qualquer outro aumento (1, 1, 2, 2, 3, 3… PA). Você não pega -2
+            na criação e sobe de volta de graça — e, como o custo sobe, recomprar os dois pontos do defeito
+            grande custa mais que o primeiro ponto que você comprar.
           </P>
           <Warning title="Antes de largar o Vigor, leia isto">
             Vigor é o único atributo que não governa perícia nenhuma (seção 4), o que faz dele o alvo óbvio
@@ -116,8 +117,8 @@ export default function Chapter1() {
             ["1 PA", "3 Proficiências ou Línguas à sua escolha — qualquer personagem, de qualquer árvore."],
             ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente)."],
             ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
-            ["2 PA", "+1 ponto de Atributo Base permanente (teto 8) — medido pela soma dos cinco, então desfazer um defeito custa o mesmo."],
-            [`${SAVE_ADVANTAGE_PA_COST} PA`, "Vantagem permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha — uma vez por atributo, então no máximo 5 compras. Marcada na ficha e no PDF."],
+            ["1 / 1 / 2 / 2 / 3 / 3… PA", "+1 ponto de Atributo Base permanente (teto 8). PROGRESSIVO: as duas primeiras compras custam 1 PA cada, as duas seguintes 2 PA cada, e assim por diante. Medido pela soma dos cinco atributos, então desfazer um defeito custa o mesmo que qualquer outro aumento."],
+            ["2 / 3 / 4 / 4 / 4 PA", "Vantagem permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha — uma vez por atributo, no máximo 5 compras (17 PA pelas cinco). PROGRESSIVO: cada compra custa 1 PA a mais que a anterior, com teto em 4. Marcada na ficha e no PDF."],
             ["Variável", "Magias, Técnicas e Talentos de Árvore — o custo escala com o Rank (tabela na seção 3)."],
           ]}
         />
@@ -170,9 +171,27 @@ export default function Chapter1() {
           ]).concat([["Deus", "Narrativa", "—", "—", "—", "—"]])}
         />
         <P className="text-sm">
-          Esta é a tabela padrão, usada por Magia e pelo Corpo. <b>Árvores de Utilidade são mais baratas</b> —
-          ver a tabela própria delas no Cap. 3, &ldquo;Sistemas Compartilhados&rdquo;.
+          Esta é a tabela padrão, usada por Magia e pelo Corpo. Duas famílias fogem dela, e as duas fogem pra
+          baixo: <b>Árvores de Utilidade</b> (tabela própria no Cap. 3, &ldquo;Sistemas Compartilhados&rdquo;)
+          e a <b>Magia de Desintoxicação</b> (Cap. 2, &ldquo;A Escola Barata&rdquo;).
         </P>
+        <SubTitle>A Escola Barata — Desintoxicação</SubTitle>
+        <P>
+          A Desintoxicação é a única escola do livro cujo trabalho principal acontece fora do combate e cujo
+          alvo é sempre um problema que o Mestre criou. Ninguém compra Purgar esperando ganhar uma luta —
+          compra pra que a campanha não pare quando alguém pisa no pântano errado. Cobrar dela o preço de uma
+          escola de dano era fazer o jogador pagar Fogo por um seguro contra o roteiro.
+        </P>
+        <BookTable
+          headers={["Rank", "Magia Comum", "Magia Assinatura ◆", "Talento", "(tabela padrão, pra comparar)"]}
+          rows={RANKS.filter((r) => r !== "Deus").map((rank) => [
+            rank,
+            `${DESINTOX_PA_COST.common[rank]} PA`,
+            `${DESINTOX_PA_COST.signature[rank]} PA`,
+            `${DESINTOX_PA_COST.talent[rank]} PA`,
+            `${RANK_PA_COST.common[rank]} / ${RANK_PA_COST.signature[rank]} / ${RANK_PA_COST.talent[rank]} PA`,
+          ])}
+        />
         <Aside title="Magia Assinatura ◆">
           Dentro de cada Rank existe uma magia que define aquele patamar — a que os magos daquele nível são
           reconhecidos por saber, marcada com o símbolo ◆ nas listas. Ela custa +1 PA a mais que uma magia
@@ -477,7 +496,7 @@ export default function Chapter1() {
         </P>
         <BookTable
           headers={["Rank na Árvore", "Bônus Numérico"]}
-          rows={RANKS.map((r) => [r, `+${RANK_BONUS[r]}`]).concat([["Deus", "—"]])}
+          rows={RANKS.map((r) => [r, `+${RANK_BONUS[r]}`])}
         />
         <Aside title="O Bônus Depende da Ação!">
           O Bônus Numérico é específico da árvore em uso no momento. Se você atacar com Magia de Água, usa

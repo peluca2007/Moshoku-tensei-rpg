@@ -5,6 +5,18 @@ export const SUISHIN_TREE: Tree = {
   name: "Estilo Deus da Água",
   category: "corpo",
   subgroup: "Espadachim",
+  mechanic: {
+    tag: "Contra-ataque",
+    hook:
+      "Você não abre a luta. Você cobra por ela — e é o único estilo que mantém outras pessoas vivas.",
+    loop: [
+      "Deixe vir. Quando uma criatura adjacente ERRA um ataque corpo a corpo contra você, o Fluxo dispara: contra-ataque imediato com dano de arma normal, sem gastar PT.",
+      "Suba a CA e a chance de errar. Aparar, postura e escudo leve existem pra transformar acerto em erro — cada erro do inimigo vira dano seu.",
+      "Estenda. Do Avançado em diante o contra-ataque cobre quem está ao seu lado, não só você.",
+    ],
+    cost:
+      "Contra quem não ataca, você não faz nada. É o mais fraco dos três estilos numa luta de iniciativa pura, e o único que precisa que o inimigo coopere.",
+  },
   keyAttributeLabel: "Vigor",
   resourceLabel: "PT",
   tagline:
@@ -25,7 +37,7 @@ export const SUISHIN_TREE: Tree = {
       mastery: {
         name: "Fluxo",
         description:
-          "Reação: quando uma criatura adjacente erra um ataque corpo a corpo contra você, você contra-ataca imediatamente com dano de arma normal, sem custo de PT. No Principiante, uma vez por rodada.",
+          "[Contra-ataque] Reação: quando uma criatura adjacente erra um ataque corpo a corpo contra você, você contra-ataca imediatamente com dano de arma normal, sem custo de PT. No Principiante, uma vez por rodada. É toda a identidade da escola: você não abre a luta, você cobra por ela.",
       },
       talents: [
         { id: "casco-de-tartaruga", name: "Casco de Tartaruga", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
@@ -67,7 +79,7 @@ export const SUISHIN_TREE: Tree = {
           paCost: 1,
           range: "Visão e audição",
           actions: { normal: 1 },
-          effect: "Teste de Espírito (CD 8 + Espírito + Rank). Se falhar, no próximo turno o alvo tem que atacar você se conseguir alcançá-lo. Uma vez por criatura por combate.",
+          effect: "Teste de Espírito (CD 8 + Espírito + Rank). Se falhar, no próximo turno o alvo tem que atacar você se conseguir alcançá-lo. Uma vez por criatura por combate. No rank Rei, a maestria 'A Arte da Provocação' torna isto gratuito (1/turno) e quem falhar ataca com Desvantagem — o talento torna-se opcional para quem não quer esperar o Rei.",
         },
         {
           id: "base-firme",
@@ -122,7 +134,7 @@ export const SUISHIN_TREE: Tree = {
           paCost: 1,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Enquanto você não se mover no seu turno, aliados adjacentes recebem Cobertura Superior contra ataques à distância vindos da sua direção.",
+          effect: "Enquanto você não se mover no seu turno, aliados adjacentes recebem Cobertura Superior contra ataques à distância vindos da sua direção. (Diferente de Guarda do Corpo: isto é passivo, só contra distância, e não gasta Reação. Escudo Vivo no Avançado amplia Guarda do Corpo para 3m e 1 uso grátis/turno.)",
         },
         {
           id: "contra-investida",
@@ -149,7 +161,7 @@ export const SUISHIN_TREE: Tree = {
       talents: [
         { id: "postura-movel", name: "Postura Móvel", paCost: 2, description: "Em Postura, você pode se mover até 3 metros por turno sem sair dela." },
         { id: "segunda-guarda", name: "Segunda Guarda", paCost: 2, description: "+1 Reação por turno, mesmo fora da Postura." },
-        { id: "escudo-vivo", name: "Escudo Vivo", paCost: 2, description: "Guarda do Corpo passa a alcançar 3 metros e pode ser usada uma vez por turno sem gastar Reação." },
+        { id: "escudo-vivo", name: "Escudo Vivo", paCost: 2, description: "Guarda do Corpo passa a alcançar 3 metros e pode ser usada uma vez por turno sem gastar Reação. (Muralha de Um Homem no Intermediário dá Cobertura Superior passiva contra distância se você não se mover — papéis diferentes: reação ativa vs passiva à distância.)" },
       ],
       abilities: [
         {
@@ -229,7 +241,7 @@ export const SUISHIN_TREE: Tree = {
       mastery: {
         name: "A Arte da Provocação",
         description:
-          "Provocar vira gratuito, uma vez por turno. Quem falhar ataca você com Desvantagem. Em Postura, inimigos que optarem por não atacar você e estiverem ao alcance sofrem Desvantagem em tudo naquele turno.",
+          "Provocar vira gratuito, uma vez por turno. Quem falhar ataca você com Desvantagem. Em Postura, inimigos que optarem por não atacar você e estiverem ao alcance sofrem Desvantagem em tudo naquele turno. (O talento Provocar do Principiante torna-se opcional — esta maestria o substitui integralmente.)",
       },
       talents: [],
       abilities: [

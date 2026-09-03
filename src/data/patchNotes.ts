@@ -16,6 +16,101 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.0.4",
+    date: "2026-09-03",
+    title: "O Cântico Tem Preço",
+    sections: [
+      {
+        heading: "Recitação Perfeita — agora existe um piso",
+        items: [
+          "O Bônus de Recitação Perfeita deixa de ser automático. Uma magia cujo cântico for MAIS CURTO que o piso do rank dela não concede bônus nenhum, por melhor que você recite — a carta dela passa a dizer \"Sem bônus\".",
+          "Motivo: uma auditoria das 149 magias do livro encontrou 55 com cântico abaixo do piso do próprio rank. Barreira, Cura, Desintoxicação, Invocação e Bardo estavam quase inteiras fora da escada. \"Não caias. Ainda não. Prontidão!\" tem 35 caracteres e pagava o mesmo que um cântico de 380 do rank Rei.",
+          "50 cânticos foram reescritos para alcançar a faixa do próprio rank. Hoje 144 das 149 magias estão dentro da faixa; antes, 91.",
+          "As 5 magias que continuam curtas são curtas DE PROPÓSITO e agora dizem isso: Prontidão, Rejeitar a Morte, Luz Absoluta, Lança de Plasma e Explosão Silenciosa. Todas de emergência, todas com nota de custo explicando a pressa — nelas a velocidade já é o benefício, e o livro parou de pagar as duas coisas.",
+          "A regra se mede sozinha a partir da tabela de tamanho: escrever um cântico curto novo desliga o bônus dele automaticamente.",
+        ],
+      },
+      {
+        heading: "Novas regras de magia (Cap. 2)",
+        items: [
+          "INTERROMPER UMA CONJURAÇÃO — a regra que faltava. Ao sofrer dano enquanto conjura, faça teste de resistência de Espírito contra CD 8 + metade do dano sofrido. Falha: perde todas as Ações gastas e metade do PM da magia.",
+          "Enquanto está Conjurando você é visível e audível (o Mestre informa o rank aparente pelo tamanho do cântico), pode se mover metade do Deslocamento, e não pode atacar, usar item nem usar Reação — usar Reação encerra a conjuração.",
+          "Atordoado, Paralisado, Incapacitado, Surdo e Soterrado interrompem SEM teste. Congelado e Atolado não interrompem: você continua falando.",
+          "Ritual não se interrompe pela metade — se perde inteiro: PM cheio e todo o tempo investido. Em troca, ritual conduzido em paz nunca exige teste.",
+          "Tabela de formas deliberadas de interromper: bater forte, Vácuo Localizado (Vento), Selado e Anulação (Barreira), Corte de Braço (Deus da Espada).",
+          "Nova seção \"Regras Gerais de Conjuração\": linha de visão, conjurar em corpo a corpo (permitido, sem penalidade), mãos livres, segurar magia pronta, quantas magias sustentar, ficar sem PM no meio, falha crítica e empilhamento de magias iguais.",
+        ],
+      },
+      {
+        heading: "Mecânica Central — as 19 árvores",
+        items: [
+          "Toda árvore passa a declarar a sua Mecânica Central num quadro no topo do catálogo: a tag, o que ela faz que nenhuma outra faz, o ciclo de jogo numerado, e — o que faltava — a fraqueza declarada.",
+          "Nova seção do Cap. 3, \"Como Ler uma Árvore\", com as 19 mecânicas lado a lado em tabela, para ser lida ANTES de escolher a Árvore Inicial.",
+          "A tag de cada árvore aparece entre colchetes na Maestria de 1º patamar dela, para você reconhecer a mecânica quando ela voltar: [Molhado], [Em Chamas], [Desequilibrado], [Atolado], [Ferida Fresca], [Rank contra Rank], [Selado / Fluxo Interrompido], [Pacto], [Letalidade], [Contra-ataque], [Improviso], [Quebrantado], [Sob Minha Guarda], [Marcado], [Calor], [Distância Roubada] e os três [Escopo] das árvores de Utilidade.",
+          "Documentada a regra dos dois tempos: árvores que PREPARAM (Água, Terra, Vento, Lutador) contra árvores que COBRAM na hora (Fogo, Deus da Espada, Arquearia). Nenhuma é melhor — depende de quantos turnos a sua mesa joga.",
+        ],
+      },
+      {
+        heading: "Estilo Vendaval — mecânica nova",
+        items: [
+          "Era a única árvore do livro sem identidade própria: mobilidade solta, alcance estendido em três patamares diferentes e nenhuma regra ligando as duas coisas.",
+          "Nova mecânica DISTÂNCIA ROUBADA: a distância que você percorreu na sua vez (até 9m) é somada ao alcance do seu próximo ataque corpo a corpo neste turno. Se ele acertar um alvo a mais de 3m, o alvo fica Desequilibrado.",
+          "Ela escala pelos patamares em vez de aparecer do nada: no Intermediário, movimento feito com Reação também conta; no Avançado o teto sobe para 12m; no Rei ela soma em cima do alcance mínimo de 6m.",
+          "Isso transforma os cinco \"ataques corpo a corpo à distância\" espalhados pela árvore em variações de uma regra só, e dá ao Vendaval um motivo mecânico para o excesso de reposicionamento que ele já comprava.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.0.3",
+    date: "2026-09-03",
+    title: "A Profundidade Morreu",
+    sections: [
+      {
+        heading: "Rework: Magia de Desintoxicação",
+        items: [
+          "A mecânica de Profundidade foi APAGADA. Aflições não têm mais um número de 1 a 5 que sobe sozinho com o relógio, e nenhuma magia move esse número pra cima ou pra baixo.",
+          "Regra nova, uma linha: toda aflição tem um RANK (Principiante a Imperador), e um feitiço de Desintoxicação de rank X remove uma aflição de rank X ou inferior. Nada mais.",
+          "Aflição não piora sozinha e não passa sozinha: ela continua cobrando o efeito dela (2d6 por hora, -1 atributo por semana) até alguém tratar. A urgência é o efeito, não um contador.",
+          "A árvore virou a mais barata do livro em PA, com tabela própria (Cap. 1, \"A Escola Barata\"): Imperador custa 3 PA onde a tabela comum cobra 5, e Santo custa 2 onde ela cobra 3.",
+          "Em troca do preço, a árvore foi nerfada de propósito. Sopro Podre cai de 10d8 para 6d8; Corrosão cai de 4d8 para 3d6 e não destrói mais CA permanentemente; Toque do Fim deixa de matar sozinho.",
+          "Anular deixa de remover QUALQUER condição do jogo e passa a cobrir só as cinco da escola (Envenenado, Paralisado, Petrificado, Cego, Surdo), e só de origem tóxica — condição de golpe, elemento ou medo é Milagre Menor, na Cura.",
+          "Estado Anulado (Santo) passa a gastar sua Reação e vale uma vez por rodada. Corpo Recusado perde a imunidade a veneno mágico. Nada Entra cai de 18m para 9m e vira Vantagem em vez de imunidade compartilhada.",
+          "Sangria virou a única válvula de escape da escola: purga uma aflição de UM rank acima do seu alcance, ao custo de 3d6 irredutíveis. Substitui o talento A Mão que Não Erra, que foi removido.",
+          "Sangue Trocado não reduz mais o rank da aflição ao transferi-la para você — é sacrifício, não atalho.",
+          "Contra a Maré (Avançado) deixa de \"parar o relógio\" e passa a deixar aflições DORMENTES num raio de 9m: elas continuam lá, mas não cobram efeito enquanto você estiver de pé.",
+        ],
+      },
+      {
+        heading: "Identidade das Árvores",
+        items: [
+          "Nova condição SOTERRADO (Cap. 4, §5), a metade que faltava da identidade da Terra: Deslocamento 0, Preso, sem visão nem gesto, 2d10 de sufocamento por turno. Só pode ser aplicada a quem já está Atolado, Preso ou Caído.",
+          "Terra virou uma escada de duas etapas igual à Água: Atolado prepara, Soterrado cobra. Cárcere, Prisão de Pedra e Sepultamento passam a aplicar Soterrado; a Maestria de Santo converte Atolado em Soterrado automaticamente.",
+          "Água ganhou a regra geral que faltava: QUALQUER magia de frio sua deixa Congelado quem já estava Molhado e falhou no teste (Maestria do Avançado). Antes só Campo de Gelo fazia isso.",
+          "Vento ganhou o pagamento que não tinha: toda magia de Vento rola um dado de dano a mais contra alvo Desequilibrado. Grito do Mundo e Lâmina do Horizonte passam a aplicar a condição — antes ela sumia nos dois últimos patamares.",
+          "Fogo: toda magia da escola causa dano cheio contra alvo Em Chamas, sem metade em caso de sucesso no teste — a escola que não prepara nada e cobra na hora.",
+          "As sete essências estão agora marcadas explicitamente nas Maestrias de 1º patamar: [Molhado], [Em Chamas], [Desequilibrado], [Atolado], [Letalidade], [Improviso] e [Contra-ataque].",
+        ],
+      },
+      {
+        heading: "Custos de PA",
+        items: [
+          "A compra de Atributo é oficialmente PROGRESSIVA no livro e na ficha: 1, 1, 2, 2, 3, 3… PA. O motor já cobrava assim; a tabela do Cap. 1 e o painel da ficha ainda anunciavam 2 PA fixos.",
+          "A Vantagem em Testes de Resistência também: 2, 3, 4, 4, 4 PA (17 PA pelas cinco), em vez de 2 PA fixos por atributo.",
+          "A ficha agora mostra quanto custa a PRÓXIMA compra, e não só o total já gasto.",
+        ],
+      },
+      {
+        heading: "Loja e Mundo",
+        items: [
+          "Os três venenos à venda passam a ser nomeados por rank (Principiante, Intermediário, Avançado) em vez de Profundidade 1/2/3. Preços e Ranks de Guilda exigidos não mudaram.",
+          "Poção de Antídoto agora remove uma aflição de rank Principiante ou Intermediário, em vez de \"1 ponto de Profundidade\". O Antídoto Universal cobre qualquer rank até Imperador.",
+          "A Doença da Pedra Mágica virou a única aflição de rank DEUS do livro — o teto que nenhum patamar jogável alcança.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.0.2",
     date: "2026-08-31",
     title: "Guarda Erguida",

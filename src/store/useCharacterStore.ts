@@ -48,6 +48,17 @@ function makeId(prefix: string) {
 /** Quantas edições passadas guardamos por ficha para o "Desfazer" — não persiste entre recarregamentos. */
 const HISTORY_LIMIT = 30;
 
+/**
+ * Itens da loja que trocaram de id no rework de 2026-09-03 (Profundidade → rank).
+ * Usado só pela migração v9 do persist: o inventário guarda o id, e um id órfão
+ * vira um item sem nome nem preço na ficha.
+ */
+const RENAMED_SHOP_ITEM_IDS: Record<string, string> = {
+  veneno_prof1: "veneno_principiante",
+  veneno_prof2: "veneno_intermediario",
+  veneno_prof3: "veneno_avancado",
+};
+
 interface RosterState {
   characters: Record<string, CharacterData>;
   order: string[];
@@ -389,7 +400,17 @@ export const useCharacterStore = create<RosterState>()(
       // v8 (2026-08-29): `saveAdvantages` — a compra de Vantagem permanente em
       // Testes de Resistência (Cap. 1, §2), que existia no livro desde sempre e
       // nunca existiu na ficha. Baixou de 3 pra 2 PA na mesma passada.
-      version: 8,
+      // v9 (2026-09-03): rework da Desintoxicação. O talento Santo
+      // "a-mao-que-nao-erra" existia só pra furar a escada de Profundidade e
+      // deixou de existir junto com ela; quem o tinha comprado recebe no lugar
+      // "maos-limpas", que ocupa a mesma vaga e custa o mesmo PA. Os três
+      // venenos da loja também foram renomeados de Profundidade pra rank.
+      //
+      // Sem esta migração, uma ficha salva continuaria listando um talento que
+      // findAbilityOrTalentDef não encontra mais: ele some da tela, mas o PA
+      // pago por ele some junto do getPaSpent — o jogador "ganharia" PA de
+      // volta em silêncio, sem nada na ficha explicando por quê.
+      version: 9,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
@@ -406,6 +427,15 @@ export const useCharacterStore = create<RosterState>()(
                 treeSkillChoices: c.treeSkillChoices ?? [],
                 proficiencies: c.proficiencies ?? [],
                 saveAdvantages: c.saveAdvantages ?? [],
+                purchasedAbilities: (c.purchasedAbilities ?? []).map((a) =>
+                  a.treeId === "desintoxicacao" && a.id === "a-mao-que-nao-erra"
+                    ? { ...a, id: "maos-limpas" }
+                    : a
+                ),
+                inventory: (c.inventory ?? []).map((item) => ({
+                  ...item,
+                  id: RENAMED_SHOP_ITEM_IDS[item.id] ?? item.id,
+                })),
               },
             ])
           ),

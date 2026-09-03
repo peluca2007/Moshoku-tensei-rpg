@@ -6,6 +6,18 @@ export const LADINO_TREE: Tree = {
   name: "Furtividade e Armadilhas",
   category: "utilidade",
   subgroup: "Batedor e Ladrão",
+  mechanic: {
+    tag: "Escopo: coisas e lugares",
+    hook:
+      "A pergunta dele é \"como eu entro?\". Única árvore de Utilidade com dano de verdade — o Dano Furtivo.",
+    loop: [
+      "Prepare. PP (Pontos de Preparação) são gastos ANTES da cena: uma saída pronta, uma fechadura já estudada, uma armadilha já plantada.",
+      "Entre. O Escopo cresce a cada patamar — de um cômodo, para um prédio, para uma cidade — e diz até onde a sua preparação alcança.",
+      "Cobre. O Dano Furtivo é a faixa exclusiva do Ladino: nenhuma outra árvore de Utilidade causa dano acima do trivial.",
+    ],
+    cost:
+      "Fora da preparação você é frágil. Sem PP gasto de antemão e sem surpresa, o Ladino é o pior combatente direto das dezenove.",
+  },
   keyAttributeLabel: "Agilidade",
   resourceLabel: "PP",
   tagline:
@@ -49,7 +61,7 @@ export const LADINO_TREE: Tree = {
         // exatamente 1 PA, o mesmo que as 2 perícias do outro lado — os dois
         // caminhos custam o mesmo, e é isso que faz a escolha ser de sabor.
         description:
-          "Escopo: um objeto, um cômodo, uma pessoa comum. Se Furtividade e Armadilhas NÃO for a sua Árvore Inicial, você aprende as perícias Furtividade e Percepção — esta é a única árvore do livro que ensina as próprias perícias a quem chegou depois. Se ELA for a sua Árvore Inicial, você já tem as duas; em vez delas, ganhe 3 proficiências ou línguas à sua escolha (a gíria de ladrão, as ferramentas de arrombamento, o kit de falsificação). Em qualquer um dos casos: uma vez por turno, ao acertar um alvo desprevenido, cego, imobilizado ou contra o qual tenha Vantagem, some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
+          "[Escopo: coisas e lugares] Escopo: um objeto, um cômodo, uma pessoa comum. Se Furtividade e Armadilhas NÃO for a sua Árvore Inicial, você aprende as perícias Furtividade e Percepção — esta é a única árvore do livro que ensina as próprias perícias a quem chegou depois. Se ELA for a sua Árvore Inicial, você já tem as duas; em vez delas, ganhe 3 proficiências ou línguas à sua escolha (a gíria de ladrão, as ferramentas de arrombamento, o kit de falsificação). Em qualquer um dos casos: uma vez por turno, ao acertar um alvo desprevenido, cego, imobilizado ou contra o qual tenha Vantagem, some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
       },
       talents: [
         { id: "maos-rapidas", name: "Mãos Rápidas", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você tira e coloca objetos em bolsos alheios com teste de Agilidade contra a Percepção do alvo. Em combate, 1 Ação para roubar item não empunhado." },

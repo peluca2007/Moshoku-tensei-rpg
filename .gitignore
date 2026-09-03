@@ -40,13 +40,26 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# PDFs derivados (o livro.typ é a fonte de verdade; PDF é sempre gerado a
-# partir dele, no typst.app ou pelo botão "Baixar PDF" da ficha — não faz
-# sentido versionar binário que muda a cada exportação)
+# PDFs derivados: a ficha é montada em Typst em tempo de execução (typstFicha.ts)
+# e baixada pelo botão "Baixar PDF" — não faz sentido versionar um binário que
+# muda a cada exportação.
 *.pdf
 
-# rascunho antigo do livro (Homebrewery/Markdown), substituído por livro.typ
+# LaTeX: removido do projeto em 2026-09-03. O livro vive em src/components/book/
+# e é lido em /livro; não há mais pipeline .tex.
+*.tex
+*.cls
+/livro-tex/
+
+# rascunho antigo do livro (Homebrewery/Markdown)
 livro em txt.txt
 
-# claude code - configuração local, não deve ser versionada
+# claude code - estado local de ferramenta, nunca versionado
 .claude/settings.local.json
+/.claude/worktrees/
+/.claude/scheduled_tasks.lock
+
+# backup de um .git corrompido, restaurado em 2026-08-31 — 13 objetos soltos que
+# entraram no repositório por acidente. Não é histórico: o histórico real está no
+# .git de verdade. Pode ser apagado do disco com segurança (rm -rf).
+/.git.corrupted-backup/

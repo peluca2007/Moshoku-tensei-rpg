@@ -2,114 +2,174 @@
 
 # Mushoku Tensei RPG
 
-**Sistema de RPG de mesa homebrew ambientado no mundo de _Mushoku Tensei_.**
-Livro de regras completo e ficha de personagem digital, vivendo no mesmo lugar.
+**Um sistema de RPG de mesa completo, e o site que o joga.**
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=next.js&logoColor=white)](https://nextjs.org)
+O livro de regras, a ficha de personagem, o mapa de progressão e a loja não são quatro produtos —
+são quatro leituras do mesmo `src/data/`.
+
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38BDF8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
-[![Zustand](https://img.shields.io/badge/State-Zustand-8B5CF6)](https://github.com/pmndrs/zustand)
-[![Fan project](https://img.shields.io/badge/status-fan%20project-6b4c12)](#)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.0.4-8B1E3F)](PATCH_NOTES.md)
+[![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>
 
-<br>
+> [!NOTE]
+> Homenagem de fã, sem fins comerciais. Não afiliado à Media Factory, ao Studio Bind ou aos autores da
+> obra original.
 
-> Homenagem de fã, sem fins comerciais. Não afiliado à Media Factory, Studio Bind ou aos autores da obra original.
+---
 
-## O que é isto
+## A premissa do sistema
 
-Um único site que é ao mesmo tempo o **livro de regras** e a **mesa de jogo** — o livro nunca é um PDF à parte que perde sincronia com a ficha; os dois lêem os mesmos dados.
+**Não existe nível de personagem.** Você não sobe de nível; você estuda. O crescimento inteiro do
+personagem passa por uma moeda só — os **Pontos de Aprimoramento (PA)** — que o Mestre entrega por sessão,
+missão ou arco, e que você gasta em atributos, perícias, ou nas **árvores**.
 
-| | |
-|---|---|
-| 📖 **`/livro`** | O livro de regras inteiro (5 capítulos + 7 apêndices), navegável, com sumário fixo e exportação em PDF num clique. |
-| 📝 **`/ficha`** | Cálculo automático de PV/PM/PT/PP/CA/dano, inventário com Dado de Arma escalável, grimório com busca, campo de lore/anotações, exportação em PDF e JSON. |
-| 🎲 **Três vias de criação** | Manual, Roleta do Destino (raça/antecedente/atributos sorteados) e A Entrevista (perguntas que inclinam o sorteio sem nunca garantir o resultado, e ainda geram um rascunho de lore pro personagem). |
-| 🕸️ **`/arvores`** | Mapa radial navegável das 18 árvores de progressão do jogo, incluindo árvores híbridas que só se revelam a quem já domina outras duas. |
-| 🛒 **`/loja`** | Loja da Guilda: compra item, debita PO e manda direto pro inventário da ficha ativa — catálogo com o mesmo dado que o livro lista em preço, filtro por Tipo e por Rank de Guilda. |
-| ⚔️ **`/iniciativa`** | Tracker de combate por rodada, com condições e PV por combatente. |
-| 🎯 **Rolador de dados** | Testes, dano e macros salváveis, com atalho de teclado (`R`) e animação opcional de dado girando. |
+Cada árvore é uma escola de verdade do Mundo de Seis Faces, com sete patamares: Principiante,
+Intermediário, Avançado, Santo, Rei, Imperador e Deus. Abrir um patamar exige um número mínimo de
+**conhecimentos** (magias e talentos comprados) na mesma árvore — não dá para comprar o topo, só escalá-lo.
 
-Tudo mobile-first: a leitura do livro, a ficha e o rolador de dados funcionam sem zoom e sem quebra de layout num celular.
+Três decisões estruturam o resto:
 
-## Arquitetura
+**1. Largura é barata, profundidade é forte.** Abrir a segunda árvore custa mais que a primeira, a terceira
+mais que a segunda. E sua reserva de mana escala com o *maior* patamar de magia que você tem, não com
+quantas escolas você abriu — quem espalha assiste, quem vai fundo conjura.
 
-Três decisões que valem entender antes de mexer no código:
+**2. Cada escola prepara uma condição e cobra outra.** Água deixa **Molhado** e cobra **Congelado**; Terra
+deixa **Atolado** e cobra **Soterrado**; Vento aplica **Desequilibrado** e cobra dano extra em cima; Fogo
+não prepara nada e cobra **Em Chamas** na hora. Os três estilos de espada não têm condição de propósito:
+Deus da Espada é letalidade pura, Deus do Norte é improviso, Deus da Água é contra-ataque.
 
-1. **O livro mora no código, não num arquivo à parte.** `src/components/book/*.tsx` contém o texto narrativo de cada capítulo e apêndice; `src/data/*.ts` (árvores, raças, antecedentes) contém os números. Os dois são a única fonte de verdade — não existe um documento externo que precise ser mantido em sincronia manualmente.
-2. **A ficha nunca duplica uma fórmula.** Todo cálculo (PV, PM, dano, CD) vive em `src/store/selectors.ts` e é consumido tanto pela ficha quanto pelas tabelas do livro em `/livro` — mudar uma regra num lugar não pode deixar o outro desatualizado.
-3. **`livro.typ` é histórico, não fonte de verdade.** Era o formato original, em [Typst](https://typst.app), de antes da migração pro site — permanece no repositório congelado, só como referência do texto original.
+**3. O cântico é mecânica, não decoração.** Recitar bem dá Vantagem — e o tamanho do encantamento escala
+com o rank. Um Principiante resolve em uma linha; um Imperador sustenta meio minuto de fôlego na frente da
+mesa. O preço do bônus é tempo real de jogo.
 
-`PROGRESS.md` guarda o changelog sessão a sessão — o que foi feito, por quê, e onde. Vale consultar antes de propor uma mudança grande.
+**Onde ler:** o livro inteiro vive em [`/livro`](src/components/book), navegável, com as tabelas geradas a
+partir dos mesmos dados que a ficha usa.
+
+---
 
 ## Rodando localmente
 
-Requer Node.js 20+.
+**Requisitos:** Node.js 20+ e npm.
 
 ```bash
+git clone <url-do-repo>
+cd "Moshoku tensei rpg"
 npm install
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000). Tudo fica salvo no `localStorage` do navegador — nada é enviado a um servidor.
+Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem backend: as fichas moram no
+`localStorage` do navegador, e é possível exportá-las em JSON ou PDF a qualquer momento.
 
-```bash
-npm run build          # build de produção
-npm run lint            # eslint
-npx tsc --noEmit -p .   # typecheck
-```
+### Scripts
 
-## Principais rotas
+| Comando | O que faz |
+| --- | --- |
+| `npm run dev` | Servidor de desenvolvimento (Turbopack) |
+| `npm run build` | Build de produção |
+| `npm start` | Sobe o build de produção |
+| `npm run lint` | ESLint |
+| `npx tsc --noEmit` | Checagem de tipos |
+| `npm run check:magias` | Audita os cânticos contra a escada de tamanho do Cap. 2 |
+
+> [!IMPORTANT]
+> Se o projeto estiver dentro do WSL, rode `build` e `check:magias` **de dentro do WSL**. Eles dependem de
+> binários nativos compilados para Linux (`lightningcss`, `esbuild`); chamá-los do Windows por
+> um caminho `\\wsl.localhost` falha. `tsc` e `eslint` funcionam dos dois lados.
+
+---
+
+## Rotas
 
 | Rota | O que é |
-|---|---|
-| `/` | Landing page — apresentação do projeto, botões pra criar personagem ou abrir uma ficha |
-| `/ficha` | Ficha do personagem ativo |
-| `/personagens` | Lista de fichas (criar, abrir, renomear, excluir, importar/exportar JSON) |
-| `/criar` | As três vias de criação de personagem |
-| `/arvores` | Mapa radial das árvores de progressão |
-| `/livro` | Livro de regras completo, navegável e exportável em PDF |
-| `/loja` | Loja da Guilda — comprar item manda direto pro inventário da ficha ativa |
-| `/iniciativa` | Tracker de combate |
+| --- | --- |
+| `/` | Landing page |
+| `/criar` | Criação de personagem — três vias: Manual, Roleta e Entrevista |
+| `/ficha` | Ficha completa: atributos, PV/PM/PT/PP/CA, inventário, Grimório, Lore, Desfazer, export PDF e JSON |
+| `/livro` | Livro de regras navegável, com Patch Notes |
+| `/arvores` | Mapa radial de progressão (Destiny Board), pan/zoom |
+| `/loja` | Loja da Guilda — 85 itens, filtro por Tipo × Rank de Guilda |
+| `/iniciativa` | Tracker de iniciativa |
+| `/personagens` | Roster de fichas salvas |
 
-## Stack
+---
 
-| Camada | Tecnologia | Por que esta |
-|---|---|---|
-| Framework | **Next.js 16** (App Router, Turbopack) | Rotas como arquivos, Server Components por padrão, e uma rota de API pro PDF sem precisar de um servidor separado |
-| Linguagem | **TypeScript 5** | O sistema tem 18 árvores e ~400 habilidades — os tipos em `src/lib/types.ts` são o que impede uma magia mal formada de chegar na ficha |
-| Estilo | **Tailwind CSS v4** | Paleta temática declarada como tokens em `@theme` (`globals.css`), sem arquivo de config |
-| Estado | **Zustand** + `persist` | Ficha inteira no `localStorage`, com store versionada e migração a cada mudança de formato |
-| Ícones | **lucide-react** | — |
-| Tema | **next-themes** | Dark mode manual (classe `.dark`), não só `prefers-color-scheme` |
-| PDF da ficha | **[`typst`](https://www.npmjs.com/package/typst)** | Binário nativo via `/api/ficha-pdf`; layout de ficha em Typst, sem WASM no navegador |
-| PDF do livro | Impressão nativa do navegador | `@media print` dedicado em `globals.css` — abre todos os `<details>`, esconde a nav, força serifa |
+## Arquitetura
+
+```
+src/
+├── data/          FONTE DE VERDADE — regras, números, conteúdo
+│   ├── trees/     as 19 árvores (17 base + Vendaval e Punho de Fogo, híbridas)
+│   │   └── shared.ts    tabelas de custo: MAGIC_ACTIONS, RANK_PA_COST,
+│   │                    UTILITY_PA_COST, DESINTOX_PA_COST
+│   ├── races.ts · backgrounds.ts · skills.ts · proficiencies.ts
+│   ├── shopItems.ts · startingKits.ts · combinedSpells.ts
+│   ├── rankDeus.ts · interview.ts · patchNotes.ts
+│
+├── lib/           tipos e cálculos puros, sem React
+│   ├── types.ts   CharacterData, Tree, AbilityDef + as constantes do Cap. 1
+│   ├── rollEngine.ts · dice.ts · weaponDie.ts
+│   └── typstFicha.ts · buildFichaPayload.ts   ficha em PDF (Typst)
+│
+├── store/         estado global (Zustand)
+│   ├── useCharacterStore.ts   roster + persistência + migrações
+│   └── selectors.ts           TODAS as fórmulas derivadas
+│
+├── components/
+│   ├── book/      o livro de regras, capítulo a capítulo
+│   ├── tree/      Destiny Board
+│   └── …          ficha, criação, loja, rolador, tracker
+│
+└── app/           rotas (App Router)
+```
+
+### As três regras da base de código
+
+**1. Um número, uma origem.** Nenhuma fórmula é reimplementada numa página. `selectors.ts` é o gargalo de
+propósito — é por isso que o livro nunca diverge da ficha: os dois leem o mesmo `getMaxHp`, o mesmo
+`TREES`. Todo custo em PA sai de uma função ou tabela exportada, nunca de um literal digitado na UI.
+
+**2. Divergir da tabela exige justificar.** `MAGIC_ACTIONS` e `RANK_PA_COST` são o padrão sugerido, não a
+lei — uma magia pode declarar `actions` ou `paCost` próprios. Mas então o campo `costNote` é
+**obrigatório** e explica a troca em uma frase. Sem essa nota, um desvio é indistinguível de um erro de
+digitação. Tabelas alternativas de escola inteira (`UTILITY_PA_COST`, `DESINTOX_PA_COST`) não são desvios.
+
+**3. Ficha salva nunca é resetada.** `useCharacterStore` é a única coisa que escreve no `localStorage`.
+Mudou o formato de `CharacterData`, ou o id de um item ou talento? Sobe a `version` e escreve a migração —
+já existem fichas reais de mesa salvas, e um id órfão vira PA que some do total sem nada explicando por quê.
 
 ### Como o estado flui
 
 ```
-src/data/*.ts          →  fonte de verdade mecânica (números, magias, itens)
-        ↓
-src/store/selectors.ts →  TODA fórmula do sistema (PV, PM, PT, PP, CA, dano, CD)
-        ↓
-   ┌────┴─────────────────────────┐
-   ↓                              ↓
-/ficha, /arvores, /loja        /livro
-(consomem o cálculo)           (renderiza o mesmo dado como tabela)
+src/data/*.ts  ──►  selectors.ts  ──►  componentes
+   (regras)         (fórmulas)         (livro, ficha, árvores, loja)
+                          ▲
+                          │
+                useCharacterStore  ──►  localStorage
+                   (a sua ficha)
 ```
 
-`selectors.ts` é o gargalo de propósito: nenhuma fórmula é reimplementada numa página. É por isso que o livro nunca pode divergir da ficha — os dois leem o mesmo `getMaxHp`, o mesmo `TREES`.
-
-`useCharacterStore` guarda o roster inteiro (várias fichas, uma ativa) e é a única coisa que escreve no `localStorage`. Mudou o formato de `CharacterData`? Sobe a `version` e escreve a migração — já existem fichas reais de mesa salvas.
+---
 
 ## Contribuindo
 
-Toda regra, magia, talento ou número de balanceamento nasce em `src/data/*.ts` e no texto correspondente em `src/components/book/*.tsx` — nunca só num lugar. Se uma mudança na ficha expõe uma lacuna de regra, a correção sai primeiro no livro (`/livro`) e a ficha só reflete o que já está escrito lá.
+Toda regra, magia, talento ou número de balanceamento nasce em `src/data/*.ts` **e** no texto
+correspondente em `src/components/book/*.tsx` — nunca só num lugar. Se uma mudança na ficha expõe uma
+lacuna de regra, a correção sai primeiro no livro e a ficha só reflete o que já está escrito lá.
 
-## Issues: como reportar
+Mudanças de regra entram em [`PATCH_NOTES.md`](PATCH_NOTES.md) e em `src/data/patchNotes.ts`.
+O estado do projeto e as decisões vivas ficam em [`PROGRESS.md`](PROGRESS.md).
 
-Este repositório trata **bug de código** e **desequilíbrio de regra** como duas coisas diferentes, com dois formulários diferentes. Confundir os dois é o erro mais comum — e o que mais atrasa a correção.
+### Issues: como reportar
+
+Este repositório trata **bug de código** e **desequilíbrio de regra** como duas coisas diferentes, com dois
+formulários diferentes. Confundir os dois é o erro mais comum — e o que mais atrasa a correção.
 
 > **A pergunta que separa os dois:** o site está fazendo o que o livro manda?
 >
@@ -117,29 +177,34 @@ Este repositório trata **bug de código** e **desequilíbrio de regra** como du
 > - **Sim, e o resultado ainda é absurdo** → o livro errou. É **⚖️ desequilíbrio de regra**.
 
 | Template | Use quando | Exemplo real |
-|---|---|---|
-| 🐛 **Bug de código** | O site discorda do livro, quebra, ou calcula errado | *"A ficha mostra 42 PT num Imperador; o Cap. 3 diz que a fórmula é aditiva e dá ~17."* |
+| --- | --- | --- |
+| 🐛 **Bug de código** | O site discorda do livro, quebra, ou calcula errado | *"A ficha mostra 10 PA nas Vantagens de Resistência e 17 PA no total."* |
 | ⚖️ **Desequilíbrio de regra** | A regra funciona como escrita e mesmo assim quebra a mesa | *"Um espadão já satura o 4d10 no Rei — a Maestria de Imperador não entrega nada."* |
 | ✨ **Conteúdo novo** | Falta uma magia, item, criatura ou árvore | *"Vento não tem como tirar um aliado do corpo a corpo."* |
 | 💬 **Discussions** | Você não entendeu uma regra | *"Manto de Touki soma com Postura de Água?"* |
 
 ### O que faz uma issue de balanceamento virar commit
 
-Balanceamento não se decide por opinião — se decide por número. O livro já traz duas réguas prontas, e uma issue que as usa costuma virar mudança no mesmo dia:
+Balanceamento não se decide por opinião — se decide por número. O livro já traz duas réguas prontas, e uma
+issue que as usa costuma virar mudança no mesmo dia:
 
-- **Apêndice C — Tabela de Dano por Turno:** quanto cada árvore deve causar em cada patamar. Se a sua conta estoura a coluna, você tem um caso.
-- **Apêndice G — Bestiário:** PV, CA, bônus de ataque e CD esperados por patamar. É contra isso que se mede se um efeito é forte demais.
+- **Apêndice C — Tabela de Dano por Turno:** quanto cada árvore deve causar em cada patamar. Se a sua conta
+  estoura a coluna, você tem um caso.
+- **Apêndice G — Bestiário:** PV, CA, bônus de ataque e CD esperados por patamar. É contra isso que se mede
+  se um efeito é forte demais.
 
-Três coisas que transformam um relato em correção:
+Três coisas transformam um relato em correção:
 
-1. **A conta, escrita.** `4d10 (média 22) × 5 + Força 8 + Rank 6 = 124 em 2 Ações` diz mais que qualquer adjetivo.
+1. **A conta, escrita.** `4d10 (média 22) × 5 + Força 8 + Rank 6 = 124 em 2 Ações` diz mais que qualquer
+   adjetivo.
 2. **O JSON da ficha.** `/ficha` → *Exportar JSON*. Reproduz o seu caso exato em segundos.
-3. **O que a sua proposta quebra.** Toda mudança quebra alguma coisa. Dizer o quê é metade da decisão — e é o que separa uma sugestão de um patch.
+3. **O que a sua proposta quebra.** Toda mudança quebra alguma coisa. Dizer o quê é metade da decisão — e é
+   o que separa uma sugestão de um patch.
 
 ### Labels
 
 | Label | Significa |
-|---|---|
+| --- | --- |
 | `bug` | O site discorda do livro |
 | `balanceamento` | O livro discorda da mesa |
 | `conteúdo` | Falta alguma coisa |
@@ -147,8 +212,12 @@ Três coisas que transformam um relato em correção:
 | `precisa-de-mesa` | A conta fecha, mas falta ver acontecer numa sessão real |
 | `decisão-de-design` | Não é erro; é uma escolha que o dono do sistema precisa fazer |
 
+---
+
+## Licença e créditos
+
+Projeto de fã, **não-comercial**, sem afiliação com os detentores dos direitos da obra.
+
 <div align="center">
-
-<sub>Mushoku Tensei © Rifujin na Magonote. Este projeto é um trabalho de fã não-comercial.</sub>
-
+<sub>Mushoku Tensei © Rifujin na Magonote · Media Factory · Studio Bind</sub>
 </div>

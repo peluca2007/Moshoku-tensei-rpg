@@ -5,6 +5,18 @@ export const NORTE_TREE: Tree = {
   name: "Estilo Deus do Norte",
   category: "corpo",
   subgroup: "Espadachim",
+  mechanic: {
+    tag: "Improviso",
+    hook:
+      "Não é esgrima refinada — é um método pra continuar vivo. A única árvore do livro sem uma única arma proibida.",
+    loop: [
+      "Pegue o que tiver. Proficiência UNIVERSAL em armas, sem exceção: simples, marcial, exótica, de haste, de arremesso, à distância, estrangeira — e qualquer objeto improvisado, com Dado Base d6.",
+      "Use o cenário. Uma vez por combate, descreva uma manobra com o que está em volta e role o atributo que o Mestre indicar COM VANTAGEM.",
+      "Suje a luta. Areia, joelho, mentira, terreno, a arma do inimigo. As técnicas do Norte compram truques, não dano.",
+    ],
+    cost:
+      "Não tem o pico de nada. Menos dano que o Deus da Espada, menos defesa que o Deus da Água — o Norte é a árvore que nunca perde por muito e nunca ganha por muito.",
+  },
   keyAttributeLabel: "Força ou Agilidade",
   resourceLabel: "PT",
   tagline: "Não é esgrima refinada — é um método para continuar vivo. Truques, improviso e terreno; a maioria dos aventureiros aprende Norte.",

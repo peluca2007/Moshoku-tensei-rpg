@@ -6,6 +6,18 @@ export const ARQUEARIA_TREE: Tree = {
   name: "Arquearia",
   category: "corpo",
   subgroup: "Arqueiro",
+  mechanic: {
+    tag: "Marcado",
+    hook:
+      "O maior dano sustentado do jogo a 90 metros, sem gastar recurso nenhum — contra quem não veste Touki.",
+    loop: [
+      "Marque. Suas habilidades aplicam Marcado: você passa a saber o PV aproximado, as resistências e se o alvo veste Touki.",
+      "Ignore a cobertura. Contra alvo Marcado você ignora Cobertura parcial, e a árvore inteira soma dano e precisão contra ele.",
+      "Repita. Nada aqui gasta PT nem PM — o seu dano por turno é o mesmo no primeiro e no décimo turno do combate.",
+    ],
+    cost:
+      "O Manto de Touki. Contra rank Santo ou superior, cada tiro perde o DOBRO do Bônus de Rank do alvo, e a árvore concede uma única forma — cara — de furar isso.",
+  },
   keyAttributeLabel: "Agilidade",
   resourceLabel: "PT",
   tagline:
@@ -34,7 +46,7 @@ export const ARQUEARIA_TREE: Tree = {
       mastery: {
         name: "Olho do Caçador",
         description:
-          "Você nunca sofre Desvantagem por distância longa. Ignora Cobertura Leve e não sofre penalidade por atirar em meio a aliados engajados. Identifica a distância exata até qualquer coisa visível.",
+          "[Marcado] Você nunca sofre Desvantagem por distância longa. Ignora Cobertura Leve e não sofre penalidade por atirar em meio a aliados engajados. Identifica a distância exata até qualquer coisa visível.",
       },
       talents: [
         { id: "aljava-cheia", name: "Aljava Cheia", paCost: 1, description: "Você nunca fica sem flechas em terreno com madeira, e fabrica munição durante um Descanso Curto." },

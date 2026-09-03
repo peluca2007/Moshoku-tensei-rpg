@@ -80,10 +80,26 @@ export interface FichaPdfPayload {
   maxMp: string;
   maxPt: string;
   maxPp: string;
+  /**
+   * O que sobrou de cada reserva em jogo (2026-09-03). Antes o PDF imprimia só
+   * o máximo, então a ficha impressa nascia sempre "cheia" e a mesa tinha que
+   * anotar o valor real à mão por cima — a ficha do site mostra atual/máximo
+   * desde sempre, e a exportada não mostrava.
+   */
+  currentHp: string;
+  currentMp: string;
+  currentPt: string;
+  currentPp: string;
   armorClass: string;
   initiative: string;
   deslocamento: string;
   paSpent: string;
+  /** Cap. 5, §2: Rank de Aventureiro na Guilda, com "(estimado)" quando o Mestre ainda não fixou um. */
+  guildRank: string;
+  /** Cap. 1, §8: a Árvore Inicial, que decide quais perícias vieram de graça. */
+  startingTreeName: string;
+  /** Cap. 1, §6: a entrada de sub-tabela sorteada (Miko, Olho, Laplace), quando o antecedente exige uma. */
+  subtableName: string;
   /** BC e CD por escola de magia desbloqueada (Cap. 1, seção 7) — cada árvore usa o próprio Rank. */
   spellcasting: FichaSpellcastingRow[];
   trees: FichaTreePillar[];
@@ -207,18 +223,19 @@ function resourcesBlock(p: FichaPdfPayload): string {
     #v(4pt)
     #grid(
       columns: (1fr, 1fr), gutter: 8pt,
-      resource-box-filled("PONTOS DE VIDA (PV)", ${tstr(p.maxHp)}),
-      resource-box-filled("PONTOS DE MANA (PM)", ${tstr(p.maxMp)}),
-      resource-box-filled("PONTOS DE TOUKI (PT)", ${tstr(p.maxPt)}),
-      resource-box-filled("PONTOS DE PREP. (PP)", ${tstr(p.maxPp)})
+      resource-box-filled("PONTOS DE VIDA (PV)", ${tstr(`${p.currentHp} / ${p.maxHp}`)}),
+      resource-box-filled("PONTOS DE MANA (PM)", ${tstr(`${p.currentMp} / ${p.maxMp}`)}),
+      resource-box-filled("PONTOS DE TOUKI (PT)", ${tstr(`${p.currentPt} / ${p.maxPt}`)}),
+      resource-box-filled("PONTOS DE PREP. (PP)", ${tstr(`${p.currentPp} / ${p.maxPp}`)})
     )
     #v(8pt)
     #grid(
-      columns: (1fr, 1fr, 1fr, 1fr), gutter: 8pt,
+      columns: (1fr, 1fr, 1fr, 1fr, 1fr), gutter: 8pt,
       stat-box-filled("ARMADURA (CA)", ${tstr(p.armorClass)}, height: 36pt),
       stat-box-filled("INICIATIVA", ${tstr(p.initiative)}, height: 36pt),
       stat-box-filled("DESLOCAMENTO", ${tstr(p.deslocamento)}, height: 36pt),
-      stat-box-filled("PA GASTOS", ${tstr(p.paSpent)}, height: 36pt)
+      stat-box-filled("PA GASTOS", ${tstr(p.paSpent)}, height: 36pt),
+      stat-box-filled("RANK DE GUILDA", ${tstr(p.guildRank)}, height: 36pt)
     )
   ]`;
 }
@@ -425,6 +442,13 @@ export function buildFichaTypstSource(p: FichaPdfPayload): string {
   field("Raça:", value: ${tstr(p.raceName)}),
   field("Antecedente:", value: ${tstr(p.backgroundName)}),
   field("Ouro (PO):", value: ${tstr(p.gold)})
+)
+#v(6pt)
+#grid(
+  columns: (2fr, 2fr),
+  gutter: 10pt,
+  field("Árvore Inicial:", value: ${tstr(p.startingTreeName)}),
+  field("Destino / Sub-tabela:", value: ${tstr(p.subtableName)})
 )
 #v(10pt)
 

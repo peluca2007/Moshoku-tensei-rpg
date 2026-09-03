@@ -27,7 +27,7 @@ const MAX_ZOOM = 2.5;
 // Quanto o meio da curva de conexão "estufa" pra fora do anel (px), só estética.
 const HYBRID_CURVE_BULGE = 30;
 
-const TIER_ORDER: RankName[] = ["Principiante", "Intermediário", "Avançado", "Santo", "Rei", "Imperador"];
+const TIER_ORDER: RankName[] = ["Principiante", "Intermediário", "Avançado", "Santo", "Rei", "Imperador", "Deus"];
 
 /**
  * Math.cos/Math.sin podem divergir no último bit entre SSR e hidratação —
@@ -787,7 +787,11 @@ function DetailPanel({ meta, showToast }: { meta: NodeMeta; showToast: (msg: str
   const accent = RANK_ACCENT[meta.rank];
   const unlocked = isRankUnlocked(meta.tree.id, meta.rank);
   const requirement = RANK_REQUIREMENTS[meta.rank];
-  const unlockPaCost = getRankUnlockPaCost(meta.tree.id, meta.rank);
+  const openedTrees = new Set(character.unlockedRanks.filter(r => r.rank === "Principiante").map(r => r.treeId));
+  const isAlreadyUnlocked = openedTrees.has(meta.tree.id);
+  const unlockPaCost = meta.rank === "Principiante" 
+    ? (isAlreadyUnlocked ? 0 : openedTrees.size)
+    : getRankUnlockPaCost(meta.tree.id, meta.rank);
   const unlockCheck = canUnlockRank(character, meta.tree.id, meta.rank);
   const rankDef = meta.tree.ranks.find((r) => r.rank === meta.rank);
   const items = rankDef
@@ -875,9 +879,15 @@ function PanelShell({
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
-      <h3 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h3>
-      {subtitle && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{subtitle}</p>}
-      <div className="mt-2 space-y-2 text-sm text-parchment-700 dark:text-parchment-300">{children}</div>
+      <div className="flex flex-col h-full">
+        <div className="flex-shrink-0">
+          <h3 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h3>
+          {subtitle && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{subtitle}</p>}
+        </div>
+        <div className="mt-2 flex-1 overflow-y-auto space-y-2 text-sm text-parchment-700 dark:text-parchment-300 pr-1">
+          {children}
+        </div>
+      </div>
     </motion.aside>
   );
 }
@@ -936,7 +946,7 @@ function AbilityListItem({
             {ability.effect}
           </p>
           <CastingBreakdown ability={ability} />
-          <IncantationBlock ability={ability} />
+          <IncantationBlock ability={ability} rank={rank} />
         </>
       ) : (
         <p className="text-xs text-parchment-600 dark:text-parchment-300">{talent?.description}</p>

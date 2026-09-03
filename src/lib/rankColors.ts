@@ -7,6 +7,7 @@ export const RANK_COLORS: Record<RankName, string> = {
   Santo: "bg-amber-500/15 text-amber-400 ring-amber-500/30",
   Rei: "bg-rose-500/15 text-rose-400 ring-rose-500/30",
   Imperador: "bg-fuchsia-500/15 text-fuchsia-400 ring-fuchsia-500/30",
+  Deus: "bg-yellow-500/15 text-yellow-300 ring-yellow-500/30",
 };
 
 /** Classes estáticas (Tailwind precisa ver o literal completo) para o grafo visual da árvore. */
@@ -61,6 +62,14 @@ export const RANK_ACCENT: Record<
     stroke: "stroke-fuchsia-500",
     text: "text-fuchsia-400",
     glow: "shadow-fuchsia-500/50",
+  },
+  Deus: {
+    solidBg: "bg-yellow-500",
+    ringActive: "ring-yellow-300",
+    borderActive: "border-yellow-300",
+    stroke: "stroke-yellow-500",
+    text: "text-yellow-300",
+    glow: "shadow-yellow-500/50",
   },
 };
 

@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 const LINKS = [
+  { href: "/criar", label: "Criar" },
   { href: "/ficha", label: "Ficha" },
   { href: "/arvores", label: "Árvores" },
   { href: "/personagens", label: "Personagens" },

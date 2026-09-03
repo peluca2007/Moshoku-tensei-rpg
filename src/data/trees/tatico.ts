@@ -6,6 +6,18 @@ export const TATICO_TREE: Tree = {
   name: "Navegação e Liderança",
   category: "utilidade",
   subgroup: "Sobrevivência e Táticas",
+  mechanic: {
+    tag: "Escopo: tempo e logística",
+    hook:
+      "A pergunta dele é \"onde e quando isso acontece?\". Faixa exclusiva: economia de ação — só o Tático concede Ações.",
+    loop: [
+      "Escolha o terreno e a hora. Enquanto lidera a marcha, o grupo não se perde, ignora terreno difícil natural e NUNCA é surpreendido.",
+      "Gaste PP antes do combate. Reconhecimento, posicionamento, suprimento — a preparação vira vantagem mecânica quando a luta começa.",
+      "Dê Ações. Só esta árvore concede Ações a aliados, mexe na ordem de Iniciativa e reposiciona gente sem gastar o turno dela.",
+    ],
+    cost:
+      "O Tático não bate e não aguenta. Todo o valor dele acontece antes do primeiro dado rolar — numa emboscada que ele não previu, ele é um civil bem informado.",
+  },
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PP",
   tagline:
@@ -34,7 +46,7 @@ export const TATICO_TREE: Tree = {
       mastery: {
         name: "Onde Pisar",
         description:
-          "Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. O grupo nunca é surpreendido — emboscadas ainda acontecem, mas vocês agem no primeiro turno. Sempre encontram água, abrigo e um lugar defensável.",
+          "[Escopo: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. O grupo nunca é surpreendido — emboscadas ainda acontecem, mas vocês agem no primeiro turno. Sempre encontram água, abrigo e um lugar defensável.",
       },
       talents: [
         { id: "mapa-vivo", name: "Mapa Vivo", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você desenha e lê mapas; regiões que já atravessou ficam registradas e podem ser vendidas." },

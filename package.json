@@ -1,13 +1,13 @@
 {
   "name": "moshoku-tensei-rpg",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "book:tex": "tsx scripts/gen-livro-tex.mts"
+    "check:magias": "tsx scripts/check-magias.mts"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

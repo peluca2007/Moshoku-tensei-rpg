@@ -1,7 +1,50 @@
-import { AbilityDef } from "@/lib/types";
+import { AbilityDef, qualifiesForRecitationBonus, RANK_BONUS, RankName } from "@/lib/types";
 
 function actionText(n: number) {
   return n === 0 ? "Passivo" : `${n} Ação${n > 1 ? "ões" : ""}`;
+}
+
+/**
+ * Cap. 2, §2: o que a Recitação Perfeita paga nesta magia — ou por que ela não
+ * paga nada.
+ *
+ * O gate de tamanho (2026-09-03) é a mudança que importa. Antes bastava a magia
+ * ter um cântico escrito pra conceder Vantagem no acerto ou +2 na CD, e uma
+ * auditoria das 149 magias do livro achou **55 com cântico abaixo do piso do
+ * próprio rank**: "Não caias. Ainda não. Prontidão!" tem 35 caracteres e pagava
+ * exatamente o mesmo que um cântico de 380 caracteres do rank Rei. O sistema
+ * estava premiando quem escrevesse cânticos CURTOS — o oposto exato do que o
+ * capítulo promete quando diz que o tamanho é proporcional ao poder.
+ *
+ * Agora o piso de INCANTATION_LENGTH é a porta, e quem não alcança recebe um
+ * selo explícito de "Sem bônus" em vez de silêncio. Não é uma punição: são as
+ * magias rápidas de propósito (Prontidão, Rejeitar a Morte, Luz Absoluta, Lança
+ * de Plasma, Explosão Silenciosa — todas de emergência, todas com `costNote`
+ * justificando a pressa), e pra elas a velocidade já É o benefício. O livro
+ * deixou de dar as duas coisas de graça.
+ */
+function perfectRecitationBonus(
+  ability: AbilityDef,
+  rank?: RankName
+): { ok: boolean; text: string } | null {
+  if (!ability.incantation) return null;
+
+  if (rank && !qualifiesForRecitationBonus(ability.incantation, rank)) {
+    return { ok: false, text: `Sem bônus — cântico curto demais para o rank ${rank}` };
+  }
+
+  const hasAttackRoll = ability.damage?.normal !== undefined;
+  const imposesSave =
+    ability.effect.includes("teste") ||
+    ability.effect.includes("Teste") ||
+    ability.effect.includes("CD 8");
+
+  if (hasAttackRoll) return { ok: true, text: "Vantagem no teste de acerto" };
+  if (imposesSave) return { ok: true, text: "+2 na CD para resistir" };
+  return {
+    ok: true,
+    text: rank ? `Recupera ${RANK_BONUS[rank]} PM` : "Recupera PM (Bônus de Rank)",
+  };
 }
 
 /**
@@ -44,13 +87,53 @@ export function CastingBreakdown({ ability }: { ability: AbilityDef }) {
   );
 }
 
-/** Cap. 2: o verso recitado ao conjurar. Puramente de sabor — não afeta a mecânica. */
-export function IncantationBlock({ ability }: { ability: AbilityDef }) {
+/**
+ * Cap. 2, §2: o cântico, e o que recitá-lo bem paga.
+ *
+ * `rank` é opcional só por compatibilidade de assinatura — sem ele o gate de
+ * tamanho não roda e a carta volta a prometer bônus pra qualquer cântico. As
+ * três superfícies que renderizam isto (livro, ficha e mapa de árvores) têm o
+ * rank em mãos e devem passá-lo sempre.
+ */
+export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?: RankName }) {
   if (!ability.incantation) return null;
+
+  const bonus = perfectRecitationBonus(ability, rank);
+  const verses = ability.incantation.split("\\n").filter((v) => v.trim().length > 0);
+
   return (
-    <p className="mt-1.5 border-l-2 border-wine-300/70 pl-2 text-[11px] italic text-parchment-600 dark:border-wine-800 dark:text-parchment-400">
-      “{ability.incantation}”
-    </p>
+    <div className="relative mt-2">
+      <div className="absolute -top-3 left-2 -z-10 h-10 w-10 rounded-full bg-gold-500/20 ring-2 ring-gold-400/50 dark:bg-gold-500/10" />
+      <blockquote className="relative rounded-lg border border-wine-300/30 bg-parchment-50/50 p-3 pl-6 ring-1 ring-inset ring-wine-300/10 dark:border-wine-800/30 dark:bg-parchment-900/50 dark:ring-wine-800/10">
+        <div className="flex items-start gap-1.5">
+          <span className="select-none font-serif text-2xl leading-none text-wine-500/70 dark:text-wine-400/70">
+            &ldquo;
+          </span>
+          <div className="whitespace-pre-line font-serif text-[11px] italic leading-relaxed text-parchment-700 dark:text-parchment-300">
+            {verses.map((v, i) => (
+              <span key={i}>{v}</span>
+            ))}
+          </div>
+        </div>
+      </blockquote>
+      {bonus?.ok === true && (
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-[10px] font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300 dark:ring-gold-500/20">
+          <span className="relative flex h-3 w-3">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-400 opacity-75" />
+            <span className="relative inline-flex h-3 w-3 rounded-full bg-gold-500" />
+          </span>
+          <span>Recitação Perfeita: {bonus.text}</span>
+        </div>
+      )}
+      {bonus?.ok === false && (
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-parchment-500/10 px-2.5 py-1 text-[10px] font-semibold text-parchment-600 ring-1 ring-parchment-500/30 dark:text-parchment-400">
+          <span className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-parchment-400/60 text-[9px] leading-none text-parchment-900">
+            —
+          </span>
+          <span>{bonus.text}</span>
+        </div>
+      )}
+    </div>
   );
 }
 

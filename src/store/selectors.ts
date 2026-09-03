@@ -5,9 +5,9 @@ import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
 import {
   ATTRIBUTE_CREATION_POINTS,
-  ATTRIBUTE_PA_COST_PER_POINT,
+  attributePaCostTotal,
   PROFICIENCIES_PER_PA,
-  SAVE_ADVANTAGE_PA_COST,
+  saveAdvantagePaCostTotal,
   SKILLS_PER_PA,
   AttributeKey,
   ATTRIBUTES,
@@ -487,6 +487,10 @@ function findAbilityOrTalentDef(treeId: string, rank: RankName, kind: "ability" 
 
 /** Custo em PA pra desbloquear um rank numa árvore: RANK_REQUIREMENTS, a menos que a árvore declare unlockPaCostOverride (ex: Rei do Norte = 2 PA). */
 export function getRankUnlockPaCost(treeId: string, rank: RankName): number {
+  if (rank === "Principiante") {
+    // Será calculado dinamicamente com base na ordem de abertura (0 PA para a 1ª, 1 PA para a 2ª, etc.)
+    return 0;
+  }
   const rankDef = getTreeById(treeId)?.ranks.find((r) => r.rank === rank);
   return rankDef?.unlockPaCostOverride ?? RANK_REQUIREMENTS[rank].paCost;
 }
@@ -514,18 +518,13 @@ export function getRankUnlockPaCost(treeId: string, rank: RankName): number {
  */
 export function getAttributePaCost(state: StoreState): number {
   const soma = ATTRIBUTES.reduce((sum, { key }) => sum + (state.attributeBase[key] ?? 0), 0);
-  // 2026-08-30: o orçamento da criação ficou fixo em ATTRIBUTE_CREATION_POINTS (2)
-  // e NÃO desconta mais os bônus de Raça/Antecedente/sub-tabela. Eles são
-  // empilhados POR FORA do point-buy, não são pontos que a raça "gasta" do
-  // jogador. Sem isso, Ogro (+2 For) ou Dragão (+2 For +1 Vig) abririam o jogo
-  // no 4/4 sem cobrar nada — o que mata o propósito do cap de criação.
   const budget = ATTRIBUTE_CREATION_POINTS;
-  return Math.max(0, soma - budget) * ATTRIBUTE_PA_COST_PER_POINT;
+  const purchasedPoints = Math.max(0, soma - budget);
+  return attributePaCostTotal(purchasedPoints);
 }
 
-/** Cap. 1, §2: Vantagem permanente nos saves de um atributo — 2 PA por atributo. */
 export function getSaveAdvantagePaCost(state: StoreState): number {
-  return (state.saveAdvantages ?? []).length * SAVE_ADVANTAGE_PA_COST;
+  return saveAdvantagePaCostTotal((state.saveAdvantages ?? []).length);
 }
 
 /** true se os Testes de Resistência deste atributo têm Vantagem permanente. */
@@ -624,9 +623,11 @@ export function getPaSpent(state: StoreState): number {
   const rankCost = state.unlockedRanks.reduce((sum, u) => {
     if (u.rank === "Principiante" && !openedTrees.has(u.treeId)) {
       openedTrees.add(u.treeId);
-      return sum + openedTrees.size;
+      // 1ª árvore = 0 PA, 2ª = 1 PA, 3ª = 2 PA, 4ª = 3 PA, 5ª = 4 PA...
+      return sum + Math.max(0, openedTrees.size - 1);
     }
-    return sum + getRankUnlockPaCost(u.treeId, u.rank);
+    const rankDef = getTreeById(u.treeId)?.ranks.find((r) => r.rank === u.rank);
+    return sum + (rankDef?.unlockPaCostOverride ?? RANK_REQUIREMENTS[u.rank].paCost);
   }, 0);
   const abilityCost = state.purchasedAbilities.reduce((sum, a) => {
     const def = findAbilityOrTalentDef(a.treeId, a.rank, a.kind, a.id);

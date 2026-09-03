@@ -12,6 +12,18 @@ export const VENDAVAL_TREE: Tree = {
   name: "Estilo Vendaval",
   category: "corpo",
   subgroup: "Estilo Híbrido",
+  mechanic: {
+    tag: "Distância Roubada",
+    hook:
+      "Uma árvore corpo a corpo que briga de longe: cada metro que você anda vira alcance da sua lâmina.",
+    loop: [
+      "Ande. Mover-se é livre e barato aqui — a árvore compra reposicionamento em quase todo patamar, e do Intermediário em diante até como Reação.",
+      "Roube a distância. A distância que você percorreu na sua vez (até 9m) é somada ao ALCANCE do seu próximo ataque corpo a corpo neste turno: o vento estica o fio da arma.",
+      "Cobre. Se esse ataque acertar um alvo a mais de 3m de você, ele fica Desequilibrado — e as suas magias de Vento cobram um dado a mais de quem está assim.",
+    ],
+    cost:
+      "Você não tem parede, não tem contra-ataque e não tem PV pra trocar golpe. Se te encurralarem num corredor, a árvore inteira vira uma espada comum.",
+  },
   keyAttributeLabel: "Força ou Agilidade",
   resourceLabel: "PT",
   tagline: "O que sobra quando a sobrevivência do Norte para de precisar de distância — nascido de quem já domina o aço e o vento ao mesmo tempo.",
@@ -34,7 +46,7 @@ export const VENDAVAL_TREE: Tree = {
       mastery: {
         name: "Passo sem Peso",
         description:
-          "+3 metros de Deslocamento. Uma vez em cada um dos seus turnos, afastar-se de um inimigo não provoca ataque de oportunidade. Uma vez por combate, ao errar um ataque corpo a corpo, o vento absorve o impacto: reposicione-se até 3m sem gastar Ação.",
+          "+3 metros de Deslocamento. Uma vez em cada um dos seus turnos, afastar-se de um inimigo não provoca ataque de oportunidade. Uma vez por combate, ao errar um ataque corpo a corpo, o vento absorve o impacto: reposicione-se até 3m sem gastar Ação. [Distância Roubada] A mecânica que define a árvore: guarde a distância que você percorreu na sua vez, até 9 metros. O seu PRÓXIMO ataque corpo a corpo neste turno tem o alcance da arma aumentado nessa distância — o vento estica o fio do golpe. Se esse ataque acertar um alvo a mais de 3 metros de você, ele fica Desequilibrado. A distância guardada zera no fim do turno, gasta ou não.",
       },
       talents: [
         { id: "folego-do-vendaval", name: "Fôlego do Vendaval", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
@@ -86,7 +98,7 @@ export const VENDAVAL_TREE: Tree = {
       mastery: {
         name: "Lâmina no Vácuo",
         description:
-          "Seus ataques corpo a corpo ignoram metade da Cobertura do alvo — o vento carrega seu golpe ao redor de obstáculos parciais. Uma vez por turno, gaste 1 PT pra repetir um teste de resistência de Agilidade que tenha falhado.",
+          "Seus ataques corpo a corpo ignoram metade da Cobertura do alvo — o vento carrega seu golpe ao redor de obstáculos parciais. Uma vez por turno, gaste 1 PT pra repetir um teste de resistência de Agilidade que tenha falhado. [Distância Roubada] O movimento que você faz com REAÇÃO passa a contar para a Distância Roubada — Passo Entre Rajadas deixa de ser só uma fuga e vira o preparo do golpe seguinte.",
       },
       talents: [
         { id: "corrente-de-apoio-marcial", name: "Corrente de Apoio Marcial", paCost: 1, description: "Quando um aliado a até 9m for empurrado, arremessado ou puxado por qualquer efeito, gaste 1 PT como Reação pra dobrar a distância do movimento dele, na direção que ele quiser." },
@@ -135,7 +147,7 @@ export const VENDAVAL_TREE: Tree = {
       mastery: {
         name: "Fio do Vendaval",
         description:
-          "Enquanto vestir o Manto de Touki, sua arma ganha +3 metros de alcance em ataques corpo a corpo — o fio do golpe se estende pelo vento — e você ignora metade da CA de armaduras não-mágicas.",
+          "Enquanto vestir o Manto de Touki, sua arma ganha +3 metros de alcance em ataques corpo a corpo — o fio do golpe se estende pelo vento — e você ignora metade da CA de armaduras não-mágicas. [Distância Roubada] O teto da Distância Roubada sobe de 9 para 12 metros, e ela soma em cima destes +3.",
       },
       talents: [
         { id: "segunda-rajada", name: "Segunda Rajada", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
@@ -224,7 +236,7 @@ export const VENDAVAL_TREE: Tree = {
       mastery: {
         name: "Lâmina Sem Fronteira",
         description:
-          "Seus ataques corpo a corpo passam a ter alcance de 6 metros, sempre — o vento carrega o fio da sua arma até o alvo. A Vantagem de Estilo (Cap. 3) se aplica mesmo à distância.",
+          "Seus ataques corpo a corpo passam a ter alcance MÍNIMO de 6 metros, sempre — o vento carrega o fio da sua arma até o alvo, tenha você corrido ou não. A Vantagem de Estilo (Cap. 3) se aplica mesmo à distância. [Distância Roubada] Continua somando em cima desse piso: correr 12 metros e golpear alcança 18.",
       },
       talents: [],
       abilities: [

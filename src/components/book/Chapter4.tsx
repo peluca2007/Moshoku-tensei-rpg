@@ -159,6 +159,7 @@ export default function Chapter4() {
             ["Molhado", "Dano de frio contra você é dobrado. Desvantagem em testes de resistência contra magias de gelo de quem te molhou. Fogo aplicado a um alvo Molhado evapora a água em vez de acender."],
             ["Paralisado", "Incapaz de agir e de se mover; falha automaticamente em testes de resistência de Força e Agilidade. Ataques corpo a corpo contra você são críticos automáticos se o atacante estiver adjacente."],
             ["Petrificado", "Vira pedra (ou material equivalente): Incapacitado, imune a veneno e doença, e Resistência a todo dano enquanto durar. Reverter exige a fonte específica que petrificou, ou magia de rank igual ou superior."],
+            ["Soterrado", "A segunda metade da identidade da Terra, e o pagamento de Atolado: só pode ser aplicada a um alvo que já esteja Atolado, Preso ou Caído. Deslocamento 0, Preso, não enxerga nem conjura com gesto, e sofre 2d10 de sufocamento no início de cada turno se precisar respirar. Sai gastando 1 Ação num teste de Força (CD 8 + BC de quem soterrou), ou quando 30 de dano forem causados à terra que o cobre."],
             ["Selado", "Dentro da barreira, nenhuma criatura conjura magia de rank SUPERIOR ao rank em Barreira de quem a ergueu — um Selado de rank Avançado permite magia até Avançado e barra Santo pra cima. Tentar mesmo assim gasta as Ações e o PM e falha. Não impede técnicas de Touki, ataques com arma nem habilidades de Utilidade: Selado é sobre mana, e só."],
             ["Preso", "Deslocamento reduzido a 0. Ataques contra você têm Vantagem; seus ataques têm Desvantagem. Solta-se gastando 1 Ação num teste (Atributo e CD definidos por quem prendeu)."],
             ["Quebrantado", "Acumulável: cada acúmulo dá −1 na CA e −1 no dano de todos os seus ataques, até o máximo do Bônus de Rank de quem aplicou. Não é ferimento — magia de Cura não remove. Some com um Descanso Curto, ou dura até o fim do combate, o que vier primeiro."],
@@ -437,21 +438,33 @@ export default function Chapter4() {
         <SectionTitle id="cap4-aflicoes">7. Aflições do Mundo de Seis Faces</SectionTitle>
         <P>
           Além do dano que se vê na hora, o corpo pode ser atacado por caminhos mais lentos — veneno, doença,
-          maldição. Toda aflição tem uma Profundidade de 1 a 5 que sobe sozinha enquanto ninguém trata, e um mago de
-          Desintoxicação só purga o que estiver dentro do Bônus de Rank dele. Venenos agudos sobem 1 de
-          Profundidade por hora; doenças, maldições e petrificações sobem 1 por dia. Nada disso cai sozinho.
+          maldição. Toda aflição tem um <b>Rank</b>, na mesma escada de Principiante a Imperador que o resto do
+          livro usa, e a regra inteira desta seção cabe numa linha: <b>um feitiço de Desintoxicação de rank X
+            remove uma aflição de rank X ou inferior</b>. Nada mais. Se você é Intermediário, Purga Profunda
+          resolve tudo até Intermediário e não encosta num Avançado.
         </P>
+        <P>
+          Aflição nenhuma some sozinha, e nenhuma piora sozinha: ela simplesmente <b>continua fazendo o que faz</b>,
+          hora após hora ou dia após dia, até alguém tratar. A urgência é o efeito, não um número subindo.
+        </P>
+        <Aside title="O que mudou (2026-09-03)">
+          Até esta versão, cada aflição carregava uma <i>Profundidade</i> de 1 a 5 que subia sozinha com o
+          relógio, e cada magia da escola empurrava esse número pra cima ou pra baixo em incrementos diferentes.
+          A mesa precisava manter um segundo relógio por personagem afetado, e o jogador de Desintoxicação
+          passava o turno fazendo conta em vez de jogar. O número foi apagado. O que ele media — &quot;dá pra
+          curar isto?&quot; — agora se responde olhando o rank, e a resposta leva um segundo.
+        </Aside>
 
         <SubTitle>Venenos</SubTitle>
         <BookTable
-          headers={["Aflição", "Prof.", "Origem", "Efeito"]}
+          headers={["Aflição", "Rank", "Origem", "Efeito"]}
           rows={[
-            ["Baba de Sapo-Lodo", "1", "Pântanos do Continente Central", "Envenenado por 1 hora. A primeira coisa que um aventureiro novato pega."],
-            ["Espinho da Rosa-Preta", "1", "Planta cultivada em Asura", "Sono profundo em 10 minutos. Não causa dano."],
-            ["Peçonha de Serpente-do-Pântano", "2", "Serpentes grandes", "2d6 por hora e Desvantagem em Vigor. Mata um camponês em cinco horas."],
-            ["Toxina de Aranha Gigante", "2", "Cavernas, ruínas", "Paralisia progressiva: -3m de Deslocamento por hora, cumulativo até 0."],
-            ["Fel de Wyvern", "3", "Feras voadoras do Continente Demônio", "4d8 por dia. Cega em 48 horas."],
-            ["Sombra Líquida", "4", "Assassinos profissionais", "Sem sintoma por três dias. No quarto, o coração para."],
+            ["Baba de Sapo-Lodo", "Principiante", "Pântanos do Continente Central", "Envenenado por 1 hora. A primeira coisa que um aventureiro novato pega."],
+            ["Espinho da Rosa-Preta", "Principiante", "Planta cultivada em Asura", "Sono profundo em 10 minutos. Não causa dano."],
+            ["Peçonha de Serpente-do-Pântano", "Intermediário", "Serpentes grandes", "2d6 por hora e Desvantagem em Vigor. Mata um camponês em cinco horas."],
+            ["Toxina de Aranha Gigante", "Intermediário", "Cavernas, ruínas", "Paralisia progressiva: -3m de Deslocamento por hora, cumulativo até 0."],
+            ["Fel de Wyvern", "Avançado", "Feras voadoras do Continente Demônio", "4d8 por dia. Cega em 48 horas."],
+            ["Sombra Líquida", "Santo", "Assassinos profissionais", "Sem sintoma por três dias. No quarto, o coração para."],
           ]}
         />
 
@@ -482,58 +495,59 @@ export default function Chapter4() {
         />
         <P>
           Em qualquer via, a vítima só é afetada se sofrer dano da arma untada, ingerir a dose ou respirar a
-          nuvem. Nesse momento ela faz um <b>teste de resistência de Vigor</b> contra <b>CD 8 + (2 × a
-            Profundidade do veneno)</b> — veneno é exposição direta e ativa, por isso a CD é mais alta que a de
-          contágio passivo de uma doença (mais adiante, nas Regras de Mesa desta seção). Sucesso: a aflição
-          some por completo, sem efeito nenhum. Falha: a aflição começa exatamente na Profundidade listada na
-          tabela e sobe sozinha a partir daí, 1 ponto por hora.
+          nuvem. Nesse momento ela faz um <b>teste de resistência de Vigor</b> contra <b>CD 8 + (2 × o Bônus
+            de Rank da aflição)</b> — o mesmo Bônus de Rank do Cap. 1, §7, lido na coluna Rank da tabela:
+          Principiante CD 10, Intermediário CD 12, Avançado CD 14, Santo CD 16, Rei CD 18. Veneno é exposição
+          direta e ativa, por isso a CD é mais alta que a de contágio passivo de uma doença (mais adiante, nas
+          Regras de Mesa desta seção). Sucesso: a aflição some por completo, sem efeito nenhum. Falha: a
+          aflição se instala no rank listado na tabela e faz o que a tabela diz, sem parar, até ser tratada.
         </P>
         <Aside title="Exemplo rápido">
-          Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Profundidade 2) e acerta um golpe surpresa.
-          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, já entra Envenenada na Profundidade 2 — 2d6 por
-          hora e Desvantagem em Vigor — e esse relógio corre até alguém tratar com Desintoxicação ou um
-          Antídoto (Cap. 5, §4).
+          Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Intermediária) e acerta um golpe surpresa.
+          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, entra Envenenada — 2d6 por hora e Desvantagem
+          em Vigor — e isso não para até alguém com <b>Purga Profunda</b> (Intermediário) ou superior tratar,
+          ou até um Antídoto (Cap. 5, §4) ser bebido.
         </Aside>
 
         <SubTitle>Doenças</SubTitle>
         <BookTable
-          headers={["Aflição", "Prof.", "Contágio", "Efeito"]}
+          headers={["Aflição", "Rank", "Contágio", "Efeito"]}
           rows={[
-            ["Febre de Estrada", "1", "Água parada", "1 nível de Exaustão. A mais comum do mundo."],
-            ["Podridão de Ferida", "2", "Ferimento não tratado", "PV máximos caem 5 por dia."],
-            ["Tosse Cinzenta", "2", "Ar, entre pessoas", "Desvantagem em tudo que exija fôlego."],
-            ["Peste dos Portos", "3", "Ratos, carga, navios", "3d6 por dia e contagia 1d4 pessoas próximas por dia."],
-            ["Febre de Mana", "3", "Esgotar PM a zero repetidamente", "PM máximos caem 10% por dia."],
-            ["Praga do Continente Demônio", "4", "Contato com terreno corrompido", "Pele endurece e racha. -1 em todos os atributos por semana, cumulativo."],
+            ["Febre de Estrada", "Principiante", "Água parada", "1 nível de Exaustão. A mais comum do mundo."],
+            ["Podridão de Ferida", "Intermediário", "Ferimento não tratado", "PV máximos caem 5 por dia."],
+            ["Tosse Cinzenta", "Intermediário", "Ar, entre pessoas", "Desvantagem em tudo que exija fôlego."],
+            ["Peste dos Portos", "Avançado", "Ratos, carga, navios", "3d6 por dia e contagia 1d4 pessoas próximas por dia."],
+            ["Febre de Mana", "Avançado", "Esgotar PM a zero repetidamente", "PM máximos caem 10% por dia."],
+            ["Praga do Continente Demônio", "Santo", "Contato com terreno corrompido", "Pele endurece e racha. -1 em todos os atributos por semana, cumulativo."],
           ]}
         />
 
         <SubTitle>Maldições e Transformações</SubTitle>
         <BookTable
-          headers={["Aflição", "Prof.", "Origem", "Efeito"]}
+          headers={["Aflição", "Rank", "Origem", "Efeito"]}
           rows={[
-            ["Marca do Sepulcro", "3", "Profanar um túmulo", "Não recupera PV por meio nenhum enquanto durar. Nem magia."],
-            ["Olhar de Basilisco", "4", "A criatura", "Petrificação em 4 turnos."],
-            ["Fome Vermelha", "4", "Mordida de certos mortos-vivos", "1 nível de Exaustão por dia que não some. Ao chegar a 6, vira o que o mordeu."],
-            ["Nome Roubado", "5", "Pactos mal fechados", "Ninguém consegue lembrar quem você é. Só um Imperador desfaz."],
+            ["Marca do Sepulcro", "Avançado", "Profanar um túmulo", "Não recupera PV por meio nenhum enquanto durar. Nem magia."],
+            ["Olhar de Basilisco", "Santo", "A criatura", "Petrificação em 4 turnos."],
+            ["Fome Vermelha", "Santo", "Mordida de certos mortos-vivos", "1 nível de Exaustão por dia que não some. Ao chegar a 6, vira o que o mordeu."],
+            ["Nome Roubado", "Rei", "Pactos mal fechados", "Ninguém consegue lembrar quem você é. Só um Imperador desfaz."],
           ]}
         />
 
-        <Warning title="O Teto — Doença da Pedra Mágica (Profundidade 6)">
-          A carne vira minério, devagar, começando pelas extremidades. Nenhum patamar deste livro alcança
-          Profundidade 6 — um Imperador de Desintoxicação consegue Selar a Maldição e congelar o avanço, e é
-          só isso que o mundo tem a oferecer. O grimório de rank Deus que curaria isso existe, catalogado no
-          Grande Templo de Millis, e ninguém consegue ler o primeiro verso.
+        <Warning title="O Teto — Doença da Pedra Mágica (rank Deus)">
+          A carne vira minério, devagar, começando pelas extremidades. É a única aflição de <b>rank Deus</b> do
+          livro, e nenhum patamar jogável a alcança — um Imperador de Desintoxicação consegue Selar a Maldição
+          e deixá-la dormente, e é só isso que o mundo tem a oferecer. O grimório de rank Deus que a curaria
+          existe, catalogado no Grande Templo de Millis, e ninguém consegue ler o primeiro verso.
         </Warning>
 
         <Aside title="Regras de Mesa">
           <List
             items={[
-              "Definindo a Profundidade: se a aflição não estiver na tabela, use 1 (incômodo), 2 (perigoso), 3 (grave), 4 (fatal) ou 5 (lendário).",
-              "Diagnóstico (Cura, 1º patamar) diz de que categoria é o problema. Paladar (Desintoxicação, 1º patamar) diz exatamente qual e a Profundidade.",
+              "Definindo o Rank: se a aflição não estiver nas tabelas, escolha o patamar pelo estrago — Principiante (incômodo), Intermediário (perigoso), Avançado (grave), Santo (fatal), Rei (lendário). É a mesma escada do resto do livro, então não há tabela nova pra decorar.",
+              "Diagnóstico (Cura, 1º patamar) diz de que categoria é o problema. Paladar (Desintoxicação, 1º patamar) diz exatamente qual e de que rank — ou seja, quem no grupo consegue tratar.",
               "Cura não trata nada desta seção, em rank nenhum — fecha o ferimento por onde a coisa entrou, e só. Desintoxicação, na direção oposta, também não trata dano físico: ela remove a causa (veneno, doença, maldição, petrificação), mas não fecha o corte — a carne continua aberta até Cura, uma poção ou repouso cuidarem dela.",
-              "Contágio: se uma aflição contagiosa estiver ativa no grupo ao fim de um Descanso Longo, cada personagem que dormiu perto faz teste de Vigor (CD 8 + Profundidade atual).",
-              "Ritmo: uma aflição de Profundidade 2 pegada no primeiro dia de viagem chega a 5 em três dias — é esse relógio, não o combate, que cria a urgência de uma campanha longa.",
+              "Contágio: se uma aflição contagiosa estiver ativa no grupo ao fim de um Descanso Longo, cada personagem que dormiu perto faz teste de Vigor (CD 8 + Bônus de Rank da aflição) — a mesma conta da exposição, sem o ×2, porque contágio passivo é mais fácil de escapar que uma lâmina untada.",
+              "Ritmo: a aflição não piora, mas também não passa. Uma Peste dos Portos pegada no primeiro dia de viagem vai cobrar 3d6 por dia e infectar mais 1d4 pessoas por dia até o grupo achar quem trate — é esse acúmulo, não um número subindo, que cria a urgência de uma campanha longa.",
             ]}
           />
         </Aside>

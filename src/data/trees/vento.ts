@@ -6,6 +6,18 @@ export const VENTO_TREE: Tree = {
   name: "Magia de Vento",
   category: "magia",
   subgroup: "Magia Ofensiva",
+  mechanic: {
+    tag: "Desequilibrado",
+    hook:
+      "Não derruba nem prende: tira o inimigo do prumo e cobra por isso em cima.",
+    loop: [
+      "Desequilibre. Quase toda magia de Vento aplica Desequilibrado — metade do Deslocamento, uma Reação por rodada, Desvantagem em ataque de oportunidade.",
+      "Cobre. Toda magia de Vento sua rola UM DADO DE DANO A MAIS contra alvo Desequilibrado.",
+      "Suba. Do Avançado em diante você voa de graça, e quem está Desequilibrado não te alcança de volta.",
+    ],
+    cost:
+      "O menor dado por magia das quatro ofensivas, e nenhuma parede. Vento não segura ninguém — ele atrapalha, empurra e sai de perto.",
+  },
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PM",
   tagline: "Corte, som e mobilidade — a escola que anula a distância, inclusive a sua própria.",
@@ -25,7 +37,7 @@ export const VENTO_TREE: Tree = {
       mastery: {
         name: "Brisa",
         description:
-          "Controle constante e gratuito de ar num raio de 18 metros, sem PM e sem Ação. Você nunca sofre dano de queda de até 15 metros, e desce devagar de qualquer altura.",
+          "Controle constante e gratuito de ar num raio de 18 metros, sem PM e sem Ação. Você nunca sofre dano de queda de até 15 metros, e desce devagar de qualquer altura. [Desequilibrado] Uma vez por turno, sem gastar Ação nem PM, empurre uma criatura a até 9m em 1,5m — se isso a tirar de uma borda, telhado, ponte ou escada, ela fica Desequilibrada.",
       },
       talents: [
         { id: "pes-leves", name: "Pés Leves", paCost: RANK_PA_COST.talent.Principiante, description: "+3 metros de Deslocamento, e você não deixa pegadas nem faz ruído ao andar." },
@@ -43,7 +55,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Principiante,
           damage: { normal: "1d10 + BC (cortante)" },
           effect: "Ataque mágico à distância. Se acertar, o alvo fica Desequilibrado.",
-          incantation: "Ar que passa por tudo sem pedir licença, tome fio e vá. Lâmina de Vento!",
+          incantation:
+            "Ar que passa por tudo sem pedir licença a coisa nenhuma,\ntoma o fio da navalha e vai até ele.\nLâmina de Vento!",
         },
         {
           id: "empurrao",
@@ -53,6 +66,8 @@ export const VENTO_TREE: Tree = {
           range: "18 metros",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "Teste de Força (CD 8 + BC) ou o alvo é empurrado 6m na direção escolhida e fica Desequilibrado. Sem dano.",
+          incantation:
+            "Vento que não corta, só empurra com o peso do mundo inteiro atrás,\nvai até ele e não pares até que perceba que perdeu o chão.\nEmpurrão!",
         },
         {
           id: "passo-de-vento",
@@ -62,6 +77,8 @@ export const VENTO_TREE: Tree = {
           range: "Pessoal",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "1 Ação: desloque-se 18 metros em qualquer direção, inclusive para cima, sem provocar ataques de oportunidade e ignorando terreno difícil. Desce suavemente se terminar no ar.",
+          incantation:
+            "Ar sob meus pés, que finge não estar lá até que eu peça,\nleva-me daqui pra ali antes que alguém perceba que eu me movi.\nPasso de Vento!",
         },
         {
           id: "sopro-de-poeira",
@@ -69,8 +86,12 @@ export const VENTO_TREE: Tree = {
           paCost: RANK_PA_COST.common.Principiante,
           pmCost: 1,
           range: "Cone de 6 metros",
-          actions: MAGIC_ACTIONS.Principiante,
+          actions: { normal: 1, encurtada: 1, silenciosa: 1 },
+          costNote:
+            "1 Ação em vez de 2: é poeira soprada na cara de alguém, não um feitiço de duas partes. Sem dano e sem duração além de um turno, o custo em Ação tinha que acompanhar o quão pouco ela realmente faz.",
           effect: "Teste de Vigor (CD 8 + BC) ou o alvo fica Cego e Desequilibrado até o fim do próximo turno dele. Sem dano.",
+          incantation:
+            "Poeira que dorme no chão, levanta e cega quem olhar de frente sem pensar duas vezes.\nSopro de Poeira!",
         },
         {
           id: "vacuo-localizado",
@@ -81,6 +102,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Principiante,
           damage: { normal: "1d6" },
           effect: "Remove o ar ao redor da cabeça do alvo. Ele não consegue recitar cânticos, falar nem gritar por 1 turno. Não funciona em quem não respira.",
+          incantation:
+            "Ar que envolve a cabeça dele sem que ele perceba nada, eu te retiro agora mesmo, sem aviso.\nVácuo Localizado!",
         },
       ],
     },
@@ -90,7 +113,7 @@ export const VENTO_TREE: Tree = {
       mastery: {
         name: "Sem Peso",
         description:
-          "Passo de Vento passa a custar 1 PM e pode ser usado uma vez por turno sem gastar Ação. Você ignora terreno difícil e não pode ser Caído nem Atolado enquanto consciente. Ataques à distância mundanos contra você sofrem Desvantagem.",
+          "Passo de Vento passa a custar 1 PM e pode ser usado uma vez por turno sem gastar Ação. Você ignora terreno difícil e não pode ser Caído nem Atolado enquanto consciente. Ataques à distância mundanos contra você sofrem Desvantagem. [Desequilibrado] O pagamento da escola: toda magia de Vento sua rola UM DADO DE DANO A MAIS contra um alvo Desequilibrado — é o equivalente exato do frio que dobra contra Molhado, na Água.",
       },
       talents: [
         { id: "corrente-de-apoio", name: "Corrente de Apoio", paCost: RANK_PA_COST.talent.Intermediário, description: "Quando um aliado a até 18m conjurar magia de área, gaste 1 PM como Reação para aumentar a área dela em metade." },
@@ -108,7 +131,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Intermediário,
           damage: { normal: "3d8 + BC (contundente)" },
           effect: "Teste de Força (CD 8 + BC). Falha: dano cheio, empurradas 9m e Desequilibradas. Sucesso: metade.",
-          incantation: "Ar que se dobra até doer, endireite de uma vez e leve tudo o que estiver na frente. Estrondo Sônico!",
+          incantation:
+            "Ar que se dobra até doer nas próprias costuras, endireite de uma vez\ne leve tudo o que estiver na frente sem escolher o que poupar.\nEstrondo Sônico!",
         },
         {
           id: "foice-de-vacuo",
@@ -119,6 +143,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Intermediário,
           damage: { normal: "2d10 + BC (cortante)" },
           effect: "Ataque mágico à distância que ignora Cobertura. Contra alvo Desequilibrado, crita em 19-20 e ignora metade da CA de armadura.",
+          incantation:
+            "Foice que ninguém vê chegar até já ter passado, curva-te no ar sem fazer barulho algum,\ne não pares na primeira coisa que encontrares no caminho.\nFoice de Vácuo!",
         },
         {
           id: "ciclone",
@@ -129,6 +155,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Intermediário,
           damage: { normal: "2d8 + BC (contundente)" },
           effect: "Teste de Força (CD 8 + BC). Falha: dano, arremessadas 6m para longe do centro, Desequilibradas e Caídas. Vento forte na área por 1 minuto — projéteis mundanos erram.",
+          incantation:
+            "Vento que gira em volta de si mesmo até esquecer qual direção era a original,\nleva tudo que estiver perto contigo nessa dança, sem escolher quem fica de fora.\nCiclone!",
         },
         {
           id: "asas-emprestadas",
@@ -138,6 +166,8 @@ export const VENTO_TREE: Tree = {
           range: "Toque",
           actions: MAGIC_ACTIONS.Intermediário,
           effect: "10 minutos: o alvo recebe Deslocamento de Voo igual ao dobro do deslocamento dele. Se acabar no ar, desce suavemente.",
+          incantation:
+            "Asas que eu não tenho, mas posso emprestar por um tempo, cresçam nas costas dele\ne o levem mais alto do que os próprios pés jamais o levariam.\nAsas Emprestadas!",
         },
       ],
     },
@@ -165,7 +195,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "6d8 de frio (já contando a duplicação por Molhado)" },
           effect: "Requer 1 patamar em Água (ou aliado mago de Água conjurando junto). Todos na área ficam Molhados e imediatamente Congelados, sem teste.",
-          incantation: "Umidade que viaja comigo, pare no meio do caminho e escolha ser vidro. Nova Congelante!",
+          incantation:
+            "Umidade que viaja comigo desde a última chuva que caiu, pare no meio do caminho e escolhe,\nagora, sem hesitar nenhum instante, ser vidro em vez de ser água que apenas corre e some no chão.\nNova Congelante!",
         },
         {
           id: "prisao-de-ar",
@@ -175,6 +206,8 @@ export const VENTO_TREE: Tree = {
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
           effect: "Teste de Força (CD 8 + BC). Falha: o alvo é erguido 6m do chão, Preso e Desequilibrado por 1 minuto (repete teste no fim de cada turno).",
+          incantation:
+            "Ar que sustenta o pássaro em pleno voo sem que ele nunca perceba o próprio esforço de estar voando,\nsustenta agora quem eu escolher, bem longe do chão firme em que sempre confiou cegamente até hoje.\nPrisão de Ar!",
         },
         {
           id: "guilhotina-de-vacuo",
@@ -185,16 +218,22 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "5d8 + BC (cortante, +2d8 contra Desequilibrado)" },
           effect: "Corta madeira, corda e tecido com facilidade; não corta pedra.",
+          incantation:
+            "Vazio que corta sem lâmina nenhuma, sem fio, sem peso algum e sem qualquer aviso a quem estiver por perto observando,\ntraça uma linha reta e exata por onde nada mais volta a se juntar depois de cortado em dois pedaços.\nGuilhotina de Vácuo!",
         },
         {
           id: "tomar-o-ar",
           name: "Tomar o Ar",
-          paCost: RANK_PA_COST.talent.Avançado,
+          paCost: 4,
           pmCost: 4,
           range: "Esfera de 6m",
           actions: MAGIC_ACTIONS.Avançado,
+          costNote:
+            "4 PA em vez dos 2 do Avançado comum. Não é dano — é negar a magia inteira de um inimigo (sem ar, sem cântico) e apagar fogo em área, incluindo Em Chamas mágico. Contra um mago rival ou um incêndio fora de controle, isto vale mais que qualquer feitiço de dano do mesmo rank.",
           damage: { normal: "3d6 por turno" },
           effect: "Remove o ar da área por 3 turnos. Teste de Vigor por turno; quem falhar sofre dano e não pode recitar cântico. Apaga fogo na área, inclusive Em Chamas.",
+          incantation:
+            "Ar que todos aqui respiram sem nunca agradecer por isso nem uma única vez sequer, eu te retiro deste espaço inteiro agora\ne devolvo só depois que a lição estiver bem aprendida por quem realmente precisa aprendê-la.\nTomar o Ar!",
         },
       ],
     },
@@ -220,7 +259,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Santo,
           damage: { normal: "5d8 + BC de dano cortante por turno" },
           effect: "Dura 1 minuto e se move 9m por turno para onde você quiser. Desequilibrado automático em quem falhar teste de Força.",
-          incantation: "Que o ar se lembre de que já foi lâmina. Que ele lembre mil vezes por segundo. Tempestade Cortante!",
+          incantation:
+            "Que o ar se lembre de que já foi lâmina afiada, muito antes de aprender a ser apenas respiração calma e mansa demais.\nQue ele lembre mil vezes por segundo, sem parar nenhum instante sequer, sem descansar nunca, sem jamais esquecer de novo o que sempre foi de verdade.\nTempestade Cortante!",
         },
         {
           id: "ceu-negado",
@@ -230,6 +270,8 @@ export const VENTO_TREE: Tree = {
           range: "Raio de 300m",
           actions: MAGIC_ACTIONS.Santo,
           effect: "10 minutos: nenhuma criatura hostil voa, salta acima de 3m ou dispara projéteis pra dentro da área. Aliados voam livremente.",
+          incantation:
+            "Céu que sempre foi de todos, sem dono nenhum e sem fronteira alguma desde o princípio remoto dos tempos,\nhoje eu fecho a tua porta pra quem vem com má intenção guardada na alma há tempos. Que ninguém hostil se erga\nacima do que os próprios pés já alcançavam antes de eu ter chegado aqui hoje.\nCéu Negado!",
         },
       ],
     },
@@ -254,7 +296,9 @@ export const VENTO_TREE: Tree = {
           range: "Esfera de 45m",
           actions: MAGIC_ACTIONS.Rei,
           damage: { normal: "10d10 + BC de dano sônico (ignora armadura, Cobertura e Manto de Touki)" },
-          effect: "Teste de Vigor (CD 8 + BC). Falha: dano cheio, Atordoado 1 turno e Surdo 10 minutos. Sucesso: metade. Estruturas de pedra racham; vidro se despedaça.",
+          effect: "Teste de Vigor (CD 8 + BC). Falha: dano cheio, Desequilibrado, Atordoado 1 turno e Surdo 10 minutos. Sucesso: metade e Desequilibrado mesmo assim. Estruturas de pedra racham; vidro se despedaça.",
+          incantation:
+            "Eu não grito com a garganta. Eu grito com o ar inteiro que existe entre mim e todos vocês,\ne peço a ele que carregue não a minha voz, mas o meu peso completo e integral.\nQue toda pedra desta região rache, que todo vidro se lembre de que já foi areia um dia distante,\ne que quem estiver de pé aprenda, na própria carne, o que é ser atingido por um som que decidiu ter forma física.\nGrito do Mundo!",
         },
         {
           id: "vazio",
@@ -265,6 +309,8 @@ export const VENTO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Rei,
           damage: { normal: "4d10 por turno, sem teste" },
           effect: "Remove todo o ar da área por 1 minuto. Impossível recitar, gritar ou fazer fogo ali dentro. Som não existe — nem o seu.",
+          incantation:
+            "Eu não crio nada aqui. Eu apenas retiro tudo — o ar que respiram, o som que fariam, a possibilidade de gritar por socorro pra alguém do lado de fora que talvez ouvisse.\nQue esta esfera inteira se torne o lugar mais silencioso que qualquer um de vocês jamais visitou em toda a vida,\ne que ninguém aqui dentro consiga sequer dizer o próprio nome em voz alta, nem pra si mesmo.\nVazio!",
         },
       ],
     },
@@ -290,18 +336,23 @@ export const VENTO_TREE: Tree = {
           range: "Linha de 3 km",
           actions: MAGIC_ACTIONS.Imperador,
           damage: { normal: "16d10 + BC de dano cortante (+6d10 contra Desequilibrado)" },
-          effect: "Teste de Agilidade com Desvantagem Absoluta. Muralhas, torres e florestas na trajetória são cortadas ao meio, permanentemente.",
-          incantation: "Um traço. Um só. E que tudo o que estiver do lado errado dele aprenda que estava do lado errado. Lâmina do Horizonte!",
+          effect: "Teste de Agilidade com Desvantagem Absoluta; quem passar fica Desequilibrado pela esteira de pressão. Muralhas, torres e florestas na trajetória são cortadas ao meio, permanentemente.",
+          incantation:
+            "Um traço. Um só, do horizonte de um lado ao horizonte mais distante do outro, sem hesitar em nenhum ponto do longuíssimo caminho entre os dois extremos.\nE que tudo o que estiver do lado errado dele descubra, tarde demais e sem nenhuma chance real de correção,\nque sempre esteve do lado errado desde o próprio início de tudo — não porque escolheu mal em algum momento importante da vida,\nmas porque eu, e apenas eu, decidi onde a linha inteira seria traçada neste exato dia, sem consultar absolutamente ninguém antes.\nLâmina do Horizonte!",
         },
         {
           id: "explosao-silenciosa",
           name: "Explosão Silenciosa",
           paCost: RANK_PA_COST.common.Imperador,
-          pmCost: 18,
+          pmCost: 22,
           range: "Esfera de 60m",
-          actions: MAGIC_ACTIONS.Imperador,
+          actions: { normal: 3, silenciosa: 2 },
+          costNote:
+            "3 Ações em vez das 6 do rank Imperador, e 22 PM em vez de 18. O nome já entrega a lógica: uma explosão dessa escala sair em 3 Ações, sem o mundo perceber até o eco chegar quilômetros depois, é logisticamente impossível sem pagar o excedente de mana pela ausência do cântico completo — o vácuo que segura o som também segura parte do próprio feitiço.",
           damage: { normal: "12d12 dividido igualmente entre ígneo, sônico e contundente" },
           effect: "Requer 1 patamar em Fogo. Teste de Vigor com Desvantagem Absoluta para metade. Ignora Resistência aos três tipos. Não faz som no momento — ele chega depois, a quilômetros de distância.",
+          incantation:
+            "Fogo.\nVácuo.\nAgora.",
         },
       ],
     },
