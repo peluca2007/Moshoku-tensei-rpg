@@ -361,6 +361,22 @@ export interface ReserveGrant {
   pt?: number;
 }
 
+/**
+ * Pré-requisito de COMPRA: ids de habilidades/talentos da MESMA árvore que
+ * precisam já estar comprados (2026-09-03).
+ *
+ * Dez habilidades do livro carregavam a exigência só na prosa do efeito —
+ * "Requer o talento Puro Escudo", "Requer Pacto: Filhote Evolutivo" — e
+ * `canPurchaseAbility` só checava rank desbloqueado e duplicata. Na prática
+ * dava pra comprar o Golpe de Escudo Soberano sem ter Puro Escudo: a linha de
+ * identidade inteira do Escudeiro (sete habilidades Soberanas que só existem
+ * pra quem abre mão de arma de dano) era opcional só no texto.
+ *
+ * Só entra aqui o que é pré-requisito de COMPRA. Condição de uso — "Requer
+ * alvo Agarrado", "Requer montaria", "Requer Postura" — continua na prosa,
+ * porque é o Mestre que julga na mesa, não a ficha.
+ */
+export type PrerequisiteIds = string[];
 export interface TalentDef {
   id: string;
   name: string;
@@ -368,6 +384,8 @@ export interface TalentDef {
   description: string;
   /** Reserva que este talento concede, quando concede (Cap. 1, "O Padrão das Reservas"). */
   grants?: ReserveGrant;
+  /** Ids da mesma árvore que precisam estar comprados antes deste. */
+  requires?: PrerequisiteIds;
 }
 
 /** Maestria: passiva automática e gratuita concedida ao desbloquear o rank (Cap. 2, seção 5). Não conta como conhecimento. */
@@ -412,6 +430,8 @@ export interface AbilityDef {
    * mantém o livro seis meses depois.
    */
   costNote?: string;
+  /** Ids da mesma árvore que precisam estar comprados antes desta. */
+  requires?: PrerequisiteIds;
   range: string;
   actions: {
     normal: number;

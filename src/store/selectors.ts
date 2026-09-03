@@ -700,6 +700,17 @@ export function canUnlockRank(state: StoreState, treeId: string, rank: RankName)
 }
 
 /** Pode comprar esta magia/talento? Exige só o rank já desbloqueado nesta árvore. */
+/** O nome legível de um id dentro de uma árvore — pra mensagem de erro dizer o que falta. */
+function findNomeNaArvore(treeId: string, id: string): string | undefined {
+  const tree = getTreeById(treeId);
+  for (const rankDef of tree?.ranks ?? []) {
+    const achado =
+      rankDef.abilities.find((a) => a.id === id) ?? rankDef.talents.find((t) => t.id === id);
+    if (achado) return achado.name;
+  }
+  return undefined;
+}
+
 export function canPurchaseAbility(
   state: StoreState,
   treeId: string,
@@ -712,6 +723,18 @@ export function canPurchaseAbility(
 
   if (state.purchasedAbilities.some((a) => a.treeId === treeId && a.id === id)) {
     return { ok: false, reason: "Já adquirido." };
+  }
+
+  // Pré-requisito de compra (2026-09-03). Dez habilidades declaram `requires`:
+  // as sete Soberanas do Escudeiro, que só existem pra quem comprou Puro Escudo,
+  // e as três Evoluções do Pacto, que precisam do Filhote. Até esta data a
+  // exigência vivia só na prosa do efeito, e nada a checava.
+  const defParaRequisito = findAbilityOrTalentDef(treeId, rank, kind, id);
+  for (const requerido of defParaRequisito?.requires ?? []) {
+    if (!state.purchasedAbilities.some((a) => a.treeId === treeId && a.id === requerido)) {
+      const nome = findNomeNaArvore(treeId, requerido) ?? requerido;
+      return { ok: false, reason: `Exige "${nome}" nesta árvore antes.` };
+    }
   }
 
   const def = findAbilityOrTalentDef(treeId, rank, kind, id);

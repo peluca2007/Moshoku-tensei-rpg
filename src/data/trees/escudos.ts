@@ -168,7 +168,7 @@ export const ESCUDOS_TREE: Tree = {
           paCost: 1,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "1d8 + Força (contundente)" },
+          damage: { normal: "1d8 + Força + Bônus de Rank (contundente)" },
           effect: "Teste de Força do alvo (CD 8 + Vigor + Rank) ou é empurrado 3m e fica Caído.",
         },
         {
@@ -178,11 +178,12 @@ export const ESCUDOS_TREE: Tree = {
           // controle de posição do que sobre isolamento). Disponível só
           // pra quem comprou Puro Escudo no Principiante.
           id: "golpe-de-escudo-soberano",
+          requires: ["puro-escudo"],
           name: "Golpe de Escudo Soberano",
           paCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "2d8 + Força (contundente)" },
+          damage: { normal: "2d8 + Força + Bônus de Rank (contundente)" },
           effect: "Requer o talento Puro Escudo. Teste de Força do alvo (CD 8 + Vigor + Rank + 2) ou é empurrado 6m e fica Caído. Você fica com marca de 'última posição' até o início do próximo turno — qualquer aliado que passar por essa posição recebe Cobertura contra o próximo ataque.",
         },
         {
@@ -207,6 +208,7 @@ export const ESCUDOS_TREE: Tree = {
           // em +2, dura 2 turnos em vez de 1, e aplica a Desvantagem em
           // AMBOS os turnos (a provocação normal só vale o turno seguinte).
           id: "provocar-odio-soberano",
+          requires: ["puro-escudo"],
           name: "Provocar Ódio Soberano",
           paCost: 2,
           range: "Visão",
@@ -227,7 +229,8 @@ export const ESCUDOS_TREE: Tree = {
       talents: [
         { id: "folego-de-sentinela", name: "Fôlego de Sentinela", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
         { id: "a-porta-sou-eu", name: "A Porta Sou Eu", paCost: 1, description: "Enquanto bloquear uma passagem de até 3m, criaturas Médias ou menores não atravessam sem antes te derrubar." },
-        { id: "escudo-de-corpo-inteiro", name: "Escudo de Corpo Inteiro", paCost: 1, description: "Requer Puro Escudo. Você recebe +2 adicional na CA enquanto empunhar apenas escudo(s). Aliados adjacentes a você recebem Meia-Cobertura (+2 CA) passivamente." },
+        { id: "escudo-de-corpo-inteiro",
+          requires: ["puro-escudo"], name: "Escudo de Corpo Inteiro", paCost: 1, description: "Requer Puro Escudo. Você recebe +2 adicional na CA enquanto empunhar apenas escudo(s). Aliados adjacentes a você recebem Meia-Cobertura (+2 CA) passivamente." },
       ],
       abilities: [
         {
@@ -244,6 +247,7 @@ export const ESCUDOS_TREE: Tree = {
         },
         {
           id: "aguentar-soberano",
+          requires: ["puro-escudo"],
           name: "Aguentar Soberano",
           signature: true,
           reaction: true,
@@ -310,6 +314,7 @@ export const ESCUDOS_TREE: Tree = {
         },
         {
           id: "nao-ele-soberano",
+          requires: ["puro-escudo"],
           name: "Não Ele Soberano",
           signature: true,
           reaction: true,
@@ -381,6 +386,7 @@ export const ESCUDOS_TREE: Tree = {
         },
         {
           id: "custe-o-que-custar-soberano",
+          requires: ["puro-escudo"],
           name: "Custe o Que Custar Soberano",
           signature: true,
           reaction: true,
@@ -461,6 +467,7 @@ export const ESCUDOS_TREE: Tree = {
         },
         {
           id: "o-muro-final-soberano",
+          requires: ["puro-escudo"],
           name: "O Muro Final Soberano",
           signature: true,
           paCost: 7,

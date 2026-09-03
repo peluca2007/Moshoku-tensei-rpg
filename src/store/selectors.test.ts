@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  canPurchaseAbility,
   getArmorClass,
   getAttributePaCost,
   getMaxHp,
@@ -279,5 +280,50 @@ describe("Classe de Armadura (Cap. 4, §1)", () => {
     };
     expect(getArmorClass(ficha({ inventory: [item] }))).toBe(10);
     expect(getArmorClass(ficha({ inventory: [{ ...item, equipped: true }] }))).toBe(14);
+  });
+});
+
+describe("Pré-requisito de compra (2026-09-03)", () => {
+  const escudeiro = ficha({
+    startingTreeId: "cavalaria-e-escudos",
+    unlockedRanks: [{ treeId: "cavalaria-e-escudos", rank: "Principiante" }],
+  });
+
+  it("recusa a habilidade Soberana sem o talento Puro Escudo", () => {
+    // A linha inteira do Escudeiro só existe pra quem abre mão de arma de dano.
+    // Até esta data a exigência vivia só na prosa do efeito, e nada a checava.
+    const r = canPurchaseAbility(
+      escudeiro,
+      "cavalaria-e-escudos",
+      "Principiante",
+      "ability",
+      "golpe-de-escudo-soberano"
+    );
+    expect(r.ok).toBe(false);
+    expect(r.reason).toContain("Puro Escudo");
+  });
+
+  it("libera assim que o pré-requisito está comprado", () => {
+    const comPuroEscudo = ficha({
+      ...escudeiro,
+      purchasedAbilities: [
+        { treeId: "cavalaria-e-escudos", rank: "Principiante", kind: "talent", id: "puro-escudo" },
+      ],
+    });
+    expect(
+      canPurchaseAbility(
+        comPuroEscudo,
+        "cavalaria-e-escudos",
+        "Principiante",
+        "ability",
+        "golpe-de-escudo-soberano"
+      ).ok
+    ).toBe(true);
+  });
+
+  it("uma habilidade sem pré-requisito continua livre", () => {
+    expect(
+      canPurchaseAbility(escudeiro, "cavalaria-e-escudos", "Principiante", "talent", "puro-escudo").ok
+    ).toBe(true);
   });
 });
