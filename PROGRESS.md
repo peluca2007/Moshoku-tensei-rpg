@@ -1,10 +1,9 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-03 — três passadas. **0.0.3**: rework da Desintoxicação (Profundidade
-apagada), condição Soterrado, custos de PA progressivos. **0.0.4**: piso de tamanho no Bônus de Recitação
-Perfeita (50 cânticos reescritos), regras de conjuração, Mecânica Central nas 19 árvores. **0.0.5**:
-capítulo "Comece Aqui" e sete contradições de regra corrigidas numa leitura completa do livro.
-Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-03 — quatro passadas (0.0.3 a 0.0.6). A última fecha os buracos que a
+leitura completa do livro abriu: Rank Deus do Vendaval, escada de cura do Rei, `Corpo de Ferro` escalando,
+a regra de PM com uma redação só — e `npm run check:livro`, que passa a achar sozinho a classe de
+contradição que custou uma leitura manual inteira. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
@@ -47,10 +46,15 @@ mão duas vezes.
 
 - [ ] **Deixar o site mais bonito** — Ficha e Roleta já receberam um passe; **`/livro` e `/arvores`
       seguem pendentes**, nessa ordem.
-- [ ] **Auditoria linha a linha das magias** — Água, Fogo, Terra, Vento, Deus da Espada e Desintoxicação
-      conferidas por completo. Cura, Barreira, Invocação e Bardo tiveram os **cânticos** auditados e
+- [ ] **Auditoria linha a linha das magias** — Água, Fogo, Terra, Vento, Deus da Espada, Desintoxicação e
+      Cura conferidas por completo. Barreira, Invocação e Bardo tiveram os **cânticos** auditados e
       reescritos em 0.0.4, mas não os números. Faltam por inteiro: Suishin, Norte, Lutador, Escudos,
       Arquearia, Ladino, Tático, Vendaval, Punho de Fogo.
+- [ ] **Decidir o patamar Deus do Punho de Fogo** — é a única árvore das 19 com um Rank Deus COMPRÁVEL
+      (13 habilidades, incluindo "reduz o alvo a 0 se falhar um teste CD 30"). As outras 18 tratam o Deus
+      como quadro narrativo, e o Cap. 1, §3 diz que ele "não possui custo mecânico de PA". Ou o capítulo
+      abre uma exceção nomeada, ou o patamar vira narrativo como os outros. **Não mexi: é conteúdo escrito
+      por você, e a escolha é de design, não de correção.**
 - [ ] **Validar Distância Roubada na mesa** (Vendaval, novo em 0.0.4) — a mecânica soma alcance a partir do
       movimento, e nenhuma outra árvore faz isso. Vale medir se 9m de bônus de alcance no Principiante não
       transforma a árvore num arqueiro corpo a corpo cedo demais.
@@ -168,7 +172,7 @@ some do total sem nada na ficha explicando por quê.
 ```bash
 npx tsc --noEmit      # tipos
 npm run lint          # eslint
-npm run check:magias  # audita os cânticos contra a escada do Cap. 2 (rodar dentro do WSL)
+npm run check:livro   # confere dados × texto do livro (rodar dentro do WSL)
 ```
 
 **Nota de ambiente:** `next build` e `tsx` dependem de binários nativos instalados para Linux

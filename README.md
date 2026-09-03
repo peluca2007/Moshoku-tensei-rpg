@@ -12,7 +12,7 @@ são quatro leituras do mesmo `src/data/`.
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
-[![Versão do sistema](https://img.shields.io/badge/regras-0.0.5-8B1E3F)](PATCH_NOTES.md)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.0.6-8B1E3F)](PATCH_NOTES.md)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>
@@ -76,10 +76,10 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm start` | Sobe o build de produção |
 | `npm run lint` | ESLint |
 | `npx tsc --noEmit` | Checagem de tipos |
-| `npm run check:magias` | Audita os cânticos contra a escada de tamanho do Cap. 2 |
+| `npm run check:livro` | Confere a consistência entre os dados e o texto do livro |
 
 > [!IMPORTANT]
-> Se o projeto estiver dentro do WSL, rode `build` e `check:magias` **de dentro do WSL**. Eles dependem de
+> Se o projeto estiver dentro do WSL, rode `build` e `check:livro` **de dentro do WSL**. Eles dependem de
 > binários nativos compilados para Linux (`lightningcss`, `esbuild`); chamá-los do Windows por
 > um caminho `\\wsl.localhost` falha. `tsc` e `eslint` funcionam dos dois lados.
 

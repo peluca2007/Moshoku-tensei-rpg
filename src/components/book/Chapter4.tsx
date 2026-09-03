@@ -82,7 +82,8 @@ export default function Chapter4() {
             <b>Espírito × Bônus + 8</b>.
           </P>
           <P>
-            <b>Cap nos 2 primeiros ranks.</b> Enquanto o Maior Bônus de Rank de magia for 1 ou 2
+            <b>Cap nos 2 primeiros ranks — esta é a redação canônica; o Cap. 1, §1 só aponta pra cá.</b>{" "}
+            Enquanto o Maior Bônus de Rank de magia for 1 ou 2
             (Principiante/Intermediário), a reserva TOTAL não pode passar de{" "}
             <b>4 × MB + 8 + talento + racial</b> — o que dá 12 PM sem nada, 14 com Nascente de Mana, 17
             com Migurd. É o equivalente numérico do &ldquo;no máximo 4 casts&rdquo; da assinatura do
