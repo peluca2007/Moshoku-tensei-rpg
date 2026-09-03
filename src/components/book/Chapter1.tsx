@@ -232,15 +232,15 @@ export default function Chapter1() {
           ]}
         />
 
-        <Warning title="Perícias de Árvore — as 18 ensinam, e só a Árvore Inicial entrega">
+        <Warning title="Perícias de Árvore — as 19 ensinam, e só a Árvore Inicial entrega">
           <P>
-            <b>TODAS as dezoito árvores deste livro ensinam perícias</b> — as oito de Magia, as sete do Corpo
+            <b>TODAS as dezenove árvores deste livro ensinam perícias</b> — as oito de Magia, as oito do Corpo
             e as três de Utilidade, sem exceção. Não existe árvore que não ensine nada. Elas entram na sua
             ficha <b>automaticamente</b>, sem gastar PA e sem você precisar pedir.
           </P>
           <P>
             A condição é uma só: <b>você recebe as perícias da árvore que for a sua Árvore Inicial</b> — a
-            primeira que você abriu, aquela que também decidiu o seu kit. A tabela abaixo lista as dezoito e
+            primeira que você abriu, aquela que também decidiu o seu kit. A tabela abaixo lista as dezenove e
             o que cada uma ensina.
           </P>
           <P>
@@ -588,9 +588,9 @@ export default function Chapter1() {
         </Aside>
         <Aside title="7. E se eu for fundo em duas árvores ao mesmo tempo?">
           Algumas combinações de Rank Avançado ou superior revelam uma <b>árvore híbrida</b> que não existe
-          pra ninguém que não cumpriu os dois pré-requisitos — o Estilo Vendaval (Cap. 3, catálogo da Árvore
-          do Corpo) é a primeira: emerge de já dominar o Estilo Deus do Norte e a Magia de Vento. Ela não
-          aparece na escolha da Árvore Inicial, e o desbloqueio dela não é travado por código nenhum — o
+          pra ninguém que não cumpriu os dois pré-requisitos — hoje são duas, ambas no catálogo da Árvore do Corpo: o
+          <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Avançado) e o <b>Punho de Fogo</b>
+          (Lutador + Magia de Fogo, ambas no Intermediário). Nenhuma das duas aparece na escolha da Árvore Inicial, e o desbloqueio dela não é travado por código nenhum — o
           Mestre decide, do mesmo jeito que já decide a Raça Dragão e o Rank Deus.
         </Aside>
       </Section>

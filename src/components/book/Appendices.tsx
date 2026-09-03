@@ -171,7 +171,7 @@ export default function Appendices() {
         <QA q="Posso usar a Reação no meu próprio turno?" a="Pode, desde que o gatilho aconteça." />
         <QA
           q="Conjurar uma magia de 4 Ações me deixa sem Reação?"
-          a="Não. Reação é independente do custo em Ações — mas se sofrer dano, faça o teste de Interrupção do Capítulo 4 ou perde o cântico."
+          a="Não. Reação é independente do custo em Ações — mas USAR a Reação encerra a conjuração (Cap. 2, §6), e sofrer dano exige o teste de Concentração (CD 10 + Bônus de Rank de quem te acertou) ou você perde o cântico."
         />
         <QA q="O invocado gasta minhas Ações?" a="Ordens gerais, não. Ordens específicas, 1 Ação sua. Ele tem Iniciativa própria e age sozinho no turno dele." />
 

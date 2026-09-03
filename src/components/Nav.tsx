@@ -6,8 +6,19 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
+/**
+ * `/criar` NÃO entra aqui de propósito (2026-09-03).
+ *
+ * Criar personagem não é um destino que se visita: é uma coisa que se faz uma
+ * vez por ficha, e sempre a partir do roster. `/personagens` já abre com o botão
+ * de criação e mostra as fichas existentes ao lado — que é o contexto que faz a
+ * pergunta "criar mais uma?" ter sentido. Ter as duas portas no topo dava ao
+ * fluxo mais peso permanente do que ele merece, e a de cima chegava sem
+ * contexto nenhum.
+ *
+ * A rota continua existindo e linkada da landing e do roster; só saiu da barra.
+ */
 const LINKS = [
-  { href: "/criar", label: "Criar" },
   { href: "/ficha", label: "Ficha" },
   { href: "/arvores", label: "Árvores" },
   { href: "/personagens", label: "Personagens" },

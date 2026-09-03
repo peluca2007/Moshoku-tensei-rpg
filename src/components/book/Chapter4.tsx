@@ -119,15 +119,20 @@ export default function Chapter4() {
             tenha largado aquele atributo no Sistema de Defeitos falharia em quase tudo no fim da campanha.
           </P>
         </Aside>
-        <Aside title="Por que o dobro, e por que 20">
+        <Aside title="Por que 1,67, e por que 14">
           <P>
             Somar os dados crus não funciona: um Norte de Vigor 5 chegaria ao Imperador com pouco mais de 70
             PV, contra um Imperador da Espada causando perto de 130 de dano por turno — o combate acabaria
-            antes de o segundo personagem agir. Com o dobro, o mesmo Norte chega ao Imperador perto de 240 PV,
-            e a luta dura de duas a três rodadas em qualquer patamar: tempo pro curandeiro agir e pro Escudos
-            se interpor. Os 20 de base são o que sustenta um personagem de 1º patamar antes de o treino pesar.
+            antes de o segundo personagem agir. O multiplicador existe pra que a luta dure de duas a três
+            rodadas em qualquer patamar: tempo pro curandeiro agir e pro Escudos se interpor.
           </P>
-       
+          <P>
+            O valor foi <b>2,0</b> até 2026-08-30, e a constante de base foi <b>20</b>. Os dois desceram
+            juntos, a pedido da mesa — &ldquo;com 5 PA peguei 80 de vida&rdquo; —, e desceram pelo mesmo
+            motivo: <b>rank baixo é pra ser arriscado, não confortável</b>. Os 14 somam antes do Fator de
+            Vigor e afetam todo mundo por igual, então o piso caiu uns 10 PV sem distorcer a curva entre
+            classes; o 1,67 segura o topo sem achatar o meio.
+          </P>
         </Aside>
       </Section>
 
@@ -201,6 +206,11 @@ export default function Chapter4() {
             investido. É a mesma lógica do Fio da Vida (seção 6): quem te acertou decide o quanto é difícil
             continuar, não o tamanho do número que ele rolou.
           </P>
+          <P className="text-sm">
+            O <b>Cap. 2, §6</b> expande esta regra: o que o estado &ldquo;Conjurando&rdquo; te impede de
+            fazer, quais condições interrompem sem teste nenhum, o que acontece com um Ritual interrompido, e
+            as formas deliberadas de derrubar o cântico de outra pessoa.
+          </P>
         </Aside>
         <Aside title="Por que a CD não é metade do dano">
           <P>
@@ -227,7 +237,7 @@ export default function Chapter4() {
       <Section>
         <SectionTitle id="cap4-4">4. Regras de Empilhamento</SectionTitle>
         <P>
-          Com dezoito árvores no jogo, um grupo bem construído consegue empilhar bônus até quebrar a
+          Com dezenove árvores no jogo, um grupo bem construído consegue empilhar bônus até quebrar a
           matemática. Estas regras impedem isso sem tirar a graça da combinação.
         </P>
         <Aside title="Bônus do mesmo tipo não somam">
@@ -248,7 +258,7 @@ export default function Chapter4() {
           Tático Comandante na mesa chega a 7 Ações por turno, e o combate deixa de existir.
         </Aside>
         <Aside title="Duas Salvações por Combate">
-          O livro tem quatro formas de impedir que alguém morra — Aguentar (Touki), Rejeitar a Morte (Cura), Sem Baixas (Tático) e Custe o Que Custar (Escudos).
+          O livro tem cinco formas de impedir que alguém morra — Aguentar (Touki), Rejeitar a Morte (Cura), Sem Baixas (Tático), Custe o Que Custar (Escudos) e a Égide Lendária (item de Rank S, Cap. 5).
           Cada criatura pode ser salva no máximo duas vezes por combate, e você não pode usar o mesmo método duas vezes no mesmo alvo.
           Qualquer terceira tentativa de salvação, de qualquer fonte, falha automaticamente, mas não consome o recurso de quem a ativou.
         </Aside>

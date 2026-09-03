@@ -5,6 +5,49 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.0.5 — "Comece Aqui" · 2026-09-03
+
+### 📖 Novas Regras e Simplificações
+
+**Novo capítulo de abertura.** O livro abria em *"o sistema utiliza 5 atributos principais"* — quem nunca
+jogou via uma decisão de ficha antes de saber o que é um turno. O capítulo **Comece Aqui** resolve isso em
+cinco minutos de leitura: o que é o jogo, a ficha em seis números, um turno de combate, **uma rodada
+jogada de ponta a ponta**, criação em seis passos, e um índice de onde encontrar cada coisa.
+
+A rodada de exemplo ensina a regra dos dois tempos com um caso concreto: a maga de Água prepara no 1º
+turno (aplica Molhado, causa pouco dano) e cobra em dobro no 2º.
+
+### 🐛 Correções de Bugs
+
+Uma leitura completa do livro achou sete contradições. A primeira é grave e foi introduzida na 0.0.4:
+
+| Onde | O problema |
+| --- | --- |
+| **Interrupção de conjuração** | Existiam **duas regras conflitantes**. Cap. 2, §6 usava `CD 8 + metade do dano`; Cap. 4, §3 usava `CD 10 + Bônus de Rank de quem acertou`. |
+| **Salvações** | Cap. 4, §4 diz "Duas Salvações"; Santuário Menor citava "Uma Salvação". |
+| **Formas de evitar morte** | Listava quatro; são cinco — a Égide Lendária estava fora da contagem apesar de se declarar parte dela. |
+| **Contagem de árvores** | O livro dizia 17 ou 18 em seis lugares. São **19** desde que o Punho de Fogo entrou, na 0.0.2. |
+| **Tabela de patamares (Cap. 3)** | Renderizava uma **linha 7 duplicada com bônus +8** — valor que não existe (o rank Deus é +7). |
+| **Escolas Formais × Ofícios** | Dizia seis Ofícios; são sete, e o Estilo Vendaval é Escola Formal. |
+| **Aside "Por que o dobro, e por que 20"** | Explicava uma fórmula que não existe mais: a constante é **14** e o multiplicador é **1,67** desde 2026-08-30. |
+
+**Sobre a interrupção:** vale a regra do Cap. 4. O próprio livro já documentava, desde 2026-08-29, por que
+a versão baseada em dano não funciona — o dano cresce sem teto (uma criatura Imperador bate perto de 120
+por turno) enquanto o teste trava em +11 num d20, então magia de 4 a 6 Ações ficaria impossível de
+conjurar exatamente nos patamares em que ela existe. A regra correta amarra a CD ao **Rank de quem
+acertou**, não ao tamanho do golpe. Todo o resto da seção nova do Cap. 2 (o estado "Conjurando", as
+condições que interrompem sem teste, o Ritual que se perde inteiro, a tabela de interrupção deliberada)
+continua valendo — só a CD estava errada.
+
+### 💻 Sincronia de Sistema
+
+- **"Criar" saiu da barra de navegação.** Criar personagem não é um destino que se visita: é uma coisa que
+  se faz a partir do roster, e `/personagens` já abre com o botão de criação ao lado das fichas
+  existentes. A rota continua existindo e linkada da landing e do roster.
+- Cap. 2, §6 e Cap. 4, §3 agora se referenciam mutuamente, em vez de repetir a regra.
+
+---
+
 ## 0.0.4 — "O Cântico Tem Preço" · 2026-09-03
 
 ### ⚔️ Balanceamento
@@ -63,7 +106,7 @@ o cântico pode ser dividido entre turnos: o conjurador passa rodadas inteiras v
 dizia o que acontece nesse intervalo.
 
 > Ao **sofrer dano** enquanto está Conjurando: teste de resistência de **Espírito** contra
-> **CD 8 + metade do dano sofrido**.
+> **CD 10 + o Bônus de Rank de quem te acertou** *(corrigido na 0.0.5 — ver abaixo)*.
 > **Sucesso:** o cântico segue. **Falha:** perde todas as Ações gastas e **metade do PM** da magia.
 
 - Enquanto Conjurando você é **visível e audível** (o Mestre informa o rank aparente pelo tamanho do
