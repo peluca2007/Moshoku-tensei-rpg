@@ -83,6 +83,18 @@ export const ESCUDOS_TREE: Tree = {
   name: "Cavalaria e Escudos",
   category: "corpo",
   subgroup: "Tank / Defensor",
+  mechanic: {
+    tag: "Sob Minha Guarda",
+    hook:
+      "A única árvore cujo recurso é gasto no dano dos outros. Você não sobrevive: você faz outra pessoa sobreviver.",
+    loop: [
+      "Designe. Escolha 1 aliado como protegido (2 no Intermediário, 3 do Avançado em diante).",
+      "Intercepte. A até 3m dele, gaste 1 Reação e TODO o dano de um ataque contra ele vem pra você — não reduzível por Resistência, mas sim pelo seu PT.",
+      "Recarregue. Se o protegido sofrer dano que você NÃO interceptou, você recupera 1 PT. Falhar em proteger é o que te dá recurso pra proteger da próxima vez.",
+    ],
+    cost:
+      "Sozinho você é um alvo com CA alta e pouco dano. Toda a árvore pressupõe alguém ao seu lado que valha mais que você — sem grupo, metade das suas compras não faz nada.",
+  },
   keyAttributeLabel: "Vigor",
   resourceLabel: "PT",
   tagline:
@@ -111,7 +123,7 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Interpor",
         description:
-          "Você desbloqueia 'Sob Minha Guarda': designe 1 aliado como protegido; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim por PT). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo. Usar escudo concede +1 na CA (não empilha com magias de barreira).",
+          "[Sob Minha Guarda] Você desbloqueia 'Sob Minha Guarda': designe 1 aliado como protegido; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim por PT). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo. Usar escudo concede +1 na CA (não empilha com magias de barreira).",
       },
       talents: [
         // 2026-08-30: buff — era +2 PV por patamar, virou +4 PV por patamar e

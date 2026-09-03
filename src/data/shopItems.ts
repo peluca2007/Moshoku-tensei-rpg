@@ -274,7 +274,7 @@ const POTIONS: ShopItem[] = [
     name: "Poção de Antídoto",
     category: "pocao",
     type: "geral",
-    description: "Remove 1 ponto de Profundidade de uma única aflição (Cap. 4, §7).",
+    description: "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §7). Contra ranks acima disso, não faz nada.",
     price: 25,
     guildRankRequired: "E",
   },
@@ -334,11 +334,11 @@ const POTIONS: ShopItem[] = [
   },
 ];
 
-/** Cap. 5, §4 ("Venenos"): mesma Profundidade e preço de venda do livro. Profundidade 4+ não entra aqui de propósito — o livro é explícito que não está à venda. */
+/** Cap. 5, §4 ("Venenos"): mesmo rank e preço de venda do livro. Rank Santo ou acima não entra aqui de propósito — o livro é explícito que não está à venda. */
 const POISONS: ShopItem[] = [
   {
-    id: "veneno_prof1",
-    name: "Veneno Fraco (Profundidade 1)",
+    id: "veneno_principiante",
+    name: "Veneno Fraco (rank Principiante)",
     category: "veneno",
     type: "geral",
     description: "Ex: baba de sapo-lodo. Aplicação em Cap. 4, §7, \"Aplicando um Veneno em Combate ou em Segredo\".",
@@ -346,8 +346,8 @@ const POISONS: ShopItem[] = [
     guildRankRequired: "E",
   },
   {
-    id: "veneno_prof2",
-    name: "Veneno Comum (Profundidade 2)",
+    id: "veneno_intermediario",
+    name: "Veneno Comum (rank Intermediário)",
     category: "veneno",
     type: "geral",
     description: "Ex: peçonha de serpente-do-pântano. Venda exige licença registrada na sede.",
@@ -355,8 +355,8 @@ const POISONS: ShopItem[] = [
     guildRankRequired: "C",
   },
   {
-    id: "veneno_prof3",
-    name: "Veneno Potente (Profundidade 3)",
+    id: "veneno_avancado",
+    name: "Veneno Potente (rank Avançado)",
     category: "veneno",
     type: "geral",
     description: "Ex: fel de wyvern. Venda sob vigilância da sede — vender sem licença é crime em Millis e no Reino Asura (perde Reputação com a facção local).",
@@ -386,7 +386,7 @@ const POISONS: ShopItem[] = [
     name: "Frasco de Armazenamento Estável",
     category: "veneno",
     type: "geral",
-    description: "Vidro escuro selado a vácuo — uma dose guardada aqui não perde Profundidade com o tempo, ao contrário de um frasco comum.",
+    description: "Vidro escuro selado a vácuo — uma dose guardada aqui não perde potência com o tempo, ao contrário de um frasco comum.",
     price: 100,
     guildRankRequired: "B",
   },
@@ -395,7 +395,7 @@ const POISONS: ShopItem[] = [
     name: "Antídoto Universal",
     category: "veneno",
     type: "geral",
-    description: "Remove TODA a Profundidade acumulada de uma única aflição (Cap. 4, §7), não importa o quão fundo — inclusive Profundidade 4+, que nenhuma dose à venda alcança. Raríssimo por isso mesmo.",
+    description: "Remove uma aflição de QUALQUER rank até Imperador (Cap. 4, §7) — inclusive as de rank Santo ou acima, que nenhuma outra dose à venda alcança. Raríssimo por isso mesmo.",
     price: 500,
     guildRankRequired: "S",
   },

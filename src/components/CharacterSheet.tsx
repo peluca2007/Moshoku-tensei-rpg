@@ -17,9 +17,11 @@ import {
   ATTRIBUTE_CREATION_POINTS,
   ATTRIBUTE_FLOOR,
   ATTRIBUTE_HARD_CAP,
-  ATTRIBUTE_PA_COST_PER_POINT,
+  attributePaCostForPurchase,
+  attributePaCostTotal,
   ATTRIBUTES,
-  SAVE_ADVANTAGE_PA_COST,
+  saveAdvantagePaCostForPurchase,
+  saveAdvantagePaCostTotal,
   PurchasedAbility,
   RANK_BONUS,
   RANKS,
@@ -547,20 +549,23 @@ export default function CharacterSheet() {
                 <>
                   {" · "}
                   <span className="font-semibold text-gold-500">
-                    {(attributeSum - ATTRIBUTE_CREATION_POINTS) * ATTRIBUTE_PA_COST_PER_POINT} PA
+                    {attributePaCostTotal(attributeSum - ATTRIBUTE_CREATION_POINTS)} PA
                   </span>{" "}
-                  em {attributeSum - ATTRIBUTE_CREATION_POINTS} ponto(s) comprado(s)
+                  em {attributeSum - ATTRIBUTE_CREATION_POINTS} ponto(s) comprado(s) · o próximo custa{" "}
+                  {attributePaCostForPurchase(attributeSum - ATTRIBUTE_CREATION_POINTS + 1)} PA
                 </>
               ) : null}
             </p>
 
             {/* Cap. 1, §2: Vantagem permanente nos Testes de Resistência de um
-                atributo, 2 PA cada. Fica colada nos atributos porque é a única
+                atributo, progressivo (2, 3, 4, 4, 4 PA). Fica colada nos atributos porque é a única
                 compra do livro que se aplica a um atributo específico. */}
             <div className="mt-3 border-t border-parchment-300 pt-2 dark:border-parchment-800">
               <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
                 Vantagem em Resistência
-                <span className="ml-1 font-normal normal-case">({SAVE_ADVANTAGE_PA_COST} PA por atributo)</span>
+                <span className="ml-1 font-normal normal-case">
+                  (a próxima custa {saveAdvantagePaCostForPurchase((saveAdvantages ?? []).length + 1)} PA — 2, 3, 4, 4, 4)
+                </span>
               </p>
               <div className="flex flex-wrap gap-1">
                 {ATTRIBUTES.map(({ key, short, label }) => {
@@ -569,7 +574,7 @@ export default function CharacterSheet() {
                     <button
                       key={key}
                       type="button"
-                      title={`Vantagem permanente em todos os Testes de Resistência de ${label} — ${SAVE_ADVANTAGE_PA_COST} PA`}
+                      title={`Vantagem permanente em todos os Testes de Resistência de ${label} — ${ativo ? "já comprada" : `${saveAdvantagePaCostForPurchase((saveAdvantages ?? []).length + 1)} PA`}`}
                       aria-pressed={ativo}
                       onClick={() => useCharacterStore.getState().toggleSaveAdvantage(key)}
                       className={`rounded-lg px-2 py-1 text-[11px] font-bold transition-colors ${
@@ -585,7 +590,7 @@ export default function CharacterSheet() {
               </div>
               {(saveAdvantages ?? []).length > 0 && (
                 <p className="mt-1 text-[11px] text-gold-600 dark:text-gold-400">
-                  {(saveAdvantages ?? []).length * SAVE_ADVANTAGE_PA_COST} PA · rola 2d20 e escolhe o maior
+                  {saveAdvantagePaCostTotal((saveAdvantages ?? []).length)} PA · rola 2d20 e escolhe o maior
                   nesses testes.
                 </p>
               )}
@@ -860,7 +865,7 @@ export default function CharacterSheet() {
                             {(def as AbilityDef).effect}
                           </p>
                           <CastingBreakdown ability={def as AbilityDef} />
-                          <IncantationBlock ability={def as AbilityDef} />
+                          <IncantationBlock ability={def as AbilityDef} rank={rank} />
                           <AbilityQuickRoll
                             label={def.name}
                             hintText={(def as AbilityDef).damage?.normal ?? (def as AbilityDef).effect}

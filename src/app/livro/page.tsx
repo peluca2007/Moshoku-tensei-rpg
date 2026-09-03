@@ -6,7 +6,6 @@ import Chapter3 from "@/components/book/Chapter3";
 import Chapter4 from "@/components/book/Chapter4";
 import Chapter5 from "@/components/book/Chapter5";
 import Appendices from "@/components/book/Appendices";
-import ExportBookButton from "@/components/book/ExportBookButton";
 import BookShell from "@/components/book/BookShell";
 import type { TocEntry } from "@/components/book/BookToc";
 
@@ -35,15 +34,21 @@ const TOC: TocEntry[] = [
     children: [
       { id: "cap2-1", label: "1. Categorias da Magia" },
       { id: "cap2-2", label: "2. Encantamentos" },
+      { id: "cap2-2-recitacao", label: "— Recitação Perfeita" },
+      { id: "cap2-2-cantico-curto", label: "— Cântico Curto (sem bônus)" },
       { id: "cap2-3", label: "3. Tempo de Conjuração" },
       { id: "cap2-4", label: "4. Combinações entre Árvores" },
       { id: "cap2-5", label: "5. Maestrias" },
+      { id: "cap2-6", label: "6. Interromper uma Conjuração" },
+      { id: "cap2-7", label: "7. Regras Gerais de Conjuração" },
     ],
   },
   {
     id: "cap3",
     label: "Cap. 3 — Árvores de Progressão",
     children: [
+      { id: "cap3-como-ler", label: "Como Ler uma Árvore" },
+      { id: "cap3-mecanicas", label: "— As 19 Mecânicas" },
       { id: "cap3-mapa", label: "O Mapa Completo" },
       { id: "cap3-corpo", label: "Árvore do Corpo" },
       { id: "cap3-utilidade", label: "Árvore de Utilidade" },
@@ -100,7 +105,6 @@ export default function LivroPage() {
           </h1>
           <p className="mt-1 text-sm text-parchment-600 dark:text-parchment-400">O Mundo de Seis Faces — livro de regras completo, navegável.</p>
         </div>
-        <ExportBookButton />
       </header>
 
       <BookShell toc={TOC}>

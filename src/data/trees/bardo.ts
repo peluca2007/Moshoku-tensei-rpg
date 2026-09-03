@@ -6,6 +6,18 @@ export const BARDO_TREE: Tree = {
   name: "Bardo e Interação",
   category: "utilidade",
   subgroup: "Bardo",
+  mechanic: {
+    tag: "Escopo: pessoas e reputação",
+    hook:
+      "A pergunta dele é \"quem eu convenço?\". Faixa exclusiva: só o Bardo altera o que um inimigo SENTE.",
+    loop: [
+      "Toque. Enquanto estiver cantando, tocando ou falando, aliados que te ouvem somam o seu Bônus de Rank num teste de perícia por cena.",
+      "Sustente. Do Avançado em diante a canção não para: você mantém um efeito indefinidamente, sem Ação e sem concentração.",
+      "Cresça o Escopo. Uma pessoa, uma taverna, um vilarejo, uma cidade, um reino, um continente — a cada patamar a sua reputação alcança mais longe, e vira verdade aceita.",
+    ],
+    cost:
+      "Contra o que não sente emoção — construto, morto-vivo, criatura sem mente — a metade que importa da árvore não funciona. E o Bardo precisa ser ouvido: silêncio, surdez e vácuo o desligam.",
+  },
   keyAttributeLabel: "Espírito",
   resourceLabel: "PP",
   tagline:
@@ -34,7 +46,7 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A Plateia",
         description:
-          "Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida.",
+          "[Escopo: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida.",
       },
       talents: [
         { id: "ouvido-absoluto", name: "Ouvido Absoluto", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você imita qualquer voz já ouvida e reproduz sotaques. Aprende idiomas em dias." },
@@ -53,6 +65,8 @@ export const BARDO_TREE: Tree = {
           actions: { normal: 1 },
           damage: { normal: "Dado de Inspiração: 1d6 (1º-2º patamar), 2d6 (3º-4º), 3d6 (5º-6º)" },
           effect: "Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +5 (Cap. 4, §4).",
+          incantation:
+            "Que as minhas palavras de coragem ressoem no fundo do teu coração e despertem a força oculta que tu sempre guardaste. Inspiração!",
         },
       ],
     },
@@ -81,6 +95,8 @@ export const BARDO_TREE: Tree = {
           actions: { normal: 1 },
           effect:
             "Teste de Espírito contra Espírito do alvo. Se vencer, por 3 turnos ele só consegue pensar em você: Desvantagem em ataques que não sejam contra você, e não pode usar habilidades que exijam concentração ou cálculo. O risco: ele vai te atacar.",
+          incantation:
+            "Palavras afiadas como punhal, fiquem gravadas na mente do insolente e retirem dele a paz e o foco para lutar com precisão. Insulto que Fica!",
         },
       ],
     },
@@ -109,6 +125,8 @@ export const BARDO_TREE: Tree = {
           actions: { normal: 1 },
           effect:
             "Sustentada de graça pela sua Maestria. Aliados que te ouvem recebem +2 em acertos, imunidade a Amedrontado, e ignoram a penalidade do primeiro nível de Exaustão. Acaba se você for silenciado, nocauteado ou morto.",
+          incantation:
+            "Eu não canto pra que vocês esqueçam o medo, porque esquecer é coisa de covarde e nenhum de vocês é covarde. Eu canto pra que vocês lembrem por que vieram, lembrem quem ficou pra trás esperando, e lembrem que a marcha só acaba quando eu parar de tocar. Canção de Guerra!",
         },
       ],
     },
@@ -137,6 +155,8 @@ export const BARDO_TREE: Tree = {
           actions: { normal: 1 },
           effect:
             "Diga, na frente de todos, algo verdadeiro sobre um inimigo (dentro do seu Escopo e Domínio). Aliados dele fazem teste de Espírito (CD 8 + Espírito + Bônus de Rank): quem falhar age com Desvantagem enquanto o alvo estiver na cena.",
+          incantation:
+            "Eu poderia mentir agora. Seria mais fácil pra mim, mais confortável pra ti, e não haveria ninguém nesta sala com coragem de me corrigir depois. Mas eu vim aqui pra cantar, e uma canção que mente não vale a garganta que a carrega. Então escuta: eu vou dizer, na frente de todos, a única coisa que tu passaste a vida inteira pagando pra que ninguém dissesse. A Verdade que Dói!",
         },
       ],
     },
@@ -165,6 +185,8 @@ export const BARDO_TREE: Tree = {
           actions: { normal: 1 },
           effect:
             "Uma vez por combate. Escolha pavor, fúria ou devoção. Hostis na área que te ouçam fazem teste de Espírito: quem falhar foge (pavor), ataca o mais próximo (fúria), ou não ataca você/aliados (devoção) por 2 turnos. Não funciona em criaturas sem emoção.",
+          incantation:
+            "Uma voz é uma opinião, e opinião se desmente com outra opinião no dia seguinte, de manhã, antes do café. Duas vozes viram uma discussão. Dez viram um boato de taverna. Mas cem vozes cantando a mesma linha, no mesmo tom e na mesma hora, deixam de ser gente cantando e viram um fato — e contra fato não argumenta rei, não argumenta sacerdote, e não argumenta exército nenhum parado no fim da praça olhando. Eu não vim aqui cantar pra vocês. Eu vim aqui começar; vocês terminam. Coro!",
         },
       ],
     },
@@ -193,6 +215,8 @@ export const BARDO_TREE: Tree = {
           actions: { normal: 3 },
           effect:
             "Uma vez por Descanso Longo. Encerre a batalha declarando publicamente por que ela não faz mais sentido. Hostis capazes de ouvir e raciocinar fazem teste de Espírito com Desvantagem; quem falhar encerra as hostilidades. Exige que a razão seja real e acessível — não funciona em quem luta por prazer, fome ou ordem divina.",
+          incantation:
+            "Toda canção que eu cantei até hoje foi um começo: uma que abria a marcha antes do sol, uma que abria o baile depois da colheita, uma que abria o luto de uma casa que tinha acabado de perder alguém. Esta é a única que fecha. Eu cantei o teu nome quando ninguém neste continente sabia dele, cantei os teus feitos quando ainda eram pequenos, e cantei a tua entrada em cada cidade em que quiseste ser recebido. Por isso, e só por isso, sou eu quem tem o direito de cantar a última estrofe. Fica quieto agora. A parte que sobra não é tua: é minha, e eu vou cantá-la até o fim, do jeito que merecias e nunca pediste. O Fim da Canção!",
         },
       ],
     },

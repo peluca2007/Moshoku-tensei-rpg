@@ -1,7 +1,9 @@
-import { TREES } from "@/data/trees";
+import { getTreeById, TREES } from "@/data/trees";
 import {
   getAttackBonus,
+  getGuildRank,
   getPaSpent,
+  isGuildRankEstimated,
   getSpellDC,
   getTreeGrantedSkills,
   getWeaponDamage,
@@ -117,6 +119,15 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
   if (manualSkills.length > 0) traits.push(`Perícias: ${manualSkills.join(", ")}.`);
   const proficiencias = character.proficiencies ?? [];
   if (proficiencias.length > 0) traits.push(`Proficiências e Línguas: ${proficiencias.join(", ")}.`);
+  // Cap. 1, §5: melhoria racial é comprada com PA e não aparecia em lugar nenhum
+  // do PDF — o jogador pagava 3 PA por Sombra Absoluta e levava pra mesa uma
+  // ficha que não sabia que ele a tinha.
+  const upgradesCompradas = (race?.upgrades ?? []).filter((u) =>
+    (character.racialUpgrades ?? []).includes(u.id)
+  );
+  for (const u of upgradesCompradas) {
+    traits.push(`Melhoria racial — ${u.name} (${u.paCost} PA): ${u.description}`);
+  }
 
   /**
    * Cap. 3, "As Fórmulas Marciais": Dado de Arma escalado + Atributo + Bônus do
@@ -263,10 +274,20 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
     maxMp: String(maxMp),
     maxPt: String(maxPt),
     maxPp: String(maxPp),
+    // `null` = a reserva nunca foi tocada nesta ficha, então ela está cheia.
+    currentHp: String(character.currentHp ?? maxHp),
+    currentMp: String(character.currentMp ?? maxMp),
+    currentPt: String(character.currentPt ?? maxPt),
+    currentPp: String(character.currentPp ?? maxPp),
     armorClass: String(armorClass),
     initiative: signed(initiativeBonus),
     deslocamento: "9m",
     paSpent: String(getPaSpent(character)),
+    guildRank: isGuildRankEstimated(character)
+      ? `${getGuildRank(character)} (est.)`
+      : getGuildRank(character),
+    startingTreeName: getTreeById(character.startingTreeId)?.name ?? "—",
+    subtableName: subtable?.name ?? "—",
     spellcasting,
     trees,
     traits,

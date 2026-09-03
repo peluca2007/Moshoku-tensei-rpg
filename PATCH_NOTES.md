@@ -1,0 +1,286 @@
+# Patch Notes
+
+Histórico de mudanças de regra, balanceamento e sistema do RPG de Mushoku Tensei.
+As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patchNotes.ts`.
+
+---
+
+## 0.0.4 — "O Cântico Tem Preço" · 2026-09-03
+
+### ⚔️ Balanceamento
+
+**O Bônus de Recitação Perfeita deixa de ser automático.** Ele é a recompensa mais forte que o livro
+entrega de graça (Vantagem no acerto, ou +2 na CD, ou PM de volta) e estava saindo por qualquer cântico
+escrito. Uma auditoria das 149 magias encontrou **55 com cântico abaixo do piso do próprio rank**:
+
+| Árvore | Magias fora da escada (antes) |
+| --- | --- |
+| Cura | 16 de 21 |
+| Desintoxicação | 14 de 17 |
+| Barreira | 12 |
+| Invocação | 5 |
+| Bardo | 4 |
+
+> *"Não caias. Ainda não. Prontidão!"* — 35 caracteres — pagava exatamente o mesmo que um cântico de 380
+> caracteres do rank Rei.
+
+O efeito colateral era pior que o desequilíbrio: o sistema **premiava quem escrevesse cânticos curtos**,
+o oposto do que o Cap. 2 promete. Agora o piso da faixa do rank é a porta do bônus.
+
+| Rank | Piso (concede bônus a partir daqui) | Teto de estilo |
+| --- | --- | --- |
+| Principiante | 90 | 140 |
+| Intermediário | 140 | 200 |
+| Avançado | 200 | 280 |
+| Santo | 280 | 380 |
+| Rei | 380 | 500 |
+| Imperador | 500 | 650 |
+
+- **50 cânticos reescritos** para alcançar a faixa do próprio rank. Hoje **144 das 149** magias estão
+  dentro da faixa; antes eram 91.
+- **5 magias continuam curtas de propósito** e agora imprimem **"Sem bônus"** na carta: Prontidão,
+  Rejeitar a Morte, Luz Absoluta, Lança de Plasma e Explosão Silenciosa. Todas de emergência, todas com
+  `costNote` explicando a pressa — nelas a velocidade já *é* o benefício.
+- A regra se mede sozinha a partir de `INCANTATION_LENGTH`: escrever um cântico curto novo desliga o bônus
+  dele automaticamente, sem ninguém marcar campo nenhum.
+
+**Estilo Vendaval — mecânica nova.** Era a única árvore sem identidade: mobilidade solta, alcance estendido
+em três patamares diferentes, e nenhuma regra ligando as duas coisas.
+
+> **[Distância Roubada]** A distância que você percorreu na sua vez (até 9m) é somada ao **alcance** do seu
+> próximo ataque corpo a corpo neste turno. Se ele acertar um alvo a mais de 3m, o alvo fica Desequilibrado.
+
+Ela escala pelos patamares em vez de aparecer do nada: no Intermediário o movimento feito com Reação
+também conta; no Avançado o teto sobe para 12m; no Rei ela soma em cima do alcance mínimo de 6m. Os cinco
+"ataques corpo a corpo à distância" espalhados pela árvore viraram variações de uma regra só.
+
+---
+
+### 📖 Novas Regras e Simplificações
+
+**Interromper uma Conjuração (Cap. 2, §6)** — a regra que faltava. Uma magia de Imperador custa 6 Ações e
+o cântico pode ser dividido entre turnos: o conjurador passa rodadas inteiras vulnerável, e o livro não
+dizia o que acontece nesse intervalo.
+
+> Ao **sofrer dano** enquanto está Conjurando: teste de resistência de **Espírito** contra
+> **CD 8 + metade do dano sofrido**.
+> **Sucesso:** o cântico segue. **Falha:** perde todas as Ações gastas e **metade do PM** da magia.
+
+- Enquanto Conjurando você é **visível e audível** (o Mestre informa o rank aparente pelo tamanho do
+  cântico), move-se metade do Deslocamento, e não pode atacar, usar item nem usar Reação — usar Reação
+  encerra a conjuração. Conjuração Silenciosa é a exceção: ninguém percebe.
+- **Atordoado, Paralisado, Incapacitado, Surdo e Soterrado** interrompem **sem teste**.
+  **Congelado e Atolado não interrompem** — você continua falando.
+- **Ritual não se interrompe pela metade: se perde inteiro.** PM cheio e todo o tempo investido. Em troca,
+  um ritual conduzido em paz nunca exige teste.
+- Tabela de formas deliberadas de interromper: bater forte (concentrar o dano num golpe só vale mais que
+  espalhá-lo), Vácuo Localizado (Vento), Selado e Anulação (Barreira), Corte de Braço (Deus da Espada).
+
+**Regras Gerais de Conjuração (Cap. 2, §7)** — as perguntas de primeira sessão, respondidas de uma vez:
+linha de visão, conjurar em corpo a corpo (permitido, **sem** penalidade), mãos livres, segurar magia
+pronta, quantas magias sustentar, ficar sem PM no meio, falha crítica e empilhamento de magias iguais.
+
+**Mecânica Central — as 19 árvores (Cap. 3).** Toda árvore sempre teve uma ideia própria, e nenhuma dizia
+qual era: a `tagline` existia nos dados e o livro nunca a imprimia. A mesa abria o catálogo de Terra e via
+24 magias sem nenhuma linha explicando que a escola gira em torno de prender primeiro e enterrar depois.
+
+Cada catálogo agora começa com um quadro de quatro blocos fixos — **a tag**, **o que ela faz que nenhuma
+outra faz**, **o ciclo de jogo numerado** e **a fraqueza declarada** — e o capítulo ganhou a seção
+**"Como Ler uma Árvore"** com as 19 lado a lado, para ser lida *antes* de escolher a Árvore Inicial.
+
+A tag aparece entre colchetes na Maestria de 1º patamar de cada árvore:
+
+| | |
+| --- | --- |
+| Água | `[Molhado → Congelado]` |
+| Fogo | `[Em Chamas]` |
+| Vento | `[Desequilibrado]` |
+| Terra | `[Atolado → Soterrado]` |
+| Cura | `[Ferida Fresca]` |
+| Desintoxicação | `[Rank contra Rank]` |
+| Barreira | `[Selado / Fluxo Interrompido]` |
+| Invocação | `[Pacto]` |
+| Deus da Espada | `[Letalidade]` |
+| Deus da Água | `[Contra-ataque]` |
+| Deus do Norte | `[Improviso]` |
+| Armas Pesadas | `[Quebrantado]` |
+| Cavalaria e Escudos | `[Sob Minha Guarda]` |
+| Arquearia | `[Marcado]` |
+| Vendaval | `[Distância Roubada]` |
+| Punho de Fogo | `[Calor]` |
+| Ladino / Bardo / Tático | `[Escopo: coisas e lugares / pessoas e reputação / tempo e logística]` |
+
+**A regra dos dois tempos**, agora escrita: árvores que **preparam** (Água, Terra, Vento, Lutador) contra
+árvores que **cobram na hora** (Fogo, Deus da Espada, Arquearia). Nenhuma é melhor — a pergunta é quantos
+turnos a sua mesa costuma jogar antes de a luta acabar.
+
+---
+
+### 💻 Sincronia de Sistema
+
+- `src/lib/types.ts`: nova `qualifiesForRecitationBonus(incantation, rank)` — o gate único, medido a partir
+  de `INCANTATION_LENGTH`; e a interface `TreeMechanic` (tag / hook / loop / cost).
+- Todas as 19 árvores declaram `mechanic`. `TreeCatalog` renderiza o quadro `MechanicCard` no topo.
+- `AbilityDetail.IncantationBlock` passou a receber `rank` e imprime o selo dourado *ou* o selo cinza
+  "Sem bônus". As três superfícies que o usam (livro, ficha, mapa de árvores) passam o rank.
+- `scripts/check-magias.mts` reescrito: separa **falha** (magia sem cântico, quebra o build) de **aviso**
+  (fora da faixa), e lista quais magias não concedem bônus e quais delas não têm `costNote` justificando.
+- Quebras de linha normalizadas nos arquivos de árvore (mistura de LF e CRLF introduzida pelas edições).
+
+---
+
+### 🐛 Correções de Bugs
+
+- **`perfectRecitationBonus` lia um campo que não existe.** Ela fazia `(ability as { rank?: RankName }).rank`
+  para calcular quanto PM devolver, mas `AbilityDef` nunca teve `rank` — o valor era sempre `undefined`, e
+  toda magia de suporte do livro exibia o texto genérico *"Recupera PM (Bônus de Rank)"* em vez do número.
+  Agora o rank vem por prop e a carta mostra o valor real.
+- **Cânticos fora da escada de tamanho** (58 magias no total, contando os longos demais): um Principiante
+  recitava mais que um Santo em três árvores, invertendo a leitura de rank pelo tamanho do cântico.
+
+---
+
+## 0.0.3 — "A Profundidade Morreu" · 2026-09-03
+
+### ⚔️ Balanceamento
+
+**Magia de Desintoxicação — nerf de poder, corte de preço.**
+
+| O que | Antes | Agora |
+| --- | --- | --- |
+| Sopro Podre (Rei) | 10d8 + aflição que escalava | 6d8 + aflição de rank Avançado |
+| Corrosão (Avançado) | 4d8 ácido, −2 CA **permanente** | 3d6 ácido, −2 CA até 1h de conserto |
+| Toque do Fim (Rei) | Aflição que subia 1/dia e **matava** em 6 | Aflição de rank Rei, não mata sozinha |
+| Anular (Avançado) | Removia **qualquer** condição do jogo | Só as 5 da escola, e só de origem tóxica |
+| Estado Anulado (Santo) | 1×/turno, sem custo | 1×/rodada, **gasta a Reação** |
+| Corpo Recusado (Avançado) | Imune a veneno e doença + relógio lento | Imune só a veneno/doença **não-mágicos** |
+| Nada Entra (Imperador) | Imunidade compartilhada em 18m | Vantagem em 9m |
+| Sangue Trocado (Avançado) | Reduzia a aflição em 2 ao transferir | Transfere com o rank intacto |
+
+**Tabela de PA própria (Cap. 1, "A Escola Barata").** A Desintoxicação é a única escola cujo trabalho
+principal acontece fora do combate e cujo alvo é sempre um problema que o Mestre criou. Cobrar dela o
+preço de uma escola de dano era fazer o jogador pagar Fogo por um seguro contra o roteiro.
+
+| Rank | Comum (era → é) | Assinatura ◆ | Talento |
+| --- | --- | --- | --- |
+| Principiante | 1 → 1 | 2 → 1 | 1 → 1 |
+| Intermediário | 1 → 1 | 2 → 1 | 1 → 1 |
+| Avançado | 2 → 1 | 3 → 2 | 2 → 1 |
+| Santo | 3 → 2 | 4 → 2 | 3 → 2 |
+| Rei | 4 → 2 | 5 → 3 | 4 → 2 |
+| Imperador | 5 → 3 | 6 → 4 | 4 → 3 |
+
+**Custos de PA de personagem, agora progressivos no livro também.** O motor já cobrava assim desde a
+auditoria anterior; a tabela do Cap. 1 e o painel da ficha ainda anunciavam o custo fixo antigo.
+
+- Atributo: **1 / 1 / 2 / 2 / 3 / 3… PA** (era "2 PA fixos por ponto").
+- Vantagem em Testes de Resistência: **2 / 3 / 4 / 4 / 4 PA**, 17 PA pelas cinco (era "2 PA por atributo").
+
+---
+
+### 📖 Novas Regras e Simplificações
+
+**A Profundidade foi apagada.** Toda aflição carregava um número de 1 a 5 que subia sozinho (1 por hora,
+ou 1 por dia) e que cada magia da escola empurrava em incrementos diferentes. A mesa precisava manter um
+segundo relógio por personagem afetado, e o jogador de Desintoxicação passava o turno fazendo aritmética.
+
+A regra nova cabe numa linha:
+
+> **Toda aflição tem um Rank. Um feitiço de rank X remove uma aflição de rank X ou inferior.**
+
+Nada sobe, nada desce. Aflição não piora sozinha e não passa sozinha — ela **continua cobrando o efeito
+dela** (2d6 por hora, −1 atributo por semana, petrificação em quatro turnos) até alguém tratar. A urgência
+sempre foi o efeito, nunca o contador.
+
+- CD de exposição a veneno: `8 + (2 × Bônus de Rank da aflição)` — os mesmos números de antes (Principiante
+  CD 10 … Rei CD 18), lidos de uma escada que o livro inteiro já usa.
+- CD de contágio passivo: `8 + Bônus de Rank da aflição`.
+- **Sangria** virou a única válvula de escape da escola: purga uma aflição de **um rank acima** do seu
+  alcance, ao custo de 3d6 irredutíveis. Substitui o talento *A Mão que Não Erra*, removido.
+- **Contra a Maré** (Avançado) deixa aflições **dormentes** num raio de 9m em vez de "parar o relógio":
+  continuam no corpo, mas não cobram efeito enquanto você estiver de pé.
+- A **Doença da Pedra Mágica** virou a única aflição de **rank Deus** do livro.
+
+**Nova condição: Soterrado** (Cap. 4, §5) — a metade que faltava da identidade da Terra.
+
+> Deslocamento 0, Preso, não enxerga nem conjura com gesto, 2d10 de sufocamento por turno.
+> Só pode ser aplicada a quem já esteja **Atolado, Preso ou Caído**.
+> Sai com 1 Ação e teste de Força (CD 8 + BC), ou com 30 de dano à terra que o cobre.
+
+**As sete essências, agora respeitadas nas sete árvores.** Cada Maestria de 1º patamar marca a sua com um
+rótulo entre colchetes, e cada escola ganhou o *pagamento* que faltava:
+
+| Árvore | Prepara | Cobra |
+| --- | --- | --- |
+| Água | Molhado | Congelado — **toda** magia de frio congela quem já estava Molhado e falhou (antes só Campo de Gelo) |
+| Fogo | — | Em Chamas — dano **cheio** contra alvo Em Chamas, sem metade no sucesso |
+| Vento | Desequilibrado | **+1 dado de dano** contra alvo Desequilibrado; Grito do Mundo e Lâmina do Horizonte voltam a aplicar a condição |
+| Terra | Atolado | Soterrado — Cárcere, Prisão de Pedra e Sepultamento; a Maestria de Santo converte automaticamente |
+| Deus da Espada | — | `[Letalidade]` — sem condição própria, de propósito: dano puro, rápido e letal |
+| Deus do Norte | — | `[Improviso]` |
+| Deus da Água | — | `[Contra-ataque]` |
+
+---
+
+### 💻 Sincronia de Sistema
+
+- `src/data/trees/shared.ts`: nova tabela `DESINTOX_PA_COST`, no mesmo padrão declarado que
+  `UTILITY_PA_COST` já usava — não é um desvio por magia, é uma tabela alternativa da escola inteira.
+- `src/lib/types.ts`: `ATTRIBUTE_PA_COST_PER_POINT` e `SAVE_ADVANTAGE_PA_COST` (constantes fixas, mortas)
+  saíram; entraram `attributePaCostForPurchase/Total` e `saveAdvantagePaCostForPurchase/Total`. Motor, livro
+  e ficha passam a ler a mesma origem.
+- `src/store/selectors.ts`: `getAttributePaCost` e `getSaveAdvantagePaCost` passam a delegar para essas
+  funções, em vez de repetir a escada num laço local.
+- `src/store/useCharacterStore.ts`: **migração v9** do persist. Uma ficha salva com o talento removido
+  `a-mao-que-nao-erra` recebe `maos-limpas` no lugar, e os venenos do inventário são renomeados
+  (`veneno_prof1/2/3` → `veneno_principiante/intermediario/avancado`).
+- `npx tsc --noEmit` e `eslint src` passam sem erros.
+
+---
+
+### 🐛 Correções de Bugs
+
+- **A ficha mostrava um custo de PA que o motor não cobrava.** O painel de Atributos exibia
+  `(soma − 2) × 2 PA` e o de Vantagem em Resistência exibia `nº de compras × 2 PA`, enquanto `getPaSpent`
+  já cobrava as escadas progressivas. Uma ficha com as cinco Vantagens mostrava **10 PA** na linha e
+  **17 PA** no total, sem nada explicando a diferença. As duas superfícies agora leem a mesma função.
+- **PA sumiria em silêncio de fichas salvas.** Com o talento `a-mao-que-nao-erra` removido,
+  `findAbilityOrTalentDef` retornaria `undefined` e o PA pago por ele desapareceria do total sem deixar
+  rastro na ficha. A migração v9 fecha isso.
+- **Itens órfãos no inventário.** Os três venenos trocaram de id; sem migração, um veneno comprado antes
+  viraria uma linha sem nome nem preço.
+- **Importações mortas em `selectors.ts`** (`ATTRIBUTE_PA_COST_PER_POINT`, `SAVE_ADVANTAGE_PA_COST`),
+  resquício da auditoria anterior, removidas.
+
+---
+
+## 0.0.2 — "Guarda Erguida" · 2026-08-31
+
+### ⚔️ Balanceamento
+
+- **Ação Defender/Absorver:** o atacante ganha Vantagem, mas o dano é reduzido por
+  `(Vigor × 2) + Bônus de Rank do seu maior Estilo de Corpo`.
+- **Bloquear com Escudo (Reação):** soma a CA do escudo contra aquele ataque; se o golpe passar a errar,
+  o dano é anulado.
+- Esquivar e Defender/Absorver protegem só o **primeiro** ataque da rodada.
+- PV Máximos escalam de forma mais contida nos primeiros patamares.
+- PM Máximos ganham teto nos dois primeiros patamares de magia; some a partir do Avançado.
+- **Escudos:** Sob Minha Guarda escala com o rank (1 → 2 → 3 aliados); Interpor passa a somar +1 na CA;
+  Ombro de Pedra sobe de +2 para +4 PV por patamar e ganha +1 PT.
+- **Criação:** orçamento livre de atributos cai de 4 para 2 pontos; os dois Defeitos liberam 5 em vez de 7;
+  bônus de Raça e Antecedente saem do orçamento; kit de Tank troca Armadura Média (+3 CA) por Leve (+1 CA).
+
+### 📖 Novas Regras e Simplificações
+
+- **Magia Combinada** deixa de ser "o que o Mestre aprovar" e vira tabela oficial com 9 magias fixas, cada
+  uma comprada com PA e destravada pela Maestria do Avançado.
+- **Puro Escudo:** abrir mão de arma de dano desbloqueia versões *Soberanas* das habilidades em todos os ranks.
+- **Pacto (Invocação):** Filhote Evolutivo → Forma Média → Forma Suprema, ganhando dano, PV e resistências.
+- **Vínculo Concentrado:** concentrar todo o PM de invocação num familiar só concede dados extras e Resistência.
+- Invocar em combate sem círculo pronto exige *Convocar sob Pressão* (6 Ações, invocado com metade dos PV).
+- **Nova sub-árvore: Punho de Fogo** (Fogo + Lutador), revelada ao alcançar Intermediário nas duas bases.
+
+### 💻 Sincronia de Sistema
+
+- Árvores híbridas (Vendaval, Punho de Fogo) ficam ocultas no Mapa de Árvores até os pré-requisitos serem
+  cumpridos, com conector próprio ligando-as às origens.

@@ -40,9 +40,9 @@ export default function Chapter5() {
         </Warning>
         <SubTitle>Downtime Interrompido</SubTitle>
         <P>
-          Se uma aflição (Cap. 4, §7) estiver ativa em alguém do grupo, a Profundidade dela continua subindo
-          normalmente durante o downtime — um bloco de &ldquo;Recuperar-se&rdquo; não pausa o relógio de um
-          veneno ou de uma doença.
+          Se uma aflição (Cap. 4, §7) estiver ativa em alguém do grupo, ela continua cobrando o efeito dela
+          normalmente durante o downtime — um bloco de &ldquo;Recuperar-se&rdquo; trata ferimento, não trata
+          veneno nem doença. Só um feitiço de Desintoxicação do rank certo, ou uma poção, encerram isso.
         </P>
       </Section>
 
@@ -114,11 +114,11 @@ export default function Chapter5() {
           headers={["Rank mínimo", "O que a Guilda libera"]}
           rows={[
             ["F", "Poção Menor de Cura, equipamento mundano comum."],
-            ["E", "Poção de Antídoto e Elixir de Foco; veneno de Profundidade 1."],
+            ["E", "Poção de Antídoto e Elixir de Foco; veneno de rank Principiante."],
             ["D", "Encomenda de Encantamento nível Avançado (+1 no Dado de Arma ou na CA)."],
-            ["C", "Poção Maior de Cura; veneno de Profundidade 2, com licença registrada."],
+            ["C", "Poção Maior de Cura; veneno de rank Intermediário, com licença registrada."],
             ["B", "Encomenda de Encantamento nível Santo (dano elemental extra)."],
-            ["A", "Encomenda de Encantamento nível Rei (ignora Resistência); veneno de Profundidade 3, sob vigilância da sede."],
+            ["A", "Encomenda de Encantamento nível Rei (ignora Resistência); veneno de rank Avançado, sob vigilância da sede."],
             ["S", "Encomenda de Encantamento nível Imperador; a sede intermedia contato com um encantador de rank Deus pra um Item Mágico Único (seção 4 deste capítulo) — abre a porta, não garante o resultado."],
           ]}
         />
@@ -188,7 +188,7 @@ export default function Chapter5() {
         <List
           items={[
             "Quem: qualquer personagem com a Perícia de Ofícios (especializada em Alquimia, pra Poções e Venenos) ligada ao item. Encantamento é diferente — exige um encantador vivo no Rank de árvore listado na tabela, não a Perícia de Ofícios.",
-            "Até onde: uma poção que reproduz magia de rank X exige que o alquimista tenha um patamar igual ou superior a X em Cura (ou em Desintoxicação, pros antídotos). Um veneno de Profundidade X exige um patamar igual ou superior a X em Desintoxicação, ou material colhido de uma criatura daquele porte. Sem isso, a receita simplesmente não é legível — não é uma CD mais alta, é um teste que você não pode tentar.",
+            "Até onde: uma poção que reproduz magia de rank X exige que o alquimista tenha um patamar igual ou superior a X em Cura (ou em Desintoxicação, pros antídotos). Um veneno de rank X exige um patamar igual ou superior a X em Desintoxicação, ou material colhido de uma criatura daquele porte. Sem isso, a receita simplesmente não é legível — não é uma CD mais alta, é um teste que você não pode tentar.",
             "Tempo: 1 bloco de Downtime (seção 1 deste capítulo, atividade Estudar um Ofício ou Ritual) por item, salvo quando a tabela disser outro valor.",
             "Custo em materiais: metade do valor listado na coluna de Custo — a mesma proporção que a regra de Downtime já usa pra qualquer produção. O valor cheio da coluna é o preço de venda, não o de fabricação.",
             "Teste: role Ofícios (ou o teste do encantador) contra a CD da tabela ao fim do bloco. Sucesso: o item fica pronto. Falha: os materiais se perdem, mas o bloco de Downtime já foi gasto — tente de novo no próximo. Falha crítica (1 no dado): metade dos materiais é recuperável.",
@@ -214,7 +214,7 @@ export default function Chapter5() {
           headers={["Poção", "CD de Ofícios", "Custo (venda / fabricação)", "Efeito"]}
           rows={[
             ["Poção Menor de Cura", "11", "15 PO / 8 PO", "Reproduz uma magia de Cura de rank Principiante ou Intermediário, sem precisar de mago presente."],
-            ["Poção de Antídoto", "13", "25 PO / 13 PO", "Remove 1 ponto de Profundidade de uma única aflição (Cap. 4, §7)."],
+            ["Poção de Antídoto", "13", "25 PO / 13 PO", "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §7). Contra ranks acima disso, não faz nada — é uma dose, não um mago."],
             ["Poção Maior de Cura", "15", "60 PO / 30 PO", "Reproduz uma magia de Cura de rank Avançado ou Santo."],
             ["Elixir de Foco", "13", "40 PO / 20 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
             ["Poção de Vigor Passageiro", "14", "45 PO / 23 PO", "Vantagem no próximo teste de resistência de Vigor — a versão física do Elixir de Foco."],
@@ -226,21 +226,21 @@ export default function Chapter5() {
         <SubTitle>Venenos</SubTitle>
         <P>
           Fabricar veneno é produzir uma dose de uma aflição já catalogada no Cap. 4, §7 — a CD de Ofícios
-          sobe junto com a Profundidade, porque manusear algo mais perigoso sem se envenenar no processo é
+          sobe junto com o rank, porque manusear algo mais perigoso sem se envenenar no processo é
           mais difícil. Como aplicar a dose em alguém está no Cap. 4, §7, seção &ldquo;Aplicando um Veneno em
           Combate ou em Segredo&rdquo;.
         </P>
         <BookTable
-          headers={["Profundidade", "Exemplo", "CD de Ofícios", "Custo (venda / fabricação)"]}
+          headers={["Rank", "Exemplo", "CD de Ofícios", "Custo (venda / fabricação)"]}
           rows={[
-            ["1", "Baba de Sapo-Lodo", "10", "5 PO / 3 PO"],
-            ["2", "Peçonha de Serpente-do-Pântano", "12", "20 PO / 10 PO"],
-            ["3", "Fel de Wyvern", "14", "80 PO / 40 PO"],
-            ["4+", "Praga do Continente Demônio", "16+", "Não está à venda — só se rouba, caça ou herda."],
+            ["Principiante", "Baba de Sapo-Lodo", "10", "5 PO / 3 PO"],
+            ["Intermediário", "Peçonha de Serpente-do-Pântano", "12", "20 PO / 10 PO"],
+            ["Avançado", "Fel de Wyvern", "14", "80 PO / 40 PO"],
+            ["Santo+", "Praga do Continente Demônio", "16+", "Não está à venda — só se rouba, caça ou herda."],
           ]}
         />
         <Warning title="A lei e o veneno">
-          Vender veneno de Profundidade 3 ou superior sem licença é crime em Millis e no Reino Asura — perde
+          Vender veneno de rank Avançado ou superior sem licença é crime em Millis e no Reino Asura — perde
           Reputação (seção 3 deste capítulo) com a facção local automaticamente.
         </Warning>
         <SubTitle>Encantamento de Arma e Armadura</SubTitle>

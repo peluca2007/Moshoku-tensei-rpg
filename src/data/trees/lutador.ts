@@ -5,6 +5,18 @@ export const LUTADOR_TREE: Tree = {
   name: "Lutador",
   category: "corpo",
   subgroup: "Guerreiro / Parrudice",
+  mechanic: {
+    tag: "Quebrantado",
+    hook:
+      "Não mata rápido: desmonta. Cada acúmulo tira um pedaço do inimigo, e a árvore inteira empilha.",
+    loop: [
+      "Corra. Momento: percorrer 6m ou mais em linha reta antes de atacar soma +1 Dado de Arma ao golpe.",
+      "Empilhe. Seus golpes aplicam Quebrantado — cada acúmulo dá −1 na CA e −1 no dano de TODOS os ataques do alvo, até o teto do seu Bônus de Rank.",
+      "Colha. Quebrantado não é ferimento: magia de Cura não remove. Ele só sai com um Descanso Curto, ou quando o combate acaba.",
+    ],
+    cost:
+      "É lento pra chegar lá. Sem acúmulo montado você é o corpo a corpo mais fraco do livro, e quem te mantém à distância te desliga.",
+  },
   keyAttributeLabel: "Força",
   resourceLabel: "PT",
   tagline: "Peso e impacto — a única árvore onde lutar de mãos vazias é opção legítima até o fim. Degrada o inimigo (Quebrantado) em vez de matar rápido.",
@@ -32,7 +44,7 @@ export const LUTADOR_TREE: Tree = {
       mastery: {
         name: "O Corpo é a Arma",
         description:
-          "Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência com toda arma pesada, de duas mãos e improvisada; empunhar arma de duas mãos com uma só custa apenas um degrau a menos. Você aplica a condição Quebrantado e usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar).",
+          "[Quebrantado] Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência com toda arma pesada, de duas mãos e improvisada; empunhar arma de duas mãos com uma só custa apenas um degrau a menos. Você aplica a condição Quebrantado e usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar).",
       },
       talents: [
         { id: "couro-grosso", name: "Couro Grosso", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },

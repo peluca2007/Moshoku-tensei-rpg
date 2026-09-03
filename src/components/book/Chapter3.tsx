@@ -28,6 +28,64 @@ export default function Chapter3() {
       </Warning>
 
       <Section>
+        <SectionTitle id="cap3-como-ler">Como Ler uma Árvore</SectionTitle>
+        <P>
+          Toda árvore deste livro gira em torno de <b>uma ideia só</b>. Se você entender essa ideia, as vinte
+          e poucas magias ou técnicas dela deixam de ser uma lista pra decorar e viram variações de um mesmo
+          gesto. Se não entender, você compra habilidades soltas que não conversam entre si — e é assim que
+          um personagem fica fraco sem que ninguém saiba explicar por quê.
+        </P>
+        <P>
+          Por isso o catálogo de cada árvore começa com um quadro <b>Mecânica Central</b>, sempre com os
+          mesmos quatro blocos:
+        </P>
+        <List
+          items={[
+            <span key="t"><b>A tag.</b> Um rótulo curto — <i>Molhado → Congelado</i>, <i>Improviso</i>, <i>Ferida Fresca</i>. Ele aparece também entre colchetes na Maestria de 1º patamar da árvore, pra você reconhecer a mecânica quando ela voltar.</span>,
+            <span key="h"><b>A frase.</b> O que esta árvore faz que nenhuma outra faz.</span>,
+            <span key="l"><b>Como se joga.</b> Dois a quatro passos, na ordem em que acontecem na mesa. Não são conselhos: é literalmente o ciclo de turno da árvore.</span>,
+            <span key="c"><b>O que ela não faz.</b> A fraqueza declarada. Uma árvore sem fraqueza é uma árvore que ninguém sabe quando <i>não</i> escolher — e é assim que se escreve um sistema em que todo mundo joga a mesma ficha.</span>,
+          ]}
+        />
+        <Aside title="A regra dos dois tempos">
+          <P>
+            Repare, na tabela abaixo, que várias árvores têm um passo de <b>preparo</b> e um passo de{" "}
+            <b>cobrança</b>. Água molha pra depois congelar. Terra atola pra depois soterrar. Lutador empilha
+            Quebrantado pra depois colher. Vento desequilibra pra depois cobrar um dado a mais.
+          </P>
+          <P>
+            Isso é de propósito, e é a diferença entre as árvores <i>de dois tempos</i> e as{" "}
+            <i>de um tempo só</i>. Fogo, Deus da Espada e Arquearia não preparam nada — elas cobram no
+            primeiro turno, e por isso entregam menos quando a luta se estende. Quem prepara paga um turno
+            adiantado e recebe juros depois. <b>Nenhuma das duas famílias é melhor:</b> a pergunta é quantos
+            turnos a sua mesa costuma jogar antes de a luta acabar.
+          </P>
+        </Aside>
+
+        <SubTitle id="cap3-mecanicas">As Dezenove Mecânicas, lado a lado</SubTitle>
+        <P>
+          A tabela existe pra ser lida <b>antes</b> de escolher a Árvore Inicial (Cap. 1, §8). Cada linha é o
+          resumo de um quadro completo, que você encontra no catálogo da árvore mais abaixo.
+        </P>
+        {(["magia", "corpo", "utilidade"] as const).map((category) => (
+          <div key={category} className="space-y-2">
+            <h4 className="mt-3 text-sm font-bold text-wine-700 dark:text-wine-300">
+              {CATEGORY_LABELS[category]}
+            </h4>
+            <BookTable
+              headers={["Árvore", "Mecânica", "O que ela faz", "O que ela não faz"]}
+              rows={TREES.filter((t) => t.category === category && t.mechanic).map((t) => [
+                t.name,
+                t.mechanic!.tag,
+                t.mechanic!.hook,
+                t.mechanic!.cost,
+              ])}
+            />
+          </div>
+        ))}
+      </Section>
+
+      <Section>
         <SectionTitle id="cap3-mapa">O Mapa Completo das Árvores</SectionTitle>
         <P>
           O sistema comporta dezessete sub-árvores escolhíveis desde o primeiro dia, mais uma décima oitava

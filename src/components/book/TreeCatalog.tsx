@@ -1,4 +1,4 @@
-import { AbilityDef, RANK_BONUS, TalentDef, Tree } from "@/lib/types";
+import { AbilityDef, RANK_BONUS, RankName, TalentDef, Tree } from "@/lib/types";
 import { getRankDeusForTree } from "@/data/rankDeus";
 import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "../AbilityDetail";
@@ -18,7 +18,7 @@ function costLabel(def: AbilityDef | TalentDef) {
   return parts.join(" | ");
 }
 
-function EntryCard({ kind, def }: { kind: "ability" | "talent"; def: AbilityDef | TalentDef }) {
+function EntryCard({ kind, def, rank }: { kind: "ability" | "talent"; def: AbilityDef | TalentDef; rank: RankName }) {
   const ability = isAbility(def) ? def : null;
   const description = isAbility(def) ? def.effect : def.description;
   return (
@@ -42,7 +42,7 @@ function EntryCard({ kind, def }: { kind: "ability" | "talent"; def: AbilityDef 
         </p>
       )}
       {ability && <CastingBreakdown ability={ability} />}
-      {ability && <IncantationBlock ability={ability} />}
+      {ability && <IncantationBlock ability={ability} rank={rank} />}
     </div>
   );
 }
@@ -117,6 +117,63 @@ function ProficiencyCard({ tree }: { tree: Tree }) {
   );
 }
 
+/**
+ * A Mecânica Central da árvore, no topo do catálogo dela (Cap. 3, "Como Ler uma
+ * Árvore") — 2026-09-03.
+ *
+ * Fica ANTES das proficiências e da tabela de progressão de propósito: a
+ * primeira pergunta de quem abre uma árvore não é "que armas eu uso", é "o que
+ * eu faço com isto". Até esta data o livro respondia essa pergunta em lugar
+ * nenhum — a `tagline` de cada árvore existia nos dados e nunca era impressa,
+ * então a mesa lia 24 magias de Terra sem nenhuma linha dizendo que a escola
+ * inteira gira em torno de prender primeiro e enterrar depois.
+ *
+ * Os quatro blocos são sempre os mesmos, nas dezenove, pra que dê pra comparar
+ * árvore com árvore sem reler o capítulo: o rótulo, a frase, o ciclo numerado e
+ * — o que mais falta em livro de RPG — a fraqueza declarada.
+ */
+function MechanicCard({ tree }: { tree: Tree }) {
+  const m = tree.mechanic;
+  if (!m) return null;
+  return (
+    <div className="print-avoid-break rounded-xl border-2 border-wine-400 bg-wine-50/70 p-4 dark:border-wine-800 dark:bg-wine-950/40">
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <p className="text-xs font-bold uppercase tracking-wider text-wine-700 dark:text-wine-300">
+          Mecânica Central
+        </p>
+        <span className="rounded-full bg-wine-600 px-2 py-0.5 text-[11px] font-bold text-white dark:bg-wine-700">
+          {m.tag}
+        </span>
+      </div>
+
+      <p className="mt-2 text-[15px] font-semibold leading-snug text-parchment-900 dark:text-parchment-50">
+        {m.hook}
+      </p>
+
+      <p className="mt-3 text-xs font-bold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+        Como se joga
+      </p>
+      <ol className="mt-1 space-y-1.5">
+        {m.loop.map((passo, i) => (
+          <li key={i} className="flex gap-2 text-sm leading-relaxed text-parchment-800 dark:text-parchment-200">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-wine-600/15 text-[11px] font-bold text-wine-700 ring-1 ring-wine-500/30 dark:text-wine-300">
+              {i + 1}
+            </span>
+            <span>{passo}</span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-3 border-t border-wine-300/60 pt-2 dark:border-wine-800/60">
+        <p className="text-xs font-bold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+          O que ela não faz
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-parchment-700 dark:text-parchment-300">{m.cost}</p>
+      </div>
+    </div>
+  );
+}
+
 /** Catálogo completo de uma árvore — progressão, todo Rank, toda Maestria, todo Talento/Técnica/Magia e o patamar Divino, direto da mesma fonte que alimenta a ficha (nunca diverge). */
 export default function TreeCatalog({ tree }: { tree: Tree }) {
   const nonEmptyRanks = tree.ranks.filter((r) => r.mastery || r.talents.length > 0 || r.abilities.length > 0);
@@ -137,6 +194,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
           {tree.prerequisiteNote}
         </div>
       )}
+      <MechanicCard tree={tree} />
       <ProficiencyCard tree={tree} />
       <ProgressionTable tree={tree} />
       {nonEmptyRanks.map((rankDef) => {
@@ -153,10 +211,10 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
               </div>
             )}
             {rankDef.talents.map((t) => (
-              <EntryCard key={t.id} kind="talent" def={t} />
+              <EntryCard key={t.id} kind="talent" def={t} rank={rankDef.rank} />
             ))}
             {rankDef.abilities.map((a) => (
-              <EntryCard key={a.id} kind="ability" def={a} />
+              <EntryCard key={a.id} kind="ability" def={a} rank={rankDef.rank} />
             ))}
           </div>
         );

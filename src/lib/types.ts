@@ -29,7 +29,8 @@ export type RankName =
   | "Avançado"
   | "Santo"
   | "Rei"
-  | "Imperador";
+  | "Imperador"
+  | "Deus";
 
 export const RANKS: RankName[] = [
   "Principiante",
@@ -38,6 +39,7 @@ export const RANKS: RankName[] = [
   "Santo",
   "Rei",
   "Imperador",
+  "Deus",
 ];
 
 // Capítulo 1, seção 7: bônus numérico fixo por rank, usado em ataque/CD/dano de QUALQUER árvore.
@@ -48,17 +50,79 @@ export const RANK_BONUS: Record<RankName, number> = {
   Santo: 4,
   Rei: 5,
   Imperador: 6,
+  Deus: 7,
 };
+
+/**
+ * Cap. 2, §2: o piso e o teto de tamanho do encantamento de cada rank, em
+ * caracteres (2026-09-02).
+ *
+ * A regra do livro sempre disse que "o tamanho do encantamento é proporcional
+ * ao rank", e os cânticos nunca cumpriram isso: Bola de Água (Principiante)
+ * tinha 134 caracteres e Zero Absoluto (Imperador) tinha 132. Ler os dois em
+ * voz alta custava o mesmo, então o cântico não comunicava poder nenhum — era
+ * decoração.
+ *
+ * Isto existe porque o Bônus de Recitação Perfeita transforma o cântico em
+ * mecânica: se recitar bem dá Vantagem, o preço tem que ser tempo real de mesa.
+ * Um Imperador que quer o bônus precisa mesmo sustentar meio minuto de fôlego
+ * na frente do grupo; um Principiante resolve em uma linha. A dificuldade da
+ * interpretação escala junto com o que ela paga.
+ *
+ * Assinaturas (◆) miram o topo da faixa do próprio rank — são a magia que
+ * define o patamar, e devem ser a mais custosa de recitar dele.
+ */
+export const INCANTATION_LENGTH: Record<RankName, { min: number; max: number }> = {
+  Principiante: { min: 90, max: 140 },
+  Intermediário: { min: 140, max: 200 },
+  Avançado: { min: 200, max: 280 },
+  Santo: { min: 280, max: 380 },
+  Rei: { min: 380, max: 500 },
+  Imperador: { min: 500, max: 650 },
+  Deus: { min: 500, max: 900 },
+};
+
+/**
+ * Cap. 2, §2: o cântico só paga o Bônus de Recitação Perfeita se alcançar o
+ * PISO do rank (2026-09-03).
+ *
+ * Antes disto o bônus era automático: bastava a magia ter um cântico escrito.
+ * Uma auditoria de todas as 149 magias achou **55 com cântico abaixo do piso do
+ * próprio rank** — Barreira, Cura, Desintoxicação, Invocação e Bardo estavam
+ * quase inteiras fora da escada. "Não caias. Ainda não. Prontidão!" são 35
+ * caracteres e pagava Vantagem no acerto, o mesmo que um cântico de 380 de rank
+ * Rei. O bônus mais forte do livro estava sendo distribuído de graça, e o
+ * incentivo era escrever cânticos CURTOS — exatamente o contrário do que o
+ * capítulo promete.
+ *
+ * Agora o piso é a porta. Um cântico abaixo dele não é um erro: é uma magia
+ * rápida de propósito (Prontidão, Rejeitar a Morte, Luz Absoluta, Lança de
+ * Plasma, Explosão Silenciosa — todas de emergência, e todas com `costNote`
+ * explicando a pressa). A velocidade É o benefício dela, e o livro passa a
+ * imprimir "Sem bônus de recitação" na carta, em vez de dar as duas coisas.
+ *
+ * A regra se mede sozinha a partir de INCANTATION_LENGTH, então escrever um
+ * cântico curto novo desliga o bônus dele automaticamente — ninguém precisa
+ * lembrar de marcar um campo.
+ */
+export function qualifiesForRecitationBonus(
+  incantation: string | undefined,
+  rank: RankName
+): boolean {
+  if (!incantation) return false;
+  return incantation.replace(/\\n/g, "\n").trim().length >= INCANTATION_LENGTH[rank].min;
+}
 
 // Capítulo 1, seção 3: quantos "conhecimentos" (magias/talentos) a árvore precisa ter
 // para liberar a COMPRA do próximo rank, e quanto custa em PA desbloquear esse rank.
 export const RANK_REQUIREMENTS: Record<RankName, { knowledgeRequired: number; paCost: number }> = {
   Principiante: { knowledgeRequired: 0, paCost: 1 },
-  Intermediário: { knowledgeRequired: 2, paCost: 1 },
-  Avançado: { knowledgeRequired: 4, paCost: 2 },
-  Santo: { knowledgeRequired: 6, paCost: 2 },
-  Rei: { knowledgeRequired: 8, paCost: 3 },
-  Imperador: { knowledgeRequired: 10, paCost: 3 },
+  Intermediário: { knowledgeRequired: 3, paCost: 1 },
+  Avançado: { knowledgeRequired: 6, paCost: 2 },
+  Santo: { knowledgeRequired: 9, paCost: 2 },
+  Rei: { knowledgeRequired: 12, paCost: 3 },
+  Imperador: { knowledgeRequired: 15, paCost: 3 },
+  Deus: { knowledgeRequired: 18, paCost: 4 },
 };
 
 /**
@@ -89,7 +153,28 @@ export const ATTRIBUTE_CREATION_MAX = 4;
  * cap e deixasse o jogador com 5/6 atributos no 4 sem nenhum custo.
  */
 export const ATTRIBUTE_CREATION_POINTS = 2;
-export const ATTRIBUTE_PA_COST_PER_POINT = 2;
+/**
+ * Cap. 1, §2: custo em PA da N-ésima compra de Atributo (N começa em 1) —
+ * progressivo, não fixo. 1 PA nas duas primeiras compras, 2 PA nas duas
+ * seguintes, 3 PA nas duas seguintes, e assim por diante.
+ *
+ * Isto era um número fixo (2 PA por ponto) até 2026-09-03, e a ficha imprimia
+ * esse número fixo na tela enquanto `getAttributePaCost` já cobrava a escada
+ * progressiva desde a auditoria anterior. O jogador via um total de PA gasto
+ * que não batia com a soma das linhas do próprio painel. Agora existe uma
+ * função só, e ela é a origem tanto do que o motor cobra quanto do que o livro
+ * e a ficha imprimem.
+ */
+export function attributePaCostForPurchase(n: number): number {
+  return Math.floor((n - 1) / 2) + 1;
+}
+
+/** Custo total em PA de `count` pontos de Atributo comprados acima do orçamento da criação. */
+export function attributePaCostTotal(count: number): number {
+  let total = 0;
+  for (let i = 1; i <= count; i++) total += attributePaCostForPurchase(i);
+  return total;
+}
 
 /**
  * Cap. 1, §2: Vantagem permanente em TODOS os Testes de Resistência de um
@@ -100,7 +185,24 @@ export const ATTRIBUTE_PA_COST_PER_POINT = 2;
  * nenhum PA contado, nada no PDF. Era uma compra que o livro vendia e o sistema
  * não sabia que existia.
  */
-export const SAVE_ADVANTAGE_PA_COST = 2;
+/**
+ * Cap. 1, §2: custo em PA da N-ésima compra de Vantagem em Testes de
+ * Resistência (N começa em 1) — 2, 3, 4, e daí 4 pra sempre (teto).
+ *
+ * Mesma história do custo de atributo acima: era a constante fixa 2, a ficha
+ * imprimia `count × 2`, e `getSaveAdvantagePaCost` já cobrava a escada. Uma
+ * ficha com as cinco compras mostrava 10 PA numa linha e 17 PA no total.
+ */
+export function saveAdvantagePaCostForPurchase(n: number): number {
+  return Math.min(4, 2 + (n - 1));
+}
+
+/** Custo total em PA de `count` compras de Vantagem em Resistência. */
+export function saveAdvantagePaCostTotal(count: number): number {
+  let total = 0;
+  for (let i = 1; i <= count; i++) total += saveAdvantagePaCostForPurchase(i);
+  return total;
+}
 
 /** Cap. 1, §2: 1 PA compra 2 Perícias. */
 export const SKILLS_PER_PA = 2;
@@ -292,6 +394,24 @@ export interface AbilityDef {
   signature?: boolean;
   /** Ritual: não pode ser encurtado, geralmente custa mais Ações. */
   ritual?: boolean;
+  /**
+   * Por que ESTA magia foge da tabela do rank (Cap. 2, "Nem toda magia obedece
+   * à tabela") — 2026-09-02.
+   *
+   * Até esta data as 149 magias do livro copiavam `MAGIC_ACTIONS[rank]` e
+   * `RANK_PA_COST[rank]` sem exceção: toda magia Avançada custava 3 Ações e 2
+   * PA, sempre, e o rank virava a única variável de design que existia. O
+   * problema não é a tabela — é ela ser inescapável: uma magia que purifica o
+   * poço de uma vila e uma que abre a garganta de um homem custavam o mesmo
+   * porque nasceram no mesmo patamar.
+   *
+   * Quando `actions` ou `paCost` divergem do padrão do rank, este campo é
+   * OBRIGATÓRIO e explica a troca em uma frase (o self-check de
+   * scripts/check-magias.mts falha sem ele). Sem essa nota, um desvio é
+   * indistinguível de um erro de digitação — pra quem lê a ficha e pra quem
+   * mantém o livro seis meses depois.
+   */
+  costNote?: string;
   range: string;
   actions: {
     normal: number;
@@ -322,11 +442,43 @@ export interface TreeRankDef {
   abilities: AbilityDef[];
 }
 
+/**
+ * A Mecânica Central de uma árvore (Cap. 3, "Como Ler uma Árvore") — 2026-09-03.
+ *
+ * Toda árvore SEMPRE teve uma ideia própria, e nenhuma delas dizia qual era.
+ * O que existia era `tagline`, uma frase de sabor que o livro nem sequer
+ * imprimia: a mesa abria o catálogo de Terra e via 24 magias, sem nenhuma linha
+ * explicando que a escola inteira gira em torno de prender primeiro e enterrar
+ * depois. Quem já sabia jogar deduzia lendo tudo; quem não sabia escolhia a
+ * árvore pelo nome.
+ *
+ * Os quatro campos são deliberadamente rígidos, porque é o rigor que torna as
+ * dezenove comparáveis lado a lado:
+ *
+ * - `tag`   — o rótulo curto, o MESMO que aparece entre colchetes na Maestria
+ *             de 1º patamar da árvore. É o gancho de memória.
+ * - `hook`  — uma frase: o que esta árvore faz que nenhuma outra faz.
+ * - `loop`  — o ciclo de jogo, na ordem em que acontece na mesa. Dois a quatro
+ *             passos, cada um uma ação concreta, nunca um adjetivo.
+ * - `cost`  — o que ela deliberadamente NÃO faz. Uma árvore sem fraqueza
+ *             declarada é uma árvore que ninguém sabe quando não escolher, e é
+ *             assim que se escreve um sistema em que todo mundo joga a mesma
+ *             ficha.
+ */
+export interface TreeMechanic {
+  tag: string;
+  hook: string;
+  loop: string[];
+  cost: string;
+}
+
 export interface Tree {
   id: string;
   name: string;
   category: "magia" | "corpo" | "utilidade";
   subgroup: string;
+  /** A ideia única da árvore, explicada no topo do catálogo dela (Cap. 3). */
+  mechanic?: TreeMechanic;
   /** Nome cosmético do rank nesta árvore (ex: Armas Pesadas usa "Briguento" em vez de "Principiante"). Mecânica (RANK_BONUS/RANK_REQUIREMENTS) é sempre a do RankName real. */
   rankLabels?: Partial<Record<RankName, string>>;
   /** Atributo(s) que alimentam o BC/CD desta árvore (texto livre — ex: "Força ou Agilidade"). */

@@ -1,4 +1,4 @@
-import { RANKS } from "@/lib/types";
+import { INCANTATION_LENGTH, RANKS } from "@/lib/types";
 import { MAGIC_ACTIONS } from "@/data/trees/shared";
 import { COMBINED_SPELLS } from "@/data/combinedSpells";
 import { getTreeById } from "@/data/trees";
@@ -128,13 +128,213 @@ export default function Chapter2() {
             Imperador de magia continua limitado a uma por turno, do rank mais fraco que ele conhece.
           </P>
         </Warning>
+
+        <SubTitle id="cap2-2-recitacao">O Bônus de Recitação Perfeita</SubTitle>
+        <P>
+          Toda e qualquer magia do jogo possui um encantamento escrito que deve ser verbalizado durante a conjuração.
+          Se o jogador recitar o encantamento completo em voz alta na mesa de forma <b>fluida, sem gaguejar e sem ler da ficha</b> (critério do Mestre),
+          ele recebe uma recompensa mecânica direta e proporcional ao tipo da magia:
+        </P>
+        <List
+          items={[
+            <span key="atk"><b>Ataque Mágico (com rolagem de acerto):</b> ganha <b>Vantagem</b> no teste de acerto contra a CA do alvo.</span>,
+            <span key="save"><b>Feitiço que impõe Teste de Resistência:</b> concede <b>+2 na CD</b> para os alvos resistirem.</span>,
+            <span key="rit"><b>Ritual ou Feitiço sem rolagem (suporte, barreira, cura):</b> <b>recupera PM igual ao seu Bônus de Rank</b> na respectiva escola.</span>,
+            <span key="enc"><b>Em Conjuração Encurtada ou Silenciosa:</b> se recitar perfeitamente o cântico original, ignora a penalidade de dados e área daquele lançamento.</span>,
+          ]}
+        />
+        <P className="text-xs text-parchment-600 dark:text-parchment-400 italic">
+          Esta mesma regra se aplica às <b>Canções de Bardo</b> (Árvore de Utilidade): cantar os versos da canção com maestria concede o mesmo benefício correspondente.
+        </P>
+
+        <SubTitle id="cap2-2-cantico-curto">Cântico Curto — a magia que não paga bônus</SubTitle>
+        <P>
+          O bônus acima é a recompensa mais forte que este livro entrega de graça, e ele tem um preço:{" "}
+          <b>tempo real de mesa</b>. Recitar trinta segundos de verso na frente do grupo, sem gaguejar e sem
+          ler, é difícil — e é justamente por ser difícil que vale Vantagem. Por isso existe um piso:
+        </P>
+        <Warning title="A regra">
+          <P>
+            Uma magia cujo cântico for <b>mais curto que o piso do rank dela</b> (tabela abaixo){" "}
+            <b>não concede o Bônus de Recitação Perfeita</b>, por melhor que você recite. A carta dela diz,
+            com todas as letras, <b>&ldquo;Sem bônus&rdquo;</b>.
+          </P>
+          <P>
+            Isso não é punição, e não é erro de escrita: são as <b>magias rápidas de propósito</b>. Prontidão
+            é uma Reação — um cântico de 140 caracteres a tornaria impossível de usar. Rejeitar a Morte
+            dispara no instante em que o aliado cairia. Luz Absoluta sai em 3 Ações onde o rank Imperador
+            pede 6. Nessas magias <b>a velocidade já É o benefício</b>, e o livro não paga as duas coisas.
+          </P>
+        </Warning>
+        <BookTable
+          headers={["Rank da Magia", "Piso do cântico (concede bônus a partir daqui)", "Teto de estilo"]}
+          rows={RANKS.map((rank) => [
+            rank,
+            `${INCANTATION_LENGTH[rank].min} caracteres`,
+            `${INCANTATION_LENGTH[rank].max} caracteres`,
+          ])}
+        />
+        <Aside title="Por que este piso existe">
+          <P>
+            Até a versão 0.0.3 o bônus era automático: bastava a magia ter um cântico escrito. Uma auditoria
+            das 149 magias do livro encontrou <b>55 com cântico abaixo do piso do próprio rank</b> —
+            Barreira, Cura, Desintoxicação, Invocação e Bardo estavam quase inteiras fora da escada.{" "}
+            <i>&ldquo;Não caias. Ainda não. Prontidão!&rdquo;</i> tem 35 caracteres e pagava exatamente o
+            mesmo que um cântico de 380 do rank Rei.
+          </P>
+          <P>
+            O efeito colateral era pior que o desequilíbrio: o sistema estava <b>premiando quem escrevesse
+              cânticos curtos</b>, que é o oposto exato do que este capítulo promete quando diz que o tamanho
+            é proporcional ao poder. Com o piso, a escada volta a significar alguma coisa — e escrever um
+            cântico curto passou a ser uma <i>escolha de design</i> declarada, com uma consequência visível
+            na carta, em vez de um atalho invisível.
+          </P>
+        </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap2-6">6. Interromper uma Conjuração</SectionTitle>
+        <P>
+          Uma magia de rank Santo custa 4 Ações; uma de Imperador, 6. Como o Capítulo 4 permite dividir o
+          cântico entre turnos, o conjurador passa rodadas inteiras <b>vulnerável e visível</b> antes de o
+          feitiço sair. Esta seção diz o que acontece nesse intervalo — e até esta versão o livro não dizia,
+          o que deixava a mesa inventando uma regra diferente por combate.
+        </P>
+
+        <SubTitle>Quando você está Conjurando</SubTitle>
+        <P>
+          Do instante em que você gasta a primeira Ação de uma magia até o instante em que ela sai, você está{" "}
+          <b>Conjurando</b>. Enquanto estiver:
+        </P>
+        <List
+          items={[
+            <span key="v"><b>Você é visível e audível.</b> Qualquer criatura que te veja ou te ouça sabe que uma magia está sendo preparada, e o Mestre deve dizer o rank aparente dela (pelo tamanho do cântico). Conjuração Silenciosa é a exceção: ninguém percebe.</span>,
+            <span key="a"><b>Você não pode fazer mais nada.</b> Mover-se metade do Deslocamento é permitido; atacar, usar item, conjurar outra magia ou usar Reação, não. Usar uma Reação encerra a conjuração na hora.</span>,
+            <span key="c"><b>Você não perde o progresso ao ser atacado</b> — perde ao <i>falhar no teste abaixo</i>. Sofrer dano não interrompe automaticamente.</span>,
+          ]}
+        />
+
+        <SubTitle>O Teste de Concentração</SubTitle>
+        <Warning title="A regra">
+          <P>
+            Sempre que você <b>sofrer dano</b> enquanto estiver Conjurando, faça um{" "}
+            <b>teste de resistência de Espírito</b> contra <b>CD 8 + metade do dano sofrido</b> (arredondado
+            pra baixo).
+          </P>
+          <List
+            items={[
+              <span key="s"><b>Sucesso:</b> o cântico segue. As Ações já gastas continuam valendo.</span>,
+              <span key="f"><b>Falha:</b> a conjuração é interrompida. Você perde <b>todas as Ações já gastas</b> e <b>metade do PM</b> da magia, arredondado pra cima. A magia não acontece.</span>,
+            ]}
+          />
+        </Warning>
+        <P>
+          <b>Meia dúzia de flechas não derruba um Imperador.</b> Um tiro de 6 de dano pede CD 11, que um
+          conjurador de rank alto passa quase sempre. Um Deus da Espada entregando 60 de dano num turno pede
+          CD 38, que ninguém passa. É exatamente esse o desenho: <b>o preço de conjurar devagar é ter alguém
+            segurando a linha de frente</b>, e a única coisa que realmente interrompe um apocalipse é outro
+          apocalipse.
+        </P>
+        <Aside title="Quatro coisas que a CD já resolve, pra não virarem regra nova">
+          <List
+            items={[
+              "Dano em área que atinge o conjurador conta uma vez, pelo total, não uma vez por fonte.",
+              "Dano contínuo (Em Chamas, veneno, magma) força o teste no início do turno, quando cobra.",
+              "Ficar Atordoado, Paralisado, Incapacitado, Surdo ou Soterrado interrompe SEM teste — o cântico exige voz e postura. Congelado e Atolado não interrompem: você continua falando.",
+              "Ser empurrado, derrubado ou movido contra a vontade interrompe sem teste se você sair do alcance ou perder a linha de visão do alvo declarado.",
+            ]}
+          />
+        </Aside>
+
+        <SubTitle>Interromper de Propósito</SubTitle>
+        <BookTable
+          headers={["Como", "Quem consegue", "O que acontece"]}
+          rows={[
+            [
+              "Bater forte",
+              "Qualquer um",
+              "Não existe manobra especial: cause dano e deixe a CD trabalhar. Contra um conjurador, concentrar o dano num golpe só vale mais que espalhá-lo em três.",
+            ],
+            [
+              "Vácuo Localizado (Vento, Principiante)",
+              "Magia de Vento",
+              "Remove o ar em volta da cabeça: o alvo não recita nada por 1 turno. Interrompe sem teste, e é a forma mais barata do livro.",
+            ],
+            [
+              "Selado (Barreira)",
+              "Magia de Barreira",
+              "Não interrompe — impede. Magia acima do rank da barreira gasta as Ações e o PM e falha sozinha, sem chegar a existir.",
+            ],
+            [
+              "Anulação (Barreira, Imperador)",
+              "Magia de Barreira",
+              "1 Reação e 4 PM anulam qualquer magia de rank Imperador ou inferior no instante em que é conjurada, sem teste. O conjurador perde PM e Ações.",
+            ],
+            [
+              "Corte de Braço (Deus da Espada, Principiante)",
+              "Estilo Deus da Espada",
+              "Não impede o cântico, mas derruba o foco: o dano do golpe entra normalmente no Teste de Concentração, e conjuradores têm PV baixo.",
+            ],
+          ]}
+        />
+        <Warning title="Ritual não se interrompe pela metade — se perde inteiro">
+          Uma magia marcada como <b>Ritual</b> não pode ser encurtada nem retomada. Se a conjuração for
+          interrompida em qualquer ponto, o ritual <b>falha por completo</b>: perde-se o PM inteiro (não a
+          metade) e todo o tempo investido. Em compensação, um ritual conduzido fora de combate, sem ninguém
+          por perto, nunca exige teste nenhum.
+        </Warning>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap2-7">7. Regras Gerais de Conjuração</SectionTitle>
+        <P>
+          As perguntas que toda mesa faz na primeira sessão, respondidas de uma vez. Nada aqui é novo em
+          espírito — é o que o livro já pressupunha, escrito onde dá pra achar.
+        </P>
+        <BookTable
+          headers={["Pergunta", "Resposta"]}
+          rows={[
+            [
+              "Preciso ver o alvo?",
+              "Sim, salvo quando a magia disser o contrário. Sem linha de visão você pode mirar um PONTO que enxergue (o centro de uma área), nunca uma criatura específica. Cobertura Total bloqueia; Cobertura parcial, não.",
+            ],
+            [
+              "Posso conjurar em corpo a corpo?",
+              "Pode, e sem penalidade — este livro não copia a regra de ataque de oportunidade por conjurar. O risco já está no Teste de Concentração: quem está adjacente é quem mais facilmente te faz falhar nele.",
+            ],
+            [
+              "Preciso das mãos livres?",
+              "Não. O cântico é a voz, e a Conjuração Silenciosa é a mana. Mãos importam só onde a magia disser (Toque, ou um Ritual que exija desenho).",
+            ],
+            [
+              "Posso segurar a magia pronta?",
+              "Só com Conjuração Silenciosa, e por no máximo 1 turno — é um dos três Bônus de Forma dela (§2). Fora isso, magia conjurada sai na hora.",
+            ],
+            [
+              "Quantas magias posso sustentar?",
+              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Barreira do Intermediário sustenta duas; Cura do Santo, duas). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
+            ],
+            [
+              "E se eu ficar sem PM no meio?",
+              "Você não pode começar uma magia que não consegue pagar. O PM é debitado quando a conjuração COMEÇA, não quando termina — é por isso que ser interrompido devolve só metade.",
+            ],
+            [
+              "Falha crítica (1 natural) em magia?",
+              "A magia falha e o PM se perde. Não existe tabela de acidente mágico neste livro — a Maestria de Intermediário da Água é a única exceção, e ela existe justamente pra dizer que falhar em silêncio é um privilégio que se compra.",
+            ],
+            [
+              "Duas magias iguais no mesmo alvo?",
+              "O efeito não empilha: vale o maior, e a duração é reiniciada. Isso vale para condições, PV temporários e barreiras.",
+            ],
+          ]}
+        />
       </Section>
 
       <Section>
         <SectionTitle id="cap2-3">3. Tempo de Conjuração por Rank</SectionTitle>
         <P>
-          Esta tabela governa quantas Ações uma magia custa. O cântico cresce com o rank — magias grandes
-          exigem que o grupo proteja o mago enquanto ele canta.
+          A tabela abaixo governa o tempo padrão de Ações por rank da magia. No entanto, <b>nem toda magia segue rigidamente esta tabela</b>:
+          magias rituais de rank baixo podem exigir mais Ações, e magias imperiais concentradas podem custar menos Ações pagando um custo de PM substancialmente maior.
         </P>
         <BookTable
           headers={["Rank da Magia", "Padrão", "Encurtada", "Silenciosa"]}

@@ -59,7 +59,7 @@ export const RANK_DEUS: Record<string, RankDeusEntry> = {
     body: [
       "O grimório de Desintoxicação de rank Deus existe. Está no Grande Templo de Millis, catalogado, guardado e vigiado.",
       "Ninguém no mundo consegue lê-lo.",
-      "Ele é o único registro conhecido de uma magia capaz de curar a Doença da Pedra Mágica — a aflição de Profundidade 6, aquela que transforma carne viva em minério lentamente e que nenhum patamar deste livro alcança. Todo mago de Desintoxicação do mundo sabe que o livro está lá. Nenhum deles conseguiu passar do primeiro verso.",
+      "Ele é o único registro conhecido de uma magia capaz de curar a Doença da Pedra Mágica — a única aflição de rank Deus do livro, aquela que transforma carne viva em minério lentamente e que nenhum patamar jogável alcança. Todo mago de Desintoxicação do mundo sabe que o livro está lá. Nenhum deles conseguiu passar do primeiro verso.",
       "Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o fim de uma campanha inteira, e o mundo deve mudar por causa disso.",
     ],
   },

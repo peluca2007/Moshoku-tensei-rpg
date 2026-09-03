@@ -11,6 +11,18 @@ export const INVOCACAO_TREE: Tree = {
   name: "Espíritos e Feras",
   category: "magia",
   subgroup: "Invocação",
+  mechanic: {
+    tag: "Pacto",
+    hook:
+      "A menor lista de feitiços do mundo. O que você compra aqui não são magias — são relações, e elas agem sozinhas.",
+    loop: [
+      "Feche o Pacto. Cada Pacto comprado com PA é uma criatura específica que aceitou te servir; você mantém 1 ativo por vez no começo, mais nos ranks seguintes.",
+      "Desenhe o círculo. A invocação padrão exige 10 minutos de preparo FORA de combate. Invocar sob pressão é função exclusiva de talento, e sai caro.",
+      "Solte. O invocado dura 1 hora ou até cair a 0 PV, tem PV iguais a 10 × seu Bônus de Rank, usa o SEU BC para acertar e para CD, e age sem gastar as suas Ações.",
+    ],
+    cost:
+      "Você depende de preparo. Um invocador emboscado sem círculo pronto é um mago de armadura leve com meia dúzia de feitiços — e um invocado que cai não volta antes do próximo Descanso Longo.",
+  },
   keyAttributeLabel: "Espírito",
   resourceLabel: "PM",
   tagline: "A menor lista de feitiços do mundo — o que você compra aqui não são feitiços, são relações (Pactos).",
@@ -30,17 +42,11 @@ export const INVOCACAO_TREE: Tree = {
       mastery: {
         name: "O Primeiro Círculo",
         description:
-          "Você aprende a fechar acordos com criaturas invocáveis e a desenhar círculos. Mantém 1 Pacto ativo por vez (sobe nos ranks seguintes). Um invocado permanece 1 hora ou até cair a 0 PV (não pode ser invocado de novo até o próximo Descanso Longo). PV do invocado = 10 × seu Bônus de Rank e eles usam o seu BC para acertar e para CD. Você entende e é entendido por qualquer criatura com quem tenha Pacto, sem idioma comum.",
+          "[Pacto] Você aprende a fechar acordos com criaturas invocáveis e a desenhar círculos. Mantém 1 Pacto ativo por vez (sobe nos ranks seguintes). Um invocado permanece 1 hora ou até cair a 0 PV (não pode ser invocado de novo até o próximo Descanso Longo). PV do invocado = 10 × seu Bônus de Rank e eles usam o seu BC para acertar e para CD. Você entende e é entendido por qualquer criatura com quem tenha Pacto, sem idioma comum.",
       },
       talents: [
-        { id: "convocar-sob-pressao", name: "Convocar sob Pressão", paCost: RANK_PA_COST.talent.Principiante, description: "Você pode invocar um Pacto em combate sem círculo prévio: consome 6 Ações (distribuíveis em turnos), o invocado surge com metade dos PV normais e reduz seu dado de dano em um degrau. Sem este talento, a única forma de invocar em combate é já ter um círculo desenhado no chão." },
+        { id: "invocacao-de-emergencia", name: "Invocação de Emergência", paCost: RANK_PA_COST.talent.Principiante, description: "Você pode invocar um Pacto em combate sem círculo prévio: gasta 1 Ação e o PM dobrado da invocação. O invocado surge com metade dos PV normais e seu dado de dano cai um degrau. Gaste 1 PA extra na compra deste talento para remover as penalidades de PV e dano (o custo em Ação e PM dobrado permanece)." },
         { id: "pacto-filhote", name: "Pacto: Filhote Evolutivo", paCost: RANK_PA_COST.talent.Principiante, description: "Você invoca um filhote de fera (1d4 garras, PV = 10 × seu Bônus de Rank). Ele não luta, mas pode executar uma Ação de ajuda por turno. Você pode gastar PA em ranks superiores pra evoluir o filhote." },
-        { id: "pacto-lobo-cinzento", name: "Pacto: Lobo Cinzento", paCost: RANK_PA_COST.talent.Principiante, description: "3d8 mordida, deslocamento 12m, rastreia por cheiro com Vantagem. Se outro aliado estiver adjacente ao alvo, derruba." },
-        { id: "pacto-corvo-mensageiro", name: "Pacto: Corvo Mensageiro", paCost: RANK_PA_COST.talent.Principiante, description: "Frágil (metade dos PV), voa 18m. Você vê e ouve pelo que ele vê e ouve a qualquer distância. Não luta." },
-        { id: "pacto-salamandra", name: "Pacto: Salamandra", paCost: RANK_PA_COST.talent.Principiante, description: "2d8 mordida + 2d6 ígneo, imune a fogo, aplica Em Chamas. Acende fogueiras e derrete fechaduras; do tamanho de um gato." },
-        { id: "pacto-espirito-de-pedra", name: "Pacto: Espírito de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "3d6 soco, Resistência a dano físico, Deslocamento 6m. Não recua nunca. Serve para segurar uma porta." },
-        { id: "reserva-do-invocador", name: "Reserva do Invocador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Invocação. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
-        { id: "traco-rapido", name: "Traço Rápido", paCost: RANK_PA_COST.talent.Principiante, description: "Você pode desenhar um círculo em combate como 1 Ação, gastando o dobro do PM normal da invocação. Não precisa do talento Convocar sob Pressão, mas ainda exige que a invocação pague o PM dobrado como penalidade." },
       ],
       abilities: [
         {
@@ -52,8 +58,8 @@ export const INVOCACAO_TREE: Tree = {
           range: "Círculo desenhado",
           actions: { normal: 1 },
           effect:
-            "Invoca uma criatura com quem você tenha Pacto. Por padrão, exige um círculo desenhado com antecedência (10 min de preparo fora de combate). O invocado surge e age a partir do próximo turno. Invocar um Pacto acima do Principiante custa +3 PM por patamar de diferença (Intermediário 6, Avançado 9, Santo 12, Rei 15).",
-          incantation: "O elo foi selado no solo. Venha a mim, força que atende ao meu chamado! Venha!",
+            "Invoca uma criatura com quem você tenha Pacto. Por padrão, exige um círculo desenhado com antecedência (10 min de preparo fora de combate). O invocado surge e age a partir do próximo turno. Invocar um Pacto acima do Principiante custa +3 PM por patamar de diferença (Intermediário 6, Avançado 9, Santo 12, Rei 15). Com o talento Invocação de Emergência, pode invocar em combate gastando 1 Ação e PM dobrado (o invocado vem com metade dos PV e -1 degrau de dano, a menos que tenha pago o PA extra para remover penalidades).",
+          incantation: "Eu não te ordeno e não te compro: eu te chamo pelo nome que nós dois combinamos, e espero que venhas porque prometeste vir. Chamado!",
         },
       ],
     },
@@ -86,6 +92,8 @@ export const INVOCACAO_TREE: Tree = {
           range: "90 metros",
           actions: { normal: 1 },
           effect: "Um invocado seu volta imediatamente para o círculo, ou é dispensado. Se dispensado antes de chegar a 0 PV, pode ser chamado de novo neste mesmo dia.",
+          incantation:
+            "Familiar que cumpriu o seu dever neste campo de batalha, desfaça o seu corpo físico e retorne em paz para o descanso das brumas até que o meu chamado te convoque novamente. Retorno!",
         },
       ],
     },
@@ -119,6 +127,8 @@ export const INVOCACAO_TREE: Tree = {
           range: "18 metros",
           actions: { normal: 1 },
           effect: "1 Reação, quando você ou um aliado for alvo de um ataque: um invocado seu troca de lugar com o alvo instantaneamente e recebe o ataque no lugar dele.",
+          incantation:
+            "Pelo elo de sangue e mana que nos une através do círculo de pacto, troque a sua posição com a minha no piscar de um olho e receba o impacto que era destinado a mim neste momento crucial. Substituição!",
         },
       ],
     },
@@ -147,6 +157,8 @@ export const INVOCACAO_TREE: Tree = {
           range: "Círculo de 12m",
           actions: { normal: 4 },
           effect: "Invoca todos os seus Pactos de uma vez, no mesmo turno. Uma vez por Descanso Longo.",
+          incantation:
+            "Este círculo não é uma jaula, e nunca foi — é uma porta que eu desenho com a minha própria mana pra que tu não precises abrir caminho sozinho do outro lado. Eu marco o chão, marco a hora combinada, marco o preço que já foi pago entre nós dois, e agora só me resta ficar de pé aqui e esperar o som dos teus passos chegando de um lugar que não tem chão. Círculo de Convocação!",
         },
       ],
     },
@@ -173,6 +185,8 @@ export const INVOCACAO_TREE: Tree = {
           range: "Alcance ilimitado",
           actions: { normal: 1 },
           effect: "Você e um invocado seu trocam de posição instantaneamente, em qualquer lugar do mundo.",
+          incantation:
+            "Existe um fio entre nós dois desde o dia em que fechamos o acordo, e esse fio nunca se importou com a distância — ele só se importa com quem puxa primeiro. Eu puxo agora. Toma o meu lugar neste chão, com o meu peso, o meu perigo e a lâmina que já vinha vindo, e devolve-me o teu, com tudo o que houver de errado nele. Não é fuga e não é covardia: é o que dois que confiam um no outro fazem quando um dos dois ainda tem fôlego e o outro já não tem mais nenhum. Troca de Lugares!",
         },
       ],
     },
@@ -199,6 +213,8 @@ export const INVOCACAO_TREE: Tree = {
           actions: { normal: 6 },
           effect:
             "Você invoca uma criatura com quem não tem Pacto — qualquer criatura de rank Rei ou inferior que já tenha visto, viva ou morta. Teste de Espírito com Desvantagem: se falhar, obedece por 1 minuto; se passar, vem mesmo assim, furiosa, e o Mestre decide o que ela faz.",
+          incantation:
+            "Durante toda a minha vida eu chamei pedindo, e vocês vieram porque quiseram vir. Mas existe uma hora, uma só, em que pedir não basta, e é a hora em que aquilo que está do outro lado da porta é grande demais pra que qualquer um de nós dois sobreviva sozinho a ele. Esta é essa hora. Então hoje eu não estou pedindo. Eu estou dizendo o teu nome inteiro, do primeiro som ao último, do jeito exato que só consegue dizer quem estava lá no dia em que ele te foi dado — e o mundo, que respeita nomes acima de qualquer outra coisa, vai te trazer aqui queiras tu ou não. Depois nós dois acertamos as contas. O Chamado que Não se Recusa!",
         },
         {
           id: "corpo-emprestado",
@@ -209,6 +225,8 @@ export const INVOCACAO_TREE: Tree = {
           actions: { normal: 1 },
           effect:
             "Por 10 minutos, você transfere sua consciência para o corpo de um invocado, usando os PV, ataques e sentidos dele; seu corpo fica inconsciente e protegido pelo círculo. Se o corpo emprestado morrer, você volta com 1 PV e um nível de Exaustão.",
+          incantation:
+            "Um pacto começa como um acordo entre dois que continuam sendo dois, e é assim que ele fica por anos, por décadas, por uma vida inteira de invocações e despedidas educadas na porta do círculo. Mas há um último degrau que quase ninguém sobe, e ele não se sobe com mana nem com estudo: sobe-se com confiança, e confiança não se compra em lugar nenhum. Eu te ofereço este corpo, com os ossos que ele tem e as cicatrizes que ele carrega sem esconder de ti, e peço em troca o teu — não pra te usar, mas pra que, por um instante só, não exista mais diferença entre a minha vontade e a tua força. Vem. Não vou fechar a porta atrás de ti. Corpo Emprestado!",
         },
       ],
     },

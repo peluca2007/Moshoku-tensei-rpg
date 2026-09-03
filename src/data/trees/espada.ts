@@ -5,6 +5,18 @@ export const ESPADA_TREE: Tree = {
   name: "Estilo Deus da Espada",
   category: "corpo",
   subgroup: "Espadachim",
+  mechanic: {
+    tag: "Letalidade",
+    hook:
+      "A vitória é de quem se move primeiro. O maior dano por turno do livro, sem uma única Reação defensiva.",
+    loop: [
+      "Vença a Iniciativa. Empates são sempre seus, você nunca fica Surpreso, e o seu primeiro ataque do combate tem Vantagem e rola o Dado de Arma uma vez a mais.",
+      "Bata. Nenhuma condição, nenhum preparo, nenhum recurso a montar — as técnicas somam Dados de Arma e tiram Ações do inimigo.",
+      "Termine antes do segundo turno. A árvore inteira é construída pra que o combate acabe enquanto a sua vantagem de abertura ainda vale.",
+    ],
+    cost:
+      "Doutrina: nenhuma armadura média ou pesada (vestir DESLIGA a árvore inteira), CA base −2, e nenhuma técnica concede Reação defensiva — a única exceção do livro é a Reversão de Luz. Se a luta passar do primeiro turno, você está apanhando.",
+  },
   keyAttributeLabel: "Força",
   resourceLabel: "PT",
   tagline:
@@ -25,7 +37,7 @@ export const ESPADA_TREE: Tree = {
       mastery: {
         name: "Quem Se Move Primeiro",
         description:
-          "Empates de Iniciativa sempre são seus. No primeiro turno de qualquer combate, seu primeiro ataque tem Vantagem e rola o Dado de Arma uma vez a mais. Você nunca fica Surpreso enquanto empunhar espada e estiver consciente.",
+          "[Letalidade] Empates de Iniciativa sempre são seus. No primeiro turno de qualquer combate, seu primeiro ataque tem Vantagem e rola o Dado de Arma uma vez a mais. Você nunca fica Surpreso enquanto empunhar espada e estiver consciente. Esta árvore não tem condição própria de propósito: dano puro, rápido e letal é a identidade dela — quem quer aplicar condição usa outra escola.",
       },
       talents: [
         { id: "braco-de-ferro", name: "Braço de Ferro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
