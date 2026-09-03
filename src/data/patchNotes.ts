@@ -16,6 +16,38 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.0.8",
+    date: "2026-09-03",
+    title: "A Régua Agora Se Mede",
+    sections: [
+      {
+        heading: "Apêndice C — a régua de dano saiu da prosa",
+        items: [
+          "A Tabela Comparativa de Dano por Turno — que o livro chama de \"a régua com que toda árvore futura deve ser medida\" — era 15 colunas × 6 linhas de valores digitados à mão dentro do texto. Era a única régua do livro que ninguém verificava, e ela já estava errada: o Sopro Podre caiu de 10d8 pra 6d8 no rework da 0.0.3 e a coluna da Desintoxicação continuou anunciando ~55 no 5º patamar, um número que a escola não alcança mais.",
+          "A tabela virou dado (src/data/danoPorTurno.ts) e o Apêndice C passa a renderizá-la de lá. Os números continuam sendo calibragem humana — \"dano por turno\" embute Ações, número de alvos e o Touki do inimigo, e nada disso está nos dados de uma magia isolada.",
+          "O que mudou é que agora existe um piso verificável: o check:livro compara cada célula com a média do maior golpe único daquele patamar, JÁ AMORTIZADA pelas Ações que ele custa (uma magia de 6 Ações entrega metade por turno — o próprio Apêndice C explica isso). Uma coluna pode ficar acima desse piso; nunca abaixo.",
+          "As quatro colunas que o próprio livro diz não medirem dano — Cura, Desintoxicação, Barreira e Escudos — ficam marcadas como fora da régua e não são verificadas. Cobrar delas uma promessa que elas nunca fizeram seria inventar regra.",
+          "A coluna do Vento no 3º patamar foi corrigida de ~30 para ~32, que é o que os dados entregam.",
+        ],
+      },
+      {
+        heading: "Testes — 35 fórmulas, zero cobertura",
+        items: [
+          "selectors.ts calcula TODO número da ficha (PV, PM, PT, PP, CA, BC e o PA gasto) em 35 funções puras, e não tinha um único teste. Duas das correções desta sessão foram exatamente do tipo que teste pega e revisão humana não: a ficha imprimia count × 2 PA enquanto o motor cobrava a escada progressiva, e perfectRecitationBonus lia um campo que nunca existiu no tipo.",
+          "23 testes cobrindo PV Máximos e o Fator de Vigor, PM e o cap dos dois primeiros patamares, Pontos de Touki, os custos progressivos de PA, o Custo de Abertura de árvore, BC/CD por árvore e a Classe de Armadura.",
+          "Cada expect cita a seção do livro que o justifica, então quando um quebra dá pra saber na hora se quebrou o código ou se a regra mudou. npm test.",
+        ],
+      },
+      {
+        heading: "Lint limpo pela primeira vez",
+        items: [
+          "Os quatro avisos que arrastavam há sessões foram resolvidos — e nenhum deles era um bug: os três hooks do Destiny Board estavam CERTOS como estavam, e adicionar as dependências que o linter pedia causaria loop (o mapa saltaria de volta ao centro sem parar, a câmera ficaria presa numa árvore). Cada um ganhou o disable com o motivo escrito.",
+          "O quarto era o idioma de descartar uma chave por destructuring. O eslint passou a aceitar o prefixo _ para variável, argumento e erro capturado, que é a convenção que já diz isso.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.0.7",
     date: "2026-09-03",
     title: "O Divino Não Se Compra",
