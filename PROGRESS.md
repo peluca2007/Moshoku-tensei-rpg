@@ -1,9 +1,8 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-03 — quatro passadas (0.0.3 a 0.0.6). A última fecha os buracos que a
-leitura completa do livro abriu: Rank Deus do Vendaval, escada de cura do Rei, `Corpo de Ferro` escalando,
-a regra de PM com uma redação só — e `npm run check:livro`, que passa a achar sozinho a classe de
-contradição que custou uma leitura manual inteira. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-03 — cinco passadas (0.0.3 a 0.0.8). A última fecha o buraco estrutural:
+`selectors.ts` tinha 35 funções e zero testes; agora tem 23. O Apêndice C saiu da prosa e virou dado
+verificado. E o lint está limpo pela primeira vez. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
@@ -125,6 +124,12 @@ patamar marca a sua entre colchetes, então a identidade é legível sem ler a �
 
 → Maestrias em `src/data/trees/*.ts` · condições no Cap. 4, §5.
 
+### Fórmula sem teste é fórmula que já divergiu (2026-09-03)
+
+`selectors.ts` calcula todo número da ficha e passou a ter suíte própria (`selectors.test.ts`). Cada
+`expect` cita a seção do livro que o justifica, então quando um quebra o autor sabe na hora se quebrou o
+código ou mudou a regra. Duas correções desta sessão foram do tipo que teste pega e revisão humana não.
+
 ### Uma fonte por número
 
 Todo custo em PA vem de uma função ou tabela exportada, nunca de um literal repetido na UI. A regressão de
@@ -166,6 +171,7 @@ some do total sem nada na ficha explicando por quê.
 
 ```bash
 npx tsc --noEmit      # tipos
+npm test              # testes das fórmulas (vitest)
 npm run lint          # eslint
 npm run check:livro   # confere dados × texto do livro (rodar dentro do WSL)
 ```

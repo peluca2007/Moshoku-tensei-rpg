@@ -5,6 +5,63 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.0.8 — "A Régua Agora Se Mede" · 2026-09-03
+
+### ⚔️ Balanceamento
+
+**O Apêndice C estava errado, e ninguém tinha como saber.** A Tabela Comparativa de Dano por Turno — que o
+livro chama de *"a régua com que toda árvore futura deve ser medida"* — eram 15 colunas × 6 linhas de
+valores `~N` digitados à mão dentro da prosa. Era a única régua do livro que nada verificava.
+
+> O Sopro Podre caiu de **10d8 → 6d8** no rework da 0.0.3, e a coluna da Desintoxicação continuou
+> anunciando **~55** no 5º patamar — um número que a escola não alcança mais.
+
+A tabela virou dado (`src/data/danoPorTurno.ts`) e o Apêndice C a renderiza de lá. Os números continuam
+sendo **calibragem humana** e têm que ser: "dano por turno" embute Ações, número de alvos e o Touki do
+inimigo, e nada disso está nos dados de uma magia isolada.
+
+O que mudou é que agora existe um **piso verificável**. O `check:livro` compara cada célula com a média do
+maior golpe único daquele patamar, **já amortizada pelas Ações que ele custa** — uma magia de 6 Ações
+entrega metade por turno, exatamente como o próprio Apêndice C explica. Uma coluna pode ficar *acima* do
+piso (várias Ações, vários alvos); nunca abaixo.
+
+As quatro colunas que o próprio livro diz **não medirem dano** — Cura, Desintoxicação, Barreira e Escudos
+— ficam marcadas como fora da régua. Cobrar delas uma promessa que nunca fizeram seria inventar regra.
+
+- Vento no 3º patamar corrigido de **~30 → ~32**, que é o que os dados entregam.
+
+---
+
+### 💻 Sincronia de Sistema
+
+**35 fórmulas, zero testes.** `selectors.ts` calcula todo número da ficha — PV, PM, PT, PP, CA, BC e o PA
+gasto — em 35 funções puras, e não tinha um único teste. Duas das correções desta sessão foram exatamente
+do tipo que um teste pega e uma revisão humana não:
+
+- a ficha imprimia `count × 2 PA` enquanto o motor cobrava a escada progressiva;
+- `perfectRecitationBonus` lia `ability.rank`, campo que `AbilityDef` nunca teve.
+
+**23 testes** cobrindo PV Máximos e o Fator de Vigor, PM e o cap dos dois primeiros patamares, Pontos de
+Touki, os custos progressivos de PA, o Custo de Abertura de árvore, BC/CD por árvore e a Classe de
+Armadura. Cada `expect` cita a seção do livro que o justifica — quando um quebra, dá para saber na hora se
+quebrou o código ou se a regra mudou.
+
+```bash
+npm test
+```
+
+### 🐛 Correções de Bugs
+
+**Lint limpo pela primeira vez.** Os quatro avisos que arrastavam há sessões foram resolvidos — e nenhum
+deles era um bug de verdade:
+
+- Os **três hooks do Destiny Board estavam certos como estavam**. Adicionar as dependências que o linter
+  pedia causaria loop: o mapa saltaria de volta ao centro sem parar, e a câmera ficaria presa numa árvore.
+  Cada um ganhou o `eslint-disable` com o motivo escrito.
+- O quarto era o idioma de descartar uma chave por destructuring. O eslint passou a aceitar o prefixo `_`
+  para variável, argumento e erro capturado — a convenção que já diz isso.
+
+---
 ## 0.0.7 — "O Divino Não Se Compra" · 2026-09-03
 
 ### 📖 Novas Regras e Simplificações

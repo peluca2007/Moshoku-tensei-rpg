@@ -12,7 +12,8 @@ são quatro leituras do mesmo `src/data/`.
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
-[![Versão do sistema](https://img.shields.io/badge/regras-0.0.7-8B1E3F)](PATCH_NOTES.md)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.0.8-8B1E3F)](PATCH_NOTES.md)
+[![Testes](https://img.shields.io/badge/testes-23%20passando-3FB950)](src/store/selectors.test.ts)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>
@@ -74,6 +75,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run dev` | Servidor de desenvolvimento (Turbopack) |
 | `npm run build` | Build de produção |
 | `npm start` | Sobe o build de produção |
+| `npm test` | Testes das fórmulas (vitest) |
 | `npm run lint` | ESLint |
 | `npx tsc --noEmit` | Checagem de tipos |
 | `npm run check:livro` | Confere a consistência entre os dados e o texto do livro |
@@ -111,6 +113,7 @@ src/
 │   ├── races.ts · backgrounds.ts · skills.ts · proficiencies.ts
 │   ├── shopItems.ts · startingKits.ts · combinedSpells.ts
 │   ├── rankDeus.ts · interview.ts · patchNotes.ts
+│   └── danoPorTurno.ts   a régua do Apêndice C, verificada por check:livro
 │
 ├── lib/           tipos e cálculos puros, sem React
 │   ├── types.ts   CharacterData, Tree, AbilityDef + as constantes do Cap. 1
@@ -119,7 +122,8 @@ src/
 │
 ├── store/         estado global (Zustand)
 │   ├── useCharacterStore.ts   roster + persistência + migrações
-│   └── selectors.ts           TODAS as fórmulas derivadas
+│   ├── selectors.ts           TODAS as fórmulas derivadas
+│   └── selectors.test.ts      os testes que travam essas fórmulas
 │
 ├── components/
 │   ├── book/      o livro de regras, capítulo a capítulo

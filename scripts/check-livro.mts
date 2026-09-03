@@ -2,7 +2,15 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { TREES } from "../src/data/trees/index";
 import { getRankDeusForTree } from "../src/data/rankDeus";
-import { INCANTATION_LENGTH, qualifiesForRecitationBonus } from "../src/lib/types";
+import { INCANTATION_LENGTH, RANKS, qualifiesForRecitationBonus } from "../src/lib/types";
+import { diceAverage } from "../src/lib/dice";
+import {
+  COLUNAS_CORPO,
+  COLUNAS_MAGIA,
+  DANO_POR_TURNO_CORPO,
+  DANO_POR_TURNO_MAGIA,
+  valorNumerico,
+} from "../src/data/danoPorTurno";
 import { MAGIC_ACTIONS } from "../src/data/trees/shared";
 
 /**
@@ -174,6 +182,74 @@ for (const tree of TREES) {
       }
     }
   }
+}
+
+// ---------------------------------------------------------------------------
+// 5. Apêndice C — a régua de dano não pode prometer menos do que a árvore entrega
+//
+// "Dano por turno" embute Ações, número de alvos e o Touki do inimigo, e nada
+// disso está nos dados de uma magia isolada — então a tabela continua sendo uma
+// calibragem humana. O que dá pra verificar é o PISO: uma coluna pode ficar
+// ACIMA da média do maior golpe único daquele patamar (várias Ações, vários
+// alvos), mas nunca abaixo dela.
+//
+// Foi assim que a régua envelheceu sem ninguém ver: o Sopro Podre caiu de 10d8
+// pra 6d8 no rework de 2026-09-03 e a coluna da Desintoxicação continuou
+// anunciando ~55 no 5º patamar — um número que a escola não alcançava mais.
+// ---------------------------------------------------------------------------
+/**
+ * A média do maior golpe único do patamar, JÁ AMORTIZADA pelas Ações que ele
+ * custa — que é a unidade em que o Apêndice C mede.
+ *
+ * O próprio livro avisa: "Magia não está amortizada pelas Ações. Uma magia de
+ * Imperador custa 6 Ações — dois turnos inteiros." Um turno tem 3 Ações, então
+ * uma magia de 6 Ações entrega metade do total por turno. Sem essa divisão o
+ * check acusaria o Sol Menor (221 de média, 6 Ações) contra uma coluna de 130,
+ * quando 130 é exatamente o número certo pra ele.
+ */
+function danoPorTurnoDaArvore(treeId: string, rankIndex: number): number {
+  const tree = TREES.find((t) => t.id === treeId);
+  const rank = RANKS[rankIndex];
+  const rd = tree?.ranks.find((r) => r.rank === rank);
+  if (!rd) return 0;
+  let melhor = 0;
+  for (const a of rd.abilities) {
+    const formula = a.damage?.normal;
+    if (!formula) continue;
+    let total = 0;
+    for (const m of formula.matchAll(/(\d+)d(\d+)/g)) total += diceAverage(`${m[1]}d${m[2]}`);
+    const acoes = a.reaction ? 1 : Math.max(1, a.actions.normal);
+    const turnos = Math.max(1, Math.ceil(acoes / 3));
+    const porTurno = total / turnos;
+    if (porTurno > melhor) melhor = porTurno;
+  }
+  return melhor;
+}
+
+const COLUNAS_DA_REGUA = new Set(
+  [...COLUNAS_MAGIA, ...COLUNAS_CORPO].filter((c) => c.regua !== false).map((c) => c.treeId)
+);
+
+for (const tabela of [DANO_POR_TURNO_MAGIA, DANO_POR_TURNO_CORPO]) {
+  tabela.forEach((linha, i) => {
+    for (const [treeId, celula] of Object.entries(linha.porArvore)) {
+      if (!COLUNAS_DA_REGUA.has(treeId)) continue;
+      // Célula com qualificador — "~22 + área", "~39 em 45m", "0 a ∞" — não é um
+      // número de dano por turno comparável: o livro escolheu descrever outra
+      // coisa ali de propósito. Verificar isso seria inventar uma regra que o
+      // texto não tem.
+      if (/[a-zA-Zà-úÀ-Ú∞]/.test(celula.replace(/^~?\d+\s*/, ""))) continue;
+      const prometido = valorNumerico(celula);
+      if (prometido === null) continue;
+      const piso = Math.round(danoPorTurnoDaArvore(treeId, i));
+      if (piso > 0 && prometido < piso) {
+        aviso(
+          `Apêndice C: ${treeId} no ${linha.patamar} promete ${celula}, mas o maior golpe único do ` +
+            `patamar já tem média ${piso} — a régua está abaixo do que a árvore entrega`
+        );
+      }
+    }
+  });
 }
 
 // ---------------------------------------------------------------------------

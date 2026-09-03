@@ -316,6 +316,11 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
     });
 
     return connections;
+    // Só `unlockedRanks` importa aqui: os conectores das árvores híbridas
+    // dependem de quais patamares estão abertos, e de mais nada da ficha.
+    // Depender de `character` inteiro recalcularia o grafo a cada tecla
+    // digitada no nome do personagem.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [character.unlockedRanks]);
 
   const recenter = () => {
@@ -329,10 +334,18 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
 
   useLayoutEffect(() => {
     recenter();
+    // Recentraliza quando o canvas muda de tamanho, e só então. `recenter` é
+    // recriada a cada render, então incluí-la na lista faria o mapa saltar de
+    // volta ao centro continuamente — o usuário nunca conseguiria arrastar.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canvasSize]);
 
   useLayoutEffect(() => {
     if (initialFocusTreeId) focusOnTree(initialFocusTreeId);
+    // Foca a árvore vinda do ?arvore= da URL uma vez por mudança de parâmetro.
+    // `focusOnTree` muda de identidade a cada render; incluí-la re-focaria a
+    // árvore sem parar, prendendo a câmera nela.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFocusTreeId]);
 
   function zoomBy(factor: number) {

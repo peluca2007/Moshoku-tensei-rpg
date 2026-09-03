@@ -1,3 +1,9 @@
+import {
+  COLUNAS_CORPO,
+  COLUNAS_MAGIA,
+  DANO_POR_TURNO_CORPO,
+  DANO_POR_TURNO_MAGIA,
+} from "@/data/danoPorTurno";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 export default function Appendices() {
@@ -64,26 +70,18 @@ export default function Appendices() {
           principal progredindo de 4 até 8.
         </P>
         <BookTable
-          headers={["Patamar", "Água", "Fogo", "Vento", "Terra", "Cura", "Desintox", "Barreira", "Invocação"]}
-          rows={[
-            ["1º", "~10", "~12", "~9", "~11", "—", "—", "—", "~13"],
-            ["2º", "~20", "~26", "~18", "~24", "—", "~8", "—", "~24"],
-            ["3º", "~28", "~40", "~30", "~36", "—", "~20", "—", "~38"],
-            ["4º", "~22 + área", "~62", "~45", "~52", "—", "~28", "—", "~55"],
-            ["5º", "~54", "~90", "~70", "~76", "~40", "~55", "~30", "~80"],
-            ["6º", "~39 em 45m", "~130", "~110", "~105", "~55", "~70", "~40", "~110"],
-          ]}
+          headers={["Patamar", ...COLUNAS_MAGIA.map((c) => c.label)]}
+          rows={DANO_POR_TURNO_MAGIA.map((l) => [
+            l.patamar,
+            ...COLUNAS_MAGIA.map((c) => l.porArvore[c.treeId] ?? "—"),
+          ])}
         />
         <BookTable
-          headers={["Patamar", "Espada", "Norte", "Suishin", "Arco", "Lutador", "Escudos", "Utilidade"]}
-          rows={[
-            ["1º", "~25", "~19", "~11", "~22", "~21", "~7", "~15 (1º turno)"],
-            ["2º", "~34", "~25", "~26", "~34", "~32", "~9", "~18"],
-            ["3º", "~62", "~34", "~40", "~48", "~44", "~11", "~22"],
-            ["4º", "~78", "~42", "~60", "~62", "~58", "~13", "~26"],
-            ["5º", "~98", "~55", "~85", "~78", "~74", "~15", "~30"],
-            ["6º", "~118", "~87", "0 a ∞", "~91", "~95", "~18", "~31"],
-          ]}
+          headers={["Patamar", ...COLUNAS_CORPO.map((c) => c.label)]}
+          rows={DANO_POR_TURNO_CORPO.map((l) => [
+            l.patamar,
+            ...COLUNAS_CORPO.map((c) => l.porArvore[c.treeId] ?? "—"),
+          ])}
         />
         <Warning title="Três coisas que a tabela não diz sozinha">
           <P>
