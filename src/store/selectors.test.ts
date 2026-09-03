@@ -12,6 +12,7 @@ import {
   getAttackBonus,
   getTrainedBody,
 } from "./selectors";
+import { TREES } from "@/data/trees";
 import {
   attributePaCostTotal,
   ATTRIBUTE_CREATION_POINTS,
@@ -326,4 +327,55 @@ describe("Pré-requisito de compra (2026-09-03)", () => {
       canPurchaseAbility(escudeiro, "cavalaria-e-escudos", "Principiante", "talent", "puro-escudo").ok
     ).toBe(true);
   });
+});
+
+describe("Padrão das Reservas — PT escala como PV e PM (2026-09-03)", () => {
+  it("um talento de PT rende por patamar, não um número fixo", () => {
+    // Antes desta data PT era a única das três reservas fora do Padrão do
+    // Cap. 1: vinha como "+2 PT Máximos" fixo. Cinco árvores tinham DOIS
+    // talentos assim em patamares diferentes, fazendo a mesma coisa com um
+    // número diferente — comprar o segundo não mudava nada além do total.
+    const umPatamar = ficha({
+      startingTreeId: "deus-da-espada",
+      unlockedRanks: [{ treeId: "deus-da-espada", rank: "Principiante" }],
+      purchasedAbilities: [],
+    });
+    const tresPatamares = ficha({
+      startingTreeId: "deus-da-espada",
+      unlockedRanks: [
+        { treeId: "deus-da-espada", rank: "Principiante" },
+        { treeId: "deus-da-espada", rank: "Intermediário" },
+        { treeId: "deus-da-espada", rank: "Avançado" },
+      ],
+    });
+    const comTalento = (c: CharacterData) => ({
+      ...c,
+      purchasedAbilities: [
+        { treeId: "deus-da-espada", rank: "Intermediário" as const, kind: "talent" as const, id: "aco-rapido" },
+      ],
+    });
+
+    const ganho1 = getPtPool(comTalento(umPatamar)) - getPtPool(umPatamar);
+    const ganho3 = getPtPool(comTalento(tresPatamares)) - getPtPool(tresPatamares);
+    expect(ganho1).toBe(1);
+    expect(ganho3).toBe(3);
+  });
+
+  it("nenhum talento existe SÓ pra dar PT fixo", () => {
+    // A redundância não era usar o campo `pt` — era existir um talento cuja
+    // única função é "+N PT Máximos", repetido em dois patamares da mesma
+    // árvore. Um rider de PT em cima de um talento de PV (Ombro de Pedra)
+    // continua legítimo: ele não compete com nada.
+    const soPtFixo: string[] = [];
+    for (const tree of TREES) {
+      for (const rd of tree.ranks) {
+        for (const t of rd.talents) {
+          const g = t.grants;
+          if (!g) continue;
+          const soPt = g.pt !== undefined && !g.hpPerRank && !g.mpPerRank && !g.ptPerRank;
+          if (soPt) soPtFixo.push(`${tree.id}/${t.id}`);
+        }
+      }
+    }
+    expect(soPtFixo).toEqual([]);  });
 });

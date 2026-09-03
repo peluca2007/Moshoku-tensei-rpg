@@ -5,6 +5,85 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.0.9 — "Ganhar Duas Vezes a Mesma Coisa" · 2026-09-03
+
+### ⚔️ Balanceamento
+
+**Pontos de Touki entram no Padrão das Reservas.** PT era a única das três reservas fora do padrão do
+Cap. 1: PV e PM escalavam por patamar, PT vinha como número fixo. A consequência não era só
+inconsistência — era **redundância**:
+
+| Árvore | Talento A | Talento B |
+| --- | --- | --- |
+| Deus da Espada | Aço Rápido (Intermediário) `+2 PT` | Fôlego de Aço (Avançado) `+3 PT` |
+| Cavalaria e Escudos | Fôlego de Sentinela (Interm.) `+2 PT` | Aço Paciente (Avançado) `+4 PT` |
+| Estilo Vendaval | Fôlego do Vendaval (Princip.) `+2 PT` | Segunda Rajada (Avançado) `+3 PT` |
+
+Comprar o segundo não mudava nada na mesa além do total. Agora os **sete talentos de reserva de PT**
+rendem `+1 PT por patamar` naquela árvore, como os de PV e PM sempre renderam — um talento só cobre a
+árvore inteira.
+
+Os **três que sobravam viraram recarga**, não tanque maior:
+
+> Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank.
+
+No Escudeiro — que gasta PT mais rápido que qualquer árvore — é o que faz a segunda metade da luta ainda
+ter um Escudeiro nela. No Deus da Espada, compra um segundo primeiro turno. No Vendaval, vem com 9 metros
+de deslocamento que contam para a Distância Roubada.
+
+**Estilo Vendaval — duas habilidades que só repetiam um patamar anterior.**
+
+- **Mil Cortes no Vendaval** (Rei) era o **Redemoinho de Aço** (Intermediário) com raio 3× e dado 2×,
+  quatro patamares depois — o mesmo botão, mais caro. Agora o raio **vem da Distância Roubada** do turno
+  (3m a 12m): você não gira no lugar, atravessa o grupo e corta no caminho. Cada alvo que cair devolve 1 PT.
+- **Corte que o Vento Termina** (Santo) era o **Corte do Horizonte Curto** (Avançado) com mais dado e mais
+  Ação. Agora a segunda lâmina segue por toda a sua Distância Roubada — e **se você não se moveu neste
+  turno, ela não sai**.
+
+---
+
+### 📖 Novas Regras e Simplificações
+
+**O chefe solo não sobrevivia a um grupo de cinco.** A regra do Apêndice G era *"chefe único: dobre o PV e
+mantenha o dano"*. Ela resolve a vida do chefe e ignora o problema real: **economia de ação**. Cinco
+personagens agem quinze vezes por rodada; um chefe age três.
+
+Numa simulação de 2.000 combates, um grupo de 3º patamar derrubava o chefe de *Elite* — **um patamar acima
+deles** — em 2,4 rodadas perdendo 0,7 personagem. E ainda vencia 59% contra um chefe **dois** patamares
+acima.
+
+> **Regra nova:** o chefe ganha uma rodada inteira a cada dois personagens do grupo (mínimo 1). Um grupo de
+> cinco enfrenta um chefe que age **duas vezes por rodada**.
+
+| Chefe | Antes | Depois |
+| --- | --- | --- |
+| Mesmo patamar | 100%, **0,0** mortes | 100%, 0,9 mortes |
+| Um acima | 100%, 0,7 mortes | **70%**, 3,6 mortes |
+| Dois acima | **59%** | 0% |
+
+O chefe não ficou mais difícil de matar — ficou **perigoso enquanto está vivo**, que é a única coisa que
+faz um combate contra um inimigo só valer a mesa.
+
+---
+
+### 💻 Sincronia de Sistema
+
+**`npm run check:redundancia`** — detector novo. Compara toda habilidade, talento e Maestria com as outras
+da **mesma árvore, entre patamares diferentes**, por sobreposição de vocabulário. Ele procura a progressão
+que não progride — *"ganho isso no 1º e ganho quase igual no 3º"* — que nenhum check de consistência pega,
+porque não há contradição nenhuma, só repetição.
+
+Achou **10 pares** acima de 40%: cinco eram escadas legítimas (Bala de Pedra → Canhão de Pedra), três eram
+os talentos de PT, dois eram o Vendaval. Ele ignora de propósito os talentos de reserva entre si — o Padrão
+das Reservas existe justamente para que eles digam a mesma frase.
+
+### 🐛 Correções de Bugs
+
+- **`getPtPool` ignorava o campo escalar novo** e lia só o de PT fixo: os sete talentos convertidos estavam
+  concedendo **zero**. Pego por um teste escrito junto com a mudança, antes de qualquer ficha ver.
+- 28 testes no total (eram 26).
+
+---
 ## 0.0.8 — "A Régua Agora Se Mede" · 2026-09-03
 
 ### ⚔️ Balanceamento

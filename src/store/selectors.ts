@@ -188,6 +188,7 @@ function getTalentReserve(state: StoreState, field: keyof ReserveGrant): number 
       ?.talents.find((t) => t.id === a.id);
     const value = def?.grants?.[field];
     if (!value) return sum;
+    // `pt` é o legado de valor fixo; `ptPerRank` escala como PV e PM.
     if (field === "pt") return sum + value;
     return sum + value * state.unlockedRanks.filter((u) => u.treeId === a.treeId).length;
   }, 0);
@@ -305,7 +306,8 @@ export function getPtPool(state: StoreState): number {
     const espirito = getFinalAttribute(state, "espirito");
 
     const plenoRanks = corpoRanks.filter((u) => RANKS.indexOf(u.rank) >= ptPlenoThresholdIndex(u.treeId));
-    if (plenoRanks.length === 0) return Math.max(vigor, 1) + getTalentReserve(state, "pt");
+    if (plenoRanks.length === 0)
+      return Math.max(vigor, 1) + getTalentReserve(state, "pt") + getTalentReserve(state, "ptPerRank");
 
     // Crescimento vem do campo `ptGained` de cada patamar — antes era um
     // `treeId === "cavalaria-e-escudos" ? 2 : 1` escrito à mão aqui, e o campo
@@ -316,7 +318,9 @@ export function getPtPool(state: StoreState): number {
       return sum + (rankDef?.ptGained ?? 1);
     }, 0);
 
-    return vigor + espirito + crescimento + getTalentReserve(state, "pt");
+    return (
+      vigor + espirito + crescimento + getTalentReserve(state, "pt") + getTalentReserve(state, "ptPerRank")
+    );
   }
 
   return state.overrides.maxPt ?? computeNatural();

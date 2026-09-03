@@ -227,7 +227,7 @@ export const ESCUDOS_TREE: Tree = {
           "O alcance de Sob Minha Guarda sobe para 4,5 metros, e você pode proteger até 2 aliados (em vez de 1). Você não pode ser empurrado, derrubado, agarrado nem movido contra a vontade com os pés no chão e escudo na mão. Com armadura pesada, Resistência a dano de área.",
       },
       talents: [
-        { id: "folego-de-sentinela", name: "Fôlego de Sentinela", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
+        { id: "folego-de-sentinela", name: "Fôlego de Sentinela", paCost: 1, description: "+1 PT por patamar seu em Cavalaria e Escudos. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { ptPerRank: 1 } },
         { id: "a-porta-sou-eu", name: "A Porta Sou Eu", paCost: 1, description: "Enquanto bloquear uma passagem de até 3m, criaturas Médias ou menores não atravessam sem antes te derrubar." },
         { id: "escudo-de-corpo-inteiro",
           requires: ["puro-escudo"], name: "Escudo de Corpo Inteiro", paCost: 1, description: "Requer Puro Escudo. Você recebe +2 adicional na CA enquanto empunhar apenas escudo(s). Aliados adjacentes a você recebem Meia-Cobertura (+2 CA) passivamente." },
@@ -298,7 +298,7 @@ export const ESCUDOS_TREE: Tree = {
       talents: [
         { id: "casco-escudos", name: "Casco", paCost: 2, description: "Você tem Resistência a dano físico de armas mundanas enquanto empunhar escudo." },
         { id: "guarda-ampla", name: "Guarda Ampla", paCost: 2, description: "O número de aliados Sob Sua Guarda passa a ser o dobro do seu Bônus de Rank." },
-        { id: "aco-paciente", name: "Aço Paciente", paCost: 2, description: "+4 PT Máximos." , grants: { pt: 4 } },
+        { id: "aco-paciente", name: "Aço Paciente", paCost: 2, description: "Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank em Cavalaria e Escudos. Você gasta PT mais rápido que qualquer outra árvore do livro — este talento existe pra que a segunda metade da luta ainda tenha um Escudeiro nela." },
       ],
       abilities: [
         {

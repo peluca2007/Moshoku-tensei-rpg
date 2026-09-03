@@ -109,7 +109,7 @@ export const LUTADOR_TREE: Tree = {
       },
       talents: [
         { id: "maos-grandes", name: "Mãos Grandes", paCost: 1, description: "Você agarra criaturas de qualquer tamanho e carrega o dobro de peso." },
-        { id: "folego-de-fosso", name: "Fôlego de Fosso", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
+        { id: "folego-de-fosso", name: "Fôlego de Fosso", paCost: 1, description: "+1 PT por patamar seu em Armas Pesadas. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { ptPerRank: 1 } },
         { id: "cicatriz-velha", name: "Cicatriz Velha", paCost: 1, description: "Enquanto estiver com metade ou menos dos PV, seus ataques ganham +1 Dado de Arma." },
       ],
       abilities: [

@@ -16,6 +16,50 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.0.9",
+    date: "2026-09-03",
+    title: "Ganhar Duas Vezes a Mesma Coisa",
+    sections: [
+      {
+        heading: "Pontos de Touki entram no Padrão das Reservas",
+        items: [
+          "PT era a única das três reservas fora do Padrão do Cap. 1: PV e PM escalavam por patamar, PT vinha como número fixo. A consequência não era só inconsistência — era redundância. CINCO árvores tinham DOIS talentos de PT em patamares diferentes fazendo a mesma coisa com um número diferente: \"+2 PT Máximos\" no Intermediário, \"+3 PT Máximos\" no Avançado.",
+          "Os sete talentos de reserva de PT agora rendem +1 PT POR PATAMAR seu naquela árvore, como os de PV e PM sempre renderam. Um talento só cobre a árvore inteira.",
+          "Os três talentos que sobravam deixaram de ser tanque maior e viraram RECARGA: uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank. No Escudeiro, que gasta PT mais rápido que qualquer árvore, isso é o que faz a segunda metade da luta ainda ter um Escudeiro nela. No Deus da Espada, compra um segundo primeiro turno. No Vendaval, vem junto com 9 metros de deslocamento que contam para a Distância Roubada.",
+        ],
+      },
+      {
+        heading: "Estilo Vendaval — duas habilidades que só repetiam um patamar anterior",
+        items: [
+          "Mil Cortes no Vendaval (Rei) era o Redemoinho de Aço (Intermediário) com o raio 3× maior e o dado 2× maior, quatro patamares depois — o mesmo botão, mais caro. Agora o raio VEM da Distância Roubada do turno (3m a 12m): você não gira no lugar, atravessa o grupo e corta no caminho. Cada alvo que cair devolve 1 PT.",
+          "Corte que o Vento Termina (Santo) era o Corte do Horizonte Curto (Avançado) com mais dado e mais Ação. Agora a segunda lâmina segue por toda a sua Distância Roubada — e se você não se moveu neste turno, ela não sai.",
+        ],
+      },
+      {
+        heading: "O chefe solo não sobrevivia a um grupo de cinco",
+        items: [
+          "A regra do Apêndice G era \"chefe único: dobre o PV e mantenha o dano\". Ela resolve a vida do chefe e ignora o problema real, que é economia de ação: cinco personagens agem quinze vezes por rodada, um chefe age três.",
+          "Numa simulação de 2.000 combates, um grupo de 3º patamar derrubava o chefe de Elite (um patamar ACIMA deles) em 2,4 rodadas perdendo 0,7 personagem — e ainda vencia 59% contra um chefe DOIS patamares acima.",
+          "Regra nova: o chefe ganha uma rodada inteira a cada dois personagens do grupo (mínimo 1). Um grupo de cinco enfrenta um chefe que age duas vezes por rodada. A curva virou o que devia ser: mesmo patamar 100% com uma baixa, um acima 70% com o grupo quase inteiro no chão, dois acima 0%.",
+        ],
+      },
+      {
+        heading: "npm run check:redundancia",
+        items: [
+          "Detector novo: compara toda habilidade, talento e Maestria com todas as outras da MESMA árvore, entre patamares diferentes, por sobreposição de vocabulário. Ele procura a progressão que não progride — \"ganho isso no 1º e ganho quase igual no 3º\" — que nenhum check de consistência pega, porque não há contradição nenhuma, só repetição.",
+          "Achou 10 pares acima de 40%. Cinco eram escadas legítimas (Bala de Pedra → Canhão de Pedra), três eram os talentos de PT e dois eram o Vendaval. Ele ignora de propósito os talentos de reserva entre si: o Padrão das Reservas existe justamente pra que eles digam a mesma frase.",
+        ],
+      },
+      {
+        heading: "Correções",
+        items: [
+          "getPtPool lia só o campo de PT fixo e ignorava o novo campo escalar — os sete talentos convertidos estavam concedendo ZERO. Pego por um teste escrito junto com a mudança, antes de qualquer ficha ver.",
+          "28 testes no total (eram 26).",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.0.8",
     date: "2026-09-03",
     title: "A Régua Agora Se Mede",

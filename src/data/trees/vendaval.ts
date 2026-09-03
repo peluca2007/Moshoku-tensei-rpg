@@ -49,7 +49,7 @@ export const VENDAVAL_TREE: Tree = {
           "+3 metros de Deslocamento. Uma vez em cada um dos seus turnos, afastar-se de um inimigo não provoca ataque de oportunidade. Uma vez por combate, ao errar um ataque corpo a corpo, o vento absorve o impacto: reposicione-se até 3m sem gastar Ação. [Distância Roubada] A mecânica que define a árvore: guarde a distância que você percorreu na sua vez, até 9 metros. O seu PRÓXIMO ataque corpo a corpo neste turno tem o alcance da arma aumentado nessa distância — o vento estica o fio do golpe. Se esse ataque acertar um alvo a mais de 3 metros de você, ele fica Desequilibrado. A distância guardada zera no fim do turno, gasta ou não.",
       },
       talents: [
-        { id: "folego-do-vendaval", name: "Fôlego do Vendaval", paCost: 1, description: "+2 PT Máximos." , grants: { pt: 2 } },
+        { id: "folego-do-vendaval", name: "Fôlego do Vendaval", paCost: 1, description: "+1 PT por patamar seu no Estilo Vendaval. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
         { id: "ouvido-do-vendaval", name: "Ouvido do Vendaval", paCost: 1, description: "Vantagem em Percepção auditiva, e você percebe magia de Vento sendo conjurada a até 60 metros." },
         { id: "pes-que-o-vento-segura", name: "Pés que o Vento Segura", paCost: 1, description: "Você nunca sofre penalidade de Deslocamento em terreno difícil, gelo ou vento contrário, e nunca escorrega." },
       ],
@@ -150,7 +150,7 @@ export const VENDAVAL_TREE: Tree = {
           "Enquanto vestir o Manto de Touki, sua arma ganha +3 metros de alcance em ataques corpo a corpo — o fio do golpe se estende pelo vento — e você ignora metade da CA de armaduras não-mágicas. [Distância Roubada] O teto da Distância Roubada sobe de 9 para 12 metros, e ela soma em cima destes +3.",
       },
       talents: [
-        { id: "segunda-rajada", name: "Segunda Rajada", paCost: 2, description: "+3 PT Máximos." , grants: { pt: 3 } },
+        { id: "segunda-rajada", name: "Segunda Rajada", paCost: 2, description: "Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank no Estilo Vendaval — e, no mesmo instante, desloque-se até 9 metros sem provocar ataque de oportunidade. A distância percorrida conta para a Distância Roubada." },
         { id: "vortice-pessoal", name: "Vórtice Pessoal", paCost: 2, description: "Ataques à distância mundanos contra você sofrem Desvantagem enquanto estiver se movendo, e você nunca sofre dano de queda." },
         { id: "leitura-do-vento", name: "Leitura do Vento", paCost: 2, description: "Vantagem em Iniciativa, e você identifica de onde veio qualquer ataque à distância que te acertou, mesmo escondido." },
       ],
@@ -206,7 +206,8 @@ export const VENDAVAL_TREE: Tree = {
           range: "Corpo a corpo, depois Linha de 18 metros",
           actions: { normal: 2 },
           damage: { normal: "Dado de arma normal + 5d10 (cortante)" },
-          effect: "Um golpe corpo a corpo que, se acertar, libera uma segunda lâmina de vento em linha atrás do alvo. Teste de Agilidade (CD 8 + Força + Rank) pra metade do dano da segunda lâmina.",
+          effect:
+            "Um golpe corpo a corpo que, se acertar, libera uma segunda lâmina que segue em linha reta ATRAVÉS do alvo e continua por toda a sua Distância Roubada deste turno, cortando tudo no caminho. Teste de Agilidade (CD 8 + Força + Rank) pra metade do dano da segunda lâmina. Se você não se moveu neste turno, a segunda lâmina não sai — sobra o golpe de arma.",
         },
         {
           id: "rajada-que-segue-a-lamina",
@@ -249,7 +250,8 @@ export const VENDAVAL_TREE: Tree = {
           range: "Esfera de 9 metros",
           actions: { normal: 1 },
           damage: { normal: "Dado de arma rolado duas vezes + Bônus de Rank (cortante)" },
-          effect: "Ataque cada criatura à sua escolha dentro de 9m, com rolagem separada para cada, sem Desvantagem por aliados na área — o vento não escolhe lado, você escolhe por ele.",
+          effect:
+            "O raio não é fixo: é a sua Distância Roubada deste turno (mínimo 3m, máximo 12m). Você não gira no lugar como no Redemoinho de Aço — você atravessa o grupo inteiro e corta no caminho. Ataque cada criatura à sua escolha dentro desse raio, com rolagem separada para cada, sem Desvantagem por aliados na área. Cada alvo que cair devolve 1 PT.",
         },
         {
           id: "golpe-que-nao-tem-origem",
