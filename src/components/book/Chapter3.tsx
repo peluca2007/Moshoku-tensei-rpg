@@ -88,7 +88,7 @@ export default function Chapter3() {
       <Section>
         <SectionTitle id="cap3-mapa">O Mapa Completo das Árvores</SectionTitle>
         <P>
-          O sistema comporta dezessete sub-árvores escolhíveis desde o primeiro dia, mais duas híbridas que não
+          O sistema comporta 19 sub-árvores: 17 escolhíveis desde o primeiro dia, mais duas híbridas que não
           se escolhem — elas só se revelam pra quem já cumpriu os pré-requisitos das duas árvores de origem
           (ver a nota no catálogo de cada uma, mais abaixo). Nenhuma delas é uma
           classe: você compra Ranks em quantas quiser, na ordem que quiser, e seu personagem é simplesmente

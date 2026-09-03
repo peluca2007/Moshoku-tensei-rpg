@@ -300,7 +300,9 @@ export const CURA_TREE: Tree = {
           pmCost: 7,
           range: "Toque",
           actions: MAGIC_ACTIONS.Santo,
-          effect: "10 minutos: +50 PV máximos e imunidade a acertos críticos.",
+          effect: "10 minutos: PV Temporários iguais a 8 × o seu Bônus de Rank em Cura (32 no Santo, 48 no Imperador) e imunidade a acertos críticos. Não acumulam com Vigor Emprestado nem com outra fonte de PV Temporários — vale o maior.",
+          costNote:
+            "O valor era +50 PV MÁXIMOS fixos até 2026-09-03. Dois problemas num número só: ele não escalava (valia o mesmo no Santo e no Imperador, num livro em que tudo o mais escala com o Bônus de Rank), e usava a categoria errada — PV máximos não são consumidos antes dos reais e não expiram, então a magia se comportava como cura permanente disfarçada de escudo. Agora é PV Temporário, a categoria que Vigor Emprestado já usa, e escala como o resto da escola.",
           incantation:
             "Carne que eu fecho com aço e não com ligadura, osso que eu forro por dentro com aquilo que não cede, pele que eu ensino a recusar o gume antes mesmo de sentir o corte: aprende agora, e de uma vez, a não ceder antes da hora certa. E quando a hora certa vier, cede devagar, pra que dê tempo de alguém te alcançar. Corpo de Ferro!",
         },
@@ -312,7 +314,7 @@ export const CURA_TREE: Tree = {
       mastery: {
         name: "Golpe Divino",
         description:
-          "Você canaliza cura ofensivamente contra mortos-vivos, construtos e criaturas de mana corrompida: sofrem o valor curado como dano radiante, sem teste. Contra vivos normais, não funciona. Regenera membros perdidos desde que os ossos estejam disponíveis, não importa há quanto tempo.",
+          "[Ferida Fresca] A Mão Não Envelhece: toda magia de Cura sua rola +1d8 por rank de diferença entre o seu patamar em Cura e o rank da magia — no Rei, a Cura de 1º patamar rola +4d8, e a Cura Radiante rola +1d8. É o que impede a sua magia mais barata de virar lixo de ficha. Você também canaliza cura ofensivamente contra mortos-vivos, construtos e criaturas de mana corrompida: sofrem o valor curado como dano radiante, sem teste. Contra vivos normais, não funciona. Regenera membros perdidos desde que os ossos estejam disponíveis, não importa há quanto tempo.",
       },
       talents: [
         { id: "sopro-do-julgamento", name: "Sopro do Julgamento", paCost: RANK_PA_COST.talent.Rei, description: "Seu Golpe Divino passa a funcionar também contra demônios de linhagem antiga e criaturas de rank Deus corrompidas, com metade do dano." },
@@ -384,6 +386,8 @@ export const CURA_TREE: Tree = {
         },
         {
           id: "santuario",
+          costNote:
+            "4 Ações em vez das 6 do rank Imperador. É a única magia de Salvação em ÁREA do livro, e uma Salvação que chega dois turnos depois não salva ninguém — o Santuário existe pra ser erguido no turno em que o grupo está caindo, não no seguinte. O preço das duas Ações economizadas está na trava: enquanto ele estiver ativo você não conjura mais nada, então o curandeiro troca a rodada inteira dele pela sobrevivência de todo mundo.",
           name: "Santuário",
           ritual: true,
           paCost: RANK_PA_COST.common.Imperador,

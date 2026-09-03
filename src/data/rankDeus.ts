@@ -133,6 +133,27 @@ export const RANK_DEUS: Record<string, RankDeusEntry> = {
       "Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o tipo de decisão que define o resultado de uma campanha inteira antes da primeira espada ser desembainhada, e o mundo deve mudar por causa disso.",
     ],
   },
+
+  /**
+   * As duas híbridas (2026-09-03). Eram as únicas árvores do livro sem quadro de
+   * Rank Deus — e a ausência era mais visível nelas do que em qualquer outra,
+   * porque uma árvore híbrida já é, por definição, um teto: você só chega nela
+   * depois de ir fundo em duas outras.
+   *
+   * O critério de ascensão delas é diferente do das demais de propósito. Nas
+   * escolas normais o patamar Divino é uma escalada dentro de uma coisa só. Aqui
+   * ele é o oposto: é o instante em que as duas origens param de ser duas.
+   */
+  vendaval: {
+    title: "O Passo Que Não Termina",
+    body: [
+      "A Distância Roubada é a mecânica inteira desta árvore: você anda, e o que você andou vira alcance da lâmina. Todo patamar dela apenas alarga esse número — 9 metros, 12, um piso de 6 que soma em cima. O patamar Divino não alarga mais nada. Ele apaga o número.",
+      "Um Vendaval neste patamar não percorre a distância até o alvo: ele já a percorreu antes de decidir atacar. Não existe recuo, terreno, corredor nem muralha que crie separação, porque separação é a única coisa que esta árvore aprendeu a converter em dano — e, no Divino, a conversão deixou de ter teto.",
+      "É o patamar mais discreto do livro, e o mais difícil de testemunhar. Quem viu descreve sempre a mesma coisa: o espadachim estava longe, e depois o golpe já tinha acontecido. Ninguém relata o meio, porque não há meio para relatar.",
+      "Nenhuma das duas escolas de origem reivindica este título. O Deus do Norte diz que é vento; a Magia de Vento diz que é esgrima. É por isso que ele não tem sede, não tem titular reconhecido e não aparece em registro nenhum — só em histórias que ninguém conseguiu confirmar.",
+      "Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o fim de uma campanha construída sobre movimento, e o mundo deve mudar por causa disso.",
+    ],
+  },
 };
 
 /**

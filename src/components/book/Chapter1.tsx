@@ -83,13 +83,10 @@ export default function Chapter1() {
             pro cirurgião do parágrafo abaixo (Cap. 4, §1).
           </P>
           <P>
-            <b>Cap dos 2 primeiros ranks.</b> Enquanto o seu Maior Bônus de Rank de magia for 1 ou 2
-            (Principiante/Intermediário), a reserva <b>não pode passar de 4 × MB + 8 + talento + racial</b>
-            — o que dá 12 a 17 PM. É o equivalente numérico do &ldquo;no máximo 4 casts&rdquo; da
-            assinatura do rank: 1 PM no Principiante, 3 PM no Intermediário. O cap corta só o que entra
-            por fora da árvore (PA avulso da seção 2, antecedente e sub-tabela); talento de reserva e
-            bônus racial ESCALAR continuam valendo. A partir do 3º rank (Avançado, MB=3) o cap some e
-            a fórmula antiga entra inteira.
+            <b>Existe um teto nos dois primeiros patamares</b>, pra que bônus de fora da árvore não
+            empurrem um conjurador iniciante além do que a assinatura do próprio rank permite pagar. A
+            regra completa — quem entra no teto, quem não entra, e por que ele some no Avançado — está no{" "}
+            <b>Cap. 4, §1</b>, junto da fórmula. Aqui basta saber que ela existe.
           </P>
           <P>
             Abrir oito escolas no 1º patamar não te dá mana nenhuma a mais. Subir <b>uma</b> escola até o

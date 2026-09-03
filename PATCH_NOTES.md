@@ -5,6 +5,75 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.0.6 — "A Mão Não Envelhece" · 2026-09-03
+
+### ⚔️ Balanceamento
+
+**Magia de Cura — o Rei deixou de ser um patamar morto.** A escada de cura direta parava no Santo:
+
+| Rank | Melhor cura direta | PM | Cura (Ferida Fresca) |
+| --- | --- | --- | --- |
+| Avançado | Cura Suprema | 6 | 12d8+BC ≈ 61 |
+| Santo | Cura Radiante | 10 | 20d8+BC ≈ 98 |
+| **Rei** | *(nenhuma nova)* | — | **98 — o mesmo do Santo** |
+| Imperador | Maestria: dados máximos | — | 160 |
+
+O Rei ganhava Restauração e Milagre Menor — utilidade alta — mas curava exatamente o mesmo que o patamar
+anterior, num livro em que toda escola ofensiva ganha um número maior a cada rank.
+
+> **A Mão Não Envelhece** (Maestria do Rei): toda magia de Cura sua rola **+1d8 por rank de diferença**
+> entre o seu patamar em Cura e o rank da magia. No Rei, a Cura de 1º patamar rola +4d8; a Cura Radiante,
+> +1d8.
+
+**Corpo de Ferro (Santo)** dava **+50 PV máximos fixos** — o único número solto da árvore. Dois problemas
+num número só: não escalava (valia o mesmo no Santo e no Imperador) e usava a categoria errada, porque PV
+máximos não são gastos antes dos reais e não expiram — a magia funcionava como cura permanente disfarçada
+de escudo. Agora são **PV Temporários iguais a 8 × Bônus de Rank** (32 no Santo, 48 no Imperador), e não
+acumulam com Vigor Emprestado.
+
+---
+
+### 📖 Novas Regras e Simplificações
+
+**Rank Deus do Estilo Vendaval** — era a única árvore sem quadro do patamar Divino, e a ausência pesava
+mais nela porque uma árvore híbrida já é um teto por definição.
+
+> **O Passo Que Não Termina.** Todo patamar do Vendaval apenas alarga o número da Distância Roubada — 9m,
+> 12m, um piso de 6. O Divino apaga o número: o espadachim não percorre a distância até o alvo, ele já a
+> percorreu antes de decidir atacar. Nenhuma das duas escolas de origem reivindica o título — o Norte diz
+> que é vento, o Vento diz que é esgrima.
+
+**Uma regra, uma redação.** O teto de PM dos dois primeiros patamares estava escrito quase palavra por
+palavra em Cap. 1, §1 **e** Cap. 4, §1. Duas cópias da mesma regra é exatamente como nasceram as sete
+contradições corrigidas na 0.0.5. A redação canônica agora vive no Cap. 4, §1, junto da fórmula; o Cap. 1
+aponta pra lá.
+
+**Cinco magias divergiam da tabela de Ações sem a nota que o Cap. 2 exige** — Chamado, Retorno, Troca de
+Lugares e Corpo Emprestado (Invocação) e Santuário (Cura). Todas ganharam a justificativa. Na Invocação, o
+custo em Ações não escala com o rank *de propósito*: o preparo acontece fora de combate, no círculo de 10
+minutos, e um gesto não fica mais lento porque o invocado ficou mais forte.
+
+---
+
+### 💻 Sincronia de Sistema
+
+**`npm run check:livro`** substitui o `check:magias`. As sete contradições da 0.0.5 nasceram todas do
+mesmo jeito: um número escrito à mão numa frase, e depois o dado mudou. Ler o livro inteiro à mão acha isso
+uma vez; o script acha toda vez, em dois segundos.
+
+Ele confere:
+
+- a contagem de árvores citada na prosa contra `TREES.length`;
+- que toda árvore declara Mecânica Central e tem quadro de Rank Deus (ou patamar Deus próprio);
+- que a tag da mecânica aparece na Maestria de 1º patamar (aceitando tags de dois tempos);
+- que toda magia tem cântico, e que ele respeita a faixa do rank;
+- que todo desvio da tabela de Ações carrega `costNote`.
+
+Na primeira execução ele achou **21 técnicas do Punho de Fogo** sendo tratadas como magia sem cântico — o
+check antigo não as via porque olhava uma lista fixa de árvores. A regra ficou explícita: só as **oito
+escolas de magia** recitam; técnica marcial que gasta PM é executada, não conjurada.
+
+---
 ## 0.0.5 — "Comece Aqui" · 2026-09-03
 
 ### 📖 Novas Regras e Simplificações

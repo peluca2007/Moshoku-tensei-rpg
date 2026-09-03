@@ -16,6 +16,43 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.0.6",
+    date: "2026-09-03",
+    title: "A Mão Não Envelhece",
+    sections: [
+      {
+        heading: "Magia de Cura — o Rei deixou de ser um patamar morto",
+        items: [
+          "A escada de cura direta parava no Santo: Cura Radiante (10 PM, 20d8+BC contra Ferida Fresca) era a melhor magia de cura de um Santo, de um Rei E de um Imperador. O Rei ganhava Restauração e Milagre Menor — utilidade alta — mas curava exatamente o mesmo que o patamar anterior, num livro em que toda escola ofensiva ganha um número maior a cada rank.",
+          "A Maestria do Rei (Golpe Divino) ganhou A MÃO NÃO ENVELHECE: toda magia de Cura sua rola +1d8 por rank de diferença entre o seu patamar e o rank da magia. No Rei, a Cura de 1º patamar rola +4d8 e a Cura Radiante rola +1d8 — é o que impede a sua magia mais barata de virar lixo de ficha.",
+          "CORPO DE FERRO (Santo) dava +50 PV MÁXIMOS fixos: o único número solto da árvore. Não escalava (valia o mesmo no Santo e no Imperador) e usava a categoria errada — PV máximos não são gastos antes dos reais e não expiram, então a magia funcionava como cura permanente disfarçada de escudo. Agora são PV TEMPORÁRIOS iguais a 8 × o seu Bônus de Rank (32 no Santo, 48 no Imperador), e não acumulam com Vigor Emprestado.",
+        ],
+      },
+      {
+        heading: "Rank Deus do Estilo Vendaval",
+        items: [
+          "Era a única árvore do livro sem quadro do patamar Divino — e a ausência pesava mais nela, porque uma árvore híbrida já é um teto por definição.",
+          "O PASSO QUE NÃO TERMINA: todo patamar do Vendaval apenas alarga o número da Distância Roubada (9m, 12m, um piso de 6). O Divino apaga o número — o espadachim não percorre a distância até o alvo, ele já a percorreu antes de decidir atacar. Nenhuma das duas escolas de origem reivindica o título: o Norte diz que é vento, o Vento diz que é esgrima.",
+        ],
+      },
+      {
+        heading: "Uma regra, uma redação",
+        items: [
+          "O teto de PM dos dois primeiros patamares estava escrito quase palavra por palavra em Cap. 1, §1 e Cap. 4, §1. Duas cópias da mesma regra é exatamente como nasceram as sete contradições corrigidas na 0.0.5. Agora a redação canônica vive no Cap. 4, §1 (junto da fórmula) e o Cap. 1 aponta pra lá.",
+          "Cinco magias divergiam da tabela de Ações do próprio rank sem a nota que o Cap. 2 exige: Chamado, Retorno, Troca de Lugares e Corpo Emprestado (Invocação) e Santuário (Cura). Todas ganharam a justificativa — na Invocação, o custo em Ações não escala com o rank de propósito, porque o preparo acontece fora de combate e um gesto não fica mais lento porque o invocado ficou mais forte.",
+        ],
+      },
+      {
+        heading: "npm run check:livro",
+        items: [
+          "Substitui o check:magias por uma verificação de consistência entre os DADOS e o TEXTO do livro. As sete contradições da 0.0.5 nasceram todas do mesmo jeito: um número escrito à mão numa frase, e depois o dado mudou.",
+          "Ele confere: a contagem de árvores citada na prosa contra TREES.length; que toda árvore declara Mecânica Central e tem quadro de Rank Deus (ou patamar Deus próprio); que a tag da mecânica aparece na Maestria de 1º patamar; que toda magia tem cântico; que o cântico respeita a faixa do rank; e que todo desvio da tabela de Ações carrega costNote.",
+          "Na primeira execução ele achou 21 técnicas do Punho de Fogo sendo tratadas como magia sem cântico — o check antigo não as via porque olhava uma lista fixa de árvores. A regra correta ficou explícita: só as OITO ESCOLAS DE MAGIA recitam; técnica marcial que gasta PM é executada, não conjurada.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.0.5",
     date: "2026-09-03",
     title: "Comece Aqui",

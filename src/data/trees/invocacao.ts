@@ -51,6 +51,8 @@ export const INVOCACAO_TREE: Tree = {
       abilities: [
         {
           id: "chamado",
+          costNote:
+            "1 Ação em vez das 2 da tabela do rank. A Invocação é a única escola do livro cujo custo em Ações não escala com o rank, e é de propósito: o preparo dela acontece FORA de combate, no círculo de 10 minutos. O que sobra pra mesa é só o gesto de puxar o fio do Pacto — e um gesto não fica mais lento porque o invocado ficou mais forte. O rank desta escola mede COM QUEM você fechou acordo, não quanto tempo leva pra chamar.",
           name: "Chamado",
           signature: true,
           paCost: RANK_PA_COST.signature.Principiante,
@@ -85,6 +87,8 @@ export const INVOCACAO_TREE: Tree = {
       abilities: [
         {
           id: "retorno-invocacao",
+          costNote:
+            "1 Ação em vez das 2 da tabela do rank. A Invocação é a única escola do livro cujo custo em Ações não escala com o rank, e é de propósito: o preparo dela acontece FORA de combate, no círculo de 10 minutos. O que sobra pra mesa é só o gesto de puxar o fio do Pacto — e um gesto não fica mais lento porque o invocado ficou mais forte. O rank desta escola mede COM QUEM você fechou acordo, não quanto tempo leva pra chamar.",
           name: "Retorno",
           signature: true,
           paCost: RANK_PA_COST.signature.Intermediário,
@@ -178,6 +182,8 @@ export const INVOCACAO_TREE: Tree = {
       abilities: [
         {
           id: "troca-de-lugares",
+          costNote:
+            "1 Ação em vez das 5 da tabela do rank. A Invocação é a única escola do livro cujo custo em Ações não escala com o rank, e é de propósito: o preparo dela acontece FORA de combate, no círculo de 10 minutos. O que sobra pra mesa é só o gesto de puxar o fio do Pacto — e um gesto não fica mais lento porque o invocado ficou mais forte. O rank desta escola mede COM QUEM você fechou acordo, não quanto tempo leva pra chamar.",
           name: "Troca de Lugares",
           signature: true,
           paCost: RANK_PA_COST.signature.Rei,
@@ -218,6 +224,8 @@ export const INVOCACAO_TREE: Tree = {
         },
         {
           id: "corpo-emprestado",
+          costNote:
+            "1 Ação em vez das 6 da tabela do rank. A Invocação é a única escola do livro cujo custo em Ações não escala com o rank, e é de propósito: o preparo dela acontece FORA de combate, no círculo de 10 minutos. O que sobra pra mesa é só o gesto de puxar o fio do Pacto — e um gesto não fica mais lento porque o invocado ficou mais forte. O rank desta escola mede COM QUEM você fechou acordo, não quanto tempo leva pra chamar.",
           name: "Corpo Emprestado",
           paCost: RANK_PA_COST.common.Imperador,
           pmCost: 18,
