@@ -12,7 +12,7 @@ são quatro leituras do mesmo `src/data/`.
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
-[![Versão do sistema](https://img.shields.io/badge/regras-0.0.6-8B1E3F)](PATCH_NOTES.md)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.0.7-8B1E3F)](PATCH_NOTES.md)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>

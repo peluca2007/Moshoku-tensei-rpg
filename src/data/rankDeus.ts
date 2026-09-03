@@ -144,6 +144,28 @@ export const RANK_DEUS: Record<string, RankDeusEntry> = {
    * escolas normais o patamar Divino é uma escalada dentro de uma coisa só. Aqui
    * ele é o oposto: é o instante em que as duas origens param de ser duas.
    */
+  /**
+   * O Punho de Fogo tinha, até 2026-09-03, um patamar Deus COMPRÁVEL — 13
+   * habilidades, uma Maestria e um talento, custando PA como qualquer outro
+   * rank. Era a única das 19 árvores assim, e contradizia o Cap. 1, §3 ("o
+   * patamar Divino não possui custo mecânico de PA... só pode ser alcançado
+   * através de intenso Roleplay e eventos lendários").
+   *
+   * O conteúdo não foi jogado fora: as três habilidades (Big Bang Marcial,
+   * Ignição da Alma, Julgamento de Prometeu) e a Aura do Alfa e Ômega viraram o
+   * corpo deste quadro. O que se perdeu foi o preço em PA e a rolagem — que é
+   * exatamente o que o livro diz que o patamar Divino não tem.
+   */
+  "punho-de-fogo": {
+    title: "A Aura do Alfa e do Ômega",
+    body: [
+      "Todo o Punho de Fogo é um ciclo com teto: você bate para acumular Calor, o Calor para em 5, e um turno sem acertar é um turno sem recurso. O patamar Divino quebra as três coisas de uma vez. O Calor deixa de ter teto e deixa de precisar de alvo — ele sobe porque o corpo está vivo, e continua subindo enquanto estiver.",
+      "A chama deste patamar tem duas faces, e o lutador escolhe entre elas a cada golpe. No Alfa, o soco não causa dano: ele desfaz. A matéria atingida deixa de estar organizada, e nada abaixo do patamar Divino sobrevive a isso — não por ter poucos PV, mas por não haver mais o que os sustente. No Ômega, o mesmo calor faz o contrário: membros voltam, órgãos voltam, a Exaustão sai, e as Marcas da Morte se apagam de quem estiver perto o bastante para sentir o calor.",
+      "Os relatos mais extremos descrevem três coisas que ninguém confirmou e ninguém desmentiu: um soco que comprimiu numa mão o peso de uma estrela nascendo e apagou o alvo do próprio registro histórico; um lutador reduzido a nada que se reacendeu sozinho e incendiou o campo de batalha inteiro por uma hora, curando os aliados no mesmo fogo que consumia o resto; e uma fenda aberta a punho no ar de onde jorrou a chama que existia antes de existir combustível, e que reescreveu o clima de um continente por um ano e um dia.",
+      "Nenhuma das duas escolas de origem ensina isto. A Magia de Fogo considera indigno que um mago abandone o cântico; o Lutador considera absurdo que alguém treine punho para virar tocha. Quem chegou aqui chegou sozinho, e pagou sempre o mesmo preço — o corpo não esfria mais. Nem para dormir, nem para tocar em alguém. Há registro de dois na história, e nenhum dos dois morreu de velhice.",
+      "Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o ponto em que ele deixa de conseguir voltar a ser quem era, e a mesa decide isso junto.",
+    ],
+  },
   vendaval: {
     title: "O Passo Que Não Termina",
     body: [

@@ -158,14 +158,24 @@ export default function Chapter1() {
         </P>
         <BookTable
           headers={["Rank", "Custo de Desbloqueio", "Conhecimentos Exigidos", "Magia Comum", "Magia Assinatura ◆", "Talento"]}
-          rows={RANKS.map((rank) => [
-            rank,
-            `${RANK_REQUIREMENTS[rank].paCost} PA`,
-            String(RANK_REQUIREMENTS[rank].knowledgeRequired || "—"),
-            `${RANK_PA_COST.common[rank]} PA`,
-            `${RANK_PA_COST.signature[rank]} PA`,
-            `${RANK_PA_COST.talent[rank]} PA`,
-          ]).concat([["Deus", "Narrativa", "—", "—", "—", "—"]])}
+          rows={RANKS.map((rank) =>
+            // O Divino nunca é comprado (Cap. 1, §3): ele aparece na tabela para
+            // fechar a escada, mas com "Narrativa" no lugar de todo custo. Até
+            // 2026-09-03 esta tabela imprimia DUAS linhas "Deus" — a do map, com
+            // o custo de RANK_REQUIREMENTS, e uma segunda escrita à mão dizendo
+            // "Narrativa" — que se contradiziam uma à outra, no meio da seção
+            // que existe justamente para explicar quanto cada rank custa.
+            rank === "Deus"
+              ? [rank, "Narrativa", "—", "—", "—", "—"]
+              : [
+                  rank,
+                  `${RANK_REQUIREMENTS[rank].paCost} PA`,
+                  String(RANK_REQUIREMENTS[rank].knowledgeRequired || "—"),
+                  `${RANK_PA_COST.common[rank]} PA`,
+                  `${RANK_PA_COST.signature[rank]} PA`,
+                  `${RANK_PA_COST.talent[rank]} PA`,
+                ]
+          )}
         />
         <P className="text-sm">
           Esta é a tabela padrão, usada por Magia e pelo Corpo. Duas famílias fogem dela, e as duas fogem pra

@@ -5,6 +5,41 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.0.7 — "O Divino Não Se Compra" · 2026-09-03
+
+### 📖 Novas Regras e Simplificações
+
+**O Punho de Fogo era a única das 19 árvores com um patamar Deus comprável** — uma Maestria, um talento e
+três habilidades, custando PA como qualquer outro rank. Isso contradizia o Cap. 1, §3:
+
+> O patamar Divino não possui custo mecânico de PA. […] este Rank só pode ser alcançado através de intenso
+> Roleplay e eventos lendários na narrativa, ditados inteiramente pela história e pelo Mestre.
+
+O conteúdo **não foi jogado fora**. A Aura do Alfa e Ômega, o Big Bang Marcial, a Ignição da Alma e o
+Julgamento de Prometeu viraram o corpo do quadro narrativo **A Aura do Alfa e do Ômega**. O que se perdeu
+foi o preço em PA e a rolagem — que é exatamente o que o livro diz que o Divino não tem.
+
+Com o **Passo Que Não Termina** (Vendaval, 0.0.6), as **19 árvores** agora tratam o patamar Divino do
+mesmo jeito, sem exceção.
+
+---
+
+### 🐛 Correções de Bugs
+
+- **A tabela de custos do Cap. 1, §3 imprimia duas linhas "Deus"**: uma cobrando **4 PA** (vinda de
+  `RANK_REQUIREMENTS`) e outra, escrita à mão logo abaixo, dizendo **"Narrativa"**. As duas se
+  contradiziam no meio da seção que existe justamente para explicar quanto cada rank custa — o mesmo bug
+  de linha duplicada que a tabela de patamares do Cap. 3 tinha.
+- **Migração v10 do persist:** uma ficha que já tivesse comprado no patamar Deus do Punho de Fogo perde
+  essas compras e o desbloqueio do rank, e o PA volta a ficar disponível — em vez de sumir do total sem
+  nada na ficha explicando por quê.
+
+### 💻 Sincronia de Sistema
+
+- `check:livro` passou a tratar **patamar Deus comprável como erro**, não aviso. A decisão fica trancada:
+  a próxima árvore que tentar abrir exceção quebra o build.
+
+---
 ## 0.0.6 — "A Mão Não Envelhece" · 2026-09-03
 
 ### ⚔️ Balanceamento
