@@ -5,6 +5,9 @@ import { Plus, X, Swords, RotateCcw, ChevronRight, Heart, Download } from "lucid
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { getInitiative, getMaxHp } from "@/store/selectors";
+import PageHeader from "@/components/ui/PageHeader";
+import Surface from "@/components/ui/Surface";
+import EmptyState from "@/components/ui/EmptyState";
 
 function rollD20() {
   return Math.floor(Math.random() * 20) + 1;
@@ -54,25 +57,34 @@ export default function InitiativeTracker() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
-          <Swords className="h-6 w-6 text-wine-500" /> Tracker de Iniciativa
-        </h1>
-        <div className="flex items-center gap-3">
-          <span className="rounded-full bg-wine-500/10 px-3 py-1 text-sm font-bold text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300">
-            Rodada {round}
-          </span>
-          <button
-            type="button"
-            onClick={() => useInitiativeStore.getState().resetCombat()}
-            className="flex items-center gap-1 rounded-lg border border-parchment-300 px-3 py-1.5 text-sm font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
-          >
-            <RotateCcw className="h-4 w-4" /> Novo Combate
-          </button>
-        </div>
-      </header>
+      <PageHeader
+        icon={Swords}
+        title="Tracker de Iniciativa"
+        faixa="/faixas/iniciativa.jpg"
+        faixaPosition="center 40%"
+        actions={
+          <>
+            {/*
+              A Rodada é o único número que muda sozinho enquanto o combate roda,
+              e é o que a mesa inteira olha. Em `tabular-nums` ele para de mudar
+              de largura ao virar de 9 pra 10 — a barra inteira dançava. */}
+            <span className="tabular rounded-full bg-wine-600/15 px-3.5 py-1.5 text-sm font-black text-wine-700 ring-1 ring-wine-500/40 backdrop-blur-sm dark:text-wine-200">
+              Rodada {round}
+            </span>
+            <button
+              type="button"
+              onClick={() => useInitiativeStore.getState().resetCombat()}
+              className="flex items-center gap-1 rounded-lg border border-parchment-300 bg-parchment-50/80 px-3 py-1.5 text-sm font-medium text-parchment-700 backdrop-blur-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:bg-parchment-900/70 dark:text-parchment-200 dark:hover:bg-parchment-900"
+            >
+              <RotateCcw className="h-4 w-4" /> Novo Combate
+            </button>
+          </>
+        }
+      >
+        Ordene a mesa, marque quem já agiu e vire a rodada. O que entra aqui não toca a ficha de ninguém.
+      </PageHeader>
 
-      <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+      <Surface as="section" className="p-4">
         <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
           Adicionar Combatente
         </h2>
@@ -137,12 +149,12 @@ export default function InitiativeTracker() {
             </button>
           </div>
         )}
-      </section>
+      </Surface>
 
       {sorted.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
-          Nenhum combatente ainda. Adicione personagens ou NPCs acima pra começar.
-        </p>
+        <EmptyState icon={Swords} hint="Adicione um NPC acima, ou importe uma ficha do grupo — a iniciativa dela é rolada na hora.">
+          A mesa ainda não entrou em combate.
+        </EmptyState>
       ) : (
         <>
           <button

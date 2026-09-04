@@ -17,13 +17,21 @@ export const SHOP_CATEGORY_ORDER: ShopCategory[] = [
  * A imagem de cada categoria, em `public/loja/` (2026-09-03).
  *
  * Mesma regra do `Tree.icon`: o arquivo se chama como a categoria, e o caminho
- * inteiro mora no dado porque só a extensão varia. `aventura` ainda não tem
- * arte — a ausência é declarada aqui em vez de virar um 404, e a tela cai no
- * ícone de traço da lucide quando falta.
+ * inteiro mora no dado porque só a extensão varia. Desde 0.1.5 as SETE têm arte
+ * própria; o `Partial<>` continua porque uma categoria nova pode nascer sem
+ * medalhão, e a tela cai no ícone de traço da lucide quando falta.
  */
 export const SHOP_CATEGORY_ICONS: Partial<Record<ShopCategory, string>> = {
   arma: "/loja/arma.png",
   armadura: "/loja/armadura.png",
+  /*
+   * A sétima e última categoria (0.1.5). A arte já estava no repositório desde
+   * 0.1.4 — solta na raiz de `public/`, com espaço no nome ("aventura
+   * equipamento.png"), fora da pasta e portanto invisível pra esta tabela. O
+   * `check:livro` avisava "categoria sem arte própria" o tempo todo e o arquivo
+   * estava a um diretório de distância.
+   */
+  aventura: "/loja/aventura.png",
   pocao: "/loja/pocao.png",
   veneno: "/loja/veneno.jpg",
   "ferramenta-magica": "/loja/ferramenta-magica.png",
@@ -258,7 +266,7 @@ const ARMOR: ShopItem[] = [
     name: "Égide Lendária",
     category: "armadura",
     type: "armadura",
-    description: "Uma vez por Descanso Longo, ignore completamente o dano de um único golpe recebido — decida depois de ver o resultado do ataque. Se isso evitar que o dano leve você a 0 PV, conta como a sua Salvação do combate (Cap. 4, §4): não empilha com Aguentar, Rejeitar a Morte, Sem Baixas ou Custe o Que Custar.",
+    description: "Uma vez por Descanso Longo, ignore completamente o dano de um único golpe recebido — decida depois de ver o resultado do ataque. Se isso evitar que o dano leve você a 0 PV, conta como a sua Salvação do combate (Cap. 4, §5): não empilha com Aguentar, Rejeitar a Morte, Sem Baixas ou Custe o Que Custar.",
     price: 1200,
     guildRankRequired: "S",
     acBonus: 6,
@@ -303,7 +311,7 @@ const POTIONS: ShopItem[] = [
     name: "Poção de Antídoto",
     category: "pocao",
     type: "geral",
-    description: "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §7). Contra ranks acima disso, não faz nada.",
+    description: "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §8). Contra ranks acima disso, não faz nada.",
     price: 25,
     guildRankRequired: "E",
   },
@@ -348,7 +356,7 @@ const POTIONS: ShopItem[] = [
     name: "Elixir de Regeneração",
     category: "pocao",
     type: "geral",
-    description: "Remove toda a Exaustão acumulada de quem bebe (Cap. 4, §8) — não cura PV nem PM, só o cansaço acumulado.",
+    description: "Remove toda a Exaustão acumulada de quem bebe (Cap. 4, §9) — não cura PV nem PM, só o cansaço acumulado.",
     price: 200,
     guildRankRequired: "A",
   },
@@ -370,7 +378,7 @@ const POISONS: ShopItem[] = [
     name: "Veneno Fraco (rank Principiante)",
     category: "veneno",
     type: "geral",
-    description: "Ex: baba de sapo-lodo. Aplicação em Cap. 4, §7, \"Aplicando um Veneno em Combate ou em Segredo\".",
+    description: "Ex: baba de sapo-lodo. Aplicação em Cap. 4, §8, \"Aplicando um Veneno em Combate ou em Segredo\".",
     price: 5,
     guildRankRequired: "E",
   },
@@ -424,7 +432,7 @@ const POISONS: ShopItem[] = [
     name: "Antídoto Universal",
     category: "veneno",
     type: "geral",
-    description: "Remove uma aflição de QUALQUER rank até Imperador (Cap. 4, §7) — inclusive as de rank Santo ou acima, que nenhuma outra dose à venda alcança. Raríssimo por isso mesmo.",
+    description: "Remove uma aflição de QUALQUER rank até Imperador (Cap. 4, §8) — inclusive as de rank Santo ou acima, que nenhuma outra dose à venda alcança. Raríssimo por isso mesmo.",
     price: 500,
     guildRankRequired: "S",
   },

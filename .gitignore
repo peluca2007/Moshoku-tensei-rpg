@@ -63,3 +63,7 @@ livro em txt.txt
 # entraram no repositório por acidente. Não é histórico: o histórico real está no
 # .git de verdade. Pode ser apagado do disco com segurança (rm -rf).
 /.git.corrupted-backup/
+
+# Imagens avaliadas e recusadas para o design (ver PATCH_NOTES 0.1.5) — ficam
+# fora de public/ pra nao serem servidas, e fora do git pra nao pesarem no repo.
+.recusadas/

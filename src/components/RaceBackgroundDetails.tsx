@@ -163,7 +163,7 @@ export default function RaceBackgroundDetails({
   if (!race && !background) return null;
 
   return (
-    <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+    <section className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 dark:border-parchment-800 dark:bg-parchment-900/60">
       <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
         Passivas de Raça &amp; Antecedente
       </h2>

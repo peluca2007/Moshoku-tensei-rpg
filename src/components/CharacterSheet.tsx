@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices } from "lucide-react";
@@ -40,6 +41,7 @@ import SkillsSection from "./SkillsSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import DiceRoller from "./DiceRoller";
+import EmptyState from "@/components/ui/EmptyState";
 
 interface ResolvedAbility {
   kind: "ability" | "talent";
@@ -87,19 +89,25 @@ function ResourceCard({
   extra?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm transition-shadow hover:shadow-md dark:border-parchment-800 dark:bg-parchment-900/60">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner ${tone}`}>{icon}</div>
+    <div className="surface flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-900/70">
+      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-inner ring-1 ring-black/5 ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
           {label}
         </p>
         <div className="flex items-baseline gap-1">
+          {/*
+            PV, PM, PT e PP são os números que a mesa inteira olha — e estavam
+            em `text-lg` na mesma sans dos rótulos de formulário ao redor, do
+            mesmo tamanho de qualquer outro texto da ficha. Em display, pretos e
+            grandes, a ficha passa a ter um primeiro lugar pra onde olhar.
+          */}
           <input
             type="number"
             value={current}
             onChange={(e) => onCurrentChange(Number(e.target.value))}
             title="Valor atual — vai gastando/recuperando em jogo"
-            className="w-12 rounded bg-transparent text-lg font-bold text-parchment-900 outline-none focus:ring-2 focus:ring-wine-400 dark:text-parchment-50"
+            className="tabular w-14 rounded bg-transparent font-display text-2xl font-black leading-tight text-parchment-900 outline-none focus:ring-2 focus:ring-wine-400 dark:text-parchment-50"
           />
           <span className="text-parchment-400">/</span>
           <input
@@ -150,10 +158,10 @@ function EditableStatCard({
   suffix?: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-100/70 p-3 shadow-sm transition-shadow hover:shadow-md dark:border-parchment-800 dark:bg-parchment-900/60">
-      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner ${tone}`}>{icon}</div>
+    <div className="surface flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-900/70">
+      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-inner ring-1 ring-black/5 ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
           {label}
         </p>
         <div className="flex items-center gap-1.5">
@@ -162,7 +170,7 @@ function EditableStatCard({
             value={value}
             onChange={(e) => onChange(Number(e.target.value))}
             title="Calculado — edite pra sobrescrever"
-            className={`w-14 rounded bg-transparent text-lg font-bold outline-none focus:ring-2 focus:ring-wine-400 ${
+            className={`tabular w-16 rounded bg-transparent font-display text-2xl font-black leading-tight outline-none focus:ring-2 focus:ring-wine-400 ${
               overridden ? "text-gold-600 dark:text-gold-400" : "text-parchment-900 dark:text-parchment-50"
             }`}
           />
@@ -380,7 +388,21 @@ export default function CharacterSheet() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
       {/* Cabeçalho */}
-      <header className="relative overflow-hidden rounded-2xl border border-parchment-300 bg-gradient-to-br from-wine-50 via-parchment-50 to-parchment-50 p-4 shadow-sm sm:p-6 dark:border-parchment-800 dark:from-parchment-900 dark:via-parchment-950 dark:to-parchment-900">
+      <header className="surface-raised relative isolate overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 p-4 sm:p-6 dark:border-parchment-700/80 dark:bg-parchment-900/80">
+        {/*
+          A ficha na mesa, atrás do nome do personagem (0.1.6). É a arte que
+          mais fala do que a página faz: papel, vela, pena e tinteiro — e o
+          letreiro do projeto impresso nela. Passa pelo mesmo `.faixa-arte` dos
+          cabeçalhos de rota, então some antes de encostar nos campos editáveis.
+        */}
+        <Image
+          src="/faixas/ficha.png"
+          alt=""
+          aria-hidden
+          fill
+          sizes="(max-width: 1024px) 100vw, 1024px"
+          className="faixa-arte -z-10 object-cover object-[center_30%]"
+        />
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-gold-500/10 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-wine-500/10 blur-3xl" aria-hidden />
         <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -389,7 +411,7 @@ export default function CharacterSheet() {
             onChange={(e) => useCharacterStore.getState().setName(e.target.value)}
             placeholder="Nome do personagem"
             aria-label="Nome do personagem"
-            className="w-full min-w-0 rounded-lg bg-transparent text-2xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700 sm:flex-1 sm:text-3xl"
+            className="w-full min-w-0 rounded-lg bg-transparent font-display text-2xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700 sm:flex-1 sm:text-3xl"
           />
           <div className="flex flex-wrap gap-2 sm:shrink-0">
             <button
@@ -513,7 +535,7 @@ export default function CharacterSheet() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
         {/* Sidebar esquerda */}
         <aside className="space-y-4">
-          <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+          <div className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 dark:border-parchment-800 dark:bg-parchment-900/60">
             <h2 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
               <Activity className="h-3.5 w-3.5 text-wine-500" /> Atributos
             </h2>
@@ -603,7 +625,7 @@ export default function CharacterSheet() {
           <div className="space-y-2">
             <ResourceCard
               icon={<Heart className="h-5 w-5 text-white" />}
-              label="PV (atual / máximo)"
+              label="PV"
               tone="bg-wine-600"
               current={currentHp}
               max={maxHp}
@@ -615,7 +637,7 @@ export default function CharacterSheet() {
             />
             <ResourceCard
               icon={<Droplets className="h-5 w-5 text-white" />}
-              label="PM (atual / máximo)"
+              label="PM"
               tone="bg-wine-500"
               current={currentMp}
               max={maxMp}
@@ -628,7 +650,7 @@ export default function CharacterSheet() {
             {(maxPt > 0 || overrides.maxPt !== undefined) && (
               <ResourceCard
                 icon={<Flame className="h-5 w-5 text-white" />}
-                label="PT (atual / máximo, Touki)"
+                label="PT · Touki"
                 tone="bg-gold-600"
                 current={currentPt}
                 max={maxPt}
@@ -641,7 +663,7 @@ export default function CharacterSheet() {
             {(maxPp > 0 || overrides.maxPp !== undefined) && (
               <ResourceCard
                 icon={<Compass className="h-5 w-5 text-white" />}
-                label="PP (atual / máximo, Preparação)"
+                label="PP · Preparação"
                 tone="bg-parchment-600"
                 current={currentPp}
                 max={maxPp}
@@ -653,7 +675,7 @@ export default function CharacterSheet() {
             )}
             <EditableStatCard
               icon={<Shield className="h-5 w-5 text-white" />}
-              label="Classe de Armadura"
+              label="CA"
               tone="bg-parchment-700"
               value={armorClass}
               overridden={overrides.armorClass !== undefined}
@@ -672,7 +694,7 @@ export default function CharacterSheet() {
             />
           </div>
 
-          <div className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+          <div className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm dark:border-parchment-800 dark:bg-parchment-900/60">
             <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
               <Sprout className="h-3.5 w-3.5 text-wine-500" /> Árvore Inicial
             </h2>
@@ -725,7 +747,7 @@ export default function CharacterSheet() {
         </aside>
 
         {/* Corpo principal: Grimório */}
-        <main className="space-y-4">
+        <div className="space-y-4">
           <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
           <SkillsSection race={race} background={background} skills={skills} />
 
@@ -758,9 +780,12 @@ export default function CharacterSheet() {
           </div>
 
           {abilitiesByTree.size === 0 && (purchasedCombinedSpells ?? []).length === 0 && (
-            <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
-              Nenhuma magia ou talento comprado ainda.
-            </p>
+            <EmptyState
+              icon={Sparkles}
+              hint="Abra as Árvores de Progressão e desbloqueie um patamar — magias, talentos e técnicas caem aqui sozinhos."
+            >
+              O grimório está em branco.
+            </EmptyState>
           )}
 
           {(() => {
@@ -837,7 +862,7 @@ export default function CharacterSheet() {
                   {resolved.map(({ kind, rank, def }) => (
                     <div
                       key={def.id}
-                      className="rounded-xl border border-parchment-300 bg-parchment-100/80 p-3 dark:border-parchment-800 dark:bg-parchment-950/50"
+                      className="surface rounded-xl border border-parchment-300 bg-parchment-100/80 p-3 dark:border-parchment-800 dark:bg-parchment-950/50"
                     >
                       <div className="mb-1 flex items-start justify-between gap-2">
                         <span className="font-semibold text-parchment-900 dark:text-parchment-50">
@@ -900,7 +925,7 @@ export default function CharacterSheet() {
 
           <InventorySection />
           <LoreSection lore={lore} />
-        </main>
+        </div>
       </div>
 
       {/* Painel de regras rápidas */}

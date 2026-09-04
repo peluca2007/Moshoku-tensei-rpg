@@ -65,7 +65,7 @@ export const BARDO_TREE: Tree = {
           range: "Voz",
           actions: { normal: 1 },
           damage: { normal: "Dado de Inspiração: 1d6 (1º-2º patamar), 2d6 (3º-4º), 3d6 (5º-6º)" },
-          effect: "Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +5 (Cap. 4, §4).",
+          effect: "Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +5 (Cap. 4, §5).",
           incantation:
             "Que as minhas palavras de coragem ressoem no fundo do teu coração e despertem a força oculta que tu sempre guardaste. Inspiração!",
         },

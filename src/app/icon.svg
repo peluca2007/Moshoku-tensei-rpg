@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="512" height="512" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <title>Mushoku Tensei RPG</title>
-<desc>GERADO por scripts/gerar-logo-dark.mjs a partir de public/logo.svg — não edite à mão. Favicon: o logo sobre fundo parchment-900, pra ler nas duas cores de aba.</desc>
+<desc>GERADO por scripts/gerar-favicon.mjs a partir de public/logo.svg — não edite à mão. Favicon: o logo sobre fundo parchment-900, pra ler nas duas cores de aba.</desc>
 <rect width="512" height="512" rx="96" fill="#2b1810"/>
 <g transform="translate(16 128) scale(0.8)">
 <defs>

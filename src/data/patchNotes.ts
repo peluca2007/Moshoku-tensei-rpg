@@ -16,6 +16,203 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.8",
+    date: "2026-09-04",
+    title: "Seis Portas",
+    sections: [
+      {
+        heading: "A vitrine da landing dobrou",
+        items: [
+          "Eram três destinos — árvores, loja, livro — e metade do site continuava invisível pra quem chega: a ficha, o roster e o montador de encontros (que é onde o Mestre passa o tempo dele) só apareciam como texto numa lista de bullets embaixo. Agora são seis, cada um com a arte da própria rota, na ordem de uso: descobrir o sistema → fazer a ficha → equipar → guardar o grupo → o lado do Mestre → a referência.",
+          "/criar fica de fora de propósito: ela já é o botão grande do topo, e repetir o CTA principal dentro da vitrine enfraquece os dois.",
+          "Os cards de recursos caíram de quatro para três junto: \"Feito pra mesa de verdade\" descrevia o tracker e o montador de encontros, que agora têm card próprio — dizer a mesma coisa duas vezes na mesma página só ensina o leitor a pular a segunda.",
+        ],
+      },
+      {
+        heading: "A faixa de convite deixou de ser um recorte colado",
+        items: [
+          "Ela tinha duas camadas — a arte e um véu chapado — e o resultado era corte reto em cima e embaixo, laterais que simplesmente terminavam, e a tocha do grupo brilhando por trás da linha de texto.",
+          "Agora são quatro, e nenhuma é enfeite: a arte tratada, uma máscara radial que faz a imagem morrer no pergaminho em vez de encostar numa borda, um véu em degradê (denso no meio onde o texto está, aberto nas pontas onde a arte pode aparecer) e os dois filetes dourados, a mesma aresta de luz que todo card elevado do site tem.",
+        ],
+      },
+      {
+        heading: "A logo cresceu, e a segunda faxina",
+        items: [
+          "A marca ficou 40% maior na landing, na barra e no rodapé. Ela tinha ficado tímida quando perdeu o cartucho — sem a moldura, o mesmo tamanho lê menor do que lia antes.",
+          "public/logo-dark.svg apagado: era a variante de tema escuro do logo antigo, e desde que a marca virou logo-real-alfa.png nenhum componente o importava. O script que o gerava virou scripts/gerar-favicon.mjs e agora produz só o que ainda tem uso.",
+          "logo-real.png (1,3 MB) saiu de public/ para assets-fonte/. Ele é matéria-prima de script, não asset de site: em public/ ficava servível em /logo-real.png — baixável por qualquer visitante e concorrendo por engano com a versão boa.",
+        ],
+      },
+      {
+        heading: "O favicon ainda é da marca antiga",
+        items: [
+          "src/app/icon.svg continua derivado de public/logo.svg — o letreiro velho. É o único lugar do site que ainda mostra a marca anterior, e sobrevive por razão técnica: favicon precisa ser vetorial pra ler num quadrado de 16px, e a marca nova é um PNG. Trocar exige rasterizar e recortar. Fica anotado como pendência declarada, não como esquecimento.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.7",
+    date: "2026-09-04",
+    title: "A Ordem do Livro",
+    sections: [
+      {
+        heading: "O Capítulo 2 estava na ordem errada",
+        items: [
+          "O capítulo rodava 1, 2, 6, 7, 3, 4, 5: \"Interromper uma Conjuração\" e \"Regras Gerais\" ficavam entre a §2 e a §3. A §6 abre dizendo \"uma magia de rank Santo custa 4 Ações\" — número que só a §3 estabelece, e que o leitor ainda não tinha visto.",
+          "O sumário listava 1→7 corretamente, então clicar em \"3. Tempo de Conjuração\" fazia o leitor SUBIR na página. As duas seções foram para o fim, na ordem que o sumário sempre prometeu.",
+        ],
+      },
+      {
+        heading: "O Capítulo 4 numerava 8 seções; o sumário, 9",
+        items: [
+          "\"Reações e Ações Defensivas\" — a tabela com Ataque de Oportunidade, Esquivar, Defender e Bloquear com Escudo, que é regra central de combate — estava enterrada como subtítulo dentro da seção de Exaustão, Fome, Sede e Clima, entre \"Removendo Exaustão\" e \"Fome e Sede\".",
+          "Virou seção própria, logo depois da Economia de Ações. As seções seguintes foram renumeradas de 5 a 9, e as 25 remissões cruzadas do livro inteiro (\"Cap. 4, §7\" e companhia, espalhadas por árvores, raças, loja, bestiário e antecedentes) foram corrigidas junto.",
+        ],
+      },
+      {
+        heading: "O Capítulo 3 apresentava três pilares e dava seção a dois",
+        items: [
+          "A abertura nomeia Magia, Corpo e Utilidade; o capítulo tinha seção de sistemas compartilhados para Corpo e Utilidade, e nada para a Magia. A razão era boa (os sistemas compartilhados da Magia são o Capítulo 2 inteiro), mas não estava escrita em lugar nenhum — quem rolava procurando concluía que faltava uma parte.",
+          "Agora existe a seção-ponte, curta de propósito: ela aponta pro Capítulo 2, não repete ele em versão resumida. Este livro não tem duas fontes de nada.",
+        ],
+      },
+      {
+        heading: "O sumário virou teste",
+        items: [
+          "Nada disso quebrava tsc, eslint ou vitest: eram âncoras válidas apontando pro lugar errado. Um livro é uma ORDEM, e ordem precisa de teste.",
+          "O `npm run check:livro` agora falha se um item do sumário não tem âncora na página, ou se aparece na página numa ordem diferente da do sumário. Conferido invertendo duas seções de propósito: ele pega os dois casos.",
+        ],
+      },
+      {
+        heading: "A logo perdeu o fundo",
+        items: [
+          "Em 0.1.6 ela ia ao ar dentro de um cartucho escuro com mix-blend-mode: screen — o preto sumia contra o cartucho, mas o cartucho continuava sendo um retângulo em volta da marca, que é justamente o que uma logo não pode ter.",
+          "A correção foi no ARQUIVO: scripts/logo-sem-fundo.mjs decodifica o PNG com o zlib do próprio Node (zero dependências), calcula alfa = max(R,G,B) e des-premultiplica a cor. Sem esse segundo passo, cada pixel de borda carrega o preto que o compôs e a logo ganha um halo sujo sobre pergaminho. 15,5% do quadro é letreiro; o resto é transparente de verdade.",
+          "No tema claro ela passa por brightness(.3) sepia(.5) saturate(2): o letreiro é creme e ouro, desenhado pra viver em fundo escuro, e sobre pergaminho ele simplesmente sumia.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.6",
+    date: "2026-09-04",
+    title: "O Letreiro e a Faxina",
+    sections: [
+      {
+        heading: "A logo nova, e o fim do \"RPG\" avulso",
+        items: [
+          "A marca virou /logo-real.png, e isso muda estrutura, não só arte: o \"RPG\" agora está DENTRO do letreiro. Até 0.1.5 ele era um texto ao lado da imagem em três lugares (nav, landing, rodapé), porque o logo da franquia não trazia a palavra que este projeto acrescenta ao nome. Trazendo, o texto virou repetição — e saiu dos três.",
+          "Ela chegou como PNG sem canal alfa, com fundo preto sólido. Solta sobre o pergaminho seria um retângulo preto. A saída não foi gerar um arquivo por tema (que é o que logo.svg + logo-dark.svg precisavam ser): é `mix-blend-mode: screen` sobre um cartucho escuro. Screen com preto devolve o fundo intacto e com creme clareia — a mesma conta nos dois temas, sem editor de imagem.",
+        ],
+      },
+      {
+        heading: "As quatro rotas que faltavam ganharam arte",
+        items: [
+          "/ficha (a ficha na mesa, com vela, pena e tinteiro), /personagens (o salão da guilda), /iniciativa (uma escaramuça em floresta) e /criar (a mão desenhando um círculo mágico). Com elas, todas as sete rotas têm identidade visual própria.",
+          "A landing ganhou uma faixa de convite antes do rodapé: a página terminava numa fileira de links de texto e nunca voltava a pedir a única coisa que quer de quem está lendo.",
+          "O Superd Renegado do bestiário ganhou retrato próprio e parou de emprestar o da raça Superd.",
+        ],
+      },
+      {
+        heading: "O mapa parou de parecer de outro projeto",
+        items: [
+          "Os três pilares eram sky-600, rose-600 e emerald-600 — três primárias saturadas de biblioteca num site inteiro de pergaminho, vinho e ouro. O mapa é a página mais bonita do projeto e era a única que parecia ter vindo de outro. Viraram teal fundo, vinho e oliva: água, sangue e mata. A distinção entre os ramos continua igual; o que mudou foi a temperatura.",
+          "O galho em que você investiu agora ACENDE: linha em opacidade cheia com brilho da cor do Rank, contra os 25% do que nunca foi tocado. Antes, uma árvore com quatro patamares comprados e uma que você nunca abriu tinham o mesmo peso na tela.",
+        ],
+      },
+      {
+        heading: "Gastar passou a ter instante",
+        items: [
+          "Comprar item e gastar PA eram instantâneos: o \"150 PO\" virava \"85 PO\" entre um quadro e outro, e nada dizia que você acabou de gastar 65. Agora a bolsa e o contador de PA contam até o novo valor — duração fixa de 420 ms, e não passo fixo, porque ir de 0 a 6 e de 0 a 3.400 tem que levar o mesmo tempo.",
+          "O card do item comprado pulsa uma vez em dourado. Tudo respeita prefers-reduced-motion.",
+        ],
+      },
+      {
+        heading: "Faxina no repositório",
+        items: [
+          "Um git worktree inteiro do Claude estava commitado em .claude/worktrees/ — cópia completa do projeto, package-lock.json incluído, 30 arquivos rastreados. Saiu do índice e do disco; os markdowns do livro que moravam lá foram preservados fora do repositório.",
+          "Os cinco SVGs do template do create-next-app (next, vercel, window, file, globe) nunca foram referenciados por uma linha de código. Removidos.",
+          "O rodapé passou a citar o repositório no GitHub e o Discord do autor — o Discord como handle copiável, não como link: um convite discord.gg expira e viraria 404 no rodapé de todas as páginas.",
+        ],
+      },
+      {
+        heading: "Dois defeitos que o tsc aprovou e a tela reprovou",
+        items: [
+          "A página inteira quebrou ao abrir: CopyChip recebia o ícone como `icon: ComponentType`, e React recusa uma FUNÇÃO atravessando de Server pra Client Component. tsc e eslint passaram os dois. Agora o ícone entra como children, já construído.",
+          "A logo subiu por cima do selo \"projeto de fã\" na landing: o componente era inline-flex, entrava no fluxo de linha do container centralizado, e mx-auto não centraliza caixa inline nenhuma.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.5",
+    date: "2026-09-04",
+    title: "Três Níveis de Papel",
+    sections: [
+      {
+        heading: "O site tinha UM card, repetido 23 vezes",
+        items: [
+          "A string do card (`rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm…`) estava copiada literalmente 23 vezes no JSX, e o botão vinho outras 23. Em ~11 mil linhas havia 36 `shadow-sm` e exatamente 1 `group-hover`: nada tinha relevo, nada reagia ao mouse, e uma tela cheia lia como uma lista de retângulos igualmente importantes.",
+          "Agora existem três níveis de superfície, e o nível é gramática: `.surface-raised` anuncia (cabeçalho de rota, hero, total — ganha o fio dourado na aresta de cima), `.surface` contém (o card comum), `.surface-sunken` espera (campo, poço, estado vazio, com sombra pra dentro).",
+          "As três compõem com as utilitárias de cor que já estavam no JSX — elas declaram profundidade e textura, não background-color. Por isso deu pra acrescentar a classe num card existente sem reescrever a linha dele.",
+        ],
+      },
+      {
+        heading: "Cada rota tem uma cara",
+        items: [
+          "/ficha, /loja, /encontros e /iniciativa eram estruturalmente a mesma página: h1 + ícone + grade. O novo PageHeader põe a arte de ambiente da rota atrás do título — a taverna da guilda na Loja, o covil de teia nos Encontros, o grimório à luz de vela no Livro, o céu estrelado nas Árvores.",
+          "A arte é dessaturada, puxada pro âmbar da paleta e morre num degradê antes da borda de baixo: as artes chegaram em teal, azul e cinza, e nenhuma delas, crua, convive com texto por cima.",
+          "Rota sem arte não fica esperando arte — o cabeçalho cai num degradê vinho→pergaminho e é o mesmo objeto.",
+        ],
+      },
+      {
+        heading: "O mapa de progressão ganhou céu",
+        items: [
+          "O tabuleiro era o objeto mais bonito do site rodando sobre um retângulo bege chapado. Agora tem campo estelar de fundo e vinheta radial fechando as quatro pontas.",
+          "A mesma imagem serve aos dois temas com tratamentos opostos: no escuro ela aparece de verdade (passada pelo sépia, senão o azul frio briga com a paleta); no claro entra em `multiply` a 13% e vira mancha de tinta — uma carta celeste desenhada no pergaminho.",
+          "O painel lateral era um parágrafo de instrução numa coluna de 340×700 vazia. Virou a legenda das três cores do mapa: a informação que faltava e o conteúdo que faltava, no mesmo lugar.",
+        ],
+      },
+      {
+        heading: "O livro virou livro",
+        items: [
+          "Capitular na abertura de cinco capítulos, e filigrana sob cada título de capítulo.",
+          "A filigrana chegou como PNG de traço preto sobre fundo branco. Ela é convertida em ouro por um filtro SVG que joga a luminância no canal alfa: o fundo branco vira transparente e o traço vira ouro, nos dois temas, sem passar por editor de imagem.",
+          "Filete duplo com losango entre seções e no rodapé, em CSS puro — filigrana toda seção viraria barulho.",
+        ],
+      },
+      {
+        heading: "O bestiário e a loja",
+        items: [
+          "As 6 criaturas prontas do Apêndice G ganharam retrato (`CriaturaPronta.icon`, em public/criaturas/<id>), com `check:livro` conferindo que cada arquivo existe. O Superd Renegado reaproveita o retrato da raça Superd — a criatura do Apêndice G é um membro renegado dessa mesma raça.",
+          "Rank da loja passou a ter cor por letra (F→S, do frio ao quente, na mesma direção da escala de Rank das árvores). Vinte e um cards de arma com a mesma faixa vinho não separavam uma adaga de 6 PO de um artefato de Rank S.",
+          "Item bloqueado não ganha mais um botão cinza do tamanho do card: a grade tinha 21 barras cinzas mortas, e elas eram o elemento mais pesado da tela. Bloqueio virou linha de estado; botão é só pra quem pode agir, e quem tem Rank mas não tem PO vê quanto falta.",
+          "A sétima categoria (Equipamento de Aventura) finalmente tem ícone. A arte estava no repositório desde 0.1.4, solta na raiz de public/ com espaço no nome, a um diretório de distância da tabela que a procurava.",
+        ],
+      },
+      {
+        heading: "Estados vazios, rodapé e barra fixa",
+        items: [
+          "\"Nenhuma perícia ainda.\", \"Nenhuma magia ou talento comprado ainda.\", \"Nenhum item ainda.\" — três frases cinzas em sequência eram a primeira impressão de quem acabava de criar um personagem. Viraram poços com o ícone da seção grande e apagado, e a frase na voz do livro: o grimório está em branco, a mochila está vazia, o covil está vazio.",
+          "Nenhuma rota do site terminava — elas paravam, e depois vinha pergaminho vazio até o fim do scroll. Agora há rodapé com navegação, versão e o disclaimer de fã, em todas as páginas.",
+          "O disclaimer saiu da landing, onde ocupava o espaço logo abaixo do CTA. No lugar dele entrou a vitrine: as três coisas que o site tem e que uma lista de bullets não vende (o mapa, a loja, o livro), cada uma com a arte do próprio destino.",
+          "A barra de navegação é fixa e translúcida com blur — a textura do body é `fixed`, e uma barra opaca cortaria a folha em duas. A rota atual ganhou filete dourado: antes o ativo era só negrito+vinho, a mesma diferença que o hover dá.",
+          "Os números-herói da ficha (PV/PM/PT/PP/CA/Iniciativa) saíram de text-lg na sans de formulário pra display, pretos e tabulares.",
+        ],
+      },
+      {
+        heading: "Três defeitos que só o print pegou",
+        items: [
+          "O ornamento saía com uma moldura dourada: a região padrão de um filtro SVG é 10% maior que o elemento, e lá fora o pixel é preto transparente — que, pela conta do filtro, vira alfa 1, ou seja, ouro chapado na margem inteira.",
+          "A linha \"19 sub-árvores\" da vitrine era invisível: elemento posicionado pinta acima de irmão não posicionado mesmo vindo antes no DOM, e a margem negativa enfiava o texto por baixo da imagem.",
+          "A textura de fibra estava forte demais — exatamente o sintoma que o comentário dela no CSS descreve como erro. Caiu de 0,22 pra 0,10 no tema escuro.",
+          "E um falso positivo que vale anotar: o print de 390px mostrava a página estourando pra fora da tela. O Chrome no Windows trava a largura mínima de janela em ~500px — o print era um recorte de uma janela de 500, e o layout em 500 está correto. `--window-size` abaixo disso mente.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.4",
     date: "2026-09-03",
     title: "As Doze Raças Ganharam Cara",

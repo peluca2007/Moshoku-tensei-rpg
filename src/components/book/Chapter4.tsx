@@ -5,7 +5,7 @@ export default function Chapter4() {
   return (
     <div className="space-y-8">
       <ChapterTitle id="cap4">Capítulo 4 — O Combate e a Sobrevivência</ChapterTitle>
-      <P>Quando a diplomacia falha e as espadas são desembainhadas, o sistema adota um combate rápido, letal e tático.</P>
+      <P className="dropcap">Quando a diplomacia falha e as espadas são desembainhadas, o sistema adota um combate rápido, letal e tático.</P>
 
       <Section>
         <SectionTitle id="cap4-1">1. Cálculos Vitais</SectionTitle>
@@ -234,9 +234,28 @@ export default function Chapter4() {
           maior total vence. Em empate, a situação se mantém inalterada.
         </Aside>
       </Section>
+      <Section>
+        <SectionTitle id="cap4-reacoes-combate">4. Reações e Ações Defensivas</SectionTitle>
+        <P>
+          O combate do sistema tem 3 Ações por turno e 1 Reação por rodada. Abaixo estão as opções
+          básicas que qualquer personagem tem acesso, mesmo sem habilidades específicas:
+        </P>
+        <BookTable
+          headers={["Ação / Reação", "Custo", "Efeito"]}
+          rows={[
+            ["Ataque de Oportunidade", "1 Reação", "Disparado quando uma criatura hostil sai do seu alcance corpo a corpo sem usar a ação de Desengajar. Você realiza um ataque corpo a corpo comum."],
+            ["Desengajar", "1 Ação", "Seu movimento neste turno não provoca Ataques de Oportunidade."],
+            ["Esquivar", "1 Ação", "Até o início do seu próximo turno, você tem Vantagem em testes de resistência e o PRIMEIRO ataque contra você na rodada sofre Desvantagem. Demais ataques ocorrem normalmente."],
+            ["Defender / Absorver", "1 Ação", "Você foca em absorver o impacto. O atacante recebe Vantagem na rolagem de acerto do PRIMEIRO ataque contra você na rodada. Se acertado, o dano desse único ataque é reduzido por sua mitigação base: (Vigor × 2) + Bônus de Rank do maior Estilo de Corpo (ou 0 se não tiver). Demais ataques no turno causam dano integral."],
+            ["Bloquear com Escudo", "1 Reação", "Ao ser atingido por um ataque físico que você veja, gasta sua Reação para somar a CA do seu escudo contra aquele único ataque. Se isso fizer o ataque errar, o dano é anulado."],
+            ["Ajudar", "1 Ação", "Concede Vantagem no próximo teste de perícia ou de ataque de um aliado adjacente até o início do seu próximo turno."],
+          ]}
+        />
+      </Section>
+
 
       <Section>
-        <SectionTitle id="cap4-4">4. Regras de Empilhamento</SectionTitle>
+        <SectionTitle id="cap4-4">5. Regras de Empilhamento</SectionTitle>
         <P>
           Com dezenove árvores no jogo, um grupo bem construído consegue empilhar bônus até quebrar a
           matemática. Estas regras impedem isso sem tirar a graça da combinação.
@@ -272,7 +291,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-5">5. Críticos, Touki e o Fio da Vida</SectionTitle>
+        <SectionTitle id="cap4-5">6. Críticos, Touki e o Fio da Vida</SectionTitle>
         <List
           items={[
             <span key="20"><b>20 Natural (Crítico):</b> acerta automaticamente, independente da CA ou resistência do inimigo. Role os dados de dano duas vezes e some os bônus fixos uma vez só.</span>,
@@ -291,7 +310,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-6">6. Sangrando e Morrendo</SectionTitle>
+        <SectionTitle id="cap4-6">7. Sangrando e Morrendo</SectionTitle>
         <P>
           Magia de cura pode fechar feridas, mas ressurreição beira o mito divino. Se seus Pontos de Vida
           chegarem a 0, você cai Inconsciente e entra em estado de Morte.
@@ -446,7 +465,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-aflicoes">7. Aflições do Mundo de Seis Faces</SectionTitle>
+        <SectionTitle id="cap4-aflicoes">8. Aflições do Mundo de Seis Faces</SectionTitle>
         <P>
           Além do dano que se vê na hora, o corpo pode ser atacado por caminhos mais lentos — veneno, doença,
           maldição. Toda aflição tem um <b>Rank</b>, na mesma escada de Principiante a Imperador que o resto do
@@ -565,7 +584,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-8">8. Exaustão, Fome, Sede e Clima Extremo</SectionTitle>
+        <SectionTitle id="cap4-8">9. Exaustão, Fome, Sede e Clima Extremo</SectionTitle>
         <P>
           O sistema já usa a condição Exaustão em dezenas de talentos, doenças e maldições sem nunca fechar
           o que ela faz de fato. Esta seção fecha essa conta.
@@ -600,23 +619,6 @@ export default function Chapter4() {
             marcha forçada: isso não é ferimento, é privação, e só sai resolvendo a causa.
           </P>
         </Warning>
-
-        <SubTitle id="cap4-reacoes-combate">Reações e Ações Defensivas em Combate</SubTitle>
-        <P>
-          O combate do sistema tem 3 Ações por turno e 1 Reação por rodada. Abaixo estão as opções
-          básicas que qualquer personagem tem acesso, mesmo sem habilidades específicas:
-        </P>
-        <BookTable
-          headers={["Ação / Reação", "Custo", "Efeito"]}
-          rows={[
-            ["Ataque de Oportunidade", "1 Reação", "Disparado quando uma criatura hostil sai do seu alcance corpo a corpo sem usar a ação de Desengajar. Você realiza um ataque corpo a corpo comum."],
-            ["Desengajar", "1 Ação", "Seu movimento neste turno não provoca Ataques de Oportunidade."],
-            ["Esquivar", "1 Ação", "Até o início do seu próximo turno, você tem Vantagem em testes de resistência e o PRIMEIRO ataque contra você na rodada sofre Desvantagem. Demais ataques ocorrem normalmente."],
-            ["Defender / Absorver", "1 Ação", "Você foca em absorver o impacto. O atacante recebe Vantagem na rolagem de acerto do PRIMEIRO ataque contra você na rodada. Se acertado, o dano desse único ataque é reduzido por sua mitigação base: (Vigor × 2) + Bônus de Rank do maior Estilo de Corpo (ou 0 se não tiver). Demais ataques no turno causam dano integral."],
-            ["Bloquear com Escudo", "1 Reação", "Ao ser atingido por um ataque físico que você veja, gasta sua Reação para somar a CA do seu escudo contra aquele único ataque. Se isso fizer o ataque errar, o dano é anulado."],
-            ["Ajudar", "1 Ação", "Concede Vantagem no próximo teste de perícia ou de ataque de um aliado adjacente até o início do seu próximo turno."],
-          ]}
-        />
 
         <SubTitle id="cap4-fome-sede">Fome e Sede</SubTitle>
         <List

@@ -21,7 +21,7 @@ export default function Chapter1() {
   return (
     <div className="space-y-8">
       <ChapterTitle id="cap1">Capítulo 1 — O Núcleo do Sistema</ChapterTitle>
-      <P>
+      <P className="dropcap">
         Este sistema abandona a ideia tradicional de Níveis de Personagem. Aqui, você não sobe de nível
         automaticamente; o seu crescimento é orgânico, baseado no estudo, no treinamento e no acúmulo de
         Pontos de Aprimoramento (PA).

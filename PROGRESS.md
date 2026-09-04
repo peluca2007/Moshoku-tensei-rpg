@@ -48,22 +48,40 @@ mão duas vezes.
 
 ## Metas atuais
 
+- [x] **Composição do livro auditada (0.1.7)** — o Cap. 2 rodava 1,2,6,7,3,4,5; o Cap. 4 numerava 8 seções
+      contra as 9 do sumário, com "Reações e Ações Defensivas" enterrada dentro de Fome/Sede/Clima; e o
+      Cap. 3 apresentava três pilares dando seção a dois. Os três corrigidos, as 25 remissões cruzadas do
+      Cap. 4 renumeradas junto, e `check:livro` passou a falhar quando o sumário e a página divergem em
+      existência OU em ordem.
+- [x] **Faxina do repositório (0.1.6)** — um worktree do Claude commitado inteiro (30 arquivos, cópia do
+      projeto), os 5 SVGs do template do `create-next-app` e o `tsconfig.tsbuildinfo` saíram. Os markdowns
+      do livro que moravam no worktree estão preservados em `../backup-livro-md/`, fora do repositório.
 - [ ] **Deixar o site mais bonito** — em andamento, e agora com prints de verdade guiando (Chrome headless:
       `google-chrome --headless=new --screenshot`). Já saíram: brasões e logo (0.1.2), textura de
       pergaminho, paisagem da landing, enquadramento do mapa de árvores e agrupamento da loja (0.1.3).
       **O que falta, em ordem:**
-  - [ ] **Hierarquia de superfície** — existe UM estilo de card no site inteiro (`border-parchment-300` +
-        `bg-parchment-100/60`), usado pra tudo. Quando nada se destaca, a tela vira uma lista cinza de
-        coisas igualmente importantes. Precisa de três níveis (elevado / normal / afundado), e isso é uma
-        varredura por dezenas de componentes.
+  - [x] **Hierarquia de superfície** — FEITO em 0.1.5. Três níveis (`.surface-raised` / `.surface` /
+        `.surface-sunken`), num componente `ui/Surface` mais três classes de CSS que só declaram
+        profundidade e textura. Como elas não declaram cor nem borda, compõem com as utilitárias que já
+        estavam no JSX — foi isso que permitiu a varredura sem reescrever dezenas de linhas inteiras.
   - [ ] **`/personagens`** — o card já mostra o retrato da RAÇA (0.1.4); falta a foto do personagem
         (frente 2, abaixo) e uma barra de PV/PM visível de fora.
-  - [ ] **`/livro`** — capitular na abertura de capítulo e ornamento entre seções. O resto da página já é
-        a melhor do site.
-  - [ ] **Cabeçalho com identidade por rota** — `/ficha`, `/loja` e `/encontros` são estruturalmente
-        idênticas (h1 + ícone + grade). Uma loja de guilda e uma ficha deveriam *parecer* coisas diferentes.
-  - [ ] **Imagens que ainda faltam**: retratos das 6 criaturas prontas do Apêndice G, arte da categoria
-        `aventura` da loja (a única das 7 sem), fundo do mapa de árvores e ornamento de capítulo.
+  - [x] **`/livro`** — FEITO em 0.1.5: capitular em cinco capítulos, filigrana sob cada título de
+        capítulo (PNG preto-no-branco convertido em ouro por filtro SVG) e filete duplo entre seções.
+  - [x] **Cabeçalho com identidade por rota** — FEITO em 0.1.5. `ui/PageHeader` com a faixa de ambiente
+        de cada rota. Falta arte pra `/ficha`, `/iniciativa`, `/personagens` e `/criar` — elas caem no
+        degradê de reserva, que é o mesmo objeto sem foto.
+  - [x] **Imagens que faltavam** — TODAS entraram em 0.1.5: os 6 retratos de criatura
+        (`public/criaturas/<id>`, com o Superd Renegado reaproveitando o retrato da raça), a categoria
+        `aventura` da loja (a arte já estava no repo, solta na raiz de `public/`), o campo estelar de
+        fundo do mapa e a filigrana de capítulo. `check:livro` fecha com **zero avisos** pela primeira vez.
+  - [x] **Faixas de todas as rotas** — FEITO em 0.1.6. As sete rotas têm arte própria, mais a faixa de
+        convite no fim da landing. O que ainda vale trocar é RESOLUÇÃO: `faixas/loja.jpg` (600px) e
+        `faixas/livro.jpg` (525px) amaciam visivelmente em tela larga; as outras seis estão de 960 a 1900.
+- [ ] **Favicon com a marca nova** — `src/app/icon.svg` ainda é derivado de `public/logo.svg`, o letreiro
+      antigo. É o único lugar do site que mostra a marca anterior. Favicon precisa ser vetorial pra ler em
+      16px e a marca nova é PNG, então trocar exige rasterizar e recortar (o `logo-sem-fundo.mjs` já sabe
+      decodificar PNG; falta o downscale).
 - [ ] **Foto de perfil e capa nas fichas** — documentado e ainda não implementado, a pedido. As decisões
       que precisam ser tomadas antes de escrever código estão no fim deste arquivo.
 - [ ] **Auditoria linha a linha das magias** — Água, Fogo, Terra, Vento, Deus da Espada, Desintoxicação e
@@ -214,7 +232,7 @@ regra que faz o traço preto de um SVG aparecer também no tema escuro. `check:l
 `icon` aponta pra um arquivo que existe, porque um caminho em texto é a coisa mais fácil de quebrar em
 silêncio.
 
-→ `src/components/TreeCrest.tsx` · `scripts/gerar-logo-dark.mjs` · `scripts/check-livro.mts`.
+→ `src/components/TreeCrest.tsx` · `scripts/gerar-favicon.mjs` · `scripts/check-livro.mts`.
 
 ### Fórmula sem teste é fórmula que já divergiu (2026-09-03)
 
@@ -343,7 +361,7 @@ npx tsc --noEmit      # tipos
 npm test              # testes das fórmulas (vitest)
 npm run lint          # eslint
 npm run check:livro   # confere dados × texto do livro, e se toda arte existe em disco (rodar dentro do WSL)
-node scripts/gerar-logo-dark.mjs   # regera logo-dark.svg e o favicon, depois de trocar o logo
+node scripts/gerar-favicon.mjs   # regera logo-dark.svg e o favicon, depois de trocar o logo
 ```
 
 **Mudou alguma coisa visual? Tire um print** — ver "O print é o teste que falta" acima:
