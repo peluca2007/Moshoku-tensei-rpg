@@ -1,26 +1,38 @@
 /**
- * Gera o FAVICON (`src/app/icon.png`) a partir da marca nova.
+ * Gera o FAVICON (`src/app/icon.png`) a partir do brasão em `assets-fonte/`.
  *
- * ## O que mudou em 0.1.11
+ * ## O brasão (0.1.12)
  *
- * Até aqui o favicon era um SVG derivado de `public/logo.svg` — o letreiro
- * ANTIGO. Ele era o último lugar do site que ainda mostrava a marca anterior, e
- * sobrevivia por uma razão técnica: favicon precisa ler num quadrado de 16px, e
- * a marca nova é um PNG, então trocar exigia rasterizar e recortar.
+ * O ícone era o letreiro inteiro reduzido, e o `O-QUE-FALTA.md` registrava a
+ * ressalva: em 16px cinco letras viram mancha, e legibilidade ali pede um
+ * SÍMBOLO. O símbolo chegou pronto — o brasão dourado de asas e olho — e é ele
+ * que este script rasteriza.
  *
- * Este script faz as duas coisas, reaproveitando o decodificador de PNG que o
- * `logo-sem-fundo.mjs` já tinha:
+ * O que o script faz, nesta ordem:
  *
- * 1. **Recorta pelo conteúdo.** A marca ocupa só ~15% do quadro; o resto é
- *    transparente. Reduzir a imagem inteira pra 256px deixaria o letreiro do
- *    tamanho de um grão. O recorte usa a caixa real dos pixels opacos.
- * 2. **Reduz por média de área**, e não pegando um pixel a cada N: o letreiro
- *    tem traço fino, e amostragem simples come metade dele.
- * 3. **Compõe sobre `parchment-950`.** A marca é creme e ouro, desenhada pra
- *    fundo escuro; numa aba clara, sem fundo próprio, ela sumiria.
+ * 1. **Apaga o xadrez de transparência.** A arte chegou como JPEG, e JPEG não
+ *    tem canal alfa: o quadriculado do editor de imagem veio QUEIMADO nos
+ *    pixels, como duas cores cinza de verdade. Sem este passo o favicon sai com
+ *    o quadriculado em volta do brasão. Ver `ehXadrez` mais abaixo.
+ * 2. **Recorta pelo conteúdo.** O brasão ocupa ~48% do quadro; o resto é fundo.
+ *    Reduzir a imagem inteira deixaria o desenho pequeno demais no quadrado.
+ * 3. **Reduz por média de área**, e não pegando um pixel a cada N: as asas têm
+ *    traço fino, e amostragem simples come metade delas.
+ * 4. **Compõe sobre `parchment-950`.** O brasão é ouro sobre nada; numa aba
+ *    clara, sem fundo próprio, ele perderia o contorno.
  *
- * O quadrado final é o recorte CENTRADO num campo quadrado — o letreiro é
- * deitado (1,5:1), e esticá-lo pra caber deformaria a marca.
+ * ## A fonte mora em `assets-fonte/`, e não em `public/`
+ *
+ * Mesma regra do `logo-sem-fundo.mjs`, e pelo mesmo motivo: matéria-prima de
+ * build não é asset de site. Deixada em `public/`, a arte de 2752×1536 ficaria
+ * servível por URL — baixável por qualquer visitante e concorrendo por engano
+ * com o ícone bom.
+ *
+ * **Se a arte mudar:** exporte em **PNG** e substitua `assets-fonte/icon-fonte.png`.
+ * PNG porque este script não tem (nem quer) uma biblioteca de imagem — ele
+ * decodifica PNG com o `zlib` do próprio Node, e JPEG exigiria uma. Com ou sem
+ * canal alfa, tanto faz: o xadrez queimado ele resolve sozinho, e é ele que
+ * decide o que é fundo aqui.
  *
  *   node scripts/gerar-favicon.mjs
  */
@@ -30,12 +42,36 @@ import { fileURLToPath } from "node:url";
 import { deflateSync, inflateSync } from "node:zlib";
 
 const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const ENTRADA = resolve(raiz, "public/logo-real-alfa.png");
+const ENTRADA = resolve(raiz, "assets-fonte/icon-fonte.png");
 const SAIDA = resolve(raiz, "src/app/icon.png");
 /** O SVG que este script gerava antes da marca nova. */
 const ANTIGO = resolve(raiz, "src/app/icon.svg");
 
 const LADO = 256;
+
+/**
+ * O xadrez de transparência do editor de imagem, queimado nos pixels.
+ *
+ * São dois cinzas alternados (#EBEBEB e #BFBFBF). Um pixel é fundo quando as
+ * duas coisas valem ao mesmo tempo: ele é CINZA (os três canais quase iguais) e
+ * cai perto de um dos dois tons. As duas condições juntas são o que protege o
+ * desenho — o dourado do brasão é saturado e nunca é cinza, então nenhuma parte
+ * dele satisfaz a primeira.
+ *
+ * Arte que já venha com alfa de verdade passa por aqui sem ser tocada: pixel
+ * transparente não é cinza claro, é transparente.
+ */
+const XADREZ_TONS = [235, 191];
+/** Quanto um canal pode se afastar do tom pra ainda contar como xadrez. */
+const XADREZ_TOLERANCIA = 26;
+/** Diferença máxima entre o maior e o menor canal pra considerar o pixel cinza. */
+const XADREZ_CINZA = 12;
+
+function ehXadrez(r, g, b) {
+  if (Math.max(r, g, b) - Math.min(r, g, b) > XADREZ_CINZA) return false;
+  return XADREZ_TONS.some((tom) => Math.abs(r - tom) <= XADREZ_TOLERANCIA);
+}
+
 /** parchment-950 do `globals.css` — o mesmo fundo do tema escuro. */
 const FUNDO = [0x1a, 0x12, 0x10];
 /** Respiro entre a arte e a borda do ícone, em fração do lado. */
@@ -90,19 +126,47 @@ function lerPng(caminho) {
   const ihdr = chunks.find((c) => c.tipo === "IHDR");
   const largura = ihdr.dados.readUInt32BE(0);
   const altura = ihdr.dados.readUInt32BE(4);
-  if (ihdr.dados[8] !== 8 || ihdr.dados[9] !== 6) throw new Error("Esperava RGBA de 8 bits.");
+  const profundidade = ihdr.dados[8];
+  const tipoDeCor = ihdr.dados[9];
+  /*
+   * Aceita RGBA (6) e RGB (2), e é de propósito.
+   *
+   * A arte-fonte deste ícone é uma imagem ACHATADA — o fundo dela é o xadrez do
+   * editor, não transparência —, e qualquer editor que a exporte vai gravar RGB
+   * sem canal alfa, porque não há alfa nenhum pra gravar. Exigir RGBA obrigaria
+   * quem troca a arte a saber de um detalhe de formato que não muda nada aqui:
+   * quem decide o que é fundo, neste script, é o `ehXadrez`, e não o canal alfa.
+   *
+   * O RGB é expandido pra RGBA na leitura, com alfa 255, e o resto do script
+   * continua trabalhando num buffer de 4 canais só.
+   */
+  if (profundidade !== 8 || ![2, 3, 6].includes(tipoDeCor)) {
+    throw new Error(
+      `Esperava PNG de 8 bits em RGB, RGBA ou paleta (colortype 2, 3 ou 6); ` +
+        `veio profundidade ${profundidade}, colortype ${tipoDeCor}.`
+    );
+  }
 
+  // Paleta (colortype 3) entra na lista porque e o que um editor de imagem
+  // costuma escolher sozinho pra uma arte de poucas cores — e este brasao, com
+  // o xadrez atras, e exatamente isso. Recusa-la mandaria quem trocou a arte
+  // pra um beco sem saida que ele nao tem ferramenta pra sair.
+  const paleta = tipoDeCor === 3 ? chunks.find((c) => c.tipo === "PLTE")?.dados : null;
+  const alfaDaPaleta = tipoDeCor === 3 ? chunks.find((c) => c.tipo === "tRNS")?.dados : null;
+  if (tipoDeCor === 3 && !paleta) throw new Error("PNG de paleta sem chunk PLTE.");
+
+  const canaisNoArquivo = tipoDeCor === 6 ? 4 : tipoDeCor === 2 ? 3 : 1;
   const dados = inflateSync(Buffer.concat(chunks.filter((c) => c.tipo === "IDAT").map((c) => c.dados)));
-  const bpp = 4;
+  const bpp = canaisNoArquivo;
   const bytesPorLinha = largura * bpp;
-  const pixels = Buffer.alloc(bytesPorLinha * altura);
+  const cru = Buffer.alloc(bytesPorLinha * altura);
   let q = 0;
   for (let y = 0; y < altura; y++) {
     const filtro = dados[q++];
     const linha = dados.subarray(q, q + bytesPorLinha);
     q += bytesPorLinha;
-    const destino = pixels.subarray(y * bytesPorLinha, (y + 1) * bytesPorLinha);
-    const anterior = y > 0 ? pixels.subarray((y - 1) * bytesPorLinha, y * bytesPorLinha) : null;
+    const destino = cru.subarray(y * bytesPorLinha, (y + 1) * bytesPorLinha);
+    const anterior = y > 0 ? cru.subarray((y - 1) * bytesPorLinha, y * bytesPorLinha) : null;
     for (let i = 0; i < bytesPorLinha; i++) {
       const a = i >= bpp ? destino[i - bpp] : 0;
       const b = anterior ? anterior[i] : 0;
@@ -116,12 +180,42 @@ function lerPng(caminho) {
       destino[i] = v & 0xff;
     }
   }
+
+  if (canaisNoArquivo === 4) return { largura, altura, pixels: cru };
+
+  const pixels = Buffer.alloc(largura * altura * 4);
+  if (paleta) {
+    for (let i = 0, j = 0; i < cru.length; i++, j += 4) {
+      const indice = cru[i];
+      pixels[j] = paleta[indice * 3];
+      pixels[j + 1] = paleta[indice * 3 + 1];
+      pixels[j + 2] = paleta[indice * 3 + 2];
+      pixels[j + 3] = alfaDaPaleta && indice < alfaDaPaleta.length ? alfaDaPaleta[indice] : 255;
+    }
+    return { largura, altura, pixels };
+  }
+  for (let i = 0, j = 0; i < cru.length; i += 3, j += 4) {
+    pixels[j] = cru[i];
+    pixels[j + 1] = cru[i + 1];
+    pixels[j + 2] = cru[i + 2];
+    pixels[j + 3] = 255;
+  }
   return { largura, altura, pixels };
 }
 
 const { largura, altura, pixels } = lerPng(ENTRADA);
 
-// 1. A caixa do que é visível. Sem isso, 85% do ícone seria vazio.
+// 1. Apaga o xadrez do editor, e SÓ ENTÃO mede a caixa do conteúdo. Na ordem
+//    inversa a caixa seria a imagem inteira, porque o xadrez é opaco.
+let apagados = 0;
+for (let i = 3; i < pixels.length; i += 4) {
+  if (pixels[i] > 24 && ehXadrez(pixels[i - 3], pixels[i - 2], pixels[i - 1])) {
+    pixels[i] = 0;
+    apagados++;
+  }
+}
+
+// 2. A caixa do que sobrou visível.
 let x0 = largura;
 let y0 = altura;
 let x1 = -1;
@@ -136,10 +230,22 @@ for (let y = 0; y < altura; y++) {
     }
   }
 }
-if (x1 < 0) throw new Error("A marca está inteira transparente — nada pra recortar.");
+if (x1 < 0) throw new Error("Sobrou tudo transparente — o filtro de xadrez comeu a arte inteira.");
 
-// 2. O campo quadrado que contém a caixa, centrado nela: o letreiro é deitado, e
-//    esticar pra caber deformaria a marca.
+// A arte tem que ser MAJORITARIAMENTE fundo: é um brasão com folga em volta, e
+// se o recorte devolver quase o quadro inteiro, ou o xadrez não foi
+// reconhecido, ou a arte trocada é outra coisa. Falhar aqui é melhor que
+// publicar um favicon com moldura cinza.
+const fracaoDoQuadro = ((x1 - x0 + 1) * (y1 - y0 + 1)) / (largura * altura);
+if (fracaoDoQuadro > 0.9) {
+  throw new Error(
+    `O recorte pegou ${(fracaoDoQuadro * 100).toFixed(0)}% da imagem: o fundo não foi reconhecido. ` +
+      `Se a arte nova não usa o xadrez do editor, exporte-a em PNG com alfa de verdade.`
+  );
+}
+
+// 3. O campo quadrado que contém a caixa, centrado nela: esticar pra caber
+//    deformaria o brasão.
 const larguraCaixa = x1 - x0 + 1;
 const alturaCaixa = y1 - y0 + 1;
 const lado = Math.max(larguraCaixa, alturaCaixa) / (1 - MARGEM * 2);
@@ -148,7 +254,7 @@ const centroY = (y0 + y1) / 2;
 const origemX = centroX - lado / 2;
 const origemY = centroY - lado / 2;
 
-// 3. Redução por média de área, composta sobre o fundo escuro.
+// 4. Redução por média de área, composta sobre o fundo escuro.
 const saida = Buffer.alloc(LADO * LADO * 3);
 const passo = lado / LADO;
 for (let sy = 0; sy < LADO; sy++) {
@@ -214,4 +320,5 @@ if (existsSync(ANTIGO)) {
 }
 
 console.log(`✅ ${SAIDA}`);
-console.log(`   ${LADO}×${LADO}, recortado da caixa ${larguraCaixa}×${alturaCaixa} da marca.`);
+console.log(`   ${LADO}×${LADO}, recortado da caixa ${larguraCaixa}×${alturaCaixa} do brasão.`);
+console.log(`   Xadrez do editor apagado em ${((apagados / (largura * altura)) * 100).toFixed(0)}% dos pixels.`);

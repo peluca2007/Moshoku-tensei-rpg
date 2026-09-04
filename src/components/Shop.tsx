@@ -117,7 +117,7 @@ export default function Shop() {
             </span>
             <span className="flex items-center gap-1 rounded-full bg-wine-600/15 px-3 py-1 text-sm font-bold text-wine-700 ring-1 ring-wine-500/40 backdrop-blur-sm dark:text-wine-200">
               Rank {guildRank} na Guilda
-              {guildRankEstimated && <span className="text-[10px] uppercase tracking-wide">(estimado)</span>}
+              {guildRankEstimated && <span className="text-3xs uppercase tracking-wide">(estimado)</span>}
             </span>
           </>
         }
@@ -135,7 +135,7 @@ export default function Shop() {
 
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-parchment-400 dark:text-parchment-500">
+          <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-500">
             Tipo
           </span>
           <button
@@ -166,7 +166,7 @@ export default function Shop() {
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-parchment-400 dark:text-parchment-500">
+          <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-500">
             Rank
           </span>
           <button
@@ -243,16 +243,28 @@ export default function Shop() {
                     key={item.id}
                     /*
                       Item que você NÃO pode comprar fica de fato mais apagado
-                      (`opacity-70`) em vez de só ter o botão desligado: numa
-                      grade de 21 armas, "o que dá pra comprar agora" tem que
-                      ser legível de longe, sem ler letra nenhuma.
+                      em vez de só ter o botão desligado: numa grade de 21 armas,
+                      "o que dá pra comprar agora" tem que ser legível de longe,
+                      sem ler letra nenhuma.
+
+                      O apagamento era `opacity-70`, e a varredura de contraste
+                      de 0.1.12 mostrou o preço disso: 128 achados nesta página
+                      sozinha. Opacidade puxa TEXTO e fundo juntos na direção do
+                      pergaminho, então a descrição do item caía de 5,6:1 pra
+                      3,0:1 — e a descrição é justamente o que alguém lê pra
+                      decidir se vale juntar PO pra aquele item.
+
+                      Agora o recuo é de cor e de saturação, não de opacidade: o
+                      card afunda um degrau no fundo e perde cor, e o texto
+                      continua com o contraste que tinha. De longe a leitura é a
+                      mesma; de perto ela existe.
                     */
                     className={`flex flex-col p-4 transition-all ${
                       justBought
                         ? "animate-ganho-flash !border-emerald-400 !bg-emerald-50 dark:!border-emerald-600 dark:!bg-emerald-950/40"
                         : rankOk
                           ? ""
-                          : "opacity-70 saturate-50"
+                          : "bg-parchment-200/60 saturate-50 dark:bg-parchment-950/50"
                     }`}
                   >
                     <div className="mb-1.5 flex items-start justify-between gap-2">

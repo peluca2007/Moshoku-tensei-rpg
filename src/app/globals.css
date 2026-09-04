@@ -95,6 +95,23 @@
   --color-olive-800: #3d4020;
   --color-olive-900: #2a2c17;
   --color-olive-950: #16170c;
+
+  /*
+   * Dois degraus abaixo do `text-xs`, em REM (0.1.12).
+   *
+   * O site tinha 68 lugares escritos como `text-[11px]`, `text-[10px]` e
+   * `text-[9px]` — rótulo de reserva, etiqueta de rank, nota de custo em PA.
+   * Pixel cravado não obedece ao tamanho de fonte do navegador: quem aumenta a
+   * letra nas configurações do celular (que é como uma pessoa com baixa visão
+   * usa QUALQUER site) via todo o resto crescer e justamente as legendas
+   * ficarem do mesmo tamanho. Em rem elas crescem junto.
+   *
+   * Os valores são os mesmos de antes numa raiz de 16px, então nada muda de
+   * aparência pra quem não mexeu em nada — o que muda é o que acontece pra quem
+   * mexeu.
+   */
+  --text-2xs: 0.6875rem; /* 11px na raiz padrão */
+  --text-3xs: 0.625rem; /* 10px */
 }
 
 html {
@@ -661,6 +678,30 @@ input[type="number"],
 
 .faixa-arte {
   mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+}
+
+/*
+ * A CAPA da ficha (0.1.12) — mesma máscara da faixa, tratamento de cor bem
+ * mais leve.
+ *
+ * A capa não é arte de ambiente: é a foto que o jogador escolheu pro
+ * personagem DELE. O `sepia(0.5) saturate(0.6)` da faixa existe pra puxar
+ * artes de terceiros, que chegam em teal e azul, pro âmbar da paleta — e
+ * aplicá-lo aqui repinta a escolha de outra pessoa até ela sumir. Uma capa
+ * clara testada com esse filtro saiu indistinguível de não ter capa nenhuma.
+ *
+ * O que NÃO afrouxa é o véu de contraste que vive no componente: a lição de
+ * 0.1.10 é que filtro depende de quão clara a arte é, e véu não. Escurecer
+ * menos aqui é seguro justamente porque o véu continua garantindo o piso de
+ * luminância que o nome do personagem precisa por cima.
+ */
+.capa-da-ficha {
+  filter: saturate(0.92) brightness(0.9);
+  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+}
+
+.dark .capa-da-ficha {
+  filter: saturate(0.85) brightness(0.78);
 }
 
 /* ============================================================================

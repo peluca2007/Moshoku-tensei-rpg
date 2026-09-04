@@ -47,7 +47,7 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A Plateia",
         description:
-          "[Escopo: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida.",
+          "[Escopo: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida. [Dissonância] Uma vez por turno, quando você usa uma habilidade desta árvore, cada criatura hostil que te OUÇA sofre 1d4 de dano sônico por patamar que você possua nesta árvore. É a mesma fraqueza do resto da árvore, cobrada no dano: quem não ouve não sofre, e criatura sem emoção também não.",
       },
       talents: [
         { id: "ouvido-absoluto", name: "Ouvido Absoluto", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você imita qualquer voz já ouvida e reproduz sotaques. Aprende idiomas em dias." },
@@ -64,8 +64,7 @@ export const BARDO_TREE: Tree = {
           paCost: UTILITY_PA_COST.signature.Principiante,
           range: "Voz",
           actions: { normal: 1 },
-          damage: { normal: "Dado de Inspiração: 1d6 (1º-2º patamar), 2d6 (3º-4º), 3d6 (5º-6º)" },
-          effect: "Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +5 (Cap. 4, §5).",
+          effect: "Dado de Inspiração: 1d6 (1º-2º patamar), 2d6 (3º-4º), 3d6 (5º-6º). Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +5 (Cap. 4, §5).",
           incantation:
             "Que as minhas palavras de coragem ressoem no fundo do teu coração e despertem a força oculta que tu sempre guardaste. Inspiração!",
         },

@@ -85,7 +85,23 @@ export default function CombinedSpellsPanel() {
                 ? "border-emerald-400/60 bg-emerald-500/5 dark:border-emerald-800"
                 : disponivel
                   ? "border-gold-400 bg-gold-500/5 dark:border-gold-700"
-                  : "border-parchment-300 bg-parchment-50/40 opacity-70 dark:border-parchment-800 dark:bg-parchment-950/30"
+                  : /*
+                       Trancada NÃO usa `opacity`, e essa é a diferença que a
+                       varredura de contraste de 0.1.12 obrigou.
+
+                       `opacity-70` no <li> desbota a linha INTEIRA contra o
+                       pergaminho da página: texto e fundo do botão andam juntos
+                       na direção do fundo, e o par que dava 4,65:1 sozinho caía
+                       pra 2,6:1 dentro da linha desbotada. O pior é o que ele
+                       apaga — a linha trancada é justamente a que o leitor
+                       precisa LER, porque é ela que diz quais duas portas
+                       faltam.
+
+                       O recuo agora é de cor, não de opacidade: fundo mais
+                       fundo que a página e nada mais. A linha continua lendo
+                       como "não é pra agora" sem levar o texto junto.
+                    */
+                    "border-parchment-300 bg-parchment-200/50 dark:border-parchment-800 dark:bg-parchment-950/30"
             }`}
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
@@ -103,7 +119,7 @@ export default function CombinedSpellsPanel() {
                     <span
                       key={p.nome}
                       title={p.ok ? `Você tem ${p.nome} no ${p.atual}` : `Você tem: ${p.atual}`}
-                      className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ${
+                      className={`rounded-full px-2 py-0.5 text-2xs font-semibold ring-1 ${
                         p.ok
                           ? "bg-emerald-500/10 text-emerald-700 ring-emerald-500/30 dark:text-emerald-300"
                           : "bg-parchment-500/10 text-parchment-600 ring-parchment-400/40 dark:text-parchment-400"
@@ -129,7 +145,7 @@ export default function CombinedSpellsPanel() {
                     ? "bg-parchment-200 text-parchment-700 hover:bg-parchment-300 dark:bg-parchment-800 dark:text-parchment-300"
                     : disponivel
                       ? "bg-gold-600 text-white hover:bg-gold-500"
-                      : "cursor-not-allowed bg-parchment-200 text-parchment-400 dark:bg-parchment-800 dark:text-parchment-600"
+                      : "cursor-not-allowed bg-parchment-200 text-parchment-600 dark:bg-parchment-800 dark:text-parchment-400"
                 }`}
               >
                 {comprada ? "Remover" : disponivel ? `Comprar (${spell.paCost} PA)` : "Trancada"}

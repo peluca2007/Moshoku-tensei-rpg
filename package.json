@@ -11,7 +11,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:redundancia": "tsx scripts/check-redundancia.mts",
-    "check:arvores": "tsx scripts/check-arvores.mts"
+    "check:arvores": "tsx scripts/check-arvores.mts",
+    "check:contraste": "node scripts/check-contraste.mjs",
+    "check:mobile": "node scripts/check-mobile.mjs",
+    "check:a11y": "node scripts/check-a11y.mjs",
+    "check:texto": "tsx scripts/check-texto.mts"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

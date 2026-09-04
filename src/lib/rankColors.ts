@@ -121,7 +121,7 @@ export const CATEGORY_ACCENT: Record<
   magia: {
     solidBg: "bg-teal-700",
     stroke: "stroke-teal-600",
-    text: "text-teal-500 dark:text-teal-300",
+    text: "text-teal-700 dark:text-teal-300",
     border: "border-teal-600",
     glow: "drop-shadow-[0_0_6px_rgba(20,184,166,0.55)]",
   },
@@ -156,12 +156,25 @@ export const CATEGORY_ACCENT: Record<
  * Classes literais e completas: o Tailwind lê o texto do arquivo, então
  * `bg-${cor}-500/15` montado em template literal não geraria regra nenhuma.
  */
+/*
+ * O degrau do TEXTO no tema claro é 800, e não 700 (0.1.12).
+ *
+ * A etiqueta tem 12px em negrito sobre um fundo da própria cor a 15% — que, em
+ * cima do pergaminho, não é claro o bastante pra sustentar o 700. Medido na
+ * varredura de contraste: amber-700 sobre a etiqueta âmbar dava 3,80:1 e
+ * rose-700 dava 4,07:1, os dois abaixo dos 4,5:1 do WCAG AA. É a etiqueta que
+ * responde "posso comprar isto?" em 21 cards de uma vez, então é o texto que
+ * menos pode exigir esforço pra ler.
+ *
+ * O escuro fica onde estava: lá o mesmo 15% cai sobre parchment-950 e os tons
+ * 300 já passam com folga.
+ */
 export const GUILD_RANK_COLORS: Record<GuildRank, string> = {
   F: "bg-parchment-500/15 text-parchment-700 ring-parchment-500/30 dark:text-parchment-300",
-  E: "bg-emerald-500/15 text-emerald-700 ring-emerald-500/30 dark:text-emerald-300",
-  D: "bg-sky-500/15 text-sky-700 ring-sky-500/30 dark:text-sky-300",
-  C: "bg-violet-500/15 text-violet-700 ring-violet-500/30 dark:text-violet-300",
-  B: "bg-amber-500/15 text-amber-700 ring-amber-500/30 dark:text-amber-300",
-  A: "bg-rose-500/15 text-rose-700 ring-rose-500/30 dark:text-rose-300",
-  S: "bg-yellow-400/20 text-yellow-800 ring-yellow-500/40 dark:text-yellow-200",
+  E: "bg-emerald-500/15 text-emerald-800 ring-emerald-500/30 dark:text-emerald-300",
+  D: "bg-sky-500/15 text-sky-800 ring-sky-500/30 dark:text-sky-300",
+  C: "bg-violet-500/15 text-violet-800 ring-violet-500/30 dark:text-violet-300",
+  B: "bg-amber-500/15 text-amber-800 ring-amber-500/30 dark:text-amber-300",
+  A: "bg-rose-500/15 text-rose-800 ring-rose-500/30 dark:text-rose-300",
+  S: "bg-yellow-400/20 text-yellow-900 ring-yellow-500/40 dark:text-yellow-200",
 };

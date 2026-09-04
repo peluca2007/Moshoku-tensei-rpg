@@ -67,3 +67,9 @@ livro em txt.txt
 # Imagens avaliadas e recusadas para o design (ver PATCH_NOTES 0.1.5) — ficam
 # fora de public/ pra nao serem servidas, e fora do git pra nao pesarem no repo.
 .recusadas/
+
+# Originais das faixas: o arquivo grande de onde a faixa de public/ foi recortada
+# (loja: 3840px, 4,4 MB). Mesma regra do .recusadas/ — fora de public/ pra não ser
+# servido, fora do git pra não pesar no repo, mas guardado em disco pra permitir
+# recortar de novo sem procurar a imagem outra vez.
+/assets-fonte/originais/

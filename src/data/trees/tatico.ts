@@ -47,7 +47,7 @@ export const TATICO_TREE: Tree = {
       mastery: {
         name: "Onde Pisar",
         description:
-          "[Escopo: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. O grupo nunca é surpreendido — emboscadas ainda acontecem, mas vocês agem no primeiro turno. Sempre encontram água, abrigo e um lugar defensável.",
+          "[Escopo: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. O grupo nunca é surpreendido — emboscadas ainda acontecem, mas vocês agem no primeiro turno. Sempre encontram água, abrigo e um lugar defensável. [Ordem de Tiro] Uma vez por turno, sem gastar Ação, aponte um alvo que você enxergue: o primeiro ataque de ALIADO que acertar aquele alvo até o seu próximo turno causa +1d6 de dano por patamar que você possua nesta árvore. É a única fonte de dano do Tático, e ela não sai da arma dele — sai de quem ele mandou atirar.",
       },
       talents: [
         { id: "mapa-vivo", name: "Mapa Vivo", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você desenha e lê mapas; regiões que já atravessou ficam registradas e podem ser vendidas." },

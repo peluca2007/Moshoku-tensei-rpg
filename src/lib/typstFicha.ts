@@ -72,6 +72,21 @@ export interface FichaSpellcastingRow {
 
 export interface FichaPdfPayload {
   name: string;
+  /**
+   * A foto de perfil da ficha, como data URL (2026-09-04).
+   *
+   * A decisão que o PROGRESS.md deixou em aberto ("o PDF tem que decidir se
+   * imprime a foto ou ignora") ficou em IMPRIMIR. O argumento contra era
+   * privacidade — mas esta rota já recebe a ficha inteira pra compilar o
+   * Typst, então a foto não abre um caminho novo: ela anda pelo mesmo que o
+   * nome, os atributos e a lore já andam. E o PDF existe pra ser levado pra
+   * mesa impresso, que é exatamente onde um retrato vale mais.
+   *
+   * A rota valida e grava o arquivo ao lado do `.typ`; o Typst referencia o
+   * NOME do arquivo, nunca o data URL — um base64 de 30 KB dentro do
+   * código-fonte estoura o compilador sem uma mensagem que ajude.
+   */
+  portrait?: string;
   raceName: string;
   backgroundName: string;
   gold: string;
@@ -419,7 +434,12 @@ function abilityCardsPages(cards: FichaAbilityCard[]): string {
   return pages.join("\n\n#pagebreak()\n\n");
 }
 
-export function buildFichaTypstSource(p: FichaPdfPayload): string {
+/**
+ * @param retratoArquivo nome do arquivo de imagem já gravado ao lado do `.typ`
+ *   (a rota é quem decodifica e grava). `undefined` = ficha sem foto, e o
+ *   cabeçalho volta a ocupar a largura inteira.
+ */
+export function buildFichaTypstSource(p: FichaPdfPayload, retratoArquivo?: string): string {
   return `${PREAMBLE}
 
 // ==========================================
@@ -436,19 +456,35 @@ export function buildFichaTypstSource(p: FichaPdfPayload): string {
 #v(6pt)
 
 #grid(
-  columns: (2fr, 1fr, 1.5fr, 1fr),
+  columns: ${retratoArquivo ? "(auto, 1fr)" : "(1fr,)"},
   gutter: 10pt,
-  field("Personagem:", value: ${tstr(p.name)}),
-  field("Raça:", value: ${tstr(p.raceName)}),
-  field("Antecedente:", value: ${tstr(p.backgroundName)}),
-  field("Ouro (PO):", value: ${tstr(p.gold)})
-)
-#v(6pt)
-#grid(
-  columns: (2fr, 2fr),
-  gutter: 10pt,
-  field("Árvore Inicial:", value: ${tstr(p.startingTreeName)}),
-  field("Destino / Sub-tabela:", value: ${tstr(p.subtableName)})
+  ${
+    retratoArquivo
+      ? `block(
+    radius: 4pt,
+    clip: true,
+    stroke: 0.6pt + cor-principal,
+    image(${tstr(retratoArquivo)}, width: 27mm, height: 27mm, fit: "cover")
+  ),`
+      : ""
+  }
+  [
+    #grid(
+      columns: (2fr, 1fr, 1.5fr, 1fr),
+      gutter: 10pt,
+      field("Personagem:", value: ${tstr(p.name)}),
+      field("Raça:", value: ${tstr(p.raceName)}),
+      field("Antecedente:", value: ${tstr(p.backgroundName)}),
+      field("Ouro (PO):", value: ${tstr(p.gold)})
+    )
+    #v(6pt)
+    #grid(
+      columns: (2fr, 2fr),
+      gutter: 10pt,
+      field("Árvore Inicial:", value: ${tstr(p.startingTreeName)}),
+      field("Destino / Sub-tabela:", value: ${tstr(p.subtableName)})
+    )
+  ]
 )
 #v(10pt)
 

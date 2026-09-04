@@ -3,14 +3,62 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, Trash2, User, Check, Upload, Wand2 } from "lucide-react";
+import { Plus, Trash2, User, Check, Upload, Wand2, Heart, Droplets } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById } from "@/data/races";
 import RaceCrest from "./RaceCrest";
 import { getBackgroundById } from "@/data/backgrounds";
-import { getGuildRank, getPaSpent } from "@/store/selectors";
+import { getCurrentHp, getCurrentMp, getGuildRank, getMaxHp, getMaxMp, getPaSpent } from "@/store/selectors";
 import PageHeader from "./ui/PageHeader";
 import EmptyState from "./ui/EmptyState";
+import { ACEITA_NA_IMPORTACAO, FichaIlegivel, lerArquivoDeFicha } from "@/lib/fichaArquivo";
+import type { CharacterData } from "@/lib/types";
+
+/**
+ * A barra de PV/PM do card (0.1.12).
+ *
+ * Ela existe porque o roster era a única tela do site onde o estado do
+ * personagem não aparecia: pra saber se o guerreiro do grupo estava com 4 de 62
+ * PV era preciso ABRIR a ficha, uma por vez. Numa mesa isso acontece toda
+ * rodada, e o Mestre é quem mais paga.
+ *
+ * O número vem junto com a barra de propósito. Barra sozinha comunica proporção
+ * e esconde escala — "meio cheia" é a mesma imagem com 6 PV e com 60 —, e a
+ * decisão de mesa ("dá pra aguentar mais um turno?") é sobre a escala.
+ */
+function BarraDeRecurso({
+  icone: Icone,
+  rotulo,
+  atual,
+  maximo,
+  className,
+}: {
+  icone: typeof Heart;
+  rotulo: string;
+  atual: number;
+  maximo: number;
+  className: string;
+}) {
+  const fracao = maximo > 0 ? Math.max(0, Math.min(1, atual / maximo)) : 0;
+  return (
+    <div className="flex items-center gap-2">
+      <Icone className="h-3.5 w-3.5 shrink-0 text-parchment-500 dark:text-parchment-400" aria-hidden />
+      <div
+        className="h-2 flex-1 overflow-hidden rounded-full bg-parchment-300/70 dark:bg-parchment-800"
+        role="meter"
+        aria-valuenow={atual}
+        aria-valuemin={0}
+        aria-valuemax={maximo}
+        aria-label={`${rotulo}: ${atual} de ${maximo}`}
+      >
+        <div className={`h-full rounded-full transition-[width] ${className}`} style={{ width: `${fracao * 100}%` }} />
+      </div>
+      <span className="w-16 shrink-0 text-right text-2xs font-semibold tabular-nums text-parchment-600 dark:text-parchment-300">
+        {atual}/{maximo}
+      </span>
+    </div>
+  );
+}
 
 export default function CharacterRoster() {
   const router = useRouter();
@@ -31,21 +79,25 @@ export default function CharacterRoster() {
     router.push("/ficha");
   }
 
+  /**
+   * Aceita o arquivo novo (`.mtficha`, comprimido e com as imagens dentro) E o
+   * `.json` antigo. O formato é detectado pelo conteúdo, não pela extensão —
+   * ficha de mesa não se abandona por causa de formato, e alguém vai ter um
+   * JSON exportado semana passada guardado no Discord.
+   */
   async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
     setImportError(null);
     try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-      if (!data || typeof data !== "object" || !("attributeBase" in data)) {
-        throw new Error("Arquivo não parece ser uma ficha exportada deste site.");
-      }
-      useCharacterStore.getState().importCharacter(data);
+      const data = await lerArquivoDeFicha(file);
+      useCharacterStore.getState().importCharacter(data as CharacterData);
       router.push("/ficha");
     } catch (err) {
-      setImportError(err instanceof Error ? err.message : "Não foi possível ler esse arquivo.");
+      setImportError(
+        err instanceof FichaIlegivel ? err.message : "Não foi possível ler esse arquivo."
+      );
     }
   }
 
@@ -58,13 +110,24 @@ export default function CharacterRoster() {
         faixaPosition="center 45%"
         actions={
           <>
-          <input ref={fileInputRef} type="file" accept="application/json" onChange={handleImportFile} className="hidden" />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ACEITA_NA_IMPORTACAO}
+            onChange={handleImportFile}
+            className="hidden"
+            /* Quem interage é o botão "Importar ficha" ao lado; este campo é só o
+               mecanismo. Sem `aria-hidden` + `tabIndex={-1}` o leitor de tela
+               anuncia um campo de arquivo sem nome, e o Tab para nele. */
+            aria-hidden
+            tabIndex={-1}
+          />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             className="flex items-center gap-1 rounded-lg border border-parchment-300 px-3 py-2 text-sm font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
           >
-            <Upload className="h-4 w-4" /> Importar JSON
+            <Upload className="h-4 w-4" /> Importar ficha
           </button>
           <Link
             href="/criar"
@@ -83,7 +146,7 @@ export default function CharacterRoster() {
           </>
         }
       >
-        Cada ficha vive no seu navegador. Exporte o JSON pra levar pra outra máquina — ou pro Mestre.
+        Cada ficha vive no seu navegador. Baixe o arquivo da ficha pra levar pra outra máquina — ou pro Mestre. Ele vai comprimido, com a foto e a capa dentro.
       </PageHeader>
 
       {importError && (
@@ -123,14 +186,31 @@ export default function CharacterRoster() {
                 ficha que era só nome e dois botões passa a ter uma cara.
               */}
               <div className="mb-3 flex items-start gap-3">
-                {race && <RaceCrest race={race} size={52} rounded="rounded-xl" />}
+                {/*
+                  A FOTO do personagem quando existe; o brasão da raça quando
+                  não (0.1.12). O brasão continua sendo o fallback e não um
+                  degrau menor: ele resolve o card de quem nunca vai subir foto
+                  nenhuma, que é a maioria de uma mesa.
+                */}
+                {character.portrait ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={character.portrait}
+                    alt={`Retrato de ${character.name || "personagem sem nome"}`}
+                    width={52}
+                    height={52}
+                    className="h-[52px] w-[52px] shrink-0 rounded-xl border border-parchment-300/80 object-cover dark:border-parchment-700/80"
+                  />
+                ) : race ? (
+                  <RaceCrest race={race} size={52} rounded="rounded-xl" />
+                ) : null}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-2">
                     <h2 className="font-bold text-parchment-900 dark:text-parchment-50">
                       {character.name || "Sem nome"}
                     </h2>
                     {isActive && (
-                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-wine-500/10 px-2 py-0.5 text-[11px] font-semibold text-wine-600 dark:text-wine-300">
+                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-wine-500/10 px-2 py-0.5 text-2xs font-semibold text-wine-600 dark:text-wine-300">
                         <Check className="h-3 w-3" /> Ativa
                       </span>
                     )}
@@ -141,6 +221,23 @@ export default function CharacterRoster() {
                   </p>
                 </div>
               </div>
+              <div className="mb-3 space-y-1.5">
+                <BarraDeRecurso
+                  icone={Heart}
+                  rotulo="PV"
+                  atual={getCurrentHp(character)}
+                  maximo={getMaxHp(character)}
+                  className="bg-rose-500/80"
+                />
+                <BarraDeRecurso
+                  icone={Droplets}
+                  rotulo="PM"
+                  atual={getCurrentMp(character)}
+                  maximo={getMaxMp(character)}
+                  className="bg-sky-500/80"
+                />
+              </div>
+
               <div className="flex gap-2">
                 <button
                   type="button"

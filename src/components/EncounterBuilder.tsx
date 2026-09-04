@@ -303,7 +303,25 @@ function SecaoGrupo({
                 }`}
               >
                 <div className="flex items-center gap-2">
-                  {tree && <TreeCrest tree={tree} size={36} />}
+                  {/*
+                    A FOTO do personagem quando existe (0.1.12), com o brasão da
+                    árvore como alternativa. O Mestre monta o encontro olhando
+                    pros jogadores dele — e o card mostrava o mesmo emblema de
+                    Magia de Água pros dois magos da mesa, o que é exatamente o
+                    contrário do que essa tela precisa.
+                  */}
+                  {c.portrait ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={c.portrait}
+                      alt={`Retrato de ${c.name || "personagem sem nome"}`}
+                      width={36}
+                      height={36}
+                      className="h-9 w-9 shrink-0 rounded-lg border border-parchment-300/80 object-cover dark:border-parchment-700/80"
+                    />
+                  ) : (
+                    tree && <TreeCrest tree={tree} size={36} />
+                  )}
                   <div className="min-w-0">
                     <p className="font-semibold text-parchment-900 dark:text-parchment-50">
                       {c.name || "Sem nome"}
@@ -438,7 +456,7 @@ function SecaoCriaturas({
               <span className="font-semibold text-parchment-900 dark:text-parchment-50">{p.nome}</span>{" "}
               <span className="text-parchment-600 dark:text-parchment-400">— {rotuloPatamar(p.patamar)}</span>
               <p className="mt-0.5 text-parchment-600 dark:text-parchment-400">{p.perigo}</p>
-              <p className="mt-1 font-mono text-[11px] text-parchment-600 dark:text-parchment-400">
+              <p className="mt-1 font-mono text-2xs text-parchment-600 dark:text-parchment-400">
                 {p.acoes.map((a) => `${a.nome}${a.dano ? ` ${a.dano}` : ""}`).join(" · ")}
               </p>
               </span>
@@ -673,7 +691,7 @@ function CampoNumero({
   return (
     <label
       title={dica}
-      className={`text-[11px] font-semibold ${desativado ? "text-parchment-400 dark:text-parchment-600" : "text-parchment-600 dark:text-parchment-400"}`}
+      className={`text-2xs font-semibold ${desativado ? "text-parchment-400 dark:text-parchment-600" : "text-parchment-600 dark:text-parchment-400"}`}
     >
       {rotulo}
       <input
@@ -811,7 +829,7 @@ function LinhaDeAcao({
       </div>
 
       <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-        <label className="flex items-center gap-1 text-[11px] font-semibold text-parchment-600 dark:text-parchment-400">
+        <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
           Dano
           <input
             value={acao.dano}
@@ -822,7 +840,7 @@ function LinhaDeAcao({
           />
         </label>
         {media > 0 && (
-          <span className="font-mono text-[11px] text-parchment-600 dark:text-parchment-400">
+          <span className="font-mono text-2xs text-parchment-600 dark:text-parchment-400">
             média {media % 1 === 0 ? media : media.toFixed(1)}
           </span>
         )}
@@ -833,7 +851,7 @@ function LinhaDeAcao({
           aria-label="Alcance"
           className="min-w-28 flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
         />
-        <label className="flex items-center gap-1 text-[11px] font-semibold text-parchment-600 dark:text-parchment-400">
+        <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
           <input
             type="checkbox"
             checked={acao.area}
@@ -849,7 +867,7 @@ function LinhaDeAcao({
         onChange={(e) => onChange({ nota: e.target.value })}
         placeholder="Condição, veneno, gatilho — o que você lê em voz alta. (A simulação não modela isto.)"
         aria-label="Anotação da ação"
-        className="mt-1.5 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-[11px] text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+        className="mt-1.5 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-2xs text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
       />
     </div>
   );
@@ -1069,7 +1087,7 @@ function Numero({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
     <div className="surface rounded-xl border border-parchment-300 bg-parchment-100/60 p-2 text-center dark:border-parchment-800 dark:bg-parchment-900/50">
       <p className="text-lg font-black text-parchment-900 dark:text-parchment-50">{valor}</p>
-      <p className="text-[11px] text-parchment-600 dark:text-parchment-400">{rotulo}</p>
+      <p className="text-2xs text-parchment-600 dark:text-parchment-400">{rotulo}</p>
     </div>
   );
 }

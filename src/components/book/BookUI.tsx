@@ -13,12 +13,12 @@ import Ornament from "@/components/ui/Ornament";
 export function ChapterTitle({ id, children }: { id: string; children: ReactNode }) {
   return (
     <header className="scroll-mt-24">
-      <h1
+      <h2
         id={id}
         className="scroll-mt-24 text-3xl font-black tracking-tight text-parchment-900 sm:text-4xl dark:text-parchment-50"
       >
         {children}
-      </h1>
+      </h2>
       <Ornament arte className="!my-4" />
     </header>
   );
@@ -33,23 +33,23 @@ export function ChapterTitle({ id, children }: { id: string; children: ReactNode
  */
 export function SectionTitle({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <h2
+    <h3
       id={id}
       className="scroll-mt-24 text-xl font-bold text-parchment-900 sm:text-2xl dark:text-parchment-50"
     >
       {children}
-    </h2>
+    </h3>
   );
 }
 
 export function SubTitle({ id, children }: { id?: string; children: ReactNode }) {
   return (
-    <h3
+    <h4
       id={id}
       className="scroll-mt-24 text-lg font-semibold text-parchment-800 dark:text-parchment-200"
     >
       {children}
-    </h3>
+    </h4>
   );
 }
 

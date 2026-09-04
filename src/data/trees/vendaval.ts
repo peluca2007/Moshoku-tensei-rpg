@@ -6,6 +6,53 @@ import { Tree } from "@/lib/types";
  * `prerequisiteNote` (aviso renderizado no catálogo). Mecanicamente é só mais uma árvore do
  * Corpo — sem recurso novo, sem gate em código: o Mestre decide se o pré-requisito foi cumprido,
  * do mesmo jeito que já decide Rank Deus e a Raça Dragão.
+ *
+ * ## A Distância Roubada, medida (2026-09-04)
+ *
+ * O `O-QUE-FALTA.md` pedia validação de mesa pra esta mecânica, com o motivo
+ * certo: *"ela soma alcance a partir do movimento, nenhuma outra árvore faz
+ * isso, e o simulador não pega porque não modela posicionamento."* O simulador
+ * continua não pegando. O que dá pra fazer sem mesa é fechar a conta — e ela
+ * muda a pergunta que a mesa precisa responder.
+ *
+ * Deslocamento base do livro: 9m por Ação (Cap. 4, §3).
+ *
+ *   Patamar  Desloc./Ação   Teto da DR   Alcance do golpe corpo a corpo
+ *   1º       12m (+3)        9m          1,5 + 9  = 10,5m
+ *   2º       12m             9m          10,5m (+ movimento de Reação)
+ *   3º       12m            12m          1,5 + 3 + 12 = 16,5m
+ *   4º       18m (+50%)     12m          16,5m
+ *   5º       18m            12m          piso 6 + 12 = 18m
+ *   6º       18m            12m          18m
+ *
+ * **O teto é 18m, e ele é atingido no 5º patamar.** Encher a Distância Roubada
+ * custa 1 Ação em TODO patamar, porque o Deslocamento de uma Ação (12m, 18m no
+ * Santo) já passa do teto dela. Ou seja: alcance máximo por 1 das 3 Ações.
+ *
+ * ### O número não é o problema
+ *
+ * A própria árvore já bate mais longe sem a mecânica: `Arremesso Cortante` faz
+ * 18m com Dado de Arma cheio no 1º patamar, e `Golpe que Não Tem Origem` faz
+ * 27m no 5º. A Distância Roubada nunca é o maior alcance do Vendaval.
+ *
+ * O que ela dá de único é que o ataque continua sendo **corpo a corpo**. Isso
+ * carrega junto tudo que só vale no corpo a corpo — a Vantagem de Estilo do
+ * Cap. 3 inclusive, e a Maestria de Rei diz isso com todas as letras ao
+ * anunciar que "a Vantagem de Estilo se aplica mesmo à distância", o que só faz
+ * sentido se antes dela não se aplicasse aos ataques à distância da árvore.
+ *
+ * ### A pergunta que sobrou pra mesa
+ *
+ * Não é "18 metros é demais". É: **o Vendaval alguma vez apanha?** Ele
+ * desengaja de graça uma vez por turno (Maestria de 1º) e bate de 10,5 a 18m
+ * mantendo o ataque como corpo a corpo. Se o inimigo nunca chega a revidar, o
+ * custo declarado da árvore — *"não tem parede, não tem contra-ataque e não tem
+ * PV pra trocar golpe"* — nunca é cobrado, e a fraqueza escrita vira decoração.
+ *
+ * Isso se mede numa sessão sem simulador nenhum: conte quantos ataques corpo a
+ * corpo inimigos ACERTARAM o Vendaval, e compare com o outro da linha de
+ * frente. Se for perto de zero em duas sessões, o teto da Distância Roubada
+ * precisa cair ou o desengajamento gratuito precisa custar algo.
  */
 export const VENDAVAL_TREE: Tree = {
   id: "vendaval",
@@ -99,7 +146,7 @@ export const VENDAVAL_TREE: Tree = {
       mastery: {
         name: "Lâmina no Vácuo",
         description:
-          "Seus ataques corpo a corpo ignoram metade da Cobertura do alvo — o vento carrega seu golpe ao redor de obstáculos parciais. Uma vez por turno, gaste 1 PT pra repetir um teste de resistência de Agilidade que tenha falhado. [Distância Roubada] O movimento que você faz com REAÇÃO passa a contar para a Distância Roubada — Passo Entre Rajadas deixa de ser só uma fuga e vira o preparo do golpe seguinte.",
+          "Seus ataques corpo a corpo ignoram metade da Cobertura do alvo — o vento carrega seu golpe ao redor de obstáculos parciais. Uma vez por turno, gaste 1 PT pra repetir um teste de resistência de Agilidade que tenha falhado. [Distância Roubada] O movimento que você faz com REAÇÃO passa a contar para a Distância Roubada, e essa parcela é a ÚNICA que sobrevive à virada de turno: ela fica guardada até o seu próximo ataque corpo a corpo, e só então zera. O movimento do seu próprio turno continua zerando no fim dele, gasto ou não. Sem essa exceção a Maestria não faria nada — Reação acontece no turno do inimigo, e a distância morreria antes de você poder usá-la. Passo Entre Rajadas deixa de ser só uma fuga e vira o preparo do golpe seguinte.",
       },
       talents: [
         { id: "corrente-de-apoio-marcial", name: "Corrente de Apoio Marcial", paCost: 1, description: "Quando um aliado a até 9m for empurrado, arremessado ou puxado por qualquer efeito, gaste 1 PT como Reação pra dobrar a distância do movimento dele, na direção que ele quiser." },

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
 import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank } from "./selectors";
+import { comImagensSaneadas } from "@/lib/imagemDaFicha";
 
 const DEFAULT_ATTRIBUTES: Record<AttributeKey, number> = {
   forca: 0,
@@ -91,6 +92,16 @@ interface RosterState {
 
   setName: (name: string) => void;
   setLore: (lore: string) => void;
+  /**
+   * Grava (ou apaga, com `null`) a foto de perfil e a capa da ficha ativa.
+   *
+   * O data URL tem que chegar aqui JA reduzido por `prepararImagem`
+   * (`imagemDaFicha.ts`). O store nao verifica tamanho de proposito: verificar
+   * aqui seria tarde demais, porque quem descobre que a foto nao cabe precisa
+   * poder avisar a pessoa ANTES de a ficha mudar, e o store nao tem tela.
+   */
+  setPortrait: (dataUrl: string | null) => void;
+  setCover: (dataUrl: string | null) => void;
   setRace: (raceId: string | null) => void;
   /** Define o bônus livre de atributo da raça (Humano). Índice = qual dos pontos concedidos. */
   setRaceAttributeChoice: (index: number, key: AttributeKey | null) => void;
@@ -178,7 +189,11 @@ export const useCharacterStore = create<RosterState>()(
       importCharacter: (data) => {
         const id = makeId("char");
         // JSON exportado antes do campo `lore` existir não traz essa chave — preenche vazio.
-        const character: CharacterData = { ...data, id, lore: data.lore ?? "" };
+        // `comImagensSaneadas` derruba foto/capa que não sejam `data:image/` dentro
+        // do teto: o JSON vem de outra pessoa, e uma imagem apontando pra fora
+        // entregaria o IP de quem abre a ficha a um servidor que ele não escolheu
+        // (`imagemDaFicha.ts` explica os dois motivos).
+        const character: CharacterData = comImagensSaneadas({ ...data, id, lore: data.lore ?? "" });
         set((state) => ({
           characters: { ...state.characters, [id]: character },
           order: [...state.order, id],
@@ -216,6 +231,9 @@ export const useCharacterStore = create<RosterState>()(
 
       setName: (name) => updateActive(get, set, (c) => ({ ...c, name })),
       setLore: (lore) => updateActive(get, set, (c) => ({ ...c, lore })),
+      setPortrait: (dataUrl) =>
+        updateActive(get, set, (c) => ({ ...c, portrait: dataUrl ?? undefined })),
+      setCover: (dataUrl) => updateActive(get, set, (c) => ({ ...c, cover: dataUrl ?? undefined })),
       // Trocar de raça zera as escolhas dependentes dela: o +1 livre e as compras
       // raciais pertencem à raça anterior e não fazem sentido na nova.
       setRace: (raceId) =>
@@ -451,7 +469,12 @@ export const useCharacterStore = create<RosterState>()(
       // v11 (2026-09-03): `purchasedCombinedSpells`. As Magias Combinadas
       // passaram a ser compradas com PA e guardadas na ficha; ficha antiga
       // entra com a lista vazia.
-      version: 11,
+      // v12 (2026-09-04): `portrait` e `cover`. Os dois são opcionais e o
+      // "sem imagem" é a ausência da chave, então ficha antiga não precisa de
+      // conversão nenhuma — ela já entra correta. A versão sobe mesmo assim
+      // porque o schema mudou, e um `persist` que não registra a mudança é um
+      // persist em que ninguém confia na próxima vez que ela não for inócua.
+      version: 12,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };

@@ -262,7 +262,7 @@ export default function CreationRoulette() {
                 <div className="mt-4 grid w-full grid-cols-5 gap-2 text-center">
                   {ATTRIBUTES.map(({ key, label }) => (
                     <div key={key} className="rounded-lg border border-parchment-300 bg-parchment-50 p-2 dark:border-parchment-700 dark:bg-parchment-900">
-                      <p className="text-[10px] uppercase tracking-wide text-parchment-600 dark:text-parchment-400">{label}</p>
+                      <p className="text-3xs uppercase tracking-wide text-parchment-600 dark:text-parchment-400">{label}</p>
                       <p className="text-lg font-bold text-parchment-900 dark:text-parchment-50">{character.attributeBase[key]}</p>
                     </div>
                   ))}

@@ -43,19 +43,41 @@
  * em `danoPorTurno.ts`, e por isso este script **avisa** em vez de reprovar
  * quase tudo: ele não decide se a árvore está certa, ele diz onde olhar.
  *
- * ## A limitação que separa as duas metades do relatório
+ * ## O Corpo deixou de ser piso (2026-09-04)
  *
- * Numa árvore de MAGIA, o dano está inteiro na fórmula da magia — a medição
- * abaixo é fiel. Numa árvore do CORPO, não: o golpe base é o **Dado de Arma**,
- * que escala por degraus concedidos pelas Maestrias de cada patamar
- * (`weaponDie.ts`), e as técnicas costumam somar a ele em vez de substituí-lo.
- * Medir isso direito exigiria ler as Maestrias uma a uma e decidir qual arma o
- * personagem carrega.
+ * Até aqui as duas metades do relatório não eram comparáveis. Numa árvore de
+ * MAGIA o dano está inteiro na fórmula da magia, e a medição era fiel. Numa
+ * árvore do CORPO, não: o golpe base é o **Dado de Arma**, que escala por
+ * degraus das Maestrias (`weaponDie.ts`), e as técnicas somam a ele em vez de
+ * substituí-lo — "Dado de arma rolado três vezes" lido por um parser de `NdM`
+ * vale ZERO. O número do Corpo saía marcado como PISO e nunca como falha,
+ * porque o desvio podia ser inteiramente o que faltava medir.
  *
- * Então o número do Corpo aqui é um **PISO**, não uma medição — e o relatório
- * diz isso em vez de fingir precisão. Inventar um Dado de Arma plausível daria
- * um número mais bonito e menos verdadeiro; um medidor que não sabe o que não
- * sabe é pior que nenhum.
+ * Faltavam duas coisas, e as duas agora existem:
+ *
+ * - `weaponFormula.ts` lê as fórmulas em português do catálogo do Corpo, com a
+ *   distinção que o livro faz entre "arma normal" (dado + atributo + Bônus de
+ *   Rank) e "rolado N vezes" (só os dados). Tem teste próprio.
+ * - `ARMA_DE_REFERENCIA`, abaixo, declara qual arma o auditor assume por
+ *   árvore — a premissa que estava faltando, agora escrita e discutível.
+ *
+ * E faltava o óbvio: o **ataque comum**. Nenhuma árvore declara "Atacar com
+ * Arma (1 Ação)" como habilidade, porque é regra do Cap. 4 e não técnica de
+ * árvore — então o medidor lia o guerreiro como alguém que só sabe usar
+ * técnica. Era ele, e não as técnicas, que explicava as seis linhas do Corpo:
+ * três ataques comuns já passam de todas elas.
+ *
+ * Faltava também a **quarta Ação** de quatro árvores (`ACAO_EXTRA_A_PARTIR_DE`).
+ * O próprio Apêndice C avisa que conta com ela na coluna da Espada; medir com
+ * três era comparar contra uma régua calibrada com quatro.
+ *
+ * ## O que "teto" significa, e por que ficar ABAIXO dele é normal
+ *
+ * O teto ignora chance de acerto, Touki do alvo e posicionamento. O Apêndice C
+ * não: ele diz "valores médios, alvo de CA razoável". Logo uma coluna abaixo do
+ * teto é o esperado — é o que a CA come. O teste é de um lado só de propósito:
+ * se a régua promete MAIS que o teto, ela promete mais do que o personagem
+ * consegue nem acertando tudo, e aí não há CA que explique.
  *
  * O que ele entrega é a lista curta. Auditar nove árvores lendo 400 magias é
  * trabalho de semanas; auditar as células que este relatório acusa é trabalho de
@@ -64,8 +86,10 @@
  *   npm run check:arvores
  */
 import { TREES } from "../src/data/trees/index";
-import { RANKS, RANK_BONUS, AbilityDef } from "../src/lib/types";
+import { RANKS, RANK_BONUS, type AbilityDef, type RankName } from "../src/lib/types";
 import { diceAverage } from "../src/lib/dice";
+import { escalateWeaponDie } from "../src/lib/weaponDie";
+import { averageOfWeaponFormula, type WeaponContext } from "../src/lib/weaponFormula";
 import {
   COLUNAS_CORPO,
   COLUNAS_MAGIA,
@@ -74,18 +98,187 @@ import {
   valorNumerico,
 } from "../src/data/danoPorTurno";
 
-/** As nove que o PROGRESS.md lista como nunca auditadas linha a linha. */
+/**
+ * As nove que o PROGRESS.md lista como nunca auditadas linha a linha.
+ *
+ * Os ids aqui eram os NOMES das árvores ("suishin", "norte", "lutador",
+ * "escudos", "ladino", "tatico", "punho_fogo") e não os `id` de
+ * `src/data/trees` — então o marcador "[nunca auditada]" só acendia em duas das
+ * nove, e justamente as sete que mais precisavam do aviso saíam sem ele. Um
+ * `Set` de strings não reclama de chave inexistente; a checagem logo abaixo
+ * passou a reclamar.
+ */
 const NUNCA_AUDITADAS = new Set([
-  "suishin",
-  "norte",
-  "lutador",
-  "escudos",
+  "deus-da-agua-corpo",
+  "deus-do-norte",
+  "armas-pesadas",
+  "cavalaria-e-escudos",
   "arquearia",
-  "ladino",
-  "tatico",
+  "furtividade-e-armadilhas",
+  "navegacao-e-lideranca",
   "vendaval",
-  "punho_fogo",
+  "punho-de-fogo",
 ]);
+
+const idsDesconhecidos = [...NUNCA_AUDITADAS].filter((id) => !TREES.some((t) => t.id === id));
+if (idsDesconhecidos.length) {
+  console.error(`❌ NUNCA_AUDITADAS cita árvore que não existe: ${idsDesconhecidos.join(", ")}`);
+  process.exit(1);
+}
+
+/**
+ * A arma que o auditor assume que o personagem daquela árvore carrega.
+ *
+ * É a decisão que faltava pra medir o Corpo, e ela tem que ser declarada em
+ * algum lugar: "Dado de arma rolado três vezes" não vale nada sem saber qual
+ * dado. Não vive nos dados da árvore de propósito — é premissa de MEDIÇÃO, não
+ * regra do livro, e enfiá-la em `Tree` faria o catálogo carregar um campo que
+ * só o auditor lê.
+ *
+ * O critério é sempre o mesmo: **o maior Dado Base que a proficiência daquela
+ * árvore permite** (Cap. 3, "O Dado de Arma"). Escolher generoso é o lado
+ * seguro AQUI porque o teste só dispara quando a régua promete MAIS do que a
+ * árvore entrega — uma arma grande torna o teste mais difícil de acender, então
+ * o que sobrevive a ele é desvio de verdade, e não escolha de arma do auditor.
+ */
+const ARMA_DE_REFERENCIA: Record<string, { die: string; nome: string; porque: string }> = {
+  "deus-da-espada": {
+    die: "d10",
+    nome: "Espadão / Montante",
+    porque: "'toda espada (curta, longa, espadão, rapieira, katana)' — o espadão é a maior delas",
+  },
+  "deus-do-norte": {
+    die: "d10",
+    nome: "Martelo de Guerra",
+    porque: "proficiência UNIVERSAL em armas: nenhuma arma do Cap. 3 passa de d10",
+  },
+  "deus-da-agua-corpo": {
+    die: "d10",
+    nome: "Espadão / Montante",
+    porque: "'toda espada' inclui o espadão; o escudo leve que a árvore concede é opcional",
+  },
+  arquearia: {
+    die: "d10",
+    nome: "Besta",
+    porque: "'arco curto, arco longo, besta e funda' — a besta é o maior dado dos quatro",
+  },
+  "armas-pesadas": {
+    die: "d10",
+    nome: "Martelo de Guerra",
+    porque: "'toda arma pesada, de duas mãos e improvisada' — o topo delas é d10",
+  },
+  "cavalaria-e-escudos": {
+    die: "d8",
+    nome: "Espada Longa",
+    porque: "'toda arma de UMA MÃO' — d10 no Cap. 3 é sempre arma de duas mãos ou haste",
+  },
+  vendaval: {
+    die: "d10",
+    nome: "Alabarda / Lança",
+    porque: "'toda espada e toda arma de haste' — a haste chega a d10",
+  },
+  "punho-de-fogo": {
+    die: "d6",
+    nome: "Ataque desarmado",
+    porque: "a árvore não concede arma nenhuma: o punho é o Dado Base, e é o único",
+  },
+  // As tres de Utilidade entraram em 0.1.12, quando ganharam coluna propria no
+  // Apendice C. Elas nao tem Escada de Dados (Cap. 3: "arvores de Utilidade nao
+  // recebem degraus no Dado de Arma"), entao o dado delas nunca cresce — e e
+  // exatamente por isso que elas ficam pra tras em dano sem precisar de nenhuma
+  // regra que as puna. A soma de `weaponDieSteps` delas ja e zero nos dados, e o
+  // codigo abaixo nao precisa de caso especial.
+  "furtividade-e-armadilhas": {
+    die: "d6",
+    nome: "Espada Curta",
+    porque: "'adaga, punhal, espada curta, funda e besta leve' — a espada curta é o maior dado de mão dela",
+  },
+  "navegacao-e-lideranca": {
+    die: "d10",
+    nome: "Alabarda / Lança",
+    porque: "'armas simples, arco curto e lança' — a lança é d10 no Cap. 3",
+  },
+  "bardo-e-interacao": {
+    die: "d6",
+    nome: "Rapieira",
+    porque: "'adaga, espada curta e rapieira' — as três param no d6",
+  },
+};
+
+/**
+ * O golpe que cada árvore de Utilidade acrescenta ao turno, uma vez por turno,
+ * e que escala com o patamar em vez de virar uma habilidade nova por rank.
+ *
+ * As três vivem na MAESTRIA de 1º patamar, não num campo `damage` — e era por
+ * isso que a medição dava zero nas três. O Dano Furtivo do Ladino existe assim
+ * desde sempre; a Dissonância do Bardo e a Ordem de Tiro do Tático entraram em
+ * 0.1.12 no mesmo molde, porque uma coluna própria no Apêndice C exige ter o
+ * que medir.
+ *
+ * `dado` é o dado POR PATAMAR: no 3º patamar o Ladino soma 3d6.
+ */
+const GOLPE_POR_PATAMAR: Record<string, { dado: string; nome: string }> = {
+  "furtividade-e-armadilhas": { dado: "d6", nome: "Dano Furtivo" },
+  "bardo-e-interacao": { dado: "d4", nome: "Dissonância" },
+  "navegacao-e-lideranca": { dado: "d6", nome: "Ordem de Tiro" },
+};
+
+/** A média do golpe de patamar daquela árvore, ou 0 se ela não tiver um. */
+function golpeDePatamar(treeId: string, rankIndex: number): { media: number; nome: string } | null {
+  const regra = GOLPE_POR_PATAMAR[treeId];
+  if (!regra) return null;
+  return { media: diceAverage(`${rankIndex + 1}${regra.dado}`), nome: regra.nome };
+}
+
+/**
+ * As árvores que ganham uma QUARTA Ação, e a partir de qual patamar.
+ *
+ * O Apêndice C avisa que isto existe e que ele já conta com isso: *"A Espada
+ * conta 4 Ações do Avançado em diante. A Maestria 'Velocidade Encarnada' dá uma
+ * Ação extra a quem não se move no turno, e os números dela já assumem isso.
+ * Ela é a única coluna com uma 4ª Ação antes do Imperador."* Medir a Espada com
+ * 3 Ações, então, é medir contra uma régua calibrada com 4 — e o desvio
+ * apareceria como se a árvore devesse dano.
+ *
+ * Nas quatro, a Ação extra é RESTRITA a atacar (a do Norte é livre, a das
+ * outras três é "só para atacar", "só para atacar ou agarrar", "só para um
+ * único disparo, nunca técnica nomeada"). A interseção das quatro restrições é
+ * exatamente o ATAQUE COMUM, e é isso que o medidor soma: uma técnica nomeada
+ * a mais seria dano que três das quatro não podem fazer.
+ */
+const ACAO_EXTRA_A_PARTIR_DE: Record<string, { rank: RankName; porque: string }> = {
+  "deus-da-espada": { rank: "Avançado", porque: "«Velocidade Encarnada»: 1 Ação extra a quem não se move" },
+  "deus-do-norte": { rank: "Imperador", porque: "«Nada é Regra»: 1 Ação adicional, sem restrição" },
+  "armas-pesadas": { rank: "Imperador", porque: "«Nada Fica de Pé»: 1 Ação adicional só pra atacar ou agarrar" },
+  arquearia: { rank: "Imperador", porque: "«O Tiro Que Já Aconteceu»: 1 Ação adicional pra um disparo simples" },
+};
+
+/** A árvore já tem a quarta Ação neste patamar? */
+function temAcaoExtra(treeId: string, rankIndex: number): boolean {
+  const regra = ACAO_EXTRA_A_PARTIR_DE[treeId];
+  return !!regra && rankIndex >= RANKS.indexOf(regra.rank);
+}
+
+/**
+ * O Dado de Arma daquela árvore naquele patamar, já escalado pelas Maestrias
+ * acumuladas até ali — mais o degrau abaixo, que várias técnicas usam.
+ */
+function contextoDeArma(treeId: string, ateRankIndex: number): WeaponContext | null {
+  const arma = ARMA_DE_REFERENCIA[treeId];
+  const tree = TREES.find((t) => t.id === treeId);
+  if (!arma || !tree) return null;
+
+  const degraus = tree.ranks
+    .filter((r) => RANKS.indexOf(r.rank) <= ateRankIndex)
+    .reduce((soma, r) => soma + (r.weaponDieSteps ?? 0), 0);
+
+  return {
+    dieAverage: diceAverage(escalateWeaponDie(arma.die, degraus)),
+    dieAverageOneStepBelow: diceAverage(escalateWeaponDie(arma.die, Math.max(0, degraus - 1))),
+    attribute: ATRIBUTO_POR_PATAMAR[Math.min(ateRankIndex, ATRIBUTO_POR_PATAMAR.length - 1)],
+    rankBonus: RANK_BONUS[RANKS[ateRankIndex]],
+  };
+}
 
 /** Acima disto a coluna promete mais do que a árvore entrega — vale olhar. */
 const DESVIO_AVISO = 0.35;
@@ -139,7 +332,21 @@ interface Golpe {
 function golpesAcumulados(treeId: string, ateRankIndex: number): Golpe[] {
   const tree = TREES.find((t) => t.id === treeId);
   if (!tree) return [];
+  const arma = contextoDeArma(treeId, ateRankIndex);
   const golpes: Golpe[] = [];
+
+  // O ataque comum, que toda árvore do Corpo tem de graça e nenhuma declara
+  // como habilidade: "Atacar com Arma (1 Ação)" (Cap. 4, §3). Sem ele o teto do
+  // Corpo era medido como se o guerreiro só soubesse usar técnica — e é
+  // exatamente por ele que Arco aparecia entregando 33 no 5º patamar.
+  if (arma) {
+    golpes.push({
+      nome: "Ataque comum",
+      media: arma.dieAverage + arma.attribute + arma.rankBonus,
+      acoes: 1,
+    });
+  }
+
   for (let i = 0; i <= ateRankIndex; i++) {
     const rd = tree.ranks.find((r) => r.rank === RANKS[i]);
     if (!rd) continue;
@@ -149,9 +356,16 @@ function golpesAcumulados(treeId: string, ateRankIndex: number): Golpe[] {
       // Reação acontece fora do turno: contá-la no orçamento de 3 Ações mede um
       // turno que não existe.
       if (a.reaction) continue;
-      const media = mediaDeDano(formula, ateRankIndex);
+      // 0 Ações não é "de graça no turno": é montada fora dele (Armadilha de
+      // Caça pede 10 minutos). Repeti-la três vezes por turno foi o que fez o
+      // relatório anunciar "Armadilha de Caça ×3" como o melhor turno do Arco.
+      if (a.actions.normal === 0) continue;
+
+      const media = arma
+        ? averageOfWeaponFormula(formula, arma).average
+        : mediaDeDano(formula, ateRankIndex);
       if (media <= 0) continue;
-      golpes.push({ nome: a.name, media, acoes: Math.max(1, a.actions.normal) });
+      golpes.push({ nome: a.name, media, acoes: a.actions.normal });
     }
   }
   return golpes;
@@ -161,12 +375,46 @@ function golpesAcumulados(treeId: string, ateRankIndex: number): Golpe[] {
  * O melhor uso das 3 Ações do turno.
  *
  * Mochila pequena e com repetição: a mesma magia pode ser conjurada duas vezes
- * num turno se couber. Golpes que custam mais que um turno inteiro entram pela
- * média amortizada (dano ÷ turnos gastos), que é como o próprio livro os
- * descreve — "magias de 4, 5 ou 6 Ações são perfeitamente jogáveis; elas só
- * exigem que alguém segure a linha de frente".
+ * num turno se couber.
+ *
+ * ## `amortizar`, e as cinco falsas falhas que ele causou
+ *
+ * Um golpe de 4+ Ações ocupa mais de um turno. Dividir o dano dele pelos turnos
+ * gastos parece a única leitura honesta — e é a errada pra metade da tabela.
+ * O Apêndice C avisa, com todas as letras, que as duas metades dele não são
+ * medidas do mesmo jeito:
+ *
+ *   "Magia não está amortizada pelas Ações. Uma magia de Imperador custa 6
+ *   Ações — dois turnos inteiros. O Sol Menor aparece como ~130, mas entrega
+ *   ~65 por turno."
+ *
+ * Ou seja: a coluna de MAGIA é o dano CHEIO da maior magia, e o leitor é quem
+ * divide. Amortizar antes de comparar media uma coisa contra outra, e o
+ * resultado era previsível — as cinco únicas células acusadas na Magia eram as
+ * cinco escolas cuja maior magia custa 4, 5 ou 6 Ações:
+ *
+ *   Fogo 4º  ~62 × Mar de Chamas  56 (4 Ações)  →  amortizado dava 28
+ *   Água 5º  ~54 × Relâmpago      57 (4 Ações)  →  amortizado dava 28
+ *   Fogo 5º  ~90 × Flashover      79 (5 Ações)  →  amortizado dava 39
+ *   Vento 5º ~70 × Grito do Mundo 68 (5 Ações)  →  amortizado dava 34
+ *   Terra 6º ~105 × Rio de Magma 101 (5 Ações)  →  amortizado dava 50
+ *
+ * Cinco colunas caindo dentro de 3% a 12% do dano cheio, e nenhuma dentro de
+ * 40% do amortizado, não é coincidência: é a régua declarando como foi
+ * calibrada. A régua estava certa, as árvores estavam certas, e o medidor
+ * estava lendo a metade errada da tabela.
+ *
+ * No CORPO a amortização continua valendo: ali a coluna é dano por turno de
+ * verdade (o próprio Apêndice diz que a Espada "conta 4 Ações do Avançado em
+ * diante", que só faz sentido dentro de um turno), e nenhuma técnica marcial do
+ * livro passa de 3 Ações.
  */
-function tetoPorTurno(golpes: Golpe[]): { total: number; plano: string } {
+function tetoPorTurno(
+  golpes: Golpe[],
+  amortizar: boolean,
+  ataqueExtra = 0,
+  rotuloDoExtra?: string
+): { total: number; plano: string } {
   if (golpes.length === 0) return { total: 0, plano: "—" };
 
   // Caminho 1: encher o turno com golpes que cabem nele.
@@ -190,22 +438,27 @@ function tetoPorTurno(golpes: Golpe[]): { total: number; plano: string } {
     }
   }
 
-  // Caminho 2: um golpe grande, amortizado pelos turnos que ele ocupa.
-  let amortizado = { dano: 0, golpe: null as Golpe | null };
+  // Caminho 2: um golpe grande, que ocupa mais que um turno.
+  let grande = { valor: 0, golpe: null as Golpe | null, turnos: 1 };
   for (const g of golpes) {
     const turnos = Math.max(1, Math.ceil(g.acoes / ACOES_POR_TURNO));
-    const porTurno = g.media / turnos;
-    if (porTurno > amortizado.dano) amortizado = { dano: porTurno, golpe: g };
+    const valor = amortizar ? g.media / turnos : g.media;
+    if (valor > grande.valor) grande = { valor, golpe: g, turnos };
   }
 
-  if (amortizado.dano > dp[ACOES_POR_TURNO].dano && amortizado.golpe) {
-    const g = amortizado.golpe;
-    return { total: amortizado.dano, plano: `${g.nome} (${g.acoes} Ações, amortizado)` };
+  if (grande.valor > dp[ACOES_POR_TURNO].dano && grande.golpe) {
+    const g = grande.golpe;
+    const nota = amortizar
+      ? `${g.acoes} Ações, amortizado`
+      : `${g.acoes} Ações, dano cheio — ~${(g.media / grande.turnos).toFixed(0)}/turno`;
+    const extraNoGrande = ataqueExtra > 0 ? ` + ${rotuloDoExtra ?? "Ataque comum (4ª Ação)"}` : "";
+    return { total: grande.valor + ataqueExtra, plano: `${g.nome} (${nota})${extraNoGrande}` };
   }
   const contagem = new Map<string, number>();
   for (const g of dp[ACOES_POR_TURNO].usados) contagem.set(g.nome, (contagem.get(g.nome) ?? 0) + 1);
   const plano = [...contagem].map(([n, q]) => (q > 1 ? `${n} ×${q}` : n)).join(" + ") || "—";
-  return { total: dp[ACOES_POR_TURNO].dano, plano };
+  const extra = ataqueExtra > 0 ? ` + ${rotuloDoExtra ?? "Ataque comum (4ª Ação)"}` : "";
+  return { total: dp[ACOES_POR_TURNO].dano + ataqueExtra, plano: plano + extra };
 }
 
 // ---------------------------------------------------------------------------
@@ -230,26 +483,47 @@ for (const tabela of [DANO_POR_TURNO_MAGIA, DANO_POR_TURNO_CORPO]) {
       const prometido = valorNumerico(celula);
       if (prometido === null || prometido <= 0) continue;
 
-      const { total, plano } = tetoPorTurno(golpesAcumulados(coluna.treeId, rankIndex));
+      const arvore = TREES.find((t) => t.id === coluna.treeId);
+      const ehCorpo = arvore?.category === "corpo";
+
+      const arma = contextoDeArma(coluna.treeId, rankIndex);
+      const ataqueExtra =
+        arma && temAcaoExtra(coluna.treeId, rankIndex)
+          ? arma.dieAverage + arma.attribute + arma.rankBonus
+          : 0;
+      const golpeDeMaestria = golpeDePatamar(coluna.treeId, rankIndex);
+      // A Utilidade tambem gasta as 3 Acoes atacando quando escolhe atacar: o
+      // orcamento do turno e o mesmo pra todo mundo, e comparar uma coluna que
+      // inclui o ataque comum com outra que nao inclui foi o defeito que esta
+      // versao passou o dia corrigindo.
+      const { total, plano } = tetoPorTurno(
+        golpesAcumulados(coluna.treeId, rankIndex),
+        ehCorpo || arvore?.category === "utilidade",
+        ataqueExtra + (golpeDeMaestria?.media ?? 0),
+        golpeDeMaestria?.nome
+      );
       if (total <= 0) continue;
 
       const desvio = (prometido - total) / prometido;
       if (desvio < DESVIO_AVISO) continue;
 
-      const arvore = TREES.find((t) => t.id === coluna.treeId);
-      const ehCorpo = arvore?.category === "corpo";
       const marca = NUNCA_AUDITADAS.has(coluna.treeId) ? " [nunca auditada]" : "";
       const msg =
         `${coluna.label} no ${linha.patamar}: a régua promete ${celula}, o teto do turno dá ` +
         `${total.toFixed(0)} (${(desvio * 100).toFixed(0)}% abaixo) — melhor turno: ${plano}${marca}`;
 
-      // No Corpo o número é piso, não medição (ver o cabeçalho): ele nunca vira
-      // FALHA, porque o Dado de Arma que falta na conta pode explicar o desvio
-      // inteiro. Reprovar um build por causa do que o medidor não sabe medir
-      // treinaria a equipe a ignorar o relatório.
+      // O Corpo deixou de ser piso: com o Dado de Arma modelado, a linha dele é
+      // medição igual à da Magia e responde pelas mesmas regras. O que continua
+      // separando as duas listas é só a leitura — a do Corpo mostra a arma de
+      // referência, porque ela é a premissa que pode ser discutida.
       if (ehCorpo) {
-        avisos++;
-        listaCorpo.push(`[PISO]   ${msg}`);
+        if (desvio >= DESVIO_ERRO) {
+          erros++;
+          listaCorpo.push(`[FALHA]  ${msg}`);
+        } else {
+          avisos++;
+          listaCorpo.push(`[AVISO]  ${msg}`);
+        }
       } else if (desvio >= DESVIO_ERRO) {
         erros++;
         linhasDoRelatorio.push(`[FALHA]  ${msg}`);
@@ -270,11 +544,26 @@ if (linhasDoRelatorio.length === 0) {
   console.log("MAGIA (medição fiel: o dano está na fórmula da magia)");
   for (const l of linhasDoRelatorio) console.log(l);
 }
-if (listaCorpo.length) {
-  console.log("");
-  console.log("CORPO (PISO, não medição: falta o Dado de Arma escalado por Maestria)");
+console.log("");
+if (listaCorpo.length === 0) {
+  console.log("CORPO — nenhuma coluna promete mais do que a árvore entrega.");
+} else {
+  console.log("CORPO (medição: Dado de Arma escalado por Maestria, com a arma de referência abaixo)");
   for (const l of listaCorpo) console.log(l);
 }
+console.log("");
+console.log("Arma de referência de cada árvore do Corpo (o maior Dado Base que a proficiência permite):");
+for (const [id, arma] of Object.entries(ARMA_DE_REFERENCIA)) {
+  const tree = TREES.find((t) => t.id === id);
+  const degraus = tree?.ranks.reduce((s, r) => s + (r.weaponDieSteps ?? 0), 0) ?? 0;
+  const noTopo = escalateWeaponDie(arma.die, degraus);
+  console.log(
+    `  · ${(tree?.name ?? id).padEnd(24)} ${arma.nome} (${arma.die} → ${noTopo} no 6º) — ${arma.porque}`
+  );
+}
+console.log("");
+console.log("O teto ignora chance de acerto e Touki do alvo; a régua não ('alvo de CA razoável').");
+console.log("Coluna ABAIXO do teto é o esperado. Só o contrário é defeito — e é só isso que sai acima.");
 console.log("");
 console.log(`Colunas conferidas..................... ${colunas.length}`);
 console.log(`Árvores sem auditoria manual........... ${NUNCA_AUDITADAS.size} de ${TREES.length}`);

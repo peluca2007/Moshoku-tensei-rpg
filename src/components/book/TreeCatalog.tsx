@@ -141,12 +141,12 @@ function MechanicCard({ tree }: { tree: Tree }) {
         <p className="text-xs font-bold uppercase tracking-wider text-wine-700 dark:text-wine-300">
           Mecânica Central
         </p>
-        <span className="rounded-full bg-wine-600 px-2 py-0.5 text-[11px] font-bold text-white dark:bg-wine-700">
+        <span className="rounded-full bg-wine-600 px-2 py-0.5 text-2xs font-bold text-white dark:bg-wine-700">
           {m.tag}
         </span>
       </div>
 
-      <p className="mt-2 text-[15px] font-semibold leading-snug text-parchment-900 dark:text-parchment-50">
+      <p className="mt-2 text-[0.9375rem] font-semibold leading-snug text-parchment-900 dark:text-parchment-50">
         {m.hook}
       </p>
 
@@ -156,7 +156,7 @@ function MechanicCard({ tree }: { tree: Tree }) {
       <ol className="mt-1 space-y-1.5">
         {m.loop.map((passo, i) => (
           <li key={i} className="flex gap-2 text-sm leading-relaxed text-parchment-800 dark:text-parchment-200">
-            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-wine-600/15 text-[11px] font-bold text-wine-700 ring-1 ring-wine-500/30 dark:text-wine-300">
+            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-wine-600/15 text-2xs font-bold text-wine-700 ring-1 ring-wine-500/30 dark:text-wine-300">
               {i + 1}
             </span>
             <span>{passo}</span>

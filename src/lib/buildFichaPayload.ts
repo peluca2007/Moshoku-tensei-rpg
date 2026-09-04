@@ -280,6 +280,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
 
   return {
     name: character.name || "Sem nome",
+    portrait: character.portrait,
     raceName: race?.name ?? "",
     backgroundName: background?.name ?? "",
     gold: String(character.gold),

@@ -81,6 +81,7 @@ export const NORTE_TREE: Tree = {
           actions: { normal: 1 },
           damage: { normal: "Vigor + Bônus de Rank em PV" },
           effect: "Um aliado adjacente (ou você) recupera PV e remove todas as Marcas da Morte. Uma vez por Descanso Curto por criatura. Concede a perícia Medicina.",
+          grantsSkills: ["Medicina"],
         },
         {
           id: "leitura-de-rastro-norte",
@@ -89,6 +90,7 @@ export const NORTE_TREE: Tree = {
           range: "Passivo",
           actions: { normal: 0 },
           effect: "Você ganha as perícias Sobrevivência e Percepção, e rola com Vantagem para rastrear alvos por terreno pisado, sangue ou hábitos.",
+          grantsSkills: ["Sobrevivência", "Percepção"],
         },
         {
           id: "golpe-baixo",

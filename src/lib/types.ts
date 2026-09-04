@@ -459,6 +459,21 @@ export interface AbilityDef {
   costNote?: string;
   /** Ids da mesma árvore que precisam estar comprados antes desta. */
   requires?: PrerequisiteIds;
+  /**
+   * Perícias que ESTA habilidade ensina a quem a compra (2026-09-04).
+   *
+   * Existe porque duas técnicas do Deus do Norte já prometiam isso na prosa —
+   * "Concede a perícia Medicina", "Você ganha as perícias Sobrevivência e
+   * Percepção" — e não havia onde gravar: `grantedSkills` é da ÁRVORE e só vale
+   * se ela for a Inicial. O jogador comprava a técnica e a perícia não aparecia
+   * em tela nenhuma. A auditoria de texto de 0.1.12 (`check:texto`) foi quem
+   * achou as duas, e a regra dela continua vigiando: prosa que promete perícia
+   * sem este campo vira aviso.
+   *
+   * Diferente de perícia comprada, ela não custa PA — `getSkillPaCost` a trata
+   * como gratuita, igual às de raça e antecedente.
+   */
+  grantsSkills?: string[];
   range: string;
   actions: {
     normal: number;
@@ -642,6 +657,23 @@ export function meetsGuildRank(have: GuildRank, required: GuildRank): boolean {
 export interface CharacterData {
   id: string;
   name: string;
+  /**
+   * Foto de perfil do personagem, como data URL JPEG (2026-09-04).
+   *
+   * Opcional e sempre opcional: uma ficha sem foto é uma ficha completa, e o
+   * roster cai no brasão da raça, que já resolvia isso desde 0.1.2.
+   *
+   * Mora DENTRO da ficha, e não como URL externa, porque a promessa do botão
+   * "Exportar JSON" é levar a ficha inteira num arquivo só. Quem grava passa
+   * obrigatoriamente por `prepararImagem` (`imagemDaFicha.ts`), que reduz e
+   * comprime até caber num teto duro de bytes — o `localStorage` guarda o
+   * roster inteiro e não avisa quando a cota acaba.
+   *
+   * Não viaja no link de compartilhamento: ver `fichaLink.ts`.
+   */
+  portrait?: string;
+  /** Capa da ficha, mesmo formato e mesmas regras da `portrait` — só maior. */
+  cover?: string;
   /** Texto livre — história de fundo e anotações de mesa. A Entrevista (Via 3) pré-preenche com um rascunho a partir das respostas; o jogador edita à vontade em /ficha. Também sai no PDF exportado. */
   lore: string;
   raceId: string | null;

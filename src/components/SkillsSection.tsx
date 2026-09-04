@@ -125,7 +125,7 @@ export default function SkillsSection({
           >
             {skill}
             {getSkillByName(skill) && (
-              <span className="text-[10px] font-bold text-parchment-400 dark:text-parchment-500">
+              <span className="text-3xs font-bold text-parchment-400 dark:text-parchment-500">
                 {ATTRIBUTE_SHORT[getSkillByName(skill)!.attribute]}
               </span>
             )}
@@ -153,7 +153,7 @@ export default function SkillsSection({
           placeholder="Ex: Arcanismo"
           title="Escolha da Lista Mestre (Cap. 1) ou digite uma perícia de homebrew"
           aria-label="Nova perícia"
-          className="flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+          className="min-w-0 flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
         />
         <datalist id="skill-master-list">
           {SKILLS.map((s) => (
@@ -165,7 +165,7 @@ export default function SkillsSection({
         <button
           type="button"
           onClick={addSkill}
-          className="flex items-center gap-1 rounded-lg bg-wine-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-wine-500"
+          className="flex shrink-0 items-center gap-1 rounded-lg bg-wine-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-wine-500"
         >
           <Plus className="h-4 w-4" /> Adicionar
         </button>

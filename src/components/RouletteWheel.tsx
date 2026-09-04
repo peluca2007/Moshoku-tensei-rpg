@@ -208,7 +208,7 @@ export function WheelLegend({ options, highlightId }: { options: WheelOption[]; 
             }`}
           >
             <span
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-parchment-50 shadow-sm"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-2xs font-extrabold text-parchment-50 shadow-sm"
               style={{ backgroundColor: wheelSliceColor(index, options.length) }}
             >
               {index + 1}

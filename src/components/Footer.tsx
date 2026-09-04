@@ -84,7 +84,7 @@ export default function Footer() {
               Sistema de RPG de mesa homebrew, ambientado no Mundo de Seis Faces.
             </p>
             {versao ? (
-              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-[11px] font-bold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
+              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-2xs font-bold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
                 v{versao.version} · {versao.title}
               </p>
             ) : null}

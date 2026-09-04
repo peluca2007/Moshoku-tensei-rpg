@@ -77,7 +77,7 @@ export const VENTO_TREE: Tree = {
           pmCost: 2,
           range: "Pessoal",
           actions: MAGIC_ACTIONS.Principiante,
-          effect: "1 Ação: desloque-se 18 metros em qualquer direção, inclusive para cima, sem provocar ataques de oportunidade e ignorando terreno difícil. Desce suavemente se terminar no ar.",
+          effect: "Desloque-se 18 metros em qualquer direção, inclusive para cima, sem provocar ataques de oportunidade e ignorando terreno difícil. Desce suavemente se terminar no ar.",
           incantation:
             "Ar sob meus pés, que finge não estar lá até que eu peça,\nleva-me daqui pra ali antes que alguém perceba que eu me movi.\nPasso de Vento!",
         },
