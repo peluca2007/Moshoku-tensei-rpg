@@ -23,6 +23,18 @@ dessaturação, brilho) e **`.faixa-arte`** acrescenta a máscara de baixo. As d
 só, e isso obrigava toda arte de ambiente a morrer do mesmo jeito — o que serve para o cabeçalho de rota,
 onde a borda inferior é aresta de card real, e não serve para uma faixa que atravessa a página inteira.
 
+### 🌫 Correção do degradê da faixa (0.1.10, mesmo dia)
+
+A primeira tentativa usou uma ELIPSE, e as duas linhas duras continuaram lá. O motivo é aritmético: com
+raio vertical de 92% da altura, a borda de cima fica a 54% do raio, e a rampa da máscara só ia de 28% a
+80% — ou seja, ela chegava na borda ainda com METADE da opacidade. Uma máscara que não chega a zero dentro
+da caixa não dissolve nada; ela só desenha uma borda mais clara, que foi exatamente o que o print mostrou.
+
+Agora é `linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)`. Linear
+resolve porque `transparent 0%` e `transparent 100%` são, literalmente, as bordas — não há como sobrar
+opacidade nelas. E é a forma certa pra uma FAIXA: ela atravessa a página de lado a lado e desaparece só na
+vertical, em vez de virar uma mancha oval no meio da tela. O véu acompanha a mesma curva.
+
 ### 🪧 A logo, de novo
 
 `h-48 sm:h-72` na landing, `h-14` na barra, `h-20` no rodapé — mais 30% sobre 0.1.8. E a faixa de convite

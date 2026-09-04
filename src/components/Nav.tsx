@@ -64,7 +64,7 @@ export default function Nav() {
           cartucho escuro e do `mix-blend-screen`.
         */}
         <Link href="/" className="flex shrink-0 items-center transition-transform hover:scale-[1.03]">
-          <Logo className="h-14" priority />
+          <Logo className="h-16" priority />
         </Link>
 
         <div className="hidden min-w-0 flex-1 items-center gap-4 overflow-x-auto sm:flex">

@@ -305,7 +305,24 @@ export default function LandingPage() {
           justamente a aresta que esta seção não quer ter.
         */}
         <div
-          className="pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(120%_92%_at_50%_50%,black_0%,black_28%,transparent_80%)]"
+          /*
+           * A máscara é LINEAR e vertical, e as paradas importam (0.1.10).
+           *
+           * A tentativa anterior usava uma elipse (`radial-gradient(120% 92%)`)
+           * e continuou com as duas linhas duras. O motivo é aritmético: com
+           * raio vertical de 92% da altura, a borda de cima está a 54% do raio,
+           * e a rampa só ia de 28% a 80% — ou seja, a máscara chegava na borda
+           * ainda com METADE da opacidade. Uma máscara que não chega a zero
+           * dentro da caixa não dissolve nada; ela só desenha uma borda mais
+           * clara. O print mostrou exatamente isso.
+           *
+           * Linear resolve porque `transparent 0%` e `transparent 100%` são,
+           * literalmente, as bordas: não há como sobrar opacidade nelas. E é
+           * também a forma certa pra uma FAIXA — ela atravessa a página de lado
+           * a lado e desaparece só na vertical, em vez de virar uma mancha oval
+           * no meio da tela.
+           */
+          className="pointer-events-none absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,transparent_0%,black_30%,black_70%,transparent_100%)]"
           aria-hidden
         >
           <Image
@@ -313,9 +330,16 @@ export default function LandingPage() {
             alt=""
             fill
             sizes="100vw"
-            className="arte-ambiente object-cover object-[center_30%]"
+            className="arte-ambiente object-cover object-[center_32%]"
           />
-          <div className="absolute inset-0 bg-parchment-50/55 dark:bg-parchment-950/60" />
+          {/*
+            O véu acompanha a mesma curva: mais denso no miolo, onde as três
+            linhas de texto passam por cima da tocha e dos rostos, e mais aberto
+            em cima e embaixo, onde a arte pode respirar antes de sumir. Um véu
+            chapado teria que ser forte o bastante pro pior ponto da imagem, e
+            aí apagaria a imagem inteira pra proteger três linhas.
+          */}
+          <div className="absolute inset-0 bg-gradient-to-b from-parchment-50/30 via-parchment-50/70 to-parchment-50/30 dark:from-parchment-950/35 dark:via-parchment-950/75 dark:to-parchment-950/35" />
         </div>
         <div className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6 sm:py-32">
           <h2 className="font-display text-2xl font-black text-parchment-900 drop-shadow-[0_1px_0_rgba(253,246,227,0.5)] dark:text-parchment-50 dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] sm:text-3xl">
