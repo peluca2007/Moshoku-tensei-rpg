@@ -60,6 +60,22 @@ export default function PageHeader({
             style={{ objectPosition: faixaPosition }}
             className="faixa-arte object-cover"
           />
+          {/*
+            O VÉU que garante o contraste, e não é opcional (0.1.10).
+
+            O filtro de `.faixa-arte` dessatura e escurece — o que funciona
+            enquanto a arte é clara. O campo estelar de `/arvores` é quase
+            PRETO, e escurecer um preto não faz nada: no tema claro, onde o
+            título é `parchment-900`, o cabeçalho inteiro ficou texto escuro
+            sobre fundo escuro. Ilegível, e invisível pra mim até eu forçar o
+            tema claro num print — todos os anteriores tinham saído no escuro,
+            porque o Chrome headless segue o tema do SO.
+
+            Filtro depende de quão clara a arte é; véu não. Ele garante o piso
+            de luminância que o texto precisa, qualquer que seja a imagem que
+            entrar aqui amanhã.
+          */}
+          <div className="absolute inset-0 bg-parchment-50/72 dark:bg-parchment-950/45" />
         </div>
       ) : (
         <div
