@@ -14,6 +14,7 @@ import {
 import { MAGIC_ACTIONS } from "../src/data/trees/shared";
 import { SHOP_CATEGORY_ICONS, SHOP_CATEGORY_ORDER } from "../src/data/shopItems";
 import { RACES } from "../src/data/races";
+import { CRIATURAS_PRONTAS } from "../src/data/bestiary";
 
 /**
  * Self-check de consistência entre os DADOS e o TEXTO do livro.
@@ -292,6 +293,17 @@ for (const race of RACES) {
   conferirArquivo(`Raça "${race.name}"`, race.icon);
 }
 
+// As criaturas prontas do Apêndice G seguem a mesma regra das árvores e das
+// raças: o arquivo se chama como o `id`, e um caminho quebrado aqui vira
+// quadrado partido no livro e no montador de encontros.
+for (const criatura of CRIATURAS_PRONTAS) {
+  if (!criatura.icon) {
+    aviso(`Criatura "${criatura.nome}" (${criatura.id}) não declara icon — ela sai sem retrato`);
+    continue;
+  }
+  conferirArquivo(`Criatura "${criatura.nome}"`, criatura.icon);
+}
+
 const categoriasSemArte = SHOP_CATEGORY_ORDER.filter((c) => !SHOP_CATEGORY_ICONS[c]);
 if (categoriasSemArte.length) {
   aviso(`Categorias da loja sem arte própria (usam o ícone de traço): ${categoriasSemArte.join(", ")}`);
@@ -300,11 +312,60 @@ if (categoriasSemArte.length) {
 // Os avulsos que a interface referencia por caminho fixo. Cada um destes já
 // quebrou uma vez: o logo escuro, a textura e a paisagem entraram em CSS e JSX
 // como string, onde nenhum tipo os protege.
-for (const url of ["/logo.svg", "/logo-dark.svg", "/paisagem.jpg", "/texturas/pergaminho.avif"]) {
+for (const url of ["/logo-real-alfa.png", "/paisagem.jpg", "/texturas/pergaminho.avif", "/texturas/fibra.jpg"]) {
   conferirArquivo("Arte fixa da interface", url);
 }
 
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// O sumário aponta pra âncoras que existem, e na ORDEM em que a página as tem
+// (0.1.7)
+//
+// Por que existe: o Capítulo 2 estava fisicamente na ordem 1, 2, 6, 7, 3, 4, 5 —
+// as seções "Interromper uma Conjuração" e "Regras Gerais" ficavam ENTRE a 2 e a
+// 3, e a §6 abria falando do custo em Ações que só a §3 estabelece. O sumário
+// listava 1→7 certinho, então clicar em "3. Tempo de Conjuração" fazia o leitor
+// SUBIR na página. E o Capítulo 4 numerava 8 seções enquanto o sumário numerava
+// 9, porque "Reações e Ações Defensivas" estava enterrada como subtítulo dentro
+// da seção de fome, sede e clima.
+//
+// Nada disso quebra `tsc`, `eslint` nem teste: são âncoras válidas apontando pro
+// lugar errado. Um livro é uma ORDEM, e ordem precisa de teste.
+const arquivosDoLivro = readdirSync(join(process.cwd(), "src/components/book"));
+const ordemNaPagina: string[] = [];
+for (const nome of ["Chapter0", "Chapter1", "Chapter2", "Chapter3", "Chapter4", "Chapter5", "Appendices"]) {
+  const arquivo = arquivosDoLivro.find((f) => f === `${nome}.tsx`);
+  if (!arquivo) continue;
+  const texto = readFileSync(join(process.cwd(), "src/components/book", arquivo), "utf8");
+  for (const m of texto.matchAll(/<(?:Chapter|Section|Sub)Title[^>]*\bid="([a-z0-9-]+)"/g)) {
+    ordemNaPagina.push(m[1]);
+  }
+}
+
+const paginaLivro = readFileSync(join(process.cwd(), "src/app/livro/page.tsx"), "utf8");
+const ordemNoSumario = [...paginaLivro.matchAll(/id:\s*"([a-z0-9-]+)"/g)].map((m) => m[1]);
+
+for (const id of ordemNoSumario) {
+  if (!ordemNaPagina.includes(id)) falha(`Sumário do livro aponta pra "#${id}", que não existe em nenhum capítulo`);
+}
+
+// A ordem relativa: os ids do sumário que existem na página têm que aparecer nela
+// na mesma sequência. Se não aparecem, um link do sumário anda pra trás.
+const soOsQueExistem = ordemNoSumario.filter((id) => ordemNaPagina.includes(id));
+let anterior = -1;
+for (const id of soOsQueExistem) {
+  const posicao = ordemNaPagina.indexOf(id);
+  if (posicao < anterior) {
+    falha(
+      `Sumário fora de ordem: "#${id}" vem depois no sumário, mas aparece ANTES na página — ` +
+        `clicar nele faz o leitor subir`
+    );
+  }
+  anterior = Math.max(anterior, posicao);
+}
+
+console.log(`Âncoras do sumário conferidas.......... ${ordemNoSumario.length}, todas na ordem da página`);
 console.log("\n========================================");
 console.log(`Árvores................................ ${TREES.length}`);
 console.log(`  com Mecânica Central................. ${TREES.filter((t) => t.mechanic).length}`);

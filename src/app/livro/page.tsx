@@ -9,6 +9,7 @@ import Chapter5 from "@/components/book/Chapter5";
 import Appendices from "@/components/book/Appendices";
 import BookShell from "@/components/book/BookShell";
 import type { TocEntry } from "@/components/book/BookToc";
+import PageHeader from "@/components/ui/PageHeader";
 
 export const metadata: Metadata = {
   title: "Livro de Regras — Mushoku Tensei RPG",
@@ -63,6 +64,7 @@ const TOC: TocEntry[] = [
       { id: "cap3-como-ler", label: "Como Ler uma Árvore" },
       { id: "cap3-mecanicas", label: "— As 19 Mecânicas" },
       { id: "cap3-mapa", label: "O Mapa Completo" },
+      { id: "cap3-magia", label: "Árvore da Magia" },
       { id: "cap3-corpo", label: "Árvore do Corpo" },
       { id: "cap3-utilidade", label: "Árvore de Utilidade" },
       { id: "cap3-todas", label: "Todas as Sub-árvores" },
@@ -111,14 +113,14 @@ const TOC: TocEntry[] = [
 export default function LivroPage() {
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
-      <header className="mb-6 flex flex-col gap-3 rounded-2xl border border-parchment-300 bg-gradient-to-br from-wine-50 via-parchment-50 to-parchment-50 p-6 shadow-sm dark:border-parchment-800 dark:from-parchment-900 dark:via-parchment-950 dark:to-parchment-900 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-black tracking-tight text-parchment-900 dark:text-parchment-50">
-            <BookOpen className="h-6 w-6 text-wine-500" /> Sistema de RPG Mushoku Tensei
-          </h1>
-          <p className="mt-1 text-sm text-parchment-600 dark:text-parchment-400">O Mundo de Seis Faces — livro de regras completo, navegável.</p>
-        </div>
-      </header>
+      <PageHeader
+        icon={BookOpen}
+        title="Sistema de RPG Mushoku Tensei"
+        faixa="/faixas/livro.jpg"
+        faixaPosition="center 65%"
+      >
+        O Mundo de Seis Faces — livro de regras completo, navegável.
+      </PageHeader>
 
       <BookShell toc={TOC}>
         <Chapter0 />

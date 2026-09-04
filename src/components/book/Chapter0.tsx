@@ -21,7 +21,7 @@ export default function Chapter0() {
   return (
     <div className="space-y-8">
       <ChapterTitle id="cap0">Comece Aqui</ChapterTitle>
-      <P>
+      <P className="dropcap">
         Cinco minutos de leitura, e você joga. Este capítulo não tem nenhuma regra completa — ele tem a
         forma de todas elas. O resto do livro é referência: você consulta, não decora.
       </P>

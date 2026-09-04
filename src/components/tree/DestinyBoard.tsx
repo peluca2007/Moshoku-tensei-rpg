@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useLayoutEffect, useMemo, useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Crown, Wand2, Swords, Compass, Circle, Lock, CheckCircle2, Plus, ZoomIn, ZoomOut, Maximize, Search } from "lucide-react";
@@ -419,16 +420,32 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
   const isRankUnlocked = (treeId: string, rank: RankName) =>
     character.unlockedRanks.some((r) => r.treeId === treeId && r.rank === rank);
 
+  /**
+   * O ramo em que você investiu ACENDE (0.1.6).
+   *
+   * Até aqui o mapa desenhava todas as linhas com a mesma opacidade fixa: uma
+   * árvore com quatro patamares comprados e uma que você nunca abriu tinham
+   * exatamente o mesmo peso na tela, e "onde eu já fui" só dava pra ler nó a
+   * nó, com zoom. Agora a linha de um galho vivo tem brilho e opacidade cheia,
+   * e o resto recua — o mapa passa a contar a história da ficha de longe.
+   */
+  const isTreeTouched = (treeId: string) => character.unlockedRanks.some((r) => r.treeId === treeId);
+
   function edgeClassName(meta: NodeMeta): string {
     switch (meta.kind) {
       case "category":
       case "subgroup":
         return `${CATEGORY_ACCENT[meta.category].stroke} opacity-40`;
-      case "tree":
-        return `${CATEGORY_ACCENT[meta.tree.category].stroke} ${isTreeEmpty(meta.tree) ? "opacity-20" : "opacity-50"}`;
+      case "tree": {
+        if (isTreeEmpty(meta.tree)) return `${CATEGORY_ACCENT[meta.tree.category].stroke} opacity-20`;
+        const acesa = isTreeTouched(meta.tree.id);
+        return `${CATEGORY_ACCENT[meta.tree.category].stroke} ${
+          acesa ? `opacity-100 ${CATEGORY_ACCENT[meta.tree.category].glow}` : "opacity-50"
+        }`;
+      }
       case "rank":
         return isRankUnlocked(meta.tree.id, meta.rank)
-          ? `${RANK_ACCENT[meta.rank].stroke} opacity-80`
+          ? `${RANK_ACCENT[meta.rank].stroke} opacity-100 ${RANK_ACCENT[meta.rank].glowLine}`
           : "stroke-parchment-300 dark:stroke-parchment-700 opacity-25";
       default:
         return "stroke-parchment-400 opacity-30";
@@ -549,7 +566,39 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
 
   return (
     <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_340px]">
-      <div className="relative h-[75vh] min-h-[500px] overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 shadow-sm dark:border-parchment-800 dark:bg-parchment-950">
+      <div className="surface-raised relative h-[75vh] min-h-[500px] overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 dark:border-parchment-700 dark:bg-parchment-950">
+        {/*
+          O céu atrás do mapa (0.1.5).
+
+          O tabuleiro era o objeto mais bonito do site rodando sobre um
+          retângulo chapado — 19 brasões e ~60 nós flutuando em bege liso. A
+          arte entra como AMBIENTE, com tratamento diferente por tema porque a
+          mesma foto não pode servir aos dois:
+
+          - escuro: o céu aparece de verdade (opacidade alta), mas passado pelo
+            sépia, senão o azul frio da nebulosa briga com a paleta vinho/ouro
+            do site inteiro;
+          - claro: a MESMA imagem em `multiply` e opacidade baixa deixa de ser
+            uma foto e vira mancha de tinta — uma carta celeste desenhada no
+            pergaminho, que é a leitura certa pra um mapa de destino.
+
+          `object-cover` com a posição puxada pro alto tira do centro a mancha
+          clara da nebulosa: o centro é onde mora o nó Aventureiro, e um borrão
+          claro exatamente ali apagaria a raiz da árvore.
+        */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          <Image
+            src="/texturas/ceu-arvores.png"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover object-[center_18%] opacity-[0.13] mix-blend-multiply [filter:sepia(0.4)_saturate(0.7)] dark:opacity-60 dark:mix-blend-normal dark:[filter:sepia(0.45)_saturate(0.85)_brightness(0.75)]"
+          />
+          {/* A vinheta radial fecha as quatro pontas e empurra o olho pro
+              centro, que é onde a raiz do mapa está. Sem ela o tabuleiro
+              "vazava" pelas bordas e o mapa parecia menor do que é. */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(43,24,16,0.16)_100%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.75)_100%)]" />
+        </div>
         <div
           ref={viewportRef}
           className="h-full w-full cursor-grab touch-none active:cursor-grabbing"
@@ -740,10 +789,45 @@ function DetailPanel({ meta, showToast }: { meta: NodeMeta; showToast: (msg: str
     character.unlockedRanks.some((r) => r.treeId === treeId && r.rank === rank);
   if (meta.kind === "root") {
     return (
-      <PanelShell title="Aventureiro">
-        <p className="text-parchment-700 dark:text-parchment-300">
-          Clique num ramo do círculo para explorar Magia, Corpo ou Utilidade. Arraste pra mover o mapa e use a
-          roda do mouse (ou os botões) pra dar zoom.
+      /*
+       * A legenda das três cores (0.1.5).
+       *
+       * Sem nada selecionado, este painel era um parágrafo de instrução dentro
+       * de uma coluna de 340px por 700px de altura — o print mostrava a metade
+       * direita da página vazia. E o mapa já pintava cada ramo de uma cor sem
+       * dizer em lugar nenhum o que cada cor significa: a legenda é a
+       * informação que faltava E o conteúdo que faltava, no mesmo lugar.
+       */
+      <PanelShell title="Aventureiro" subtitle="A raiz de tudo — três pilares saem daqui.">
+        <ul className="space-y-2">
+          {(["magia", "corpo", "utilidade"] as const).map((categoria) => {
+            const Icone = iconForCategory(categoria);
+            const arvores = TREES.filter((t) => t.category === categoria && !t.hiddenFromCreation);
+            return (
+              <li
+                key={categoria}
+                className="flex items-start gap-2.5 rounded-lg border border-parchment-300/70 bg-parchment-50/60 p-2.5 dark:border-parchment-800/70 dark:bg-parchment-950/40"
+              >
+                <span
+                  className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-white ${CATEGORY_ACCENT[categoria].solidBg}`}
+                >
+                  <Icone className="h-3.5 w-3.5" />
+                </span>
+                <div className="min-w-0">
+                  <p className={`text-sm font-bold ${CATEGORY_ACCENT[categoria].text}`}>
+                    {CATEGORY_LABELS[categoria]}
+                  </p>
+                  <p className="text-xs text-parchment-600 dark:text-parchment-400">
+                    {arvores.length} sub-árvores · {arvores.map((t) => t.name).slice(0, 3).join(", ")}…
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="pt-1 text-xs text-parchment-600 dark:text-parchment-400">
+          Clique num ramo pra abrir a categoria. Arraste pra mover o mapa, e use a roda do mouse (ou os
+          botões no canto) pra dar zoom.
         </p>
       </PanelShell>
     );

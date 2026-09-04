@@ -3,7 +3,7 @@ import TreeBrowser from "@/components/tree/TreeBrowser";
 
 export default function ArvoresPage() {
   return (
-    <div className="min-h-screen">
+    <div>
       <Suspense fallback={null}>
         <TreeBrowser />
       </Suspense>

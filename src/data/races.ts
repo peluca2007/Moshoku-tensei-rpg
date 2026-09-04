@@ -66,7 +66,7 @@ export const RACES: Race[] = [
     traits: [
       "Sentido da Floresta: Vantagem em Percepção auditiva e em Sobrevivência para navegação.",
       "+1 em Agilidade, permanente, e PM Máximos iguais ao DOBRO do seu Maior Bônus de Rank de magia (+2 no Principiante, +12 no Imperador) — séculos de convivência com a mana da Grande Floresta. Sem nenhuma escola de magia aberta, este bônus é 0.",
-      "Sangue Longevo: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §7) — séculos de vida ensinam o corpo a esperar o pior.",
+      "Sangue Longevo: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §8) — séculos de vida ensinam o corpo a esperar o pior.",
     ],
   },
   {
@@ -93,7 +93,7 @@ export const RACES: Race[] = [
     traits: [
       "Sangue da Forja: magias de Terra e Fogo custam 1 PM a menos para conjurar (mínimo 1). Não pode aprender magias de Água ou Vento.",
       "+1 em Vigor e +10 PV Máximos, permanentes — o corpo mais denso do livro.",
-      "Fígado de Pedra: imune a ficar Embriagado e tem Vantagem em testes de resistência de Vigor contra Exaustão por privação (Cap. 4, seção 8).",
+      "Fígado de Pedra: imune a ficar Embriagado e tem Vantagem em testes de resistência de Vigor contra Exaustão por privação (Cap. 4, seção 9).",
     ],
   },
   {
@@ -269,7 +269,7 @@ export const RACES: Race[] = [
       // no Imperador — de propósito: o preço de escalar é não ser adiantado.
       "Regeneração Profunda: regenera PV iguais ao seu Maior Bônus de Rank (Cap. 1, §7) no início do seu turno, desde que esteja com mais de 0 PV.",
       "+8 PV Máximos, permanentes.",
-      "Descendência Divina: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §7).",
+      "Descendência Divina: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §8).",
     ],
   },
   {
