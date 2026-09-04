@@ -431,6 +431,14 @@ export default function CharacterSheet() {
           sizes="(max-width: 1024px) 100vw, 1024px"
           className="faixa-arte -z-10 object-cover object-[center_30%]"
         />
+        {/*
+          O mesmo véu do `PageHeader`, pelo mesmo motivo — e aqui ele é mais
+          necessário ainda: esta arte é uma FICHA impressa, com rótulos próprios
+          ("Deus Protetor", "Classes de Magia"). Sem o véu, o texto da foto
+          disputa leitura com os campos de verdade da ficha por cima dela, e o
+          olho não sabe qual dos dois é para preencher.
+        */}
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-parchment-50/72 dark:bg-parchment-950/55" aria-hidden />
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-gold-500/10 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-wine-500/10 blur-3xl" aria-hidden />
         <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start">
