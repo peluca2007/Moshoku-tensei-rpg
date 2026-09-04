@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Backpack, Plus, Trash2, ShieldCheck, Pencil, Swords, Check, X, Dices } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
@@ -51,13 +51,23 @@ function ItemFields({
   description: string;
   setDescription: (v: string) => void;
 }) {
+  // Os rótulos existiam e eram visíveis, mas soltos: sem `for`/`id` um <label>
+  // não é o nome acessível de campo nenhum, e o leitor de tela anunciava só
+  // "edição, em branco". `useId` porque este formulário aparece mais de uma vez
+  // na mesma página (a linha de edição de um item já existente).
+  const idNome = useId();
+  const idDescricao = useId();
   return (
     <div className="flex flex-wrap items-end gap-2">
       <div className="flex-1 min-w-[140px]">
-        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
+        <label
+          htmlFor={idNome}
+          className="mb-1 block text-2xs font-semibold uppercase text-parchment-600 dark:text-parchment-400"
+        >
           Nome
         </label>
         <input
+          id={idNome}
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Ex: Armadura de Couro"
@@ -65,10 +75,14 @@ function ItemFields({
         />
       </div>
       <div className="flex-1 min-w-[160px]">
-        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
+        <label
+          htmlFor={idDescricao}
+          className="mb-1 block text-2xs font-semibold uppercase text-parchment-600 dark:text-parchment-400"
+        >
           Descrição (opcional)
         </label>
         <input
+          id={idDescricao}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Ex: dada pelo mestre da guilda"
@@ -76,7 +90,7 @@ function ItemFields({
         />
       </div>
       <div>
-        <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
+        <label className="mb-1 block text-2xs font-semibold uppercase text-parchment-600 dark:text-parchment-400">
           Tipo
         </label>
         <select
@@ -91,7 +105,7 @@ function ItemFields({
       </div>
       {type === "armadura" && (
         <div className="w-20">
-          <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
+          <label className="mb-1 block text-2xs font-semibold uppercase text-parchment-600 dark:text-parchment-400">
             +CA
           </label>
           <input
@@ -106,7 +120,7 @@ function ItemFields({
       {type === "arma" && (
         <>
           <div className="w-36">
-            <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
+            <label className="mb-1 block text-2xs font-semibold uppercase text-parchment-600 dark:text-parchment-400">
               Dado Base
             </label>
             <input
@@ -126,7 +140,7 @@ function ItemFields({
             </datalist>
           </div>
           <div className="w-28">
-            <label className="mb-1 block text-[11px] font-semibold uppercase text-parchment-600 dark:text-parchment-400">
+            <label className="mb-1 block text-2xs font-semibold uppercase text-parchment-600 dark:text-parchment-400">
               Atributo
             </label>
             <select
@@ -212,7 +226,7 @@ function WeaponDamageBadge({ item }: { item: InventoryItem }) {
           })
         }
         title="Abrir o Rolador de Dados já com esse dano pronto pra rolar (dá pra editar antes)"
-        className="ml-1 flex items-center gap-1 rounded-full bg-wine-600 px-2 py-0.5 text-[11px] font-semibold text-white transition-colors hover:bg-wine-500"
+        className="ml-1 flex items-center gap-1 rounded-full bg-wine-600 px-2 py-0.5 text-2xs font-semibold text-white transition-colors hover:bg-wine-500"
       >
         <Dices className="h-3 w-3" /> Rolar
       </button>

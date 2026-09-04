@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Plus, X, Swords, RotateCcw, ChevronRight, Heart, Download } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
@@ -55,6 +55,12 @@ export default function InitiativeTracker() {
     setConditionDraft((prev) => ({ ...prev, [combatantId]: { name: "", duration: "" } }));
   }
 
+  // Os três rótulos de "Adicionar Combatente" eram <label> soltos: visíveis,
+  // mas sem `for`, então não nomeavam campo nenhum pra um leitor de tela.
+  const idNome = useId();
+  const idIniciativa = useId();
+  const idPv = useId();
+
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
       <PageHeader
@@ -90,8 +96,9 @@ export default function InitiativeTracker() {
         </h2>
         <div className="mb-3 flex flex-wrap items-end gap-2">
           <div className="flex-1 min-w-[10rem]">
-            <label className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">Nome</label>
+            <label htmlFor={idNome} className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">Nome</label>
             <input
+              id={idNome}
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ex: Goblin Batedor"
@@ -99,8 +106,9 @@ export default function InitiativeTracker() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">Iniciativa</label>
+            <label htmlFor={idIniciativa} className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">Iniciativa</label>
             <input
+              id={idIniciativa}
               type="number"
               value={initiative}
               onChange={(e) => setInitiative(e.target.value === "" ? "" : Number(e.target.value))}
@@ -108,8 +116,9 @@ export default function InitiativeTracker() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">PV Máximo</label>
+            <label htmlFor={idPv} className="mb-1 block text-xs text-parchment-600 dark:text-parchment-400">PV Máximo</label>
             <input
+              id={idPv}
               type="number"
               value={maxHp}
               onChange={(e) => setMaxHp(e.target.value === "" ? "" : Number(e.target.value))}
@@ -126,11 +135,15 @@ export default function InitiativeTracker() {
         </div>
 
         {rosterOrder.length > 0 && (
-          <div className="flex items-center gap-2 border-t border-parchment-300 pt-3 dark:border-parchment-800">
+          /* `flex-wrap` + `min-w-0`: a largura de um <select> é ditada pela opção
+             mais longa dele, e `flex-1` não encolhe um item abaixo do conteúdo
+             sem `min-w-0`. Em 360px — a largura da metade dos Androids — esta
+             linha empurrava a página 41px pra fora. */
+          <div className="flex flex-wrap items-center gap-2 border-t border-parchment-300 pt-3 dark:border-parchment-800">
             <select
               value={importId}
               onChange={(e) => setImportId(e.target.value)}
-              className="flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+              className="min-w-0 flex-1 basis-48 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
             >
               <option value="">Importar da lista de personagens…</option>
               {rosterOrder.map((id) => (
@@ -143,7 +156,7 @@ export default function InitiativeTracker() {
               type="button"
               onClick={handleImport}
               disabled={!importId}
-              className="flex items-center gap-1 rounded-lg border border-wine-500 px-3 py-1.5 text-sm font-medium text-wine-600 transition-colors hover:bg-wine-500/10 disabled:opacity-40 dark:text-wine-300"
+              className="flex shrink-0 items-center gap-1 rounded-lg border border-wine-500 px-3 py-1.5 text-sm font-medium text-wine-600 transition-colors hover:bg-wine-500/10 disabled:opacity-40 dark:text-wine-300"
             >
               <Download className="h-4 w-4" /> Rolar e Importar
             </button>
@@ -186,7 +199,7 @@ export default function InitiativeTracker() {
                     <span className="min-w-[6rem] flex-1 font-bold text-parchment-900 dark:text-parchment-50">
                       {c.name}
                       {isCurrent && (
-                        <span className="ml-2 rounded-full bg-wine-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                        <span className="ml-2 rounded-full bg-wine-500 px-2 py-0.5 text-3xs font-bold uppercase tracking-wide text-white">
                           Turno atual
                         </span>
                       )}
@@ -238,7 +251,7 @@ export default function InitiativeTracker() {
                     {c.conditions.map((cond) => (
                       <span
                         key={cond.id}
-                        className="flex items-center gap-1 rounded-full bg-gold-500/10 px-2 py-0.5 text-[11px] font-medium text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300"
+                        className="flex items-center gap-1 rounded-full bg-gold-500/10 px-2 py-0.5 text-2xs font-medium text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300"
                       >
                         {cond.name}
                         {cond.duration !== undefined && <span className="opacity-70">({cond.duration})</span>}
@@ -260,7 +273,7 @@ export default function InitiativeTracker() {
                       onKeyDown={(e) => e.key === "Enter" && handleAddCondition(c.id)}
                       placeholder="+ condição"
                       aria-label={`Nova condição para ${c.name}`}
-                      className="w-24 rounded-full border border-dashed border-parchment-300 bg-transparent px-2 py-0.5 text-[11px] outline-none focus:border-wine-400 dark:border-parchment-700"
+                      className="w-24 rounded-full border border-dashed border-parchment-300 bg-transparent px-2 py-0.5 text-2xs outline-none focus:border-wine-400 dark:border-parchment-700"
                     />
                     <input
                       value={draft.duration}
@@ -271,7 +284,7 @@ export default function InitiativeTracker() {
                       placeholder="rodadas"
                       type="number"
                       aria-label={`Duração da condição em rodadas para ${c.name}`}
-                      className="w-16 rounded-full border border-dashed border-parchment-300 bg-transparent px-2 py-0.5 text-[11px] outline-none focus:border-wine-400 dark:border-parchment-700"
+                      className="w-16 rounded-full border border-dashed border-parchment-300 bg-transparent px-2 py-0.5 text-2xs outline-none focus:border-wine-400 dark:border-parchment-700"
                     />
                   </div>
                 </li>

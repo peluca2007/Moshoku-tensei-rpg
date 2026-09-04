@@ -41,8 +41,11 @@ import SkillsSection from "./SkillsSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
+import { empacotarFicha } from "@/lib/fichaArquivo";
 import DiceRoller from "./DiceRoller";
 import EmptyState from "@/components/ui/EmptyState";
+import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
+import RaceCrest from "./RaceCrest";
 
 interface ResolvedAbility {
   kind: "ability" | "talent";
@@ -93,7 +96,7 @@ function ResourceCard({
     <div className="surface flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-900/70">
       <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-inner ring-1 ring-black/5 ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
+        <p className="text-2xs font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
           {label}
         </p>
         <div className="flex items-baseline gap-1">
@@ -110,7 +113,7 @@ function ResourceCard({
             title="Valor atual — vai gastando/recuperando em jogo"
             className="tabular w-14 rounded bg-transparent font-display text-2xl font-black leading-tight text-parchment-900 outline-none focus:ring-2 focus:ring-wine-400 dark:text-parchment-50"
           />
-          <span className="text-parchment-400">/</span>
+          <span className="text-parchment-600 dark:text-parchment-400">/</span>
           <input
             type="number"
             value={max}
@@ -162,7 +165,7 @@ function EditableStatCard({
     <div className="surface flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-900/70">
       <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-inner ring-1 ring-black/5 ${tone}`}>{icon}</div>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
+        <p className="text-2xs font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
           {label}
         </p>
         <div className="flex items-center gap-1.5">
@@ -227,7 +230,7 @@ function AbilityQuickRoll({ label, hintText }: { label: string; hintText?: strin
         onClick={() => formula.trim() && requestDamageRoll({ formula: formula.trim(), modifier, label })}
         disabled={!formula.trim()}
         title="Abrir o Rolador de Dados já com esse dado pronto pra rolar"
-        className="flex items-center gap-1 rounded-full bg-wine-600 px-2 py-1 text-[11px] font-semibold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex items-center gap-1 rounded-full bg-wine-600 px-2 py-1 text-2xs font-semibold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         Rolar
       </button>
@@ -237,7 +240,7 @@ function AbilityQuickRoll({ label, hintText }: { label: string; hintText?: strin
 
 function BonusInput({ value, onChange }: { value: number; onChange: (value: number) => void }) {
   return (
-    <label className="flex shrink-0 flex-col items-center text-[10px] font-semibold uppercase text-parchment-400">
+    <label className="flex shrink-0 flex-col items-center text-3xs font-semibold uppercase text-parchment-600 dark:text-parchment-400">
       +PA
       <input
         type="number"
@@ -258,6 +261,8 @@ export default function CharacterSheet() {
   const {
     name,
     lore,
+    portrait,
+    cover,
     raceId,
     backgroundId,
     subtableEntryId,
@@ -280,6 +285,7 @@ export default function CharacterSheet() {
   const [grimoireQuery, setGrimoireQuery] = useState("");
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "error">("idle");
   const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
+  const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
@@ -368,16 +374,31 @@ export default function CharacterSheet() {
     }
   }
 
-  function handleExportJson() {
-    const blob = new Blob([JSON.stringify(character, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${(name || "ficha").trim() || "ficha"}.json`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+  /**
+   * Baixa a ficha inteira num arquivo `.mtficha` — comprimido, e com a foto e a
+   * capa dentro (`fichaArquivo.ts` explica o formato).
+   *
+   * Era um `.json` de texto puro, e isso parou de servir quando a ficha ganhou
+   * imagem: base64 é texto, e uma ficha com foto e capa passava de 350 KB. O
+   * arquivo novo reencoda as imagens pra um tamanho de compartilhamento e
+   * comprime o resto — mesma ficha, cerca de um quinto do tamanho.
+   */
+  async function handleBaixarFicha() {
+    setArquivoState("loading");
+    try {
+      const { blob, nomeDoArquivo } = await empacotarFicha(character);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = nomeDoArquivo;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setArquivoState("idle");
+    } catch {
+      setArquivoState("erro");
+    }
   }
 
   const abilitiesByTree = useMemo(() => {
@@ -423,14 +444,36 @@ export default function CharacterSheet() {
           letreiro do projeto impresso nela. Passa pelo mesmo `.faixa-arte` dos
           cabeçalhos de rota, então some antes de encostar nos campos editáveis.
         */}
-        <Image
-          src="/faixas/ficha.png"
-          alt=""
-          aria-hidden
-          fill
-          sizes="(max-width: 1024px) 100vw, 1024px"
-          className="faixa-arte -z-10 object-cover object-[center_30%]"
-        />
+        {cover ? (
+          /*
+            A CAPA da ficha, quando o jogador põe uma (0.1.12). Ela entra no
+            lugar exato da arte padrão, e não em cima dela: duas imagens
+            empilhadas atrás do mesmo texto brigariam por contraste, e a de
+            baixo nunca apareceria inteira.
+
+            É `<img>` e não `next/image` de propósito. A imagem é um data URL
+            que já saiu do `imagemDaFicha` no tamanho final; o otimizador do
+            Next não tem o que fazer com ela além de um round-trip pelo
+            servidor — e mandar a foto do personagem de alguém pro servidor é
+            justamente o que este projeto não faz.
+          */
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={cover}
+            alt=""
+            aria-hidden
+            className="capa-da-ficha absolute inset-0 -z-10 h-full w-full object-cover"
+          />
+        ) : (
+          <Image
+            src="/faixas/ficha.png"
+            alt=""
+            aria-hidden
+            fill
+            sizes="(max-width: 1024px) 100vw, 1024px"
+            className="faixa-arte -z-10 object-cover object-[center_30%]"
+          />
+        )}
         {/*
           O mesmo véu do `PageHeader`, pelo mesmo motivo — e aqui ele é mais
           necessário ainda: esta arte é uma FICHA impressa, com rótulos próprios
@@ -441,7 +484,38 @@ export default function CharacterSheet() {
         <div className="pointer-events-none absolute inset-0 -z-10 bg-parchment-50/72 dark:bg-parchment-950/55" aria-hidden />
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-gold-500/10 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-wine-500/10 blur-3xl" aria-hidden />
+        {/*
+          O h1 da rota. O nome do personagem é um <input> editável, e input não
+          é cabeçalho: sem isto `/ficha` era a única rota do site sem h1 — quem
+          navega por cabeçalho num leitor de tela chegava numa página que não
+          dizia o que era. Fica só para leitor porque o cabeçalho visual já é o
+          nome, em corpo 30, logo abaixo.
+        */}
+        <h1 className="sr-only">{name ? `Ficha de ${name}` : "Ficha de personagem"}</h1>
         <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start">
+          {/*
+            A FOTO DE PERFIL. Sem foto o lugar não fica vazio: cai no brasão da
+            raça, que já resolvia esse buraco desde 0.1.2 — e uma ficha sem foto
+            continua sendo uma ficha completa, não uma ficha pela metade.
+          */}
+          <div className="flex shrink-0 items-center gap-3">
+            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-parchment-300/80 bg-parchment-100/80 shadow-sm dark:border-parchment-700/80 dark:bg-parchment-900/80 sm:h-24 sm:w-24">
+              {portrait ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={portrait}
+                  alt={name ? `Retrato de ${name}` : "Retrato do personagem"}
+                  className="h-full w-full object-cover"
+                />
+              ) : race ? (
+                <RaceCrest race={race} size={96} rounded="rounded-none" />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center text-parchment-400">
+                  <Sprout className="h-7 w-7" />
+                </span>
+              )}
+            </div>
+          </div>
           <input
             value={name}
             onChange={(e) => useCharacterStore.getState().setName(e.target.value)}
@@ -471,11 +545,17 @@ export default function CharacterSheet() {
             </button>
             <button
               type="button"
-              onClick={handleExportJson}
-              title="Exportar esta ficha como arquivo JSON (backup, ou pra importar em outro navegador)"
+              onClick={handleBaixarFicha}
+              disabled={arquivoState === "loading"}
+              title="Baixar a ficha inteira num arquivo — com a foto e a capa dentro, comprimido"
               className="flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900 sm:mt-1.5"
             >
-              <FileJson className="h-3.5 w-3.5" /> Exportar JSON
+              {arquivoState === "loading" ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <FileJson className="h-3.5 w-3.5" />
+              )}
+              {arquivoState === "loading" ? "Preparando..." : "Baixar ficha"}
             </button>
             {/*
               O link é o caminho curto do que o JSON já fazia: até aqui, passar
@@ -516,6 +596,39 @@ export default function CharacterSheet() {
         {pdfState === "error" && (
           <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra gerar o PDF agora. Tente de novo em instantes.</p>
         )}
+        {arquivoState === "erro" && (
+          <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra montar o arquivo da ficha. Tente de novo.</p>
+        )}
+        {/*
+          Os dois controles de imagem, juntos e embaixo — e não flutuando por
+          cima da foto e da capa. Um botão que só aparece no hover da imagem
+          funciona no mouse e desaparece no toque, que é onde metade da mesa
+          abre o site.
+
+          O aviso do link não é rodapé: a foto é a única coisa da ficha que o
+          link NÃO leva, e quem descobre isso do outro lado não tem como saber
+          por quê.
+        */}
+        <div className="relative mt-3 flex flex-wrap items-center gap-2">
+          <ImagemDaFicha
+            tipo="portrait"
+            valorAtual={portrait}
+            rotulo="Adicionar foto"
+            onChange={(dataUrl) => useCharacterStore.getState().setPortrait(dataUrl)}
+          />
+          <ImagemDaFicha
+            tipo="cover"
+            valorAtual={cover}
+            rotulo="Adicionar capa"
+            onChange={(dataUrl) => useCharacterStore.getState().setCover(dataUrl)}
+          />
+          {(portrait || cover) && (
+            <p className="w-full text-xs text-parchment-600 dark:text-parchment-400">
+              Foto e capa ficam no seu navegador e vão junto em <b>Baixar ficha</b> — o arquivo leva as
+              duas, reduzidas pra caber. O <b>link</b> vai sem elas: imagem não cabe numa URL.
+            </p>
+          )}
+        </div>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
           <select
             value={raceId ?? ""}
@@ -597,7 +710,7 @@ export default function CharacterSheet() {
                 </option>
               ))}
             </select>
-            {!guildRankEstimated && <span className="text-[10px] uppercase tracking-wide">fixado</span>}
+            {!guildRankEstimated && <span className="text-3xs uppercase tracking-wide">fixado</span>}
           </label>
         </div>
       </header>
@@ -619,7 +732,7 @@ export default function CharacterSheet() {
                     title={label}
                     className="flex flex-col items-center justify-center rounded-2xl border-2 border-parchment-300 bg-parchment-50 p-2 transition-colors hover:border-wine-400 dark:border-parchment-700 dark:bg-parchment-800/80 dark:hover:border-wine-600"
                   >
-                    <span className="text-[10px] font-bold uppercase text-parchment-600 dark:text-parchment-400">
+                    <span className="text-3xs font-bold uppercase text-parchment-600 dark:text-parchment-400">
                       {short}
                     </span>
                     <input
@@ -631,19 +744,19 @@ export default function CharacterSheet() {
                       className="w-12 bg-transparent text-center text-lg font-black text-parchment-900 outline-none dark:text-parchment-50"
                     />
                     {final !== base && (
-                      <span className="text-[10px] text-parchment-400">Final {final >= 0 ? `+${final}` : final}</span>
+                      <span className="text-3xs text-parchment-600 dark:text-parchment-400">Final {final >= 0 ? `+${final}` : final}</span>
                     )}
                   </div>
                 );
               })}
             </div>
             {/* O custo em PA de atributo é da SOMA dos cinco, não de cada um (Cap. 1, §2) — mostrar por atributo escondia o total e sugeria que subir de -2 até 4 era grátis. Bônus de Raça/Antecedente não entram na conta (são por fora do point-buy desde 2026-08-30). */}
-            <p className="mt-2 text-[11px] leading-snug text-parchment-500 dark:text-parchment-400">
+            <p className="mt-2 text-2xs leading-snug text-parchment-600 dark:text-parchment-400">
               Soma {attributeSum} de {ATTRIBUTE_CREATION_POINTS} do point-buy (bônus de Raça/Antecedente não contam aqui)
               {attributeSum > ATTRIBUTE_CREATION_POINTS ? (
                 <>
                   {" · "}
-                  <span className="font-semibold text-gold-500">
+                  <span className="font-semibold text-gold-600 dark:text-gold-400">
                     {attributePaCostTotal(attributeSum - ATTRIBUTE_CREATION_POINTS)} PA
                   </span>{" "}
                   em {attributeSum - ATTRIBUTE_CREATION_POINTS} ponto(s) comprado(s) · o próximo custa{" "}
@@ -656,7 +769,7 @@ export default function CharacterSheet() {
                 atributo, progressivo (2, 3, 4, 4, 4 PA). Fica colada nos atributos porque é a única
                 compra do livro que se aplica a um atributo específico. */}
             <div className="mt-3 border-t border-parchment-300 pt-2 dark:border-parchment-800">
-              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+              <p className="mb-1.5 text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
                 Vantagem em Resistência
                 <span className="ml-1 font-normal normal-case">
                   (a próxima custa {saveAdvantagePaCostForPurchase((saveAdvantages ?? []).length + 1)} PA — 2, 3, 4, 4, 4)
@@ -672,7 +785,7 @@ export default function CharacterSheet() {
                       title={`Vantagem permanente em todos os Testes de Resistência de ${label} — ${ativo ? "já comprada" : `${saveAdvantagePaCostForPurchase((saveAdvantages ?? []).length + 1)} PA`}`}
                       aria-pressed={ativo}
                       onClick={() => useCharacterStore.getState().toggleSaveAdvantage(key)}
-                      className={`rounded-lg px-2 py-1 text-[11px] font-bold transition-colors ${
+                      className={`rounded-lg px-2 py-1 text-2xs font-bold transition-colors ${
                         ativo
                           ? "bg-gold-600 text-white"
                           : "bg-parchment-200 text-parchment-600 hover:bg-parchment-300 dark:bg-parchment-800 dark:text-parchment-400 dark:hover:bg-parchment-700"
@@ -684,7 +797,7 @@ export default function CharacterSheet() {
                 })}
               </div>
               {(saveAdvantages ?? []).length > 0 && (
-                <p className="mt-1 text-[11px] text-gold-600 dark:text-gold-400">
+                <p className="mt-1 text-2xs text-gold-600 dark:text-gold-400">
                   {saveAdvantagePaCostTotal((saveAdvantages ?? []).length)} PA · rola 2d20 e escolhe o maior
                   nesses testes.
                 </p>
@@ -898,7 +1011,7 @@ export default function CharacterSheet() {
                   <h3 className="mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
                     <TreeCrest tree={tree} size={32} />
                     {tree.name}
-                    <span className={`rounded-full bg-parchment-900/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${accent.text} dark:bg-white/5`}>
+                    <span className={`rounded-full bg-parchment-900/5 px-2 py-0.5 text-3xs font-semibold uppercase tracking-wide ${accent.text} dark:bg-white/5`}>
                       {CATEGORY_LABELS[tree.category]}
                     </span>
                     {highestRank && (
@@ -942,7 +1055,7 @@ export default function CharacterSheet() {
                         <div className="flex shrink-0 items-center gap-1">
                           {kind === "ability" && <RitualBadge ability={def as AbilityDef} />}
                           <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ring-1 ${RANK_COLORS[rank]}`}
+                            className={`rounded-full px-2 py-0.5 text-3xs font-semibold ring-1 ${RANK_COLORS[rank]}`}
                           >
                             {rank}
                           </span>
@@ -998,7 +1111,19 @@ export default function CharacterSheet() {
         </div>
       </div>
 
-      {/* Painel de regras rápidas */}
+      {/*
+        Painel de regras rápidas.
+
+        Este rodapé é `bg-parchment-900` nos DOIS temas — ele é escuro de
+        propósito, e não por herdar o tema. Por isso os destaques aqui usam
+        `wine-300` e não o `wine-400` do resto do site: medido, wine-400 sobre
+        parchment-900 dá 4,01:1, logo abaixo do mínimo de 4,5:1 do WCAG AA pra
+        texto de 14px. wine-300 no mesmo fundo dá 6,4:1.
+
+        Como o painel não troca de cor com o tema, o erro também não trocava: a
+        varredura de contraste de 0.1.12 achou isto no tema claro, mas ele
+        estava igual no escuro desde sempre.
+      */}
       <footer className="rounded-2xl border border-t-4 border-parchment-300 border-t-gold-500 bg-parchment-900 p-4 text-parchment-100 shadow-sm dark:border-parchment-800 dark:border-t-gold-600">
         <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-parchment-400">
@@ -1006,26 +1131,26 @@ export default function CharacterSheet() {
           </h2>
           <Link
             href="/livro"
-            className="flex items-center gap-1 text-xs font-medium text-wine-400 hover:text-wine-300"
+            className="flex items-center gap-1 text-xs font-medium text-wine-300 hover:text-wine-200"
           >
             <BookOpen className="h-3.5 w-3.5" /> Livro de regras completo
           </Link>
         </div>
         <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
           <p>
-            <span className="font-semibold text-wine-400">CD da Habilidade</span> = 8 + Atributo + Bônus do
+            <span className="font-semibold text-wine-300">CD da Habilidade</span> = 8 + Atributo + Bônus do
             Rank ({Object.entries(RANK_BONUS).map(([r, b]) => `${r} +${b}`).join(", ")})
           </p>
           <p>
-            <span className="font-semibold text-wine-400">Bônus de Ataque</span> = 1d20 + Atributo + Bônus do
+            <span className="font-semibold text-wine-300">Bônus de Ataque</span> = 1d20 + Atributo + Bônus do
             Rank
           </p>
           <p>
-            <span className="font-semibold text-wine-400">Empilhamento</span> = bônus do mesmo tipo não somam
+            <span className="font-semibold text-wine-300">Empilhamento</span> = bônus do mesmo tipo não somam
             (use o maior); teto de +5 vindo de aliados; máximo 5 Ações por turno (2 externas).
           </p>
           <p>
-            <span className="font-semibold text-wine-400">Vantagem</span> = 2d20, escolha o maior (3d20 se
+            <span className="font-semibold text-wine-300">Vantagem</span> = 2d20, escolha o maior (3d20 se
             Absoluta). Não empilha; Vantagem e Desvantagem se cancelam uma a uma.
           </p>
         </div>

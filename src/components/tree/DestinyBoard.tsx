@@ -941,7 +941,7 @@ function DetailPanel({ meta, showToast }: { meta: NodeMeta; showToast: (msg: str
         >
           <span className="text-sm font-semibold text-gold-700 dark:text-gold-400">◈ Maestria: {rankDef.mastery.name}</span>
           <p className="mt-1 text-xs text-gold-900/80 dark:text-gold-200/80">{rankDef.mastery.description}</p>
-          {!unlocked && <p className="mt-1 text-[11px] italic text-gold-700/70 dark:text-gold-400/70">Gratuita ao desbloquear o rank.</p>}
+          {!unlocked && <p className="mt-1 text-2xs italic text-gold-700/70 dark:text-gold-400/70">Gratuita ao desbloquear o rank.</p>}
         </motion.div>
       )}
 
@@ -1012,7 +1012,10 @@ function PanelShell({
         <div className="flex flex-shrink-0 items-center gap-3">
           {crest}
           <div className="min-w-0">
-            <h3 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h3>
+            {/* h2, e não h3: este painel é filho direto do h1 da rota, e um salto
+                h1 → h3 lê como "faltou uma seção" pra quem navega por cabeçalho.
+                O tamanho vem da classe, não da tag — nada muda na tela. */}
+            <h2 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h2>
             {subtitle && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{subtitle}</p>}
           </div>
         </div>
@@ -1100,7 +1103,7 @@ function AbilityListItem({
           Comprar ({def.paCost} PA)
         </motion.button>
       )}
-      {!check.ok && check.reason && <p className="mt-1 text-[11px] text-rose-500">{check.reason}</p>}
+      {!check.ok && check.reason && <p className="mt-1 text-2xs text-rose-500">{check.reason}</p>}
     </motion.div>
   );
 }

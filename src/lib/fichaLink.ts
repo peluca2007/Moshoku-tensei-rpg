@@ -1,4 +1,5 @@
 import { CharacterData } from "./types";
+import { comImagensSaneadas } from "./imagemDaFicha";
 
 /**
  * A ficha inteira dentro de um link.
@@ -71,8 +72,17 @@ export async function codificarFicha(character: CharacterData): Promise<string> 
   // O `id` fica de fora: quem importa recebe um id novo (`importCharacter`), e
   // mandar o antigo junto só criaria duas fichas disputando a mesma chave se a
   // pessoa importasse a própria ficha de volta.
-  const { id: _id, ...semId } = character;
-  const json = JSON.stringify(semId);
+  //
+  // `portrait` e `cover` ficam de fora por um motivo diferente, e mais duro: o
+  // link não aguenta. JPEG já é dado comprimido, e o gzip abaixo não tira quase
+  // nada dele — uma foto de 60 KB viraria ~80 000 caracteres de URL. Navegador,
+  // Discord e WhatsApp cortam links muito antes disso, então mandá-las junto
+  // não daria um link grande: daria um link QUEBRADO, que parece pronto ao ser
+  // copiado e chega inútil do outro lado. Quem quiser passar a ficha COM as
+  // imagens exporta o JSON, que é arquivo e não tem esse teto — e é o que a
+  // tela de compartilhar avisa.
+  const { id: _id, portrait: _portrait, cover: _cover, ...enxuta } = character;
+  const json = JSON.stringify(enxuta);
   const comprimido = await comprimir(json);
   if (!comprimido) return MARCA_CRU + bytesParaBase64Url(new TextEncoder().encode(json));
   return MARCA_GZIP + bytesParaBase64Url(comprimido);
@@ -97,7 +107,11 @@ export async function decodificarFicha(fragmento: string): Promise<Omit<Characte
     const json = marca === MARCA_GZIP ? await descomprimir(bytes) : new TextDecoder().decode(bytes);
     const dados = JSON.parse(json);
     if (!dados || typeof dados !== "object" || !("attributeBase" in dados)) return null;
-    return dados as Omit<CharacterData, "id">;
+    // `codificarFicha` nunca põe imagem no fragmento, então um link com uma foto
+    // dentro foi montado à mão. Sanear aqui também é barato e fecha o caminho:
+    // um `portrait` apontando pra fora entregaria o IP de quem abre a ficha ao
+    // servidor de quem mandou o link.
+    return comImagensSaneadas(dados as Omit<CharacterData, "id">);
   } catch {
     return null;
   }

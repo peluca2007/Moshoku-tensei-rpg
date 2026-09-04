@@ -5,6 +5,291 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.12 — "O Que a Régua Não Media" · 2026-09-04
+
+### 📐 O Corpo virou medição, e a Magia estava certa desde sempre
+
+O `check:arvores` de 0.1.11 acusava **11 células** e dizia, honestamente, que não confiava em seis
+delas: as do Corpo saíam marcadas como PISO porque o **Dado de Arma** — que é o golpe base de toda
+árvore marcial — não entrava na conta. As onze caíram para zero, e nenhuma delas caiu por um nerf.
+
+**As seis do Corpo eram o medidor.** Faltavam três coisas, e a terceira é a que dói:
+
+- `weaponFormula.ts` lê as fórmulas em português do catálogo do Corpo, com a distinção que o livro
+  faz e que um parser de `NdM` não vê: **"arma normal"** invoca a fórmula inteira (dado + atributo +
+  Bônus de Rank), **"rolado N vezes"** invoca só os dados. Duas técnicas escrevem "+ Força + Bônus de
+  Rank" com todas as letras, e é isso que prova que a omissão nas outras é deliberada. Tem 18 testes.
+- `ARMA_DE_REFERENCIA` declara qual arma o auditor assume por árvore — a premissa que faltava, agora
+  escrita e discutível. O critério é o maior Dado Base que a proficiência daquela árvore permite,
+  porque generoso é o lado seguro num teste que só dispara pra baixo.
+- **O ataque comum.** Nenhuma árvore declara "Atacar com Arma (1 Ação)" como habilidade, porque é
+  regra do Cap. 4 e não técnica de árvore. O medidor lia o guerreiro como alguém que só sabe usar
+  técnica. Três ataques comuns já passam das seis colunas acusadas — era ele, não as técnicas.
+
+E a **quarta Ação**: Espada (do Avançado), Norte, Lutador e Arquearia (do Imperador) ganham uma Ação
+extra por Maestria. O Apêndice C avisa que já conta com isso na coluna da Espada; medir com três era
+comparar contra uma régua calibrada com quatro.
+
+**As cinco da Magia eram o medidor lendo a metade errada da tabela.** O Apêndice C diz, no próprio
+aviso dele: *"Magia não está amortizada pelas Ações. O Sol Menor aparece como ~130, mas entrega ~65
+por turno."* A coluna de Magia é o dano CHEIO da maior magia, e o leitor é quem divide — o script
+dividia antes de comparar. As cinco células acusadas eram exatamente as cinco escolas cuja maior
+magia custa 4, 5 ou 6 Ações:
+
+| Célula | A régua promete | Dano cheio | Amortizado (o que o script comparava) |
+| --- | --- | --- | --- |
+| Fogo 4º | ~62 | Mar de Chamas 56 | 28 |
+| Água 5º | ~54 | Relâmpago 57 | 28 |
+| Fogo 5º | ~90 | Flashover 79 | 39 |
+| Vento 5º | ~70 | Grito do Mundo 68 | 34 |
+| Terra 6º | ~105 | Rio de Magma 101 | 50 |
+
+Cinco colunas caindo dentro de 3% a 12% do dano cheio e nenhuma dentro de 40% do amortizado não é
+coincidência: é a régua declarando como foi calibrada. **A régua estava certa, as árvores estavam
+certas, e o medidor estava errado.** No Corpo a amortização continua valendo, porque ali a coluna é
+dano por turno de verdade.
+
+Um defeito de acabamento junto: `NUNCA_AUDITADAS` guardava os NOMES das árvores e não os `id` de
+`src/data/trees`, então o marcador "[nunca auditada]" só acendia em duas das nove — e justamente as
+sete que mais precisavam do aviso saíam sem ele. Agora o script recusa subir se um id não existir.
+
+### 🔍 Um script que lê texto
+
+A dívida da "auditoria linha a linha" carregava uma ressalva: *"leitura manual ainda é o que pega
+texto de habilidade errado, e o script não lê texto."* Agora existe `npm run check:texto`, e ele lê
+as **592 habilidades e talentos** conferindo a prosa contra os campos. Ele não substitui a leitura —
+nenhum programa julga se uma técnica é divertida. Ele faz o que a leitura faz PIOR: quem lê 400
+cartas perde a que diz "2 Ações" com `actions: 1` na terceira hora.
+
+O que ele achou na primeira execução, tudo corrigido:
+
+- **Duas evoluções do filhote eram invendáveis.** `Evolução: Forma Média` e `Evolução: Sentidos
+  Aguçados` exigiam `pacto-filhote-evolutivo`, um id que não existe — o talento se chama
+  `pacto-filhote`. Com o pré-requisito apontando pra lugar nenhum, a compra nunca liberava, em
+  silêncio, desde que foram escritas.
+- **Passo de Vento** abria com "1 Ação:" e cobrava 2 pela tabela do Cap. 2. Sem `costNote`, o campo é
+  a regra; quem estava errado era a frase, escrita antes da tabela.
+- **Três Reações que a carta não anunciava.** `O Primeiro Segredo`, `O Segundo Segredo` e
+  `Redirecionar` são Reações no campo e não diziam isso no texto — quem lê a ficha na mesa não vê o
+  campo.
+- **Duas perícias prometidas sem lugar pra existir.** `Primeiros Socorros de Campo` diz "concede a
+  perícia Medicina" e `Leitura de Rastro` diz "você ganha Sobrevivência e Percepção" — e não havia
+  onde gravar: `grantedSkills` é da ÁRVORE, e só vale se ela for a Inicial. O jogador comprava a
+  técnica e a perícia não aparecia em tela nenhuma. Virou o campo `grantsSkills`, com o motor e os
+  testes junto.
+- **25 textos com markdown cru.** O Punho do Fogo era a única das dezenove que escrevia
+  `**Ganha 2 de Calor**`, e nada no projeto renderiza negrito — a mesa lia os asteriscos.
+
+Duas regras do script nasceram erradas e foram corrigidas ANTES de virar relatório, o que é o teste
+que uma régua nova precisa passar: a de alcance acusou dez falsos positivos de dez ("avance 6m",
+"empurrado 3m" — deslocamento, não alcance), e a de PV acusou 21 patamares em 19 árvores por repetir
+o dado do anterior, quando repetir por dois patamares é a cadência normal do livro. Vinte e um
+defeitos na primeira execução não é um livro quebrado; é a régua errada.
+
+### 🌪 A Distância Roubada, medida
+
+O Vendaval pedia validação de mesa, e o simulador continua sem modelar posicionamento. O que dava
+pra fazer sem mesa era fechar a conta — e ela **muda a pergunta**. O teto é 18 metros, atingido no 5º
+patamar, e custa 1 das 3 Ações em todo patamar. A própria árvore já bate mais longe sem a mecânica:
+`Arremesso Cortante` faz 18m no 1º patamar e `Golpe que Não Tem Origem` faz 27m no 5º.
+
+O que a Distância Roubada dá de único é o ataque continuar sendo **corpo a corpo**, o que carrega
+junto a Vantagem de Estilo. Então a pergunta pra mesa não é "18 metros é demais". É: **o Vendaval
+alguma vez apanha?** Se o inimigo nunca revida, o custo declarado da árvore — "não tem parede, não
+tem contra-ataque, não tem PV pra trocar golpe" — nunca é cobrado. Isso se mede numa sessão:
+conte os ataques corpo a corpo que ACERTARAM o Vendaval e compare com o outro da linha de frente.
+
+De quebra, uma ambiguidade que a mesa encontraria no primeiro combate: a Maestria de Intermediário
+diz que movimento de REAÇÃO conta para a Distância Roubada, mas Reação acontece no turno do inimigo e
+a regra base zera a distância no fim do turno — do jeito que estava escrito, a Maestria não fazia
+nada. O texto agora diz que essa parcela é a única que sobrevive à virada de turno.
+
+### 📸 Foto de perfil e capa nas fichas
+
+A frente que estava documentada e não implementada desde 2026-09-03, com as decisões que o
+`PROGRESS.md` deixou em aberto agora tomadas:
+
+- **A imagem mora dentro da ficha, em base64.** Guardar só uma URL faria "exporte o JSON pra levar
+  pra outra máquina" virar mentira: a ficha chegaria do outro lado apontando pra um arquivo que não
+  existe lá.
+- **Reduzir no cliente é obrigatório, e o teto é duro.** A imagem é redesenhada num canvas dentro do
+  lado máximo (512px pra foto, 1200px pra capa) e comprimida em degraus de qualidade ATÉ caber num
+  teto de bytes. Se não couber nem no último degrau, a função recusa com uma frase que diz o que
+  fazer — em vez de gravar e estourar a cota do `localStorage` depois, no meio de um `setItem` que
+  levaria junto as fichas que já estavam salvas.
+- **O link de compartilhar NÃO leva as imagens.** JPEG já é dado comprimido e o gzip do link não tira
+  quase nada dele: uma foto de 60 KB viraria ~80 000 caracteres de URL. Navegador, Discord e WhatsApp
+  cortam links muito antes disso — mandá-las junto não daria um link grande, daria um link QUEBRADO,
+  que parece pronto ao ser copiado e chega inútil. O JSON exportado continua levando tudo, e a ficha
+  avisa isso na tela.
+- **Imagem que vem de fora é saneada.** JSON importado e link de terceiro passam por uma checagem que
+  só aceita `data:image/` dentro do teto. Um `portrait` apontando pra `https://…` faria o navegador
+  de quem abre a ficha entregar o IP dele a um servidor que ele nunca escolheu.
+- **O PDF imprime o retrato.** A decisão que estava em aberto ficou em imprimir: a rota do PDF já
+  recebe a ficha inteira pra compilar o Typst, então a foto não abre um caminho novo — e o PDF existe
+  pra ser levado impresso pra mesa, que é onde um retrato vale mais.
+
+O `/personagens` ganhou a foto no card (com o brasão da raça como alternativa, não como degrau menor)
+e **barras de PV/PM com o número junto**. Barra sozinha comunica proporção e esconde escala — "meio
+cheia" é a mesma imagem com 6 PV e com 60, e a decisão de mesa é sobre a escala.
+
+### ♿ Acessibilidade que dá pra medir
+
+Três checagens novas, todas rodando num Chrome de verdade porque as três coisas que elas medem não
+dá pra ver em print. A primeira lição foi essa: os primeiros prints desta série saíram com perfil de
+cor aplicado, e um botão `wine-600` (#4a0e2e) apareceu como #7d505e — o suficiente pra eu "achar" um
+defeito de contraste que não existia, e quase corrigi-lo.
+
+- **`check:contraste`** mede as 9 rotas nos 2 temas contra o WCAG AA. Achou 6 defeitos reais, todos
+  corrigidos: `text-parchment-400` como texto de apoio no tema claro (1,99:1), `text-teal-500` no
+  acento da Magia (2,21:1), as etiquetas de Rank da Loja (3,80:1), e — o mais caro — `opacity-70`
+  usado pra apagar item bloqueado, que puxa TEXTO e fundo juntos na direção do pergaminho e derrubava
+  128 textos da Loja de 5,6:1 pra 3,0:1. O apagamento virou recuo de cor e saturação, não de
+  opacidade: de longe a leitura é a mesma, de perto ela existe.
+- **`check:mobile`** impõe a largura por dentro do navegador, o que é o ponto: recortar uma janela de
+  500px em 360 mostra o que caberia em 360, não o que o CSS FAZ em 360 — media query não dispara,
+  flex não recalcula, `<select>` não encolhe. Achou dois transbordos, e os dois eram a mesma
+  armadilha de flexbox (item de flex tem `min-width: auto` e não encolhe abaixo do conteúdo, então
+  `flex-1` sem `min-w-0` não encolhe nada): a linha de "nova perícia" da ficha empurrava 39px em
+  320px, e o importador da iniciativa empurrava 41px em **360px** — a largura de metade dos Androids.
+- **`check:a11y`** achou o que um leitor de tela encontra: `/ficha` era a única rota sem `h1` (o nome
+  do personagem é um `<input>`, e input não é cabeçalho), `/livro` tinha oito `h1` porque cada
+  capítulo abria um, cinco campos sem rótulo associado, e o `<input type="file">` escondido do
+  importador, que o Tab visitava e o leitor anunciava como campo sem nome.
+
+E o **tamanho da letra ficou ajustável**, que era metade do item. O caminho de verdade não foi o
+botão: foram as **68 legendas escritas em pixel cravado** (`text-[11px]`, `text-[10px]`), que não
+obedecem ao tamanho de fonte do navegador. Quem aumenta a letra nas configurações do celular — que é
+como uma pessoa com baixa visão usa QUALQUER site — via todo o resto crescer e justamente as legendas
+ficarem do mesmo tamanho. Em `rem` elas crescem junto. O botão de três degraus na barra existe por
+cima disso, pelo mesmo motivo do botão de tema: ninguém abre as configurações do Chrome no meio de um
+combate pra passar o celular pro vizinho ler.
+
+### ⚖️ O Apêndice C ganhou três colunas, e duas árvores ganharam dano
+
+A tabela tinha UMA coluna chamada "Utilidade" para as três árvores da categoria, e a razão era
+constrangedora: **duas delas não tinham dano nenhum pra medir.** Só o Ladino tinha — e ainda assim
+escondido, porque o Dano Furtivo dele vive na Maestria de 1º patamar e não num campo `damage`, então
+nenhuma conta do projeto o enxergava. Uma coluna para três árvores diferentes é uma coluna que não
+descreve nenhuma delas.
+
+Separar exigia ter o que medir, e o molde já existia dentro da própria categoria — um número que
+escala por patamar, declarado na Maestria de 1º, sem uma habilidade nova por rank:
+
+- **Dissonância** (Bardo): uma vez por turno, ao usar uma habilidade da árvore, cada hostil que te
+  OUÇA sofre 1d4 por patamar. A fraqueza declarada da árvore cobrada no dano — quem não ouve não
+  sofre, e criatura sem emoção também não.
+- **Ordem de Tiro** (Tático): uma vez por turno, sem gastar Ação, aponte um alvo; o primeiro ataque
+  de **aliado** que acertar causa +1d6 por patamar. É a única coluna do livro que não sai da arma de
+  quem a lê.
+- **Dano Furtivo** (Ladino): já existia. O que mudou é que agora ele é medido.
+
+As três agora aparecem no `check:arvores` com arma de referência própria, e o relatório imprime
+`d6 → d6 no 6º` para elas — a forma mais curta de dizer que árvore de Utilidade não recebe degraus
+de Dado de Arma (Cap. 3), e que é por isso que elas ficam pra trás sem precisar de nenhuma regra que
+as puna.
+
+A ordem entre as três colunas não é acidente: o **Ladino** é o maior, porque a árvore dele diz em
+texto que é "a única árvore de Utilidade com dano de verdade"; o **Bardo** é o menor, porque o dano
+dele é efeito colateral de uma habilidade social e cobra área em troca; o **Tático** fica no meio.
+Todas as três ficam entre 49% e 73% do teto medido — folga proposital, porque a coluna é média
+contra CA razoável e o teto ignora chance de acerto.
+
+Também subiram, como pedido:
+
+- **Desintoxicação**, pouco: Sangria 3d6→4d6, Corrosão 3d6→5d6, Sopro Podre 6d8→8d8. Sangria e
+  Corrosão estavam empatadas em 11 apesar de três ranks de distância.
+- **Escudos**: Golpe de Escudo 1d8→2d8, a versão Soberana 2d8→3d8. A coluna sobe de ~7–18 para
+  ~10–27 e **continua sendo a menor do livro**, que é o ponto: o Escudeiro bate, mas bater não é o
+  trabalho dele.
+
+### 🐺 O Invocador estava cobrando PA pra ligar a árvore
+
+A Maestria de 1º patamar ensinava a fechar Pactos e a desenhar círculos — e não invocava. Invocar
+era uma habilidade comprada (`Chamado`, 2 PA). Na prática isso significava que um invocador que
+gastasse o PA todo em Pactos ficava com um caderno de acordos e nenhuma forma de chamar ninguém.
+
+**Invocar virou a Maestria:** círculo preparado (10 minutos, fora de combate) e 3 PM, sem PA nenhum.
+Piso de escola não se compra.
+
+O que era o `Chamado` virou o **Chamado de Emergência** (mesmo id, pra não órfãozar ficha salva):
+**3 Ações e 6 PM**, sem círculo, no meio da luta — e o invocado chega com **metade dos PV e metade do
+dano**, porque foi chamado às pressas. As 3 Ações são o turno inteiro de propósito: se essa
+habilidade custasse o padrão do rank, o círculo de 10 minutos não teria função e a fraqueza declarada
+da escola deixaria de existir.
+
+Dois talentos novos no 1º patamar destravam as duas metades do preço, separadamente:
+
+- **Círculo Improvisado** (o antigo "Invocação de Emergência", id preservado): baixa para 3 PM.
+- **Pacto Firmado**: tira a penalidade — o invocado chega inteiro.
+
+E um terceiro resolve a pergunta que toda mesa faz: **Ordem Partilhada** deixa você ceder uma das
+suas 3 Ações a um invocado, sem custo de PM. É a única forma de um invocado agir duas vezes no mesmo
+turno, e o preço é você agir uma vez a menos.
+
+Porque a regra que faltava estava escrita agora com todas as letras: **um invocado age com 1 Ação e
+1 Reação por turno** — as dele, não as suas três. Ele não é um segundo personagem seu; é um aliado
+que obedece.
+
+O 1º patamar também ganhou **três Pactos novos**, mais fortes que o Filhote e claramente abaixo dos
+de Intermediário: **Cão de Caça** (mordida 2d6, faro, pode Derrubar), **Corvo Mensageiro** (bico 1d6,
+voo, entrega recado e empresta a linha de visão) e **Fogo-Fátuo** (não ataca; marca um alvo e o
+próximo ataque de aliado contra ele tem Vantagem). O Filhote continua sendo o mais fraco dos quatro
+**de propósito** — é o único que evolui, e no Avançado ele passa todos os outros.
+
+De quebra, um pré-requisito quebrado: o talento `Convocação Aprimorada` do Avançado dizia "Requer
+Convocar sob Pressão", um talento que nunca existiu em lugar nenhum do livro.
+
+### 📦 Um arquivo de ficha no lugar do JSON
+
+Passar a ficha adiante tinha dois caminhos, e o de arquivo envelheceu no dia em que a ficha ganhou
+foto e capa: base64 é texto, e uma ficha com as duas passava de **350 KB de JSON** — quase tudo
+caracteres de base64. Mandar isso pro Mestre funciona e é feio.
+
+O botão agora baixa um **`.mtficha`**: as imagens são reencodadas *para compartilhar* (capa 640px,
+foto 256px — quem exporta continua com as grandes na própria ficha) e o resto vai comprimido em gzip.
+Medido numa ficha com capa de 1200px e foto de 512px: **464 KB de JSON viraram 40 KB**, com as duas
+imagens dentro.
+
+O formato é `MTF1` + gzip(JSON), e o prefixo existe pra que a importação saiba o que chegou **sem
+adivinhar pela extensão** — um `.json` exportado semana passada continua entrando normalmente. Ficha
+de mesa não se abandona por causa de formato.
+
+O **link** continua existindo e continua sem imagem, porque nenhuma das duas otimizações o salva:
+mesmo reduzida, uma capa de 640px vira ~55 000 caracteres de URL, e navegador, Discord e WhatsApp
+cortam muito antes disso. Os dois caminhos passaram a ter papéis distintos em vez de competirem: o
+link é o rápido, o arquivo é o completo.
+
+### 🖼 A foto do personagem chegou em `/encontros`
+
+O montador de encontros mostrava o brasão da ÁRVORE INICIAL no card de cada ficha do grupo — o que
+significa que os dois magos de Água da mesa apareciam com o mesmo emblema. O Mestre monta o encontro
+olhando pros jogadores dele; agora o card mostra a foto quando existe, e cai no brasão quando não.
+
+### 🎨 Estética
+
+- **O favicon virou um brasão.** A ressalva de 0.1.11 dizia que em 16px o letreiro inteiro vira
+  mancha e que legibilidade ali pediria um símbolo. O símbolo chegou pronto — o brasão dourado de
+  asas e olho — e o `gerar-favicon.mjs` passou a rasterizá-lo.
+
+  Ele chegou como **JPEG**, e JPEG não tem canal alfa: o quadriculado de transparência do editor de
+  imagem veio *queimado nos pixels*, como duas cores cinza de verdade (#EBEBEB e #BFBFBF). Publicado
+  como estava, o ícone sairia com o xadrez em volta. O script agora apaga esse fundo antes de medir
+  o recorte, e a regra é dupla de propósito — um pixel só é fundo se for CINZA (os três canais quase
+  iguais) **e** cair perto de um dos dois tons. O dourado do brasão é saturado e nunca é cinza,
+  então nenhuma parte do desenho satisfaz a primeira condição. Foram 82% dos pixels.
+
+  A arte-fonte saiu de `public/` e foi pra `assets-fonte/`, seguindo a regra que o
+  `logo-sem-fundo.mjs` já tinha escrita: matéria-prima de build não é asset de site. Deixada lá, ela
+  ficaria servível por URL — 1,9 MB baixáveis por qualquer visitante, concorrendo por engano com o
+  ícone bom.
+- **A capa da ficha não usa o filtro das faixas.** `sepia(0.5) saturate(0.6)` existe pra puxar arte
+  de terceiros pro âmbar da paleta; aplicá-lo à foto que o jogador escolheu repinta a escolha dele
+  até ela sumir. O véu de contraste continua, porque a lição de 0.1.10 é que filtro depende de quão
+  clara a arte é e véu não.
+
+---
+
 ## 0.1.11 — "O Grupo Inteiro num Link" · 2026-09-04
 
 ### 🔗 Ficha por link
@@ -58,6 +343,16 @@ Corpo pra olhar — lista curta no lugar de 400 magias.
 
 ### 🎨 Estética
 
+- **As duas faixas de baixa resolução foram trocadas** (mesmo dia). `loja.jpg` era 600×279 e `livro.jpg`
+  525×350, contra 960–1900 das outras seis — elas amaciavam em tela larga, que é onde a faixa é grande.
+  A loja saiu de uma arte de 3840px e agora é a **maior das oito: 1600×794**. O livro subiu pra **680×384**
+  e continua sendo o menor do conjunto — a imagem encontrada não tinha mais que isso, e ampliar não cria
+  detalhe.
+  *A arte da loja não entrou inteira: o original é uma prancha de concept art com o título e dois créditos
+  do autor impressos nos cantos, além de margem creme nas quatro bordas. A faixa é o recorte
+  `3294×1635 @ (191, 796)` do original, que fica só com o salão — texto e margem ficam de fora. O original
+  está em `assets-fonte/originais/` (ignorado pelo git, como o `.recusadas/`) pra permitir outro recorte
+  sem procurar a imagem de novo.*
 - **O favicon virou a marca nova.** `src/app/icon.png` é gerado por `gerar-favicon.mjs`, que recorta pela
   caixa real do letreiro (a arte ocupa 15% do quadro), reduz por média de área (traço fino some com
   amostragem simples) e compõe sobre `parchment-950`. O `icon.svg` antigo foi removido: com os dois

@@ -76,8 +76,8 @@ export default function ImportarFichaPorLink() {
           </p>
           <p className="max-w-sm text-xs text-parchment-600 dark:text-parchment-400">
             Ele pode ter sido cortado no caminho — aplicativos de mensagem às vezes quebram links longos em
-            duas linhas. Peça pra reenviar, de preferência dentro de um bloco de código, ou use o{" "}
-            <b>Importar JSON</b> em{" "}
+            duas linhas. Peça pra reenviar, de preferência dentro de um bloco de código, ou peça o arquivo
+            da ficha e use o <b>Importar ficha</b> em{" "}
             <Link href="/personagens" className="text-wine-600 underline dark:text-wine-300">
               Meus Personagens
             </Link>
@@ -88,7 +88,7 @@ export default function ImportarFichaPorLink() {
 
       {ficha && (
         <Surface level="raised" className="p-6">
-          <p className="text-[11px] font-black uppercase tracking-widest text-gold-700 dark:text-gold-400">
+          <p className="text-2xs font-black uppercase tracking-widest text-gold-700 dark:text-gold-400">
             Chegou pra você
           </p>
           <h2 className="mt-1 font-display text-2xl font-black text-parchment-900 dark:text-parchment-50">

@@ -82,7 +82,7 @@ function RaceChoices({ race }: { race: Race }) {
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
             Bônus livre de raça
             {pendentes > 0 && (
-              <span className="ml-2 rounded-full bg-gold-500/20 px-2 py-0.5 text-[10px] font-bold normal-case text-gold-600 dark:text-gold-400">
+              <span className="ml-2 rounded-full bg-gold-500/20 px-2 py-0.5 text-3xs font-bold normal-case text-gold-600 dark:text-gold-400">
                 {pendentes} ponto(s) a distribuir
               </span>
             )}

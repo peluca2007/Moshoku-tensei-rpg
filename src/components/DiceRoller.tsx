@@ -330,7 +330,7 @@ export default function DiceRoller() {
                       setTestSource(s);
                       applySource(s);
                     }}
-                    className={`rounded-lg px-1.5 py-1 text-[11px] font-medium capitalize transition-colors ${
+                    className={`rounded-lg px-1.5 py-1 text-2xs font-medium capitalize transition-colors ${
                       testSource === s
                         ? "bg-wine-600 text-white"
                         : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300"
@@ -351,7 +351,7 @@ export default function DiceRoller() {
                         setAttributeKey(a.key);
                         applySource("atributo", a.key);
                       }}
-                      className={`rounded-lg px-1 py-1 text-[11px] font-semibold ${
+                      className={`rounded-lg px-1 py-1 text-2xs font-semibold ${
                         attributeKey === a.key
                           ? "bg-wine-500/20 text-wine-700 ring-1 ring-wine-500 dark:text-wine-300"
                           : "bg-parchment-100 text-parchment-600 dark:bg-parchment-900"
@@ -381,7 +381,7 @@ export default function DiceRoller() {
                     ))}
                   </select>
                   {spellDcInfo !== null && (
-                    <p className="mt-1 flex items-center gap-1 text-[11px] text-parchment-600 dark:text-parchment-400">
+                    <p className="mt-1 flex items-center gap-1 text-2xs text-parchment-600 dark:text-parchment-400">
                       <Sparkles className="h-3 w-3" /> CD desta escola: <span className="font-semibold">{spellDcInfo}</span>
                     </p>
                   )}
@@ -414,7 +414,7 @@ export default function DiceRoller() {
                           setMarcialAttribute(k);
                           applySource("marcial", attributeKey, magicTreeId, marcialTreeId, k);
                         }}
-                        className={`rounded-lg px-1.5 py-1 text-[11px] font-medium ${
+                        className={`rounded-lg px-1.5 py-1 text-2xs font-medium ${
                           marcialAttribute === k
                             ? "bg-wine-500/20 text-wine-700 ring-1 ring-wine-500 dark:text-wine-300"
                             : "bg-parchment-100 text-parchment-600 dark:bg-parchment-900"
@@ -424,7 +424,7 @@ export default function DiceRoller() {
                       </button>
                     ))}
                   </div>
-                  <p className="flex items-center gap-1 text-[11px] text-parchment-600 dark:text-parchment-400">
+                  <p className="flex items-center gap-1 text-2xs text-parchment-600 dark:text-parchment-400">
                     <Swords className="h-3 w-3" /> Acerto Físico = 1d20 + Atributo + Bônus do Rank
                   </p>
                 </div>
@@ -447,7 +447,7 @@ export default function DiceRoller() {
                     type="button"
                     onClick={() => setMode(m)}
                     title={ADVANTAGE_LABELS[m]}
-                    className={`rounded-lg px-1 py-1.5 text-[10px] font-medium leading-tight ${
+                    className={`rounded-lg px-1 py-1.5 text-3xs font-medium leading-tight ${
                       mode === m
                         ? "bg-wine-600 text-white"
                         : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-400"
@@ -481,7 +481,7 @@ export default function DiceRoller() {
                 Dano
               </h3>
               {pendingLabel && (
-                <p className="mb-2 flex items-center gap-1 text-[11px] font-medium text-wine-600 dark:text-wine-300">
+                <p className="mb-2 flex items-center gap-1 text-2xs font-medium text-wine-600 dark:text-wine-300">
                   <Sparkles className="h-3 w-3" /> Pronto pra rolar: {pendingLabel} — confira o dado antes de rolar.
                 </p>
               )}
@@ -554,7 +554,7 @@ export default function DiceRoller() {
                           <Star className="h-3 w-3 shrink-0 text-gold-500" />
                           <span className="truncate">{macro.label}</span>
                         </span>
-                        <span className="shrink-0 text-[11px] text-parchment-400 dark:text-parchment-500">{macro.formula}</span>
+                        <span className="shrink-0 text-2xs text-parchment-400 dark:text-parchment-500">{macro.formula}</span>
                       </button>
                       <button
                         type="button"
@@ -611,7 +611,7 @@ export default function DiceRoller() {
                       setLog([]);
                       setLastResult(null);
                     }}
-                    className="flex items-center gap-1 text-[11px] text-parchment-400 hover:text-rose-500"
+                    className="flex items-center gap-1 text-2xs text-parchment-400 hover:text-rose-500"
                   >
                     <Trash2 className="h-3 w-3" /> Limpar
                   </button>
@@ -628,7 +628,7 @@ export default function DiceRoller() {
                     >
                       <div className="min-w-0">
                         <p className="truncate font-medium text-parchment-800 dark:text-parchment-200">{entry.label}</p>
-                        <p className="truncate text-[11px] text-parchment-600 dark:text-parchment-400">{entry.detail}</p>
+                        <p className="truncate text-2xs text-parchment-600 dark:text-parchment-400">{entry.detail}</p>
                       </div>
                       <span
                         className={`shrink-0 text-base font-bold ${

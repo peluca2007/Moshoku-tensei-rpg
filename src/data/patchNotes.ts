@@ -16,6 +16,96 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.12",
+    date: "2026-09-04",
+    title: "O Que a R\u00e9gua N\u00e3o Media",
+    sections: [
+      {
+        heading: "O Corpo virou medi\u00e7\u00e3o, e a Magia estava certa desde sempre",
+        items: [
+          "O check:arvores de 0.1.11 acusava 11 c\u00e9lulas e dizia, honestamente, que n\u00e3o confiava em seis delas: as do Corpo saíam marcadas como PISO porque o Dado de Arma \u2014 o golpe base de toda \u00e1rvore marcial \u2014 n\u00e3o entrava na conta. As onze ca\u00edram para zero, e nenhuma delas caiu por um nerf.",
+          "As seis do Corpo eram o MEDIDOR. Faltava ler as f\u00f3rmulas em portugu\u00eas do cat\u00e1logo (\"arma normal\" invoca dado + atributo + B\u00f4nus de Rank; \"rolado N vezes\" invoca s\u00f3 os dados), faltava declarar qual arma o auditor assume por \u00e1rvore, e faltava o \u00f3bvio: o ATAQUE COMUM. Nenhuma \u00e1rvore declara \"Atacar com Arma (1 A\u00e7\u00e3o)\" como habilidade, porque \u00e9 regra do Cap. 4 \u2014 ent\u00e3o o medidor lia o guerreiro como algu\u00e9m que s\u00f3 sabe usar t\u00e9cnica. Tr\u00eas ataques comuns j\u00e1 passam das seis colunas acusadas.",
+          "Entrou tamb\u00e9m a QUARTA A\u00c7\u00c3O de Espada (do Avan\u00e7ado), Norte, Lutador e Arquearia (do Imperador). O Ap\u00eandice C avisa que j\u00e1 conta com ela na coluna da Espada; medir com tr\u00eas era comparar contra uma r\u00e9gua calibrada com quatro.",
+          "As cinco da Magia eram o medidor lendo a metade errada da tabela. O pr\u00f3prio Ap\u00eandice C avisa: \"Magia n\u00e3o est\u00e1 amortizada pelas A\u00e7\u00f5es \u2014 o Sol Menor aparece como ~130, mas entrega ~65 por turno.\" A coluna de Magia \u00e9 o dano CHEIO da maior magia, e o script dividia antes de comparar. As cinco c\u00e9lulas acusadas eram exatamente as cinco escolas cuja maior magia custa 4, 5 ou 6 A\u00e7\u00f5es \u2014 e todas caem dentro de 3% a 12% do dano cheio. A r\u00e9gua estava certa, as \u00e1rvores estavam certas, e o medidor estava errado.",
+        ],
+      },
+      {
+        heading: "Um script que l\u00ea texto",
+        items: [
+          "A d\u00edvida da auditoria linha a linha carregava uma ressalva: \"leitura manual ainda \u00e9 o que pega texto de habilidade errado, e o script n\u00e3o l\u00ea texto\". Agora existe check:texto, e ele l\u00ea as 592 habilidades e talentos conferindo a prosa contra os campos. Ele n\u00e3o substitui a leitura \u2014 faz o que a leitura faz PIOR: quem l\u00ea 400 cartas perde a que diz \"2 A\u00e7\u00f5es\" com actions: 1 na terceira hora.",
+          "Duas evolu\u00e7\u00f5es do filhote de Esp\u00edritos e Feras eram INVEND\u00c1VEIS: exigiam um id de talento que n\u00e3o existe, ent\u00e3o a compra nunca liberava, em sil\u00eancio, desde que foram escritas.",
+          "Passo de Vento abria com \"1 A\u00e7\u00e3o:\" e cobrava 2 pela tabela do Cap. 2. Tr\u00eas Rea\u00e7\u00f5es n\u00e3o diziam na carta que eram Rea\u00e7\u00e3o. Duas t\u00e9cnicas do Norte prometiam per\u00edcia e n\u00e3o havia onde gravar \u2014 virou o campo grantsSkills, com motor e testes junto. E o Punho do Fogo tinha 25 textos com markdown cru: a mesa lia os asteriscos, porque nada no projeto renderiza negrito.",
+          "Duas regras do pr\u00f3prio script nasceram erradas e foram corrigidas antes de virar relat\u00f3rio. A de alcance acusou dez falsos positivos de dez (\"avance 6m\", \"empurrado 3m\" \u2014 deslocamento, n\u00e3o alcance), e a de PV acusou 21 patamares em 19 \u00e1rvores por repetir o dado do anterior, quando repetir por dois patamares \u00e9 a cad\u00eancia normal do livro. Vinte e um defeitos na primeira execu\u00e7\u00e3o n\u00e3o \u00e9 um livro quebrado; \u00e9 a r\u00e9gua errada.",
+        ],
+      },
+      {
+        heading: "A Dist\u00e2ncia Roubada, medida",
+        items: [
+          "O teto \u00e9 18 metros, atingido no 5\u00ba patamar, e custa 1 das 3 A\u00e7\u00f5es em todo patamar. A pr\u00f3pria \u00e1rvore j\u00e1 bate mais longe sem a mec\u00e2nica: Arremesso Cortante faz 18m no 1\u00ba patamar e Golpe que N\u00e3o Tem Origem faz 27m no 5\u00ba.",
+          "O que a mec\u00e2nica d\u00e1 de \u00fanico \u00e9 o ataque continuar sendo CORPO A CORPO, o que carrega a Vantagem de Estilo junto. Ent\u00e3o a pergunta pra mesa n\u00e3o \u00e9 \"18 metros \u00e9 demais\": \u00e9 \"o Vendaval alguma vez apanha?\". Se o inimigo nunca revida, o custo declarado da \u00e1rvore nunca \u00e9 cobrado. Conte, numa sess\u00e3o, os ataques corpo a corpo que ACERTARAM o Vendaval, e compare com o outro da linha de frente.",
+          "Uma ambiguidade que a mesa encontraria no primeiro combate: a Maestria de Intermedi\u00e1rio diz que movimento de Rea\u00e7\u00e3o conta para a Dist\u00e2ncia Roubada, mas Rea\u00e7\u00e3o acontece no turno do inimigo e a regra base zera a dist\u00e2ncia no fim do turno \u2014 do jeito que estava escrito, a Maestria n\u00e3o fazia nada. Essa parcela passa a ser a \u00fanica que sobrevive \u00e0 virada de turno.",
+        ],
+      },
+      {
+        heading: "Foto de perfil e capa nas fichas",
+        items: [
+          "A imagem mora DENTRO da ficha, em base64. Guardar s\u00f3 uma URL faria \"exporte o JSON pra levar pra outra m\u00e1quina\" virar mentira: a ficha chegaria do outro lado apontando pra um arquivo que n\u00e3o existe l\u00e1.",
+          "Reduzir no cliente \u00e9 obrigat\u00f3rio e o teto \u00e9 duro: a imagem \u00e9 redesenhada num canvas dentro do lado m\u00e1ximo (512px pra foto, 1200px pra capa) e comprimida em degraus de qualidade AT\u00c9 caber num teto de bytes. Se n\u00e3o couber nem no \u00faltimo degrau, ela \u00e9 recusada com uma frase que diz o que fazer \u2014 em vez de estourar a cota do localStorage depois, levando junto as fichas j\u00e1 salvas.",
+          "O LINK de compartilhar n\u00e3o leva as imagens. JPEG j\u00e1 \u00e9 dado comprimido e o gzip do link n\u00e3o tira quase nada dele: uma foto de 60 KB viraria ~80 000 caracteres de URL, e navegador, Discord e WhatsApp cortam muito antes disso. N\u00e3o daria um link grande: daria um link quebrado, que parece pronto ao ser copiado. O arquivo .mtficha leva as duas, e a ficha avisa isso na tela.",
+          "Imagem vinda de fora (JSON importado, link de terceiro) s\u00f3 \u00e9 aceita como data:image/ dentro do teto. Um retrato apontando pra https:// faria o navegador de quem abre a ficha entregar o IP dele a um servidor que ele nunca escolheu.",
+          "O PDF imprime o retrato \u2014 a decis\u00e3o que estava em aberto. A rota do PDF j\u00e1 recebe a ficha inteira pra compilar o Typst, ent\u00e3o a foto n\u00e3o abre um caminho novo; e o PDF existe pra ser levado impresso pra mesa, que \u00e9 onde um retrato vale mais.",
+          "O /personagens ganhou a foto no card (com o bras\u00e3o da ra\u00e7a como alternativa) e barras de PV/PM com o n\u00famero junto. Barra sozinha comunica propor\u00e7\u00e3o e esconde escala \u2014 \"meio cheia\" \u00e9 a mesma imagem com 6 PV e com 60, e a decis\u00e3o de mesa \u00e9 sobre a escala.",
+        ],
+      },
+      {
+        heading: "Acessibilidade que d\u00e1 pra medir",
+        items: [
+          "Tr\u00eas checagens novas, todas num Chrome de verdade. A primeira li\u00e7\u00e3o foi essa: os primeiros prints desta s\u00e9rie sa\u00edram com perfil de cor aplicado, e um bot\u00e3o wine-600 (#4a0e2e) apareceu como #7d505e \u2014 o suficiente pra \"achar\" um defeito de contraste que n\u00e3o existia.",
+          "check:contraste mede as 9 rotas nos 2 temas contra o WCAG AA. Achou 6 defeitos reais, todos corrigidos \u2014 e o mais caro foi opacity-70 usado pra apagar item bloqueado na Loja: opacidade puxa TEXTO e fundo juntos na dire\u00e7\u00e3o do pergaminho, e derrubava 128 textos de 5,6:1 pra 3,0:1. O apagamento virou recuo de cor e satura\u00e7\u00e3o: de longe a leitura \u00e9 a mesma, de perto ela existe.",
+          "check:mobile imp\u00f5e a largura por dentro do navegador, que \u00e9 o ponto: recortar uma janela de 500px em 360 mostra o que caberia em 360, n\u00e3o o que o CSS FAZ em 360. Achou dois transbordos, os dois pela mesma armadilha de flexbox (item de flex tem min-width: auto e n\u00e3o encolhe abaixo do conte\u00fado) \u2014 e um deles quebrava em 360px, a largura de metade dos Androids.",
+          "check:a11y achou o que um leitor de tela encontra: /ficha era a \u00fanica rota sem h1 (o nome do personagem \u00e9 um input, e input n\u00e3o \u00e9 cabe\u00e7alho), /livro tinha oito h1 porque cada cap\u00edtulo abria um, cinco campos sem r\u00f3tulo associado, e o input de arquivo escondido do importador, que o Tab visitava.",
+          "O tamanho da letra ficou ajust\u00e1vel \u2014 e o caminho de verdade n\u00e3o foi o bot\u00e3o: foram as 68 legendas escritas em pixel cravado, que n\u00e3o obedecem ao tamanho de fonte do navegador. Quem aumenta a letra nas configura\u00e7\u00f5es do celular via todo o resto crescer e justamente as legendas ficarem do mesmo tamanho. Em rem elas crescem junto.",
+        ],
+      },
+      {
+        heading: "O Ap\u00eandice C ganhou tr\u00eas colunas, e duas \u00e1rvores ganharam dano",
+        items: [
+          "A tabela tinha UMA coluna chamada Utilidade para as tr\u00eas \u00e1rvores da categoria, e a raz\u00e3o era constrangedora: duas delas n\u00e3o tinham dano nenhum pra medir. S\u00f3 o Ladino tinha, e ainda assim escondido — o Dano Furtivo dele vive na Maestria de 1\u00ba patamar e n\u00e3o num campo de dano, ent\u00e3o nenhuma conta do projeto o enxergava. Uma coluna para tr\u00eas \u00e1rvores diferentes \u00e9 uma coluna que n\u00e3o descreve nenhuma delas.",
+          "Separar exigia ter o que medir, e o molde ja existia dentro da propria categoria — um numero que escala por patamar, declarado na Maestria de 1\u00ba. DISSON\u00c2NCIA (Bardo): uma vez por turno, ao usar uma habilidade da \u00e1rvore, cada hostil que te OU\u00c7A sofre 1d4 por patamar. ORDEM DE TIRO (T\u00e1tico): uma vez por turno, sem gastar A\u00e7\u00e3o, aponte um alvo e o primeiro ataque de ALIADO que acertar causa +1d6 por patamar — \u00e9 a \u00fanica coluna do livro que n\u00e3o sai da arma de quem a l\u00ea. O Dano Furtivo do Ladino j\u00e1 existia; o que mudou \u00e9 que agora ele \u00e9 medido.",
+          "A ordem entre as tr\u00eas colunas n\u00e3o \u00e9 acidente: o Ladino \u00e9 o maior porque a \u00e1rvore dele diz em texto que \u00e9 \"a \u00fanica \u00e1rvore de Utilidade com dano de verdade\"; o Bardo \u00e9 o menor porque o dano dele \u00e9 efeito colateral de uma habilidade social e cobra \u00e1rea em troca; o T\u00e1tico fica no meio. Nenhuma \u00e1rvore de Utilidade recebe degraus de Dado de Arma (Cap. 3), e \u00e9 por isso que elas ficam pra tr\u00e1s sem precisar de nenhuma regra que as puna.",
+          "Tamb\u00e9m subiram: a Desintoxica\u00e7\u00e3o pouco (Sangria 3d6→4d6, Corros\u00e3o 3d6→5d6, Sopro Podre 6d8→8d8 — Sangria e Corros\u00e3o estavam empatadas em 11 apesar de tr\u00eas ranks de dist\u00e2ncia), e o Escudos de vez (Golpe de Escudo 1d8→2d8, Soberano 2d8→3d8). A coluna do Escudos vai de ~7–18 para ~10–27 e CONTINUA sendo a menor do livro, que \u00e9 o ponto: o Escudeiro bate, mas bater n\u00e3o \u00e9 o trabalho dele.",
+        ],
+      },
+      {
+        heading: "O Invocador estava cobrando PA pra ligar a \u00e1rvore",
+        items: [
+          "A Maestria de 1\u00ba patamar ensinava a fechar Pactos e a desenhar c\u00edrculos — e n\u00e3o invocava. Invocar era uma habilidade comprada. Na pr\u00e1tica, um invocador que gastasse o PA todo em Pactos ficava com um caderno de acordos e nenhuma forma de chamar ningu\u00e9m. Invocar virou a MAESTRIA: c\u00edrculo preparado (10 minutos, fora de combate) e 3 PM, sem PA nenhum. Piso de escola n\u00e3o se compra.",
+          "O antigo Chamado virou o CHAMADO DE EMERG\u00caNCIA: 3 A\u00e7\u00f5es e 6 PM, sem c\u00edrculo, no meio da luta — e o invocado chega com metade dos PV e metade do dano, porque foi chamado \u00e0s pressas. As 3 A\u00e7\u00f5es s\u00e3o o turno inteiro de prop\u00f3sito: se ela custasse o padr\u00e3o do rank, o c\u00edrculo de 10 minutos n\u00e3o teria fun\u00e7\u00e3o e a fraqueza declarada da escola deixaria de existir.",
+          "Dois talentos novos destravam as duas metades do pre\u00e7o, separadamente: C\u00edrculo Improvisado baixa para 3 PM, e Pacto Firmado tira a penalidade. Um terceiro, ORDEM PARTILHADA, deixa voc\u00ea ceder uma das suas 3 A\u00e7\u00f5es a um invocado sem custo de PM — \u00e9 a \u00fanica forma de um invocado agir duas vezes no mesmo turno, e o pre\u00e7o \u00e9 voc\u00ea agir uma vez a menos.",
+          "A regra que faltava est\u00e1 escrita agora com todas as letras: um invocado age com 1 A\u00c7\u00c3O e 1 REA\u00c7\u00c3O por turno — as dele, n\u00e3o as suas tr\u00eas. Ele n\u00e3o \u00e9 um segundo personagem seu; \u00e9 um aliado que obedece.",
+          "O 1\u00ba patamar ganhou tr\u00eas Pactos novos, mais fortes que o Filhote e claramente abaixo dos de Intermedi\u00e1rio: C\u00e3o de Ca\u00e7a (mordida 2d6, faro, pode Derrubar), Corvo Mensageiro (bico 1d6, voo, entrega recado e empresta a linha de vis\u00e3o) e Fogo-F\u00e1tuo (n\u00e3o ataca; marca um alvo e o pr\u00f3ximo ataque de aliado contra ele tem Vantagem). O Filhote continua sendo o mais fraco dos quatro DE PROP\u00d3SITO — \u00e9 o \u00fanico que evolui, e no Avan\u00e7ado ele passa todos os outros.",
+        ],
+      },
+      {
+        heading: "Um arquivo de ficha no lugar do JSON",
+        items: [
+          "Passar a ficha adiante tinha dois caminhos, e o de arquivo envelheceu no dia em que a ficha ganhou foto e capa: base64 \u00e9 texto, e uma ficha com as duas passava de 350 KB de JSON — quase tudo caracteres de base64.",
+          "O bot\u00e3o agora baixa um .mtficha: as imagens s\u00e3o reencodadas PARA COMPARTILHAR (capa 640px, foto 256px; quem exporta continua com as grandes na pr\u00f3pria ficha) e o resto vai comprimido em gzip. Medido numa ficha com capa de 1200px e foto de 512px: 464 KB de JSON viraram 40 KB, com as duas imagens dentro.",
+          "O formato \u00e9 MTF1 + gzip(JSON), e o prefixo existe pra que a importa\u00e7\u00e3o saiba o que chegou sem adivinhar pela extens\u00e3o — um .json exportado semana passada continua entrando. Ficha de mesa n\u00e3o se abandona por causa de formato.",
+          "O LINK continua existindo e continua sem imagem, porque nenhuma das duas otimiza\u00e7\u00f5es o salva: mesmo reduzida, uma capa de 640px vira ~55 000 caracteres de URL. Os dois caminhos passaram a ter pap\u00e9is distintos em vez de competirem — o link \u00e9 o r\u00e1pido, o arquivo \u00e9 o completo.",
+          "E a foto do personagem chegou em /encontros: o montador mostrava o bras\u00e3o da \u00e1rvore inicial, ent\u00e3o os dois magos de \u00c1gua da mesa apareciam com o mesmo emblema.",
+        ],
+      },
+      {
+        heading: "Est\u00e9tica",
+        items: [
+          "O favicon virou um bras\u00e3o. A ressalva de 0.1.11 dizia que em 16px o letreiro inteiro vira mancha e que legibilidade ali pediria um s\u00edmbolo; o s\u00edmbolo chegou pronto. Ele veio como JPEG, e JPEG n\u00e3o tem canal alfa: o quadriculado de transpar\u00eancia do editor veio QUEIMADO nos pixels, e publicado como estava o \u00edcone sairia com o xadrez em volta. O script apaga esse fundo antes de recortar, com uma regra dupla — um pixel s\u00f3 \u00e9 fundo se for cinza E cair perto de um dos dois tons do xadrez, e o dourado do bras\u00e3o nunca \u00e9 cinza. Foram 82% dos pixels. A arte-fonte saiu de public/ pra assets-fonte/, pela mesma regra de sempre: mat\u00e9ria-prima de build n\u00e3o \u00e9 asset de site.",
+          "A capa da ficha n\u00e3o usa o filtro das faixas de rota. sepia(0.5) saturate(0.6) existe pra puxar arte de terceiros pro \u00e2mbar da paleta; aplic\u00e1-lo \u00e0 foto que o jogador escolheu repinta a escolha dele at\u00e9 ela sumir. O v\u00e9u de contraste continua, porque a li\u00e7\u00e3o de 0.1.10 \u00e9 que filtro depende de qu\u00e3o clara a arte \u00e9 e v\u00e9u n\u00e3o.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.11",
     date: "2026-09-04",
     title: "O Grupo Inteiro num Link",
@@ -46,8 +136,10 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
-        heading: "Favicon, tema claro e README",
+        heading: "Faixas, favicon, tema claro e README",
         items: [
+          "As duas faixas de baixa resolução foram trocadas: loja.jpg era 600x279 e livro.jpg 525x350, contra 960-1900 das outras seis — elas amaciavam justamente em tela larga, que é onde a faixa é grande. A loja saiu de uma arte de 3840px e agora é a maior das oito (1600x794); o livro subiu pra 680x384 e continua sendo o menor do conjunto, porque a imagem encontrada não tinha mais que isso e ampliar não cria detalhe.",
+          "A arte da loja não entrou inteira: o original é uma prancha de concept art com o título e dois créditos do autor impressos nos cantos, além de margem creme nas bordas. A faixa é o recorte que fica só com o salão — texto e margem ficam de fora.",
           "O favicon virou a marca nova: src/app/icon.png é gerado recortando pela caixa real do letreiro (a arte ocupa 15% do quadro), reduzindo por média de área (traço fino some com amostragem simples) e compondo sobre parchment-950. O icon.svg antigo saiu — com os dois presentes, cada navegador escolhe um e a aba mostra marcas diferentes por máquina. Ressalva: em 16px o letreiro inteiro vira mancha; legibilidade nesse tamanho pediria um símbolo.",
           "Os badges do README diziam regras 0.1.0 (estava em 0.1.10) e 35 testes (são 96) — e é a primeira coisa que alguém vê ao abrir o repositório, que é o link que o rodapé do site agora aponta.",
         ],

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Logo from "./ui/Logo";
 import ThemeToggle from "./ThemeToggle";
+import FontSizeToggle from "./FontSizeToggle";
 
 /**
  * `/criar` NÃO entra aqui de propósito (2026-09-03).
@@ -91,7 +92,8 @@ export default function Nav() {
           ))}
         </div>
 
-        <span className="ml-auto shrink-0">
+        <span className="ml-auto flex shrink-0 items-center gap-0.5">
+          <FontSizeToggle />
           <ThemeToggle />
         </span>
       </div>

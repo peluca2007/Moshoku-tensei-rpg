@@ -12,8 +12,8 @@ são quatro leituras do mesmo `src/data/`.
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
-[![Versão do sistema](https://img.shields.io/badge/regras-0.1.10-8B1E3F)](PATCH_NOTES.md)
-[![Testes](https://img.shields.io/badge/testes-89%20passando-3FB950)](src/store/selectors.test.ts)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.1.12-8B1E3F)](PATCH_NOTES.md)
+[![Testes](https://img.shields.io/badge/testes-125%20passando-3FB950)](src/store/selectors.test.ts)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>
@@ -81,6 +81,10 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:livro` | Confere a consistência entre os dados e o texto do livro |
 | `npm run check:redundancia` | Acha habilidades que repetem um patamar anterior |
 | `npm run check:arvores` | Audita as 19 árvores contra a régua do Apêndice C e acusa quem sai da faixa |
+| `npm run check:texto` | Lê o TEXTO das 592 habilidades contra os campos delas e acusa contradição |
+| `npm run check:contraste` | Mede o contraste das 9 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
+| `npm run check:mobile` | Procura transbordo horizontal de 320px a 414px (precisa de `npm run dev`) |
+| `npm run check:a11y` | Controle sem nome, campo sem rótulo, hierarquia de cabeçalho (precisa de `npm run dev`) |
 | `npx tsx scripts/simular-combate.mts` | Playtest automatizado: builds de mesmo orçamento de PA se batendo |
 | `node scripts/logo-sem-fundo.mjs` | Regera `public/logo-real-alfa.png` a partir de `assets-fonte/` |
 | `node scripts/gerar-favicon.mjs` | Regera `src/app/icon.png` a partir de `public/logo-real-alfa.png` |
@@ -89,6 +93,11 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 > Se o projeto estiver dentro do WSL, rode `build` e `check:livro` **de dentro do WSL**. Eles dependem de
 > binários nativos compilados para Linux (`lightningcss`, `esbuild`); chamá-los do Windows por
 > um caminho `\\wsl.localhost` falha. `tsc` e `eslint` funcionam dos dois lados.
+>
+> Os três checks de tela (`check:contraste`, `check:mobile`, `check:a11y`) sobem um Chrome e falam
+> com ele pela porta de depuração. Rode-os **do mesmo lado em que o Chrome está**: chamar um Chrome
+> do Windows a partir do WSL abre a porta do lado de lá e o script não a alcança. Aponte outro
+> navegador com `CHROME=/caminho/do/chrome` se precisar.
 
 ---
 

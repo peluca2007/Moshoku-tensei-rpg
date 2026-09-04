@@ -220,7 +220,7 @@ export const SUISHIN_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           effect:
-            "Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica uma condição — Caído, Preso, Desarmado ou Atordoado; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso).",
+            "1 Reação, no gatilho que você escolher. Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica uma condição — Caído, Preso, Desarmado ou Atordoado; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso).",
         },
         {
           id: "espelho-suishin",
@@ -255,7 +255,7 @@ export const SUISHIN_TREE: Tree = {
           ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          effect: "Invente seu segundo Segredo com o mesmo molde, escolhendo três opções de orçamento em vez de duas.",
+          effect: "1 Reação, igual ao primeiro. Invente seu segundo Segredo com o mesmo molde, escolhendo três opções de orçamento em vez de duas.",
         },
         {
           id: "mare-de-retorno",

@@ -13,6 +13,8 @@ import {
   getSpellDC,
   getAttackBonus,
   getTrainedBody,
+  getTreeGrantedSkills,
+  getSkillPaCost,
 } from "./selectors";
 import { TREES } from "@/data/trees";
 import { COMBINED_SPELLS, getCombinedSpellById } from "@/data/combinedSpells";
@@ -509,5 +511,59 @@ describe("Magias Combinadas na ficha exportada", () => {
     });
     const nomes = COMBINED_SPELLS.map((s) => s.name);
     expect(payload.abilityCards.filter((a) => nomes.some((n) => a.name.includes(n)))).toEqual([]);
+  });
+});
+
+describe("Perícias que a árvore ensina sozinha (Cap. 1, §4)", () => {
+  /**
+   * O terceiro caminho, aberto em 0.1.12: uma HABILIDADE comprada que declara
+   * `grantsSkills`. Duas técnicas do Deus do Norte prometiam perícia na prosa
+   * desde que foram escritas, e não havia campo pra guardar — o jogador
+   * comprava e a perícia não aparecia em lugar nenhum. Quem achou foi o
+   * `check:texto`, lendo o texto contra os campos.
+   *
+   * O Norte NÃO é a Árvore Inicial nestes testes de propósito: como inicial ele
+   * já entrega Sobrevivência e Enganação pelo caminho 1, e o teste não
+   * distinguiria as duas fontes.
+   */
+  const comLeituraDeRastro = ficha({
+    startingTreeId: "agua",
+    unlockedRanks: [{ treeId: "deus-do-norte", rank: "Principiante" }],
+    purchasedAbilities: [
+      { treeId: "deus-do-norte", rank: "Principiante", kind: "ability", id: "leitura-de-rastro-norte" },
+    ],
+  });
+
+  it("uma técnica com grantsSkills entrega as perícias que a carta promete", () => {
+    const pericias = getTreeGrantedSkills(comLeituraDeRastro);
+    expect(pericias).toContain("Sobrevivência");
+    expect(pericias).toContain("Percepção");
+  });
+
+  it("sem a compra, a técnica não entrega nada", () => {
+    const semCompra = ficha({
+      startingTreeId: "agua",
+      unlockedRanks: [{ treeId: "deus-do-norte", rank: "Principiante" }],
+    });
+    expect(getTreeGrantedSkills(semCompra)).not.toContain("Percepção");
+  });
+
+  it("perícia concedida é GRATUITA — não vira PA gasto", () => {
+    const anotadas = { ...comLeituraDeRastro, skills: ["Sobrevivência", "Percepção"] };
+    expect(getSkillPaCost(anotadas)).toBe(0);
+  });
+
+  it("todo grantsSkills do livro cita uma perícia que existe na Lista Mestre", async () => {
+    const { SKILLS } = await import("@/data/skills");
+    const conhecidas = new Set(SKILLS.map((s) => s.name));
+    for (const tree of TREES) {
+      for (const rank of tree.ranks) {
+        for (const a of rank.abilities) {
+          for (const nome of (a as { grantsSkills?: string[] }).grantsSkills ?? []) {
+            expect(conhecidas, `${tree.name} · ${a.name}`).toContain(nome);
+          }
+        }
+      }
+    }
   });
 });

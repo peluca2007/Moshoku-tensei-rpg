@@ -59,7 +59,7 @@ export function CastingBreakdown({ ability }: { ability: AbilityDef }) {
   if (ability.reaction || !hasCasting) return null;
 
   return (
-    <dl className="mt-1.5 grid grid-cols-1 gap-x-3 gap-y-0.5 border-t border-dashed border-parchment-300 pt-1.5 text-[11px] text-parchment-600 dark:border-parchment-800 dark:text-parchment-400 sm:grid-cols-3">
+    <dl className="mt-1.5 grid grid-cols-1 gap-x-3 gap-y-0.5 border-t border-dashed border-parchment-300 pt-1.5 text-2xs text-parchment-600 dark:border-parchment-800 dark:text-parchment-400 sm:grid-cols-3">
       <div>
         <dt className="inline font-semibold text-parchment-600 dark:text-parchment-300">Padrão </dt>
         <dd className="inline">{actionText(actions.normal)} · dano cheio</dd>
@@ -106,10 +106,21 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
       <div className="absolute -top-3 left-2 -z-10 h-10 w-10 rounded-full bg-gold-500/20 ring-2 ring-gold-400/50 dark:bg-gold-500/10" />
       <blockquote className="relative rounded-lg border border-wine-300/30 bg-parchment-50/50 p-3 pl-6 ring-1 ring-inset ring-wine-300/10 dark:border-wine-800/30 dark:bg-parchment-900/50 dark:ring-wine-800/10">
         <div className="flex items-start gap-1.5">
-          <span className="select-none font-serif text-2xl leading-none text-wine-500/70 dark:text-wine-400/70">
+          {/*
+            A aspa é ORNAMENTO: ela abre visualmente o cântico e não diz nada
+            que o `<blockquote>` já não diga. Fica `aria-hidden` porque um
+            leitor de tela anunciando "aspas esquerdas" antes de cada um dos 149
+            cânticos do livro é ruído puro — e o contraste dela (2,7:1) é baixo
+            de propósito, o que só é aceitável justamente por ela não carregar
+            informação.
+          */}
+          <span
+            aria-hidden
+            className="select-none font-serif text-2xl leading-none text-wine-500/70 dark:text-wine-400/70"
+          >
             &ldquo;
           </span>
-          <div className="whitespace-pre-line font-serif text-[11px] italic leading-relaxed text-parchment-700 dark:text-parchment-300">
+          <div className="whitespace-pre-line font-serif text-2xs italic leading-relaxed text-parchment-700 dark:text-parchment-300">
             {verses.map((v, i) => (
               <span key={i}>{v}</span>
             ))}
@@ -117,7 +128,7 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
         </div>
       </blockquote>
       {bonus?.ok === true && (
-        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-[10px] font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300 dark:ring-gold-500/20">
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-3xs font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300 dark:ring-gold-500/20">
           <span className="relative flex h-3 w-3">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-400 opacity-75" />
             <span className="relative inline-flex h-3 w-3 rounded-full bg-gold-500" />
@@ -126,8 +137,17 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
         </div>
       )}
       {bonus?.ok === false && (
-        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-parchment-500/10 px-2.5 py-1 text-[10px] font-semibold text-parchment-600 ring-1 ring-parchment-500/30 dark:text-parchment-400">
-          <span className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-parchment-400/60 text-[9px] leading-none text-parchment-900">
+        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-parchment-500/10 px-2.5 py-1 text-3xs font-semibold text-parchment-600 ring-1 ring-parchment-500/30 dark:text-parchment-400">
+          {/*
+            O travessão é o "ícone" deste selo — quem carrega a informação é a
+            frase ao lado. Vai `aria-hidden` pelo mesmo motivo da aspa do
+            cântico, e ganhou fundo sólido (era `parchment-400/60`, que deixava
+            o traço em 3,83:1 dentro de um círculo de 12px).
+          */}
+          <span
+            aria-hidden
+            className="inline-flex h-3 w-3 items-center justify-center rounded-full bg-parchment-300 text-3xs leading-none text-parchment-900"
+          >
             —
           </span>
           <span>{bonus.text}</span>
@@ -141,7 +161,7 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
 export function RitualBadge({ ability }: { ability: AbilityDef }) {
   if (!ability.ritual) return null;
   return (
-    <span className="shrink-0 rounded-full bg-gold-500/10 px-2 py-0.5 text-[10px] font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
+    <span className="shrink-0 rounded-full bg-gold-500/10 px-2 py-0.5 text-3xs font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
       Ritual
     </span>
   );

@@ -169,12 +169,12 @@ export const ESCUDOS_TREE: Tree = {
           paCost: 1,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "1d8 + Força + Bônus de Rank (contundente)" },
+          damage: { normal: "2d8 + Força + Bônus de Rank (contundente)" },
           effect: "Teste de Força do alvo (CD 8 + Vigor + Rank) ou é empurrado 3m e fica Caído.",
         },
         {
           // 2026-08-31: linha Puro Escudo no Principiante. Versão Soberana
-          // do Golpe de Escudo: dano dobrado e Empurra 6m em vez de 3m, mas
+          // do Golpe de Escudo: +1d8 de dano e Empurra 6m em vez de 3m, mas
           // perde o ganho de manter o alvo Caído (a Soberana é mais sobre
           // controle de posição do que sobre isolamento). Disponível só
           // pra quem comprou Puro Escudo no Principiante.
@@ -184,7 +184,7 @@ export const ESCUDOS_TREE: Tree = {
           paCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "2d8 + Força + Bônus de Rank (contundente)" },
+          damage: { normal: "3d8 + Força + Bônus de Rank (contundente)" },
           effect: "Requer o talento Puro Escudo. Teste de Força do alvo (CD 8 + Vigor + Rank + 2) ou é empurrado 6m e fica Caído. Você fica com marca de 'última posição' até o início do próximo turno — qualquer aliado que passar por essa posição recebe Cobertura contra o próximo ataque.",
         },
         {
@@ -333,7 +333,7 @@ export const ESCUDOS_TREE: Tree = {
           ptCost: 1,
           range: "9 metros",
           actions: { normal: 1 },
-          effect: "Ao interceptar um ataque à distância ou projétil mágico, desvie-o para uma criatura hostil à sua escolha a até 9m, usando a rolagem original.",
+          effect: "1 Reação, ao interceptar um ataque à distância ou projétil mágico, desvie-o para uma criatura hostil à sua escolha a até 9m, usando a rolagem original.",
         },
         {
           id: "folego-emprestado",

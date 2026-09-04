@@ -99,8 +99,16 @@ export default function Appendices() {
           </P>
           <P>
             <b>Escudos pressupõe todas as Ações gastas defendendo.</b> Um Defensor Imperador que{" "}
-            <i>escolha</i> atacar faz perto de 48 por turno, não 18. A coluna mede o que ele faz no papel
-            dele, não o teto dele.
+            <i>escolha</i> atacar faz perto de 84 por turno, não 27. A coluna mede o que ele faz no papel
+            dele, não o teto dele — e ele continua sendo a menor coluna do livro de propósito.
+          </P>
+          <P>
+            <b>A Utilidade tem três colunas, e não uma.</b> Até 0.1.12 as três dividiam uma coluna só,
+            porque duas delas não tinham dano nenhum pra medir. Agora cada uma tem o próprio golpe que
+            escala por patamar — Dano Furtivo, Ordem de Tiro, Dissonância —, todos na Maestria de 1º
+            patamar e todos uma vez por turno. Nenhuma das três recebe degraus de Dado de Arma (Cap. 3),
+            então o dado delas nunca cresce: é essa a razão de ficarem para trás sem precisar de nenhuma
+            regra que as puna.
           </P>
           <P>
             <b>Magia não está amortizada pelas Ações.</b> Uma magia de Imperador custa 6 Ações — dois
@@ -118,7 +126,10 @@ export default function Appendices() {
               "O Arco só é real contra quem não veste aura. Contra um Santo ou superior, subtraia o dobro do Bônus de Rank do alvo de cada disparo.",
               "O Suishin-ryū não tem número. Contra quatro inimigos agressivos ele bate mais que qualquer coisa deste livro. Contra um inimigo parado, causa zero, pra sempre.",
               "O Lutador tem o número errado na tabela — o que ele realmente faz é acumular Quebrantado. No quarto turno, o inimigo já perdeu 6 de CA e 6 de dano e a luta já acabou sem a tabela registrar.",
-              "Escudos é a menor coluna do livro e o personagem mais difícil de substituir. Não causa dano. Decide quem sobrevive.",
+              "Escudos é a menor coluna do livro e o personagem mais difícil de substituir. Ele bate, mas bater não é o trabalho dele: é decidir quem sobrevive.",
+              "O Ladino é a maior das três colunas de Utilidade, e o número dela é da EMBOSCADA. O Dano Furtivo exige alvo desprevenido, cego, imobilizado ou com Vantagem — em luta aberta, sem preparação, o Ladino é o pior combatente direto das dezenove.",
+              "O Tático é a única coluna do livro que não sai da arma de quem a lê. A Ordem de Tiro soma no ataque de um ALIADO: se o grupo não tem quem atire, o número não acontece.",
+              "O Bardo é a menor das três, e a única cujo dano é em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
               "Cura, Desintoxicação e Barreira não deveriam estar nesta tabela — estão só pra deixar claro que, se você escolher uma delas esperando causar dano, escolheu errado.",
             ]}
           />

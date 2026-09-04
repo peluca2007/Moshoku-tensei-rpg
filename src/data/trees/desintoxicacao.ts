@@ -112,7 +112,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 2,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
-          damage: { normal: "3d6 de dano ao alvo, que não pode ser reduzido nem resistido" },
+          damage: { normal: "4d6 de dano ao alvo, que não pode ser reduzido nem resistido" },
           effect:
             "A válvula de escape da escola, e a única: você purga uma aflição de UM rank acima do que o seu patamar alcança, arrancando-a junto com o sangue. Uma vez por aflição por Descanso Longo. Não funciona em quem está a 0 PV.",
           incantation:
@@ -237,7 +237,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 5,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "3d6 de dano ácido (dobrado contra construtos e armaduras pesadas)" },
+          damage: { normal: "5d6 de dano ácido (dobrado contra construtos e armaduras pesadas)" },
           effect: "Teste de Vigor (CD 8 + BC). Falha: dano e Envenenado por 1 minuto. Metal não-mágico exposto perde 2 de CA até uma hora de conserto com ferramentas.",
           incantation:
             "Ácido voraz que devoras aço, pedra e carne sem te dares ao trabalho de distinguir qual delas é qual, dissolve a carcaça do meu inimigo justamente por onde ela for mais orgulhosa, e não deixes nenhuma armadura inteira o bastante pra contar a história depois. Corrosão!",
@@ -312,7 +312,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 13,
           range: "Cone de 18m",
           actions: MAGIC_ACTIONS.Rei,
-          damage: { normal: "6d8 de dano de veneno" },
+          damage: { normal: "8d8 de dano de veneno" },
           effect:
             "Teste de Vigor. Falha: dano, Envenenado por 10 minutos e uma aflição de rank Avançado. Sucesso: metade e nenhuma aflição. Não funciona em construtos, mortos-vivos ou quem não respira.",
           incantation:

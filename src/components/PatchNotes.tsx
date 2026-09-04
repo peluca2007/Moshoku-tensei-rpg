@@ -51,7 +51,7 @@ export default function PatchNotes() {
       <article className="rounded-2xl border-2 border-wine-400 bg-parchment-50/80 p-5 shadow-sm dark:border-wine-800 dark:bg-parchment-900/60">
         <header className="mb-3 flex flex-wrap items-baseline justify-between gap-2 border-b border-parchment-300 pb-3 dark:border-parchment-800">
           <h3 className="flex flex-wrap items-center gap-2 text-lg font-black tracking-tight text-parchment-900 dark:text-parchment-50">
-            <span className="rounded-full bg-wine-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+            <span className="rounded-full bg-wine-600 px-2 py-0.5 text-3xs font-bold uppercase tracking-wider text-white">
               Atual
             </span>
             {latest.title}

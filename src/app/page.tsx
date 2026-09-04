@@ -213,7 +213,7 @@ export default function LandingPage() {
                   mostrou.
                 */}
                 <div className="relative -mt-3 flex flex-1 flex-col p-5 pt-0">
-                  <p className="text-[11px] font-black uppercase tracking-widest text-gold-700 dark:text-gold-400">
+                  <p className="text-2xs font-black uppercase tracking-widest text-gold-700 dark:text-gold-400">
                     {kicker}
                   </p>
                   <h2 className="mt-1 font-display text-lg font-black text-parchment-900 dark:text-parchment-50">

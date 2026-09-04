@@ -38,7 +38,7 @@ export default function CombinedSpellsSection({ query }: { query: string }) {
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <h3 className="flex items-center gap-2 font-bold text-parchment-900 dark:text-parchment-50">
           <Sparkles className="h-4 w-4 text-wine-500" /> Magias Combinadas
-          <span className="rounded-full bg-wine-600/10 px-2 py-0.5 text-[11px] font-semibold text-wine-700 ring-1 ring-wine-500/30 dark:text-wine-300">
+          <span className="rounded-full bg-wine-600/10 px-2 py-0.5 text-2xs font-semibold text-wine-700 ring-1 ring-wine-500/30 dark:text-wine-300">
             {minhas.length}
           </span>
         </h3>
@@ -64,7 +64,7 @@ export default function CombinedSpellsSection({ query }: { query: string }) {
               {spell.requires.map((r) => (
                 <span
                   key={r.treeId}
-                  className="rounded-full bg-parchment-500/10 px-2 py-0.5 text-[10px] font-semibold text-parchment-600 ring-1 ring-parchment-400/40 dark:text-parchment-400"
+                  className="rounded-full bg-parchment-500/10 px-2 py-0.5 text-3xs font-semibold text-parchment-600 ring-1 ring-parchment-400/40 dark:text-parchment-400"
                 >
                   {getTreeById(r.treeId)?.name ?? r.treeId} {r.rank}
                 </span>

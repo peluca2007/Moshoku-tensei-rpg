@@ -76,6 +76,13 @@ export function getFinalAttribute(state: StoreState, key: AttributeKey): number 
  *    patamar de Furtividade e Armadilhas ensina Furtividade e Percepção a quem
  *    chegou DEPOIS. Se ela já for a Árvore Inicial, essas duas já vieram pelo
  *    caminho 1, e a Maestria entrega outra coisa no lugar (ver a descrição dela).
+ * 3. A **habilidade comprada** que declara `grantsSkills` (2026-09-04). Duas
+ *    técnicas do Deus do Norte já prometiam isso na prosa desde sempre —
+ *    "Concede a perícia Medicina", "Você ganha as perícias Sobrevivência e
+ *    Percepção" — e não tinham onde gravar: a fonte 1 é da ÁRVORE, e só da
+ *    Inicial. O jogador comprava a técnica e a perícia não aparecia em tela
+ *    nenhuma. Quem achou as duas foi o `check:texto`, lendo a prosa contra os
+ *    campos.
  */
 export function getTreeGrantedSkills(state: StoreState): string[] {
   const skills: string[] = [];
@@ -97,6 +104,13 @@ export function getTreeGrantedSkills(state: StoreState): string[] {
     if (treeId === state.startingTreeId) continue;
     const tree = getTreeById(treeId);
     if (tree?.masterySkillsWhenNotFirst) skills.push(...tree.masterySkillsWhenNotFirst);
+  }
+
+  for (const compra of state.purchasedAbilities ?? []) {
+    if (compra.kind !== "ability") continue;
+    const def = findAbilityOrTalentDef(compra.treeId, compra.rank, "ability", compra.id);
+    const concedidas = (def as { grantsSkills?: string[] } | undefined)?.grantsSkills;
+    if (concedidas) skills.push(...concedidas);
   }
 
   return Array.from(new Set(skills));

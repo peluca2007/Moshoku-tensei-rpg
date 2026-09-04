@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono, Literata } from "next/font/google";
 import StoreHydration from "@/components/StoreHydration";
 import ThemeProvider from "@/components/ThemeProvider";
+import { SCRIPT_TAMANHO_INICIAL } from "@/components/FontSizeToggle";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { OrnamentDefs } from "@/components/ui/Ornament";
@@ -59,6 +60,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${literata.variable} h-full antialiased`}
     >
+      <head>
+        {/*
+          O tamanho de letra escolhido tem que valer ANTES da primeira pintura,
+          senão a página nasce no padrão e salta — o mesmo flash que o
+          `next-themes` evita com a mesma técnica. `dangerouslySetInnerHTML` é
+          a forma de emitir um script síncrono aqui; o conteúdo é uma constante
+          do próprio código, sem nada vindo de fora.
+        */}
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_TAMANHO_INICIAL }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <StoreHydration />
