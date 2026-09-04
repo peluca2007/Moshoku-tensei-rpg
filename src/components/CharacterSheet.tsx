@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Check } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
@@ -40,6 +40,7 @@ import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
+import { linkDaFicha } from "@/lib/fichaLink";
 import DiceRoller from "./DiceRoller";
 import EmptyState from "@/components/ui/EmptyState";
 
@@ -278,6 +279,14 @@ export default function CharacterSheet() {
   const guildRankEstimated = isGuildRankEstimated(character);
   const [grimoireQuery, setGrimoireQuery] = useState("");
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "error">("idle");
+  const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
+  const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (linkTimeoutRef.current) clearTimeout(linkTimeoutRef.current);
+    },
+    []
+  );
 
   const {
     attributes,
@@ -337,6 +346,25 @@ export default function CharacterSheet() {
     } catch (err) {
       console.error("Falha ao baixar PDF da ficha:", err);
       setPdfState("error");
+    }
+  }
+
+  /**
+   * A ficha inteira num link, no clipboard.
+   *
+   * Assíncrono porque a codificação passa por `CompressionStream` (ver
+   * `lib/fichaLink.ts`) — sem gzip, um Imperador vira um link de milhares de
+   * caracteres que aplicativo de mensagem quebra em duas linhas.
+   */
+  async function handleCopiarLink() {
+    try {
+      await navigator.clipboard.writeText(await linkDaFicha(character));
+      setLinkState("copiado");
+      if (linkTimeoutRef.current) clearTimeout(linkTimeoutRef.current);
+      linkTimeoutRef.current = setTimeout(() => setLinkState("idle"), 2200);
+    } catch (err) {
+      console.error("Falha ao copiar o link da ficha:", err);
+      setLinkState("erro");
     }
   }
 
@@ -441,8 +469,42 @@ export default function CharacterSheet() {
             >
               <FileJson className="h-3.5 w-3.5" /> Exportar JSON
             </button>
+            {/*
+              O link é o caminho curto do que o JSON já fazia: até aqui, passar
+              uma ficha adiante era exportar o arquivo, achar ele, mandar, o
+              outro baixar e importar — cinco passos, uma vez por jogador, toda
+              vez que alguém mudava alguma coisa. O montador de encontros
+              depende de ter o grupo carregado, então esse atrito estava
+              exatamente no caminho da funcionalidade mais cara do site.
+            */}
+            <button
+              type="button"
+              onClick={handleCopiarLink}
+              title="Copiar um link com esta ficha inteira dentro — quem abrir escolhe se importa"
+              className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-colors sm:mt-1.5 ${
+                linkState === "copiado"
+                  ? "border-emerald-400 bg-emerald-500/10 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300"
+                  : "border-parchment-300 text-parchment-600 hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+              }`}
+            >
+              {linkState === "copiado" ? (
+                <>
+                  <Check className="h-3.5 w-3.5" /> Link copiado
+                </>
+              ) : (
+                <>
+                  <Link2 className="h-3.5 w-3.5" /> Copiar link
+                </>
+              )}
+            </button>
           </div>
         </div>
+        {linkState === "erro" && (
+          <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">
+            O navegador não deixou copiar. Isso costuma acontecer fora de HTTPS — exporte o JSON por
+            enquanto.
+          </p>
+        )}
         {pdfState === "error" && (
           <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra gerar o PDF agora. Tente de novo em instantes.</p>
         )}
