@@ -640,13 +640,27 @@ input[type="number"],
  * borda de baixo do cabeçalho.
  * ========================================================================== */
 
+/*
+ * O TRATAMENTO de cor, separado da MÁSCARA (0.1.9).
+ *
+ * As duas coisas andavam juntas numa classe só, e isso obrigava toda arte de
+ * ambiente a morrer do mesmo jeito: um degradê que apaga a metade de baixo.
+ * Serve pro cabeçalho de rota, onde a borda inferior é uma aresta de card real.
+ * Não serve pra faixa que atravessa a página inteira, que precisa sumir nas
+ * QUATRO direções — ver a faixa de convite na landing.
+ */
+.arte-ambiente,
 .faixa-arte {
   filter: sepia(0.55) saturate(0.75) brightness(0.72) contrast(1.05);
-  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
 }
 
+.dark .arte-ambiente,
 .dark .faixa-arte {
   filter: sepia(0.5) saturate(0.6) brightness(0.5) contrast(1.1);
+}
+
+.faixa-arte {
+  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
 }
 
 /* ============================================================================

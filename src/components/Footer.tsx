@@ -78,7 +78,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
             <Link href="/" className="inline-flex">
-              <Logo className="h-16" />
+              <Logo className="h-20" />
             </Link>
             <p className="mt-3 text-xs leading-relaxed text-parchment-600 dark:text-parchment-400">
               Sistema de RPG de mesa homebrew, ambientado no Mundo de Seis Faces.

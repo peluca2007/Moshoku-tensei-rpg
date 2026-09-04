@@ -156,7 +156,7 @@ export default function LandingPage() {
             letreiro novo. Ver ui/Logo.tsx.
           */}
           <h1 className="sr-only">Mushoku Tensei RPG</h1>
-          <Logo className="mx-auto mt-2 h-40 sm:h-56" priority />
+          <Logo className="mx-auto mt-1 h-48 sm:h-72" priority />
           <p className="mx-auto mt-6 max-w-xl text-base text-parchment-700 dark:text-parchment-300 sm:text-lg">
             Um sistema de RPG de mesa completo, homebrew e feito por fãs, ambientado no mundo de{" "}
             <i>Mushoku Tensei: Jobless Reincarnation</i>. Crie seu personagem, evolua pelas árvores de magia,
@@ -288,27 +288,36 @@ export default function LandingPage() {
           4. Os dois FILETES dourados, que dão à faixa a mesma aresta de luz que
              todo `.surface-raised` do site tem.
         */}
-        <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
-          <div className="absolute inset-0 [mask-image:radial-gradient(115%_140%_at_50%_45%,black_35%,transparent_100%)]">
-            <Image
-              src="/faixas/convite.jpg"
-              alt=""
-              fill
-              sizes="100vw"
-              className="faixa-arte object-cover object-[center_30%]"
-            />
-          </div>
-          <div className="absolute inset-0 bg-[radial-gradient(80%_120%_at_50%_50%,rgba(253,246,227,0.82)_0%,rgba(253,246,227,0.55)_55%,rgba(253,246,227,0.95)_100%)] dark:bg-[radial-gradient(80%_120%_at_50%_50%,rgba(26,18,16,0.86)_0%,rgba(26,18,16,0.6)_55%,rgba(26,18,16,0.97)_100%)]" />
+        {/*
+          A máscara é do GRUPO, não da arte (0.1.9).
+          A versão anterior mascarava só a imagem e depois punha um véu radial
+          por cima — mas o véu era um retângulo opaco, e era ELE que desenhava
+          as duas linhas horizontais duras que faziam a faixa parecer um recorte
+          colado na página. A arte sumia nas pontas; a caixa de cor, não.
+
+          Agora arte e véu vivem dentro do mesmo `<div>` mascarado, então os
+          dois desaparecem juntos: no centro a faixa tem imagem e escurecimento
+          suficientes pra segurar o texto, e nas quatro bordas ela simplesmente
+          deixa de existir — não há aresta pra ver, porque não há nada ali além
+          do pergaminho da página.
+
+          Por isso também não há mais filetes dourados aqui: filete marca
+          justamente a aresta que esta seção não quer ter.
+        */}
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 [mask-image:radial-gradient(120%_92%_at_50%_50%,black_0%,black_28%,transparent_80%)]"
+          aria-hidden
+        >
+          <Image
+            src="/faixas/convite.jpg"
+            alt=""
+            fill
+            sizes="100vw"
+            className="arte-ambiente object-cover object-[center_30%]"
+          />
+          <div className="absolute inset-0 bg-parchment-50/55 dark:bg-parchment-950/60" />
         </div>
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-500/45 to-transparent"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold-500/45 to-transparent"
-          aria-hidden
-        />
-        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6 sm:py-32">
           <h2 className="font-display text-2xl font-black text-parchment-900 drop-shadow-[0_1px_0_rgba(253,246,227,0.5)] dark:text-parchment-50 dark:drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] sm:text-3xl">
             A guilda está aceitando fichas
           </h2>

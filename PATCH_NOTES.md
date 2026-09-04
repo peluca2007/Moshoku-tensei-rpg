@@ -5,6 +5,32 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.9 — "Sem Arestas" · 2026-09-04
+
+### 🌫 A faixa de convite estava mascarando a coisa errada
+
+0.1.8 mascarou a IMAGEM e depois pôs um véu radial por cima dela. A arte sumia nas pontas como devia — mas
+o véu era um retângulo opaco, e era **ele** que desenhava as duas linhas horizontais duras que faziam a
+seção parecer um bloco colado na página. Mascarar a arte não adianta enquanto a caixa de cor continuar lá.
+
+Agora arte e véu vivem dentro do **mesmo `<div>` mascarado**: os dois desaparecem juntos. No centro a faixa
+tem imagem e escurecimento suficientes pra segurar o texto; nas quatro bordas ela simplesmente deixa de
+existir, porque não há nada ali além do pergaminho da página. Os filetes dourados saíram junto — filete
+marca justamente a aresta que esta seção não quer ter.
+
+Para isso, `.faixa-arte` foi partida em duas: **`.arte-ambiente`** carrega só o tratamento de cor (sépia,
+dessaturação, brilho) e **`.faixa-arte`** acrescenta a máscara de baixo. As duas andavam juntas numa classe
+só, e isso obrigava toda arte de ambiente a morrer do mesmo jeito — o que serve para o cabeçalho de rota,
+onde a borda inferior é aresta de card real, e não serve para uma faixa que atravessa a página inteira.
+
+### 🪧 A logo, de novo
+
+`h-48 sm:h-72` na landing, `h-14` na barra, `h-20` no rodapé — mais 30% sobre 0.1.8. E a faixa de convite
+ganhou respiro vertical (`py-24 sm:py-32`), que é o espaço de que o degradê precisa pra acontecer: máscara
+suave em caixa baixa vira máscara dura.
+
+---
+
 ## 0.1.8 — "Seis Portas" · 2026-09-04
 
 ### 🚪 A vitrine da landing dobrou
