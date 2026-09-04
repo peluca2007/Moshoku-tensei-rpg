@@ -22,6 +22,9 @@ import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { getArmorClass, getMaxHp, getPaSpent } from "@/store/selectors";
 import { getTreeById } from "@/data/trees/index";
 import TreeCrest from "@/components/TreeCrest";
+import Crest from "@/components/Crest";
+import PageHeader from "@/components/ui/PageHeader";
+import EmptyState from "@/components/ui/EmptyState";
 import { CharacterData } from "@/lib/types";
 import { SIMPLIFICACOES, mediaFormula, patamarDaFicha, rankDaFicha } from "@/lib/combatSim";
 import {
@@ -167,16 +170,11 @@ export default function EncounterBuilder() {
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6">
-      <header className="mb-6">
-        <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
-          <Skull className="h-6 w-6 text-wine-500" /> Encontros
-        </h1>
-        <p className="mt-1 text-sm text-parchment-600 dark:text-parchment-400">
-          Monte NPCs, monstros e chefes a partir do molde do Apêndice G, escolha quais fichas do grupo
-          entram, e rode o combate {BATALHAS} vezes antes da sessão. O site diz se você acabou de matar a
-          mesa inteira.
-        </p>
-      </header>
+      <PageHeader icon={Skull} title="Encontros" faixa="/faixas/encontros.jpg" faixaPosition="center 60%">
+        Monte NPCs, monstros e chefes a partir do molde do Apêndice G, escolha quais fichas do grupo
+        entram, e rode o combate {BATALHAS} vezes antes da sessão. O site diz se você acabou de matar a
+        mesa inteira.
+      </PageHeader>
 
       <SecaoGrupo
         order={order}
@@ -430,24 +428,32 @@ function SecaoCriaturas({
                 // As ações vêm do Apêndice G sem id — quem sorteia é a store.
                 for (const acao of p.acoes) adicionarAcao(id, acao);
               }}
-              className="rounded-lg border border-parchment-300 p-2 text-left text-xs transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:hover:bg-parchment-900"
+              className="lift flex gap-2.5 rounded-lg border border-parchment-300 p-2 text-left text-xs hover:border-wine-400 hover:bg-parchment-100 dark:border-parchment-700 dark:hover:border-wine-600 dark:hover:bg-parchment-900"
             >
+              {/* O retrato passa pelo mesmo medalhão de brasão e raça (`Crest`):
+                  seis criaturas que chegaram em enquadramentos e fundos
+                  diferentes saem daqui com o mesmo recorte. */}
+              {p.icon && <Crest src={p.icon} size={56} rounded="rounded-lg" className="mt-0.5" />}
+              <span className="min-w-0 flex-1">
               <span className="font-semibold text-parchment-900 dark:text-parchment-50">{p.nome}</span>{" "}
               <span className="text-parchment-600 dark:text-parchment-400">— {rotuloPatamar(p.patamar)}</span>
               <p className="mt-0.5 text-parchment-600 dark:text-parchment-400">{p.perigo}</p>
               <p className="mt-1 font-mono text-[11px] text-parchment-600 dark:text-parchment-400">
                 {p.acoes.map((a) => `${a.nome}${a.dano ? ` ${a.dano}` : ""}`).join(" · ")}
               </p>
+              </span>
             </button>
           ))}
         </div>
       </details>
 
       {criaturas.length === 0 ? (
-        <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
-          Nenhuma criatura ainda. Escolha um patamar acima e clique em &quot;Nova criatura&quot; — os
-          números do Apêndice G já vêm preenchidos, e você ajusta o que quiser.
-        </p>
+        <EmptyState
+          icon={Skull}
+          hint="Escolha um patamar acima e clique em “Nova criatura” — os números do Apêndice G já vêm preenchidos. Ou puxe uma das seis prontas, com retrato e tudo."
+        >
+          O covil está vazio.
+        </EmptyState>
       ) : (
         <div className="flex flex-col gap-3">
           {criaturas.map((c) => (
@@ -1061,7 +1067,7 @@ function Recomendacao({ ajuste, criaturas }: { ajuste: AjusteSugerido; criaturas
 
 function Numero({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
-    <div className="rounded-xl border border-parchment-300 bg-parchment-100/60 p-2 text-center dark:border-parchment-800 dark:bg-parchment-900/50">
+    <div className="surface rounded-xl border border-parchment-300 bg-parchment-100/60 p-2 text-center dark:border-parchment-800 dark:bg-parchment-900/50">
       <p className="text-lg font-black text-parchment-900 dark:text-parchment-50">{valor}</p>
       <p className="text-[11px] text-parchment-600 dark:text-parchment-400">{rotulo}</p>
     </div>

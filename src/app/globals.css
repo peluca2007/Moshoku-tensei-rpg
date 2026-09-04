@@ -77,6 +77,24 @@
   --color-gold-800: #4d370d;
   --color-gold-900: #332408;
   --color-gold-950: #1f1505;
+
+  /*
+   * Oliva — o terceiro ramo do mapa de progressão (Utilidade), acrescentado em
+   * 0.1.6. O Tailwind não traz um verde terroso, e `emerald` (o que estava lá)
+   * é um verde de interface: fluorescente ao lado de pergaminho e ouro. Este é
+   * o verde de mato seco que convive com os outros dois.
+   */
+  --color-olive-50: #f7f7ec;
+  --color-olive-100: #edeed4;
+  --color-olive-200: #dbdda9;
+  --color-olive-300: #c2c579;
+  --color-olive-400: #a8ac55;
+  --color-olive-500: #8b9040;
+  --color-olive-600: #6d7333;
+  --color-olive-700: #545829;
+  --color-olive-800: #3d4020;
+  --color-olive-900: #2a2c17;
+  --color-olive-950: #16170c;
 }
 
 html {
@@ -405,6 +423,282 @@ input[type="number"],
   .animate-destiny-spin,
   .animate-destiny-pulse,
   .animate-node-entrance {
+    animation: none !important;
+  }
+}
+/* ============================================================================
+ * HIERARQUIA DE SUPERFÍCIE (0.1.5)
+ *
+ * Até aqui existia UM card no site inteiro — `border-parchment-300` +
+ * `bg-parchment-100/60`, repetido literalmente 23 vezes — e o resultado é o que
+ * o print mostrava: uma lista de retângulos igualmente importantes, sem nada
+ * puxando o olho. Três níveis resolvem isso:
+ *
+ *   .surface-raised  o que ANUNCIA   (cabeçalho de rota, hero, total)
+ *   .surface         o que CONTÉM    (card comum)
+ *   .surface-sunken  o que ESPERA    (campo, poço, estado vazio)
+ *
+ * As três compõem com as utilitárias de cor/borda que já estão no JSX: elas
+ * não declaram `background-color` nem `border-color`, só profundidade e
+ * textura. Por isso dá pra acrescentar a classe num card existente sem
+ * reescrever a linha inteira dele.
+ * ========================================================================== */
+
+.surface,
+.surface-raised,
+.surface-sunken {
+  position: relative;
+  /* Sem isolar, o ::before de textura sangra pro contexto de empilhamento do
+     pai e passa por cima de dropdowns e tooltips que abrem de dentro do card. */
+  isolation: isolate;
+}
+
+/*
+ * A fibra de papel por cima de cada card.
+ *
+ * `texturas/fibra.jpg` é REPETÍVEL (conferido tilando 6× num teste headless —
+ * a folha `pergaminho.avif` do body não é, tem vinheta, e por isso não serve
+ * aqui). Ela entra como camada de mistura, não como cor: `multiply` no claro
+ * escurece só onde a fibra tem relevo, `soft-light` no escuro levanta o relevo
+ * sem lavar o fundo. Em ambos, opacidade baixíssima — se você CONSEGUE ver a
+ * textura, ela está forte demais e já está comendo contraste do texto.
+ */
+.surface::before,
+.surface-raised::before,
+.surface-sunken::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: url("/texturas/fibra.jpg") repeat;
+  background-size: 180px 180px;
+  mix-blend-mode: multiply;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.dark .surface::before,
+.dark .surface-raised::before,
+.dark .surface-sunken::before {
+  mix-blend-mode: soft-light;
+  opacity: 0.1;
+}
+
+.surface {
+  box-shadow:
+    0 1px 2px rgb(43 24 16 / 0.06),
+    0 4px 12px -6px rgb(43 24 16 / 0.12);
+}
+
+/*
+ * O nível ELEVADO tem um fio dourado na aresta de cima — a única luz da página
+ * bate de cima, então é onde um objeto físico brilharia. É esse fio, e não a
+ * sombra, que faz o cabeçalho parecer estar ACIMA do resto: sombra sozinha lê
+ * como "borrado", sombra + aresta iluminada lê como "levantado".
+ */
+.surface-raised {
+  box-shadow:
+    inset 0 1px 0 rgb(212 169 78 / 0.45),
+    0 2px 4px rgb(43 24 16 / 0.08),
+    0 12px 32px -12px rgb(43 24 16 / 0.28);
+}
+
+.dark .surface {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 4px 14px -6px rgb(0 0 0 / 0.5);
+}
+
+.dark .surface-raised {
+  box-shadow:
+    inset 0 1px 0 rgb(212 169 78 / 0.3),
+    0 2px 6px rgb(0 0 0 / 0.45),
+    0 16px 40px -14px rgb(0 0 0 / 0.7);
+}
+
+/* AFUNDADO: sombra pra dentro. É o que diz "escreva aqui" / "aqui não tem nada
+   ainda" sem precisar de uma frase explicando. */
+.surface-sunken {
+  box-shadow: inset 0 2px 6px -2px rgb(43 24 16 / 0.16);
+}
+
+.dark .surface-sunken {
+  box-shadow: inset 0 2px 8px -2px rgb(0 0 0 / 0.55);
+}
+
+/*
+ * `.lift` — só em card CLICÁVEL. O site tinha exatamente um `group-hover` em
+ * ~11 mil linhas de JSX: nada respondia ao mouse, e por isso nada parecia
+ * clicável. 2px é de propósito pouco: card de conteúdo que salta 8px lê como
+ * botão de anúncio.
+ */
+.lift {
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.18s ease-out,
+    border-color 0.18s ease-out;
+}
+
+.lift:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgb(212 169 78 / 0.5),
+    0 4px 8px rgb(43 24 16 / 0.1),
+    0 18px 40px -16px rgb(43 24 16 / 0.35);
+}
+
+.dark .lift:hover {
+  box-shadow:
+    inset 0 1px 0 rgb(212 169 78 / 0.35),
+    0 4px 10px rgb(0 0 0 / 0.5),
+    0 20px 46px -18px rgb(0 0 0 / 0.8);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift,
+  .lift:hover {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ============================================================================
+ * ORNAMENTO E TIPOGRAFIA DE LIVRO (0.1.5)
+ * ========================================================================== */
+
+/*
+ * Filete duplo com losango — o divisor de seção do livro, em CSS puro.
+ *
+ * Duas linhas de espessura diferente com um vazio no meio é o vocabulário de
+ * página impressa; uma linha só é o vocabulário de `<hr>` de formulário. O
+ * losango no centro é o mesmo `rotate(45deg)` de um quadrado, e existe pra dar
+ * ao filete um ponto de parada — sem ele o olho corre pra fora da coluna.
+ */
+.rule-ornate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  color: var(--color-gold-600);
+}
+
+.dark .rule-ornate {
+  color: var(--color-gold-400);
+}
+
+.rule-ornate::before,
+.rule-ornate::after {
+  content: "";
+  flex: 1 1 0;
+  height: 4px;
+  border-top: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  opacity: 0.45;
+}
+
+/*
+ * Capitular na abertura de capítulo do livro.
+ *
+ * `initial-letter` faz o navegador reservar as linhas certas sozinho; o
+ * `float` é o fallback pra quem não implementa (a letra fica grande e alinhada
+ * ao topo em vez de encaixada, que é feio mas nunca quebra o parágrafo).
+ */
+.dropcap::first-letter {
+  initial-letter: 3;
+  float: left;
+  margin-right: 0.5rem;
+  padding-top: 0.05em;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 3.4em;
+  font-weight: 900;
+  line-height: 0.82;
+  color: var(--color-wine-600);
+}
+
+.dark .dropcap::first-letter {
+  color: var(--color-gold-400);
+}
+
+@supports (initial-letter: 3) {
+  .dropcap::first-letter {
+    float: none;
+    font-size: inherit;
+  }
+}
+
+/* ============================================================================
+ * FAIXA DE ROTA (0.1.5)
+ *
+ * `/ficha`, `/loja` e `/encontros` eram estruturalmente idênticas — h1 + ícone
+ * + grade — e uma loja de guilda deveria PARECER outra coisa que uma ficha.
+ * A faixa é a arte de ambiente atrás do título de cada rota.
+ *
+ * O tratamento é o que faz a arte servir de fundo em vez de disputar com o
+ * texto: dessaturar, puxar pro âmbar da paleta (as artes chegam em teal, azul
+ * e cinza — cor de outro projeto), e morrer num degradê antes de encostar na
+ * borda de baixo do cabeçalho.
+ * ========================================================================== */
+
+.faixa-arte {
+  filter: sepia(0.55) saturate(0.75) brightness(0.72) contrast(1.05);
+  mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+}
+
+.dark .faixa-arte {
+  filter: sepia(0.5) saturate(0.6) brightness(0.5) contrast(1.1);
+}
+
+/* ============================================================================
+ * MICRO-INTERAÇÕES (0.1.6)
+ *
+ * Comprar um item, gastar um PA e desbloquear um patamar eram, até aqui,
+ * instantâneos: o número simplesmente virava outro número. Num sistema em que
+ * gastar PA é a única forma de progredir, o instante da compra é o instante
+ * mais importante da interface — e ele não tinha instante nenhum.
+ *
+ * Todas respeitam `prefers-reduced-motion` no bloco lá embaixo.
+ * ========================================================================== */
+
+/* Pulso dourado no que acabou de ser comprado/adquirido. Uma vez, curto: é
+   confirmação, não enfeite permanente. */
+@keyframes ganho-flash {
+  0% {
+    box-shadow: 0 0 0 0 rgb(212 169 78 / 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgb(212 169 78 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(212 169 78 / 0);
+  }
+}
+
+.animate-ganho-flash {
+  animation: ganho-flash 0.85s cubic-bezier(0.2, 0.7, 0.2, 1) 1;
+}
+
+/* Número que sobe/desce quando o valor muda (PO, PA, PV). O deslocamento é de
+   4px e não de 20: o objetivo é dizer "este número mudou", não fazer um caça-
+   níquel — o valor precisa continuar legível durante a transição. */
+@keyframes numero-troca {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-numero-troca {
+  animation: numero-troca 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ganho-flash,
+  .animate-numero-troca {
     animation: none !important;
   }
 }

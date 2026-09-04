@@ -11,7 +11,7 @@ export default function Chapter3() {
   return (
     <div className="space-y-8">
       <ChapterTitle id="cap3">Capítulo 3 — As Árvores de Progressão</ChapterTitle>
-      <P>
+      <P className="dropcap">
         Não existem classes engessadas ou papéis que limitam suas escolhas. O sistema funciona através de
         Árvores de Progressão, divididas em três grandes pilares: a <b>Árvore da Magia</b> (feitiços de
         ataque, suporte e invocação — recurso PM), a <b>Árvore do Corpo</b> (os três Estilos Divinos de
@@ -144,6 +144,44 @@ export default function Chapter3() {
         </Aside>
       </Section>
 
+      {/*
+        A seção-ponte da Magia (0.1.7).
+
+        O parágrafo de abertura deste capítulo nomeia TRÊS pilares, e o capítulo
+        entregava seção de sistemas compartilhados pra dois: Corpo e Utilidade.
+        A razão é boa — os sistemas compartilhados da Magia são o Capítulo 2
+        inteiro, que é grande demais pra caber aqui —, mas o livro não dizia
+        isso em lugar nenhum, e quem rola procurando "Magia" entre os dois
+        outros conclui que falta uma parte.
+
+        Ela é curta de propósito: existe pra fechar a simetria e apontar, não
+        pra repetir o Capítulo 2 em versão resumida (que seria uma segunda fonte
+        da mesma regra, e este livro não tem duas fontes de nada).
+      */}
+      <Section>
+        <SectionTitle id="cap3-magia">A Árvore da Magia — Sistemas Compartilhados</SectionTitle>
+        <P>
+          Os sistemas que valem para <b>todas</b> as escolas de magia não moram aqui: eles são o{" "}
+          <b>Capítulo 2</b> inteiro. Cânticos e a escada de encantamento, tempo de conjuração por rank,
+          Conjuração Silenciosa, o que acontece quando alguém te interrompe no meio, Magia Combinada e as
+          Maestrias — tudo isso é compartilhado entre Água, Fogo, Terra, Vento, Cura, Barreira,
+          Desintoxicação e Invocação, e por isso tem capítulo próprio em vez de uma seção aqui.
+        </P>
+        <P>
+          O que <i>é</i> específico de cada escola — a mecânica central dela, o catálogo de magias por rank e
+          as Maestrias que ela concede — está na seção &ldquo;Todas as Sub-árvores&rdquo;, no fim deste
+          capítulo, junto com as do Corpo e as de Utilidade.
+        </P>
+        <Aside title="A regra de ouro das três">
+          <P>
+            Magia gasta <b>PM</b> e paga em alcance e área. Corpo gasta <b>PT</b> e paga em dano por turno e
+            sobrevivência. Utilidade quase não gasta recurso nenhum e paga em <b>não precisar rolar</b> — ela
+            resolve antes de o combate começar. Um grupo que só compra uma das três descobre isso da pior
+            forma possível.
+          </P>
+        </Aside>
+      </Section>
+
       <Section>
         <SectionTitle id="cap3-corpo">A Árvore do Corpo — Sistemas Compartilhados</SectionTitle>
         <P>
@@ -240,7 +278,7 @@ export default function Chapter3() {
           </P>
           <List
             items={[
-              "PT são recuperados integralmente em um Descanso Curto — e são o único recurso que volta inteiro nele (PM voltam pela metade). O Cap. 4, §6 limita a dois Descansos Curtos entre dois Longos.",
+              "PT são recuperados integralmente em um Descanso Curto — e são o único recurso que volta inteiro nele (PM voltam pela metade). O Cap. 4, §7 limita a dois Descansos Curtos entre dois Longos.",
               "PT não podem ser convertidos em PM, nem PM em PT.",
               "Um personagem com Ranks em mais de um estilo marcial usa uma reserva única de PT.",
             ]}
@@ -445,7 +483,7 @@ export default function Chapter3() {
               {CATEGORY_LABELS[category]}
             </h3>
             {TREES.filter((t) => t.category === category).map((tree) => (
-              <details key={tree.id} className="rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
+              <details key={tree.id} className="surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
                 <summary className="flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
                   <TreeCrest tree={tree} size={44} />
                   <span className="min-w-0">

@@ -3,6 +3,8 @@ import { Fraunces, Geist, Geist_Mono, Literata } from "next/font/google";
 import StoreHydration from "@/components/StoreHydration";
 import ThemeProvider from "@/components/ThemeProvider";
 import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
+import { OrnamentDefs } from "@/components/ui/Ornament";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,7 +40,7 @@ const literata = Literata({
 /**
  * O ícone da aba é `src/app/icon.svg`, achado por convenção do App Router — não
  * precisa (nem deve) ser declarado aqui. Ele é gerado do logo por
- * `scripts/gerar-logo-dark.mjs`, e o `favicon.ico` padrão do Next saiu junto:
+ * `scripts/gerar-favicon.mjs`, e o `favicon.ico` padrão do Next saiu junto:
  * com os dois no lugar, cada navegador escolhia um.
  */
 export const metadata: Metadata = {
@@ -60,8 +62,21 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <StoreHydration />
+          {/*
+            As definições de filtro SVG do ornamento vivem no layout, e não no
+            componente: um `<filter id>` é global por documento, e repetir o
+            mesmo id uma vez por divisor de seção (o Cap. 1 do livro tem
+            dezenas) seria dezenas de ids duplicados no HTML.
+          */}
+          <OrnamentDefs />
           <Nav />
-          {children}
+          {/* `flex-1` é o que gruda o rodapé no fim da janela em página curta.
+              Antes daqui cada rota carregava um `min-h-screen` próprio pra
+              simular isso — e com um rodapé de verdade no fim, esse
+              `min-h-screen` viraria uma tela inteira de pergaminho vazio entre
+              o conteúdo e o rodapé em TODAS as páginas. */}
+          <main className="flex-1">{children}</main>
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

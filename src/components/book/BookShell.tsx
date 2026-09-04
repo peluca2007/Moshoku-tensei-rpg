@@ -37,9 +37,9 @@ export default function BookShell({ toc, children }: { toc: TocEntry[]; children
         </div>
       </details>
 
-      <main className="min-w-0 space-y-14 rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm sm:p-6 dark:border-parchment-800 dark:bg-parchment-900/60">
+      <div className="min-w-0 space-y-14 rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm sm:p-6 dark:border-parchment-800 dark:bg-parchment-900/60">
         {children}
-      </main>
+      </div>
     </div>
   );
 }

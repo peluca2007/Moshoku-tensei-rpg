@@ -9,6 +9,8 @@ import { getRaceById } from "@/data/races";
 import RaceCrest from "./RaceCrest";
 import { getBackgroundById } from "@/data/backgrounds";
 import { getGuildRank, getPaSpent } from "@/store/selectors";
+import PageHeader from "./ui/PageHeader";
+import EmptyState from "./ui/EmptyState";
 
 export default function CharacterRoster() {
   const router = useRouter();
@@ -49,11 +51,13 @@ export default function CharacterRoster() {
 
   return (
     <div className="mx-auto max-w-4xl p-4 sm:p-6">
-      <header className="mb-6 flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
-          <User className="h-6 w-6 text-wine-500" /> Meus Personagens
-        </h1>
-        <div className="flex items-center gap-2">
+      <PageHeader
+        icon={User}
+        title="Meus Personagens"
+        faixa="/faixas/personagens.jpg"
+        faixaPosition="center 45%"
+        actions={
+          <>
           <input ref={fileInputRef} type="file" accept="application/json" onChange={handleImportFile} className="hidden" />
           <button
             type="button"
@@ -76,8 +80,11 @@ export default function CharacterRoster() {
           >
             <Plus className="h-4 w-4" /> Criar Ficha
           </button>
-        </div>
-      </header>
+          </>
+        }
+      >
+        Cada ficha vive no seu navegador. Exporte o JSON pra levar pra outra máquina — ou pro Mestre.
+      </PageHeader>
 
       {importError && (
         <p className="mb-4 rounded-lg border border-rose-300 bg-rose-50 p-2 text-sm text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300">
@@ -86,9 +93,9 @@ export default function CharacterRoster() {
       )}
 
       {order.length === 0 && (
-        <p className="rounded-xl border border-dashed border-parchment-300 p-8 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
-          Nenhuma ficha ainda. Clique em &quot;Criar Ficha&quot; pra começar.
-        </p>
+        <EmptyState icon={User} hint="Criar com Guia leva você pelas três vias — manual, Roleta do Destino ou a Entrevista.">
+          Ninguém nasceu ainda.
+        </EmptyState>
       )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -138,7 +145,10 @@ export default function CharacterRoster() {
                 <button
                   type="button"
                   onClick={() => openCharacter(id)}
-                  className="flex-1 rounded-lg bg-parchment-900 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-parchment-700 dark:bg-white dark:text-parchment-900"
+                  /* Era branco puro no tema escuro — o elemento mais claro de qualquer
+                     tela do site, num botão secundário. Vinho é a cor de ação do
+                     projeto e já é o que a landing e a loja usam. */
+                  className="flex-1 rounded-lg bg-wine-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-wine-500 hover:shadow-md"
                 >
                   Abrir Ficha
                 </button>

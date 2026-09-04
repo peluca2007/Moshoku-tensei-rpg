@@ -1,14 +1,26 @@
 import { ReactNode } from "react";
+import Ornament from "@/components/ui/Ornament";
 
-/** Título de capítulo — âncora com margem de rolagem pra não ficar atrás do header/ToC fixo. */
+/**
+ * Título de capítulo — âncora com margem de rolagem pra não ficar atrás do
+ * header/ToC fixo.
+ *
+ * A abertura de capítulo é a única hora em que a filigrana aparece (0.1.5): são
+ * oito capítulos num documento de metros de scroll, e o ornamento é o que marca
+ * "começou coisa nova" pra quem está rolando rápido. Entre seções ele viraria
+ * barulho — lá o divisor é o filete de CSS, sem arte.
+ */
 export function ChapterTitle({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <h1
-      id={id}
-      className="scroll-mt-24 border-b border-parchment-300 pb-3 text-3xl font-black tracking-tight text-parchment-900 sm:text-4xl dark:border-parchment-800 dark:text-parchment-50"
-    >
-      {children}
-    </h1>
+    <header className="scroll-mt-24">
+      <h1
+        id={id}
+        className="scroll-mt-24 text-3xl font-black tracking-tight text-parchment-900 sm:text-4xl dark:text-parchment-50"
+      >
+        {children}
+      </h1>
+      <Ornament arte className="!my-4" />
+    </header>
   );
 }
 

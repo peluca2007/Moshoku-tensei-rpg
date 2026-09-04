@@ -7,6 +7,7 @@ import type { LucideIcon } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getGuildRank, isGuildRankEstimated } from "@/store/selectors";
 import { GUILD_RANK_ORDER, GuildRank, meetsGuildRank } from "@/lib/types";
+import { GUILD_RANK_COLORS } from "@/lib/rankColors";
 import {
   SHOP_CATEGORY_ICONS,
   SHOP_CATEGORY_LABELS,
@@ -17,6 +18,9 @@ import {
   toInventoryItem,
 } from "@/data/shopItems";
 import Crest from "./Crest";
+import PageHeader from "./ui/PageHeader";
+import Surface from "./ui/Surface";
+import CountingNumber from "./ui/CountingNumber";
 
 const CATEGORY_ICONS: Record<ShopCategory, LucideIcon> = {
   arma: Swords,
@@ -95,29 +99,39 @@ export default function Shop() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
-      <header className="space-y-3">
-        <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
-          <Store className="h-6 w-6 text-wine-500" /> Loja da Guilda
-        </h1>
-        <p className="text-sm text-parchment-600 dark:text-parchment-400">
+      <PageHeader
+        icon={Store}
+        title="Loja da Guilda"
+        faixa="/faixas/loja.jpg"
+        faixaPosition="center 35%"
+        actions={
+          <>
+            {/*
+              A bolsa e o Rank saíram de baixo do parágrafo e vieram pro canto
+              do cabeçalho: são os dois números que decidem se você PODE comprar
+              cada card da página, então eles precisam estar no lugar onde o
+              olho volta, e não no fim de um texto de apoio.
+            */}
+            <span className="flex items-center gap-1 rounded-full bg-gold-500/15 px-3 py-1 text-sm font-bold text-gold-700 ring-1 ring-gold-500/40 backdrop-blur-sm dark:text-gold-300">
+              <Coins className="h-3.5 w-3.5" /> <CountingNumber value={character.gold} /> PO
+            </span>
+            <span className="flex items-center gap-1 rounded-full bg-wine-600/15 px-3 py-1 text-sm font-bold text-wine-700 ring-1 ring-wine-500/40 backdrop-blur-sm dark:text-wine-200">
+              Rank {guildRank} na Guilda
+              {guildRankEstimated && <span className="text-[10px] uppercase tracking-wide">(estimado)</span>}
+            </span>
+          </>
+        }
+      >
+        <p>
           Comprar aqui debita o PO e manda o item direto pro inventário de{" "}
-          <b className="text-parchment-700 dark:text-parchment-300">{character.name || "Sem nome"}</b>. Preço
+          <b className="text-parchment-800 dark:text-parchment-200">{character.name || "Sem nome"}</b>. Preço
           completo e o que cada Rank libera também estão no{" "}
-          <Link href="/livro#cap5-2" className="text-wine-600 underline hover:text-wine-500 dark:text-wine-300">
+          <Link href="/livro#cap5-2" className="text-wine-700 underline hover:text-wine-500 dark:text-wine-200">
             Livro de Regras
           </Link>
           .
         </p>
-        <div className="flex flex-wrap items-center gap-2 text-sm">
-          <span className="flex items-center gap-1 rounded-full bg-gold-500/10 px-3 py-1 font-medium text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
-            <Coins className="h-3.5 w-3.5" /> {character.gold} PO
-          </span>
-          <span className="flex items-center gap-1 rounded-full bg-wine-500/10 px-3 py-1 font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300">
-            Rank {guildRank} na Guilda
-            {guildRankEstimated && <span className="text-[10px] uppercase tracking-wide">(estimado)</span>}
-          </span>
-        </div>
-      </header>
+      </PageHeader>
 
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -225,25 +239,35 @@ export default function Shop() {
                 // já está escrita a poucos pixels dali, no cabeçalho.
                 const descricaoPropria = item.description === notaComum ? null : item.description;
                 return (
-                  <div
+                  <Surface
                     key={item.id}
-                    className={`flex flex-col rounded-2xl border p-4 shadow-sm transition-colors ${
+                    /*
+                      Item que você NÃO pode comprar fica de fato mais apagado
+                      (`opacity-70`) em vez de só ter o botão desligado: numa
+                      grade de 21 armas, "o que dá pra comprar agora" tem que
+                      ser legível de longe, sem ler letra nenhuma.
+                    */
+                    className={`flex flex-col p-4 transition-all ${
                       justBought
-                        ? "border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/30"
-                        : "border-parchment-300 bg-parchment-50/90 dark:border-parchment-800 dark:bg-parchment-900/70"
+                        ? "animate-ganho-flash !border-emerald-400 !bg-emerald-50 dark:!border-emerald-600 dark:!bg-emerald-950/40"
+                        : rankOk
+                          ? ""
+                          : "opacity-70 saturate-50"
                     }`}
                   >
-                    <div className="mb-1 flex items-start justify-between gap-2">
-                      <h3 className="flex items-center gap-1.5 font-bold text-parchment-900 dark:text-parchment-50">
+                    <div className="mb-1.5 flex items-start justify-between gap-2">
+                      <h3 className="flex items-center gap-1.5 font-display font-bold text-parchment-900 dark:text-parchment-50">
                         <Icon className="h-4 w-4 shrink-0 text-wine-500" /> {item.name}
                       </h3>
-                      <span className="shrink-0 rounded-full bg-gold-500/10 px-2 py-0.5 text-xs font-semibold text-gold-700 dark:text-gold-300">
+                      <span className="tabular shrink-0 rounded-full bg-gold-500/15 px-2 py-0.5 text-xs font-bold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300">
                         {item.price} PO
                       </span>
                     </div>
                     <p className="mb-1 flex flex-wrap items-center gap-1.5 text-xs">
-                      <span className="rounded-full bg-wine-500/10 px-2 py-0.5 font-semibold text-wine-600 dark:text-wine-300">
-                        Rank {item.guildRankRequired} mínimo
+                      <span
+                        className={`rounded-full px-2 py-0.5 font-bold ring-1 ${GUILD_RANK_COLORS[item.guildRankRequired]}`}
+                      >
+                        Rank {item.guildRankRequired}
                       </span>
                       {(item.baseDie || item.acBonus) && (
                         <span className="font-semibold text-wine-600 dark:text-wine-300">
@@ -256,26 +280,45 @@ export default function Shop() {
                         {descricaoPropria}
                       </p>
                     )}
-                    <button
-                      type="button"
-                      onClick={() => handleBuy(item)}
-                      disabled={!canBuy}
-                      title={!rankOk ? `Precisa de Rank ${item.guildRankRequired} na Guilda` : !goldOk ? "PO insuficiente" : undefined}
-                      className={`flex items-center justify-center gap-1.5 rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:bg-parchment-300 disabled:text-parchment-600 dark:disabled:bg-parchment-800 dark:disabled:text-parchment-600 ${descricaoPropria ? "" : "mt-auto"}`}
-                    >
-                      {justBought ? (
-                        <>
-                          <Check className="h-4 w-4" /> Comprado!
-                        </>
-                      ) : !rankOk ? (
-                        <>
-                          <Lock className="h-3.5 w-3.5" /> Rank {item.guildRankRequired}
-                        </>
-                      ) : (
-                        "Comprar"
-                      )}
-                    </button>
-                  </div>
+                    {/*
+                      Item bloqueado não ganha mais um botão cinza do tamanho do
+                      card. A grade da loja tinha 21 barras cinzas mortas, uma
+                      por arma, e elas eram o elemento mais pesado da tela —
+                      a página inteira lia como "nada aqui funciona". Bloqueio
+                      virou uma linha de estado; botão é só pra quem pode agir.
+                    */}
+                    {!rankOk ? (
+                      <p
+                        className={`flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-parchment-400/60 py-2 text-xs font-semibold text-parchment-600 dark:border-parchment-700 dark:text-parchment-400 ${descricaoPropria ? "" : "mt-auto"}`}
+                      >
+                        <Lock className="h-3.5 w-3.5" /> Precisa de Rank {item.guildRankRequired} na Guilda
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleBuy(item)}
+                        disabled={!canBuy}
+                        title={!goldOk ? "PO insuficiente" : undefined}
+                        className={`flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-bold shadow-sm transition-all ${
+                          justBought
+                            ? "bg-emerald-600 text-white"
+                            : goldOk
+                              ? "bg-wine-600 text-white ring-1 ring-gold-400/30 hover:-translate-y-0.5 hover:bg-wine-500 hover:shadow-md"
+                              : "cursor-not-allowed border border-parchment-300 text-parchment-600 dark:border-parchment-700 dark:text-parchment-400"
+                        } ${descricaoPropria ? "" : "mt-auto"}`}
+                      >
+                        {justBought ? (
+                          <>
+                            <Check className="h-4 w-4" /> Comprado!
+                          </>
+                        ) : goldOk ? (
+                          "Comprar"
+                        ) : (
+                          `Faltam ${item.price - character.gold} PO`
+                        )}
+                      </button>
+                    )}
+                  </Surface>
                 );
               })}
             </div>

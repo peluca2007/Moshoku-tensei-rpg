@@ -5,7 +5,7 @@ export default function Chapter5() {
   return (
     <div className="space-y-8">
       <ChapterTitle id="cap5">Capítulo 5 — Entre Aventuras</ChapterTitle>
-      <P>
+      <P className="dropcap">
         Nem toda sessão é masmorra. Este capítulo reúne os quatro sistemas que rodam entre combates — tempo
         livre, fama na Guilda, reputação com o mundo e o que dá pra fabricar com as próprias mãos — porque
         eles se usam com a mesma frequência que qualquer regra do Capítulo 4, mesmo fora da luta.
@@ -40,7 +40,7 @@ export default function Chapter5() {
         </Warning>
         <SubTitle>Downtime Interrompido</SubTitle>
         <P>
-          Se uma aflição (Cap. 4, §7) estiver ativa em alguém do grupo, ela continua cobrando o efeito dela
+          Se uma aflição (Cap. 4, §8) estiver ativa em alguém do grupo, ela continua cobrando o efeito dela
           normalmente durante o downtime — um bloco de &ldquo;Recuperar-se&rdquo; trata ferimento, não trata
           veneno nem doença. Só um feitiço de Desintoxicação do rank certo, ou uma poção, encerram isso.
         </P>
@@ -214,20 +214,20 @@ export default function Chapter5() {
           headers={["Poção", "CD de Ofícios", "Custo (venda / fabricação)", "Efeito"]}
           rows={[
             ["Poção Menor de Cura", "11", "15 PO / 8 PO", "Reproduz uma magia de Cura de rank Principiante ou Intermediário, sem precisar de mago presente."],
-            ["Poção de Antídoto", "13", "25 PO / 13 PO", "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §7). Contra ranks acima disso, não faz nada — é uma dose, não um mago."],
+            ["Poção de Antídoto", "13", "25 PO / 13 PO", "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §8). Contra ranks acima disso, não faz nada — é uma dose, não um mago."],
             ["Poção Maior de Cura", "15", "60 PO / 30 PO", "Reproduz uma magia de Cura de rank Avançado ou Santo."],
             ["Elixir de Foco", "13", "40 PO / 20 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
             ["Poção de Vigor Passageiro", "14", "45 PO / 23 PO", "Vantagem no próximo teste de resistência de Vigor — a versão física do Elixir de Foco."],
             ["Poção Régia de Cura", "17", "120 PO / 60 PO", "Reproduz uma magia de Cura de rank Rei — um degrau acima da Poção Maior."],
-            ["Elixir de Regeneração", "18", "200 PO / 100 PO", "Remove 2 níveis de Exaustão de quem bebe (Cap. 4, §8) — não cura PV nem PM, só o cansaço acumulado. Não remove Exaustão cuja causa ainda esteja ativa: quem não comeu continua com fome."],
+            ["Elixir de Regeneração", "18", "200 PO / 100 PO", "Remove 2 níveis de Exaustão de quem bebe (Cap. 4, §9) — não cura PV nem PM, só o cansaço acumulado. Não remove Exaustão cuja causa ainda esteja ativa: quem não comeu continua com fome."],
             ["Poção Imperial de Cura", "20", "400 PO / 200 PO", "Reproduz uma magia de Cura de rank Imperador — o topo da escada, engarrafado."],
           ]}
         />
         <SubTitle>Venenos</SubTitle>
         <P>
-          Fabricar veneno é produzir uma dose de uma aflição já catalogada no Cap. 4, §7 — a CD de Ofícios
+          Fabricar veneno é produzir uma dose de uma aflição já catalogada no Cap. 4, §8 — a CD de Ofícios
           sobe junto com o rank, porque manusear algo mais perigoso sem se envenenar no processo é
-          mais difícil. Como aplicar a dose em alguém está no Cap. 4, §7, seção &ldquo;Aplicando um Veneno em
+          mais difícil. Como aplicar a dose em alguém está no Cap. 4, §8, seção &ldquo;Aplicando um Veneno em
           Combate ou em Segredo&rdquo;.
         </P>
         <BookTable

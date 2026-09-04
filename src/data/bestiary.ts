@@ -125,6 +125,17 @@ export interface CriaturaPronta {
   nome: string;
   patamar: number;
   papel: PapelCriatura;
+  /**
+   * Retrato da criatura, caminho em `public/criaturas`.
+   *
+   * Mesma regra de `Tree.icon` e `Race.icon`: o arquivo se chama como o `id`, e
+   * `npm run check:livro` confere que ele existe em disco — um caminho em texto
+   * é a coisa mais fácil de quebrar em silêncio.
+   *
+   * Em 0.1.5 o Superd Renegado emprestava o retrato da RAÇA Superd por falta de
+   * arte própria; em 0.1.6 ele ganhou a dele, e a regra voltou a valer pras seis.
+   */
+  icon?: string;
   /** A coluna "O que a torna perigosa" — o que o molde numérico não diz. */
   perigo: string;
   /**
@@ -143,9 +154,10 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
   {
     id: "sapo-lodo",
     nome: "Sapo-Lodo Gigante",
+    icon: "/criaturas/sapo-lodo.jpg",
     patamar: 1,
     papel: "padrao",
-    perigo: "Língua pegajosa (Preso, CD 11) e a Baba de Sapo-Lodo (Cap. 4, §7) em cada mordida.",
+    perigo: "Língua pegajosa (Preso, CD 11) e a Baba de Sapo-Lodo (Cap. 4, §8) em cada mordida.",
     acoes: [
       {
         nome: "Mordida Babosa",
@@ -154,7 +166,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
-        nota: "Quem for mordido pega Baba de Sapo-Lodo (Cap. 4, §7 — aflição de Rank 1).",
+        nota: "Quem for mordido pega Baba de Sapo-Lodo (Cap. 4, §8 — aflição de Rank 1).",
       },
       {
         nome: "Língua Pegajosa",
@@ -170,9 +182,10 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
   {
     id: "serpente-pantano",
     nome: "Serpente-do-Pântano",
+    icon: "/criaturas/serpente-pantano.jpg",
     patamar: 2,
     papel: "padrao",
-    perigo: "Peçonha de Serpente-do-Pântano (Cap. 4, §7) em cada picada bem-sucedida.",
+    perigo: "Peçonha de Serpente-do-Pântano (Cap. 4, §8) em cada picada bem-sucedida.",
     acoes: [
       {
         nome: "Picada Peçonhenta",
@@ -181,7 +194,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
-        nota: "Peçonha de Serpente-do-Pântano em todo acerto (Cap. 4, §7 — aflição de Rank 2).",
+        nota: "Peçonha de Serpente-do-Pântano em todo acerto (Cap. 4, §8 — aflição de Rank 2).",
       },
       {
         nome: "Bote e Recuo",
@@ -197,6 +210,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
   {
     id: "aranha-cavernas",
     nome: "Aranha Gigante das Cavernas",
+    icon: "/criaturas/aranha-cavernas.jpg",
     patamar: 2,
     papel: "padrao",
     perigo: "Teia que aplica Preso em área antes do combate começar; ataca de emboscada com Vantagem.",
@@ -224,6 +238,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
   {
     id: "wyvern",
     nome: "Wyvern",
+    icon: "/criaturas/wyvern.jpg",
     patamar: 3,
     papel: "padrao",
     perigo: "Voa, mergulha pra morder e volta a 18m de altura no mesmo turno.",
@@ -251,6 +266,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
   {
     id: "ogro-de-guerra",
     nome: "Ogro de Guerra (Onizoku)",
+    icon: "/criaturas/ogro-de-guerra.jpg",
     patamar: 4,
     papel: "padrao",
     perigo: "Um golpe de maça rola o Dado de Arma duas vezes; contra alvo Caído, dano triplicado.",
@@ -278,6 +294,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
   {
     id: "superd-renegado",
     nome: "Superd Renegado",
+    icon: "/criaturas/superd-renegado.jpg",
     patamar: 5,
     papel: "padrao",
     perigo: "Usa o Terceiro Olho pra nunca ser flanqueado e conjura Magia de Água até o patamar Rei.",

@@ -241,7 +241,7 @@ export const CURA_TREE: Tree = {
           range: "9 metros",
           actions: { normal: 1 },
           costNote:
-            "4 PA em vez dos 2 do Avançado comum. É uma das quatro Salvações do livro (Cap. 4, §4) — impede uma morte de verdade, não recupera PV numérico. Vale mais que qualquer magia de dano do mesmo rank porque a alternativa dela não é 'menos eficiente', é a ficha do aliado terminando ali.",
+            "4 PA em vez dos 2 do Avançado comum. É uma das quatro Salvações do livro (Cap. 4, §5) — impede uma morte de verdade, não recupera PV numérico. Vale mais que qualquer magia de dano do mesmo rank porque a alternativa dela não é 'menos eficiente', é a ficha do aliado terminando ali.",
           effect: "1 Reação, quando um aliado visível chegaria a 0 PV: ele fica com 1 PV e pode se mover 4,5m imediatamente. Uma vez por criatura por combate.",
           incantation: "Não. Ainda não é hoje. Rejeitar a Morte!",
         },
@@ -290,7 +290,7 @@ export const CURA_TREE: Tree = {
           pmCost: 8,
           range: "Esfera de 9m",
           actions: MAGIC_ACTIONS.Santo,
-          effect: "1 minuto: nenhum aliado na área recebe Marcas da Morte, e todo aliado que chegaria a 0 PV fica com 1 PV — uma vez cada. Cada uma dessas salvações consome uma das duas Salvações daquela criatura no combate (Cap. 4, §4, Duas Salvações por Combate).",
+          effect: "1 minuto: nenhum aliado na área recebe Marcas da Morte, e todo aliado que chegaria a 0 PV fica com 1 PV — uma vez cada. Cada uma dessas salvações consome uma das duas Salvações daquela criatura no combate (Cap. 4, §5, Duas Salvações por Combate).",
           incantation:
             "Dentro deste espaço a morte pede licença e espera do lado de fora, encostada na parede, com a paciência de quem sabe que vai receber todo mundo mais cedo ou mais tarde. Eu não a estou enganando, e não sou tolo o bastante pra achar que a estou vencendo: estou apenas dizendo, com todas as letras, que hoje não é o dia dela. Santuário Menor!",
         },

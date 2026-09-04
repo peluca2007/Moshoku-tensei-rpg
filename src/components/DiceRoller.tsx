@@ -209,7 +209,7 @@ export default function DiceRoller() {
       }
     }
     if (criticalDamage) {
-      // Cap. 4, §5: crítico rola os dados de dano duas vezes; os bônus fixos somam uma vez só.
+      // Cap. 4, §6: crítico rola os dados de dano duas vezes; os bônus fixos somam uma vez só.
       const first = rollFormula(liveFormula, 0);
       const second = rollFormula(liveFormula, 0);
       const total = first.total + second.total + liveModifier;
@@ -524,7 +524,7 @@ export default function DiceRoller() {
                   onChange={(e) => setCriticalDamageOverride(e.target.checked)}
                   className="h-3.5 w-3.5"
                 />
-                Crítico — dobrar os dados de dano (Cap. 4, §5)
+                Crítico — dobrar os dados de dano (Cap. 4, §6)
               </label>
               <button
                 type="button"
