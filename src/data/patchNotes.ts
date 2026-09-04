@@ -31,7 +31,8 @@ export const PATCH_NOTES: PatchNote[] = [
       {
         heading: "A logo, de novo",
         items: [
-          "Mais 30% sobre 0.1.8: h-48 sm:h-72 na landing, h-14 na barra, h-20 no rodapé.",
+          "A primeira tentativa de dissolver a faixa usou uma ELIPSE, e as duas linhas duras continuaram. O motivo é aritmético: com raio vertical de 92% da altura, a borda de cima fica a 54% do raio, e a rampa só ia de 28% a 80% — a máscara chegava na borda ainda com METADE da opacidade. Máscara que não chega a zero dentro da caixa não dissolve nada, só desenha uma borda mais clara. Trocada por linear-gradient vertical, onde transparent 0% e transparent 100% SÃO as bordas.",
+          "Mais 30% sobre 0.1.8: h-48 sm:h-72 na landing, h-16 na barra, h-20 no rodapé.",
           "A faixa de convite ganhou respiro vertical (py-24 sm:py-32), que é o espaço de que o degradê precisa pra acontecer — máscara suave em caixa baixa vira máscara dura.",
         ],
       },
