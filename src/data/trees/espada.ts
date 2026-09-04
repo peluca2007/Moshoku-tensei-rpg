@@ -3,6 +3,7 @@ import { Tree } from "@/lib/types";
 export const ESPADA_TREE: Tree = {
   id: "deus-da-espada",
   name: "Estilo Deus da Espada",
+  icon: "/arvores/deus-da-espada.svg",
   category: "corpo",
   subgroup: "Espadachim",
   mechanic: {

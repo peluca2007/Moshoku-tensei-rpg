@@ -81,6 +81,7 @@ import { Tree } from "@/lib/types";
 export const ESCUDOS_TREE: Tree = {
   id: "cavalaria-e-escudos",
   name: "Cavalaria e Escudos",
+  icon: "/arvores/cavalaria-e-escudos.png",
   category: "corpo",
   subgroup: "Tank / Defensor",
   mechanic: {

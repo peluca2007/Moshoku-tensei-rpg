@@ -305,6 +305,14 @@ export interface Race {
   id: string;
   name: string;
   description: string;
+  /**
+   * O retrato da raça, em `public/racas/` (2026-09-03).
+   *
+   * Mesma regra do `Tree.icon`: o arquivo se chama como o `id`, então não
+   * existe tabela de mapeamento em lugar nenhum — só a extensão varia, e é por
+   * isso que o caminho inteiro mora aqui. Criação, ficha e livro leem daqui.
+   */
+  icon?: string;
   bonuses: FlatBonuses;
   fixedSkills?: string[];
   bonusSkillChoices?: number;
@@ -526,6 +534,16 @@ export interface Tree {
   resourceLabel?: string;
   /** Curta descrição de identidade da árvore, usada no painel de detalhes. */
   tagline?: string;
+  /**
+   * O brasão da árvore, em `public/arvores/` (2026-09-03).
+   *
+   * O arquivo se chama como o `id` da árvore, então o mapeamento nome→arquivo
+   * deixou de existir como tabela: só a extensão varia, e é por isso que o
+   * caminho inteiro mora aqui em vez de ser montado por concatenação. Quem
+   * desenha (`/arvores`, `/livro`, o seletor de criação, a ficha) lê deste
+   * campo — nenhuma tela repete a lista.
+   */
+  icon?: string;
   /** true = não aparece no seletor de Árvore Inicial (criação); só some acessível depois, desbloqueando na tela de Árvores como qualquer multiclasse (ex: árvores híbridas com pré-requisito de outras duas). */
   hiddenFromCreation?: boolean;
   /** Nota exibida no topo do catálogo (TreeCatalog) explicando um pré-requisito narrativo — não é uma trava de código, o Mestre que decide. */

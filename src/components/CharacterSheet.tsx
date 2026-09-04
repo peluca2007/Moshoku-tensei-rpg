@@ -11,6 +11,7 @@ import { GUILD_RANK_ORDER } from "@/lib/types";
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById, getTreeGroups } from "@/data/trees";
+import TreeCrest from "./TreeCrest";
 import { getStartingKit } from "@/data/startingKits";
 import {
   AbilityDef,
@@ -694,6 +695,14 @@ export default function CharacterSheet() {
                 </optgroup>
               ))}
             </select>
+            {startingTree && (
+              <div className="mt-2 flex items-center gap-2">
+                <TreeCrest tree={startingTree} size={40} />
+                <p className="text-xs italic text-parchment-600 dark:text-parchment-400">
+                  {startingTree.tagline ?? startingTree.subgroup}
+                </p>
+              </div>
+            )}
             {startingTree && startingKit && (
               <>
                 <ul className="mt-2 space-y-0.5 text-xs text-parchment-600 dark:text-parchment-400">
@@ -792,6 +801,7 @@ export default function CharacterSheet() {
                   className={`rounded-2xl border-l-4 ${accent.border} border-y border-r border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-y-parchment-800 dark:border-r-parchment-800 dark:bg-parchment-900/60`}
                 >
                   <h3 className="mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
+                    <TreeCrest tree={tree} size={32} />
                     {tree.name}
                     <span className={`rounded-full bg-parchment-900/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${accent.text} dark:bg-white/5`}>
                       {CATEGORY_LABELS[tree.category]}

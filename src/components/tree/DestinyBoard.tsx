@@ -11,6 +11,7 @@ import { CATEGORY_ACCENT, RANK_ACCENT } from "@/lib/rankColors";
 import { layoutRadialTree, RadialInputNode, PositionedNode, RadialEdge } from "@/lib/radialLayout";
 import { describeGrantedSkills } from "@/lib/treeSkills";
 import { CastingBreakdown, IncantationBlock } from "@/components/AbilityDetail";
+import TreeCrest from "@/components/TreeCrest";
 
 type NodeMeta =
   | { kind: "root"; label: string }
@@ -150,7 +151,10 @@ function sizeForDepth(depth: number) {
   if (depth === 0) return 48;
   if (depth === 1) return 38;
   if (depth === 2) return 26;
-  if (depth === 3) return 28;
+  // Profundidade 3 é a árvore, e desde 2026-09-03 ela desenha o brasão dela em
+  // vez do ícone genérico da categoria — 28px era pequeno demais pra distinguir
+  // dezenove brasões, que é a única coisa que o mapa pede desse anel.
+  if (depth === 3) return 36;
   return 22;
 }
 
@@ -274,6 +278,26 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
   const selected = finalPosById.get(selectedId) ?? finalPosById.get("root")!;
 
   const viewportRef = useRef<HTMLDivElement>(null);
+  /**
+   * O zoom que faz o mapa INTEIRO caber no visor (2026-09-03).
+   *
+   * Até esta data o zoom inicial era a constante 0.35, sem relação nenhuma com
+   * o tamanho do canvas nem do visor — e o canvas cresce com o número de
+   * árvores. O resultado, num monitor comum, era um grafo do tamanho de uma
+   * moeda no meio de um retângulo vazio de 800px: os brasões viravam pontos, as
+   * ligações sumiam, e a primeira impressão da tela mais importante do site era
+   * a de uma página que não carregou.
+   *
+   * A conta mede o CONTEÚDO, não o canvas: `canvasSize` carrega
+   * `CANVAS_PADDING` dos dois lados, e enquadrar por ele deixaria 200px de nada
+   * dentro do enquadramento. O que precisa caber é o diâmetro do grafo mais o
+   * raio de um nó da borda, que é o que `+80` reserva. `0.95` é o respiro final.
+   */
+  const zoomParaCaber = (largura: number, altura: number) => {
+    const diametroDoConteudo = finalMaxRadius * 2 + 80;
+    return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, (Math.min(largura, altura) / diametroDoConteudo) * 0.95));
+  };
+
   const [zoom, setZoom] = useState(0.35);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const dragRef = useRef<{ startX: number; startY: number; panX: number; panY: number } | null>(null);
@@ -327,7 +351,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
     const el = viewportRef.current;
     if (!el) return;
     const { width, height } = el.getBoundingClientRect();
-    const nextZoom = 0.35;
+    const nextZoom = zoomParaCaber(width, height);
     setZoom(nextZoom);
     setPan({ x: width / 2 - center * nextZoom, y: height / 2 - center * nextZoom });
   };
@@ -628,7 +652,11 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
                       whileHover={{ scale: 1.15 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Icon style={{ width: size * 0.5, height: size * 0.5 }} />
+                      {node.meta.kind === "tree" && node.meta.tree.icon && !isTreeEmpty(node.meta.tree) ? (
+                        <TreeCrest tree={node.meta.tree} size={size - 6} rounded="rounded-full" />
+                      ) : (
+                        <Icon style={{ width: size * 0.5, height: size * 0.5 }} />
+                      )}
                     </motion.button>
                   </AnimatePresence>
                 );
@@ -749,6 +777,7 @@ function DetailPanel({ meta, showToast }: { meta: NodeMeta; showToast: (msg: str
         title={meta.tree.name}
         subtitle={meta.tree.subgroup}
         accentClass={CATEGORY_ACCENT[meta.tree.category].text}
+        crest={<TreeCrest tree={meta.tree} size={44} />}
       >
         {empty ? (
           <p className="text-parchment-600 dark:text-parchment-400">Em Breve — conteúdo desta árvore ainda não foi escrito.</p>
@@ -878,11 +907,14 @@ function PanelShell({
   title,
   subtitle,
   accentClass,
+  crest,
   children,
 }: {
   title: string;
   subtitle?: string;
   accentClass?: string;
+  /** Brasão da árvore, quando o painel descreve uma. */
+  crest?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
@@ -893,9 +925,12 @@ function PanelShell({
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       <div className="flex flex-col h-full">
-        <div className="flex-shrink-0">
-          <h3 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h3>
-          {subtitle && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{subtitle}</p>}
+        <div className="flex flex-shrink-0 items-center gap-3">
+          {crest}
+          <div className="min-w-0">
+            <h3 className={`text-base font-bold ${accentClass ?? "text-parchment-900 dark:text-parchment-50"}`}>{title}</h3>
+            {subtitle && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{subtitle}</p>}
+          </div>
         </div>
         <div className="mt-2 flex-1 overflow-y-auto space-y-2 text-sm text-parchment-700 dark:text-parchment-300 pr-1">
           {children}

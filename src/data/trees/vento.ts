@@ -4,6 +4,7 @@ import { MAGIC_ACTIONS, RANK_PA_COST } from "./shared";
 export const VENTO_TREE: Tree = {
   id: "vento",
   name: "Magia de Vento",
+  icon: "/arvores/vento.png",
   category: "magia",
   subgroup: "Magia Ofensiva",
   mechanic: {

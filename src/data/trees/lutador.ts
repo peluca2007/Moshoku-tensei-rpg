@@ -3,6 +3,7 @@ import { Tree } from "@/lib/types";
 export const LUTADOR_TREE: Tree = {
   id: "armas-pesadas",
   name: "Lutador",
+  icon: "/arvores/armas-pesadas.png",
   category: "corpo",
   subgroup: "Guerreiro / Parrudice",
   mechanic: {

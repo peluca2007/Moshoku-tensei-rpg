@@ -4,6 +4,7 @@ import { MAGIC_ACTIONS, RANK_PA_COST } from "./shared";
 export const TERRA_TREE: Tree = {
   id: "terra",
   name: "Magia de Terra",
+  icon: "/arvores/terra.svg",
   category: "magia",
   subgroup: "Magia Ofensiva",
   mechanic: {

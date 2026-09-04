@@ -29,6 +29,7 @@ export const RACES: Race[] = [
   {
     id: "humano",
     name: "Humano (Jinzoku)",
+    icon: "/racas/humano.png",
     description:
       "A raça dominante do mundo. Físico relativamente fraco e vida curta (70-100 anos), mas altíssima inteligência e versatilidade.",
     // 2026-08-29: saíram os +4 PV / +4 PM fixos, entrou +1 atributo à ESCOLHA do
@@ -51,6 +52,7 @@ export const RACES: Race[] = [
   {
     id: "elfo",
     name: "Elfo (Erufu)",
+    icon: "/racas/elfo.png",
     description:
       "Habitantes da Grande Floresta. Corpos esguios, orelhas longas, fertilidade baixa e vida longuíssima.",
     // 2026-08-29: os 5 PM fixos viraram ESCALARES (Maior Bônus de Rank de magia
@@ -70,6 +72,7 @@ export const RACES: Race[] = [
   {
     id: "anao",
     name: "Anão (Dowaafu)",
+    icon: "/racas/anao.png",
     description:
       "Artesãos e ferreiros inatos da Cordilheira do Dragão Azul. Vivem várias centenas de anos, baixa estatura, alta resistência ao álcool.",
     // O Anão era o pior pacote do livro — e o único que podia sair NEGATIVO. A
@@ -96,6 +99,7 @@ export const RACES: Race[] = [
   {
     id: "hobbit",
     name: "Povo Pequeno / Hobbit (Hobitto)",
+    icon: "/racas/hobbit.png",
     description:
       "Vivem na Grande Floresta e em cidades como Millishion. Estatura e aparência de criança humana por toda a vida.",
     bonuses: { attributes: { agilidade: 1 } },
@@ -126,6 +130,7 @@ export const RACES: Race[] = [
   {
     id: "raca-fera",
     name: "Raça Fera (Juuzoku)",
+    icon: "/racas/raca-fera.jpg",
     description:
       "Habitantes da Grande Floresta com traços de mamíferos. Fisicamente superiores aos humanos, vida similar.",
     bonuses: { attributes: { forca: 1 } },
@@ -149,6 +154,7 @@ export const RACES: Race[] = [
   {
     id: "celestial",
     name: "Raça Celestial (Tenzoku)",
+    icon: "/racas/celestial.jpg",
     description: "Habitantes do Continente Divino. Vivem centenas de anos e possuem asas.",
     bonuses: { attributes: { espirito: 1 } },
     traits: [
@@ -167,6 +173,7 @@ export const RACES: Race[] = [
   {
     id: "oceano",
     name: "Raça do Oceano (Kaizoku)",
+    icon: "/racas/oceano.jpg",
     description: "Governantes do Mar de Ringus.",
     // Trocado +4 PV fixos por +1 Vigor. A Raça do Oceano é uma das mais comuns no
     // sorteio e era a única cujo pacote inteiro podia não valer NADA: respirar
@@ -187,6 +194,7 @@ export const RACES: Race[] = [
   {
     id: "migurd",
     name: "Migurd",
+    icon: "/racas/migurd.jpg",
     description:
       "Humanoides de cabelos e olhos azuis, ~200 anos de vida, aparência de adolescente até os 150 anos.",
     // +10 PM eram o maior bônus fixo de qualquer raça: +83% da reserva de um
@@ -212,6 +220,7 @@ export const RACES: Race[] = [
   {
     id: "superd",
     name: "Superd",
+    icon: "/racas/superd.jpg",
     description: "Pele pálida, cabelos verdes, cauda bifurcada que vira lança tridente.",
     // 2026-08-29: saiu o +1 de Intelecto e o Terceiro Olho deixou de atravessar
     // parede. Ver através de parede não é forte demais — é DESTRUTIVO pro design
@@ -229,6 +238,7 @@ export const RACES: Race[] = [
   {
     id: "ogro",
     name: "Ogro (Onizoku)",
+    icon: "/racas/ogro.png",
     description: "Extremamente altos e musculosos, machos chegam a 3 metros de altura.",
     // 2026-08-29: removidos os +6 PV Máximos. O Ogro já carrega o maior bônus de
     // atributo do livro (+2 de Força), e Força entra no acerto E no dano de todo
@@ -245,6 +255,7 @@ export const RACES: Race[] = [
   {
     id: "demonio-imortal",
     name: "Demônio Imortal",
+    icon: "/racas/demonio-imortal.webp",
     description: "Descendentes do Primeiro Deus Demônio. Pele negra azeviche, seis braços (machos).",
     bonuses: { maxHp: 8 },
     traits: [
@@ -264,6 +275,7 @@ export const RACES: Race[] = [
   {
     id: "dragao",
     name: "Raça Dragão (Ryuzoku)",
+    icon: "/racas/dragao.webp",
     description:
       "Raça mítica (requer aprovação do Mestre). Fisicamente a mais poderosa da existência, pode viver mais de 100.000 anos.",
     // 2026-08-29 — buff, e o Dragão entrou no sorteio com 1% exato (ver

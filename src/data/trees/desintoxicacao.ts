@@ -29,6 +29,7 @@ import { MAGIC_ACTIONS, DESINTOX_PA_COST } from "./shared";
 export const DESINTOXICACAO_TREE: Tree = {
   id: "desintoxicacao",
   name: "Magia de Desintoxicação",
+  icon: "/arvores/desintoxicacao.svg",
   category: "magia",
   subgroup: "Cura e Suporte",
   mechanic: {

@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { TREES } from "../src/data/trees/index";
 import { getRankDeusForTree } from "../src/data/rankDeus";
@@ -12,6 +12,8 @@ import {
   valorNumerico,
 } from "../src/data/danoPorTurno";
 import { MAGIC_ACTIONS } from "../src/data/trees/shared";
+import { SHOP_CATEGORY_ICONS, SHOP_CATEGORY_ORDER } from "../src/data/shopItems";
+import { RACES } from "../src/data/races";
 
 /**
  * Self-check de consistência entre os DADOS e o TEXTO do livro.
@@ -253,10 +255,62 @@ for (const tabela of [DANO_POR_TURNO_MAGIA, DANO_POR_TURNO_CORPO]) {
 }
 
 // ---------------------------------------------------------------------------
+// O brasão de cada árvore existe mesmo em disco (2026-09-03)
+// ---------------------------------------------------------------------------
+/*
+ * `Tree.icon` é um caminho em texto: nada no TypeScript impede que ele aponte
+ * pra um arquivo que não existe, e o resultado disso é um quadrado quebrado no
+ * mapa de árvores que ninguém vê até abrir a página certa. As dezenove imagens
+ * chegaram com espaço no nome, acento e uma extensão mentindo sobre o formato
+ * — exatamente a classe de erro que só um teste de existência pega.
+ */
+function conferirArquivo(rotulo: string, url: string) {
+  const caminho = join("public", url.replace(/^\//, ""));
+  if (!existsSync(caminho)) falha(`${rotulo} aponta "${url}", mas ${caminho} não existe`);
+}
+
+let semIcone = 0;
+for (const tree of TREES) {
+  if (!tree.icon) {
+    aviso(`Árvore "${tree.name}" (${tree.id}) não declara icon — ela vai cair no ícone genérico da categoria`);
+    semIcone++;
+    continue;
+  }
+  conferirArquivo(`Árvore "${tree.name}"`, tree.icon);
+}
+
+// A loja tem arte por categoria, e uma categoria sem arte é caso previsto (cai
+// no ícone de traço). O que não pode é declarar arte que não existe.
+for (const [categoria, url] of Object.entries(SHOP_CATEGORY_ICONS)) {
+  if (url) conferirArquivo(`Categoria de loja "${categoria}"`, url);
+}
+for (const race of RACES) {
+  if (!race.icon) {
+    aviso(`Raça "${race.name}" (${race.id}) não declara icon — o card dela sai sem retrato`);
+    continue;
+  }
+  conferirArquivo(`Raça "${race.name}"`, race.icon);
+}
+
+const categoriasSemArte = SHOP_CATEGORY_ORDER.filter((c) => !SHOP_CATEGORY_ICONS[c]);
+if (categoriasSemArte.length) {
+  aviso(`Categorias da loja sem arte própria (usam o ícone de traço): ${categoriasSemArte.join(", ")}`);
+}
+
+// Os avulsos que a interface referencia por caminho fixo. Cada um destes já
+// quebrou uma vez: o logo escuro, a textura e a paisagem entraram em CSS e JSX
+// como string, onde nenhum tipo os protege.
+for (const url of ["/logo.svg", "/logo-dark.svg", "/paisagem.jpg", "/texturas/pergaminho.avif"]) {
+  conferirArquivo("Arte fixa da interface", url);
+}
+
+// ---------------------------------------------------------------------------
 console.log("\n========================================");
 console.log(`Árvores................................ ${TREES.length}`);
 console.log(`  com Mecânica Central................. ${TREES.filter((t) => t.mechanic).length}`);
 console.log(`  com quadro de Rank Deus.............. ${TREES.filter((t) => getRankDeusForTree(t.id)).length}`);
+console.log(`  com brasão em public/arvores......... ${TREES.length - semIcone}`);
+console.log(`Raças com retrato...................... ${RACES.filter((r) => r.icon).length} de ${RACES.length}`);
 console.log(`Magias verificadas..................... ${magias}`);
 console.log(`  sem cântico (erro)................... ${semCantico}`);
 console.log(`  sem bônus de recitação (por design).. ${semBonus}`);

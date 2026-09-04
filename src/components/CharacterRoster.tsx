@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Plus, Trash2, User, Check, Upload, Wand2 } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById } from "@/data/races";
+import RaceCrest from "./RaceCrest";
 import { getBackgroundById } from "@/data/backgrounds";
 import { getGuildRank, getPaSpent } from "@/store/selectors";
 
@@ -108,18 +109,31 @@ export default function CharacterRoster() {
                   : "border-parchment-300 bg-parchment-100/70 dark:border-parchment-800 dark:bg-parchment-900/60"
               }`}
             >
-              <div className="mb-1 flex items-start justify-between gap-2">
-                <h2 className="font-bold text-parchment-900 dark:text-parchment-50">{character.name || "Sem nome"}</h2>
-                {isActive && (
-                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-wine-500/10 px-2 py-0.5 text-[11px] font-semibold text-wine-600 dark:text-wine-300">
-                    <Check className="h-3 w-3" /> Ativa
-                  </span>
-                )}
+              {/*
+                O retrato da raça no card (2026-09-03). Não é a foto de perfil
+                que o roster ainda vai ganhar — é o que dá pra mostrar hoje sem
+                pedir upload nenhum, e ocupa exatamente o lugar dela: um card de
+                ficha que era só nome e dois botões passa a ter uma cara.
+              */}
+              <div className="mb-3 flex items-start gap-3">
+                {race && <RaceCrest race={race} size={52} rounded="rounded-xl" />}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <h2 className="font-bold text-parchment-900 dark:text-parchment-50">
+                      {character.name || "Sem nome"}
+                    </h2>
+                    {isActive && (
+                      <span className="flex shrink-0 items-center gap-1 rounded-full bg-wine-500/10 px-2 py-0.5 text-[11px] font-semibold text-wine-600 dark:text-wine-300">
+                        <Check className="h-3 w-3" /> Ativa
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-0.5 text-xs text-parchment-600 dark:text-parchment-400">
+                    {race?.name ?? "Raça não definida"} · {background?.name ?? "Antecedente não definido"} ·{" "}
+                    {getPaSpent(character)} PA gastos · Rank {getGuildRank(character)} na Guilda
+                  </p>
+                </div>
               </div>
-              <p className="mb-3 text-xs text-parchment-600 dark:text-parchment-400">
-                {race?.name ?? "Raça não definida"} · {background?.name ?? "Antecedente não definido"} ·{" "}
-                {getPaSpent(character)} PA gastos · Rank {getGuildRank(character)} na Guilda
-              </p>
               <div className="flex gap-2">
                 <button
                   type="button"

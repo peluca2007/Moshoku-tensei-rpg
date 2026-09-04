@@ -10,6 +10,7 @@ import { RANK_PA_COST } from "./shared";
 export const PUNHO_DE_FOGO_TREE: Tree = {
   id: "punho-de-fogo",
   name: "Punho do Fogo",
+  icon: "/arvores/punho-de-fogo.png",
   category: "corpo",
   subgroup: "Híbrida (Lutador + Magia de Fogo)",
   mechanic: {

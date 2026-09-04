@@ -10,6 +10,7 @@ import { Tree } from "@/lib/types";
 export const VENDAVAL_TREE: Tree = {
   id: "vendaval",
   name: "Estilo Vendaval",
+  icon: "/arvores/vendaval.png",
   category: "corpo",
   subgroup: "Estilo Híbrido",
   mechanic: {

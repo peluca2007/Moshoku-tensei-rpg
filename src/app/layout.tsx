@@ -35,9 +35,19 @@ const literata = Literata({
   display: "swap",
 });
 
+/**
+ * O ícone da aba é `src/app/icon.svg`, achado por convenção do App Router — não
+ * precisa (nem deve) ser declarado aqui. Ele é gerado do logo por
+ * `scripts/gerar-logo-dark.mjs`, e o `favicon.ico` padrão do Next saiu junto:
+ * com os dois no lugar, cada navegador escolhia um.
+ */
 export const metadata: Metadata = {
-  title: "Mushoku Tensei RPG",
+  title: {
+    default: "Mushoku Tensei RPG",
+    template: "%s · Mushoku Tensei RPG",
+  },
   description: "Ficha de personagem, árvores de habilidade e o livro de regras do sistema.",
+  applicationName: "Mushoku Tensei RPG",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

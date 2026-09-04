@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Plus, Sparkles, Check } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { RACES, getRaceById } from "@/data/races";
+import RaceCrest from "./RaceCrest";
 import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
@@ -119,18 +120,50 @@ export default function CreationWizard() {
             <div>
               <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha uma raça</h2>
               <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Cap. 1, seção 5 — cada raça dá perícias e traços próprios.</p>
-              <select
-                value={character.raceId ?? ""}
-                onChange={(e) => useCharacterStore.getState().setRace(e.target.value || null)}
-                className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+              {/*
+                Grade de retratos, e não um <select> (2026-09-03).
+
+                Escolher a raça é a primeira decisão de identidade da ficha, e
+                até aqui ela era uma lista suspensa de doze linhas de texto —
+                doze nomes que só quem já leu o Cap. 1 sabe diferenciar. Com o
+                retrato, a diferença entre um Superd e um Migurd chega antes da
+                leitura, que é como escolha de raça funciona em qualquer livro
+                de RPG impresso.
+              */}
+              <div
+                role="radiogroup"
+                aria-label="Raça"
+                className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4"
               >
-                <option value="">Escolha...</option>
-                {RACES.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name}
-                  </option>
-                ))}
-              </select>
+                {RACES.map((r) => {
+                  const escolhida = character.raceId === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={escolhida}
+                      onClick={() => useCharacterStore.getState().setRace(escolhida ? null : r.id)}
+                      className={`flex flex-col items-center gap-1.5 rounded-xl border p-2 text-center transition-colors ${
+                        escolhida
+                          ? "border-wine-500 bg-wine-50/70 shadow-sm dark:bg-wine-950/30"
+                          : "border-parchment-300 bg-parchment-50/70 hover:border-wine-400 dark:border-parchment-800 dark:bg-parchment-900/50"
+                      }`}
+                    >
+                      <RaceCrest race={r} size={72} rounded="rounded-lg" />
+                      <span
+                        className={`text-xs font-semibold leading-tight ${
+                          escolhida
+                            ? "text-wine-700 dark:text-wine-200"
+                            : "text-parchment-800 dark:text-parchment-200"
+                        }`}
+                      >
+                        {r.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             {race && <RaceBackgroundDetails race={race} />}
           </div>

@@ -99,6 +99,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `/arvores` | Mapa radial de progressão (Destiny Board), pan/zoom |
 | `/loja` | Loja da Guilda — 85 itens, filtro por Tipo × Rank de Guilda |
 | `/iniciativa` | Tracker de iniciativa |
+| `/encontros` | Construtor de NPCs/monstros/chefes: ações próprias, conselho ao vivo contra o PV/CA do grupo, e simulação contra as fichas de verdade |
 | `/personagens` | Roster de fichas salvas |
 
 ---

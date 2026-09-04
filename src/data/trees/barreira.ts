@@ -4,6 +4,7 @@ import { MAGIC_ACTIONS, RANK_PA_COST } from "./shared";
 export const BARREIRA_TREE: Tree = {
   id: "barreira",
   name: "Barreira e Proteção",
+  icon: "/arvores/barreira.png",
   category: "magia",
   subgroup: "Cura e Suporte",
   mechanic: {

@@ -9,6 +9,7 @@ import { RANK_PA_COST } from "./shared";
 export const INVOCACAO_TREE: Tree = {
   id: "invocacao",
   name: "Espíritos e Feras",
+  icon: "/arvores/invocacao.jpg",
   category: "magia",
   subgroup: "Invocação",
   mechanic: {

@@ -4,6 +4,7 @@ import { UTILITY_PA_COST } from "./shared";
 export const LADINO_TREE: Tree = {
   id: "furtividade-e-armadilhas",
   name: "Furtividade e Armadilhas",
+  icon: "/arvores/furtividade-e-armadilhas.png",
   category: "utilidade",
   subgroup: "Batedor e Ladrão",
   mechanic: {
