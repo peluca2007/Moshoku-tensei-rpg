@@ -312,7 +312,7 @@ if (categoriasSemArte.length) {
 // Os avulsos que a interface referencia por caminho fixo. Cada um destes já
 // quebrou uma vez: o logo escuro, a textura e a paisagem entraram em CSS e JSX
 // como string, onde nenhum tipo os protege.
-for (const url of ["/logo.svg", "/logo-real-alfa.png", "/paisagem.jpg", "/texturas/pergaminho.avif"]) {
+for (const url of ["/logo-real-alfa.png", "/paisagem.jpg", "/texturas/pergaminho.avif", "/texturas/fibra.jpg"]) {
   conferirArquivo("Arte fixa da interface", url);
 }
 

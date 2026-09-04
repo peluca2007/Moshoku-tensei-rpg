@@ -83,7 +83,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:arvores` | Audita as 19 árvores contra a régua do Apêndice C e acusa quem sai da faixa |
 | `npx tsx scripts/simular-combate.mts` | Playtest automatizado: builds de mesmo orçamento de PA se batendo |
 | `node scripts/logo-sem-fundo.mjs` | Regera `public/logo-real-alfa.png` a partir de `assets-fonte/` |
-| `node scripts/gerar-favicon.mjs` | Regera `src/app/icon.svg` a partir de `public/logo.svg` |
+| `node scripts/gerar-favicon.mjs` | Regera `src/app/icon.png` a partir de `public/logo-real-alfa.png` |
 
 > [!IMPORTANT]
 > Se o projeto estiver dentro do WSL, rode `build` e `check:livro` **de dentro do WSL**. Eles dependem de
@@ -105,6 +105,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `/iniciativa` | Tracker de iniciativa |
 | `/encontros` | Construtor de NPCs/monstros/chefes: ações próprias, conselho ao vivo contra o PV/CA do grupo, e simulação contra as fichas de verdade |
 | `/personagens` | Roster de fichas salvas |
+| `/ficha/importar` | Recebe uma ficha vinda de link e pergunta antes de gravar no navegador |
 
 ---
 
