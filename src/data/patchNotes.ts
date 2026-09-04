@@ -16,6 +16,28 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.9",
+    date: "2026-09-04",
+    title: "Sem Arestas",
+    sections: [
+      {
+        heading: "A faixa de convite estava mascarando a coisa errada",
+        items: [
+          "0.1.8 mascarou a IMAGEM e depois pôs um véu radial por cima dela. A arte sumia nas pontas como devia — mas o véu era um retângulo opaco, e era ELE que desenhava as duas linhas horizontais duras que faziam a seção parecer um bloco colado na página. Mascarar a arte não adianta enquanto a caixa de cor continuar lá.",
+          "Agora arte e véu vivem dentro do mesmo elemento mascarado: os dois desaparecem juntos. No centro a faixa tem imagem e escurecimento suficientes pra segurar o texto; nas quatro bordas ela simplesmente deixa de existir. Os filetes dourados saíram junto — filete marca justamente a aresta que esta seção não quer ter.",
+          "Para isso, `.faixa-arte` foi partida em duas: `.arte-ambiente` carrega só o tratamento de cor e `.faixa-arte` acrescenta a máscara de baixo. As duas andavam juntas numa classe só, e isso obrigava toda arte de ambiente a morrer do mesmo jeito — o que serve pro cabeçalho de rota, onde a borda inferior é aresta de card real, e não serve pra faixa que atravessa a página inteira.",
+        ],
+      },
+      {
+        heading: "A logo, de novo",
+        items: [
+          "Mais 30% sobre 0.1.8: h-48 sm:h-72 na landing, h-14 na barra, h-20 no rodapé.",
+          "A faixa de convite ganhou respiro vertical (py-24 sm:py-32), que é o espaço de que o degradê precisa pra acontecer — máscara suave em caixa baixa vira máscara dura.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.8",
     date: "2026-09-04",
     title: "Seis Portas",
