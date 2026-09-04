@@ -3,6 +3,7 @@ import { TREES, CATEGORY_LABELS } from "@/data/trees";
 import { RANK_BONUS, RANKS } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import TreeCatalog from "./TreeCatalog";
+import TreeCrest from "../TreeCrest";
 
 export default function Chapter3() {
   const rankLabelTrees = TREES.filter((t) => t.rankLabels);
@@ -445,12 +446,15 @@ export default function Chapter3() {
             </h3>
             {TREES.filter((t) => t.category === category).map((tree) => (
               <details key={tree.id} className="rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
-                <summary className="scroll-mt-24 cursor-pointer list-none rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
-                  <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
-                  <span className="ml-2 text-xs text-parchment-600 dark:text-parchment-400">{tree.subgroup}</span>
-                  {tree.tagline && (
-                    <span className="mt-0.5 block text-xs italic text-parchment-600 dark:text-parchment-400">{tree.tagline}</span>
-                  )}
+                <summary className="flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
+                  <TreeCrest tree={tree} size={44} />
+                  <span className="min-w-0">
+                    <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
+                    <span className="ml-2 text-xs text-parchment-600 dark:text-parchment-400">{tree.subgroup}</span>
+                    {tree.tagline && (
+                      <span className="mt-0.5 block text-xs italic text-parchment-600 dark:text-parchment-400">{tree.tagline}</span>
+                    )}
+                  </span>
                 </summary>
                 <div className="border-t border-parchment-300 p-3 dark:border-parchment-800">
                   <TreeCatalog tree={tree} />

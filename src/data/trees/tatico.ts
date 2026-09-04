@@ -4,6 +4,7 @@ import { UTILITY_PA_COST } from "./shared";
 export const TATICO_TREE: Tree = {
   id: "navegacao-e-lideranca",
   name: "Navegação e Liderança",
+  icon: "/arvores/navegacao-e-lideranca.png",
   category: "utilidade",
   subgroup: "Sobrevivência e Táticas",
   mechanic: {

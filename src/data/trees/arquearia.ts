@@ -4,6 +4,7 @@ import { RANK_PA_COST } from "./shared";
 export const ARQUEARIA_TREE: Tree = {
   id: "arquearia",
   name: "Arquearia",
+  icon: "/arvores/arquearia.png",
   category: "corpo",
   subgroup: "Arqueiro",
   mechanic: {

@@ -4,6 +4,13 @@ import {
   DANO_POR_TURNO_CORPO,
   DANO_POR_TURNO_MAGIA,
 } from "@/data/danoPorTurno";
+import {
+  CRIATURAS_PRONTAS,
+  MOLDES_CRIATURA,
+  bonusResistencia,
+  getMoldePorPatamar,
+  rotuloPatamar,
+} from "@/data/bestiary";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 export default function Appendices() {
@@ -310,14 +317,15 @@ export default function Appendices() {
         </P>
         <BookTable
           headers={["Patamar", "PV", "CA", "Bônus de Ataque", "Dano por turno", "CD de resistência", "Bônus de Resistência"]}
-          rows={[
-            ["1º — Comum", "20", "12", "+3", "~10", "11", "+2"],
-            ["2º — Perigosa", "45", "14", "+4", "~20", "13", "+2"],
-            ["3º — Ameaça", "90", "16", "+6", "~35", "15", "+3"],
-            ["4º — Elite", "150", "18", "+8", "~55", "17", "+4"],
-            ["5º — Terror", "220", "20", "+10", "~80", "19", "+5"],
-            ["6º — Lenda", "320", "22", "+12", "~120", "21", "+6"],
-          ]}
+          rows={MOLDES_CRIATURA.map((m) => [
+            rotuloPatamar(m.patamar),
+            String(m.pv),
+            String(m.ca),
+            `+${m.bonusAtaque}`,
+            `~${m.danoPorTurno}`,
+            String(m.cdResistencia),
+            `+${bonusResistencia(m)}`,
+          ])}
         />
         <Aside title="As duas colunas que mudaram, e por quê">
           <P>
@@ -362,15 +370,45 @@ export default function Appendices() {
         </Aside>
         <BookTable
           headers={["Criatura", "Patamar", "O que a torna perigosa"]}
-          rows={[
-            ["Sapo-Lodo Gigante", "1º — Comum", "Língua pegajosa (Preso, CD 11) e a Baba de Sapo-Lodo (Cap. 4, §7) em cada mordida."],
-            ["Serpente-do-Pântano", "2º — Perigosa", "Peçonha de Serpente-do-Pântano (Cap. 4, §7) em cada picada bem-sucedida."],
-            ["Aranha Gigante das Cavernas", "2º — Perigosa", "Teia que aplica Preso em área antes do combate começar; ataca de emboscada com Vantagem."],
-            ["Wyvern", "3º — Ameaça", "Voa, mergulha pra morder e volta a 18m de altura no mesmo turno."],
-            ["Ogro de Guerra (Onizoku)", "4º — Elite", "Um golpe de maça rola o Dado de Arma duas vezes; contra alvo Caído, dano triplicado."],
-            ["Superd Renegado", "5º — Terror", "Usa o Terceiro Olho pra nunca ser flanqueado e conjura Magia de Água até o patamar Rei."],
-          ]}
+          rows={CRIATURAS_PRONTAS.map((c) => [c.nome, rotuloPatamar(c.patamar), c.perigo])}
         />
+        {/*
+          As ações de cada uma, impressas dos MESMOS dados que a tela de
+          Encontros usa pra montar a criatura (2026-09-03). Antes desta data a
+          criatura pronta era três colunas de prosa: o Mestre sabia que a Wyvern
+          mergulha, e tinha que inventar na hora quanto a mordida dela tira.
+        */}
+        <div className="mt-4 space-y-3">
+          {CRIATURAS_PRONTAS.map((c) => (
+            <div
+              key={c.id}
+              className="print-avoid-break rounded-lg border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40"
+            >
+              <p className="font-bold text-parchment-900 dark:text-parchment-50">
+                {c.nome}{" "}
+                <span className="text-xs font-normal text-parchment-600 dark:text-parchment-400">
+                  — {rotuloPatamar(c.patamar)} · {getMoldePorPatamar(c.patamar).pv} PV · CA{" "}
+                  {getMoldePorPatamar(c.patamar).ca} · ataque +{getMoldePorPatamar(c.patamar).bonusAtaque} ·
+                  CD {getMoldePorPatamar(c.patamar).cdResistencia}
+                </span>
+              </p>
+              <ul className="mt-1.5 space-y-1">
+                {c.acoes.map((a) => (
+                  <li key={a.nome} className="text-parchment-700 dark:text-parchment-300">
+                    <b>{a.nome}</b>{" "}
+                    <span className="text-xs text-parchment-600 dark:text-parchment-400">
+                      — {a.acoes} Ação{a.acoes > 1 ? "es" : ""} ·{" "}
+                      {a.dano ? `${a.dano} de dano` : "sem dano"} · {a.alcance} ·{" "}
+                      {a.tipo === "ataque" ? "ataque contra a CA" : "teste de resistência"}
+                      {a.area && " · em área"}
+                    </span>
+                    <span className="block text-xs text-parchment-600 dark:text-parchment-400">{a.nota}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </Section>
     </div>
   );

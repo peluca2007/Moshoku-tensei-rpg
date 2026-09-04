@@ -4,6 +4,7 @@ import { Check, Sparkle } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getPendingRaceAttributeChoices, hasRacialUpgrade } from "@/store/selectors";
 import { ATTRIBUTES, AttributeKey, Background, Race, SubtableEntry } from "@/lib/types";
+import RaceCrest from "./RaceCrest";
 
 function TraitList({ traits }: { traits: string[] }) {
   return (
@@ -25,6 +26,7 @@ function Block({
   fixedSkills,
   bonusSkillChoices,
   extra,
+  crest,
 }: {
   title: string;
   description?: string;
@@ -32,10 +34,15 @@ function Block({
   fixedSkills?: string[];
   bonusSkillChoices?: number;
   extra?: string;
+  /** Retrato, quando o bloco descreve uma raça. Antecedente não tem arte. */
+  crest?: React.ReactNode;
 }) {
   return (
     <div>
-      <h3 className="mb-1 text-sm font-bold text-parchment-900 dark:text-parchment-50">{title}</h3>
+      <div className="mb-1 flex items-center gap-2">
+        {crest}
+        <h3 className="text-sm font-bold text-parchment-900 dark:text-parchment-50">{title}</h3>
+      </div>
       {description && <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">{description}</p>}
       {traits.length > 0 && <TraitList traits={traits} />}
       {(fixedSkills?.length || bonusSkillChoices || extra) && (
@@ -168,6 +175,7 @@ export default function RaceBackgroundDetails({
             traits={race.traits}
             fixedSkills={race.fixedSkills}
             bonusSkillChoices={race.bonusSkillChoices}
+            crest={<RaceCrest race={race} size={40} />}
           />
         )}
         {background && (

@@ -1,4 +1,5 @@
 import { RACES } from "@/data/races";
+import RaceCrest from "../RaceCrest";
 import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
 import { RANK_BONUS, RANK_REQUIREMENTS, RANKS } from "@/lib/types";
 import { DESINTOX_PA_COST, RANK_PA_COST } from "@/data/trees/shared";
@@ -417,14 +418,17 @@ export default function Chapter1() {
         </Aside>
         <div className="space-y-2.5">
           {RACES.map((race) => (
-            <div key={race.id} className="rounded-xl border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40">
-              <p className="font-semibold text-parchment-900 dark:text-parchment-50">{race.name}</p>
-              <p className="mt-0.5 text-parchment-600 dark:text-parchment-400">{race.description}</p>
-              <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-parchment-700 dark:text-parchment-300">
-                {race.traits.map((t, i) => (
-                  <li key={i}>{t}</li>
-                ))}
-              </ul>
+            <div key={race.id} className="print-avoid-break flex gap-3 rounded-xl border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40">
+              <RaceCrest race={race} size={56} />
+              <div className="min-w-0">
+                <p className="font-semibold text-parchment-900 dark:text-parchment-50">{race.name}</p>
+                <p className="mt-0.5 text-parchment-600 dark:text-parchment-400">{race.description}</p>
+                <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-parchment-700 dark:text-parchment-300">
+                  {race.traits.map((t, i) => (
+                    <li key={i}>{t}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
         </div>

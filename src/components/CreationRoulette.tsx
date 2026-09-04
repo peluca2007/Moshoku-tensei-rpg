@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Dices, LucideIcon, ScrollText, Sparkles, Users } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById, RACES } from "@/data/races";
+import RaceCrest from "./RaceCrest";
 import { BACKGROUNDS, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import {
   getRaceProbabilities,
@@ -66,12 +67,15 @@ function WheelBlock({
   options,
   wheel,
   resultLabel,
+  resultCrest,
 }: {
   title: string;
   icon: LucideIcon;
   options: WheelOption[];
   wheel: ReturnType<typeof useWheelSpin>;
   resultLabel?: string;
+  /** Arte do resultado, quando ele tem uma (a Raça tem; o Antecedente não). */
+  resultCrest?: React.ReactNode;
 }) {
   const attemptsLeft = WHEEL_MAX_ATTEMPTS - wheel.attempts;
   const Icon = icon;
@@ -114,7 +118,10 @@ function WheelBlock({
           {attemptsLeft > 0 ? `${attemptsLeft} de ${WHEEL_MAX_ATTEMPTS} tentativas restantes` : "O Destino já decidiu."}
         </p>
         {resultLabel && wheel.result && (
-          <p className="mt-2 text-sm font-semibold text-wine-700 dark:text-wine-300">{resultLabel}</p>
+          <div className="mt-3 flex animate-birth-reveal items-center gap-2">
+            {resultCrest}
+            <p className="text-sm font-semibold text-wine-700 dark:text-wine-300">{resultLabel}</p>
+          </div>
         )}
       </div>
     </div>
@@ -219,7 +226,16 @@ export default function CreationRoulette() {
 
         {step === 2 && (
           <div className="space-y-10">
-            <WheelBlock title="Roleta da Raça" icon={Users} options={RACE_OPTIONS} wheel={raceWheel} resultLabel={race?.name} />
+            <WheelBlock
+              title="Roleta da Raça"
+              icon={Users}
+              options={RACE_OPTIONS}
+              wheel={raceWheel}
+              resultLabel={race?.name}
+              // O retrato aparece no instante em que a roleta para: é o momento
+              // em que o personagem nasce, e até aqui ele nascia como um nome.
+              resultCrest={race ? <RaceCrest race={race} size={56} rounded="rounded-xl" /> : undefined}
+            />
             <div className="border-t border-parchment-300 dark:border-parchment-800" />
             <WheelBlock
               title="Roleta do Antecedente"

@@ -5,6 +5,236 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.4 — "As Doze Raças Ganharam Cara" · 2026-09-03
+
+### 🧝 Escolher raça deixou de ser uma lista suspensa
+
+As **12 raças** ganharam retrato (`Race.icon`, em `public/racas/<id>`). O arquivo se chama como o `id` da
+raça — mesma regra dos brasões de árvore e dos ícones da loja, e pelo mesmo motivo: assim não existe uma
+tabela de mapeamento nome→arquivo em lugar nenhum.
+
+O passo de raça da Criação Guiada era um `<select>` de doze linhas de texto — doze nomes que só quem já
+leu o Cap. 1 sabe diferenciar. Virou uma **grade de retratos**. Escolher raça é a primeira decisão de
+identidade da ficha, e agora a diferença entre um Superd e um Migurd chega antes da leitura, que é como
+escolha de raça funciona em qualquer livro de RPG impresso.
+
+O retrato aparece em mais quatro lugares, todos lendo do mesmo campo:
+
+| Onde | O que muda |
+| --- | --- |
+| Card de Passivas (ficha e criação) | Retrato ao lado do nome da raça |
+| Cap. 1 do livro | Os 12 cards de raça ganharam retrato |
+| Roster `/personagens` | O card era só nome e dois botões |
+| Roleta do Destino | O retrato aparece no instante em que a roleta para |
+
+O card do roster é o caso mais claro: o retrato ocupa **exatamente o lugar da foto de perfil** que ele
+ainda vai ganhar, e é o que dá pra mostrar hoje sem pedir upload nenhum.
+
+### 📦 As imagens pararam de ser servidas cruas
+
+Os retratos chegaram com até **1,28 MB** por arquivo. O medalhão servia tudo com `unoptimized` — decisão
+que fazia sentido quando só existiam SVGs e PNGs de 10 KB, e que agora mandava um megabyte pro navegador
+desenhar um selo de 44px.
+
+Agora `unoptimized` vale **só pra SVG**, que o otimizador do Next não processa mesmo. O resto passa pelo
+otimizador:
+
+```
+migurd.jpg cru:        1 286 264 bytes
+migurd.jpg otimizado:      1 694 bytes   (no tamanho em que aparece)
+```
+
+**Terceira vez na mesma semana que um arquivo mentiu sobre o formato:** duas raças chegaram como `.png`
+sendo **WebP** por dentro. Antes delas, um brasão de árvore era PNG com extensão `.svg`, e a textura de
+pergaminho era AVIF com extensão `.png`. Todos renomeados pro que realmente são.
+
+`check:livro` agora confere retrato de raça junto com brasão de árvore, ícone de loja e arte fixa da
+interface — e imprime quantas das 12 raças têm retrato.
+
+---
+
+## 0.1.3 — "O Site Ganhou Cara" · 2026-09-03
+
+### 🗺️ O mapa de árvores cabia numa moeda
+
+O zoom inicial de `/arvores` era a constante **0,35** — sem relação nenhuma com o tamanho do visor nem do
+canvas, que cresce junto com o número de árvores. Num monitor comum o grafo inteiro virava uma bolinha no
+meio de um retângulo vazio de 800px: os brasões eram pontos de 3px, e a primeira impressão da tela mais
+importante do site era a de **uma página que não carregou**.
+
+Agora o enquadramento é calculado do **conteúdo** — diâmetro do grafo mais o raio de um nó da borda —
+contra o tamanho real do visor. O mapa nasce preenchendo a tela, e cada árvore mostra o brasão dela
+legível.
+
+### 🏪 A loja repetia a mesma frase doze vezes
+
+As doze armas mundanas nascem de um mesmo `.map()` e compartilham **uma** descrição. A loja imprimia uma
+cópia dela em cada card — doze parágrafos idênticos empilhados, e as armas que *têm* algo próprio a dizer
+(Adaga de Prata, Lâmina Balanceada) afogadas no meio.
+
+A tela agora **agrupa por categoria** e detecta sozinha o texto que dois ou mais itens do grupo repetem:
+ele sobe pro cabeçalho, uma vez, e some dos cards. A definição é operacional, não uma lista fixa — *se
+dois itens dizem a mesma coisa, aquilo não descreve nenhum dos dois* —, então a regra pega as doze armas
+de hoje e pega sozinha o próximo bloco que nascer do mesmo molde.
+
+Cada grupo ganhou a arte da categoria e a contagem de itens. Com o filtro em "Todos", os 85 itens deixaram
+de ser uma lista corrida sem divisão nenhuma.
+
+### 🎨 Pergaminho, paisagem, e o logo consertado
+
+O site inteiro passou a ter **fundo de pergaminho de verdade**: 60% no tema claro (onde a textura é o
+assunto) e 20% no escuro (onde ela só precisa quebrar o marrom chapado). Os dois números saíram de
+comparar as telas lado a lado — acima de 20% no escuro a textura começa a lavar o fundo e comer contraste
+do texto.
+
+> As dez páginas pintavam um `bg-parchment-100 dark:bg-parchment-950` sólido por cima do corpo. Nenhuma
+> textura teria aparecido em lugar nenhum; isso saiu junto.
+
+A **landing** ganhou a paisagem do Mundo de Seis Faces atrás do herói. Ela dissolve na textura por
+`mask-image`, e não terminando numa cor sólida — a primeira tentativa deixava um degrau horizontal
+visível onde a imagem acabava e o fundo texturizado começava.
+
+O **logo parou de dizer o nome duas vezes**: ele *é* o título agora. O `h1` continua existindo (é ele que
+nomeia a página pra busca e pra leitor de tela) mas é lido, não visto; e o "RPG" — a parte que este
+projeto acrescenta ao nome da franquia — ganhou linha própria.
+
+**🔴 Correção: o logo estava quebrado no tema escuro desde 0.1.2.** O preto do arquivo está em **dois**
+lugares e só um tinha sido trocado:
+
+1. `fill="#000"` — a linha "jobless reincarnation". Essa estava certa.
+2. **O fim dos quatro degradês das letras grandes.** Um `<stop>` sem `stop-color` é **preto por padrão**
+   em SVG — então "Mus", "Te" e "u" iam de dourado a preto e sumiam no fundo escuro, que é o tema padrão
+   do site.
+
+Passou em tudo que é automático — arquivo válido, `200`, content-type certo, as duas variantes no HTML.
+**Só apareceu num print.** O gerador agora exige os dois padrões e falha explicando se o logo mudar de
+estrutura.
+
+`check:livro` passou a conferir que **toda arte referenciada por caminho existe em disco**: os 19 brasões,
+os ícones de categoria da loja, os dois logos, a paisagem e a textura. Caminho é texto, e nenhum tipo
+protege texto.
+
+---
+
+## 0.1.2 — "O Que a Criatura Faz" · 2026-09-03
+
+### 🐉 A ficha de monstro deixou de ser sete números soltos
+
+A criatura de `/encontros` era PV, CA, ataque, dano por turno, CD, quantidade e uma linha de texto livre.
+Isso basta pra dizer se um encontro é justo, e não basta pra **nada do que acontece na mesa**: o Mestre
+sabia que a Wyvern mergulha, e tinha que inventar na hora quanto a mordida dela tira.
+
+Agora a criatura tem **ações**. Cada uma com nome, custo em Ações, fórmula de dano (`4d8+5`, do jeito que
+se escreve numa ficha de monstro), alcance, se é em área, e se resolve **contra a CA** ou **pedindo teste
+de resistência** — mais uma anotação livre pra condição, veneno ou gatilho.
+
+**Criatura com ações é resolvida por rolagem de verdade.** Três Ações por rodada, gastas no melhor dano
+médio *por Ação* — o mesmo critério que o motor já usava pro personagem —, com 1 natural errando, 20
+natural rolando os dados de novo, área pegando todo mundo de pé, e resistência cortando o dano pela metade.
+
+**Criatura sem ações continua no orçamento fixo do Apêndice G.** Ele não foi aposentado: é ele que
+preserva a calibragem publicada da tabela e os números do playtest, e um bicho montado em trinta segundos
+antes da sessão continua sendo um bicho válido.
+
+As **seis criaturas prontas do Apêndice G** ganharam as ações delas, e o livro passou a imprimi-las:
+
+| Criatura | Turno de 3 Ações | Molde do patamar |
+| --- | --- | --- |
+| Sapo-Lodo Gigante | 3× Mordida Babosa (1d6) = ~10,5 | 10 |
+| Serpente-do-Pântano | 3× Picada Peçonhenta (1d8+2) = ~19,5 | 20 |
+| Aranha das Cavernas | 3× Presas (2d6) = ~21 | 20 |
+| Wyvern | 3× Mordida em Mergulho (2d8+3) = ~36 | 35 |
+| Ogro de Guerra | 3× Maça de Duas Mãos (4d8) = ~54 | 55 |
+| Superd Renegado | 3× Lança Demoníaca (5d8+4) = ~79,5 | 80 |
+
+As fórmulas foram escritas pra que o turno de três Ações entregue o Dano por Turno do patamar. **Um teste
+trava essa igualdade com 15% de folga** — então ligar as ações não invalidou nada do que já estava
+calibrado, e mexer numa fórmula acima avisa qual saiu da faixa.
+
+### 💡 O site sugere enquanto você digita o dano
+
+A simulação responde *depois do fato*: monte tudo, clique, espere 300 batalhas. Isso fecha um encontro e
+não ajuda a **escrever** um monstro. O conselho novo é a outra ponta — sem rolagem nenhuma, recalculado a
+cada tecla.
+
+E ele é concreto, porque é ancorado em duas coisas que o site já tem: o molde do Apêndice G e **as fichas
+de verdade do grupo selecionado**. Não *"está alto demais"*, e sim:
+
+> **Mata alguém num golpe** — Mordida tira 62 em média. Lyn (50 PV) cai num acerto só, sem chance de
+> reagir, sem cura no meio. Se a ideia era ameaçar e não executar, Mordida vira 7d10+3.
+
+Os avisos cobrem:
+
+- o **orçamento do turno** contra o molde do patamar e do papel;
+- **quem do grupo morre num golpe** — e, separado, quem *pode* morrer na rolagem alta, que é outra conversa;
+- a **chance de acerto** dela contra a CA real do grupo, nas duas pontas (erra demais / a CA não conta);
+- o dano de uma ação **em área** medido contra a reserva de PV do grupo inteiro;
+- a **CD fora do molde**, mas só quando alguma ação cobra teste.
+
+Cada aviso traz, quando cabe, uma **correção pronta com um botão** — a fórmula já escalada, o bônus de
+ataque já calculado. Nada muda sozinho: o Apêndice G é uma régua, e régua não decide.
+
+Sem grupo escolhido, os avisos que dependem do grupo **calam** em vez de inventar um personagem médio. Um
+número tirado do nada seria pior que silêncio.
+
+**16 testes novos** só do conselheiro, travando *quando* cada aviso aparece, que ele cita um número
+conferível, e que a correção que ele oferece resolve o que ele apontou. 89 no total.
+
+### 🎨 As dezenove árvores ganharam brasão, e o jogo ganhou logo
+
+Cada árvore declara `icon`, e **o arquivo se chama como o `id` dela** — então o mapeamento nome→arquivo
+deixou de existir como tabela. Quem desenha lê do mesmo campo: `/arvores` (no nó do mapa e no painel
+lateral), `/livro` (no cabeçalho de cada catálogo), a criação (no seletor de Árvore Inicial), a ficha (na
+Árvore Inicial e em cada grupo do Grimório) e `/encontros` (no cartão de cada personagem do grupo).
+
+As imagens chegaram tortas e foram endireitadas: uma era **cópia byte a byte** de outra, quatro tinham
+espaço ou acento no nome, e uma se chamava `.svg` **sendo PNG por dentro**. Todas viraram
+`public/arvores/<id da árvore>.<extensão>`.
+
+Elas vêm em fundos diferentes — traço preto sem fundo, fundo branco, fundo preto, alfa —, então todas
+passam pelo mesmo **medalhão**, com fundo claro fixo nos dois temas. É a única regra que faz o traço preto
+aparecer também no escuro, e ela mora num lugar só.
+
+O **logo** entrou na aba (favicon), na barra de navegação e no topo da landing. Como o letreiro é preto e
+os ornamentos são dourados, existe uma variante clara pro tema escuro — **gerada** do original por
+`scripts/gerar-logo-dark.mjs`, junto com o favicon quadrado, porque logo copiado à mão é a próxima coisa a
+divergir.
+
+`check:livro` passou a conferir que **o brasão de cada árvore existe mesmo em disco**: `icon` é texto, e
+nada no TypeScript impede que ele aponte pra um arquivo que não existe.
+
+---
+
+## 0.1.1 — "O Cenário Hipotético" · 2026-09-03
+
+### 🎲 `/encontros` — montar a criatura e testá-la contra o grupo antes da sessão
+
+O Apêndice G sempre teve o molde de criatura por patamar, e ele só existia como tabela impressa: o Mestre
+lia PV 150, CA 18, ~55 de dano e tinha que adivinhar o que isso faz contra **os cinco personagens dele**.
+A tabela é calibrada contra um grupo genérico; nenhuma mesa tem um grupo genérico.
+
+- Escolha um patamar e um papel (Lacaio, Padrão, Chefe) e a criatura nasce com os números do Apêndice G
+  preenchidos. Quando os números saem do molde, a tela diz que saíram e oferece recalibrar, em vez de impedir.
+- **O grupo vem das fichas de verdade**, as mesmas que o Mestre já importa dos JSONs dos jogadores.
+- O botão roda o combate 300 vezes e devolve um veredito: Trivial, Fácil, Equilibrado, Perigoso ou Letal.
+- **E a recomendação:** quando o encontro não cai em Equilibrado, o site procura por busca binária a escala
+  de PV e dano que o poria lá. Quando *nenhuma* escala resolve, ele diz isso — o problema é a composição.
+- A tela imprime, junto do veredito, a lista do que a simulação **não** sabe. O motor mede o piso.
+
+### 🔧 O motor de simulação virou código compartilhado
+
+Ele vivia inteiro dentro de `scripts/simular-combate.mts`. A tela que diz ao Mestre "este encontro é justo"
+tem que responder pelos **mesmos** números que calibram o livro. Foi pra `src/lib/combatSim.ts`, e a
+aleatoriedade passou a ser sempre injetada com semente: um veredito sem semente não se confere.
+
+### 📐 Apêndice G deixou de ser texto digitado à mão
+
+As duas tabelas do Bestiário viraram `src/data/bestiary.ts`, e o livro as imprime dali. A coluna "Bônus de
+Resistência" parou de ser digitada — o livro a define como metade do Bônus de Ataque, então ela é derivada,
+e um teste trava que a derivação reproduz os seis valores publicados.
+
+---
+
 ## 0.1.0 — "Duas Portas" · 2026-09-03
 
 ### ⚔️ Balanceamento

@@ -4,6 +4,7 @@ import { UTILITY_PA_COST } from "./shared";
 export const BARDO_TREE: Tree = {
   id: "bardo-e-interacao",
   name: "Bardo e Interação",
+  icon: "/arvores/bardo-e-interacao.png",
   category: "utilidade",
   subgroup: "Bardo",
   mechanic: {

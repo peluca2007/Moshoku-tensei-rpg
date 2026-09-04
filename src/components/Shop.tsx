@@ -7,7 +7,16 @@ import type { LucideIcon } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getGuildRank, isGuildRankEstimated } from "@/store/selectors";
 import { GUILD_RANK_ORDER, GuildRank, meetsGuildRank } from "@/lib/types";
-import { SHOP_CATEGORY_LABELS, SHOP_CATEGORY_ORDER, SHOP_ITEMS, ShopCategory, ShopItem, toInventoryItem } from "@/data/shopItems";
+import {
+  SHOP_CATEGORY_ICONS,
+  SHOP_CATEGORY_LABELS,
+  SHOP_CATEGORY_ORDER,
+  SHOP_ITEMS,
+  ShopCategory,
+  ShopItem,
+  toInventoryItem,
+} from "@/data/shopItems";
+import Crest from "./Crest";
 
 const CATEGORY_ICONS: Record<ShopCategory, LucideIcon> = {
   arma: Swords,
@@ -47,6 +56,34 @@ export default function Shop() {
       ),
     [categoryFilter, rankFilter]
   );
+
+  /**
+   * Os itens em grupos de categoria, cada um já sabendo qual descrição é
+   * BOILERPLATE dele.
+   *
+   * "Boilerplate" aqui tem definição operacional, não uma lista fixa: é uma
+   * descrição que dois ou mais itens do grupo repetem palavra por palavra. Se
+   * dois itens dizem a mesma coisa, aquilo não descreve nenhum dos dois — é
+   * regra da categoria, e o lugar dela é no cabeçalho, uma vez. A regra é
+   * genérica de propósito: ela pega as doze armas mundanas de hoje e pega
+   * sozinha o próximo bloco de itens que nascer do mesmo molde.
+   */
+  const grupos = useMemo(() => {
+    return SHOP_CATEGORY_ORDER.map((categoria) => {
+      const itens = items.filter((i) => i.category === categoria);
+      const contagem = new Map<string, number>();
+      for (const i of itens) contagem.set(i.description, (contagem.get(i.description) ?? 0) + 1);
+      let notaComum: string | null = null;
+      let maior = 1;
+      for (const [texto, n] of contagem) {
+        if (n > maior) {
+          maior = n;
+          notaComum = texto;
+        }
+      }
+      return { categoria, itens, notaComum };
+    }).filter((g) => g.itens.length > 0);
+  }, [items]);
 
   function handleBuy(item: ShopItem) {
     const ok = useCharacterStore.getState().buyItem(toInventoryItem(item), item.price, item.guildRankRequired);
@@ -152,64 +189,99 @@ export default function Shop() {
         </p>
       )}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((item) => {
-          const rankOk = meetsGuildRank(guildRank, item.guildRankRequired);
-          const goldOk = character.gold >= item.price;
-          const canBuy = rankOk && goldOk;
-          const justBought = boughtId === item.id;
-          const Icon = CATEGORY_ICONS[item.category];
-          return (
-            <div
-              key={item.id}
-              className={`flex flex-col rounded-2xl border p-4 shadow-sm transition-colors ${
-                justBought
-                  ? "border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/30"
-                  : "border-parchment-300 bg-parchment-50 dark:border-parchment-800 dark:bg-parchment-900/60"
-              }`}
-            >
-              <div className="mb-1 flex items-start justify-between gap-2">
-                <h2 className="flex items-center gap-1.5 font-bold text-parchment-900 dark:text-parchment-50">
-                  <Icon className="h-4 w-4 shrink-0 text-wine-500" /> {item.name}
-                </h2>
-                <span className="shrink-0 rounded-full bg-gold-500/10 px-2 py-0.5 text-xs font-semibold text-gold-700 dark:text-gold-300">
-                  {item.price} PO
+      {grupos.map(({ categoria, itens, notaComum }) => {
+        const Icon = CATEGORY_ICONS[categoria];
+        const arte = SHOP_CATEGORY_ICONS[categoria];
+        return (
+          <section key={categoria}>
+            <div className="mb-3 flex items-center gap-3 border-b border-parchment-300 pb-2 dark:border-parchment-800">
+              {arte ? (
+                <Crest src={arte} size={44} />
+              ) : (
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-parchment-100 text-wine-500 ring-1 ring-parchment-300 dark:ring-parchment-700">
+                  <Icon className="h-5 w-5" />
                 </span>
-              </div>
-              <p className="mb-1 flex flex-wrap items-center gap-1.5 text-xs">
-                <span className="rounded-full bg-wine-500/10 px-2 py-0.5 font-semibold text-wine-600 dark:text-wine-300">
-                  Rank {item.guildRankRequired} mínimo
-                </span>
-                {(item.baseDie || item.acBonus) && (
-                  <span className="font-semibold text-wine-600 dark:text-wine-300">
-                    {item.baseDie ? `Dado ${item.baseDie}` : `+${item.acBonus} CA`}
+              )}
+              <div className="min-w-0">
+                <h2 className="font-display text-lg font-bold text-parchment-900 dark:text-parchment-50">
+                  {SHOP_CATEGORY_LABELS[categoria]}
+                  <span className="ml-2 text-xs font-normal text-parchment-600 dark:text-parchment-400">
+                    {itens.length} {itens.length === 1 ? "item" : "itens"}
                   </span>
+                </h2>
+                {notaComum && (
+                  <p className="text-xs text-parchment-600 dark:text-parchment-400">{notaComum}</p>
                 )}
-              </p>
-              <p className="mb-3 flex-1 text-xs text-parchment-600 dark:text-parchment-400">{item.description}</p>
-              <button
-                type="button"
-                onClick={() => handleBuy(item)}
-                disabled={!canBuy}
-                title={!rankOk ? `Precisa de Rank ${item.guildRankRequired} na Guilda` : !goldOk ? "PO insuficiente" : undefined}
-                className="flex items-center justify-center gap-1.5 rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:bg-parchment-300 disabled:text-parchment-600 dark:disabled:bg-parchment-800 dark:disabled:text-parchment-600"
-              >
-                {justBought ? (
-                  <>
-                    <Check className="h-4 w-4" /> Comprado!
-                  </>
-                ) : !rankOk ? (
-                  <>
-                    <Lock className="h-3.5 w-3.5" /> Rank {item.guildRankRequired}
-                  </>
-                ) : (
-                  "Comprar"
-                )}
-              </button>
+              </div>
             </div>
-          );
-        })}
-      </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {itens.map((item) => {
+                const rankOk = meetsGuildRank(guildRank, item.guildRankRequired);
+                const goldOk = character.gold >= item.price;
+                const canBuy = rankOk && goldOk;
+                const justBought = boughtId === item.id;
+                // A descrição que virou nota do grupo não se repete no card: ela
+                // já está escrita a poucos pixels dali, no cabeçalho.
+                const descricaoPropria = item.description === notaComum ? null : item.description;
+                return (
+                  <div
+                    key={item.id}
+                    className={`flex flex-col rounded-2xl border p-4 shadow-sm transition-colors ${
+                      justBought
+                        ? "border-emerald-400 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-950/30"
+                        : "border-parchment-300 bg-parchment-50/90 dark:border-parchment-800 dark:bg-parchment-900/70"
+                    }`}
+                  >
+                    <div className="mb-1 flex items-start justify-between gap-2">
+                      <h3 className="flex items-center gap-1.5 font-bold text-parchment-900 dark:text-parchment-50">
+                        <Icon className="h-4 w-4 shrink-0 text-wine-500" /> {item.name}
+                      </h3>
+                      <span className="shrink-0 rounded-full bg-gold-500/10 px-2 py-0.5 text-xs font-semibold text-gold-700 dark:text-gold-300">
+                        {item.price} PO
+                      </span>
+                    </div>
+                    <p className="mb-1 flex flex-wrap items-center gap-1.5 text-xs">
+                      <span className="rounded-full bg-wine-500/10 px-2 py-0.5 font-semibold text-wine-600 dark:text-wine-300">
+                        Rank {item.guildRankRequired} mínimo
+                      </span>
+                      {(item.baseDie || item.acBonus) && (
+                        <span className="font-semibold text-wine-600 dark:text-wine-300">
+                          {item.baseDie ? `Dado ${item.baseDie}` : `+${item.acBonus} CA`}
+                        </span>
+                      )}
+                    </p>
+                    {descricaoPropria && (
+                      <p className="mb-3 flex-1 text-xs text-parchment-600 dark:text-parchment-400">
+                        {descricaoPropria}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleBuy(item)}
+                      disabled={!canBuy}
+                      title={!rankOk ? `Precisa de Rank ${item.guildRankRequired} na Guilda` : !goldOk ? "PO insuficiente" : undefined}
+                      className={`flex items-center justify-center gap-1.5 rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:bg-parchment-300 disabled:text-parchment-600 dark:disabled:bg-parchment-800 dark:disabled:text-parchment-600 ${descricaoPropria ? "" : "mt-auto"}`}
+                    >
+                      {justBought ? (
+                        <>
+                          <Check className="h-4 w-4" /> Comprado!
+                        </>
+                      ) : !rankOk ? (
+                        <>
+                          <Lock className="h-3.5 w-3.5" /> Rank {item.guildRankRequired}
+                        </>
+                      ) : (
+                        "Comprar"
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }

@@ -7,58 +7,35 @@
  * motor de verdade (`selectors.ts`, os mesmos que a ficha do site usa), e faz
  * elas se baterem com dados rolados.
  *
- * O que ele NÃO é: um motor de regras completo. As simplificações estão
- * declaradas em SIMPLIFICACOES, no fim do arquivo, e toda leitura do resultado
- * tem que passar por elas.
+ * O motor de combate em si vive em `src/lib/combatSim.ts` desde 2026-09-03,
+ * compartilhado com a tela /encontros: a tela que diz ao Mestre "este encontro
+ * é justo" tem que responder pelos mesmos números que calibram o livro. Este
+ * arquivo ficou só com o que é dele — as dez builds, os confrontos e o
+ * relatório.
+ *
+ * O que ele NÃO é: um motor de regras completo. As simplificações estão em
+ * SIMPLIFICACOES (importado do motor) e toda leitura do resultado tem que
+ * passar por elas.
  */
-import { TREES, getTreeById } from "../src/data/trees/index";
+import { getTreeById } from "../src/data/trees/index";
+import { getPaSpent } from "../src/store/selectors";
+import { AttributeKey, CharacterData, RankName, RANKS } from "../src/lib/types";
 import {
-  getArmorClass,
-  getAttackBonus,
-  getMaxHp,
-  getMaxMp,
-  getPaSpent,
-  getPtPool,
-} from "../src/store/selectors";
-import {
-  AbilityDef,
-  attributeKeyFromLabel,
-  AttributeKey,
-  CharacterData,
-  RANK_BONUS,
-  RankName,
-  RANKS,
-} from "../src/lib/types";
+  Alvo,
+  EstadoPersonagem,
+  FichaCombate,
+  SIMPLIFICACOES,
+  d20,
+  makeRng,
+  mediaDados,
+  montarFicha,
+  novoEstado,
+  tickChamas,
+  turnoPersonagem,
+} from "../src/lib/combatSim";
+import { MOLDES_CRIATURA, rodadasDoChefe } from "../src/data/bestiary";
 
-// ---------------------------------------------------------------------------
-// Dados
-// ---------------------------------------------------------------------------
-let seed = 20260903;
-function rng(): number {
-  seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-  return seed / 0x7fffffff;
-}
-const d = (faces: number) => Math.floor(rng() * faces) + 1;
-const d20 = () => d(20);
-
-/** Rola "NdM" repetidamente; ignora modificadores textuais. */
-function rolarDados(formula: string): number {
-  let total = 0;
-  for (const m of formula.matchAll(/(\d+)d(\d+)/g)) {
-    const n = Number(m[1]);
-    const faces = Number(m[2]);
-    for (let i = 0; i < n; i++) total += d(faces);
-  }
-  return total;
-}
-function mediaDados(formula: string): number {
-  let total = 0;
-  for (const m of formula.matchAll(/(\d+)d(\d+)/g)) {
-    total += (Number(m[1]) * (Number(m[2]) + 1)) / 2;
-  }
-  return total;
-}
-
+const rng = makeRng(20260903);
 const PA_ALVO = 12;
 
 // ---------------------------------------------------------------------------
@@ -106,306 +83,6 @@ function ficha(
     overrides: {},
     ...patch,
   };
-}
-
-/** Abre uma árvore até `ateRank` e compra as N primeiras magias/talentos de cada patamar. */
-function construir(
-  treeId: string,
-  ateRank: RankName,
-  comprasPorRank: number[]
-): Pick<CharacterData, "unlockedRanks" | "purchasedAbilities" | "startingTreeId"> {
-  const tree = getTreeById(treeId)!;
-  const limite = RANKS.indexOf(ateRank);
-  const unlockedRanks: CharacterData["unlockedRanks"] = [];
-  const purchasedAbilities: CharacterData["purchasedAbilities"] = [];
-
-  RANKS.slice(0, limite + 1).forEach((rank, i) => {
-    const rd = tree.ranks.find((r) => r.rank === rank);
-    if (!rd) return;
-    unlockedRanks.push({ treeId, rank });
-    const quantas = comprasPorRank[i] ?? 0;
-    // magias primeiro (é o que a simulação usa), depois talentos
-    const pool = [
-      ...rd.abilities.map((a) => ({ kind: "ability" as const, id: a.id })),
-      ...rd.talents.map((t) => ({ kind: "talent" as const, id: t.id })),
-    ];
-    for (const p of pool.slice(0, quantas)) {
-      purchasedAbilities.push({ treeId, rank, kind: p.kind, id: p.id });
-    }
-  });
-
-  return { unlockedRanks, purchasedAbilities, startingTreeId: treeId };
-}
-
-// ---------------------------------------------------------------------------
-// Combatente
-// ---------------------------------------------------------------------------
-interface Acao {
-  nome: string;
-  acoes: number;
-  pm: number;
-  pt: number;
-  dano: string;
-  dadosDeArma: number;
-  area: boolean;
-  ataque: boolean; // true = rola contra CA; false = teste de resistência
-  frio: boolean;
-  fogo: boolean;
-  aplicaMolhado: boolean;
-}
-
-interface Combatente {
-  nome: string;
-  build: string;
-  pvMax: number;
-  pv: number;
-  ca: number;
-  pmMax: number;
-  pm: number;
-  ptMax: number;
-  pt: number;
-  bc: number;
-  bcSemRank: number;
-  iniciativa: number;
-  acoes: Acao[];
-  ataqueBasico: Acao;
-  molhado: boolean;
-  emChamas: number; // dano por turno enquanto arder
-  vivo: boolean;
-  danoCausado: number;
-}
-
-function acoesDe(c: CharacterData): Acao[] {
-  const out: Acao[] = [];
-  for (const compra of c.purchasedAbilities) {
-    if (compra.kind !== "ability") continue;
-    const tree = getTreeById(compra.treeId);
-    const rd = tree?.ranks.find((r) => r.rank === compra.rank);
-    const a = rd?.abilities.find((x) => x.id === compra.id) as AbilityDef | undefined;
-    if (!a?.damage?.normal) continue;
-    const txt = (a.damage.normal + " " + a.effect).toLowerCase();
-    // `damage.normal` também guarda PV CURADOS (Cura) e PV Temporários
-    // (Escudos). Sem este filtro a simulação contava a Prontidão como 105 de
-    // dano por turno — o campo é o mesmo, o sinal é oposto.
-    if (/de pv|pv temporários|recupera|cura /.test(txt)) continue;
-    out.push({
-      nome: a.name,
-      acoes: a.reaction ? 1 : Math.max(1, a.actions.normal),
-      pm: a.pmCost ?? 0,
-      pt: a.ptCost ?? 0,
-      dano: a.damage.normal,
-      // "+1 Dado de Arma", "+2 Dados de Arma", "Dado de arma rolado quatro vezes":
-      // oito técnicas do livro multiplicam o dado da arma em vez de trazer dados
-      // próprios. Sem isto o Deus da Espada — que o livro chama de maior dano do
-      // jogo — aparecia em quarto lugar, porque metade das técnicas dele soma
-      // zero na conta.
-      dadosDeArma: (() => {
-        const m = a.damage.normal.match(/\+\s*(\d+)\s+Dados? de Arma/i);
-        if (m) return Number(m[1]);
-        const v = a.damage.normal.match(/rolado (duas|três|quatro|cinco) vezes/i);
-        if (v) return { duas: 2, três: 3, quatro: 4, cinco: 5 }[v[1].toLowerCase()] ?? 0;
-        return 0;
-      })(),
-      area: /esfera|cone|linha|área|todos/.test((a.range + " " + a.effect).toLowerCase()),
-      ataque: /ataque mágico|ataque à distância|se acertar/.test(txt),
-      frio: /frio|gelo/.test(txt),
-      fogo: /ígneo|chamas|fogo/.test(txt),
-      aplicaMolhado: /molhad/.test(txt),
-    });
-  }
-  return out;
-}
-
-function montar(c: CharacterData, build: string): Combatente {
-  // BC da árvore inicial
-  const tree = getTreeById(c.startingTreeId);
-  const attr = attributeKeyFromLabel(tree?.keyAttributeLabel) ?? "forca";
-  const bc = getAttackBonus(c, c.startingTreeId!, attr);
-  const maiorRank = c.unlockedRanks
-    .filter((u) => u.treeId === c.startingTreeId)
-    .reduce<RankName>((m, u) => (RANKS.indexOf(u.rank) > RANKS.indexOf(m) ? u.rank : m), "Principiante");
-
-  // Degraus de Dado de Arma: soma só dos patamares de árvores do CORPO.
-  const degraus = c.unlockedRanks.reduce((n, u) => {
-    const t = getTreeById(u.treeId);
-    if (t?.category !== "corpo") return n;
-    return n + (t.ranks.find((r) => r.rank === u.rank)?.weaponDieSteps ?? 0);
-  }, 0);
-  const LADDER = [4, 6, 8, 10, 12, 16, 20, 24];
-
-  const pv = getMaxHp(c);
-  return {
-    nome: c.name,
-    build,
-    pvMax: pv,
-    pv,
-    ca: getArmorClass(c),
-    pmMax: getMaxMp(c),
-    pm: getMaxMp(c),
-    ptMax: getPtPool(c),
-    pt: getPtPool(c),
-    bc,
-    bcSemRank: Math.max(...Object.values(c.attributeBase)),
-    iniciativa: c.attributeBase.agilidade,
-    acoes: acoesDe(c),
-    // Golpe comum. A Escada de Dados é EXCLUSIVA da Árvore do Corpo (Cap. 3):
-    // um mago de Água Avançado não escala dado nenhum — ele empunha uma arma
-    // simples (d6) e soma o atributo, sem Bônus de Rank, porque a técnica não
-    // veio de árvore nenhuma. A primeira versão deste script dava a escada a
-    // todo mundo e fazia a curandeira bater 35 por turno de espada.
-    ataqueBasico: {
-      nome: degraus > 0 ? "golpe comum" : "arma simples",
-      acoes: 1,
-      pm: 0,
-      pt: 0,
-      dano: `1d${LADDER[Math.min(LADDER.length - 1, 1 + degraus)]}`,
-      dadosDeArma: 0,
-      area: false,
-      ataque: true,
-      frio: false,
-      fogo: false,
-      aplicaMolhado: false,
-    },
-    molhado: false,
-    emChamas: 0,
-    vivo: true,
-    danoCausado: 0,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Combate
-// ---------------------------------------------------------------------------
-interface Alvo {
-  pv: number;
-  ca: number;
-  vivo: boolean;
-  molhado: boolean;
-  emChamas: number;
-  nome: string;
-}
-
-/** Melhor ação que cabe nas Ações e recursos restantes, por dano médio. */
-function escolherAcao(c: Combatente, acoesRestantes: number): Acao {
-  const viaveis = c.acoes.filter(
-    (a) => a.acoes <= acoesRestantes && a.pm <= c.pm && a.pt <= c.pt
-  );
-  if (viaveis.length === 0) return c.ataqueBasico;
-  return viaveis.reduce((melhor, a) =>
-    mediaDados(a.dano) / a.acoes > mediaDados(melhor.dano) / melhor.acoes ? a : melhor
-  );
-}
-
-function resolver(c: Combatente, a: Acao, alvo: Alvo): number {
-  // Quem não tem árvore do Corpo não soma Bônus de Rank num golpe de arma.
-  const bonus = a.nome === "arma simples" ? c.bcSemRank : c.bc;
-  let dano = 0;
-  if (a.ataque) {
-    const rolagem = d20();
-    if (rolagem === 1) return 0;
-    if (rolagem !== 20 && rolagem + bonus < alvo.ca) return 0;
-    dano = rolarDados(a.dano) + bonus + a.dadosDeArma * rolarDados(c.ataqueBasico.dano);
-    if (rolagem === 20) dano += rolarDados(a.dano);
-  } else {
-    // teste de resistência do alvo: metade se passar
-    const resistencia = d20() + Math.ceil(c.bc / 2);
-    dano = rolarDados(a.dano) + bonus + a.dadosDeArma * rolarDados(c.ataqueBasico.dano);
-    if (resistencia >= 8 + c.bc) dano = Math.floor(dano / 2);
-  }
-  // Água: frio dobra contra Molhado (Cap. 4, §5)
-  if (a.frio && alvo.molhado) dano *= 2;
-  if (a.aplicaMolhado) alvo.molhado = true;
-  // Fogo: Em Chamas cobra 1d6 no início de cada turno do alvo
-  if (a.fogo && !alvo.molhado) alvo.emChamas = 6;
-  if (a.fogo && alvo.molhado) alvo.molhado = false; // fogo evapora a água
-  return dano;
-}
-
-function turno(c: Combatente, inimigos: Alvo[]): void {
-  if (!c.vivo) return;
-  let acoes = 3;
-  let guard = 0;
-  while (acoes > 0 && guard++ < 10) {
-    const vivos = inimigos.filter((x) => x.vivo);
-    if (vivos.length === 0) return;
-    const a = escolherAcao(c, acoes);
-    if (a.acoes > acoes) break;
-    acoes -= a.acoes;
-    c.pm -= a.pm;
-    c.pt -= a.pt;
-    const alvos = a.area ? vivos : [vivos[0]];
-    for (const alvo of alvos) {
-      const dano = resolver(c, a, alvo);
-      alvo.pv -= dano;
-      c.danoCausado += dano;
-      if (alvo.pv <= 0) alvo.vivo = false;
-    }
-  }
-}
-
-function tickCondicoes(alvos: Alvo[]): void {
-  for (const a of alvos) {
-    if (!a.vivo || a.emChamas === 0) continue;
-    a.pv -= d(a.emChamas);
-    if (a.pv <= 0) a.vivo = false;
-  }
-}
-
-function comoAlvo(c: Combatente): Alvo {
-  return {
-    get pv() {
-      return c.pv;
-    },
-    set pv(v) {
-      c.pv = v;
-    },
-    ca: c.ca,
-    get vivo() {
-      return c.vivo;
-    },
-    set vivo(v) {
-      c.vivo = v;
-    },
-    get molhado() {
-      return c.molhado;
-    },
-    set molhado(v) {
-      c.molhado = v;
-    },
-    get emChamas() {
-      return c.emChamas;
-    },
-    set emChamas(v) {
-      c.emChamas = v;
-    },
-    nome: c.nome,
-  };
-}
-
-function batalha(timeA: Combatente[], timeB: Combatente[], maxRodadas = 20): "A" | "B" | "empate" {
-  const alvosA = timeA.map(comoAlvo);
-  const alvosB = timeB.map(comoAlvo);
-  const ordem = [...timeA.map((c) => ({ c, time: "A" as const })), ...timeB.map((c) => ({ c, time: "B" as const }))]
-    .map((x) => ({ ...x, ini: d20() + x.c.iniciativa }))
-    .sort((p, q) => q.ini - p.ini);
-
-  for (let r = 0; r < maxRodadas; r++) {
-    for (const { c, time } of ordem) {
-      if (!c.vivo) continue;
-      if (c.emChamas > 0) {
-        c.pv -= d(c.emChamas);
-        if (c.pv <= 0) {
-          c.vivo = false;
-          continue;
-        }
-      }
-      turno(c, time === "A" ? alvosB : alvosA);
-    }
-    tickCondicoes([]);
-    if (timeB.every((x) => !x.vivo)) return "A";
-    if (timeA.every((x) => !x.vivo)) return "B";
-  }
-  return "empate";
 }
 
 // ---------------------------------------------------------------------------
@@ -487,6 +164,31 @@ export const BUILDS = [
   build("Mara", "Escudos — protege, não mata", { vigor: 3, forca: 1 }, "cavalaria-e-escudos", "Avançado"),
 ];
 
+/** Ficha derivada uma vez por build; cada batalha recria só o estado mutável. */
+const FICHAS: FichaCombate[] = BUILDS.map(({ c, descricao }) => montarFicha(c, descricao));
+
+// ---------------------------------------------------------------------------
+// Confronto
+// ---------------------------------------------------------------------------
+function batalha(timeA: EstadoPersonagem[], timeB: EstadoPersonagem[], maxRodadas = 20): "A" | "B" | "empate" {
+  const ordem = [
+    ...timeA.map((e) => ({ e, time: "A" as const })),
+    ...timeB.map((e) => ({ e, time: "B" as const })),
+  ]
+    .map((x) => ({ ...x, ini: d20(rng) + x.e.ficha.iniciativa }))
+    .sort((p, q) => q.ini - p.ini);
+
+  for (let r = 0; r < maxRodadas; r++) {
+    for (const { e, time } of ordem) {
+      if (!e.vivo || !tickChamas(e, rng)) continue;
+      turnoPersonagem(e, time === "A" ? timeB : timeA, rng);
+    }
+    if (timeB.every((x) => !x.vivo)) return "A";
+    if (timeA.every((x) => !x.vivo)) return "B";
+  }
+  return "empate";
+}
+
 // ---------------------------------------------------------------------------
 // Relatório
 // ---------------------------------------------------------------------------
@@ -497,46 +199,43 @@ console.log(
   "FICHA".padEnd(8) + "BUILD".padEnd(46) + "PA".padStart(4) + "PV".padStart(6) + "CA".padStart(4) + "BC".padStart(4)
 );
 
-const combatentes: Combatente[] = [];
-for (const { c, descricao } of BUILDS) {
+BUILDS.forEach(({ c, descricao }, i) => {
   const pa = getPaSpent(c);
-  const comb = montar(c, descricao);
-  combatentes.push(comb);
+  const f = FICHAS[i];
   const alerta = pa === PA_ALVO ? "" : `  ⚠ ${pa} PA, não ${PA_ALVO}`;
   console.log(
     c.name.padEnd(8) +
       descricao.slice(0, 45).padEnd(46) +
       String(pa).padStart(4) +
-      String(comb.pvMax).padStart(6) +
-      String(comb.ca).padStart(4) +
-      String(comb.bc).padStart(4) +
+      String(f.pvMax).padStart(6) +
+      String(f.ca).padStart(4) +
+      String(f.bc).padStart(4) +
       alerta
   );
-}
+});
 
 console.log("\n" + "─".repeat(78));
 console.log("  DANO MÉDIO POR TURNO (3 Ações, melhor ação disponível)");
 console.log("─".repeat(78));
-for (const c of combatentes) {
-  const melhor = c.acoes.length
-    ? c.acoes.reduce((m, a) => (mediaDados(a.dano) / a.acoes > mediaDados(m.dano) / m.acoes ? a : m))
-    : c.ataqueBasico;
-  const bonus = melhor.nome === "arma simples" ? c.bcSemRank : c.bc;
+for (const f of FICHAS) {
+  const melhor = f.acoes.length
+    ? f.acoes.reduce((m, a) => (mediaDados(a.dano) / a.acoes > mediaDados(m.dano) / m.acoes ? a : m))
+    : f.ataqueBasico;
+  const bonus = melhor.nome === "arma simples" ? f.bcSemRank : f.bc;
   const porTurno = (mediaDados(melhor.dano) + bonus) * Math.floor(3 / melhor.acoes);
   console.log(
-    c.nome.padEnd(8) +
+    f.nome.padEnd(8) +
       melhor.nome.padEnd(24) +
       `${melhor.acoes} Ação/ões`.padEnd(12) +
       `média ${Math.round(porTurno)}/turno`
   );
 }
 
-
 // ---------------------------------------------------------------------------
 // 5 × 5 — mesmo orçamento, identidades diferentes
 // ---------------------------------------------------------------------------
-function novoTime(indices: number[]): Combatente[] {
-  return indices.map((i) => montar(BUILDS[i].c, BUILDS[i].descricao));
+function novoTime(indices: number[]): EstadoPersonagem[] {
+  return indices.map((i) => novoEstado(FICHAS[i]));
 }
 
 const TIME_A = [0, 1, 2, 3, 4]; // Elina, Borg, Kest, Dorn, Sera
@@ -556,9 +255,9 @@ for (let i = 0; i < TENTATIVAS; i++) {
   if (r === "A") vitoriasA++;
   else if (r === "B") vitoriasB++;
   else empates++;
-  for (const c of [...a, ...b]) {
-    danoTotal.set(c.nome, (danoTotal.get(c.nome) ?? 0) + c.danoCausado);
-    if (c.vivo) sobrevivencia.set(c.nome, (sobrevivencia.get(c.nome) ?? 0) + 1);
+  for (const e of [...a, ...b]) {
+    danoTotal.set(e.nome, (danoTotal.get(e.nome) ?? 0) + e.danoCausado);
+    if (e.vivo) sobrevivencia.set(e.nome, (sobrevivencia.get(e.nome) ?? 0) + 1);
   }
 }
 
@@ -587,20 +286,14 @@ for (const l of linhas) {
 // ---------------------------------------------------------------------------
 // Os cinco vencedores contra um chefe (Apêndice G)
 // ---------------------------------------------------------------------------
-interface Chefe {
-  nome: string;
-  pv: number;
-  ca: number;
-  ataque: number;
-  danoPorTurno: number;
-}
-
 /** Apêndice G, "Ajustando pra cima": chefe único = dobra o PV da linha, mantém o dano. */
-const CHEFES: Chefe[] = [
-  { nome: "3º — Ameaça (chefe)", pv: 90 * 2, ca: 16, ataque: 6, danoPorTurno: 35 },
-  { nome: "4º — Elite (chefe)", pv: 150 * 2, ca: 18, ataque: 8, danoPorTurno: 55 },
-  { nome: "5º — Terror (chefe)", pv: 220 * 2, ca: 20, ataque: 10, danoPorTurno: 80 },
-];
+const CHEFES = MOLDES_CRIATURA.filter((m) => m.patamar >= 3 && m.patamar <= 5).map((m) => ({
+  nome: `${m.patamar}º — ${m.titulo} (chefe)`,
+  pv: m.pv * 2,
+  ca: m.ca,
+  ataque: m.bonusAtaque,
+  danoPorTurno: m.danoPorTurno,
+}));
 
 const vencedor = vitoriasA >= vitoriasB ? TIME_A : TIME_B;
 const nomeVencedor = vitoriasA >= vitoriasB ? "Time A" : "Time B";
@@ -616,43 +309,52 @@ for (const chefe of CHEFES) {
   let somaMortes = 0;
   for (let i = 0; i < TENTATIVAS; i++) {
     const grupo = novoTime(vencedor);
-    const alvos = grupo.map(comoAlvo);
     let pvChefe = chefe.pv;
     let rodada = 0;
     for (; rodada < 20; rodada++) {
-      // grupo age
-      for (const c of grupo) {
-        if (!c.vivo) continue;
+      for (const e of grupo) {
+        if (!e.vivo) continue;
+        // Um Alvo NOVO por personagem, de propósito: é o comportamento que este
+        // relatório sempre teve, e mexer nele mudaria os números publicados no
+        // livro dentro de uma refatoração. O efeito colateral é que Molhado e
+        // Em Chamas não persistem de um personagem pro seguinte — ou seja, o
+        // combo do mago de Água nunca é contado contra o chefe, e a coluna
+        // subestima quem depende dele. Vale corrigir em uma mudança própria,
+        // que possa ser lida como recalibragem e não como limpeza.
         const alvoChefe: Alvo = {
-          get pv() { return pvChefe; },
-          set pv(v) { pvChefe = v; },
+          nome: chefe.nome,
+          get pv() {
+            return pvChefe;
+          },
+          set pv(v) {
+            pvChefe = v;
+          },
           ca: chefe.ca,
           vivo: true,
           molhado: false,
           emChamas: 0,
-          nome: chefe.nome,
+          danoCausado: 0,
         };
-        turno(c, [alvoChefe]);
+        turnoPersonagem(e, [alvoChefe], rng);
       }
       if (pvChefe <= 0) break;
       // Chefe age: uma rodada inteira a cada dois personagens do grupo
-      // (Apêndice G, "Ajustando pra cima"). Cinco personagens = duas rodadas.
-      const rodadasDoChefe = Math.max(1, Math.floor(grupo.length / 2));
-      let restante = chefe.danoPorTurno * rodadasDoChefe;
-      for (const alvo of alvos) {
+      // (Apêndice G, "Ajustando pra cima").
+      let restante = chefe.danoPorTurno * rodadasDoChefe(grupo.length);
+      for (const alvo of grupo) {
         if (restante <= 0) break;
         if (!alvo.vivo) continue;
-        if (d20() + chefe.ataque < alvo.ca) continue;
+        if (d20(rng) + chefe.ataque < alvo.ca) continue;
         const golpe = Math.min(restante, alvo.pv);
         alvo.pv -= golpe;
         restante -= golpe;
         if (alvo.pv <= 0) alvo.vivo = false;
       }
-      if (grupo.every((c) => !c.vivo)) break;
+      if (grupo.every((e) => !e.vivo)) break;
     }
     if (pvChefe <= 0) vitorias++;
     somaRodadas += rodada + 1;
-    somaMortes += grupo.filter((c) => !c.vivo).length;
+    somaMortes += grupo.filter((e) => !e.vivo).length;
   }
   console.log(
     chefe.nome.padEnd(24) +
@@ -666,15 +368,6 @@ for (const chefe of CHEFES) {
 console.log("\n" + "─".repeat(78));
 console.log("  SIMPLIFICAÇÕES — leia antes de concluir qualquer coisa");
 console.log("─".repeat(78));
-for (const s of [
-  "Condições modeladas: Molhado (frio dobra), Em Chamas (dano por turno). Todas",
-  "  as outras — Atolado, Desequilibrado, Quebrantado, Marcado, Soterrado — NÃO",
-  "  entram, e elas são a mecânica central de cinco árvores.",
-  "Cura, barreira, Reações e Salvações não são simuladas: a Sera e a Mara",
-  "  aparecem aqui só pelo dano que causam, que é o que elas menos fazem.",
-  "A IA escolhe a ação de maior dano médio por Ação, e nunca recua, foca fogo",
-  "  nem economiza recurso pro turno seguinte.",
-  "O chefe é o molde do Apêndice G com o PV dobrado, e bate igual todo turno.",
-]) console.log("· " + s);
+for (const s of SIMPLIFICACOES) console.log("· " + s);
 
 export {};

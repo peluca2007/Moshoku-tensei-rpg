@@ -83,10 +83,46 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+ * A folha de pergaminho por trás do site inteiro (2026-09-03).
+ *
+ * `texturas/pergaminho.avif` NÃO é uma textura repetível: é uma folha inteira,
+ * com vinheta escura nas quatro bordas. Repetir ela mostra a emenda. Por isso
+ * ela entra uma vez só, `cover` e `fixed` — a vinheta vira moldura da janela e
+ * o conteúdo rola por cima, como uma página apoiada numa mesa.
+ *
+ * A força é controlada por uma DEMÃO da cor de fundo por cima, não por
+ * `opacity`: um `::before` posicionado teria que disputar contexto de
+ * empilhamento com o `body`, e `background-blend-mode` não deixa dosar camada
+ * por camada. Duas paradas iguais de `linear-gradient` são um retângulo sólido
+ * translúcido, e a conta fica óbvia: 40% de demão = 60% de textura.
+ *
+ * Os dois números saíram de comparar as duas telas lado a lado: no claro a
+ * textura é o assunto (60%); no escuro ela só precisa quebrar o marrom chapado,
+ * e passar de 20% começa a lavar o fundo e a comer contraste do texto.
+ */
 body {
-  background: var(--background);
+  background:
+    linear-gradient(rgba(253, 246, 227, 0.4), rgba(253, 246, 227, 0.4)),
+    url("/texturas/pergaminho.avif") center / cover no-repeat fixed,
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+.dark body {
+  background:
+    linear-gradient(rgba(26, 18, 16, 0.8), rgba(26, 18, 16, 0.8)),
+    url("/texturas/pergaminho.avif") center / cover no-repeat fixed,
+    var(--background);
+}
+
+/* A textura é decoração de tela: no papel ela vira ruído e gasta tinta. */
+@media print {
+  body,
+  .dark body {
+    background: #fdf6e3 !important;
+  }
 }
 
 /* Força os itens do dropdown nativo a respeitarem o tema ativo. 

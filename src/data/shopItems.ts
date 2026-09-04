@@ -13,6 +13,23 @@ export const SHOP_CATEGORY_ORDER: ShopCategory[] = [
   "encantamento",
 ];
 
+/**
+ * A imagem de cada categoria, em `public/loja/` (2026-09-03).
+ *
+ * Mesma regra do `Tree.icon`: o arquivo se chama como a categoria, e o caminho
+ * inteiro mora no dado porque só a extensão varia. `aventura` ainda não tem
+ * arte — a ausência é declarada aqui em vez de virar um 404, e a tela cai no
+ * ícone de traço da lucide quando falta.
+ */
+export const SHOP_CATEGORY_ICONS: Partial<Record<ShopCategory, string>> = {
+  arma: "/loja/arma.png",
+  armadura: "/loja/armadura.png",
+  pocao: "/loja/pocao.png",
+  veneno: "/loja/veneno.jpg",
+  "ferramenta-magica": "/loja/ferramenta-magica.png",
+  encantamento: "/loja/encantamento.jpg",
+};
+
 export const SHOP_CATEGORY_LABELS: Record<ShopCategory, string> = {
   arma: "Armas",
   armadura: "Armaduras",
@@ -63,12 +80,24 @@ const WEAPON_PRICE_BY_DIE: Record<string, number> = {
 };
 
 /** Cap. 5, §2, "equipamento mundano comum": reaproveita o mesmo catálogo de armas do formulário de Inventário (`WEAPON_PRESETS`), pra loja e ficha nunca divergirem em nome/dado. */
+/**
+ * A frase que vale pras DOZE armas mundanas de uma vez.
+ *
+ * Ela sempre foi uma só no dado — mas a loja imprimia uma cópia dela em cada
+ * card, e doze cards lado a lado repetindo o mesmo parágrafo transformavam a
+ * página numa parede de texto onde as armas que TÊM algo próprio a dizer
+ * (Adaga de Prata, Lâmina Balanceada) afogavam no meio. Agora ela é exportada,
+ * e a tela sabe reconhecê-la como nota de grupo em vez de descrição de item.
+ */
+export const NOTA_ARMA_MUNDANA =
+  'Arma mundana, sem encantamento — ver Cap. 3, "O Dado de Arma", pra como ela escala com seu Rank.';
+
 const WEAPONS: ShopItem[] = WEAPON_PRESETS.map((preset) => ({
   id: `arma_${preset.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
   name: preset.name,
   category: "arma",
   type: "arma",
-  description: "Arma mundana, sem encantamento — ver Cap. 3, \"O Dado de Arma\", pra como ela escala com seu Rank.",
+  description: NOTA_ARMA_MUNDANA,
   price: WEAPON_PRICE_BY_DIE[preset.die] ?? 15,
   guildRankRequired: "F",
   baseDie: preset.die,

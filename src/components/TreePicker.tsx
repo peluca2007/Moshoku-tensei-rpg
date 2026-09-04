@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import { getTreeGroups, getTreeById, CATEGORY_LABELS } from "@/data/trees";
+import TreeCrest from "./TreeCrest";
 
 /** Grade de botões pra escolher a Árvore Inicial (Cap. 1, seção 4) — usada no wizard manual, na Roleta e na Entrevista. */
 export default function TreePicker({
@@ -28,12 +29,13 @@ export default function TreePicker({
                   key={t.id}
                   type="button"
                   onClick={() => onSelect(t.id)}
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 text-xs font-medium transition-colors ${
                     selectedTreeId === t.id
                       ? "bg-wine-600 text-white"
                       : "bg-parchment-50 text-parchment-600 ring-1 ring-parchment-300 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300 dark:ring-parchment-700"
                   }`}
                 >
+                  <TreeCrest tree={t} size={22} rounded="rounded-full" />
                   {t.name}
                 </button>
               ))}
@@ -42,8 +44,10 @@ export default function TreePicker({
         ))}
       </div>
       {selectedTree && (
-        <p className="mt-3 flex items-center gap-1 text-sm font-semibold text-wine-600 dark:text-wine-300">
-          <Check className="h-4 w-4" /> Árvore Inicial: {selectedTree.name}
+        <p className="mt-3 flex items-center gap-2 text-sm font-semibold text-wine-600 dark:text-wine-300">
+          <Check className="h-4 w-4" />
+          <TreeCrest tree={selectedTree} size={28} />
+          Árvore Inicial: {selectedTree.name}
         </p>
       )}
     </div>

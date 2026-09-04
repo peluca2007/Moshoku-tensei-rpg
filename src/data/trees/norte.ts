@@ -3,6 +3,7 @@ import { Tree } from "@/lib/types";
 export const NORTE_TREE: Tree = {
   id: "deus-do-norte",
   name: "Estilo Deus do Norte",
+  icon: "/arvores/deus-do-norte.png",
   category: "corpo",
   subgroup: "Espadachim",
   mechanic: {

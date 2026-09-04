@@ -4,6 +4,7 @@ import { MAGIC_ACTIONS, RANK_PA_COST } from "./shared";
 export const CURA_TREE: Tree = {
   id: "cura",
   name: "Magia de Cura",
+  icon: "/arvores/cura.png",
   category: "magia",
   subgroup: "Cura e Suporte",
   mechanic: {

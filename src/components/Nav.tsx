@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -23,6 +24,7 @@ const LINKS = [
   { href: "/arvores", label: "Árvores" },
   { href: "/personagens", label: "Personagens" },
   { href: "/iniciativa", label: "Iniciativa" },
+  { href: "/encontros", label: "Encontros" },
   { href: "/loja", label: "Loja" },
   { href: "/livro", label: "Livro de Regras" },
 ];
@@ -44,11 +46,38 @@ export default function Nav() {
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
 
-        <Link
-          href="/"
-          className="shrink-0 whitespace-nowrap font-black text-parchment-900 hover:text-wine-600 dark:text-parchment-50 dark:hover:text-wine-400"
-        >
-          Mushoku Tensei RPG
+        {/*
+          O logo entra como DUAS imagens, uma por tema, em vez de uma com filtro
+          CSS: o letreiro é preto e os ornamentos são dourados, então qualquer
+          `invert` que salvasse o letreiro no escuro estragaria o dourado junto.
+          `logo-dark.svg` é gerado de `logo.svg` — ver scripts/gerar-logo-dark.mjs.
+
+          O "RPG" continua sendo texto porque o logo é da franquia, não deste
+          projeto: o que ele nomeia é o mundo, e a palavra que diz o que este
+          site é fica do lado de fora da arte.
+        */}
+        <Link href="/" className="flex shrink-0 items-center gap-2">
+          <Image
+            src="/logo.svg"
+            alt="Mushoku Tensei"
+            width={112}
+            height={60}
+            priority
+            unoptimized
+            className="h-8 w-auto dark:hidden"
+          />
+          <Image
+            src="/logo-dark.svg"
+            alt="Mushoku Tensei"
+            width={112}
+            height={60}
+            priority
+            unoptimized
+            className="hidden h-8 w-auto dark:block"
+          />
+          <span className="whitespace-nowrap font-black tracking-wide text-parchment-900 hover:text-wine-600 dark:text-parchment-50 dark:hover:text-wine-400">
+            RPG
+          </span>
         </Link>
 
         <div className="hidden min-w-0 flex-1 items-center gap-4 overflow-x-auto sm:flex">

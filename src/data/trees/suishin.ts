@@ -3,6 +3,7 @@ import { Tree } from "@/lib/types";
 export const SUISHIN_TREE: Tree = {
   id: "deus-da-agua-corpo",
   name: "Estilo Deus da Água",
+  icon: "/arvores/deus-da-agua-corpo.svg",
   category: "corpo",
   subgroup: "Espadachim",
   mechanic: {
