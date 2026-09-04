@@ -12,8 +12,8 @@ são quatro leituras do mesmo `src/data/`.
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
-[![Versão do sistema](https://img.shields.io/badge/regras-0.1.0-8B1E3F)](PATCH_NOTES.md)
-[![Testes](https://img.shields.io/badge/testes-35%20passando-3FB950)](src/store/selectors.test.ts)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.1.10-8B1E3F)](PATCH_NOTES.md)
+[![Testes](https://img.shields.io/badge/testes-89%20passando-3FB950)](src/store/selectors.test.ts)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>
@@ -80,6 +80,10 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npx tsc --noEmit` | Checagem de tipos |
 | `npm run check:livro` | Confere a consistência entre os dados e o texto do livro |
 | `npm run check:redundancia` | Acha habilidades que repetem um patamar anterior |
+| `npm run check:arvores` | Audita as 19 árvores contra a régua do Apêndice C e acusa quem sai da faixa |
+| `npx tsx scripts/simular-combate.mts` | Playtest automatizado: builds de mesmo orçamento de PA se batendo |
+| `node scripts/logo-sem-fundo.mjs` | Regera `public/logo-real-alfa.png` a partir de `assets-fonte/` |
+| `node scripts/gerar-favicon.mjs` | Regera `src/app/icon.png` a partir de `public/logo-real-alfa.png` |
 
 > [!IMPORTANT]
 > Se o projeto estiver dentro do WSL, rode `build` e `check:livro` **de dentro do WSL**. Eles dependem de
@@ -101,6 +105,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `/iniciativa` | Tracker de iniciativa |
 | `/encontros` | Construtor de NPCs/monstros/chefes: ações próprias, conselho ao vivo contra o PV/CA do grupo, e simulação contra as fichas de verdade |
 | `/personagens` | Roster de fichas salvas |
+| `/ficha/importar` | Recebe uma ficha vinda de link e pergunta antes de gravar no navegador |
 
 ---
 

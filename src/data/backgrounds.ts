@@ -244,7 +244,7 @@ export const BACKGROUNDS: Background[] = [
     // A extensão de 2026-08-29 (Silenciosa gratuita até o Avançado, contra só o
     // Principiante de todo mundo) é o que torna a superioridade IMPOSSÍVEL de
     // discutir sem inflar número nenhum: é economia de ação, o recurso mais caro
-    // do sistema (Cap. 4 §4 tem um teto explícito pra ele), e cresce em valor
+    // do sistema (Cap. 4 §5 tem um teto explícito pra ele), e cresce em valor
     // conforme as magias ficam caras em Ações.
     bonuses: { attributes: { intelecto: 1, espirito: 1 } },
     startingGold: "2d4",
@@ -405,7 +405,7 @@ export const LAPLACE_TABLE: SubtableEntry[] = [
     bonuses: { attributes: { vigor: 1 } },
     traits: [
       "+1 em Vigor, permanente.",
-      "Uma vez por combate, ao chegar a 0 PV, você estabiliza automaticamente sem rolar o Fio da Vida (Cap. 4, §6) — a carne fecha antes de você decidir. Continua Inconsciente; só não morre.",
+      "Uma vez por combate, ao chegar a 0 PV, você estabiliza automaticamente sem rolar o Fio da Vida (Cap. 4, §7) — a carne fecha antes de você decidir. Continua Inconsciente; só não morre.",
       "Toda cicatriz sua reabre quando a linhagem é mencionada em voz alta perto de você. Não causa dano; causa perguntas.",
     ],
   },

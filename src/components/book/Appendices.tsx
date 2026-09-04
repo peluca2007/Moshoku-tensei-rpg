@@ -12,6 +12,7 @@ import {
   rotuloPatamar,
 } from "@/data/bestiary";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import Crest from "@/components/Crest";
 
 export default function Appendices() {
   return (
@@ -382,8 +383,10 @@ export default function Appendices() {
           {CRIATURAS_PRONTAS.map((c) => (
             <div
               key={c.id}
-              className="print-avoid-break rounded-lg border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40"
+              className="print-avoid-break surface flex gap-3 rounded-lg border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40"
             >
+              {c.icon && <Crest src={c.icon} size={72} rounded="rounded-lg" className="mt-0.5 hidden sm:flex" />}
+              <div className="min-w-0 flex-1">
               <p className="font-bold text-parchment-900 dark:text-parchment-50">
                 {c.nome}{" "}
                 <span className="text-xs font-normal text-parchment-600 dark:text-parchment-400">
@@ -406,6 +409,7 @@ export default function Appendices() {
                   </li>
                 ))}
               </ul>
+              </div>
             </div>
           ))}
         </div>

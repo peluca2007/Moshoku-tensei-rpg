@@ -6,6 +6,8 @@ import { useActiveCharacter } from "@/store/useCharacterStore";
 import { getPaSpent } from "@/store/selectors";
 import CombinedSpellsPanel from "./CombinedSpellsPanel";
 import DestinyBoard from "./DestinyBoard";
+import PageHeader from "@/components/ui/PageHeader";
+import CountingNumber from "@/components/ui/CountingNumber";
 
 export default function TreeBrowser() {
   const character = useActiveCharacter();
@@ -15,17 +17,24 @@ export default function TreeBrowser() {
 
   return (
     <div className="mx-auto max-w-6xl p-4 sm:p-6">
-      <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="flex items-center gap-2 text-2xl font-black text-parchment-900 dark:text-parchment-50">
-          <Sparkles className="h-6 w-6 text-wine-500" /> Árvores de Progressão
-        </h1>
-        <span
-          title="Só informativo — quem controla quanto PA você tem é o Mestre."
-          className="flex items-center gap-1 rounded-full bg-gold-500/10 px-3 py-1 text-sm font-medium text-gold-600 ring-1 ring-gold-500/30 dark:text-gold-400"
-        >
-          <Gem className="h-4 w-4" /> {paSpent} PA gastos
-        </span>
-      </header>
+      <PageHeader
+        icon={Sparkles}
+        title="Árvores de Progressão"
+        /* O mesmo céu que o mapa usa de fundo — o cabeçalho é a borda de cima
+           do tabuleiro, não um objeto separado dele. */
+        faixa="/texturas/ceu-arvores.png"
+        actions={
+          <span
+            title="Só informativo — quem controla quanto PA você tem é o Mestre."
+            className="flex items-center gap-1 rounded-full bg-gold-500/15 px-3 py-1 text-sm font-bold text-gold-700 ring-1 ring-gold-500/40 backdrop-blur-sm dark:text-gold-300"
+          >
+            <Gem className="h-4 w-4" /> <CountingNumber value={paSpent} /> PA gastos
+          </span>
+        }
+      >
+        Clique num ramo do círculo pra abrir Magia, Corpo ou Utilidade. Cada patamar comprado fica aceso no
+        mapa e entra na ficha.
+      </PageHeader>
 
       <DestinyBoard initialFocusTreeId={initialFocusTreeId} />
 

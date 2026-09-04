@@ -156,7 +156,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 3,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "O primeiro degrau de Soterrado da escola: o chão se fecha em torno de um alvo que já esteja Atolado, Preso ou Caído e o engole até o pescoço. O alvo fica Soterrado (Cap. 4, §5). Contra um alvo que não esteja em nenhuma dessas condições, a magia só o deixa Atolado.",
+          effect: "O primeiro degrau de Soterrado da escola: o chão se fecha em torno de um alvo que já esteja Atolado, Preso ou Caído e o engole até o pescoço. O alvo fica Soterrado (Cap. 4, §6). Contra um alvo que não esteja em nenhuma dessas condições, a magia só o deixa Atolado.",
           incantation:
             "Terra que já engoliu tanta coisa e nunca devolveu nenhuma delas, fecha-te agora em volta do pescoço dele, sobe devagar até o queixo, e não te apresses a devolver o que engoliste. Cárcere!",
         },
@@ -207,7 +207,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 6,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "Um bloco maciço encapsula o alvo, que fica Soterrado (Cap. 4, §5) e, além disso, surdo e incapaz de conjurar por qualquer via. O bloco tem 100 PV, e sair dele exige derrubá-lo — o teste de Força de Soterrado não serve aqui. Não exige que o alvo esteja Atolado antes: é a exceção do Avançado.",
+          effect: "Um bloco maciço encapsula o alvo, que fica Soterrado (Cap. 4, §6) e, além disso, surdo e incapaz de conjurar por qualquer via. O bloco tem 100 PV, e sair dele exige derrubá-lo — o teste de Força de Soterrado não serve aqui. Não exige que o alvo esteja Atolado antes: é a exceção do Avançado.",
           incantation:
             "Bloco que eu arranco do coração da montanha ainda quente do próprio peso, ainda pesado do que carregava:\nfecha-te em volta dele, apaga a luz, apaga o som, apaga o ar que ele respira sem merecer,\ncomo se ele nunca tivesse existido fora de ti.\nPrisão de Pedra!",
         },

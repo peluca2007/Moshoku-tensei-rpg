@@ -5,6 +5,398 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.11 — "O Grupo Inteiro num Link" · 2026-09-04
+
+### 🔗 Ficha por link
+
+Passar uma ficha adiante eram cinco passos: exportar JSON, achar o arquivo, mandar, o outro baixar,
+importar — uma vez por jogador, toda vez que alguém mudava alguma coisa. O montador de encontros depende
+de ter o grupo carregado, então o atrito estava exatamente no caminho da funcionalidade mais cara do site.
+
+A ficha agora cabe num link. Ela vai comprimida (gzip + base64url) no **fragmento** da URL, não na query:
+o fragmento nunca é enviado ao servidor, então a ficha de um personagem não aparece em log de acesso, em
+analytics nem no `Referer` de um link clicado depois. Como o site não tem backend de fichas — elas vivem
+no `localStorage` —, mandar o dado pro servidor seria dar a ele uma informação que ele não quer ter.
+
+`/ficha/importar` mostra de quem é a ficha e **espera o clique**. Ela não importa sozinha: o link veio de
+outra pessoa, e uma página que grava no navegador do visitante só por ele ter clicado é uma página que
+enche o roster de alguém com fichas que ele não pediu.
+
+### 🎭 A Entrevista deixou de repetir
+
+O banco tinha 14 perguntas de 4 respostas, e o sorteio pegava 10 perguntas — mas as respostas eram sempre
+as mesmas quatro. Quem fizesse a Via 3 duas vezes reconhecia as opções de cor e escolhia por memória, não
+por leitura.
+
+Agora são **20 perguntas com 6 respostas cada**, e o sorteio pega 10 perguntas e 4 das 6 respostas de cada
+uma. Nem a pergunta que mais pesaria pra sua build, nem a resposta, têm garantia de aparecer — a mesma
+promessa que a Roleta já fazia.
+
+O teste novo pegou um bug que nenhum print pegaria: doze das respostas que escrevi empurravam ids de
+**subtabela** (`odio`, `telepatia`, `veias-abertas`…) como se fossem antecedentes. A loteria sorteia entre
+`BACKGROUNDS`, então essas respostas teriam peso **zero em silêncio** — pareceriam funcionar e não fariam
+nada. Cada dom virou o antecedente-pai que abre a subtabela dele.
+
+### 📐 Auditoria automatizada das árvores
+
+`npm run check:arvores` mede o **teto do turno** de cada árvore em cada patamar — quanto ela causa gastando
+as 3 Ações da melhor forma que o patamar permite, com os golpes acumulados dos ranks anteriores e os de 4+
+Ações amortizados — e compara com a coluna do Apêndice C. O `check:livro` já verificava o piso; o teto é o
+lado perigoso, porque uma coluna pode prometer 40 e a árvore entregar 12 sem nada perceber.
+
+Duas decisões de honestidade do medidor:
+
+- O BC usa o atributo que o próprio Apêndice C declara ("progredindo de 4 até 8"). Ignorar isso foi o
+  primeiro erro do script e produziu ~50% de desvio em **toda** coluna alta — desvio uniforme em tudo
+  denuncia o medidor, não o dado.
+- Árvores do **Corpo** saem numa lista separada, marcadas como PISO e nunca como falha: o golpe base delas
+  é o Dado de Arma escalado por Maestria, que o script não modela. Inventar um número plausível ali daria
+  um relatório mais bonito e menos verdadeiro.
+
+Resultado: **5 células de Magia** pra conferir (Fogo 4º e 5º, Água 5º, Vento 5º, Terra 6º) e 6 pisos de
+Corpo pra olhar — lista curta no lugar de 400 magias.
+
+### 🎨 Estética
+
+- **O favicon virou a marca nova.** `src/app/icon.png` é gerado por `gerar-favicon.mjs`, que recorta pela
+  caixa real do letreiro (a arte ocupa 15% do quadro), reduz por média de área (traço fino some com
+  amostragem simples) e compõe sobre `parchment-950`. O `icon.svg` antigo foi removido: com os dois
+  presentes, cada navegador escolhe um e a aba mostra marcas diferentes por máquina.
+  *Ressalva declarada: em 16px o letreiro inteiro vira mancha. Legibilidade nesse tamanho pediria um
+  símbolo — o olho dourado do "O" de Mushoku é o candidato —, e isso é decisão de design.*
+- **Cabeçalho de rota legível no tema claro** — ver 0.1.10; o bug só apareceu quando forcei o tema claro
+  num print, porque o Chrome headless segue o tema do SO e todos os anteriores saíram no escuro.
+- **`public/logo.svg` saiu** de `public/` (foi pra `assets-fonte/`): com o favicon novo, ele não era mais
+  fonte de nada servido. `check:livro` passou a conferir a marca atual e a textura de fibra no lugar dele.
+
+### 📄 README
+
+Os badges diziam **regras 0.1.0** (estava em 0.1.10) e **35 testes** (são 96) — e é a primeira coisa que
+alguém vê ao abrir o repositório, que é justamente o link que o rodapé do site agora aponta. A tabela de
+scripts não citava metade dos comandos, e a de rotas não tinha `/ficha/importar`.
+
+---
+
+## 0.1.9 — "Sem Arestas" · 2026-09-04
+
+### 🌫 A faixa de convite estava mascarando a coisa errada
+
+0.1.8 mascarou a IMAGEM e depois pôs um véu radial por cima dela. A arte sumia nas pontas como devia — mas
+o véu era um retângulo opaco, e era **ele** que desenhava as duas linhas horizontais duras que faziam a
+seção parecer um bloco colado na página. Mascarar a arte não adianta enquanto a caixa de cor continuar lá.
+
+Agora arte e véu vivem dentro do **mesmo `<div>` mascarado**: os dois desaparecem juntos. No centro a faixa
+tem imagem e escurecimento suficientes pra segurar o texto; nas quatro bordas ela simplesmente deixa de
+existir, porque não há nada ali além do pergaminho da página. Os filetes dourados saíram junto — filete
+marca justamente a aresta que esta seção não quer ter.
+
+Para isso, `.faixa-arte` foi partida em duas: **`.arte-ambiente`** carrega só o tratamento de cor (sépia,
+dessaturação, brilho) e **`.faixa-arte`** acrescenta a máscara de baixo. As duas andavam juntas numa classe
+só, e isso obrigava toda arte de ambiente a morrer do mesmo jeito — o que serve para o cabeçalho de rota,
+onde a borda inferior é aresta de card real, e não serve para uma faixa que atravessa a página inteira.
+
+### 🌫 Correção do degradê da faixa (0.1.10, mesmo dia)
+
+A primeira tentativa usou uma ELIPSE, e as duas linhas duras continuaram lá. O motivo é aritmético: com
+raio vertical de 92% da altura, a borda de cima fica a 54% do raio, e a rampa da máscara só ia de 28% a
+80% — ou seja, ela chegava na borda ainda com METADE da opacidade. Uma máscara que não chega a zero dentro
+da caixa não dissolve nada; ela só desenha uma borda mais clara, que foi exatamente o que o print mostrou.
+
+Agora é `linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)`. Linear
+resolve porque `transparent 0%` e `transparent 100%` são, literalmente, as bordas — não há como sobrar
+opacidade nelas. E é a forma certa pra uma FAIXA: ela atravessa a página de lado a lado e desaparece só na
+vertical, em vez de virar uma mancha oval no meio da tela. O véu acompanha a mesma curva.
+
+### 🔦 Um bug que só o tema CLARO tinha
+
+Todos os prints desta série saíram no tema escuro — o Chrome headless segue o tema do SO, e o do meu lado
+está escuro. Forçando o claro, o cabeçalho de `/arvores` apareceu **ilegível**: título `parchment-900`
+sobre o campo estelar, que é quase preto. O filtro de `.faixa-arte` dessatura e ESCURECE, o que funciona
+enquanto a arte é clara; escurecer um preto não faz nada.
+
+O `PageHeader` ganhou um véu (`bg-parchment-50/72` no claro, `bg-parchment-950/45` no escuro). Filtro
+depende de quão clara a arte é; véu não — ele garante o piso de luminância que o texto precisa, qualquer
+que seja a imagem que entrar ali amanhã.
+
+### 🪧 A logo, de novo
+
+`h-48 sm:h-72` na landing, `h-14` na barra, `h-20` no rodapé — mais 30% sobre 0.1.8. E a faixa de convite
+ganhou respiro vertical (`py-24 sm:py-32`), que é o espaço de que o degradê precisa pra acontecer: máscara
+suave em caixa baixa vira máscara dura.
+
+---
+
+## 0.1.8 — "Seis Portas" · 2026-09-04
+
+### 🚪 A vitrine da landing dobrou
+
+Eram três destinos — árvores, loja, livro — e metade do site continuava invisível pra quem chega: a ficha,
+o roster e o montador de encontros (que é onde o Mestre passa o tempo dele) só apareciam como texto numa
+lista de bullets embaixo. Agora são **seis**, cada um com a arte da própria rota, na ordem de uso:
+descobrir o sistema → fazer a ficha → equipar → guardar o grupo → o lado do Mestre → a referência.
+
+`/criar` fica de fora de propósito: ela já é o botão grande do topo, e repetir o CTA principal dentro da
+vitrine enfraquece os dois.
+
+Os cards de "recursos" caíram de quatro para três junto: "Feito pra mesa de verdade" descrevia o tracker e
+o montador de encontros, que agora têm card próprio — dizer a mesma coisa duas vezes na mesma página só
+ensina o leitor a pular a segunda. Os três que sobraram são as afirmações que **nenhuma rota faz sozinha**.
+
+### 🔥 A faixa de convite deixou de ser um recorte colado
+
+Ela tinha duas camadas — a arte e um véu chapado — e o resultado era corte reto em cima e embaixo,
+laterais que simplesmente terminavam, e a tocha do grupo brilhando por trás da linha de texto. Agora são
+quatro, e nenhuma é enfeite: a arte tratada, uma **máscara radial** que faz a imagem morrer no pergaminho
+em vez de encostar numa borda, um **véu em degradê** (denso no meio onde o texto está, aberto nas pontas
+onde a arte pode aparecer) e os dois **filetes dourados**, a mesma aresta de luz que todo `.surface-raised`
+do site tem.
+
+### 🪧 A logo cresceu
+
+40% maior na landing (`h-40 sm:h-56`), na barra e no rodapé. Ela tinha ficado tímida quando perdeu o
+cartucho — sem a moldura, o mesmo `h-*` lê menor do que lia antes.
+
+### 🧹 Segunda faxina
+
+- **`public/logo-dark.svg` apagado.** Ele era a variante de tema escuro do logo antigo; desde que a marca
+  virou `logo-real-alfa.png`, nenhum componente o importava. O script que o gerava virou
+  `scripts/gerar-favicon.mjs` e agora produz só o que ainda tem uso: o favicon.
+- **`logo-real.png` (1,3 MB) saiu de `public/`** para `assets-fonte/`. Ele é matéria-prima do
+  `logo-sem-fundo.mjs`, não asset de site: em `public/` ele ficava servível em `/logo-real.png` — baixável
+  por qualquer visitante e concorrendo por engano com a versão boa.
+- O `check:livro` passou a conferir a marca NOVA (`/logo-real-alfa.png`) na lista de arte avulsa, em vez do
+  arquivo que não existe mais.
+
+> Nota de honestidade: a renomeação `gerar-logo-dark.mjs` → `gerar-favicon.mjs` foi aplicada também às
+> menções em notas de versão antigas. Reescrever registro histórico é um preço; a alternativa era deixar
+> notas antigas apontando pra um arquivo inexistente, o que é pior pra quem vai lê-las.
+
+### ⚠️ O favicon ainda é da marca antiga
+
+`src/app/icon.svg` continua sendo derivado de `public/logo.svg` — o letreiro velho. É o único lugar do site
+que ainda mostra a marca anterior, e ele sobrevive por uma razão técnica: favicon precisa ser vetorial pra
+ler num quadrado de 16px, e a marca nova é um PNG. Trocar exige rasterizar e recortar. Anotado no
+`PROGRESS.md` como pendência declarada, e não como esquecimento.
+
+---
+
+## 0.1.7 — "A Ordem do Livro" · 2026-09-04
+
+### 📖 O Capítulo 2 estava na ordem errada
+
+O capítulo rodava **1, 2, 6, 7, 3, 4, 5**: "Interromper uma Conjuração" e "Regras Gerais" ficavam entre a
+§2 e a §3. A §6 abre dizendo *"uma magia de rank Santo custa 4 Ações"* — número que só a §3 estabelece, e
+que o leitor ainda não tinha visto. O sumário listava 1→7 corretamente, então clicar em "3. Tempo de
+Conjuração" fazia o leitor **subir** na página. As duas seções foram para o fim, na ordem que o sumário
+sempre prometeu.
+
+### ⚔️ O Capítulo 4 numerava 8 seções; o sumário, 9
+
+"Reações e Ações Defensivas" — a tabela com Ataque de Oportunidade, Esquivar, Defender e Bloquear com
+Escudo, que é regra central de combate — estava enterrada como **subtítulo dentro da seção de Exaustão,
+Fome, Sede e Clima**, entre "Removendo Exaustão" e "Fome e Sede". Virou seção própria, logo depois da
+Economia de Ações, que é onde ela pertence. As seções seguintes foram renumeradas de 5 a 9, e **as 25
+remissões cruzadas do livro inteiro** ("Cap. 4, §7" e companhia, espalhadas por árvores, raças, loja,
+bestiário e antecedentes) foram corrigidas junto.
+
+### 🌳 O Capítulo 3 apresentava três pilares e dava seção a dois
+
+A abertura nomeia Magia, Corpo e Utilidade; o capítulo tinha "A Árvore do Corpo — Sistemas Compartilhados"
+e "A Árvore de Utilidade — Sistemas Compartilhados", e nada para a Magia. A razão era boa (os sistemas
+compartilhados da Magia são o Capítulo 2 inteiro), mas não estava escrita em lugar nenhum — quem rolava
+procurando concluía que faltava uma parte. Agora existe a seção-ponte, curta de propósito: ela aponta, não
+repete.
+
+### 🔒 O sumário virou teste
+
+Nada disso quebrava `tsc`, `eslint` ou `vitest`: eram âncoras válidas apontando para o lugar errado. Um
+livro é uma **ordem**, e ordem precisa de teste. O `npm run check:livro` agora falha se um item do sumário
+não tem âncora na página, ou se aparece na página numa ordem diferente da do sumário. Conferido invertendo
+duas seções de propósito: ele pega os dois casos.
+
+### 🪧 A logo perdeu o fundo
+
+Em 0.1.6 ela ia ao ar dentro de um cartucho escuro com `mix-blend-mode: screen` — o preto sumia contra o
+cartucho, mas o cartucho continuava sendo um retângulo em volta da marca, que é justamente o que uma logo
+não pode ter. A correção foi no **arquivo**: `scripts/logo-sem-fundo.mjs` decodifica o PNG com o `zlib` do
+Node (zero dependências), calcula `alfa = max(R,G,B)` e **des-premultiplica** a cor — sem esse segundo
+passo, cada pixel de borda carrega o preto que o compôs e a logo ganha um halo sujo sobre pergaminho.
+Resultado: 15,5% do quadro é letreiro, o resto é transparente de verdade.
+
+No tema claro ela passa por `brightness(.3) sepia(.5) saturate(2)`: o letreiro é creme e ouro, desenhado
+pra viver em fundo escuro, e sobre pergaminho ele simplesmente sumia — conferido em print, lado a lado.
+
+---
+
+## 0.1.6 — "O Letreiro e a Faxina" · 2026-09-04
+
+### 🪧 A logo nova, e o fim do "RPG" avulso
+
+A marca virou `/logo-real.png`, e isso muda estrutura, não só arte: **o "RPG" agora está dentro do
+letreiro**. Até 0.1.5 ele era um `<span>` de texto ao lado da imagem em três lugares (nav, landing,
+rodapé), porque o logo da franquia não trazia a palavra que este projeto acrescenta ao nome. Trazendo, o
+texto virou repetição — e saiu dos três.
+
+Ela chegou como PNG **sem canal alfa**, com fundo preto sólido (colortype 2, conferido no cabeçalho do
+arquivo). Solta sobre o pergaminho seria um retângulo preto. A saída não foi gerar um segundo arquivo por
+tema (que é o que `logo.svg` + `logo-dark.svg` precisavam ser): é `mix-blend-mode: screen` sobre um
+cartucho escuro. Screen com preto devolve o fundo intacto e com creme clareia, então o retângulo some e o
+letreiro fica — a mesma conta nos dois temas, sem editor de imagem.
+
+### 🖼 As quatro rotas que faltavam ganharam arte
+
+`/ficha` (a ficha na mesa, com vela, pena e tinteiro), `/personagens` (o salão da guilda), `/iniciativa`
+(uma escaramuça em floresta) e `/criar` (a mão desenhando um círculo mágico). Com elas, **todas as sete
+rotas** têm identidade visual própria, e a landing ganhou uma faixa de convite antes do rodapé — a página
+terminava numa fileira de links de texto e voltava a pedir a única coisa que quer de quem está lendo.
+
+O Superd Renegado do bestiário ganhou retrato próprio e parou de emprestar o da raça Superd.
+
+### 🎨 O mapa parou de parecer de outro projeto
+
+Os três pilares eram `sky-600`, `rose-600` e `emerald-600` — três primárias saturadas de biblioteca num
+site inteiro de pergaminho, vinho e ouro. O mapa é a página mais bonita do projeto e era a única que
+parecia ter vindo de outro. Viraram **teal fundo, vinho e oliva**: água, sangue e mata, o vocabulário do
+mundo em vez do do Tailwind. A distinção entre os ramos continua igual — o que mudou foi a temperatura.
+
+E o galho em que você investiu agora **acende**: linha em opacidade cheia com brilho da cor do Rank,
+contra os 25% do que nunca foi tocado. Antes, uma árvore com quatro patamares comprados e uma que você
+nunca abriu tinham o mesmo peso na tela.
+
+### ✨ Gastar passou a ter instante
+
+Comprar item e gastar PA eram instantâneos: o "150 PO" virava "85 PO" entre um quadro e outro, e nada
+dizia que você acabou de gastar 65. Agora a bolsa e o contador de PA **contam** até o novo valor (duração
+fixa de 420 ms, não passo fixo — ir de 0 a 6 e de 0 a 3.400 tem que levar o mesmo tempo), e o card
+comprado pulsa uma vez em dourado.
+
+### 🧹 Faxina no repositório
+
+- Um **git worktree inteiro do Claude foi commitado** em `.claude/worktrees/pdf-content-import/` — cópia
+  completa do projeto, `package-lock.json` incluído, 30 arquivos rastreados. Saiu do índice e do disco. Os
+  markdowns do livro que moravam lá (700 KB, a importação original do PDF) foram preservados **fora do
+  repositório**, em `../backup-livro-md/`.
+- Os **cinco SVGs do template do `create-next-app`** (`next`, `vercel`, `window`, `file`, `globe`) nunca
+  foram referenciados por uma linha de código. Removidos.
+- `tsconfig.tsbuildinfo` (artefato de build regenerável) saiu do disco; já estava no `.gitignore`.
+- O rodapé passou a citar o **repositório no GitHub** e o **Discord do autor** — o Discord como handle
+  copiável, não como link: um convite `discord.gg` expira e viraria 404 no rodapé de todas as páginas.
+
+### 🧪 Dois defeitos que o `tsc` aprovou e a tela reprovou
+
+1. **A página inteira quebrou ao abrir**, com erro em runtime: `CopyChip` recebia o ícone como
+   `icon: ComponentType`, e React recusa uma FUNÇÃO atravessando de Server pra Client Component ("Only
+   plain objects can be passed to Client Components"). `tsc` e `eslint` passaram os dois. Agora o ícone
+   entra como `children`, já construído.
+2. **A logo subiu por cima do selo "projeto de fã"** na landing: o componente era `inline-flex`, entrava
+   no fluxo de linha do container centralizado, e `mx-auto` não centraliza caixa inline nenhuma.
+
+---
+
+## 0.1.5 — "Três Níveis de Papel" · 2026-09-04
+
+### 🗂 O site tinha UM card, repetido 23 vezes
+
+A string `rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:…` estava copiada
+literalmente **23 vezes** no JSX, e o botão vinho outras 23. O site inteiro tinha **36 `shadow-sm` e
+exatamente 1 `group-hover`** em ~11 mil linhas: nada tinha relevo, nada reagia ao mouse, e uma tela cheia
+lia como uma lista de retângulos igualmente importantes.
+
+Agora existem **três níveis de superfície**, e o nível é gramática, não decoração:
+
+- `.surface-raised` **anuncia** — cabeçalho de rota, hero, o total de uma conta. Ganha o fio dourado na
+  aresta de cima (a luz da página vem de cima; é o fio, não a sombra, que faz um objeto parecer levantado).
+- `.surface` **contém** — o card comum.
+- `.surface-sunken` **espera** — campo, poço, estado vazio. Sombra pra dentro.
+
+As três compõem com as utilitárias de cor que já estavam no JSX: elas declaram profundidade e textura, não
+`background-color`. Por isso deu pra acrescentar a classe num card existente sem reescrever a linha dele.
+
+### 🧾 Cada rota tem uma cara
+
+`/ficha`, `/loja`, `/encontros` e `/iniciativa` eram estruturalmente a mesma página — h1 + ícone lilás +
+grade de cards. `PageHeader` resolve isso num componente só, com a arte de ambiente da rota atrás do
+título: a taverna da guilda na Loja, o covil de teia nos Encontros, o grimório à luz de vela no Livro, o
+céu estrelado nas Árvores. A arte é dessaturada, puxada pro âmbar da paleta e morre num degradê antes da
+borda de baixo — as artes chegaram em teal, azul e cinza, e nenhuma delas, crua, convive com texto por cima.
+
+Rota sem arte não fica esperando arte: o cabeçalho cai num degradê vinho→pergaminho e é o mesmo objeto.
+
+### 🌌 O mapa de progressão ganhou céu
+
+O tabuleiro era o objeto mais bonito do site rodando sobre um retângulo bege chapado. Agora ele tem fundo
+de campo estelar e vinheta radial fechando as quatro pontas. A mesma imagem serve aos dois temas com
+tratamentos opostos: no escuro ela aparece de verdade (passada pelo sépia, senão o azul frio briga com a
+paleta); no claro ela entra em `multiply` a 13% e deixa de ser foto pra virar mancha de tinta — uma carta
+celeste desenhada no pergaminho.
+
+O painel lateral, que era um parágrafo de instrução dentro de uma coluna de 340×700 vazia, virou a
+**legenda das três cores** do mapa — informação que faltava e conteúdo que faltava, no mesmo lugar.
+
+### 📖 O livro virou livro
+
+- **Capitular** na abertura de cinco capítulos (`initial-letter`, com `float` de reserva).
+- **Filigrana** sob cada título de capítulo. Ela chegou como PNG de traço preto sobre fundo branco, e é
+  convertida em ouro por um filtro SVG que joga a luminância no canal alfa — o fundo branco vira
+  transparente e o traço vira ouro, nos dois temas, sem editor de imagem.
+- **Filete duplo com losango** entre seções e no rodapé, em CSS puro.
+
+### 🦴 O bestiário tem cara
+
+As **6 criaturas prontas do Apêndice G** ganharam retrato (`CriaturaPronta.icon`, em `public/criaturas/<id>`),
+seguindo a mesma regra de árvore e raça — e `npm run check:livro` agora confere que cada uma existe em
+disco. O Superd Renegado é a exceção que confirma a regra: ele reaproveita o retrato da raça Superd,
+porque a criatura do Apêndice G é um membro renegado dessa mesma raça.
+
+### 🛒 A loja parou de parecer quebrada
+
+- **Rank colorido** por etiqueta (F→S, do frio ao quente, na mesma direção da escala de Rank das árvores).
+  Vinte e um cards de arma com a mesma faixa vinho não separavam uma adaga de 6 PO de um artefato de Rank S.
+- **Item bloqueado não ganha mais um botão cinza do tamanho do card.** A grade tinha 21 barras cinzas
+  mortas, e elas eram o elemento mais pesado da tela — a página lia como "nada aqui funciona". Bloqueio
+  virou uma linha de estado; botão é só pra quem pode agir. Quem tem Rank mas não tem PO vê quanto falta.
+- A sétima categoria (`aventura`) finalmente tem ícone: a arte estava no repositório desde 0.1.4, solta na
+  raiz de `public/` com espaço no nome, a um diretório de distância da tabela que a procurava.
+
+### 🕳 Estados vazios com voz
+
+"Nenhuma perícia ainda.", "Nenhuma magia ou talento comprado ainda.", "Nenhum item ainda." — três frases
+cinzas em sequência eram a primeira impressão de quem acabava de criar um personagem. Viraram poços
+(`.surface-sunken`, que já diz "aqui vai entrar coisa") com o ícone da seção grande e apagado, e a frase na
+voz do livro: *O grimório está em branco. A mochila está vazia. O covil está vazio.*
+
+### 🧭 Rodapé, barra fixa e o fim da página
+
+- **Nenhuma rota do site terminava** — elas paravam, e depois vinha pergaminho vazio até o fim do scroll.
+  Agora há rodapé com navegação, versão e o disclaimer de fã.
+- O disclaimer saiu da landing. Ele ocupava o espaço logo abaixo do CTA — o ponto mais valioso da página —
+  com um parágrafo jurídico em corpo 12. No lugar dele entrou a **vitrine**: as três coisas que o site tem
+  e que uma lista de bullets não vende (o mapa, a loja, o livro), cada uma com a arte do próprio destino.
+- A **barra de navegação é fixa**, translúcida com blur (a textura do body é `fixed`; uma barra opaca
+  cortaria a folha em duas). A rota atual ganhou filete dourado — antes o ativo era só negrito+vinho, a
+  mesma diferença que o hover dá, e os dois estados se confundiam.
+- Os números-herói da ficha (PV/PM/PT/PP/CA/Iniciativa) saíram de `text-lg` na sans de formulário pra
+  display, pretos e tabulares.
+
+### 🧪 Três coisas que só o print pegou
+
+Seguindo a regra de 0.1.4 ("o print é o teste que falta"), estas passaram por `tsc`, `eslint`, `vitest` e
+`check:livro` sem um arroto:
+
+1. **O ornamento saía com uma moldura dourada.** A região padrão de um filtro SVG é 10% maior que o
+   elemento, e lá fora o pixel é preto transparente — que, pela conta do filtro, vira alfa 1, ou seja, ouro
+   chapado na margem inteira.
+2. **A linha "19 sub-árvores" da vitrine era invisível.** Elemento posicionado pinta acima de irmão não
+   posicionado mesmo vindo antes no DOM, e a margem negativa enfiava o texto por baixo da imagem.
+3. **A textura de fibra estava forte demais**, exatamente o sintoma que o comentário dela no CSS descreve
+   como erro. Caiu de 0.22 pra 0.10 no escuro.
+
+E uma quarta que era **falso positivo**: o print de 390px mostrava a página estourando pra fora da tela. O
+Chrome no Windows trava a largura mínima de janela em ~500px — o print era um recorte de uma janela de 500,
+e o layout em 500 está correto. Vale anotar: `--window-size` abaixo disso mente.
+
+---
+
 ## 0.1.4 — "As Doze Raças Ganharam Cara" · 2026-09-03
 
 ### 🧝 Escolher raça deixou de ser uma lista suspensa
@@ -197,7 +589,7 @@ aparecer também no escuro, e ela mora num lugar só.
 
 O **logo** entrou na aba (favicon), na barra de navegação e no topo da landing. Como o letreiro é preto e
 os ornamentos são dourados, existe uma variante clara pro tema escuro — **gerada** do original por
-`scripts/gerar-logo-dark.mjs`, junto com o favicon quadrado, porque logo copiado à mão é a próxima coisa a
+`scripts/gerar-favicon.mjs`, junto com o favicon quadrado, porque logo copiado à mão é a próxima coisa a
 divergir.
 
 `check:livro` passou a conferir que **o brasão de cada árvore existe mesmo em disco**: `icon` é texto, e

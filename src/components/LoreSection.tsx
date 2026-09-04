@@ -5,7 +5,7 @@ import { useCharacterStore } from "@/store/useCharacterStore";
 
 export default function LoreSection({ lore }: { lore: string }) {
   return (
-    <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+    <section className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 dark:border-parchment-800 dark:bg-parchment-900/60">
       <h2 className="mb-1 flex items-center gap-2 text-lg font-bold text-parchment-900 dark:text-parchment-50">
         <ScrollText className="h-5 w-5 text-wine-500" /> Lore & Anotações
       </h2>

@@ -7,6 +7,7 @@ import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { getWeaponDamage } from "@/store/selectors";
 import { AttributeKey, InventoryItem } from "@/lib/types";
 import { WEAPON_PRESETS } from "@/lib/weaponDie";
+import EmptyState from "@/components/ui/EmptyState";
 
 const TYPE_LABELS: Record<InventoryItem["type"], string> = {
   arma: "Arma",
@@ -249,15 +250,19 @@ export default function InventorySection() {
   }
 
   return (
-    <section className="rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+    <section className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 dark:border-parchment-800 dark:bg-parchment-900/60">
       <h2 className="mb-3 flex items-center gap-2 text-lg font-bold text-parchment-900 dark:text-parchment-50">
         <Backpack className="h-5 w-5 text-wine-500" /> Inventário
       </h2>
 
       {inventory.length === 0 && (
-        <p className="mb-3 rounded-xl border border-dashed border-parchment-300 p-4 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
-          Nenhum item ainda.
-        </p>
+        <EmptyState
+          icon={Backpack}
+          className="mb-3"
+          hint="Compre na Loja da Guilda e o item cai aqui com o preço já debitado — ou escreva um à mão logo abaixo."
+        >
+          A mochila está vazia.
+        </EmptyState>
       )}
 
       <div className="mb-3 space-y-2">

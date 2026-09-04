@@ -48,34 +48,57 @@ mão duas vezes.
 
 ## Metas atuais
 
+- [x] **Composição do livro auditada (0.1.7)** — o Cap. 2 rodava 1,2,6,7,3,4,5; o Cap. 4 numerava 8 seções
+      contra as 9 do sumário, com "Reações e Ações Defensivas" enterrada dentro de Fome/Sede/Clima; e o
+      Cap. 3 apresentava três pilares dando seção a dois. Os três corrigidos, as 25 remissões cruzadas do
+      Cap. 4 renumeradas junto, e `check:livro` passou a falhar quando o sumário e a página divergem em
+      existência OU em ordem.
+- [x] **Faxina do repositório (0.1.6)** — um worktree do Claude commitado inteiro (30 arquivos, cópia do
+      projeto), os 5 SVGs do template do `create-next-app` e o `tsconfig.tsbuildinfo` saíram. Os markdowns
+      do livro que moravam no worktree estão preservados em `../backup-livro-md/`, fora do repositório.
 - [ ] **Deixar o site mais bonito** — em andamento, e agora com prints de verdade guiando (Chrome headless:
       `google-chrome --headless=new --screenshot`). Já saíram: brasões e logo (0.1.2), textura de
       pergaminho, paisagem da landing, enquadramento do mapa de árvores e agrupamento da loja (0.1.3).
       **O que falta, em ordem:**
-  - [ ] **Hierarquia de superfície** — existe UM estilo de card no site inteiro (`border-parchment-300` +
-        `bg-parchment-100/60`), usado pra tudo. Quando nada se destaca, a tela vira uma lista cinza de
-        coisas igualmente importantes. Precisa de três níveis (elevado / normal / afundado), e isso é uma
-        varredura por dezenas de componentes.
+  - [x] **Hierarquia de superfície** — FEITO em 0.1.5. Três níveis (`.surface-raised` / `.surface` /
+        `.surface-sunken`), num componente `ui/Surface` mais três classes de CSS que só declaram
+        profundidade e textura. Como elas não declaram cor nem borda, compõem com as utilitárias que já
+        estavam no JSX — foi isso que permitiu a varredura sem reescrever dezenas de linhas inteiras.
   - [ ] **`/personagens`** — o card já mostra o retrato da RAÇA (0.1.4); falta a foto do personagem
         (frente 2, abaixo) e uma barra de PV/PM visível de fora.
-  - [ ] **`/livro`** — capitular na abertura de capítulo e ornamento entre seções. O resto da página já é
-        a melhor do site.
-  - [ ] **Cabeçalho com identidade por rota** — `/ficha`, `/loja` e `/encontros` são estruturalmente
-        idênticas (h1 + ícone + grade). Uma loja de guilda e uma ficha deveriam *parecer* coisas diferentes.
-  - [ ] **Imagens que ainda faltam**: retratos das 6 criaturas prontas do Apêndice G, arte da categoria
-        `aventura` da loja (a única das 7 sem), fundo do mapa de árvores e ornamento de capítulo.
+  - [x] **`/livro`** — FEITO em 0.1.5: capitular em cinco capítulos, filigrana sob cada título de
+        capítulo (PNG preto-no-branco convertido em ouro por filtro SVG) e filete duplo entre seções.
+  - [x] **Cabeçalho com identidade por rota** — FEITO em 0.1.5. `ui/PageHeader` com a faixa de ambiente
+        de cada rota. Falta arte pra `/ficha`, `/iniciativa`, `/personagens` e `/criar` — elas caem no
+        degradê de reserva, que é o mesmo objeto sem foto.
+  - [x] **Imagens que faltavam** — TODAS entraram em 0.1.5: os 6 retratos de criatura
+        (`public/criaturas/<id>`, com o Superd Renegado reaproveitando o retrato da raça), a categoria
+        `aventura` da loja (a arte já estava no repo, solta na raiz de `public/`), o campo estelar de
+        fundo do mapa e a filigrana de capítulo. `check:livro` fecha com **zero avisos** pela primeira vez.
+  - [x] **Faixas de todas as rotas** — FEITO em 0.1.6. As sete rotas têm arte própria, mais a faixa de
+        convite no fim da landing. O que ainda vale trocar é RESOLUÇÃO: `faixas/loja.jpg` (600px) e
+        `faixas/livro.jpg` (525px) amaciam visivelmente em tela larga; as outras seis estão de 960 a 1900.
+- [x] **Favicon com a marca nova** — FEITO em 0.1.11. `src/app/icon.png` é gerado da marca por
+      `scripts/gerar-favicon.mjs`, que recorta pela caixa real do letreiro (a arte ocupa 15% do quadro),
+      reduz por média de área (traço fino some com amostragem simples) e compõe sobre parchment-950.
+      Ressalva declarada: em 16px o letreiro inteiro vira mancha. Legibilidade nesse tamanho pediria um
+      SÍMBOLO — o olho dourado do "O" de Mushoku é o candidato óbvio —, e isso é decisão de design.
 - [ ] **Foto de perfil e capa nas fichas** — documentado e ainda não implementado, a pedido. As decisões
       que precisam ser tomadas antes de escrever código estão no fim deste arquivo.
-- [ ] **Auditoria linha a linha das magias** — Água, Fogo, Terra, Vento, Deus da Espada, Desintoxicação e
+- [~] **Auditoria linha a linha das magias** — agora com ferramenta: `npm run check:arvores` mede o teto
+      do turno contra a régua do Apêndice C e devolve a lista curta (hoje 5 células de Magia e 6 pisos de
+      Corpo). A leitura manual continua valendo pro que o relatório acusa, não pras 400 magias.
+      Estado da leitura manual: — Água, Fogo, Terra, Vento, Deus da Espada, Desintoxicação e
       Cura conferidas por completo. Barreira, Invocação e Bardo tiveram os **cânticos** auditados e
       reescritos em 0.0.4, mas não os números. Faltam por inteiro: Suishin, Norte, Lutador, Escudos,
       Arquearia, Ladino, Tático, Vendaval, Punho de Fogo.
 - [ ] **Validar Distância Roubada na mesa** (Vendaval, novo em 0.0.4) — a mecânica soma alcance a partir do
       movimento, e nenhuma outra árvore faz isso. Vale medir se 9m de bônus de alcance no Principiante não
       transforma a árvore num arqueiro corpo a corpo cedo demais.
-- [ ] **Entrevista (Via 3), banco de perguntas** — os 2 modos já existem; falta só o conteúdo:
-  - [ ] Crescer de 14 para ~20 perguntas (`src/data/interview.ts`).
-  - [ ] 6 respostas possíveis por pergunta, com 4 sorteadas por vez — nunca sempre as mesmas.
+- [x] **Entrevista (Via 3), banco de perguntas** — FEITO em 0.1.11: 20 perguntas, 6 respostas cada, 10
+      perguntas e 4 respostas sorteadas por Entrevista. `interview.test.ts` cobre o que só aparece rodando
+      muitas vezes (todas as perguntas e respostas saem ao longo de 200 entrevistas; a ordem é preservada;
+      todo id empurrado existe em BACKGROUNDS).
 - [ ] **Confirmar o fix do PDF em produção** — só verificável no próximo deploy da Vercel.
 - [ ] PWA / modo offline — mesa física não pode depender de internet.
 - [ ] Acessibilidade: contraste, tamanho de fonte ajustável, teste real com leitor de tela.
@@ -214,7 +237,7 @@ regra que faz o traço preto de um SVG aparecer também no tema escuro. `check:l
 `icon` aponta pra um arquivo que existe, porque um caminho em texto é a coisa mais fácil de quebrar em
 silêncio.
 
-→ `src/components/TreeCrest.tsx` · `scripts/gerar-logo-dark.mjs` · `scripts/check-livro.mts`.
+→ `src/components/TreeCrest.tsx` · `scripts/gerar-favicon.mjs` · `scripts/check-livro.mts`.
 
 ### Fórmula sem teste é fórmula que já divergiu (2026-09-03)
 
@@ -343,7 +366,7 @@ npx tsc --noEmit      # tipos
 npm test              # testes das fórmulas (vitest)
 npm run lint          # eslint
 npm run check:livro   # confere dados × texto do livro, e se toda arte existe em disco (rodar dentro do WSL)
-node scripts/gerar-logo-dark.mjs   # regera logo-dark.svg e o favicon, depois de trocar o logo
+node scripts/gerar-favicon.mjs   # regera logo-dark.svg e o favicon, depois de trocar o logo
 ```
 
 **Mudou alguma coisa visual? Tire um print** — ver "O print é o teste que falta" acima:

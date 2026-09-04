@@ -123,7 +123,7 @@ export default function Chapter2() {
             coisa que se comporte como ação bônus, é erro de texto, não regra.
           </P>
           <P>
-            <b>E ela não conta no Teto de Ações</b> (Cap. 4, §4: 5 por turno, no máximo 2 externas). Ela não
+            <b>E ela não conta no Teto de Ações</b> (Cap. 4, §5: 5 por turno, no máximo 2 externas). Ela não
             gasta Ação nenhuma, então não há Ação pra contar — mas ela também não é uma das 2 externas, e um
             Imperador de magia continua limitado a uma por turno, do rank mais fraco que ele conhece.
           </P>
@@ -190,151 +190,6 @@ export default function Chapter2() {
             na carta, em vez de um atalho invisível.
           </P>
         </Aside>
-      </Section>
-
-      <Section>
-        <SectionTitle id="cap2-6">6. Interromper uma Conjuração</SectionTitle>
-        <P>
-          Uma magia de rank Santo custa 4 Ações; uma de Imperador, 6. Como o Capítulo 4 permite dividir o
-          cântico entre turnos, o conjurador passa rodadas inteiras <b>vulnerável e visível</b> antes de o
-          feitiço sair. Esta seção diz o que acontece nesse intervalo — e até esta versão o livro não dizia,
-          o que deixava a mesa inventando uma regra diferente por combate.
-        </P>
-
-        <SubTitle>Quando você está Conjurando</SubTitle>
-        <P>
-          Do instante em que você gasta a primeira Ação de uma magia até o instante em que ela sai, você está{" "}
-          <b>Conjurando</b>. Enquanto estiver:
-        </P>
-        <List
-          items={[
-            <span key="v"><b>Você é visível e audível.</b> Qualquer criatura que te veja ou te ouça sabe que uma magia está sendo preparada, e o Mestre deve dizer o rank aparente dela (pelo tamanho do cântico). Conjuração Silenciosa é a exceção: ninguém percebe.</span>,
-            <span key="a"><b>Você não pode fazer mais nada.</b> Mover-se metade do Deslocamento é permitido; atacar, usar item, conjurar outra magia ou usar Reação, não. Usar uma Reação encerra a conjuração na hora.</span>,
-            <span key="c"><b>Você não perde o progresso ao ser atacado</b> — perde ao <i>falhar no teste abaixo</i>. Sofrer dano não interrompe automaticamente.</span>,
-          ]}
-        />
-
-        <SubTitle>O Teste de Concentração</SubTitle>
-        <Warning title="A regra (a mesma do Cap. 4, §3)">
-          <P>
-            Sempre que você <b>sofrer dano</b> enquanto estiver Conjurando, faça um{" "}
-            <b>teste de resistência de Espírito</b> contra{" "}
-            <b>CD 10 + o Bônus de Rank de quem te acertou</b> — CD 11 contra um Principiante, CD 16 contra um
-            Imperador. Use <b>12</b> quando não houver um responsável claro (uma queda, um desabamento, uma
-            armadilha sem dono).
-          </P>
-          <List
-            items={[
-              <span key="s"><b>Sucesso:</b> o cântico segue. As Ações já gastas continuam valendo.</span>,
-              <span key="f"><b>Falha:</b> a conjuração é interrompida. Você perde <b>todas as Ações já gastas</b> e <b>metade do PM</b> da magia, arredondado pra cima. A magia não acontece.</span>,
-            ]}
-          />
-          <P>
-            <b>Quem te acertou decide, não o quanto ele rolou.</b> É a mesma lógica do Fio da Vida (Cap. 4,
-            §6). O Cap. 4, §3 explica por que a CD NÃO é metade do dano: o dano cresce sem teto neste livro
-            (uma criatura Imperador bate perto de 120 por turno) e o teste cresce até +11 num d20 — amarrada
-            ao dano, a regra tornaria magia de 4 a 6 Ações impossível de conjurar exatamente nos patamares em
-            que ela existe.
-          </P>
-        </Warning>
-        <P>
-          <b>Perda de Foco</b> (Cap. 4, §3) é a outra metade disto: você precisa gastar <b>ao menos 1 Ação
-            por turno</b> recitando. Um turno inteiro sem dedicar nenhuma Ação derruba o cântico sozinho,
-          sem ninguém precisar te acertar.
-        </P>
-        <Aside title="Quatro coisas que a CD já resolve, pra não virarem regra nova">
-          <List
-            items={[
-              "Dano em área conta como UM acerto, e a CD vem do Rank de quem conjurou a área — não um teste por criatura atingida junto.",
-              "Dano contínuo (Em Chamas, veneno, magma) força o teste no início do turno, quando cobra, com a CD do Rank de quem aplicou a condição.",
-              "Ficar Atordoado, Paralisado, Incapacitado, Surdo ou Soterrado interrompe SEM teste — o cântico exige voz e postura. Congelado e Atolado não interrompem: você continua falando.",
-              "Ser empurrado, derrubado ou movido contra a vontade interrompe sem teste se você sair do alcance ou perder a linha de visão do alvo declarado.",
-            ]}
-          />
-        </Aside>
-
-        <SubTitle>Interromper de Propósito</SubTitle>
-        <BookTable
-          headers={["Como", "Quem consegue", "O que acontece"]}
-          rows={[
-            [
-              "Bater forte",
-              "Qualquer um",
-              "Não existe manobra especial: cause dano e deixe a CD trabalhar. Contra um conjurador, concentrar o dano num golpe só vale mais que espalhá-lo em três.",
-            ],
-            [
-              "Vácuo Localizado (Vento, Principiante)",
-              "Magia de Vento",
-              "Remove o ar em volta da cabeça: o alvo não recita nada por 1 turno. Interrompe sem teste, e é a forma mais barata do livro.",
-            ],
-            [
-              "Selado (Barreira)",
-              "Magia de Barreira",
-              "Não interrompe — impede. Magia acima do rank da barreira gasta as Ações e o PM e falha sozinha, sem chegar a existir.",
-            ],
-            [
-              "Anulação (Barreira, Imperador)",
-              "Magia de Barreira",
-              "1 Reação e 4 PM anulam qualquer magia de rank Imperador ou inferior no instante em que é conjurada, sem teste. O conjurador perde PM e Ações.",
-            ],
-            [
-              "Corte de Braço (Deus da Espada, Principiante)",
-              "Estilo Deus da Espada",
-              "Não impede o cântico, mas derruba o foco: o dano do golpe entra normalmente no Teste de Concentração, e conjuradores têm PV baixo.",
-            ],
-          ]}
-        />
-        <Warning title="Ritual não se interrompe pela metade — se perde inteiro">
-          Uma magia marcada como <b>Ritual</b> não pode ser encurtada nem retomada. Se a conjuração for
-          interrompida em qualquer ponto, o ritual <b>falha por completo</b>: perde-se o PM inteiro (não a
-          metade) e todo o tempo investido. Em compensação, um ritual conduzido fora de combate, sem ninguém
-          por perto, nunca exige teste nenhum.
-        </Warning>
-      </Section>
-
-      <Section>
-        <SectionTitle id="cap2-7">7. Regras Gerais de Conjuração</SectionTitle>
-        <P>
-          As perguntas que toda mesa faz na primeira sessão, respondidas de uma vez. Nada aqui é novo em
-          espírito — é o que o livro já pressupunha, escrito onde dá pra achar.
-        </P>
-        <BookTable
-          headers={["Pergunta", "Resposta"]}
-          rows={[
-            [
-              "Preciso ver o alvo?",
-              "Sim, salvo quando a magia disser o contrário. Sem linha de visão você pode mirar um PONTO que enxergue (o centro de uma área), nunca uma criatura específica. Cobertura Total bloqueia; Cobertura parcial, não.",
-            ],
-            [
-              "Posso conjurar em corpo a corpo?",
-              "Pode, e sem penalidade — este livro não copia a regra de ataque de oportunidade por conjurar. O risco já está no Teste de Concentração: quem está adjacente é quem mais facilmente te faz falhar nele.",
-            ],
-            [
-              "Preciso das mãos livres?",
-              "Não. O cântico é a voz, e a Conjuração Silenciosa é a mana. Mãos importam só onde a magia disser (Toque, ou um Ritual que exija desenho).",
-            ],
-            [
-              "Posso segurar a magia pronta?",
-              "Só com Conjuração Silenciosa, e por no máximo 1 turno — é um dos três Bônus de Forma dela (§2). Fora isso, magia conjurada sai na hora.",
-            ],
-            [
-              "Quantas magias posso sustentar?",
-              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Barreira do Intermediário sustenta duas; Cura do Santo, duas). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
-            ],
-            [
-              "E se eu ficar sem PM no meio?",
-              "Você não pode começar uma magia que não consegue pagar. O PM é debitado quando a conjuração COMEÇA, não quando termina — é por isso que ser interrompido devolve só metade.",
-            ],
-            [
-              "Falha crítica (1 natural) em magia?",
-              "A magia falha e o PM se perde. Não existe tabela de acidente mágico neste livro — a Maestria de Intermediário da Água é a única exceção, e ela existe justamente pra dizer que falhar em silêncio é um privilégio que se compra.",
-            ],
-            [
-              "Duas magias iguais no mesmo alvo?",
-              "O efeito não empilha: vale o maior, e a duração é reiniciada. Isso vale para condições, PV temporários e barreiras.",
-            ],
-          ]}
-        />
       </Section>
 
       <Section>
@@ -478,6 +333,150 @@ export default function Chapter2() {
           </a>
           .
         </P>
+      </Section>
+      <Section>
+        <SectionTitle id="cap2-6">6. Interromper uma Conjuração</SectionTitle>
+        <P>
+          Uma magia de rank Santo custa 4 Ações; uma de Imperador, 6. Como o Capítulo 4 permite dividir o
+          cântico entre turnos, o conjurador passa rodadas inteiras <b>vulnerável e visível</b> antes de o
+          feitiço sair. Esta seção diz o que acontece nesse intervalo — e até esta versão o livro não dizia,
+          o que deixava a mesa inventando uma regra diferente por combate.
+        </P>
+
+        <SubTitle>Quando você está Conjurando</SubTitle>
+        <P>
+          Do instante em que você gasta a primeira Ação de uma magia até o instante em que ela sai, você está{" "}
+          <b>Conjurando</b>. Enquanto estiver:
+        </P>
+        <List
+          items={[
+            <span key="v"><b>Você é visível e audível.</b> Qualquer criatura que te veja ou te ouça sabe que uma magia está sendo preparada, e o Mestre deve dizer o rank aparente dela (pelo tamanho do cântico). Conjuração Silenciosa é a exceção: ninguém percebe.</span>,
+            <span key="a"><b>Você não pode fazer mais nada.</b> Mover-se metade do Deslocamento é permitido; atacar, usar item, conjurar outra magia ou usar Reação, não. Usar uma Reação encerra a conjuração na hora.</span>,
+            <span key="c"><b>Você não perde o progresso ao ser atacado</b> — perde ao <i>falhar no teste abaixo</i>. Sofrer dano não interrompe automaticamente.</span>,
+          ]}
+        />
+
+        <SubTitle>O Teste de Concentração</SubTitle>
+        <Warning title="A regra (a mesma do Cap. 4, §3)">
+          <P>
+            Sempre que você <b>sofrer dano</b> enquanto estiver Conjurando, faça um{" "}
+            <b>teste de resistência de Espírito</b> contra{" "}
+            <b>CD 10 + o Bônus de Rank de quem te acertou</b> — CD 11 contra um Principiante, CD 16 contra um
+            Imperador. Use <b>12</b> quando não houver um responsável claro (uma queda, um desabamento, uma
+            armadilha sem dono).
+          </P>
+          <List
+            items={[
+              <span key="s"><b>Sucesso:</b> o cântico segue. As Ações já gastas continuam valendo.</span>,
+              <span key="f"><b>Falha:</b> a conjuração é interrompida. Você perde <b>todas as Ações já gastas</b> e <b>metade do PM</b> da magia, arredondado pra cima. A magia não acontece.</span>,
+            ]}
+          />
+          <P>
+            <b>Quem te acertou decide, não o quanto ele rolou.</b> É a mesma lógica do Fio da Vida (Cap. 4,
+            §6). O Cap. 4, §3 explica por que a CD NÃO é metade do dano: o dano cresce sem teto neste livro
+            (uma criatura Imperador bate perto de 120 por turno) e o teste cresce até +11 num d20 — amarrada
+            ao dano, a regra tornaria magia de 4 a 6 Ações impossível de conjurar exatamente nos patamares em
+            que ela existe.
+          </P>
+        </Warning>
+        <P>
+          <b>Perda de Foco</b> (Cap. 4, §3) é a outra metade disto: você precisa gastar <b>ao menos 1 Ação
+            por turno</b> recitando. Um turno inteiro sem dedicar nenhuma Ação derruba o cântico sozinho,
+          sem ninguém precisar te acertar.
+        </P>
+        <Aside title="Quatro coisas que a CD já resolve, pra não virarem regra nova">
+          <List
+            items={[
+              "Dano em área conta como UM acerto, e a CD vem do Rank de quem conjurou a área — não um teste por criatura atingida junto.",
+              "Dano contínuo (Em Chamas, veneno, magma) força o teste no início do turno, quando cobra, com a CD do Rank de quem aplicou a condição.",
+              "Ficar Atordoado, Paralisado, Incapacitado, Surdo ou Soterrado interrompe SEM teste — o cântico exige voz e postura. Congelado e Atolado não interrompem: você continua falando.",
+              "Ser empurrado, derrubado ou movido contra a vontade interrompe sem teste se você sair do alcance ou perder a linha de visão do alvo declarado.",
+            ]}
+          />
+        </Aside>
+
+        <SubTitle>Interromper de Propósito</SubTitle>
+        <BookTable
+          headers={["Como", "Quem consegue", "O que acontece"]}
+          rows={[
+            [
+              "Bater forte",
+              "Qualquer um",
+              "Não existe manobra especial: cause dano e deixe a CD trabalhar. Contra um conjurador, concentrar o dano num golpe só vale mais que espalhá-lo em três.",
+            ],
+            [
+              "Vácuo Localizado (Vento, Principiante)",
+              "Magia de Vento",
+              "Remove o ar em volta da cabeça: o alvo não recita nada por 1 turno. Interrompe sem teste, e é a forma mais barata do livro.",
+            ],
+            [
+              "Selado (Barreira)",
+              "Magia de Barreira",
+              "Não interrompe — impede. Magia acima do rank da barreira gasta as Ações e o PM e falha sozinha, sem chegar a existir.",
+            ],
+            [
+              "Anulação (Barreira, Imperador)",
+              "Magia de Barreira",
+              "1 Reação e 4 PM anulam qualquer magia de rank Imperador ou inferior no instante em que é conjurada, sem teste. O conjurador perde PM e Ações.",
+            ],
+            [
+              "Corte de Braço (Deus da Espada, Principiante)",
+              "Estilo Deus da Espada",
+              "Não impede o cântico, mas derruba o foco: o dano do golpe entra normalmente no Teste de Concentração, e conjuradores têm PV baixo.",
+            ],
+          ]}
+        />
+        <Warning title="Ritual não se interrompe pela metade — se perde inteiro">
+          Uma magia marcada como <b>Ritual</b> não pode ser encurtada nem retomada. Se a conjuração for
+          interrompida em qualquer ponto, o ritual <b>falha por completo</b>: perde-se o PM inteiro (não a
+          metade) e todo o tempo investido. Em compensação, um ritual conduzido fora de combate, sem ninguém
+          por perto, nunca exige teste nenhum.
+        </Warning>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap2-7">7. Regras Gerais de Conjuração</SectionTitle>
+        <P>
+          As perguntas que toda mesa faz na primeira sessão, respondidas de uma vez. Nada aqui é novo em
+          espírito — é o que o livro já pressupunha, escrito onde dá pra achar.
+        </P>
+        <BookTable
+          headers={["Pergunta", "Resposta"]}
+          rows={[
+            [
+              "Preciso ver o alvo?",
+              "Sim, salvo quando a magia disser o contrário. Sem linha de visão você pode mirar um PONTO que enxergue (o centro de uma área), nunca uma criatura específica. Cobertura Total bloqueia; Cobertura parcial, não.",
+            ],
+            [
+              "Posso conjurar em corpo a corpo?",
+              "Pode, e sem penalidade — este livro não copia a regra de ataque de oportunidade por conjurar. O risco já está no Teste de Concentração: quem está adjacente é quem mais facilmente te faz falhar nele.",
+            ],
+            [
+              "Preciso das mãos livres?",
+              "Não. O cântico é a voz, e a Conjuração Silenciosa é a mana. Mãos importam só onde a magia disser (Toque, ou um Ritual que exija desenho).",
+            ],
+            [
+              "Posso segurar a magia pronta?",
+              "Só com Conjuração Silenciosa, e por no máximo 1 turno — é um dos três Bônus de Forma dela (§2). Fora isso, magia conjurada sai na hora.",
+            ],
+            [
+              "Quantas magias posso sustentar?",
+              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Barreira do Intermediário sustenta duas; Cura do Santo, duas). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
+            ],
+            [
+              "E se eu ficar sem PM no meio?",
+              "Você não pode começar uma magia que não consegue pagar. O PM é debitado quando a conjuração COMEÇA, não quando termina — é por isso que ser interrompido devolve só metade.",
+            ],
+            [
+              "Falha crítica (1 natural) em magia?",
+              "A magia falha e o PM se perde. Não existe tabela de acidente mágico neste livro — a Maestria de Intermediário da Água é a única exceção, e ela existe justamente pra dizer que falhar em silêncio é um privilégio que se compra.",
+            ],
+            [
+              "Duas magias iguais no mesmo alvo?",
+              "O efeito não empilha: vale o maior, e a duração é reiniciada. Isso vale para condições, PV temporários e barreiras.",
+            ],
+          ]}
+        />
       </Section>
     </div>
   );
