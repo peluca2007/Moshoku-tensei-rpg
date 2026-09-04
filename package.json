@@ -10,7 +10,8 @@
     "check:livro": "tsx scripts/check-livro.mts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:redundancia": "tsx scripts/check-redundancia.mts"
+    "check:redundancia": "tsx scripts/check-redundancia.mts",
+    "check:arvores": "tsx scripts/check-arvores.mts"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",
