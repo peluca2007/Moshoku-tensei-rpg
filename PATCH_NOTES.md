@@ -35,6 +35,17 @@ resolve porque `transparent 0%` e `transparent 100%` são, literalmente, as bord
 opacidade nelas. E é a forma certa pra uma FAIXA: ela atravessa a página de lado a lado e desaparece só na
 vertical, em vez de virar uma mancha oval no meio da tela. O véu acompanha a mesma curva.
 
+### 🔦 Um bug que só o tema CLARO tinha
+
+Todos os prints desta série saíram no tema escuro — o Chrome headless segue o tema do SO, e o do meu lado
+está escuro. Forçando o claro, o cabeçalho de `/arvores` apareceu **ilegível**: título `parchment-900`
+sobre o campo estelar, que é quase preto. O filtro de `.faixa-arte` dessatura e ESCURECE, o que funciona
+enquanto a arte é clara; escurecer um preto não faz nada.
+
+O `PageHeader` ganhou um véu (`bg-parchment-50/72` no claro, `bg-parchment-950/45` no escuro). Filtro
+depende de quão clara a arte é; véu não — ele garante o piso de luminância que o texto precisa, qualquer
+que seja a imagem que entrar ali amanhã.
+
 ### 🪧 A logo, de novo
 
 `h-48 sm:h-72` na landing, `h-14` na barra, `h-20` no rodapé — mais 30% sobre 0.1.8. E a faixa de convite

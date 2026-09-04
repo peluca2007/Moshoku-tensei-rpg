@@ -29,6 +29,13 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        heading: "Um bug que só o tema CLARO tinha",
+        items: [
+          "Todos os prints desta série saíram no tema escuro — o Chrome headless segue o tema do SO. Forçando o claro, o cabeçalho de /arvores apareceu ilegível: título parchment-900 sobre o campo estelar, que é quase preto. O filtro de .faixa-arte dessatura e ESCURECE, o que funciona enquanto a arte é clara; escurecer um preto não faz nada.",
+          "O PageHeader ganhou um véu (bg-parchment-50/72 no claro, bg-parchment-950/45 no escuro). Filtro depende de quão clara a arte é; véu não — ele garante o piso de luminância que o texto precisa, qualquer que seja a imagem que entrar ali amanhã.",
+        ],
+      },
+      {
         heading: "A logo, de novo",
         items: [
           "A primeira tentativa de dissolver a faixa usou uma ELIPSE, e as duas linhas duras continuaram. O motivo é aritmético: com raio vertical de 92% da altura, a borda de cima fica a 54% do raio, e a rampa só ia de 28% a 80% — a máscara chegava na borda ainda com METADE da opacidade. Máscara que não chega a zero dentro da caixa não dissolve nada, só desenha uma borda mais clara. Trocada por linear-gradient vertical, onde transparent 0% e transparent 100% SÃO as bordas.",
