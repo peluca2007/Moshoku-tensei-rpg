@@ -78,22 +78,27 @@ mão duas vezes.
   - [x] **Faixas de todas as rotas** — FEITO em 0.1.6. As sete rotas têm arte própria, mais a faixa de
         convite no fim da landing. O que ainda vale trocar é RESOLUÇÃO: `faixas/loja.jpg` (600px) e
         `faixas/livro.jpg` (525px) amaciam visivelmente em tela larga; as outras seis estão de 960 a 1900.
-- [ ] **Favicon com a marca nova** — `src/app/icon.svg` ainda é derivado de `public/logo.svg`, o letreiro
-      antigo. É o único lugar do site que mostra a marca anterior. Favicon precisa ser vetorial pra ler em
-      16px e a marca nova é PNG, então trocar exige rasterizar e recortar (o `logo-sem-fundo.mjs` já sabe
-      decodificar PNG; falta o downscale).
+- [x] **Favicon com a marca nova** — FEITO em 0.1.11. `src/app/icon.png` é gerado da marca por
+      `scripts/gerar-favicon.mjs`, que recorta pela caixa real do letreiro (a arte ocupa 15% do quadro),
+      reduz por média de área (traço fino some com amostragem simples) e compõe sobre parchment-950.
+      Ressalva declarada: em 16px o letreiro inteiro vira mancha. Legibilidade nesse tamanho pediria um
+      SÍMBOLO — o olho dourado do "O" de Mushoku é o candidato óbvio —, e isso é decisão de design.
 - [ ] **Foto de perfil e capa nas fichas** — documentado e ainda não implementado, a pedido. As decisões
       que precisam ser tomadas antes de escrever código estão no fim deste arquivo.
-- [ ] **Auditoria linha a linha das magias** — Água, Fogo, Terra, Vento, Deus da Espada, Desintoxicação e
+- [~] **Auditoria linha a linha das magias** — agora com ferramenta: `npm run check:arvores` mede o teto
+      do turno contra a régua do Apêndice C e devolve a lista curta (hoje 5 células de Magia e 6 pisos de
+      Corpo). A leitura manual continua valendo pro que o relatório acusa, não pras 400 magias.
+      Estado da leitura manual: — Água, Fogo, Terra, Vento, Deus da Espada, Desintoxicação e
       Cura conferidas por completo. Barreira, Invocação e Bardo tiveram os **cânticos** auditados e
       reescritos em 0.0.4, mas não os números. Faltam por inteiro: Suishin, Norte, Lutador, Escudos,
       Arquearia, Ladino, Tático, Vendaval, Punho de Fogo.
 - [ ] **Validar Distância Roubada na mesa** (Vendaval, novo em 0.0.4) — a mecânica soma alcance a partir do
       movimento, e nenhuma outra árvore faz isso. Vale medir se 9m de bônus de alcance no Principiante não
       transforma a árvore num arqueiro corpo a corpo cedo demais.
-- [ ] **Entrevista (Via 3), banco de perguntas** — os 2 modos já existem; falta só o conteúdo:
-  - [ ] Crescer de 14 para ~20 perguntas (`src/data/interview.ts`).
-  - [ ] 6 respostas possíveis por pergunta, com 4 sorteadas por vez — nunca sempre as mesmas.
+- [x] **Entrevista (Via 3), banco de perguntas** — FEITO em 0.1.11: 20 perguntas, 6 respostas cada, 10
+      perguntas e 4 respostas sorteadas por Entrevista. `interview.test.ts` cobre o que só aparece rodando
+      muitas vezes (todas as perguntas e respostas saem ao longo de 200 entrevistas; a ordem é preservada;
+      todo id empurrado existe em BACKGROUNDS).
 - [ ] **Confirmar o fix do PDF em produção** — só verificável no próximo deploy da Vercel.
 - [ ] PWA / modo offline — mesa física não pode depender de internet.
 - [ ] Acessibilidade: contraste, tamanho de fonte ajustável, teste real com leitor de tela.

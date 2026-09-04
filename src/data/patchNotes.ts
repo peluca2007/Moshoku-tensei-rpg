@@ -16,6 +16,45 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.11",
+    date: "2026-09-04",
+    title: "O Grupo Inteiro num Link",
+    sections: [
+      {
+        heading: "Ficha por link",
+        items: [
+          "Passar uma ficha adiante eram cinco passos: exportar JSON, achar o arquivo, mandar, o outro baixar, importar — uma vez por jogador, toda vez que alguém mudava alguma coisa. O montador de encontros depende de ter o grupo carregado, então o atrito estava exatamente no caminho da funcionalidade mais cara do site.",
+          "A ficha agora cabe num link, comprimida no FRAGMENTO da URL e não na query: o fragmento nunca é enviado ao servidor, então a ficha de um personagem não aparece em log de acesso, em analytics nem no Referer de um link clicado depois.",
+          "/ficha/importar mostra de quem é a ficha e espera o clique. Ela não importa sozinha: o link veio de outra pessoa, e uma página que grava no navegador do visitante só por ele ter clicado é uma página que enche o roster de alguém com fichas que ele não pediu.",
+        ],
+      },
+      {
+        heading: "A Entrevista deixou de repetir",
+        items: [
+          "O banco tinha 14 perguntas de 4 respostas, e o sorteio pegava 10 perguntas — mas as respostas eram sempre as mesmas quatro. Quem fizesse a Via 3 duas vezes reconhecia as opções de cor e escolhia por memória, não por leitura.",
+          "Agora são 20 perguntas com 6 respostas cada, e o sorteio pega 10 perguntas e 4 das 6 respostas de cada uma. Nem a pergunta que mais pesaria pra sua build, nem a resposta, têm garantia de aparecer — a mesma promessa que a Roleta já fazia.",
+          "O teste novo pegou um bug que nenhum print pegaria: doze das respostas novas empurravam ids de SUBTABELA (odio, telepatia, veias-abertas…) como se fossem antecedentes. A loteria sorteia entre BACKGROUNDS, então essas respostas teriam peso zero em silêncio — pareceriam funcionar e não fariam nada.",
+        ],
+      },
+      {
+        heading: "Auditoria automatizada das árvores",
+        items: [
+          "`npm run check:arvores` mede o TETO DO TURNO de cada árvore em cada patamar — quanto ela causa gastando as 3 Ações da melhor forma que o patamar permite — e compara com a coluna do Apêndice C. O check:livro já verificava o piso; o teto é o lado perigoso, porque uma coluna pode prometer 40 e a árvore entregar 12 sem nada perceber.",
+          "O BC usa o atributo que o próprio Apêndice C declara (\"progredindo de 4 até 8\"). Ignorar isso foi o primeiro erro do script e produziu ~50% de desvio em TODA coluna alta — desvio uniforme em tudo denuncia o medidor, não o dado.",
+          "Árvores do Corpo saem numa lista separada, marcadas como PISO e nunca como falha: o golpe base delas é o Dado de Arma escalado por Maestria, que o script não modela. Inventar um número plausível ali daria um relatório mais bonito e menos verdadeiro.",
+          "Resultado: 5 células de Magia pra conferir (Fogo 4º e 5º, Água 5º, Vento 5º, Terra 6º) e 6 pisos de Corpo pra olhar — lista curta no lugar de 400 magias.",
+        ],
+      },
+      {
+        heading: "Favicon, tema claro e README",
+        items: [
+          "O favicon virou a marca nova: src/app/icon.png é gerado recortando pela caixa real do letreiro (a arte ocupa 15% do quadro), reduzindo por média de área (traço fino some com amostragem simples) e compondo sobre parchment-950. O icon.svg antigo saiu — com os dois presentes, cada navegador escolhe um e a aba mostra marcas diferentes por máquina. Ressalva: em 16px o letreiro inteiro vira mancha; legibilidade nesse tamanho pediria um símbolo.",
+          "Os badges do README diziam regras 0.1.0 (estava em 0.1.10) e 35 testes (são 96) — e é a primeira coisa que alguém vê ao abrir o repositório, que é o link que o rodapé do site agora aponta.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.9",
     date: "2026-09-04",
     title: "Sem Arestas",
