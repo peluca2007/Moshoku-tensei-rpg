@@ -16,6 +16,63 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.13",
+    date: "2026-09-05",
+    title: "O Covil Ganhou Gavetas",
+    sections: [
+      {
+        heading: "O covil ganhou gavetas",
+        items: [
+          "/encontros nasceu como uma lista de cartões sempre abertos. Isso funciona até a terceira criatura; com trinta montadas — que é o uso real depois de algumas sessões — a tela vira uma parede de formulário em que \"onde está o chefe do arco 2?\" só se responde rolando a página inteira.",
+          "PASTAS: criar, renomear, reordenar, recolher, e marcar a gaveta inteira pro encontro num clique — uma pasta vira um encontro pronto. O recolhido fica SALVO: arrumar dez pastas uma vez e perder a arrumação no F5 seria pior que não ter pasta nenhuma.",
+          "CARTÃO RECOLHIDO: fechado, ele é uma linha com o retrato, o nome e os números com que se decide \"é esta?\" — quantas vêm, patamar, papel, PV, CA, dano por turno. O formulário inteiro abre com um toque, e a tela só abre sozinha o que você acabou de criar, importar ou duplicar.",
+          "BUSCA, que atravessa as gavetas fechadas — quando você já sabe o nome, navegar por pasta é o caminho longo. Ela varre nome, anotação de perigo, papel e o texto das Ações: \"quem era o que tinha a mordida venenosa?\" é uma pergunta tão comum quanto o nome próprio da criatura.",
+          "Apagar a pasta NUNCA apaga o que está dentro: as criaturas voltam pra \"Fora das pastas\", e a confirmação diz \"Só a pasta?\" pra deixar isso explícito. Um Mestre que reorganiza trinta criaturas no meio da sessão não pode perder metade do bestiário por clicar na lixeira errada.",
+          "Mover é um seletor no cartão, e não arrastar-e-soltar. A tela é mobile-first: arrastar um cartão numa lista que rola é a interação que mais falha no dedo, e é a única que não tem alternativa por teclado.",
+          "O bestiário salvo sobe pra version 4 e entra INTEIRO em \"Fora das pastas\". Inventar gavetas por quem já tem trinta criaturas montadas daria uma arrumação que ninguém pediu — o critério do que era \"os goblins daquela estrada\" é do Mestre.",
+        ],
+      },
+      {
+        heading: "A criatura saiu do navegador",
+        items: [
+          "Até aqui a criatura vivia só no localStorage de quem a montou. Isso combinava com ela ser \"rascunho de sessão\" enquanto era sete números soltos; desde que ganhou Ações escritas, ela é conteúdo que vale levar de uma campanha pra outra.",
+          "Arquivo e link: .mtcriatura (marca MTC1) e um link com a criatura dentro. O par gzip+base64url saiu de fichaArquivo.ts/fichaLink.ts pra compactacao.ts e agora serve aos dois, sem duplicar. O PDF ficou de fora de propósito: o payload do Typst é amarrado a árvore e magia de personagem, e estendê-lo pra criatura seria um Apêndice inteiro de template novo.",
+          "Retrato, com a mesma infra de imagem da ficha — reduzida no navegador, nunca sai dele. De quebra, um defeito que ninguém tinha visto: \"Recalibrar\" apagaria a foto junto dos números do molde, do mesmo jeito que já preservava o perigo e as Ações.",
+          "Condições estruturadas: Preso, Caído, Molhado e veneno saíram da anotação de texto e viraram estado do motor. Preso e Caído dão Vantagem a quem ataca o alvo, e as três tiram a Vantagem de quem já está com uma (Cap. 4, §7) — dos dois lados da mesa. As criaturas prontas do Apêndice G que já citavam uma dessas condições na prosa ganharam o campo correspondente.",
+          "O chefe reage: 1 Reação/ação lendária fora do turno normal — a outra metade da economia de ação, que até aqui só tinha a rodada extra do chefe solo.",
+          "Os números do playtest não mudaram com nada disso: as condições novas só entram em jogo quando uma ação as declara, e nenhuma das dez builds de referência faz isso.",
+        ],
+      },
+      {
+        heading: "Calor do Punho do Fogo virou número",
+        items: [
+          "Calor só existia na prosa da árvore (\"Calor máximo sobe para 8/12/16/20/25\") — nenhum campo, nenhum \"atual\" editável, nada que a ficha somasse. Agora ele segue o mesmo padrão de PV/PM/PT/PP: teto por patamar, contador com override na ficha, e o contador só aparece pra quem tem Punho do Fogo desbloqueado.",
+          "O teto é FIXO por patamar, não cumulativo: o texto sempre disse \"sobe para\", nunca \"soma\". Superaquecimento, Brasa Viva, Erupção Contínua e Combustão Reativa continuam fora do motor — são gatilhos condicionais de mesa, não deste recurso. O trabalho aqui é fazer o número existir e ser rastreável.",
+        ],
+      },
+      {
+        heading: "A foto entra na criação",
+        items: [
+          "As três vias (Manual, Roleta e Entrevista) terminavam sem nunca oferecer a foto de perfil — a pessoa só descobria que dava pra pôr uma depois, já em /ficha. A tela final de cada via é exatamente o momento em que raça e antecedente já estão fechados e a pessoa está imaginando a cara do personagem, então é ali que a foto entra: sempre opcional, com o mesmo brasão da raça como alternativa.",
+        ],
+      },
+      {
+        heading: "Os dez avisos do check:texto, e um bug de cura",
+        items: [
+          "Nove habilidades tinham dado escrito na prosa e nenhum campo onde guardá-lo. damage.condicional, damage.porTurno e healing.normal são esse lugar — bônus condicional, dano por turno de condição/terreno, e a cura de Julgamento e Luz Absoluta. Barreira e Proteção sobe pra 1d8+4 no Rei, pra quebrar um PV parado por três patamares.",
+          "De quebra, um bug real que só um campo apartado revelaria: o filtro de cura do combatSim.ts escaneava damage.normal e effect juntos, e a cura descrita no effect de Julgamento e Luz Absoluta derrubava o dano real das duas na simulação de combate inteira. Agora ele olha só damage.normal.",
+        ],
+      },
+      {
+        heading: "Suishin e Escudos: dois ajustes da leitura das quatro árvores restantes",
+        items: [
+          "\"Nome de Reidar\" era o único talento do livro sem efeito jogável nenhum. Ganha um favor pontual por sessão, no molde de \"Homem Dentro\" do Ladino.",
+          "\"O Muro Final\" anunciava o próprio risco (\"você provavelmente morre\") e tinha esse risco anulado de graça pela Maestria do Imperador (\"Enquanto Eu Estiver de Pé\"). A cláusula nova fecha essa segunda vida grátis; a versão Soberana continua com a segurança dela intacta.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.12",
     date: "2026-09-04",
     title: "O Que a R\u00e9gua N\u00e3o Media",
