@@ -200,7 +200,10 @@ for (const tree of TREES) {
       // nenhuma conta do projeto enxerga.
       // ----------------------------------------------------------------
       if (a.damage?.normal) {
-        const naFormula = new Set([...a.damage.normal.matchAll(/\d+d\d+/g)].map((m) => m[0]));
+        const capturado = [a.damage.normal, a.damage.condicional, a.damage.porTurno, a.healing?.normal]
+          .filter(Boolean)
+          .join(" ");
+        const naFormula = new Set([...capturado.matchAll(/\d+d\d+/g)].map((m) => m[0]));
         const noTexto = new Set([...a.effect.matchAll(/\d+d\d+/g)].map((m) => m[0]));
         const soNoTexto = [...noTexto].filter((d) => !naFormula.has(d));
         if (soNoTexto.length) {

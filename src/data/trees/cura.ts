@@ -342,6 +342,7 @@ export const CURA_TREE: Tree = {
           range: "Esfera de 12m",
           actions: MAGIC_ACTIONS.Rei,
           damage: { normal: "10d8 + BC de dano radiante (mortos-vivos/construtos/corrompidos, sem teste)" },
+          healing: { normal: "3d8 + BC" },
           effect: "Aliados vivos na área recuperam 3d8 + BC de PV na mesma conjuração.",
           incantation:
             "Luz que és bênção pro inocente e brasa viva pro que já deveria estar morto e enterrado há muito tempo: eu não vou te pedir pra escolher um lado, porque tu escolheste o teu antes de eu nascer e não mudaste desde então. Queima o que corrompe esta terra, alimenta o que ainda respira em cima dela, e não confundas os dois — nem por pressa, nem por piedade, nem porque alguém aqui vai gritar que não é justo. Julgamento!",
@@ -410,6 +411,7 @@ export const CURA_TREE: Tree = {
           costNote:
             "3 Ações em vez das 6 do rank Imperador, e 25 PM em vez de 22. É cura de emergência + dano apocalíptico na mesma magia: se um aliado está caindo e a horda de mortos-vivos rodeia, a Luz Absoluta não pode esperar dois turnos. A velocidade custa 3 PM extras, e o cântico encolhe junto — não há tempo pra poema quando o que pede a luz é a sobrevivência imediata.",
           damage: { normal: "20d8 de dano radiante" },
+          healing: { normal: "10d8 + BC" },
           effect: "Mortos-vivos e construtos com menos da metade dos PV máximos são destruídos automaticamente; os demais sofrem o dano. Todo aliado vivo na área recupera 10d8 + BC de PV.",
           incantation:
             "Luz. Agora.\nLuz Absoluta!",

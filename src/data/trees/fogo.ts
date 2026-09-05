@@ -95,7 +95,7 @@ export const FOGO_TREE: Tree = {
           pmCost: 2,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
-          damage: { normal: "2d6 + BC (ígneo)" },
+          damage: { normal: "2d6 + BC (ígneo)", condicional: "+1d6 se com metade ou menos dos PV" },
           effect: "Ataque corpo a corpo mágico. Aplica Em Chamas. Se você estiver com metade ou menos dos PV, causa +1d6.",
           incantation:
             "Calor que mora na minha própria mão e não me queima,\npassa agora para a mão dele, que não vai gostar da visita.\nToque Escaldante!",
@@ -238,7 +238,7 @@ export const FOGO_TREE: Tree = {
           pmCost: 6,
           range: "Esfera de 12m de raio",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "6d8 + BC (ígneo)" },
+          damage: { normal: "6d8 + BC (ígneo)", porTurno: "2d6 (ígneo) por turno a quem começar o turno na área queimando" },
           effect:
             "Teste de Agilidade (CD 8 + BC), metade se passar. Falha: Em Chamas. A área continua queimando 1 minuto: quem começar o turno dentro sofre +2d6.",
           incantation:

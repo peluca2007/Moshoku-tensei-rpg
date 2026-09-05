@@ -271,7 +271,7 @@ export const BARREIRA_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+4",
       mastery: {
         name: "Anulação",
         description:

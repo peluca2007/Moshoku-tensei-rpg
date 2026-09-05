@@ -482,7 +482,40 @@ export interface AbilityDef {
   };
   /** true = o "normal" custo é 1 Reação em vez de X Ações. */
   reaction?: boolean;
-  damage?: { normal: string; encurtada?: string };
+  damage?: {
+    normal: string;
+    encurtada?: string;
+    /**
+     * Bônus que só se aplica sob uma condição (alvo em certo estado, recurso
+     * gasto, PV do conjurador) — 2026-09-05.
+     *
+     * O `check:texto` (regra R5) compara os dados citados no `effect` com os
+     * dados de `damage.normal` e avisa quando um só existe na prosa. Um
+     * "+1d6 se o alvo estiver Em Chamas" nunca vai caber em `normal` (não é o
+     * dano garantido do golpe), mas também não pode ficar invisível pra
+     * sempre — por isso mora aqui, fora do que a "régua" do `check:arvores`
+     * soma no teto por turno.
+     */
+    condicional?: string;
+    /**
+     * Dano que se repete sozinho a cada turno, por uma condição ou terreno
+     * que a habilidade deixou pra trás (Em Chamas, cratera de magma) — sem
+     * gastar nova Ação. Mesma razão de existir que `condicional`: visível
+     * pro `check:texto`, mas fora da soma de `check:arvores`.
+     */
+    porTurno?: string;
+  };
+  /**
+   * Cura concedida pela MESMA habilidade que também causa dano em
+   * `damage.normal` (magias de dano duplo, Cap. 3 de Cura) — 2026-09-05.
+   *
+   * Cura de magias 100% curativas continua guardada dentro do próprio
+   * `damage.normal`, como sempre foi (`combatSim.ts` reconhece o padrão por
+   * palavra-chave). Esse campo só existe para o caso em que `damage.normal`
+   * já está ocupado pelo dano real e a cura não tem onde ir — sem ele, a
+   * cura ficava só na prosa e nenhuma conta a via.
+   */
+  healing?: { normal: string };
   effect: string;
   incantation?: string;
 }
