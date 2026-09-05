@@ -37,12 +37,6 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    - **Dissonância** e **Ordem de Tiro** foram inventadas pra que Bardo e Tático tivessem o que medir.
      Se não forem divertidas na mesa, o certo é trocá-las, não ajustá-las.
 
-## Sistema de RPG
-
-7. **O teto do Deus da Espada é 3× a coluna dele.** No 6º patamar entrega 336 contra os ~118 da
-   régua. O teto ignora chance de acerto e Touki, então ficar acima é esperado — mas 3× é a maior
-   folga da tabela, e vale conferir se a coluna ainda descreve a árvore que existe hoje.
-
 ## Site
 
 8. **PWA / offline.** Mesa física num porão sem sinal é o caso de uso, e hoje o site morre sem
