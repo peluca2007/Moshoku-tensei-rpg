@@ -39,41 +39,17 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Sistema de RPG
 
-7. **O "Calor" do Punho do Fogo não existe no código.** É a mecânica que define a árvore inteira —
-   todo patamar sobe o teto (5 → 8 → 12 → 16 → 20 → 25) e quase toda técnica gasta ou ganha Calor —, e
-   a ficha só conhece PV, PM, PT e PP. Hoje ele se joga no papel, à parte. É a maior dívida de dados.
-
-8. **A leitura de intenção de quatro árvores.** O `check:texto` cobre CONTRADIÇÃO nas 597 habilidades,
+7. **A leitura de intenção de quatro árvores.** O `check:texto` cobre CONTRADIÇÃO nas 597 habilidades,
    e Norte, Vendaval, Lutador, Arquearia e Punho do Fogo foram lidos de ponta a ponta. Faltam
    **Suishin, Escudos, Ladino e Tático** — e ali o que falta é o que nenhum script julga: se o efeito
    faz sentido, se a técnica é divertida, se o patamar entrega o que promete.
 
-9. **O teto do Deus da Espada é 3× a coluna dele.** No 6º patamar entrega 336 contra os ~118 da
-    régua. O teto ignora chance de acerto e Touki, então ficar acima é esperado — mas 3× é a maior
-    folga da tabela, e vale conferir se a coluna ainda descreve a árvore que existe hoje.
+8. **O teto do Deus da Espada é 3× a coluna dele.** No 6º patamar entrega 336 contra os ~118 da
+   régua. O teto ignora chance de acerto e Touki, então ficar acima é esperado — mas 3× é a maior
+   folga da tabela, e vale conferir se a coluna ainda descreve a árvore que existe hoje.
 
 ## Site
 
-10. **PWA / offline.** Mesa física num porão sem sinal é o caso de uso, e hoje o site morre sem
-    internet. As fichas já vivem no `localStorage` — falta service worker e manifest. É a maior
-    pendência funcional.
-
-11. **A foto do personagem não entra na criação.** Ela existe na ficha, no roster e em `/encontros`,
-    mas as três vias de `/criar` terminam sem perguntar por ela — que é justamente o momento em que a
-    pessoa está pensando na cara do personagem.
-
-12. **O retrato da criatura em `/encontros`.** O Mestre monta o monstro e não tem onde pôr a cara
-    dele. A infraestrutura já existe inteira (`imagemDaFicha.ts`, o componente, o saneamento, o
-    empacotador) — falta o campo no bestiário e a migração dele.
-
-## Dívida documentada que continua de pé
-
-13. **A ficha de criatura não exporta.** Vive só no `localStorage` do Mestre: não sai em arquivo, não
-    entra no PDF e não cabe num link. Com o `.mtficha` pronto, o caminho está aberto — é o mesmo
-    empacotador.
-
-14. **As ações de criatura não modelam a condição que aplicam.** Preso, Caído, Molhado e veneno ficam
-    na `nota`, como texto. Mesma dívida das `SIMPLIFICACOES` do motor.
-
-15. **Não há Reação nem ação lendária de chefe fora do turno.** A rodada extra do chefe continua sendo
-    a única economia de ação que o simulador conhece.
+9. **PWA / offline.** Mesa física num porão sem sinal é o caso de uso, e hoje o site morre sem
+   internet. As fichas já vivem no `localStorage` — falta service worker e manifest. É a maior
+   pendência funcional.
