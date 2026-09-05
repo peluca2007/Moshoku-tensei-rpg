@@ -1,9 +1,9 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-04 — **0.1.12**: o Corpo virou medição no `check:arvores`, o
-`check:texto` passou a ler a prosa das habilidades contra os campos, a ficha ganhou foto e capa, e as
-telas ganharam três checagens automáticas (contraste, largura de celular, acessibilidade estrutural).
-Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-05 — **0.1.13**: o covil de `/encontros` ganhou pastas, busca e
+cartão recolhível; a criatura ganhou arquivo, link, retrato, condições estruturadas e Reação de
+chefe; o Calor do Punho do Fogo virou número rastreável na ficha; e as três vias de criação passaram
+a perguntar pela foto. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.

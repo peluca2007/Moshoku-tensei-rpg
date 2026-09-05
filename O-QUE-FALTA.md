@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-05, depois da 0.1.12. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-05, depois da 0.1.13. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
