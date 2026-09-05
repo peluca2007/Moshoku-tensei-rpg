@@ -3,26 +3,39 @@
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
+  ArrowDown,
+  ArrowUp,
   Check,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
   Copy,
   Dices,
   Download,
+  Folder,
+  FolderOpen,
+  FolderPlus,
   Info,
   Link2,
   ListPlus,
   Loader2,
+  Pencil,
   Plus,
   RotateCcw,
+  Search,
   Skull,
+  Square,
+  SquareCheckBig,
   Swords,
   Trash2,
   TriangleAlert,
   Upload,
   Users,
   Wand2,
+  X,
 } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
-import { useBestiaryStore } from "@/store/useBestiaryStore";
+import { PastaCriaturas, useBestiaryStore } from "@/store/useBestiaryStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { getArmorClass, getMaxHp, getPaSpent } from "@/store/selectors";
 import { getTreeById } from "@/data/trees/index";
@@ -97,6 +110,14 @@ export default function EncounterBuilder() {
   const [relatorio, setRelatorio] = useState<Relatorio | null>(null);
   const [novoPatamar, setNovoPatamar] = useState(3);
   const [novoPapel, setNovoPapel] = useState<PapelCriatura>("padrao");
+  /**
+   * A pasta em que a próxima criatura nasce.
+   *
+   * Vive na tela, e não na store, porque é uma escolha do momento — "agora
+   * estou montando a emboscada da estrada" — e não parte do bestiário. O que é
+   * do bestiário (as pastas e onde cada criatura está) é o que fica salvo.
+   */
+  const [pastaDestino, setPastaDestino] = useState<string | null>(null);
 
   const fichasDoGrupo = useMemo(
     () => grupo.map((id) => characters[id]).filter((c) => c !== undefined),
@@ -198,6 +219,8 @@ export default function EncounterBuilder() {
         novoPapel={novoPapel}
         setNovoPatamar={setNovoPatamar}
         setNovoPapel={setNovoPapel}
+        pastaDestino={pastaDestino}
+        setPastaDestino={setPastaDestino}
         tamanhoDoGrupo={fichasDoGrupo.length}
         alvosDoGrupo={alvosDoGrupo}
       />
@@ -361,6 +384,22 @@ function SecaoGrupo({
 // ---------------------------------------------------------------------------
 // As criaturas
 // ---------------------------------------------------------------------------
+/**
+ * O covil, em gavetas.
+ *
+ * A tela nasceu como uma lista de cartões sempre abertos, e isso funciona até a
+ * terceira criatura. Um Mestre que montou trinta — que é o uso real depois de
+ * algumas sessões — recebia uma parede de formulário em que "onde está o Chefe
+ * do arco 2?" só se responde rolando a página inteira. As três coisas que
+ * resolvem isso são as três que estão aqui:
+ *
+ * 1. **Pastas** (`useBestiaryStore.pastas`), que separam por encontro, por arco
+ *    ou por região — o critério é do Mestre.
+ * 2. **Cartão recolhido por padrão**: fechado ele é uma linha com retrato,
+ *    nome e os números que importam; a ficha inteira abre com um toque.
+ * 3. **Busca**, que ignora as gavetas — quando você já sabe o nome, navegar por
+ *    pasta é o caminho longo.
+ */
 function SecaoCriaturas({
   criaturas,
   selecionadas,
@@ -368,6 +407,8 @@ function SecaoCriaturas({
   novoPapel,
   setNovoPatamar,
   setNovoPapel,
+  pastaDestino,
+  setPastaDestino,
   tamanhoDoGrupo,
   alvosDoGrupo,
 }: {
@@ -377,15 +418,41 @@ function SecaoCriaturas({
   novoPapel: PapelCriatura;
   setNovoPatamar: (n: number) => void;
   setNovoPapel: (p: PapelCriatura) => void;
+  /** Onde a próxima criatura nasce — a pasta escolhida no formulário, ou `null` pra fora de todas. */
+  pastaDestino: string | null;
+  setPastaDestino: (id: string | null) => void;
   tamanhoDoGrupo: number;
   alvosDoGrupo: AlvoDoGrupo[];
 }) {
+  const pastas = useBestiaryStore((s) => s.pastas);
   const criar = useBestiaryStore((s) => s.criar);
   const atualizar = useBestiaryStore((s) => s.atualizar);
   const adicionarAcao = useBestiaryStore((s) => s.adicionarAcao);
   const importarCriatura = useBestiaryStore((s) => s.importarCriatura);
+  const criarPasta = useBestiaryStore((s) => s.criarPasta);
+  const definirPastasRecolhidas = useBestiaryStore((s) => s.definirPastasRecolhidas);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [busca, setBusca] = useState("");
+  /**
+   * Quais cartões estão abertos.
+   *
+   * Diferente de `pasta.recolhida`, isto NÃO é salvo: a pasta é a arrumação
+   * (dura semanas), e o cartão aberto é o que você está editando agora. Salvar
+   * os abertos devolveria, na sessão seguinte, exatamente a parede de
+   * formulário que este recolhimento existe pra evitar.
+   */
+  const [abertas, setAbertas] = useState<string[]>([]);
+  /** A pasta cujo nome está em edição — recém-criada, ela já abre com o cursor dentro. */
+  const [pastaEditando, setPastaEditando] = useState<string | null>(null);
+
+  function abrirCartao(id: string) {
+    setAbertas((a) => (a.includes(id) ? a : [...a, id]));
+  }
+
+  function alternarCartao(id: string) {
+    setAbertas((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
+  }
 
   /**
    * Aceita o `.mtcriatura` novo (comprimido) e um `.json` cru — mesma
@@ -400,11 +467,55 @@ function SecaoCriaturas({
     setImportError(null);
     try {
       const dados = await lerArquivoDeCriatura(file);
-      importarCriatura(dados);
+      abrirCartao(importarCriatura(dados, pastaDestino));
     } catch (err) {
       setImportError(err instanceof CriaturaIlegivel ? err.message : "Não foi possível ler esse arquivo.");
     }
   }
+
+  function handleNovaPasta() {
+    const id = criarPasta();
+    setPastaEditando(id);
+    // A pasta recém-criada vira o destino: quem acabou de criar "Chefes do arco
+    // 2" quer que a próxima criatura caia lá dentro, não na raiz.
+    setPastaDestino(id);
+  }
+
+  const termo = busca.trim().toLowerCase();
+  /**
+   * A busca varre o que o Mestre lembraria: o nome, a anotação de perigo, o
+   * papel, e o texto das Ações — "quem era o que tinha a mordida venenosa?" é
+   * uma pergunta tão comum quanto o nome próprio da criatura.
+   */
+  const filtradas = useMemo(() => {
+    if (!termo) return criaturas;
+    return criaturas.filter((c) =>
+      [
+        c.nome,
+        c.perigo,
+        PAPEIS.find((p) => p.id === c.papel)?.nome ?? "",
+        rotuloPatamar(c.patamar),
+        ...c.acoes.map((a) => `${a.nome} ${a.dano} ${a.nota}`),
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(termo)
+    );
+  }, [criaturas, termo]);
+
+  const grupos = useMemo(() => {
+    const conhecidas = new Set(pastas.map((p) => p.id));
+    return [
+      ...pastas.map((p) => ({ pasta: p, itens: filtradas.filter((c) => c.pastaId === p.id) })),
+      // A gaveta de fora vem por último e inclui quem aponta pra uma pasta que
+      // não existe mais — `removerPasta` já limpa o campo, mas um bestiário que
+      // veio de um backup antigo não passou por ela.
+      {
+        pasta: null,
+        itens: filtradas.filter((c) => !c.pastaId || !conhecidas.has(c.pastaId)),
+      },
+    ];
+  }, [pastas, filtradas]);
 
   return (
     <section className="mt-8">
@@ -464,9 +575,26 @@ function SecaoCriaturas({
             ))}
           </select>
         </label>
+        {pastas.length > 0 && (
+          <label className="min-w-0 text-xs font-semibold text-parchment-600 dark:text-parchment-400">
+            Nasce em
+            <select
+              value={pastas.some((p) => p.id === pastaDestino) ? (pastaDestino as string) : ""}
+              onChange={(e) => setPastaDestino(e.target.value || null)}
+              className="mt-1 block max-w-44 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            >
+              <option value="">Fora das pastas</option>
+              {pastas.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nome}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <button
           type="button"
-          onClick={() => criar(novoPatamar, novoPapel)}
+          onClick={() => abrirCartao(criar(novoPatamar, novoPapel, undefined, pastaDestino))}
           className="rounded-lg bg-parchment-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-parchment-700 dark:bg-white dark:text-parchment-900"
         >
           Nova criatura
@@ -494,7 +622,7 @@ function SecaoCriaturas({
               key={p.id}
               type="button"
               onClick={() => {
-                const id = criar(p.patamar, p.papel, p.nome);
+                const id = criar(p.patamar, p.papel, p.nome, pastaDestino);
                 atualizar(id, { perigo: p.perigo });
                 // As ações vêm do Apêndice G sem id — quem sorteia é a store.
                 for (const acao of p.acoes) adicionarAcao(id, acao);
@@ -526,28 +654,338 @@ function SecaoCriaturas({
           O covil está vazio.
         </EmptyState>
       ) : (
-        <div className="flex flex-col gap-3">
-          {criaturas.map((c) => (
-            <CartaoCriatura
-              key={c.id}
-              criatura={c}
-              marcada={selecionadas.includes(c.id)}
-              alvosDoGrupo={alvosDoGrupo}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <div className="relative min-w-40 flex-1">
+              <Search
+                className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-parchment-400"
+                aria-hidden
+              />
+              <input
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                aria-label="Buscar criatura pelo nome, papel, perigo ou ação"
+                placeholder="Buscar no covil…"
+                className="w-full rounded-lg border border-parchment-300 bg-parchment-50 py-1.5 pl-7 pr-7 text-sm text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+              />
+              {busca && (
+                <button
+                  type="button"
+                  onClick={() => setBusca("")}
+                  aria-label="Limpar a busca"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-parchment-400 hover:text-parchment-600"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleNovaPasta}
+              className="flex items-center gap-1 rounded-lg border border-parchment-300 px-2.5 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+            >
+              <FolderPlus className="h-3.5 w-3.5" /> Nova pasta
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAbertas([]);
+                definirPastasRecolhidas(true);
+              }}
+              className="flex items-center gap-1 rounded-lg border border-parchment-300 px-2.5 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+            >
+              <ChevronUp className="h-3.5 w-3.5" /> Recolher tudo
+            </button>
+          </div>
+
+          {termo && (
+            <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">
+              {filtradas.length === 0
+                ? `Nenhuma criatura com “${busca.trim()}”.`
+                : `${filtradas.length} de ${criaturas.length} criaturas — a busca atravessa as pastas.`}
+            </p>
+          )}
+
+          <div className="flex flex-col gap-3">
+            {grupos.map(({ pasta, itens }) => {
+              // A gaveta de fora some quando está vazia; uma pasta vazia NÃO
+              // some, porque ela é onde o Mestre vai montar o próximo encontro.
+              if (pasta === null && itens.length === 0) return null;
+              return (
+                <GrupoDePasta
+                  key={pasta?.id ?? "sem-pasta"}
+                  pasta={pasta}
+                  itens={itens}
+                  pastas={pastas}
+                  selecionadas={selecionadas}
+                  abertas={abertas}
+                  onAlternarCartao={alternarCartao}
+                  onAbrirCartao={abrirCartao}
+                  alvosDoGrupo={alvosDoGrupo}
+                  // Com busca ativa toda gaveta abre: procurar por nome e
+                  // receber "nada aqui" porque a pasta certa estava fechada
+                  // seria a busca mentindo.
+                  forcarAberta={termo.length > 0}
+                  semCabecalho={pasta === null && pastas.length === 0}
+                  editando={pastaEditando !== null && pastaEditando === pasta?.id}
+                  onEditar={setPastaEditando}
+                />
+              );
+            })}
+          </div>
+        </>
       )}
     </section>
+  );
+}
+
+/**
+ * Uma gaveta na tela — ou a lista solta, quando `pasta` é `null`.
+ *
+ * O mesmo componente desenha as duas porque tudo que vale pra pasta vale pra
+ * quem está fora dela: contar quantas entraram no encontro, marcar o lote
+ * inteiro de uma vez, recolher. A diferença é só o que a gaveta de fora não
+ * tem — nome pra renomear, ordem pra mudar, e lixeira.
+ */
+function GrupoDePasta({
+  pasta,
+  itens,
+  pastas,
+  selecionadas,
+  abertas,
+  onAlternarCartao,
+  onAbrirCartao,
+  alvosDoGrupo,
+  forcarAberta,
+  semCabecalho,
+  editando,
+  onEditar,
+}: {
+  pasta: PastaCriaturas | null;
+  itens: CriaturaEncontro[];
+  pastas: PastaCriaturas[];
+  selecionadas: string[];
+  abertas: string[];
+  onAlternarCartao: (id: string) => void;
+  onAbrirCartao: (id: string) => void;
+  alvosDoGrupo: AlvoDoGrupo[];
+  forcarAberta: boolean;
+  semCabecalho: boolean;
+  editando: boolean;
+  onEditar: (id: string | null) => void;
+}) {
+  const renomearPasta = useBestiaryStore((s) => s.renomearPasta);
+  const removerPasta = useBestiaryStore((s) => s.removerPasta);
+  const moverPasta = useBestiaryStore((s) => s.moverPasta);
+  const alternarPastaRecolhida = useBestiaryStore((s) => s.alternarPastaRecolhida);
+  const definirSelecaoDeVarias = useBestiaryStore((s) => s.definirSelecaoDeVarias);
+  const [confirmando, setConfirmando] = useState(false);
+  /** Estado próprio da gaveta de fora, que não tem `recolhida` salvo em lugar nenhum. */
+  const [foraRecolhida, setForaRecolhida] = useState(false);
+
+  const recolhida = forcarAberta ? false : pasta ? pasta.recolhida : foraRecolhida;
+  const noEncontro = itens.filter((c) => selecionadas.includes(c.id)).length;
+  const indice = pasta ? pastas.findIndex((p) => p.id === pasta.id) : -1;
+
+  const lista =
+    itens.length === 0 ? (
+      <p className="rounded-xl border border-dashed border-parchment-300 px-3 py-3 text-center text-xs text-parchment-600 dark:border-parchment-800 dark:text-parchment-400">
+        Pasta vazia. Escolha-a em “Nasce em”, ou mande uma criatura pra cá pelo seletor de pasta do
+        cartão dela.
+      </p>
+    ) : (
+      <div className="flex flex-col gap-2">
+        {itens.map((c) => (
+          <CartaoCriatura
+            key={c.id}
+            criatura={c}
+            marcada={selecionadas.includes(c.id)}
+            aberta={abertas.includes(c.id)}
+            onAlternar={() => onAlternarCartao(c.id)}
+            onDuplicada={onAbrirCartao}
+            pastas={pastas}
+            alvosDoGrupo={alvosDoGrupo}
+          />
+        ))}
+      </div>
+    );
+
+  if (semCabecalho) return lista;
+
+  return (
+    <div
+      className={
+        pasta
+          ? "rounded-2xl border border-parchment-300 bg-parchment-100/40 p-2 dark:border-parchment-800 dark:bg-parchment-900/30"
+          : ""
+      }
+    >
+      {editando && pasta ? (
+        <input
+          autoFocus
+          value={pasta.nome}
+          onChange={(e) => renomearPasta(pasta.id, e.target.value)}
+          onBlur={() => onEditar(null)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === "Escape") onEditar(null);
+          }}
+          aria-label="Nome da pasta"
+          className="mb-1 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-bold text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+        />
+      ) : null}
+
+      <div className="flex flex-wrap items-center gap-1">
+        {/*
+          `min-w-48` é o que quebra a linha no celular: com o nome exigindo
+          12rem, os botões de gestão não cabem ao lado em 360px e caem pra linha
+          de baixo, em vez de espremerem "Emboscada da estrada" até sobrar
+          reticências. Em tela larga tudo volta pra mesma linha.
+        */}
+        <button
+          type="button"
+          onClick={() => (pasta ? alternarPastaRecolhida(pasta.id) : setForaRecolhida((v) => !v))}
+          aria-expanded={!recolhida}
+          className="flex min-w-48 flex-1 items-center gap-1.5 rounded-lg px-1 py-1.5 text-left hover:bg-parchment-100 dark:hover:bg-parchment-900"
+        >
+          {recolhida ? (
+            <ChevronRight className="h-4 w-4 shrink-0 text-parchment-400" aria-hidden />
+          ) : (
+            <ChevronDown className="h-4 w-4 shrink-0 text-parchment-400" aria-hidden />
+          )}
+          {pasta ? (
+            recolhida ? (
+              <Folder className="h-4 w-4 shrink-0 text-wine-500" aria-hidden />
+            ) : (
+              <FolderOpen className="h-4 w-4 shrink-0 text-wine-500" aria-hidden />
+            )
+          ) : (
+            <Skull className="h-4 w-4 shrink-0 text-parchment-400" aria-hidden />
+          )}
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-sm font-bold text-parchment-900 dark:text-parchment-50">
+              {pasta ? pasta.nome || "Pasta sem nome" : "Fora das pastas"}
+            </span>
+            {/* A contagem vai EMBAIXO do nome, e não ao lado: ao lado ela é um
+                bloco de largura fixa que empurra o nome pra fora — a pasta
+                aparecia como "Chefes d…" enquanto "3 · 1 no encontro" ficava
+                inteiro. O nome é o que identifica a gaveta. */}
+            <span className="block truncate font-mono text-2xs text-parchment-600 dark:text-parchment-400">
+              {itens.length} criatura{itens.length === 1 ? "" : "s"}
+              {noEncontro > 0 && (
+                <span className="text-wine-600 dark:text-wine-300"> · {noEncontro} no encontro</span>
+              )}
+            </span>
+          </span>
+        </button>
+
+        {/*
+          Os botões de gestão andam JUNTOS num bloco que não encolhe: soltos no
+          `flex-wrap`, eles quebravam três numa linha e dois na outra assim que
+          a tela apertava. Como bloco, ou cabem todos ao lado do nome, ou descem
+          todos pra linha de baixo — que é o que acontece no celular.
+        */}
+        <div className="ml-auto flex shrink-0 items-center gap-1">
+        {itens.length > 0 && (
+          <button
+            type="button"
+            onClick={() =>
+              definirSelecaoDeVarias(
+                itens.map((c) => c.id),
+                noEncontro < itens.length
+              )
+            }
+            aria-label={
+              noEncontro < itens.length
+                ? `Pôr as ${itens.length} criaturas no encontro`
+                : "Tirar todas do encontro"
+            }
+            title={noEncontro < itens.length ? "Marcar todas pro encontro" : "Desmarcar todas"}
+            className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-wine-600 dark:border-parchment-700 dark:hover:text-wine-300"
+          >
+            {noEncontro === itens.length ? (
+              <Square className="h-4 w-4" />
+            ) : (
+              <SquareCheckBig className="h-4 w-4" />
+            )}
+          </button>
+        )}
+
+        {pasta && (
+          <>
+            <button
+              type="button"
+              onClick={() => onEditar(pasta.id)}
+              aria-label={`Renomear a pasta ${pasta.nome}`}
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => moverPasta(pasta.id, -1)}
+              disabled={indice <= 0}
+              aria-label={`Subir a pasta ${pasta.nome}`}
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 disabled:opacity-30 dark:border-parchment-700"
+            >
+              <ArrowUp className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => moverPasta(pasta.id, 1)}
+              disabled={indice < 0 || indice >= pastas.length - 1}
+              aria-label={`Descer a pasta ${pasta.nome}`}
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 disabled:opacity-30 dark:border-parchment-700"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </button>
+            {confirmando ? (
+              <button
+                type="button"
+                onClick={() => {
+                  removerPasta(pasta.id);
+                  setConfirmando(false);
+                }}
+                className="rounded-lg bg-rose-600 px-2 py-1.5 text-2xs font-semibold text-white hover:bg-rose-500"
+              >
+                Só a pasta?
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmando(true)}
+                aria-label={`Apagar a pasta ${pasta.nome}`}
+                title="Apaga só a pasta — as criaturas voltam pra “Fora das pastas”"
+                className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:border-rose-300 hover:text-rose-500 dark:border-parchment-700"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+          </>
+        )}
+        </div>
+      </div>
+
+      {!recolhida && <div className="mt-2">{lista}</div>}
+    </div>
   );
 }
 
 function CartaoCriatura({
   criatura,
   marcada,
+  aberta,
+  onAlternar,
+  onDuplicada,
+  pastas,
   alvosDoGrupo,
 }: {
   criatura: CriaturaEncontro;
   marcada: boolean;
+  /** Fechado, o cartão é uma linha; aberto, é a ficha inteira que ele sempre foi. */
+  aberta: boolean;
+  onAlternar: () => void;
+  onDuplicada: (id: string) => void;
+  pastas: PastaCriaturas[];
   alvosDoGrupo: AlvoDoGrupo[];
 }) {
   const atualizar = useBestiaryStore((s) => s.atualizar);
@@ -555,6 +993,8 @@ function CartaoCriatura({
   const duplicar = useBestiaryStore((s) => s.duplicar);
   const recalibrar = useBestiaryStore((s) => s.recalibrar);
   const alternarSelecao = useBestiaryStore((s) => s.alternarSelecao);
+  const moverCriatura = useBestiaryStore((s) => s.moverCriatura);
+  const reordenarCriatura = useBestiaryStore((s) => s.reordenarCriatura);
   const [confirmando, setConfirmando] = useState(false);
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
@@ -596,8 +1036,13 @@ function CartaoCriatura({
   const molde = getMoldePorPatamar(criatura.patamar);
   const doMolde = aplicarPapel(criatura.patamar, criatura.papel);
   // Recalculado a cada tecla: é isso que faz o conselho aparecer ENQUANTO o
-  // Mestre digita o dano, em vez de depois de trezentas batalhas.
-  const avisos = useMemo(() => avisarSobreCriatura(criatura, alvosDoGrupo), [criatura, alvosDoGrupo]);
+  // Mestre digita o dano, em vez de depois de trezentas batalhas. Só no cartão
+  // ABERTO — num covil de trinta criaturas, aconselhar as vinte e nove que
+  // ninguém está olhando é trabalho jogado fora a cada tecla digitada na trigésima.
+  const avisos = useMemo(
+    () => (aberta ? avisarSobreCriatura(criatura, alvosDoGrupo) : []),
+    [aberta, criatura, alvosDoGrupo]
+  );
   const porAcoes = usaAcoes(criatura);
   const danoDasAcoes = porAcoes ? danoDasAcoesPorRodada(criatura) : 0;
   // "Fora do molde" não é um erro — é informação. O Mestre tem todo o direito
@@ -608,6 +1053,24 @@ function CartaoCriatura({
     criatura.ca !== molde.ca ||
     criatura.bonusAtaque !== molde.bonusAtaque;
 
+  /**
+   * A linha que o cartão fechado mostra.
+   *
+   * São os números com que se decide "é esta que eu quero?" sem abrir nada:
+   * quantas vêm, de que patamar, quanto aguentam e quanto batem. O resto do
+   * formulário é edição, e edição só interessa depois de escolher.
+   */
+  const resumo = [
+    criatura.quantidade > 1 ? `×${criatura.quantidade}` : null,
+    rotuloPatamar(criatura.patamar),
+    PAPEIS.find((p) => p.id === criatura.papel)?.nome,
+    `${criatura.pv} PV`,
+    `CA ${criatura.ca}`,
+    `${Math.round(porAcoes ? danoDasAcoes : criatura.danoPorTurno)} dano/turno`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
     <div
       className={`rounded-2xl border p-3 transition-colors ${
@@ -616,214 +1079,288 @@ function CartaoCriatura({
           : "border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/50"
       }`}
     >
-      <div className="flex flex-wrap items-center gap-2">
-        {/*
-          O retrato da criatura (0.1.13), mesma infra da foto de personagem —
-          reduzida no navegador, nunca sai dele. Sem foto própria cai no ícone
-          de caveira: o cartão de uma criatura recém-criada não tem raça nem
-          árvore pra emprestar um fallback, diferente do card de personagem.
-        */}
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-parchment-300/80 bg-parchment-50 dark:border-parchment-700/80 dark:bg-parchment-950">
-          {criatura.portrait ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={criatura.portrait}
-              alt={`Retrato de ${criatura.nome || "criatura sem nome"}`}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <Skull className="h-4 w-4 text-parchment-400 dark:text-parchment-600" />
-          )}
-        </div>
+      <div className="flex items-center gap-2">
         <input
           type="checkbox"
           checked={marcada}
           onChange={() => alternarSelecao(criatura.id)}
           aria-label={`Incluir ${criatura.nome} no encontro`}
-          className="h-4 w-4 accent-wine-600"
+          className="h-5 w-5 shrink-0 accent-wine-600"
         />
-        <input
-          value={criatura.nome}
-          onChange={(e) => atualizar(criatura.id, { nome: e.target.value })}
-          aria-label="Nome da criatura"
-          className="min-w-40 flex-1 rounded-lg border border-transparent bg-transparent px-1 py-0.5 font-bold text-parchment-900 hover:border-parchment-300 focus:border-parchment-400 focus:outline-none dark:text-parchment-50 dark:hover:border-parchment-700"
-        />
-        <select
-          value={criatura.patamar}
-          onChange={(e) => atualizar(criatura.id, { patamar: Number(e.target.value) })}
-          aria-label="Patamar"
-          className="rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
-        >
-          {MOLDES_CRIATURA.map((m) => (
-            <option key={m.patamar} value={m.patamar}>
-              {m.patamar}º — {m.titulo}
-            </option>
-          ))}
-        </select>
-        <select
-          value={criatura.papel}
-          onChange={(e) => atualizar(criatura.id, { papel: e.target.value as PapelCriatura })}
-          aria-label="Papel"
-          className="rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
-        >
-          {PAPEIS.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nome}
-            </option>
-          ))}
-        </select>
+        {/*
+          O cartão inteiro é o botão de abrir. Com trinta criaturas na tela, o
+          alvo de toque precisa ser a linha toda — um chevron de 16px no canto
+          direito é o botão que ninguém acerta no celular.
+        */}
         <button
           type="button"
-          onClick={() => duplicar(criatura.id)}
-          aria-label={`Duplicar ${criatura.nome}`}
-          className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+          onClick={onAlternar}
+          aria-expanded={aberta}
+          className="flex min-w-0 flex-1 items-center gap-2 rounded-lg py-0.5 text-left"
         >
-          <Copy className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={handleBaixarArquivo}
-          disabled={arquivoState === "loading"}
-          aria-label={`Baixar ${criatura.nome} num arquivo`}
-          title="Baixar num arquivo .mtcriatura — leva pra outra campanha ou pro Mestre seguinte"
-          className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700"
-        >
-          {arquivoState === "loading" ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+          {/*
+            O retrato da criatura (0.1.13), mesma infra da foto de personagem —
+            reduzida no navegador, nunca sai dele. Sem foto própria cai no ícone
+            de caveira: o cartão de uma criatura recém-criada não tem raça nem
+            árvore pra emprestar um fallback, diferente do card de personagem.
+          */}
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-parchment-300/80 bg-parchment-50 dark:border-parchment-700/80 dark:bg-parchment-950">
+            {criatura.portrait ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={criatura.portrait}
+                alt={`Retrato de ${criatura.nome || "criatura sem nome"}`}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <Skull className="h-4 w-4 text-parchment-400 dark:text-parchment-600" />
+            )}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate font-bold text-parchment-900 dark:text-parchment-50">
+              {criatura.nome || "Criatura sem nome"}
+            </span>
+            <span className="block truncate font-mono text-2xs text-parchment-600 dark:text-parchment-400">
+              {resumo}
+            </span>
+          </span>
+          {aberta ? (
+            <ChevronDown className="h-4 w-4 shrink-0 text-parchment-400" aria-hidden />
           ) : (
-            <Download className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 shrink-0 text-parchment-400" aria-hidden />
           )}
         </button>
-        <button
-          type="button"
-          onClick={handleCopiarLink}
-          aria-label={`Copiar link de ${criatura.nome}`}
-          title="Copiar um link com esta criatura dentro"
-          className={`rounded-lg border p-1.5 ${
-            linkState === "copiado"
-              ? "border-emerald-400 text-emerald-600 dark:border-emerald-600 dark:text-emerald-300"
-              : "border-parchment-300 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
-          }`}
-        >
-          {linkState === "copiado" ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
-        </button>
-        {confirmando ? (
-          <button
-            type="button"
-            onClick={() => remover(criatura.id)}
-            className="rounded-lg bg-rose-600 px-2 py-1.5 text-xs font-semibold text-white hover:bg-rose-500"
-          >
-            Confirmar?
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setConfirmando(true)}
-            aria-label={`Apagar ${criatura.nome}`}
-            className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:border-rose-300 hover:text-rose-500 dark:border-parchment-700"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        )}
-      </div>
-      {arquivoState === "erro" && (
-        <p className="mt-1 text-2xs text-wine-500 dark:text-wine-300">Não deu pra montar o arquivo. Tente de novo.</p>
-      )}
-      {linkState === "erro" && (
-        <p className="mt-1 text-2xs text-wine-500 dark:text-wine-300">
-          O navegador não deixou copiar. Isso costuma acontecer fora de HTTPS — baixe o arquivo por enquanto.
-        </p>
-      )}
-
-      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-6">
-        <CampoNumero
-          rotulo="Quantidade"
-          valor={criatura.quantidade}
-          min={1}
-          onChange={(v) => atualizar(criatura.id, { quantidade: v })}
-        />
-        <CampoNumero
-          rotulo="PV"
-          valor={criatura.pv}
-          min={1}
-          onChange={(v) => atualizar(criatura.id, { pv: v })}
-        />
-        <CampoNumero
-          rotulo="CA"
-          valor={criatura.ca}
-          min={1}
-          onChange={(v) => atualizar(criatura.id, { ca: v })}
-        />
-        <CampoNumero
-          rotulo="Ataque"
-          valor={criatura.bonusAtaque}
-          min={0}
-          onChange={(v) => atualizar(criatura.id, { bonusAtaque: v })}
-        />
-        <CampoNumero
-          rotulo="Dano/turno"
-          valor={criatura.danoPorTurno}
-          min={0}
-          onChange={(v) => atualizar(criatura.id, { danoPorTurno: v })}
-          desativado={porAcoes}
-          dica={
-            porAcoes
-              ? "Ignorado: esta criatura tem ações declaradas, e a simulação rola cada uma delas."
-              : undefined
-          }
-        />
-        <CampoNumero
-          rotulo="CD"
-          valor={criatura.cdResistencia}
-          min={0}
-          onChange={(v) => atualizar(criatura.id, { cdResistencia: v })}
-        />
       </div>
 
-      <EditorDeAcoes criatura={criatura} porAcoes={porAcoes} danoDasAcoes={danoDasAcoes} />
-
-      <PainelDeAvisos criatura={criatura} avisos={avisos} temGrupo={alvosDoGrupo.length > 0} />
-
-      <input
-        value={criatura.perigo}
-        onChange={(e) => atualizar(criatura.id, { perigo: e.target.value })}
-        placeholder="O que a torna perigosa — veneno, voo, emboscada. (Anotação sua: a simulação não modela isso.)"
-        className="mt-2 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
-      />
-
-      {/*
-        O upload em si. `tipo="portrait"` reaproveita o mesmo teto de bytes e o
-        mesmo orçamento de `localStorage` da foto de personagem — as duas
-        competem pela mesma cota de 4 MB, e é por isso que este botão não
-        inventa um `TipoDeImagem` próprio maior.
-      */}
-      <ImagemDaFicha
-        tipo="portrait"
-        valorAtual={criatura.portrait}
-        rotulo="Adicionar retrato"
-        onChange={(dataUrl) => atualizar(criatura.id, { portrait: dataUrl ?? undefined })}
-        className="mt-2"
-      />
-
-      <p className="mt-1.5 text-xs text-parchment-600 dark:text-parchment-400">
-        Resistência da criatura: <b>+{bonusResistencia(molde)}</b> (metade do Bônus de Ataque do molde).
-        {foraDoMolde && (
-          <>
-            {" · "}
-            <span className="text-amber-700 dark:text-amber-300">
-              Fora do molde do Apêndice G (o padrão seria {doMolde.pv} PV, CA {molde.ca}, +
-              {molde.bonusAtaque}, {doMolde.danoPorTurno} de dano/turno).
-            </span>{" "}
+      {aberta && (
+        <>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <input
+              value={criatura.nome}
+              onChange={(e) => atualizar(criatura.id, { nome: e.target.value })}
+              aria-label="Nome da criatura"
+              className="min-w-40 flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 font-bold text-parchment-900 focus:border-parchment-400 focus:outline-none dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            />
+            <select
+              value={criatura.patamar}
+              onChange={(e) => atualizar(criatura.id, { patamar: Number(e.target.value) })}
+              aria-label="Patamar"
+              className="rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            >
+              {MOLDES_CRIATURA.map((m) => (
+                <option key={m.patamar} value={m.patamar}>
+                  {m.patamar}º — {m.titulo}
+                </option>
+              ))}
+            </select>
+            <select
+              value={criatura.papel}
+              onChange={(e) => atualizar(criatura.id, { papel: e.target.value as PapelCriatura })}
+              aria-label="Papel"
+              className="rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            >
+              {PAPEIS.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nome}
+                </option>
+              ))}
+            </select>
+            {/*
+              Mover de pasta é um `<select>`, e não arrastar-e-soltar, porque
+              esta tela é mobile-first: arrastar um cartão de 300px de altura
+              com o dedo, numa lista que rola, é a interação que mais falha em
+              celular — e é a única que não tem alternativa por teclado.
+            */}
+            {pastas.length > 0 && (
+              <select
+                value={criatura.pastaId ?? ""}
+                onChange={(e) => moverCriatura(criatura.id, e.target.value || null)}
+                aria-label={`Pasta de ${criatura.nome}`}
+                title="Mover pra outra pasta"
+                className="max-w-40 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+              >
+                <option value="">Fora das pastas</option>
+                {pastas.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nome || "Pasta sem nome"}
+                  </option>
+                ))}
+              </select>
+            )}
             <button
               type="button"
-              onClick={() => recalibrar(criatura.id)}
-              className="inline-flex items-center gap-1 font-semibold text-wine-600 underline dark:text-wine-300"
+              onClick={() => reordenarCriatura(criatura.id, -1)}
+              aria-label={`Subir ${criatura.nome} na pasta`}
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
             >
-              <RotateCcw className="h-3 w-3" /> Recalibrar
+              <ArrowUp className="h-4 w-4" />
             </button>
-          </>
-        )}
-      </p>
+            <button
+              type="button"
+              onClick={() => reordenarCriatura(criatura.id, 1)}
+              aria-label={`Descer ${criatura.nome} na pasta`}
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const novo = duplicar(criatura.id);
+                if (novo) onDuplicada(novo);
+              }}
+              aria-label={`Duplicar ${criatura.nome}`}
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={handleBaixarArquivo}
+              disabled={arquivoState === "loading"}
+              aria-label={`Baixar ${criatura.nome} num arquivo`}
+              title="Baixar num arquivo .mtcriatura — leva pra outra campanha ou pro Mestre seguinte"
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700"
+            >
+              {arquivoState === "loading" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleCopiarLink}
+              aria-label={`Copiar link de ${criatura.nome}`}
+              title="Copiar um link com esta criatura dentro"
+              className={`rounded-lg border p-1.5 ${
+                linkState === "copiado"
+                  ? "border-emerald-400 text-emerald-600 dark:border-emerald-600 dark:text-emerald-300"
+                  : "border-parchment-300 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+              }`}
+            >
+              {linkState === "copiado" ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+            </button>
+            {confirmando ? (
+              <button
+                type="button"
+                onClick={() => remover(criatura.id)}
+                className="rounded-lg bg-rose-600 px-2 py-1.5 text-xs font-semibold text-white hover:bg-rose-500"
+              >
+                Confirmar?
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmando(true)}
+                aria-label={`Apagar ${criatura.nome}`}
+                className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:border-rose-300 hover:text-rose-500 dark:border-parchment-700"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          {arquivoState === "erro" && (
+            <p className="mt-1 text-2xs text-wine-500 dark:text-wine-300">Não deu pra montar o arquivo. Tente de novo.</p>
+          )}
+          {linkState === "erro" && (
+            <p className="mt-1 text-2xs text-wine-500 dark:text-wine-300">
+              O navegador não deixou copiar. Isso costuma acontecer fora de HTTPS — baixe o arquivo por enquanto.
+            </p>
+          )}
+
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-6">
+            <CampoNumero
+              rotulo="Quantidade"
+              valor={criatura.quantidade}
+              min={1}
+              onChange={(v) => atualizar(criatura.id, { quantidade: v })}
+            />
+            <CampoNumero
+              rotulo="PV"
+              valor={criatura.pv}
+              min={1}
+              onChange={(v) => atualizar(criatura.id, { pv: v })}
+            />
+            <CampoNumero
+              rotulo="CA"
+              valor={criatura.ca}
+              min={1}
+              onChange={(v) => atualizar(criatura.id, { ca: v })}
+            />
+            <CampoNumero
+              rotulo="Ataque"
+              valor={criatura.bonusAtaque}
+              min={0}
+              onChange={(v) => atualizar(criatura.id, { bonusAtaque: v })}
+            />
+            <CampoNumero
+              rotulo="Dano/turno"
+              valor={criatura.danoPorTurno}
+              min={0}
+              onChange={(v) => atualizar(criatura.id, { danoPorTurno: v })}
+              desativado={porAcoes}
+              dica={
+                porAcoes
+                  ? "Ignorado: esta criatura tem ações declaradas, e a simulação rola cada uma delas."
+                  : undefined
+              }
+            />
+            <CampoNumero
+              rotulo="CD"
+              valor={criatura.cdResistencia}
+              min={0}
+              onChange={(v) => atualizar(criatura.id, { cdResistencia: v })}
+            />
+          </div>
+
+          <EditorDeAcoes criatura={criatura} porAcoes={porAcoes} danoDasAcoes={danoDasAcoes} />
+
+          <PainelDeAvisos criatura={criatura} avisos={avisos} temGrupo={alvosDoGrupo.length > 0} />
+
+          <input
+            value={criatura.perigo}
+            onChange={(e) => atualizar(criatura.id, { perigo: e.target.value })}
+            placeholder="O que a torna perigosa — veneno, voo, emboscada. (Anotação sua: a simulação não modela isso.)"
+            aria-label="O que torna a criatura perigosa"
+            className="mt-2 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+          />
+
+          {/*
+            O upload em si. `tipo="portrait"` reaproveita o mesmo teto de bytes e o
+            mesmo orçamento de `localStorage` da foto de personagem — as duas
+            competem pela mesma cota de 4 MB, e é por isso que este botão não
+            inventa um `TipoDeImagem` próprio maior.
+          */}
+          <ImagemDaFicha
+            tipo="portrait"
+            valorAtual={criatura.portrait}
+            rotulo="Adicionar retrato"
+            onChange={(dataUrl) => atualizar(criatura.id, { portrait: dataUrl ?? undefined })}
+            className="mt-2"
+          />
+
+          <p className="mt-1.5 text-xs text-parchment-600 dark:text-parchment-400">
+            Resistência da criatura: <b>+{bonusResistencia(molde)}</b> (metade do Bônus de Ataque do molde).
+            {foraDoMolde && (
+              <>
+                {" · "}
+                <span className="text-amber-700 dark:text-amber-300">
+                  Fora do molde do Apêndice G (o padrão seria {doMolde.pv} PV, CA {molde.ca}, +
+                  {molde.bonusAtaque}, {doMolde.danoPorTurno} de dano/turno).
+                </span>{" "}
+                <button
+                  type="button"
+                  onClick={() => recalibrar(criatura.id)}
+                  className="inline-flex items-center gap-1 font-semibold text-wine-600 underline dark:text-wine-300"
+                >
+                  <RotateCcw className="h-3 w-3" /> Recalibrar
+                </button>
+              </>
+            )}
+          </p>
+        </>
+      )}
     </div>
   );
 }
