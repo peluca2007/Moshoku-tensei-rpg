@@ -1,5 +1,6 @@
 import { CharacterData } from "./types";
 import { comImagensSaneadas } from "./imagemDaFicha";
+import { base64UrlParaBytes, bytesParaBase64Url, comprimirTexto, descomprimirBytes } from "./compactacao";
 
 /**
  * A ficha inteira dentro de um link.
@@ -35,38 +36,6 @@ import { comImagensSaneadas } from "./imagemDaFicha";
 const MARCA_GZIP = "g:";
 const MARCA_CRU = "j:";
 
-function bytesParaBase64Url(bytes: Uint8Array): string {
-  let binario = "";
-  // `String.fromCharCode(...bytes)` estoura a pilha em fichas grandes — o limite
-  // de argumentos de uma chamada é dezenas de milhares, e um Imperador passa
-  // disso. O laço é feio e não estoura.
-  for (const b of bytes) binario += String.fromCharCode(b);
-  return btoa(binario).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
-
-function base64UrlParaBytes(texto: string): Uint8Array<ArrayBuffer> {
-  const base64 = texto.replace(/-/g, "+").replace(/_/g, "/");
-  const binario = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, "="));
-  const bytes = new Uint8Array(binario.length);
-  for (let i = 0; i < binario.length; i++) bytes[i] = binario.charCodeAt(i);
-  return bytes;
-}
-
-async function comprimir(texto: string): Promise<Uint8Array<ArrayBuffer> | null> {
-  if (typeof CompressionStream === "undefined") return null;
-  const stream = new Blob([texto]).stream().pipeThrough(new CompressionStream("gzip"));
-  return new Uint8Array(await new Response(stream).arrayBuffer());
-}
-
-// `Uint8Array<ArrayBuffer>`, e não `Uint8Array`: o TS 5 tipa o genérico como
-// `ArrayBufferLike`, e `BlobPart` recusa uma view que POSSA estar sobre um
-// `SharedArrayBuffer`. Amarrar o parâmetro ao buffer comum compila sem `as` —
-// e é verdade, porque quem chama sempre monta o array do zero.
-async function descomprimir(bytes: Uint8Array<ArrayBuffer>): Promise<string> {
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-  return new Response(stream).text();
-}
-
 /** A ficha codificada, pronta pra virar o fragmento de uma URL. */
 export async function codificarFicha(character: CharacterData): Promise<string> {
   // O `id` fica de fora: quem importa recebe um id novo (`importCharacter`), e
@@ -83,7 +52,7 @@ export async function codificarFicha(character: CharacterData): Promise<string> 
   // tela de compartilhar avisa.
   const { id: _id, portrait: _portrait, cover: _cover, ...enxuta } = character;
   const json = JSON.stringify(enxuta);
-  const comprimido = await comprimir(json);
+  const comprimido = await comprimirTexto(json);
   if (!comprimido) return MARCA_CRU + bytesParaBase64Url(new TextEncoder().encode(json));
   return MARCA_GZIP + bytesParaBase64Url(comprimido);
 }
@@ -104,7 +73,7 @@ export async function decodificarFicha(fragmento: string): Promise<Omit<Characte
     const corpo = texto.slice(2);
     if (marca !== MARCA_GZIP && marca !== MARCA_CRU) return null;
     const bytes = base64UrlParaBytes(corpo);
-    const json = marca === MARCA_GZIP ? await descomprimir(bytes) : new TextDecoder().decode(bytes);
+    const json = marca === MARCA_GZIP ? await descomprimirBytes(bytes) : new TextDecoder().decode(bytes);
     const dados = JSON.parse(json);
     if (!dados || typeof dados !== "object" || !("attributeBase" in dados)) return null;
     // `codificarFicha` nunca põe imagem no fragmento, então um link com uma foto

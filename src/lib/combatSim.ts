@@ -49,6 +49,21 @@ export function makeRng(seed: number): Rng {
 export const dado = (rng: Rng, faces: number) => Math.floor(rng() * faces) + 1;
 export const d20 = (rng: Rng) => dado(rng, 20);
 
+/**
+ * d20 com Vantagem/Desvantagem — rola dois e fica com o melhor ou o pior.
+ *
+ * Cancela quando as duas estão presentes (Preso E Envenenado, por exemplo, não
+ * rolam quatro dados): é a mesma regra que o resto do livro usa pra qualquer
+ * fonte de Vantagem/Desvantagem, e reaproveitá-la aqui evita inventar uma conta
+ * nova só pra combate.
+ */
+export function d20Ajustado(rng: Rng, vantagem: boolean, desvantagem: boolean): number {
+  if (vantagem === desvantagem) return d20(rng);
+  const a = d20(rng);
+  const b = d20(rng);
+  return vantagem ? Math.max(a, b) : Math.min(a, b);
+}
+
 /** Rola "NdM" repetidamente; ignora modificadores textuais. */
 export function rolarDados(formula: string, rng: Rng): number {
   let total = 0;
@@ -166,6 +181,29 @@ export interface Alvo {
   vivo: boolean;
   molhado: boolean;
   emChamas: number;
+  /**
+   * Preso, Caído e Envenenado (Cap. 4, §7-8) — as três condições que uma ação
+   * de criatura pode aplicar de forma estruturada (`AcaoCriatura.aplicaPreso` e
+   * companhia em `encounterSim.ts`), na mesma casa de Molhado acima.
+   *
+   * O que elas cobram do combate, aqui, é só a parte que o livro resume em uma
+   * frase cada: "seus ataques têm Desvantagem" (Preso, Caído, Envenenado) e
+   * "ataques contra você têm Vantagem" (Preso, Caído). O resto de cada uma —
+   * Deslocamento 0, teste pra se soltar, a hora certa em que o veneno realmente
+   * bate — segue de fora, pelo mesmo motivo que Atolado e Quebrantado seguem:
+   * é posição e é relógio de mesa, não dado de dano.
+   */
+  preso: boolean;
+  caido: boolean;
+  envenenado: boolean;
+  /**
+   * A Reação (ou ação lendária) de chefe fora do turno normal dele — reabastece
+   * uma vez por rodada da mesa (`aoIniciarRodada`) e é gasta por
+   * `reagirComoChefe`, em `encounterSim.ts`. Fica na base, e não só em
+   * `EstadoCriatura`, porque o gancho em si (`aoIniciarRodada`) é genérico:
+   * nada nele exige que quem reage seja uma criatura.
+   */
+  reacaoDisponivel: boolean;
   danoCausado: number;
 }
 
@@ -286,6 +324,10 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     pt: ficha.ptMax,
     molhado: false,
     emChamas: 0,
+    preso: false,
+    caido: false,
+    envenenado: false,
+    reacaoDisponivel: false,
     vivo: true,
     danoCausado: 0,
   };
@@ -320,16 +362,24 @@ export function escolherAcao(e: EstadoPersonagem, acoesRestantes: number): Acao 
 export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): number {
   // Quem não tem árvore do Corpo não soma Bônus de Rank num golpe de arma.
   const bonus = a.nome === "arma simples" ? e.ficha.bcSemRank : e.ficha.bc;
+  // Preso, Caído e Envenenado (Cap. 4, §7-8): "seus ataques têm Desvantagem" é
+  // igual pras três, então o personagem afetado por qualquer uma rola pior — e
+  // "ataques contra você têm Vantagem" (só Preso e Caído) faz o ALVO comprado
+  // por essas duas facilitar a vida de quem o ataca.
+  const desvantagemPropria = e.preso || e.caido || e.envenenado;
+  const vantagemContraAlvo = alvo.preso || alvo.caido;
   let dano = 0;
   if (a.ataque) {
-    const rolagem = d20(rng);
+    const rolagem = d20Ajustado(rng, vantagemContraAlvo, desvantagemPropria);
     if (rolagem === 1) return 0;
     if (rolagem !== 20 && rolagem + bonus < alvo.ca) return 0;
     dano = rolarDados(a.dano, rng) + bonus + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
     if (rolagem === 20) dano += rolarDados(a.dano, rng);
   } else {
-    // teste de resistência do alvo: metade se passar
-    const resistencia = d20(rng) + Math.ceil(e.ficha.bc / 2);
+    // teste de resistência do alvo: metade se passar. Envenenado também cobra
+    // Desvantagem em "testes de atributo" (Cap. 4, §7) — e resistir a uma
+    // magia é isso.
+    const resistencia = d20Ajustado(rng, false, alvo.envenenado) + Math.ceil(e.ficha.bc / 2);
     dano = rolarDados(a.dano, rng) + bonus + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
     if (resistencia >= 8 + e.ficha.bc) dano = Math.floor(dano / 2);
   }
@@ -373,6 +423,42 @@ export function tickChamas(alvo: Alvo, rng: Rng): boolean {
   return alvo.vivo;
 }
 
+// ---------------------------------------------------------------------------
+// Reação de chefe (fora do turno normal)
+// ---------------------------------------------------------------------------
+/*
+ * A ÚNICA economia de ação de chefe que existia até aqui era a rodada extra
+ * (`rodadasDoChefe`, Apêndice G) — mais uma vez inteira no MESMO lugar da
+ * ordem de iniciativa. O que faltava era o outro tipo, o que a maioria dos
+ * livros de chefe também dá: uma Reação ou ação lendária que dispara FORA do
+ * turno dele, entre os turnos dos outros.
+ *
+ * Reescrever a ordem de iniciativa pra caber isso — turnos intercalados,
+ * prioridade, o que acontece se dois chefes reagem ao mesmo evento — é o motor
+ * de iniciativa inteiro, e não é isso que este gancho promete. O que ele dá é
+ * o mínimo que já habilita a regra: um interruptor por combatente
+ * (`Alvo.reacaoDisponivel`), religado uma vez por rodada da mesa e gasto no
+ * momento que quem monta o loop escolher (em `encounterSim.ts`, logo depois do
+ * turno de um herói). Ele não sabe o que é "chefe" nem o que a reação FAZ —
+ * isso é decisão de quem chama, exatamente como os outros ganchos deste
+ * arquivo (`tickChamas`, `resolver`) não decidem quando são chamados.
+ */
+
+/** Rearma a Reação/ação lendária no início de uma rodada da mesa, se elegível. */
+export function aoIniciarRodada(alvo: Alvo, elegivel: boolean): void {
+  if (elegivel) alvo.reacaoDisponivel = true;
+}
+
+/**
+ * Gasta a Reação/ação lendária, se houver uma disponível. Devolve true quando
+ * consumiu — o que ela FAZ é responsabilidade de quem chamou.
+ */
+export function consumirReacao(alvo: Alvo): boolean {
+  if (!alvo.vivo || !alvo.reacaoDisponivel) return false;
+  alvo.reacaoDisponivel = false;
+  return true;
+}
+
 /**
  * As simplificações do motor, em uma lista.
  *
@@ -381,9 +467,10 @@ export function tickChamas(alvo: Alvo, rng: Rng): boolean {
  * ele ignora é pior que nenhum número: parece mais confiável do que é.
  */
 export const SIMPLIFICACOES = [
-  "Condições modeladas: Molhado (frio dobra) e Em Chamas. Todas as outras — Atolado, Desequilibrado, Quebrantado, Marcado, Soterrado — ficam de fora, e elas são a mecânica central de cinco árvores.",
-  "Cura, barreira, Reações e Salvações não entram. Quem joga de suporte aparece aqui só pelo dano que causa, que é o que ele menos faz — e o grupo parece mais frágil do que é na mesa.",
+  "Condições modeladas: Molhado (frio dobra), Em Chamas, e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Quebrantado, Marcado e Soterrado ficam de fora, e eles são a mecânica central de cinco árvores.",
+  "Cura, barreira e Salvações não entram. Quem joga de suporte aparece aqui só pelo dano que causa, que é o que ele menos faz — e o grupo parece mais frágil do que é na mesa.",
   "A IA escolhe sempre a ação de maior dano médio por Ação: nunca recua, nunca foca fogo, nunca guarda recurso pro turno seguinte.",
-  "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G (veneno, teia, voo, emboscada) não é simulado.",
+  "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
+  "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Terreno, distância, posicionamento e surpresa não existem: todo mundo alcança todo mundo desde a primeira rodada.",
 ];
