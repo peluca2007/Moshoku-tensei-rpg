@@ -50,6 +50,8 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       rank: "Principiante",
       hpDiceFormula: "1d10+3",
       weaponDieSteps: 1,
+      // Teto de Calor deste patamar — a própria Maestria abaixo já diz "máx. 5".
+      heatCap: 5,
       mastery: {
         name: "Impacto Térmico",
         description:
@@ -102,6 +104,9 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "1d10+4",
       weaponDieSteps: 1,
       ptGained: 1,
+      // A Maestria abaixo já diz "Máximo de Calor sobe para 8" — este campo é
+      // a mesma promessa em número, pra ficha calcular sem reler a prosa.
+      heatCap: 8,
       mastery: {
         name: "Fornalha Interna",
         description:
@@ -152,6 +157,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "1d12+4",
       weaponDieSteps: 2,
       ptGained: 1,
+      heatCap: 12,
       mastery: {
         name: "Punho de Nova",
         description:
@@ -205,6 +211,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "1d12+5",
       weaponDieSteps: 1,
       ptGained: 1,
+      heatCap: 16,
       mastery: {
         name: "Chama Eterna",
         description:
@@ -256,6 +263,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "2d8+5",
       weaponDieSteps: 2,
       ptGained: 1,
+      heatCap: 20,
       mastery: {
         name: "Presença do Vulcão",
         description:
@@ -309,6 +317,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "2d10+6",
       weaponDieSteps: 2,
       ptGained: 1,
+      heatCap: 25,
       mastery: {
         name: "Soberania Térmica",
         description:

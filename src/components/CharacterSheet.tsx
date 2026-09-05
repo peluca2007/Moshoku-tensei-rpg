@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Check } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Check, Thermometer } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
@@ -300,10 +300,12 @@ export default function CharacterSheet() {
     maxMp,
     maxPt,
     maxPp,
+    maxCalor,
     currentHp,
     currentMp,
     currentPt,
     currentPp,
+    currentCalor,
     armorClass,
     initiative,
   } = useCharacterDerived();
@@ -854,6 +856,25 @@ export default function CharacterSheet() {
                 onCurrentChange={(v) => useCharacterStore.getState().setCurrentPp(v)}
                 onMaxChange={(v) => useCharacterStore.getState().setOverride("maxPp", v)}
                 onResetMax={() => useCharacterStore.getState().setOverride("maxPp", null)}
+              />
+            )}
+            {/*
+              Calor só existe em Punho do Fogo — `maxCalor` já sai 0 de quem não
+              tem a árvore (getMaxCalor lê o `heatCap` do rank mais alto ali), a
+              mesma condição que PT/PP usam pra sumir da ficha de quem não tem
+              Corpo/Utilidade aberto.
+            */}
+            {(maxCalor > 0 || overrides.maxCalor !== undefined) && (
+              <ResourceCard
+                icon={<Thermometer className="h-5 w-5 text-white" />}
+                label="Calor · Punho do Fogo"
+                tone="bg-wine-700"
+                current={currentCalor}
+                max={maxCalor}
+                maxOverridden={overrides.maxCalor !== undefined}
+                onCurrentChange={(v) => useCharacterStore.getState().setCurrentCalor(v)}
+                onMaxChange={(v) => useCharacterStore.getState().setOverride("maxCalor", v)}
+                onResetMax={() => useCharacterStore.getState().setOverride("maxCalor", null)}
               />
             )}
             <EditableStatCard

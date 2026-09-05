@@ -39,6 +39,7 @@ function blankCharacter(id: string, name: string): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
+    currentCalor: null,
     overrides: {},
   };
 }
@@ -124,6 +125,7 @@ interface RosterState {
   setCurrentMp: (value: number | null) => void;
   setCurrentPt: (value: number | null) => void;
   setCurrentPp: (value: number | null) => void;
+  setCurrentCalor: (value: number | null) => void;
   /** value === null apaga a sobrescrita e volta a usar o valor calculado. */
   setOverride: (stat: keyof Omit<CharacterData["overrides"], "guildRank">, value: number | null) => void;
   /** Rank de Guilda (Cap. 5, §2) é decisão do Mestre, não fórmula — value === null volta a mostrar a estimativa por PA. */
@@ -329,6 +331,7 @@ export const useCharacterStore = create<RosterState>()(
       setCurrentMp: (currentMp) => updateActive(get, set, (c) => ({ ...c, currentMp })),
       setCurrentPt: (currentPt) => updateActive(get, set, (c) => ({ ...c, currentPt })),
       setCurrentPp: (currentPp) => updateActive(get, set, (c) => ({ ...c, currentPp })),
+      setCurrentCalor: (currentCalor) => updateActive(get, set, (c) => ({ ...c, currentCalor })),
       setOverride: (stat, value) =>
         updateActive(get, set, (c) => {
           const overrides = { ...c.overrides };
@@ -474,7 +477,10 @@ export const useCharacterStore = create<RosterState>()(
       // conversão nenhuma — ela já entra correta. A versão sobe mesmo assim
       // porque o schema mudou, e um `persist` que não registra a mudança é um
       // persist em que ninguém confia na próxima vez que ela não for inócua.
-      version: 12,
+      // v13 (2026-09-05): `currentCalor`. Mesmo caso do v12 — campo novo,
+      // nullable, e `getCurrentCalor` já trata ausência (`??`) igual a `null`
+      // ("ainda não tocado"), então ficha antiga não precisa de conversão.
+      version: 13,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
