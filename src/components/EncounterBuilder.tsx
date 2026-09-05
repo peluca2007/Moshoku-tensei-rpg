@@ -25,6 +25,7 @@ import TreeCrest from "@/components/TreeCrest";
 import Crest from "@/components/Crest";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
+import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import { CharacterData } from "@/lib/types";
 import { SIMPLIFICACOES, mediaFormula, patamarDaFicha, rankDaFicha } from "@/lib/combatSim";
 import {
@@ -528,6 +529,24 @@ function CartaoCriatura({
       }`}
     >
       <div className="flex flex-wrap items-center gap-2">
+        {/*
+          O retrato da criatura (0.1.13), mesma infra da foto de personagem —
+          reduzida no navegador, nunca sai dele. Sem foto própria cai no ícone
+          de caveira: o cartão de uma criatura recém-criada não tem raça nem
+          árvore pra emprestar um fallback, diferente do card de personagem.
+        */}
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-parchment-300/80 bg-parchment-50 dark:border-parchment-700/80 dark:bg-parchment-950">
+          {criatura.portrait ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={criatura.portrait}
+              alt={`Retrato de ${criatura.nome || "criatura sem nome"}`}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <Skull className="h-4 w-4 text-parchment-400 dark:text-parchment-600" />
+          )}
+        </div>
         <input
           type="checkbox"
           checked={marcada}
@@ -647,6 +666,20 @@ function CartaoCriatura({
         onChange={(e) => atualizar(criatura.id, { perigo: e.target.value })}
         placeholder="O que a torna perigosa — veneno, voo, emboscada. (Anotação sua: a simulação não modela isso.)"
         className="mt-2 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+      />
+
+      {/*
+        O upload em si. `tipo="portrait"` reaproveita o mesmo teto de bytes e o
+        mesmo orçamento de `localStorage` da foto de personagem — as duas
+        competem pela mesma cota de 4 MB, e é por isso que este botão não
+        inventa um `TipoDeImagem` próprio maior.
+      */}
+      <ImagemDaFicha
+        tipo="portrait"
+        valorAtual={criatura.portrait}
+        rotulo="Adicionar retrato"
+        onChange={(dataUrl) => atualizar(criatura.id, { portrait: dataUrl ?? undefined })}
+        className="mt-2"
       />
 
       <p className="mt-1.5 text-xs text-parchment-600 dark:text-parchment-400">

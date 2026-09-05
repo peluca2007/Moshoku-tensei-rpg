@@ -96,6 +96,10 @@ export const useBestiaryStore = create<BestiaryState>()(
               // devolve PV, CA e dano à tabela, e nunca apaga o que ele escreveu.
               acoes: c.acoes,
               cdResistencia: molde.cdResistencia,
+              // Mesma lógica do `perigo`: o retrato é do Mestre, não do molde —
+              // `criaturaDoMolde` nem sabe que o campo existe, e sem repassar
+              // aqui "Recalibrar" apagaria a foto junto dos números.
+              portrait: c.portrait,
             };
           }),
         })),
@@ -142,7 +146,7 @@ export const useBestiaryStore = create<BestiaryState>()(
     {
       name: "mushoku-tensei-bestiario",
       skipHydration: true,
-      version: 2,
+      version: 3,
       /**
        * v1 → v2: a criatura ganhou `acoes` (2026-09-03).
        *
@@ -150,6 +154,13 @@ export const useBestiaryStore = create<BestiaryState>()(
        * resetado. Um Mestre com dez monstros montados na véspera da sessão não
        * pode perdê-los porque o schema cresceu — e sem `acoes` definido, todo
        * `c.acoes.map` da tela quebraria na primeira renderização.
+       *
+       * v2 → v3: a criatura ganhou `portrait` (2026-09-05). Mesma regra da
+       * ficha de personagem quando ela ganhou `portrait`/`cover` (v12):
+       * opcional, e "sem retrato" é a ausência da chave — bestiário salvo já
+       * entra correto, sem conversão nenhuma. A versão sobe mesmo assim porque
+       * o schema mudou, e um `persist` que não registra isso é um `persist` em
+       * que ninguém confia na próxima vez que a mudança não for inócua.
        */
       migrate: (estado, versao) => {
         const s = estado as { criaturas?: CriaturaEncontro[] } | undefined;
