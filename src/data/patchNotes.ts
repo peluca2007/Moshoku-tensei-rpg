@@ -37,6 +37,17 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        heading: "A ficha do jogador, do lado errado da iniciativa",
+        items: [
+          "O rival que persegue o grupo há três sessões, o cavaleiro que virou inimigo, o PJ de quem faltou hoje, o duelo entre dois jogadores — todos são a mesma coisa na mesa: um personagem construído com as regras inteiras, jogando CONTRA o grupo. O Mestre tinha duas saídas ruins: montar uma criatura do zero e chutar os números, ou desistir e narrar. As duas jogam fora uma ficha que já existe, já está paga em PA e já tem as técnicas escritas.",
+          "/encontros ganhou \"Ou traga uma ficha do roster\", ao lado de \"Nova criatura\". PV, CA, Bônus de Ataque, CD, retrato e as técnicas de dano vêm da ficha, pelo MESMO derivador que a simulação usa do lado dos heróis — é isso que garante que o rival aguente na mesa o que aguentaria como personagem.",
+          "É uma CÓPIA, e não um vínculo: mexer no chefe não toca na ficha do jogador, e o jogador subir de patamar não desfaz os ajustes que você fez no chefe. Um vínculo vivo perderia o ajuste do Mestre toda vez que o dono da ficha comprasse uma habilidade.",
+          "O ataque comum vem sempre, e vem primeiro: nenhuma árvore declara \"Atacar com Arma\" como habilidade, porque é regra do Cap. 4 — e sem ele o guerreiro convertido parecia não saber bater, o mesmo erro que o check:arvores cometeu em 0.1.11. Quem não tem árvore do Corpo bate com \"arma simples\", sem Bônus de Rank no golpe (Cap. 3): somar o BC cheio daria ao mago convertido o braço de um espadachim.",
+          "A fórmula segue a CARTA, não o motor. O que está entre parênteses é condicional e não soma (\"12d12 de frio (24d12 contra alvo Molhado)\" é 12d12, não 36d12); \"+2 Dados de Arma\" é contagem de dados e não \"+2 de dano\"; e o BC entra onde o livro escreve \"+ BC\", e não em toda ação como a simulação simplifica. Quem lê o cartão na mesa tem a carta da habilidade ao lado. O texto original do livro vai junto, na nota de cada Ação.",
+          "Ela entra \"fora do molde do Apêndice G\", e isso é a informação certa: uma ficha de personagem é exatamente o caso em que os números NÃO vêm da tabela. Das técnicas de dano vêm as oito mais fortes — a simulação só gasta 3 Ações por turno, e da nona pra baixo nada seria rolado.",
+        ],
+      },
+      {
         heading: "A criatura saiu do navegador",
         items: [
           "Até aqui a criatura vivia só no localStorage de quem a montou. Isso combinava com ela ser \"rascunho de sessão\" enquanto era sete números soltos; desde que ganhou Ações escritas, ela é conteúdo que vale levar de uma campanha pra outra.",

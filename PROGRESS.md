@@ -31,7 +31,7 @@ mão duas vezes.
 | `/arvores` | Mapa radial estilo Destiny Board — pan/zoom, compra refletindo na ficha na hora |
 | `/loja` | Loja da Guilda — 85 itens, filtro duplo Tipo × Rank de Guilda, `buyItem` valida PO **e** Rank |
 | `/iniciativa` | Tracker de iniciativa |
-| `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, o teste de 300 batalhas, e o covil em pastas (com cor, emoji, busca, cartão recolhível e arquivo `.mtpasta`) |
+| `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, o teste de 300 batalhas, e o covil em pastas (com cor, emoji, busca, cartão recolhível e arquivo `.mtpasta`), e a ficha de um personagem do roster entrando como criatura |
 | `/personagens` | Roster de fichas |
 
 ### Conteúdo
