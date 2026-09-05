@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Dices, LucideIcon, ScrollText, Sparkles, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, Dices, LucideIcon, ScrollText, Sparkles, Sprout, Users } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById, RACES } from "@/data/races";
 import RaceCrest from "./RaceCrest";
@@ -21,6 +21,7 @@ import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import RouletteWheel, { WheelLegend, WheelOption } from "./RouletteWheel";
 import SkillsSection from "./SkillsSection";
 import TreePicker from "./TreePicker";
+import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 
 const STEPS = ["Árvore Inicial", "Perícias", "Sortear o Destino", "Pronto"];
 
@@ -287,6 +288,36 @@ export default function CreationRoulette() {
             <p className="mb-5 text-sm text-parchment-600 dark:text-parchment-400">
               Dê um nome a ele e ajuste qualquer detalhe livremente na ficha completa.
             </p>
+            {/*
+              Só aqui, na tela final: nas roletas anteriores a raça e o
+              antecedente ainda podem trocar a cada giro, e uma foto escolhida
+              antes disso descreveria um personagem que já não existe mais.
+              Opcional — sem foto cai no brasão da raça sorteada.
+            */}
+            <div className="mb-5 flex flex-col items-center gap-2">
+              <div className="h-20 w-20 overflow-hidden rounded-2xl border border-parchment-300/80 bg-parchment-100/80 shadow-sm dark:border-parchment-700/80 dark:bg-parchment-900/80">
+                {character.portrait ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={character.portrait}
+                    alt={character.name ? `Retrato de ${character.name}` : "Retrato do personagem"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : race ? (
+                  <RaceCrest race={race} size={80} rounded="rounded-none" />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center text-parchment-400">
+                    <Sprout className="h-7 w-7" />
+                  </span>
+                )}
+              </div>
+              <ImagemDaFicha
+                tipo="portrait"
+                valorAtual={character.portrait}
+                rotulo="Adicionar foto"
+                onChange={(dataUrl) => useCharacterStore.getState().setPortrait(dataUrl)}
+              />
+            </div>
             <button
               type="button"
               onClick={() => router.push("/ficha")}

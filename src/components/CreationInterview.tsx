@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Dices, Sparkles, ScrollText, UserRoundCheck } from "lucide-react";
+import { ChevronLeft, Dices, Sparkles, ScrollText, Sprout, UserRoundCheck } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getRaceById, RACES } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById, BACKGROUNDS } from "@/data/backgrounds";
@@ -18,8 +18,10 @@ import { buildInterviewLore } from "@/lib/interviewLore";
 import { applyDragonChance, RACE_WEIGHT, rollRandomAttributes, rollRandomSubtableEntry } from "@/lib/randomCharacter";
 import { ATTRIBUTES } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
+import RaceCrest from "./RaceCrest";
 import SkillsSection from "./SkillsSection";
 import TreePicker from "./TreePicker";
+import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 
 /**
  * Pools da loteria com o peso de raridade de cada candidato. Antecedente usa a
@@ -325,6 +327,36 @@ export default function CreationInterview() {
             <p className="mb-5 text-sm text-parchment-600 dark:text-parchment-400">
               Dê um nome a ele e ajuste qualquer detalhe livremente na ficha completa.
             </p>
+            {/*
+              Raça e antecedente só ficam definitivos depois do sorteio — pedir
+              a foto antes disso seria pedir pra imaginar uma cara pra alguém
+              que o Destino ainda não escolheu quem é. Opcional, como em toda
+              via: sem foto cai no brasão da raça.
+            */}
+            <div className="mb-5 flex flex-col items-center gap-2">
+              <div className="h-20 w-20 overflow-hidden rounded-2xl border border-parchment-300/80 bg-parchment-100/80 shadow-sm dark:border-parchment-700/80 dark:bg-parchment-900/80">
+                {character.portrait ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={character.portrait}
+                    alt={character.name ? `Retrato de ${character.name}` : "Retrato do personagem"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : race ? (
+                  <RaceCrest race={race} size={80} rounded="rounded-none" />
+                ) : (
+                  <span className="flex h-full w-full items-center justify-center text-parchment-400">
+                    <Sprout className="h-7 w-7" />
+                  </span>
+                )}
+              </div>
+              <ImagemDaFicha
+                tipo="portrait"
+                valorAtual={character.portrait}
+                rotulo="Adicionar foto"
+                onChange={(dataUrl) => useCharacterStore.getState().setPortrait(dataUrl)}
+              />
+            </div>
             <button
               type="button"
               onClick={() => router.push("/ficha")}
