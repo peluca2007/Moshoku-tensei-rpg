@@ -30,6 +30,7 @@ import {
   Trash2,
   TriangleAlert,
   Upload,
+  UserPlus,
   Users,
   Wand2,
   X,
@@ -61,6 +62,7 @@ import {
   simularEncontro,
   usaAcoes,
 } from "@/lib/encounterSim";
+import { criaturaDaFicha } from "@/lib/fichaComoCriatura";
 import { CriaturaIlegivel, empacotarCriatura } from "@/lib/criaturaArquivo";
 import {
   ACEITA_NA_IMPORTACAO_BESTIARIO,
@@ -225,6 +227,8 @@ export default function EncounterBuilder() {
       <SecaoCriaturas
         criaturas={criaturas}
         selecionadas={selecionadas}
+        order={order}
+        characters={characters}
         novoPatamar={novoPatamar}
         novoPapel={novoPapel}
         setNovoPatamar={setNovoPatamar}
@@ -455,6 +459,8 @@ const NOME_DA_COR: Record<CorDePasta, string> = {
 function SecaoCriaturas({
   criaturas,
   selecionadas,
+  order,
+  characters,
   novoPatamar,
   novoPapel,
   setNovoPatamar,
@@ -466,6 +472,9 @@ function SecaoCriaturas({
 }: {
   criaturas: CriaturaEncontro[];
   selecionadas: string[];
+  /** O roster de `/personagens`, pra trazer uma ficha pro lado errado da iniciativa. */
+  order: string[];
+  characters: Record<string, CharacterData>;
   novoPatamar: number;
   novoPapel: PapelCriatura;
   setNovoPatamar: (n: number) => void;
@@ -501,6 +510,8 @@ function SecaoCriaturas({
   const [abertas, setAbertas] = useState<string[]>([]);
   /** A pasta cujo painel de aparência está aberto — recém-criada, ela já abre com o cursor no nome. */
   const [pastaEditando, setPastaEditando] = useState<string | null>(null);
+  /** Qual ficha do roster está prestes a virar criatura. */
+  const [fichaEscolhida, setFichaEscolhida] = useState("");
   /** O que acabou de chegar, piscando por alguns segundos. */
   const [destaque, setDestaque] = useState<string | null>(null);
 
@@ -573,6 +584,24 @@ function SecaoCriaturas({
     } catch (err) {
       setImportError(err instanceof CriaturaIlegivel ? err.message : "Não foi possível ler esse arquivo.");
     }
+  }
+
+  /**
+   * A ficha do roster entrando no covil.
+   *
+   * Passa por `importarCriatura` — o mesmo caminho do arquivo e do link — e não
+   * por um método próprio: assim ela ganha ids novos (inclusive os das Ações),
+   * respeita a pasta escolhida em "Nasce em" e acende o mesmo destaque de
+   * chegada. Um caminho a menos pra manter.
+   */
+  function handleTrazerFicha() {
+    const ficha = characters[fichaEscolhida];
+    if (!ficha) return;
+    let n = 0;
+    importarCriatura(
+      criaturaDaFicha(ficha, () => `acao_ficha_${n++}`),
+      pastaDestino
+    );
   }
 
   function handleNovaPasta() {
@@ -714,6 +743,51 @@ function SecaoCriaturas({
             </>
           )}
         </p>
+
+        {/*
+          A ficha de personagem entrando como inimigo — o rival que persegue o
+          grupo, o cavaleiro que virou inimigo, o PJ de quem faltou, o duelo
+          entre dois jogadores. Fica AQUI, junto de "Nova criatura", porque é a
+          terceira forma de encher o covil: do molde, das prontas, ou de uma
+          ficha que já existe.
+        */}
+        {order.length > 0 && (
+          <div className="mt-1 flex w-full flex-wrap items-end gap-2 border-t border-parchment-300 pt-2 dark:border-parchment-800">
+            <label className="min-w-0 text-xs font-semibold text-parchment-600 dark:text-parchment-400">
+              Ou traga uma ficha do roster
+              <select
+                value={fichaEscolhida}
+                onChange={(e) => setFichaEscolhida(e.target.value)}
+                className="mt-1 block max-w-52 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+              >
+                <option value="">Escolha um personagem…</option>
+                {order.map((id) => {
+                  const c = characters[id];
+                  if (!c) return null;
+                  return (
+                    <option key={id} value={id}>
+                      {c.name || "Sem nome"}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={handleTrazerFicha}
+              disabled={!characters[fichaEscolhida]}
+              className="flex items-center gap-1.5 rounded-lg border border-parchment-300 px-3 py-2 text-sm font-semibold text-parchment-700 transition-colors hover:border-wine-400 hover:text-wine-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700 dark:text-parchment-200"
+            >
+              <UserPlus className="h-4 w-4" /> Trazer como criatura
+            </button>
+            <p className="w-full text-xs text-parchment-600 dark:text-parchment-400">
+              PV, CA, Bônus de Ataque, CD, retrato e as técnicas de dano vêm da ficha — pelo mesmo
+              derivador que a simulação usa do lado dos heróis. É uma <b>cópia</b>: mexer nela não
+              toca na ficha do jogador, e o jogador subir de patamar não muda o inimigo que você já
+              ajustou.
+            </p>
+          </div>
+        )}
       </div>
 
       <details className="mb-3 rounded-xl border border-parchment-300 bg-parchment-100/60 p-3 dark:border-parchment-800 dark:bg-parchment-900/50">
