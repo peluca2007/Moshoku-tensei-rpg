@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowDown,
@@ -35,7 +35,12 @@ import {
   X,
 } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
-import { PastaCriaturas, useBestiaryStore } from "@/store/useBestiaryStore";
+import {
+  CORES_DE_PASTA,
+  CorDePasta,
+  PastaCriaturas,
+  useBestiaryStore,
+} from "@/store/useBestiaryStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { getArmorClass, getMaxHp, getPaSpent } from "@/store/selectors";
 import { getTreeById } from "@/data/trees/index";
@@ -56,7 +61,12 @@ import {
   simularEncontro,
   usaAcoes,
 } from "@/lib/encounterSim";
-import { ACEITA_NA_IMPORTACAO_CRIATURA, CriaturaIlegivel, empacotarCriatura, lerArquivoDeCriatura } from "@/lib/criaturaArquivo";
+import { CriaturaIlegivel, empacotarCriatura } from "@/lib/criaturaArquivo";
+import {
+  ACEITA_NA_IMPORTACAO_BESTIARIO,
+  empacotarPasta,
+  lerArquivoDoBestiario,
+} from "@/lib/pastaArquivo";
 import { linkDaCriatura } from "@/lib/criaturaLink";
 import { AlvoDoGrupo, Aviso, NivelAviso, avisarSobreCriatura } from "@/lib/creatureAdvice";
 import {
@@ -384,21 +394,63 @@ function SecaoGrupo({
 // ---------------------------------------------------------------------------
 // As criaturas
 // ---------------------------------------------------------------------------
+/** A gaveta pintada: as classes de cada cor, estáticas porque o Tailwind não lê nome montado em runtime. */
+const CAIXA_DA_COR: Record<CorDePasta, string> = {
+  pergaminho: "border-parchment-300 bg-parchment-100/40 dark:border-parchment-800 dark:bg-parchment-900/30",
+  vinho: "border-wine-300 bg-wine-50/40 dark:border-wine-800 dark:bg-wine-950/20",
+  ouro: "border-gold-300 bg-gold-50/40 dark:border-gold-700 dark:bg-gold-950/20",
+  esmeralda: "border-emerald-300 bg-emerald-50/40 dark:border-emerald-800 dark:bg-emerald-950/20",
+  ambar: "border-amber-300 bg-amber-50/40 dark:border-amber-800 dark:bg-amber-950/20",
+  rosa: "border-rose-300 bg-rose-50/40 dark:border-rose-800 dark:bg-rose-950/20",
+};
+
+const ICONE_DA_COR: Record<CorDePasta, string> = {
+  pergaminho: "text-parchment-500 dark:text-parchment-400",
+  vinho: "text-wine-500",
+  ouro: "text-gold-600 dark:text-gold-400",
+  esmeralda: "text-emerald-600 dark:text-emerald-400",
+  ambar: "text-amber-600 dark:text-amber-400",
+  rosa: "text-rose-500",
+};
+
+const BOLINHA_DA_COR: Record<CorDePasta, string> = {
+  pergaminho: "bg-parchment-400",
+  vinho: "bg-wine-500",
+  ouro: "bg-gold-500",
+  esmeralda: "bg-emerald-500",
+  ambar: "bg-amber-500",
+  rosa: "bg-rose-500",
+};
+
+const NOME_DA_COR: Record<CorDePasta, string> = {
+  pergaminho: "Pergaminho",
+  vinho: "Vinho",
+  ouro: "Ouro",
+  esmeralda: "Esmeralda",
+  ambar: "Âmbar",
+  rosa: "Rosa",
+};
+
 /**
  * O covil, em gavetas.
  *
  * A tela nasceu como uma lista de cartões sempre abertos, e isso funciona até a
  * terceira criatura. Um Mestre que montou trinta — que é o uso real depois de
  * algumas sessões — recebia uma parede de formulário em que "onde está o Chefe
- * do arco 2?" só se responde rolando a página inteira. As três coisas que
- * resolvem isso são as três que estão aqui:
+ * do arco 2?" só se responde rolando a página inteira. As quatro coisas que
+ * resolvem isso são as quatro que estão aqui:
  *
  * 1. **Pastas** (`useBestiaryStore.pastas`), que separam por encontro, por arco
- *    ou por região — o critério é do Mestre.
+ *    ou por região — o critério é do Mestre, e ele pinta e etiqueta a gaveta.
  * 2. **Cartão recolhido por padrão**: fechado ele é uma linha com retrato,
  *    nome e os números que importam; a ficha inteira abre com um toque.
  * 3. **Busca**, que ignora as gavetas — quando você já sabe o nome, navegar por
  *    pasta é o caminho longo.
+ * 4. **A chegada em destaque**: o que acaba de entrar (criado, duplicado,
+ *    importado de arquivo ou de link) é aberto, tem a gaveta expandida e é
+ *    rolado até a vista. Sem isso, importar virou um clique que não parece
+ *    fazer nada — a criatura entrava fechada, no fim de uma lista longa, às
+ *    vezes dentro de uma pasta recolhida.
  */
 function SecaoCriaturas({
   criaturas,
@@ -429,8 +481,12 @@ function SecaoCriaturas({
   const atualizar = useBestiaryStore((s) => s.atualizar);
   const adicionarAcao = useBestiaryStore((s) => s.adicionarAcao);
   const importarCriatura = useBestiaryStore((s) => s.importarCriatura);
+  const importarPasta = useBestiaryStore((s) => s.importarPasta);
   const criarPasta = useBestiaryStore((s) => s.criarPasta);
+  const atualizarPasta = useBestiaryStore((s) => s.atualizarPasta);
   const definirPastasRecolhidas = useBestiaryStore((s) => s.definirPastasRecolhidas);
+  const chegada = useBestiaryStore((s) => s.chegada);
+  const limparChegada = useBestiaryStore((s) => s.limparChegada);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
@@ -443,22 +499,67 @@ function SecaoCriaturas({
    * formulário que este recolhimento existe pra evitar.
    */
   const [abertas, setAbertas] = useState<string[]>([]);
-  /** A pasta cujo nome está em edição — recém-criada, ela já abre com o cursor dentro. */
+  /** A pasta cujo painel de aparência está aberto — recém-criada, ela já abre com o cursor no nome. */
   const [pastaEditando, setPastaEditando] = useState<string | null>(null);
-
-  function abrirCartao(id: string) {
-    setAbertas((a) => (a.includes(id) ? a : [...a, id]));
-  }
+  /** O que acabou de chegar, piscando por alguns segundos. */
+  const [destaque, setDestaque] = useState<string | null>(null);
 
   function alternarCartao(id: string) {
     setAbertas((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
   }
 
   /**
-   * Aceita o `.mtcriatura` novo (comprimido) e um `.json` cru — mesma
-   * detecção por conteúdo que a ficha de personagem já usa
-   * (`lerArquivoDeFicha`), pelo mesmo motivo: criatura de mesa também não se
-   * abandona por causa de formato.
+   * Mostra o que acabou de entrar, venha de onde vier.
+   *
+   * Os quatro caminhos (criar, duplicar, importar arquivo, importar link)
+   * terminam na mesma marca da store, então a tela tem UM lugar que abre o
+   * cartão, expande a gaveta, limpa a busca que estaria escondendo o recém-
+   * chegado e rola até ele.
+   */
+  const [chegadaVista, setChegadaVista] = useState<number | null>(null);
+  if (chegada && chegada.marca !== chegadaVista) {
+    // Ajuste de estado DURANTE a renderização — o padrão que o React documenta
+    // pra estado local que deriva de uma mudança externa. O cartão recém-chegado
+    // nasce aberto, destacado e sem a busca que o esconderia no mesmo quadro,
+    // em vez de aparecer fechado e piscar um frame depois.
+    setChegadaVista(chegada.marca);
+    setBusca("");
+    setDestaque(chegada.id);
+    if (chegada.tipo === "criatura") {
+      const id = chegada.id;
+      setAbertas((a) => (a.includes(id) ? a : [...a, id]));
+    }
+  }
+
+  // E aqui o que é efeito de verdade: mexer na store (expandir a gaveta que
+  // estava recolhida), no DOM (rolar até lá) e no relógio (apagar o destaque).
+  useEffect(() => {
+    if (!chegada) return;
+    const { tipo, id } = chegada;
+    if (tipo === "criatura") {
+      const criatura = useBestiaryStore.getState().criaturas.find((c) => c.id === id);
+      if (criatura?.pastaId) atualizarPasta(criatura.pastaId, { recolhida: false });
+    } else {
+      atualizarPasta(id, { recolhida: false });
+    }
+    limparChegada();
+    // Um respiro antes de rolar: o elemento com este id só existe depois que o
+    // React pintar a gaveta expandida.
+    const rolagem = setTimeout(() => {
+      document.getElementById(`${tipo}-${id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+    const fim = setTimeout(() => setDestaque(null), 3000);
+    return () => {
+      clearTimeout(rolagem);
+      clearTimeout(fim);
+    };
+  }, [chegada, limparChegada, atualizarPasta]);
+
+  /**
+   * Aceita pasta (`.mtpasta`), criatura (`.mtcriatura`) e o `.json` cru de
+   * qualquer um dos dois — a detecção é por CONTEÚDO, como a da ficha de
+   * personagem (`lerArquivoDeFicha`). Um botão só: qual dos dois formatos o
+   * arquivo é, o próprio arquivo responde.
    */
   async function handleImportarArquivo(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -466,8 +567,9 @@ function SecaoCriaturas({
     if (!file) return;
     setImportError(null);
     try {
-      const dados = await lerArquivoDeCriatura(file);
-      abrirCartao(importarCriatura(dados, pastaDestino));
+      const lido = await lerArquivoDoBestiario(file);
+      if (lido.tipo === "pasta") importarPasta(lido.pasta);
+      else importarCriatura(lido.criatura, pastaDestino);
     } catch (err) {
       setImportError(err instanceof CriaturaIlegivel ? err.message : "Não foi possível ler esse arquivo.");
     }
@@ -527,7 +629,7 @@ function SecaoCriaturas({
           <input
             ref={fileInputRef}
             type="file"
-            accept={ACEITA_NA_IMPORTACAO_CRIATURA}
+            accept={ACEITA_NA_IMPORTACAO_BESTIARIO}
             onChange={handleImportarArquivo}
             className="hidden"
             aria-hidden
@@ -536,9 +638,10 @@ function SecaoCriaturas({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
+            title="Aceita .mtcriatura (uma criatura) e .mtpasta (uma pasta inteira)"
             className="flex items-center gap-1 rounded-lg border border-parchment-300 px-3 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
           >
-            <Upload className="h-3.5 w-3.5" /> Importar criatura
+            <Upload className="h-3.5 w-3.5" /> Importar criatura ou pasta
           </button>
         </div>
       </div>
@@ -586,7 +689,8 @@ function SecaoCriaturas({
               <option value="">Fora das pastas</option>
               {pastas.map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.nome}
+                  {p.emoji ? `${p.emoji} ` : ""}
+                  {p.nome || "Pasta sem nome"}
                 </option>
               ))}
             </select>
@@ -594,7 +698,7 @@ function SecaoCriaturas({
         )}
         <button
           type="button"
-          onClick={() => abrirCartao(criar(novoPatamar, novoPapel, undefined, pastaDestino))}
+          onClick={() => criar(novoPatamar, novoPapel, undefined, pastaDestino)}
           className="rounded-lg bg-parchment-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-parchment-700 dark:bg-white dark:text-parchment-900"
         >
           Nova criatura
@@ -646,94 +750,103 @@ function SecaoCriaturas({
         </div>
       </details>
 
-      {criaturas.length === 0 ? (
+      {/*
+        A barra de organização aparece SEMPRE, e não só depois da primeira
+        criatura. Criar as gavetas antes de ter o que pôr nelas — "a emboscada
+        da estrada", "os chefes do arco 2" — é justamente como se planeja uma
+        sessão; a versão anterior escondia o botão "Nova pasta" dentro do galho
+        que só existia com o covil cheio, e a organização começava impossível.
+      */}
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        {criaturas.length > 0 && (
+          <div className="relative min-w-40 flex-1">
+            <Search
+              className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-parchment-400"
+              aria-hidden
+            />
+            <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              aria-label="Buscar criatura pelo nome, papel, perigo ou ação"
+              placeholder="Buscar no covil…"
+              className="w-full rounded-lg border border-parchment-300 bg-parchment-50 py-1.5 pl-7 pr-7 text-sm text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            />
+            {busca && (
+              <button
+                type="button"
+                onClick={() => setBusca("")}
+                aria-label="Limpar a busca"
+                className="absolute right-1 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-parchment-400 hover:text-parchment-600"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={handleNovaPasta}
+          className="flex items-center gap-1 rounded-lg border border-parchment-300 px-2.5 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+        >
+          <FolderPlus className="h-3.5 w-3.5" /> Nova pasta
+        </button>
+        {pastas.length > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              setAbertas([]);
+              definirPastasRecolhidas(true);
+            }}
+            className="flex items-center gap-1 rounded-lg border border-parchment-300 px-2.5 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+          >
+            <ChevronUp className="h-3.5 w-3.5" /> Recolher tudo
+          </button>
+        )}
+      </div>
+
+      {termo && (
+        <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">
+          {filtradas.length === 0
+            ? `Nenhuma criatura com “${busca.trim()}”.`
+            : `${filtradas.length} de ${criaturas.length} criaturas — a busca atravessa as pastas.`}
+        </p>
+      )}
+
+      {criaturas.length === 0 && pastas.length === 0 ? (
         <EmptyState
           icon={Skull}
-          hint="Escolha um patamar acima e clique em “Nova criatura” — os números do Apêndice G já vêm preenchidos. Ou puxe uma das seis prontas, com retrato e tudo."
+          hint="Escolha um patamar acima e clique em “Nova criatura” — os números do Apêndice G já vêm preenchidos. Ou puxe uma das seis prontas, com retrato e tudo. As pastas você pode criar antes, e montar cada encontro dentro da sua."
         >
           O covil está vazio.
         </EmptyState>
       ) : (
-        <>
-          <div className="mb-2 flex flex-wrap items-center gap-2">
-            <div className="relative min-w-40 flex-1">
-              <Search
-                className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-parchment-400"
-                aria-hidden
+        <div className="flex flex-col gap-3">
+          {grupos.map(({ pasta, itens }) => {
+            // A gaveta de fora some quando está vazia; uma pasta vazia NÃO
+            // some, porque ela é onde o Mestre vai montar o próximo encontro.
+            if (pasta === null && itens.length === 0) return null;
+            return (
+              <GrupoDePasta
+                key={pasta?.id ?? "sem-pasta"}
+                pasta={pasta}
+                itens={itens}
+                pastas={pastas}
+                selecionadas={selecionadas}
+                abertas={abertas}
+                onAlternarCartao={alternarCartao}
+                alvosDoGrupo={alvosDoGrupo}
+                // Com busca ativa toda gaveta abre: procurar por nome e
+                // receber "nada aqui" porque a pasta certa estava fechada
+                // seria a busca mentindo.
+                forcarAberta={termo.length > 0}
+                semCabecalho={pasta === null && pastas.length === 0}
+                editando={pastaEditando !== null && pastaEditando === pasta?.id}
+                onEditar={setPastaEditando}
+                destaque={destaque}
               />
-              <input
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-                aria-label="Buscar criatura pelo nome, papel, perigo ou ação"
-                placeholder="Buscar no covil…"
-                className="w-full rounded-lg border border-parchment-300 bg-parchment-50 py-1.5 pl-7 pr-7 text-sm text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
-              />
-              {busca && (
-                <button
-                  type="button"
-                  onClick={() => setBusca("")}
-                  aria-label="Limpar a busca"
-                  className="absolute right-1 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-parchment-400 hover:text-parchment-600"
-                >
-                  <X className="h-3.5 w-3.5" />
-                </button>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={handleNovaPasta}
-              className="flex items-center gap-1 rounded-lg border border-parchment-300 px-2.5 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
-            >
-              <FolderPlus className="h-3.5 w-3.5" /> Nova pasta
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setAbertas([]);
-                definirPastasRecolhidas(true);
-              }}
-              className="flex items-center gap-1 rounded-lg border border-parchment-300 px-2.5 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
-            >
-              <ChevronUp className="h-3.5 w-3.5" /> Recolher tudo
-            </button>
-          </div>
-
-          {termo && (
-            <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">
-              {filtradas.length === 0
-                ? `Nenhuma criatura com “${busca.trim()}”.`
-                : `${filtradas.length} de ${criaturas.length} criaturas — a busca atravessa as pastas.`}
-            </p>
-          )}
-
-          <div className="flex flex-col gap-3">
-            {grupos.map(({ pasta, itens }) => {
-              // A gaveta de fora some quando está vazia; uma pasta vazia NÃO
-              // some, porque ela é onde o Mestre vai montar o próximo encontro.
-              if (pasta === null && itens.length === 0) return null;
-              return (
-                <GrupoDePasta
-                  key={pasta?.id ?? "sem-pasta"}
-                  pasta={pasta}
-                  itens={itens}
-                  pastas={pastas}
-                  selecionadas={selecionadas}
-                  abertas={abertas}
-                  onAlternarCartao={alternarCartao}
-                  onAbrirCartao={abrirCartao}
-                  alvosDoGrupo={alvosDoGrupo}
-                  // Com busca ativa toda gaveta abre: procurar por nome e
-                  // receber "nada aqui" porque a pasta certa estava fechada
-                  // seria a busca mentindo.
-                  forcarAberta={termo.length > 0}
-                  semCabecalho={pasta === null && pastas.length === 0}
-                  editando={pastaEditando !== null && pastaEditando === pasta?.id}
-                  onEditar={setPastaEditando}
-                />
-              );
-            })}
-          </div>
-        </>
+            );
+          })}
+        </div>
       )}
     </section>
   );
@@ -744,8 +857,8 @@ function SecaoCriaturas({
  *
  * O mesmo componente desenha as duas porque tudo que vale pra pasta vale pra
  * quem está fora dela: contar quantas entraram no encontro, marcar o lote
- * inteiro de uma vez, recolher. A diferença é só o que a gaveta de fora não
- * tem — nome pra renomear, ordem pra mudar, e lixeira.
+ * inteiro de uma vez, recolher. A diferença é o que a gaveta de fora não tem —
+ * nome, cor, emoji, ordem, lixeira e arquivo próprio.
  */
 function GrupoDePasta({
   pasta,
@@ -754,12 +867,12 @@ function GrupoDePasta({
   selecionadas,
   abertas,
   onAlternarCartao,
-  onAbrirCartao,
   alvosDoGrupo,
   forcarAberta,
   semCabecalho,
   editando,
   onEditar,
+  destaque,
 }: {
   pasta: PastaCriaturas | null;
   itens: CriaturaEncontro[];
@@ -767,25 +880,53 @@ function GrupoDePasta({
   selecionadas: string[];
   abertas: string[];
   onAlternarCartao: (id: string) => void;
-  onAbrirCartao: (id: string) => void;
   alvosDoGrupo: AlvoDoGrupo[];
   forcarAberta: boolean;
   semCabecalho: boolean;
   editando: boolean;
   onEditar: (id: string | null) => void;
+  destaque: string | null;
 }) {
-  const renomearPasta = useBestiaryStore((s) => s.renomearPasta);
+  const atualizarPasta = useBestiaryStore((s) => s.atualizarPasta);
   const removerPasta = useBestiaryStore((s) => s.removerPasta);
   const moverPasta = useBestiaryStore((s) => s.moverPasta);
-  const alternarPastaRecolhida = useBestiaryStore((s) => s.alternarPastaRecolhida);
   const definirSelecaoDeVarias = useBestiaryStore((s) => s.definirSelecaoDeVarias);
   const [confirmando, setConfirmando] = useState(false);
+  const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   /** Estado próprio da gaveta de fora, que não tem `recolhida` salvo em lugar nenhum. */
   const [foraRecolhida, setForaRecolhida] = useState(false);
 
   const recolhida = forcarAberta ? false : pasta ? pasta.recolhida : foraRecolhida;
   const noEncontro = itens.filter((c) => selecionadas.includes(c.id)).length;
   const indice = pasta ? pastas.findIndex((p) => p.id === pasta.id) : -1;
+  const cor: CorDePasta = pasta?.cor ?? "pergaminho";
+
+  /**
+   * Baixa a gaveta inteira num `.mtpasta`.
+   *
+   * As criaturas vêm da store, e não de `itens`: `itens` está filtrado pela
+   * busca, e exportar "a pasta" enquanto se procura por "goblin" tem que levar
+   * a pasta, não os três resultados na tela.
+   */
+  async function handleBaixarPasta() {
+    if (!pasta) return;
+    setArquivoState("loading");
+    try {
+      const dentro = useBestiaryStore.getState().criaturas.filter((c) => c.pastaId === pasta.id);
+      const { blob, nomeDoArquivo } = await empacotarPasta(pasta, dentro);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = nomeDoArquivo;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setArquivoState("idle");
+    } catch {
+      setArquivoState("erro");
+    }
+  }
 
   const lista =
     itens.length === 0 ? (
@@ -802,9 +943,9 @@ function GrupoDePasta({
             marcada={selecionadas.includes(c.id)}
             aberta={abertas.includes(c.id)}
             onAlternar={() => onAlternarCartao(c.id)}
-            onDuplicada={onAbrirCartao}
             pastas={pastas}
             alvosDoGrupo={alvosDoGrupo}
+            destacada={destaque === c.id}
           />
         ))}
       </div>
@@ -814,25 +955,68 @@ function GrupoDePasta({
 
   return (
     <div
+      id={pasta ? `pasta-${pasta.id}` : undefined}
       className={
         pasta
-          ? "rounded-2xl border border-parchment-300 bg-parchment-100/40 p-2 dark:border-parchment-800 dark:bg-parchment-900/30"
+          ? `rounded-2xl border p-2 transition-shadow ${CAIXA_DA_COR[cor]} ${
+              destaque === pasta.id ? "ring-2 ring-gold-400 dark:ring-gold-500" : ""
+            }`
           : ""
       }
     >
-      {editando && pasta ? (
-        <input
-          autoFocus
-          value={pasta.nome}
-          onChange={(e) => renomearPasta(pasta.id, e.target.value)}
-          onBlur={() => onEditar(null)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === "Escape") onEditar(null);
-          }}
-          aria-label="Nome da pasta"
-          className="mb-1 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-bold text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
-        />
-      ) : null}
+      {editando && pasta && (
+        <div className="mb-2 rounded-xl border border-parchment-300 bg-parchment-50 p-2 dark:border-parchment-700 dark:bg-parchment-950">
+          <div className="flex flex-wrap items-center gap-2">
+            {/*
+              O emoji é um campo de texto de propósito: um seletor de emoji
+              próprio seria uma lista fechada de figuras que alguém escolheu, e
+              o teclado do celular já tem o seletor inteiro do sistema.
+            */}
+            <input
+              value={pasta.emoji ?? ""}
+              onChange={(e) => atualizarPasta(pasta.id, { emoji: e.target.value.slice(0, 4) || undefined })}
+              aria-label="Emoji da pasta"
+              placeholder="🐉"
+              className="w-14 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-center text-base dark:border-parchment-700 dark:bg-parchment-950"
+            />
+            <input
+              autoFocus
+              value={pasta.nome}
+              onChange={(e) => atualizarPasta(pasta.id, { nome: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Escape") onEditar(null);
+              }}
+              aria-label="Nome da pasta"
+              placeholder="Emboscada da estrada"
+              className="min-w-40 flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-bold text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            />
+            <button
+              type="button"
+              onClick={() => onEditar(null)}
+              aria-label="Pronto"
+              className="rounded-lg border border-parchment-300 p-1.5 text-emerald-600 hover:bg-parchment-100 dark:border-parchment-700 dark:text-emerald-400 dark:hover:bg-parchment-900"
+            >
+              <Check className="h-4 w-4" />
+            </button>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
+            {CORES_DE_PASTA.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => atualizarPasta(pasta.id, { cor: c })}
+                aria-label={`Cor ${NOME_DA_COR[c]}`}
+                aria-pressed={cor === c}
+                className={`h-6 w-6 rounded-full ${BOLINHA_DA_COR[c]} ${
+                  cor === c
+                    ? "ring-2 ring-parchment-900 ring-offset-2 ring-offset-parchment-50 dark:ring-white dark:ring-offset-parchment-950"
+                    : ""
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-1">
         {/*
@@ -843,7 +1027,7 @@ function GrupoDePasta({
         */}
         <button
           type="button"
-          onClick={() => (pasta ? alternarPastaRecolhida(pasta.id) : setForaRecolhida((v) => !v))}
+          onClick={() => (pasta ? atualizarPasta(pasta.id, { recolhida: !pasta.recolhida }) : setForaRecolhida((v) => !v))}
           aria-expanded={!recolhida}
           className="flex min-w-48 flex-1 items-center gap-1.5 rounded-lg px-1 py-1.5 text-left hover:bg-parchment-100 dark:hover:bg-parchment-900"
         >
@@ -853,10 +1037,14 @@ function GrupoDePasta({
             <ChevronDown className="h-4 w-4 shrink-0 text-parchment-400" aria-hidden />
           )}
           {pasta ? (
-            recolhida ? (
-              <Folder className="h-4 w-4 shrink-0 text-wine-500" aria-hidden />
+            pasta.emoji ? (
+              <span className="w-4 shrink-0 text-center text-sm leading-none" aria-hidden>
+                {pasta.emoji}
+              </span>
+            ) : recolhida ? (
+              <Folder className={`h-4 w-4 shrink-0 ${ICONE_DA_COR[cor]}`} aria-hidden />
             ) : (
-              <FolderOpen className="h-4 w-4 shrink-0 text-wine-500" aria-hidden />
+              <FolderOpen className={`h-4 w-4 shrink-0 ${ICONE_DA_COR[cor]}`} aria-hidden />
             )
           ) : (
             <Skull className="h-4 w-4 shrink-0 text-parchment-400" aria-hidden />
@@ -914,11 +1102,26 @@ function GrupoDePasta({
           <>
             <button
               type="button"
-              onClick={() => onEditar(pasta.id)}
-              aria-label={`Renomear a pasta ${pasta.nome}`}
+              onClick={() => onEditar(editando ? null : pasta.id)}
+              aria-label={`Nome, emoji e cor da pasta ${pasta.nome}`}
+              title="Nome, emoji e cor"
               className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
             >
               <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={handleBaixarPasta}
+              disabled={arquivoState === "loading"}
+              aria-label={`Baixar a pasta ${pasta.nome} com as criaturas dentro`}
+              title="Baixar num arquivo .mtpasta — a gaveta inteira, com as criaturas dentro"
+              className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700"
+            >
+              {arquivoState === "loading" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
             </button>
             <button
               type="button"
@@ -965,6 +1168,12 @@ function GrupoDePasta({
         </div>
       </div>
 
+      {arquivoState === "erro" && (
+        <p className="mt-1 text-2xs text-wine-500 dark:text-wine-300">
+          Não deu pra montar o arquivo da pasta. Tente de novo.
+        </p>
+      )}
+
       {!recolhida && <div className="mt-2">{lista}</div>}
     </div>
   );
@@ -975,18 +1184,19 @@ function CartaoCriatura({
   marcada,
   aberta,
   onAlternar,
-  onDuplicada,
   pastas,
   alvosDoGrupo,
+  destacada,
 }: {
   criatura: CriaturaEncontro;
   marcada: boolean;
   /** Fechado, o cartão é uma linha; aberto, é a ficha inteira que ele sempre foi. */
   aberta: boolean;
   onAlternar: () => void;
-  onDuplicada: (id: string) => void;
   pastas: PastaCriaturas[];
   alvosDoGrupo: AlvoDoGrupo[];
+  /** Acabou de chegar (criada, duplicada ou importada) — pisca por alguns segundos. */
+  destacada: boolean;
 }) {
   const atualizar = useBestiaryStore((s) => s.atualizar);
   const remover = useBestiaryStore((s) => s.remover);
@@ -1073,11 +1283,12 @@ function CartaoCriatura({
 
   return (
     <div
+      id={`criatura-${criatura.id}`}
       className={`rounded-2xl border p-3 transition-colors ${
         marcada
           ? "border-wine-400 bg-wine-50/40 dark:border-wine-500 dark:bg-wine-950/20"
           : "border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/50"
-      }`}
+      } ${destacada ? "ring-2 ring-gold-400 dark:ring-gold-500" : ""}`}
     >
       <div className="flex items-center gap-2">
         <input
@@ -1205,10 +1416,7 @@ function CartaoCriatura({
             </button>
             <button
               type="button"
-              onClick={() => {
-                const novo = duplicar(criatura.id);
-                if (novo) onDuplicada(novo);
-              }}
+              onClick={() => duplicar(criatura.id)}
               aria-label={`Duplicar ${criatura.nome}`}
               className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
             >
