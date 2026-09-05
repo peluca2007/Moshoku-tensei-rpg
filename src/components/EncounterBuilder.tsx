@@ -1,18 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
+  Check,
   Copy,
   Dices,
+  Download,
   Info,
+  Link2,
   ListPlus,
+  Loader2,
   Plus,
   RotateCcw,
   Skull,
   Swords,
   Trash2,
   TriangleAlert,
+  Upload,
   Users,
   Wand2,
 } from "lucide-react";
@@ -37,6 +42,8 @@ import {
   simularEncontro,
   usaAcoes,
 } from "@/lib/encounterSim";
+import { ACEITA_NA_IMPORTACAO_CRIATURA, CriaturaIlegivel, empacotarCriatura, lerArquivoDeCriatura } from "@/lib/criaturaArquivo";
+import { linkDaCriatura } from "@/lib/criaturaLink";
 import { AlvoDoGrupo, Aviso, NivelAviso, avisarSobreCriatura } from "@/lib/creatureAdvice";
 import {
   AjusteSugerido,
@@ -375,12 +382,57 @@ function SecaoCriaturas({
   const criar = useBestiaryStore((s) => s.criar);
   const atualizar = useBestiaryStore((s) => s.atualizar);
   const adicionarAcao = useBestiaryStore((s) => s.adicionarAcao);
+  const importarCriatura = useBestiaryStore((s) => s.importarCriatura);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+
+  /**
+   * Aceita o `.mtcriatura` novo (comprimido) e um `.json` cru — mesma
+   * detecção por conteúdo que a ficha de personagem já usa
+   * (`lerArquivoDeFicha`), pelo mesmo motivo: criatura de mesa também não se
+   * abandona por causa de formato.
+   */
+  async function handleImportarArquivo(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setImportError(null);
+    try {
+      const dados = await lerArquivoDeCriatura(file);
+      importarCriatura(dados);
+    } catch (err) {
+      setImportError(err instanceof CriaturaIlegivel ? err.message : "Não foi possível ler esse arquivo.");
+    }
+  }
 
   return (
     <section className="mt-8">
-      <h2 className="mb-2 flex items-center gap-2 font-bold text-parchment-900 dark:text-parchment-50">
-        <Swords className="h-5 w-5 text-wine-500" /> As criaturas
-      </h2>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="flex items-center gap-2 font-bold text-parchment-900 dark:text-parchment-50">
+          <Swords className="h-5 w-5 text-wine-500" /> As criaturas
+        </h2>
+        <div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ACEITA_NA_IMPORTACAO_CRIATURA}
+            onChange={handleImportarArquivo}
+            className="hidden"
+            aria-hidden
+            tabIndex={-1}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-1 rounded-lg border border-parchment-300 px-3 py-1.5 text-xs font-medium text-parchment-600 transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+          >
+            <Upload className="h-3.5 w-3.5" /> Importar criatura
+          </button>
+        </div>
+      </div>
+      {importError && (
+        <p className="mb-2 text-xs text-wine-500 dark:text-wine-300">{importError}</p>
+      )}
 
       <div className="mb-3 flex flex-wrap items-end gap-2 rounded-xl border border-parchment-300 bg-parchment-100/60 p-3 dark:border-parchment-800 dark:bg-parchment-900/50">
         <label className="text-xs font-semibold text-parchment-600 dark:text-parchment-400">
@@ -503,6 +555,42 @@ function CartaoCriatura({
   const recalibrar = useBestiaryStore((s) => s.recalibrar);
   const alternarSelecao = useBestiaryStore((s) => s.alternarSelecao);
   const [confirmando, setConfirmando] = useState(false);
+  const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
+  const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
+
+  /**
+   * Baixa a criatura inteira num arquivo `.mtcriatura` — mesma ideia do
+   * "Baixar ficha" do personagem (`fichaArquivo.ts`), sem imagem pra reduzir:
+   * uma criatura não tem foto, só números e Ações.
+   */
+  async function handleBaixarArquivo() {
+    setArquivoState("loading");
+    try {
+      const { blob, nomeDoArquivo } = await empacotarCriatura(criatura);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = nomeDoArquivo;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setArquivoState("idle");
+    } catch {
+      setArquivoState("erro");
+    }
+  }
+
+  /** Mesma ideia do "Copiar link" da ficha (`fichaLink.ts`) — pra passar a criatura sem sair do navegador. */
+  async function handleCopiarLink() {
+    try {
+      await navigator.clipboard.writeText(await linkDaCriatura(criatura));
+      setLinkState("copiado");
+      setTimeout(() => setLinkState("idle"), 2200);
+    } catch {
+      setLinkState("erro");
+    }
+  }
 
   const molde = getMoldePorPatamar(criatura.patamar);
   const doMolde = aplicarPapel(criatura.patamar, criatura.papel);
@@ -573,6 +661,33 @@ function CartaoCriatura({
         >
           <Copy className="h-4 w-4" />
         </button>
+        <button
+          type="button"
+          onClick={handleBaixarArquivo}
+          disabled={arquivoState === "loading"}
+          aria-label={`Baixar ${criatura.nome} num arquivo`}
+          title="Baixar num arquivo .mtcriatura — leva pra outra campanha ou pro Mestre seguinte"
+          className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700"
+        >
+          {arquivoState === "loading" ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Download className="h-4 w-4" />
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={handleCopiarLink}
+          aria-label={`Copiar link de ${criatura.nome}`}
+          title="Copiar um link com esta criatura dentro"
+          className={`rounded-lg border p-1.5 ${
+            linkState === "copiado"
+              ? "border-emerald-400 text-emerald-600 dark:border-emerald-600 dark:text-emerald-300"
+              : "border-parchment-300 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+          }`}
+        >
+          {linkState === "copiado" ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+        </button>
         {confirmando ? (
           <button
             type="button"
@@ -592,6 +707,14 @@ function CartaoCriatura({
           </button>
         )}
       </div>
+      {arquivoState === "erro" && (
+        <p className="mt-1 text-2xs text-wine-500 dark:text-wine-300">Não deu pra montar o arquivo. Tente de novo.</p>
+      )}
+      {linkState === "erro" && (
+        <p className="mt-1 text-2xs text-wine-500 dark:text-wine-300">
+          O navegador não deixou copiar. Isso costuma acontecer fora de HTTPS — baixe o arquivo por enquanto.
+        </p>
+      )}
 
       <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-6">
         <CampoNumero
@@ -862,14 +985,66 @@ function LinhaDeAcao({
         </label>
       </div>
 
+      {/*
+        As quatro condições que a simulação SABE aplicar (2026-09-05) —
+        checkbox, não texto, porque só assim `resolverAcaoCriatura` (em
+        `encounterSim.ts`) enxerga o efeito: Vantagem pra quem ataca o alvo
+        depois, Desvantagem pra ele. O resto do que uma ação faz continua
+        sendo a Anotação de baixo.
+      */}
+      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+        <CondicaoDaAcao
+          rotulo="Preso"
+          checked={!!acao.aplicaPreso}
+          onChange={(v) => onChange({ aplicaPreso: v })}
+        />
+        <CondicaoDaAcao
+          rotulo="Caído"
+          checked={!!acao.aplicaCaido}
+          onChange={(v) => onChange({ aplicaCaido: v })}
+        />
+        <CondicaoDaAcao
+          rotulo="Molhado"
+          checked={!!acao.aplicaMolhado}
+          onChange={(v) => onChange({ aplicaMolhado: v })}
+        />
+        <CondicaoDaAcao
+          rotulo="Veneno"
+          checked={!!acao.aplicaVeneno}
+          onChange={(v) => onChange({ aplicaVeneno: v })}
+        />
+      </div>
+
       <input
         value={acao.nota}
         onChange={(e) => onChange({ nota: e.target.value })}
-        placeholder="Condição, veneno, gatilho — o que você lê em voz alta. (A simulação não modela isto.)"
+        placeholder="Gatilho, escape, o que mais você lê em voz alta — além das quatro condições acima."
         aria-label="Anotação da ação"
         className="mt-1.5 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-2xs text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
       />
     </div>
+  );
+}
+
+function CondicaoDaAcao({
+  rotulo,
+  checked,
+  onChange,
+}: {
+  rotulo: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="h-3.5 w-3.5 accent-wine-600"
+      />
+      {rotulo}
+    </label>
   );
 }
 

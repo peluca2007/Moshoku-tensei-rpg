@@ -116,6 +116,11 @@ export interface AcaoPronta {
   alcance: string;
   area: boolean;
   tipo: "ataque" | "resistencia";
+  /** Preso, Caído, Molhado e veneno estruturados (`AcaoCriatura` em `encounterSim.ts`) — ver lá o porquê de só estas quatro. */
+  aplicaPreso?: boolean;
+  aplicaCaido?: boolean;
+  aplicaMolhado?: boolean;
+  aplicaVeneno?: boolean;
   nota: string;
 }
 
@@ -175,6 +180,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "4,5 m",
         area: false,
         tipo: "ataque",
+        aplicaPreso: true,
         nota: "Se acertar, o alvo fica Preso até passar num teste de Força (CD 11) gastando 1 Ação.",
       },
     ],
@@ -194,6 +200,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
+        aplicaVeneno: true,
         nota: "Peçonha de Serpente-do-Pântano em todo acerto (Cap. 4, §8 — aflição de Rank 2).",
       },
       {
@@ -231,6 +238,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Esfera de 3 m a até 9 m",
         area: true,
         tipo: "resistencia",
+        aplicaPreso: true,
         nota: "Sem dano: quem falha num teste de Agilidade (CD 13) fica Preso na teia. É a montagem, não o golpe.",
       },
     ],
@@ -287,6 +295,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Esfera de 3 m ao redor dela",
         area: true,
         tipo: "resistencia",
+        aplicaCaido: true,
         nota: "Teste de Agilidade (CD 17): quem falha leva o total e cai Caído; quem passa leva metade e fica de pé.",
       },
     ],
@@ -315,6 +324,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Linha de 18 m",
         area: true,
         tipo: "resistencia",
+        aplicaMolhado: true,
         nota: "Teste de Agilidade (CD 19); metade do dano se passar. Aplica Molhado em todo mundo que ela pegar.",
       },
     ],
