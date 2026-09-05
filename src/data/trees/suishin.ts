@@ -104,7 +104,17 @@ export const SUISHIN_TREE: Tree = {
       talents: [
         { id: "guarda-longa", name: "Guarda Longa", paCost: 1, description: "Seu alcance de Reação corpo a corpo aumenta para 3 metros." },
         { id: "aco-calmo", name: "Aço Calmo", paCost: 1, description: "+1 PT por patamar seu no Estilo Deus da Água. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
-        { id: "nome-de-reidar", name: "Nome de Reidar", paCost: 1, description: "Seu cônjuge abandonou a própria casa pra estar com você — costume herdado da princesa. Você tem uma pessoa de lealdade absoluta no mundo." },
+        {
+          id: "nome-de-reidar",
+          name: "Nome de Reidar",
+          paCost: 1,
+          // 2026-09-05: era só sabor (nenhum efeito jogável) — o único talento
+          // do livro que não fazia nada além de decorar a ficha. O gancho
+          // mecânico entra no mesmo tamanho de "Homem Dentro" (Ladino, Santo):
+          // um favor pontual, uma vez por sessão, não um recurso de combate.
+          description:
+            "Seu cônjuge abandonou a própria casa pra estar com você — costume herdado da princesa. Você tem uma pessoa de lealdade absoluta no mundo: ela guarda seus segredos e cuida do que você deixa pra trás. Uma vez por sessão, ela resolve por você um problema logístico pequeno enquanto você está fora (abrigo, provisão, uma mensagem entregue).",
+        },
       ],
       abilities: [
         {

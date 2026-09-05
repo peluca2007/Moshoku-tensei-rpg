@@ -463,8 +463,15 @@ export const ESCUDOS_TREE: Tree = {
           ptCost: 6,
           range: "Todo o campo de batalha",
           actions: { normal: 2 },
+          // 2026-09-05: "Você provavelmente morre" só é verdade se nada mais
+          // no kit do Imperador te salvar primeiro — e "Enquanto Eu Estiver de
+          // Pé" (a própria Maestria deste rank) reviveria você de graça no
+          // instante em que esse dano acumulado batesse. A cláusula final
+          // existe pra que o risco anunciado aqui seja o risco de verdade, não
+          // um blefe que a Maestria desarma sozinha. "O Muro Final Soberano"
+          // não precisa dela: a segurança dele já é explícita no próprio texto.
           effect:
-            "Uma vez por Descanso Longo. Por 1 minuto, nenhum aliado seu pode morrer — todo dano letal é transferido para você, e você não cai abaixo de 1 PV durante a duração. Quando acaba, todo o dano acumulado é aplicado em você de uma vez. Você provavelmente morre.",
+            "Uma vez por Descanso Longo. Por 1 minuto, nenhum aliado seu pode morrer — todo dano letal é transferido para você, e você não cai abaixo de 1 PV durante a duração. Quando acaba, todo o dano acumulado é aplicado em você de uma vez. Você provavelmente morre — nem Enquanto Eu Estiver de Pé te salva desse golpe final.",
         },
         {
           id: "o-muro-final-soberano",
