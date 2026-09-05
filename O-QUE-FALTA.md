@@ -39,17 +39,12 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Sistema de RPG
 
-7. **A leitura de intenção de quatro árvores.** O `check:texto` cobre CONTRADIÇÃO nas 597 habilidades,
-   e Norte, Vendaval, Lutador, Arquearia e Punho do Fogo foram lidos de ponta a ponta. Faltam
-   **Suishin, Escudos, Ladino e Tático** — e ali o que falta é o que nenhum script julga: se o efeito
-   faz sentido, se a técnica é divertida, se o patamar entrega o que promete.
-
-8. **O teto do Deus da Espada é 3× a coluna dele.** No 6º patamar entrega 336 contra os ~118 da
+7. **O teto do Deus da Espada é 3× a coluna dele.** No 6º patamar entrega 336 contra os ~118 da
    régua. O teto ignora chance de acerto e Touki, então ficar acima é esperado — mas 3× é a maior
    folga da tabela, e vale conferir se a coluna ainda descreve a árvore que existe hoje.
 
 ## Site
 
-9. **PWA / offline.** Mesa física num porão sem sinal é o caso de uso, e hoje o site morre sem
+8. **PWA / offline.** Mesa física num porão sem sinal é o caso de uso, e hoje o site morre sem
    internet. As fichas já vivem no `localStorage` — falta service worker e manifest. É a maior
    pendência funcional.
