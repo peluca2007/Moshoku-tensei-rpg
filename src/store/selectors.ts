@@ -378,6 +378,29 @@ export function getPpPool(state: StoreState): number {
 }
 
 /**
+ * Cap. 3 (Punho do Fogo): Calor máximo é o teto do patamar mais alto JÁ
+ * desbloqueado NESSA árvore — nunca soma entre patamares.
+ *
+ * Diferente de PT/PP (getPtPool/getPpPool), que crescem por SOMA cumulativa de
+ * `ptGained`/`ppGained` a cada patamar aberto: a prosa de Punho do Fogo sempre
+ * falou em "Calor máximo SOBE PARA 8/12/16/20/25" — cada patamar novo
+ * SUBSTITUI o teto do anterior, não empilha em cima dele. Por isso este
+ * cálculo lê só o `heatCap` do rank mais alto (getHighestUnlockedRank), e
+ * ignora os patamares abertos abaixo dele — ao contrário do reduce/soma que
+ * getPtPool faz sobre `plenoRanks`.
+ */
+export function getMaxCalor(state: StoreState): number {
+  function computeNatural(): number {
+    const rank = getHighestUnlockedRank(state, "punho-de-fogo");
+    if (!rank) return 0;
+    const rankDef = getTreeById("punho-de-fogo")?.ranks.find((r) => r.rank === rank);
+    return rankDef?.heatCap ?? 0;
+  }
+
+  return state.overrides.maxCalor ?? computeNatural();
+}
+
+/**
  * CA = 10 + Agilidade final + bônus fixo de raça/antecedente/sub-tabela
  * (ex: Miko "Maldição do Ódio") + itens de armadura equipados.
  */
@@ -476,6 +499,10 @@ export function getCurrentPt(state: StoreState): number {
 }
 export function getCurrentPp(state: StoreState): number {
   return state.currentPp ?? getPpPool(state);
+}
+/** Calor atual (Punho do Fogo): mesmo padrão de currentPt/currentPp acima. */
+export function getCurrentCalor(state: StoreState): number {
+  return state.currentCalor ?? getMaxCalor(state);
 }
 
 /** CD da Habilidade = 8 + Atributo + Bônus do Rank daquela árvore (Cap. 1, seção 7). */

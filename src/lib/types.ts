@@ -527,6 +527,17 @@ export interface TreeRankDef {
   ptGained?: number;
   /** Árvore de Utilidade: PP ganhos ao alcançar este rank (+1 a partir do 3º patamar). */
   ppGained?: number;
+  /**
+   * Teto FIXO (não cumulativo) de um recurso próprio da árvore neste patamar —
+   * hoje só o Calor de Punho do Fogo (2026-09-05).
+   *
+   * Diferente de `ptGained`/`ppGained`, que SOMAM a cada patamar desbloqueado
+   * (Cap. 3, "PT Pleno"): a prosa de Punho do Fogo sempre disse "Calor máximo
+   * sobe para 8/12/16/20/25" patamar a patamar, um valor que SUBSTITUI o
+   * anterior, nunca soma em cima dele. Um campo cumulativo aqui teria
+   * transformado o teto do Imperador em 5+8+12+16+20+25 = 86 em vez de 25.
+   */
+  heatCap?: number;
   /** Árvore do Corpo: degraus ganhos na Escada de Dados de Arma neste rank. */
   weaponDieSteps?: number;
   /** Exceção pontual ao custo de RANK_REQUIREMENTS (ex: Cap. 3 — Rei do Norte custa 2 PA em vez de 3, por ter quase 50 titulares vivos). */
@@ -774,6 +785,13 @@ export interface CharacterData {
   currentPt: number | null;
   currentPp: number | null;
   /**
+   * Calor atual de Punho do Fogo (2026-09-05) — mesmo padrão de currentPt/currentPp
+   * acima, mas pra um recurso que só existe nessa árvore. `null` = ainda não
+   * tocado, mostra igual ao teto do patamar (ver `heatCap`); uma vez definido,
+   * fica independente do teto — subir de patamar não reabastece Calor sozinho.
+   */
+  currentCalor: number | null;
+  /**
    * Sobrescreve o valor calculado quando não-nulo/indefinido — válvula de
    * escape pra itens, maldições ou exceções de mesa que o site não modela.
    * Sempre opcional: por padrão tudo continua 100% calculado a partir da
@@ -784,6 +802,8 @@ export interface CharacterData {
     maxMp?: number;
     maxPt?: number;
     maxPp?: number;
+    /** Teto de Calor (Punho do Fogo) — mesma válvula de escape que maxPt/maxPp. */
+    maxCalor?: number;
     armorClass?: number;
     initiative?: number;
     /** Cap. 5, §2: Rank de Guilda é decisão do Mestre, nunca uma fórmula — isto é o valor que ele fixou. Sem isso, o site mostra uma estimativa por PA gasto, só como chute inicial. */
