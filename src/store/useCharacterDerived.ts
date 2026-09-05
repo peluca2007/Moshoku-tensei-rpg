@@ -1,12 +1,14 @@
 import { useActiveCharacter } from "./useCharacterStore";
 import {
   getArmorClass,
+  getCurrentCalor,
   getCurrentHp,
   getCurrentMp,
   getCurrentPp,
   getCurrentPt,
   getFinalAttributes,
   getInitiative,
+  getMaxCalor,
   getMaxHp,
   getMaxMp,
   getPpPool,
@@ -23,10 +25,12 @@ export function useCharacterDerived() {
     maxMp: getMaxMp(character),
     maxPt: getPtPool(character),
     maxPp: getPpPool(character),
+    maxCalor: getMaxCalor(character),
     currentHp: getCurrentHp(character),
     currentMp: getCurrentMp(character),
     currentPt: getCurrentPt(character),
     currentPp: getCurrentPp(character),
+    currentCalor: getCurrentCalor(character),
     armorClass: getArmorClass(character),
     initiative: getInitiative(character),
   };
