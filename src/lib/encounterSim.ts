@@ -11,7 +11,10 @@ import {
   EstadoPersonagem,
   FichaCombate,
   Rng,
+  aoIniciarRodada,
+  consumirReacao,
   d20,
+  d20Ajustado,
   makeRng,
   mediaFormula,
   montarFicha,
@@ -52,7 +55,23 @@ export interface AcaoCriatura {
   area: boolean;
   /** "ataque" rola contra a CA; "resistencia" pede teste ao alvo (metade do dano se ele passar). */
   tipo: "ataque" | "resistencia";
-  /** Condição, veneno, gatilho — a anotação do Mestre. Como o `perigo`, não é simulada. */
+  /**
+   * As quatro condições que a simulação SABE aplicar, estruturadas em vez de
+   * texto (2026-09-05) — o mesmo tratamento que `combatSim.ts` já dava a
+   * Molhado do lado do personagem (`Acao.aplicaMolhado`), agora do lado da
+   * criatura. Opcionais porque uma ação escrita antes desta mudança (ou uma
+   * criatura pronta do Apêndice G que ainda não foi revisada) não tem por que
+   * quebrar o tipo — `undefined` se lê como "não aplica", igual `false`.
+   *
+   * Só estas quatro: o resto do que uma ação pode fazer (Atolado, voar,
+   * recuar sem provocar oportunidade...) continua sendo o `nota` de baixo,
+   * que a simulação não lê.
+   */
+  aplicaPreso?: boolean;
+  aplicaCaido?: boolean;
+  aplicaMolhado?: boolean;
+  aplicaVeneno?: boolean;
+  /** Condição, veneno, gatilho — a anotação do Mestre. O que os quatro campos acima NÃO cobrem. */
   nota: string;
 }
 
@@ -225,6 +244,16 @@ function bater(c: EstadoCriatura, alvo: Alvo, dano: number): void {
  * natural erra, 20 natural rola os dados de novo, e o teste de resistência
  * bem-sucedido corta o dano pela metade em vez de anulá-lo. Um monstro que
  * jogasse por regras próprias tornaria o veredito incomparável com o playtest.
+ *
+ * As quatro condições (`aplicaPreso`/`aplicaCaido`/`aplicaMolhado`/
+ * `aplicaVeneno`) entram na MESMA rolagem: Preso e Caído dão Vantagem a quem
+ * ataca o alvo depois, e Preso/Caído/Envenenado tiram a Vantagem de quem já
+ * está com uma delas — a leitura de `combatSim.ts#resolver`, espelhada.
+ * Molhado aplica sempre que o golpe acerta ou o alvo é atingido em área
+ * (mesmo comportamento que o lado do personagem já tinha); Preso, Caído e
+ * Veneno só pegam quando o alvo FALHA no teste de resistência — Molhado é "a
+ * água te alcançou", as outras três são "você não escapou a tempo", e são
+ * coisas diferentes.
  */
 function resolverAcaoCriatura(
   c: EstadoCriatura,
@@ -232,9 +261,12 @@ function resolverAcaoCriatura(
   alvo: EstadoPersonagem,
   rng: Rng
 ): void {
+  const vantagem = alvo.preso || alvo.caido;
+  const desvantagem = c.preso || c.caido || c.envenenado;
   let dano: number;
+  let alvoFalhou = true;
   if (acao.tipo === "ataque") {
-    const rolagem = d20(rng);
+    const rolagem = d20Ajustado(rng, vantagem, desvantagem);
     if (rolagem === 1) return;
     if (rolagem !== 20 && rolagem + c.bonusAtaque < alvo.ca) return;
     dano = rolarFormula(acao.dano, rng);
@@ -243,9 +275,19 @@ function resolverAcaoCriatura(
     dano = rolarFormula(acao.dano, rng);
     // O bônus de resistência do personagem é metade do Bônus de Combate dele,
     // a mesma conta que o motor já usa quando quem resiste é a criatura.
-    if (d20(rng) + Math.ceil(alvo.ficha.bc / 2) >= c.cdResistencia) dano = Math.floor(dano / 2);
+    // Envenenado cobra Desvantagem em "testes de atributo" — resistir entra
+    // nisso.
+    const resistiu = d20Ajustado(rng, false, alvo.envenenado) + Math.ceil(alvo.ficha.bc / 2) >= c.cdResistencia;
+    if (resistiu) dano = Math.floor(dano / 2);
+    alvoFalhou = !resistiu;
   }
   bater(c, alvo, Math.round(dano * c.escala));
+  if (acao.aplicaMolhado) alvo.molhado = true;
+  if (alvoFalhou) {
+    if (acao.aplicaPreso) alvo.preso = true;
+    if (acao.aplicaCaido) alvo.caido = true;
+    if (acao.aplicaVeneno) alvo.envenenado = true;
+  }
 }
 
 /**
@@ -271,6 +313,37 @@ function turnoCriatura(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng): 
   if (!c.vivo) return;
   if (usaAcoes(c.fonte)) turnoPorAcoes(c, alvos, rng);
   else turnoPorOrcamento(c, alvos, rng);
+}
+
+/**
+ * A Reação (ou ação lendária) do chefe: 1 golpe avulso, fora do turno normal
+ * dele, gasto pelo gancho de `combatSim.ts` (`aoIniciarRodada`/`consumirReacao`)
+ * logo depois do turno de um herói.
+ *
+ * Uma Reação de verdade não para pra escolher a MELHOR opção entre todas —
+ * ela dispara com o que está pronto pra usar na hora. Por isso o critério aqui
+ * é só "a melhor de 1 Ação", nunca um combo de 2 ou 3 como o turno normal
+ * (`planoDoTurno`) monta.
+ *
+ * Criatura sem ações declaradas (orçamento fixo) não tem "a melhor de 1 Ação"
+ * pra escolher — ela belisca um terço do próprio Dano/turno, a mesma fração
+ * que 1 das 3 Ações do turno normal representaria.
+ */
+function reagirComoChefe(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng): void {
+  const vivos = alvos.filter((a) => a.vivo);
+  if (vivos.length === 0) return;
+
+  if (usaAcoes(c.fonte)) {
+    const candidatas = acoesOfensivas(c.fonte).filter((a) => Math.max(1, a.acoes) <= 1);
+    if (candidatas.length === 0) return; // nada que caiba numa Reação — ela não dispara
+    const acao = candidatas.reduce((m, a) => (mediaFormula(a.dano) > mediaFormula(m.dano) ? a : m));
+    for (const alvo of acao.area ? vivos : [vivos[0]]) resolverAcaoCriatura(c, acao, alvo, rng);
+    return;
+  }
+
+  const alvo = vivos[0];
+  if (d20(rng) + c.bonusAtaque < alvo.ca) return;
+  bater(c, alvo, Math.max(1, Math.round((c.danoPorTurno * c.escala) / ACOES_POR_TURNO)));
 }
 
 export interface ResultadoEncontro {
@@ -347,6 +420,10 @@ export function simularEncontro(
           vivo: true,
           molhado: false,
           emChamas: 0,
+          preso: false,
+          caido: false,
+          envenenado: false,
+          reacaoDisponivel: false,
           danoCausado: 0,
         });
       }
@@ -362,10 +439,23 @@ export function simularEncontro(
 
     let rodada = 0;
     for (; rodada < maxRodadas; rodada++) {
+      // Reação/ação lendária do chefe: rearma no início da rodada da mesa —
+      // só o chefe tem essa economia de ação extra fora do turno normal dele
+      // (Apêndice G, "Ajustando pra cima"). Um lacaio ou um padrão não ganham
+      // este golpe avulso.
+      for (const inimigo of inimigos) aoIniciarRodada(inimigo, inimigo.fonte.papel === "chefe");
+
       for (const p of ordem) {
         if (p.tipo === "heroi") {
           if (!p.h.vivo || !tickChamas(p.h, rng)) continue;
           turnoPersonagem(p.h, inimigos, rng);
+          // O chefe reage ao turno que acabou de passar — 1 vez por rodada da
+          // mesa, não 1 vez por herói: a Reação já foi gasta depois do primeiro
+          // herói que agiu, e os seguintes passam por `consumirReacao` sem
+          // disparar nada.
+          for (const inimigo of inimigos) {
+            if (inimigo.vivo && consumirReacao(inimigo)) reagirComoChefe(inimigo, [p.h], rng);
+          }
         } else {
           if (!p.c.vivo || !tickChamas(p.c, rng)) continue;
           turnoCriatura(p.c, heroes, rng);

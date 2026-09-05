@@ -23,7 +23,20 @@ function makeAcaoId() {
 
 /** Uma ação nova, em branco — os campos são do Mestre, não do molde. */
 function acaoVazia(nome = "Nova ação"): AcaoCriatura {
-  return { id: makeAcaoId(), nome, acoes: 1, dano: "", alcance: "Corpo a corpo", area: false, tipo: "ataque", nota: "" };
+  return {
+    id: makeAcaoId(),
+    nome,
+    acoes: 1,
+    dano: "",
+    alcance: "Corpo a corpo",
+    area: false,
+    tipo: "ataque",
+    nota: "",
+    aplicaPreso: false,
+    aplicaCaido: false,
+    aplicaMolhado: false,
+    aplicaVeneno: false,
+  };
 }
 
 interface BestiaryState {
@@ -34,6 +47,8 @@ interface BestiaryState {
   grupo: string[];
 
   criar: (patamar: number, papel: PapelCriatura, nome?: string) => string;
+  /** Traz uma criatura de um arquivo `.mtcriatura` ou de um link — id novo, ids de ação novos. */
+  importarCriatura: (dados: Omit<CriaturaEncontro, "id">) => string;
   duplicar: (id: string) => void;
   remover: (id: string) => void;
   atualizar: (id: string, patch: Partial<Omit<CriaturaEncontro, "id">>) => void;
@@ -58,6 +73,21 @@ export const useBestiaryStore = create<BestiaryState>()(
       criar: (patamar, papel, nome) => {
         const id = makeId();
         const criatura = criaturaDoMolde(patamar, papel, nome || "Criatura sem nome", id);
+        set((s) => ({ criaturas: [...s.criaturas, criatura], selecionadas: [...s.selecionadas, id] }));
+        return id;
+      },
+
+      // `id` da criatura e de cada ação são sorteados de novo — igual
+      // `importCharacter` faz com a ficha: um `.mtcriatura` que alguém te
+      // mandou pode ser o que VOCÊ mandou pra ele antes, e reimportar não pode
+      // colidir com a que já está no seu bestiário.
+      importarCriatura: (dados) => {
+        const id = makeId();
+        const criatura: CriaturaEncontro = {
+          ...dados,
+          id,
+          acoes: dados.acoes.map((a) => ({ ...a, id: makeAcaoId() })),
+        };
         set((s) => ({ criaturas: [...s.criaturas, criatura], selecionadas: [...s.selecionadas, id] }));
         return id;
       },
@@ -155,23 +185,35 @@ export const useBestiaryStore = create<BestiaryState>()(
        * pode perdê-los porque o schema cresceu — e sem `acoes` definido, todo
        * `c.acoes.map` da tela quebraria na primeira renderização.
        *
-       * v2 → v3: a criatura ganhou `portrait` (2026-09-05). Mesma regra da
-       * ficha de personagem quando ela ganhou `portrait`/`cover` (v12):
-       * opcional, e "sem retrato" é a ausência da chave — bestiário salvo já
-       * entra correto, sem conversão nenhuma. A versão sobe mesmo assim porque
-       * o schema mudou, e um `persist` que não registra isso é um `persist` em
-       * que ninguém confia na próxima vez que a mudança não for inócua.
+       * v2 → v3 (2026-09-05, duas mudanças no mesmo patamar de versão): a
+       * criatura ganhou `portrait` — opcional, "sem retrato" é a ausência da
+       * chave, bestiário salvo já entra correto sem conversão nenhuma — e a
+       * ação ganhou Preso/Caído/Molhado/Veneno estruturados. Estes últimos são
+       * opcionais no tipo (uma ação antiga sem eles continua batendo o tipo),
+       * mas preencher com `false` aqui evita que uma ação salva antes da
+       * mudança apareça "indefinida" nos checkboxes novos da tela em vez de
+       * "desmarcada".
        */
       migrate: (estado, versao) => {
         const s = estado as { criaturas?: CriaturaEncontro[] } | undefined;
         if (!s?.criaturas) return s as never;
+        let criaturas = s.criaturas;
         if (versao < 2) {
-          return {
-            ...s,
-            criaturas: s.criaturas.map((c) => ({ ...c, acoes: c.acoes ?? [] })),
-          } as never;
+          criaturas = criaturas.map((c) => ({ ...c, acoes: c.acoes ?? [] }));
         }
-        return s as never;
+        if (versao < 3) {
+          criaturas = criaturas.map((c) => ({
+            ...c,
+            acoes: c.acoes.map((a) => ({
+              aplicaPreso: false,
+              aplicaCaido: false,
+              aplicaMolhado: false,
+              aplicaVeneno: false,
+              ...a,
+            })),
+          }));
+        }
+        return { ...s, criaturas } as never;
       },
     }
   )
