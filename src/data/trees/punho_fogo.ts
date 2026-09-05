@@ -173,7 +173,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           ptCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "4d8 + BC (ígneo)" },
+          damage: { normal: "4d8 + BC (ígneo)", condicional: "+3d6 ao detonar Em Chamas no 3º soco" },
           effect: "Sequência de 3 socos rápidos (rolagens separadas). Cada acerto ganha 2 Calor. O 3º soco ignora CA de escudo/barreira, aplica Atordoado 1 turno e, se o alvo estava Em Chamas, detona a condição para +3d6 explosão.",
         },
         {
@@ -184,7 +184,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           ptCost: 2,
           range: "9 metros",
           actions: { normal: 1 },
-          damage: { normal: "5d8 + BC (ígneo + contundente)" },
+          damage: { normal: "5d8 + BC (ígneo + contundente)", porTurno: "2d6 (ígneo) por turno a quem entrar na cratera de magma" },
           effect: "Salto + mergulho explosivo. Onda de choque radial 6m: teste de Agilidade (CD 8+BC) ou Caído + Atolado. Gasta 4 Calor: cria cratera de magma (Terreno Difícil, 2d6 ígneo/turno a quem entrar) por 2 turnos.",
         },
         {
@@ -331,7 +331,11 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           ptCost: 5,
           range: "Esfera de 30m",
           actions: { normal: 2 },
-          damage: { normal: "12d10 + BC (ígneo + contundente)" },
+          damage: {
+            normal: "12d10 + BC (ígneo + contundente)",
+            porTurno: "3d10 (ígneo) por turno a quem tocar os pilares de magma",
+            condicional: "+1d6 no raio inicial por ponto de Calor gasto",
+          },
           effect: "Soca as falhas tectônicas. Pilares de magma surgem (3d10 ígneo/turno a quem tocar). O campo de batalha vira Zona Vulcânica Permanente: terreno difícil, gás tóxico (teste Vigor/hora), magma flui. Gasta todo Calor: cada ponto = +1d6 no raio inicial e +1 turno de duração dos pilares.",
         },
         {
@@ -357,7 +361,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           ptCost: 6,
           range: "Esfera de 45m",
           actions: { normal: 2 },
-          damage: { normal: "14d12 + BC (plasma)" },
+          damage: { normal: "14d12 + BC (plasma)", condicional: "+1d6 no dano final por ponto de Calor gasto" },
           effect: "Cria micro-vácuo gravitacional (Força 30): suga todos os inimigos para o centro (teste Força CD 20 ou arrastados). " +
             "Depois implode: plasma instável desestabiliza magia (efeitos mágicos rank < Imperador na área falham automaticamente por 1 turno). " +
             "Gasta todo Calor: cada ponto = +1m no raio de sucção e +1d6 dano final.",

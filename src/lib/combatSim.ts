@@ -193,10 +193,13 @@ export function acoesDe(c: CharacterData): Acao[] {
     const rd = tree?.ranks.find((r) => r.rank === compra.rank);
     const a = rd?.abilities.find((x) => x.id === compra.id) as AbilityDef | undefined;
     if (!a?.damage?.normal) continue;
-    const txt = (a.damage.normal + " " + a.effect).toLowerCase();
+    const txt = a.damage.normal.toLowerCase();
     // `damage.normal` também guarda PV CURADOS (Cura) e PV Temporários
     // (Escudos). Sem este filtro a simulação contava a Prontidão como 105 de
-    // dano por turno — o campo é o mesmo, o sinal é oposto.
+    // dano por turno — o campo é o mesmo, o sinal é oposto. O filtro olha só
+    // `damage.normal` (não `effect`): magias de dano duplo como Julgamento e
+    // Luz Absoluta descrevem a cura extra no `effect` ("recuperam ... de
+    // PV"), e olhar o `effect` aqui derrubava o dano real delas do combate.
     if (/de pv|pv temporários|recupera|cura /.test(txt)) continue;
     out.push({
       nome: a.name,

@@ -339,7 +339,10 @@ export const TERRA_TREE: Tree = {
           pmCost: 20,
           range: "Esfera de 45m",
           actions: MAGIC_ACTIONS.Imperador,
-          damage: { normal: "16d10 de dano contundente" },
+          damage: {
+            normal: "16d10 de dano contundente",
+            porTurno: "4d10 sufocando (substitui os 2d10 padrão da condição Soterrado)",
+          },
           effect: "Teste de Força com Desvantagem Absoluta. Falha: dano e Soterrada, sufocando a 4d10 por turno em vez dos 2d10 normais da condição. Sucesso: metade do dano e Atolada. Aliados são poupados automaticamente.",
           incantation:
             "A terra recebe tudo de volta, cedo ou tarde, sempre, com ou sem a minha ajuda direta neste dia —\nesta é a única lei que ela jamais quebrou desde que o primeiro corpo caiu sobre ela e ela decidiu, em silêncio absoluto, ficar com ele para sempre e sem devolver.\nEu não decido o destino de ninguém aqui hoje. Eu só estou antecipando a data\nque já estava marcada desde o dia distante em que nasceram de pó e prometeram, sem qualquer convicção real, esquecer disso um dia qualquer no futuro distante.\nSepultamento!",
