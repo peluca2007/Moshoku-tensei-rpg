@@ -76,6 +76,13 @@ export interface CriaturaEncontro {
    * com ao menos uma ação de dano, ela rola cada uma de verdade.
    */
   acoes: AcaoCriatura[];
+  /**
+   * A cara da criatura, mesmo formato de `CharacterData.portrait` (data URL,
+   * já reduzido por `prepararImagem`) — reaproveita a infra de imagem da
+   * ficha em vez de inventar outra. Opcional: o Mestre monta muito monstro
+   * sem arte própria, e "sem retrato" é a ausência da chave, não um erro.
+   */
+  portrait?: string;
 }
 
 /** Só as ações que causam dano — as outras são manobras que a simulação não modela. */
