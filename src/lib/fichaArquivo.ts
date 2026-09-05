@@ -1,5 +1,6 @@
 import { CharacterData } from "./types";
 import { comImagensSaneadas, reduzirDataUrl } from "./imagemDaFicha";
+import { comprimirTexto, descomprimirBytes } from "./compactacao";
 
 /**
  * A ficha num arquivo só — comprimida, e COM as imagens dentro.
@@ -49,16 +50,6 @@ const PARA_COMPARTILHAR = {
   portrait: { ladoMaior: 256, maxBytes: 30 * 1024 },
 } as const;
 
-async function comprimir(texto: string): Promise<Uint8Array<ArrayBuffer>> {
-  const stream = new Blob([texto]).stream().pipeThrough(new CompressionStream("gzip"));
-  return new Uint8Array(await new Response(stream).arrayBuffer());
-}
-
-async function descomprimir(bytes: Uint8Array<ArrayBuffer>): Promise<string> {
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
-  return new Response(stream).text();
-}
-
 interface FichaEmpacotada {
   blob: Blob;
   nomeDoArquivo: string;
@@ -83,12 +74,12 @@ export async function empacotarFicha(character: CharacterData): Promise<FichaEmp
   // Sem `CompressionStream` (navegador antigo) o arquivo sai como JSON puro,
   // com a mesma extensão: a leitura detecta pelo prefixo, e uma ficha grande é
   // melhor que uma ficha que não exporta.
-  if (typeof CompressionStream === "undefined") {
+  const comprimido = await comprimirTexto(json);
+  if (!comprimido) {
     const blob = new Blob([json], { type: "application/json" });
     return { blob, nomeDoArquivo: nomeDoArquivo(character), bytes: blob.size };
   }
 
-  const comprimido = await comprimir(json);
   const blob = new Blob([new TextEncoder().encode(MARCA_ARQUIVO), comprimido], {
     type: "application/octet-stream",
   });
@@ -117,7 +108,7 @@ export async function lerArquivoDeFicha(file: File): Promise<Omit<CharacterData,
   let json: string;
   if (marca === MARCA_ARQUIVO) {
     try {
-      json = await descomprimir(bytes.subarray(MARCA_ARQUIVO.length) as Uint8Array<ArrayBuffer>);
+      json = await descomprimirBytes(bytes.subarray(MARCA_ARQUIVO.length) as Uint8Array<ArrayBuffer>);
     } catch {
       throw new FichaIlegivel("O arquivo está corrompido — a parte comprimida não abriu.");
     }
