@@ -14,7 +14,7 @@ Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 ## Estado atual
 
 **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind v4 · Zustand com persistência em `localStorage`
-(ficha em `version: 12`, bestiário em `version: 2`).
+(ficha em `version: 12`, bestiário em `version: 4`).
 
 **Fonte de verdade única:** `src/data/`. O livro (`src/components/book/*.tsx`), o mapa de árvores
 (`/arvores`), a loja (`/loja`) e o PDF exportado leem todos os mesmos arrays — nenhuma tabela é escrita à
@@ -31,7 +31,7 @@ mão duas vezes.
 | `/arvores` | Mapa radial estilo Destiny Board — pan/zoom, compra refletindo na ficha na hora |
 | `/loja` | Loja da Guilda — 85 itens, filtro duplo Tipo × Rank de Guilda, `buyItem` valida PO **e** Rank |
 | `/iniciativa` | Tracker de iniciativa |
-| `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, e o teste de 300 batalhas |
+| `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, o teste de 300 batalhas, e o covil em pastas (com busca e cartão recolhível) |
 | `/personagens` | Roster de fichas |
 
 ### Conteúdo

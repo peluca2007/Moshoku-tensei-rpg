@@ -102,6 +102,20 @@ export interface CriaturaEncontro {
    * sem arte própria, e "sem retrato" é a ausência da chave, não um erro.
    */
   portrait?: string;
+  /**
+   * A gaveta em que ela está, em `useBestiaryStore.pastas`. Ausente = fora de
+   * todas as pastas, que é onde todo bestiário montado antes de 2026-09-05
+   * começa.
+   *
+   * É organização de tela, e a simulação nunca lê este campo — mas ele mora
+   * aqui, e não num mapa à parte na store, porque o dono da informação é a
+   * criatura: com um `Record<criaturaId, pastaId>` paralelo, toda remoção,
+   * duplicação e importação precisaria lembrar de mexer nos dois, e a primeira
+   * que esquecesse deixaria uma criatura fantasma numa pasta. `empacotarCriatura`
+   * leva o campo junto no arquivo; quem importa (`importarCriatura`) descarta,
+   * porque um id de pasta só faz sentido no bestiário que o sorteou.
+   */
+  pastaId?: string;
 }
 
 /** Só as ações que causam dano — as outras são manobras que a simulação não modela. */
