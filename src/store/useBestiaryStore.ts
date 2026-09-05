@@ -34,6 +34,18 @@ function makePastaId() {
  * pasta vazia continua existindo — é justamente onde o Mestre vai montar o
  * próximo encontro.
  */
+/**
+ * As cores que uma pasta pode vestir.
+ *
+ * É uma lista fechada, e não um `#rrggbb` livre, porque a cor precisa
+ * funcionar nos DOIS temas do site e passar no contraste — cor escolhida a
+ * dedo por quem só viu o tema claro fica ilegível no escuro, e o
+ * `check:contraste` não teria como cobrir um valor que só existe no
+ * `localStorage` de uma pessoa.
+ */
+export const CORES_DE_PASTA = ["pergaminho", "vinho", "ouro", "esmeralda", "ambar", "rosa"] as const;
+export type CorDePasta = (typeof CORES_DE_PASTA)[number];
+
 export interface PastaCriaturas {
   id: string;
   nome: string;
@@ -46,6 +58,41 @@ export interface PastaCriaturas {
    * acabou de arrumar.
    */
   recolhida: boolean;
+  /** A cor da gaveta. Ausente = "pergaminho", o padrão discreto. */
+  cor?: CorDePasta;
+  /**
+   * Um emoji no lugar do ícone de pasta.
+   *
+   * Personalização de verdade custa pouco aqui e paga muito: numa lista de dez
+   * gavetas, 🐉 e 🏚️ se acham de relance de um jeito que "Chefes do arco 2" e
+   * "Taverna" não — o olho lê a figura antes de ler a palavra.
+   */
+  emoji?: string;
+}
+
+/** O que chega quando o Mestre importa uma pasta inteira de outro bestiário. */
+export interface PastaImportada {
+  nome: string;
+  cor?: CorDePasta;
+  emoji?: string;
+  criaturas: Omit<CriaturaEncontro, "id">[];
+}
+
+/**
+ * O que acabou de entrar no bestiário — pra tela mostrar em vez de esconder.
+ *
+ * Sem isto, importar era um clique que não parecia fazer nada: a criatura
+ * entrava lá embaixo, com o cartão fechado (desde que o cartão passou a nascer
+ * recolhido) e, se a pasta de destino estivesse recolhida, dentro de uma gaveta
+ * fechada. O caminho pelo LINK era pior ainda, porque a confirmação acontece em
+ * outra rota e volta pra cá sem nada em comum. Quem grava é a store; a tela
+ * reage abrindo, expandindo e rolando até lá.
+ */
+export interface Chegada {
+  tipo: "criatura" | "pasta";
+  id: string;
+  /** Sorteado a cada chegada: importar a MESMA criatura duas vezes tem que acordar a tela duas vezes. */
+  marca: number;
 }
 
 /** Uma ação nova, em branco — os campos são do Mestre, não do molde. */
@@ -74,6 +121,8 @@ interface BestiaryState {
   selecionadas: string[];
   /** Ids das fichas do roster que formam o grupo no teste. */
   grupo: string[];
+  /** O último item que chegou de fora (ou nasceu agora). Não é salvo — ver `partialize`. */
+  chegada: Chegada | null;
 
   criar: (patamar: number, papel: PapelCriatura, nome?: string, pastaId?: string | null) => string;
   /** Traz uma criatura de um arquivo `.mtcriatura` ou de um link — id novo, ids de ação novos. */
@@ -95,7 +144,10 @@ interface BestiaryState {
   definirGrupo: (ids: string[]) => void;
 
   criarPasta: (nome?: string) => string;
-  renomearPasta: (id: string, nome: string) => void;
+  /** Nome, cor, emoji ou recolhimento — tudo que é aparência da gaveta. */
+  atualizarPasta: (id: string, patch: Partial<Omit<PastaCriaturas, "id">>) => void;
+  /** Traz uma pasta inteira de um arquivo `.mtpasta`: gaveta nova, criaturas com ids novos. */
+  importarPasta: (dados: PastaImportada) => string;
   /** Apaga a gaveta, NUNCA o que estava dentro: as criaturas voltam pra "Fora das pastas". */
   removerPasta: (id: string) => void;
   moverPasta: (id: string, direcao: -1 | 1) => void;
@@ -105,6 +157,12 @@ interface BestiaryState {
   moverCriatura: (id: string, pastaId: string | null) => void;
   /** Sobe ou desce a criatura uma posição DENTRO da pasta em que ela está. */
   reordenarCriatura: (id: string, direcao: -1 | 1) => void;
+  /** A tela chama isto depois de mostrar a chegada, pra ela não se repetir. */
+  limparChegada: () => void;
+}
+
+function chegou(tipo: Chegada["tipo"], id: string): Chegada {
+  return { tipo, id, marca: Math.random() };
 }
 
 export const useBestiaryStore = create<BestiaryState>()(
@@ -114,6 +172,7 @@ export const useBestiaryStore = create<BestiaryState>()(
       pastas: [],
       selecionadas: [],
       grupo: [],
+      chegada: null,
 
       criar: (patamar, papel, nome, pastaId) => {
         const id = makeId();
@@ -121,6 +180,7 @@ export const useBestiaryStore = create<BestiaryState>()(
         set((s) => ({
           criaturas: [...s.criaturas, { ...criatura, pastaId: pastaId ?? undefined }],
           selecionadas: [...s.selecionadas, id],
+          chegada: chegou("criatura", id),
         }));
         return id;
       },
@@ -141,7 +201,11 @@ export const useBestiaryStore = create<BestiaryState>()(
           // olhando agora — a pasta escolhida no formulário, ou fora de todas.
           pastaId: pastaId ?? undefined,
         };
-        set((s) => ({ criaturas: [...s.criaturas, criatura], selecionadas: [...s.selecionadas, id] }));
+        set((s) => ({
+          criaturas: [...s.criaturas, criatura],
+          selecionadas: [...s.selecionadas, id],
+          chegada: chegou("criatura", id),
+        }));
         return id;
       },
 
@@ -153,7 +217,7 @@ export const useBestiaryStore = create<BestiaryState>()(
         if (!original) return null;
         const novoId = makeId();
         const novo = { ...original, id: novoId, nome: `${original.nome} (cópia)` };
-        set((s) => ({ criaturas: [...s.criaturas, novo] }));
+        set((s) => ({ criaturas: [...s.criaturas, novo], chegada: chegou("criatura", novoId) }));
         return novoId;
       },
 
@@ -243,12 +307,35 @@ export const useBestiaryStore = create<BestiaryState>()(
       // -----------------------------------------------------------------
       criarPasta: (nome) => {
         const id = makePastaId();
-        set((s) => ({ pastas: [...s.pastas, { id, nome: nome || "Nova pasta", recolhida: false }] }));
+        set((s) => ({
+          pastas: [...s.pastas, { id, nome: nome || "Nova pasta", recolhida: false }],
+          chegada: chegou("pasta", id),
+        }));
         return id;
       },
 
-      renomearPasta: (id, nome) =>
-        set((s) => ({ pastas: s.pastas.map((p) => (p.id === id ? { ...p, nome } : p)) })),
+      atualizarPasta: (id, patch) =>
+        set((s) => ({ pastas: s.pastas.map((p) => (p.id === id ? { ...p, ...patch } : p)) })),
+
+      // A pasta importada é uma gaveta NOVA, mesmo que já exista uma com o
+      // mesmo nome: fundir duas pastas homônimas de bestiários diferentes
+      // misturaria o covil de duas campanhas sem perguntar, e desfazer isso
+      // seria mover criatura por criatura à mão.
+      importarPasta: (dados) => {
+        const pastaId = makePastaId();
+        const criaturas: CriaturaEncontro[] = dados.criaturas.map((c) => ({
+          ...c,
+          id: makeId(),
+          acoes: (c.acoes ?? []).map((a) => ({ ...a, id: makeAcaoId() })),
+          pastaId,
+        }));
+        set((s) => ({
+          pastas: [...s.pastas, { id: pastaId, nome: dados.nome || "Pasta importada", recolhida: false, cor: dados.cor, emoji: dados.emoji }],
+          criaturas: [...s.criaturas, ...criaturas],
+          chegada: chegou("pasta", pastaId),
+        }));
+        return pastaId;
+      },
 
       // Apagar a gaveta não é apagar o conteúdo. Um Mestre que fez trinta
       // criaturas e reorganiza as pastas no meio da sessão não pode perder
@@ -269,6 +356,8 @@ export const useBestiaryStore = create<BestiaryState>()(
           [pastas[i], pastas[j]] = [pastas[j], pastas[i]];
           return { ...s, pastas };
         }),
+
+      limparChegada: () => set({ chegada: null }),
 
       alternarPastaRecolhida: (id) =>
         set((s) => ({
@@ -318,6 +407,18 @@ export const useBestiaryStore = create<BestiaryState>()(
       name: "mushoku-tensei-bestiario",
       skipHydration: true,
       version: 4,
+      /**
+       * `chegada` fica de fora do que é salvo: ela é "o que acabou de acontecer
+       * nesta aba". Salva, ela reabriria e rolaria até a última criatura
+       * importada toda vez que o site abrisse — uma semana depois, sem nada ter
+       * chegado.
+       */
+      partialize: (s) => ({
+        criaturas: s.criaturas,
+        pastas: s.pastas,
+        selecionadas: s.selecionadas,
+        grupo: s.grupo,
+      }),
       /**
        * v1 → v2: a criatura ganhou `acoes` (2026-09-03).
        *

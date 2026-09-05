@@ -24,6 +24,28 @@ Três coisas resolvem isso, e as três estão nesta versão:
 - **Busca**, que atravessa as gavetas fechadas — quando você já sabe o nome, navegar por pasta é o
   caminho longo. Ela varre nome, anotação de perigo, papel e o texto das Ações: *"quem era o que
   tinha a mordida venenosa?"* é uma pergunta tão comum quanto o nome próprio da criatura.
+- **A gaveta é sua**: nome, **emoji** e uma de seis **cores**. Numa lista de dez pastas, 🐉 e 🏚️ se
+  acham de relance de um jeito que "Chefes do arco 2" e "Taverna" não — o olho lê a figura antes de
+  ler a palavra. A cor é uma lista fechada, e não um seletor livre, porque ela precisa funcionar nos
+  dois temas do site: cor escolhida a dedo por quem só viu o tema claro fica ilegível no escuro.
+
+**A pasta pode ser criada com o covil vazio.** Na primeira versão o botão "Nova pasta" morava dentro
+do galho que só existia depois da primeira criatura — e planejar a sessão começa exatamente pelo
+contrário: abrir "a emboscada da estrada" e "os chefes do arco 2" antes de ter o que pôr dentro.
+
+**O que chega aparece.** Criar, duplicar, importar de arquivo ou aceitar um link agora abre o cartão,
+expande a gaveta em que ele caiu, limpa a busca que o esconderia e rola até ele, com um realce de
+alguns segundos. Sem isso, importar tinha virado um clique que não parecia fazer nada: desde que o
+cartão passou a nascer recolhido, o recém-chegado entrava fechado no fim de uma lista longa — e pelo
+link era pior, porque a confirmação acontece em outra rota e voltava pra cá sem nada em comum.
+
+**A pasta inteira num arquivo.** `.mtpasta` leva a gaveta com nome, cor, emoji e todas as criaturas
+dentro — o mesmo `MTP1`+gzip dos outros dois formatos. `.mtcriatura` resolvia "te mando este chefe";
+não resolvia "a emboscada da estrada são estes cinco bichos, e eu quero levar isso pra outra
+máquina" — nem o backup, que é o que realmente falta a um bestiário que mora só no `localStorage` de
+um navegador. A importação é **um botão só**: pasta, criatura ou o `.json` cru de qualquer um dos
+dois, detectados pelo conteúdo. Dois botões transferem pra quem usa uma pergunta que o arquivo já
+responde sozinho.
 
 **Apagar a pasta nunca apaga o que está dentro**: as criaturas voltam pra "Fora das pastas", e a
 confirmação diz "Só a pasta?" pra deixar isso explícito. Um Mestre que reorganiza trinta criaturas no

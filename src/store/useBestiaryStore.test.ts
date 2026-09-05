@@ -10,7 +10,7 @@ import { useBestiaryStore } from "./useBestiaryStore";
  * de `encounterSim`; isto aqui é sobre não perder trabalho.
  */
 function zerar() {
-  useBestiaryStore.setState({ criaturas: [], pastas: [], selecionadas: [], grupo: [] });
+  useBestiaryStore.setState({ criaturas: [], pastas: [], selecionadas: [], grupo: [], chegada: null });
 }
 
 describe("pastas do bestiário", () => {
@@ -117,6 +117,53 @@ describe("pastas do bestiário", () => {
 
     useBestiaryStore.getState().definirSelecaoDeVarias([dois], false);
     expect(useBestiaryStore.getState().selecionadas).toEqual([um]);
+  });
+
+  // A pasta importada é uma gaveta NOVA: nem o id dela nem os das criaturas
+  // vêm do arquivo, senão reimportar o próprio backup colidiria com o que já
+  // está no bestiário.
+  it("importar pasta traz as criaturas com ids novos, todas dentro dela", () => {
+    const existente = useBestiaryStore.getState().criarPasta("Já tinha");
+    useBestiaryStore.getState().criar(1, "padrao", "Antiga", existente);
+
+    const nova = useBestiaryStore.getState().importarPasta({
+      nome: "Emboscada da estrada",
+      cor: "vinho",
+      emoji: "🏹",
+      criaturas: [
+        { nome: "Goblin", patamar: 1, papel: "lacaio", pv: 12, ca: 12, bonusAtaque: 3, danoPorTurno: 6, cdResistencia: 13, quantidade: 1, perigo: "", acoes: [] },
+        { nome: "Bandido", patamar: 2, papel: "padrao", pv: 30, ca: 14, bonusAtaque: 5, danoPorTurno: 12, cdResistencia: 14, quantidade: 1, perigo: "", acoes: [] },
+      ],
+    });
+
+    const { criaturas, pastas } = useBestiaryStore.getState();
+    expect(nova).not.toBe(existente);
+    expect(pastas).toHaveLength(2);
+    expect(pastas[1]).toMatchObject({ nome: "Emboscada da estrada", cor: "vinho", emoji: "🏹", recolhida: false });
+    const dentro = criaturas.filter((c) => c.pastaId === nova);
+    expect(dentro.map((c) => c.nome)).toEqual(["Goblin", "Bandido"]);
+    expect(new Set(criaturas.map((c) => c.id)).size).toBe(criaturas.length);
+    // A pasta que já existia não perde nada.
+    expect(criaturas.filter((c) => c.pastaId === existente)).toHaveLength(1);
+  });
+
+  // A tela precisa saber o que acabou de entrar pra abrir, expandir e rolar até
+  // lá — sem isso, importar é um clique que não parece fazer nada.
+  it("tudo que entra deixa uma chegada, e a marca muda a cada uma", () => {
+    const primeira = useBestiaryStore.getState().criar(1, "padrao", "Uma");
+    expect(useBestiaryStore.getState().chegada).toMatchObject({ tipo: "criatura", id: primeira });
+
+    const marcaAnterior = useBestiaryStore.getState().chegada!.marca;
+    const copia = useBestiaryStore.getState().duplicar(primeira)!;
+    const depois = useBestiaryStore.getState().chegada!;
+    expect(depois).toMatchObject({ tipo: "criatura", id: copia });
+    expect(depois.marca).not.toBe(marcaAnterior);
+
+    const pasta = useBestiaryStore.getState().criarPasta("Nova");
+    expect(useBestiaryStore.getState().chegada).toMatchObject({ tipo: "pasta", id: pasta });
+
+    useBestiaryStore.getState().limparChegada();
+    expect(useBestiaryStore.getState().chegada).toBeNull();
   });
 
   it("mover pasta nas pontas não muda a ordem", () => {
