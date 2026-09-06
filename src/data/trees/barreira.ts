@@ -12,17 +12,17 @@ export const BARREIRA_TREE: Tree = {
     hook:
       "Você não conjura contra o inimigo — você conjura contra o espaço, e escreve a lei que vale lá dentro.",
     loop: [
-      "Desenhe. Toda barreira é uma esfera centrada num ponto à sua escolha, erguida por 1 Ação, e você sustenta uma por vez (duas do Intermediário em diante).",
+      "Desenhe. Toda barreira é uma esfera centrada num ponto à sua escolha, e você sustenta uma por vez (duas do Intermediário em diante). Ela tem 20 PV por patamar seu, e a lei dela nunca vale contra você.",
       "Imponha o teto. Selado proíbe, dentro da esfera, magia de rank SUPERIOR ao seu rank em Barreira. Tentar mesmo assim gasta as Ações e o PM e falha.",
       "Escolha a face do Fluxo Interrompido: Estagnação (toda magia lá dentro custa +1 PM por Bônus de Rank seu, e ninguém recupera PM) ou Fonte (você e seus aliados recuperam 1 PM por turno). Nunca as duas.",
     ],
     cost:
-      "Barreiras distorcem mana, e aço não é mana. Contra o pilar do Corpo esta árvore quase não faz nada — um Deus da Espada atravessa a sua lei sem notar que ela existe.",
+      "Barreiras distorcem mana, e aço não é mana. Contra o pilar do Corpo você não proíbe nada — só atrasa: um Deus da Espada atravessa a sua lei gastando turnos, e turnos é tudo o que você tira dele. Contra quem não conjura, metade do seu catálogo é papel em branco.",
   },
   keyAttributeLabel: "Espírito",
   resourceLabel: "PM",
   tagline:
-    "Anti-magia medida em regras, não em dano. Fraqueza estrutural: barreiras distorcem mana, e aço não é mana — quase nada contra o pilar do Corpo.",
+    "Anti-magia medida em regras, não em dano — e paredes com PV para o que a regra não alcança. Fraqueza estrutural: barreiras distorcem mana, e aço não é mana; contra o pilar do Corpo você atrasa, não proíbe.",
   proficiencies: {
     armas: "Nenhuma além do padrão (armas simples, armadura leve).",
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
@@ -39,7 +39,7 @@ export const BARREIRA_TREE: Tree = {
       mastery: {
         name: "O Primeiro Círculo",
         description:
-          "[Selado / Fluxo Interrompido] Você desenha barreiras (1 Ação + PM da magia), esferas centradas num ponto à sua escolha. Sustenta uma por vez, aplicando Selado e a condição de Fluxo Interrompido que você escolher. Você vê mana: barreiras, encantamentos, itens mágicos e invisibilidade mágica aparecem como contorno luminoso, sem custo.",
+          "[Selado / Fluxo Interrompido] Você desenha barreiras — esferas centradas num ponto à sua escolha —, sustenta uma por vez e aplica nelas o Selado e a face de Fluxo Interrompido que escolher. Nenhuma das duas se aplica a VOCÊ: quem escreve a lei não obedece a ela. E toda barreira sua é matéria, não só regra: ela tem 20 PV por patamar que você possua nesta árvore (a magia que declarar os próprios PV usa os dela), e quem está dentro tem Cobertura contra ataques à distância vindos de fora. Você vê mana: barreiras, encantamentos, itens mágicos e invisibilidade mágica aparecem como contorno luminoso, sem custo.",
       },
       talents: [
         { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Barreira. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
@@ -71,6 +71,21 @@ export const BARREIRA_TREE: Tree = {
             "Que a força do impacto encontre uma recusa absoluta no ar e não alcance o meu corpo por nada neste mundo. Recusa!",
         },
         {
+          id: "casca",
+          name: "Casca",
+          paCost: RANK_PA_COST.common.Principiante,
+          pmCost: 2,
+          range: "9 metros",
+          actions: { normal: 1 },
+          costNote:
+            "1 Ação onde o rank pede 2. É a única magia da escola que responde a um golpe já a caminho, e uma casca que fica pronta dois terços de turno depois fica pronta tarde. Paga o desconto sendo pequena: ela cobre um impacto, não uma luta.",
+          damage: { normal: "2d8 + BC de PV Temporários" },
+          effect:
+            "Um aliado recebe PV Temporários por 1 minuto e, enquanto a casca durar, soma o seu Bônus de Rank em testes de resistência contra magia. Não acumula com outra fonte de PV Temporários — vale o maior.",
+          incantation:
+            "Fecho a tua pele numa segunda pele que não é tua, e deixo o primeiro golpe quebrar nela em vez de quebrar em ti. Casca!",
+        },
+        {
           id: "selo-de-objeto",
           name: "Selo de Objeto",
           paCost: RANK_PA_COST.talent.Principiante,
@@ -88,7 +103,7 @@ export const BARREIRA_TREE: Tree = {
           pmCost: 2,
           range: "9 metros",
           actions: MAGIC_ACTIONS.Principiante,
-          effect: "Uma placa de mana de 3m × 3m por 3 turnos. Qualquer magia de rank Principiante que a atravesse é anulada; de rank Intermediário tem os dados reduzidos à metade.",
+          effect: "Uma placa de mana de 3m × 3m por 3 turnos, com os PV das suas barreiras. Qualquer magia de rank Principiante que a atravesse é anulada; de rank Intermediário tem os dados reduzidos à metade. Flecha, virote e pedra param nela enquanto ela estiver de pé: quem está atrás tem Cobertura Total.",
           incantation:
             "Ergue-te, escudo de força invisível, e bloqueia o projétil antes que ele toque as vestes dos meus companheiros. Anteparo!",
         },
@@ -130,6 +145,18 @@ export const BARREIRA_TREE: Tree = {
           effect: "Barreira de 12m por 10 minutos. Além de Selado e Fluxo Interrompido, impede passagem de efeitos mágicos pela superfície nos dois sentidos. Criaturas e flechas atravessam normalmente.",
           incantation:
             "Domo translúcido que desce em esfera perfeita sobre o nosso grupo, fecha-te com força contra qualquer investida e protege-nos de tudo que vier de fora. Domo!",
+        },
+        {
+          id: "muralha",
+          name: "Muralha",
+          paCost: RANK_PA_COST.common.Intermediário,
+          pmCost: 4,
+          range: "18 metros",
+          actions: MAGIC_ACTIONS.Intermediário,
+          effect:
+            "Uma parede reta de mana, de até 12m de comprimento por 3m de altura, por 1 minuto, com os PV das suas barreiras. Ela barra passagem e projéteis nos dois sentidos, e magia de rank Intermediário ou inferior não a atravessa. Quem quiser passar derruba os PV dela — é o único jeito, e funciona.",
+          incantation:
+            "Entre o que vem e o que eu guardo eu levanto uma parede que não estava aqui: ela não pede licença ao chão, não se apoia em pedra nenhuma, e não sai daí enquanto eu estiver de pé. Muralha!",
         },
         {
           id: "amarra",
