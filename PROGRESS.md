@@ -1,9 +1,12 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-05 — **0.1.13**: o covil de `/encontros` ganhou pastas, busca e
-cartão recolhível; a criatura ganhou arquivo, link, retrato, condições estruturadas e Reação de
-chefe; o Calor do Punho do Fogo virou número rastreável na ficha; e as três vias de criação passaram
-a perguntar pela foto. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-05 — **0.1.14**: quatro árvores voltaram da mesa e foram ajustadas
+pelo que a sessão mostrou — o Tático passou a executar a própria Ordem de Tiro, a Barreira ganhou PV
+declarados e duas magias de proteção de verdade, a Desintoxicação ganhou o que fazer num turno, e o
+Calor do Punho do Fogo foi reduzido a quatro regras e um custo só. Antes disso, na **0.1.13**: o
+covil de `/encontros` ganhou pastas, busca e cartão recolhível; a criatura ganhou arquivo, link,
+retrato, condições estruturadas e Reação de chefe; o Calor virou número rastreável na ficha; e as
+três vias de criação passaram a perguntar pela foto. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
@@ -37,7 +40,7 @@ mão duas vezes.
 ### Conteúdo
 
 - **19 árvores** (17 base + Vendaval e Punho de Fogo, híbridas e ocultas até os pré-requisitos).
-- **597 magias, talentos e técnicas**, todas com encantamento e custo declarados e conferidas por
+- **601 magias, talentos e técnicas**, todas com encantamento e custo declarados e conferidas por
   `npm run check:texto`.
 - **12 raças e 13 antecedentes** com 3 sub-tabelas (Miko, Olho, Laplace).
 - **9 Magias Combinadas** oficiais (`src/data/combinedSpells.ts`).
@@ -64,14 +67,14 @@ Só o que ainda não foi feito. A lista curta com o contexto de cada item vive e
 - [ ] **Validar a Distância Roubada na mesa** (Vendaval). A conta está fechada no cabeçalho de
       `src/data/trees/vendaval.ts`; o que falta é a pergunta que ela levanta — o Vendaval alguma vez
       apanha?
-- [ ] **Jogar o Invocador e as três árvores de Utilidade.** São as únicas mudanças de 0.1.12 que não
-      saíram de medição, e sim de um pedido.
-- [~] **Auditoria linha a linha das magias** — o `check:texto` cobre CONTRADIÇÃO nas 597 habilidades, e
+- [~] **Jogar o Invocador, o Ladino e o Bardo.** São as mudanças de 0.1.12 que não saíram de medição,
+      e sim de um pedido. O Tático já foi jogado, e a Ordem de Tiro foi TROCADA em 0.1.14 por causa
+      disso — que era exatamente o que o plano previa fazer se ela não funcionasse na mesa. Falta a
+      Dissonância do Bardo passar pelo mesmo teste.
+- [~] **Auditoria linha a linha das magias** — o `check:texto` cobre CONTRADIÇÃO nas 601 habilidades, e
       Norte, Vendaval, Lutador, Arquearia e Punho do Fogo foram lidos de ponta a ponta. Faltam **Suishin,
       Escudos, Ladino e Tático**, e ali o que falta é julgamento: se o efeito faz sentido, se a técnica é
       divertida, se o patamar entrega o que promete.
-- [ ] **O "Calor" do Punho do Fogo não existe no código.** É a mecânica que define a árvore, e a ficha só
-      conhece PV, PM, PT e PP.
 - [ ] **A faixa de `/livro` está em 680×384** — a menor das oito; as outras vão de 960 a 1900.
 
 ## Backlog
@@ -276,7 +279,7 @@ npm test                  # testes das fórmulas (vitest)
 npm run lint              # eslint
 npm run check:livro       # dados × texto do livro, e se toda arte existe em disco (rodar dentro do WSL)
 npm run check:arvores     # teto do turno de cada árvore × a régua do Apêndice C
-npm run check:texto       # a PROSA das 597 habilidades × os campos delas
+npm run check:texto       # a PROSA das 601 habilidades × os campos delas
 npm run check:redundancia # habilidades que repetem um patamar anterior
 node scripts/gerar-favicon.mjs   # regera o favicon a partir de assets-fonte/icon-fonte.png
 ```
