@@ -149,6 +149,7 @@ export default function Chapter4() {
           rows={[
             ["Agarrado", "Deslocamento reduzido a 0. Desvantagem em ataques contra qualquer criatura que não seja quem te agarrou. Termina se quem te agarrou for incapacitado, ou gastando 1 Ação num teste de Força ou Agilidade (Disputa) contra quem segura."],
             ["Amedrontado", "Desvantagem em testes de atributo e em ataques enquanto a fonte do medo estiver visível. Não pode se mover voluntariamente pra mais perto dela."],
+            ["Apontado", "A Ordem de Tiro do Tático (Cap. 3). O primeiro ataque que ACERTAR o alvo Apontado — do Tático ou de um aliado — causa +1d6 de dano por patamar que o Tático possua em Navegação e Liderança, e o próprio Tático soma o Bônus de Rank dele no acerto e no dano contra esse alvo. Dura até o próximo turno de quem apontou. Se ninguém acertar nesse intervalo, ele pode apontar o mesmo alvo de novo e o bônus acumula outro 1d6, até o dobro do patamar dele."],
             ["Atolado", "Deslocamento reduzido à metade nesse terreno; gastar o dobro de Deslocamento pra sair dele. Não afeta ataques nem testes."],
             ["Atordoado", "Perde todas as Ações e a Reação até o fim do próximo turno. Ataques contra você têm Vantagem, e você falha automaticamente em testes de resistência de Força e Agilidade."],
             ["Caído", "Desvantagem em qualquer ataque que você faça. Ataques corpo a corpo contra você têm Vantagem; ataques à distância contra você têm Desvantagem. Levantar-se custa metade do seu Deslocamento."],
