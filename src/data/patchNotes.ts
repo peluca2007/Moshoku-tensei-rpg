@@ -16,6 +16,60 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.14",
+    date: "2026-09-05",
+    title: "O Que a Mesa Devolveu",
+    sections: [
+      {
+        heading: "O Tático executa a própria ordem",
+        items: [
+          "O O-QUE-FALTA.md já avisava que a Ordem de Tiro tinha sido inventada pra que o Tático tivesse o que medir, e que, se não fosse divertida na mesa, o certo era TROCÁ-LA, não ajustá-la. Jogaram de Explorador e o veredito foi esse: ele não dá dano nenhum. E não dava mesmo — o bônus somava no ataque de um ALIADO, três pontos e meio no 1º patamar, e só se outra pessoa escolhesse o alvo que você apontou.",
+          "O alvo agora fica APONTADO (a condição entrou no Glossário do Cap. 4), e o bônus de +1d6 por patamar vale para o primeiro ataque que acertar — seu ou de um aliado.",
+          "Contra o alvo Apontado, o Tático soma o Bônus de Rank no acerto e no dano dos próprios ataques com arco curto ou lança. É a única vez em que ele bate como quem treinou pra isso, e a razão é a mesma da árvore inteira: ele não bate melhor, ele bate onde ele mesmo mandou bater.",
+          "A ordem não se perde: se ninguém acertar até o seu próximo turno, aponte o mesmo alvo de novo e o bônus sobe outro 1d6, até o dobro do seu patamar. O Tático sozinho não fica parado — ele carrega.",
+          "Talento novo de 1º patamar, Voz que Corrige: uma Reação, quando um ataque contra o Apontado errar, quem errou repete a rolagem. Uma vez por turno, e vale para os ataques dele também.",
+          "\"Não pode fazer nada sozinho\" continua sendo a identidade da árvore, e é uma boa identidade. \"Não pode fazer nada\" não era.",
+        ],
+      },
+      {
+        heading: "Barreira e Proteção volta a proteger",
+        items: [
+          "O nome prometia duas coisas e a escola entregava uma: contra um conjurador ela é o melhor kit do livro, contra um urso era um mago de 1d6 de PV assistindo. E nenhuma barreira do livro dizia quantos PV tinha — Recinto declarava 120, Redoma 60, e o Círculo Menor, o Domo e o Anteparo não declaravam nada, enquanto o talento Trama Densa prometia \"o dobro de PV\" de um número que não existia.",
+          "Toda barreira sua tem 20 PV por patamar (20 no 1º, 120 no 6º), e a magia que declarar os próprios PV usa os dela. Trama Densa finalmente dobra alguma coisa.",
+          "A sua barreira nunca vale contra VOCÊ. Selado e Estagnação atingiam o próprio conjurador: um Círculo Menor no 1º patamar era uma armadilha para o grupo inteiro, aliados incluídos.",
+          "Quem está dentro tem Cobertura contra ataques à distância vindos de fora.",
+          "CASCA (Principiante, 2 PM, 1 Ação): PV Temporários de 2d8 + BC num aliado, mais o Bônus de Rank em resistências contra magia enquanto durar. É o que a escola faz num turno em que ninguém conjurou nada — que era metade dos turnos.",
+          "MURALHA (Intermediário, 4 PM): 12 metros de parede com os PV das suas barreiras, barrando passagem e projéteis nos dois sentidos. É a resposta ao inimigo que não conjura, e é honesta: dá pra derrubar no braço.",
+          "Anteparo passa a parar flecha, virote e pedra, e não só magia.",
+          "A fraqueza declarada mudou de \"quase não faz nada contra o Corpo\" para o que ela realmente é: contra o pilar do Corpo você não proíbe, você ATRASA — o Deus da Espada atravessa a sua lei gastando turnos, e turnos é tudo o que você tira dele.",
+        ],
+      },
+      {
+        heading: "A escola barata ganhou o que fazer no turno",
+        items: [
+          "O rework de 2026-09-03 tirou dano e imunidades da Desintoxicação e devolveu o valor em preço. O que ele não resolveu foi o buraco do 1º ao 3º patamar: fora de uma cena de veneno, o purificador não tinha uma única linha pra gastar o turno.",
+          "PEÇONHA (Principiante, 2 PM, 1 Ação, 18m): 2d6 de veneno e Envenenado até o fim do próximo turno, com teste de Vigor. Quem entende de veneno sabe fazer veneno — a Maestria de Rei só admite em voz alta o que este feitiço já faz pequeno.",
+          "Purgar em 1 Ação, e não 2. A magia que justifica a escola existir gastava dois terços de um turno pra desfazer o que o Mestre fez ontem.",
+          "Paladar passa a cobrir o grupo: aliados a 3 metros somam o seu Bônus de Rank em resistências contra veneno, doença e maldição.",
+          "Sangria custa 3d6, não 4d6. A Mecânica Central da árvore já dizia 3d6 desde o rework; a magia cobrava 4d6. O check:texto não pega esse tipo de divergência — ele compara a prosa de uma habilidade com os campos DELA, nunca com o texto da árvore que a contém.",
+        ],
+      },
+      {
+        heading: "O Calor tem quatro regras, e não vinte",
+        items: [
+          "O pedido não foi \"está fraco\": foi \"está confuso, e leve em conta que ele tem que pegar outras coisas\". Cada patamar do Punho do Fogo reescrevia o recurso do zero — teto numa escada torta (5, 8, 12, 16, 20, 25), decaimento mudando de regra no 2º patamar, estouro com três nomes e três efeitos (Brasa Viva, Fúria Vulcânica, Erupção Contínua) e cada técnica cobrando um número próprio de Calor: 1, 2, 3, 4, 5, 6, 8, 10 por turno.",
+          "GANHAR: 1 de Calor por ataque desarmado que acerta.",
+          "TETO: 5 por patamar (5/10/15/20/25/30). Uma conta, não uma tabela.",
+          "PERDER: 1 no fim de todo turno em que você não acertou ninguém. Nunca a barra inteira — a regra antiga punia o azar de errar um ataque com o recurso todo.",
+          "GASTAR: toda técnica tem uma SOBRECARGA, e toda Sobrecarga custa 3 de Calor, em qualquer patamar. As únicas exceções são as detonações declaradas (Soco de Nova, Erupção do Soberano, Colapso Solar, Manto de Supernova), que gastam a barra inteira porque é isso que elas são.",
+          "O estouro virou um nome só: Brasa Viva, desde o 1º patamar, melhorando em cada um deles. E ela para de cobrar o 1d6 em você no Santo, porque o Santo é imune a fogo e cobrar dano ígneo de um imune era a contradição mais visível da árvore.",
+          "O custo virou um só: PM ou PT, à sua escolha, nunca os dois. As técnicas cobravam as duas reservas no mesmo golpe (5 PM + 2 PT na Lótus Carmesim) de um personagem que já tinha pagado rank Intermediário em duas árvores pra híbrida sequer existir.",
+          "De quebra, a árvore parou de falar outra língua: \"dano halved\", \"CD 20\", \"Força 30\" e \"Petrificação leve\" viraram metade do dano, CD 8 + BC, e uma aflição de rank Santo — que é como o resto do livro escreve essas quatro coisas.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.13",
     date: "2026-09-05",
     title: "O Covil Ganhou Gavetas",

@@ -5,6 +5,113 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.14 — "O Que a Mesa Devolveu" · 2026-09-05
+
+Quatro árvores voltaram da mesa com o mesmo bilhete: *não dá pra jogar assim*. Nenhuma das quatro
+mudanças abaixo saiu de planilha — saíram de uma sessão jogada, que é a única auditoria que este
+livro ainda não sabia fazer sozinho.
+
+### 🎯 O Tático executa a própria ordem
+
+O `O-QUE-FALTA.md` já avisava: *"Dissonância e Ordem de Tiro foram inventadas pra que Bardo e Tático
+tivessem o que medir. Se não forem divertidas na mesa, o certo é trocá-las, não ajustá-las."* Jogaram
+de Explorador, e o veredito foi exatamente esse — **ele não dá dano nenhum**.
+
+E não dava mesmo. A Ordem de Tiro somava +1d6 por patamar no ataque de um **aliado**: no 1º patamar,
+três pontos e meio de dano que só aconteciam se outra pessoa escolhesse o alvo que você apontou. A
+árvore inteira não tinha uma única linha que o próprio Tático pudesse rolar.
+
+A ordem continua sendo a mecânica — o que muda é quem pode executá-la:
+
+- O alvo fica **Apontado** (agora no Glossário de Condições, Cap. 4), e o bônus vale para o primeiro
+  ataque que acertar, **seu ou de um aliado**.
+- Contra o alvo Apontado, o Tático soma o **Bônus de Rank no acerto e no dano** dos próprios ataques
+  com arco curto ou lança. É a única vez em que ele bate como quem treinou pra isso, e a justificativa
+  é a mesma da árvore: ele não bate melhor, ele bate onde ele mesmo mandou bater.
+- **A ordem não se perde.** Se ninguém acertar até o seu próximo turno, aponte o mesmo alvo de novo e
+  o bônus sobe outro 1d6, até o dobro do seu patamar. O Tático sozinho não fica parado: ele carrega.
+- Talento novo de 1º patamar, **Voz que Corrige**: uma Reação, quando um ataque contra o Apontado
+  errar, quem errou repete a rolagem — uma vez por turno, e vale para os ataques dele também.
+
+"Não pode fazer nada sozinho" continua sendo a identidade da árvore, e é uma boa identidade. "Não
+pode fazer nada" não era.
+
+### 🛡️ Barreira e Proteção volta a proteger
+
+A escola tinha um nome que prometia duas coisas e entregava uma. Contra um conjurador, ela é o
+melhor kit do livro; contra um urso, era um mago com 1d6 de PV assistindo. Pior: **nenhuma barreira
+do livro dizia quantos PV tinha** — Recinto declarava 120, Redoma 60, e o Círculo Menor, o Domo e o
+Anteparo não declaravam nada, enquanto o talento Trama Densa prometia "o dobro de PV" de um número
+que não existia.
+
+- **Toda barreira sua tem 20 PV por patamar** (20 no 1º, 120 no 6º), e a magia que declarar os
+  próprios PV usa os dela. Trama Densa finalmente dobra alguma coisa.
+- **A sua barreira nunca vale contra você.** Selado e Estagnação atingiam o próprio conjurador: quem
+  escreve a lei obedecia a ela, e um Círculo Menor no 1º patamar era uma armadilha para o grupo
+  inteiro, aliados incluídos.
+- **Quem está dentro tem Cobertura** contra ataques à distância vindos de fora.
+- **Casca** (Principiante, 2 PM, 1 Ação): PV Temporários iguais a 2d8 + BC num aliado, e o Bônus de
+  Rank em resistências contra magia enquanto durar. É o que a escola faz num turno em que ninguém
+  conjurou nada — que era metade dos turnos.
+- **Muralha** (Intermediário, 4 PM): 12m de parede com os PV das suas barreiras, barrando passagem e
+  projéteis nos dois sentidos. É a resposta ao inimigo que não conjura, e ela é honesta: dá pra
+  derrubar no braço.
+- **Anteparo** passa a parar flecha, virote e pedra, e não só magia.
+
+A fraqueza declarada mudou de "quase não faz nada contra o Corpo" para o que ela realmente é agora:
+**contra o pilar do Corpo você não proíbe, você atrasa** — o Deus da Espada atravessa a sua lei
+gastando turnos, e turnos é tudo o que você tira dele.
+
+### 🧪 A escola barata ganhou o que fazer no turno
+
+O rework de 2026-09-03 tirou dano e imunidades da Desintoxicação e devolveu o valor em preço. O que
+ele não resolveu foi o buraco do 1º ao 3º patamar: fora de uma cena de veneno, o purificador não
+tinha **uma única linha** para gastar o turno.
+
+- **Peçonha** (Principiante, 2 PM, 1 Ação, 18m): 2d6 de veneno e Envenenado até o fim do próximo
+  turno, com teste de Vigor. Quem entende de veneno sabe fazer veneno — a Maestria de Rei só admite
+  em voz alta o que este feitiço já faz pequeno.
+- **Purgar em 1 Ação**, e não 2. A magia que justifica a escola existir gastava dois terços de um
+  turno para desfazer o que o Mestre fez ontem.
+- **Paladar** passa a cobrir o grupo: aliados a 3 metros somam o seu Bônus de Rank em resistências
+  contra veneno, doença e maldição. Perto do purificador, o que devia pegar todo mundo pega um.
+- **Sangria custa 3d6, não 4d6.** A Mecânica Central da árvore já dizia 3d6 desde 2026-09-03; a magia
+  cobrava 4d6. Duas páginas do mesmo livro, dois números — e o `check:texto` não pega esse tipo de
+  divergência, porque ele compara a prosa de uma habilidade com os campos dela, nunca com o texto da
+  árvore que a contém.
+
+### 🔥 O Calor tem quatro regras, e não vinte
+
+O pedido aqui não foi "está fraco": foi **"está confuso, e leve em conta que ele tem que pegar outras
+coisas"**. Estava mesmo. Cada patamar do Punho do Fogo reescrevia o recurso do zero: o teto subia numa
+escada torta (5 → 8 → 12 → 16 → 20 → 25), o decaimento mudava de regra no 2º patamar, o estouro tinha
+três nomes com três efeitos (Brasa Viva, Fúria Vulcânica, Erupção Contínua) e cada técnica cobrava um
+número próprio de Calor — 1, 2, 3, 4, 5, 6, 8, 10 por turno.
+
+Agora são quatro regras, todas na Maestria de 1º patamar:
+
+1. **Ganhar** — 1 de Calor por ataque desarmado que acerta.
+2. **Teto** — 5 por patamar (5/10/15/20/25/30). Uma conta, não uma tabela.
+3. **Perder** — 1 no fim de todo turno em que você não acertou ninguém. Nunca a barra inteira: a
+   regra antiga punia o azar de errar um ataque com o recurso todo.
+4. **Gastar** — toda técnica tem uma **Sobrecarga**, e toda Sobrecarga custa **3 de Calor**, em
+   qualquer patamar. As únicas exceções são as detonações declaradas (Soco de Nova, Erupção do
+   Soberano, Colapso Solar, Manto de Supernova), que gastam a barra inteira porque é isso que elas são.
+
+O estouro virou um nome só — **Brasa Viva**, desde o 1º patamar, melhorando em cada um deles — e ela
+**para de cobrar o 1d6 em você no Santo**, porque o Santo é imune a fogo e cobrar dano ígneo de um
+imune era a contradição mais visível da árvore.
+
+E o custo: **PM ou PT, à sua escolha, nunca os dois.** As técnicas cobravam as duas reservas no mesmo
+golpe (5 PM + 2 PT na Lótus Carmesim) de um personagem que já tinha pagado rank Intermediário em duas
+árvores para a híbrida sequer existir. Corpo e mana queimam o mesmo fogo.
+
+De quebra, a árvore parou de falar outra língua: *"dano halved"*, *"CD 20"*, *"Força 30"* e
+*"Petrificação leve"* viraram metade do dano, CD 8 + BC, e uma aflição de rank Santo — que é como o
+resto do livro escreve essas quatro coisas.
+
+---
+
 ## 0.1.13 — "O Covil Ganhou Gavetas" · 2026-09-05
 
 ### 🗂️ O covil ganhou gavetas
