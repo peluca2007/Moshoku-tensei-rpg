@@ -17,7 +17,7 @@ export const TATICO_TREE: Tree = {
       "Dê Ações. Só esta árvore concede Ações a aliados, mexe na ordem de Iniciativa e reposiciona gente sem gastar o turno dela.",
     ],
     cost:
-      "O Tático não bate e não aguenta. Todo o valor dele acontece antes do primeiro dado rolar — numa emboscada que ele não previu, ele é um civil bem informado.",
+      "O Tático não aguenta, e só bate bem no alvo que ele mesmo apontou — fora da Ordem de Tiro ele é um civil armado com uma lança. Todo o resto do valor dele acontece antes do primeiro dado rolar: numa emboscada que ele não previu, ele é um civil bem informado.",
   },
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PP",
@@ -47,7 +47,7 @@ export const TATICO_TREE: Tree = {
       mastery: {
         name: "Onde Pisar",
         description:
-          "[Escopo: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. O grupo nunca é surpreendido — emboscadas ainda acontecem, mas vocês agem no primeiro turno. Sempre encontram água, abrigo e um lugar defensável. [Ordem de Tiro] Uma vez por turno, sem gastar Ação, aponte um alvo que você enxergue: o primeiro ataque de ALIADO que acertar aquele alvo até o seu próximo turno causa +1d6 de dano por patamar que você possua nesta árvore. É a única fonte de dano do Tático, e ela não sai da arma dele — sai de quem ele mandou atirar.",
+          "[Escopo: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. O grupo nunca é surpreendido — emboscadas ainda acontecem, mas vocês agem no primeiro turno. Sempre encontram água, abrigo e um lugar defensável. [Ordem de Tiro] Uma vez por turno, sem gastar Ação, aponte um alvo que você enxergue: ele fica Apontado até o seu próximo turno. O primeiro ataque que acertar um alvo Apontado — SEU ou de um aliado — causa +1d6 de dano por patamar que você possua nesta árvore. Contra o alvo Apontado, os seus próprios ataques com arco curto ou lança somam o seu Bônus de Rank no acerto e no dano: o Tático só bate como quem treinou pra isso quando é ele mesmo executando a ordem que deu. E a ordem não se perde — se ninguém acertar o alvo até o seu próximo turno, aponte o mesmo alvo de novo e o bônus sobe outro 1d6, acumulando até o dobro do seu patamar.",
       },
       talents: [
         { id: "mapa-vivo", name: "Mapa Vivo", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você desenha e lê mapas; regiões que já atravessou ficam registradas e podem ser vendidas." },
@@ -55,6 +55,7 @@ export const TATICO_TREE: Tree = {
         { id: "sinais", name: "Sinais", paCost: UTILITY_PA_COST.talent.Principiante, description: "Código de gestos e assobios com o grupo: comunicação a 200m sem falar." },
         { id: "conhecimento-de-bestas", name: "Conhecimento de Bestas", paCost: UTILITY_PA_COST.talent.Principiante, description: "Sobre qualquer monstro visto, identifica espécie, comportamento de caça e uma fraqueza real." },
         { id: "olho-de-cerco", name: "Olho de Cerco", paCost: UTILITY_PA_COST.talent.Principiante, description: "Olhando pra uma fortificação/acampamento, estima defensores, suprimento, tempo de resistência e o ponto fraco." },
+        { id: "voz-que-corrige", name: "Voz que Corrige", paCost: UTILITY_PA_COST.talent.Principiante, description: "Uma Reação, quando um ataque contra o alvo Apontado errar: você grita a correção e quem errou repete a rolagem. Uma vez por turno, e vale para os seus próprios ataques." },
       ],
       abilities: [
         {

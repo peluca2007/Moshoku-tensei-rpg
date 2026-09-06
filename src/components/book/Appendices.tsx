@@ -128,7 +128,7 @@ export default function Appendices() {
               "O Lutador tem o número errado na tabela — o que ele realmente faz é acumular Quebrantado. No quarto turno, o inimigo já perdeu 6 de CA e 6 de dano e a luta já acabou sem a tabela registrar.",
               "Escudos é a menor coluna do livro e o personagem mais difícil de substituir. Ele bate, mas bater não é o trabalho dele: é decidir quem sobrevive.",
               "O Ladino é a maior das três colunas de Utilidade, e o número dela é da EMBOSCADA. O Dano Furtivo exige alvo desprevenido, cego, imobilizado ou com Vantagem — em luta aberta, sem preparação, o Ladino é o pior combatente direto das dezenove.",
-              "O Tático é a única coluna do livro que não sai da arma de quem a lê. A Ordem de Tiro soma no ataque de um ALIADO: se o grupo não tem quem atire, o número não acontece.",
+              "O Tático é a coluna que decide quem executa. A Ordem de Tiro soma no primeiro ataque que acertar o alvo Apontado — de um aliado ou dele mesmo — e é só contra esse alvo que ele soma o Bônus de Rank no próprio golpe. Sem grupo, ele aponta e atira sozinho: perde a escolha de quem bate, não o número.",
               "O Bardo é a menor das três, e a única cujo dano é em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
               "Cura, Desintoxicação e Barreira não deveriam estar nesta tabela — estão só pra deixar claro que, se você escolher uma delas esperando causar dano, escolheu errado.",
             ]}
