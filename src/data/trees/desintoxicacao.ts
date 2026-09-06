@@ -42,7 +42,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       "Se não alcançar, escolha o preço: Sangria purga um rank acima do seu, ao custo de 3d6 irredutíveis; Selar a Maldição deixa a aflição dormente por um ano sem removê-la.",
     ],
     cost:
-      "Não fecha um único ponto de ferimento, não impõe condição de combate e não ganha luta nenhuma. É barata porque o que ela compra não é vitória: é a campanha não parar quando alguém pisa no pântano errado.",
+      "Não fecha um único ponto de ferimento e não ganha luta nenhuma: o que ela cospe numa luta é um veneno pequeno, e todo o resto do catálogo só responde a problema que o Mestre já criou. É barata porque o que ela compra não é vitória: é a campanha não parar quando alguém pisa no pântano errado.",
   },
   keyAttributeLabel: "Espírito",
   resourceLabel: "PM",
@@ -64,7 +64,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       mastery: {
         name: "Paladar",
         description:
-          "[Rank contra Rank] Tocando, cheirando ou provando qualquer substância, você sabe exatamente o que ela é, e identifica o nome e o RANK de qualquer aflição que veja, inclusive em cadáveres. Você é imune a veneno mundano.",
+          "[Rank contra Rank] Tocando, cheirando ou provando qualquer substância, você sabe exatamente o que ela é, e identifica o nome e o RANK de qualquer aflição que veja, inclusive em cadáveres. Você é imune a veneno mundano, e todo aliado a até 3 metros de você soma o seu Bônus de Rank em testes de resistência contra veneno, doença e maldição: perto de você, o que devia pegar o grupo inteiro pega um.",
       },
       talents: [
         { id: "reserva-do-purificador", name: "Reserva do Purificador", paCost: DESINTOX_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Desintoxicação. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { mpPerRank: 2 } },
@@ -79,7 +79,9 @@ export const DESINTOXICACAO_TREE: Tree = {
           paCost: DESINTOX_PA_COST.signature.Principiante,
           pmCost: 2,
           range: "Toque",
-          actions: MAGIC_ACTIONS.Principiante,
+          actions: { normal: 1 },
+          costNote:
+            "1 Ação onde o rank pede 2. Purgar é a magia que justifica a escola inteira existir, e ela cobrava dois terços de um turno pra desfazer o que o Mestre fez ontem: o purificador chegava, tratava um aliado, e o turno dele tinha acabado. O desconto é o que torna a escola jogável no meio de uma luta, e ela continua sem causar dano nenhum ao fazer isso.",
           effect: "Remove do alvo uma aflição de rank Principiante — veneno, doença, maldição ou petrificação incipiente, mágica ou não.",
           incantation: "O que entrou aqui sem ser convidado e se instalou como se a casa fosse sua: sai. Sai como quiseres, mas sai agora. Purgar!",
         },
@@ -106,13 +108,28 @@ export const DESINTOXICACAO_TREE: Tree = {
             "Água turva e corrompida pelo mal, expulsa a imundície e torna-te límpida como a primeira chuva. Água Limpa!",
         },
         {
+          id: "peconha",
+          name: "Peçonha",
+          paCost: DESINTOX_PA_COST.common.Principiante,
+          pmCost: 2,
+          range: "18 metros",
+          actions: { normal: 1 },
+          costNote:
+            "1 Ação onde o rank pede 2. É o único golpe da escola nos três primeiros patamares — a Corrosão só chega no Avançado —, e a 2 Ações ninguém o usaria: o purificador voltaria a passar a luta inteira esperando que alguém fosse envenenado pra ter o que fazer. Quem entende de veneno sabe fazer veneno — a Maestria de Rei só admite em voz alta o que este feitiço já faz pequeno.",
+          damage: { normal: "2d6 de dano de veneno" },
+          effect:
+            "Teste de Vigor (CD 8 + BC). Falha: dano e Envenenado até o fim do próximo turno (Desvantagem em ataques e testes de atributo). Sucesso: metade do dano e nenhuma condição. Não afeta construtos, mortos-vivos nem quem não respira.",
+          incantation:
+            "Peçonha que dorme em toda raiz amarga deste mundo e só espera uma mão que saiba pedir: sobe por este braço e acha o sangue dele. Peçonha!",
+        },
+        {
           id: "sangria",
           name: "Sangria",
           paCost: DESINTOX_PA_COST.common.Principiante,
           pmCost: 2,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
-          damage: { normal: "4d6 de dano ao alvo, que não pode ser reduzido nem resistido" },
+          damage: { normal: "3d6 de dano ao alvo, que não pode ser reduzido nem resistido" },
           effect:
             "A válvula de escape da escola, e a única: você purga uma aflição de UM rank acima do que o seu patamar alcança, arrancando-a junto com o sangue. Uma vez por aflição por Descanso Longo. Não funciona em quem está a 0 PV.",
           incantation:
