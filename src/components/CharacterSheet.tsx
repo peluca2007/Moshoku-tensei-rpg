@@ -119,7 +119,7 @@ function ResourceCard({
             value={max}
             onChange={(e) => onMaxChange(Number(e.target.value))}
             title="Máximo calculado — edite pra sobrescrever (item, exceção de mesa, etc.)"
-            className={`w-12 rounded bg-transparent text-sm font-semibold outline-none focus:ring-2 focus:ring-wine-400 ${
+            className={`w-12 rounded bg-transparent py-1 text-sm font-semibold outline-none focus:ring-2 focus:ring-wine-400 ${
               maxOverridden ? "text-gold-600 dark:text-gold-400" : "text-parchment-600 dark:text-parchment-400"
             }`}
           />
@@ -249,7 +249,7 @@ function BonusInput({ value, onChange }: { value: number; onChange: (value: numb
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         title="Comprado com PA (Cap. 1: 2 PA = +12)"
-        className="w-12 rounded border border-parchment-300 bg-parchment-50 px-1 text-center text-xs text-parchment-700 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200"
+        className="w-12 rounded border border-parchment-300 bg-parchment-50 px-1 py-1 text-center text-xs text-parchment-700 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200"
       />
     </label>
   );
@@ -694,7 +694,7 @@ export default function CharacterSheet() {
               type="number"
               value={gold}
               onChange={(e) => useCharacterStore.getState().setGold(Number(e.target.value))}
-              className="w-14 bg-transparent outline-none"
+              className="w-14 bg-transparent py-1 outline-none"
             />
             PO
           </label>
@@ -718,7 +718,8 @@ export default function CharacterSheet() {
                   .getState()
                   .setGuildRankOverride(e.target.value ? (e.target.value as GuildRank) : null)
               }
-              className="bg-transparent outline-none"
+              /* `py-1`: sem ele o select tem 20px de altura, abaixo do mínimo de toque. */
+              className="bg-transparent py-1 outline-none"
             >
               <option value="">Rank {guildRank} (estimado)</option>
               {GUILD_RANK_ORDER.map((r) => (
@@ -1167,7 +1168,9 @@ export default function CharacterSheet() {
           </h2>
           <Link
             href="/livro"
-            className="flex items-center gap-1 text-xs font-medium text-wine-300 hover:text-wine-200"
+            /* `py-1`: este link é um cabeçalho de seção, não link dentro de frase —
+               a isenção do WCAG 2.5.8 não vale pra ele, e a caixa dele tinha 16px. */
+            className="-my-1 flex items-center gap-1 py-1 text-xs font-medium text-wine-300 hover:text-wine-200"
           >
             <BookOpen className="h-3.5 w-3.5" /> Livro de regras completo
           </Link>

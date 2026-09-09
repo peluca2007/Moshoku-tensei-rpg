@@ -1,6 +1,9 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-09 — **0.1.15**: o site passou a funcionar **inteiro sem internet**
+**Última atualização:** 2026-09-09 — **0.1.16**: o mapa de árvores era intocável no celular (nós de 6
+a 14px, contra os 24 do WCAG 2.5.8) e passou a abrir num zoom com piso; o rodapé, os campos da ficha
+e os atalhos da landing também subiram do mínimo, e nove das dez rotas estão em zero alvo pequeno.
+Antes disso, na **0.1.15**: o site passou a funcionar **inteiro sem internet**
 e a instalar como app. Um service worker guarda as 15 rotas com o JavaScript e as imagens delas, e o
 `check:offline` prova isso matando o servidor e abrindo as 15 uma a uma. Antes disso, na **0.1.14**:
 quatro árvores voltaram da mesa e foram ajustadas pelo que a sessão mostrou — o Tático passou a
@@ -59,6 +62,12 @@ mão duas vezes.
 Só o que ainda não foi feito. A lista curta com o contexto de cada item vive em
 [`O-QUE-FALTA.md`](O-QUE-FALTA.md); aqui fica o registro seco.
 
+- [ ] **Busca global nas 601 habilidades** — combinado com o autor em 2026-09-09, contexto completo no
+      [`O-QUE-FALTA.md`](O-QUE-FALTA.md) item 10. Hoje só o sumário do livro filtra, e por título de seção.
+- [ ] **`not-found.tsx` e `error.tsx`** — item 11. Uma URL errada responde *"404: This page could not be
+      found."* em inglês num site pt-BR, e um erro de runtime offline é indistinguível de falta de rede.
+- [ ] **Testes do `rollEngine` + macro de Teste** — item 12. O motor que decide toda rolagem não tem um
+      teste; o macro só salva dano.
 - [ ] **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem rede e o
       `check:offline` prova a parte automatizável (15 rotas com o servidor morto). Falta o resto do
       caminho: "Adicionar à tela de início", o recorte do ícone pelo launcher, a splash, e o quanto
@@ -84,7 +93,10 @@ Só o que ainda não foi feito. A lista curta com o contexto de cada item vive e
 ## Backlog
 
 - Sincronização em tempo real (WebSocket) para jogar online com a ficha atualizando ao vivo.
-- Rank Deus / caminho de ascensão do Estilo Vendaval — a única árvore sem esse quadro.
+- ~~Rank Deus do Estilo Vendaval~~ — **entrada errada, conferida em 2026-09-09**: o Vendaval TEM o
+  quadro ("O Passo Que Não Termina", em `src/data/rankDeus.ts`). As três sem ele são Espada, Água e
+  Norte, e isso é de propósito — as Três Grandes Escolas do Corpo têm critério próprio de ascensão,
+  como o cabeçalho do arquivo documenta. Reescrever se ainda houver pendência real aqui.
 - Bestiário: falta uma criatura de 6º patamar ("Ancião Demônio Esquecido", conceito esboçado). Agora ela
   nasceria já com ações escritas, como as outras seis.
 - Criatura montada em `/encontros`: exportar/importar (o empacotador do `.mtficha` já serve), e um
