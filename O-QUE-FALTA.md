@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-05, depois da 0.1.14. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-09, depois da 0.1.15. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -52,6 +52,19 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Site
 
-8. **PWA / offline.** Mesa física num porão sem sinal é o caso de uso, e hoje o site morre sem
-   internet. As fichas já vivem no `localStorage` — falta service worker e manifest. É a maior
-   pendência funcional.
+8. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
+   `check:offline` prova a parte que dá pra provar: as 15 rotas abrem com o servidor morto, em F5 e
+   em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
+   "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
+   nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
+   um Android e um iPhone.
+
+9. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+   tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
+   de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
+   preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
+   moldura vazia no lugar dos retratos.
+
+   Fechar isso exigiria uma lista de todos os arquivos de `public/`, mantida à mão ou gerada por mais
+   um passo de build — uma lista que envelhece calada, e cujo sintoma é exatamente o que ela deveria
+   evitar. Antes de pagar esse preço, vale medir se alguém repara.

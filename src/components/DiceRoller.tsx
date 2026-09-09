@@ -86,6 +86,26 @@ export default function DiceRoller() {
     []
   );
 
+  /*
+   * `/ficha#dados` abre a rolagem já aberta (0.1.15).
+   *
+   * É o atalho de tela inicial do app instalado (ver `src/app/manifest.ts`), e
+   * é o único dos três que precisa de código: os outros dois são rotas, e uma
+   * rota se abre sozinha. A rolagem não é rota — é um painel controlado pelo
+   * `useDiceRollerStore` —, então sem isto o atalho "Rolar dados" abriria a
+   * ficha e pararia ali, exigindo mais um toque justamente de quem pediu um
+   * atalho pra não ter que dar toques.
+   *
+   * `setOpen(true)` e não `toggleOpen()`: o atalho pede um estado, não uma
+   * alternância. Hoje o painel sempre nasce fechado (o `partialize` da store
+   * deixa `open` de fora de propósito), então os dois dariam no mesmo — mas um
+   * `toggle` amarrado a uma URL é a coisa que passa a fechar o painel no dia
+   * em que essa decisão mudar.
+   */
+  useEffect(() => {
+    if (window.location.hash === "#dados") setOpen(true);
+  }, [setOpen]);
+
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key.toLowerCase() !== "r" || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
