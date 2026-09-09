@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono, Literata } from "next/font/google";
 import StoreHydration from "@/components/StoreHydration";
+import SuporteOffline from "@/components/SuporteOffline";
 import ThemeProvider from "@/components/ThemeProvider";
 import { SCRIPT_TAMANHO_INICIAL } from "@/components/FontSizeToggle";
 import Nav from "@/components/Nav";
@@ -51,6 +52,38 @@ export const metadata: Metadata = {
   },
   description: "Ficha de personagem, árvores de habilidade e o livro de regras do sistema.",
   applicationName: "Mushoku Tensei RPG",
+  /*
+   * O que o iOS lê pra instalar na tela inicial (0.1.15).
+   *
+   * O Safari ignora metade do `manifest.webmanifest` — inclusive o `name` e o
+   * `display` — e continua lendo estas metas antigas da Apple. Sem
+   * `appleWebApp`, "Adicionar à Tela de Início" no iPhone gera um atalho que
+   * abre o Safari com barra de endereço e tudo, ou seja, nada.
+   */
+  appleWebApp: {
+    capable: true,
+    title: "MT RPG",
+    statusBarStyle: "black-translucent",
+  },
+};
+
+/**
+ * A cor da barra do sistema, nos dois temas (0.1.15).
+ *
+ * O `manifest.ts` só aceita UMA `theme_color`, e o site tem dois temas. Estas
+ * duas metas cobrem o outro caso: no app instalado em tema escuro, uma barra
+ * cor de pergaminho ficaria colada no topo de uma página quase preta.
+ *
+ * Elas seguem o `prefers-color-scheme` do sistema, e não a classe `.dark` que o
+ * botão de tema controla — meta tag não reage a classe. Quem inverte o tema
+ * manualmente fica com a barra do sistema no outro tom; é o limite da
+ * plataforma, e é uma faixa de 4mm no topo.
+ */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fdf6e3" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1210" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -81,6 +114,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           */}
           <OrnamentDefs />
           <Nav />
+          {/* Abaixo do menu, no fluxo: a faixa empurra a página em vez de cobrir
+              os botões flutuantes. Ver SuporteOffline.tsx. */}
+          <SuporteOffline />
           {/* `flex-1` é o que gruda o rodapé no fim da janela em página curta.
               Antes daqui cada rota carregava um `min-h-screen` próprio pra
               simular isso — e com um rodapé de verdade no fim, esse

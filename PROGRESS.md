@@ -1,12 +1,12 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-05 — **0.1.14**: quatro árvores voltaram da mesa e foram ajustadas
-pelo que a sessão mostrou — o Tático passou a executar a própria Ordem de Tiro, a Barreira ganhou PV
-declarados e duas magias de proteção de verdade, a Desintoxicação ganhou o que fazer num turno, e o
-Calor do Punho do Fogo foi reduzido a quatro regras e um custo só. Antes disso, na **0.1.13**: o
-covil de `/encontros` ganhou pastas, busca e cartão recolhível; a criatura ganhou arquivo, link,
-retrato, condições estruturadas e Reação de chefe; o Calor virou número rastreável na ficha; e as
-três vias de criação passaram a perguntar pela foto. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-09 — **0.1.15**: o site passou a funcionar **inteiro sem internet**
+e a instalar como app. Um service worker guarda as 15 rotas com o JavaScript e as imagens delas, e o
+`check:offline` prova isso matando o servidor e abrindo as 15 uma a uma. Antes disso, na **0.1.14**:
+quatro árvores voltaram da mesa e foram ajustadas pelo que a sessão mostrou — o Tático passou a
+executar a própria Ordem de Tiro, a Barreira ganhou PV declarados e duas magias de proteção de
+verdade, a Desintoxicação ganhou o que fazer num turno, e o Calor do Punho do Fogo foi reduzido a
+quatro regras e um custo só. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
@@ -36,6 +36,7 @@ mão duas vezes.
 | `/iniciativa` | Tracker de iniciativa |
 | `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, o teste de 300 batalhas, e o covil em pastas (com cor, emoji, busca, cartão recolhível e arquivo `.mtpasta`), e a ficha de um personagem do roster entrando como criatura |
 | `/personagens` | Roster de fichas |
+| `/offline` | O que o service worker devolve quando não há nem rede nem cache |
 
 ### Conteúdo
 
@@ -48,7 +49,8 @@ mão duas vezes.
   (`public/arvores/<id do tree>`), 12 retratos de raça (`public/racas/<id da raça>`), os ícones de
   categoria da loja (`public/loja/<categoria>`), as oito faixas de rota, mais o logo, a paisagem da
   landing e a textura de pergaminho. Toda ela passa por `Crest`, o mesmo medalhão. O favicon sai de
-  `assets-fonte/icon-fonte.png` pelo `scripts/gerar-favicon.mjs`.
+  `assets-fonte/icon-fonte.png` pelo `scripts/gerar-favicon.mjs`, que desde a 0.1.15 gera junto os
+  três ícones do app instalável (192, 512 e o mascarado de 512).
 
 ---
 
@@ -57,8 +59,10 @@ mão duas vezes.
 Só o que ainda não foi feito. A lista curta com o contexto de cada item vive em
 [`O-QUE-FALTA.md`](O-QUE-FALTA.md); aqui fica o registro seco.
 
-- [ ] **PWA / modo offline** — mesa física não pode depender de internet. As fichas já vivem no
-      `localStorage`; falta service worker e manifest. É a maior pendência funcional.
+- [ ] **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem rede e o
+      `check:offline` prova a parte automatizável (15 rotas com o servidor morto). Falta o resto do
+      caminho: "Adicionar à tela de início", o recorte do ícone pelo launcher, a splash, e o quanto
+      o Safari do iPhone respeita disso.
 - [ ] **Confirmar o fix do PDF em produção** — só verificável no próximo deploy da Vercel.
 - [ ] **Teste com leitor de tela de verdade.** O `check:a11y` cobre a camada estrutural (controle sem
       nome, campo sem rótulo, hierarquia de cabeçalho); falta saber se a ficha é *usável* de ouvido.
@@ -281,17 +285,26 @@ npm run check:livro       # dados × texto do livro, e se toda arte existe em di
 npm run check:arvores     # teto do turno de cada árvore × a régua do Apêndice C
 npm run check:texto       # a PROSA das 601 habilidades × os campos delas
 npm run check:redundancia # habilidades que repetem um patamar anterior
-node scripts/gerar-favicon.mjs   # regera o favicon a partir de assets-fonte/icon-fonte.png
+node scripts/gerar-favicon.mjs   # regera o favicon E os três ícones do PWA
 ```
 
-As três checagens de TELA precisam do site no ar (`npm run dev` em outro terminal) e de um Chrome —
-e precisam rodar **do mesmo lado em que o Chrome está**, porque elas falam com ele pela porta de
-depuração:
+As checagens de TELA precisam de um Chrome, e precisam rodar **do mesmo lado em que o Chrome está**,
+porque elas falam com ele pela porta de depuração. Estas três precisam do site no ar
+(`npm run dev` em outro terminal):
 
 ```bash
-npm run check:contraste   # WCAG AA nas 9 rotas, nos 2 temas
+npm run check:contraste   # WCAG AA nas 10 rotas, nos 2 temas
 npm run check:mobile      # transbordo horizontal de 320px a 414px
 npm run check:a11y        # controle sem nome, campo sem rótulo, hierarquia de cabeçalho
+```
+
+A de offline é a exceção: ela precisa de um `npm run build` (em desenvolvimento o service worker nem
+é registrado) e **sobe e mata o próprio servidor**, numa porta separada. Não rode com um `next start`
+seu já no ar na 3100.
+
+```bash
+npm run build
+npm run check:offline     # as 15 rotas abrindo com o servidor morto, em F5 e em navegação suave
 ```
 
 Elas abrem as rotas por `/semente-dev`, que semeia duas fichas e força o tema antes de redirecionar.

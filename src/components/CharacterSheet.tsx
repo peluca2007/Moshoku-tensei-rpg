@@ -283,7 +283,16 @@ export default function CharacterSheet() {
   const guildRank = getGuildRank(character);
   const guildRankEstimated = isGuildRankEstimated(character);
   const [grimoireQuery, setGrimoireQuery] = useState("");
-  const [pdfState, setPdfState] = useState<"idle" | "loading" | "error">("idle");
+  /**
+   * `semRede` é um erro separado de `error` de propósito (0.1.15).
+   *
+   * Com o site funcionando offline, a exportação em PDF virou a ÚNICA coisa
+   * que ainda precisa de servidor — e "Tente de novo em instantes" é conselho
+   * errado pra quem está num porão sem sinal: tentar de novo não vai
+   * funcionar, e a pessoa fica repetindo o clique achando que o site quebrou.
+   * São dois problemas diferentes e duas saídas diferentes.
+   */
+  const [pdfState, setPdfState] = useState<"idle" | "loading" | "error" | "semRede">("idle");
   const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -353,7 +362,7 @@ export default function CharacterSheet() {
       setPdfState("idle");
     } catch (err) {
       console.error("Falha ao baixar PDF da ficha:", err);
-      setPdfState("error");
+      setPdfState(navigator.onLine ? "error" : "semRede");
     }
   }
 
@@ -597,6 +606,12 @@ export default function CharacterSheet() {
         )}
         {pdfState === "error" && (
           <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra gerar o PDF agora. Tente de novo em instantes.</p>
+        )}
+        {pdfState === "semRede" && (
+          <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">
+            O PDF é montado no servidor, e você está sem internet — ele sai quando o sinal voltar. A ficha
+            continua inteira aqui, e <strong>Baixar ficha</strong> funciona offline.
+          </p>
         )}
         {arquivoState === "erro" && (
           <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra montar o arquivo da ficha. Tente de novo.</p>

@@ -16,6 +16,39 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.15",
+    date: "2026-09-09",
+    title: "O Porão Sem Sinal",
+    sections: [
+      {
+        heading: "O site funciona sem internet",
+        items: [
+          "O O-QUE-FALTA.md listava isso como \"a maior pendência funcional\", e o caso de uso estava escrito com todas as letras: mesa física num porão sem sinal. As fichas já viviam no localStorage — o que morria sem rede era o SITE. De nada adianta o personagem estar salvo no aparelho se a página que o desenha precisa de um servidor pra chegar.",
+          "Um service worker (public/sw.js) guarda as 15 rotas na primeira visita, junto com o JavaScript, o CSS e as imagens que cada uma carrega. Depois disso o site abre com o avião ligado, em F5 ou navegando de link em link.",
+          "Não é promessa: npm run check:offline sobe um servidor, espera o worker instalar, MATA o servidor e abre as 15 rotas uma a uma. Modo offline de DevTools não serviria — ele se aplica à aba, e as buscas do service worker saem de outro lugar, então dava pra \"estar offline\" e o worker continuar falando com o servidor. Porta fechada não tem essa ambiguidade.",
+          "A exportação em PDF é a única coisa que continua precisando de servidor — o PDF é montado pelo Typst do lado de lá. Ela está explicitamente FORA do cache: guardar essa resposta seria arriscar devolver o PDF de uma ficha pra outra.",
+        ],
+      },
+      {
+        heading: "Instalável na tela inicial",
+        items: [
+          "Com manifesto e ícones próprios, o site instala como app: abre sem barra de endereço, com ícone na gaveta e splash própria. Segurar o ícone abre três atalhos — Ficha, Dados e Iniciativa —, que são as três coisas que se faz com o celular na mão NO MEIO da sessão.",
+          "O atalho dos dados abre a rolagem já aberta. Era o único dos três que precisava de código, e sem ele o atalho \"Rolar dados\" pararia na ficha, exigindo mais um toque justamente de quem pediu um atalho pra não dar toques.",
+          "Os ícones saem do mesmo brasão do favicon, pelo mesmo script (scripts/gerar-favicon.mjs) — inclusive um mascarado, com margem maior, porque o Android RECORTA o ícone na forma do launcher e as asas do brasão ficavam bem onde passa a faca.",
+        ],
+      },
+      {
+        heading: "O que o site diz quando o sinal cai",
+        items: [
+          "Uma faixa abaixo do menu avisa que a rede caiu e que ficha e site continuam funcionando. Ela fica no fluxo da página, e não flutuando: a primeira versão era uma tarja no rodapé e ela cobria o botão de rolar dados — o canto de baixo já tinha dois donos.",
+          "O erro do PDF parou de dar conselho errado. Ele dizia \"tente de novo em instantes\" para qualquer falha, inclusive para quem está sem sinal, onde tentar de novo não resolve nada. Sem rede ele agora explica que o PDF sai quando o sinal voltar, e lembra que Baixar ficha funciona offline.",
+          "Rota que não estava em cache cai numa página /offline que diz o que aconteceu — em vez da tela de dinossauro do navegador, que não distingue \"esta rota não foi guardada\" de \"o site saiu do ar\", e não conta que as fichas continuam salvas.",
+          "Quando uma versão nova baixa, o site oferece Atualizar em vez de trocar sozinho: um worker que assume no meio da sessão troca os chunks embaixo de uma página aberta, e o próximo clique dá 404.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.14",
     date: "2026-09-05",
     title: "O Que a Mesa Devolveu",

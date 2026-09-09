@@ -50,6 +50,29 @@ const ANTIGO = resolve(raiz, "src/app/icon.svg");
 const LADO = 256;
 
 /**
+ * Os ícones do app instalado (0.1.15).
+ *
+ * O `manifest.ts` precisa de PNG em 192 e 512 — o favicon de 256 não serve:
+ * o Android usa o 192 na gaveta de apps e o 512 na splash, e um manifesto sem
+ * esses dois tamanhos faz o Chrome recusar a instalação inteira, sem dizer por
+ * quê.
+ *
+ * O quarto arquivo é o `maskable`, e a margem maior dele não é capricho. Ícone
+ * mascarado é RECORTADO pelo sistema na forma que o launcher usa (círculo,
+ * squircle, gota), e a especificação só garante o círculo central de 80% do
+ * lado. Com a margem de 8% do favicon, as asas do brasão ficam justamente onde
+ * o recorte passa a faca. Em 20% a arte ocupa 60% do quadrado e sobra folga
+ * pra qualquer forma que o launcher invente.
+ */
+/** `margem` é o respiro entre a arte e a borda, em fração do lado. */
+const ICONES = [
+  { destino: SAIDA, lado: LADO, margem: 0.08 },
+  { destino: resolve(raiz, "public/icone-192.png"), lado: 192, margem: 0.08 },
+  { destino: resolve(raiz, "public/icone-512.png"), lado: 512, margem: 0.08 },
+  { destino: resolve(raiz, "public/icone-mascarado-512.png"), lado: 512, margem: 0.2 },
+];
+
+/**
  * O xadrez de transparência do editor de imagem, queimado nos pixels.
  *
  * São dois cinzas alternados (#EBEBEB e #BFBFBF). Um pixel é fundo quando as
@@ -74,8 +97,6 @@ function ehXadrez(r, g, b) {
 
 /** parchment-950 do `globals.css` — o mesmo fundo do tema escuro. */
 const FUNDO = [0x1a, 0x12, 0x10];
-/** Respiro entre a arte e a borda do ícone, em fração do lado. */
-const MARGEM = 0.08;
 
 const ASSINATURA = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
@@ -244,73 +265,79 @@ if (fracaoDoQuadro > 0.9) {
   );
 }
 
-// 3. O campo quadrado que contém a caixa, centrado nela: esticar pra caber
-//    deformaria o brasão.
+// 3. e 4. O campo quadrado que contém a caixa, centrado nela (esticar pra caber
+//    deformaria o brasão), reduzido por média de área e composto sobre o fundo.
+//
+//    A margem entra por parâmetro porque o ícone mascarado usa uma maior que a
+//    dos outros três — ver ICONES lá em cima.
 const larguraCaixa = x1 - x0 + 1;
 const alturaCaixa = y1 - y0 + 1;
-const lado = Math.max(larguraCaixa, alturaCaixa) / (1 - MARGEM * 2);
-const centroX = (x0 + x1) / 2;
-const centroY = (y0 + y1) / 2;
-const origemX = centroX - lado / 2;
-const origemY = centroY - lado / 2;
 
-// 4. Redução por média de área, composta sobre o fundo escuro.
-const saida = Buffer.alloc(LADO * LADO * 3);
-const passo = lado / LADO;
-for (let sy = 0; sy < LADO; sy++) {
-  for (let sx = 0; sx < LADO; sx++) {
-    let somaR = 0;
-    let somaG = 0;
-    let somaB = 0;
-    let somaA = 0;
-    let n = 0;
-    const iniX = Math.floor(origemX + sx * passo);
-    const fimX = Math.max(iniX + 1, Math.floor(origemX + (sx + 1) * passo));
-    const iniY = Math.floor(origemY + sy * passo);
-    const fimY = Math.max(iniY + 1, Math.floor(origemY + (sy + 1) * passo));
-    for (let y = iniY; y < fimY; y++) {
-      for (let x = iniX; x < fimX; x++) {
-        n++;
-        if (x < 0 || y < 0 || x >= largura || y >= altura) continue; // fora da arte = fundo
-        const i = (y * largura + x) * 4;
-        const a = pixels[i + 3] / 255;
-        somaR += pixels[i] * a;
-        somaG += pixels[i + 1] * a;
-        somaB += pixels[i + 2] * a;
-        somaA += a;
+function renderizar(ladoDoIcone, margem) {
+  const lado = Math.max(larguraCaixa, alturaCaixa) / (1 - margem * 2);
+  const centroX = (x0 + x1) / 2;
+  const centroY = (y0 + y1) / 2;
+  const origemX = centroX - lado / 2;
+  const origemY = centroY - lado / 2;
+
+  const saida = Buffer.alloc(ladoDoIcone * ladoDoIcone * 3);
+  const passo = lado / ladoDoIcone;
+  for (let sy = 0; sy < ladoDoIcone; sy++) {
+    for (let sx = 0; sx < ladoDoIcone; sx++) {
+      let somaR = 0;
+      let somaG = 0;
+      let somaB = 0;
+      let somaA = 0;
+      let n = 0;
+      const iniX = Math.floor(origemX + sx * passo);
+      const fimX = Math.max(iniX + 1, Math.floor(origemX + (sx + 1) * passo));
+      const iniY = Math.floor(origemY + sy * passo);
+      const fimY = Math.max(iniY + 1, Math.floor(origemY + (sy + 1) * passo));
+      for (let y = iniY; y < fimY; y++) {
+        for (let x = iniX; x < fimX; x++) {
+          n++;
+          if (x < 0 || y < 0 || x >= largura || y >= altura) continue; // fora da arte = fundo
+          const i = (y * largura + x) * 4;
+          const a = pixels[i + 3] / 255;
+          somaR += pixels[i] * a;
+          somaG += pixels[i + 1] * a;
+          somaB += pixels[i + 2] * a;
+          somaA += a;
+        }
       }
+      if (n === 0) n = 1;
+      // Média já premultiplicada: compor sobre o fundo é somar o que faltou de alfa.
+      const cobertura = somaA / n;
+      const j = (sy * ladoDoIcone + sx) * 3;
+      saida[j] = Math.round(somaR / n + FUNDO[0] * (1 - cobertura));
+      saida[j + 1] = Math.round(somaG / n + FUNDO[1] * (1 - cobertura));
+      saida[j + 2] = Math.round(somaB / n + FUNDO[2] * (1 - cobertura));
     }
-    if (n === 0) n = 1;
-    // Média já premultiplicada: compor sobre o fundo é somar o que faltou de alfa.
-    const cobertura = somaA / n;
-    const j = (sy * LADO + sx) * 3;
-    saida[j] = Math.round(somaR / n + FUNDO[0] * (1 - cobertura));
-    saida[j + 1] = Math.round(somaG / n + FUNDO[1] * (1 - cobertura));
-    saida[j + 2] = Math.round(somaB / n + FUNDO[2] * (1 - cobertura));
   }
-}
 
-const bytesPorLinha = LADO * 3;
-const cru = Buffer.alloc((bytesPorLinha + 1) * LADO);
-for (let y = 0; y < LADO; y++) {
-  cru[y * (bytesPorLinha + 1)] = 0;
-  saida.copy(cru, y * (bytesPorLinha + 1) + 1, y * bytesPorLinha, (y + 1) * bytesPorLinha);
-}
+  const bytesPorLinha = ladoDoIcone * 3;
+  const cru = Buffer.alloc((bytesPorLinha + 1) * ladoDoIcone);
+  for (let y = 0; y < ladoDoIcone; y++) {
+    cru[y * (bytesPorLinha + 1)] = 0;
+    saida.copy(cru, y * (bytesPorLinha + 1) + 1, y * bytesPorLinha, (y + 1) * bytesPorLinha);
+  }
 
-const ihdr = Buffer.alloc(13);
-ihdr.writeUInt32BE(LADO, 0);
-ihdr.writeUInt32BE(LADO, 4);
-ihdr[8] = 8;
-ihdr[9] = 2; // truecolor sem alfa: o fundo já está composto
-writeFileSync(
-  SAIDA,
-  Buffer.concat([
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(ladoDoIcone, 0);
+  ihdr.writeUInt32BE(ladoDoIcone, 4);
+  ihdr[8] = 8;
+  ihdr[9] = 2; // truecolor sem alfa: o fundo já está composto
+  return Buffer.concat([
     ASSINATURA,
     escreverChunk("IHDR", ihdr),
     escreverChunk("IDAT", deflateSync(cru, { level: 9 })),
     escreverChunk("IEND", Buffer.alloc(0)),
-  ])
-);
+  ]);
+}
+
+for (const icone of ICONES) {
+  writeFileSync(icone.destino, renderizar(icone.lado, icone.margem));
+}
 
 // O App Router aceita `icon.svg` E `icon.png`; com os dois presentes, cada
 // navegador escolhe um e a aba fica mostrando marcas diferentes por máquina.
@@ -319,6 +346,9 @@ if (existsSync(ANTIGO)) {
   console.log("Removido o favicon antigo (src/app/icon.svg) — dois ícones fazem cada navegador escolher um.");
 }
 
-console.log(`✅ ${SAIDA}`);
-console.log(`   ${LADO}×${LADO}, recortado da caixa ${larguraCaixa}×${alturaCaixa} do brasão.`);
+for (const icone of ICONES) {
+  const margem = icone.margem === 0.08 ? "" : `  (margem de ${(icone.margem * 100).toFixed(0)}%, pro recorte do launcher)`;
+  console.log(`✅ ${icone.destino.slice(raiz.length + 1)}  ${icone.lado}×${icone.lado}${margem}`);
+}
+console.log(`   Recortados da caixa ${larguraCaixa}×${alturaCaixa} do brasão.`);
 console.log(`   Xadrez do editor apagado em ${((apagados / (largura * altura)) * 100).toFixed(0)}% dos pixels.`);

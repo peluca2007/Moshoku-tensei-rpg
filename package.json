@@ -15,6 +15,7 @@
     "check:contraste": "node scripts/check-contraste.mjs",
     "check:mobile": "node scripts/check-mobile.mjs",
     "check:a11y": "node scripts/check-a11y.mjs",
+    "check:offline": "node scripts/check-offline.mjs",
     "check:texto": "tsx scripts/check-texto.mts"
   },
   "dependencies": {
