@@ -16,6 +16,31 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.16",
+    date: "2026-09-09",
+    title: "O Dedo Alcança",
+    sections: [
+      {
+        heading: "O mapa de árvores era intocável no celular",
+        items: [
+          "Medido a 414px de largura, o Destiny Board abria com os nós entre 6 e 14 pixels — onze deles empatados em 6×6. O mínimo do WCAG 2.2 (critério 2.5.8) é 24. Era um quarto disso, na tela principal de progressão, num projeto cuja primeira regra é mobile-first.",
+          "A causa não era defeito: era o zoom de \"caber tudo\" cumprindo o que promete. Num monitor, caber tudo dá nós grandes; num celular, caber tudo espreme dezenove árvores em 414px, e o resultado aritmético disso é um nó de 6px.",
+          "O mapa agora tem um piso: ele nunca abre num zoom em que a árvore não dê pra tocar. No celular isso significa que ele deixa de caber inteiro na tela — perde-se a visão geral e ganha-se um mapa que se usa arrastando, que é como todo mapa funciona num celular. No monitor nada muda: lá o zoom de caber já passa do piso com folga.",
+          "Os nós de rank, que são menores de propósito, ganharam área de toque invisível maior que o desenho — o alvo cresce, o mapa continua com a mesma cara.",
+        ],
+      },
+      {
+        heading: "E os alvos pequenos do resto do site",
+        items: [
+          "Os dez links do rodapé tinham 18px de altura, e o rodapé está em TODAS as rotas — eram a maior parte dos alvos pequenos do site inteiro.",
+          "Também passaram do mínimo: os campos numéricos da ficha, o seletor de Rank de Guilda, o seletor de árvore do mapa e os dois atalhos do fim da landing.",
+          "Nove das dez rotas agora estão em ZERO alvos abaixo de 24px. Os oito que sobram no /livro são links dentro de frase, que o próprio critério isenta — aumentar a caixa deles quebraria a linha do parágrafo pra resolver um problema que não existe.",
+          "O check:mobile passou a medir o alvo de verdade: a união do controle com os filhos dele. Medindo só a caixa do botão, os 40 nós do mapa continuariam sendo contados como pequenos DEPOIS de corrigidos — a contagem acusaria justamente o remédio.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.15",
     date: "2026-09-09",
     title: "O Porão Sem Sinal",

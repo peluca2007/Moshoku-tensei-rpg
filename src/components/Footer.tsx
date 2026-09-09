@@ -100,7 +100,12 @@ export default function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-parchment-600 transition-colors hover:text-wine-600 dark:text-parchment-400 dark:hover:text-wine-300"
+                      /* `py-1` não é estética: sem ele o link tem 18px de altura, abaixo
+                         dos 24px do WCAG 2.5.8, e são DEZ links assim no rodapé de
+                         todas as rotas — a maior parte dos alvos pequenos que o
+                         check:mobile contava no site inteiro. `-my-1` devolve o
+                         espaço ao layout, então a lista não estica. */
+                      className="-my-1 inline-block py-1 text-sm text-parchment-600 transition-colors hover:text-wine-600 dark:text-parchment-400 dark:hover:text-wine-300"
                     >
                       {link.label}
                     </Link>

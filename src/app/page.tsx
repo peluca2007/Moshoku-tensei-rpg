@@ -247,14 +247,20 @@ export default function LandingPage() {
         <div className="mt-10 flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:gap-4">
           <Link
             href="/criar/entrevista"
-            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-300"
+            /* `py-1` leva o alvo de 20 pra 28px de altura — o mínimo do WCAG 2.5.8
+               é 24, e estes dois são CTAs, não link dentro de frase (que o
+               critério isenta). */
+            className="flex items-center gap-1.5 py-1 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-300"
           >
             <ScrollText className="h-4 w-4" /> Fazer a Entrevista do Destino
           </Link>
           <span className="hidden text-parchment-300 dark:text-parchment-700 sm:inline">·</span>
           <Link
             href="/iniciativa"
-            className="flex items-center gap-1.5 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-300"
+            /* `py-1` leva o alvo de 20 pra 28px de altura — o mínimo do WCAG 2.5.8
+               é 24, e estes dois são CTAs, não link dentro de frase (que o
+               critério isenta). */
+            className="flex items-center gap-1.5 py-1 text-sm font-semibold text-wine-600 hover:text-wine-500 dark:text-wine-300"
           >
             <Swords className="h-4 w-4" /> Abrir o tracker de iniciativa
           </Link>

@@ -73,7 +73,23 @@ const MEDICAO = String.raw`(() => {
   for (const el of document.querySelectorAll("button,a,input,select,[role='button']")) {
     const r = el.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) continue;
-    if (r.width < 24 || r.height < 24) pequenos++;
+    // O alvo é a UNIÃO do controle com os filhos dele, e não só a caixa dele.
+    //
+    // O nó do mapa de árvores (0.1.15) estende a área de toque com um <span>
+    // invisível maior que o desenho — um clique no span sobe pro botão, então
+    // ele É alvo. Medindo só o retângulo do botão, os 40 nós apareciam aqui
+    // como "abaixo de 24px" mesmo depois de corrigidos, e a contagem passaria a
+    // acusar justamente o remédio.
+    let x0 = r.left, y0 = r.top, x1 = r.right, y1 = r.bottom;
+    for (const filho of el.children) {
+      const c = filho.getBoundingClientRect();
+      if (c.width === 0 || c.height === 0) continue;
+      if (c.left < x0) x0 = c.left;
+      if (c.top < y0) y0 = c.top;
+      if (c.right > x1) x1 = c.right;
+      if (c.bottom > y1) y1 = c.bottom;
+    }
+    if (x1 - x0 < 24 || y1 - y0 < 24) pequenos++;
   }
   return JSON.stringify({ transbordo, culpados: culpados.slice(0, 6), pequenos });
 })()`;

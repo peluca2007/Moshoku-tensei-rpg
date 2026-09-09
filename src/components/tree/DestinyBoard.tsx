@@ -26,6 +26,24 @@ const CANVAS_PADDING = 100;
 const MIN_ZOOM = 0.15;
 const MAX_ZOOM = 2.5;
 
+/**
+ * O menor alvo de toque aceitável, em pixels de TELA (0.1.15).
+ *
+ * É o mínimo do WCAG 2.2, critério 2.5.8 (nível AA) — e aqui ele não era uma
+ * formalidade: medido a 414px de largura, o mapa abria com os nós entre **6 e
+ * 14 pixels**, onze deles empatados em 6×6. Um quarto do mínimo, na tela
+ * principal de progressão do site, num projeto cuja primeira regra é
+ * mobile-first.
+ *
+ * A causa não era defeito: era o `zoomParaCaber` cumprindo o que promete. Num
+ * monitor, "caber tudo" dá nós grandes; num celular, "caber tudo" espreme
+ * dezenove árvores em 414px, e o resultado aritmético disso é um nó de 6px.
+ */
+const ALVO_MINIMO_PX = 24;
+
+/** O anel que o dedo procura: a árvore (`sizeForDepth(3)`), e não o rank. */
+const NO_DE_ARVORE_PX = 36;
+
 // Quanto o meio da curva de conexão "estufa" pra fora do anel (px), só estética.
 const HYBRID_CURVE_BULGE = 30;
 
@@ -296,7 +314,21 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
    */
   const zoomParaCaber = (largura: number, altura: number) => {
     const diametroDoConteudo = finalMaxRadius * 2 + 80;
-    return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, (Math.min(largura, altura) / diametroDoConteudo) * 0.95));
+    const cabendo = (Math.min(largura, altura) / diametroDoConteudo) * 0.95;
+    /*
+     * O piso (0.1.15): o mapa nunca abre num zoom em que a árvore não dá pra
+     * tocar.
+     *
+     * Quando o piso é maior que `cabendo` — que é o caso de qualquer celular —
+     * o mapa deixa de caber inteiro na tela, e isso é a escolha certa: dezenove
+     * árvores não cabem em 414px num tamanho que um dedo alcance, e fingir que
+     * cabem foi o que produziu os nós de 6px. Perde-se a visão geral e ganha-se
+     * um mapa que se usa arrastando, que é como todo mapa funciona num celular.
+     *
+     * Num monitor o piso não muda nada: lá `cabendo` já passa dele com folga.
+     */
+    const pisoTocavel = ALVO_MINIMO_PX / NO_DE_ARVORE_PX;
+    return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, pisoTocavel, cabendo));
   };
 
   const [zoom, setZoom] = useState(0.35);
@@ -701,6 +733,41 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
                       whileHover={{ scale: 1.15 }}
                       whileTap={{ scale: 0.95 }}
                     >
+                      {/*
+                        A folga de toque (0.1.15): invisível, não muda o desenho.
+
+                        Mesmo com o piso de zoom, o nó de RANK (22px de canvas)
+                        continua abaixo dos 24px de tela — ele é menor que o de
+                        árvore de propósito, e aumentá-lo mudaria a leitura do
+                        mapa. Então cresce só o ALVO: este `<span>` fica fora
+                        das bordas do botão, recebe o toque e deixa o clique
+                        subir pro botão que o contém.
+
+                        O teto é o espaçamento entre anéis (`RING_SPACING`), a
+                        90%: sem ele, a folga de um nó comeria o nó de dentro e
+                        o de fora, e o remédio criaria um alvo intocável por
+                        estar sempre por baixo de outro.
+                      */}
+                      <span
+                        aria-hidden
+                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                        style={(() => {
+                          /*
+                           * O tamanho é declarado, e não um `inset` negativo.
+                           *
+                           * `inset` ancora na caixa de PADDING, e o nó tem
+                           * `border-2`: um `inset: -5` dava 4px a menos de alvo
+                           * do que a conta prometia, e o resultado medido eram
+                           * 21px onde o cálculo dizia 24. Largura explícita não
+                           * depende de onde a borda entra na caixa.
+                           */
+                          const lado = Math.min(
+                            Math.max(size, ALVO_MINIMO_PX / zoom),
+                            size + RING_SPACING * 0.9
+                          );
+                          return { width: lado, height: lado };
+                        })()}
+                      />
                       {node.meta.kind === "tree" && node.meta.tree.icon && !isTreeEmpty(node.meta.tree) ? (
                         <TreeCrest tree={node.meta.tree} size={size - 6} rounded="rounded-full" />
                       ) : (
@@ -720,7 +787,8 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
             onChange={(e) => {
               if (e.target.value) focusOnTree(e.target.value);
             }}
-            className="max-w-[180px] bg-transparent text-xs text-parchment-600 outline-none dark:text-parchment-300 sm:max-w-none"
+            /* `py-1`: o select nasce com 18px de altura, abaixo do mínimo de toque. */
+            className="max-w-[180px] bg-transparent py-1 text-xs text-parchment-600 outline-none dark:text-parchment-300 sm:max-w-none"
           >
             <option value="">Buscar árvore...</option>
             {TREES.map((t) => (
