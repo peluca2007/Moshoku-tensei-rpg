@@ -5,6 +5,31 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.27 — "Modo Mesa" · 2026-09-10
+
+### 🎯 Uma tela só, aberta a sessão inteira
+
+Ficha, iniciativa, encontros e rolador são quatro rotas — e numa sessão de verdade a pessoa alterna
+entre elas o tempo todo, num celular, com uma mão, enquanto é a vez dela. Cada troca é um toque e uma
+perda de contexto, e o contexto que se perde é justamente **de quem é o turno**.
+
+O **`/mesa`** junta o que se usa *dentro* de um turno:
+
+- **De quem é a vez**, com o próximo já anunciado e um botão grande de Passar.
+- **Suas reservas**, mudando por passos de −5, −1, +1 e +5 em vez de campo numérico: digitar exige as
+  duas mãos e a atenção que o turno está consumindo.
+- **O que está pegando em você**, com o resumo do que isso muda e um toque pra tirar.
+- **Os PV de todo mundo** no combate, com −1/+1 do lado.
+
+O dado já está em todas as rotas desde a 0.1.22, então não precisa ser desenhado aqui.
+
+**O que não entra é tão importante quanto.** Nada de editar ficha, comprar habilidade ou montar
+criatura: isso acontece entre sessões, e cada uma dessas coisas já tem uma tela que faz melhor. Uma
+tela de mesa que também servisse pra construir personagem voltaria a ser a ficha — e o problema
+voltaria junto.
+
+---
+
 ## 0.1.26 — "Eu Aguento Isso?" · 2026-09-10
 
 ### ⚔️ O simulador saiu da mão do Mestre e chegou na do jogador

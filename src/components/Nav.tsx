@@ -21,6 +21,7 @@ import FontSizeToggle from "./FontSizeToggle";
  * A rota continua existindo e linkada da landing e do roster; só saiu da barra.
  */
 const LINKS = [
+  { href: "/mesa", label: "Mesa" },
   { href: "/ficha", label: "Ficha" },
   { href: "/arvores", label: "Árvores" },
   { href: "/personagens", label: "Personagens" },

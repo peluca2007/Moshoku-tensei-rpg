@@ -44,6 +44,7 @@ mão duas vezes.
 | Rota | O que é |
 | --- | --- |
 | `/` | Landing page — apresentação e disclaimer de projeto de fã |
+| `/mesa` | **Modo Mesa** — só o que se usa DENTRO de um turno: ordem, reservas com passos de −5 a +5, condições ativas. Pensada pra 320px e uma mão |
 | `/ficha` | Ficha de personagem: atributos, PV/PM/PT/PP/CA calculados, foto e capa, inventário, Grimório, Lore, Desfazer, export PDF (Typst), arquivo `.mtficha` e link |
 | `/criar` | Três vias de criação: Manual (wizard de 8 passos), Roleta e Entrevista |
 | `/livro` | Livro de regras completo, navegável, com Patch Notes embutidos |
@@ -332,7 +333,7 @@ porque elas falam com ele pela porta de depuração. Estas três precisam do sit
 (`npm run dev` em outro terminal):
 
 ```bash
-npm run check:contraste   # WCAG AA nas 13 rotas, nos 2 temas
+npm run check:contraste   # WCAG AA nas 14 rotas, nos 2 temas
 npm run check:mobile      # transbordo horizontal de 320px a 414px
 npm run check:a11y        # controle sem nome, campo sem rótulo, hierarquia de cabeçalho
 ```
@@ -343,7 +344,7 @@ seu já no ar na 3100.
 
 ```bash
 npm run build
-npm run check:offline     # as 16 rotas abrindo com o servidor morto, em F5 e em navegação suave
+npm run check:offline     # as 17 rotas abrindo com o servidor morto, em F5 e em navegação suave
 ```
 
 Elas abrem as rotas por `/semente-dev`, que semeia duas fichas e força o tema antes de redirecionar.

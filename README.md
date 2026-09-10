@@ -84,10 +84,10 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:redundancia` | Acha habilidades que repetem um patamar anterior |
 | `npm run check:arvores` | Audita as 19 árvores contra a régua do Apêndice C e acusa quem sai da faixa |
 | `npm run check:texto` | Lê o TEXTO das 592 habilidades contra os campos delas e acusa contradição |
-| `npm run check:contraste` | Mede o contraste das 13 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
+| `npm run check:contraste` | Mede o contraste das 14 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
 | `npm run check:mobile` | Procura transbordo horizontal de 320px a 414px (precisa de `npm run dev`) |
 | `npm run check:a11y` | Controle sem nome, campo sem rótulo, hierarquia de cabeçalho (precisa de `npm run dev`) |
-| `npm run check:offline` | Abre as 16 rotas **com o servidor morto** (precisa de `npm run build`; sobe e mata o próprio `next start`) |
+| `npm run check:offline` | Abre as 17 rotas **com o servidor morto** (precisa de `npm run build`; sobe e mata o próprio `next start`) |
 | `npx tsx scripts/simular-combate.mts` | Playtest automatizado: builds de mesmo orçamento de PA se batendo |
 | `node scripts/logo-sem-fundo.mjs` | Regera `public/logo-real-alfa.png` a partir de `assets-fonte/` |
 | `node scripts/gerar-favicon.mjs` | Regera o favicon e os três ícones do PWA a partir de `assets-fonte/` |
@@ -110,6 +110,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | --- | --- |
 | `/` | Landing page |
 | `/criar` | Criação de personagem — três vias: Manual, Roleta e Entrevista |
+| `/mesa` | **Modo Mesa** — a tela única de sessão: de quem é a vez, suas reservas com botões grandes, o que está pegando em você |
 | `/ficha` | Ficha completa: atributos, PV/PM/PT/PP/CA, inventário, Grimório, Lore, Desfazer, export PDF e JSON |
 | `/livro` | Livro de regras navegável, com Patch Notes |
 | `/arvores` | Mapa radial de progressão (Destiny Board), pan/zoom |
