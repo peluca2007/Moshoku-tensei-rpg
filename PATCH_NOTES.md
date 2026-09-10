@@ -5,6 +5,26 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.34 — "Comprar o Quê?" · 2026-09-10
+
+### 🔊 Os botões passaram a dizer o que fazem
+
+Numa grade de 85 itens da loja, um leitor de tela anunciava **"Comprar, botão"** oitenta e cinco
+vezes seguidas. O texto visível basta pra quem enxerga o card em volta; não basta pra quem só ouve o
+botão.
+
+Agora cada um anuncia **o nome e o preço** — na loja, nas árvores e nas magias combinadas.
+
+Os **números que mudam sozinhos** também passaram a ser anunciados: o PA gasto, que muda por causa de
+uma compra feita em outra tela, e as reservas do Modo Mesa, que mudam por botão no meio do turno.
+Antes, quem só ouve recebia **silêncio** como confirmação da compra.
+
+Isto é a metade previsível do teste com leitor de tela. A outra metade — se a ordem de foco conta a
+história certa, e se dá pra montar um personagem sem enxergar — continua precisando de meia hora de
+escuta humana.
+
+---
+
 ## 0.1.33 — "Aponte a Câmera" · 2026-09-10
 
 ### 📷 A ficha vira um QR

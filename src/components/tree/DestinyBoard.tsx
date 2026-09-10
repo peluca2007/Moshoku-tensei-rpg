@@ -1162,6 +1162,9 @@ function AbilityListItem({
             useCharacterStore.getState().purchaseAbility({ treeId, rank, kind, id: def.id });
             showToast(`${def.name} comprado!`, "success");
           }}
+          // Ver o mesmo cuidado na Loja: "Comprar (2 PA)" repetido dezenas de
+          // vezes não diz a quem só ouve O QUE está sendo comprado.
+          aria-label={`Comprar ${def.name} por ${def.paCost} PA`}
           className="mt-2 w-full rounded-lg bg-wine-600 px-2 py-1.5 text-xs font-semibold text-white transition-colors enabled:hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}

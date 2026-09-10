@@ -311,6 +311,14 @@ export default function Shop() {
                         onClick={() => handleBuy(item)}
                         disabled={!canBuy}
                         title={!goldOk ? "PO insuficiente" : undefined}
+                        /*
+                          O nome do item entra no rótulo (0.1.34).
+                          Numa grade de 85 cards, um leitor de tela anunciava
+                          "Comprar, botão" oitenta e cinco vezes seguidas — o
+                          texto visível basta pra quem enxerga o card em volta, e
+                          não basta pra quem só ouve o botão.
+                        */
+                        aria-label={`Comprar ${item.name} por ${item.price} PO`}
                         className={`flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-bold shadow-sm transition-all ${
                           justBought
                             ? "bg-emerald-600 text-white"

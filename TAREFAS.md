@@ -150,11 +150,26 @@ O PDF do Typst é completo e por isso longo. Falta o oposto: uma folha A4 com o 
 de um turno. Provavelmente um `@media print` da própria ficha, e não um segundo gerador — menos
 código, e nunca diverge da tela.
 
-### 20. 🔒 Passar o leitor de tela na ficha inteira
+### 20. 🔒 Passar o leitor de tela na ficha inteira — *a parte previsível foi feita; a escuta é sua*
 
-Item 5 do `O-QUE-FALTA`. As treze rotas estão em zero no `check:a11y`, o que **não** responde se a
-ficha é usável de ouvido. Meia hora de NVDA: a ordem de foco conta a história certa? "Comprar"
-anuncia o que está comprando? dá pra montar um personagem sem enxergar?
+Item 5 do `O-QUE-FALTA`. As dezessete rotas estão em zero no `check:a11y`, o que **não** responde se
+a ficha é usável de ouvido.
+
+**Feito na 0.1.34**, que é exatamente o que a própria task previu que sairia ("aria-label com
+contexto, aria-live nos números que mudam sozinhos"):
+
+- **"Comprar" agora diz o que está comprando.** Numa grade de 85 itens da loja, um leitor de tela
+  anunciava *"Comprar, botão"* oitenta e cinco vezes seguidas — o texto visível basta pra quem
+  enxerga o card em volta e não basta pra quem só ouve o botão. Vale também nas árvores e nas magias
+  combinadas.
+- **Os números que mudam sozinhos passaram a ser anunciados.** O PA gasto muda como consequência de
+  uma compra feita em outra tela, e as reservas do Modo Mesa mudam por botão no meio do turno — nos
+  dois casos, quem só ouve recebia silêncio como confirmação.
+
+**O que continua sendo seu, e não dá pra terceirizar:** meia hora de NVDA respondendo as três
+perguntas que nenhum script responde — a ordem de foco conta a história certa (atributos antes dos
+derivados)? dá pra montar um personagem do zero sem enxergar? o que soa confuso quando lido em voz
+alta em vez de olhado?
 
 ---
 
