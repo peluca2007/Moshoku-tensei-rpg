@@ -12,6 +12,7 @@ import {
 } from "./encounterSim";
 import { ajustarParaEquilibrio, arredondarPv, avaliar } from "./encounterBalance";
 import { CRIATURAS_PRONTAS, MOLDES_CRIATURA, bonusResistencia, rodadasDoChefe } from "@/data/bestiary";
+import { getTreeById } from "@/data/trees";
 import { maxFormula, mediaFormula, modificadorFixo, patamarDaFicha, temDano } from "./combatSim";
 import { AttributeKey, CharacterData, RankName, RANKS } from "./types";
 
@@ -156,6 +157,40 @@ describe("simularEncontro", () => {
     const a = simularEncontro(grupo, [criatura()], opcoes);
     const b = simularEncontro(grupo, [criatura()], opcoes);
     expect(a).toEqual(b);
+  });
+
+  /*
+   * A coluna "PV devolvidos" da tela do Mestre — 0.1.42.
+   *
+   * Antes dela, um grupo com curandeiro aparecia no /encontros com uma linha de
+   * "0 de dano" ao lado do nome, o que lê como ficha ruim em vez de papel
+   * diferente. É o mesmo defeito que o relatório de linha de comando tinha, e
+   * ele sobreviveu três versões a mais na tela.
+   */
+  it("conta os PV que o curandeiro devolve, e não só o dano que ele não causa", () => {
+    // Destravar o rank não basta: `acoesDe` lê as magias COMPRADAS, e um
+    // curandeiro sem magia na ficha é um civil com túnica.
+    const arvoreCura = getTreeById("cura")!;
+    const ranksDela = RANKS.slice(0, 3);
+    const curandeiro = ficha({
+      id: "cura",
+      name: "Curandeira",
+      attributeBase: { ...ZERO_ATTRS, espirito: 4, vigor: 2, intelecto: 2 },
+      startingTreeId: "cura",
+      unlockedRanks: ranksDela.map((rank) => ({ treeId: "cura", rank })),
+      purchasedAbilities: arvoreCura.ranks
+        .filter((r) => ranksDela.includes(r.rank))
+        .flatMap((r) =>
+          (r.abilities ?? []).map((a) => ({ kind: "ability" as const, treeId: "cura", rank: r.rank, id: a.id }))
+        ),
+    });
+    const r = simularEncontro([...grupo, curandeiro], [criatura()], { batalhas: 40, semente: 5 });
+    const linha = r.porPersonagem.find((p) => p.id === "cura")!;
+    expect(linha.curaMedia, "a curandeira devolveu PV").toBeGreaterThan(0);
+    expect(
+      r.porPersonagem.filter((p) => p.id !== "cura").every((p) => p.curaMedia === 0),
+      "e quem não tem magia de cura devolve zero"
+    ).toBe(true);
   });
 
   it("sementes diferentes dão resultados diferentes — não é uma constante disfarçada", () => {
