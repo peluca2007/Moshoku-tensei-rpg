@@ -5,6 +5,87 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.38 — "O Fio da Vida" · 2026-09-10
+
+### 🎯 O pedido: um chefe tem que poder dizimar o grupo em pelo menos 25% das vezes
+
+Para mirar nisso, primeiro foi preciso **medir**: a tabela de chefes mostrava vitória e mortes médias,
+nunca a taxa de dizimação. "2,8 mortes médias" tanto pode ser *"quase sempre morrem três"* quanto
+*"metade das vezes ninguém morre e na outra metade morrem todos"* — e são mesas completamente
+diferentes. A coluna **DIZIMADO** existe agora.
+
+Medido: **0% / 5% / 100%** no 3º, 4º e 5º patamares. Um penhasco, não uma curva.
+
+### 🧨 Por que não havia meio-termo: o motor matava a 0 PV
+
+O Cap. 4 §7 é explícito — *"Se seus Pontos de Vida chegarem a 0, você cai **Inconsciente**"*, rola o
+**Fio da Vida** a cada turno, junta **Marcas da Morte**, e *"qualquer magia de cura aplicada por um
+aliado remove todas as Marcas instantaneamente e você acorda"*.
+
+O simulador tratava 0 PV como **morte instantânea e permanente**. Isso não era só infidelidade ao
+livro: era a **causa** do resultado binário. Quem caía sumia da luta para sempre → o dano do grupo
+despencava → a luta se alongava → caía o próximo. Realimentação positiva não produz resultado
+intermediário; produz cara-ou-coroa.
+
+Medido, no 4º patamar: um chefe com **49** de dano por turno perdia **97%** das vezes; com **51**,
+ganhava **94%**. Dois pontos de dano decidiam tudo.
+
+**O Fio da Vida entrou inteiro:** cair inconsciente, o teste de 1d20 + Vigor contra CD 8 + o Bônus de
+Rank **de quem te derrubou** (o livro: *"um goblin de estrada te deixa em CD 9, um Rei-Demônio em CD
+14"*), 1 Marca por falha e 2 no 1 natural, morte permanente na terceira, e a cura de aliado que
+levanta e zera tudo. O curandeiro passou a **levantar quem caiu antes de qualquer outra coisa** — é o
+trabalho mais importante dele no livro, e o motor não o tinha.
+
+### 🩺 A tabela de chefes lutava contra o único time sem curandeiro
+
+Ela usava *"o time que venceu o 5×5"*, o que já é estranho (a régua de chefe do livro dependendo de um
+confronto entre jogadores) e virou um problema quando a cura entrou: o vencedor é sempre o Time B, e o
+Time B não tem curandeiro. A tabela publicava o comportamento de um grupo **que não pode levantar
+ninguém do chão**, e um Mestre lia aquilo como "o que acontece com um grupo".
+
+Agora existe um **grupo de referência** nomeado — Mara, Vex, Lyn, Kest e **Sera** —, uma mesa
+plausível: linha de frente, corpo a corpo, distância, mago e cura.
+
+### 📉 O resultado, e o que ele revelou
+
+| Chefe | Antes | Agora |
+| ----- | ----- | ----- |
+| 3º — Ameaça | 100% vitória · 0% dizimado | 100% · **0%** |
+| 4º — Elite | 92% · 8% | **55% · 45%** |
+| 5º — Terror | 0% · 100% | 0% · **100%** |
+
+**O 4º patamar ganhou o meio-termo que não existia** — e já cumpre o alvo de 25%. Ele passou de
+cara-ou-coroa para uma luta de verdade, com 4,8 rodadas em média, porque levantar um companheiro
+interrompe a espiral.
+
+**Os outros dois não se resolvem com calibragem, e isso foi medido, não estimado:**
+
+- **3º patamar:** com **PV ×4 e dano ×1,3** — o quádruplo do PV que o livro manda — o grupo ainda
+  vence 98% e é dizimado em 2%. Vinte e cinco combinações testadas.
+- **5º patamar:** **0% de vitória em todas as 25 combinações**, inclusive com o dano cortado a 70%.
+- Mexer só nas rodadas extras do chefe (`floor(n/2)` → `ceil(n/2)`) não move o 3º e **destrói** o 4º:
+  55% → 0%.
+
+Os três patamares pedem correções em **direções opostas**, e é por isso que nenhum ajuste global
+serve: a tabela põe **um grupo de 12 PA (Avançado, 3º)** contra chefes de 3º, 4º e 5º. Um está abaixo
+do nível dele, um está no nível, e um está dois acima. O que a tabela mede hoje não é "o chefe está
+calibrado?", é "quão longe do nível do grupo está este chefe?".
+
+**A decisão que sobra é sua**, e está no `O-QUE-FALTA`: um chefe do patamar do próprio grupo deve ser
+uma luta de 25% de dizimação — e, se deve, o ajuste de Chefe do Apêndice G (*PV dobrado, mesmo dano*)
+está fraco na paridade e precisa mudar no livro, não no script.
+
+### 🧱 Por baixo
+
+- `aplicarDano` passou a receber o Bônus de Rank de quem bate, pra gravar a CD do Fio da Vida na hora
+  da queda — *"quem te derrubou decide o quanto é difícil voltar"*.
+- `vivo: false` continua querendo dizer "fora da luta", que é o que as trinta e quatro checagens
+  espalhadas pelo motor já entendiam; `inconsciente`, `marcasDaMorte`, `estabilizado` e `morto` dizem
+  **se ainda dá pra voltar**.
+- **13 testes novos** (402 no total), incluindo o d20 forjado que testa a regra em vez da sorte.
+
+---
+
 ## 0.1.37 — "A Curandeira Não Bate" · 2026-09-10
 
 ### 📏 O instrumento via 20% do livro, e não era 20% espalhado

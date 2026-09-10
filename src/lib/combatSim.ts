@@ -229,6 +229,8 @@ export interface FichaCombate {
    */
   bonusDeRank: number;
   iniciativa: number;
+  /** Vigor — o atributo do teste do Fio da Vida (Cap. 4, §7). */
+  vigor: number;
   acoes: Acao[];
   ataqueBasico: Acao;
 }
@@ -300,6 +302,32 @@ export interface Alvo {
    * turnos próprios que a regra descreve, na granularidade que este motor tem.
    */
   feridaFresca: number;
+  /**
+   * O Fio da Vida (Cap. 4, §7) — 0.1.38.
+   *
+   * *"Se seus Pontos de Vida chegarem a 0, você cai Inconsciente e entra em
+   * estado de Morte."* O motor tratava 0 PV como morte instantânea e
+   * permanente, e isso não era só infidelidade ao livro: era a causa de o
+   * resultado de todo combate contra chefe ser 0% ou 100%, sem meio-termo.
+   *
+   * Quem cai some do combate pra sempre → o dano do grupo despenca → a luta se
+   * alonga → cai o próximo. Uma espiral com realimentação positiva não produz
+   * resultado intermediário; produz coin flip. Medido no 4º patamar: com 49 de
+   * dano por turno o chefe perdia 97% das vezes, com 51 ganhava 94%.
+   *
+   * `vivo: false` continua querendo dizer "fora da luta" — é o que as trinta e
+   * quatro checagens espalhadas pelo motor já entendem —, e estes campos dizem
+   * SE ainda dá pra voltar.
+   */
+  fioDaVida: boolean;
+  inconsciente: boolean;
+  marcasDaMorte: number;
+  /** Passou no teste: para de rolar, mas segue desacordado até alguém curar. */
+  estabilizado: boolean;
+  /** Três Marcas: acabou. Nenhuma cura deste motor traz de volta. */
+  morto: boolean;
+  /** "Quem te derrubou decide o quanto é difícil voltar": CD 8 + o Bônus de Rank dele. */
+  cdFioDaVida: number;
 }
 
 /**
@@ -330,6 +358,16 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
     danoCausado: p.danoCausado ?? 0,
     pvTemp: p.pvTemp ?? 0,
     feridaFresca: p.feridaFresca ?? 0,
+    // Criatura não tem Fio da Vida: o livro dá a regra aos personagens, e um
+    // goblin inconsciente é um goblin morto pra qualquer efeito de mesa.
+    fioDaVida: p.fioDaVida ?? false,
+    inconsciente: p.inconsciente ?? false,
+    marcasDaMorte: p.marcasDaMorte ?? 0,
+    estabilizado: p.estabilizado ?? false,
+    morto: p.morto ?? false,
+    // 10 é o que o livro manda usar "se não houver um responsável claro, como
+    // uma queda ou um desabamento".
+    cdFioDaVida: p.cdFioDaVida ?? 10,
   };
 }
 
@@ -538,6 +576,7 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
       return rank ? RANK_BONUS[rank] : 0;
     })(),
     iniciativa: c.attributeBase.agilidade,
+    vigor: c.attributeBase.vigor,
     acoes: acoesDe(c),
     // Golpe comum. A Escada de Dados é EXCLUSIVA da Árvore do Corpo (Cap. 3):
     // um mago de Água Avançado não escala dado nenhum — ele empunha uma arma
@@ -555,7 +594,7 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
 /** Estado zerado pra uma batalha nova, a partir da ficha já derivada. */
 export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
   return {
-    ...novoAlvo({ nome: ficha.nome, pv: ficha.pvMax, ca: ficha.ca }),
+    ...novoAlvo({ nome: ficha.nome, pv: ficha.pvMax, ca: ficha.ca, fioDaVida: true }),
     ficha,
     pm: ficha.pmMax,
     pt: ficha.ptMax,
@@ -720,7 +759,7 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
  * Devolve o dano efetivamente sofrido nos PV reais, que é o que o atacante tem
  * direito de contar como feito.
  */
-export function aplicarDano(alvo: Alvo, dano: number): number {
+export function aplicarDano(alvo: Alvo, dano: number, bonusDeRankDeQuemBate = 2): number {
   if (dano <= 0) return 0;
   // "Gastos antes dos PV reais": a casca come o golpe primeiro, e só o que
   // sobrar chega na carne.
@@ -731,8 +770,50 @@ export function aplicarDano(alvo: Alvo, dano: number): number {
   // A ferida marca mesmo quando a casca comeu tudo: quem levou o golpe levou o
   // golpe, e a janela de cura em dobro é sobre o momento, não sobre o número.
   alvo.feridaFresca = 2;
-  if (alvo.pv <= 0) alvo.vivo = false;
+  if (alvo.pv <= 0) {
+    alvo.pv = 0;
+    alvo.vivo = false;
+    /*
+     * Cap. 4, §7: quem tem Fio da Vida CAI, não morre — e "quem te derrubou
+     * decide o quanto é difícil voltar", então a CD do teste é gravada no
+     * momento da queda, com o Bônus de Rank de quem desferiu o golpe. Um goblin
+     * de estrada deixa em CD 9; um Rei-Demônio, em CD 14. É a mesma ferida.
+     */
+    if (alvo.fioDaVida && !alvo.morto) {
+      alvo.inconsciente = true;
+      alvo.estabilizado = false;
+      alvo.cdFioDaVida = 8 + bonusDeRankDeQuemBate;
+    }
+  }
   return real;
+}
+
+/**
+ * O teste do Fio da Vida, no início de cada turno de quem está a 0 PV.
+ *
+ * *"role 1d20 + Vigor contra CD 8 + o Bônus de Rank de quem te derrubou.
+ * Sucesso: você estabiliza temporariamente. Falha: 1 Marca da Morte. Falha
+ * Crítica (1 Natural): 2 Marcas. Três Marcas e você morre permanentemente."*
+ *
+ * **Estabilizar aqui PARA de rolar.** O livro diz "temporariamente" e não diz
+ * quando recomeça; um motor tem que escolher, e esta é a escolha declarada — a
+ * generosa. Quem estabilizou segue desacordado e fora da luta até um aliado
+ * curá-lo, que é o que muda o resultado da batalha de qualquer jeito.
+ */
+export function testeDoFioDaVida(e: EstadoPersonagem, rng: Rng): void {
+  if (!e.inconsciente || e.estabilizado || e.morto) return;
+  const rolagem = d20(rng);
+  if (rolagem === 1) {
+    e.marcasDaMorte += 2;
+  } else if (rolagem + e.ficha.vigor < e.cdFioDaVida) {
+    e.marcasDaMorte += 1;
+  } else {
+    e.estabilizado = true;
+  }
+  if (e.marcasDaMorte >= 3) {
+    e.morto = true;
+    e.inconsciente = false;
+  }
 }
 
 /**
@@ -743,6 +824,25 @@ export function aplicarDano(alvo: Alvo, dano: number): number {
  * justamente quando ele está desperdiçando magia.
  */
 export function curar(alvo: Alvo, rolado: number, pvMax: number, sempreFresca = false): number {
+  /*
+   * Cap. 4, §7: *"qualquer magia de cura ou poção aplicada por um aliado remove
+   * todas as Marcas da Morte instantaneamente e você acorda"*.
+   *
+   * É o trabalho mais importante de um curandeiro no livro, e o motor não o
+   * tinha: até a 0.1.38, quem chegava a 0 PV estava morto e nenhuma cura o
+   * alcançava. Levantar um companheiro devolve o dano dele ao grupo, e é o
+   * único jeito de a espiral de mortes ser interrompida.
+   *
+   * A Exaustão que o livro cobra de quem acorda ("1 nível até um Descanso
+   * Longo") fica de fora: Exaustão não é modelada por este motor.
+   */
+  if (alvo.inconsciente && !alvo.morto) {
+    alvo.inconsciente = false;
+    alvo.estabilizado = false;
+    alvo.marcasDaMorte = 0;
+    alvo.vivo = true;
+    alvo.pv = 0;
+  }
   if (!alvo.vivo) return 0;
   // Cap. 4: "toda a Magia de Cura cura em dobro contra uma Ferida Fresca".
   const total = alvo.feridaFresca > 0 || sempreFresca ? rolado * 2 : rolado;
@@ -788,6 +888,30 @@ export function escolherSuporte(
   );
   if (viaveis.length === 0) return null;
 
+  const curas = viaveis.filter((a) => a.tipo === "cura");
+
+  /*
+   * LEVANTAR vem antes de curar, e antes de qualquer outra coisa — 0.1.38.
+   *
+   * O livro: *"qualquer magia de cura aplicada por um aliado remove todas as
+   * Marcas da Morte instantaneamente e você acorda"*. Um companheiro no chão
+   * está perdendo o dano dele E rolando contra a morte a cada turno; a mesma
+   * magia que devolveria 15 PV a alguém em pé devolve um personagem inteiro à
+   * batalha. Nenhuma conta de PV por Ação chega perto disso.
+   *
+   * Entre dois caídos, o mais perto de morrer — quem tem mais Marcas.
+   */
+  const caidos = aliados
+    .filter((x) => x.inconsciente && !x.morto)
+    .sort((x, y) => y.marcasDaMorte - x.marcasDaMorte);
+  if (caidos.length > 0 && curas.length > 0) {
+    // A MENOR cura que levanta serve: acordar não depende do tamanho do dado, e
+    // guardar a magia grande pra quem ainda está de pé é a única economia que
+    // esta IA faz — e faz porque o livro a torna óbvia.
+    const barata = curas.reduce((m, a) => (a.pm < m.pm ? a : m));
+    return { acao: barata, alvo: caidos[0] };
+  }
+
   const vivos = aliados.filter((x) => x.vivo);
   if (vivos.length === 0) return null;
 
@@ -795,7 +919,6 @@ export function escolherSuporte(
     .filter((x) => x.pv <= x.ficha.pvMax / 2)
     .sort((x, y) => x.pv / x.ficha.pvMax - y.pv / y.ficha.pvMax);
 
-  const curas = viaveis.filter((a) => a.tipo === "cura");
   if (feridos.length > 0 && curas.length > 0) {
     return { acao: melhorSuporte(curas, feridos.length), alvo: feridos[0] };
   }
@@ -852,6 +975,16 @@ export function turnoPersonagem(
    */
   aliados: EstadoPersonagem[] = []
 ): void {
+  /*
+   * O turno de quem está no chão é o teste do Fio da Vida, e nada mais.
+   *
+   * Vem antes do `return`: um personagem inconsciente não age, mas o turno DELE
+   * continua acontecendo — é nele que ele rola contra a morte.
+   */
+  if (e.inconsciente) {
+    testeDoFioDaVida(e, rng);
+    return;
+  }
   if (!e.vivo) return;
   // A janela da Ferida Fresca fecha de um turno próprio por vez: "o dano
   // sofrido no turno atual ou no imediatamente anterior".
@@ -967,6 +1100,8 @@ export const SIMPLIFICACOES = [
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
   "O que de suporte segue de fora: Salvações, e a maior parte da Barreira e Proteção — muralha, domo, selo e anulação de magia são posição e regra de alcance, e este motor não tem mapa. Das 21 habilidades daquela árvore, só a Casca tem número que ele saiba usar. Julgamento e Luz Absoluta entram como as magias de DANO que são; a cura secundária que as duas descrevem na prosa não é contada.",
   "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",
+  "O Fio da Vida (Cap. 4, §7) entra desde a 0.1.38: a 0 PV o personagem CAI inconsciente, rola 1d20+Vigor contra CD 8 + o Bônus de Rank de quem o derrubou, junta Marcas da Morte e morre de vez na terceira — e qualquer cura de aliado o levanta com todas as Marcas removidas. Quem estabiliza para de rolar (o livro diz \"temporariamente\" e não diz quando recomeça; esta é a leitura declarada). A Exaustão que o livro cobra de quem acorda fica de fora, porque Exaustão não é modelada. Criatura não tem Fio da Vida: a 0 PV ela morre.",
+  "Antes disso o motor matava a 0 PV, e isso não era só infidelidade: era a razão de TODO combate contra chefe dar 0% ou 100%. Quem caía sumia da luta pra sempre, o dano do grupo despencava, a luta se alongava e caía o próximo — realimentação positiva não produz meio-termo. Com o Fio da Vida e um curandeiro, o 4º patamar virou 55% de vitória contra 45% de dizimação.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Terreno, distância, posicionamento e surpresa não existem: todo mundo alcança todo mundo desde a primeira rodada.",

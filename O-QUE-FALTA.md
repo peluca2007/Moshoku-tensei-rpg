@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.37. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.38. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -73,27 +73,41 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
      Iri: é uma pergunta sobre o custo de 2 Ações no sistema inteiro. Se nenhuma técnica de 2 Ações
      compensa, ou elas estão fracas ou a economia de 3 Ações por turno precisa de outra coisa.
 
-9. **O penhasco entre o 4º e o 5º patamar de chefe.** O playtest bate no molde de chefe do Apêndice G
-   e devolve **95% de vitória contra o 4º (Elite) e 0% contra o 5º (Terror)** — o mesmo grupo, um
-   degrau de diferença. Ou o salto é intencional (o 5º patamar é pra quem já é de 5º patamar) ou há um
-   buraco na régua do Apêndice G. O script mede; quem decide qual das duas é você. Enquanto isso, um
-   Mestre que ler a tabela vai concluir que o Terror é imbatível.
+9. ~~**O penhasco entre o 4º e o 5º patamar de chefe.**~~ — **absorvido pelo item 11**, que tem a
+   medição completa. O penhasco era real (95% de vitória no 4º contra 0% no 5º), mas a 0.1.38 mostrou
+   que ele não é um buraco na régua do Apêndice G: é a distância entre o patamar do chefe e o do
+   grupo que a tabela usa. Fica aqui riscado pra que a pergunta não seja levantada de novo do zero.
 
 10. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
     número declarado no motor, não medido na mesa. Se numa sessão o curandeiro age mais cedo (ou mais
     tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
     decisão do simulador que veio de mim e não do livro.
 
+11. **Um chefe do SEU patamar não ameaça o grupo — e a decisão é de design.** Pedido: no mínimo 25% de
+    dizimação por chefe. O 4º patamar cumpre (45%) desde que o Fio da Vida entrou na 0.1.38. Os outros
+    dois não se resolvem por calibragem, e isto foi medido:
+    - **3º patamar:** com **PV ×4 e dano ×1,3** o grupo ainda vence 98% e é dizimado em 2%. Vinte e
+      cinco combinações testadas, nenhuma passa de 2%.
+    - **5º patamar:** **0% de vitória em todas as 25**, inclusive com o dano cortado a 70%.
+    - Mexer só nas rodadas extras do chefe não move o 3º e **destrói** o 4º (55% → 0%).
+
+    A causa é estrutural: a tabela põe **um grupo de 12 PA (Avançado, 3º)** contra chefes de 3º, 4º e
+    5º — um abaixo do nível dele, um no nível, um dois acima. **A pergunta que só você responde:** um
+    chefe do patamar do próprio grupo deve ser uma luta de 25% de dizimação? Se sim, o ajuste de Chefe
+    do Apêndice G (*PV dobrado, mesmo dano*) está fraco na paridade e o conserto é no **livro**, não no
+    script — e o segundo passo é a tabela passar a montar um grupo do patamar de cada chefe, pra medir
+    calibragem em vez de diferença de nível.
+
 ## Site
 
-11. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
+12. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
     `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
     em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
     "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
     nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
     um Android e um iPhone.
 
-12. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+13. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
