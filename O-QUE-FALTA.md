@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.38. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.39. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -58,7 +58,21 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    - **Punho do Fogo:** com Sobrecarga sempre a 3 de Calor, alguma técnica ficou barata demais? A
      suspeita é a Coroa Solar, que dispara uma vez por turno e antes custava 2.
 
-8. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
+8. **As duas descrições invertidas** *(medido na 0.1.39, depois de o motor parar de ler a prosa com a
+   rede larga)*. O livro chama o **Deus da Espada** de *"o maior dano do livro"*, e o Vex entrega **29
+   de dano por batalha** com **8% de sobrevivência** — último entre os corpo a corpo. A **Mara**, cuja
+   build está descrita como *"protege, não mata"*, entrega **196** e lidera a sobrevivência com 67%.
+   As duas descrições estão invertidas em relação ao que o simulador mede.
+
+   O Vex não é fraco por turno: 35 de dano, o terceiro melhor da tabela. Ele **morre cedo**. Então a
+   pergunta é de design e é sua: o Deus da Espada deve ser o maior dano do livro **por turno** (e aí
+   está certo, e a descrição da Mara é que está errada), ou **por batalha** (e aí ele precisa aguentar
+   ficar em pé)? A resposta muda árvores diferentes.
+
+   *(A pergunta anterior — a da 0.1.35 — era a mesma sobre a Mara, com números de antes dos consertos
+   de 0.1.37/0.1.39. Segue abaixo o que ela dizia sobre o Vento, que continua de pé.)*
+
+9. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
    cura no motor, na 0.1.37, a Mara marcou 91 e 92% e a Iri 27 e 57% — as duas perguntas continuam
    valendo, e a da Mara ficou mais forte: ela lidera a sobrevivência do playtest inteiro)*. O simulador foi consertado em dois pontos
    (a CA não era consultada por técnica nenhuma; a IA não contava os Dados de Arma ao escolher), e o
@@ -73,19 +87,21 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
      Iri: é uma pergunta sobre o custo de 2 Ações no sistema inteiro. Se nenhuma técnica de 2 Ações
      compensa, ou elas estão fracas ou a economia de 3 Ações por turno precisa de outra coisa.
 
-9. ~~**O penhasco entre o 4º e o 5º patamar de chefe.**~~ — **absorvido pelo item 11**, que tem a
-   medição completa. O penhasco era real (95% de vitória no 4º contra 0% no 5º), mas a 0.1.38 mostrou
-   que ele não é um buraco na régua do Apêndice G: é a distância entre o patamar do chefe e o do
-   grupo que a tabela usa. Fica aqui riscado pra que a pergunta não seja levantada de novo do zero.
+10. ~~**O penhasco entre o 4º e o 5º patamar de chefe.**~~ — **absorvido pelo item 12**, que tem a
+    medição completa. O penhasco era real (95% de vitória no 4º contra 0% no 5º), mas a 0.1.38 mostrou
+    que ele não é um buraco na régua do Apêndice G: é a distância entre o patamar do chefe e o do
+    grupo que a tabela usa. Fica aqui riscado pra que a pergunta não seja levantada de novo do zero.
 
-10. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
+11. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
     número declarado no motor, não medido na mesa. Se numa sessão o curandeiro age mais cedo (ou mais
     tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
     decisão do simulador que veio de mim e não do livro.
 
-11. **Um chefe do SEU patamar não ameaça o grupo — e a decisão é de design.** Pedido: no mínimo 25% de
-    dizimação por chefe. O 4º patamar cumpre (45%) desde que o Fio da Vida entrou na 0.1.38. Os outros
-    dois não se resolvem por calibragem, e isto foi medido:
+12. **Um chefe do SEU patamar não ameaça o grupo — e a decisão é de design.** Pedido: no mínimo 25% de
+    dizimação por chefe. O 4º patamar cumpre desde que o Fio da Vida entrou na 0.1.38 — e depois dos
+    consertos de leitura da 0.1.39 ele foi de 45% para **73%**, que já é mais brutal do que o pedido.
+    Os outros dois não se resolvem por calibragem, e isto foi medido (números de 0.1.38; a conclusão
+    não muda com os de 0.1.39, porque os três seguem em direções opostas):
     - **3º patamar:** com **PV ×4 e dano ×1,3** o grupo ainda vence 98% e é dizimado em 2%. Vinte e
       cinco combinações testadas, nenhuma passa de 2%.
     - **5º patamar:** **0% de vitória em todas as 25**, inclusive com o dano cortado a 70%.
@@ -100,14 +116,14 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Site
 
-12. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
+13. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
     `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
     em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
     "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
     nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
     um Android e um iPhone.
 
-13. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+14. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê

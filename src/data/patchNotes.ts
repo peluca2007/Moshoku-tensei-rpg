@@ -16,6 +16,36 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.39",
+    date: "2026-09-10",
+    title: "A Exceção Cobrada Junto com a Regra",
+    sections: [
+      {
+        heading: "Sete técnicas rolavam a exceção SOMADA ao caso base",
+        items: [
+          "A rolagem soma todo grupo de dados que encontra na linha, e o livro escreve os dois casos juntos — então a condição era cobrada junto com a regra. O Zero Absoluto (Água) rolava 36d12 onde o livro escreve 12d12: três vezes. O Sol Menor rolava 2,4×, a Explosão do Fogo o dobro, e mais quatro: Lança de Fogo, Guilhotina de Vácuo, Lâmina do Horizonte e Rio de Magma.",
+          "O conserto REMOVE o miolo do parêntese em vez de cortar nele, e isso importa: quatro técnicas de Água põem o tipo de dano entre parênteses e continuam somando depois — \"3d8 + BC (cortante) + 1d6 de frio\" são 3d8 E 1d6, os dois de verdade. Cortar no parêntese perderia dano legítimo.",
+          "A condição não se perdeu: o motor já sabia dobrar frio contra Molhado. Agora o Zero Absoluto rola os 12d12 escritos e a dobra devolve exatamente os 24d12 que o livro promete, pelo mecanismo que já existia. De quebra, a Cabeçada de Armas Pesadas parou de contar como dano no alvo o 1d4 que a técnica cobra de QUEM BATE.",
+        ],
+      },
+      {
+        heading: "Correr em linha reta não é atacar em área",
+        items: [
+          "A palavra \"linha\" sozinha marcava como ataque EM ÁREA cinco técnicas sem área nenhuma, e as três piores são as que a IA mais escolhe: a Investida (Deus da Espada), a Forma Quadrúpede (Deus do Norte) e a Investida Devastadora (Armas Pesadas) — as três dizem \"avance em LINHA RETA\", que é o caminho de quem corre e não a forma do golpe. A Investida acertava os cinco inimigos do playtest, todo turno.",
+          "As outras duas eram o Relâmpago (Água) e o Golpe que Não Tem Origem (Vendaval), que dizem \"alcance ilimitado (LINHA DE VISÃO)\". A rede agora pede uma linha MEDIDA — \"linha de 18m\", \"linha de 3 km\" —, que é como o livro escreve a forma de verdade, e cobre à parte os dois jeitos que ele usa pra dizer \"atravessa e pega quem está atrás\". As 52 técnicas de área legítimas continuam em área.",
+        ],
+      },
+      {
+        heading: "O playtest, de novo — e uma pergunta afiada",
+        items: [
+          "Mara (Escudos) foi de 112 para 196 de dano por batalha e de 56% para 67% de sobrevivência. Gorr (Armas Pesadas) de 101 para 177. Sera devolve 205 PV por batalha. E Vex (Deus da Espada) DESPENCOU de 92 para 29, com a sobrevivência caindo de 28% para 8%.",
+          "O Vex caiu porque a Investida dele era um ataque em área por engano: sozinha, ela multiplicava o dano dele por cinco no confronto de times. Ele continua com 35 de dano por TURNO — o terceiro melhor —, mas morre cedo.",
+          "Isso deixa uma pergunta de balanceamento muito mais afiada que a da 0.1.35: o livro chama o Deus da Espada de \"o maior dano do livro\", e ele entrega 29 por batalha; a Mara, cuja build está descrita como \"protege, não mata\", entrega 196 e lidera a sobrevivência. As duas descrições estão invertidas em relação ao que o simulador mede.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.38",
     date: "2026-09-10",
     title: "O Fio da Vida",

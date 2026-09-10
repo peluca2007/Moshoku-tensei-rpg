@@ -109,6 +109,74 @@ describe("o caso base de uma fórmula que descreve vários", () => {
     expect(casoBase("2d6 + BC de PV por turno")).toBe("2d6 + BC de PV por turno");
     expect(casoBase("1d8 + BC de PV Temporários")).toBe("1d8 + BC de PV Temporários");
   });
+
+  /*
+   * O caso do DANO, corrigido na 0.1.39 — e a razão de a função REMOVER o
+   * parêntese em vez de cortar nele.
+   *
+   * Onze técnicas do livro traziam o caso condicional na mesma linha e o motor
+   * somava os dois: o Zero Absoluto rolava 36d12 onde o livro escreve 12d12.
+   * Mas quatro técnicas de Água põem o TIPO de dano entre parênteses e seguem
+   * somando depois — cortar no parêntese perderia dano legítimo.
+   */
+  it("descarta o caso condicional entre parênteses, e só ele", () => {
+    expect(casoBase("12d12 de frio (24d12 contra alvo Molhado)")).toBe("12d12 de frio");
+    expect(casoBase("3d6 + BC de explosão (+3d6 contra alvos Em Chamas)")).toBe("3d6 + BC de explosão");
+    expect(casoBase("5d8 + BC (cortante, +2d8 contra Desequilibrado)")).toBe("5d8 + BC");
+  });
+
+  it("PRESERVA a soma legítima que continua depois do parêntese", () => {
+    // 3d8 e 1d6 são os dois dano de verdade, no mesmo golpe.
+    expect(casoBase("3d8 + BC (cortante) + 1d6 de frio")).toBe("3d8 + BC + 1d6 de frio");
+    expect(casoBase("2d8 + BC (perfurante) + 1d8 de frio (dobra contra Molhado)")).toBe(
+      "2d8 + BC + 1d8 de frio"
+    );
+  });
+
+  it("corta no ponto-e-vírgula e no “depois”, que emendam outro caso", () => {
+    expect(casoBase("3d8 + BC (ígneo, ignora Resistência); +2d8 contra alvo Em Chamas")).toBe("3d8 + BC");
+    expect(casoBase("12d8 + BC de dano de magma no impacto, depois 6d10 por turno")).toBe(
+      "12d8 + BC de dano de magma no impacto"
+    );
+  });
+
+  it("não conta como dano no alvo o que a técnica cobra de QUEM bate", () => {
+    // "Metade do dado (você sofre 1d4)": o 1d4 é do atacante. O motor o rolava
+    // como dano no alvo.
+    expect(casoBase("Metade do dado (você sofre 1d4)")).toBe("Metade do dado");
+  });
+});
+
+/*
+ * A leitura de ÁREA — corrigida na 0.1.39.
+ *
+ * A palavra "linha" sozinha pegava cinco técnicas sem área nenhuma, e as três
+ * piores eram as que a IA mais escolhe: a Investida do Deus da Espada, a Forma
+ * Quadrúpede do Deus do Norte e a Investida Devastadora de Armas Pesadas — as
+ * três dizem "avance EM LINHA RETA", que é o caminho de quem corre e não a
+ * forma do golpe. A Investida acertava os cinco inimigos do playtest de uma vez.
+ */
+describe("o que é ataque em área e o que só anda em linha reta", () => {
+  const acaoDe = (arvore: string, nome: string) =>
+    acoesDe(comArvoreInteira(arvore)).find((a) => a.nome === nome);
+
+  it("correr em linha reta não é atacar em área", () => {
+    expect(acaoDe("deus-da-espada", "Investida")?.area, "Investida").toBe(false);
+    expect(acaoDe("deus-do-norte", "Forma Quadrúpede")?.area, "Forma Quadrúpede").toBe(false);
+  });
+
+  it("“linha de visão” também não é área", () => {
+    expect(acaoDe("agua", "Relâmpago")?.area, "Relâmpago").toBe(false);
+  });
+
+  it("mas a linha MEDIDA é área de verdade", () => {
+    expect(acaoDe("agua", "Canhão de Água")?.area, "linha de 18m").toBe(true);
+    expect(acaoDe("vento", "Estrondo Sônico")?.area, "linha de 27 metros").toBe(true);
+  });
+
+  it("e atravessar o alvo pra pegar quem está atrás também", () => {
+    expect(acaoDe("fogo", "Lança de Plasma")?.area, "atinge tudo atrás").toBe(true);
+  });
 });
 
 describe("as ações de suporte deixaram de ser descartadas", () => {
