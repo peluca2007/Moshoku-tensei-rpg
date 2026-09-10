@@ -247,17 +247,17 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng): void {
     // orçamento transbordar pro próximo alvo enquanto a casca deste ainda
     // estava de pé — o chefe atacaria dois pelo preço de um.
     const golpe = Math.min(restante, alvo.pv + alvo.pvTemp);
-    c.danoCausado += aplicarDano(alvo, golpe);
+    c.danoCausado += aplicarDano(alvo, golpe, 2, rng);
     restante -= golpe;
   }
 }
 
 /** Aplica dano a um alvo e derruba se zerar. Um lugar só, pra contabilidade não divergir. */
-function bater(c: EstadoCriatura, alvo: Alvo, dano: number): void {
+function bater(c: EstadoCriatura, alvo: Alvo, dano: number, rng?: Rng): void {
   // `danoCausado` conta o PV REAL perdido, e não o golpe desferido: o que a
   // casca absorveu não feriu ninguém, e é o mesmo critério que o lado dos
   // personagens usa desde a 0.1.37.
-  c.danoCausado += aplicarDano(alvo, Math.min(dano, alvo.pv + alvo.pvTemp));
+  c.danoCausado += aplicarDano(alvo, Math.min(dano, alvo.pv + alvo.pvTemp), 2, rng);
 }
 
 /**
@@ -309,7 +309,7 @@ function resolverAcaoCriatura(
     if (resistiu) dano = Math.floor(dano / 2);
     alvoFalhou = !resistiu;
   }
-  bater(c, alvo, Math.round(dano * c.escala));
+  bater(c, alvo, Math.round(dano * c.escala), rng);
   if (acao.aplicaMolhado) alvo.molhado = true;
   if (alvoFalhou) {
     if (acao.aplicaPreso) alvo.preso = true;
@@ -371,7 +371,7 @@ function reagirComoChefe(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng)
 
   const alvo = vivos[0];
   if (d20(rng) + c.bonusAtaque < alvo.ca) return;
-  bater(c, alvo, Math.max(1, Math.round((c.danoPorTurno * c.escala) / ACOES_POR_TURNO)));
+  bater(c, alvo, Math.max(1, Math.round((c.danoPorTurno * c.escala) / ACOES_POR_TURNO)), rng);
 }
 
 export interface ResultadoEncontro {

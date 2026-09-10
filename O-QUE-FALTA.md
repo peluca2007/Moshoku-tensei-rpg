@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.39. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.40. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -114,16 +114,34 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     script — e o segundo passo é a tabela passar a montar um grupo do patamar de cada chefe, pra medir
     calibragem em vez de diferença de nível.
 
+13. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
+    longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:
+
+    | Corpo | | Magia | |
+    | --- | --- | --- | --- |
+    | Armas Pesadas | **43,2** | Vento | 23,7 |
+    | Punho do Fogo | 40,4 | **Fogo** | **13,9** |
+    | Vendaval | 34,4 | Terra | 13,2 |
+    | Deus da Espada | 29,0 | Água | 11,9 |
+
+    Duas perguntas separadas, e as duas são suas:
+    - **O teto do corpo é o triplo do teto da magia.** A magia compra alcance de 90m, área de verdade e
+      condição — coisas que este motor não pontua. A diferença é grande demais pra ser só isso?
+    - **A magia suprema é pior que a de dois ranks abaixo.** No Fogo, o **Sol Menor** (Imperador, 22 PM,
+      6 Ações) rende 13,6 por Ação e a **Lança de Plasma** (Avançado, 13 PM, 3 Ações) rende 13,9. No
+      Vento a diferença é maior ainda. Só Água e Terra têm a magia longa compensando. Ou o custo em
+      Ações das magias de Santo pra cima está alto demais, ou o dano delas está baixo demais.
+
 ## Site
 
-13. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
+14. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
     `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
     em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
     "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
     nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
     um Android e um iPhone.
 
-14. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+15. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
