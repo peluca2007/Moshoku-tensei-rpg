@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.17. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.18. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -71,22 +71,11 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Acertado com o autor, ainda não feito
 
-Estes dois saíram de um levantamento de 2026-09-09 e foram **escolhidos por ele**. Dos outros dois
-daquele levantamento, os alvos de toque viraram a 0.1.16 e a busca global virou a 0.1.17. Estão aqui
-com o contexto todo porque quem retomar não vai ter a conversa, só o arquivo.
+Sobrou um. Os outros três daquele levantamento de 2026-09-09 já saíram: os alvos de toque viraram a
+0.1.16, a busca global virou a 0.1.17 e as telas de 404 e de erro viraram a 0.1.18. O mapa maior das
+frentes abertas — vinte delas, levantadas em 2026-09-10 — vive em [`TAREFAS.md`](TAREFAS.md).
 
-10. **`not-found.tsx` e `error.tsx`.** Não existe nenhum dos dois em `src/app/`. Duas consequências,
-    e a primeira é literal: `curl /rota-que-nao-existe` devolve hoje
-    *"404: This page could not be found."* — **em inglês**, num site `lang="pt-BR"`, e com dois
-    `<title>` no mesmo documento.
-
-    A segunda é que um erro de runtime em qualquer componente cai na tela padrão do framework. Isso
-    ficou pior depois da 0.1.15: offline, essa tela é indistinguível de "faltou rede", e o usuário não
-    tem como saber se perdeu a ficha. O `error.tsx` deveria dizer o que é erro e o que é falta de
-    sinal, e afirmar que as fichas continuam no aparelho — é o que a `/offline` já faz, e ela serve de
-    modelo de tom e de layout.
-
-11. **Testes do `rollEngine` e macro de Teste.** Duas coisas no mesmo lugar.
+10. **Testes do `rollEngine` e macro de Teste.** Duas coisas no mesmo lugar.
 
     O `src/lib/rollEngine.ts` **não tem teste nenhum** — `rollD20` com os cinco modos de vantagem, e o
     parser de `rollFormula`. É o código que decide toda rolagem da mesa, e o `selectors.ts` ao lado

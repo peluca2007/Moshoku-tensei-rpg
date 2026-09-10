@@ -5,6 +5,43 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.18 — "A Porta Errada" · 2026-09-10
+
+### 🚪 O site respondia 404 em inglês
+
+Um endereço errado devolvia literalmente *"404: This page could not be found."* — **em inglês**, num
+site declarado `lang="pt-BR"`, e com **dois `<title>`** no mesmo documento, porque a tela embutida do
+framework trazia o dela por cima do que o layout já tinha escrito.
+
+Agora existe uma página de verdade: em português, **dentro do layout** (menu, rodapé, fonte e o tema
+escolhido), com um título só, e ainda respondendo `404` pra quem consulta o status.
+
+Ela diz a coisa que importa antes de qualquer outra: **um endereço errado não apaga personagem
+nenhum**. E oferece os caminhos que restam — roster, ficha, livro — mais a busca, pra quem procurava
+algo cujo endereço não sabia.
+
+### 🩹 E um erro de execução era indistinguível de falta de sinal
+
+Sem tela de erro própria, qualquer defeito de runtime caía na tela padrão do framework. Isso ficou
+pior depois da 0.1.15: **offline, essa tela é idêntica a "faltou rede"**, e quem está numa mesa sem
+sinal não tinha como saber se acabou de perder a ficha.
+
+A tela nova separa os dois casos:
+
+- **Sem rede:** diz que o site inteiro funciona offline, e que o mais provável é esta tela ter pedido
+  algo que só existe no servidor.
+- **Com rede:** assume o defeito, sem rodeio.
+
+Nos dois casos ela afirma o que a pessoa quer saber — as fichas continuam salvas no aparelho, não
+nesta tela. Tem botão de tentar de novo, e imprime o **código do erro**: em produção a mensagem real
+é apagada de propósito, e sem esse código um relato de bug chega como "deu erro".
+
+O estado da rede passou a ser lido em **um lugar só**, compartilhado com a tarja de aviso offline:
+duas leituras diferentes de "está offline?" no mesmo site acabariam se contradizendo na frente do
+usuário.
+
+---
+
 ## 0.1.17 — "Onde Está a Peçonha" · 2026-09-10
 
 ### 🔍 O livro tinha 879 verbetes e nenhum jeito de procurar um

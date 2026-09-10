@@ -14,7 +14,7 @@ export const metadata: Metadata = {
  *
  * Ela existe pra cobrir UM caso, e é bom que seja pequeno: uma rota que não
  * está na lista de pré-cache do `public/sw.js` — uma URL antiga, um link de
- * fora, uma rota criada depois do último deploy que a pessoa visitou. As nove
+ * fora, uma rota criada depois do último deploy que a pessoa visitou. As dezesseis
  * rotas do site inteiro são guardadas na instalação, então chegar aqui já é
  * exceção.
  *
@@ -53,6 +53,7 @@ export default function OfflinePage() {
           { href: "/encontros", label: "Encontros" },
           { href: "/loja", label: "Loja" },
           { href: "/livro", label: "Livro de Regras" },
+          { href: "/busca", label: "Busca" },
         ].map((rota) => (
           <Link
             key={rota.href}
