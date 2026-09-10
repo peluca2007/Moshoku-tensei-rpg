@@ -1,5 +1,6 @@
 import { VIGOR_FACTOR_TABLE } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { CONDICOES } from "@/data/condicoes";
 
 export default function Chapter4() {
   return (
@@ -144,34 +145,19 @@ export default function Chapter4() {
           sem repetir o efeito toda vez — é aqui, e só aqui, que cada uma delas tem sua definição completa.
           Se uma habilidade específica alterar o efeito padrão, a habilidade sempre vence.
         </Warning>
+        {/*
+          A tabela sai de `src/data/condicoes.ts` desde a 0.1.23, e não mais de
+          24 linhas escritas à mão aqui.
+
+          O motivo é o mesmo do resto do livro: a ficha marca condição com
+          duração e a prosa das habilidades linka pro verbete, então a definição
+          passou a ter TRÊS leitores. Escrita em três lugares, ela divergiria no
+          primeiro ajuste de regra — e a divergência apareceria como o livro
+          dizendo uma coisa e a ficha cobrando outra na mesa.
+        */}
         <BookTable
           headers={["Condição", "Efeito"]}
-          rows={[
-            ["Agarrado", "Deslocamento reduzido a 0. Desvantagem em ataques contra qualquer criatura que não seja quem te agarrou. Termina se quem te agarrou for incapacitado, ou gastando 1 Ação num teste de Força ou Agilidade (Disputa) contra quem segura."],
-            ["Amedrontado", "Desvantagem em testes de atributo e em ataques enquanto a fonte do medo estiver visível. Não pode se mover voluntariamente pra mais perto dela."],
-            ["Apontado", "A Ordem de Tiro do Tático (Cap. 3). O primeiro ataque que ACERTAR o alvo Apontado — do Tático ou de um aliado — causa +1d6 de dano por patamar que o Tático possua em Navegação e Liderança, e o próprio Tático soma o Bônus de Rank dele no acerto e no dano contra esse alvo. Dura até o próximo turno de quem apontou. Se ninguém acertar nesse intervalo, ele pode apontar o mesmo alvo de novo e o bônus acumula outro 1d6, até o dobro do patamar dele."],
-            ["Atolado", "Deslocamento reduzido à metade nesse terreno; gastar o dobro de Deslocamento pra sair dele. Não afeta ataques nem testes."],
-            ["Atordoado", "Perde todas as Ações e a Reação até o fim do próximo turno. Ataques contra você têm Vantagem, e você falha automaticamente em testes de resistência de Força e Agilidade."],
-            ["Caído", "Desvantagem em qualquer ataque que você faça. Ataques corpo a corpo contra você têm Vantagem; ataques à distância contra você têm Desvantagem. Levantar-se custa metade do seu Deslocamento."],
-            ["Cego", "Falha automaticamente em qualquer teste que dependa de visão. Seus ataques têm Desvantagem; ataques contra você têm Vantagem."],
-            ["Congelado", "Deslocamento reduzido a 0 e Desvantagem em testes de resistência de Agilidade, até quebrar o gelo (1 Ação, teste de Força CD 8 + BC de quem congelou) ou sofrer dano de fogo."],
-            ["Desequilibrado", "Deslocamento reduzido à metade, não pode usar mais de uma Reação por rodada, e sofre Desvantagem em ataques de oportunidade. Dura até o fim do próximo turno do alvo, salvo instrução contrária da habilidade."],
-            ["Em Chamas", "No início de cada um dos seus turnos, sofre 1d6 de dano ígneo (ou o valor que a habilidade que ateou o fogo especificar). Apaga submergindo em água, ficando Molhado, ou gastando 1 Ação inteira rolando no chão (teste de Agilidade CD 10)."],
-            ["Envenenado", "Desvantagem em ataques e em testes de atributo enquanto durar."],
-            ["Estagnação (Fluxo Interrompido)", "Uma das duas faces do Fluxo Interrompido. Dentro da barreira, toda magia custa +1 PM por Bônus de Rank de quem a ergueu, e ninguém recupera PM por meio nenhum — nem descanso, nem item, nem habilidade."],
-            ["Fonte (Fluxo Interrompido)", "A outra face do Fluxo Interrompido. Você e seus aliados dentro da barreira recuperam 1 PM no início de cada um dos seus turnos; quem não é seu aliado sofre Estagnação normalmente."],
-            ["Fluxo Interrompido", "A barreira decide como a mana se move lá dentro. Ao erguer uma barreira você escolhe uma das duas faces — Estagnação ou Fonte — e ela vale pela duração inteira. Nunca as duas."],
-            ["Incapacitado", "Não pode tomar Ações nem Reações. Mais severo que Atordoado: não termina sozinho no fim do turno — só quando a fonte específica disser como remover."],
-            ["Marcado", "Quem te marcou sabe seu PV aproximado, suas resistências e se você veste Touki, e ignora Cobertura parcial ao te atacar. Dura até ser removido pela habilidade que o concedeu, ou até você ficar fora do alcance dela por um Descanso Longo inteiro."],
-            ["Molhado", "Dano de frio contra você é dobrado. Desvantagem em testes de resistência contra magias de gelo de quem te molhou. Fogo aplicado a um alvo Molhado evapora a água em vez de acender."],
-            ["Paralisado", "Incapaz de agir e de se mover; falha automaticamente em testes de resistência de Força e Agilidade. Ataques corpo a corpo contra você são críticos automáticos se o atacante estiver adjacente."],
-            ["Petrificado", "Vira pedra (ou material equivalente): Incapacitado, imune a veneno e doença, e Resistência a todo dano enquanto durar. Reverter exige a fonte específica que petrificou, ou magia de rank igual ou superior."],
-            ["Soterrado", "A segunda metade da identidade da Terra, e o pagamento de Atolado: só pode ser aplicada a um alvo que já esteja Atolado, Preso ou Caído. Deslocamento 0, Preso, não enxerga nem conjura com gesto, e sofre 2d10 de sufocamento no início de cada turno se precisar respirar. Sai gastando 1 Ação num teste de Força (CD 8 + BC de quem soterrou), ou quando 30 de dano forem causados à terra que o cobre."],
-            ["Selado", "Dentro da barreira, nenhuma criatura conjura magia de rank SUPERIOR ao rank em Barreira de quem a ergueu — um Selado de rank Avançado permite magia até Avançado e barra Santo pra cima. Tentar mesmo assim gasta as Ações e o PM e falha. Não impede técnicas de Touki, ataques com arma nem habilidades de Utilidade: Selado é sobre mana, e só."],
-            ["Preso", "Deslocamento reduzido a 0. Ataques contra você têm Vantagem; seus ataques têm Desvantagem. Solta-se gastando 1 Ação num teste (Atributo e CD definidos por quem prendeu)."],
-            ["Quebrantado", "Acumulável: cada acúmulo dá −1 na CA e −1 no dano de todos os seus ataques, até o máximo do Bônus de Rank de quem aplicou. Não é ferimento — magia de Cura não remove. Some com um Descanso Curto, ou dura até o fim do combate, o que vier primeiro."],
-            ["Surdo", "Falha automaticamente em testes que dependam de audição. Não consegue usar Conjuração Padrão nem Encurtada (exigem cântico verbal) — só Conjuração Silenciosa continua funcionando pra você."],
-          ]}
+          rows={CONDICOES.map((c) => [c.nome, c.efeito])}
         />
       </Section>
 
