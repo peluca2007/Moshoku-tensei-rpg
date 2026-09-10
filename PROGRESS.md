@@ -106,10 +106,10 @@ Só o que ainda não foi feito. A lista curta do que já estava combinado com o 
 ## Backlog
 
 - Sincronização em tempo real (WebSocket) para jogar online com a ficha atualizando ao vivo.
-- ~~Rank Deus do Estilo Vendaval~~ — **entrada errada, conferida em 2026-09-09**: o Vendaval TEM o
-  quadro ("O Passo Que Não Termina", em `src/data/rankDeus.ts`). As três sem ele são Espada, Água e
-  Norte, e isso é de propósito — as Três Grandes Escolas do Corpo têm critério próprio de ascensão,
-  como o cabeçalho do arquivo documenta. Reescrever se ainda houver pendência real aqui.
+- ~~Rank Deus do Estilo Vendaval~~ — **entrada errada, encerrada em 2026-09-10**: o Vendaval TEM o
+  quadro, e as três do Corpo (Espada, Água, Norte) têm o CAMINHO de ascensão em `GODHOOD_PATH`, que o
+  livro imprime. Nenhuma árvore está sem patamar Divino escrito, e `src/data/rankDeus.test.ts` agora
+  reprova o dia em que uma ficar.
 - Bestiário: falta uma criatura de 6º patamar ("Ancião Demônio Esquecido", conceito esboçado). Agora ela
   nasceria já com ações escritas, como as outras seis.
 - Criatura montada em `/encontros`: exportar/importar (o empacotador do `.mtficha` já serve), e um

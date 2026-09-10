@@ -215,50 +215,25 @@ corpo que **acertaram** o Vendaval". Ninguém faz isso com lápis no meio da ses
 essas pendências não fecham. O barato é aproveitar o que já acontece: toda rolagem passa pelo
 `rollEngine`, e o `InitiativeTracker` já sabe de quem é o turno.
 
-### 19. 🔒 Escrever no livro por que Espada, Água e Norte não têm Rank Deus
+### 19. ✅ Rank Deus das Três Grandes Escolas — *a task estava errada; corrigido em 2026-09-10*
 
-Dezesseis árvores têm o quadro; três não têm, e isso é deliberado — as Três Grandes Escolas do Corpo
-têm critério próprio de ascensão. O motivo existe **só** como comentário em `src/data/rankDeus.ts`, e
-o `PROGRESS.md` já registrou a ausência como pendência uma vez, justamente porque a justificativa não
-estava em lugar visível. Escrever o critério no livro é conteúdo novo de regra: é do autor.
+**A premissa desta task não se sustentou.** Ela dizia que o critério de ascensão das três escolas do
+Corpo existia "só como comentário em `rankDeus.ts`" e precisava ser escrito no livro.
 
----
+Ele já estava escrito, e o livro já o imprimia. As três têm entradas inteiras em `GODHOOD_PATH`, com
+as chaves batendo com os ids das árvores: *"E o Deus da Espada?"*, *"O Caminho para Deusa da Água"*,
+*"O Estilo mais Barato de Ser Rei"*. O que elas não têm é o **quadro** do que o patamar FAZ — porque
+nelas o Deus é um cargo com titular vivo, não um nível de poder pessoal.
 
-## Achado enquanto trabalhava
+Ou seja: eu escrevi uma task pedindo conteúdo que já existia, dois dias depois de o `PROGRESS.md` ter
+registrado outra afirmação errada sobre o mesmo assunto (que o Vendaval não teria o quadro — tem). As
+duas têm a mesma causa: a informação mora em **dois mapas** (`RANK_DEUS` e `GODHOOD_PATH`) e só o
+acessor os une, então dá pra abrir o arquivo e não ver.
 
-### 21. ⬜ Rolar perícia direto da ficha — hoje não dá em lugar nenhum
+**O que foi feito, então:** nada de conteúdo novo — inventar lore aqui seria pôr palavra minha na sua
+canon. Em vez disso, `src/data/rankDeus.test.ts` passa a responder a pergunta por execução (nenhuma
+das dezenove pode ficar sem patamar Divino escrito), o cabeçalho do dado passa a dizer onde cada
+coisa mora, e as três afirmações erradas foram corrigidas no `PROGRESS.md` e no `O-QUE-FALTA.md`.
 
-Descoberto ao fechar a task 8: **não existe nenhum lugar no site onde se role uma perícia.** O
-`SkillsSection` lista as treinadas e não tem botão; o rolador tem quatro fontes de Teste — Livre,
-Atributo, Magia e Marcial — e perícia não é nenhuma delas.
-
-Estranho porque a perícia é provavelmente a rolagem mais frequente da mesa, e porque o site já tem
-tudo: `SKILLS` diz qual atributo governa cada uma, `getFinalAttribute` dá o valor, e o Bônus de Rank
-já é calculado pra ataque. A conta do Cap. 1 §4 está implementada — falta o botão.
-
-Uma quinta fonte "Perícia" no rolador, e um toque na própria perícia do `SkillsSection` abrindo o
-rolador já configurado (o `useDiceRollerStore` já recebe pedidos de fora — é assim que o Inventário
-manda a arma).
-
-**🔒 Obstáculo achado ao tentar implementar — é ele que precisa da decisão do autor.**
-
-A regra do Cap. 1 §4 tem três partes, e só duas são computáveis hoje:
-
-1. `1d20 + Atributo correspondente` — trivial, `SKILLS` já diz qual atributo governa cada perícia.
-2. *"Ter a perícia dá **Vantagem** quando ela se encaixa perfeitamente na situação"* — o **quando** é
-   julgamento do Mestre. O rolador pode, no máximo, avisar que o personagem tem a perícia; ligar
-   Vantagem sozinho seria decidir pelo Mestre.
-3. *"**Bônus de Rank em perícia** (só nas árvores de Utilidade): soma nas perícias que aquela árvore
-   cobre, e só naquelas que você realmente tem."* — **este é o problema.**
-   `Tree.proficiencies.pericias` é **prosa livre**, não lista. Não dá pra computar sem adivinhar por
-   regex em cima de frase escrita à mão — exatamente o tipo de coisa que quebra em silêncio no dia em
-   que alguém reescrever a frase.
-
-O caminho honesto exige uma decisão de modelo de dados: **transformar `proficiencies.pericias` em
-lista estruturada** (as perícias cobertas pelo Bônus de Rank daquela árvore), mantendo a prosa como
-texto de exibição, com um check garantindo que as duas não divirjam — no espírito do `check:texto`.
-São 19 árvores para revisar.
-
-Sem isso, um rolador de perícia ou **(a)** ignora o Bônus de Rank e mente para todo personagem de
-Utilidade, ou **(b)** pede o bônus digitado à mão, que é o que a fonte "Livre" já faz hoje. Nenhuma
-das duas merece ser implementada como se fosse a regra — por isso **nada foi implementado**.
+**Se você quiser mesmo mais texto** — o que um Deus da Espada precisa fazer, em detalhe — isso é
+escrita sua, e continua em aberto por escolha, não por esquecimento.

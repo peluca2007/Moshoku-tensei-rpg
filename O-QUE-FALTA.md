@@ -79,11 +79,19 @@ nas 0.1.20/0.1.21. O mapa maior — vinte frentes levantadas em 2026-09-10 — v
 *Nada — o último item combinado (testes do `rollEngine` e macro de Teste) saiu nas 0.1.20/0.1.21.*
 O mapa das frentes abertas agora é o [`TAREFAS.md`](TAREFAS.md).
 
-## Correções pendentes de registro
+## Correções de registro — fechadas em 2026-09-10
 
-- O `PROGRESS.md` lista no backlog *"Rank Deus / caminho de ascensão do Estilo Vendaval — a única
-  árvore sem esse quadro"*. **Está errado:** o Vendaval tem o quadro ("O Passo Que Não Termina", 5
-  parágrafos, em `src/data/rankDeus.ts`). As únicas três sem ele são Espada, Água e Norte, e o próprio
-  cabeçalho do arquivo documenta que é de propósito — as Três Grandes Escolas do Corpo têm critério
-  próprio de ascensão no lugar do quadro. Se sobrou alguma pendência ali, ela precisa ser reescrita,
-  porque a justificativa atual não vale mais.
+- O `PROGRESS.md` listava no backlog *"Rank Deus / caminho de ascensão do Estilo Vendaval — a única
+  árvore sem esse quadro"*. **Estava errado**, e a correção que escrevi aqui em 2026-09-09 também
+  estava incompleta: ela dizia que Espada, Água e Norte não têm o quadro "de propósito", o que fez
+  parecer que o critério delas não estava escrito em lugar nenhum.
+
+  **Está escrito.** As três têm entradas inteiras em `GODHOOD_PATH` (`src/data/rankDeus.ts`), com as
+  chaves batendo com os ids das árvores, e o livro as imprime desde sempre — "E o Deus da Espada?",
+  "O Caminho para Deusa da Água", "O Estilo mais Barato de Ser Rei". O que elas não têm é o *quadro*
+  do que o patamar FAZ, porque nelas o Deus é um cargo com titular vivo, e não um nível de poder.
+
+  Duas afirmações erradas sobre a mesma coisa em dois dias têm a mesma causa: a informação mora em
+  dois mapas e só o acessor os une, então dava pra abrir o arquivo e não ver. Agora
+  `src/data/rankDeus.test.ts` responde a pergunta por execução — nenhuma das dezenove árvores pode
+  ficar sem patamar Divino escrito sem reprovar o teste.
