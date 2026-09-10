@@ -5,6 +5,34 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.31 — "O Que a Mesa Mostrou" · 2026-09-10
+
+### 📓 O site passou a contar sozinho
+
+Metade das pendências de balanceamento pede uma contagem que só sai no papel. A do Vendaval é
+literal: *"conte os ataques corpo a corpo que **acertaram** o Vendaval e compare com o outro da linha
+de frente"*. Ninguém faz isso com lápis no meio de uma sessão — e é por isso que essas pendências não
+fecham.
+
+O **`/sessao`** conta sozinho, **sem pedir nenhuma digitação**. Ele pega carona no que já acontece:
+
+- cada rolagem do rolador entra **assinada por quem está agindo** (o tracker de iniciativa já sabe);
+- cada passo negativo de PV no Modo Mesa **é** um golpe levado.
+
+No fim aparecem os números que o balanceamento pede: quantas rolagens, quantos críticos, o que mais
+se repetiu, quem rolou mais — e, a coluna que responde a pergunta do Vendaval, **quanto dano cada
+personagem levou e em quantos golpes**.
+
+**Ele começa desligado**, e é uma decisão: gravar por padrão transformaria toda partida numa coleta
+silenciosa, num site inteiro construído em cima de dado que não sai do aparelho.
+
+### 🚫 E o que ele não finge saber
+
+**Se um ataque acertou.** O site vê a rolagem, não a CA do alvo — quem decide o acerto é o Mestre, na
+cabeça dele. Uma taxa de acerto ali seria número inventado.
+
+---
+
 ## 0.1.30 — "Duas Builds, Um Alvo" · 2026-09-10
 
 ### ⚖️ Comparar deixou de ser opinião
