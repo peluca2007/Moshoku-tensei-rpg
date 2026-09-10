@@ -40,6 +40,7 @@ import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import CondicoesSection from "./CondicoesSection";
 import DescansoSection from "./DescansoSection";
+import SimuladorPessoal from "./SimuladorPessoal";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
@@ -1022,6 +1023,13 @@ export default function CharacterSheet() {
             combate, e o descanso é o que ela recupera depois dele.
           */}
           <DescansoSection />
+
+          {/*
+            O simulador fecha o trio: condição é o que o combate cobrou,
+            descanso é o que se recupera dele, e isto responde se valia a pena
+            entrar. Os três usam a mesma ficha e ficam na mesma coluna.
+          */}
+          <SimuladorPessoal />
 
           <div className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm dark:border-parchment-800 dark:bg-parchment-900/60">
             <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
