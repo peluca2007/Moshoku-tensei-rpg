@@ -1,28 +1,14 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — **0.1.22**: o rolador de dados saiu de dentro da ficha e passou
-a existir em todas as rotas, que é onde a mesa está no meio do combate. Antes disso, na **0.1.21**: o macro do rolador aprendeu a guardar Teste (d20 com
-modificador e vantagem), e não só fórmula de dano — com migração, porque macro salvo não some. Antes
-disso, na **0.1.20**: compartilhar ficha virou um toque (a bandeja do
-próprio celular, na ficha e na criatura) e o site passou a oferecer a instalação como app em vez de
-esperar que a pessoa ache "Adicionar à tela de início" no menu. Antes disso, na **0.1.19**: o link
-de ficha parava de funcionar em silêncio — cinco causas diferentes viravam a mesma frase —, e agora
-cada uma tem nome, saída e um campo de colar que aceita até link quebrado em várias linhas; o teto do
-Discord foi medido (2.000 caracteres, e ele morde em três árvores). Antes disso, na **0.1.18**: o site respondia *"404: This page could not be
-found."* em inglês num site pt-BR, e um erro de runtime caía na tela padrão do framework — que,
-offline, é indistinguível de falta de sinal. As duas telas agora existem, em português, dentro do
-layout, e dizem que as fichas continuam no aparelho. Antes disso, na **0.1.17**: o livro tinha 879 verbetes e nenhum jeito de
-procurar um; a rota `/busca` procura no nome **e no texto** de todos eles, sem acento e sem caixa, e
-abre o card completo ali mesmo em vez de mandar pro livro. Antes disso, na **0.1.16**: o mapa de
-árvores era intocável no celular (nós de 6 a 14px, contra os 24 do WCAG 2.5.8) e passou a abrir num
-zoom com piso; o rodapé, os campos da ficha e os atalhos da landing também subiram do mínimo.
-Antes disso, na **0.1.15**: o site passou a funcionar **inteiro sem internet**
-e a instalar como app. Um service worker guarda as 16 rotas com o JavaScript e as imagens delas, e o
-`check:offline` prova isso matando o servidor e abrindo as 16 uma a uma. Antes disso, na **0.1.14**:
-quatro árvores voltaram da mesa e foram ajustadas pelo que a sessão mostrou — o Tático passou a
-executar a própria Ordem de Tiro, a Barreira ganhou PV declarados e duas magias de proteção de
-verdade, a Desintoxicação ganhou o que fazer num turno, e o Calor do Punho do Fogo foi reduzido a
-quatro regras e um custo só. Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
+**Última atualização:** 2026-09-10 — dezoito versões num dia (0.1.17 → 0.1.34), fechando as vinte e
+duas frentes do [`TAREFAS.md`](TAREFAS.md). O site ganhou **busca global** nos 879 verbetes, telas de
+**404 e de erro** em português, o **link de ficha diagnosticado** (com colagem e QR), **compartilhar
+pela bandeja do celular** e **botão de instalar**, o **rolador em todas as rotas** com macro de
+Teste, as **condições como estado vivo** da ficha, **descanso e downtime jogáveis**, o **Modo Mesa**,
+o **Painel do Mestre**, o **comparador de builds**, o **registro de sessão**, a **rolagem de
+perícia** e a **ficha imprimível**. Sobraram três coisas, e as três precisam do autor: o iPhone do
+amigo, meia hora de NVDA, e a decisão sobre quanto PM o Descanso Curto devolve.
+Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
 > O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
