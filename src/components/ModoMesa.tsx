@@ -75,7 +75,16 @@ function Reserva({
         <span className="text-2xs font-bold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
           {rotulo}
         </span>
-        <span className="tabular-nums text-lg font-black leading-none text-parchment-900 dark:text-parchment-50">
+        {/*
+          O valor é uma região viva: aqui ele muda por botão, no meio do turno,
+          e quem só ouve precisa saber em quanto ficou sem ter que voltar o foco
+          pra reler. `atomic` porque "19 de 40" só significa alguma coisa junto.
+        */}
+        <span
+          aria-live="polite"
+          aria-atomic="true"
+          className="tabular-nums text-lg font-black leading-none text-parchment-900 dark:text-parchment-50"
+        >
           {atual}
           <span className="text-xs font-normal text-parchment-600 dark:text-parchment-400"> / {max}</span>
         </span>

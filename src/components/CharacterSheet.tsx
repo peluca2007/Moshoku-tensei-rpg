@@ -815,7 +815,16 @@ export default function CharacterSheet() {
             PO
           </label>
 
+          {/*
+            `aria-live` no PA gasto (0.1.34).
+
+            Comprar uma habilidade acontece em OUTRA tela (o mapa de árvores) ou
+            em outra parte desta, e o número aqui muda sozinho como consequência.
+            Quem enxerga vê o número saltar; quem só ouve não recebia nada — a
+            compra era confirmada por um silêncio.
+          */}
           <span
+            aria-live="polite"
             title="Só informativo — quem controla quanto PA você tem é o Mestre."
             className="flex items-center gap-1 rounded-full bg-gold-500/10 px-3 py-1 font-medium text-gold-600 ring-1 ring-gold-500/30 dark:text-gold-400"
           >

@@ -16,6 +16,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.34",
+    date: "2026-09-10",
+    title: "Comprar o Quê?",
+    sections: [
+      {
+        heading: "Os botões passaram a dizer o que fazem",
+        items: [
+          "Numa grade de 85 itens da loja, um leitor de tela anunciava \"Comprar, botão\" oitenta e cinco vezes seguidas. O texto visível basta pra quem enxerga o card em volta; não basta pra quem só ouve o botão. Agora cada um anuncia o nome e o preço — na loja, nas árvores e nas magias combinadas.",
+          "Os números que mudam sozinhos passaram a ser anunciados: o PA gasto, que muda por causa de uma compra feita em outra tela, e as reservas do Modo Mesa, que mudam por botão no meio do turno. Antes, quem só ouve recebia silêncio como confirmação da compra.",
+          "Isto é a metade previsível do teste com leitor de tela. A outra metade — se a ordem de foco conta a história certa, e se dá pra montar um personagem sem enxergar — continua precisando de meia hora de escuta humana.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.33",
     date: "2026-09-10",
     title: "Aponte a Câmera",

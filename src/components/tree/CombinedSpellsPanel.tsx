@@ -137,6 +137,7 @@ export default function CombinedSpellsPanel() {
               </div>
 
               <button
+                aria-label={comprada ? `Remover ${spell.name}` : `Comprar ${spell.name} por ${spell.paCost} PA`}
                 type="button"
                 disabled={!comprada && !canPurchaseCombinedSpell(character, spell.id).ok}
                 onClick={() => (comprada ? remover(spell.id) : comprar(spell.id))}
