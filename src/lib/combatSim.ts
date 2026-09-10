@@ -142,13 +142,48 @@ export function temDano(formula: string): boolean {
 // Ficha → combatente
 // ---------------------------------------------------------------------------
 
+/**
+ * O que uma ação FAZ — 0.1.37.
+ *
+ * Até aqui o motor só conhecia dano, e `acoesDe` DESCARTAVA cura e PV
+ * Temporários com um filtro de texto, porque os três moram no mesmo campo
+ * (`damage.normal`) e somar uma cura como dano contava a Prontidão como 105 de
+ * dano por turno. O filtro estava certo em recusar; o erro era parar aí.
+ */
+export type TipoDeAcao = "dano" | "cura" | "escudo";
+
 /** Uma coisa que um combatente pode fazer no turno dele. */
 export interface Acao {
   nome: string;
   acoes: number;
   pm: number;
   pt: number;
+  /**
+   * A fórmula de DANO. Vazia em toda ação de suporte, de propósito.
+   *
+   * O campo do livro é o mesmo pros três tipos e o sinal é oposto — essa é
+   * exatamente a armadilha que derrubou a Prontidão antes. Deixando esta vazia
+   * e a fórmula de suporte em `formulaSuporte`, uma ação de cura que vaze pro
+   * caminho de dano soma ZERO em vez de curar o inimigo: `mediaDados("")` é 0.
+   */
   dano: string;
+  tipo: TipoDeAcao;
+  /**
+   * A fórmula do CASO BASE de PV curados ou de PV Temporários. Vazia em dano.
+   *
+   * "Caso base" e não a linha inteira: o livro escreve os dois casos na mesma
+   * frase — *"2d8 + BC de PV (4d8 + BC se Ferida Fresca)"* —, e `rolarDados`
+   * soma TODO grupo de dados que encontra. A linha crua rolaria 2d8+4d8, e a
+   * dobra da Ferida Fresca em cima disso devolveria 12d8 onde o livro promete
+   * 4d8. `casoBase` corta na primeira vírgula ou parêntese.
+   */
+  formulaSuporte: string;
+  /**
+   * A Prontidão diz *"sempre como Ferida Fresca"* — ela é a Reação que cura
+   * enquanto o golpe ainda acontece, e o livro a chama de "a magia que define a
+   * escola". Sem esta linha ela curaria metade do que promete.
+   */
+  sempreFresca: boolean;
   dadosDeArma: number;
   area: boolean;
   /** true = rola contra a CA; false = o alvo faz um teste de resistência. */
@@ -245,6 +280,78 @@ export interface Alvo {
    */
   reacaoDisponivel: boolean;
   danoCausado: number;
+  /**
+   * PV Temporários — 0.1.37. "Gastos antes dos PV reais", diz o livro em toda
+   * magia que os concede, e é exatamente o que `aplicarDano` faz.
+   *
+   * Não acumulam: o livro repete "não acumulam com outra fonte" na Casca, no
+   * Vigor Emprestado e no Corpo de Ferro, então uma segunda concessão
+   * SUBSTITUI quando for maior e é desperdiçada quando for menor.
+   */
+  pvTemp: number;
+  /**
+   * Ferida Fresca (Cap. 4) — a mecânica que dá identidade à Magia de Cura:
+   * *"toda a Magia de Cura cura em dobro contra uma Ferida Fresca. Ferida Fresca
+   * é o dano sofrido no turno atual ou no turno imediatamente anterior"*.
+   *
+   * É por isso que o curandeiro age cedo e não depois, e sem ela a escola vira
+   * um dado de cura genérico. Aqui o contador vale 2 quando o alvo leva dano e
+   * cai de 1 no início de cada turno DELE (`turnoPersonagem`) — a janela de dois
+   * turnos próprios que a regra descreve, na granularidade que este motor tem.
+   */
+  feridaFresca: number;
+}
+
+/**
+ * Um `Alvo` completo a partir do pouco que sempre muda — 0.1.37.
+ *
+ * Existe por um estrago concreto: ao acrescentar `pvTemp` e `feridaFresca` ao
+ * `Alvo`, o compilador acusou DEZ literais construídos à mão espalhados por
+ * script, motor e testes, cada um repetindo onze campos que ninguém lê. Um tipo
+ * que só se constrói assim cobra o preço inteiro a cada campo novo — e cobra na
+ * forma de "some um `false` em dez arquivos", que é onde se erra em silêncio.
+ *
+ * Quem chama diz o que interessa (nome, PV, CA, e o que for exceção); o resto
+ * nasce no estado neutro de quem acabou de entrar em combate.
+ */
+export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: number }): Alvo {
+  return {
+    nome: p.nome,
+    pv: p.pv,
+    ca: p.ca,
+    vivo: p.vivo ?? true,
+    molhado: p.molhado ?? false,
+    emChamas: p.emChamas ?? 0,
+    quebrantado: p.quebrantado ?? 0,
+    preso: p.preso ?? false,
+    caido: p.caido ?? false,
+    envenenado: p.envenenado ?? false,
+    reacaoDisponivel: p.reacaoDisponivel ?? false,
+    danoCausado: p.danoCausado ?? 0,
+    pvTemp: p.pvTemp ?? 0,
+    feridaFresca: p.feridaFresca ?? 0,
+  };
+}
+
+/** Uma `Acao` completa a partir do que a distingue. Mesmo motivo do `novoAlvo`. */
+export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
+  return {
+    nome: p.nome,
+    acoes: p.acoes ?? 1,
+    pm: p.pm ?? 0,
+    pt: p.pt ?? 0,
+    dano: p.dano ?? "",
+    tipo: p.tipo ?? "dano",
+    formulaSuporte: p.formulaSuporte ?? "",
+    sempreFresca: p.sempreFresca ?? false,
+    dadosDeArma: p.dadosDeArma ?? 0,
+    area: p.area ?? false,
+    ataque: p.ataque ?? false,
+    frio: p.frio ?? false,
+    fogo: p.fogo ?? false,
+    aplicaMolhado: p.aplicaMolhado ?? false,
+    aplicaQuebrantado: p.aplicaQuebrantado ?? 0,
+  };
 }
 
 /** O que muda numa batalha, do lado do personagem. */
@@ -252,6 +359,15 @@ export interface EstadoPersonagem extends Alvo {
   ficha: FichaCombate;
   pm: number;
   pt: number;
+  /**
+   * PV devolvidos a aliados (e a si) nesta batalha — 0.1.37.
+   *
+   * É a contrapartida de `danoCausado`, e existe porque sem ela o relatório
+   * media um curandeiro pela única coisa que ele não faz. Conta o PV
+   * EFETIVAMENTE devolvido, não o rolado: curar 40 em quem está 8 abaixo do
+   * máximo vale 8, que é o que a mesa recebeu.
+   */
+  pvCurado: number;
 }
 
 const ESCADA_DADOS = [4, 6, 8, 10, 12, 16, 20, 24];
@@ -272,19 +388,43 @@ export function acoesDe(c: CharacterData): Acao[] {
     const a = rd?.abilities.find((x) => x.id === compra.id) as AbilityDef | undefined;
     if (!a?.damage?.normal) continue;
     const txt = a.damage.normal.toLowerCase();
-    // `damage.normal` também guarda PV CURADOS (Cura) e PV Temporários
-    // (Escudos). Sem este filtro a simulação contava a Prontidão como 105 de
-    // dano por turno — o campo é o mesmo, o sinal é oposto. O filtro olha só
-    // `damage.normal` (não `effect`): magias de dano duplo como Julgamento e
-    // Luz Absoluta descrevem a cura extra no `effect` ("recuperam ... de
-    // PV"), e olhar o `effect` aqui derrubava o dano real delas do combate.
-    if (/de pv|pv temporários|recupera|cura /.test(txt)) continue;
+    /*
+     * Cura e PV Temporários — 0.1.37.
+     *
+     * `damage.normal` guarda os três: dano, PV curados (Cura) e PV Temporários
+     * (Escudos, Barreira). O campo é o mesmo e o SINAL é oposto — foi assim que
+     * a simulação já contou a Prontidão como 105 de dano por turno.
+     *
+     * Até aqui a linha abaixo era um `continue`: o motor recusava a cura e
+     * seguia. Recusar estava certo; parar aí não. O custo medido disso é a
+     * escola de Cura aparecendo no playtest com 2 de 23 habilidades visíveis, e
+     * a Barreira com 0 de 21 — e então o relatório declarando a curandeira
+     * fraca por não bater, que é a única coisa que ela não faz.
+     *
+     * A distinção entre os dois ramos é literal: "PV Temporários" está escrito
+     * em toda magia que os concede. O que sobra com "de PV" ou "recupera" é
+     * cura de verdade.
+     *
+     * Este ramo NÃO olha o `effect`, pelo mesmo motivo de sempre: Julgamento e
+     * Luz Absoluta são magias de DANO que descrevem uma cura secundária ali
+     * ("aliados vivos na área recuperam..."), e lê-las como cura derrubaria o
+     * dano real das duas. Elas seguem como dano; a cura de brinde delas é uma
+     * das simplificações declaradas.
+     */
+    const ehSuporte = /de pv|pv temporários|recupera|cura /.test(txt);
+    const tipo: TipoDeAcao = !ehSuporte ? "dano" : /pv temporários/.test(txt) ? "escudo" : "cura";
     out.push({
       nome: a.name,
       acoes: a.reaction ? 1 : Math.max(1, a.actions.normal),
       pm: a.pmCost ?? 0,
       pt: a.ptCost ?? 0,
-      dano: a.damage.normal,
+      tipo,
+      // As duas fórmulas nunca estão preenchidas ao mesmo tempo: a de dano fica
+      // vazia no suporte pra que uma cura que vaze pro caminho de dano some
+      // zero em vez de curar o inimigo.
+      dano: ehSuporte ? "" : a.damage.normal,
+      formulaSuporte: ehSuporte ? casoBase(a.damage.normal) : "",
+      sempreFresca: /sempre como ferida fresca/i.test(txt),
       // "+1 Dado de Arma", "+2 Dados de Arma", "Dado de arma rolado quatro vezes":
       // QUINZE técnicas do livro multiplicam o dado da arma em vez de trazer
       // dados próprios — medido em 2026-09-10, espalhadas por cinco árvores.
@@ -351,6 +491,23 @@ export function acoesDe(c: CharacterData): Acao[] {
   return out;
 }
 
+/**
+ * O primeiro caso de uma fórmula que descreve vários — 0.1.37.
+ *
+ * O livro escreve a exceção na mesma linha da regra, entre parênteses ou depois
+ * de vírgula: *"2d8 + BC de PV (4d8 + BC se Ferida Fresca)"*, *"12d12 de frio
+ * (24d12 contra alvo Molhado)"*. `rolarDados` soma todo `NdM` que vê, então a
+ * linha inteira vale a soma dos DOIS casos — um erro que já produziu "um cartão
+ * de 36d12" no gerador de criaturas, e que aqui produziria uma cura de 12d8
+ * onde o livro promete 4d8.
+ *
+ * Cortar no primeiro separador devolve o caso base, que é o que o motor sabe
+ * modular depois (dobrar por Ferida Fresca, dobrar frio contra Molhado).
+ */
+export function casoBase(formula: string): string {
+  return formula.split(/[(,]/)[0].trim();
+}
+
 /** Resolve uma ficha do site nos números que a simulação usa. */
 export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
   const tree = getTreeById(c.startingTreeId);
@@ -387,41 +544,22 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
     // simples (d6) e soma o atributo, sem Bônus de Rank, porque a técnica não
     // veio de árvore nenhuma. A primeira versão deste motor dava a escada a
     // todo mundo e fazia a curandeira bater 35 por turno de espada.
-    ataqueBasico: {
+    ataqueBasico: novaAcao({
       nome: degraus > 0 ? "golpe comum" : "arma simples",
-      acoes: 1,
-      pm: 0,
-      pt: 0,
       dano: `1d${ESCADA_DADOS[Math.min(ESCADA_DADOS.length - 1, 1 + degraus)]}`,
-      dadosDeArma: 0,
-      area: false,
       ataque: true,
-      frio: false,
-      fogo: false,
-      aplicaMolhado: false,
-      aplicaQuebrantado: 0,
-    },
+    }),
   };
 }
 
 /** Estado zerado pra uma batalha nova, a partir da ficha já derivada. */
 export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
   return {
+    ...novoAlvo({ nome: ficha.nome, pv: ficha.pvMax, ca: ficha.ca }),
     ficha,
-    nome: ficha.nome,
-    pv: ficha.pvMax,
-    ca: ficha.ca,
     pm: ficha.pmMax,
     pt: ficha.ptMax,
-    molhado: false,
-    emChamas: 0,
-    preso: false,
-    caido: false,
-    envenenado: false,
-    reacaoDisponivel: false,
-    vivo: true,
-    danoCausado: 0,
-    quebrantado: 0,
+    pvCurado: 0,
   };
 }
 
@@ -504,7 +642,12 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
  * dano bruto, que é o comportamento anterior à 0.1.35.
  */
 export function escolherAcao(e: EstadoPersonagem, acoesRestantes: number, alvo: Alvo | null = null): Acao {
-  const viaveis = e.ficha.acoes.filter((a) => a.acoes <= acoesRestantes && a.pm <= e.pm && a.pt <= e.pt);
+  const viaveis = e.ficha.acoes.filter(
+    // `tipo === "dano"` é o filtro que 0.1.37 tornou necessário: a lista de
+    // ações passou a conter cura e escudo, e uma delas escolhida aqui rolaria
+    // uma fórmula de dano VAZIA e queimaria o turno em zero.
+    (a) => a.tipo === "dano" && a.acoes <= acoesRestantes && a.pm <= e.pm && a.pt <= e.pt
+  );
   if (viaveis.length === 0) return e.ficha.ataqueBasico;
   return viaveis.reduce((melhor, a) =>
     danoEsperado(e, a, alvo) / a.acoes > danoEsperado(e, melhor, alvo) / melhor.acoes ? a : melhor
@@ -563,14 +706,198 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
   return dano;
 }
 
+/**
+ * A ÚNICA porta por onde dano entra num alvo — 0.1.37.
+ *
+ * Antes disto, `alvo.pv -= dano; if (alvo.pv <= 0) alvo.vivo = false;` estava
+ * copiado em cinco lugares (motor, tela de encontros e script, duas vezes cada
+ * em alguns). Enquanto dano era só subtração, cinco cópias de duas linhas eram
+ * feias e inofensivas. PV Temporários e Ferida Fresca mudam isso: as duas são
+ * consequências de LEVAR dano, e um lugar que não as aplicasse viraria um
+ * buraco silencioso — a Casca que não absorve num dos caminhos, a cura que não
+ * dobra porque ninguém marcou a ferida.
+ *
+ * Devolve o dano efetivamente sofrido nos PV reais, que é o que o atacante tem
+ * direito de contar como feito.
+ */
+export function aplicarDano(alvo: Alvo, dano: number): number {
+  if (dano <= 0) return 0;
+  // "Gastos antes dos PV reais": a casca come o golpe primeiro, e só o que
+  // sobrar chega na carne.
+  const absorvido = Math.min(alvo.pvTemp, dano);
+  alvo.pvTemp -= absorvido;
+  const real = dano - absorvido;
+  alvo.pv -= real;
+  // A ferida marca mesmo quando a casca comeu tudo: quem levou o golpe levou o
+  // golpe, e a janela de cura em dobro é sobre o momento, não sobre o número.
+  alvo.feridaFresca = 2;
+  if (alvo.pv <= 0) alvo.vivo = false;
+  return real;
+}
+
+/**
+ * Cura um alvo, respeitando o teto de PV e a Ferida Fresca — 0.1.37.
+ *
+ * Devolve o PV EFETIVAMENTE devolvido: curar 40 em quem está 8 abaixo do máximo
+ * vale 8. Contar o rolado em vez do recebido faria um curandeiro parecer melhor
+ * justamente quando ele está desperdiçando magia.
+ */
+export function curar(alvo: Alvo, rolado: number, pvMax: number, sempreFresca = false): number {
+  if (!alvo.vivo) return 0;
+  // Cap. 4: "toda a Magia de Cura cura em dobro contra uma Ferida Fresca".
+  const total = alvo.feridaFresca > 0 || sempreFresca ? rolado * 2 : rolado;
+  const antes = alvo.pv;
+  alvo.pv = Math.min(pvMax, alvo.pv + total);
+  return alvo.pv - antes;
+}
+
+/** Concede PV Temporários. Não acumulam: o maior vence, como diz cada magia. */
+export function darPvTemp(alvo: Alvo, valor: number): number {
+  if (!alvo.vivo || valor <= alvo.pvTemp) return 0;
+  const ganho = valor - alvo.pvTemp;
+  alvo.pvTemp = valor;
+  return ganho;
+}
+
+/**
+ * A ação de suporte que vale a pena AGORA, ou `null` — 0.1.37.
+ *
+ * ## A regra de decisão, declarada
+ *
+ * Uma IA que curasse por "valor esperado" precisaria de um modelo de quanto
+ * vale um PV, e esse modelo seria invenção minha entrando num relatório que o
+ * livro usa pra calibrar. A regra aqui é a que um jogador usa e cabe numa
+ * frase: **cura quem estiver na metade ou abaixo, começando pelo pior.** Se
+ * ninguém está ferido, não há suporte a fazer e o turno volta a ser de dano.
+ *
+ * O limiar de 50% não é neutro e não finge ser: curandeiro que espera demais
+ * perde gente, e curandeiro que cura cedo demais desperdiça — 50% é o meio
+ * declarado entre os dois, e mudá-lo muda os números do relatório.
+ *
+ * PV Temporários entram por outro critério, porque não é cura: eles valem em
+ * quem AINDA não tem casca, ferido ou não, e por isso são oferecidos ao alvo
+ * mais ferido que esteja sem ela.
+ */
+export function escolherSuporte(
+  e: EstadoPersonagem,
+  acoesRestantes: number,
+  aliados: EstadoPersonagem[]
+): { acao: Acao; alvo: EstadoPersonagem } | null {
+  const viaveis = e.ficha.acoes.filter(
+    (a) => a.tipo !== "dano" && a.acoes <= acoesRestantes && a.pm <= e.pm && a.pt <= e.pt
+  );
+  if (viaveis.length === 0) return null;
+
+  const vivos = aliados.filter((x) => x.vivo);
+  if (vivos.length === 0) return null;
+
+  const feridos = vivos
+    .filter((x) => x.pv <= x.ficha.pvMax / 2)
+    .sort((x, y) => x.pv / x.ficha.pvMax - y.pv / y.ficha.pvMax);
+
+  const curas = viaveis.filter((a) => a.tipo === "cura");
+  if (feridos.length > 0 && curas.length > 0) {
+    return { acao: melhorSuporte(curas, feridos.length), alvo: feridos[0] };
+  }
+
+  const escudos = viaveis.filter((a) => a.tipo === "escudo");
+  if (escudos.length > 0) {
+    const semCasca = vivos
+      .filter((x) => x.pvTemp === 0)
+      .sort((x, y) => x.pv / x.ficha.pvMax - y.pv / y.ficha.pvMax);
+    if (semCasca.length > 0) {
+      return { acao: melhorSuporte(escudos, semCasca.length), alvo: semCasca[0] };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * A melhor entre ações de suporte do mesmo tipo, por PV devolvidos POR AÇÃO.
+ *
+ * A conta espelha a do lado ofensivo (`danoEsperado / acoes`), com a diferença
+ * que só o suporte tem: uma magia em área multiplica pelo número de aliados que
+ * ela alcança. Sem isso a escolha era "a maior cura individual", e a Bênção
+ * Coletiva — 1d8 em TODO o grupo, por 4 PM — perdia para sempre pra uma Cura de
+ * 2d8 num só, inclusive com quatro companheiros caindo ao lado. Era uma magia
+ * que o livro tem e a simulação nunca usava.
+ *
+ * `alcance` é quantos alvos elegíveis existem AGORA — feridos, no caso da cura.
+ * Uma magia de área com um ferido só vale o mesmo que a individual, que é
+ * exatamente o que a mesa vê.
+ */
+function melhorSuporte(candidatas: Acao[], alcance: number): Acao {
+  const valor = (a: Acao) =>
+    // `sempreFresca` dobra de verdade e a IA precisa saber: a Prontidão cura
+    // 2d8 escritos que valem 4d8 na mesa, e sem este fator ela era comparada
+    // pela metade do que entrega.
+    (mediaDados(a.formulaSuporte) * (a.area ? alcance : 1) * (a.sempreFresca ? 2 : 1)) / a.acoes;
+  return candidatas.reduce((m, a) => (valor(a) > valor(m) ? a : m));
+}
+
 /** Um turno inteiro de um personagem: 3 Ações gastas na melhor coisa disponível. */
-export function turnoPersonagem(e: EstadoPersonagem, inimigos: Alvo[], rng: Rng): void {
+export function turnoPersonagem(
+  e: EstadoPersonagem,
+  inimigos: Alvo[],
+  rng: Rng,
+  /**
+   * O grupo de quem age, pra que ele possa CURAR — 0.1.37.
+   *
+   * Opcional porque nem todo chamador tem grupo (o comparador de builds põe uma
+   * ficha sozinha contra um boneco). Sem ele o turno é o de sempre, só dano — e
+   * é o que garante que esta mudança não altere um número de quem não passa
+   * aliado. Quem passa, passa o time INTEIRO incluindo `e`: o curandeiro se
+   * cura, e o livro não diz o contrário.
+   */
+  aliados: EstadoPersonagem[] = []
+): void {
   if (!e.vivo) return;
+  // A janela da Ferida Fresca fecha de um turno próprio por vez: "o dano
+  // sofrido no turno atual ou no imediatamente anterior".
+  if (e.feridaFresca > 0) e.feridaFresca--;
+
   let acoes = 3;
   let guarda = 0;
   while (acoes > 0 && guarda++ < 10) {
     const vivos = inimigos.filter((x) => x.vivo);
     if (vivos.length === 0) return;
+
+    /*
+     * Suporte ANTES de dano, quando há suporte a fazer.
+     *
+     * A ordem é uma decisão, não um detalhe: quem cura depois de bater cura um
+     * turno mais tarde, e um turno mais tarde é exatamente o que faz a Ferida
+     * Fresca fechar e a magia valer metade. A escola inteira de Cura é sobre
+     * essa janela — a Prontidão, que o livro chama de "a magia que define a
+     * escola", é uma Reação justamente pra não perdê-la.
+     */
+    const suporte = escolherSuporte(e, acoes, aliados);
+    if (suporte) {
+      acoes -= suporte.acao.acoes;
+      e.pm -= suporte.acao.pm;
+      e.pt -= suporte.acao.pt;
+      /*
+       * Cura em área pega o grupo, do mesmo jeito que dano em área pega todos
+       * os inimigos de pé — a Bênção Coletiva diz "todos os aliados na área
+       * recuperam PV", e curar um só dela faria a magia de 4 PM valer menos que
+       * a de 2. Sem mapa, "na área" é o grupo.
+       *
+       * A fórmula é rolada UMA vez e aplicada a cada um: é uma conjuração só.
+       * Quem está no máximo recebe 0 e não desperdiça nada além da magia, que é
+       * o que aconteceria na mesa.
+       */
+      const rolado = rolarDados(suporte.acao.formulaSuporte, rng) + e.ficha.bc;
+      const alvos = suporte.acao.area ? aliados.filter((x) => x.vivo) : [suporte.alvo];
+      for (const alvo of alvos) {
+        e.pvCurado +=
+          suporte.acao.tipo === "cura"
+            ? curar(alvo, rolado, alvo.ficha.pvMax, suporte.acao.sempreFresca)
+            : darPvTemp(alvo, rolado);
+      }
+      continue;
+    }
+
     // O alvo da vez entra na escolha: sem ele a IA não sabe se a técnica de
     // ataque que ela prefere tem chance de acertar este inimigo.
     const a = escolherAcao(e, acoes, vivos[0]);
@@ -580,10 +907,7 @@ export function turnoPersonagem(e: EstadoPersonagem, inimigos: Alvo[], rng: Rng)
     e.pt -= a.pt;
     const alvos = a.area ? vivos : [vivos[0]];
     for (const alvo of alvos) {
-      const dano = resolver(e, a, alvo, rng);
-      alvo.pv -= dano;
-      e.danoCausado += dano;
-      if (alvo.pv <= 0) alvo.vivo = false;
+      e.danoCausado += aplicarDano(alvo, resolver(e, a, alvo, rng));
     }
   }
 }
@@ -591,8 +915,7 @@ export function turnoPersonagem(e: EstadoPersonagem, inimigos: Alvo[], rng: Rng)
 /** Queima no início do turno de quem está Em Chamas. Devolve true se sobreviveu. */
 export function tickChamas(alvo: Alvo, rng: Rng): boolean {
   if (!alvo.vivo || alvo.emChamas === 0) return alvo.vivo;
-  alvo.pv -= dado(rng, alvo.emChamas);
-  if (alvo.pv <= 0) alvo.vivo = false;
+  aplicarDano(alvo, dado(rng, alvo.emChamas));
   return alvo.vivo;
 }
 
@@ -641,7 +964,8 @@ export function consumirReacao(alvo: Alvo): boolean {
  */
 export const SIMPLIFICACOES = [
   "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: as quatro são sobre movimento, alcance e posição, e este motor não tem mapa.",
-  "Cura, barreira e Salvações não entram. Quem joga de suporte aparece aqui só pelo dano que causa, que é o que ele menos faz — e o grupo parece mais frágil do que é na mesa.",
+  "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
+  "O que de suporte segue de fora: Salvações, e a maior parte da Barreira e Proteção — muralha, domo, selo e anulação de magia são posição e regra de alcance, e este motor não tem mapa. Das 21 habilidades daquela árvore, só a Casca tem número que ele saiba usar. Julgamento e Luz Absoluta entram como as magias de DANO que são; a cura secundária que as duas descrevem na prosa não é contada.",
   "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",

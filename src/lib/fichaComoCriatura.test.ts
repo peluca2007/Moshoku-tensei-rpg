@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { criaturaDaFicha, formulaDaAcao } from "./fichaComoCriatura";
-import { mediaFormula, montarFicha, patamarDaFicha } from "./combatSim";
+import {
+  mediaFormula,
+  montarFicha,
+  novaAcao,
+  patamarDaFicha,
+} from "./combatSim";
 import { usaAcoes } from "./encounterSim";
 import { getArmorClass, getMaxHp } from "@/store/selectors";
 import { AttributeKey, CharacterData } from "./types";
@@ -163,19 +168,7 @@ describe("ficha como criatura", () => {
   });
 
   describe("a fórmula de uma ação", () => {
-    const acaoBase = {
-      nome: "Golpe",
-      acoes: 1,
-      pm: 0,
-      pt: 0,
-      dadosDeArma: 0,
-      area: false,
-      ataque: true,
-      frio: false,
-      fogo: false,
-      aplicaMolhado: false,
-    aplicaQuebrantado: 0,
-    };
+    const acaoBase = novaAcao({ nome: "Golpe", ataque: true });
 
     it("mantém os dados próprios e o fixo do texto", () => {
       expect(formulaDaAcao({ ...acaoBase, dano: "3d6+2" }, 8, 5)).toBe("3d6+2");

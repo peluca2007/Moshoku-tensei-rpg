@@ -1,5 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { Acao, Alvo, acoesDe, makeRng, montarFicha, novoEstado, resolver, SIMPLIFICACOES } from "./combatSim";
+import {
+  Acao,
+  Alvo,
+  SIMPLIFICACOES,
+  acoesDe,
+  makeRng,
+  montarFicha,
+  novaAcao,
+  novoAlvo,
+  novoEstado,
+  resolver,
+} from "./combatSim";
 import { getTreeById, TREES } from "@/data/trees";
 import { AttributeKey, CharacterData } from "./types";
 
@@ -81,38 +92,11 @@ function pesado(ranks: string[]): CharacterData {
 }
 
 function boneco(ca = 15, pv = 10_000): Alvo {
-  return {
-    nome: "boneco",
-    pv,
-    ca,
-    vivo: true,
-    molhado: false,
-    emChamas: 0,
-    quebrantado: 0,
-    preso: false,
-    caido: false,
-    envenenado: false,
-    reacaoDisponivel: false,
-    danoCausado: 0,
-  };
+  return novoAlvo({ nome: "boneco", pv, ca });
 }
 
 function acaoDeTeste(patch: Partial<Acao> = {}): Acao {
-  return {
-    nome: "teste",
-    acoes: 1,
-    pm: 0,
-    pt: 0,
-    dano: "10",
-    dadosDeArma: 0,
-    area: false,
-    ataque: false,
-    frio: false,
-    fogo: false,
-    aplicaMolhado: false,
-    aplicaQuebrantado: 0,
-    ...patch,
-  };
+  return novaAcao({ nome: "teste", dano: "10", ...patch });
 }
 
 /* ------------------------------------------------------------------------- */

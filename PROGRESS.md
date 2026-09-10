@@ -1,6 +1,6 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — vinte versões num dia (0.1.17 → 0.1.36), fechando as vinte e
+**Última atualização:** 2026-09-10 — vinte e uma versões num dia (0.1.17 → 0.1.37), fechando as vinte e
 duas frentes do [`TAREFAS.md`](TAREFAS.md). O site ganhou **busca global** nos 879 verbetes, telas de
 **404 e de erro** em português, o **link de ficha diagnosticado** (com colagem e QR), **compartilhar
 pela bandeja do celular** e **botão de instalar**, o **rolador em todas as rotas** com macro de
@@ -108,6 +108,14 @@ encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
 - **Quatro condições fora da simulação**: Atolado, Desequilibrado, Marcado e Soterrado. As quatro
   são sobre movimento, alcance e posição, e o motor não tem mapa — modelá-las exigiria dar ao
   simulador uma noção de distância que ele nunca teve. Quebrantado saiu desta lista na 0.1.35.
+- **O simulador enxerga o que é DANO, e pouco além.** Medido em 2026-09-10: das 601 habilidades e
+  talentos do livro, a lista de ações do motor tem 122 — e a distribuição é o problema, não a fração.
+  Cura e PV Temporários entraram na 0.1.37; o que segue invisível é **Espíritos e Feras (0 de 7)**,
+  **Bardo e Interação (0 de 6)**, **Navegação e Liderança (0 de 6)** e a maior parte de **Barreira e
+  Proteção (1 de 21)**. As quatro são economia de ação, interação social, informação e posição — não
+  dano —, e é por isso que o `O-QUE-FALTA` pede mesa de verdade justamente pra elas. **A lista de
+  pendências de playtest é a sombra do ponto cego da ferramenta**, e cada pedaço de motor que enxergar
+  mais tira uma linha daquela lista.
 - **A IA do simulador não dá valor a condição.** Ela escolhe pelo dano ESPERADO contra o alvo da vez
   — desde a 0.1.35 com Dados de Arma, bônus fixo e chance de errar na conta —, e o valor de um
   acúmulo continua fora dela. É por isso que Quebrantado, já modelado, não move um número sequer no

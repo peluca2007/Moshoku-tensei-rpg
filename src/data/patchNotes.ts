@@ -16,6 +16,52 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.37",
+    date: "2026-09-10",
+    title: "A Curandeira Não Bate",
+    sections: [
+      {
+        heading: "O instrumento via 20% do livro, e não era 20% espalhado",
+        items: [
+          "Contado: o livro tem 601 habilidades e talentos, e a lista de ações do simulador tinha 122. A distribuição é que era o problema — Barreira e Proteção 0 de 21, Espíritos e Feras 0 de 7, Bardo 0 de 6, Navegação e Liderança 0 de 6, Estilo Deus da Água 1 de 19, Cura 2 de 23, Cavalaria e Escudos 4 de 23; do outro lado, Fogo 14 de 19 e Água 17 de 24.",
+          "Quando o playtest dizia que o Fogo bate mais que a Barreira, ele comparava uma árvore lida a 74% com uma lida a 0%. Isso não é achado de balanceamento, é artefato do instrumento.",
+          "E as árvores sobre as quais ainda não há resposta no backlog — Invocador, Ladino, Bardo, Tático, Barreira, Desintoxicação — são exatamente as que o simulador via entre 0% e 20%. Aquela lista não é um backlog: é a sombra do ponto cego da ferramenta.",
+        ],
+      },
+      {
+        heading: "Cura e PV Temporários entraram",
+        items: [
+          "O motor DESCARTAVA cura e PV Temporários com um filtro de texto. Recusar estava certo — os três moram no mesmo campo do livro e o sinal é oposto, e somar cura como dano já contou a Prontidão como 105 de dano por turno. O erro era parar aí.",
+          "Agora a cura entra com a dobra da Ferida Fresca (Cap. 4: \"o dano sofrido no turno atual ou no turno imediatamente anterior\"), que é a mecânica que dá identidade à escola — a que faz o curandeiro agir cedo em vez de depois. A Prontidão, que o livro chama de \"a magia que define a escola\", cura SEMPRE como Ferida Fresca. PV Temporários são gastos antes dos PV reais e não acumulam, como cada magia que os concede diz. Cura em área pega o grupo.",
+          "A IA ganhou uma regra de decisão DECLARADA, e não uma tática: cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem. O limiar de 50% não é neutro e não finge ser — curandeiro que espera demais perde gente, o que cura cedo demais desperdiça.",
+        ],
+      },
+      {
+        heading: "Um erro de três vezes o valor, achado no meio do caminho",
+        items: [
+          "A rolagem soma TODO grupo de dados que encontra na fórmula, e o livro escreve os dois casos na mesma linha: \"2d8 + BC de PV (4d8 + BC se Ferida Fresca)\". A linha crua rola 2d8+4d8, e dobrar isso pela Ferida Fresca devolveria 12d8 onde o livro promete 4d8.",
+          "Medido com o erro dentro, o time da curandeira ganhava 20,1% das batalhas; corrigido, 8,3%. É o mesmo erro que o gerador de criaturas já tinha cometido — \"(24d12 contra alvo Molhado)\" somado virava um cartão de 36d12 — e agora existe uma função só pra isso, com teste próprio.",
+        ],
+      },
+      {
+        heading: "O playtest ganhou a coluna que faltava",
+        items: [
+          "O Time A (com a Sera) subiu de 6,7% para 8,3% de vitória. A tabela de contribuição agora tem PV DEVOLVIDOS ao lado do dano: a Sera aparece com 21 de dano e 44 de cura por batalha, e sai do fim da tabela para o quinto lugar. O que mudou não foi a ficha dela, foi a régua.",
+          "A ordenação passou a ser por dano MAIS PV devolvidos. Somar os dois não afirma que 1 de cura vale 1 de dano — afirma que os dois são maneiras de gastar um turno, que é o que a tabela compara.",
+          "A tela de encontros herdou tudo: as fichas do grupo agora se curam nas 300 batalhas de teste do montador.",
+        ],
+      },
+      {
+        heading: "O que foi consertado por baixo",
+        items: [
+          "Uma porta só pra dano. A subtração de PV estava copiada em cinco lugares — enquanto dano era subtração, cinco cópias eram feias e inofensivas; PV Temporários e Ferida Fresca são consequências de LEVAR dano, e um lugar que não as aplicasse viraria buraco silencioso.",
+          "Fábricas em vez de literais: acrescentar dois campos ao alvo acusou DEZ objetos montados à mão, cada um repetindo onze campos que ninguém lê. Agora cada chamador cobra só o que distingue o caso dele, e o próximo campo novo não quebra dez arquivos.",
+          "O orçamento de dano do chefe passou a considerar a casca no teto do golpe: sem isso ele transbordaria pro próximo alvo enquanto a casca deste ainda estava de pé, atacando dois pelo preço de um. 25 testes novos, incluindo o de ponta a ponta: um grupo com curandeiro tem que aguentar mais pancada que o mesmo grupo sem ele.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.36",
     date: "2026-09-10",
     title: "Dez Destinos Viraram Sete",

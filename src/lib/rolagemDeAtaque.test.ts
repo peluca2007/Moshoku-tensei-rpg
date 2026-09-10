@@ -7,6 +7,7 @@ import {
   escolherAcao,
   makeRng,
   montarFicha,
+  novoAlvo,
   novoEstado,
   resolver,
 } from "./combatSim";
@@ -145,20 +146,7 @@ describe("a previsão da IA bate com o que os dados devolvem", () => {
     let total = 0;
     for (let semente = 1; semente <= n; semente++) {
       const rng = makeRng(semente);
-      const alvo: Alvo = {
-        nome: "boneco",
-        pv: 1_000_000,
-        ca,
-        vivo: true,
-        molhado: false,
-        emChamas: 0,
-        quebrantado: 0,
-        preso: false,
-        caido: false,
-        envenenado: false,
-        reacaoDisponivel: false,
-        danoCausado: 0,
-      };
+      const alvo: Alvo = novoAlvo({ nome: "boneco", pv: 1_000_000, ca });
       total += resolver(e, acao, alvo, rng);
     }
     return total / n;
@@ -173,20 +161,7 @@ describe("a previsão da IA bate com o que os dados devolvem", () => {
   for (const caso of casos) {
     it(`${caso.nome}: previsão e média empírica se encontram`, () => {
       const e = novoEstado(montarFicha(comArvoreInteira(caso.arvore)));
-      const alvoRef: Alvo = {
-        nome: "ref",
-        pv: 1,
-        ca: caso.ca,
-        vivo: true,
-        molhado: false,
-        emChamas: 0,
-        quebrantado: 0,
-        preso: false,
-        caido: false,
-        envenenado: false,
-        reacaoDisponivel: false,
-        danoCausado: 0,
-      };
+      const alvoRef: Alvo = novoAlvo({ nome: "ref", pv: 1, ca: caso.ca });
       const acao = escolherAcao(e, 3, alvoRef);
       const previsto = danoEsperado(e, acao, alvoRef);
       const empirico = media(e, acao, caso.ca);
@@ -211,20 +186,7 @@ describe("a previsão da IA bate com o que os dados devolvem", () => {
    */
   it("a IA do Deus da Espada escolhe uma técnica de Dado de Arma", () => {
     const e = novoEstado(montarFicha(comArvoreInteira("deus-da-espada")));
-    const alvo: Alvo = {
-      nome: "ref",
-      pv: 1,
-      ca: 15,
-      vivo: true,
-      molhado: false,
-      emChamas: 0,
-      quebrantado: 0,
-      preso: false,
-      caido: false,
-      envenenado: false,
-      reacaoDisponivel: false,
-      danoCausado: 0,
-    };
+    const alvo: Alvo = novoAlvo({ nome: "ref", pv: 1, ca: 15 });
     const escolhida = escolherAcao(e, 3, alvo);
     expect(
       escolhida.dadosDeArma,
@@ -237,20 +199,7 @@ describe("a previsão da IA bate com o que os dados devolvem", () => {
 
   it("a previsão cai quando a CA sobe — senão a IA não estaria olhando pro alvo", () => {
     const e = novoEstado(montarFicha(comArvoreInteira("fogo")));
-    const ref = (ca: number): Alvo => ({
-      nome: "ref",
-      pv: 1,
-      ca,
-      vivo: true,
-      molhado: false,
-      emChamas: 0,
-      quebrantado: 0,
-      preso: false,
-      caido: false,
-      envenenado: false,
-      reacaoDisponivel: false,
-      danoCausado: 0,
-    });
+    const ref = (ca: number): Alvo => (novoAlvo({ nome: "ref", pv: 1, ca }));
     const acaoDeAtaque = acoesDe(comArvoreInteira("fogo")).find((a) => a.ataque)!;
     expect(danoEsperado(e, acaoDeAtaque, ref(25))).toBeLessThan(danoEsperado(e, acaoDeAtaque, ref(8)));
   });
