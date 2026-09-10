@@ -84,6 +84,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:redundancia` | Acha habilidades que repetem um patamar anterior |
 | `npm run check:arvores` | Audita as 19 árvores contra a régua do Apêndice C e acusa quem sai da faixa |
 | `npm run check:texto` | Lê o TEXTO das 592 habilidades contra os campos delas e acusa contradição |
+| `npm run check:progressao` | Dano esperado **por Ação** por rank e por pilar: acha capstone que rende menos que o rank abaixo, e compara o teto do Corpo com o da Magia. Não reprova — as perguntas são de design |
 | `npm run check:contraste` | Mede o contraste das 17 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
 | `npm run check:mobile` | Procura transbordo horizontal de 320px a 414px (precisa de `npm run dev`) |
 | `npm run check:a11y` | Controle sem nome, campo sem rótulo, hierarquia de cabeçalho (precisa de `npm run dev`) |
