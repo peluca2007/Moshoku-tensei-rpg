@@ -16,6 +16,23 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.26",
+    date: "2026-09-10",
+    title: "Eu Aguento Isso?",
+    sections: [
+      {
+        heading: "O simulador saiu da mão do Mestre e chegou na do jogador",
+        items: [
+          "O /encontros sempre soube rodar 300 batalhas contra as fichas do grupo, mas isso responde a pergunta do MESTRE: este encontro mata a mesa? A pergunta do jogador é outra e mais simples — quantos turnos eu aguento contra um Sapo-Lodo? e contra três?",
+          "A ficha agora responde: escolha uma criatura do Apêndice G (ou uma do seu bestiário), diga quantas, e veja chance de vitória, rodadas médias e quanto PV sobra.",
+          "Nenhum número novo foi inventado: é o mesmo motor que já trava a régua do Apêndice C nos testes do projeto.",
+          "A simulação é você SOZINHO, e a tela diz isso. A pergunta é sobre a sua build, não sobre o grupo — um resultado que incluísse aliados imaginários responderia outra coisa.",
+          "A semente é fixa: repetir a mesma escolha dá o mesmo número. É o que permite comparar duas builds — um resultado que dança a cada clique não serve pra decidir nada.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.25",
     date: "2026-09-10",
     title: "Dormir Conta",

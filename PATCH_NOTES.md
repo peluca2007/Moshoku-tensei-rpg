@@ -5,6 +5,26 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.26 — "Eu Aguento Isso?" · 2026-09-10
+
+### ⚔️ O simulador saiu da mão do Mestre e chegou na do jogador
+
+O `/encontros` sempre soube rodar 300 batalhas contra as fichas do grupo — mas isso responde a
+pergunta do **Mestre**: *este encontro mata a mesa?* A pergunta do jogador é outra, e mais simples:
+*quantos turnos eu aguento contra um Sapo-Lodo? e contra três?*
+
+A ficha agora responde. Escolha uma criatura do Apêndice G (ou uma do seu bestiário), diga quantas, e
+veja **chance de vitória, rodadas médias e quanto PV sobra**.
+
+- **Nenhum número novo foi inventado:** é o mesmo motor que já trava a régua do Apêndice C nos testes.
+- **É você sozinho**, e a tela diz isso. A pergunta é sobre a sua build, não sobre o grupo — um
+  resultado que incluísse aliados imaginários responderia outra coisa. A conta do grupo continua em
+  `/encontros`, contra as fichas de verdade.
+- **A semente é fixa:** repetir a mesma escolha dá o mesmo número. É o que permite comparar duas
+  builds; um resultado que dança a cada clique não serve pra decidir nada.
+
+---
+
 ## 0.1.25 — "Dormir Conta" · 2026-09-10
 
 ### 🛏️ Descanso virou botão, com a conta à vista
