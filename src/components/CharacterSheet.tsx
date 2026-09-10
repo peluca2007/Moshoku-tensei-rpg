@@ -492,7 +492,13 @@ export default function CharacterSheet() {
   }, [unlockedRanks]);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
+    /*
+      `ficha-impressa` é o gancho do `@media print` do globals.css (0.1.29).
+      Ele existe pra que as regras de densidade da impressão valham SÓ aqui: o
+      livro também é impresso, e apertar o corpo dele com as mesmas regras
+      transformaria a leitura num panfleto.
+    */
+    <div className="ficha-impressa mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
       {/* Cabeçalho */}
       <header className="surface-raised relative isolate overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 p-4 sm:p-6 dark:border-parchment-700/80 dark:bg-parchment-900/80">
         {/*
@@ -580,7 +586,7 @@ export default function CharacterSheet() {
             aria-label="Nome do personagem"
             className="w-full min-w-0 rounded-lg bg-transparent font-display text-2xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700 sm:flex-1 sm:text-3xl"
           />
-          <div className="flex flex-wrap gap-2 sm:shrink-0">
+          <div className="print-hide flex flex-wrap gap-2 sm:shrink-0">
             <button
               type="button"
               onClick={() => useCharacterStore.getState().undo()}
@@ -1015,21 +1021,30 @@ export default function CharacterSheet() {
             duas coisas juntas é o que faz o número menor parecer explicado em
             vez de errado.
           */}
-          <CondicoesSection />
-
           {/*
-            Descanso e Downtime ficam ao lado das condições porque são o outro
-            lado do mesmo movimento: a condição é o que a mesa ganhou no
-            combate, e o descanso é o que ela recupera depois dele.
+            As três ferramentas de sessão, e a razão de saírem juntas do papel
+            (0.1.29): condição é transitória, descanso é um botão e o simulador é
+            uma pergunta. Nenhuma das três é CONTEÚDO de ficha — numa folha
+            impressa elas viram três caixas mortas ocupando o espaço que as
+            magias precisam.
           */}
-          <DescansoSection />
+          <div className="print-hide space-y-4">
+            <CondicoesSection />
 
-          {/*
-            O simulador fecha o trio: condição é o que o combate cobrou,
-            descanso é o que se recupera dele, e isto responde se valia a pena
-            entrar. Os três usam a mesma ficha e ficam na mesma coluna.
-          */}
-          <SimuladorPessoal />
+            {/*
+              Descanso e Downtime ficam ao lado das condições porque são o outro
+              lado do mesmo movimento: a condição é o que a mesa ganhou no
+              combate, e o descanso é o que ela recupera depois dele.
+            */}
+            <DescansoSection />
+
+            {/*
+              O simulador fecha o trio: condição é o que o combate cobrou,
+              descanso é o que se recupera dele, e isto responde se valia a pena
+              entrar. Os três usam a mesma ficha e ficam na mesma coluna.
+            */}
+            <SimuladorPessoal />
+          </div>
 
           <div className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm dark:border-parchment-800 dark:bg-parchment-900/60">
             <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
@@ -1261,7 +1276,10 @@ export default function CharacterSheet() {
           <CombinedSpellsSection query={grimoireQuery} />
 
           <InventorySection />
-          <LoreSection lore={lore} />
+          {/* A lore é leitura, não consulta de turno — fora do papel. */}
+          <div className="print-hide">
+            <LoreSection lore={lore} />
+          </div>
         </div>
       </div>
 

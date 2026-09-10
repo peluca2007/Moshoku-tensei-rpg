@@ -5,6 +5,29 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.29 — "Ctrl+P" · 2026-09-10
+
+### 🖨️ A ficha agora imprime como ficha
+
+O PDF do Typst continua sendo o documento bonito de três páginas — e ele **precisa do servidor**,
+porque é lá que o Typst roda. Isto é o outro caminho: **Ctrl+P na própria ficha**, funcionando
+**offline**, porque é só CSS.
+
+A regra do recorte é a mesma do Modo Mesa: **fica o que se consulta dentro de um turno**.
+
+- **Saem** os botões, as condições, o descanso, o simulador, a lore, o rodapé e o rolador. Nenhum
+  deles é conteúdo de ficha, e no papel viravam caixas mortas ocupando o espaço das magias.
+- **Saem** as três formas de conjuração e o cântico de cada magia: numa folha de consulta o que
+  importa é custo, alcance e efeito.
+- **Impressão é sempre em tema claro.** Uma ficha impressa no escuro é uma folha inteira de tinta
+  preta com letra clara por cima — gasta o cartucho e sai ilegível em laser comum.
+- **Foto, capa e arte de fundo não vão pro papel.** Numa impressora doméstica a arte do cabeçalho
+  sozinha come mais tinta que a ficha inteira, e ela é ambientação, não informação.
+- **O rodapé impresso diz de onde a folha veio** e pede pra conferir a versão viva: uma ficha
+  desatualizada circulando na mesa é pior que nenhuma.
+
+---
+
 ## 0.1.28 — "O Mestre Olha a Mesa" · 2026-09-10
 
 ### 👁️ As fichas do grupo lado a lado

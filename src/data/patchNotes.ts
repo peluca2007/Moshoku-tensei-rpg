@@ -16,6 +16,24 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.29",
+    date: "2026-09-10",
+    title: "Ctrl+P",
+    sections: [
+      {
+        heading: "A ficha agora imprime como ficha",
+        items: [
+          "O PDF do Typst continua sendo o documento bonito de três páginas — e ele precisa do servidor, porque o Typst roda lá. Isto é o outro caminho: Ctrl+P na própria ficha, funcionando OFFLINE, porque é só CSS.",
+          "A regra do recorte é a mesma do Modo Mesa: fica o que se consulta dentro de um turno. Saem os botões, as condições, o descanso, o simulador, a lore, o rodapé e o rolador — nenhum deles é conteúdo de ficha, e no papel viravam caixas mortas ocupando o espaço das magias.",
+          "Também saem as três formas de conjuração e o cântico de cada magia: numa folha de consulta o que importa é o custo, o alcance e o efeito.",
+          "Impressão é sempre em tema claro. Uma ficha impressa no tema escuro é uma folha inteira de tinta preta com letra clara por cima — gasta o cartucho e sai ilegível em impressora a laser comum.",
+          "Foto, capa e a arte de fundo do cabeçalho não vão pro papel: numa impressora doméstica a arte de fundo sozinha come mais tinta que a ficha inteira, e ela é ambientação, não informação.",
+          "O rodapé impresso diz de onde a folha veio e pede pra conferir a versão viva. Uma ficha desatualizada circulando na mesa é pior que nenhuma.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.28",
     date: "2026-09-10",
     title: "O Mestre Olha a Mesa",
