@@ -44,7 +44,6 @@ import { linkDaFicha } from "@/lib/fichaLink";
 import { LIMITE_DISCORD, passaDoDiscord } from "@/lib/diagnosticoDeLink";
 import { compartilhar, usePodeCompartilhar } from "@/lib/compartilharNativo";
 import { empacotarFicha } from "@/lib/fichaArquivo";
-import DiceRoller from "./DiceRoller";
 import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import RaceCrest from "./RaceCrest";
@@ -1266,7 +1265,6 @@ export default function CharacterSheet() {
         </div>
       </footer>
 
-      <DiceRoller />
     </div>
   );
 }

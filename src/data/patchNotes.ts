@@ -16,6 +16,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.22",
+    date: "2026-09-10",
+    title: "O Dado Segue Você",
+    sections: [
+      {
+        heading: "O rolador existia só na ficha",
+        items: [
+          "Ele nasceu dentro da ficha, o que fazia sentido enquanto rolar dado fosse uma coisa que se faz olhando a ficha. Não é: no meio do combate a pessoa está no tracker de iniciativa vendo de quem é o turno, ou em Encontros com a criatura aberta — e era exatamente aí que ela tinha que sair da tela pra rolar um d20.",
+          "Agora o botão de dados está em todas as rotas, com o mesmo estado: o histórico da sessão, os macros salvos e o atalho R continuam onde estavam, e mudar de tela não perde nada.",
+          "Ele já era global em tudo menos na montagem — o estado sempre morou fora da ficha. O que faltava era o rolador estar montado onde a mesa está.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.21",
     date: "2026-09-10",
     title: "O Atalho Que Faltava",
