@@ -214,5 +214,25 @@ Uma quinta fonte "Perícia" no rolador, e um toque na própria perícia do `Skil
 rolador já configurado (o `useDiceRollerStore` já recebe pedidos de fora — é assim que o Inventário
 manda a arma).
 
-Fecha o exemplo que o `O-QUE-FALTA` usava pra pedir o macro de Teste: "Furtividade com Vantagem" já
-dá pra salvar, mas o modificador ainda precisa ser digitado à mão.
+**🔒 Obstáculo achado ao tentar implementar — é ele que precisa da decisão do autor.**
+
+A regra do Cap. 1 §4 tem três partes, e só duas são computáveis hoje:
+
+1. `1d20 + Atributo correspondente` — trivial, `SKILLS` já diz qual atributo governa cada perícia.
+2. *"Ter a perícia dá **Vantagem** quando ela se encaixa perfeitamente na situação"* — o **quando** é
+   julgamento do Mestre. O rolador pode, no máximo, avisar que o personagem tem a perícia; ligar
+   Vantagem sozinho seria decidir pelo Mestre.
+3. *"**Bônus de Rank em perícia** (só nas árvores de Utilidade): soma nas perícias que aquela árvore
+   cobre, e só naquelas que você realmente tem."* — **este é o problema.**
+   `Tree.proficiencies.pericias` é **prosa livre**, não lista. Não dá pra computar sem adivinhar por
+   regex em cima de frase escrita à mão — exatamente o tipo de coisa que quebra em silêncio no dia em
+   que alguém reescrever a frase.
+
+O caminho honesto exige uma decisão de modelo de dados: **transformar `proficiencies.pericias` em
+lista estruturada** (as perícias cobertas pelo Bônus de Rank daquela árvore), mantendo a prosa como
+texto de exibição, com um check garantindo que as duas não divirjam — no espírito do `check:texto`.
+São 19 árvores para revisar.
+
+Sem isso, um rolador de perícia ou **(a)** ignora o Bônus de Rank e mente para todo personagem de
+Utilidade, ou **(b)** pede o bônus digitado à mão, que é o que a fonte "Livre" já faz hoje. Nenhuma
+das duas merece ser implementada como se fosse a regra — por isso **nada foi implementado**.
