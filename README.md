@@ -84,7 +84,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:redundancia` | Acha habilidades que repetem um patamar anterior |
 | `npm run check:arvores` | Audita as 19 árvores contra a régua do Apêndice C e acusa quem sai da faixa |
 | `npm run check:texto` | Lê o TEXTO das 592 habilidades contra os campos delas e acusa contradição |
-| `npm run check:contraste` | Mede o contraste das 11 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
+| `npm run check:contraste` | Mede o contraste das 13 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
 | `npm run check:mobile` | Procura transbordo horizontal de 320px a 414px (precisa de `npm run dev`) |
 | `npm run check:a11y` | Controle sem nome, campo sem rótulo, hierarquia de cabeçalho (precisa de `npm run dev`) |
 | `npm run check:offline` | Abre as 16 rotas **com o servidor morto** (precisa de `npm run build`; sobe e mata o próprio `next start`) |

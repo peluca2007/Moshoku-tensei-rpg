@@ -327,7 +327,7 @@ porque elas falam com ele pela porta de depuração. Estas três precisam do sit
 (`npm run dev` em outro terminal):
 
 ```bash
-npm run check:contraste   # WCAG AA nas 11 rotas, nos 2 temas
+npm run check:contraste   # WCAG AA nas 13 rotas, nos 2 temas
 npm run check:mobile      # transbordo horizontal de 320px a 414px
 npm run check:a11y        # controle sem nome, campo sem rótulo, hierarquia de cabeçalho
 ```

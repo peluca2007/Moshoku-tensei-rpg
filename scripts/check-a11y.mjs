@@ -33,7 +33,7 @@
  */
 import { BASE, comNavegador, dormir, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
 
-const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe"];
+const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
 
 const MEDICAO = String.raw`(() => {
   const problemas = [];
@@ -70,7 +70,7 @@ const MEDICAO = String.raw`(() => {
 
     // Link cujo conteúdo é uma IMAGEM tira o nome do alt dela — é assim que o
     // logo do cabeçalho se anuncia, e ler só o textContent o reprovaria em
-    // todas as doze rotas por um defeito que não existe.
+    // todas as treze rotas por um defeito que não existe.
     for (const filho of clone.querySelectorAll("img[alt],[aria-label],svg title")) {
       const nome = (filho.getAttribute?.("alt") || filho.getAttribute?.("aria-label") || filho.textContent || "").trim();
       if (nome) return nome;
@@ -78,13 +78,27 @@ const MEDICAO = String.raw`(() => {
 
     const title = el.getAttribute("title");
     if (title && title.trim()) return title.trim();
-    if (el.tagName === "INPUT") {
-      const v = el.getAttribute("value") || el.getAttribute("alt") || "";
-      if (v.trim()) return v.trim();
+    // O <label> vale pra TODO campo de formulário, e não só pra <input>.
+    //
+    // Enquanto isto estava preso a INPUT, um <textarea> corretamente rotulado
+    // por <label for> era acusado de "controle sem nome" — o que é pior que um
+    // falso negativo: a varredura empurrava quem a lê na direção de trocar o
+    // rótulo visível por um aria-label, que é a solução PIOR das duas (o
+    // aria-label não aparece na tela pra quem enxerga, e não vira alvo de
+    // clique que põe o foco no campo). Achado em 2026-09-10, no textarea de
+    // colar link da tela de importação.
+    if (["INPUT", "TEXTAREA", "SELECT"].includes(el.tagName)) {
       const envolvente = el.closest("label");
       if (envolvente && (envolvente.textContent || "").trim()) return (envolvente.textContent || "").trim();
       const porFor = el.id ? document.querySelector('label[for="' + CSS.escape(el.id) + '"]') : null;
       if (porFor && (porFor.textContent || "").trim()) return (porFor.textContent || "").trim();
+      const v = el.getAttribute("value") || el.getAttribute("alt") || "";
+      if (v.trim()) return v.trim();
+      // O placeholder NÃO entra, embora o navegador o aceite como último
+      // recurso: ele desaparece assim que a pessoa digita a primeira letra, e
+      // um campo cujo único nome some no meio do preenchimento é exatamente o
+      // defeito que esta varredura existe pra achar. Aqui a régua é mais dura
+      // que a do navegador, de propósito.
     }
     return "";
   }
@@ -176,4 +190,4 @@ if (total > 0) {
   console.error(`\n❌ ${total} problema(s) de acessibilidade estrutural.`);
   process.exit(1);
 }
-console.log("\n✅ Nenhum problema estrutural nas doze rotas. (Teste com leitor de tela de verdade continua pendente.)");
+console.log("\n✅ Nenhum problema estrutural nas treze rotas. (Teste com leitor de tela de verdade continua pendente.)");

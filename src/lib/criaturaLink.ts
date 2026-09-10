@@ -1,5 +1,6 @@
 import { CriaturaEncontro } from "./encounterSim";
-import { base64UrlParaBytes, bytesParaBase64Url, comprimirTexto, descomprimirBytes } from "./compactacao";
+import { bytesParaBase64Url, comprimirTexto } from "./compactacao";
+import { LeituraDeLink, lerFragmento } from "./diagnosticoDeLink";
 
 /**
  * A criatura do Mestre dentro de um link — mesma ideia de `fichaLink.ts`,
@@ -30,27 +31,25 @@ export async function codificarCriatura(criatura: CriaturaEncontro): Promise<str
 }
 
 /**
- * Devolve a criatura de um fragmento, ou `null` se o texto não for uma.
+ * Devolve a criatura de um fragmento — ou a razão pela qual ela não veio.
  *
- * Igual `decodificarFicha`: o conteúdo vem de fora, então nada aqui confia
- * nele — qualquer passo pode lançar, e a validação de forma no fim (`papel` +
- * `acoes`) é a mesma que `lerArquivoDeCriatura` já faz.
+ * Igual `decodificarFicha`: os cinco passos e o texto de cada falha moram em
+ * `diagnosticoDeLink.ts`, e aqui fica só o que é específico de CRIATURA — a
+ * marca própria (`gm`/`jm`) e a validação de forma (`papel` + `acoes`), a mesma
+ * que `lerArquivoDeCriatura` já faz.
  */
-export async function decodificarCriatura(fragmento: string): Promise<Omit<CriaturaEncontro, "id"> | null> {
-  const texto = fragmento.startsWith("#") ? fragmento.slice(1) : fragmento;
-  if (!texto) return null;
-  try {
-    const marca = texto.slice(0, 2);
-    const corpo = texto.slice(2);
-    if (marca !== MARCA_GZIP && marca !== MARCA_CRU) return null;
-    const bytes = base64UrlParaBytes(corpo);
-    const json = marca === MARCA_GZIP ? await descomprimirBytes(bytes) : new TextDecoder().decode(bytes);
-    const dados = JSON.parse(json);
-    if (!dados || typeof dados !== "object" || !("papel" in dados) || !("acoes" in dados)) return null;
-    return dados as Omit<CriaturaEncontro, "id">;
-  } catch {
-    return null;
+export async function decodificarCriatura(
+  fragmento: string
+): Promise<LeituraDeLink<Omit<CriaturaEncontro, "id">>> {
+  const lido = await lerFragmento(fragmento, { gzip: MARCA_GZIP, cru: MARCA_CRU });
+  if (!lido.ok) return lido;
+
+  const caracteres = lido.json.length;
+  const dados = JSON.parse(lido.json);
+  if (!dados || typeof dados !== "object" || !("papel" in dados) || !("acoes" in dados)) {
+    return { ok: false, motivo: "nao-e-isso", caracteres };
   }
+  return { ok: true, conteudo: dados as Omit<CriaturaEncontro, "id"> };
 }
 
 /** A URL completa de compartilhamento, a partir da origem atual. */

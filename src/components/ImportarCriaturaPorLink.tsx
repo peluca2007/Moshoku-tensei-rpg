@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, Link2Off, Loader2, Skull } from "lucide-react";
+import { Check, Loader2, Skull } from "lucide-react";
 import { useBestiaryStore } from "@/store/useBestiaryStore";
 import { decodificarCriatura } from "@/lib/criaturaLink";
+import { FalhaDeLink } from "@/lib/diagnosticoDeLink";
+import LinkQueFalhou from "@/components/LinkQueFalhou";
 import { rotuloPatamar } from "@/data/bestiary";
 import PageHeader from "@/components/ui/PageHeader";
 import Surface from "@/components/ui/Surface";
@@ -13,7 +15,7 @@ import type { CriaturaEncontro } from "@/lib/encounterSim";
 
 type Estado =
   | { fase: "lendo" }
-  | { fase: "invalido" }
+  | { fase: "falhou"; falha: FalhaDeLink }
   | { fase: "confirmar"; criatura: Omit<CriaturaEncontro, "id"> }
   | { fase: "importada" };
 
@@ -31,14 +33,22 @@ export default function ImportarCriaturaPorLink() {
 
   useEffect(() => {
     let vivo = true;
-    decodificarCriatura(window.location.hash).then((criatura) => {
+    decodificarCriatura(window.location.hash).then((r) => {
       if (!vivo) return;
-      setEstado(criatura ? { fase: "confirmar", criatura } : { fase: "invalido" });
+      setEstado(r.ok ? { fase: "confirmar", criatura: r.conteudo } : { fase: "falhou", falha: r });
     });
     return () => {
       vivo = false;
     };
   }, []);
+
+  /** Segunda chance: o fragmento colado à mão, já recolhido por `LinkQueFalhou`. */
+  function lerColado(fragmento: string) {
+    setEstado({ fase: "lendo" });
+    decodificarCriatura(fragmento).then((r) =>
+      setEstado(r.ok ? { fase: "confirmar", criatura: r.conteudo } : { fase: "falhou", falha: r })
+    );
+  }
 
   function importar() {
     if (estado.fase !== "confirmar") return;
@@ -61,22 +71,8 @@ export default function ImportarCriaturaPorLink() {
         </Surface>
       )}
 
-      {estado.fase === "invalido" && (
-        <Surface level="sunken" className="flex flex-col items-center gap-3 p-8 text-center">
-          <Link2Off className="h-9 w-9 text-parchment-400 dark:text-parchment-700" aria-hidden />
-          <p className="font-display text-base font-bold text-parchment-800 dark:text-parchment-200">
-            Este link não traz uma criatura.
-          </p>
-          <p className="max-w-sm text-xs text-parchment-600 dark:text-parchment-400">
-            Ele pode ter sido cortado no caminho — aplicativos de mensagem às vezes quebram links longos em
-            duas linhas. Peça pra reenviar, de preferência dentro de um bloco de código, ou peça o arquivo{" "}
-            <code>.mtcriatura</code> e use o <b>Importar criatura</b> em{" "}
-            <Link href="/encontros" className="text-wine-600 underline dark:text-wine-300">
-              Encontros
-            </Link>
-            .
-          </p>
-        </Surface>
+      {estado.fase === "falhou" && (
+        <LinkQueFalhou falha={estado.falha} oQue="criatura" aoTentarDeNovo={lerColado} />
       )}
 
       {criatura && (

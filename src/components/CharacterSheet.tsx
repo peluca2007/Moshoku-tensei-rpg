@@ -41,6 +41,7 @@ import SkillsSection from "./SkillsSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
+import { LIMITE_DISCORD, passaDoDiscord } from "@/lib/diagnosticoDeLink";
 import { empacotarFicha } from "@/lib/fichaArquivo";
 import DiceRoller from "./DiceRoller";
 import EmptyState from "@/components/ui/EmptyState";
@@ -294,6 +295,8 @@ export default function CharacterSheet() {
    */
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "error" | "semRede">("idle");
   const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
+  /** Tamanho do último link copiado — só pra avisar quando ele não couber numa mensagem do Discord. */
+  const [tamanhoDoLink, setTamanhoDoLink] = useState(0);
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
@@ -375,7 +378,12 @@ export default function CharacterSheet() {
    */
   async function handleCopiarLink() {
     try {
-      await navigator.clipboard.writeText(await linkDaFicha(character));
+      const url = await linkDaFicha(character);
+      await navigator.clipboard.writeText(url);
+      // Medido, e não estimado: o aviso abaixo do botão depende de saber o
+      // tamanho REAL deste personagem, que varia de ~1.000 caracteres (uma
+      // árvore) a ~2.600 (cinco). Ver `LIMITE_DISCORD`.
+      setTamanhoDoLink(url.length);
       setLinkState("copiado");
       if (linkTimeoutRef.current) clearTimeout(linkTimeoutRef.current);
       linkTimeoutRef.current = setTimeout(() => setLinkState("idle"), 2200);
@@ -598,6 +606,23 @@ export default function CharacterSheet() {
             </button>
           </div>
         </div>
+        {/*
+          O link foi copiado, mas não cabe numa mensagem do Discord.
+
+          Não bloqueia a cópia de propósito: pelo WhatsApp, pelo Telegram ou
+          colado direto na barra de endereço ele funciona — o teto de 2.000
+          caracteres é do Discord, e é o mais apertado dos caminhos que a mesa
+          usa. Avisar depois de copiar é o que evita o pior desfecho, que é o
+          link chegar cortado e ninguém dos dois lados entender por quê.
+        */}
+        {linkState === "copiado" && passaDoDiscord(tamanhoDoLink) && (
+          <p className="mt-1 text-xs text-gold-700 dark:text-gold-400">
+            Copiado, mas são <strong>{tamanhoDoLink.toLocaleString("pt-BR")} caracteres</strong> — mais que
+            os {LIMITE_DISCORD.toLocaleString("pt-BR")} de uma mensagem do Discord, que cortaria o link no
+            meio. Pelo WhatsApp ou pelo Telegram ele passa inteiro; pro Discord, mande o arquivo em{" "}
+            <strong>Baixar ficha</strong>.
+          </p>
+        )}
         {linkState === "erro" && (
           <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">
             O navegador não deixou copiar. Isso costuma acontecer fora de HTTPS — exporte o JSON por
