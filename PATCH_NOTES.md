@@ -5,6 +5,39 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.23 — "A Condição Que Se Explica" · 2026-09-10
+
+### 🔗 "O alvo fica Envenenado" agora diz o que isso faz
+
+O glossário do Cap. 4 sempre avisou que é *"aqui, e só aqui"* que cada condição tem definição
+completa — e centenas de habilidades a citam pelo nome sem repetir o efeito. Na mesa isso era: ler a
+magia, não lembrar o que **Quebrantado** faz, sair da magia, procurar o capítulo 4, voltar. No meio
+do turno.
+
+Agora a condição citada na prosa é **clicável** e o verbete abre ali mesmo, embaixo do parágrafo.
+São **221 citações reconhecidas** no livro inteiro, e vale também na busca e no Grimório da ficha —
+os três desenham o mesmo card.
+
+Duas regras que fazem o reconhecedor funcionar:
+
+- **Maiúscula obrigatória**, seguindo a convenção do próprio livro. Não é preciosismo: metade dos
+  nomes é palavra comum do português, e sem ela *"preso ao chão"* e *"marcado pela guerra"* virariam
+  links. Um glossário que acende em toda frase deixa de ser glossário.
+- **Flexão de gênero e número**: "as criaturas ficam **Seladas**", "cai na fenda e fica **Presa**",
+  "duas ficam **Caídas**". Casar só a forma do dicionário deixaria a maioria das citações de fora.
+
+### 📚 E o glossário virou dado
+
+As 24 condições saíram de uma tabela escrita à mão no capítulo e viraram `src/data/condicoes.ts`. A
+tabela impressa no livro é **gerada** de lá, então não existe cópia pra divergir.
+
+Cada uma carrega, além do texto, o que a ficha consegue aplicar sozinha — Desvantagem em ataque,
+Deslocamento zerado, dano no início do turno. O que depende do Mestre decidir continua sendo prosa:
+um campo que fingisse saber *"enquanto a fonte do medo estiver visível"* mentiria em metade das
+mesas.
+
+---
+
 ## 0.1.22 — "O Dado Segue Você" · 2026-09-10
 
 ### 🎲 O rolador existia só na ficha

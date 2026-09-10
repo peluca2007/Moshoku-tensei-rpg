@@ -1,5 +1,7 @@
 import { AbilityDef, RankName, TalentDef } from "@/lib/types";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "../AbilityDetail";
+import ProsaComCondicoes from "../ProsaComCondicoes";
+import { condicoesCitadas } from "@/lib/condicoesNaProsa";
 
 export function isAbility(def: AbilityDef | TalentDef): def is AbilityDef {
   return "actions" in def;
@@ -49,7 +51,26 @@ export default function EntryCard({
         {ability && <RitualBadge ability={ability} />}
       </div>
       {ability?.range && <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">Alcance: {ability.range}</p>}
-      <p className="mt-1 leading-relaxed text-parchment-700 dark:text-parchment-300">{description}</p>
+      {/*
+        O efeito passa pelo reconhecedor de condições (0.1.23): "o alvo fica
+        Envenenado" vira um verbete que abre ali mesmo, em vez de mandar a mesa
+        procurar o Cap. 4 no meio do turno. Vale no livro, na busca e no
+        Grimório da ficha, porque os três desenham este mesmo card.
+
+        A verificação acontece AQUI, do lado do servidor, e o componente
+        interativo só é montado quando o texto cita alguma condição de verdade.
+        Sem isso, o /livro — que desenha as 601 habilidades numa página só —
+        embarcaria 601 componentes com estado próprio para que a maioria deles
+        nunca tivesse nada a abrir.
+      */}
+      {condicoesCitadas(description).length > 0 ? (
+        <ProsaComCondicoes
+          texto={description}
+          className="mt-1 block leading-relaxed text-parchment-700 dark:text-parchment-300"
+        />
+      ) : (
+        <p className="mt-1 leading-relaxed text-parchment-700 dark:text-parchment-300">{description}</p>
+      )}
       {ability?.damage && (
         <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">
           <b>Dano:</b> {ability.damage.normal}
