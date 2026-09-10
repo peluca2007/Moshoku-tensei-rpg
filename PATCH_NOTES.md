@@ -5,6 +5,40 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.17 — "Onde Está a Peçonha" · 2026-09-10
+
+### 🔍 O livro tinha 879 verbetes e nenhum jeito de procurar um
+
+Não existia caminho para *"qual magia aplica Envenenado"* ou *"onde está a Peçonha"*. O filtro do
+sumário do `/livro` reduz **títulos de seção**; o seletor do mapa acha **árvore por nome**. Nenhum dos
+dois entra no texto das regras — sobrava rolar os 190 mil caracteres do livro, no meio do turno, com
+o grupo esperando.
+
+A rota **`/busca`** procura nos **879 verbetes**: as 601 técnicas, magias e talentos, mais as 114
+maestrias, as 9 Magias Combinadas, as 19 árvores, os 85 itens da loja, as 12 raças, os 13
+antecedentes, as 20 perícias e as 6 criaturas prontas.
+
+- Procura no **nome e no texto**. "Envenenado" devolve as oito coisas que aplicam a condição, e
+  **nenhuma delas tem a palavra no título** — o caso que o sumário nunca resolveria.
+- **Sem acento e sem caixa** nos dois lados: quem digita "peconha" acha "Peçonha".
+- **Duas palavras estreitam** em vez de somar: "fogo cura" devolve só o que é as duas coisas.
+
+### 📖 O resultado abre ali, e não manda você pro livro
+
+Quem busca no meio do turno quer o texto, não a viagem. Tocar num resultado abre o **card completo**
+na hora — o mesmo do livro, com as três formas de conjuração, o dano, o cântico e o que a Recitação
+Perfeita paga. O link pro lugar de origem continua embaixo, pra quem quer o contexto em volta.
+
+É o **mesmo componente** que o `/livro` desenha, e não uma cópia: duas telas mostrando a mesma magia
+de dois jeitos diferentes é a única coisa pior que não ter busca nenhuma.
+
+- O trecho mostrado é a **frase onde a palavra está**, com ela pintada — não os primeiros 140
+  caracteres do efeito, que quase nunca são a parte que responde.
+- Filtros por tipo com contagem, endereço compartilhável (`/busca?q=peçonha`), e tudo isso **sem
+  internet**: o índice sai dos mesmos dados que o site já carrega.
+
+---
+
 ## 0.1.16 — "O Dedo Alcança" · 2026-09-09
 
 ### 👆 O mapa de árvores era intocável no celular

@@ -2,16 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
+import { normalizar } from "@/lib/texto";
 
 export interface TocEntry {
   id: string;
   label: string;
   children?: TocEntry[];
-}
-
-/** Tira acento e caixa — quem busca "pericias" tem que achar "Perícias". */
-function normalize(s: string): string {
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 /**
@@ -88,12 +84,12 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
   }, [allIds]);
 
   const filtered = useMemo(() => {
-    const q = normalize(query.trim());
+    const q = normalizar(query.trim());
     if (!q) return toc;
     return toc
       .map((chapter) => {
-        const chapterHit = normalize(chapter.label).includes(q);
-        const children = (chapter.children ?? []).filter((c) => normalize(c.label).includes(q));
+        const chapterHit = normalizar(chapter.label).includes(q);
+        const children = (chapter.children ?? []).filter((c) => normalizar(c.label).includes(q));
         // Capítulo que casa mostra os filhos todos; senão, só os filhos que casam.
         if (chapterHit) return chapter;
         if (children.length > 0) return { ...chapter, children };

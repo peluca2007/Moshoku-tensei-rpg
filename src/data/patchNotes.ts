@@ -16,6 +16,31 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.17",
+    date: "2026-09-10",
+    title: "Onde Está a Peçonha",
+    sections: [
+      {
+        heading: "O livro tinha 879 verbetes e nenhum jeito de procurar um",
+        items: [
+          "Não existia caminho pra \"qual magia aplica Envenenado\" ou \"onde está a Peçonha\". O filtro do sumário do /livro reduz TÍTULOS de seção, e o seletor do mapa acha árvore por nome — nenhum dos dois entra no texto das regras. Sobrava rolar os 190 mil caracteres do livro, no meio do turno, com o grupo esperando.",
+          "A rota /busca procura nos 879 verbetes: as 601 técnicas, magias e talentos, mais as 114 maestrias, as 9 magias combinadas, as 19 árvores, os 85 itens da loja, as 12 raças, os 13 antecedentes, as 20 perícias e as 6 criaturas prontas.",
+          "Ela procura no NOME e no TEXTO. \"Envenenado\" devolve as oito coisas que aplicam a condição, e nenhuma delas tem a palavra no título — que é exatamente o caso que o sumário nunca resolveria.",
+          "Sem acento e sem caixa nos dois lados: quem digita \"peconha\" acha \"Peçonha\". Duas palavras estreitam em vez de somar — \"fogo cura\" devolve só o que é as duas coisas.",
+        ],
+      },
+      {
+        heading: "O resultado abre ali, e não manda você pro livro",
+        items: [
+          "Quem busca no meio do turno quer o texto, não a viagem. Tocar num resultado abre o card COMPLETO na hora — o mesmo do livro, com as três formas de conjuração, o dano, o cântico e o que a Recitação Perfeita paga. O link pro lugar de origem continua embaixo, pra quem quer o contexto em volta.",
+          "É o mesmo componente que o /livro desenha, e não uma cópia: duas telas mostrando a mesma magia de dois jeitos diferentes é a única coisa pior que não ter busca nenhuma.",
+          "O trecho mostrado é a FRASE onde a palavra está, com ela pintada — não os primeiros 140 caracteres do efeito, que quase nunca são a parte que responde.",
+          "Filtros por tipo com contagem, endereço compartilhável (/busca?q=peçonha), e tudo isso funciona sem internet, porque o índice sai dos mesmos dados que o site já carrega.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.16",
     date: "2026-09-09",
     title: "O Dedo Alcança",
