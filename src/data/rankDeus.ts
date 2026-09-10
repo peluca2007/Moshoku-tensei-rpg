@@ -3,6 +3,17 @@
  * lista, decisão de mesa entre jogador e Mestre (Cap. 1, seção 3). A maioria das árvores usa
  * um quadro fixo descrevendo o que esse patamar significa nela; as Três Grandes Escolas do
  * Corpo (Norte, Espada, Suishin) têm cada uma seu próprio critério de ascensão no lugar disso.
+ *
+ * ONDE CADA COISA MORA — e isto está escrito porque a ausência já foi lida como
+ * falta duas vezes, em dois documentos do projeto:
+ *
+ * - `RANK_DEUS` guarda o QUADRO: o que o patamar Divino faz naquela árvore.
+ * - `GODHOOD_PATH` guarda o CAMINHO: como se toma o título, nas três do Corpo em
+ *   que o Deus é um cargo com titular vivo e não um nível de poder pessoal.
+ * - `getRankDeusForTree` une os dois, e o livro imprime o que ele devolver.
+ *
+ * As dezenove árvores têm um ou outro. Nenhuma fica sem — e `rankDeus.test.ts`
+ * reprova o dia em que uma ficar.
  */
 export interface RankDeusEntry {
   title: string;
