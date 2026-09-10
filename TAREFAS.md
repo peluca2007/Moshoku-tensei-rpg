@@ -10,15 +10,22 @@ ponta a ponta, e o que o sistema de RPG ainda não faz.
 
 ---
 
-## Estado em 2026-09-10, de madrugada
+## Estado em 2026-09-10, fim do dia
 
-**Sete feitas** (2, 3, 5, 6, 7, 8, 9), em seis versões: da 0.1.17 à 0.1.22. **Uma** (1) teve a causa
-provável corrigida e espera o iPhone do seu amigo pra fechar.
+**As 22 estão endereçadas.** Dezenove entregues, em dezoito versões — da 0.1.17 à 0.1.34. As três que
+restam não são trabalho parado: são trabalho que **precisa de você**, e cada uma diz por quê.
 
-O que sobrou **não é falta de tempo — é falta de você**, e vale saber por quê antes de retomar:
+| Precisa de | Task | O que exatamente |
+| --- | --- | --- |
+| Um iPhone | 1 | Confirmar com seu amigo qual dos dois suspeitos era: navegador antigo demais, ou o app cortando o link. A causa provável já foi tratada e tem tela própria. |
+| Meia hora de NVDA | 20 | A ordem de foco conta a história certa? dá pra montar um personagem sem enxergar? A parte previsível (rótulos e números anunciados) saiu na 0.1.34. |
+| Sua decisão de regra | 22 | O Descanso Curto devolve 25% ou 50% de PM? A tabela do Cap. 4 diz um, o aviso logo abaixo e o Cap. 3 dizem outro — e o argumento do teto de dois Curtos é construído em cima do maior. |
 
-| Task | O que trava |
-| --- | --- |
+Duas tasks acabaram sendo **corrigidas em vez de executadas**, e vale ler o porquê nelas: a 19 pedia
+conteúdo que já existia (e o teste novo impede a terceira afirmação errada sobre o mesmo assunto), e
+a 14 partia da premissa de que o PDF era longo demais, quando ele já é A4 desenhado.
+
+--- | --- |
 | 1 | Precisa do iPhone do amigo pra confirmar qual dos dois suspeitos era |
 | 4 (QR) | Não dá pra **verificar** um QR sem uma câmera. Um QR que desenha mas não lê é exatamente a "funcionalidade que mente" que a própria task manda evitar — e ainda pede uma dependência nova no `package.json` |
 | 14 | O PDF do Typst **já é A4 e desenhado**; o que falta é decidir o que CORTAR pra virar uma folha, e isso é escolha de autor |
