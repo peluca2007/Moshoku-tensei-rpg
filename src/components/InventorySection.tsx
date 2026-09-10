@@ -221,7 +221,7 @@ function WeaponDamageBadge({ item }: { item: InventoryItem }) {
         onClick={() =>
           requestDamageRoll({
             formula: info.escalatedDie,
-            modifier: info.attributeValue + info.rankBonus,
+            modifier: info.attributeValue + info.rankBonus - info.penalidadeQuebrantado,
             label: item.name,
           })
         }

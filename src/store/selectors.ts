@@ -4,6 +4,7 @@ import { getTreeById } from "@/data/trees";
 import { COMBINED_SPELLS, getCombinedSpellById } from "@/data/combinedSpells";
 import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
+import { Condicao, getCondicaoPorId } from "@/data/condicoes";
 import {
   ATTRIBUTE_CREATION_POINTS,
   attributePaCostTotal,
@@ -409,8 +410,13 @@ export function getArmorClass(state: StoreState): number {
     (sum, item) => sum + (item.equipped && item.type === "armadura" ? (item.acBonus ?? 0) : 0),
     0
   );
+  // Quebrantado (Cap. 4, §2) é a ÚNICA condição do livro que mexe num número da
+  // ficha: −1 de CA por acúmulo. Entra depois do override manual de propósito —
+  // quem digitou uma CA à mão está declarando o corpo do personagem, e a
+  // condição é algo que acontece com esse corpo depois.
+  const quebrantado = getPenalidadeQuebrantado(state);
   const computed = 10 + getFinalAttribute(state, "agilidade") + getFlatBonusSum(state, "armorClass") + equippedBonus;
-  return state.overrides.armorClass ?? computed;
+  return (state.overrides.armorClass ?? computed) - quebrantado;
 }
 
 /** Iniciativa = 1d20 + Agilidade; Escudeiro/Treino Precoce dá Vantagem. */
@@ -433,6 +439,8 @@ export interface WeaponDamageInfo {
   escalatedDie: string;
   attribute: AttributeKey;
   attributeValue: number;
+  /** −1 por acúmulo de Quebrantado (Cap. 4, §2). Zero quando não há a condição. */
+  penalidadeQuebrantado: number;
   averageDamage: number;
 }
 
@@ -471,6 +479,10 @@ export function getWeaponDamage(
   const escalatedDie = escalateWeaponDie(baseDie, steps);
   const rankBonus = RANK_BONUS[rank];
   const attributeValue = getFinalAttribute(state, attribute);
+  // A outra metade de Quebrantado: −1 de dano por acúmulo, em TODOS os ataques.
+  // Sai como campo próprio, e não somado dentro de `attributeValue`, pra que a
+  // tela consiga dizer de onde veio o número menor.
+  const penalidadeQuebrantado = getPenalidadeQuebrantado(state);
 
   return {
     treeId: tree.id,
@@ -483,7 +495,8 @@ export function getWeaponDamage(
     escalatedDie,
     attribute,
     attributeValue,
-    averageDamage: diceAverage(escalatedDie) + attributeValue + rankBonus,
+    penalidadeQuebrantado,
+    averageDamage: diceAverage(escalatedDie) + attributeValue + rankBonus - penalidadeQuebrantado,
   };
 }
 
@@ -826,4 +839,98 @@ export function canPurchaseAbility(
   if (!def) return { ok: false, reason: "Não encontrado." };
 
   return OK;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Condições ativas (Cap. 4, §2) — 0.1.24                                    */
+/* ------------------------------------------------------------------------- */
+
+/**
+ * As condições marcadas na ficha, já resolvidas contra o glossário.
+ *
+ * Descarta id que não existe mais em `CONDICOES` em vez de quebrar: uma ficha
+ * salva pode carregar uma condição de uma versão anterior do livro, e uma linha
+ * órfã na ficha é melhor tratada como "não existe" do que como uma exceção no
+ * meio do cálculo de CA.
+ */
+export interface CondicaoNaFicha {
+  condicao: Condicao;
+  acumulos: number;
+  nota?: string;
+}
+
+export function getCondicoesAtivas(state: StoreState): CondicaoNaFicha[] {
+  return (state.condicoes ?? [])
+    .map((ativa): CondicaoNaFicha | null => {
+      const condicao = getCondicaoPorId(ativa.id);
+      return condicao ? { condicao, acumulos: ativa.acumulos ?? 1, nota: ativa.nota } : null;
+    })
+    .filter((x): x is CondicaoNaFicha => x !== null);
+}
+
+/**
+ * A penalidade de Quebrantado: −1 na CA e −1 no dano por acúmulo.
+ *
+ * É a única condição do livro que mexe num NÚMERO da ficha, e por isso a única
+ * que entra no cálculo. As outras mudam como se rola (Vantagem, Desvantagem) ou
+ * o que se pode fazer (Ações, Deslocamento) — coisas que a ficha mostra, mas não
+ * soma.
+ */
+export function getPenalidadeQuebrantado(state: StoreState): number {
+  const q = getCondicoesAtivas(state).find((c) => c.condicao.id === "quebrantado");
+  return q ? q.acumulos : 0;
+}
+
+export interface EfeitosDeCondicoes {
+  /** Rolagens de ATAQUE saem com Desvantagem, e por causa de quais condições. */
+  desvantagemEmAtaques: string[];
+  /** Testes de atributo saem com Desvantagem, e por causa de quais. */
+  desvantagemEmTestes: string[];
+  /** Quem ataca este personagem tem Vantagem. */
+  vantagemParaQuemAtaca: string[];
+  /** Deslocamento zerado ou pela metade — o pior dos dois vence. */
+  deslocamento: "normal" | "metade" | "zero";
+  /** Perdeu as Ações do turno. */
+  semAcoes: string[];
+  /** Dano no início do turno, por condição. */
+  danoPorTurno: { nome: string; formula: string }[];
+  /** −1 de CA e de dano por acúmulo de Quebrantado. */
+  penalidadeQuebrantado: number;
+}
+
+/**
+ * Tudo que as condições ativas fazem, junto — é o que a ficha desenha em cima do
+ * corpo do personagem e o que o rolador consulta antes de uma rolagem.
+ *
+ * Cada efeito vem acompanhado do NOME de quem o causou, e não como um booleano
+ * solto: a diferença entre "Desvantagem" e "Desvantagem por Envenenado" é a
+ * diferença entre a mesa aceitar o número e a mesa entender o número.
+ */
+export function getEfeitosDeCondicoes(state: StoreState): EfeitosDeCondicoes {
+  const ativas = getCondicoesAtivas(state);
+  const efeitos: EfeitosDeCondicoes = {
+    desvantagemEmAtaques: [],
+    desvantagemEmTestes: [],
+    vantagemParaQuemAtaca: [],
+    deslocamento: "normal",
+    semAcoes: [],
+    danoPorTurno: [],
+    penalidadeQuebrantado: getPenalidadeQuebrantado(state),
+  };
+
+  for (const { condicao } of ativas) {
+    const m = condicao.mecanica;
+    if (!m) continue;
+    if (m.desvantagemEmAtaques) efeitos.desvantagemEmAtaques.push(condicao.nome);
+    if (m.desvantagemEmTestes) efeitos.desvantagemEmTestes.push(condicao.nome);
+    if (m.vantagemParaQuemAtaca || m.vantagemCorpoACorpo) efeitos.vantagemParaQuemAtaca.push(condicao.nome);
+    if (m.semAcoes) efeitos.semAcoes.push(condicao.nome);
+    if (m.danoPorTurno) efeitos.danoPorTurno.push({ nome: condicao.nome, formula: m.danoPorTurno });
+    // Zero vence metade: duas condições que reduzem o Deslocamento não se somam,
+    // a pior manda — é como o livro trata empilhamento (Cap. 4, §5).
+    if (m.deslocamento === "zero") efeitos.deslocamento = "zero";
+    else if (m.deslocamento === "metade" && efeitos.deslocamento !== "zero") efeitos.deslocamento = "metade";
+  }
+
+  return efeitos;
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Dices, Sparkles, Swords, X, Trash2, Star, Plus, Zap, ZapOff } from "lucide-react";
 import { useActiveCharacter } from "@/store/useCharacterStore";
-import { getAttackBonus, getFinalAttribute, getSpellDC, getWeaponDamage } from "@/store/selectors";
+import { getAttackBonus, getEfeitosDeCondicoes, getFinalAttribute, getSpellDC, getWeaponDamage } from "@/store/selectors";
 import { getTreeById } from "@/data/trees";
 import { ATTRIBUTES, attributeKeyFromLabel, AttributeKey } from "@/lib/types";
 import { useMacroStore } from "@/store/useMacroStore";
@@ -132,6 +132,23 @@ export default function DiceRoller() {
     setPendingLabel(pendingRoll.label);
   }
 
+  /*
+   * As condições do personagem, e o que elas fazem com ESTA rolagem (0.1.24).
+   *
+   * O rolador não força nada: ele diz o que a regra manda e põe a Desvantagem a
+   * um toque de distância. Forçar seria decidir por quem está na mesa — a
+   * condição pode ter acabado de sair, a habilidade pode ter uma exceção, e o
+   * Mestre pode ter combinado outra coisa. Avisar e não aplicar é pior; aplicar
+   * sem avisar é pior ainda.
+   */
+  const efeitosDeCondicao = getEfeitosDeCondicoes(character);
+  const condicoesQuePesam =
+    testSource === "magia" || testSource === "marcial"
+      ? efeitosDeCondicao.desvantagemEmAtaques
+      : testSource === "atributo"
+        ? efeitosDeCondicao.desvantagemEmTestes
+        : [...new Set([...efeitosDeCondicao.desvantagemEmAtaques, ...efeitosDeCondicao.desvantagemEmTestes])];
+
   const magicTrees = useMemo(
     () =>
       character.unlockedRanks
@@ -236,7 +253,7 @@ export default function DiceRoller() {
     const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca");
     if (info) {
       setDamageFormula(info.escalatedDie);
-      setDamageModifier(info.attributeValue + info.rankBonus);
+      setDamageModifier(info.attributeValue + info.rankBonus - info.penalidadeQuebrantado);
     }
   }
 
@@ -252,7 +269,7 @@ export default function DiceRoller() {
       const info = getWeaponDamage(character, weapon.baseDie, weapon.damageAttribute ?? "forca");
       if (info) {
         liveFormula = info.escalatedDie;
-        liveModifier = info.attributeValue + info.rankBonus;
+        liveModifier = info.attributeValue + info.rankBonus - info.penalidadeQuebrantado;
       }
     }
     if (criticalDamage) {
@@ -396,7 +413,7 @@ export default function DiceRoller() {
               </div>
 
               {testSource === "atributo" && (
-                <div className="mb-2 grid grid-cols-5 gap-1">
+              <div className="mb-2 grid grid-cols-5 gap-1">
                   {ATTRIBUTES.map((a) => (
                     <button
                       key={a.key}
@@ -493,6 +510,29 @@ export default function DiceRoller() {
                   className="w-20 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
                 />
               </div>
+
+              {/*
+                O aviso de condição, colado nos botões de vantagem (0.1.24).
+
+                Ele NÃO força o modo: diz o que a regra manda e deixa a
+                Desvantagem a um toque. Forçar seria decidir pela mesa — a
+                condição pode ter acabado de sair, a habilidade pode ter exceção,
+                e o Mestre pode ter combinado outra coisa. Avisar sem oferecer o
+                botão é pior; aplicar sem avisar é pior ainda.
+              */}
+              {condicoesQuePesam.length > 0 && mode !== "desvantagem" && mode !== "desvantagemAbsoluta" && (
+                <button
+                  type="button"
+                  onClick={() => setMode("desvantagem")}
+                  className="mb-2 flex w-full items-start gap-1.5 rounded-lg border border-wine-400/60 bg-wine-500/10 px-2 py-1.5 text-left text-2xs leading-snug text-wine-800 hover:bg-wine-500/20 dark:border-wine-700 dark:text-wine-200"
+                >
+                  <Zap className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
+                  <span>
+                    <b>{condicoesQuePesam.join(", ")}</b>: esta rolagem deveria sair com Desvantagem.{" "}
+                    <span className="underline underline-offset-2">Aplicar</span>
+                  </span>
+                </button>
+              )}
 
               <div className="mb-2 grid grid-cols-5 gap-1">
                 {ADVANTAGE_MODES.map((m) => (

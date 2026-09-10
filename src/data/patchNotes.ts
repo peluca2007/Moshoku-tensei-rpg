@@ -16,6 +16,30 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.24",
+    date: "2026-09-10",
+    title: "A Ficha Sabe Que Você Está Envenenado",
+    sections: [
+      {
+        heading: "Condição deixou de ser anotação no papel",
+        items: [
+          "A ficha tem uma seção de Condições: marque Envenenado, Preso, Quebrantado, e o site passa a saber. Ela fica logo abaixo dos números que ela muda, de propósito — ler as duas coisas juntas é o que faz um número menor parecer explicado em vez de errado.",
+          "Quebrantado é a única condição do livro que mexe num NÚMERO, e agora ele mexe de verdade: −1 na CA e −1 no dano por acúmulo, com os acúmulos contados na ficha. As outras mudam como se rola ou o que se pode fazer, e isso a ficha mostra em vez de somar.",
+          "O rolador de dados passou a olhar as condições. Se você está Envenenado, ele avisa que aquela rolagem deveria sair com Desvantagem e põe o botão de aplicar a um toque — ele não força, porque a condição pode ter acabado de sair e o Mestre pode ter combinado outra coisa.",
+          "Deslocamento zerado, quem te ataca com Vantagem, dano no início do seu turno e perda de Ações aparecem num resumo do que está valendo agora, sempre dizendo QUAL condição causou. A diferença entre \"Desvantagem\" e \"Desvantagem por Envenenado\" é a diferença entre a mesa aceitar o número e entender o número.",
+          "Um botão de Fim de combate limpa tudo de uma vez, que é como a mesa realmente limpa a ficha.",
+        ],
+      },
+      {
+        heading: "O que ela não tenta fazer: contar rodadas",
+        items: [
+          "A duração das condições do Cap. 4 é escrita em prosa — \"até quebrar o gelo\", \"enquanto a fonte do medo estiver visível\". Um contador numérico obrigaria a mesa a inventar um número que a regra não pediu e a mantê-lo atualizado a cada turno pra ele não mentir.",
+          "No lugar dele, cada condição tem um campo de nota livre, já preenchido com a duração padrão do livro como sugestão. Quem quiser escreve \"CD 12 Força pra sair\" ou \"até o fim do combate\".",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.23",
     date: "2026-09-10",
     title: "A Condição Que Se Explica",

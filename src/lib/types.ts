@@ -656,6 +656,31 @@ export interface Tree {
   ranks: TreeRankDef[];
 }
 
+/**
+ * Uma condição do Cap. 4, §2 marcada na ficha (0.1.24).
+ *
+ * Guarda o `id` e não a definição: o efeito mora em `src/data/condicoes.ts` e
+ * pode ser reescrito num ajuste de regra sem que a ficha de ninguém precise ser
+ * tocada. É a mesma razão pela qual o inventário guarda o id do item da loja.
+ */
+export interface CondicaoAtiva {
+  /** `id` de `CONDICOES` (`src/data/condicoes.ts`). */
+  id: string;
+  /**
+   * Quantos acúmulos, para as condições que empilham — hoje só Quebrantado, que
+   * dá −1 de CA e −1 de dano por acúmulo. Ausente vale 1.
+   */
+  acumulos?: number;
+  /**
+   * O que a mesa combinou sobre esta aplicação: quem aplicou, até quando, qual
+   * CD para se soltar. Texto livre de propósito — a duração das condições é
+   * escrita em prosa no livro ("até quebrar o gelo", "enquanto a fonte estiver
+   * visível"), e um campo numérico de rodadas obrigaria a mesa a inventar um
+   * número que a regra não pediu.
+   */
+  nota?: string;
+}
+
 export interface PurchasedAbility {
   treeId: string;
   rank: RankName;
@@ -809,4 +834,9 @@ export interface CharacterData {
     /** Cap. 5, §2: Rank de Guilda é decisão do Mestre, nunca uma fórmula — isto é o valor que ele fixou. Sem isso, o site mostra uma estimativa por PA gasto, só como chute inicial. */
     guildRank?: GuildRank;
   };
+  /**
+   * Condições ativas agora (Cap. 4, §2). Ausente = ficha de antes da 0.1.24;
+   * toda leitura usa `?? []`.
+   */
+  condicoes?: CondicaoAtiva[];
 }

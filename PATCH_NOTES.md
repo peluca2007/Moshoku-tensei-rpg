@@ -5,6 +5,36 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.24 — "A Ficha Sabe Que Você Está Envenenado" · 2026-09-10
+
+### ⚡ Condição deixou de ser anotação no papel
+
+A ficha ganhou uma seção de **Condições**: marque Envenenado, Preso, Quebrantado, e o site passa a
+saber. Ela fica logo abaixo dos números que ela muda — ler as duas coisas juntas é o que faz um
+número menor parecer **explicado** em vez de errado.
+
+- **Quebrantado** é a única condição do livro que mexe num número, e agora mexe de verdade: **−1 na
+  CA e −1 no dano por acúmulo**, com os acúmulos contados na ficha.
+- **O rolador olha as condições.** Envenenado? ele avisa que aquela rolagem deveria sair com
+  Desvantagem e deixa o botão de aplicar a um toque. Ele **não força**: a condição pode ter acabado
+  de sair, a habilidade pode ter exceção, e o Mestre pode ter combinado outra coisa.
+- Deslocamento zerado, quem te ataca com Vantagem, dano no início do turno e perda de Ações aparecem
+  num resumo do que está valendo — sempre dizendo **qual** condição causou. A diferença entre
+  "Desvantagem" e "Desvantagem por Envenenado" é a diferença entre a mesa aceitar o número e
+  entender o número.
+- **Fim de combate** limpa tudo de uma vez, que é como a mesa realmente limpa a ficha.
+
+### ⏱️ O que ela não tenta fazer: contar rodadas
+
+A duração das condições do Cap. 4 é escrita em prosa — *"até quebrar o gelo"*, *"enquanto a fonte do
+medo estiver visível"*. Um contador numérico obrigaria a mesa a **inventar** um número que a regra
+não pediu, e a mantê-lo atualizado a cada turno pra ele não mentir.
+
+No lugar dele, cada condição tem um campo de nota livre, com a duração padrão do livro já como
+sugestão. Quem quiser escreve "CD 12 Força pra sair" ou "até o fim do combate".
+
+---
+
 ## 0.1.23 — "A Condição Que Se Explica" · 2026-09-10
 
 ### 🔗 "O alvo fica Envenenado" agora diz o que isso faz
