@@ -16,6 +16,23 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.21",
+    date: "2026-09-10",
+    title: "O Atalho Que Faltava",
+    sections: [
+      {
+        heading: "Macro agora guarda Teste, e não só dano",
+        items: [
+          "Os macros do rolador só sabiam guardar fórmula de dano — \"Bola de Fogo → 2d10+5\". Metade do que se repete numa sessão é o outro lado: Furtividade com Vantagem, resistir ao veneno, iniciativa. Tudo d20 com um modificador e um modo de vantagem, e nada disso cabia numa fórmula de dados.",
+          "Agora existe uma estrela ao lado do Rolar 1d20 que guarda o teste como ele está: o nome que o próprio rolador já dava, o modificador e o modo de vantagem. Um toque pra salvar, um toque pra repetir.",
+          "Macro de teste rola d20 de verdade, com crítico: se caísse na rolagem de dano, um 20 natural viraria só mais um número.",
+          "Ele guarda o modificador JÁ somado, e não a fonte que o produziu. Macro é atalho de mesa, não pedaço de ficha — guardar \"Ataque Mágico de Fogo\" faria o atalho mentir no dia em que o personagem subisse de rank, ou ao ser usado com outro personagem do roster.",
+          "Os macros que já estavam salvos continuam ali, como macros de dano. Macro que some sem explicação é indistinguível de defeito, e um registro sem fórmula é descartado em vez de virar um botão que rola zero.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.20",
     date: "2026-09-10",
     title: "Um Toque, e Foi",

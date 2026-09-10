@@ -90,12 +90,18 @@ combate a pessoa está em `/iniciativa` ou `/encontros`. Subir pro layout manten
 `#dados` do app instalado e os pedidos de rolagem do Inventário e do Grimório. Cuidar de não cobrir
 controle de outra rota (a tarja de `SuporteOffline` já teve esse problema).
 
-### 8. 🔨 Testar o `rollEngine` e ensinar o macro a guardar Testes — *31 testes feitos; falta o macro*
+### 8. ✅ Testar o `rollEngine` e ensinar o macro a guardar Testes — *0.1.20 e 0.1.21*
 
-Item 11 do `O-QUE-FALTA`. O motor que decide toda rolagem da mesa não tem um teste, enquanto o
-`selectors.ts` ao lado tem 570 linhas travando fórmulas. E `RollMacro` é `{id, label, formula}`, então
-não dá pra salvar "Furtividade com Vantagem" — metade do que se repete numa sessão. Testes primeiro
-(risco zero, e viram a rede de segurança); o formato do macro depois, com migração de verdade.
+**Os 31 testes do motor** entraram sem tocar numa linha do `rollEngine`: viciar o `Math.random` no
+teste, em vez de abrir uma costura no código de produção. A fila de dados estoura quando acaba, o que
+transforma "o motor rolou mais dados do que devia" em falha com nome. Conferido por mutação: com o
+crítico olhando qualquer dado rolado, 3 falham; com o modificador embutido ignorado, 4 falham.
+
+**O macro** virou união de dois tipos (`dano` e `teste`), com migração v1→v2 e uma estrela ao lado do
+"Rolar 1d20" que guarda o teste montado. Guarda o modificador já somado, e não a fonte — macro é
+atalho de mesa, não pedaço de ficha.
+
+O que sobrou desta frente virou a **task 21**: não dá pra rolar perícia em lugar nenhum do site.
 
 ### 9. 🔨 Botão "Instalar app" visível — *feito na 0.1.20, falta instalar num aparelho*
 
@@ -189,3 +195,24 @@ Dezesseis árvores têm o quadro; três não têm, e isso é deliberado — as T
 têm critério próprio de ascensão. O motivo existe **só** como comentário em `src/data/rankDeus.ts`, e
 o `PROGRESS.md` já registrou a ausência como pendência uma vez, justamente porque a justificativa não
 estava em lugar visível. Escrever o critério no livro é conteúdo novo de regra: é do autor.
+
+---
+
+## Achado enquanto trabalhava
+
+### 21. ⬜ Rolar perícia direto da ficha — hoje não dá em lugar nenhum
+
+Descoberto ao fechar a task 8: **não existe nenhum lugar no site onde se role uma perícia.** O
+`SkillsSection` lista as treinadas e não tem botão; o rolador tem quatro fontes de Teste — Livre,
+Atributo, Magia e Marcial — e perícia não é nenhuma delas.
+
+Estranho porque a perícia é provavelmente a rolagem mais frequente da mesa, e porque o site já tem
+tudo: `SKILLS` diz qual atributo governa cada uma, `getFinalAttribute` dá o valor, e o Bônus de Rank
+já é calculado pra ataque. A conta do Cap. 1 §4 está implementada — falta o botão.
+
+Uma quinta fonte "Perícia" no rolador, e um toque na própria perícia do `SkillsSection` abrindo o
+rolador já configurado (o `useDiceRollerStore` já recebe pedidos de fora — é assim que o Inventário
+manda a arma).
+
+Fecha o exemplo que o `O-QUE-FALTA` usava pra pedir o macro de Teste: "Furtividade com Vantagem" já
+dá pra salvar, mas o modificador ainda precisa ser digitado à mão.

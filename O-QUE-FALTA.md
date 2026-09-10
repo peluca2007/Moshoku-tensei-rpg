@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.18. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.21. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -71,21 +71,13 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Acertado com o autor, ainda não feito
 
-Sobrou um. Os outros três daquele levantamento de 2026-09-09 já saíram: os alvos de toque viraram a
-0.1.16, a busca global virou a 0.1.17 e as telas de 404 e de erro viraram a 0.1.18. O mapa maior das
-frentes abertas — vinte delas, levantadas em 2026-09-10 — vive em [`TAREFAS.md`](TAREFAS.md).
+Acabaram. Os quatro daquele levantamento de 2026-09-09 saíram: alvos de toque na 0.1.16, busca
+global na 0.1.17, telas de 404 e de erro na 0.1.18, e os testes do `rollEngine` mais o macro de Teste
+nas 0.1.20/0.1.21. O mapa maior — vinte frentes levantadas em 2026-09-10 — vive em
+[`TAREFAS.md`](TAREFAS.md).
 
-10. **Testes do `rollEngine` e macro de Teste.** Duas coisas no mesmo lugar.
-
-    O `src/lib/rollEngine.ts` **não tem teste nenhum** — `rollD20` com os cinco modos de vantagem, e o
-    parser de `rollFormula`. É o código que decide toda rolagem da mesa, e o `selectors.ts` ao lado
-    tem 570 linhas de teste travando as fórmulas. A régua do projeto não está sendo aplicada nele.
-    Testar rolagem exige injetar o aleatório ou fixar semente; hoje `dice.ts` sorteia direto.
-
-    E o macro só sabe dano: `RollMacro` é `{ id, label, formula }` (`store/useMacroStore.ts`), então
-    não dá pra salvar "Teste de Furtividade com Vantagem" — metade do que se repete numa sessão. Já
-    estava no backlog do `PROGRESS.md`. Mexer no formato salvo pede migração: a store é persistida
-    (`version: 1`), e ficha salva nunca é resetada é a terceira regra da base de código.
+*Nada — o último item combinado (testes do `rollEngine` e macro de Teste) saiu nas 0.1.20/0.1.21.*
+O mapa das frentes abertas agora é o [`TAREFAS.md`](TAREFAS.md).
 
 ## Correções pendentes de registro
 
