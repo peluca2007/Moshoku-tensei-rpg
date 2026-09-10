@@ -38,6 +38,7 @@ import InventorySection from "./InventorySection";
 import LoreSection from "./LoreSection";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
+import CondicoesSection from "./CondicoesSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
@@ -1003,6 +1004,16 @@ export default function CharacterSheet() {
               suffix={initiative.hasAdvantage ? "(Vantagem)" : undefined}
             />
           </div>
+
+          {/*
+            As condições ficam logo abaixo dos números que elas mudam (0.1.24).
+
+            Não é acaso: Quebrantado abaixa a CA que está no card acima, e
+            Deslocamento zerado contradiz o número que a ficha mostra. Ler as
+            duas coisas juntas é o que faz o número menor parecer explicado em
+            vez de errado.
+          */}
+          <CondicoesSection />
 
           <div className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm dark:border-parchment-800 dark:bg-parchment-900/60">
             <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">

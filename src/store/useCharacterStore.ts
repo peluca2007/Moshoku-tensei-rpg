@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
 import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank } from "./selectors";
 import { comImagensSaneadas } from "@/lib/imagemDaFicha";
+import { getCondicaoPorId } from "@/data/condicoes";
 
 const DEFAULT_ATTRIBUTES: Record<AttributeKey, number> = {
   forca: 0,
@@ -40,6 +41,7 @@ function blankCharacter(id: string, name: string): CharacterData {
     currentPt: null,
     currentPp: null,
     currentCalor: null,
+    condicoes: [],
     overrides: {},
   };
 }
@@ -130,6 +132,18 @@ interface RosterState {
   setOverride: (stat: keyof Omit<CharacterData["overrides"], "guildRank">, value: number | null) => void;
   /** Rank de Guilda (Cap. 5, §2) é decisão do Mestre, não fórmula — value === null volta a mostrar a estimativa por PA. */
   setGuildRankOverride: (value: CharacterData["overrides"]["guildRank"] | null) => void;
+  /**
+   * Marca uma condição do Cap. 4 na ficha. Aplicar a mesma duas vezes NÃO cria
+   * duas linhas: nas acumuláveis soma um acúmulo, nas outras não faz nada — um
+   * personagem não fica "Envenenado duas vezes".
+   */
+  aplicarCondicao: (id: string) => void;
+  removerCondicao: (id: string) => void;
+  /** Muda os acúmulos (Quebrantado). Zero ou menos remove a condição. */
+  ajustarAcumulos: (id: string, delta: number) => void;
+  anotarCondicao: (id: string, nota: string) => void;
+  /** Fim de combate: tira tudo de uma vez, que é como a mesa realmente limpa a ficha. */
+  limparCondicoes: () => void;
   addSkill: (name: string) => void;
   removeSkill: (name: string) => void;
   addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
@@ -347,6 +361,39 @@ export const useCharacterStore = create<RosterState>()(
           return { ...c, overrides };
         }),
 
+      aplicarCondicao: (id) =>
+        updateActive(get, set, (c) => {
+          const atuais = c.condicoes ?? [];
+          const existente = atuais.find((x) => x.id === id);
+          if (existente) {
+            // Acumulável ganha mais um; o resto ignora, porque estar Envenenado
+            // duas vezes não é nada no Cap. 4.
+            const condicao = getCondicaoPorId(id);
+            if (!condicao?.mecanica?.acumulavel) return c;
+            return {
+              ...c,
+              condicoes: atuais.map((x) => (x.id === id ? { ...x, acumulos: (x.acumulos ?? 1) + 1 } : x)),
+            };
+          }
+          return { ...c, condicoes: [...atuais, { id }] };
+        }),
+      removerCondicao: (id) =>
+        updateActive(get, set, (c) => ({ ...c, condicoes: (c.condicoes ?? []).filter((x) => x.id !== id) })),
+      ajustarAcumulos: (id, delta) =>
+        updateActive(get, set, (c) => {
+          const atuais = c.condicoes ?? [];
+          const alvo = atuais.find((x) => x.id === id);
+          if (!alvo) return c;
+          const novo = (alvo.acumulos ?? 1) + delta;
+          if (novo <= 0) return { ...c, condicoes: atuais.filter((x) => x.id !== id) };
+          return { ...c, condicoes: atuais.map((x) => (x.id === id ? { ...x, acumulos: novo } : x)) };
+        }),
+      anotarCondicao: (id, nota) =>
+        updateActive(get, set, (c) => ({
+          ...c,
+          condicoes: (c.condicoes ?? []).map((x) => (x.id === id ? { ...x, nota: nota || undefined } : x)),
+        })),
+      limparCondicoes: () => updateActive(get, set, (c) => ({ ...c, condicoes: [] })),
       addSkill: (name) =>
         updateActive(get, set, (c) =>
           c.skills.includes(name) ? c : { ...c, skills: [...c.skills, name] }
@@ -480,7 +527,7 @@ export const useCharacterStore = create<RosterState>()(
       // v13 (2026-09-05): `currentCalor`. Mesmo caso do v12 — campo novo,
       // nullable, e `getCurrentCalor` já trata ausência (`??`) igual a `null`
       // ("ainda não tocado"), então ficha antiga não precisa de conversão.
-      version: 13,
+      version: 14,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
@@ -497,6 +544,7 @@ export const useCharacterStore = create<RosterState>()(
                 treeSkillChoices: c.treeSkillChoices ?? [],
                 proficiencies: c.proficiencies ?? [],
                 saveAdvantages: c.saveAdvantages ?? [],
+                condicoes: c.condicoes ?? [],
                 purchasedCombinedSpells: c.purchasedCombinedSpells ?? [],
                 purchasedAbilities: (c.purchasedAbilities ?? [])
                   .map((a) =>
