@@ -4,6 +4,7 @@ import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, 
 import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank } from "./selectors";
 import { comImagensSaneadas } from "@/lib/imagemDaFicha";
 import { getCondicaoPorId } from "@/data/condicoes";
+import { CURTOS_POR_DIA } from "@/lib/descanso";
 
 const DEFAULT_ATTRIBUTES: Record<AttributeKey, number> = {
   forca: 0,
@@ -42,6 +43,7 @@ function blankCharacter(id: string, name: string): CharacterData {
     currentPp: null,
     currentCalor: null,
     condicoes: [],
+    descansosCurtos: 0,
     overrides: {},
   };
 }
@@ -144,6 +146,16 @@ interface RosterState {
   anotarCondicao: (id: string, nota: string) => void;
   /** Fim de combate: tira tudo de uma vez, que é como a mesa realmente limpa a ficha. */
   limparCondicoes: () => void;
+  /**
+   * Aplica um descanso (Cap. 4, §7). Recebe o ganho já calculado por
+   * `lib/descanso.ts` porque o PV do Longo depende de uma ROLAGEM: a store não
+   * sorteia dado, e a tela precisa mostrar o número que caiu antes de aplicar.
+   *
+   * Devolve false no Curto quando o teto de dois já foi usado — o teto é a
+   * regra que segura o livro inteiro em pé, e uma store que o ignorasse
+   * deixaria a tela sozinha vigiando.
+   */
+  descansar: (tipo: "curto" | "longo", ganho: { pv: number; pm: number; pt: number; pp: number }, maximos: { pv: number; pm: number; pt: number; pp: number }) => boolean;
   addSkill: (name: string) => void;
   removeSkill: (name: string) => void;
   addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
@@ -361,6 +373,28 @@ export const useCharacterStore = create<RosterState>()(
           return { ...c, overrides };
         }),
 
+      descansar: (tipo, ganho, maximos) => {
+        const state = get();
+        const atual = state.activeId ? state.characters[state.activeId] : undefined;
+        if (!atual) return false;
+        if (tipo === "curto" && (atual.descansosCurtos ?? 0) >= CURTOS_POR_DIA) return false;
+
+        // `?? maximos.x` porque `null` em `currentX` significa "cheio, ainda não
+        // tocado" (ver getCurrentHp) — somar em cima de null daria NaN.
+        const somar = (corrente: number | null | undefined, ganhoDoRecurso: number, teto: number) =>
+          Math.min(teto, (corrente ?? teto) + ganhoDoRecurso);
+
+        updateActive(get, set, (c) => ({
+          ...c,
+          currentHp: somar(c.currentHp, ganho.pv, maximos.pv),
+          currentMp: somar(c.currentMp, ganho.pm, maximos.pm),
+          currentPt: somar(c.currentPt, ganho.pt, maximos.pt),
+          currentPp: somar(c.currentPp, ganho.pp, maximos.pp),
+          // O Longo é o que vira o dia: zera o contador de Curtos.
+          descansosCurtos: tipo === "longo" ? 0 : (c.descansosCurtos ?? 0) + 1,
+        }));
+        return true;
+      },
       aplicarCondicao: (id) =>
         updateActive(get, set, (c) => {
           const atuais = c.condicoes ?? [];
@@ -527,7 +561,7 @@ export const useCharacterStore = create<RosterState>()(
       // v13 (2026-09-05): `currentCalor`. Mesmo caso do v12 — campo novo,
       // nullable, e `getCurrentCalor` já trata ausência (`??`) igual a `null`
       // ("ainda não tocado"), então ficha antiga não precisa de conversão.
-      version: 14,
+      version: 15,
       migrate: (persistedState, version) => {
         if (version < 4) return { characters: {}, order: [], activeId: null };
         const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
@@ -545,6 +579,7 @@ export const useCharacterStore = create<RosterState>()(
                 proficiencies: c.proficiencies ?? [],
                 saveAdvantages: c.saveAdvantages ?? [],
                 condicoes: c.condicoes ?? [],
+                descansosCurtos: c.descansosCurtos ?? 0,
                 purchasedCombinedSpells: c.purchasedCombinedSpells ?? [],
                 purchasedAbilities: (c.purchasedAbilities ?? [])
                   .map((a) =>

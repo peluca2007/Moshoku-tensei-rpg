@@ -39,6 +39,7 @@ import LoreSection from "./LoreSection";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import CondicoesSection from "./CondicoesSection";
+import DescansoSection from "./DescansoSection";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
@@ -1014,6 +1015,13 @@ export default function CharacterSheet() {
             vez de errado.
           */}
           <CondicoesSection />
+
+          {/*
+            Descanso e Downtime ficam ao lado das condições porque são o outro
+            lado do mesmo movimento: a condição é o que a mesa ganhou no
+            combate, e o descanso é o que ela recupera depois dele.
+          */}
+          <DescansoSection />
 
           <div className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 text-sm dark:border-parchment-800 dark:bg-parchment-900/60">
             <h2 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">

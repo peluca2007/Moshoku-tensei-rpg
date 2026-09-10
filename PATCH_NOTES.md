@@ -5,6 +5,43 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.25 — "Dormir Conta" · 2026-09-10
+
+### 🛏️ Descanso virou botão, com a conta à vista
+
+Descanso Curto e Longo acontecem na ficha, pelas regras exatas do Cap. 4, §7. **Nada muda sozinho:**
+a tela mostra quanto vai devolver de cada reserva e de onde saiu cada número ("25% de 40", "20%
+rolado no Vigor"), e só aplica no segundo toque. Um número que aparece sem a conta ao lado é um
+número que a mesa não confere — e o que a mesa não confere, ela não confia.
+
+- **O Curto não devolve PV. Nenhum.** É a regra mais importante do capítulo — *"a carne não fecha
+  sozinha"* — e é dela que depende a promessa de que um grupo sem curandeiro sangra na segunda luta.
+- **O teto de dois Curtos** entre dois Longos é cobrado de verdade: o terceiro é recusado, e o botão
+  diz em quantos você está. O Longo zera a contagem, porque é ele que vira o dia.
+- **Os PT voltam inteiros no Curto.** A tabela do Cap. 4 lista PT entre os 25%, e o aviso logo abaixo
+  dela diz que isso está errado; o site segue os dois trechos que corrigem, não o que foi corrigido.
+
+### 🗓️ E o Downtime saiu do papel
+
+As seis atividades de uma semana livre (Cap. 5, §1) estão na ficha. **Trabalhar** rola 2d6 × seu
+maior Bônus de Rank e o ouro entra na hora; **Recuperar-se** enche os PV. As outras quatro são
+combinação de mesa — o site mostra o texto em vez de fingir que resolve.
+
+Nenhuma concede PA, magia, talento ou Rank, e a tela repete isso: progressão só vem de jogar a
+campanha.
+
+### ⚠️ Uma contradição do livro que precisa de você
+
+Sobre quanto **PM** o Descanso Curto devolve, o livro diz duas coisas: a **tabela** do Cap. 4 diz
+**25%**, e o **aviso logo abaixo dela** e o **Cap. 3** dizem **metade**. Não é detalhe — o próprio
+aviso constrói a defesa do teto de dois Curtos em cima da conta de 50%.
+
+O site segue a tabela (25%) por enquanto, porque é o número que a mesa lê na hora de aplicar.
+Escolher o maior sem o autor mandar seria dobrar, por conta própria, o recurso do qual a Magia de
+Cura converte PV.
+
+---
+
 ## 0.1.24 — "A Ficha Sabe Que Você Está Envenenado" · 2026-09-10
 
 ### ⚡ Condição deixou de ser anotação no papel

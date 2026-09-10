@@ -839,4 +839,10 @@ export interface CharacterData {
    * toda leitura usa `?? []`.
    */
   condicoes?: CondicaoAtiva[];
+  /**
+   * Quantos Descansos Curtos já foram feitos desde o último Longo (Cap. 4, §7:
+   * "dois, e nem um a mais"). O Descanso Longo zera — ele é o que marca o dia
+   * novo. Ausente = ficha de antes da 0.1.25, e vale zero.
+   */
+  descansosCurtos?: number;
 }
