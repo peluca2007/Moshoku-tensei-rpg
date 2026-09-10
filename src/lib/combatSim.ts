@@ -460,7 +460,16 @@ export function acoesDe(c: CharacterData): Acao[] {
       // As duas fórmulas nunca estão preenchidas ao mesmo tempo: a de dano fica
       // vazia no suporte pra que uma cura que vaze pro caminho de dano some
       // zero em vez de curar o inimigo.
-      dano: ehSuporte ? "" : a.damage.normal,
+      /*
+       * O dano também é lido pelo CASO BASE desde a 0.1.39.
+       *
+       * Onze técnicas do livro descrevem o caso condicional na mesma linha, e o
+       * motor somava os dois: a Explosão do Fogo (3d6, +3d6 contra Em Chamas)
+       * rolava o dobro, o Zero Absoluto da Água rolava o TRIPLO. A condição
+       * existe no livro e o motor sabe aplicá-la (frio dobra contra Molhado);
+       * o que ele não pode é cobrar a exceção junto com a regra.
+       */
+      dano: ehSuporte ? "" : casoBase(a.damage.normal),
       formulaSuporte: ehSuporte ? casoBase(a.damage.normal) : "",
       sempreFresca: /sempre como ferida fresca/i.test(txt),
       // "+1 Dado de Arma", "+2 Dados de Arma", "Dado de arma rolado quatro vezes":
@@ -476,7 +485,27 @@ export function acoesDe(c: CharacterData): Acao[] {
         if (v) return { duas: 2, três: 3, quatro: 4, cinco: 5 }[v[1].toLowerCase()] ?? 0;
         return 0;
       })(),
-      area: /esfera|cone|linha|área|todos/.test((a.range + " " + a.effect).toLowerCase()),
+      /*
+       * ÁREA — a palavra "linha" sozinha era larga demais (0.1.39).
+       *
+       * Ela pegava cinco técnicas que não têm área nenhuma, e as três piores
+       * eram as que a IA mais escolhe:
+       *
+       * - **Investida** (Deus da Espada): *"avance até o dobro do deslocamento
+       *   EM LINHA RETA e ataque ao final"* — a linha é o caminho de quem corre,
+       *   não a forma do golpe. Ela acertava os cinco inimigos do playtest.
+       * - **Forma Quadrúpede** (Deus do Norte) e **Investida Devastadora**
+       *   (Armas Pesadas): mesma frase, mesmo erro.
+       * - **Relâmpago** (Água) e **Golpe que Não Tem Origem** (Vendaval), que
+       *   dizem "alcance ilimitado (LINHA DE VISÃO)".
+       *
+       * A rede agora pede uma linha MEDIDA — "linha de 18m", "linha de 3 km" —,
+       * que é como o livro escreve a forma de verdade, e cobre à parte os dois
+       * jeitos que ele usa pra dizer "atravessa e pega quem está atrás".
+       */
+      area: /esfera|cone|área|todos|atinge tudo|atinge até \d|cada criatura|linha de \d/.test(
+        (a.range + " " + a.effect).toLowerCase()
+      ),
       /*
        * A rolagem de ataque, lida do EFEITO — corrigido na 0.1.35.
        *
@@ -530,20 +559,34 @@ export function acoesDe(c: CharacterData): Acao[] {
 }
 
 /**
- * O primeiro caso de uma fórmula que descreve vários — 0.1.37.
+ * O caso BASE de uma fórmula que descreve vários — 0.1.37, corrigido na 0.1.39.
  *
- * O livro escreve a exceção na mesma linha da regra, entre parênteses ou depois
- * de vírgula: *"2d8 + BC de PV (4d8 + BC se Ferida Fresca)"*, *"12d12 de frio
- * (24d12 contra alvo Molhado)"*. `rolarDados` soma todo `NdM` que vê, então a
- * linha inteira vale a soma dos DOIS casos — um erro que já produziu "um cartão
- * de 36d12" no gerador de criaturas, e que aqui produziria uma cura de 12d8
- * onde o livro promete 4d8.
+ * `rolarDados` soma todo `NdM` que encontra, e o livro escreve a exceção na
+ * mesma linha da regra. Sem esta função, a linha inteira vale a SOMA dos dois
+ * casos: *"12d12 de frio (24d12 contra alvo Molhado)"* virava 36d12, três vezes
+ * o dano escrito.
  *
- * Cortar no primeiro separador devolve o caso base, que é o que o motor sabe
- * modular depois (dobrar por Ferida Fresca, dobrar frio contra Molhado).
+ * ## Por que remover parênteses em vez de cortar neles
+ *
+ * A primeira versão cortava no primeiro `(` ou `,`, e isso servia para a cura
+ * (onde a exceção vem sempre no fim) mas MUTILA o dano. Quatro técnicas de Água
+ * põem o tipo de dano entre parênteses e continuam somando depois:
+ * *"3d8 + BC (cortante) + 1d6 de frio"* são 3d8 E 1d6, e cortar no parêntese
+ * perderia o 1d6. Remover só o miolo do parêntese acerta os dois casos.
+ *
+ * ## Os conectores
+ *
+ * Fora dos parênteses o livro emenda o caso condicional com `;`, `, depois`
+ * (dano ao longo do tempo, que não é do mesmo golpe) e `, sempre` (a Prontidão).
+ * Cada um está aqui porque existe uma linha do livro que o usa — e a lista é
+ * curta de propósito: cortar em vírgula solta perderia dano legítimo.
  */
 export function casoBase(formula: string): string {
-  return formula.split(/[(,]/)[0].trim();
+  return formula
+    .replace(/\([^)]*\)/g, " ")
+    .split(/;|,\s*depois\b|,\s*sempre\b/i)[0]
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 /** Resolve uma ficha do site nos números que a simulação usa. */

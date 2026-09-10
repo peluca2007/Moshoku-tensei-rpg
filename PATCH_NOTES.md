@@ -5,6 +5,73 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.39 — "A Exceção Cobrada Junto com a Regra" · 2026-09-10
+
+Auditoria da leitura de texto do motor. Dois erros, os dois na mesma família: o simulador lendo a
+prosa do livro com uma rede larga demais.
+
+### 🎲 Sete técnicas rolavam a exceção SOMADA ao caso base
+
+`rolarDados` soma **todo** `NdM` que encontra na linha, e o livro escreve os dois casos juntos. O
+resultado é que a condição era cobrada junto com a regra:
+
+| Técnica | O livro escreve | O motor rolava |
+| ------- | --------------- | -------------- |
+| **Zero Absoluto** (Água) | `12d12 de frio (24d12 contra Molhado)` | **36d12** — 3× |
+| **Sol Menor** (Fogo) | `14d12 (20d12 contra Em Chamas)` | 34d12 — 2,4× |
+| **Explosão** (Fogo) | `3d6 + BC (+3d6 contra Em Chamas)` | 6d6 — 2× |
+| **Lança de Fogo** (Fogo) | `3d8 + BC; +2d8 contra Em Chamas` | 5d8 |
+| **Guilhotina de Vácuo** (Vento) | `5d8 + BC (+2d8 contra Desequilibrado)` | 7d8 |
+| **Lâmina do Horizonte** (Vento) | `16d10 (+6d10 contra Desequilibrado)` | 22d10 |
+| **Rio de Magma** (Terra) | `12d8 no impacto, depois 6d10 por turno` | 12d8+6d10 no mesmo golpe |
+
+O conserto **remove o miolo do parêntese** em vez de cortar nele, e isso importa: quatro técnicas de
+Água põem o TIPO de dano entre parênteses e continuam somando depois — `3d8 + BC (cortante) + 1d6 de
+frio` são 3d8 **e** 1d6, os dois de verdade. Cortar no parêntese perderia dano legítimo; remover só o
+miolo acerta os onze casos.
+
+E a condição não se perdeu: o motor já sabia dobrar frio contra Molhado. Agora o Zero Absoluto rola
+os 12d12 escritos e a dobra devolve exatamente os **24d12** que o livro promete — pelo mecanismo que
+já existia. De quebra, a Cabeçada de Armas Pesadas (`Metade do dado (você sofre 1d4)`) parou de
+contar como dano no alvo o `1d4` que a técnica cobra de **quem bate**.
+
+### 🎯 Correr em linha reta não é atacar em área
+
+A palavra `linha` sozinha marcava como **ataque em área** cinco técnicas que não têm área nenhuma — e
+as três piores são as que a IA mais escolhe:
+
+- **Investida** (Deus da Espada): *"avance até o dobro do deslocamento **em linha reta** e ataque ao
+  final"*. A linha é o caminho de quem corre, não a forma do golpe. **Ela acertava os cinco inimigos
+  do playtest, todo turno.**
+- **Forma Quadrúpede** (Deus do Norte) e **Investida Devastadora** (Armas Pesadas): mesma frase.
+- **Relâmpago** (Água) e **Golpe que Não Tem Origem** (Vendaval): *"alcance ilimitado (**linha de
+  visão**)"*.
+
+A rede agora pede uma linha **medida** — `linha de 18m`, `linha de 3 km` —, que é como o livro
+escreve a forma de verdade, e cobre à parte os dois jeitos que ele usa pra dizer "atravessa e pega
+quem está atrás". As 52 técnicas de área legítimas continuam em área.
+
+### 📉 O playtest, de novo
+
+| Ficha | Dano/batalha | Sobreviveu |
+| ----- | ------------ | ---------- |
+| **Mara** (Escudos) | 112 → **196** | 56% → **67%** |
+| **Gorr** (Armas Pesadas) | 101 → **177** | 53% → 50% |
+| **Vex** (Deus da Espada) | 92 → **29** | 28% → **8%** |
+| **Borg** (Deus do Norte) | 116 → **56** | 39% → 24% |
+| Sera (Cura) | 116 → **205** PV devolvidos | 44% → 33% |
+
+**O Vex despencou porque a Investida dele era um ataque em área por engano.** Sozinha, ela
+multiplicava o dano dele por cinco no confronto de times. Ele continua com 35 de dano por turno — o
+terceiro melhor —, mas morre cedo: 8% de sobrevivência.
+
+E isso deixa uma pergunta de balanceamento muito mais afiada que a da 0.1.35, agora no
+`O-QUE-FALTA`: o livro chama o **Deus da Espada** de *"o maior dano do livro"*, e ele entrega **29
+por batalha**. A **Mara**, cuja build está descrita como *"protege, não mata"*, entrega **196** e
+lidera a sobrevivência. As duas descrições estão invertidas em relação ao que o simulador mede.
+
+---
+
 ## 0.1.38 — "O Fio da Vida" · 2026-09-10
 
 ### 🎯 O pedido: um chefe tem que poder dizimar o grupo em pelo menos 25% das vezes
