@@ -16,6 +16,22 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.27",
+    date: "2026-09-10",
+    title: "Modo Mesa",
+    sections: [
+      {
+        heading: "Uma tela só, aberta a sessão inteira",
+        items: [
+          "Ficha, iniciativa, encontros e rolador são quatro rotas, e numa sessão de verdade a pessoa alterna entre elas o tempo todo — num celular, com uma mão, enquanto é a vez dela. Cada troca é um toque e uma perda de contexto, e o contexto que se perde é justamente de quem é o turno.",
+          "O /mesa junta o que se usa DENTRO de um turno: de quem é a vez (com o próximo já anunciado e um botão grande de Passar), suas reservas, o que está pegando em você, e os PV de todo mundo no combate. O dado já está em todas as rotas desde a 0.1.22.",
+          "As reservas mudam por passos de −5, −1, +1 e +5 em vez de campo numérico: digitar exige as duas mãos e a atenção que o turno está consumindo.",
+          "O que NÃO entra é tão importante quanto: nada de editar ficha, comprar habilidade ou montar criatura. Isso acontece entre sessões, e cada uma dessas coisas já tem uma tela que faz melhor — uma tela de mesa que também servisse pra construir personagem voltaria a ser a ficha, e o problema voltaria junto.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.26",
     date: "2026-09-10",
     title: "Eu Aguento Isso?",

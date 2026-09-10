@@ -271,7 +271,7 @@ try {
       return;
     }
     /*
-     * O piso de 40 não é chute: são 16 rotas de HTML mais os chunks, o CSS e as
+     * O piso de 40 não é chute: são 17 rotas de HTML mais os chunks, o CSS e as
      * imagens que elas citam. Um número baixo aqui significa que a varredura de
      * referências do `precachear()` parou de achar o que procura — o sintoma
      * seria o site abrir offline em branco, e é justamente o que não pode

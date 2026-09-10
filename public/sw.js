@@ -77,6 +77,7 @@ const NOSSOS_CACHES = [CACHE_PAGINAS, CACHE_ESTATICO];
  */
 const ROTAS = [
   "/",
+  "/mesa",
   "/ficha",
   "/ficha/importar",
   "/arvores",
