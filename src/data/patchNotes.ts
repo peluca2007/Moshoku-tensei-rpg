@@ -16,6 +16,43 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.19",
+    date: "2026-09-10",
+    title: "O Link Que Chegou Pela Metade",
+    sections: [
+      {
+        heading: "\"Este link não traz uma ficha\" dizia a mesma coisa para cinco problemas diferentes",
+        items: [
+          "Um link de ficha que não abre podia ser: o app de mensagem comendo a parte depois do #, um link de criatura aberto na tela de ficha, o link cortado no meio, o navegador antigo demais, ou um conteúdo que não é ficha. A tela dizia a mesma frase para os cinco, e quem recebia não tinha como saber de quem era o problema.",
+          "Agora cada caso tem título próprio, explicação e — o que faltava — uma SAÍDA. Quando o link chega cortado, a tela diz quantos caracteres chegaram, que é o número que faz o remetente entender na hora o que aconteceu.",
+        ],
+      },
+      {
+        heading: "O link que não abriu no iPhone tem nome",
+        items: [
+          "A descompressão que o link usa (DecompressionStream) só existe no Safari a partir do iOS 16.4, de março de 2023. Num iPhone mais antigo o link comprimido simplesmente não abre — e o erro era engolido, virando \"link inválido\", que manda a pessoa culpar o link e quem mandou.",
+          "A tela agora reconhece esse caso e diz o que é: o navegador é antigo demais, não é problema do link nem da ficha. E oferece as três saídas reais — atualizar o iOS, abrir em outro aparelho, ou pedir o arquivo da ficha.",
+          "Falta confirmar com o aparelho na mão que era isso mesmo: pode ter sido também o aplicativo de mensagem cortando o link.",
+        ],
+      },
+      {
+        heading: "Colar o link, em vez de baixar arquivo",
+        items: [
+          "Toda tela de link que falha agora tem um campo de colar. É o caminho principal no celular: baixar um arquivo e achá-lo de novo num gerenciador de arquivos é o passo em que a importação morre num telefone.",
+          "Ele aceita o link inteiro ou só o fim dele, e — o detalhe que resolve o caso mais comum — aceita o link QUEBRADO EM VÁRIAS LINHAS. Quando o aplicativo parte um link longo em duas linhas e só a primeira vira clicável, colar as duas aqui faz a ficha voltar a abrir.",
+        ],
+      },
+      {
+        heading: "E agora se sabe quanto o link pesa",
+        items: [
+          "Medido: uma ficha com uma árvore inteira até Imperador dá um link de ~1.086 caracteres; com duas árvores, ~1.594; com três, ~2.058; com cinco, ~2.990.",
+          "O teto que morde é o Discord, que corta mensagem em 2.000 caracteres — e ele morde mais cedo do que se imaginaria: duas árvores passam, TRÊS já não passam, e três árvores é um multiclasse comum de campanha longa. Depois de copiar um link grande demais, a ficha agora avisa, com o número, e manda usar o arquivo.",
+          "A mesma medição matou uma ideia que parecia boa: \"gerar o link sem compressão, aí o Safari velho lê\". Sem compressão, a ficha de UMA árvore já sai com ~3.500 caracteres e não caberia no Discord de ninguém. A compressão aqui não é otimização — é o que faz o recurso existir.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.18",
     date: "2026-09-10",
     title: "A Porta Errada",

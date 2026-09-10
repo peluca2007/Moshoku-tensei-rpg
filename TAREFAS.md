@@ -12,7 +12,7 @@ ponta a ponta, e o que o sistema de RPG ainda não faz.
 
 ## Compartilhar ficha — o que o autor relatou
 
-### 1. ⬜ Corrigir o link de ficha que não abre no iPhone
+### 1. 🔒 Corrigir o link de ficha que não abre no iPhone — *causa provável tratada na 0.1.19*
 
 Hipótese principal, achada lendo o código: `codificarFicha` sempre marca o corpo como `g:` (gzip), e
 `decodificarFicha` chama `descomprimirBytes` → `DecompressionStream`, que **só existe no Safari do
@@ -24,18 +24,19 @@ O comentário do arquivo já previu metade disso: "onde o `CompressionStream` n�
 é gerado, só mais longo". Isso cobre o **remetente** sem gzip. O caso real aqui é o oposto:
 remetente **com** gzip, destinatário **sem**.
 
-O que fazer: detectar a ausência antes de tentar, explicar o motivo real, e oferecer o arquivo
-`.mtficha` como caminho. Mesma correção vale para `criaturaLink.ts`, que usa o mesmo `compactacao.ts`.
+**Feito na 0.1.19:** a ausência é detectada antes de tentar, a tela diz que o problema é o navegador
+(e não o link nem a ficha de quem mandou), e oferece as três saídas — atualizar o iOS, abrir em outro
+aparelho, ou pedir o arquivo. Vale para ficha e criatura. Há teste simulando o Safari velho.
 
 🔒 **Confirmar com o amigo antes de fechar:** versão do iOS, por qual app o link chegou, e se o link
 colado direto na barra de endereço funciona — isso separa "navegador velho" de "app cortou o link".
 
-### 2. ⬜ Dizer por que o link falhou, em vez de "inválido"
+### 2. ✅ Dizer por que o link falhou, em vez de "inválido" — *0.1.19*
 
 `decodificarFicha` devolve `null` para cinco causas diferentes e a tela trata as cinco igual.
-Separar: fragmento vazio (o app comeu o `#`), marca desconhecida, base64 quebrado no meio (link
-truncado — o sintoma clássico do WhatsApp), gzip indisponível, e JSON sem `attributeBase`. Mostrar
-junto o tamanho do fragmento em caracteres: é o número que faz o remetente entender na hora.
+**Feito na 0.1.19** em `lib/diagnosticoDeLink.ts`: cinco motivos, cada um com título, explicação e
+saída, e o tamanho do fragmento impresso quando o link chega cortado. 22 testes travam o
+comportamento, inclusive o de cada motivo ter título distinto — senão não valeu separar.
 
 ### 3. ⬜ Compartilhar pela bandeja nativa do celular (Web Share API)
 
@@ -51,16 +52,24 @@ respeitada ou o recurso mente: um QR legível em tela de celular aguenta bem men
 teóricos, e uma ficha de Imperador provavelmente não cabe — medir e, acima do limite, dizer "não
 cabe num QR, use o link" em vez de desenhar um QR ilegível. Gerador local: o site funciona offline.
 
-### 5. ⬜ Importar colando o link ou o conteúdo, sem baixar arquivo
+### 5. ✅ Importar colando o link — *0.1.19*
 
-O caminho de hoje pressupõe gerenciador de arquivos. Um campo que aceite o link inteiro (extrai o
-fragmento sozinho) ou o conteúdo cru colado funciona em qualquer celular, com qualquer app.
+**Feito na 0.1.19:** toda tela de link que falha tem campo de colar, que aceita a URL inteira, o
+fragmento sozinho, e — o caso que mais acontece — o link **quebrado em várias linhas**, juntando as
+partes (legítimo: base64url não tem espaço nenhum).
 
-### 6. ⬜ Medir e declarar o teto de tamanho do link
+O que NÃO dá pra colar é o conteúdo do arquivo `.mtficha`: ele é binário (gzip), não texto. Passar
+ficha com foto sem gerenciador de arquivos depende da task 3 (bandeja nativa) ou da 4 (QR).
 
-O comentário de `fichaLink.ts` já sabe que "Discord e WhatsApp cortam links", mas o código nunca
-mede — e o sintoma é o pior possível: o link parece pronto ao ser copiado e chega quebrado.
-Descobrir os tetos reais, gravar cada um com a fonte, e avisar **antes** de a pessoa copiar.
+### 6. 🔨 Medir e declarar o teto de tamanho do link — *medido e declarado na 0.1.19*
+
+**Feito na 0.1.19**, com uma surpresa: o teto do Discord (2.000 caracteres) morde em **três
+árvores**, não em cinco — 1 árvore dá ~1.086, 2 dão ~1.594, 3 dão ~2.058. A primeira medição desta
+sessão saiu errada por usar uma forma simplificada de `purchasedAbilities`; foi o teste que pegou. A
+ficha agora avisa depois de copiar um link grande demais, e um teste falha se o número mudar.
+
+**Ainda falta (🔒):** medir WhatsApp, iMessage e a barra de endereço do Safari do iPhone em aparelho
+de verdade. Eles parecem folgados, mas "parecem" não é medida.
 
 ---
 
@@ -73,7 +82,7 @@ combate a pessoa está em `/iniciativa` ou `/encontros`. Subir pro layout manten
 `#dados` do app instalado e os pedidos de rolagem do Inventário e do Grimório. Cuidar de não cobrir
 controle de outra rota (a tarja de `SuporteOffline` já teve esse problema).
 
-### 8. ⬜ Testar o `rollEngine` e ensinar o macro a guardar Testes
+### 8. 🔨 Testar o `rollEngine` e ensinar o macro a guardar Testes — *31 testes feitos; falta o macro*
 
 Item 11 do `O-QUE-FALTA`. O motor que decide toda rolagem da mesa não tem um teste, enquanto o
 `selectors.ts` ao lado tem 570 linhas travando fórmulas. E `RollMacro` é `{id, label, formula}`, então
@@ -95,7 +104,7 @@ código, e nunca diverge da tela.
 
 ### 20. 🔒 Passar o leitor de tela na ficha inteira
 
-Item 5 do `O-QUE-FALTA`. As doze rotas estão em zero no `check:a11y`, o que **não** responde se a
+Item 5 do `O-QUE-FALTA`. As treze rotas estão em zero no `check:a11y`, o que **não** responde se a
 ficha é usável de ouvido. Meia hora de NVDA: a ordem de foco conta a história certa? "Comprar"
 anuncia o que está comprando? dá pra montar um personagem sem enxergar?
 

@@ -1,6 +1,7 @@
 import { CharacterData } from "./types";
 import { comImagensSaneadas } from "./imagemDaFicha";
-import { base64UrlParaBytes, bytesParaBase64Url, comprimirTexto, descomprimirBytes } from "./compactacao";
+import { bytesParaBase64Url, comprimirTexto } from "./compactacao";
+import { LeituraDeLink, lerFragmento } from "./diagnosticoDeLink";
 
 /**
  * A ficha inteira dentro de um link.
@@ -58,32 +59,31 @@ export async function codificarFicha(character: CharacterData): Promise<string> 
 }
 
 /**
- * Devolve a ficha de um fragmento, ou `null` se o texto não for uma.
+ * Devolve a ficha de um fragmento — ou a razão pela qual ela não veio.
+ *
+ * Até 0.1.19 isto devolvia `null` para cinco causas diferentes, e a tela de
+ * importação dizia a mesma frase para as cinco. O diagnóstico agora mora em
+ * `diagnosticoDeLink.ts`, junto com o texto de cada caso; aqui fica só o que é
+ * específico de FICHA: a marca do fragmento e a validação de forma.
  *
  * O conteúdo vem de um link que OUTRA PESSOA montou, então nada aqui confia
- * nele: qualquer passo pode lançar, e a validação de forma no fim é a mesma que
- * o `Importar JSON` já faz — `attributeBase` é o campo que toda ficha tem e que
- * nenhum outro JSON teria por acaso.
+ * nele. `attributeBase` é o campo que toda ficha tem e que nenhum outro JSON
+ * teria por acaso — a mesma checagem que o `Importar JSON` já faz.
  */
-export async function decodificarFicha(fragmento: string): Promise<Omit<CharacterData, "id"> | null> {
-  const texto = fragmento.startsWith("#") ? fragmento.slice(1) : fragmento;
-  if (!texto) return null;
-  try {
-    const marca = texto.slice(0, 2);
-    const corpo = texto.slice(2);
-    if (marca !== MARCA_GZIP && marca !== MARCA_CRU) return null;
-    const bytes = base64UrlParaBytes(corpo);
-    const json = marca === MARCA_GZIP ? await descomprimirBytes(bytes) : new TextDecoder().decode(bytes);
-    const dados = JSON.parse(json);
-    if (!dados || typeof dados !== "object" || !("attributeBase" in dados)) return null;
-    // `codificarFicha` nunca põe imagem no fragmento, então um link com uma foto
-    // dentro foi montado à mão. Sanear aqui também é barato e fecha o caminho:
-    // um `portrait` apontando pra fora entregaria o IP de quem abre a ficha ao
-    // servidor de quem mandou o link.
-    return comImagensSaneadas(dados as Omit<CharacterData, "id">);
-  } catch {
-    return null;
+export async function decodificarFicha(fragmento: string): Promise<LeituraDeLink<Omit<CharacterData, "id">>> {
+  const lido = await lerFragmento(fragmento, { gzip: MARCA_GZIP, cru: MARCA_CRU });
+  if (!lido.ok) return lido;
+
+  const caracteres = lido.json.length;
+  const dados = JSON.parse(lido.json);
+  if (!dados || typeof dados !== "object" || !("attributeBase" in dados)) {
+    return { ok: false, motivo: "nao-e-isso", caracteres };
   }
+  // `codificarFicha` nunca põe imagem no fragmento, então um link com uma foto
+  // dentro foi montado à mão. Sanear aqui também é barato e fecha o caminho:
+  // um `portrait` apontando pra fora entregaria o IP de quem abre a ficha ao
+  // servidor de quem mandou o link.
+  return { ok: true, conteudo: comImagensSaneadas(dados as Omit<CharacterData, "id">) };
 }
 
 /** A URL completa de compartilhamento, a partir da origem atual. */

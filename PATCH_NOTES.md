@@ -5,6 +5,63 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.19 — "O Link Que Chegou Pela Metade" · 2026-09-10
+
+### 🔗 Uma frase só para cinco problemas diferentes
+
+Um link de ficha que não abre podia ser cinco coisas: o aplicativo de mensagem comendo a parte depois
+do `#`, um link de **criatura** aberto na tela de **ficha**, o link cortado no meio, o navegador
+antigo demais, ou um conteúdo que não é ficha. A tela dizia *"este link não traz uma ficha"* para os
+cinco — e quem recebia não tinha como saber de quem era o problema.
+
+Agora cada caso tem título próprio, explicação e, o que mais faltava, uma **saída**. Quando o link
+chega cortado, a tela diz **quantos caracteres chegaram**: é o número que faz o remetente entender na
+hora o que aconteceu.
+
+### 🍎 O link que não abriu no iPhone tem nome
+
+A descompressão que o link usa (`DecompressionStream`) só existe no Safari **a partir do iOS 16.4**,
+de março de 2023. Num iPhone mais antigo o link comprimido não abre — e o erro era engolido por um
+`try/catch`, virando "link inválido", que manda a pessoa culpar o link e quem mandou.
+
+A tela agora reconhece o caso e diz o que é: **o navegador é antigo demais, não é problema do link
+nem da ficha**. E oferece as três saídas reais — atualizar o iOS, abrir em outro aparelho, ou pedir o
+arquivo `.mtficha`.
+
+> Falta confirmar com o aparelho na mão que era isso mesmo. O outro suspeito do mesmo relato é o
+> aplicativo de mensagem cortando o link, e os dois agora têm tela própria.
+
+### 📋 Colar o link, em vez de baixar arquivo
+
+Toda tela de link que falha ganhou um **campo de colar**. É o caminho principal no celular: baixar um
+arquivo e achá-lo de novo num gerenciador de arquivos é o passo em que a importação morre num
+telefone.
+
+Ele aceita o link inteiro ou só o fim dele — e, o detalhe que resolve o caso mais comum, aceita o
+link **quebrado em várias linhas**. Quando o aplicativo parte um link longo e só a primeira linha
+vira clicável, colar as duas aqui faz a ficha voltar a abrir.
+
+### 📏 E agora se sabe quanto o link pesa
+
+| Personagem | Conhecimentos | Link |
+| --- | --- | --- |
+| 1 árvore inteira até Imperador | 31 | ~1.086 |
+| 2 árvores | 67 | ~1.594 |
+| 3 árvores | 98 | ~2.058 |
+| 4 árvores | 129 | ~2.490 |
+| 5 árvores | 164 | ~2.990 |
+
+O teto que morde é o **Discord: 2.000 caracteres por mensagem** — e ele morde mais cedo do que se
+imaginaria: **duas árvores passam, três já não passam**, e três árvores é um multiclasse comum de
+campanha longa. Depois de copiar um link grande demais, a ficha avisa (com o número) e manda usar o
+arquivo.
+
+A mesma medição matou uma ideia que parecia boa: *"gera o link sem compressão, aí o Safari velho
+lê"*. Sem compressão, a ficha de **uma** árvore sai com ~4.650 caracteres, mais que o dobro do teto.
+A compressão aqui não é otimização: é o que faz o recurso existir.
+
+---
+
 ## 0.1.18 — "A Porta Errada" · 2026-09-10
 
 ### 🚪 O site respondia 404 em inglês
