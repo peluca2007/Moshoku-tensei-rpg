@@ -38,12 +38,20 @@ colado direto na barra de endereço funciona — isso separa "navegador velho" d
 saída, e o tamanho do fragmento impresso quando o link chega cortado. 22 testes travam o
 comportamento, inclusive o de cada motivo ter título distinto — senão não valeu separar.
 
-### 3. ⬜ Compartilhar pela bandeja nativa do celular (Web Share API)
+### 3. 🔨 Compartilhar pela bandeja nativa do celular — *feito na 0.1.20, falta um celular pra confirmar*
 
-Hoje "Exportar" baixa um arquivo que a pessoa precisa achar de novo — o passo que quebra no celular.
-`navigator.share({ url })` abre a bandeja do sistema e manda direto pro WhatsApp, Discord ou AirDrop.
-`navigator.canShare({ files })` faz o mesmo com o `.mtficha`. Manter "Copiar link" como caminho
-garantido, e não mexer no download do desktop, onde ele funciona.
+**Feito na 0.1.20** (`lib/compartilharNativo.ts`), na ficha e na criatura: o botão só aparece onde a
+API existe, manda o LINK (um link termina com o amigo na tela de importar; um arquivo termina com ele
+segurando um `.mtficha` que o telefone não abre), e trata `AbortError` como cancelamento e não como
+erro. Quatro testes cobrem ok / cancelado / falhou / navegador sem a API.
+
+🔒 **Falta confirmar num celular de verdade.** O Chrome headless não implementa Web Share, então
+nenhuma checagem automática consegue ver esse botão — o que dá pra afirmar é que ele não aparece no
+HTML do servidor (conferido) e que a lógica está testada. Se o compartilhamento sair errado no
+aparelho, é aqui que se olha.
+
+Ainda em aberto: compartilhar o ARQUIVO por `navigator.canShare({ files })`, que é o único caminho
+que leva a foto e a capa junto sem gerenciador de arquivos.
 
 ### 4. ⬜ QR Code da ficha, para passar de celular pra celular na mesa
 
@@ -89,12 +97,20 @@ Item 11 do `O-QUE-FALTA`. O motor que decide toda rolagem da mesa não tem um te
 não dá pra salvar "Furtividade com Vantagem" — metade do que se repete numa sessão. Testes primeiro
 (risco zero, e viram a rede de segurança); o formato do macro depois, com migração de verdade.
 
-### 9. ⬜ Botão "Instalar app" visível
+### 9. 🔨 Botão "Instalar app" visível — *feito na 0.1.20, falta instalar num aparelho*
 
-O site **já é instalável** desde a 0.1.15 — manifesto, três ícones, `appleWebApp` pro iOS e três
-atalhos de tela inicial. O que falta é descoberta: só instala quem caça "Adicionar à tela de início"
-no menu do navegador. Capturar `beforeinstallprompt` e oferecer o botão; no iOS, que nunca dispara
-esse evento, mostrar a instrução ilustrada, que é o que a plataforma permite.
+O site **já era instalável** desde a 0.1.15 — manifesto, três ícones, `appleWebApp` pro iOS e três
+atalhos de tela inicial. O que faltava era descoberta: só instalava quem caçava "Adicionar à tela de
+início" no menu do navegador.
+
+**Feito na 0.1.20** (`components/BotaoInstalar.tsx`), no rodapé — que alcança quem já USA o site, e
+não quem chegou agora. Dois caminhos porque são duas plataformas: Chromium guarda o
+`beforeinstallprompt` e instala de um toque; o iOS, que nunca dispara esse evento e não tem API de
+instalação, recebe a instrução ilustrada com o ícone real de Compartilhar. Some sozinho quando já
+está instalado (`display-mode: standalone` ou `navigator.standalone`).
+
+🔒 **Falta o aparelho** — é o item 8 do `O-QUE-FALTA`, e continua valendo: instalar num Android e num
+iPhone e conferir o botão, o recorte do ícone pelo launcher, a splash e os três atalhos.
 
 ### 14. ⬜ Ficha em uma folha, para quem joga no papel
 

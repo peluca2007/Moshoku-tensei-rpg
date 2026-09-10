@@ -16,6 +16,30 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.20",
+    date: "2026-09-10",
+    title: "Um Toque, e Foi",
+    sections: [
+      {
+        heading: "Passar a ficha adiante virou um toque",
+        items: [
+          "A ficha e a criatura ganharam um botão Compartilhar que abre a bandeja do próprio celular — a mesma que aparece em qualquer app. Escolhe o contato e acabou: sem passar pela área de transferência, sem baixar arquivo, sem gerenciador de arquivos.",
+          "Ele manda o LINK, e não o arquivo, de propósito: um link termina com o amigo abrindo o site já na tela de importar, com um toque; um arquivo termina com ele segurando um .mtficha que nenhum aplicativo do telefone sabe abrir. O arquivo continua existindo pro que só ele resolve — levar a foto e a capa junto.",
+          "O botão só aparece onde a bandeja existe (celular, e alguns navegadores de desktop). Onde não existe, nada muda e o Copiar link continua sendo o caminho garantido.",
+          "Cancelar não acusa erro. Fechar a bandeja é uma decisão, não um defeito — e o navegador sinaliza os dois casos do mesmo jeito, então era fácil errar isso e fazer a ficha piscar erro toda vez que alguém mudasse de ideia.",
+        ],
+      },
+      {
+        heading: "E o site diz que dá pra instalar",
+        items: [
+          "O site é instalável desde a 0.1.15, mas isso só servia pra quem sabia caçar \"Adicionar à tela de início\" no menu do navegador. Agora tem um botão no rodapé.",
+          "No Android ele instala de um toque. No iPhone, onde o Safari não tem API de instalação nenhuma e nunca vai ter, o botão ensina o caminho de dois passos, com o ícone real de Compartilhar do iOS.",
+          "Ele some sozinho quando o app já está instalado — um botão \"Instalar\" dentro do app instalado é a definição de ruído.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.19",
     date: "2026-09-10",
     title: "O Link Que Chegou Pela Metade",

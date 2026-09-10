@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Check, Thermometer } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Share2, Check, Thermometer } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
@@ -42,6 +42,7 @@ import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
 import { LIMITE_DISCORD, passaDoDiscord } from "@/lib/diagnosticoDeLink";
+import { compartilhar, usePodeCompartilhar } from "@/lib/compartilharNativo";
 import { empacotarFicha } from "@/lib/fichaArquivo";
 import DiceRoller from "./DiceRoller";
 import EmptyState from "@/components/ui/EmptyState";
@@ -297,6 +298,7 @@ export default function CharacterSheet() {
   const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
   /** Tamanho do último link copiado — só pra avisar quando ele não couber numa mensagem do Discord. */
   const [tamanhoDoLink, setTamanhoDoLink] = useState(0);
+  const podeCompartilhar = usePodeCompartilhar();
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
@@ -389,6 +391,33 @@ export default function CharacterSheet() {
       linkTimeoutRef.current = setTimeout(() => setLinkState("idle"), 2200);
     } catch (err) {
       console.error("Falha ao copiar o link da ficha:", err);
+      setLinkState("erro");
+    }
+  }
+
+  /**
+   * A ficha na bandeja de compartilhamento do sistema (0.1.20).
+   *
+   * É o caminho de UM toque no celular: escolhe o contato e acabou, sem passar
+   * pela área de transferência nem por gerenciador de arquivos. Manda o LINK e
+   * não o arquivo de propósito — ver o cabeçalho de `lib/compartilharNativo.ts`.
+   *
+   * Cancelar não acusa nada: fechar a bandeja é uma decisão, não um defeito.
+   */
+  async function handleCompartilhar() {
+    const url = await linkDaFicha(character);
+    setTamanhoDoLink(url.length);
+    const nome = character.name?.trim() || "Personagem sem nome";
+    const r = await compartilhar({
+      title: `${nome} — Mushoku Tensei RPG`,
+      text: `Ficha de ${nome}. Abrir o link importa a ficha no seu navegador (você confirma antes).`,
+      url,
+    });
+    if (r === "ok") {
+      setLinkState("copiado");
+      if (linkTimeoutRef.current) clearTimeout(linkTimeoutRef.current);
+      linkTimeoutRef.current = setTimeout(() => setLinkState("idle"), 2200);
+    } else if (r === "falhou") {
       setLinkState("erro");
     }
   }
@@ -584,6 +613,23 @@ export default function CharacterSheet() {
               depende de ter o grupo carregado, então esse atrito estava
               exatamente no caminho da funcionalidade mais cara do site.
             */}
+            {/*
+              A bandeja do sistema, quando o aparelho tem uma (0.1.20).
+
+              Fica ANTES do "Copiar link" porque no celular ela é o caminho
+              curto: um toque escolhe o contato e manda. No desktop, onde a API
+              quase nunca existe, o botão simplesmente não aparece e nada muda.
+            */}
+            {podeCompartilhar && (
+              <button
+                type="button"
+                onClick={handleCompartilhar}
+                title="Mandar esta ficha por WhatsApp, Discord, AirDrop… sem baixar arquivo"
+                className="flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900 sm:mt-1.5"
+              >
+                <Share2 className="h-3.5 w-3.5" /> Compartilhar
+              </button>
+            )}
             <button
               type="button"
               onClick={handleCopiarLink}

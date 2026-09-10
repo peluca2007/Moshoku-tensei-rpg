@@ -4,6 +4,7 @@ import { PATCH_NOTES } from "@/data/patchNotes";
 import Ornament from "./ui/Ornament";
 import Logo from "./ui/Logo";
 import CopyChip from "./ui/CopyChip";
+import BotaoInstalar from "./BotaoInstalar";
 
 /** O repositório e o contato do autor — citados no rodapé de todas as rotas. */
 const REPOSITORIO = "https://github.com/peluca2007/Moshoku-tensei-rpg";
@@ -88,6 +89,14 @@ export default function Footer() {
                 v{versao.version} · {versao.title}
               </p>
             ) : null}
+            {/*
+              A oferta de instalar mora no rodapé, e não na landing, porque ela
+              precisa alcançar quem já USA o site — quem chega pela primeira vez
+              não instala nada. Ver BotaoInstalar.tsx pros dois caminhos
+              (Chromium e iOS) e pro porque ele some sozinho quando já está
+              instalado.
+            */}
+            <BotaoInstalar />
           </div>
 
           {COLUNAS.map((coluna) => (
