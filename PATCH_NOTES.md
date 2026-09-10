@@ -5,6 +5,38 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.30 — "Duas Builds, Um Alvo" · 2026-09-10
+
+### ⚖️ Comparar deixou de ser opinião
+
+Metade das pendências de balanceamento do projeto é *"jogar e ver"* — e parte delas tem um lado que
+dá pra **medir antes da mesa**. Enquanto não se mede, "essa build é mais forte" é palpite com número
+nenhum atrás.
+
+O **`/comparar`** põe duas fichas do roster lado a lado: PA gastos, conhecimentos, PV, CA,
+iniciativa, reservas, o maior golpe de cada uma — e o resultado de **400 batalhas contra o mesmo
+alvo**.
+
+- **Mesmo alvo, mesma semente.** Um alvo diferente pra cada uma compararia dois encontros, não duas
+  builds; e sem semente fixa, a diferença entre 62% e 58% pode ser só o dado.
+- **O alvo é o molde do Apêndice G, sem truques.** Assim ele gasta o orçamento de dano do patamar
+  inteiro todo turno — a criatura média contra a qual a régua do livro foi calibrada. Uma criatura
+  com habilidades mediria quão bem cada build responde *àquela* habilidade.
+- **Ele não diz qual build é melhor**, e a tela repete isso: cura, controle e utilidade não aparecem
+  numa luta de um contra um. Uma build que perde nos dois números pode ser exatamente a que a mesa
+  precisa.
+
+### 🧭 E a barra do topo respirou
+
+Com dez destinos, "Livro de Regras" era o rótulo que empurrava a **Busca** pra fora da tela em
+monitores estreitos. Virou **"Livro"**.
+
+O comparador fica **fora do menu** de propósito: comparar builds é coisa de preparo, não destino de
+sessão. Ele é alcançado pelo roster e pelo Painel do Mestre — os dois lugares de onde a pergunta
+nasce.
+
+---
+
 ## 0.1.29 — "Ctrl+P" · 2026-09-10
 
 ### 🖨️ A ficha agora imprime como ficha

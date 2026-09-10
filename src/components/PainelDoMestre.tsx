@@ -289,7 +289,11 @@ export default function PainelDoMestre() {
             <Link href="/encontros" className="font-semibold text-wine-700 underline dark:text-wine-300">
               montador de encontros
             </Link>{" "}
-            simula 300 batalhas contra estas mesmas fichas.
+            simula 300 batalhas contra estas mesmas fichas. Para pôr duas delas lado a lado contra o mesmo
+            alvo, o{" "}
+            <Link href="/comparar" className="font-semibold text-wine-700 underline dark:text-wine-300">
+              comparador de builds
+            </Link>.
           </p>
         </>
       )}
