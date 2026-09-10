@@ -28,6 +28,7 @@ const LINKS = [
   { href: "/encontros", label: "Encontros" },
   { href: "/loja", label: "Loja" },
   { href: "/livro", label: "Livro de Regras" },
+  { href: "/busca", label: "Busca" },
 ];
 
 export default function Nav() {

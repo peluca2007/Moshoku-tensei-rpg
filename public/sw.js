@@ -86,6 +86,7 @@ const ROTAS = [
   "/encontros/importar",
   "/loja",
   "/livro",
+  "/busca",
   "/criar",
   "/criar/entrevista",
   "/criar/manual",

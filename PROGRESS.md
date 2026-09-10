@@ -1,11 +1,13 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-09 — **0.1.16**: o mapa de árvores era intocável no celular (nós de 6
-a 14px, contra os 24 do WCAG 2.5.8) e passou a abrir num zoom com piso; o rodapé, os campos da ficha
-e os atalhos da landing também subiram do mínimo, e nove das dez rotas estão em zero alvo pequeno.
+**Última atualização:** 2026-09-10 — **0.1.17**: o livro tinha 879 verbetes e nenhum jeito de
+procurar um; a rota `/busca` procura no nome **e no texto** de todos eles, sem acento e sem caixa, e
+abre o card completo ali mesmo em vez de mandar pro livro. Antes disso, na **0.1.16**: o mapa de
+árvores era intocável no celular (nós de 6 a 14px, contra os 24 do WCAG 2.5.8) e passou a abrir num
+zoom com piso; o rodapé, os campos da ficha e os atalhos da landing também subiram do mínimo.
 Antes disso, na **0.1.15**: o site passou a funcionar **inteiro sem internet**
-e a instalar como app. Um service worker guarda as 15 rotas com o JavaScript e as imagens delas, e o
-`check:offline` prova isso matando o servidor e abrindo as 15 uma a uma. Antes disso, na **0.1.14**:
+e a instalar como app. Um service worker guarda as 16 rotas com o JavaScript e as imagens delas, e o
+`check:offline` prova isso matando o servidor e abrindo as 16 uma a uma. Antes disso, na **0.1.14**:
 quatro árvores voltaram da mesa e foram ajustadas pelo que a sessão mostrou — o Tático passou a
 executar a própria Ordem de Tiro, a Barreira ganhou PV declarados e duas magias de proteção de
 verdade, a Desintoxicação ganhou o que fazer num turno, e o Calor do Punho do Fogo foi reduzido a
@@ -39,6 +41,7 @@ mão duas vezes.
 | `/iniciativa` | Tracker de iniciativa |
 | `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, o teste de 300 batalhas, e o covil em pastas (com cor, emoji, busca, cartão recolhível e arquivo `.mtpasta`), e a ficha de um personagem do roster entrando como criatura |
 | `/personagens` | Roster de fichas |
+| `/busca` | Busca global nos 879 verbetes — nome **e** texto da regra, com o card completo abrindo na própria linha |
 | `/offline` | O que o service worker devolve quando não há nem rede nem cache |
 
 ### Conteúdo
@@ -62,14 +65,12 @@ mão duas vezes.
 Só o que ainda não foi feito. A lista curta com o contexto de cada item vive em
 [`O-QUE-FALTA.md`](O-QUE-FALTA.md); aqui fica o registro seco.
 
-- [ ] **Busca global nas 601 habilidades** — combinado com o autor em 2026-09-09, contexto completo no
-      [`O-QUE-FALTA.md`](O-QUE-FALTA.md) item 10. Hoje só o sumário do livro filtra, e por título de seção.
-- [ ] **`not-found.tsx` e `error.tsx`** — item 11. Uma URL errada responde *"404: This page could not be
+- [ ] **`not-found.tsx` e `error.tsx`** — item 10. Uma URL errada responde *"404: This page could not be
       found."* em inglês num site pt-BR, e um erro de runtime offline é indistinguível de falta de rede.
-- [ ] **Testes do `rollEngine` + macro de Teste** — item 12. O motor que decide toda rolagem não tem um
+- [ ] **Testes do `rollEngine` + macro de Teste** — item 11. O motor que decide toda rolagem não tem um
       teste; o macro só salva dano.
 - [ ] **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem rede e o
-      `check:offline` prova a parte automatizável (15 rotas com o servidor morto). Falta o resto do
+      `check:offline` prova a parte automatizável (16 rotas com o servidor morto). Falta o resto do
       caminho: "Adicionar à tela de início", o recorte do ícone pelo launcher, a splash, e o quanto
       o Safari do iPhone respeita disso.
 - [ ] **Confirmar o fix do PDF em produção** — só verificável no próximo deploy da Vercel.
@@ -119,6 +120,25 @@ Só o que ainda não foi feito. A lista curta com o contexto de cada item vive e
 
 Só o que ainda governa o sistema hoje. O raciocínio completo de cada mudança de regra mora no comentário
 do arquivo que a implementa — os ponteiros abaixo dizem onde procurar.
+
+### A busca é rota, e devolve o texto (2026-09-10)
+
+Duas decisões que estavam em aberto no `O-QUE-FALTA.md` e foram fechadas ao implementar a `/busca`.
+
+**Rota, e não painel por atalho de teclado.** O site já usa `R` pro rolador, e um segundo atalho
+seria coerente — em um teclado. A primeira regra do projeto é mobile-first, e numa mesa de verdade a
+busca é feita com o polegar: rota tem link no menu, tem endereço e recarrega. O `?q=` ainda deixa
+mandar uma busca pronta pro grupo no chat, que atalho nenhum faz.
+
+**O resultado abre na própria linha, e não leva pro `/livro`.** Quem busca no meio do turno quer o
+texto, não a viagem. E o card que abre é o **mesmo componente** do livro (`components/book/EntryCard`,
+extraído do `TreeCatalog` nesta versão justamente pra isso): duas telas desenhando a mesma magia de
+dois jeitos é a única coisa pior que não ter busca.
+
+**O índice se monta em tempo de execução, e não é arquivo gerado.** `lib/busca.ts` percorre
+`src/data/` na importação. Uma habilidade nova entra na busca no mesmo commit em que entra no jogo,
+sem ninguém lembrar de rodar nada — é a mesma razão pela qual o livro é gerado dos dados, e não
+escrito à mão ao lado deles.
 
 ### Aflições são Rank, não Profundidade (2026-09-03)
 
@@ -305,7 +325,7 @@ porque elas falam com ele pela porta de depuração. Estas três precisam do sit
 (`npm run dev` em outro terminal):
 
 ```bash
-npm run check:contraste   # WCAG AA nas 10 rotas, nos 2 temas
+npm run check:contraste   # WCAG AA nas 11 rotas, nos 2 temas
 npm run check:mobile      # transbordo horizontal de 320px a 414px
 npm run check:a11y        # controle sem nome, campo sem rótulo, hierarquia de cabeçalho
 ```
@@ -316,7 +336,7 @@ seu já no ar na 3100.
 
 ```bash
 npm run build
-npm run check:offline     # as 15 rotas abrindo com o servidor morto, em F5 e em navegação suave
+npm run check:offline     # as 16 rotas abrindo com o servidor morto, em F5 e em navegação suave
 ```
 
 Elas abrem as rotas por `/semente-dev`, que semeia duas fichas e força o tema antes de redirecionar.

@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-09, depois da 0.1.16. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.17. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -53,7 +53,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 ## Site
 
 8. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
-   `check:offline` prova a parte que dá pra provar: as 15 rotas abrem com o servidor morto, em F5 e
+   `check:offline` prova a parte que dá pra provar: as 16 rotas abrem com o servidor morto, em F5 e
    em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
    "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
    nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
@@ -71,25 +71,11 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Acertado com o autor, ainda não feito
 
-Estes três saíram de um levantamento de 2026-09-09 e foram **escolhidos por ele**; o quarto item
-daquele levantamento (alvos de toque) virou a 0.1.16. Estão aqui com o contexto todo porque quem
-retomar não vai ter a conversa, só o arquivo.
+Estes dois saíram de um levantamento de 2026-09-09 e foram **escolhidos por ele**. Dos outros dois
+daquele levantamento, os alvos de toque viraram a 0.1.16 e a busca global virou a 0.1.17. Estão aqui
+com o contexto todo porque quem retomar não vai ter a conversa, só o arquivo.
 
-10. **Busca global nas 601 habilidades.** Hoje não existe. O filtro do `BookToc` reduz o *sumário* —
-    títulos de seção —, e o `<select>` do mapa acha árvore por nome. Não há caminho para "qual magia
-    aplica Envenenado" ou "onde está a Peçonha" a não ser rolar os 190 mil caracteres do `/livro`.
-
-    O índice sai de graça do `src/data/`, que já é fonte única: as 601 habilidades (nome, descrição,
-    rank, árvore), os 85 itens da loja, as 12 raças, os 13 antecedentes e o bestiário. O jeito de
-    normalizar já existe e está pronto pra reusar — `normalize()` em `components/book/BookToc.tsx`
-    tira acento e caixa, porque "quem busca *pericias* tem que achar *Perícias*".
-
-    Decisões que ficaram em aberto: se é uma rota (`/busca`) ou um painel por atalho de teclado (o
-    site já usa `R` pro rolador, em `DiceRoller.tsx`); e se o resultado leva ao `/livro` ou abre o
-    `AbilityDetail` na hora. A segunda importa mais na mesa: quem busca no meio do turno quer o texto,
-    não a viagem.
-
-11. **`not-found.tsx` e `error.tsx`.** Não existe nenhum dos dois em `src/app/`. Duas consequências,
+10. **`not-found.tsx` e `error.tsx`.** Não existe nenhum dos dois em `src/app/`. Duas consequências,
     e a primeira é literal: `curl /rota-que-nao-existe` devolve hoje
     *"404: This page could not be found."* — **em inglês**, num site `lang="pt-BR"`, e com dois
     `<title>` no mesmo documento.
@@ -100,7 +86,7 @@ retomar não vai ter a conversa, só o arquivo.
     sinal, e afirmar que as fichas continuam no aparelho — é o que a `/offline` já faz, e ela serve de
     modelo de tom e de layout.
 
-12. **Testes do `rollEngine` e macro de Teste.** Duas coisas no mesmo lugar.
+11. **Testes do `rollEngine` e macro de Teste.** Duas coisas no mesmo lugar.
 
     O `src/lib/rollEngine.ts` **não tem teste nenhum** — `rollD20` com os cinco modos de vantagem, e o
     parser de `rollFormula`. É o código que decide toda rolagem da mesa, e o `selectors.ts` ao lado
