@@ -16,6 +16,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.28",
+    date: "2026-09-10",
+    title: "O Mestre Olha a Mesa",
+    sections: [
+      {
+        heading: "As fichas do grupo lado a lado",
+        items: [
+          "O montador de encontros já simula contra as fichas de verdade, mas isso responde uma pergunta de preparo: este encontro mata a mesa? Entre um turno e outro o Mestre tem outra, e ela é de consulta — quem está mais machucado, quem ainda tem recurso, quem está com o quê pegando.",
+          "O /mestre põe tudo isso numa tela: PV com barra, CA, iniciativa, PM/PT/PP, as condições ativas de cada um, e o maior golpe que cada personagem consegue dar, com o nome do golpe ao lado.",
+          "Por padrão ele ordena por quem está PIOR primeiro — é a ordem em que o Mestre olha a mesa quando decide em quem o monstro bate. Quem cai abaixo de metade dos PV ganha moldura própria.",
+          "O painel LÊ as fichas e nunca escreve nelas. Mexer nos números de um personagem continua sendo de quem joga com ele.",
+        ],
+      },
+      {
+        heading: "E um número que ele deliberadamente não mostra",
+        items: [
+          "\"Dano por turno do grupo\" contra a régua do Apêndice C parecia o número mais óbvio a exibir aqui — e é justamente o que a própria régua avisa não ser automatizável: ela embute quantas Ações a árvore gasta, quantos alvos ela pega e se o alvo veste Touki, e nada disso está nos dados de uma magia isolada.",
+          "Somar médias de golpes daria um número com cara de verdade e sem verdade nenhuma. No lugar dele aparece o que dá pra afirmar: a média do maior golpe único de cada um.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.27",
     date: "2026-09-10",
     title: "Modo Mesa",

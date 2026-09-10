@@ -33,7 +33,7 @@
  */
 import { BASE, comNavegador, dormir, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
 
-const ROTAS = ["/", "/mesa", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
+const ROTAS = ["/", "/mesa", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
 
 const MEDICAO = String.raw`(() => {
   const problemas = [];
@@ -70,7 +70,7 @@ const MEDICAO = String.raw`(() => {
 
     // Link cujo conteúdo é uma IMAGEM tira o nome do alt dela — é assim que o
     // logo do cabeçalho se anuncia, e ler só o textContent o reprovaria em
-    // todas as catorze rotas por um defeito que não existe.
+    // todas as quinze rotas por um defeito que não existe.
     for (const filho of clone.querySelectorAll("img[alt],[aria-label],svg title")) {
       const nome = (filho.getAttribute?.("alt") || filho.getAttribute?.("aria-label") || filho.textContent || "").trim();
       if (nome) return nome;
@@ -190,4 +190,4 @@ if (total > 0) {
   console.error(`\n❌ ${total} problema(s) de acessibilidade estrutural.`);
   process.exit(1);
 }
-console.log("\n✅ Nenhum problema estrutural nas catorze rotas. (Teste com leitor de tela de verdade continua pendente.)");
+console.log("\n✅ Nenhum problema estrutural nas quinze rotas. (Teste com leitor de tela de verdade continua pendente.)");
