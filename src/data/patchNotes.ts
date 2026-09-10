@@ -16,6 +16,31 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.35",
+    date: "2026-09-10",
+    title: "A CA era Decoração",
+    sections: [
+      {
+        heading: "Nenhuma técnica do livro errava — literalmente nenhuma",
+        items: [
+          "O simulador decide se uma técnica rola ataque (e portanto pode ERRAR) procurando frases como \"Ataque mágico à distância\" no texto dela. Ele procurava no campo errado: lia a fórmula de dano, e a frase mora na descrição do efeito. Medido: ZERO das 122 ações do livro inteiro rolavam ataque. Todas caíam no ramo de teste de resistência, que não consulta a CA do alvo e garante metade do dano mesmo quando o alvo passa no teste.",
+          "Ou seja: a Classe de Armadura era decoração em toda simulação que este projeto já rodou, e toda técnica de dano acertava sempre. Dezessete técnicas voltaram a poder errar — quatro de Fogo, quatro de Água, cinco do Vendaval, duas de Vento, duas de Terra, e uma cada de Deus da Água, Deus do Norte e Armas Pesadas.",
+          "O playtest das dez builds mudou de lugar: Vex (Deus da Espada) caiu de 94 pra 83 de dano por batalha e de 45% pra 36% de sobrevivência — ele era o maior beneficiado por nunca errar. Kest (Fogo) subiu de 23 pra 29 e Borg (Deus do Norte) de 54 pra 62, porque as técnicas deles agora causam dano CHEIO quando acertam, em vez de metade garantida. A vitória do Time B ficou onde estava (97%), e a tabela de chefes não se mexeu.",
+          "A rede não foi alargada além do necessário: incluir \"ataque corpo a corpo\" pegaria mais duas técnicas certas e uma errada — a Devolver, do Deus da Água, cuja frase descreve o ataque DO INIMIGO que dispara a Reação.",
+        ],
+      },
+      {
+        heading: "Quebrantado entrou na simulação",
+        items: [
+          "Das cinco condições que o motor declarava não modelar, Quebrantado era a única puramente numérica: cada acúmulo tira 1 da CA e 1 do dano de quem o carrega, até o teto do Bônus de Rank de quem aplicou. As outras quatro (Atolado, Desequilibrado, Marcado, Soterrado) são sobre movimento e posição, e este motor não tem mapa.",
+          "Custo da ausência: as treze citações de Quebrantado no livro inteiro são de UMA árvore, Armas Pesadas, cuja mecânica central é justamente empilhá-los — e o playtest tem uma build chamada \"Lutador — empilha Quebrantado\". A simulação lia esses acúmulos como texto decorativo.",
+          "O motor lê os acúmulos da prosa da técnica, que é uma exceção deliberada à regra dele de só ler campos estruturados. Isso só é seguro porque a condição é de uma árvore só e nenhuma técnica do livro a REMOVE — e agora existe um teste que quebra no dia em que qualquer uma dessas duas coisas deixar de ser verdade.",
+          "Declaração honesta do resultado: ligar ou desligar Quebrantado não muda NADA no playtest das dez builds. A IA escolhe sempre a ação de maior dano bruto, e as técnicas que empilham acúmulos raramente são essas. A mecânica está correta e testada; quem vai colhê-la é o jogador na mesa, não o robô. Isso está escrito nas simplificações que a tela de encontros imprime.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.34",
     date: "2026-09-10",
     title: "Comprar o Quê?",

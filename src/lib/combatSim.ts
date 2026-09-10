@@ -13,11 +13,19 @@
  * imprime na tela em vez de escondê-las.
  */
 import { getTreeById } from "@/data/trees/index";
-import { getArmorClass, getAttackBonus, getMaxHp, getMaxMp, getPtPool } from "@/store/selectors";
+import {
+  getArmorClass,
+  getAttackBonus,
+  getHighestUnlockedRank,
+  getMaxHp,
+  getMaxMp,
+  getPtPool,
+} from "@/store/selectors";
 import {
   AbilityDef,
   attributeKeyFromLabel,
   CharacterData,
+  RANK_BONUS,
   RankName,
   RANKS,
 } from "@/lib/types";
@@ -148,6 +156,15 @@ export interface Acao {
   frio: boolean;
   fogo: boolean;
   aplicaMolhado: boolean;
+  /**
+   * Acúmulos de Quebrantado que a ação aplica (0.1.35). Zero = não aplica.
+   *
+   * `"maximo"` é o teto do Cap. 4 — "até o máximo do Bônus de Rank de quem
+   * aplicou" — e existe porque três técnicas de Armas Pesadas dizem exatamente
+   * isso em vez de dar um número: "acúmulos iguais ao seu Bônus de Rank" e
+   * "fica Quebrantado ao máximo".
+   */
+  aplicaQuebrantado: number | "maximo";
 }
 
 /**
@@ -168,6 +185,14 @@ export interface FichaCombate {
   bc: number;
   /** Bônus de quem bate com arma sem ter árvore do Corpo: só o atributo, sem Rank. */
   bcSemRank: number;
+  /**
+   * O Bônus de Rank SOZINHO, sem o atributo em cima (0.1.35).
+   *
+   * `bc` já traz os dois somados, e pra quase tudo isso basta. Quebrantado é a
+   * exceção: o teto do Cap. 4 é "até o máximo do Bônus de Rank de quem aplicou",
+   * e de um `bc` somado não dá pra separar de volta a parcela que interessa.
+   */
+  bonusDeRank: number;
   iniciativa: number;
   acoes: Acao[];
   ataqueBasico: Acao;
@@ -182,6 +207,21 @@ export interface Alvo {
   molhado: boolean;
   emChamas: number;
   /**
+   * Acúmulos de Quebrantado (Cap. 4, §2) — 0.1.35.
+   *
+   * É a única das cinco condições que o motor deixava de fora sendo puramente
+   * NUMÉRICA: cada acúmulo tira 1 da CA e 1 do dano de quem o carrega. As outras
+   * quatro (Atolado, Desequilibrado, Soterrado, Marcado) são sobre movimento,
+   * posição e informação, que o motor declara não modelar.
+   *
+   * Ela ficou de fora por três versões do motor, e o custo disso não era
+   * abstrato: as treze citações de Quebrantado do livro inteiro pertencem a UMA
+   * árvore (Armas Pesadas), cuja mecânica central é justamente empilhá-los. A
+   * simulação lia esses acúmulos como texto decorativo e devolvia a árvore mais
+   * fraca do que ela é — inclusive no comparador de builds.
+   */
+  quebrantado: number;
+  /**
    * Preso, Caído e Envenenado (Cap. 4, §7-8) — as três condições que uma ação
    * de criatura pode aplicar de forma estruturada (`AcaoCriatura.aplicaPreso` e
    * companhia em `encounterSim.ts`), na mesma casa de Molhado acima.
@@ -190,8 +230,8 @@ export interface Alvo {
    * frase cada: "seus ataques têm Desvantagem" (Preso, Caído, Envenenado) e
    * "ataques contra você têm Vantagem" (Preso, Caído). O resto de cada uma —
    * Deslocamento 0, teste pra se soltar, a hora certa em que o veneno realmente
-   * bate — segue de fora, pelo mesmo motivo que Atolado e Quebrantado seguem:
-   * é posição e é relógio de mesa, não dado de dano.
+   * bate — segue de fora, pelo mesmo motivo que Atolado e Soterrado seguem: é
+   * posição e é relógio de mesa, não dado de dano.
    */
   preso: boolean;
   caido: boolean;
@@ -258,10 +298,53 @@ export function acoesDe(c: CharacterData): Acao[] {
         return 0;
       })(),
       area: /esfera|cone|linha|área|todos/.test((a.range + " " + a.effect).toLowerCase()),
-      ataque: /ataque mágico|ataque à distância|se acertar/.test(txt),
+      /*
+       * A rolagem de ataque, lida do EFEITO — corrigido na 0.1.35.
+       *
+       * Esta linha procurava as frases em `damage.normal`, e elas nunca estão
+       * lá: quem escreve "Ataque mágico à distância" é o `effect`. O resultado
+       * medido era ZERO de 122 ações do livro inteiro rolando ataque — todas
+       * caíam no ramo de teste de resistência, que não consulta a CA do alvo e
+       * garante metade do dano até quando o alvo passa. A CA era decoração, e
+       * nenhuma técnica do livro errava.
+       *
+       * O `area` logo abaixo sempre leu `range + effect`; esta linha ficou pra
+       * trás. São 17 técnicas que voltam a poder errar.
+       *
+       * A rede não é mais larga do que isso de propósito: incluir "ataque corpo
+       * a corpo" pegaria mais duas técnicas certas e uma errada — a Devolver
+       * (Deus da Água), cuja frase descreve o ataque DO INIMIGO que dispara a
+       * Reação, não uma rolagem dela.
+       */
+      ataque: /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`),
       frio: /frio|gelo/.test(txt),
       fogo: /ígneo|chamas|fogo/.test(txt),
       aplicaMolhado: /molhad/.test(txt),
+      /*
+       * Quebrantado, lido do EFEITO e não do dano (0.1.35).
+       *
+       * É a exceção deliberada à regra deste arquivo de só olhar
+       * `damage.normal`: os acúmulos nunca aparecem ali, porque não são dano —
+       * são uma consequência descrita na prosa ("o alvo ganha 2 acúmulos de
+       * Quebrantado"). Sem olhar o efeito, a mecânica central de Armas Pesadas
+       * é invisível pra simulação.
+       *
+       * O risco normal de ler prosa — confundir aplicar com REMOVER — não existe
+       * aqui, e isso foi conferido: as treze citações de Quebrantado do livro
+       * inteiro são da mesma árvore, e as treze aplicam. O próprio glossário
+       * explica por quê: "não é ferimento — magia de Cura não remove".
+       */
+      aplicaQuebrantado: (() => {
+        const efeito = a.effect;
+        if (!/quebrantad/i.test(efeito)) return 0;
+        if (/ao máximo|iguais ao seu Bônus de Rank/i.test(efeito)) return "maximo" as const;
+        const n = efeito.match(/(\d+)\s+ac[úu]mulos?\s+de\s+Quebrantado/i);
+        if (n) return Number(n[1]);
+        // "ganha 1 acúmulo" sem número escrito por extenso não existe no livro,
+        // mas citar a condição sem quantificar vale um acúmulo — é o mínimo que
+        // "fica Quebrantado" pode significar.
+        return 1;
+      })(),
     });
   }
   return out;
@@ -290,6 +373,12 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
     ptMax: getPtPool(c),
     bc,
     bcSemRank: Math.max(0, ...Object.values(c.attributeBase)),
+    // O Bônus de Rank da árvore inicial — a mesma de onde `bc` sai, pra que as
+    // duas contas falem do mesmo personagem.
+    bonusDeRank: (() => {
+      const rank = c.startingTreeId ? getHighestUnlockedRank(c, c.startingTreeId) : undefined;
+      return rank ? RANK_BONUS[rank] : 0;
+    })(),
     iniciativa: c.attributeBase.agilidade,
     acoes: acoesDe(c),
     // Golpe comum. A Escada de Dados é EXCLUSIVA da Árvore do Corpo (Cap. 3):
@@ -309,6 +398,7 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
       frio: false,
       fogo: false,
       aplicaMolhado: false,
+      aplicaQuebrantado: 0,
     },
   };
 }
@@ -330,6 +420,7 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     reacaoDisponivel: false,
     vivo: true,
     danoCausado: 0,
+    quebrantado: 0,
   };
 }
 
@@ -368,11 +459,17 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
   // por essas duas facilitar a vida de quem o ataca.
   const desvantagemPropria = e.preso || e.caido || e.envenenado;
   const vantagemContraAlvo = alvo.preso || alvo.caido;
+  /*
+   * Quebrantado (Cap. 4, §2): cada acúmulo tira 1 da CA do alvo e 1 do dano de
+   * QUEM o carrega. Aqui aparecem os dois lados da mesma condição — a CA menor
+   * do alvo facilita o acerto, e os acúmulos do próprio atacante cobram dele.
+   */
+  const caDoAlvo = Math.max(1, alvo.ca - alvo.quebrantado);
   let dano = 0;
   if (a.ataque) {
     const rolagem = d20Ajustado(rng, vantagemContraAlvo, desvantagemPropria);
     if (rolagem === 1) return 0;
-    if (rolagem !== 20 && rolagem + bonus < alvo.ca) return 0;
+    if (rolagem !== 20 && rolagem + bonus < caDoAlvo) return 0;
     dano = rolarDados(a.dano, rng) + bonus + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
     if (rolagem === 20) dano += rolarDados(a.dano, rng);
   } else {
@@ -385,7 +482,19 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
   }
   // Água: frio dobra contra Molhado (Cap. 4, §5)
   if (a.frio && alvo.molhado) dano *= 2;
+  // O próprio atacante Quebrantado bate mais fraco — 1 por acúmulo, e nunca
+  // abaixo de zero: a condição enfraquece o golpe, não cura o alvo.
+  dano = Math.max(0, dano - e.quebrantado);
   if (a.aplicaMolhado) alvo.molhado = true;
+  if (a.aplicaQuebrantado) {
+    // O teto é o Bônus de Rank de quem aplica ("até o máximo do Bônus de Rank
+    // de quem aplicou"). O motor não guarda o Bônus de Rank isolado — `bc` é
+    // atributo mais rank —, então o teto usa `bonusDeRank` da ficha, que
+    // `montarFicha` passou a separar justamente pra isto.
+    const teto = e.ficha.bonusDeRank;
+    const ganho = a.aplicaQuebrantado === "maximo" ? teto : a.aplicaQuebrantado;
+    alvo.quebrantado = Math.min(teto, alvo.quebrantado + ganho);
+  }
   // Fogo: Em Chamas cobra 1d6 no início de cada turno do alvo
   if (a.fogo && !alvo.molhado) alvo.emChamas = 6;
   if (a.fogo && alvo.molhado) alvo.molhado = false; // fogo evapora a água
@@ -467,9 +576,9 @@ export function consumirReacao(alvo: Alvo): boolean {
  * ele ignora é pior que nenhum número: parece mais confiável do que é.
  */
 export const SIMPLIFICACOES = [
-  "Condições modeladas: Molhado (frio dobra), Em Chamas, e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Quebrantado, Marcado e Soterrado ficam de fora, e eles são a mecânica central de cinco árvores.",
+  "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: as quatro são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura, barreira e Salvações não entram. Quem joga de suporte aparece aqui só pelo dano que causa, que é o que ele menos faz — e o grupo parece mais frágil do que é na mesa.",
-  "A IA escolhe sempre a ação de maior dano médio por Ação: nunca recua, nunca foca fogo, nunca guarda recurso pro turno seguinte.",
+  "A IA escolhe sempre a ação de maior dano médio por Ação: nunca recua, nunca foca fogo, nunca guarda recurso pro turno seguinte — e não dá valor nenhum a condição. É por isso que Quebrantado, embora modelado desde a 0.1.35, quase nunca aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano bruto, e a IA nunca as escolhe. Na mesa, um jogador escolhe.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Terreno, distância, posicionamento e surpresa não existem: todo mundo alcança todo mundo desde a primeira rodada.",

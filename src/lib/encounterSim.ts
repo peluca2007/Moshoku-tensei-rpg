@@ -282,7 +282,12 @@ function resolverAcaoCriatura(
   if (acao.tipo === "ataque") {
     const rolagem = d20Ajustado(rng, vantagem, desvantagem);
     if (rolagem === 1) return;
-    if (rolagem !== 20 && rolagem + c.bonusAtaque < alvo.ca) return;
+    // Quebrantado abaixa a CA de quem o carrega, venha o golpe de onde vier.
+    // Hoje isto é sempre zero deste lado — as treze citações da condição no
+    // livro são de Armas Pesadas, e o Apêndice G não dá a condição a criatura
+    // nenhuma —, mas escrever a CA de dois jeitos diferentes nos dois arquivos
+    // é como um motor começa a divergir de si mesmo.
+    if (rolagem !== 20 && rolagem + c.bonusAtaque < Math.max(1, alvo.ca - alvo.quebrantado)) return;
     dano = rolarFormula(acao.dano, rng);
     if (rolagem === 20) dano += rolarFormula(acao.dano, rng);
   } else {
@@ -439,6 +444,7 @@ export function simularEncontro(
           envenenado: false,
           reacaoDisponivel: false,
           danoCausado: 0,
+          quebrantado: 0,
         });
       }
     }

@@ -5,6 +5,66 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.35 — "A CA era Decoração" · 2026-09-10
+
+### 🎯 Nenhuma técnica do livro errava — literalmente nenhuma
+
+O simulador decide se uma técnica **rola ataque** (e portanto pode ERRAR) procurando frases como
+*"Ataque mágico à distância"* no texto dela. Ele procurava no **campo errado**: lia a fórmula de
+dano, e a frase mora na descrição do efeito.
+
+Medido: **zero das 122 ações do livro inteiro rolavam ataque.** Todas caíam no ramo de teste de
+resistência, que não consulta a CA do alvo e garante **metade do dano** mesmo quando o alvo passa no
+teste.
+
+Ou seja: a **Classe de Armadura era decoração** em toda simulação que este projeto já rodou, e toda
+técnica de dano acertava sempre. Dezessete técnicas voltaram a poder errar — quatro de Fogo, quatro
+de Água, cinco do Vendaval, duas de Vento, duas de Terra, e uma cada de Deus da Água, Deus do Norte e
+Armas Pesadas.
+
+**O playtest das dez builds mudou de lugar:**
+
+| Ficha | Dano/batalha | Sobreviveu |
+| ----- | ------------ | ---------- |
+| Vex (Deus da Espada) | 94 → **83** | 45% → **36%** |
+| Iri (Vento) | 53 → **62** | 72% → **67%** |
+| Borg (Deus do Norte) | 54 → **62** | 0% → 0% |
+| Kest (Fogo) | 23 → **29** | 0% → 1% |
+| Sera (Cura) | 17 → **20** | 3% → 3% |
+| Gorr (Armas Pesadas) | 67 → **66** | 90% → **85%** |
+
+Vex era o maior beneficiado por nunca errar, e é quem mais perde. Kest e Borg **sobem**, porque as
+técnicas deles agora causam dano CHEIO quando acertam, em vez de metade garantida. A vitória do Time
+B ficou onde estava (97%) e a tabela de chefes não se mexeu.
+
+A rede não foi alargada além do necessário: incluir *"ataque corpo a corpo"* pegaria mais duas
+técnicas certas e uma errada — a **Devolver**, do Deus da Água, cuja frase descreve o ataque DO
+INIMIGO que dispara a Reação.
+
+### 🔨 Quebrantado entrou na simulação
+
+Das cinco condições que o motor declarava não modelar, **Quebrantado era a única puramente
+numérica**: cada acúmulo tira 1 da CA e 1 do dano de quem o carrega, até o teto do Bônus de Rank de
+quem aplicou (Cap. 4, §2). As outras quatro (Atolado, Desequilibrado, Marcado, Soterrado) são sobre
+movimento e posição, e este motor não tem mapa.
+
+Custo da ausência: as **treze citações** de Quebrantado no livro inteiro são de UMA árvore, Armas
+Pesadas, cuja mecânica central é justamente empilhá-los — e o playtest tem uma build literalmente
+chamada *"Lutador — empilha Quebrantado"*. A simulação lia esses acúmulos como texto decorativo.
+
+O motor lê os acúmulos **da prosa** da técnica, exceção deliberada à regra dele de só ler campos
+estruturados. Isso só é seguro porque a condição é de uma árvore só e **nenhuma técnica do livro a
+REMOVE** — e agora existe um teste que quebra no dia em que qualquer uma dessas duas coisas deixar de
+ser verdade.
+
+**Declaração honesta do resultado:** ligar ou desligar Quebrantado **não muda nada** no playtest das
+dez builds. A IA escolhe sempre a ação de maior dano bruto, e as técnicas que empilham acúmulos
+raramente são essas. A mecânica está correta e testada; quem vai colhê-la é o jogador na mesa, não o
+robô. Isso está escrito nas simplificações que a tela de encontros imprime — e é a próxima coisa que
+vale a pena melhorar no motor.
+
+---
+
 ## 0.1.34 — "Comprar o Quê?" · 2026-09-10
 
 ### 🔊 Os botões passaram a dizer o que fazem
