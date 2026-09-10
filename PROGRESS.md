@@ -54,6 +54,7 @@ mão duas vezes.
 | `/mestre` | **Painel do Mestre** — lê as fichas do roster lado a lado (PV, CA, recursos, condições, maior golpe). Nunca escreve nelas |
 | `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, o teste de 300 batalhas, e o covil em pastas (com cor, emoji, busca, cartão recolhível e arquivo `.mtpasta`), e a ficha de um personagem do roster entrando como criatura |
 | `/personagens` | Roster de fichas |
+| `/sessao` | **Registro de sessão** — pega carona no rolador e no Modo Mesa; começa DESLIGADO. Fora do menu |
 | `/comparar` | **Comparador de builds** — duas fichas contra o mesmo alvo e a mesma semente. Fora do menu de propósito |
 | `/busca` | Busca global nos 879 verbetes — nome **e** texto da regra, com o card completo abrindo na própria linha |
 | `/offline` | O que o service worker devolve quando não há nem rede nem cache |
@@ -335,7 +336,7 @@ porque elas falam com ele pela porta de depuração. Estas três precisam do sit
 (`npm run dev` em outro terminal):
 
 ```bash
-npm run check:contraste   # WCAG AA nas 16 rotas, nos 2 temas
+npm run check:contraste   # WCAG AA nas 17 rotas, nos 2 temas
 npm run check:mobile      # transbordo horizontal de 320px a 414px
 npm run check:a11y        # controle sem nome, campo sem rótulo, hierarquia de cabeçalho
 ```
@@ -346,7 +347,7 @@ seu já no ar na 3100.
 
 ```bash
 npm run build
-npm run check:offline     # as 19 rotas abrindo com o servidor morto, em F5 e em navegação suave
+npm run check:offline     # as 20 rotas abrindo com o servidor morto, em F5 e em navegação suave
 ```
 
 Elas abrem as rotas por `/semente-dev`, que semeia duas fichas e força o tema antes de redirecionar.

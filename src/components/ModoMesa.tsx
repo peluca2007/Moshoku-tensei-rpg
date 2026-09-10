@@ -5,6 +5,7 @@ import { ChevronRight, Minus, Plus, SkipForward, Swords, X, Zap } from "lucide-r
 import { CONDICOES } from "@/data/condicoes";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
+import { useSessionLog } from "@/store/useSessionLog";
 import {
   getCondicoesAtivas,
   getCurrentHp,
@@ -55,12 +56,15 @@ function Reserva({
   max,
   cor,
   aoMudar,
+  aoRegistrar,
 }: {
   rotulo: string;
   atual: number;
   max: number;
   cor: string;
   aoMudar: (valor: number) => void;
+  /** Recebe o delta aplicado (negativo = dano). Só o PV usa — é o registro de sessão. */
+  aoRegistrar?: (delta: number) => void;
 }) {
   if (max <= 0) return null;
   const pct = Math.max(0, Math.min(100, (atual / max) * 100));
@@ -86,7 +90,14 @@ function Reserva({
           <button
             key={passo}
             type="button"
-            onClick={() => aoMudar(Math.max(0, Math.min(max, atual + passo)))}
+            onClick={() => {
+              const novo = Math.max(0, Math.min(max, atual + passo));
+              // O passo negativo de PV É o dano levado — o registro de sessão
+              // aproveita isso em vez de pedir que alguém anote o golpe.
+              // `registrar` não faz nada com a gravação desligada.
+              if (aoRegistrar) aoRegistrar(novo - atual);
+              aoMudar(novo);
+            }}
             aria-label={`${passo > 0 ? "Recuperar" : "Gastar"} ${Math.abs(passo)} de ${rotulo}`}
             className="flex min-h-[2.25rem] items-center justify-center rounded-lg bg-parchment-200/80 text-xs font-bold text-parchment-700 hover:bg-wine-500/15 hover:text-wine-700 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:text-wine-300"
           >
@@ -181,6 +192,14 @@ export default function ModoMesa() {
           max={maxHp}
           cor="bg-wine-600"
           aoMudar={(v) => useCharacterStore.getState().setCurrentHp(v)}
+          aoRegistrar={(delta) =>
+            useSessionLog.getState().registrar({
+              tipo: delta < 0 ? "dano" : "cura",
+              rotulo: character.name?.trim() || "Sem nome",
+              valor: Math.abs(delta),
+              ator: vez?.name,
+            })
+          }
         />
         <Reserva
           rotulo="PM"

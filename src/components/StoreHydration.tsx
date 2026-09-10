@@ -6,6 +6,7 @@ import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { useMacroStore } from "@/store/useMacroStore";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { useBestiaryStore } from "@/store/useBestiaryStore";
+import { useSessionLog } from "@/store/useSessionLog";
 
 /**
  * A store usa skipHydration (persist não lê o localStorage sozinho) pra
@@ -23,6 +24,7 @@ export default function StoreHydration() {
     useMacroStore.persist.rehydrate();
     useDiceRollerStore.persist.rehydrate();
     useBestiaryStore.persist.rehydrate();
+    useSessionLog.persist.rehydrate();
   }, []);
 
   return null;

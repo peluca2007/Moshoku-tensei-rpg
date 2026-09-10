@@ -16,6 +16,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.31",
+    date: "2026-09-10",
+    title: "O Que a Mesa Mostrou",
+    sections: [
+      {
+        heading: "O site passou a contar sozinho",
+        items: [
+          "Metade das pendências de balanceamento pede uma contagem que só sai no papel. A do Vendaval é literal: conte os ataques corpo a corpo que ACERTARAM o Vendaval e compare com o outro da linha de frente. Ninguém faz isso com lápis no meio de uma sessão — e é por isso que essas pendências não fecham.",
+          "O /sessao conta sozinho, sem pedir nenhuma digitação: cada rolagem do rolador entra assinada por quem está agindo (o tracker de iniciativa já sabe), e cada passo negativo de PV no Modo Mesa É um golpe levado.",
+          "No fim aparecem os números que o balanceamento pede: quantas rolagens, quantos críticos, o que mais se repetiu na mesa, quem rolou mais, e — a coluna que responde a pergunta do Vendaval — quanto dano cada personagem levou e em quantos golpes.",
+          "Ele começa DESLIGADO, e é uma decisão: gravar por padrão transformaria toda partida numa coleta silenciosa, num site inteiro construído em cima de dado que não sai do aparelho.",
+        ],
+      },
+      {
+        heading: "E o que ele não finge saber",
+        items: [
+          "Se um ataque acertou. O site vê a rolagem, não a CA do alvo — quem decide o acerto é o Mestre, na cabeça dele. Uma taxa de acerto ali seria número inventado.",
+          "O que dá pra afirmar é o que ele mostra: quantas vezes cada coisa foi ROLADA, quantos críticos caíram, e quanto dano cada um levou.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.30",
     date: "2026-09-10",
     title: "Duas Builds, Um Alvo",

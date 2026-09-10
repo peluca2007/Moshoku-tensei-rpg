@@ -8,6 +8,8 @@ import { getTreeById } from "@/data/trees";
 import { ATTRIBUTES, attributeKeyFromLabel, AttributeKey } from "@/lib/types";
 import { useMacroStore } from "@/store/useMacroStore";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
+import { useSessionLog } from "@/store/useSessionLog";
+import { useInitiativeStore } from "@/store/useInitiativeStore";
 import {
   ADVANTAGE_LABELS,
   AdvantageMode,
@@ -181,6 +183,23 @@ export default function DiceRoller() {
   function pushLog(entry: Omit<RollLogEntry, "id" | "timestamp">) {
     setLog((prev) => [{ ...entry, id: nextRollId(), timestamp: Date.now() }, ...prev].slice(0, 40));
     setLastResult({ total: entry.total, critical: entry.critical });
+
+    /*
+     * O registro de sessão pega carona aqui (0.1.31).
+     *
+     * `registrar` não faz nada enquanto a gravação está desligada, que é o
+     * padrão — então esta linha custa uma comparação booleana por rolagem no
+     * caso normal. A rolagem sai ASSINADA com quem está agindo, lido do tracker
+     * de iniciativa: é o que permite responder "quem apanhou" e "quem rolou o
+     * quê" sem pedir uma única digitação à mesa.
+     */
+    useSessionLog.getState().registrar({
+      tipo: "rolagem",
+      rotulo: entry.label,
+      valor: entry.total,
+      critico: entry.critical ?? null,
+      ator: atorDaVez(),
+    });
   }
 
   /**
@@ -219,6 +238,12 @@ export default function DiceRoller() {
    * cópias da mesma frase acabam divergindo no dia em que uma fonte nova de
    * teste for adicionada.
    */
+  /** De quem é a vez agora, pelo tracker. Vazio fora de combate — e tudo bem. */
+  function atorDaVez(): string | undefined {
+    const { combatants, currentTurnId } = useInitiativeStore.getState();
+    return combatants.find((c) => c.id === currentTurnId)?.name;
+  }
+
   function rotuloDoTeste(): string {
     let label = "Teste";
     if (testSource === "atributo") label = `Teste de ${ATTRIBUTES.find((a) => a.key === attributeKey)?.label}`;
