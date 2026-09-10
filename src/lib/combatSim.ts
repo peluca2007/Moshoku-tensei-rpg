@@ -231,6 +231,8 @@ export interface FichaCombate {
   iniciativa: number;
   /** Vigor — o atributo do teste do Fio da Vida (Cap. 4, §7). */
   vigor: number;
+  /** Espírito — o atributo do teste de Concentração da conjuração (Cap. 2, §6). */
+  espirito: number;
   acoes: Acao[];
   ataqueBasico: Acao;
 }
@@ -397,6 +399,20 @@ export interface EstadoPersonagem extends Alvo {
   ficha: FichaCombate;
   pm: number;
   pt: number;
+  /**
+   * O cântico em andamento — Cap. 2, §6 e Cap. 4, §3, na 0.1.40.
+   *
+   * *"Magias poderosas exigem mais Ações do que você tem num turno — o sistema
+   * permite dividir o cântico."* Sem isto, as VINTE ações de dano que custam 4,
+   * 5 ou 6 Ações eram inalcançáveis pelo motor: `escolherAcao` filtrava por
+   * `acoes <= acoesRestantes` e um turno tem 3. Sol Menor, Zero Absoluto, Era
+   * Glacial, Vazio — as maiores magias do livro nunca foram simuladas uma vez.
+   *
+   * `acoesNesteTurno` existe pra Perda de Foco: *"você é obrigado a gastar pelo
+   * menos 1 Ação por turno recitando. Se passar um turno inteiro sem dedicar
+   * nenhuma Ação, a magia falha, a mana se perde, e você recomeça do zero."*
+   */
+  conjurando: { acao: Acao; acoesGastas: number; acoesNesteTurno: number } | null;
   /**
    * PV devolvidos a aliados (e a si) nesta batalha — 0.1.37.
    *
@@ -620,6 +636,7 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
     })(),
     iniciativa: c.attributeBase.agilidade,
     vigor: c.attributeBase.vigor,
+    espirito: c.attributeBase.espirito,
     acoes: acoesDe(c),
     // Golpe comum. A Escada de Dados é EXCLUSIVA da Árvore do Corpo (Cap. 3):
     // um mago de Água Avançado não escala dado nenhum — ele empunha uma arma
@@ -642,6 +659,7 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     pm: ficha.pmMax,
     pt: ficha.ptMax,
     pvCurado: 0,
+    conjurando: null,
   };
 }
 
@@ -723,12 +741,40 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
  * O alvo é opcional porque nem todo chamador tem um — sem ele a escolha cai no
  * dano bruto, que é o comportamento anterior à 0.1.35.
  */
-export function escolherAcao(e: EstadoPersonagem, acoesRestantes: number, alvo: Alvo | null = null): Acao {
+export function escolherAcao(
+  e: EstadoPersonagem,
+  acoesRestantes: number,
+  alvo: Alvo | null = null,
+  /**
+   * Deixa a escolha considerar magia que NÃO cabe no que resta, começando um
+   * cântico dividido (Cap. 4, §3) — 0.1.40.
+   *
+   * Só o turno inteiro autoriza. É uma regra de decisão minha, declarada, e ela
+   * existe por uma medição: sem ela, um mago com 1 Ação sobrando largava o golpe
+   * de arma e começava um cântico de 3 Ações, o que gasta a sobra E amarra o
+   * turno seguinte. O time dos magos caiu 16 pontos de vitória por causa disso,
+   * e o livro não pede nada parecido — ele só PERMITE dividir. Comprometer-se
+   * com uma magia grande é decisão de começo de turno, não de sobra de turno.
+   */
+  permitirCantico = false
+): Acao {
+  /*
+   * O filtro de Ações caiu na 0.1.40 — a Conjuração Dividida (Cap. 4, §3).
+   *
+   * `a.acoes <= acoesRestantes` excluía toda magia de 4, 5 ou 6 Ações, porque um
+   * turno tem 3. Eram VINTE ações de dano invisíveis, e não as menores: Sol
+   * Menor, Zero Absoluto, Era Glacial, Vazio. O livro não proíbe conjurá-las —
+   * ele manda dividir o cântico entre turnos.
+   *
+   * `tipo === "dano"` fica: a lista contém cura e escudo desde a 0.1.37, e uma
+   * delas escolhida aqui rolaria fórmula de dano vazia e queimaria o turno.
+   */
   const viaveis = e.ficha.acoes.filter(
-    // `tipo === "dano"` é o filtro que 0.1.37 tornou necessário: a lista de
-    // ações passou a conter cura e escudo, e uma delas escolhida aqui rolaria
-    // uma fórmula de dano VAZIA e queimaria o turno em zero.
-    (a) => a.tipo === "dano" && a.acoes <= acoesRestantes && a.pm <= e.pm && a.pt <= e.pt
+    (a) =>
+      a.tipo === "dano" &&
+      a.pm <= e.pm &&
+      a.pt <= e.pt &&
+      (permitirCantico || a.acoes <= acoesRestantes)
   );
   if (viaveis.length === 0) return e.ficha.ataqueBasico;
   return viaveis.reduce((melhor, a) =>
@@ -802,7 +848,17 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
  * Devolve o dano efetivamente sofrido nos PV reais, que é o que o atacante tem
  * direito de contar como feito.
  */
-export function aplicarDano(alvo: Alvo, dano: number, bonusDeRankDeQuemBate = 2): number {
+export function aplicarDano(
+  alvo: Alvo,
+  dano: number,
+  bonusDeRankDeQuemBate = 2,
+  /**
+   * Necessário só pra rolar o teste de Concentração de quem está conjurando
+   * (Cap. 2, §6). Sem ele o cântico não é testado — é o que as contas puras
+   * (`danoEsperado`, testes de unidade de absorção) querem.
+   */
+  rng?: Rng
+): number {
   if (dano <= 0) return 0;
   // "Gastos antes dos PV reais": a casca come o golpe primeiro, e só o que
   // sobrar chega na carne.
@@ -813,6 +869,13 @@ export function aplicarDano(alvo: Alvo, dano: number, bonusDeRankDeQuemBate = 2)
   // A ferida marca mesmo quando a casca comeu tudo: quem levou o golpe levou o
   // golpe, e a janela de cura em dobro é sobre o momento, não sobre o número.
   alvo.feridaFresca = 2;
+  /*
+   * Cap. 2, §6: *"sofrer dano NÃO interrompe automaticamente"* — quem conjura
+   * faz um teste de Espírito contra CD 10 + o Bônus de Rank de quem acertou.
+   * Sucesso e o cântico segue com as Ações gastas valendo; falha e perde tudo
+   * que investiu mais metade do PM.
+   */
+  if (rng && "conjurando" in alvo) testeDeConcentracao(alvo as EstadoPersonagem, bonusDeRankDeQuemBate, rng);
   if (alvo.pv <= 0) {
     alvo.pv = 0;
     alvo.vivo = false;
@@ -829,6 +892,42 @@ export function aplicarDano(alvo: Alvo, dano: number, bonusDeRankDeQuemBate = 2)
     }
   }
   return real;
+}
+
+/**
+ * O teste de Concentração — Cap. 2, §6 e Cap. 4, §3 (0.1.40).
+ *
+ * *"Sempre que você sofrer dano enquanto estiver Conjurando, faça um teste de
+ * resistência de Espírito contra CD 10 + o Bônus de Rank de quem te acertou.
+ * Sucesso: o cântico segue, as Ações já gastas continuam valendo. Falha: a
+ * conjuração é interrompida, você perde todas as Ações já gastas e metade do PM
+ * da magia, arredondado pra cima."*
+ *
+ * A meia devolução de PM é a parte fácil de errar: o livro cobra METADE, não o
+ * total — quem foi interrompido perdeu tempo e mana, mas não a magia inteira.
+ */
+export function testeDeConcentracao(e: EstadoPersonagem, bonusDeRankDeQuemBate: number, rng: Rng): void {
+  if (!e.conjurando) return;
+  const cd = 10 + bonusDeRankDeQuemBate;
+  if (d20(rng) + e.ficha.espirito >= cd) return;
+  // Falhou: metade do PM volta (o livro cobra a outra metade), e o cântico morre.
+  e.pm += Math.floor(e.conjurando.acao.pm / 2);
+  e.conjurando = null;
+}
+
+/**
+ * Perda de Foco, no fim do turno de quem conjura — Cap. 4, §3.
+ *
+ * *"Pra manter a mana canalizada, você é obrigado a gastar pelo menos 1 Ação por
+ * turno recitando. Se passar um turno inteiro sem dedicar nenhuma Ação, a magia
+ * falha, a mana se perde, e você recomeça do zero."*
+ *
+ * Aqui a mana se perde INTEIRA, e não pela metade: a metade é a concessão que o
+ * livro faz a quem foi interrompido por um golpe, não a quem largou o cântico.
+ */
+export function perdaDeFoco(e: EstadoPersonagem): void {
+  if (!e.conjurando) return;
+  if (e.conjurando.acoesNesteTurno === 0) e.conjurando = null;
 }
 
 /**
@@ -1035,9 +1134,37 @@ export function turnoPersonagem(
 
   let acoes = 3;
   let guarda = 0;
+  if (e.conjurando) e.conjurando.acoesNesteTurno = 0;
+
   while (acoes > 0 && guarda++ < 10) {
     const vivos = inimigos.filter((x) => x.vivo);
-    if (vivos.length === 0) return;
+    if (vivos.length === 0) break;
+
+    /*
+     * CONJURANDO: o cântico consome o turno inteiro e não sobra nada.
+     *
+     * Cap. 2, §6: *"você não pode fazer mais nada. Mover-se metade do
+     * Deslocamento é permitido; atacar, usar item, conjurar outra magia ou usar
+     * Reação, não."* Então enquanto há cântico em pé, cada Ação do turno vai
+     * pra ele — inclusive as que sobrariam depois de a magia sair, porque
+     * lançar uma segunda magia no mesmo turno é o que o livro proíbe.
+     */
+    if (e.conjurando) {
+      const c = e.conjurando;
+      const falta = c.acao.acoes - c.acoesGastas;
+      const gasta = Math.min(falta, acoes);
+      c.acoesGastas += gasta;
+      c.acoesNesteTurno += gasta;
+      acoes -= gasta;
+      if (c.acoesGastas < c.acao.acoes) break; // segue no próximo turno
+      // O cântico completou: a magia sai agora.
+      e.conjurando = null;
+      const alvos = c.acao.area ? vivos : [vivos[0]];
+      for (const alvo of alvos) {
+        e.danoCausado += aplicarDano(alvo, resolver(e, c.acao, alvo, rng), e.ficha.bonusDeRank, rng);
+      }
+      break;
+    }
 
     /*
      * Suporte ANTES de dano, quando há suporte a fazer.
@@ -1076,16 +1203,31 @@ export function turnoPersonagem(
 
     // O alvo da vez entra na escolha: sem ele a IA não sabe se a técnica de
     // ataque que ela prefere tem chance de acertar este inimigo.
-    const a = escolherAcao(e, acoes, vivos[0]);
-    if (a.acoes > acoes) break;
-    acoes -= a.acoes;
+    // O cântico dividido só começa com o turno inteiro na mão — ver `escolherAcao`.
+    const a = escolherAcao(e, acoes, vivos[0], acoes === 3);
     e.pm -= a.pm;
     e.pt -= a.pt;
+
+    /*
+     * A magia que não cabe no turno vira cântico: o PM é investido AGORA (é o
+     * que o livro chama de "o PM investido", e é o que se perde pela metade
+     * quando alguém interrompe), e as Ações começam a ser gastas.
+     */
+    if (a.acoes > acoes) {
+      e.conjurando = { acao: a, acoesGastas: acoes, acoesNesteTurno: acoes };
+      acoes = 0;
+      break;
+    }
+
+    acoes -= a.acoes;
     const alvos = a.area ? vivos : [vivos[0]];
     for (const alvo of alvos) {
-      e.danoCausado += aplicarDano(alvo, resolver(e, a, alvo, rng));
+      e.danoCausado += aplicarDano(alvo, resolver(e, a, alvo, rng), e.ficha.bonusDeRank, rng);
     }
   }
+
+  // Fim do turno: quem não dedicou nenhuma Ação ao cântico o perde (Perda de Foco).
+  perdaDeFoco(e);
 }
 
 /** Queima no início do turno de quem está Em Chamas. Devolve true se sobreviveu. */
@@ -1145,6 +1287,8 @@ export const SIMPLIFICACOES = [
   "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",
   "O Fio da Vida (Cap. 4, §7) entra desde a 0.1.38: a 0 PV o personagem CAI inconsciente, rola 1d20+Vigor contra CD 8 + o Bônus de Rank de quem o derrubou, junta Marcas da Morte e morre de vez na terceira — e qualquer cura de aliado o levanta com todas as Marcas removidas. Quem estabiliza para de rolar (o livro diz \"temporariamente\" e não diz quando recomeça; esta é a leitura declarada). A Exaustão que o livro cobra de quem acorda fica de fora, porque Exaustão não é modelada. Criatura não tem Fio da Vida: a 0 PV ela morre.",
   "Antes disso o motor matava a 0 PV, e isso não era só infidelidade: era a razão de TODO combate contra chefe dar 0% ou 100%. Quem caía sumia da luta pra sempre, o dano do grupo despencava, a luta se alongava e caía o próximo — realimentação positiva não produz meio-termo. Com o Fio da Vida e um curandeiro, o 4º patamar virou 55% de vitória contra 45% de dizimação.",
+  "Conjuração Contínua e Dividida (Cap. 4, §3) entra na 0.1.40: magia que custa mais Ações do que o turno tem é recitada ao longo de turnos, com Perda de Foco (1 Ação por turno, no mínimo) e teste de Concentração de Espírito contra CD 10 + o Bônus de Rank de quem acertou, perdendo metade do PM na falha. Sem ela, VINTE ações de dano do livro eram inalcançáveis — Sol Menor, Zero Absoluto, Era Glacial, Vazio, as maiores magias do jogo.",
+  "A IA só COMEÇA um cântico longo com o turno inteiro na mão: é regra de decisão declarada, não do livro. Sem ela, um mago com 1 Ação sobrando largava o golpe de arma pra começar um cântico de 3 Ações e amarrava o turno seguinte — o time dos magos perdia 16 pontos de vitória por isso. E a IA não desconta o risco de interrupção ao escolher: ela é otimista, e o relatório mede o preço mesmo assim. Cura e escudo seguem sem cântico dividido — um curandeiro que passa dois turnos recitando enquanto o grupo cai é jogada ruim, não simplificação.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Terreno, distância, posicionamento e surpresa não existem: todo mundo alcança todo mundo desde a primeira rodada.",

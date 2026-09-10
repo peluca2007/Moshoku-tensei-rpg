@@ -446,7 +446,9 @@ for (const chefe of CHEFES) {
         const golpe = Math.min(restante, alvo.pv + alvo.pvTemp);
         // "Quem te derrubou decide o quanto é difícil voltar": o chefe de 5º
         // patamar deixa numa CD bem pior que o de 3º.
-        aplicarDano(alvo, golpe, chefe.bonusDeRank);
+        // O `rng` é o que permite o teste de Concentração de quem está
+        // conjurando (Cap. 2, §6): sem ele o chefe nunca derruba um cântico.
+        aplicarDano(alvo, golpe, chefe.bonusDeRank, rng);
         restante -= golpe;
       }
       if (grupo.every((e) => !e.vivo)) break;

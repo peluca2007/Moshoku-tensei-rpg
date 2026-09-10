@@ -16,6 +16,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.40",
+    date: "2026-09-10",
+    title: "A Magia que Não Cabe no Turno",
+    sections: [
+      {
+        heading: "Vinte magias nunca tinham sido simuladas. Nenhuma vez.",
+        items: [
+          "Um turno tem 3 Ações, e o custo de conjuração sobe com o rank: Avançado 3, Santo 4, Rei 5, Imperador 6. Ou seja, magia de Santo pra cima NÃO CABE num turno — e o motor escolhia ações filtrando pelo que cabia. Vinte ações de dano do livro eram inalcançáveis, e não as menores: Sol Menor, Zero Absoluto, Era Glacial, Vazio, Flashover, Maremoto, Sepultamento.",
+          "O livro não as proíbe. O Cap. 4, §3 tem a regra inteira — \"A Regra de Ouro: Conjuração Contínua e Dividida\" — e ela entrou completa: o cântico atravessa turnos com o PM investido no começo; Perda de Foco se passar um turno sem recitar; e o teste de Concentração de Espírito contra CD 10 + o Bônus de Rank de quem acertou, porque sofrer dano NÃO interrompe automaticamente. Falhar custa tudo que investiu mais METADE do PM — metade, não o total, que o livro é específico. E quem conjura não ataca.",
+          "A IA só COMEÇA um cântico longo com o turno inteiro na mão. Isso não está no livro (ele só permite dividir); é regra de decisão declarada, e existe por medição: sem ela, um mago com 1 Ação sobrando largava o golpe de arma pra começar um cântico de 3 Ações, gastando a sobra e amarrando o turno seguinte — o time dos magos caía de 32,8% para 16,4% de vitória. Com a regra, voltou a 32,0%.",
+        ],
+      },
+      {
+        heading: "E o que o destravamento revelou",
+        items: [
+          "Com as magias longas finalmente na mesa, dá pra comparar o melhor dano esperado POR AÇÃO de cada árvore. Só 2 das 6 árvores de magia têm a magia longa valendo a pena: no Fogo, o Sol Menor (Imperador, 22 PM, 6 Ações) rende MENOS por Ação que a Lança de Plasma (Avançado, 13 PM, 3 Ações). A magia suprema é pior que a de dois ranks abaixo. No Vento é a mesma coisa.",
+          "E a magia inteira perde da técnica corporal na economia de Ações: o teto da magia é ~24 por Ação (Vento), o do corpo é 43 (Armas Pesadas), com Punho do Fogo em 40 e Vendaval em 34. O Fogo, a árvore de dano mágico por excelência, faz 13,9.",
+          "Isso é medida de dano puro, e a magia compra coisas que este motor não pontua: alcance de 90m, área de verdade e condições. Mas a diferença é grande demais pra ser só isso, e virou pergunta de design no backlog.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.39",
     date: "2026-09-10",
     title: "A Exceção Cobrada Junto com a Regra",

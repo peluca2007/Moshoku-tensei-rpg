@@ -5,6 +5,78 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.40 — "A Magia que Não Cabe no Turno" · 2026-09-10
+
+### 🕯️ Vinte magias nunca tinham sido simuladas. Nenhuma vez.
+
+Um turno tem **3 Ações**, e o custo de conjuração sobe com o rank: Avançado 3, Santo 4, Rei 5,
+Imperador 6. Ou seja, **magia de Santo pra cima não cabe num turno** — e o motor escolhia ações
+filtrando por `acoes <= acoesRestantes`.
+
+Resultado: **20 ações de dano do livro eram inalcançáveis**, e não as menores. Sol Menor, Zero
+Absoluto, Era Glacial, Vazio, Flashover, Maremoto, Sepultamento — as maiores magias do jogo, invisíveis
+para todo relatório que este projeto já produziu.
+
+O livro não as proíbe. O Cap. 4, §3 tem a regra inteira, chamada **"A Regra de Ouro: Conjuração
+Contínua e Dividida"**: *"Magias poderosas exigem mais Ações do que você tem num turno — o sistema
+permite dividir o cântico."*
+
+**Ela entrou completa:**
+
+- O cântico atravessa turnos, e o **PM é investido quando começa** (é o que o livro chama de "o PM
+  investido").
+- **Perda de Foco:** *"você é obrigado a gastar pelo menos 1 Ação por turno recitando"*. Um turno
+  inteiro sem recitar e a magia falha, a mana se perde.
+- **Teste de Concentração:** *"sofrer dano NÃO interrompe automaticamente"* — é um teste de Espírito
+  contra **CD 10 + o Bônus de Rank de quem te acertou**. Sucesso e as Ações já gastas continuam
+  valendo; falha e perde tudo que investiu mais **metade** do PM (metade, não o total — o livro é
+  específico).
+- Quem conjura **não ataca**: *"atacar, usar item, conjurar outra magia ou usar Reação, não."*
+
+### 🧠 Uma regra de decisão que é minha, e por que ela existe
+
+A IA só **começa** um cântico longo com o turno inteiro na mão. Isso não está no livro — o livro só
+*permite* dividir.
+
+Ela existe por uma medição: sem ela, um mago com 1 Ação sobrando largava o golpe de arma pra começar
+um cântico de 3 Ações, gastando a sobra **e** amarrando o turno seguinte. O time dos magos caiu de
+32,8% para **16,4%** de vitória por causa disso. Com a regra, voltou a 32,0% — praticamente idêntico
+ao de antes, que é o correto: os builds do playtest vão até Avançado e não têm magia de 4+ Ações. O
+destravamento é para quem TEM.
+
+### ⚖️ E o que o destravamento revelou
+
+Com as magias longas finalmente na mesa, dá pra comparar. O melhor **dano esperado por Ação** de cada
+árvore:
+
+| Árvore | Melhor por Ação | A melhor de 4+ Ações vence? |
+| ------ | --------------- | --------------------------- |
+| **Armas Pesadas** (corpo) | **43,2** | não tem magia longa |
+| **Punho do Fogo** (corpo) | 40,4 | — |
+| **Vendaval** (corpo) | 34,4 | — |
+| **Deus da Espada** (corpo) | 29,0 | — |
+| Fogo (magia) | 13,9 (Lança de Plasma, 3A) | **não** — Sol Menor faz 13,6 |
+| Água (magia) | 11,9 (Zero Absoluto, 6A) | **sim** |
+| Terra (magia) | 13,2 (Falha Geológica, 4A) | **sim** |
+| Vento (magia) | 23,7 (Explosão Silenciosa, 3A) | **não** — a de 6A faz 13,2 |
+
+Duas coisas saltam:
+
+1. **Só 2 das 6 árvores de magia** têm a magia longa valendo a pena. No Fogo, o **Sol Menor**
+   (Imperador, 22 PM, 6 Ações) rende **menos por Ação** que a Lança de Plasma (Avançado, 13 PM, 3
+   Ações). A magia suprema é pior que a de dois ranks abaixo.
+2. **A magia inteira perde da técnica corporal na economia de Ações.** O teto da magia é ~24 por
+   Ação; o do corpo, **43**. Armas Pesadas entrega três vezes o que o Fogo entrega por Ação.
+
+Isso é medida de dano puro, e a magia compra outras coisas que este motor não pontua: alcance de 90m,
+área de verdade e condições. Mas a diferença é grande demais pra ser só isso, e virou pergunta no
+`O-QUE-FALTA`.
+
+**13 testes novos** (423 no total), incluindo o d20 forjado que separa "passou no teste" de "falhou" e
+o que prova que o PM volta pela metade.
+
+---
+
 ## 0.1.39 — "A Exceção Cobrada Junto com a Regra" · 2026-09-10
 
 Auditoria da leitura de texto do motor. Dois erros, os dois na mesma família: o simulador lendo a
