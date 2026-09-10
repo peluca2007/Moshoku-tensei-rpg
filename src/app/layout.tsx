@@ -5,6 +5,7 @@ import SuporteOffline from "@/components/SuporteOffline";
 import ThemeProvider from "@/components/ThemeProvider";
 import { SCRIPT_TAMANHO_INICIAL } from "@/components/FontSizeToggle";
 import Nav from "@/components/Nav";
+import DiceRoller from "@/components/DiceRoller";
 import Footer from "@/components/Footer";
 import { OrnamentDefs } from "@/components/ui/Ornament";
 import "./globals.css";
@@ -124,6 +125,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               o conteúdo e o rodapé em TODAS as páginas. */}
           <main className="flex-1">{children}</main>
           <Footer />
+          {/*
+            O rolador de dados vive AQUI desde a 0.1.22, e não mais dentro da
+            ficha.
+
+            Ele nasceu como parte do `CharacterSheet`, o que fazia sentido
+            enquanto rolar dado era uma coisa que se faz olhando a ficha. Não é:
+            no meio do combate a pessoa está no tracker de iniciativa vendo de
+            quem é o turno, ou em `/encontros` com a criatura aberta — e era
+            exatamente aí que ela tinha que sair da tela pra rolar um d20.
+
+            Ele já era global em tudo menos na montagem: o estado mora no
+            `useDiceRollerStore`, os macros no `useMacroStore`, e o personagem
+            vem do `useActiveCharacter` (que devolve uma ficha em branco quando
+            não há nenhuma ativa, então nenhuma rota precisa de contexto de
+            personagem pra montá-lo).
+          */}
+          <DiceRoller />
         </ThemeProvider>
       </body>
     </html>

@@ -83,12 +83,16 @@ de verdade. Eles parecem folgados, mas "parecem" não é medida.
 
 ## Site
 
-### 7. ⬜ Rolador de dados em todas as rotas
+### 7. ✅ Rolador de dados em todas as rotas — *0.1.22*
 
-`DiceRoller` só é montado dentro de `CharacterSheet`, então só existe em `/ficha` — mas no meio do
-combate a pessoa está em `/iniciativa` ou `/encontros`. Subir pro layout mantendo o atalho `R`, o
-`#dados` do app instalado e os pedidos de rolagem do Inventário e do Grimório. Cuidar de não cobrir
-controle de outra rota (a tarja de `SuporteOffline` já teve esse problema).
+**Feito na 0.1.22:** subiu pro layout raiz. O atalho `R`, o `#dados` do app instalado, os macros e os
+pedidos de rolagem do Inventário e do Grimório continuam funcionando — tudo isso já morava fora da
+ficha, o que faltava era a montagem.
+
+Colisão conferida: o único outro elemento flutuante do site é o aviso do `DestinyBoard`, que é
+centralizado (`left-1/2`) e não disputa o canto; a tarja de `SuporteOffline` é de fluxo, não
+flutuante. Print de `/iniciativa` e `/encontros` com o botão no lugar, e as treze rotas seguem em
+zero no mobile/a11y/contraste.
 
 ### 8. ✅ Testar o `rollEngine` e ensinar o macro a guardar Testes — *0.1.20 e 0.1.21*
 

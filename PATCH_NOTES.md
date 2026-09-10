@@ -5,6 +5,25 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.22 — "O Dado Segue Você" · 2026-09-10
+
+### 🎲 O rolador existia só na ficha
+
+Ele nasceu dentro do `CharacterSheet`, o que fazia sentido enquanto rolar dado fosse uma coisa que se
+faz **olhando a ficha**. Não é: no meio do combate a pessoa está no tracker de iniciativa vendo de
+quem é o turno, ou em `/encontros` com a criatura aberta — e era exatamente aí que ela tinha que sair
+da tela pra rolar um d20.
+
+Agora o botão está em **todas as rotas**, com o mesmo estado: o histórico da sessão, os macros
+salvos e o atalho `R` continuam onde estavam, e trocar de tela não perde nada.
+
+Ele já era global em tudo menos na montagem — o estado sempre morou fora da ficha
+(`useDiceRollerStore`, `useMacroStore`), e o personagem vem do `useActiveCharacter`, que devolve uma
+ficha em branco quando não há nenhuma ativa. O que faltava era o rolador estar montado onde a mesa
+está.
+
+---
+
 ## 0.1.21 — "O Atalho Que Faltava" · 2026-09-10
 
 ### ⭐ Macro agora guarda Teste, e não só dano

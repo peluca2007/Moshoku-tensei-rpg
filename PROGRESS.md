@@ -1,6 +1,7 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — **0.1.21**: o macro do rolador aprendeu a guardar Teste (d20 com
+**Última atualização:** 2026-09-10 — **0.1.22**: o rolador de dados saiu de dentro da ficha e passou
+a existir em todas as rotas, que é onde a mesa está no meio do combate. Antes disso, na **0.1.21**: o macro do rolador aprendeu a guardar Teste (d20 com
 modificador e vantagem), e não só fórmula de dano — com migração, porque macro salvo não some. Antes
 disso, na **0.1.20**: compartilhar ficha virou um toque (a bandeja do
 próprio celular, na ficha e na criatura) e o site passou a oferecer a instalação como app em vez de
