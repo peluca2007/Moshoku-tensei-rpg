@@ -1,13 +1,18 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — dezoito versões num dia (0.1.17 → 0.1.34), fechando as vinte e
+**Última atualização:** 2026-09-10 — vinte versões num dia (0.1.17 → 0.1.36), fechando as vinte e
 duas frentes do [`TAREFAS.md`](TAREFAS.md). O site ganhou **busca global** nos 879 verbetes, telas de
 **404 e de erro** em português, o **link de ficha diagnosticado** (com colagem e QR), **compartilhar
 pela bandeja do celular** e **botão de instalar**, o **rolador em todas as rotas** com macro de
-Teste, as **condições como estado vivo** da ficha, **descanso e downtime jogáveis**, o **Modo Mesa**,
-o **Painel do Mestre**, o **comparador de builds**, o **registro de sessão**, a **rolagem de
-perícia** e a **ficha imprimível**. Sobraram três coisas, e as três precisam do autor: o iPhone do
-amigo, meia hora de NVDA, e a decisão sobre quanto PM o Descanso Curto devolve.
+Teste, as **condições como estado vivo** da ficha, **descanso e downtime jogáveis**, o **Painel do
+Mestre**, o **comparador de builds**, o **registro de sessão**, a **rolagem de perícia** e a **ficha
+imprimível**. O **Modo Mesa** saiu na 0.1.27 e foi **absorvido pela ficha na 0.1.36**, que é onde os
+passos de reserva e a faixa de "de quem é a vez" moram agora — na mesma versão em que a barra do topo
+caiu de dez destinos pra sete, com Iniciativa, Encontros e Comparador passando a morar nos cartões do
+Painel do Mestre.
+
+Sobraram três coisas, e as três precisam do autor: o iPhone do amigo, meia hora de NVDA, e a decisão
+sobre quanto PM o Descanso Curto devolve.
 Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
 
 > Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
@@ -30,17 +35,16 @@ mão duas vezes.
 | Rota | O que é |
 | --- | --- |
 | `/` | Landing page — apresentação e disclaimer de projeto de fã |
-| `/mesa` | **Modo Mesa** — só o que se usa DENTRO de um turno: ordem, reservas com passos de −5 a +5, condições ativas. Pensada pra 320px e uma mão |
-| `/ficha` | Ficha de personagem: atributos, PV/PM/PT/PP/CA calculados, foto e capa, inventário, Grimório, Lore, Desfazer, export PDF (Typst), arquivo `.mtficha` e link |
+| `/ficha` | Ficha de personagem: atributos, PV/PM/PT/PP/CA calculados, **reservas com passos de −5 a +5** e a **faixa de "de quem é a vez"** (0.1.36, herdadas do Modo Mesa), foto e capa, inventário, Grimório, Lore, Desfazer, export PDF (Typst), arquivo `.mtficha` e link |
 | `/criar` | Três vias de criação: Manual (wizard de 8 passos), Roleta e Entrevista |
 | `/livro` | Livro de regras completo, navegável, com Patch Notes embutidos |
 | `/arvores` | Mapa radial estilo Destiny Board — pan/zoom, compra refletindo na ficha na hora |
 | `/loja` | Loja da Guilda — 85 itens, filtro duplo Tipo × Rank de Guilda, `buyItem` valida PO **e** Rank |
-| `/iniciativa` | Tracker de iniciativa |
-| `/mestre` | **Painel do Mestre** — lê as fichas do roster lado a lado (PV, CA, recursos, condições, maior golpe). Nunca escreve nelas |
+| `/iniciativa` | Tracker de iniciativa. Fora do menu desde a 0.1.36 — a porta dela é o Painel do Mestre |
+| `/mestre` | **Painel do Mestre** — lê as fichas do roster lado a lado (PV, CA, recursos, condições, maior golpe). Nunca escreve nelas. Desde a 0.1.36 é também o hub das três ferramentas de Mestre: Encontros, Iniciativa e Comparador |
 | `/encontros` | Construtor de criaturas: ações, conselho ao vivo contra o grupo real, o teste de 300 batalhas, e o covil em pastas (com cor, emoji, busca, cartão recolhível e arquivo `.mtpasta`), e a ficha de um personagem do roster entrando como criatura |
 | `/personagens` | Roster de fichas |
-| `/sessao` | **Registro de sessão** — pega carona no rolador e no Modo Mesa; começa DESLIGADO. Fora do menu |
+| `/sessao` | **Registro de sessão** — pega carona no rolador e nos passos de PV da ficha; começa DESLIGADO. Fora do menu |
 | `/comparar` | **Comparador de builds** — duas fichas contra o mesmo alvo e a mesma semente. Fora do menu de propósito |
 | `/busca` | Busca global nos 879 verbetes — nome **e** texto da regra, com o card completo abrindo na própria linha |
 | `/offline` | O que o service worker devolve quando não há nem rede nem cache |

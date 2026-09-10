@@ -170,8 +170,8 @@ contexto, aria-live nos números que mudam sozinhos"):
   enxerga o card em volta e não basta pra quem só ouve o botão. Vale também nas árvores e nas magias
   combinadas.
 - **Os números que mudam sozinhos passaram a ser anunciados.** O PA gasto muda como consequência de
-  uma compra feita em outra tela, e as reservas do Modo Mesa mudam por botão no meio do turno — nos
-  dois casos, quem só ouve recebia silêncio como confirmação.
+  uma compra feita em outra tela, e as reservas mudam por botão no meio do turno (então no Modo Mesa;
+  desde a 0.1.36, na própria ficha) — nos dois casos, quem só ouve recebia silêncio como confirmação.
 
 **O que continua sendo seu, e não dá pra terceirizar:** meia hora de NVDA respondendo as três
 perguntas que nenhum script responde — a ordem de foco conta a história certa (atributos antes dos
@@ -196,12 +196,22 @@ Desvantagem refletida nos números, o `InitiativeTracker` decrementando a duraç
 de Em Chamas entrando sozinho. É a diferença entre um site que **mostra** a ficha e um que joga
 junto. Muda schema → migração no `persist` (`useCharacterStore`, hoje `version: 12`).
 
-### 12. ⬜ Modo Mesa: a tela única que fica aberta a sessão inteira
+### 12. ✅ Modo Mesa: a tela única que fica aberta a sessão inteira — *feita na 0.1.27, absorvida pela ficha na 0.1.36*
 
 Ficha, iniciativa, rolador e encontros são quatro rotas, e a mesa alterna entre elas o tempo todo num
 celular. Uma tela com só o que se usa **dentro** de um turno: ordem, PV/PM/PT com os botões de gastar,
 condições ativas e o rolador. Nada de edição, nada de compra. Tem que funcionar em 320px, de pé, com
 uma mão.
+
+**Feita, e depois desfeita — de propósito.** A `/mesa` saiu no ar na 0.1.27 e cumpriu o que esta task
+pedia. O que a sessão mostrou é que ela era a **ficha com botões grandes**: as mesmas reservas, as
+mesmas condições, e a diferença toda em não precisar digitar no meio de um turno. Manter uma segunda
+ficha pra ter botões é caro pelo que entrega, e duas telas do mesmo dado divergem.
+
+Na 0.1.36 a rota foi apagada e o que era só dela foi pra `/ficha`: os passos de −5/−1/+1/+5 em toda
+reserva (com o registro de dano do log de sessão pendurado no passo negativo de PV) e a faixa de "de
+quem é a vez", que desaparece fora de combate. O pedido desta task continua atendido; o que mudou é
+que ele não custa mais uma rota. **Não reconstrua a tela** — se algo dela faltar, o lugar é a ficha.
 
 ### 13. ⬜ Painel do Mestre: as fichas do grupo lado a lado
 

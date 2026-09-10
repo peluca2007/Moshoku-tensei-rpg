@@ -66,7 +66,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 ## Site
 
 9. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
-   `check:offline` prova a parte que dá pra provar: as 16 rotas abrem com o servidor morto, em F5 e
+   `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
    em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
    "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
    nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,

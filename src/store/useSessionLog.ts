@@ -19,7 +19,7 @@ import { persist } from "zustand/middleware";
  * - toda rolagem passa pelo rolador de dados, que já sabe o rótulo e o total;
  * - o tracker de iniciativa já sabe de quem é a vez, então a rolagem sai
  *   assinada sem ninguém dizer quem rolou;
- * - o Modo Mesa já mexe nos PV com botões, e um passo negativo É o dano levado.
+ * - a ficha já mexe nos PV com botões, e um passo negativo É o dano levado.
  *
  * Um registro que exigisse um formulário depois de cada golpe seria abandonado
  * na primeira sessão, e um registro abandonado é pior que nenhum: ele parece

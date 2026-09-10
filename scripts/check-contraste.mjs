@@ -52,7 +52,7 @@
  */
 import { BASE, comNavegador, dormir, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
 
-const ROTAS = ["/", "/mesa", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/comparar", "/sessao", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
+const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/comparar", "/sessao", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
 const TEMAS = process.env.TEMA ? [process.env.TEMA] : ["light", "dark"];
 
 const AUDITORIA = String.raw`(() => {
@@ -168,4 +168,4 @@ if (total > 0) {
   console.error(`\n❌ ${total} texto(s) abaixo do mínimo do WCAG AA.`);
   process.exit(1);
 }
-console.log("\n✅ Nenhum texto abaixo do mínimo do WCAG AA nas dezessete rotas, nos dois temas.");
+console.log(`\n✅ Nenhum texto abaixo do mínimo do WCAG AA nas ${ROTAS.length} rotas, nos dois temas.`);
