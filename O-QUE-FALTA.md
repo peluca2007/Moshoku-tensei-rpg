@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.40. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.41. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -114,7 +114,22 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     script — e o segundo passo é a tabela passar a montar um grupo do patamar de cada chefe, pra medir
     calibragem em vez de diferença de nível.
 
-13. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
+13. **Dezesseis capstones que não compensam** — `npm run check:progressao` (novo na 0.1.41). A melhor
+    técnica de um rank rendendo MENOS por Ação que a de um rank abaixo, na mesma árvore: quem chega lá
+    destrava e não usa. As piores:
+
+    | Árvore | Rank | Rende | O rank anterior fazia |
+    | --- | --- | --- | --- |
+    | Punho do Fogo | Rei | 17,6 | 37,6 (**−53%**) |
+    | Desintoxicação | Avançado | 7,6 | 14,4 (−47%) |
+    | Armas Pesadas | Santo | 24,4 | 38,8 (−37%) |
+    | Deus da Espada | Santo | 19,4 | 28,8 (−33%) |
+
+    Nem toda uma é erro — um rank pode entregar utilidade em vez de dano, e o personagem continua com
+    as técnicas antigas. Mas quatro quedas acima de 30% na mesma lista é padrão, não coincidência. O
+    check imprime as dezesseis e **não reprova o build**, de propósito: a decisão é sua.
+
+14. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
     longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:
 
     | Corpo | | Magia | |
@@ -134,14 +149,14 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Site
 
-14. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
+15. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
     `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
     em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
     "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
     nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
     um Android e um iPhone.
 
-15. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+16. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
