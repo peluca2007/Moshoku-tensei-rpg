@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { CloudOff, RefreshCw } from "lucide-react";
 import { PATCH_NOTES } from "@/data/patchNotes";
+import { useRedeOffline } from "@/lib/useRedeOffline";
 
 /**
  * Liga o service worker e conta ao usuário o que está acontecendo (0.1.15).
@@ -26,28 +27,16 @@ import { PATCH_NOTES } from "@/data/patchNotes";
 const VERSAO = PATCH_NOTES[0]?.version ?? "0";
 
 export default function SuporteOffline() {
-  const [offline, setOffline] = useState(false);
-  const [temAtualizacao, setTemAtualizacao] = useState(false);
-
   /*
-   * O estado da rede.
-   *
-   * `navigator.onLine` mente pra cima: um celular no wi-fi de um hotel sem
-   * internet do outro lado continua "online". Mentir pra cima é o lado certo
-   * de errar aqui — o preço de um falso "online" é o usuário tentar exportar um
-   * PDF e receber um erro, e o de um falso "offline" seria uma tarja
-   * permanente num site que está funcionando perfeitamente.
+   * O estado da rede mora em `lib/useRedeOffline` desde a 0.1.18, quando o
+   * `error.tsx` passou a precisar da mesma resposta pra dizer se o que
+   * aconteceu foi um defeito ou só falta de sinal. Duas leituras diferentes de
+   * "está offline?" no mesmo site seria a receita pra tarja e tela de erro se
+   * contradizerem na frente do usuário. O porquê do `navigator.onLine` mentir
+   * pra cima está documentado lá.
    */
-  useEffect(() => {
-    const atualizar = () => setOffline(!navigator.onLine);
-    atualizar();
-    window.addEventListener("online", atualizar);
-    window.addEventListener("offline", atualizar);
-    return () => {
-      window.removeEventListener("online", atualizar);
-      window.removeEventListener("offline", atualizar);
-    };
-  }, []);
+  const offline = useRedeOffline();
+  const [temAtualizacao, setTemAtualizacao] = useState(false);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;

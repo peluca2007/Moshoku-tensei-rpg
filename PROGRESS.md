@@ -1,6 +1,9 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — **0.1.17**: o livro tinha 879 verbetes e nenhum jeito de
+**Última atualização:** 2026-09-10 — **0.1.18**: o site respondia *"404: This page could not be
+found."* em inglês num site pt-BR, e um erro de runtime caía na tela padrão do framework — que,
+offline, é indistinguível de falta de sinal. As duas telas agora existem, em português, dentro do
+layout, e dizem que as fichas continuam no aparelho. Antes disso, na **0.1.17**: o livro tinha 879 verbetes e nenhum jeito de
 procurar um; a rota `/busca` procura no nome **e no texto** de todos eles, sem acento e sem caixa, e
 abre o card completo ali mesmo em vez de mandar pro livro. Antes disso, na **0.1.16**: o mapa de
 árvores era intocável no celular (nós de 6 a 14px, contra os 24 do WCAG 2.5.8) e passou a abrir num
@@ -62,13 +65,12 @@ mão duas vezes.
 
 ## Metas atuais
 
-Só o que ainda não foi feito. A lista curta com o contexto de cada item vive em
-[`O-QUE-FALTA.md`](O-QUE-FALTA.md); aqui fica o registro seco.
+Só o que ainda não foi feito. A lista curta do que já estava combinado com o autor vive em
+[`O-QUE-FALTA.md`](O-QUE-FALTA.md), e o mapa maior das vinte frentes abertas em
+[`TAREFAS.md`](TAREFAS.md); aqui fica o registro seco.
 
-- [ ] **`not-found.tsx` e `error.tsx`** — item 10. Uma URL errada responde *"404: This page could not be
-      found."* em inglês num site pt-BR, e um erro de runtime offline é indistinguível de falta de rede.
-- [ ] **Testes do `rollEngine` + macro de Teste** — item 11. O motor que decide toda rolagem não tem um
-      teste; o macro só salva dano.
+- [ ] **Testes do `rollEngine` + macro de Teste** — item 10 do `O-QUE-FALTA`. O motor que decide toda
+      rolagem não tem um teste; o macro só salva dano.
 - [ ] **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem rede e o
       `check:offline` prova a parte automatizável (16 rotas com o servidor morto). Falta o resto do
       caminho: "Adicionar à tela de início", o recorte do ícone pelo launcher, a splash, e o quanto
