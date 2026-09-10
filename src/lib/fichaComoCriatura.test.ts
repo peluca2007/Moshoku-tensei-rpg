@@ -174,6 +174,7 @@ describe("ficha como criatura", () => {
       frio: false,
       fogo: false,
       aplicaMolhado: false,
+    aplicaQuebrantado: 0,
     };
 
     it("mantém os dados próprios e o fixo do texto", () => {

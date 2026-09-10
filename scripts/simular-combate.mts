@@ -339,6 +339,7 @@ for (const chefe of CHEFES) {
           envenenado: false,
           reacaoDisponivel: false,
           danoCausado: 0,
+    quebrantado: 0,
         };
         turnoPersonagem(e, [alvoChefe], rng);
       }

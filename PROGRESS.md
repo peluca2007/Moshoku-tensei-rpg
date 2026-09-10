@@ -101,11 +101,14 @@ encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
   seis prontas vão do 1º ao 5º. Agora ela nasceria já com ações escritas, como as outras.
 - Não há Reação nem ação de Chefe (lendária) fora do turno: a rodada extra do chefe continua sendo a
   única economia de ação que o motor conhece — e ela está declarada em `SIMPLIFICACOES`.
-- **Cinco condições fora da simulação**: Atolado, Desequilibrado, Quebrantado, Marcado e Soterrado,
-  que são a mecânica central de cinco árvores. Três delas (Atolado, Desequilibrado, Soterrado) são
-  sobre movimento e posição, que o motor não modela por decisão declarada; **Quebrantado é a única
-  puramente numérica**, e desde a 0.1.24 a regra dele já existe em `selectors.ts` — é a candidata
-  natural se alguém for mexer aqui.
+- **Quatro condições fora da simulação**: Atolado, Desequilibrado, Marcado e Soterrado. As quatro
+  são sobre movimento, alcance e posição, e o motor não tem mapa — modelá-las exigiria dar ao
+  simulador uma noção de distância que ele nunca teve. Quebrantado saiu desta lista na 0.1.35.
+- **A IA do simulador não dá valor a condição**, só a dano bruto por Ação. É por isso que
+  Quebrantado, já modelado, não move um número sequer no playtest das dez builds: as técnicas que
+  empilham acúmulos quase nunca são as de maior dano, e a IA nunca as escolhe. Uma IA que enxergasse
+  o valor de uma condição é a próxima melhoria de verdade do motor — e é ela que decide se Armas
+  Pesadas está fraca ou se é só o robô que não sabe jogar de Armas Pesadas.
 - Universidade de Ranoa como 4ª facção de Reputação. As três atuais (Reino Asura, Igreja de Millis,
   Deuses Demônios) têm cinco degraus escritos cada; a quarta precisa dos cinco também.
 - Magias inatas de raça (ex: Howling da Raça Fera) só existem como texto em `traits`, não como
@@ -115,6 +118,10 @@ encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
 - Tradução PT-BR / EN.
 
 ### Saíram daqui em 2026-09-10, porque já estavam feitas
+
+- ~~"Quebrantado fora da simulação"~~ — **entrou na 0.1.35**, com teste. A condição é lida da prosa
+  da técnica, o que só é seguro porque as treze citações do livro são de uma árvore só e nenhuma
+  delas remove acúmulos — e há um teste que quebra no dia em que isso mudar.
 
 - ~~"As ações de criatura não aplicam condição na simulação"~~ — **aplicam**. `resolverAcaoCriatura`
   aplica Preso, Caído, Molhado e Envenenado, e os quatro afetam as rolagens dos dois lados. A própria
