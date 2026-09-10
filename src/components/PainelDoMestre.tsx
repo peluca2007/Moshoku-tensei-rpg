@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { Eye, Heart, Shield, Sparkles, Swords, Zap } from "lucide-react";
+import { ArrowRight, Eye, Heart, ListOrdered, Scale, Shield, Sparkles, Swords, Zap } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import { useCharacterStore } from "@/store/useCharacterStore";
@@ -24,6 +24,70 @@ import { montarFicha } from "@/lib/combatSim";
 import { diceAverage } from "@/lib/dice";
 import { getTreeById } from "@/data/trees";
 import { CharacterData, RANK_BONUS } from "@/lib/types";
+
+/**
+ * As três ferramentas de Mestre, na porta delas (0.1.36).
+ *
+ * Iniciativa e Encontros saíram da barra do topo, e o comparador de builds
+ * nunca esteve lá. As três são trabalho de Mestre, e é aqui que a pergunta que
+ * cada uma responde nasce — então é aqui que elas ficam.
+ *
+ * Cartões, e não abas: as três telas somam bem mais de duas mil linhas de
+ * componente, e juntá-las numa rota só cobraria isso do celular de quem só
+ * queria consultar os PV do grupo. As rotas continuam de pé, o que mantém link
+ * salvo, busca global e pré-cache offline funcionando exatamente como antes.
+ *
+ * Cada cartão diz o que a ferramenta RESPONDE, não o que ela é. "Encontros" não
+ * informa nada a quem nunca abriu; "este encontro mata a mesa?" informa.
+ */
+function FerramentasDoMestre() {
+  const ferramentas = [
+    {
+      href: "/encontros",
+      icone: Swords,
+      titulo: "Encontros",
+      pergunta: "Este encontro mata a mesa? Monta a criatura e simula 300 batalhas contra as fichas de verdade.",
+    },
+    {
+      href: "/iniciativa",
+      icone: ListOrdered,
+      titulo: "Iniciativa",
+      pergunta: "De quem é a vez. Rola a ordem, guarda os PV de cada um e passa o turno.",
+    },
+    {
+      href: "/comparar",
+      icone: Scale,
+      titulo: "Comparar builds",
+      pergunta: "Duas fichas contra o mesmo alvo e a mesma semente: PA gastos, maior golpe e quanto cada uma aguenta.",
+    },
+  ];
+
+  return (
+    <nav aria-label="Ferramentas do Mestre" className="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+      {ferramentas.map(({ href, icone: Icone, titulo, pergunta }) => (
+        <Link
+          key={href}
+          href={href}
+          className="surface group flex flex-col rounded-2xl border border-parchment-300 bg-parchment-100/70 p-3 transition-colors hover:border-wine-400 hover:bg-wine-50/50 dark:border-parchment-800 dark:bg-parchment-900/60 dark:hover:border-wine-700 dark:hover:bg-wine-950/25"
+        >
+          <span className="flex items-center gap-2">
+            <Icone className="h-4 w-4 shrink-0 text-wine-600 dark:text-wine-400" aria-hidden />
+            <span className="min-w-0 flex-1 font-display text-base font-black text-parchment-900 dark:text-parchment-50">
+              {titulo}
+            </span>
+            <ArrowRight
+              className="h-3.5 w-3.5 shrink-0 text-parchment-400 transition-transform group-hover:translate-x-0.5 group-hover:text-wine-600 dark:group-hover:text-wine-400"
+              aria-hidden
+            />
+          </span>
+          <span className="mt-1 text-2xs leading-relaxed text-parchment-600 dark:text-parchment-400">
+            {pergunta}
+          </span>
+        </Link>
+      ))}
+    </nav>
+  );
+}
 
 /**
  * Painel do Mestre — as fichas do grupo lado a lado (0.1.28).
@@ -125,6 +189,8 @@ export default function PainelDoMestre() {
         As fichas do grupo lado a lado — quem está machucado, quem ainda tem recurso, e o que cada um tira
         num acerto.
       </PageHeader>
+
+      <FerramentasDoMestre />
 
       {grupo.length === 0 ? (
         <EmptyState
@@ -283,17 +349,14 @@ export default function PainelDoMestre() {
             })}
           </ul>
 
+          {/*
+            As duas frases que linkavam Encontros e Comparador saíram: os
+            cartões no topo agora dizem a mesma coisa, e melhor. O que sobrou é
+            a única linha que os cartões não cobrem — o limite do painel.
+          */}
           <p className="mt-3 text-2xs leading-relaxed text-parchment-600 dark:text-parchment-400">
             O painel <b>lê</b> as fichas, nunca escreve nelas — mexer nos números de um personagem continua
-            sendo coisa de quem joga com ele. Para saber se um encontro mata a mesa, o{" "}
-            <Link href="/encontros" className="font-semibold text-wine-700 underline dark:text-wine-300">
-              montador de encontros
-            </Link>{" "}
-            simula 300 batalhas contra estas mesmas fichas. Para pôr duas delas lado a lado contra o mesmo
-            alvo, o{" "}
-            <Link href="/comparar" className="font-semibold text-wine-700 underline dark:text-wine-300">
-              comparador de builds
-            </Link>.
+            sendo coisa de quem joga com ele.
           </p>
         </>
       )}

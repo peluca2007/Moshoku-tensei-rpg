@@ -110,17 +110,16 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | --- | --- |
 | `/` | Landing page |
 | `/criar` | Criação de personagem — três vias: Manual, Roleta e Entrevista |
-| `/mesa` | **Modo Mesa** — a tela única de sessão: de quem é a vez, suas reservas com botões grandes, o que está pegando em você |
-| `/ficha` | Ficha completa: atributos, PV/PM/PT/PP/CA, inventário, Grimório, Lore, Desfazer, export PDF e JSON |
+| `/ficha` | Ficha completa: atributos, PV/PM/PT/PP/CA com **botões de −5 a +5**, a **faixa de "de quem é a vez"** em combate, inventário, Grimório, Lore, Desfazer, export PDF e JSON |
 | `/livro` | Livro de regras navegável, com Patch Notes |
 | `/arvores` | Mapa radial de progressão (Destiny Board), pan/zoom |
 | `/loja` | Loja da Guilda — 85 itens, filtro por Tipo × Rank de Guilda |
-| `/iniciativa` | Tracker de iniciativa |
-| `/mestre` | **Painel do Mestre** — as fichas do grupo lado a lado: PV, CA, recursos, condições e o maior golpe de cada um |
+| `/iniciativa` | Tracker de iniciativa (fora do menu; a porta dela é o Painel do Mestre) |
+| `/mestre` | **Painel do Mestre** — as fichas do grupo lado a lado (PV, CA, recursos, condições e o maior golpe de cada um), e o hub das três ferramentas de Mestre: Encontros, Iniciativa e Comparador |
 | `/encontros` | Construtor de NPCs/monstros/chefes: ações próprias, conselho ao vivo contra o PV/CA do grupo, e simulação contra as fichas de verdade |
 | `/personagens` | Roster de fichas salvas |
-| `/sessao` | **Registro de sessão** — conta sozinho as rolagens e o dano levado, pra fechar as pendências de balanceamento (fora do menu) |
-| `/comparar` | **Comparador de builds** — duas fichas contra o mesmo alvo, com a mesma semente (fora do menu; linkado do roster e do Painel do Mestre) |
+| `/sessao` | **Registro de sessão** — conta sozinho as rolagens e o dano levado pelos botões de PV da ficha, pra fechar as pendências de balanceamento (fora do menu) |
+| `/comparar` | **Comparador de builds** — duas fichas contra o mesmo alvo, com a mesma semente (fora do menu; nos cartões do Painel do Mestre e no roster) |
 | `/busca` | Busca global nos 879 verbetes — nome **e** texto da regra, resultado abrindo o card completo na hora |
 | `/ficha/importar` | Recebe uma ficha vinda de link e pergunta antes de gravar no navegador |
 | `/offline` | O que o service worker devolve pra uma rota que não estava em cache |

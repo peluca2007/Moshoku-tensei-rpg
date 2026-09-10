@@ -8,13 +8,14 @@ export const metadata: Metadata = {
 };
 
 /*
- * Fora do menu, de propósito.
+ * Fora do menu, de propósito — e desde a 0.1.36 ela deixou de ser exceção.
  *
- * Comparar duas builds é coisa que se faz de vez em quando, no preparo — não é
- * um destino de sessão como Ficha ou Mesa. A barra do topo já carrega nove
- * links, e cada um a mais empurra os outros pra fora da tela no celular. Ela é
- * alcançada pelo roster e pelo Painel do Mestre, que são os dois lugares de onde
- * a pergunta nasce.
+ * Comparar duas builds é coisa que se faz de vez em quando, no preparo, e não
+ * um destino de sessão como a Ficha. Este era o argumento pra ela não estar na
+ * barra do topo enquanto Iniciativa e Encontros estavam; agora as três moram no
+ * mesmo lugar, os cartões do Painel do Mestre, e a barra ficou com sete links
+ * em vez de dez. Ela também continua alcançada pelo roster, que é o outro lugar
+ * de onde a pergunta nasce.
  */
 export default function CompararPage() {
   return <ComparadorDeBuilds />;

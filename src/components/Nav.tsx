@@ -20,17 +20,32 @@ import FontSizeToggle from "./FontSizeToggle";
  *
  * A rota continua existindo e linkada da landing e do roster; só saiu da barra.
  */
+/**
+ * Dez destinos viraram sete (0.1.36).
+ *
+ * A barra tinha crescido um link por ferramenta nova, e chegou a dez — mais do
+ * que caberia numa decisão. Três saíram, e nenhum por ser pouco usado:
+ *
+ * - **Mesa** saiu porque a tela saiu. Ela era a ficha com botões grandes, e
+ *   agora a ficha TEM os botões grandes: as reservas ganharam os passos de
+ *   ±1/±5 e a faixa de "de quem é a vez" (ver `VezDaMesa`).
+ * - **Iniciativa** e **Encontros** saíram porque são trabalho de Mestre, e o
+ *   `/mestre` passou a ser a porta deles — junto do comparador de builds, que
+ *   já morava fora da barra pelo mesmo motivo.
+ *
+ * As três rotas continuam existindo, linkadas e no pré-cache offline: o que
+ * mudou é quem responde por elas na barra. Uma barra é uma pergunta — "onde eu
+ * estou e pra onde posso ir?" —, e uma pergunta com dez respostas não é uma
+ * pergunta.
+ */
 const LINKS = [
-  { href: "/mesa", label: "Mesa" },
   { href: "/ficha", label: "Ficha" },
   { href: "/arvores", label: "Árvores" },
   { href: "/personagens", label: "Personagens" },
-  { href: "/iniciativa", label: "Iniciativa" },
-  { href: "/encontros", label: "Encontros" },
   { href: "/mestre", label: "Mestre" },
   { href: "/loja", label: "Loja" },
-  // "Livro" e não "Livro de Regras": com dez destinos na barra, o rótulo longo
-  // era o que empurrava a Busca pra fora da tela em telas de ~900px.
+  // "Livro" e não "Livro de Regras": o rótulo longo era o que empurrava a Busca
+  // pra fora da tela em telas de ~900px quando a barra tinha dez destinos.
   { href: "/livro", label: "Livro" },
   { href: "/busca", label: "Busca" },
 ];

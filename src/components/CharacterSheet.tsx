@@ -7,6 +7,8 @@ import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, C
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
+import { useInitiativeStore } from "@/store/useInitiativeStore";
+import { useSessionLog } from "@/store/useSessionLog";
 import { getGuildRank, getPaSpent, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
 import { GUILD_RANK_ORDER } from "@/lib/types";
 import { RACES, getRaceById } from "@/data/races";
@@ -41,6 +43,7 @@ import SkillsSection from "./SkillsSection";
 import CondicoesSection from "./CondicoesSection";
 import DescansoSection from "./DescansoSection";
 import SimuladorPessoal from "./SimuladorPessoal";
+import VezDaMesa from "./VezDaMesa";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
 import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
@@ -73,7 +76,27 @@ function resolveAbilities(tree: Tree, purchases: PurchasedAbility[]): ResolvedAb
 }
 
 
-/** PV/PM/PT/PP: valor atual (gasto em jogo) editável, e o máximo — normalmente calculado, mas sobrescrevível pra itens/exceções que o site não modela. */
+/**
+ * Os passos de reserva: −5, −1, +1, +5.
+ *
+ * Quatro, e não seis: cabem numa linha de quatro colunas na largura de 320px
+ * que o `check:mobile` cobra, e o par grande resolve o golpe típico sem virar
+ * uma fileira de botões pequenos demais pro polegar.
+ */
+const PASSOS_DE_RESERVA = [-5, -1, 1, 5];
+
+/**
+ * PV/PM/PT/PP: valor atual (gasto em jogo) editável, e o máximo — normalmente
+ * calculado, mas sobrescrevível pra itens/exceções que o site não modela.
+ *
+ * ## Os passos de −5/−1/+1/+5 (0.1.36)
+ *
+ * Vieram do Modo Mesa, quando aquela tela saiu do ar. O campo numérico continua
+ * aqui, porque corrigir "PV 37" de uma vez é digitação legítima entre sessões;
+ * o que ele não serve é o meio do turno, com o aparelho numa mão e a ficha de
+ * outra pessoa na frente — digitar exige as duas mãos e a atenção que o turno
+ * está consumindo. Os dois convivem: botão pro turno, campo pra correção.
+ */
 function ResourceCard({
   icon,
   label,
@@ -85,6 +108,7 @@ function ResourceCard({
   onMaxChange,
   onResetMax,
   extra,
+  aoRegistrar,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -96,52 +120,92 @@ function ResourceCard({
   onMaxChange: (value: number) => void;
   onResetMax: () => void;
   extra?: React.ReactNode;
+  /** Recebe o delta aplicado por BOTÃO (negativo = gasto). Só o PV usa — é o registro de sessão. */
+  aoRegistrar?: (delta: number) => void;
 }) {
   return (
-    <div className="surface flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-900/70">
-      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-inner ring-1 ring-black/5 ${tone}`}>{icon}</div>
-      <div className="min-w-0 flex-1">
-        <p className="text-2xs font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
-          {label}
-        </p>
-        <div className="flex items-baseline gap-1">
-          {/*
-            PV, PM, PT e PP são os números que a mesa inteira olha — e estavam
-            em `text-lg` na mesma sans dos rótulos de formulário ao redor, do
-            mesmo tamanho de qualquer outro texto da ficha. Em display, pretos e
-            grandes, a ficha passa a ter um primeiro lugar pra onde olhar.
-          */}
-          <input
-            type="number"
-            value={current}
-            onChange={(e) => onCurrentChange(Number(e.target.value))}
-            title="Valor atual — vai gastando/recuperando em jogo"
-            className="tabular w-14 rounded bg-transparent font-display text-2xl font-black leading-tight text-parchment-900 outline-none focus:ring-2 focus:ring-wine-400 dark:text-parchment-50"
-          />
-          <span className="text-parchment-600 dark:text-parchment-400">/</span>
-          <input
-            type="number"
-            value={max}
-            onChange={(e) => onMaxChange(Number(e.target.value))}
-            title="Máximo calculado — edite pra sobrescrever (item, exceção de mesa, etc.)"
-            className={`w-12 rounded bg-transparent py-1 text-sm font-semibold outline-none focus:ring-2 focus:ring-wine-400 ${
-              maxOverridden ? "text-gold-600 dark:text-gold-400" : "text-parchment-600 dark:text-parchment-400"
-            }`}
-          />
-          {maxOverridden && (
-            <button
-              type="button"
-              onClick={onResetMax}
-              title="Voltar ao valor calculado automaticamente"
-              aria-label={`Voltar máximo de ${label} ao valor calculado`}
-              className="text-parchment-400 hover:text-wine-500 dark:hover:text-wine-400"
-            >
-              <RotateCcw className="h-3 w-3" />
-            </button>
-          )}
+    /*
+      O cartão é uma COLUNA desde a 0.1.36: a linha de sempre em cima, e os
+      passos embaixo ocupando a largura inteira. Dentro da coluna do valor eles
+      ficavam confinados a menos da metade do cartão, com espaço morto debaixo
+      do `+PA` — quatro alvos estreitos onde o polegar precisa de largura.
+    */
+    <div className="surface rounded-xl border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-900/70">
+      <div className="flex items-center gap-3">
+        <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-inner ring-1 ring-black/5 ${tone}`}>{icon}</div>
+        <div className="min-w-0 flex-1">
+          <p className="text-2xs font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
+            {label}
+          </p>
+          <div className="flex items-baseline gap-1">
+            {/*
+              PV, PM, PT e PP são os números que a mesa inteira olha — e estavam
+              em `text-lg` na mesma sans dos rótulos de formulário ao redor, do
+              mesmo tamanho de qualquer outro texto da ficha. Em display, pretos
+              e grandes, a ficha passa a ter um primeiro lugar pra onde olhar.
+            */}
+            <input
+              type="number"
+              value={current}
+              onChange={(e) => onCurrentChange(Number(e.target.value))}
+              title="Valor atual — vai gastando/recuperando em jogo"
+              className="tabular w-14 rounded bg-transparent font-display text-2xl font-black leading-tight text-parchment-900 outline-none focus:ring-2 focus:ring-wine-400 dark:text-parchment-50"
+            />
+            <span className="text-parchment-600 dark:text-parchment-400">/</span>
+            <input
+              type="number"
+              value={max}
+              onChange={(e) => onMaxChange(Number(e.target.value))}
+              title="Máximo calculado — edite pra sobrescrever (item, exceção de mesa, etc.)"
+              className={`w-12 rounded bg-transparent py-1 text-sm font-semibold outline-none focus:ring-2 focus:ring-wine-400 ${
+                maxOverridden ? "text-gold-600 dark:text-gold-400" : "text-parchment-600 dark:text-parchment-400"
+              }`}
+            />
+            {maxOverridden && (
+              <button
+                type="button"
+                onClick={onResetMax}
+                title="Voltar ao valor calculado automaticamente"
+                aria-label={`Voltar máximo de ${label} ao valor calculado`}
+                className="text-parchment-400 hover:text-wine-500 dark:hover:text-wine-400"
+              >
+                <RotateCcw className="h-3 w-3" />
+              </button>
+            )}
+          </div>
         </div>
+        {extra}
       </div>
-      {extra}
+
+      {/*
+        Os passos só aparecem quando há máximo pra andar dentro: numa reserva
+        zerada eles seriam quatro botões que não fazem nada.
+      */}
+      {max > 0 && (
+        <div className="print-hide mt-2 grid grid-cols-4 gap-1.5">
+          {PASSOS_DE_RESERVA.map((passo) => (
+            <button
+              key={passo}
+              type="button"
+              onClick={() => {
+                const novo = Math.max(0, Math.min(max, current + passo));
+                // O passo negativo de PV É o dano levado — o registro de sessão
+                // aproveita isso em vez de pedir que alguém anote o golpe.
+                // `registrar` não faz nada com a gravação desligada. Reporta o
+                // delta REAL (`novo - current`), que difere do passo quando a
+                // reserva bate no 0 ou no máximo.
+                if (aoRegistrar) aoRegistrar(novo - current);
+                onCurrentChange(novo);
+              }}
+              aria-label={`${passo > 0 ? "Recuperar" : "Gastar"} ${Math.abs(passo)} de ${label}`}
+              className="flex min-h-[2.25rem] items-center justify-center rounded-lg bg-parchment-200/80 text-xs font-bold text-parchment-700 hover:bg-wine-500/15 hover:text-wine-700 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:text-wine-300"
+            >
+              {passo > 0 ? "+" : "−"}
+              {Math.abs(passo)}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -262,6 +326,14 @@ function BonusInput({ value, onChange }: { value: number; onChange: (value: numb
 
 export default function CharacterSheet() {
   const character = useActiveCharacter();
+  /*
+   * De quem é a vez, só pra ASSINAR o dano no registro de sessão.
+   *
+   * O tracker de iniciativa já sabe disso, e é o que permite a linha "levou 7,
+   * na vez do Ogro" sair sem ninguém digitar nada. Sem combate rolando o campo
+   * fica ausente e o registro segue útil — só não consegue assinar.
+   */
+  const vezDe = useInitiativeStore((s) => s.combatants.find((c) => c.id === s.currentTurnId)?.name);
   const canUndo = useCharacterStore((s) => (s.activeId ? (s.history[s.activeId]?.length ?? 0) > 0 : false));
   const {
     name,
@@ -501,6 +573,14 @@ export default function CharacterSheet() {
       transformaria a leitura num panfleto.
     */
     <div className="ficha-impressa mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
+      {/*
+        De quem é a vez, acima de tudo. Ele se esconde na impressão e não rende
+        NADA quando não há combate montado — sem wrapper próprio de propósito:
+        uma div vazia aqui ganharia o `space-y-6` do pai e abriria um vão de 24px
+        no topo de toda ficha fora de sessão.
+      */}
+      <VezDaMesa />
+
       {/* Cabeçalho */}
       <header className="surface-raised relative isolate overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 p-4 sm:p-6 dark:border-parchment-700/80 dark:bg-parchment-900/80">
         {/*
@@ -960,6 +1040,14 @@ export default function CharacterSheet() {
               onMaxChange={(v) => useCharacterStore.getState().setOverride("maxHp", v)}
               onResetMax={() => useCharacterStore.getState().setOverride("maxHp", null)}
               extra={<BonusInput value={bonusHp} onChange={(v) => useCharacterStore.getState().setBonusHp(v)} />}
+              aoRegistrar={(delta) =>
+                useSessionLog.getState().registrar({
+                  tipo: delta < 0 ? "dano" : "cura",
+                  rotulo: name?.trim() || "Sem nome",
+                  valor: Math.abs(delta),
+                  ator: vezDe,
+                })
+              }
             />
             <ResourceCard
               icon={<Droplets className="h-5 w-5 text-white" />}

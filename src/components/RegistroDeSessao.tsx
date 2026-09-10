@@ -15,10 +15,14 @@ import { resumirSessao, useSessionLog } from "@/store/useSessionLog";
  * *"conte os ataques corpo a corpo que ACERTARAM o Vendaval e compare com o
  * outro da linha de frente"*. Ninguém faz isso com lápis no meio de uma sessão.
  *
- * A coluna **"Quem apanhou"** é exatamente essa conta, e ela sai de graça: no
- * Modo Mesa o dano já é aplicado por botão, e um passo negativo de PV É um
- * golpe levado. Duas sessões com essa tela ligada dizem se o Vendaval alguma
+ * A coluna **"Quem apanhou"** é exatamente essa conta, e ela sai de graça: na
+ * ficha o dano já é aplicado pelos passos de ±PV, e um passo negativo É um
+ * golpe levado. Duas sessões com o registro ligado dizem se o Vendaval alguma
  * vez apanha — que é a pergunta que a árvore inteira depende.
+ *
+ * (Até a 0.1.36 esses botões viviam no Modo Mesa, que era uma segunda ficha só
+ * pra tê-los. A tela saiu, os botões foram pra ficha, e esta conta não mudou de
+ * fonte — só de endereço.)
  *
  * ## O que ele NÃO sabe, e por que não finge saber
  *
@@ -65,7 +69,9 @@ export default function RegistroDeSessao() {
         }
       >
         Ele conta sozinho o que já acontece: cada rolagem do rolador, assinada por quem está agindo, e cada
-        golpe levado no <Link href="/mesa" className="font-semibold text-wine-700 underline dark:text-wine-300">Modo Mesa</Link>. Nenhuma digitação.
+        golpe levado pelos passos de PV da{" "}
+        <Link href="/ficha" className="font-semibold text-wine-700 underline dark:text-wine-300">ficha</Link>.
+        Nenhuma digitação.
       </PageHeader>
 
       {eventos.length === 0 ? (
@@ -73,7 +79,7 @@ export default function RegistroDeSessao() {
           icon={NotebookPen}
           hint={
             gravando
-              ? "Está gravando. Role um dado ou mexa nos PV pelo Modo Mesa e a contagem começa."
+              ? "Está gravando. Role um dado ou mexa nos PV pelos botões da ficha e a contagem começa."
               : "Aperte Gravar antes da sessão. Enquanto está desligado, nada é registrado — e é assim que ele nasce, porque gravar por padrão transformaria toda partida numa coleta silenciosa."
           }
         >

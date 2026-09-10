@@ -50,11 +50,19 @@ const COLUNAS = [
       { href: "/loja", label: "Loja da Guilda" },
     ],
   },
+  /*
+   * Esta coluna ganhou o Painel do Mestre e o comparador na 0.1.36, quando
+   * Iniciativa e Encontros saíram da barra do topo. O rodapé é a segunda
+   * navegação do site, e o hub que passou a responder por essas duas telas não
+   * podia ser a única porta delas.
+   */
   {
     titulo: "Mesa",
     links: [
+      { href: "/mestre", label: "Painel do Mestre" },
       { href: "/iniciativa", label: "Tracker de iniciativa" },
       { href: "/encontros", label: "Montar encontro" },
+      { href: "/comparar", label: "Comparar builds" },
       { href: "/arvores", label: "Árvores de progressão" },
     ],
   },

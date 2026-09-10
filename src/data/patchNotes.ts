@@ -16,6 +16,30 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.36",
+    date: "2026-09-10",
+    title: "Dez Destinos Viraram Sete",
+    sections: [
+      {
+        heading: "A barra do topo tinha dez links",
+        items: [
+          "Ela cresceu um link por ferramenta nova, e uma barra com dez respostas deixa de ser uma pergunta. Três saíram — nenhum por ser pouco usado. A barra ficou com Ficha, Árvores, Personagens, Mestre, Loja, Livro e Busca.",
+          "O Modo Mesa saiu porque a TELA saiu. Ele era a ficha com botões grandes: as mesmas reservas, as mesmas condições, e a diferença toda em não precisar digitar no meio de um turno. Uma segunda ficha pra ter botões é caro demais pelo que entrega — então os botões foram pra ficha, e a segunda ficha deixou de existir.",
+          "A ficha ganhou as duas coisas que só existiam lá: os passos de −5/−1/+1/+5 em PV, PM, PT, PP e Calor, ocupando a largura inteira do cartão (o campo numérico continua ali — botão pro turno, digitação pra correção entre sessões); e a faixa de \"de quem é a vez\" no topo, com o botão de passar o turno, que DESAPARECE quando não há combate montado.",
+          "Nada se perdeu na troca. O registro de sessão conta o dano levado a partir do passo negativo de PV, e o Modo Mesa era o único lugar que o produzia; agora quem o produz é a ficha, com a mesma assinatura de quem estava agindo.",
+        ],
+      },
+      {
+        heading: "Iniciativa e Encontros agora moram no Painel do Mestre",
+        items: [
+          "As duas são trabalho de Mestre, e o /mestre passou a ser a porta delas — junto do comparador de builds, que já estava fora da barra pelo mesmo motivo e agora deixou de ser exceção. O painel abre com três cartões, e cada um diz o que a ferramenta RESPONDE, não o que ela é: \"este encontro mata a mesa?\" informa; \"Encontros\" não informa nada a quem nunca abriu.",
+          "Cartões, e não abas: as três telas somam mais de duas mil e setecentas linhas de componente, e juntá-las numa rota só cobraria isso do celular de quem só queria consultar os PV do grupo. As rotas /encontros, /iniciativa e /comparar continuam de pé — link salvo, busca global e pré-cache offline seguem funcionando como antes —, e o rodapé, que é a segunda navegação do site, ganhou as três.",
+          "Verificado com a rota a menos: nenhuma das 16 rotas transborda entre 320 e 414px, nenhum alvo de toque abaixo de 24px nas telas novas, contraste AA nos dois temas, e as 19 rotas do pré-cache continuam abrindo com o servidor morto.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.35",
     date: "2026-09-10",
     title: "A CA era Decoração",
