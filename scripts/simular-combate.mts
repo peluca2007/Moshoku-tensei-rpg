@@ -27,6 +27,8 @@ import {
   SIMPLIFICACOES,
   d20,
   makeRng,
+  aplicarDano,
+  novoAlvo,
   danoEsperado,
   escolherAcao,
   montarFicha,
@@ -183,7 +185,7 @@ function batalha(timeA: EstadoPersonagem[], timeB: EstadoPersonagem[], maxRodada
   for (let r = 0; r < maxRodadas; r++) {
     for (const { e, time } of ordem) {
       if (!e.vivo || !tickChamas(e, rng)) continue;
-      turnoPersonagem(e, time === "A" ? timeB : timeA, rng);
+      turnoPersonagem(e, time === "A" ? timeB : timeA, rng, time === "A" ? timeA : timeB);
     }
     if (timeB.every((x) => !x.vivo)) return "A";
     if (timeA.every((x) => !x.vivo)) return "B";
@@ -224,20 +226,7 @@ BUILDS.forEach(({ c, descricao }, i) => {
  * e está escrita aqui em vez de escondida na conta pra que ninguém leia a
  * coluna como um número absoluto.
  */
-const BONECO_DE_REFERENCIA: Alvo = {
-  nome: "referência (CA 15)",
-  pv: 1,
-  ca: 15,
-  vivo: true,
-  molhado: false,
-  emChamas: 0,
-  quebrantado: 0,
-  preso: false,
-  caido: false,
-  envenenado: false,
-  reacaoDisponivel: false,
-  danoCausado: 0,
-};
+const BONECO_DE_REFERENCIA: Alvo = novoAlvo({ nome: "referência (CA 15)", pv: 1, ca: 15 });
 
 console.log("\n" + "─".repeat(78));
 console.log("  DANO MÉDIO POR TURNO (3 Ações, melhor ação, contra CA 15)");
@@ -279,6 +268,7 @@ let vitoriasA = 0;
 let vitoriasB = 0;
 let empates = 0;
 const danoTotal = new Map<string, number>();
+const curaTotal = new Map<string, number>();
 const sobrevivencia = new Map<string, number>();
 
 for (let i = 0; i < TENTATIVAS; i++) {
@@ -290,6 +280,7 @@ for (let i = 0; i < TENTATIVAS; i++) {
   else empates++;
   for (const e of [...a, ...b]) {
     danoTotal.set(e.nome, (danoTotal.get(e.nome) ?? 0) + e.danoCausado);
+    curaTotal.set(e.nome, (curaTotal.get(e.nome) ?? 0) + e.pvCurado);
     if (e.vivo) sobrevivencia.set(e.nome, (sobrevivencia.get(e.nome) ?? 0) + 1);
   }
 }
@@ -304,16 +295,39 @@ console.log(`Empates (20 rodadas sem decisão)............ ${((empates / TENTATI
 console.log("\n" + "─".repeat(78));
 console.log("  CONTRIBUIÇÃO INDIVIDUAL (média por batalha)");
 console.log("─".repeat(78));
+/*
+ * A coluna de CURA, e por que a ordenação mudou — 0.1.37.
+ *
+ * Enquanto a tabela tinha uma coluna só, ela ordenava por dano e chamava isso
+ * de "contribuição". Para nove das dez builds era quase verdade; para a Sera
+ * era uma difamação com cara de medida — a escola inteira dela é a coisa que a
+ * coluna não media.
+ *
+ * Agora são duas colunas e a ordem é por CONTRIBUIÇÃO TOTAL (dano + PV
+ * devolvidos). Somar os dois não diz que 1 de cura vale 1 de dano — diz que os
+ * dois são maneiras de gastar um turno, que é o que a tabela compara. Quem
+ * quiser a régua antiga tem a coluna de dano ali do lado, intacta.
+ */
 const linhas = [...danoTotal.entries()]
   .map(([nome, total]) => ({
     nome,
     dano: total / TENTATIVAS,
+    cura: (curaTotal.get(nome) ?? 0) / TENTATIVAS,
     viveu: ((sobrevivencia.get(nome) ?? 0) / TENTATIVAS) * 100,
   }))
-  .sort((x, y) => y.dano - x.dano);
-console.log("FICHA".padEnd(8) + "DANO/BATALHA".padStart(14) + "SOBREVIVEU".padStart(13));
+  .sort((x, y) => y.dano + y.cura - (x.dano + x.cura));
+console.log(
+  "FICHA".padEnd(8) + "DANO/BATALHA".padStart(14) + "PV DEVOLVIDOS".padStart(15) + "SOBREVIVEU".padStart(13)
+);
 for (const l of linhas) {
-  console.log(l.nome.padEnd(8) + l.dano.toFixed(0).padStart(14) + (l.viveu.toFixed(0) + "%").padStart(13));
+  console.log(
+    l.nome.padEnd(8) +
+      l.dano.toFixed(0).padStart(14) +
+      // Um traço, e não um zero, em quem não tem magia de suporte nenhuma: zero
+      // sugere que tentou e não conseguiu.
+      (l.cura > 0 ? l.cura.toFixed(0) : "—").padStart(15) +
+      (l.viveu.toFixed(0) + "%").padStart(13)
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -355,25 +369,19 @@ for (const chefe of CHEFES) {
         // subestima quem depende dele. Vale corrigir em uma mudança própria,
         // que possa ser lida como recalibragem e não como limpeza.
         const alvoChefe: Alvo = {
-          nome: chefe.nome,
+          ...novoAlvo({ nome: chefe.nome, pv: 0, ca: chefe.ca }),
+          // O PV do chefe é acessor, e não valor: ele vive fora deste objeto
+          // (`pvChefe`) porque o mesmo chefe atravessa os turnos de todos os
+          // personagens do grupo. O espalhamento acima entrega os campos
+          // neutros; estas duas linhas SUBSTITUEM o `pv` que ele trouxe.
           get pv() {
             return pvChefe;
           },
           set pv(v) {
             pvChefe = v;
           },
-          ca: chefe.ca,
-          vivo: true,
-          molhado: false,
-          emChamas: 0,
-          preso: false,
-          caido: false,
-          envenenado: false,
-          reacaoDisponivel: false,
-          danoCausado: 0,
-    quebrantado: 0,
         };
-        turnoPersonagem(e, [alvoChefe], rng);
+        turnoPersonagem(e, [alvoChefe], rng, grupo);
       }
       if (pvChefe <= 0) break;
       // Chefe age: uma rodada inteira a cada dois personagens do grupo
@@ -383,10 +391,11 @@ for (const chefe of CHEFES) {
         if (restante <= 0) break;
         if (!alvo.vivo) continue;
         if (d20(rng) + chefe.ataque < alvo.ca) continue;
-        const golpe = Math.min(restante, alvo.pv);
-        alvo.pv -= golpe;
+        // Casca incluída no teto, senão o orçamento do chefe transborda pro
+        // próximo alvo enquanto a deste ainda está de pé (0.1.37).
+        const golpe = Math.min(restante, alvo.pv + alvo.pvTemp);
+        aplicarDano(alvo, golpe);
         restante -= golpe;
-        if (alvo.pv <= 0) alvo.vivo = false;
       }
       if (grupo.every((e) => !e.vivo)) break;
     }

@@ -5,6 +5,97 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.37 — "A Curandeira Não Bate" · 2026-09-10
+
+### 📏 O instrumento via 20% do livro, e não era 20% espalhado
+
+Contado: o livro tem **601** habilidades e talentos, e a lista de ações do simulador tinha **122**.
+A distribuição é que era o problema:
+
+| Árvore | O simulador via |
+| --- | --- |
+| Barreira e Proteção | **0 de 21** |
+| Espíritos e Feras | **0 de 7** |
+| Bardo e Interação | **0 de 6** |
+| Navegação e Liderança | **0 de 6** |
+| Estilo Deus da Água | 1 de 19 |
+| Cura | 2 de 23 |
+| Cavalaria e Escudos | 4 de 23 |
+| … | … |
+| Fogo | 14 de 19 |
+| Água | 17 de 24 |
+
+Quando o playtest dizia que o Fogo bate mais que a Barreira, comparava uma árvore lida a 74% com uma
+lida a 0%. Isso não é achado de balanceamento — é artefato do instrumento.
+
+E as árvores sobre as quais o `O-QUE-FALTA` ainda não tem resposta — **Invocador, Ladino, Bardo,
+Tático, Barreira, Desintoxicação** — são exatamente as que o simulador via entre 0% e 20%. Aquela
+lista não é um backlog: é a **sombra do ponto cego da ferramenta**.
+
+### 💚 Cura e PV Temporários entraram
+
+`acoesDe` **descartava** cura e PV Temporários com um filtro de texto. Recusar estava certo: os três
+moram no mesmo campo do livro e o sinal é oposto — somar cura como dano já contou a *Prontidão* como
+105 de dano por turno. O erro era **parar aí**.
+
+Agora eles entram como o que são:
+
+- **Cura**, com a dobra da **Ferida Fresca** (Cap. 4: *"o dano sofrido no turno atual ou no turno
+  imediatamente anterior"*). É a mecânica que dá identidade à escola — a que faz o curandeiro agir
+  cedo em vez de depois — e a *Prontidão*, que o livro chama de *"a magia que define a escola"*, cura
+  **sempre** como Ferida Fresca.
+- **PV Temporários**, gastos antes dos PV reais e sem acumular, como cada magia que os concede diz.
+- **Cura em área** pega o grupo, do mesmo jeito que dano em área pega todos os inimigos de pé.
+
+A IA ganhou uma regra de decisão **declarada**, não uma tática: cura quem estiver **na metade ou
+abaixo**, começando pelo pior, e oferece casca a quem ainda não tem. O limiar de 50% não é neutro e
+não finge ser — curandeiro que espera demais perde gente, o que cura cedo demais desperdiça.
+
+### 🐛 Um erro de três vezes o valor, achado no meio do caminho
+
+`rolarDados` soma **todo** grupo de dados que encontra, e o livro escreve os dois casos na mesma
+linha: *"2d8 + BC de PV (4d8 + BC se Ferida Fresca)"*. A linha crua rola 2d8+4d8, e dobrar isso pela
+Ferida Fresca devolveria **12d8 onde o livro promete 4d8**.
+
+Medido com o erro dentro: o time da curandeira ganhava **20,1%** das batalhas. Corrigido: **8,3%**.
+É o mesmo erro que o gerador de criaturas já tinha cometido — *"(24d12 contra alvo Molhado)"* somado
+virava um cartão de 36d12 — e agora existe uma função só pra isso (`casoBase`) com teste próprio.
+
+### 📊 O que mudou no playtest
+
+O Time A (com a Sera) subiu de **6,7% para 8,3%** de vitória. E a tabela ganhou a coluna que
+faltava:
+
+| Ficha | Dano/batalha | PV devolvidos | Sobreviveu |
+| ----- | ------------ | ------------- | ---------- |
+| Vex | 93 | — | 35% |
+| Gorr | 92 | — | 82% |
+| Mara | 91 | — | 92% |
+| **Sera** | **21** | **44** | 8% |
+| Lyn | 32 | — | 87% |
+
+A Sera saiu do fim da tabela para o quinto lugar em contribuição — e o que mudou não foi a ficha
+dela, foi a régua. A ordenação agora é por dano **mais** PV devolvidos: somar os dois não afirma que
+1 de cura vale 1 de dano, afirma que os dois são maneiras de gastar um turno.
+
+### 🧱 O que foi consertado por baixo
+
+- **Uma porta só pra dano.** `alvo.pv -= dano` estava copiado em cinco lugares. Enquanto dano era
+  subtração, cinco cópias eram feias e inofensivas; PV Temporários e Ferida Fresca são consequências
+  de LEVAR dano, e um lugar que não as aplicasse viraria buraco silencioso. Agora tudo passa por
+  `aplicarDano`.
+- **Fábricas em vez de literais.** Acrescentar dois campos ao `Alvo` acusou **dez** literais montados
+  à mão, cada um repetindo onze campos que ninguém lê. `novoAlvo` e `novaAcao` cobram só o que
+  distingue cada caso — o próximo campo novo não quebra dez arquivos.
+- **O orçamento do chefe** passou a considerar a casca no teto do golpe. Sem isso ele transbordaria
+  pro próximo alvo enquanto a casca deste ainda estava de pé: dois pelo preço de um.
+- A tela `/encontros` herdou tudo: as fichas do grupo agora se curam nas 300 batalhas de teste.
+
+**25 testes novos**, incluindo o de ponta a ponta que é a razão de todo o resto existir: um grupo com
+curandeiro tem que aguentar mais pancada que o mesmo grupo sem ele.
+
+---
+
 ## 0.1.36 — "Dez Destinos Viraram Sete" · 2026-09-10
 
 ### 🧭 A barra do topo tinha dez links

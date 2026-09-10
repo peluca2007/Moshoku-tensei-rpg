@@ -18,6 +18,8 @@ import {
   makeRng,
   mediaFormula,
   montarFicha,
+  aplicarDano,
+  novoAlvo,
   novoEstado,
   rolarFormula,
   temDano,
@@ -240,21 +242,22 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng): void {
     if (restante <= 0) break;
     if (!alvo.vivo) continue;
     if (d20(rng) + c.bonusAtaque < alvo.ca) continue;
-    const golpe = Math.min(restante, alvo.pv);
-    alvo.pv -= golpe;
-    c.danoCausado += golpe;
+    // O teto do golpe é a reserva INTEIRA do alvo, casca incluída (0.1.37):
+    // antes era só `alvo.pv`, e com PV Temporários no motor isso deixaria o
+    // orçamento transbordar pro próximo alvo enquanto a casca deste ainda
+    // estava de pé — o chefe atacaria dois pelo preço de um.
+    const golpe = Math.min(restante, alvo.pv + alvo.pvTemp);
+    c.danoCausado += aplicarDano(alvo, golpe);
     restante -= golpe;
-    if (alvo.pv <= 0) alvo.vivo = false;
   }
 }
 
 /** Aplica dano a um alvo e derruba se zerar. Um lugar só, pra contabilidade não divergir. */
 function bater(c: EstadoCriatura, alvo: Alvo, dano: number): void {
-  if (dano <= 0) return;
-  const golpe = Math.min(dano, alvo.pv);
-  alvo.pv -= golpe;
-  c.danoCausado += golpe;
-  if (alvo.pv <= 0) alvo.vivo = false;
+  // `danoCausado` conta o PV REAL perdido, e não o golpe desferido: o que a
+  // casca absorveu não feriu ninguém, e é o mesmo critério que o lado dos
+  // personagens usa desde a 0.1.37.
+  c.danoCausado += aplicarDano(alvo, Math.min(dano, alvo.pv + alvo.pvTemp));
 }
 
 /**
@@ -431,10 +434,12 @@ export function simularEncontro(
     for (const criatura of criaturas) {
       for (let i = 0; i < criatura.quantidade; i++) {
         inimigos.push({
+          ...novoAlvo({
+            nome: criatura.quantidade > 1 ? `${criatura.nome} ${i + 1}` : criatura.nome,
+            pv: Math.max(1, Math.round(criatura.pv * escala)),
+            ca: criatura.ca,
+          }),
           fonte: criatura,
-          nome: criatura.quantidade > 1 ? `${criatura.nome} ${i + 1}` : criatura.nome,
-          pv: Math.max(1, Math.round(criatura.pv * escala)),
-          ca: criatura.ca,
           bonusAtaque: criatura.bonusAtaque,
           danoPorTurno: Math.max(1, Math.round(criatura.danoPorTurno * escala)),
           cdResistencia: criatura.cdResistencia,
@@ -442,15 +447,6 @@ export function simularEncontro(
           // o dano de cada ação na hora de bater — as duas pontas escalam junto.
           escala,
           rodadas: criatura.papel === "chefe" ? rodadasChefe : 1,
-          vivo: true,
-          molhado: false,
-          emChamas: 0,
-          preso: false,
-          caido: false,
-          envenenado: false,
-          reacaoDisponivel: false,
-          danoCausado: 0,
-          quebrantado: 0,
         });
       }
     }
@@ -474,7 +470,7 @@ export function simularEncontro(
       for (const p of ordem) {
         if (p.tipo === "heroi") {
           if (!p.h.vivo || !tickChamas(p.h, rng)) continue;
-          turnoPersonagem(p.h, inimigos, rng);
+          turnoPersonagem(p.h, inimigos, rng, heroes);
           // O chefe reage ao turno que acabou de passar — 1 vez por rodada da
           // mesa, não 1 vez por herói: a Reação já foi gasta depois do primeiro
           // herói que agiu, e os seguintes passam por `consumirReacao` sem
