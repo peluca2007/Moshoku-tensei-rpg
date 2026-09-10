@@ -5,6 +5,39 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.32 — "Rolar a Perícia" · 2026-09-10
+
+### 🎲 Não existia lugar nenhum pra rolar uma perícia
+
+Provavelmente **a rolagem mais frequente da mesa**, e o site não tinha onde fazê-la: a ficha listava
+as perícias sem botão, e o rolador tinha quatro fontes de Teste — Livre, Atributo, Magia e Marcial —
+nenhuma delas perícia.
+
+Agora **tocar numa perícia da ficha** abre o rolador com a conta pronta, e o rolador ganhou a fonte
+**Perícia** com a lista das que o personagem tem. O chip mostra o total já somado, que é o número que
+se fala em voz alta na mesa.
+
+- **A conta é a do Cap. 1, §4 inteira:** atributo da Lista Mestre, mais o Bônus de Rank quando uma
+  árvore de Utilidade cobre aquela perícia — e **só quando você realmente a tem**, porque sem a
+  perícia não existe teste treinado onde somar o bônus.
+- **Duas árvores cobrindo a mesma perícia** (Percepção, no Ladino e no Tático) não somam: vale o
+  maior, como manda o Empilhamento do Cap. 4.
+- **A Vantagem por ter a perícia não é aplicada sozinha.** O livro diz que ela vale *"quando a
+  perícia se encaixa perfeitamente na situação"*, e esse **quando** é julgamento do Mestre — a tela
+  avisa que o personagem tem a perícia e deixa a decisão com a mesa.
+
+### 🧱 O dado que faltava pra isso existir
+
+O Bônus de Rank em perícia estava escrito só na **prosa** de cada árvore ("soma em Furtividade,
+Ladinagem, Percepção…"), e prosa não é computável: ler aquilo exigiria adivinhar por regex numa frase
+escrita à mão, que quebra em silêncio no dia em que alguém a reescrever.
+
+As três árvores de Utilidade passaram a **declarar a lista** das perícias cobertas. A prosa continua
+sendo o que o livro imprime; a lista é o que a ficha calcula — e um teste garante que as duas nunca
+divirjam, inclusive que só as de Utilidade cobrem perícia alguma.
+
+---
+
 ## 0.1.31 — "O Que a Mesa Mostrou" · 2026-09-10
 
 ### 📓 O site passou a contar sozinho

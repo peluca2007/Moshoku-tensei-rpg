@@ -623,6 +623,23 @@ export interface Tree {
     armas: string;
     /** Perícias ligadas à árvore — e, na Utilidade, em quais o Bônus de Rank soma. */
     pericias: string;
+    /**
+     * As perícias em que o Bônus de Rank DESTA árvore soma (Cap. 1, §4) — em
+     * lista, e não só na prosa acima (0.1.32).
+     *
+     * Existe porque somar o Bônus de Rank numa perícia é uma conta, e conta que
+     * mora em prosa não é computável: até aqui, ler "soma em Furtividade,
+     * Ladinagem, Percepção…" exigiria adivinhar por regex em cima de uma frase
+     * escrita à mão, que quebra em silêncio no dia em que alguém a reescrever.
+     *
+     * Só as três árvores de UTILIDADE preenchem: o próprio livro diz que somar
+     * em perícia é exclusivo delas. Ausente = o Bônus de Rank não soma em
+     * perícia nenhuma, que é o caso das outras dezesseis.
+     *
+     * A prosa continua sendo o que o livro imprime; a lista é o que a ficha
+     * calcula. `check:livro` confere que as duas dizem a mesma coisa.
+     */
+    periciasCobertas?: string[];
     /** Uma linha de enquadramento: Escola Formal ou Ofício, atributo de conjuração, recurso. */
     nota: string;
   };

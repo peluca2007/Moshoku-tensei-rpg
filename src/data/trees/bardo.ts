@@ -34,6 +34,7 @@ export const BARDO_TREE: Tree = {
   proficiencies: {
     armas: "Adaga, espada curta e rapieira, mais todo instrumento musical. Armadura leve apenas.",
     pericias: "O Bônus de Rank soma em Atuação, Persuasão, Intuição e História — mas só nas que você realmente possui (Cap. 3).",
+    periciasCobertas: ["Atuação", "Persuasão", "Intuição", "História"],
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
   },
   grantedSkills: {

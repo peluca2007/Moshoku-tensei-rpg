@@ -34,6 +34,7 @@ export const LADINO_TREE: Tree = {
   proficiencies: {
     armas: "Adaga, punhal, espada curta, funda e besta leve. Armadura leve apenas.",
     pericias: "O Bônus de Rank soma em Furtividade, Ladinagem, Percepção, Acrobacia e Enganação (disfarce) — mas só nas que você realmente possui (Cap. 3).",
+    periciasCobertas: ["Furtividade", "Ladinagem", "Percepção", "Acrobacia", "Enganação"],
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
   },
   grantedSkills: {
