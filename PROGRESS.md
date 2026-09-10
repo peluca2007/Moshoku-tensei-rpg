@@ -1,6 +1,6 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — vinte e uma versões num dia (0.1.17 → 0.1.37), fechando as vinte e
+**Última atualização:** 2026-09-10 — vinte e duas versões num dia (0.1.17 → 0.1.38), fechando as vinte e
 duas frentes do [`TAREFAS.md`](TAREFAS.md). O site ganhou **busca global** nos 879 verbetes, telas de
 **404 e de erro** em português, o **link de ficha diagnosticado** (com colagem e QR), **compartilhar
 pela bandeja do celular** e **botão de instalar**, o **rolador em todas as rotas** com macro de
@@ -108,6 +108,12 @@ encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
 - **Quatro condições fora da simulação**: Atolado, Desequilibrado, Marcado e Soterrado. As quatro
   são sobre movimento, alcance e posição, e o motor não tem mapa — modelá-las exigiria dar ao
   simulador uma noção de distância que ele nunca teve. Quebrantado saiu desta lista na 0.1.35.
+- **Um chefe do patamar do próprio grupo não ameaça ninguém.** Medido na 0.1.38, com a coluna de
+  dizimação nova: 0% no 3º patamar, 45% no 4º, 100% no 5º. O 3º não passa de 2% de dizimação nem com
+  PV ×4 e dano ×1,3 (25 combinações testadas), e o 5º não dá UMA vitória em nenhuma delas. Os três
+  pedem correções em direções opostas porque a tabela põe um grupo de 12 PA contra chefes de três
+  patamares diferentes. A decisão de design está no `O-QUE-FALTA` item 11; o conserto, se houver, é no
+  ajuste de Chefe do Apêndice G e não no script.
 - **O simulador enxerga o que é DANO, e pouco além.** Medido em 2026-09-10: das 601 habilidades e
   talentos do livro, a lista de ações do motor tem 122 — e a distribuição é o problema, não a fração.
   Cura e PV Temporários entraram na 0.1.37; o que segue invisível é **Espíritos e Feras (0 de 7)**,

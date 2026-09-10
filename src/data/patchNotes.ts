@@ -16,6 +16,42 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.38",
+    date: "2026-09-10",
+    title: "O Fio da Vida",
+    sections: [
+      {
+        heading: "O pedido: um chefe tem que poder dizimar o grupo",
+        items: [
+          "O alvo é 25% de dizimação no mínimo. Pra mirar nisso foi preciso primeiro MEDIR: a tabela de chefes mostrava vitória e mortes médias, nunca a taxa de dizimação — e \"2,8 mortes médias\" tanto pode ser \"quase sempre morrem três\" quanto \"metade das vezes ninguém morre e na outra metade morrem todos\". A coluna DIZIMADO existe agora, e mediu 0% / 5% / 100% no 3º, 4º e 5º patamares. Um penhasco, não uma curva.",
+        ],
+      },
+      {
+        heading: "Por que não havia meio-termo: o motor matava a 0 PV",
+        items: [
+          "O Cap. 4 §7 é explícito: a 0 PV o personagem cai INCONSCIENTE, rola o Fio da Vida a cada turno, junta Marcas da Morte, e qualquer magia de cura de um aliado remove todas as Marcas e o acorda. O simulador tratava 0 PV como morte instantânea e permanente.",
+          "Isso não era só infidelidade ao livro: era a CAUSA do resultado binário. Quem caía sumia da luta pra sempre, o dano do grupo despencava, a luta se alongava e caía o próximo — realimentação positiva não produz meio-termo, produz cara-ou-coroa. Medido: no 4º patamar um chefe com 49 de dano por turno perdia 97% das vezes e um com 51 ganhava 94%.",
+          "O Fio da Vida entrou inteiro: o teste de 1d20 + Vigor contra CD 8 + o Bônus de Rank DE QUEM TE DERRUBOU (o livro: \"um goblin de estrada te deixa em CD 9, um Rei-Demônio em CD 14\"), 1 Marca por falha e 2 no 1 natural, morte permanente na terceira, e a cura de aliado que levanta e zera tudo. O curandeiro passou a levantar quem caiu antes de qualquer outra coisa — é o trabalho mais importante dele no livro, e o motor não o tinha.",
+        ],
+      },
+      {
+        heading: "A tabela de chefes lutava contra o único time sem curandeiro",
+        items: [
+          "Ela usava \"o time que venceu o 5×5\" — estranho por si, já que fazia a régua de chefe do livro depender de um confronto entre jogadores, e um problema de verdade depois que a cura entrou no motor: o vencedor é sempre o Time B, e o Time B não tem curandeiro. A tabela publicava o comportamento de um grupo que não pode levantar ninguém do chão.",
+          "Agora existe um grupo de referência nomeado — Mara, Vex, Lyn, Kest e Sera —, uma mesa plausível: linha de frente, corpo a corpo, distância, mago e cura.",
+        ],
+      },
+      {
+        heading: "O resultado, e o que ele revelou",
+        items: [
+          "O 4º patamar ganhou o meio-termo que não existia: de 92%/8% para 55% de vitória contra 45% de dizimação, em 4,8 rodadas médias. Ele já cumpre o alvo de 25%, e deixou de ser cara-ou-coroa porque levantar um companheiro interrompe a espiral.",
+          "Os outros dois não se resolvem com calibragem, e isso foi medido e não estimado. No 3º patamar, com PV ×4 e dano ×1,3 — o quádruplo do PV que o livro manda — o grupo ainda vence 98% e é dizimado em 2%; foram 25 combinações testadas. No 5º, ZERO por cento de vitória em todas as 25, inclusive com o dano cortado a 70%. E mexer só nas rodadas extras do chefe não move o 3º e destrói o 4º (55% → 0%).",
+          "Os três patamares pedem correções em direções opostas, e é por isso que nenhum ajuste global serve: a tabela põe um grupo de 12 PA (Avançado, 3º) contra chefes de 3º, 4º e 5º — um abaixo do nível dele, um no nível, e um dois acima. O que ela mede hoje não é \"o chefe está calibrado?\", é \"quão longe do nível do grupo está este chefe?\". A decisão que sobra é de design e está no backlog: se um chefe do patamar do próprio grupo deve ser uma luta de 25% de dizimação, então o ajuste de Chefe do Apêndice G (PV dobrado, mesmo dano) está fraco na paridade e precisa mudar no livro, não no script.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.37",
     date: "2026-09-10",
     title: "A Curandeira Não Bate",

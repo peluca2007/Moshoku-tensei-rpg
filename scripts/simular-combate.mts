@@ -19,7 +19,7 @@
  */
 import { getTreeById } from "../src/data/trees/index";
 import { getPaSpent } from "../src/store/selectors";
-import { AttributeKey, CharacterData, RankName, RANKS } from "../src/lib/types";
+import { AttributeKey, CharacterData, RankName, RANKS, RANK_BONUS } from "../src/lib/types";
 import {
   Alvo,
   EstadoPersonagem,
@@ -33,6 +33,7 @@ import {
   escolherAcao,
   montarFicha,
   novoEstado,
+  testeDoFioDaVida,
   tickChamas,
   turnoPersonagem,
 } from "../src/lib/combatSim";
@@ -184,7 +185,10 @@ function batalha(timeA: EstadoPersonagem[], timeB: EstadoPersonagem[], maxRodada
 
   for (let r = 0; r < maxRodadas; r++) {
     for (const { e, time } of ordem) {
-      if (!e.vivo || !tickChamas(e, rng)) continue;
+      // Quem está no chão ainda TEM turno — é nele que rola o Fio da Vida.
+      // Só o morto de vez é pulado, e as chamas não queimam quem já está a 0.
+      if (e.morto) continue;
+      if (!e.inconsciente && !tickChamas(e, rng)) continue;
       turnoPersonagem(e, time === "A" ? timeB : timeA, rng, time === "A" ? timeA : timeB);
     }
     if (timeB.every((x) => !x.vivo)) return "A";
@@ -340,18 +344,58 @@ const CHEFES = MOLDES_CRIATURA.filter((m) => m.patamar >= 3 && m.patamar <= 5).m
   ca: m.ca,
   ataque: m.bonusAtaque,
   danoPorTurno: m.danoPorTurno,
+  // O Bônus de Rank equivalente ao patamar da criatura, pro CD do Fio da Vida:
+  // o livro casa a escada de patamares da criatura com a de Ranks do
+  // personagem, e RANK_BONUS é essa escada.
+  bonusDeRank: RANK_BONUS[RANKS[Math.min(RANKS.length - 1, m.patamar - 1)]],
 }));
 
-const vencedor = vitoriasA >= vitoriasB ? TIME_A : TIME_B;
-const nomeVencedor = vitoriasA >= vitoriasB ? "Time A" : "Time B";
+/*
+ * O GRUPO DE REFERÊNCIA da tabela de chefes — 0.1.38.
+ *
+ * Até aqui esta tabela lutava contra "o time que venceu o 5×5", o que é uma
+ * escolha estranha por si (a régua de chefe do livro passava a depender do
+ * resultado de um confronto entre jogadores) e virou um problema de verdade
+ * quando a cura entrou no motor: o vencedor é sempre o Time B, e o Time B é
+ * justamente o time SEM curandeiro.
+ *
+ * A tabela publicava, portanto, o comportamento de um grupo que não pode
+ * levantar ninguém do chão — e um Mestre lia aquilo como "o que acontece com um
+ * grupo". Aqui o grupo é uma mesa plausível, escrita à mão e nomeada: linha de
+ * frente, dano corpo a corpo, dano à distância, mago e CURANDEIRO.
+ */
+const GRUPO_DE_REFERENCIA = [9, 5, 8, 2, 4]; // Mara, Vex, Lyn, Kest, Sera
+const vencedor = GRUPO_DE_REFERENCIA;
+const nomeVencedor = "Grupo de referência (Mara, Vex, Lyn, Kest, Sera)";
 
 console.log("\n" + "═".repeat(78));
-console.log(`  ${nomeVencedor} × CHEFE — ${TENTATIVAS} batalhas por patamar`);
+console.log(`  ${nomeVencedor}`);
+console.log(`  × CHEFE — ${TENTATIVAS} batalhas por patamar`);
 console.log("═".repeat(78));
-console.log("CHEFE".padEnd(24) + "PV".padStart(6) + "VITÓRIA".padStart(10) + "RODADAS".padStart(10) + "MORTES".padStart(9));
+/*
+ * A coluna DIZIMADO — 0.1.38.
+ *
+ * "Vitória" e "mortes médias" não respondem a pergunta que decide se um chefe
+ * presta: **com que frequência ele acaba com o grupo inteiro?** 2,8 mortes
+ * médias tanto pode ser "quase sempre morrem três" quanto "metade das vezes não
+ * morre ninguém e na outra metade morrem todos" — e as duas mesas são
+ * completamente diferentes.
+ *
+ * O alvo de design é **no mínimo 25% de dizimação** por chefe. Um chefe que
+ * nunca dizima é um saco de PV com nome próprio.
+ */
+console.log(
+  "CHEFE".padEnd(24) +
+    "PV".padStart(6) +
+    "VITÓRIA".padStart(10) +
+    "DIZIMADO".padStart(10) +
+    "RODADAS".padStart(9) +
+    "MORTES".padStart(8)
+);
 
 for (const chefe of CHEFES) {
   let vitorias = 0;
+  let dizimados = 0;
   let somaRodadas = 0;
   let somaMortes = 0;
   for (let i = 0; i < TENTATIVAS; i++) {
@@ -360,6 +404,12 @@ for (const chefe of CHEFES) {
     let rodada = 0;
     for (; rodada < 20; rodada++) {
       for (const e of grupo) {
+        // Quem está no chão ainda tem turno: é nele que rola o Fio da Vida.
+        if (e.morto) continue;
+        if (e.inconsciente) {
+          testeDoFioDaVida(e, rng);
+          continue;
+        }
         if (!e.vivo) continue;
         // Um Alvo NOVO por personagem, de propósito: é o comportamento que este
         // relatório sempre teve, e mexer nele mudaria os números publicados no
@@ -394,12 +444,17 @@ for (const chefe of CHEFES) {
         // Casca incluída no teto, senão o orçamento do chefe transborda pro
         // próximo alvo enquanto a deste ainda está de pé (0.1.37).
         const golpe = Math.min(restante, alvo.pv + alvo.pvTemp);
-        aplicarDano(alvo, golpe);
+        // "Quem te derrubou decide o quanto é difícil voltar": o chefe de 5º
+        // patamar deixa numa CD bem pior que o de 3º.
+        aplicarDano(alvo, golpe, chefe.bonusDeRank);
         restante -= golpe;
       }
       if (grupo.every((e) => !e.vivo)) break;
     }
     if (pvChefe <= 0) vitorias++;
+    // Dizimado é o grupo INTEIRO no chão, e não "o chefe sobreviveu": uma
+    // batalha que estoura as 20 rodadas com dois de pé não dizimou ninguém.
+    if (grupo.every((e) => !e.vivo)) dizimados++;
     somaRodadas += rodada + 1;
     somaMortes += grupo.filter((e) => !e.vivo).length;
   }
@@ -407,7 +462,8 @@ for (const chefe of CHEFES) {
     chefe.nome.padEnd(24) +
       String(chefe.pv).padStart(6) +
       ((vitorias / TENTATIVAS) * 100).toFixed(0).padStart(9) + "%" +
-      (somaRodadas / TENTATIVAS).toFixed(1).padStart(10) +
+      ((dizimados / TENTATIVAS) * 100).toFixed(0).padStart(9) + "%" +
+      (somaRodadas / TENTATIVAS).toFixed(1).padStart(9) +
       (somaMortes / TENTATIVAS).toFixed(1).padStart(9)
   );
 }

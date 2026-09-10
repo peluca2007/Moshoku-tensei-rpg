@@ -469,7 +469,11 @@ export function simularEncontro(
 
       for (const p of ordem) {
         if (p.tipo === "heroi") {
-          if (!p.h.vivo || !tickChamas(p.h, rng)) continue;
+          // Quem está no chão ainda tem turno — é nele que rola o Fio da Vida
+          // (0.1.38). Só o morto de vez é pulado, e as chamas não queimam quem
+          // já está a 0 PV.
+          if (p.h.morto) continue;
+          if (!p.h.inconsciente && !tickChamas(p.h, rng)) continue;
           turnoPersonagem(p.h, inimigos, rng, heroes);
           // O chefe reage ao turno que acabou de passar — 1 vez por rodada da
           // mesa, não 1 vez por herói: a Reação já foi gasta depois do primeiro
