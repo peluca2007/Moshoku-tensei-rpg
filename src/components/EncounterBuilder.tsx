@@ -1283,7 +1283,10 @@ function CartaoCriatura({
   const reordenarCriatura = useBestiaryStore((s) => s.reordenarCriatura);
   const [confirmando, setConfirmando] = useState(false);
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
-  const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
+  // "compartilhado" é separado de "copiado" porque nada vai pra área de
+  // transferência ao mandar pela bandeja do sistema — o visto verde tem que
+  // acender no botão que a pessoa apertou, e não no outro.
+  const [linkState, setLinkState] = useState<"idle" | "copiado" | "compartilhado" | "erro">("idle");
   const podeCompartilhar = usePodeCompartilhar();
 
   /**
@@ -1321,7 +1324,7 @@ function CartaoCriatura({
       url: await linkDaCriatura(criatura),
     });
     if (r === "ok") {
-      setLinkState("copiado");
+      setLinkState("compartilhado");
       setTimeout(() => setLinkState("idle"), 2200);
     } else if (r === "falhou") {
       setLinkState("erro");
@@ -1538,9 +1541,13 @@ function CartaoCriatura({
                 onClick={handleCompartilhar}
                 aria-label={`Compartilhar ${criatura.nome}`}
                 title="Mandar esta criatura por WhatsApp, Discord, AirDrop…"
-                className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+                className={`rounded-lg border p-1.5 ${
+                  linkState === "compartilhado"
+                    ? "border-emerald-400 text-emerald-600 dark:border-emerald-600 dark:text-emerald-300"
+                    : "border-parchment-300 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+                }`}
               >
-                <Share2 className="h-4 w-4" />
+                {linkState === "compartilhado" ? <Check className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
               </button>
             )}
             <button
