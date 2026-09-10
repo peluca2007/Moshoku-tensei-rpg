@@ -17,6 +17,7 @@ import {
   FolderPlus,
   Info,
   Link2,
+  Share2,
   ListPlus,
   Loader2,
   Pencil,
@@ -70,6 +71,7 @@ import {
   lerArquivoDoBestiario,
 } from "@/lib/pastaArquivo";
 import { linkDaCriatura } from "@/lib/criaturaLink";
+import { compartilhar, usePodeCompartilhar } from "@/lib/compartilharNativo";
 import { AlvoDoGrupo, Aviso, NivelAviso, avisarSobreCriatura } from "@/lib/creatureAdvice";
 import {
   AjusteSugerido,
@@ -1282,6 +1284,7 @@ function CartaoCriatura({
   const [confirmando, setConfirmando] = useState(false);
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
+  const podeCompartilhar = usePodeCompartilhar();
 
   /**
    * Baixa a criatura inteira num arquivo `.mtcriatura` — mesma ideia do
@@ -1303,6 +1306,25 @@ function CartaoCriatura({
       setArquivoState("idle");
     } catch {
       setArquivoState("erro");
+    }
+  }
+
+  /**
+   * A criatura na bandeja do sistema (0.1.20) — mesmo caminho de um toque que a
+   * ficha ganhou. Um Mestre passando um chefe pronto pra outro Mestre no meio
+   * de uma conversa não deveria precisar da área de transferência.
+   */
+  async function handleCompartilhar() {
+    const r = await compartilhar({
+      title: `${criatura.nome} — Mushoku Tensei RPG`,
+      text: `Criatura de ${criatura.patamar}º patamar. Abrir o link a importa no seu bestiário (você confirma antes).`,
+      url: await linkDaCriatura(criatura),
+    });
+    if (r === "ok") {
+      setLinkState("copiado");
+      setTimeout(() => setLinkState("idle"), 2200);
+    } else if (r === "falhou") {
+      setLinkState("erro");
     }
   }
 
@@ -1510,6 +1532,17 @@ function CartaoCriatura({
                 <Download className="h-4 w-4" />
               )}
             </button>
+            {podeCompartilhar && (
+              <button
+                type="button"
+                onClick={handleCompartilhar}
+                aria-label={`Compartilhar ${criatura.nome}`}
+                title="Mandar esta criatura por WhatsApp, Discord, AirDrop…"
+                className="rounded-lg border border-parchment-300 p-1.5 text-parchment-400 hover:text-parchment-600 dark:border-parchment-700"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+            )}
             <button
               type="button"
               onClick={handleCopiarLink}

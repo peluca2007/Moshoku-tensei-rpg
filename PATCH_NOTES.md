@@ -5,6 +5,39 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.20 — "Um Toque, e Foi" · 2026-09-10
+
+### 📲 Passar a ficha adiante virou um toque
+
+A ficha e a criatura ganharam um botão **Compartilhar** que abre a bandeja do próprio celular — a
+mesma de qualquer app. Escolhe o contato e acabou: sem área de transferência, sem baixar arquivo, sem
+gerenciador de arquivos.
+
+Ele manda o **link**, e não o arquivo, de propósito: um link termina com o amigo abrindo o site já na
+tela de importar, com um toque; um arquivo termina com ele segurando um `.mtficha` que nenhum
+aplicativo do telefone sabe abrir. O arquivo continua existindo para o que só ele resolve — levar a
+**foto e a capa** junto, que não cabem no link.
+
+- O botão **só aparece onde a bandeja existe**. Onde não existe, nada muda: o "Copiar link" continua
+  sendo o caminho garantido.
+- **Cancelar não acusa erro.** Fechar a bandeja é uma decisão, não um defeito — e o navegador
+  sinaliza os dois casos do mesmo jeito, então era fácil errar isso e fazer a ficha piscar erro toda
+  vez que alguém mudasse de ideia.
+
+### 🏠 E o site diz que dá pra instalar
+
+O site é instalável desde a 0.1.15 — manifesto, ícones, splash e três atalhos de tela inicial. Só que
+isso servia apenas a quem sabia caçar "Adicionar à tela de início" no menu do navegador. Agora tem um
+botão no rodapé.
+
+- **Android:** instala de um toque.
+- **iPhone:** o Safari não tem API de instalação e nunca vai ter, então o botão **ensina** o caminho
+  de dois passos, com o ícone real de Compartilhar do iOS.
+- **Já instalado:** o botão some sozinho. Um "Instalar" dentro do app instalado é a definição de
+  ruído.
+
+---
+
 ## 0.1.19 — "O Link Que Chegou Pela Metade" · 2026-09-10
 
 ### 🔗 Uma frase só para cinco problemas diferentes

@@ -1,6 +1,11 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — **0.1.18**: o site respondia *"404: This page could not be
+**Última atualização:** 2026-09-10 — **0.1.20**: compartilhar ficha virou um toque (a bandeja do
+próprio celular, na ficha e na criatura) e o site passou a oferecer a instalação como app em vez de
+esperar que a pessoa ache "Adicionar à tela de início" no menu. Antes disso, na **0.1.19**: o link
+de ficha parava de funcionar em silêncio — cinco causas diferentes viravam a mesma frase —, e agora
+cada uma tem nome, saída e um campo de colar que aceita até link quebrado em várias linhas; o teto do
+Discord foi medido (2.000 caracteres, e ele morde em três árvores). Antes disso, na **0.1.18**: o site respondia *"404: This page could not be
 found."* em inglês num site pt-BR, e um erro de runtime caía na tela padrão do framework — que,
 offline, é indistinguível de falta de sinal. As duas telas agora existem, em português, dentro do
 layout, e dizem que as fichas continuam no aparelho. Antes disso, na **0.1.17**: o livro tinha 879 verbetes e nenhum jeito de
