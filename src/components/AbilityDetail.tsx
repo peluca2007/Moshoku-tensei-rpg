@@ -59,7 +59,7 @@ export function CastingBreakdown({ ability }: { ability: AbilityDef }) {
   if (ability.reaction || !hasCasting) return null;
 
   return (
-    <dl className="mt-1.5 grid grid-cols-1 gap-x-3 gap-y-0.5 border-t border-dashed border-parchment-300 pt-1.5 text-2xs text-parchment-600 dark:border-parchment-800 dark:text-parchment-400 sm:grid-cols-3">
+    <dl className="print-hide mt-1.5 grid grid-cols-1 gap-x-3 gap-y-0.5 border-t border-dashed border-parchment-300 pt-1.5 text-2xs text-parchment-600 dark:border-parchment-800 dark:text-parchment-400 sm:grid-cols-3">
       <div>
         <dt className="inline font-semibold text-parchment-600 dark:text-parchment-300">Padrão </dt>
         <dd className="inline">{actionText(actions.normal)} · dano cheio</dd>

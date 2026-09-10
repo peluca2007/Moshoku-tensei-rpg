@@ -325,7 +325,7 @@ export default function DiceRoller() {
       <button
         type="button"
         onClick={toggleOpen}
-        className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
+        className="print-hide fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
         title="Rolador de Dados (atalho: R)"
         aria-label="Abrir rolador de dados"
       >
@@ -333,7 +333,7 @@ export default function DiceRoller() {
       </button>
 
       {open && (
-        <div className="fixed inset-x-3 bottom-[5.5rem] z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 shadow-2xl dark:border-parchment-700 dark:bg-parchment-950 sm:inset-x-auto sm:right-5 sm:w-[22rem]">
+        <div className="print-hide fixed inset-x-3 bottom-[5.5rem] z-40 flex max-h-[75vh] flex-col overflow-hidden rounded-2xl border border-parchment-300 bg-parchment-50 shadow-2xl dark:border-parchment-700 dark:bg-parchment-950 sm:inset-x-auto sm:right-5 sm:w-[22rem]">
           <div className="flex items-center justify-between border-b border-parchment-300 bg-parchment-100 px-4 py-3 dark:border-parchment-800 dark:bg-parchment-900">
             <h2 className="flex items-center gap-2 text-sm font-bold text-parchment-900 dark:text-parchment-50">
               <Dices className="h-4 w-4 text-wine-500" /> Rolador de Dados

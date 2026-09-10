@@ -294,6 +294,110 @@ input[type="number"],
   th {
     word-break: break-word;
   }
+
+  /* ---------------------------------------------------------------------
+     A FICHA numa folha (0.1.29)
+     ---------------------------------------------------------------------
+
+     O PDF do Typst continua sendo o documento bonito, de três páginas — e ele
+     precisa do servidor, porque é lá que o Typst roda. Isto aqui é o outro
+     caminho: Ctrl+P na própria ficha, funcionando OFFLINE, porque é só CSS.
+
+     A regra do recorte: fica o que se consulta DENTRO de um turno. O que sai
+     está marcado com `print-hide` no componente (botões, condições, descanso,
+     simulador, lore, rodapé, rolador) — aqui embaixo fica só o que é ajuste de
+     DENSIDADE, que é o que decide se cabe numa folha.
+  */
+
+  /* O rodapé da ficha imprime a origem: uma folha solta na mesa não diz de
+     quem é nem de quando é, e uma ficha desatualizada circulando é pior que
+     nenhuma. */
+  .ficha-impressa::after {
+    content: "Mushoku Tensei RPG — ficha impressa do site. Confira a versão viva antes de usar.";
+    display: block;
+    margin-top: 8pt;
+    border-top: 1px solid #cbbfa6;
+    padding-top: 4pt;
+    font-size: 7pt;
+    color: #6b5d47;
+  }
+
+  /* Fundo e sombra de card não existem no papel: cada `surface` vira uma
+     moldura fina, que gasta tinta de menos e separa igual. */
+  .ficha-impressa .surface,
+  .ficha-impressa .surface-raised,
+  .ficha-impressa .surface-sunken {
+    box-shadow: none !important;
+    background: transparent !important;
+    border: 1px solid #cbbfa6 !important;
+  }
+
+  /* Densidade: a ficha na tela respira porque tem scroll infinito. No papel,
+     esse respiro é a diferença entre uma folha e três. */
+  .ficha-impressa {
+    font-size: 9pt;
+    line-height: 1.25;
+  }
+
+  .ficha-impressa .p-4,
+  .ficha-impressa .p-5,
+  .ficha-impressa .p-6 {
+    padding: 5pt !important;
+  }
+
+  .ficha-impressa .gap-4,
+  .ficha-impressa .gap-6,
+  .ficha-impressa .space-y-4 > * + *,
+  .ficha-impressa .space-y-6 > * + * {
+    gap: 4pt !important;
+    margin-top: 4pt !important;
+  }
+
+  /* Campo de formulário no papel é só o valor: a caixa em volta some, e o que
+     sobra é o número. */
+  .ficha-impressa input,
+  .ficha-impressa select,
+  .ficha-impressa textarea {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    color: #2b1810 !important;
+  }
+
+  /* Botão é AÇÃO, e papel não tem ação. Some tudo: "Adicionar", "Comprar",
+     "Trocar foto". O que eles operavam continua impresso; o gatilho não. */
+  .ficha-impressa button {
+    display: none !important;
+  }
+
+  /* Poço vazio é um convite a preencher — na TELA. No papel ele é um retângulo
+     de nada ocupando o espaço que as magias precisam. */
+  .ficha-impressa .surface-sunken {
+    display: none !important;
+  }
+
+  /* Foto, capa e a arte de fundo do cabeçalho não vão pro papel.
+     Numa impressora doméstica, a arte de fundo do cabeçalho sozinha come mais
+     tinta que a ficha inteira — e ela é ambientação, não informação. Quem quer
+     a ficha COM retrato tem o PDF do Typst, que é o documento bonito. */
+  .ficha-impressa img {
+    display: none !important;
+  }
+
+  /* Imprimir é sempre em tema claro.
+     Uma ficha impressa no tema escuro é uma folha inteira de tinta preta com
+     letra clara por cima: gasta o cartucho e sai ilegível em impressora a laser
+     comum. Como o tema vive numa classe no <html>, a única forma honesta de
+     garantir isso é neutralizar as cores DENTRO da ficha na hora de imprimir —
+     a cor é decoração de tela, e o que precisa sobreviver ao papel é o texto. */
+  .dark .ficha-impressa,
+  .dark .ficha-impressa * {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #2b1810 !important;
+    border-color: #cbbfa6 !important;
+    box-shadow: none !important;
+  }
 }
 
 /* Micro-animações de entrada usadas na criação de personagem (Via 2 — Roleta
