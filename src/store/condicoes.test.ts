@@ -157,3 +157,51 @@ describe("resumo dos efeitos", () => {
     expect(getCondicoesAtivas(ficha())).toHaveLength(CONDICOES.length);
   });
 });
+
+/*
+ * O teto de dois Descansos Curtos entre dois Longos (Cap. 4, §7).
+ *
+ * O aviso do livro é literal — "dois, e nem um a mais" — e a defesa dele é
+ * aritmética: sem o teto, a reserva de PM vira PV indefinidamente pela Magia de
+ * Cura, e o grupo volta inteiro descansando duas horas a mais. A store recusa o
+ * terceiro em vez de deixar a tela sozinha vigiando.
+ */
+describe("teto de Descansos Curtos", () => {
+  const nada = { pv: 0, pm: 0, pt: 0, pp: 0 };
+  const maximos = { pv: 40, pm: 16, pt: 10, pp: 6 };
+
+  it("aceita dois e recusa o terceiro", () => {
+    expect(useCharacterStore.getState().descansar("curto", nada, maximos)).toBe(true);
+    expect(useCharacterStore.getState().descansar("curto", nada, maximos)).toBe(true);
+    expect(useCharacterStore.getState().descansar("curto", nada, maximos)).toBe(false);
+    expect(ficha().descansosCurtos).toBe(2);
+  });
+
+  it("o Longo zera o contador — é ele que vira o dia", () => {
+    useCharacterStore.getState().descansar("curto", nada, maximos);
+    useCharacterStore.getState().descansar("curto", nada, maximos);
+    useCharacterStore.getState().descansar("longo", nada, maximos);
+    expect(ficha().descansosCurtos).toBe(0);
+    expect(useCharacterStore.getState().descansar("curto", nada, maximos)).toBe(true);
+  });
+
+  it("descanso nunca passa do máximo da reserva", () => {
+    useCharacterStore.getState().setCurrentHp(1);
+    useCharacterStore.getState().descansar("longo", { pv: 9999, pm: 9999, pt: 9999, pp: 9999 }, maximos);
+    expect(ficha().currentHp).toBe(maximos.pv);
+    expect(ficha().currentMp).toBe(maximos.pm);
+  });
+
+  /*
+   * `null` em `currentHp` significa "cheio, ainda não tocado" (ver
+   * `getCurrentHp`). Somar em cima de null daria NaN e apagaria a reserva da
+   * ficha — o pior desfecho possível pra um botão que a pessoa aperta pra
+   * RECUPERAR alguma coisa.
+   */
+  it("reserva nunca tocada (null) não vira NaN ao descansar", () => {
+    expect(ficha().currentHp).toBeNull();
+    useCharacterStore.getState().descansar("longo", { pv: 5, pm: 5, pt: 5, pp: 5 }, maximos);
+    expect(ficha().currentHp).toBe(maximos.pv);
+    expect(Number.isNaN(ficha().currentMp)).toBe(false);
+  });
+});
