@@ -2056,17 +2056,35 @@ function Relatorio({ relatorio, tamanhoDoGrupo }: { relatorio: Relatorio; tamanh
             <tr>
               <th className="py-1 pr-3 font-semibold">Personagem</th>
               <th className="py-1 pr-3 text-right font-semibold">Dano por combate</th>
+              <th className="py-1 pr-3 text-right font-semibold">PV devolvidos</th>
               <th className="py-1 text-right font-semibold">Sobreviveu</th>
             </tr>
           </thead>
           <tbody>
+            {/*
+              A ordem é por CONTRIBUIÇÃO — dano mais PV devolvidos —, e não por
+              dano (0.1.42).
+
+              Ordenar só por dano dava a um curandeiro a última linha da tabela e
+              um "0" ao lado do nome, o que lê como ficha ruim em vez de papel
+              diferente. Somar os dois não afirma que 1 de cura vale 1 de dano;
+              afirma que os dois são maneiras de gastar um turno, que é o que
+              esta tabela compara.
+            */}
             {[...resultado.porPersonagem]
-              .sort((a, b) => b.danoMedio - a.danoMedio)
+              .sort((a, b) => b.danoMedio + b.curaMedia - (a.danoMedio + a.curaMedia))
               .map((p) => (
                 <tr key={p.id} className="border-t border-parchment-300 dark:border-parchment-800">
                   <td className="py-1.5 pr-3 text-parchment-900 dark:text-parchment-50">{p.nome}</td>
                   <td className="py-1.5 pr-3 text-right font-mono text-parchment-600 dark:text-parchment-400">
                     {Math.round(p.danoMedio)}
+                  </td>
+                  {/*
+                    Um traço, e não um zero, em quem não tem magia de suporte:
+                    zero sugere que tentou curar e não conseguiu.
+                  */}
+                  <td className="py-1.5 pr-3 text-right font-mono text-parchment-600 dark:text-parchment-400">
+                    {p.curaMedia > 0 ? Math.round(p.curaMedia) : "—"}
                   </td>
                   <td className="py-1.5 text-right font-mono text-parchment-600 dark:text-parchment-400">
                     {formatarPorcentagem(p.sobreviveu)}

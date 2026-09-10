@@ -5,6 +5,57 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.42 — "O Curandeiro na Tela do Mestre" · 2026-09-10
+
+O `/encontros` simula 300 batalhas contra as fichas de verdade do grupo e imprime **"Quem fez o quê"**.
+A tabela tinha duas colunas: dano por combate e sobreviveu.
+
+Um curandeiro aparecia ali com um **`0`** ao lado do nome, na última linha. Isso lê como ficha ruim, e
+é papel diferente — o mesmo defeito que o relatório de linha de comando tinha e que a 0.1.37
+consertou. Ele sobreviveu cinco versões a mais na tela.
+
+- A tabela ganhou **PV devolvidos**, ao lado do dano.
+- A ordem passou a ser por **contribuição** (dano + cura) em vez de só dano. Somar os dois não afirma
+  que 1 de cura vale 1 de dano; afirma que os dois são maneiras de gastar um turno, que é o que a
+  tabela compara.
+- Quem não tem magia de suporte mostra **traço**, não zero: zero sugere que tentou e não conseguiu.
+
+Travado por um teste que roda 40 batalhas com uma curandeira no grupo e cobra que ela devolva PV — e
+que **só ela** devolva.
+
+---
+
+## 0.1.41 — "Subir de Rank Vale a Pena?" · 2026-09-10
+
+Um check novo, e nenhuma regra mexida: `npm run check:progressao`.
+
+Ele responde duas perguntas na única moeda que o combate gasta — a **Ação**:
+
+1. **A capstone compensa?** A melhor técnica de um rank tem que render mais por Ação que a melhor do
+   rank abaixo, na mesma árvore.
+2. **Corpo e Magia estão no mesmo campeonato?**
+
+**Achou dezesseis capstones que não compensam.** As piores: Punho do Fogo no **Rei** rende 17,6 contra
+**37,6** do Santo (−53%); Desintoxicação no Avançado, −47%; Armas Pesadas no Santo, −37%; Deus da
+Espada no Santo, −33%.
+
+Nem toda uma é erro — um rank pode entregar utilidade em vez de dano, e o personagem continua com as
+técnicas antigas. Mas quatro quedas acima de 30% na mesma lista é padrão, não coincidência.
+
+Teto do Corpo **44,0/Ação** (Prensa) contra **26,9** da Magia (Luz Absoluta): **1,6×**.
+
+O check **não reprova o build**, de propósito: a magia compra alcance de 90m, área de verdade e
+condição, e nada disso pontua ali. O que o instrumento garante é que a decisão de design seja tomada
+olhando o número, em vez de descoberta seis meses depois numa mesa. As dezesseis estão no
+`O-QUE-FALTA`.
+
+*No caminho, dois becos sem saída ficaram registrados pra ninguém repetir: a **Conjuração Encurtada**
+não resolve a capstone (corta metade dos dados pra cortar um terço das Ações — é sempre pior por Ação,
+existe pra urgência), e a régua do **Apêndice C** não está sendo violada, porque ela mede o maior
+golpe único e não o dano por turno.*
+
+---
+
 ## 0.1.40 — "A Magia que Não Cabe no Turno" · 2026-09-10
 
 ### 🕯️ Vinte magias nunca tinham sido simuladas. Nenhuma vez.

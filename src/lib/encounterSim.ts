@@ -387,7 +387,21 @@ export interface ResultadoEncontro {
   quedasMedia: number;
   /** PV do grupo sobrando ao fim, em fração da reserva total. */
   pvRestante: number;
-  porPersonagem: { id: string; nome: string; danoMedio: number; sobreviveu: number }[];
+  porPersonagem: {
+    id: string;
+    nome: string;
+    danoMedio: number;
+    /**
+     * PV devolvidos a aliados por batalha — 0.1.42.
+     *
+     * A contrapartida de `danoMedio`, e ela existe pelo mesmo motivo que a
+     * coluna do relatório de linha de comando existe: sem ela, a tela do Mestre
+     * media um curandeiro pela única coisa que ele não faz. Um grupo com Sera
+     * aparecia com uma linha de "0 de dano" e nenhuma explicação.
+     */
+    curaMedia: number;
+    sobreviveu: number;
+  }[];
 }
 
 export interface OpcoesEncontro {
@@ -426,6 +440,7 @@ export function simularEncontro(
   let somaPvRestante = 0;
   const pvTotalGrupo = fichas.reduce((s, f) => s + f.pvMax, 0) || 1;
   const dano = new Map<string, number>();
+  const cura = new Map<string, number>();
   const viveu = new Map<string, number>();
 
   for (let b = 0; b < batalhas; b++) {
@@ -502,6 +517,7 @@ export function simularEncontro(
     somaPvRestante += heroes.reduce((s, h) => s + Math.max(0, h.pv), 0);
     for (const h of heroes) {
       dano.set(h.ficha.id, (dano.get(h.ficha.id) ?? 0) + h.danoCausado);
+      cura.set(h.ficha.id, (cura.get(h.ficha.id) ?? 0) + h.pvCurado);
       if (h.vivo) viveu.set(h.ficha.id, (viveu.get(h.ficha.id) ?? 0) + 1);
     }
   }
@@ -518,6 +534,7 @@ export function simularEncontro(
       id: f.id,
       nome: f.nome,
       danoMedio: (dano.get(f.id) ?? 0) / batalhas,
+      curaMedia: (cura.get(f.id) ?? 0) / batalhas,
       sobreviveu: (viveu.get(f.id) ?? 0) / batalhas,
     })),
   };

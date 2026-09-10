@@ -16,6 +16,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.42",
+    date: "2026-09-10",
+    title: "O Curandeiro na Tela do Mestre",
+    sections: [
+      {
+        heading: "A tabela “Quem fez o quê” media o curandeiro pelo que ele não faz",
+        items: [
+          "O /encontros simula 300 batalhas contra as fichas de verdade do grupo e imprime quem fez o quê. A tabela tinha duas colunas — dano por combate e sobreviveu — e um curandeiro aparecia ali com um 0 ao lado do nome, na última linha. Isso lê como ficha ruim, e é papel diferente.",
+          "É o mesmo defeito que o relatório de linha de comando tinha e que a 0.1.37 consertou; ele sobreviveu cinco versões a mais na tela. Agora a tabela tem PV DEVOLVIDOS ao lado do dano, e a ordem passou a ser por contribuição (dano mais cura) em vez de só dano. Quem não tem magia de suporte mostra traço, não zero — zero sugere que tentou e não conseguiu.",
+          "Travado por um teste que roda 40 batalhas com uma curandeira no grupo e cobra que ela devolva PV, e que só ela devolva.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.40",
     date: "2026-09-10",
     title: "A Magia que Não Cabe no Turno",
