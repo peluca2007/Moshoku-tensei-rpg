@@ -46,6 +46,7 @@ import { buildFichaPayload } from "@/lib/buildFichaPayload";
 import { linkDaFicha } from "@/lib/fichaLink";
 import { LIMITE_DISCORD, passaDoDiscord } from "@/lib/diagnosticoDeLink";
 import { compartilhar, usePodeCompartilhar } from "@/lib/compartilharNativo";
+import { BotaoQr, PainelQr } from "./QrDaFicha";
 import { empacotarFicha } from "@/lib/fichaArquivo";
 import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
@@ -308,6 +309,7 @@ export default function CharacterSheet() {
   /** Tamanho do último link copiado — só pra avisar quando ele não couber numa mensagem do Discord. */
   const [tamanhoDoLink, setTamanhoDoLink] = useState(0);
   const podeCompartilhar = usePodeCompartilhar();
+  const [qrAberto, setQrAberto] = useState(false);
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
   const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
@@ -677,6 +679,14 @@ export default function CharacterSheet() {
                 </>
               )}
             </button>
+
+            {/*
+              O QR é o mesmo link por outro caminho: entre dois celulares na
+              mesma mesa, apontar a câmera é mais curto que qualquer aplicativo
+              de mensagem. O botão fica aqui; o painel abre embaixo da fileira,
+              porque um bloco de largura total dentro dela a quebrava.
+            */}
+            <BotaoQr aberto={qrAberto} aoAlternar={() => setQrAberto((v) => !v)} className="sm:mt-1.5" />
           </div>
         </div>
         {/*
@@ -688,6 +698,13 @@ export default function CharacterSheet() {
           usa. Avisar depois de copiar é o que evita o pior desfecho, que é o
           link chegar cortado e ninguém dos dois lados entender por quê.
         */}
+        {qrAberto && (
+          <PainelQr
+            gerarLink={() => linkDaFicha(character)}
+            titulo={`Ficha de ${character.name?.trim() || "personagem sem nome"}`}
+            aoFechar={() => setQrAberto(false)}
+          />
+        )}
         {(linkState === "copiado" || linkState === "compartilhado") && passaDoDiscord(tamanhoDoLink) && (
           <p className="mt-1 text-xs text-gold-700 dark:text-gold-400">
             {linkState === "copiado" ? "Copiado" : "Compartilhado"}, mas são{" "}

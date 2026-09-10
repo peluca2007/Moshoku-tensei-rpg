@@ -5,6 +5,43 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.33 — "Aponte a Câmera" · 2026-09-10
+
+### 📷 A ficha vira um QR
+
+Entre dois celulares na mesma mesa, o caminho mais curto não é link nem arquivo: é **apontar a
+câmera**. Não passa por aplicativo de mensagem, não depende de o link sobreviver inteiro, e não
+precisa de gerenciador de arquivos.
+
+O botão **QR** fica ao lado de Compartilhar e Copiar link. O código abre logo abaixo, sobre **fundo
+branco fixo** — a única superfície do site que ignora o tema, porque um QR escuro sobre pergaminho
+escuro é um QR que a câmera não enxerga.
+
+Ele avisa quando o código fica **denso demais** pra ser lido de longe, e diz quando a ficha
+simplesmente **não cabe** (acima de 2.953 caracteres, o teto do formato) em vez de desenhar um código
+impossível. Funciona sem internet, como o resto do site.
+
+### 🔬 E a prova de que ele lê de verdade
+
+A objeção contra fazer isso era boa: *não dá pra verificar um QR sem uma câmera, e um QR que desenha
+mas não lê é uma funcionalidade que mente.*
+
+A resposta foi **decodificar o QR gerado com uma implementação independente**, dentro do teste. O
+código é rasterizado exatamente como aparece na tela e lido de volta; se o texto não voltar idêntico,
+o teste falha.
+
+Isso pescou dois defeitos de verdade:
+
+1. **Texto com acento saía corrompido** — o modo byte do gerador não usava UTF-8. O link nunca teria
+   acento, mas o componente é genérico.
+2. **A versão 23 do formato não é lida.** Varrendo as 40 versões, 39 voltam perfeitas e uma não
+   volta, em qualquer tamanho de renderização — o que descarta "ficou pequeno". Como esse
+   decodificador é o leitor por trás de boa parte dos scanners que rodam em navegador, o site agora
+   **pula a versão 23** e usa a seguinte. Custa quatro módulos a mais; a alternativa era uma ficha
+   que algumas câmeras nunca abririam.
+
+---
+
 ## 0.1.32 — "Rolar a Perícia" · 2026-09-10
 
 ### 🎲 Não existia lugar nenhum pra rolar uma perícia
