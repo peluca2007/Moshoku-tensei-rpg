@@ -294,7 +294,14 @@ export default function CharacterSheet() {
    * São dois problemas diferentes e duas saídas diferentes.
    */
   const [pdfState, setPdfState] = useState<"idle" | "loading" | "error" | "semRede">("idle");
-  const [linkState, setLinkState] = useState<"idle" | "copiado" | "erro">("idle");
+  /*
+   * "compartilhado" existe separado de "copiado" porque as duas coisas não
+   * são a mesma: depois de mandar pela bandeja do sistema, nada foi pra área
+   * de transferência, e o botão dizer "Link copiado" seria uma afirmação
+   * falsa sobre o que acabou de acontecer. Os dois estados compartilham o
+   * aviso de tamanho, que vale para os dois caminhos.
+   */
+  const [linkState, setLinkState] = useState<"idle" | "copiado" | "compartilhado" | "erro">("idle");
   /** Tamanho do último link copiado — só pra avisar quando ele não couber numa mensagem do Discord. */
   const [tamanhoDoLink, setTamanhoDoLink] = useState(0);
   const podeCompartilhar = usePodeCompartilhar();
@@ -413,7 +420,7 @@ export default function CharacterSheet() {
       url,
     });
     if (r === "ok") {
-      setLinkState("copiado");
+      setLinkState("compartilhado");
       if (linkTimeoutRef.current) clearTimeout(linkTimeoutRef.current);
       linkTimeoutRef.current = setTimeout(() => setLinkState("idle"), 2200);
     } else if (r === "falhou") {
@@ -624,9 +631,21 @@ export default function CharacterSheet() {
                 type="button"
                 onClick={handleCompartilhar}
                 title="Mandar esta ficha por WhatsApp, Discord, AirDrop… sem baixar arquivo"
-                className="flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900 sm:mt-1.5"
+                className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-colors sm:mt-1.5 ${
+                  linkState === "compartilhado"
+                    ? "border-emerald-400 bg-emerald-500/10 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300"
+                    : "border-parchment-300 text-parchment-600 hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
+                }`}
               >
-                <Share2 className="h-3.5 w-3.5" /> Compartilhar
+                {linkState === "compartilhado" ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" /> Enviado
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="h-3.5 w-3.5" /> Compartilhar
+                  </>
+                )}
               </button>
             )}
             <button
@@ -660,9 +679,10 @@ export default function CharacterSheet() {
           usa. Avisar depois de copiar é o que evita o pior desfecho, que é o
           link chegar cortado e ninguém dos dois lados entender por quê.
         */}
-        {linkState === "copiado" && passaDoDiscord(tamanhoDoLink) && (
+        {(linkState === "copiado" || linkState === "compartilhado") && passaDoDiscord(tamanhoDoLink) && (
           <p className="mt-1 text-xs text-gold-700 dark:text-gold-400">
-            Copiado, mas são <strong>{tamanhoDoLink.toLocaleString("pt-BR")} caracteres</strong> — mais que
+            {linkState === "copiado" ? "Copiado" : "Compartilhado"}, mas são{" "}
+            <strong>{tamanhoDoLink.toLocaleString("pt-BR")} caracteres</strong> — mais que
             os {LIMITE_DISCORD.toLocaleString("pt-BR")} de uma mensagem do Discord, que cortaria o link no
             meio. Pelo WhatsApp ou pelo Telegram ele passa inteiro; pro Discord, mande o arquivo em{" "}
             <strong>Baixar ficha</strong>.
