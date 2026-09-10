@@ -1,6 +1,8 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — **0.1.20**: compartilhar ficha virou um toque (a bandeja do
+**Última atualização:** 2026-09-10 — **0.1.21**: o macro do rolador aprendeu a guardar Teste (d20 com
+modificador e vantagem), e não só fórmula de dano — com migração, porque macro salvo não some. Antes
+disso, na **0.1.20**: compartilhar ficha virou um toque (a bandeja do
 próprio celular, na ficha e na criatura) e o site passou a oferecer a instalação como app em vez de
 esperar que a pessoa ache "Adicionar à tela de início" no menu. Antes disso, na **0.1.19**: o link
 de ficha parava de funcionar em silêncio — cinco causas diferentes viravam a mesma frase —, e agora
@@ -74,8 +76,6 @@ Só o que ainda não foi feito. A lista curta do que já estava combinado com o 
 [`O-QUE-FALTA.md`](O-QUE-FALTA.md), e o mapa maior das vinte frentes abertas em
 [`TAREFAS.md`](TAREFAS.md); aqui fica o registro seco.
 
-- [ ] **Testes do `rollEngine` + macro de Teste** — item 10 do `O-QUE-FALTA`. O motor que decide toda
-      rolagem não tem um teste; o macro só salva dano.
 - [ ] **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem rede e o
       `check:offline` prova a parte automatizável (16 rotas com o servidor morto). Falta o resto do
       caminho: "Adicionar à tela de início", o recorte do ícone pelo launcher, a splash, e o quanto
@@ -115,7 +115,6 @@ Só o que ainda não foi feito. A lista curta do que já estava combinado com o 
   única economia de ação que o motor conhece.
 - A foto do personagem não entra em `/criar` — as três vias terminam sem perguntar por ela.
 - Universidade de Ranoa como 4ª facção de Reputação.
-- Macros de Teste (1d20 com Vantagem/Desvantagem) no `DiceRoller` — hoje macro só suporta Dano.
 - Magias inatas de raça (ex: Howling da Raça Fera) só existem como texto no card de passivas, não como
   habilidade de verdade no Grimório.
 - PDF via Typst: revisão visual fina (densidade dos cards, Deslocamento refletindo raça, BC em multiclasse).

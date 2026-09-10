@@ -68,7 +68,8 @@ export default function DiceRoller() {
   const [criticalDamageOverride, setCriticalDamageOverride] = useState<boolean | null>(null);
   const criticalDamage = criticalDamageOverride ?? lastResult?.critical === "sucesso";
   const macros = useMacroStore((s) => s.macros);
-  const addMacro = useMacroStore((s) => s.addMacro);
+  const addMacroDeDano = useMacroStore((s) => s.addMacroDeDano);
+  const addMacroDeTeste = useMacroStore((s) => s.addMacroDeTeste);
   const removeMacro = useMacroStore((s) => s.removeMacro);
   const [macroLabel, setMacroLabel] = useState("");
   const [macroFormula, setMacroFormula] = useState("");
@@ -192,14 +193,40 @@ export default function DiceRoller() {
     rollAnimationRef.current = { interval, timeout };
   }
 
-  function handleRollD20() {
-    const result = rollD20(mode, testModifier);
+  /**
+   * O nome do teste que está montado agora.
+   *
+   * Existe como função porque DUAS coisas precisam dele e precisam do mesmo:
+   * a linha do histórico e o macro salvo. Enquanto o rótulo era montado dentro
+   * do `handleRollD20`, salvar um teste teria exigido remontá-lo — e duas
+   * cópias da mesma frase acabam divergindo no dia em que uma fonte nova de
+   * teste for adicionada.
+   */
+  function rotuloDoTeste(): string {
     let label = "Teste";
     if (testSource === "atributo") label = `Teste de ${ATTRIBUTES.find((a) => a.key === attributeKey)?.label}`;
     else if (testSource === "magia" && magicTreeId) label = `Ataque Mágico (${getTreeById(magicTreeId)?.name})`;
     else if (testSource === "marcial" && marcialTreeId) label = `Ataque Marcial (${getTreeById(marcialTreeId)?.name})`;
     if (mode !== "normal") label += ` — ${ADVANTAGE_LABELS[mode]}`;
-    animateRoll({ label, detail: d20Detail(result), total: result.total, critical: result.critical });
+    return label;
+  }
+
+  function handleRollD20() {
+    const result = rollD20(mode, testModifier);
+    animateRoll({ label: rotuloDoTeste(), detail: d20Detail(result), total: result.total, critical: result.critical });
+  }
+
+  /**
+   * Guarda o teste montado agora como macro (0.1.21).
+   *
+   * Salva o modificador JÁ SOMADO, e não a fonte que o produziu, porque macro é
+   * atalho de mesa e não pedaço de ficha — a store diz isso desde sempre
+   * ("independente de personagem"). Guardar "Ataque Mágico de Fogo" faria o
+   * macro mentir no dia em que o personagem subisse de rank, ou pior, ao ser
+   * usado com outro personagem do roster.
+   */
+  function handleSalvarTesteComoMacro() {
+    addMacroDeTeste(rotuloDoTeste(), testModifier, mode);
   }
 
   function handleSelectWeapon(id: string) {
@@ -245,13 +272,20 @@ export default function DiceRoller() {
   function handleRollMacro(macroId: string) {
     const macro = macros.find((m) => m.id === macroId);
     if (!macro) return;
+    if (macro.tipo === "teste") {
+      const result = rollD20(macro.modo, macro.modificador);
+      // Um macro de teste rola d20 de verdade, com crítico e tudo: se ele
+      // caísse no `rollFormula`, "20 natural" viraria só mais um número.
+      animateRoll({ label: macro.label, detail: d20Detail(result), total: result.total, critical: result.critical });
+      return;
+    }
     const result = rollFormula(macro.formula);
     animateRoll({ label: macro.label, detail: diceDetail(result), total: result.total });
   }
 
   function handleAddMacro() {
     if (!macroFormula.trim()) return;
-    addMacro(macroLabel, macroFormula);
+    addMacroDeDano(macroLabel, macroFormula);
     setMacroLabel("");
     setMacroFormula("");
   }
@@ -486,14 +520,34 @@ export default function DiceRoller() {
                 ))}
               </div>
 
-              <button
-                type="button"
-                onClick={handleRollD20}
-                disabled={isRolling}
-                className="w-full rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                Rolar 1d20
-              </button>
+              <div className="flex items-stretch gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleRollD20}
+                  disabled={isRolling}
+                  className="flex-1 rounded-lg bg-wine-600 py-2 text-sm font-bold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Rolar 1d20
+                </button>
+                {/*
+                  Salvar ESTE teste como macro (0.1.21).
+
+                  Fica aqui, e não na seção de Macros, porque é aqui que o teste
+                  está montado: o atalho nasce do que a pessoa acabou de
+                  configurar — fonte, modificador e modo de vantagem — em vez de
+                  exigir que ela remonte tudo digitando lá embaixo. É o mesmo
+                  gesto de "isto eu vou repetir a sessão inteira".
+                */}
+                <button
+                  type="button"
+                  onClick={handleSalvarTesteComoMacro}
+                  title={`Salvar "${rotuloDoTeste()}" nos macros`}
+                  aria-label={`Salvar ${rotuloDoTeste()} nos macros`}
+                  className="flex w-11 shrink-0 items-center justify-center rounded-lg border border-parchment-300 text-parchment-600 transition-colors hover:border-gold-400 hover:text-gold-600 dark:border-parchment-700 dark:text-parchment-300 dark:hover:text-gold-400"
+                >
+                  <Star className="h-4 w-4" />
+                </button>
+              </div>
             </section>
 
             <section className="mb-5">
@@ -574,7 +628,13 @@ export default function DiceRoller() {
                           <Star className="h-3 w-3 shrink-0 text-gold-500" />
                           <span className="truncate">{macro.label}</span>
                         </span>
-                        <span className="shrink-0 text-2xs text-parchment-400 dark:text-parchment-500">{macro.formula}</span>
+                        <span className="shrink-0 text-2xs text-parchment-400 dark:text-parchment-500">
+                          {macro.tipo === "teste"
+                            ? `d20 ${macro.modificador >= 0 ? "+" : ""}${macro.modificador}${
+                                macro.modo === "normal" ? "" : ` · ${ADVANTAGE_LABELS[macro.modo]}`
+                              }`
+                            : macro.formula}
+                        </span>
                       </button>
                       <button
                         type="button"

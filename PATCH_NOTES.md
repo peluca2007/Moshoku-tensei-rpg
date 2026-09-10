@@ -5,6 +5,29 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.21 — "O Atalho Que Faltava" · 2026-09-10
+
+### ⭐ Macro agora guarda Teste, e não só dano
+
+Os macros do rolador só sabiam guardar **fórmula de dano** — "Bola de Fogo → 2d10+5". Metade do que se
+repete numa sessão é o outro lado: *Furtividade com Vantagem*, *resistir ao veneno*, *iniciativa*.
+Tudo d20 com um modificador e um modo de vantagem, e nada disso cabia numa fórmula de dados.
+
+Agora há uma **estrela ao lado do "Rolar 1d20"** que guarda o teste como ele está: o nome que o
+próprio rolador já dava, o modificador e o modo de vantagem. Um toque pra salvar, um toque pra
+repetir a sessão inteira.
+
+- **Macro de teste rola d20 de verdade, com crítico.** Se caísse na rolagem de dano, um 20 natural
+  viraria só mais um número.
+- **Guarda o modificador já somado**, e não a fonte que o produziu. Macro é atalho de mesa, não
+  pedaço de ficha: guardar "Ataque Mágico de Fogo" faria o atalho mentir no dia em que o personagem
+  subisse de rank — ou ao ser usado com outro personagem do roster.
+- **O que já estava salvo continua ali**, como macro de dano. Macro que some sem explicação é
+  indistinguível de defeito; e um registro sem fórmula é descartado em vez de virar um botão que rola
+  zero.
+
+---
+
 ## 0.1.20 — "Um Toque, e Foi" · 2026-09-10
 
 ### 📲 Passar a ficha adiante virou um toque
