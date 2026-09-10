@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.21. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.35. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -50,24 +50,37 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    - **Punho do Fogo:** com Sobrecarga sempre a 3 de Calor, alguma técnica ficou barata demais? A
      suspeita é a Coroa Solar, que dispara uma vez por turno e antes custava 2.
 
+8. **Duas perguntas de balanceamento que a 0.1.35 abriu.** O simulador foi consertado em dois pontos
+   (a CA não era consultada por técnica nenhuma; a IA não contava os Dados de Arma ao escolher), e o
+   playtest mudou de dono. Duas linhas agora precisam do seu julgamento — o script mede, ele não
+   decide:
+   - **A Mara é a maior causadora de dano do jogo.** Cavalaria e Escudos está descrita como *"protege,
+     não mata"* e terminou o playtest com 95 de dano por batalha e 93% de sobrevivência — à frente do
+     Deus da Espada em dano E em sobrevivência. Ou a descrição está errada, ou o Golpe de Escudo
+     Soberano está.
+   - **O Vento desabou de 53 pra 19.** As técnicas da Iri custam **duas Ações**, e a conta certa
+     mostra que duas Ações quase nunca compensam contra três golpes de uma. Isso não é um problema da
+     Iri: é uma pergunta sobre o custo de 2 Ações no sistema inteiro. Se nenhuma técnica de 2 Ações
+     compensa, ou elas estão fracas ou a economia de 3 Ações por turno precisa de outra coisa.
+
 ## Site
 
-8. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
+9. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
    `check:offline` prova a parte que dá pra provar: as 16 rotas abrem com o servidor morto, em F5 e
    em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
    "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
    nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
    um Android e um iPhone.
 
-9. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
-   tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
-   de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
-   preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
-   moldura vazia no lugar dos retratos.
+10. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+    tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
+    de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
+    preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
+    moldura vazia no lugar dos retratos.
 
-   Fechar isso exigiria uma lista de todos os arquivos de `public/`, mantida à mão ou gerada por mais
-   um passo de build — uma lista que envelhece calada, e cujo sintoma é exatamente o que ela deveria
-   evitar. Antes de pagar esse preço, vale medir se alguém repara.
+    Fechar isso exigiria uma lista de todos os arquivos de `public/`, mantida à mão ou gerada por mais
+    um passo de build — uma lista que envelhece calada, e cujo sintoma é exatamente o que ela deveria
+    evitar. Antes de pagar esse preço, vale medir se alguém repara.
 
 ## Acertado com o autor, ainda não feito
 

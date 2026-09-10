@@ -27,7 +27,8 @@ import {
   SIMPLIFICACOES,
   d20,
   makeRng,
-  mediaDados,
+  danoEsperado,
+  escolherAcao,
   montarFicha,
   novoEstado,
   tickChamas,
@@ -215,18 +216,49 @@ BUILDS.forEach(({ c, descricao }, i) => {
   );
 });
 
+/**
+ * O alvo de referência da tabela de dano por turno.
+ *
+ * "Dano por turno" só existe CONTRA alguém: a chance de errar depende da CA do
+ * outro. A CA 15 é a do molde de 3º patamar do Apêndice G — o meio da tabela —,
+ * e está escrita aqui em vez de escondida na conta pra que ninguém leia a
+ * coluna como um número absoluto.
+ */
+const BONECO_DE_REFERENCIA: Alvo = {
+  nome: "referência (CA 15)",
+  pv: 1,
+  ca: 15,
+  vivo: true,
+  molhado: false,
+  emChamas: 0,
+  quebrantado: 0,
+  preso: false,
+  caido: false,
+  envenenado: false,
+  reacaoDisponivel: false,
+  danoCausado: 0,
+};
+
 console.log("\n" + "─".repeat(78));
-console.log("  DANO MÉDIO POR TURNO (3 Ações, melhor ação disponível)");
+console.log("  DANO MÉDIO POR TURNO (3 Ações, melhor ação, contra CA 15)");
 console.log("─".repeat(78));
+/*
+ * A escolha vem de `escolherAcao`, e não de uma conta própria daqui.
+ *
+ * Esta tabela tinha a sua: dano médio dos dados por Ação, ignorando Dados de
+ * Arma e bônus fixo. Enquanto a IA usava o mesmo critério, as duas concordavam
+ * por acidente. Na 0.1.35 a IA passou a escolher por dano ESPERADO — com Dados
+ * de Arma, bônus e chance de errar — e esta tabela passaria a anunciar uma ação
+ * que a simulação não usa. Uma tabela que mente sobre a batalha logo abaixo é
+ * pior que tabela nenhuma.
+ */
 for (const f of FICHAS) {
-  const melhor = f.acoes.length
-    ? f.acoes.reduce((m, a) => (mediaDados(a.dano) / a.acoes > mediaDados(m.dano) / m.acoes ? a : m))
-    : f.ataqueBasico;
-  const bonus = melhor.nome === "arma simples" ? f.bcSemRank : f.bc;
-  const porTurno = (mediaDados(melhor.dano) + bonus) * Math.floor(3 / melhor.acoes);
+  const estado = novoEstado(f);
+  const melhor = escolherAcao(estado, 3, BONECO_DE_REFERENCIA);
+  const porTurno = danoEsperado(estado, melhor, BONECO_DE_REFERENCIA) * Math.floor(3 / melhor.acoes);
   console.log(
     f.nome.padEnd(8) +
-      melhor.nome.padEnd(24) +
+      melhor.nome.padEnd(26) +
       `${melhor.acoes} Ação/ões`.padEnd(12) +
       `média ${Math.round(porTurno)}/turno`
   );

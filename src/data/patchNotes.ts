@@ -25,8 +25,23 @@ export const PATCH_NOTES: PatchNote[] = [
         items: [
           "O simulador decide se uma técnica rola ataque (e portanto pode ERRAR) procurando frases como \"Ataque mágico à distância\" no texto dela. Ele procurava no campo errado: lia a fórmula de dano, e a frase mora na descrição do efeito. Medido: ZERO das 122 ações do livro inteiro rolavam ataque. Todas caíam no ramo de teste de resistência, que não consulta a CA do alvo e garante metade do dano mesmo quando o alvo passa no teste.",
           "Ou seja: a Classe de Armadura era decoração em toda simulação que este projeto já rodou, e toda técnica de dano acertava sempre. Dezessete técnicas voltaram a poder errar — quatro de Fogo, quatro de Água, cinco do Vendaval, duas de Vento, duas de Terra, e uma cada de Deus da Água, Deus do Norte e Armas Pesadas.",
-          "O playtest das dez builds mudou de lugar: Vex (Deus da Espada) caiu de 94 pra 83 de dano por batalha e de 45% pra 36% de sobrevivência — ele era o maior beneficiado por nunca errar. Kest (Fogo) subiu de 23 pra 29 e Borg (Deus do Norte) de 54 pra 62, porque as técnicas deles agora causam dano CHEIO quando acertam, em vez de metade garantida. A vitória do Time B ficou onde estava (97%), e a tabela de chefes não se mexeu.",
           "A rede não foi alargada além do necessário: incluir \"ataque corpo a corpo\" pegaria mais duas técnicas certas e uma errada — a Devolver, do Deus da Água, cuja frase descreve o ataque DO INIMIGO que dispara a Reação.",
+        ],
+      },
+      {
+        heading: "A IA sabia resolver e não sabia escolher",
+        items: [
+          "O mesmo erro tinha um irmão na outra ponta do arquivo. QUINZE técnicas do livro multiplicam o dado da arma (\"+2 Dados de Arma\", \"Dado de arma rolado cinco vezes\") em vez de trazer dados próprios — entre elas CINCO das seis ações de dano do Deus da Espada, que o livro chama de maior dano do jogo. A RESOLUÇÃO sempre as rolou; a IA que ESCOLHE contava zero nelas e preferia qualquer outra coisa.",
+          "A escolha passou a ser por dano ESPERADO contra o alvo da vez: dados próprios, mais Dados de Arma, mais o bônus fixo, tudo multiplicado pela chance real de acertar aquela CA. Nenhuma regra nova — é a mesma aritmética que o motor já executava com os dados na mão, só que agora a decisão a conhece. Um teste roda oito mil resoluções e compara com a previsão: as duas contas não podem mais divergir em silêncio.",
+          "A tabela de dano por turno do relatório também tinha a conta dela, e agora chama a mesma função do motor. Ela ganhou uma coluna implícita que faltava: \"contra CA 15\" — porque dano por turno só existe contra alguém.",
+        ],
+      },
+      {
+        heading: "O playtest mudou de dono",
+        items: [
+          "Vex (Deus da Espada) caiu de 94 pra 69 de dano por batalha e de 45% pra 28% de sobrevivência. Ele era o maior beneficiado por nunca errar, e é quem mais perde quando a CA volta a existir — mesmo ganhando os Dados de Arma que a IA agora enxerga (o golpe dele subiu de 21 pra 35 por turno).",
+          "Mara (Cavalaria e Escudos) virou a MAIOR causadora de dano do playtest, com 95 por batalha e 93% de sobrevivência. A build está descrita como \"protege, não mata\", e o simulador discorda em toda linha. Isso é balanceamento pra olhar, não um número pra comemorar.",
+          "Borg (Deus do Norte) subiu de 54 pra 81 e Gorr (Armas Pesadas) de 67 pra 79. Iri (Vento) desabou de 53 pra 19 — as técnicas dela custam duas Ações, e a conta certa mostra que duas Ações raramente compensam. A vitória do Time B caiu de 97% pra 93%, e a tabela de chefes não se mexeu em nenhuma linha.",
         ],
       },
       {
@@ -34,8 +49,8 @@ export const PATCH_NOTES: PatchNote[] = [
         items: [
           "Das cinco condições que o motor declarava não modelar, Quebrantado era a única puramente numérica: cada acúmulo tira 1 da CA e 1 do dano de quem o carrega, até o teto do Bônus de Rank de quem aplicou. As outras quatro (Atolado, Desequilibrado, Marcado, Soterrado) são sobre movimento e posição, e este motor não tem mapa.",
           "Custo da ausência: as treze citações de Quebrantado no livro inteiro são de UMA árvore, Armas Pesadas, cuja mecânica central é justamente empilhá-los — e o playtest tem uma build chamada \"Lutador — empilha Quebrantado\". A simulação lia esses acúmulos como texto decorativo.",
-          "O motor lê os acúmulos da prosa da técnica, que é uma exceção deliberada à regra dele de só ler campos estruturados. Isso só é seguro porque a condição é de uma árvore só e nenhuma técnica do livro a REMOVE — e agora existe um teste que quebra no dia em que qualquer uma dessas duas coisas deixar de ser verdade.",
-          "Declaração honesta do resultado: ligar ou desligar Quebrantado não muda NADA no playtest das dez builds. A IA escolhe sempre a ação de maior dano bruto, e as técnicas que empilham acúmulos raramente são essas. A mecânica está correta e testada; quem vai colhê-la é o jogador na mesa, não o robô. Isso está escrito nas simplificações que a tela de encontros imprime.",
+          "O motor lê os acúmulos da prosa da técnica, exceção deliberada à regra dele de só ler campos estruturados. Isso só é seguro porque a condição é de uma árvore só e nenhuma técnica do livro a REMOVE — e agora existe um teste que quebra no dia em que qualquer uma dessas duas coisas deixar de ser verdade.",
+          "Declaração honesta: ligar ou desligar Quebrantado não muda um número do playtest. A IA continua sem dar valor a condição — ela escolhe pelo dano, e as técnicas que empilham acúmulos raramente são as de maior dano. A mecânica está correta e testada; quem vai colhê-la é o jogador na mesa. Uma IA que enxergue o valor de uma condição é a próxima melhoria de verdade do motor, e está anotada no PROGRESS.",
         ],
       },
     ],

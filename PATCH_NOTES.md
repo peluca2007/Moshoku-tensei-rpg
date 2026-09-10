@@ -22,24 +22,54 @@ técnica de dano acertava sempre. Dezessete técnicas voltaram a poder errar —
 de Água, cinco do Vendaval, duas de Vento, duas de Terra, e uma cada de Deus da Água, Deus do Norte e
 Armas Pesadas.
 
-**O playtest das dez builds mudou de lugar:**
-
-| Ficha | Dano/batalha | Sobreviveu |
-| ----- | ------------ | ---------- |
-| Vex (Deus da Espada) | 94 → **83** | 45% → **36%** |
-| Iri (Vento) | 53 → **62** | 72% → **67%** |
-| Borg (Deus do Norte) | 54 → **62** | 0% → 0% |
-| Kest (Fogo) | 23 → **29** | 0% → 1% |
-| Sera (Cura) | 17 → **20** | 3% → 3% |
-| Gorr (Armas Pesadas) | 67 → **66** | 90% → **85%** |
-
-Vex era o maior beneficiado por nunca errar, e é quem mais perde. Kest e Borg **sobem**, porque as
-técnicas deles agora causam dano CHEIO quando acertam, em vez de metade garantida. A vitória do Time
-B ficou onde estava (97%) e a tabela de chefes não se mexeu.
-
 A rede não foi alargada além do necessário: incluir *"ataque corpo a corpo"* pegaria mais duas
 técnicas certas e uma errada — a **Devolver**, do Deus da Água, cuja frase descreve o ataque DO
 INIMIGO que dispara a Reação.
+
+### 🧠 A IA sabia resolver e não sabia escolher
+
+O mesmo erro tinha um irmão na outra ponta do arquivo. **Quinze técnicas do livro** multiplicam o
+dado da arma (*"+2 Dados de Arma"*, *"Dado de arma rolado cinco vezes"*) em vez de trazer dados
+próprios — entre elas **cinco das seis ações de dano do Deus da Espada**, que o livro chama de maior
+dano do jogo. A **resolução** sempre as rolou; a IA que **escolhe** contava zero nelas e preferia
+qualquer outra coisa.
+
+A escolha passou a ser por **dano esperado contra o alvo da vez**: dados próprios, mais Dados de
+Arma, mais o bônus fixo, tudo multiplicado pela chance real de acertar aquela CA. Nenhuma regra nova
+— é a mesma aritmética que o motor já executava com os dados na mão, só que agora a decisão a
+conhece. Um teste roda **oito mil resoluções** e compara com a previsão: as duas contas não podem
+mais divergir em silêncio.
+
+A tabela de dano por turno do relatório também tinha a conta dela, e agora chama a mesma função do
+motor. Ela ganhou a coluna que faltava: **"contra CA 15"** — porque dano por turno só existe contra
+alguém.
+
+### 📉 O playtest mudou de dono
+
+| Ficha | Dano/batalha | Sobreviveu |
+| ----- | ------------ | ---------- |
+| **Mara** (Escudos) | 67 → **95** | 97% → 93% |
+| **Borg** (Deus do Norte) | 54 → **81** | 0% → 2% |
+| **Gorr** (Armas Pesadas) | 67 → **79** | 90% → 72% |
+| **Vex** (Deus da Espada) | 94 → **69** | 45% → **28%** |
+| Kest (Fogo) | 23 → 33 | 0% → 2% |
+| Dorn (Terra) | 19 → 31 | 1% → 7% |
+| Sera (Cura) | 17 → 31 | 3% → 7% |
+| Lyn (Arquearia) | 22 → 29 | 93% → 80% |
+| **Iri** (Vento) | 53 → **19** | 72% → 47% |
+| Elina (Água) | 5 → 8 | 0% → 0% |
+
+**Vex era o maior beneficiado por nunca errar**, e é quem mais perde quando a CA volta a existir —
+mesmo ganhando os Dados de Arma que a IA agora enxerga (o golpe dele subiu de 21 pra 35 por turno).
+
+**Mara virou a maior causadora de dano do playtest.** A build está descrita como *"protege, não
+mata"*, e o simulador discorda em toda linha. Isso é balanceamento pra olhar, não número pra
+comemorar.
+
+**Iri desabou.** As técnicas dela custam duas Ações, e a conta certa mostra que duas Ações raramente
+compensam contra três golpes de uma.
+
+A vitória do Time B caiu de 97% pra 93%, e a **tabela de chefes não se mexeu em nenhuma linha**.
 
 ### 🔨 Quebrantado entrou na simulação
 
@@ -57,11 +87,11 @@ estruturados. Isso só é seguro porque a condição é de uma árvore só e **n
 REMOVE** — e agora existe um teste que quebra no dia em que qualquer uma dessas duas coisas deixar de
 ser verdade.
 
-**Declaração honesta do resultado:** ligar ou desligar Quebrantado **não muda nada** no playtest das
-dez builds. A IA escolhe sempre a ação de maior dano bruto, e as técnicas que empilham acúmulos
-raramente são essas. A mecânica está correta e testada; quem vai colhê-la é o jogador na mesa, não o
-robô. Isso está escrito nas simplificações que a tela de encontros imprime — e é a próxima coisa que
-vale a pena melhorar no motor.
+**Declaração honesta:** ligar ou desligar Quebrantado **não muda um número** do playtest. A IA
+continua sem dar valor a condição — ela escolhe pelo dano, e as técnicas que empilham acúmulos
+raramente são as de maior dano. A mecânica está correta e testada; quem vai colhê-la é o jogador na
+mesa. Uma IA que enxergue o valor de uma condição é a próxima melhoria de verdade do motor, e está
+anotada no `PROGRESS.md`.
 
 ---
 
