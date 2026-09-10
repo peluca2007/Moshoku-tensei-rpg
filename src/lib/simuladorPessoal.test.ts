@@ -103,3 +103,38 @@ describe("o resultado responde à pergunta que a tela faz", () => {
     expect(r.pvRestante).toBeLessThanOrEqual(1);
   });
 });
+
+/*
+ * O comparador de builds (0.1.30) apoia-se em duas promessas, e as duas são
+ * verificáveis aqui: o alvo é o MESMO e a semente é a MESMA, então qualquer
+ * diferença entre os dois resultados veio da build — não do dado nem do
+ * inimigo.
+ */
+describe("comparar duas builds contra o mesmo alvo", () => {
+  const alvo = () => criaturaDoMolde(3, "padrao", "Alvo padrão", "cmp_alvo");
+  const OPCOES_CMP = { batalhas: 400, semente: 20260910 };
+
+  it("a mesma build dos dois lados dá exatamente o mesmo número", () => {
+    const a = simularEncontro([heroi(1, 3)], [alvo()], OPCOES_CMP);
+    const b = simularEncontro([heroi(1, 3)], [alvo()], OPCOES_CMP);
+    expect(a).toEqual(b);
+  });
+
+  it("builds diferentes dão números diferentes — senão a comparação não compara nada", () => {
+    const fraca = simularEncontro([heroi(1, 1)], [alvo()], OPCOES_CMP);
+    const forte = simularEncontro([heroi(2, 5)], [alvo()], OPCOES_CMP);
+    expect(forte.vitorias).not.toBe(fraca.vitorias);
+    expect(forte.vitorias).toBeGreaterThan(fraca.vitorias);
+  });
+
+  /*
+   * O alvo do comparador é o molde CRU, sem ações próprias. É essa ausência que
+   * o faz gastar o orçamento de dano do patamar inteiro todo turno — a
+   * "criatura média" contra a qual a régua do livro foi calibrada. Uma criatura
+   * com truques mediria quão bem cada build responde àquele truque.
+   */
+  it("o molde do comparador não tem ação própria", () => {
+    expect(alvo().acoes).toEqual([]);
+    expect(alvo().danoPorTurno).toBeGreaterThan(0);
+  });
+});

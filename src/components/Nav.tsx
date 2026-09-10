@@ -29,7 +29,9 @@ const LINKS = [
   { href: "/encontros", label: "Encontros" },
   { href: "/mestre", label: "Mestre" },
   { href: "/loja", label: "Loja" },
-  { href: "/livro", label: "Livro de Regras" },
+  // "Livro" e não "Livro de Regras": com dez destinos na barra, o rótulo longo
+  // era o que empurrava a Busca pra fora da tela em telas de ~900px.
+  { href: "/livro", label: "Livro" },
   { href: "/busca", label: "Busca" },
 ];
 
