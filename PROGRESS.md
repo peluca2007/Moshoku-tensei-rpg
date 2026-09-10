@@ -91,25 +91,40 @@ Só o que ainda não foi feito. A lista curta do que já estava combinado com o 
 
 ## Backlog
 
+**Auditado item a item em 2026-09-10.** Quatro entradas desta lista descreviam coisas que já estavam
+feitas — uma delas me custou duas investigações no mesmo dia. O que sobrou abaixo foi conferido
+contra o código na data acima; o que saiu está registrado no fim da seção, porque uma lista que só
+encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
+
 - Sincronização em tempo real (WebSocket) para jogar online com a ficha atualizando ao vivo.
-- ~~Rank Deus do Estilo Vendaval~~ — **entrada errada, encerrada em 2026-09-10**: o Vendaval TEM o
-  quadro, e as três do Corpo (Espada, Água, Norte) têm o CAMINHO de ascensão em `GODHOOD_PATH`, que o
-  livro imprime. Nenhuma árvore está sem patamar Divino escrito, e `src/data/rankDeus.test.ts` agora
-  reprova o dia em que uma ficar.
-- Bestiário: falta uma criatura de 6º patamar ("Ancião Demônio Esquecido", conceito esboçado). Agora ela
-  nasceria já com ações escritas, como as outras seis.
-- Criatura montada em `/encontros`: exportar/importar (o empacotador do `.mtficha` já serve), e um
-  retrato no cartão dela — a infraestrutura de imagem da ficha já cobre tudo menos o campo.
-- As ações de criatura não aplicam condição (Preso, Caído, Molhado) na simulação — a condição fica como
-  texto na `nota`. É a mesma dívida das `SIMPLIFICACOES` do motor.
+- Bestiário: falta uma criatura de 6º patamar ("Ancião Demônio Esquecido", conceito esboçado). As
+  seis prontas vão do 1º ao 5º. Agora ela nasceria já com ações escritas, como as outras.
 - Não há Reação nem ação de Chefe (lendária) fora do turno: a rodada extra do chefe continua sendo a
-  única economia de ação que o motor conhece.
-- A foto do personagem não entra em `/criar` — as três vias terminam sem perguntar por ela.
-- Universidade de Ranoa como 4ª facção de Reputação.
-- Magias inatas de raça (ex: Howling da Raça Fera) só existem como texto no card de passivas, não como
-  habilidade de verdade no Grimório.
-- PDF via Typst: revisão visual fina (densidade dos cards, Deslocamento refletindo raça, BC em multiclasse).
+  única economia de ação que o motor conhece — e ela está declarada em `SIMPLIFICACOES`.
+- **Cinco condições fora da simulação**: Atolado, Desequilibrado, Quebrantado, Marcado e Soterrado,
+  que são a mecânica central de cinco árvores. Três delas (Atolado, Desequilibrado, Soterrado) são
+  sobre movimento e posição, que o motor não modela por decisão declarada; **Quebrantado é a única
+  puramente numérica**, e desde a 0.1.24 a regra dele já existe em `selectors.ts` — é a candidata
+  natural se alguém for mexer aqui.
+- Universidade de Ranoa como 4ª facção de Reputação. As três atuais (Reino Asura, Igreja de Millis,
+  Deuses Demônios) têm cinco degraus escritos cada; a quarta precisa dos cinco também.
+- Magias inatas de raça (ex: Howling da Raça Fera) só existem como texto em `traits`, não como
+  habilidade de verdade no Grimório — não dá pra rolar nem pra contar no dano por turno.
+- PDF via Typst: revisão visual fina (densidade dos cards, Deslocamento refletindo raça, BC em
+  multiclasse).
 - Tradução PT-BR / EN.
+
+### Saíram daqui em 2026-09-10, porque já estavam feitas
+
+- ~~"As ações de criatura não aplicam condição na simulação"~~ — **aplicam**. `resolverAcaoCriatura`
+  aplica Preso, Caído, Molhado e Envenenado, e os quatro afetam as rolagens dos dois lados. A própria
+  lista de `SIMPLIFICACOES` já dizia isso corretamente enquanto o backlog dizia o contrário.
+- ~~"Criatura de /encontros: exportar/importar, e um retrato no cartão"~~ — **as duas existem**:
+  `criaturaArquivo.ts` e `criaturaLink.ts` desde a 0.1.13, e o campo `portrait` com upload no cartão.
+- ~~"A foto do personagem não entra em /criar"~~ — **entra nas três vias**. Manual, Roleta e
+  Entrevista todas montam o `ImagemDaFicha`.
+- ~~"Macros de Teste no DiceRoller"~~ — feito na 0.1.21, com migração da store.
+- ~~"Rank Deus do Vendaval"~~ — ele tem o quadro; ver a seção de correções do `O-QUE-FALTA.md`.
 
 ---
 
