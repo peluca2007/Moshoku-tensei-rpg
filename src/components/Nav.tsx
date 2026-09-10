@@ -27,6 +27,7 @@ const LINKS = [
   { href: "/personagens", label: "Personagens" },
   { href: "/iniciativa", label: "Iniciativa" },
   { href: "/encontros", label: "Encontros" },
+  { href: "/mestre", label: "Mestre" },
   { href: "/loja", label: "Loja" },
   { href: "/livro", label: "Livro de Regras" },
   { href: "/busca", label: "Busca" },

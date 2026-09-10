@@ -84,10 +84,10 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:redundancia` | Acha habilidades que repetem um patamar anterior |
 | `npm run check:arvores` | Audita as 19 árvores contra a régua do Apêndice C e acusa quem sai da faixa |
 | `npm run check:texto` | Lê o TEXTO das 592 habilidades contra os campos delas e acusa contradição |
-| `npm run check:contraste` | Mede o contraste das 14 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
+| `npm run check:contraste` | Mede o contraste das 15 rotas nos 2 temas contra o WCAG AA (precisa de `npm run dev`) |
 | `npm run check:mobile` | Procura transbordo horizontal de 320px a 414px (precisa de `npm run dev`) |
 | `npm run check:a11y` | Controle sem nome, campo sem rótulo, hierarquia de cabeçalho (precisa de `npm run dev`) |
-| `npm run check:offline` | Abre as 17 rotas **com o servidor morto** (precisa de `npm run build`; sobe e mata o próprio `next start`) |
+| `npm run check:offline` | Abre as 18 rotas **com o servidor morto** (precisa de `npm run build`; sobe e mata o próprio `next start`) |
 | `npx tsx scripts/simular-combate.mts` | Playtest automatizado: builds de mesmo orçamento de PA se batendo |
 | `node scripts/logo-sem-fundo.mjs` | Regera `public/logo-real-alfa.png` a partir de `assets-fonte/` |
 | `node scripts/gerar-favicon.mjs` | Regera o favicon e os três ícones do PWA a partir de `assets-fonte/` |
@@ -116,6 +116,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `/arvores` | Mapa radial de progressão (Destiny Board), pan/zoom |
 | `/loja` | Loja da Guilda — 85 itens, filtro por Tipo × Rank de Guilda |
 | `/iniciativa` | Tracker de iniciativa |
+| `/mestre` | **Painel do Mestre** — as fichas do grupo lado a lado: PV, CA, recursos, condições e o maior golpe de cada um |
 | `/encontros` | Construtor de NPCs/monstros/chefes: ações próprias, conselho ao vivo contra o PV/CA do grupo, e simulação contra as fichas de verdade |
 | `/personagens` | Roster de fichas salvas |
 | `/busca` | Busca global nos 879 verbetes — nome **e** texto da regra, resultado abrindo o card completo na hora |
