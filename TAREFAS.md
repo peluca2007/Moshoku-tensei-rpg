@@ -10,6 +10,28 @@ ponta a ponta, e o que o sistema de RPG ainda não faz.
 
 ---
 
+## Estado em 2026-09-10, de madrugada
+
+**Sete feitas** (2, 3, 5, 6, 7, 8, 9), em seis versões: da 0.1.17 à 0.1.22. **Uma** (1) teve a causa
+provável corrigida e espera o iPhone do seu amigo pra fechar.
+
+O que sobrou **não é falta de tempo — é falta de você**, e vale saber por quê antes de retomar:
+
+| Task | O que trava |
+| --- | --- |
+| 1 | Precisa do iPhone do amigo pra confirmar qual dos dois suspeitos era |
+| 4 (QR) | Não dá pra **verificar** um QR sem uma câmera. Um QR que desenha mas não lê é exatamente a "funcionalidade que mente" que a própria task manda evitar — e ainda pede uma dependência nova no `package.json` |
+| 14 | O PDF do Typst **já é A4 e desenhado**; o que falta é decidir o que CORTAR pra virar uma folha, e isso é escolha de autor |
+| 19 | Escrever regra nova no livro é sua voz, não minha |
+| 20 | Precisa de meia hora de NVDA com ouvido humano |
+| 21 | Esbarra num modelo de dado que só você decide (ver a task) |
+| 10–13, 15–18 | São as de **maior impacto**, e você pediu pra deixar pra validar |
+
+Nada foi implementado pela metade pra parecer progresso. Onde parei, está escrito por quê.
+
+
+---
+
 ## Compartilhar ficha — o que o autor relatou
 
 ### 1. 🔒 Corrigir o link de ficha que não abre no iPhone — *causa provável tratada na 0.1.19*
