@@ -131,10 +131,16 @@ export function usaAcoes(c: CriaturaEncontro): boolean {
 /**
  * O turno da criatura montado a partir das ações dela, gulosamente.
  *
- * Mesma regra que o motor já aplica ao personagem (`escolherAcao`): gasta as
- * três Ações no melhor dano médio POR AÇÃO que couber no que sobrou. Não é uma
- * tática — é a única escolha que não precisa ser inventada, e é a mesma dos
- * dois lados da mesa, o que mantém a comparação honesta.
+ * Gasta as três Ações no melhor dano médio POR AÇÃO que couber no que sobrou.
+ * Não é uma tática — é a única escolha que não precisa ser inventada.
+ *
+ * Aqui o critério é o dano MÉDIO, e não o dano esperado que `escolherAcao`
+ * passou a usar na 0.1.35, porque este plano é montado SEM alvo: quem o chama
+ * de verdade é `danoDasAcoesPorRodada`, cuja grandeza tem que ser pré-acerto
+ * pra ser comparável com a coluna "Dano por Turno" do Apêndice G. Descontar a
+ * chance de acertar aqui faria toda criatura montada na tela parecer fraca ao
+ * lado das do livro. A assimetria é deliberada; a comparação que ela protege
+ * está explicada em `danoDasAcoesPorRodada`, logo abaixo.
  */
 export function planoDoTurno(c: CriaturaEncontro, acoesDisponiveis = ACOES_POR_TURNO): AcaoCriatura[] {
   const ofensivas = acoesOfensivas(c);

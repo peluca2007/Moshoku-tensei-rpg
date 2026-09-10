@@ -104,11 +104,13 @@ encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
 - **Quatro condições fora da simulação**: Atolado, Desequilibrado, Marcado e Soterrado. As quatro
   são sobre movimento, alcance e posição, e o motor não tem mapa — modelá-las exigiria dar ao
   simulador uma noção de distância que ele nunca teve. Quebrantado saiu desta lista na 0.1.35.
-- **A IA do simulador não dá valor a condição**, só a dano bruto por Ação. É por isso que
-  Quebrantado, já modelado, não move um número sequer no playtest das dez builds: as técnicas que
-  empilham acúmulos quase nunca são as de maior dano, e a IA nunca as escolhe. Uma IA que enxergasse
-  o valor de uma condição é a próxima melhoria de verdade do motor — e é ela que decide se Armas
-  Pesadas está fraca ou se é só o robô que não sabe jogar de Armas Pesadas.
+- **A IA do simulador não dá valor a condição.** Ela escolhe pelo dano ESPERADO contra o alvo da vez
+  — desde a 0.1.35 com Dados de Arma, bônus fixo e chance de errar na conta —, e o valor de um
+  acúmulo continua fora dela. É por isso que Quebrantado, já modelado, não move um número sequer no
+  playtest das dez builds: as técnicas que empilham acúmulos quase nunca são as de maior dano, e a IA
+  nunca as escolhe. Uma IA que enxergasse o valor de uma condição é a próxima melhoria de verdade do
+  motor — e é ela que decide se Armas Pesadas está fraca ou se é só o robô que não sabe jogar de
+  Armas Pesadas.
 - Universidade de Ranoa como 4ª facção de Reputação. As três atuais (Reino Asura, Igreja de Millis,
   Deuses Demônios) têm cinco degraus escritos cada; a quarta precisa dos cinco também.
 - Magias inatas de raça (ex: Howling da Raça Fera) só existem como texto em `traits`, não como

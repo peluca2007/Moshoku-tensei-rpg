@@ -286,10 +286,11 @@ export function acoesDe(c: CharacterData): Acao[] {
       pt: a.ptCost ?? 0,
       dano: a.damage.normal,
       // "+1 Dado de Arma", "+2 Dados de Arma", "Dado de arma rolado quatro vezes":
-      // oito técnicas do livro multiplicam o dado da arma em vez de trazer dados
-      // próprios. Sem isto o Deus da Espada — que o livro chama de maior dano do
-      // jogo — aparecia em quarto lugar, porque metade das técnicas dele soma
-      // zero na conta.
+      // QUINZE técnicas do livro multiplicam o dado da arma em vez de trazer
+      // dados próprios — medido em 2026-09-10, espalhadas por cinco árvores.
+      // Sem isto o Deus da Espada — que o livro chama de maior dano do jogo —
+      // aparecia em quarto lugar, porque CINCO das seis ações de dano dele
+      // somam zero na conta.
       dadosDeArma: (() => {
         const m = a.damage.normal.match(/\+\s*(\d+)\s+Dados? de Arma/i);
         if (m) return Number(m[1]);
@@ -440,12 +441,73 @@ export function rankDaFicha(c: CharacterData): RankName | null {
 // Resolução
 // ---------------------------------------------------------------------------
 
-/** Melhor ação que cabe nas Ações e recursos restantes, por dano médio por Ação. */
-export function escolherAcao(e: EstadoPersonagem, acoesRestantes: number): Acao {
+/**
+ * Dano ESPERADO de uma ação contra um alvo — 0.1.35.
+ *
+ * A IA escolhia pelo dano médio dos dados, que é o dano quando tudo dá certo.
+ * Desde que as dezessete técnicas de ataque do livro voltaram a poder ERRAR,
+ * esse número passou a mentir na direção delas: uma magia de ataque de 30 de
+ * dado vale menos que uma de resistência de 25, porque a primeira pode não
+ * causar nada e a segunda causa metade até quando o alvo passa no teste.
+ *
+ * Não há regra nova inventada aqui. Cada linha abaixo é a probabilidade da
+ * mesma conta que `resolver` faz com os dados na mão — se aquela mudar, esta
+ * tem que mudar junto.
+ */
+export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): number {
+  const bonus = a.nome === "arma simples" ? e.ficha.bcSemRank : e.ficha.bc;
+
+  /*
+   * O dano bruto é montado exatamente como `resolver` monta o dele: dados
+   * próprios, MAIS os Dados de Arma multiplicados, MAIS o bônus fixo.
+   *
+   * Os Dados de Arma eram o buraco. `mediaDados` só enxerga `NdM`, e QUINZE
+   * técnicas do livro multiplicam o dado da arma em vez de trazer dados
+   * próprios — inclusive CINCO das seis ações de dano do Deus da Espada, que o
+   * livro chama de maior dano do jogo. `resolver` sempre as rolou; a IA que
+   * ESCOLHE contava zero nelas e preferia qualquer outra coisa. Foi o mesmo
+   * erro da rolagem de ataque, na outra ponta do mesmo arquivo: a resolução
+   * certa e a decisão cega.
+   */
+  const bruto =
+    mediaDados(a.dano) + a.dadosDeArma * mediaDados(e.ficha.ataqueBasico.dano) + bonus;
+
+  if (!alvo) return bruto;
+
+  if (a.ataque) {
+    // O d20 acerta quando `rolagem + bonus >= ca`; o 20 sempre acerta e dobra
+    // os dados, o 1 sempre erra. Daí o piso e o teto de 5%.
+    const ca = Math.max(1, alvo.ca - alvo.quebrantado);
+    const precisa = ca - bonus;
+    const chance = Math.min(0.95, Math.max(0.05, (21 - precisa) / 20));
+    // O crítico (5% do d20) soma UMA rolagem a mais dos dados PRÓPRIOS da ação
+    // — não do bônus fixo nem dos Dados de Arma. É o que `resolver` faz, e a
+    // diferença aparece justamente nas técnicas de Dado de Arma, onde o bruto é
+    // várias vezes maior que os dados próprios.
+    return chance * bruto + 0.05 * mediaDados(a.dano);
+  }
+
+  // Ramo de resistência: metade quando o alvo passa. A CD e o bônus de quem
+  // resiste saem os dois do BC do atacante, como em `resolver` — o motor não
+  // guarda atributo de alvo.
+  const cd = 8 + e.ficha.bc;
+  const bonusDoAlvo = Math.ceil(e.ficha.bc / 2);
+  const passa = Math.min(0.95, Math.max(0.05, (21 - (cd - bonusDoAlvo)) / 20));
+  return bruto * (1 - passa / 2);
+}
+
+/**
+ * Melhor ação que cabe nas Ações e recursos restantes, por dano ESPERADO por
+ * Ação contra o alvo da vez.
+ *
+ * O alvo é opcional porque nem todo chamador tem um — sem ele a escolha cai no
+ * dano bruto, que é o comportamento anterior à 0.1.35.
+ */
+export function escolherAcao(e: EstadoPersonagem, acoesRestantes: number, alvo: Alvo | null = null): Acao {
   const viaveis = e.ficha.acoes.filter((a) => a.acoes <= acoesRestantes && a.pm <= e.pm && a.pt <= e.pt);
   if (viaveis.length === 0) return e.ficha.ataqueBasico;
   return viaveis.reduce((melhor, a) =>
-    mediaDados(a.dano) / a.acoes > mediaDados(melhor.dano) / melhor.acoes ? a : melhor
+    danoEsperado(e, a, alvo) / a.acoes > danoEsperado(e, melhor, alvo) / melhor.acoes ? a : melhor
   );
 }
 
@@ -509,7 +571,9 @@ export function turnoPersonagem(e: EstadoPersonagem, inimigos: Alvo[], rng: Rng)
   while (acoes > 0 && guarda++ < 10) {
     const vivos = inimigos.filter((x) => x.vivo);
     if (vivos.length === 0) return;
-    const a = escolherAcao(e, acoes);
+    // O alvo da vez entra na escolha: sem ele a IA não sabe se a técnica de
+    // ataque que ela prefere tem chance de acertar este inimigo.
+    const a = escolherAcao(e, acoes, vivos[0]);
     if (a.acoes > acoes) break;
     acoes -= a.acoes;
     e.pm -= a.pm;
@@ -578,7 +642,7 @@ export function consumirReacao(alvo: Alvo): boolean {
 export const SIMPLIFICACOES = [
   "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: as quatro são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura, barreira e Salvações não entram. Quem joga de suporte aparece aqui só pelo dano que causa, que é o que ele menos faz — e o grupo parece mais frágil do que é na mesa.",
-  "A IA escolhe sempre a ação de maior dano médio por Ação: nunca recua, nunca foca fogo, nunca guarda recurso pro turno seguinte — e não dá valor nenhum a condição. É por isso que Quebrantado, embora modelado desde a 0.1.35, quase nunca aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano bruto, e a IA nunca as escolhe. Na mesa, um jogador escolhe.",
+  "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Terreno, distância, posicionamento e surpresa não existem: todo mundo alcança todo mundo desde a primeira rodada.",
