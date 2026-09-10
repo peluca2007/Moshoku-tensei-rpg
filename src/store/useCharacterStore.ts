@@ -195,6 +195,65 @@ function updateActive(
   });
 }
 
+/**
+ * A migração do roster — extraída pra fora do `persist` pra poder ser TESTADA.
+ *
+ * Ela é o código mais perigoso do projeto: "ficha salva nunca é resetada" é a
+ * terceira regra da base, e esta função é a única coisa entre uma ficha de
+ * campanha e o formato novo. Ela já rodou de `version: 4` até a 15, e nunca teve
+ * um teste — enquanto o `selectors.ts` ao lado tem centenas de linhas travando
+ * fórmulas que, se errarem, no máximo mostram um número torto.
+ *
+ * Fica exportada e nomeada pelo mesmo motivo de `migrarMacros`: em Node não
+ * existe `localStorage`, o `persist` do zustand vira passagem direta e a API
+ * dele nem é criada, então não dá pra alcançar a migração pelo caminho da store.
+ * O `migrate:` lá embaixo é a única linha que amarra as duas coisas.
+ */
+export function migrarRoster(
+  persistedState: unknown,
+  version: number
+): { characters: Record<string, CharacterData>; order: string[]; activeId: string | null } {
+  if (version < 4) return { characters: {}, order: [], activeId: null };
+  const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
+  return {
+    ...prev,
+    characters: Object.fromEntries(
+      Object.entries(prev.characters).map(([id, c]) => [
+        id,
+        {
+          ...c,
+          lore: c.lore ?? "",
+          raceAttributeChoices: c.raceAttributeChoices ?? [],
+          racialUpgrades: c.racialUpgrades ?? [],
+          treeSkillChoices: c.treeSkillChoices ?? [],
+          proficiencies: c.proficiencies ?? [],
+          saveAdvantages: c.saveAdvantages ?? [],
+          condicoes: c.condicoes ?? [],
+          descansosCurtos: c.descansosCurtos ?? 0,
+          purchasedCombinedSpells: c.purchasedCombinedSpells ?? [],
+          purchasedAbilities: (c.purchasedAbilities ?? [])
+            .map((a) =>
+              a.treeId === "desintoxicacao" && a.id === "a-mao-que-nao-erra"
+                ? { ...a, id: "maos-limpas" }
+                : a
+            )
+            .filter(
+              (a) =>
+                !(a.treeId === "punho-de-fogo" && PUNHO_DE_FOGO_DEUS_IDS.includes(a.id))
+            ),
+          inventory: (c.inventory ?? []).map((item) => ({
+            ...item,
+            id: RENAMED_SHOP_ITEM_IDS[item.id] ?? item.id,
+          })),
+          unlockedRanks: (c.unlockedRanks ?? []).filter(
+            (u) => !(u.treeId === "punho-de-fogo" && u.rank === "Deus")
+          ),
+        },
+      ])
+    ),
+  };
+}
+
 export const useCharacterStore = create<RosterState>()(
   persist(
     (set, get) => ({
@@ -562,47 +621,7 @@ export const useCharacterStore = create<RosterState>()(
       // nullable, e `getCurrentCalor` já trata ausência (`??`) igual a `null`
       // ("ainda não tocado"), então ficha antiga não precisa de conversão.
       version: 15,
-      migrate: (persistedState, version) => {
-        if (version < 4) return { characters: {}, order: [], activeId: null };
-        const prev = persistedState as { characters: Record<string, CharacterData>; order: string[]; activeId: string | null };
-        return {
-          ...prev,
-          characters: Object.fromEntries(
-            Object.entries(prev.characters).map(([id, c]) => [
-              id,
-              {
-                ...c,
-                lore: c.lore ?? "",
-                raceAttributeChoices: c.raceAttributeChoices ?? [],
-                racialUpgrades: c.racialUpgrades ?? [],
-                treeSkillChoices: c.treeSkillChoices ?? [],
-                proficiencies: c.proficiencies ?? [],
-                saveAdvantages: c.saveAdvantages ?? [],
-                condicoes: c.condicoes ?? [],
-                descansosCurtos: c.descansosCurtos ?? 0,
-                purchasedCombinedSpells: c.purchasedCombinedSpells ?? [],
-                purchasedAbilities: (c.purchasedAbilities ?? [])
-                  .map((a) =>
-                    a.treeId === "desintoxicacao" && a.id === "a-mao-que-nao-erra"
-                      ? { ...a, id: "maos-limpas" }
-                      : a
-                  )
-                  .filter(
-                    (a) =>
-                      !(a.treeId === "punho-de-fogo" && PUNHO_DE_FOGO_DEUS_IDS.includes(a.id))
-                  ),
-                inventory: (c.inventory ?? []).map((item) => ({
-                  ...item,
-                  id: RENAMED_SHOP_ITEM_IDS[item.id] ?? item.id,
-                })),
-                unlockedRanks: (c.unlockedRanks ?? []).filter(
-                  (u) => !(u.treeId === "punho-de-fogo" && u.rank === "Deus")
-                ),
-              },
-            ])
-          ),
-        };
-      },
+      migrate: migrarRoster,
       // history é só uma conveniência de sessão pro botão "Desfazer" — não faz sentido inchar o
       // localStorage guardando fichas inteiras duplicadas, e não precisa sobreviver a um recarregamento.
       partialize: (state) => ({ characters: state.characters, order: state.order, activeId: state.activeId }),
