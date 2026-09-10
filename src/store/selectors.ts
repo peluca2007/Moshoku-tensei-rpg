@@ -5,6 +5,7 @@ import { COMBINED_SPELLS, getCombinedSpellById } from "@/data/combinedSpells";
 import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
 import { Condicao, getCondicaoPorId } from "@/data/condicoes";
+import { getSkillByName } from "@/data/skills";
 import {
   ATTRIBUTE_CREATION_POINTS,
   attributePaCostTotal,
@@ -933,4 +934,84 @@ export function getEfeitosDeCondicoes(state: StoreState): EfeitosDeCondicoes {
   }
 
   return efeitos;
+}
+
+/* ------------------------------------------------------------------------- */
+/* Teste de perícia (Cap. 1, §4) — 0.1.32                                    */
+/* ------------------------------------------------------------------------- */
+
+export interface BonusDePericia {
+  nome: string;
+  /** O atributo que governa a perícia, segundo a Lista Mestre. */
+  atributo: AttributeKey;
+  atributoValor: number;
+  /** Bônus de Rank somado, e de qual árvore de Utilidade ele veio. */
+  bonusDeRank: number;
+  arvoreDoBonus?: string;
+  /** O total que vai no d20. */
+  total: number;
+  /** O personagem TEM a perícia — é isso que dá Vantagem quando ela se encaixa. */
+  treinada: boolean;
+}
+
+/**
+ * O bônus de um teste de perícia, com a conta aberta.
+ *
+ * O Cap. 1, §4 tem três partes, e só duas são conta:
+ *
+ * 1. **`1d20 + Atributo`** — a Lista Mestre diz qual atributo governa cada
+ *    perícia, e é isso que sempre soma.
+ * 2. **Bônus de Rank em perícia**, exclusivo das três árvores de Utilidade:
+ *    soma nas perícias que aquela árvore cobre, "mas só naquelas que você
+ *    realmente possui — se você nunca aprendeu a perícia, não existe teste
+ *    treinado onde somar o bônus". As duas condições são checadas aqui.
+ * 3. **Vantagem por ter a perícia**, "sempre que ela se encaixar perfeitamente
+ *    na situação" — o *quando* é julgamento do Mestre, e por isso `treinada`
+ *    é devolvido como fato e não aplicado como modo de rolagem. Quem decide
+ *    continua sendo quem está na mesa.
+ *
+ * Quando duas árvores de Utilidade cobrem a mesma perícia (Percepção, no Ladino
+ * e no Tático), vale o MAIOR bônus — bônus do mesmo tipo não empilham (Cap. 4,
+ * §5, Empilhamento).
+ */
+export function getBonusDePericia(state: StoreState, nome: string): BonusDePericia | null {
+  const pericia = getSkillByName(nome);
+  if (!pericia) return null;
+
+  const atributoValor = getFinalAttribute(state, pericia.attribute);
+  const treinada = state.skills.includes(nome);
+
+  let bonusDeRank = 0;
+  let arvoreDoBonus: string | undefined;
+  if (treinada) {
+    for (const u of state.unlockedRanks) {
+      const tree = getTreeById(u.treeId);
+      if (!tree?.proficiencies?.periciasCobertas?.includes(nome)) continue;
+      const rank = getHighestUnlockedRank(state, tree.id);
+      if (!rank) continue;
+      const bonus = RANK_BONUS[rank];
+      if (bonus > bonusDeRank) {
+        bonusDeRank = bonus;
+        arvoreDoBonus = tree.name;
+      }
+    }
+  }
+
+  return {
+    nome,
+    atributo: pericia.attribute,
+    atributoValor,
+    bonusDeRank,
+    arvoreDoBonus,
+    total: atributoValor + bonusDeRank,
+    treinada,
+  };
+}
+
+/** As perícias que o personagem tem, com o bônus de cada uma já calculado. */
+export function getPericiasTreinadas(state: StoreState): BonusDePericia[] {
+  return state.skills
+    .map((nome) => getBonusDePericia(state, nome))
+    .filter((p): p is BonusDePericia => p !== null)
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
 }

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Dices, Sparkles, Swords, X, Trash2, Star, Plus, Zap, ZapOff } from "lucide-react";
 import { useActiveCharacter } from "@/store/useCharacterStore";
-import { getAttackBonus, getEfeitosDeCondicoes, getFinalAttribute, getSpellDC, getWeaponDamage } from "@/store/selectors";
+import { getAttackBonus, getEfeitosDeCondicoes, getFinalAttribute, getPericiasTreinadas, getSpellDC, getWeaponDamage } from "@/store/selectors";
 import { getTreeById } from "@/data/trees";
 import { ATTRIBUTES, attributeKeyFromLabel, AttributeKey } from "@/lib/types";
 import { useMacroStore } from "@/store/useMacroStore";
@@ -28,7 +28,7 @@ function randomPreviewFace(): number {
   return 1 + Math.floor(Math.random() * 20);
 }
 
-type TestSource = "manual" | "atributo" | "magia" | "marcial";
+type TestSource = "manual" | "atributo" | "pericia" | "magia" | "marcial";
 
 function d20Detail(result: D20RollResult): string {
   const rollsText = result.rolls.join(", ");
@@ -50,12 +50,15 @@ export default function DiceRoller() {
   const setOpen = useDiceRollerStore((s) => s.setOpen);
   const toggleOpen = useDiceRollerStore((s) => s.toggleOpen);
   const pendingRoll = useDiceRollerStore((s) => s.pending);
+  const pendingSkill = useDiceRollerStore((s) => s.pendingSkill);
   const diceAnimationEnabled = useDiceRollerStore((s) => s.diceAnimationEnabled);
   const setDiceAnimationEnabled = useDiceRollerStore((s) => s.setDiceAnimationEnabled);
   const [handledPendingRoll, setHandledPendingRoll] = useState(pendingRoll);
+  const [handledPendingSkill, setHandledPendingSkill] = useState(pendingSkill);
   const [mode, setMode] = useState<AdvantageMode>("normal");
   const [testSource, setTestSource] = useState<TestSource>("manual");
   const [attributeKey, setAttributeKey] = useState<AttributeKey>("forca");
+  const [periciaNome, setPericiaNome] = useState<string>("");
   const [magicTreeId, setMagicTreeId] = useState<string>("");
   const [marcialTreeId, setMarcialTreeId] = useState<string>("");
   const [marcialAttribute, setMarcialAttribute] = useState<AttributeKey>("forca");
@@ -126,6 +129,18 @@ export default function DiceRoller() {
   // cada requestDamageRoll() cria um objeto novo, então a comparação por identidade já basta,
   // sem precisar "limpar" a store depois de consumir. Ver
   // https://react.dev/learn/you-might-not-need-an-effect.
+  /*
+   * Um teste de perícia pedido pela ficha (0.1.32) — mesmo desenho do pedido de
+   * dano logo abaixo: ajustado durante o render, comparando por identidade, sem
+   * precisar "limpar" a store depois de consumir.
+   */
+  if (pendingSkill && pendingSkill !== handledPendingSkill) {
+    setHandledPendingSkill(pendingSkill);
+    setTestSource("pericia");
+    setPericiaNome(pendingSkill.nome);
+    setTestModifier(pendingSkill.modificador);
+  }
+
   if (pendingRoll && pendingRoll !== handledPendingRoll) {
     setHandledPendingRoll(pendingRoll);
     setDamageFormula(pendingRoll.formula);
@@ -143,6 +158,10 @@ export default function DiceRoller() {
    * Mestre pode ter combinado outra coisa. Avisar e não aplicar é pior; aplicar
    * sem avisar é pior ainda.
    */
+  /** As perícias que o personagem tem, já com a conta do Cap. 1, §4 pronta. */
+  const periciasTreinadas = getPericiasTreinadas(character);
+  const periciaAtual = periciasTreinadas.find((p) => p.nome === periciaNome) ?? periciasTreinadas[0];
+
   const efeitosDeCondicao = getEfeitosDeCondicoes(character);
   const condicoesQuePesam =
     testSource === "magia" || testSource === "marcial"
@@ -247,6 +266,7 @@ export default function DiceRoller() {
   function rotuloDoTeste(): string {
     let label = "Teste";
     if (testSource === "atributo") label = `Teste de ${ATTRIBUTES.find((a) => a.key === attributeKey)?.label}`;
+    else if (testSource === "pericia" && periciaAtual) label = `Teste de ${periciaAtual.nome}`;
     else if (testSource === "magia" && magicTreeId) label = `Ataque Mágico (${getTreeById(magicTreeId)?.name})`;
     else if (testSource === "marcial" && marcialTreeId) label = `Ataque Marcial (${getTreeById(marcialTreeId)?.name})`;
     if (mode !== "normal") label += ` — ${ADVANTAGE_LABELS[mode]}`;
@@ -417,8 +437,8 @@ export default function DiceRoller() {
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
                 Teste (1d20)
               </h3>
-              <div className="mb-2 grid grid-cols-4 gap-1">
-                {(["manual", "atributo", "magia", "marcial"] as TestSource[]).map((s) => (
+              <div className="mb-2 grid grid-cols-5 gap-1">
+                {(["manual", "atributo", "pericia", "magia", "marcial"] as TestSource[]).map((s) => (
                   <button
                     key={s}
                     type="button"
@@ -432,10 +452,57 @@ export default function DiceRoller() {
                         : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300"
                     }`}
                   >
-                    {s === "manual" ? "Livre" : s === "atributo" ? "Atributo" : s === "magia" ? "Magia" : "Marcial"}
+                    {s === "manual" ? "Livre" : s === "atributo" ? "Atributo" : s === "pericia" ? "Perícia" : s === "magia" ? "Magia" : "Marcial"}
                   </button>
                 ))}
               </div>
+
+              {testSource === "pericia" && (
+                <div className="mb-2">
+                  {periciasTreinadas.length === 0 ? (
+                    <p className="rounded-lg bg-parchment-100 p-2 text-2xs leading-relaxed text-parchment-600 dark:bg-parchment-900 dark:text-parchment-400">
+                      Nenhuma perícia na ficha ainda. Elas vêm da raça, do antecedente e da Árvore Inicial, ou
+                      se compram na ficha (1 PA = 2).
+                    </p>
+                  ) : (
+                    <>
+                      <select
+                        value={periciaAtual?.nome ?? ""}
+                        onChange={(e) => {
+                          const escolhida = periciasTreinadas.find((p) => p.nome === e.target.value);
+                          setPericiaNome(e.target.value);
+                          // O modificador acompanha a escolha: a conta do Cap. 1,
+                          // §4 já veio pronta do seletor, e digitá-la à mão era
+                          // exatamente o que a fonte "Livre" já fazia.
+                          if (escolhida) setTestModifier(escolhida.total);
+                        }}
+                        aria-label="Qual perícia"
+                        className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+                      >
+                        {periciasTreinadas.map((p) => (
+                          <option key={p.nome} value={p.nome}>
+                            {p.nome} ({p.total >= 0 ? "+" : ""}
+                            {p.total})
+                          </option>
+                        ))}
+                      </select>
+                      {periciaAtual && (
+                        <p className="mt-1 text-2xs leading-relaxed text-parchment-600 dark:text-parchment-400">
+                          {ATTRIBUTES.find((a) => a.key === periciaAtual.atributo)?.label}{" "}
+                          {periciaAtual.atributoValor >= 0 ? "+" : ""}
+                          {periciaAtual.atributoValor}
+                          {periciaAtual.bonusDeRank > 0 && (
+                            <> · Bônus de Rank +{periciaAtual.bonusDeRank} ({periciaAtual.arvoreDoBonus})</>
+                          )}
+                          {" · "}
+                          <b>você tem esta perícia</b>: dá Vantagem quando ela se encaixa na situação (Cap. 1,
+                          §4) — quem decide é o Mestre.
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
 
               {testSource === "atributo" && (
               <div className="mb-2 grid grid-cols-5 gap-1">

@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { GraduationCap, Languages, Plus, X } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
-import { getPendingTreeSkillChoices, getTreeGrantedSkills } from "@/store/selectors";
+import { useDiceRollerStore } from "@/store/useDiceRollerStore";
+import { getBonusDePericia, getPendingTreeSkillChoices, getTreeGrantedSkills } from "@/store/selectors";
 import { getTreeById } from "@/data/trees";
 import { Background, Race } from "@/lib/types";
 import { SKILLS, getSkillByName } from "@/data/skills";
@@ -16,6 +17,43 @@ const ATTRIBUTE_SHORT: Record<string, string> = {
   intelecto: "INT",
   espirito: "ESP",
 };
+
+/**
+ * Uma perícia da ficha, clicável — tocar nela abre o rolador já montado.
+ *
+ * O rótulo mostra o TOTAL já somado (atributo + Bônus de Rank quando a árvore
+ * de Utilidade cobre aquela perícia), porque é o número que a mesa vai falar em
+ * voz alta. A sigla do atributo continua ali pra dizer de onde ele vem.
+ */
+function BotaoDePericia({ nome, origem, semAnel }: { nome: string; origem: string; semAnel?: boolean }) {
+  const character = useActiveCharacter();
+  const bonus = getBonusDePericia(character, nome);
+  const requestSkillRoll = useDiceRollerStore((s) => s.requestSkillRoll);
+  const descricao = getSkillByName(nome)?.description;
+
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        requestSkillRoll({ nome, modificador: bonus?.total ?? 0, treinada: true })
+      }
+      title={[descricao, `Perícia ${origem}. Toque para rolar.`].filter(Boolean).join(" — ")}
+      className={`flex min-h-[1.75rem] items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors hover:bg-wine-500/15 hover:text-wine-700 dark:hover:text-wine-300 ${
+        semAnel
+          ? "text-parchment-700 dark:text-parchment-200"
+          : "bg-wine-500/10 text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300"
+      }`}
+    >
+      {nome}
+      {bonus && (
+        <span className="text-3xs font-bold tabular-nums text-parchment-700 dark:text-parchment-400">
+          {ATTRIBUTE_SHORT[bonus.atributo]} {bonus.total >= 0 ? "+" : ""}
+          {bonus.total}
+        </span>
+      )}
+    </button>
+  );
+}
 
 export default function SkillsSection({
   race,
@@ -107,28 +145,24 @@ export default function SkillsSection({
         </div>
       )}
 
+      {/*
+        Tocar numa perícia ROLA a perícia (0.1.32).
+        
+        Até aqui não existia lugar nenhum no site onde se rolasse uma perícia —
+        provavelmente a rolagem mais frequente da mesa. O chip vira botão, e o
+        rolador abre com a conta do Cap. 1, §4 já montada: atributo + Bônus de
+        Rank da árvore de Utilidade que cobre aquela perícia, quando há.
+      */}
       <div className="mb-3 flex flex-wrap gap-2">
         {fixedSkills.map((skill) => (
-          <span
-            key={skill}
-            title="Automática (raça/antecedente)"
-            className="rounded-full bg-wine-500/10 px-2.5 py-1 text-xs font-medium text-wine-600 ring-1 ring-wine-500/30 dark:text-wine-300"
-          >
-            {skill}
-          </span>
+          <BotaoDePericia key={skill} nome={skill} origem="automática (raça/antecedente)" />
         ))}
         {manualSkills.map((skill) => (
           <span
             key={skill}
-            title={getSkillByName(skill)?.description}
-            className="flex items-center gap-1 rounded-full bg-parchment-900/5 px-2.5 py-1 text-xs font-medium text-parchment-700 ring-1 ring-parchment-900/10 dark:bg-white/5 dark:text-parchment-200 dark:ring-white/10"
+            className="flex items-center gap-1 rounded-full bg-parchment-900/5 px-1 py-0.5 text-xs font-medium text-parchment-700 ring-1 ring-parchment-900/10 dark:bg-white/5 dark:text-parchment-200 dark:ring-white/10"
           >
-            {skill}
-            {getSkillByName(skill) && (
-              <span className="text-3xs font-bold text-parchment-400 dark:text-parchment-500">
-                {ATTRIBUTE_SHORT[getSkillByName(skill)!.attribute]}
-              </span>
-            )}
+            <BotaoDePericia nome={skill} origem="comprada com PA" semAnel />
             <button
               type="button"
               onClick={() => useCharacterStore.getState().removeSkill(skill)}

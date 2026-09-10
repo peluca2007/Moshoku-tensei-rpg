@@ -34,6 +34,7 @@ export const TATICO_TREE: Tree = {
   proficiencies: {
     armas: "Armas simples, arco curto e lança. Armadura leve e média.",
     pericias: "O Bônus de Rank soma em Sobrevivência, Natureza, Investigação e Percepção (rastreio) — mas só nas que você realmente possui (Cap. 3).",
+    periciasCobertas: ["Sobrevivência", "Natureza", "Investigação", "Percepção"],
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",
   },
   grantedSkills: {
