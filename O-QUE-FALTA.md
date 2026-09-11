@@ -84,22 +84,27 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    - **Punho do Fogo:** com Sobrecarga sempre a 3 de Calor, alguma técnica ficou barata demais? A
      suspeita é a Coroa Solar, que dispara uma vez por turno e antes custava 2.
 
-9. **O Deus da Espada não fica em pé** *(metade resolvida na 0.1.47)*. Das duas descrições invertidas,
-   você decidiu que a errada era a **Mara** — e ela foi. O `Golpe de Escudo Soberano` caiu de 3d8 pra
-   2d8 e ela passou de 196 de dano por batalha pra **125 de dano e 57 PV devolvidos**: *"protege, não
-   mata"* virou verdade.
+9. **+4 PV e +1 PM custam o mesmo 1 PA, e não valem o mesmo** *(descoberto na 0.1.48)*. Toda árvore
+   tem um talento de 1 PA que escala sozinho a cada patamar: **Corpo dá +4 PV**, **Magia dá +1 PM**.
+   Quando o playtest passou a comprá-los — porque nenhum jogador de verdade os deixa na mesa —, o time
+   com quatro árvores de Corpo saltou de 46% pra **74%** de vitória contra o time de quatro magias.
+   O PM destravou os magos (a Iri foi de 43 pra 117 de dano), mas PM não impede ninguém de morrer.
 
-   **O Vex não melhorou com isso.** Ele está em **1% de sobrevivência** e 24 de dano por batalha, a
-   pior build do playtest. Por TURNO ele nunca foi ruim — ele morre antes de usar os turnos. Era a
-   outra opção daquela pergunta, e ela segue aberta: **dar sustentação ao Deus da Espada** (PV,
-   defesa, ou uma Reação) ou **aceitar que ele é vidro** e dizer isso no livro, em vez de chamá-lo de
-   "o maior dano do livro".
+   A pergunta é sua: os dois talentos deviam custar o mesmo? Ou o de Magia deveria dar outra coisa —
+   mais PM **e** algum PV, ou um desconto de conjuração?
 
-   *(Há também dois capstones que a 0.1.47 não fechou, e são do mesmo tipo de decisão: `Espada de Luz`
-   e `Golpe do Desespero` são, cada um, a única habilidade de 2 Ações num galho inteiro de 1 Ação, e
-   por isso perdem por Ação. Consertar exige enfraquecer os ranks do meio ou inflar o topo em ~2×.)*
+10. **O Deus da Espada continua frágil — mas a árvore está certa** *(investigado na 0.1.48)*. Você
+    mandou conferir a ficha antes de mexer no livro, e estava certo: a árvore **tem** o talento de
+    sustentação (`Braço de Ferro`, 1 PA, +4 PV por patamar), e o algoritmo do playtest nunca o
+    comprava. Dar o talento ao Vex moveu o time inteiro dele de **45,1% pra 54,9%** de vitória — dez
+    pontos, num talento de 1 PA. O algoritmo foi corrigido; era ele que estava errado, não a árvore.
 
-10. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
+    **O que sobra da pergunta:** mesmo com o talento, o Vex fica em ~8% de sobrevivência e é o menor
+    dano por batalha. Por TURNO ele nunca foi ruim. Ou o Deus da Espada precisa de mais que um talento
+    de PV, ou ele é vidro de propósito — e aí o livro deveria dizer isso em vez de chamá-lo de "o maior
+    dano do livro".
+
+11. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
     cura no motor, na 0.1.37, a Mara marcou 91 e 92% e a Iri 27 e 57% — as duas perguntas continuam
     valendo, e a da Mara ficou mais forte: ela lidera a sobrevivência do playtest inteiro)*. O simulador foi consertado em dois pontos
     (a CA não era consultada por técnica nenhuma; a IA não contava os Dados de Arma ao escolher), e o
@@ -114,12 +119,12 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
      Iri: é uma pergunta sobre o custo de 2 Ações no sistema inteiro. Se nenhuma técnica de 2 Ações
      compensa, ou elas estão fracas ou a economia de 3 Ações por turno precisa de outra coisa.
 
-11. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
+12. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
     número declarado no motor, não medido na mesa. Se numa sessão o curandeiro age mais cedo (ou mais
     tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
     decisão do simulador que veio de mim e não do livro.
 
-12. **Um chefe do SEU patamar não ameaça o grupo — e a decisão é de design.** Pedido: no mínimo 25% de
+13. **Um chefe do SEU patamar não ameaça o grupo — e a decisão é de design.** Pedido: no mínimo 25% de
     dizimação por chefe. O 4º patamar cumpre desde que o Fio da Vida entrou na 0.1.38 — e depois dos
     consertos de leitura da 0.1.39 ele foi de 45% para **73%**, que já é mais brutal do que o pedido.
     Os outros dois não se resolvem por calibragem, e isto foi medido (números de 0.1.38; a conclusão
@@ -136,7 +141,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     script — e o segundo passo é a tabela passar a montar um grupo do patamar de cada chefe, pra medir
     calibragem em vez de diferença de nível.
 
-13. **Cinco capstones que não compensam** *(eram dezesseis; onze caíram na 0.1.47)* — `npm run check:progressao`. A melhor
+14. **Cinco capstones que não compensam** *(eram dezesseis; onze caíram na 0.1.47)* — `npm run check:progressao`. A melhor
     técnica de um rank rendendo MENOS por Ação que a de um rank abaixo, na mesma árvore: quem chega lá
     destrava e não usa. As piores:
 
@@ -154,7 +159,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     dano sustentado** (Tempestade Cortante, Rio de Magma, Trono de Chamas) — o conserto delas é no
     motor, não no livro — e duas são as do item 9.
 
-14. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
+15. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
     longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:
 
     | Corpo | | Magia | |
@@ -174,7 +179,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Site
 
-15. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
+16. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
     aparelho mostrava foram achadas e corrigidas sem aparelho, lendo o que o navegador recebe: o
     **`apple-touch-icon` não existia** (o iPhone usava uma captura da página como ícone da tela de
     início), faltava o **`viewport-fit=cover`** que o `black-translucent` exige, e não havia **nenhuma
@@ -193,7 +198,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
       segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, mas nunca num
       aparelho.)*
 
-16. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+17. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
