@@ -16,6 +16,22 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.51",
+    date: "2026-09-11",
+    title: "A Ficha Impressa",
+    sections: [
+      {
+        heading: "Cinco defeitos que só a folha em papel mostra",
+        items: [
+          "Cabeçalho de seção órfão: \"ARMAS E ATAQUES MARCIAIS\" terminava a página 1 e a tabela dele começava a 2 — idem \"EQUIPAMENTO E INVENTÁRIO\". Agora o título vai grudado no conteúdo dele, e quando o par não cabe ele pula inteiro pra folha seguinte.",
+          "A seção \"ÁRVORES DE PROGRESSÃO\" imprimia as dezenove árvores do livro, dezoito com um traço. Só as abertas aparecem. E a faixa de conjuração some por completo numa ficha sem magia, em vez de sair com uma tabela vazia.",
+          "A tabela de BC/CD foi pro vão ao lado de INT e ESP, que estava morto e empurrava a tabela de armas pra fora da primeira folha.",
+          "A última página retrato fechava com três caixinhas e 55% de papel em branco. Agora tem doze linhas pautadas em Lore e Anotações, nove de inventário por coluna (eram seis) e quatro em Vínculos: a folha continua com duas páginas, mas a segunda virou lugar de escrever.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.50",
     date: "2026-09-11",
     title: "O Santo Que Ninguém Usava",

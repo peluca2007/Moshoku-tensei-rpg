@@ -5,6 +5,47 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.51 — "A Ficha Impressa" · 2026-09-11
+
+O PDF da ficha existe pra ser **levado pra mesa em papel**. Renderizando fichas de verdade — uma
+conjuradora e um guerreiro — apareceram cinco defeitos que só a folha impressa mostra.
+
+### 📄 Cabeçalho de seção órfão no pé da página
+
+"ARMAS E ATAQUES MARCIAIS" terminava a página 1 e a tabela dele começava a 2. Idem "EQUIPAMENTO E
+INVENTÁRIO". Todas as seções passaram a usar um helper que gruda o título ao conteúdo
+(`block(breakable: false)`): quando o par não cabe, ele pula inteiro.
+
+> Nota de Typst pra quem vier depois: `block(sticky: true)`, que seria o jeito elegante, **compila
+> nesta versão e não faz nada** — os dois PDFs saem byte a byte idênticos. Foi testado.
+
+### 🌳 Dezenove árvores pra listar uma
+
+A seção "ÁRVORES DE PROGRESSÃO" imprimia as dezenove árvores do livro, dezoito delas com um traço. A
+ficha do Vex gastava meia página pra dizer que ele abriu **uma**. Agora só as abertas aparecem, e o
+número de colunas acompanha.
+
+### 🔮 Seção de conjuração numa ficha sem magia
+
+Um guerreiro puro recebia a faixa "BÔNUS DE CONJURAÇÃO (BC) E CD" com uma tabela vazia. Ela some por
+inteiro — junto com o espaço que vinha depois dela, que é o erro que costuma sobrar quando uma seção
+desaparece.
+
+### 📐 O buraco ao lado de INT e ESP
+
+A coluna dos atributos tem cinco caixas; a das reservas acabava logo depois da fileira de status,
+deixando uns 120pt de vão — e empurrando tudo pra baixo a ponto de a tabela de armas não caber mais
+na primeira folha. A tabela de BC/CD foi pra dentro daquele vão.
+
+### ✍️ Meia folha em branco não é diagramação, é espaço que a ficha não deu
+
+A última página retrato fechava com três caixinhas e 55% de papel morto. Agora: **doze linhas
+pautadas** em "Lore e Anotações", **nove** linhas de inventário por coluna (eram seis) e **quatro**
+em "Vínculos". A folha continua com duas páginas retrato — o que mudou é que a segunda virou lugar
+de escrever.
+
+---
+
 ## 0.1.50 — "O Santo Que Ninguém Usava" · 2026-09-11
 
 Fecha a última das quatro decisões de balanceamento.
