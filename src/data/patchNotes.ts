@@ -16,6 +16,23 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.54",
+    date: "2026-09-11",
+    title: "A Progressão Que Não Se Compra",
+    sections: [
+      {
+        heading: "Dojos e Mestres: certos nós agora são fechados a chave, e a chave é uma pessoa",
+        items: [
+          "Até aqui PA era a única porta de toda a progressão, e isso tem um preço que só aparece depois de vinte sessões: o mundo deixa de importar para a ficha. Dá pra jogar a campanha inteira numa taverna e progredir igual a quem atravessou o continente. Um mestre precisa estar dois patamares acima — divindades ignoram a escada, e um salto de patente (Imperador ensinando um Rei) vale por dois.",
+          "Concluir a provação abre a árvore DE GRAÇA, e aí vem o Dilema. A proposta original era 3 PA travados na árvore nova ou 1 PA livre; virou 2:1, porque a 3:1 não há dilema — os 3 travados equivalem a um patamar e meio da árvore, e quem pretende usá-la pega sem pensar. A recompensa também passou a escalar com o patamar (2/1, depois 3/2, depois 4/2): fixa, ela valeria 25% do patrimônio de um personagem de 3º e 12% do de um de 5º.",
+          "Entrou uma terceira porta que não é PA nenhum — a Marca do Mestre: o sinal daquele mestre, a Maestria pessoal dele, e o direito de voltar ao dojo uma vez por arco de campanha pra uma segunda provação valendo a recompensa cheia. Duas quantidades da mesma moeda fazem uma conta; a terceira porta precisa ser de outra natureza.",
+          "Quatro provações prontas, todas construídas pra TIRAR dos jogadores aquilo em que eles são bons: o Deus do Arco (ninguém toca em arma que não seja de disparo), A Que Não Deixa Rastro (nenhum ponto de dano, e todo teste de ser visto usa a MENOR Agilidade do grupo), O Que Recita Devagar (cântico obrigatório em voz alta, e a mana sai de uma reserva comum) e O Que Nunca Ataca (você não tem turno — só Reações).",
+          "A regra de bolso que acompanha a trava: nenhum nó fechado sem pelo menos um rumor plantado na mesma sessão. Um nó a chave só é bom enquanto a chave existe — sem o rumor o jogador não está jogando exploração, está esperando.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.53",
     date: "2026-09-11",
     title: "Quatro Ações Num Turno de Três",

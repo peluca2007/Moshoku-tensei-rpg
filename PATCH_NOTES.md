@@ -5,6 +5,67 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.54 — "A Progressão Que Não Se Compra" · 2026-09-11
+
+O **Sistema de Dojo** entra como a quinta seção do Cap. 5. Ideia e regras do autor da mesa; esta versão
+é o balanceamento da economia e quatro provações prontas.
+
+### 🥋 O problema que ele resolve
+
+Até aqui, PA era a única porta de toda a progressão. Isso funciona e tem um preço que só aparece depois
+de umas vinte sessões: **o mundo deixa de importar para a ficha**. Dá pra jogar a campanha inteira numa
+taverna e progredir igual a quem atravessou o continente. Certos nós agora são fechados a chave, e a
+chave é uma pessoa.
+
+### 💰 A economia foi reequilibrada de 3:1 para 2:1
+
+A proposta original era **3 PA travados ou 1 PA livre**. Isso não é um dilema — é uma conta com resposta
+óbvia. Os 3 PA travados equivalem a **um patamar e meio** da árvore nova (abrir o Intermediário custa 1,
+o Avançado custa 2), então qualquer um que pretenda usar a árvore pega sem pensar e a porta do PA livre
+nunca é aberta.
+
+E a recompensa passou a **escalar com o patamar**, porque fixa ela vale o dobro pra quem menos precisa:
+
+| Patamar do aluno | PA travados | PA livre | Patrimônio típico |
+| --- | --- | --- | --- |
+| Principiante–Intermediário | 2 | 1 | — |
+| Avançado–Santo | 3 | 2 | ~12 a 18 PA |
+| Rei–Deus | 4 | 2 | ~24 PA |
+
+### 🔖 A terceira porta: a Marca do Mestre
+
+Duas quantidades da mesma moeda fazem uma conta, não uma escolha. A Marca não dá PA nenhum: dá o sinal
+daquele mestre, a Maestria pessoal dele, e o **direito de voltar** — uma segunda provação por arco de
+campanha, valendo a recompensa cheia do patamar em que você estiver. Troca poder agora por uma porta
+que continua aberta.
+
+### ⚠️ A trava precisa de válvula
+
+Um nó fechado a chave só é bom enquanto a chave existe. Se o Mestre trava uma árvore e nunca põe o dojo
+no mundo, o jogador não está jogando exploração — está esperando. Regra de bolso escrita no livro:
+**nenhuma trava sem pelo menos um rumor plantado na mesma sessão em que o jogador esbarra nela.**
+
+### 🎭 Quatro mestres prontos
+
+Toda provação boa **tira dos jogadores aquilo em que eles são bons**:
+
+- **O Deus do Arco** (Arquearia) — ninguém toca em arma que não seja de disparo. Durante a provação, a
+  etapa da Leitura do Tiro Perfeito pode ser rolada com **Intuição** por qualquer um.
+- **A Que Não Deixa Rastro** (Furtividade) — nenhum ponto de dano, o tempo todo. E todo teste de ser
+  visto usa a MENOR Agilidade do grupo: quem passou a campanha de armadura pesada descobre o que ele
+  custa aos outros.
+- **O Que Recita Devagar** (uma escola de magia à escolha) — conjuração sem cântico proibida, recitada
+  em voz alta pelo jogador na mesa. E ninguém gasta o próprio PM: a mana sai de uma reserva comum.
+- **O Que Nunca Ataca** (Escudos ou Suishin-ryū) — você não tem turno. Só Reações, 2 por rodada.
+
+### 🔒 O teste que pegou meu próprio erro
+
+A faixa do meio da tabela nasceu 3:1 — exatamente a razão que esta versão existe pra corrigir. O teste
+da economia acusou na primeira execução. Virou 3:2, e ficou melhor que o plano: é no meio da campanha
+que o jogador já sabe o que quer da ficha, e é onde o dilema deve apertar mais.
+
+---
+
 ## 0.1.53 — "Quatro Ações Num Turno de Três" · 2026-09-11
 
 O **Tiro Perfeito** entra como o quarto sistema do Cap. 3, ao lado do Dado de Arma, do Touki e do
