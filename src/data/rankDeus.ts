@@ -20,7 +20,7 @@ export interface RankDeusEntry {
   body: string[];
 }
 
-export const RANK_DEUS: Record<string, RankDeusEntry> = {
+const RANK_DEUS: Record<string, RankDeusEntry> = {
   agua: {
     title: "O Mar Que Obedece",
     body: [

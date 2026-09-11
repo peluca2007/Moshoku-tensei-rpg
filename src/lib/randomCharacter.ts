@@ -155,15 +155,3 @@ export interface RandomCharacterResult {
   subtableEntryId: string | null;
   attributeBase: Record<AttributeKey, number>;
 }
-
-/** Via 2 (Roleta): gira raça, antecedente, subtabela (se aplicável) e atributos de uma vez. */
-export function rollRandomCharacter(): RandomCharacterResult {
-  const backgroundId = rollRandomBackground();
-  const background = BACKGROUNDS.find((b) => b.id === backgroundId);
-  return {
-    raceId: rollRandomRace(),
-    backgroundId,
-    subtableEntryId: background?.requiresSubtable ? rollRandomSubtableEntry(background.requiresSubtable) : null,
-    attributeBase: rollRandomAttributes(),
-  };
-}

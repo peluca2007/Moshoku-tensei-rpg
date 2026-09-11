@@ -37,7 +37,7 @@ const WHEEL_COLOR_A = "#4a0e2e"; // wine-600
 const WHEEL_COLOR_B = "#b8862e"; // gold-500
 
 /** Cor de cada fatia — varredura suave vinho→dourado→vinho ao redor do círculo, pra roleta ficar "linda" sem precisar de uma paleta de N cores distintas (o número dentro da fatia já identifica qual é qual). */
-export function wheelSliceColor(index: number, total: number) {
+function wheelSliceColor(index: number, total: number) {
   const t = index / total;
   const wave = t < 0.5 ? t * 2 : (1 - t) * 2;
   return mixHex(WHEEL_COLOR_A, WHEEL_COLOR_B, wave);

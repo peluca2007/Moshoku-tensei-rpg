@@ -6,7 +6,7 @@ import { getRankDeusForTree } from "./rankDeus";
  * A ausência silenciosa que este teste existe pra impedir.
  *
  * O `PROGRESS.md` registrou, em 2026-09-09, que o Vendaval não tinha quadro de
- * Rank Deus. Tinha. Depois disso, a task 19 do `TAREFAS.md` afirmou que o
+ * Rank Deus. Tinha. Depois disso, um levantamento de tarefas afirmou que o
  * critério das Três Grandes Escolas do Corpo vivia "só como comentário em
  * rankDeus.ts" e precisava ser escrito no livro. Também não era verdade: os três
  * estão em `GODHOOD_PATH`, com as chaves batendo com os ids das árvores, e o

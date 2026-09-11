@@ -1,7 +1,7 @@
 import { getRaceById } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
-import { COMBINED_SPELLS, getCombinedSpellById } from "@/data/combinedSpells";
+import { getCombinedSpellById } from "@/data/combinedSpells";
 import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
 import { Condicao, getCondicaoPorId } from "@/data/condicoes";
@@ -616,12 +616,12 @@ export function getSkillPaCost(state: StoreState): number {
   return Math.ceil(compradas / SKILLS_PER_PA);
 }
 
-export function getProficiencyPaCost(state: StoreState): number {
+function getProficiencyPaCost(state: StoreState): number {
   return Math.ceil((state.proficiencies ?? []).length / PROFICIENCIES_PER_PA);
 }
 
 /** Melhorias raciais compradas (Cap. 1, §5) — hoje só a do Povo Pequeno, a 3 PA. */
-export function getRacialUpgradePaCost(state: StoreState): number {
+function getRacialUpgradePaCost(state: StoreState): number {
   const upgrades = getRaceById(state.raceId)?.upgrades ?? [];
   return (state.racialUpgrades ?? []).reduce(
     (sum, id) => sum + (upgrades.find((u) => u.id === id)?.paCost ?? 0),
@@ -658,14 +658,13 @@ export function hasRacialUpgrade(state: StoreState, upgradeId: string): boolean 
  *   proposital — ele é travado no número de patamares de UMA árvore, enquanto
  *   esta compra é incondicional e não tem teto.
  */
-export function getHpMpPaCost(state: StoreState): number {
+function getHpMpPaCost(state: StoreState): number {
   const hpRate = Math.max(1, getHighestRankBonus(state) * 4);
   const mpRate = Math.max(1, getHighestRankBonus(state, "magia") * 2);
   const hpCost = Math.ceil(state.bonusHp / hpRate) * 2;
   const mpCost = Math.ceil(state.bonusMp / mpRate) * 2;
   return Math.max(0, hpCost) + Math.max(0, mpCost);
 }
-
 
 /**
  * Cap. 2, §4: uma Magia Combinada exige as DUAS portas abertas, cada uma no
@@ -687,14 +686,6 @@ export function canPurchaseCombinedSpell(state: StoreState, id: string): Check {
     }
   }
   return { ok: true };
-}
-
-/** As Combinadas cujas duas portas já estão abertas — é isto que /arvores lista. */
-export function getAvailableCombinedSpells(state: StoreState) {
-  return COMBINED_SPELLS.filter((s) => {
-    const check = canPurchaseCombinedSpell(state, s.id);
-    return check.ok || check.reason === "Já adquirida.";
-  });
 }
 
 /** PA gasto em Magias Combinadas (Cap. 2, §4). */
@@ -877,7 +868,7 @@ export function getCondicoesAtivas(state: StoreState): CondicaoNaFicha[] {
  * o que se pode fazer (Ações, Deslocamento) — coisas que a ficha mostra, mas não
  * soma.
  */
-export function getPenalidadeQuebrantado(state: StoreState): number {
+function getPenalidadeQuebrantado(state: StoreState): number {
   const q = getCondicoesAtivas(state).find((c) => c.condicao.id === "quebrantado");
   return q ? q.acumulos : 0;
 }

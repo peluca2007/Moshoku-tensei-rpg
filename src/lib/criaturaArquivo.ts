@@ -28,9 +28,6 @@ import { comprimirTexto, descomprimirBytes } from "./compactacao";
 const MARCA_ARQUIVO = "MTC1";
 const EXTENSAO = "mtcriatura";
 
-/** O que a importação aceita na caixa de diálogo. */
-export const ACEITA_NA_IMPORTACAO_CRIATURA = `.${EXTENSAO},application/json,.json`;
-
 interface CriaturaEmpacotada {
   blob: Blob;
   nomeDoArquivo: string;

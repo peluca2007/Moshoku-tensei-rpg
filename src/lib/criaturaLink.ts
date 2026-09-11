@@ -19,7 +19,7 @@ const MARCA_GZIP = "gm";
 const MARCA_CRU = "jm";
 
 /** A criatura codificada, pronta pra virar o fragmento de uma URL. */
-export async function codificarCriatura(criatura: CriaturaEncontro): Promise<string> {
+async function codificarCriatura(criatura: CriaturaEncontro): Promise<string> {
   // `id` fica de fora pelo mesmo motivo de `codificarFicha`: quem importa
   // recebe um id novo, e mandar o antigo criaria duas disputando a mesma chave
   // se o Mestre importasse a própria criatura de volta.

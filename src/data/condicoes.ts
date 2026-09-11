@@ -256,7 +256,3 @@ export const CONDICOES: Condicao[] = [
 export function getCondicaoPorId(id: string): Condicao | undefined {
   return CONDICOES.find((c) => c.id === id);
 }
-
-export function getCondicaoPorNome(nome: string): Condicao | undefined {
-  return CONDICOES.find((c) => c.nome === nome || c.sinonimos?.includes(nome));
-}
