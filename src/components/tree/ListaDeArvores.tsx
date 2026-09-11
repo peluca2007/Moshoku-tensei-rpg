@@ -76,14 +76,36 @@ export default function ListaDeArvores({
 
   return (
     <div className="space-y-5">
-      {grupos.map((grupo) => {
+      {grupos.map((grupo, i) => {
         const arvores = grupo.trees.filter((t) => !isTreeEmpty(t));
         if (arvores.length === 0) return null;
+        /*
+         * O pilar só aparece quando MUDA — 0.1.60.
+         *
+         * `getTreeGroups()` devolve um grupo por categoria E subgrupo, e esta
+         * lista imprimia a CATEGORIA como cabeçalho de cada um. O resultado no
+         * celular era "ÁRVORE DE MAGIA" três vezes seguidas, uma pra cada
+         * subgrupo dela — o leitor rolava e via o mesmo título de novo, sem
+         * saber se tinha voltado.
+         *
+         * (A `key` também era `grupo.category`, repetida entre grupos: chave
+         * duplicada faz o React reaproveitar o nó errado quando a lista muda.)
+         *
+         * Agora o pilar é o título grande, uma vez, e o subgrupo é o subtítulo
+         * — que é o nome informativo de verdade: "Magia Ofensiva" e "Cura e
+         * Suporte" dizem o que "Árvore de Magia" repetido não diz.
+         */
+        const pilarMudou = i === 0 || grupos[i - 1].category !== grupo.category;
         return (
-          <section key={grupo.category}>
-            <h2 className="mb-2 font-display text-sm font-black uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
-              {CATEGORY_LABELS[grupo.category] ?? grupo.category}
-            </h2>
+          <section key={`${grupo.category}-${grupo.subgroup}`} className={pilarMudou ? "" : "-mt-2"}>
+            {pilarMudou && (
+              <h2 className="mb-2 font-display text-sm font-black uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
+                {CATEGORY_LABELS[grupo.category] ?? grupo.category}
+              </h2>
+            )}
+            <h3 className="mb-2 text-xs font-semibold text-parchment-500 dark:text-parchment-500">
+              {grupo.subgroup}
+            </h3>
 
             <ul className="space-y-2">
               {arvores.map((tree) => {

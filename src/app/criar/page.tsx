@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ListChecks, Dices, ScrollText, Sparkles } from "lucide-react";
+import { ArrowRight, Dices, ListChecks, ScrollText, Sparkles } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import Surface from "@/components/ui/Surface";
 
@@ -48,6 +48,22 @@ export default function CriarPage() {
               </span>
               <h2 className="mb-1 font-display font-bold text-parchment-900 dark:text-parchment-50">{title}</h2>
               <p className="text-sm leading-relaxed text-parchment-600 dark:text-parchment-400">{description}</p>
+              {/*
+                A linha de ação — 0.1.60.
+
+                O card inteiro sempre foi um link, mas nada na tela dizia isso:
+                esta é a PRIMEIRA página de quem nunca jogou, e ela mostrava três
+                parágrafos sem nenhum lugar visível pra clicar. A seta é a mesma
+                linguagem dos cards do Painel do Mestre, então quem já andou pelo
+                site reconhece sem precisar aprender.
+
+                O `mt-auto` faz um segundo trabalho: empurra a linha pro pé do
+                card, e com isso as três alturas desiguais passam a terminar no
+                mesmo lugar.
+              */}
+              <span className="mt-auto flex items-center gap-1.5 pt-4 text-sm font-semibold text-wine-600 transition-transform group-hover:translate-x-0.5 dark:text-wine-300">
+                Começar por aqui <ArrowRight className="h-4 w-4" />
+              </span>
             </Surface>
           </Link>
         ))}
