@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Logo from "./ui/Logo";
+import BotaoInstalar from "./BotaoInstalar";
 import ThemeToggle from "./ThemeToggle";
 import FontSizeToggle from "./FontSizeToggle";
 
@@ -134,6 +135,22 @@ export default function Nav() {
               {link.label}
             </Link>
           ))}
+          {/*
+            O botão de instalar, no menu — 0.1.61.
+
+            Ele já existia, só que SÓ no rodapé. Num site cujo `/livro` tem 87
+            mil pixels de rolagem, "está no rodapé" é o mesmo que não existir: o
+            relato que abriu isto foi *"não apareceu a opção de adicionar à tela
+            inicial"*, de um aparelho de verdade.
+
+            O componente decide sozinho se aparece — some quando o app já está
+            instalado, e some no navegador que não sabe instalar. Aqui ele fica
+            onde a pessoa procura quando quer fazer algo com o site, que é o
+            menu, e continua no rodapé pra quem chega lá pelo fim da página.
+          */}
+          <div className="border-t border-parchment-300 px-3 pt-1 dark:border-parchment-800">
+            <BotaoInstalar />
+          </div>
         </div>
       )}
     </nav>

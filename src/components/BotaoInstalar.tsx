@@ -28,7 +28,18 @@ function estaInstalado(): boolean {
 function ehSafariDoIOS(): boolean {
   if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent;
-  const iOS = /iphone|ipad|ipod/i.test(ua);
+  /*
+   * O iPad moderno MENTE o user agent — 0.1.61.
+   *
+   * Desde o iPadOS 13 o Safari do iPad se apresenta como "Macintosh", e some
+   * com a palavra "iPad" que este teste procurava. O resultado é que o botão de
+   * instalar nunca aparecia num iPad, apesar de a instalação funcionar lá.
+   *
+   * O sinal que sobra é a combinação: plataforma de Mac COM tela de toque.
+   * Nenhum Mac de verdade tem `maxTouchPoints > 1`.
+   */
+  const iPadMentindo = /macintosh/i.test(ua) && (navigator.maxTouchPoints ?? 0) > 1;
+  const iOS = /iphone|ipad|ipod/i.test(ua) || iPadMentindo;
   const outroNavegador = /crios|fxios|edgios|opios/i.test(ua);
   return iOS && !outroNavegador;
 }
