@@ -336,15 +336,21 @@ export default function Chapter5() {
           Cada jogador escolhe <b>uma</b> das três portas. A escolha é individual: dois personagens podem
           sair do mesmo dojo com recompensas diferentes.
         </P>
+        {/* Três colunas, e não quatro: a de "A Marca do Mestre" dizia "sempre
+            disponível" nas três linhas. Coluna com o mesmo valor em toda linha não
+            é informação — é uma coluna. E era ela que empurrava a tabela pra fora
+            da tela num celular de 390px. A Marca está na lista logo abaixo. */}
         <BookTable
-          headers={["Patamar do aluno", "PA travados na árvore nova", "PA livre", "A Marca do Mestre"]}
+          headers={["Patamar do aluno", "PA travados na árvore nova", "PA livre"]}
           rows={RECOMPENSA_POR_PATAMAR.map((r) => [
             `${r.patamares[0]}–${r.patamares[r.patamares.length - 1]}`,
             `${r.travados} PA`,
             `${r.livre} PA`,
-            "sempre disponível",
           ])}
         />
+        <P className="text-sm">
+          A <b>Marca do Mestre</b> é a terceira porta, e está disponível em qualquer patamar.
+        </P>
         <List
           items={[
             <span key="t">
