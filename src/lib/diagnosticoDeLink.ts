@@ -71,7 +71,7 @@ export type LeituraDeLink<T> = { ok: true; conteudo: T } | FalhaDeLink;
  *
  * Os outros tetos (WhatsApp, iMessage, barra de endereço do Safari do iPhone)
  * são folgados o bastante para não decidirem nada, mas ainda **não foram
- * medidos em aparelho** — ver `TAREFAS.md`, task 6.
+ * medidos em aparelho** — ver `O-QUE-FALTA.md`, item 2.
  */
 export const LIMITE_DISCORD = 2000;
 
@@ -88,7 +88,7 @@ export function passaDoDiscord(caracteres: number): boolean {
  * gera nem lê link comprimido, e quem manda de um desktop com Chrome manda
  * sempre comprimido, porque lá ele existe.
  */
-export function navegadorLeComprimido(): boolean {
+function navegadorLeComprimido(): boolean {
   return typeof DecompressionStream !== "undefined";
 }
 

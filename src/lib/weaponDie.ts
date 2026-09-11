@@ -33,7 +33,7 @@ export const WEAPON_DIE_LADDER = [
  * um d10), mas talentos que dão degrau avulso (Espada Emprestada, Punho Duplo)
  * ainda podem estourar — e sem esta regra eles viravam PA jogado fora.
  */
-export const EXCESS_STEP_DAMAGE = 2;
+const EXCESS_STEP_DAMAGE = 2;
 
 /** Dados base do Cap. 3, seção "O Dado de Arma", pra preencher o seletor de armas. */
 export const WEAPON_PRESETS: { name: string; die: string }[] = [

@@ -3,7 +3,7 @@ import { CastingBreakdown, IncantationBlock, RitualBadge } from "../AbilityDetai
 import ProsaComCondicoes from "../ProsaComCondicoes";
 import { condicoesCitadas } from "@/lib/condicoesNaProsa";
 
-export function isAbility(def: AbilityDef | TalentDef): def is AbilityDef {
+function isAbility(def: AbilityDef | TalentDef): def is AbilityDef {
   return "actions" in def;
 }
 

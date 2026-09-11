@@ -20,7 +20,7 @@
  * arquivo segue a **tabela**, porque é o que a mesa lê na hora de aplicar — e
  * porque escolher o número maior sem o autor mandar seria dobrar, por conta
  * própria, o recurso do qual a Magia de Cura converte PV. A divergência está
- * anotada no `TAREFAS.md` e é decisão de balanceamento, não de código.
+ * anotada no `O-QUE-FALTA.md` e é decisão de balanceamento, não de código.
  */
 
 export interface ReservasMaximas {

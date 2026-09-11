@@ -5,6 +5,58 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.45 — "Apagar o que Já Foi Feito" · 2026-09-10
+
+Faxina. Nada de regra mudou.
+
+### 🧹 Código morto
+
+Varri o projeto por quatro tipos de sobra. Três vieram **zero**: nenhum arquivo órfão, nenhum asset em
+`public/` sem citação, nenhuma das 20 dependências sem uso.
+
+O quarto veio com quinze. **Quatro estavam mortos de verdade**, e os quatro tinham sido *substituídos*,
+não esquecidos:
+
+| Apagado | Quem ocupou o lugar |
+| ------- | ------------------- |
+| `ACEITA_NA_IMPORTACAO_CRIATURA` | `ACEITA_NA_IMPORTACAO_BESTIARIO` |
+| `getAvailableCombinedSpells` | o painel lista TODAS e checa uma a uma — inclusive as trancadas |
+| `rollRandomCharacter` | a roleta chama os quatro sorteios separados |
+| `getCondicaoPorNome` | `getCondicaoPorId` |
+
+O segundo tinha um docstring que dizia *"é isto que /arvores lista"* — e não era mais verdade havia
+tempo. Apagá-lo derrubou um import junto, em cascata.
+
+Os outros onze eram usados **dentro do próprio arquivo** e só sobrava a palavra `export`. Perderam ela.
+Nova varredura: **zero**.
+
+### 📄 Documentação que mentia
+
+O `TAREFAS.md` era o levantamento de vinte frentes de 2026-09-10. Conferi **item a item contra o
+código**, e todos os oito marcados como abertos (⬜) estavam feitos: QR Code da ficha, condições
+clicáveis, condições como estado vivo, Painel do Mestre, Descanso e Downtime, o simulador na mão do
+jogador, o comparador de builds e o registro de sessão.
+
+O cabeçalho do próprio arquivo já sabia — *"as 22 estão endereçadas"* —, mas os marcadores nunca
+foram atualizados. **Ele foi apagado**: o que estava feito vive no `PATCH_NOTES`, e as quatro frentes
+que dependiam de aparelho foram dobradas no `O-QUE-FALTA` antes de a porta fechar (inclusive o link de
+ficha no iPhone e a bandeja de compartilhar, que não estavam lá).
+
+O `PROGRESS.md` tinha **uma segunda cópia** da lista de pendências, com outras palavras — a receita
+exata da divergência que o `TAREFAS` acabou de demonstrar. A seção "Metas atuais" agora aponta pro
+`O-QUE-FALTA` em vez de repeti-lo, e a "Auditoria linha a linha das magias" (Suishin, Escudos, Ladino,
+Tático), que só existia ali, virou item de verdade no backlog.
+
+Saíram também duas seções de coisa **fechada**: "Saíram daqui porque já estavam feitas" no `PROGRESS`
+e "Correções de registro — fechadas" no `O-QUE-FALTA`, mais o item de chefe que já estava riscado. Uma
+delas apontava pra outra, e o link ia morrer de qualquer jeito.
+
+**Resultado:** um arquivo de documentação a menos, `O-QUE-FALTA` com dezesseis itens que são todos
+pendências de verdade, e `PROGRESS` sem nenhuma lista duplicada. As referências no código a
+`TAREFAS.md` — em três arquivos — foram para onde a informação está agora.
+
+---
+
 ## 0.1.44 — "O iPhone Era Meio Cidadão" · 2026-09-10
 
 A mesa usa **iPhone e Android**. O caminho padrão de PWA é o do Chromium, e três coisas que pareciam

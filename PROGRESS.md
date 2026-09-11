@@ -1,7 +1,8 @@
 # Progresso — Mushoku Tensei RPG
 
 **Última atualização:** 2026-09-10 — vinte e duas versões num dia (0.1.17 → 0.1.38), fechando as vinte e
-duas frentes do [`TAREFAS.md`](TAREFAS.md). O site ganhou **busca global** nos 879 verbetes, telas de
+duas frentes daquele levantamento — o `TAREFAS.md`, que foi apagado na 0.1.45 depois de as vinte e
+duas serem endereçadas. O site ganhou **busca global** nos 879 verbetes, telas de
 **404 e de erro** em português, o **link de ficha diagnosticado** (com colagem e QR), **compartilhar
 pela bandeja do celular** e **botão de instalar**, o **rolador em todas as rotas** com macro de
 Teste, as **condições como estado vivo** da ficha, **descanso e downtime jogáveis**, o **Painel do
@@ -67,31 +68,12 @@ mão duas vezes.
 
 ## Metas atuais
 
-Só o que ainda não foi feito. A lista curta do que já estava combinado com o autor vive em
-[`O-QUE-FALTA.md`](O-QUE-FALTA.md), e o mapa maior das vinte frentes abertas em
-[`TAREFAS.md`](TAREFAS.md); aqui fica o registro seco.
+**Elas vivem em [`O-QUE-FALTA.md`](O-QUE-FALTA.md), e só lá.** Esta seção repetia a lista inteira item
+a item, e duas listas da mesma coisa divergem — foi o que aconteceu: o `TAREFAS.md` (apagado na
+0.1.45) marcava como abertas oito frentes que já estavam entregues, e este arquivo tinha uma cópia
+delas com outras palavras.
 
-- [ ] **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem rede e o
-      `check:offline` prova a parte automatizável (16 rotas com o servidor morto). Falta o resto do
-      caminho: "Adicionar à tela de início", o recorte do ícone pelo launcher, a splash, e o quanto
-      o Safari do iPhone respeita disso.
-- [ ] **Confirmar o fix do PDF em produção** — só verificável no próximo deploy da Vercel.
-- [ ] **Teste com leitor de tela de verdade.** O `check:a11y` cobre a camada estrutural (controle sem
-      nome, campo sem rótulo, hierarquia de cabeçalho); falta saber se a ficha é *usável* de ouvido.
-- [ ] **Testar em celular de verdade.** O `check:mobile` garante que nada transborda de 320 a 414px, e é
-      só isso que ele sabe.
-- [ ] **Validar a Distância Roubada na mesa** (Vendaval). A conta está fechada no cabeçalho de
-      `src/data/trees/vendaval.ts`; o que falta é a pergunta que ela levanta — o Vendaval alguma vez
-      apanha?
-- [~] **Jogar o Invocador, o Ladino e o Bardo.** São as mudanças de 0.1.12 que não saíram de medição,
-      e sim de um pedido. O Tático já foi jogado, e a Ordem de Tiro foi TROCADA em 0.1.14 por causa
-      disso — que era exatamente o que o plano previa fazer se ela não funcionasse na mesa. Falta a
-      Dissonância do Bardo passar pelo mesmo teste.
-- [~] **Auditoria linha a linha das magias** — o `check:texto` cobre CONTRADIÇÃO nas 601 habilidades, e
-      Norte, Vendaval, Lutador, Arquearia e Punho do Fogo foram lidos de ponta a ponta. Faltam **Suishin,
-      Escudos, Ladino e Tático**, e ali o que falta é julgamento: se o efeito faz sentido, se a técnica é
-      divertida, se o patamar entrega o que promete.
-- [ ] **A faixa de `/livro` está em 680×384** — a menor das oito; as outras vão de 960 a 1900.
+Aqui fica só o registro seco do que o projeto É; o que ainda falta fica lá.
 
 ## Backlog
 
@@ -136,22 +118,6 @@ encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
 - PDF via Typst: revisão visual fina (densidade dos cards, Deslocamento refletindo raça, BC em
   multiclasse).
 - Tradução PT-BR / EN.
-
-### Saíram daqui em 2026-09-10, porque já estavam feitas
-
-- ~~"Quebrantado fora da simulação"~~ — **entrou na 0.1.35**, com teste. A condição é lida da prosa
-  da técnica, o que só é seguro porque as treze citações do livro são de uma árvore só e nenhuma
-  delas remove acúmulos — e há um teste que quebra no dia em que isso mudar.
-
-- ~~"As ações de criatura não aplicam condição na simulação"~~ — **aplicam**. `resolverAcaoCriatura`
-  aplica Preso, Caído, Molhado e Envenenado, e os quatro afetam as rolagens dos dois lados. A própria
-  lista de `SIMPLIFICACOES` já dizia isso corretamente enquanto o backlog dizia o contrário.
-- ~~"Criatura de /encontros: exportar/importar, e um retrato no cartão"~~ — **as duas existem**:
-  `criaturaArquivo.ts` e `criaturaLink.ts` desde a 0.1.13, e o campo `portrait` com upload no cartão.
-- ~~"A foto do personagem não entra em /criar"~~ — **entra nas três vias**. Manual, Roleta e
-  Entrevista todas montam o `ImagemDaFicha`.
-- ~~"Macros de Teste no DiceRoller"~~ — feito na 0.1.21, com migração da store.
-- ~~"Rank Deus do Vendaval"~~ — ele tem o quadro; ver a seção de correções do `O-QUE-FALTA.md`.
 
 ---
 

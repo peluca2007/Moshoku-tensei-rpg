@@ -97,7 +97,7 @@ const WEAPON_PRICE_BY_DIE: Record<string, number> = {
  * (Adaga de Prata, Lâmina Balanceada) afogavam no meio. Agora ela é exportada,
  * e a tela sabe reconhecê-la como nota de grupo em vez de descrição de item.
  */
-export const NOTA_ARMA_MUNDANA =
+const NOTA_ARMA_MUNDANA =
   'Arma mundana, sem encantamento — ver Cap. 3, "O Dado de Arma", pra como ela escala com seu Rank.';
 
 const WEAPONS: ShopItem[] = WEAPON_PRESETS.map((preset) => ({
