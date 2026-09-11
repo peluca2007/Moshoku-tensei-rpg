@@ -200,6 +200,66 @@ export interface Acao {
    * "fica Quebrantado ao máximo".
    */
   aplicaQuebrantado: number | "maximo";
+  /**
+   * A fórmula que se REPETE a cada turno, enquanto o efeito durar (0.1.57).
+   *
+   * Vazia em quase tudo. Três magias do livro descrevem dano por turno
+   * sustentado — Trono de Chamas, Rio de Magma e Tempestade Cortante — e até
+   * aqui o motor contava cada uma UMA vez, porque `damage.normal` guarda a
+   * linha inteira e ninguém separava "o que acontece no impacto" de "o que
+   * acontece todo turno depois".
+   *
+   * O custo disso era visível e vinha sendo declarado como pendência desde a
+   * 0.1.50: as três apareciam no `check:progressao` como capstones que rendem
+   * MENOS que o rank abaixo delas. Não era o livro estar errado — era o
+   * instrumento não saber ler o que estava escrito.
+   */
+  danoPorTurno: string;
+}
+
+/**
+ * Por quantos turnos um efeito sustentado é contado.
+ *
+ * ## Por que não é a duração escrita
+ *
+ * A Tempestade Cortante dura "1 minuto" — dez turnos. Contar dez daria a ela um
+ * dano que nenhuma mesa vê, por duas razões que o motor não modela: o alvo pode
+ * SAIR da área (não há mapa aqui) e o combate costuma acabar antes (as batalhas
+ * do playtest fecham em 2 a 4 rodadas).
+ *
+ * ## Por que três
+ *
+ * É a duração mediana de um combate deste simulador, medida: o efeito rende o
+ * turno em que foi lançado mais dois. É um número DECLARADO, igual ao limiar de
+ * cura de 50% — escolhido por mim, não pelo livro, e por isso ele está aqui em
+ * cima e não enterrado numa expressão.
+ *
+ * Errar pra menos é o lado certo de errar: se a mesa disser que a magia rende
+ * mais, o conserto é subir este número; se o motor contasse dez, ele estaria
+ * prometendo um dano que depende de o inimigo cooperar.
+ */
+export const TURNOS_SUSTENTADOS = 3;
+
+/**
+ * Separa o golpe de impacto do que se repete, numa linha de dano do livro.
+ *
+ * As três formas que o livro usa, todas presentes hoje:
+ *
+ * - `"5d8 + BC de dano cortante por turno"` — tudo é por turno, não há impacto.
+ * - `"6d10 + BC/turno (ígneo)"` — idem, com a barra no lugar do "por".
+ * - `"12d8 + BC de dano de magma no impacto, depois 6d10 por turno"` — os dois,
+ *   e a vírgula separa.
+ */
+export function separarSustentado(linha: string): { impacto: string; porTurno: string } {
+  const temPorTurno = /(por turno|\/turno)/i.test(linha);
+  if (!temPorTurno) return { impacto: linha, porTurno: "" };
+
+  // "…, depois X por turno" — o que vem antes da vírgula é o impacto.
+  const m = linha.match(/^(.*?),\s*(?:e\s+)?depois\s+(.*)$/i);
+  if (m) return { impacto: m[1], porTurno: m[2] };
+
+  // Sem "depois": a linha inteira é o efeito por turno, e não há impacto extra.
+  return { impacto: linha, porTurno: linha };
 }
 
 /**
@@ -260,6 +320,19 @@ export interface Alvo {
    * fraca do que ela é — inclusive no comparador de builds.
    */
   quebrantado: number;
+  /**
+   * Efeitos de dano por turno ativos sobre este alvo (0.1.57).
+   *
+   * O livro tem SETE magias de dano sustentado — a Tempestade Cortante, o Rio
+   * de Magma, o Trono de Chamas e mais quatro — e até aqui o motor contava cada
+   * uma UMA vez. Em Chamas já tinha relógio (`emChamas`); estas não tinham
+   * nenhum, apesar de o livro escrever "por turno" em letra.
+   *
+   * Cada entrada guarda a média já calculada, e não a fórmula: quem aplicou o
+   * efeito conhece o próprio BC e o alvo não, e recalcular a cada tique exigiria
+   * que o alvo carregasse uma referência ao conjurador.
+   */
+  sustentados: { media: number; turnos: number }[];
   /**
    * Preso, Caído e Envenenado (Cap. 4, §7-8) — as três condições que uma ação
    * de criatura pode aplicar de forma estruturada (`AcaoCriatura.aplicaPreso` e
@@ -353,6 +426,7 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
     molhado: p.molhado ?? false,
     emChamas: p.emChamas ?? 0,
     quebrantado: p.quebrantado ?? 0,
+    sustentados: p.sustentados ?? [],
     preso: p.preso ?? false,
     caido: p.caido ?? false,
     envenenado: p.envenenado ?? false,
@@ -391,6 +465,7 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     fogo: p.fogo ?? false,
     aplicaMolhado: p.aplicaMolhado ?? false,
     aplicaQuebrantado: p.aplicaQuebrantado ?? 0,
+    danoPorTurno: p.danoPorTurno ?? "",
   };
 }
 
@@ -505,7 +580,15 @@ export function acoesDe(c: CharacterData): Acao[] {
        * existe no livro e o motor sabe aplicá-la (frio dobra contra Molhado);
        * o que ele não pode é cobrar a exceção junto com a regra.
        */
-      dano: ehSuporte ? "" : casoBase(a.damage.normal),
+      dano: ehSuporte ? "" : casoBase(separarSustentado(a.damage.normal).impacto),
+      /*
+       * O que se repete a cada turno (0.1.57).
+       *
+       * Nunca em suporte: cura sustentada não existe no livro, e deixar este
+       * campo escapar pro lado de suporte reabriria exatamente a armadilha de
+       * sinal que `formulaSuporte` foi criada pra fechar.
+       */
+      danoPorTurno: ehSuporte ? "" : casoBase(separarSustentado(a.damage.normal).porTurno),
       formulaSuporte: ehSuporte ? casoBase(a.damage.normal) : "",
       sempreFresca: /sempre como ferida fresca/i.test(txt),
       // "+1 Dado de Arma", "+2 Dados de Arma", "Dado de arma rolado quatro vezes":
@@ -743,8 +826,26 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
    * erro da rolagem de ataque, na outra ponta do mesmo arquivo: a resolução
    * certa e a decisão cega.
    */
-  const bruto =
+  const impacto =
     mediaDados(a.dano) + a.dadosDeArma * mediaDados(e.ficha.ataqueBasico.dano) + bonus;
+
+  /*
+   * O que a magia sustentada rende DEPOIS do turno em que saiu — 0.1.57.
+   *
+   * `TURNOS_SUSTENTADOS - 1` porque o primeiro turno já está em `impacto`: numa
+   * linha como "5d8 + BC por turno" o impacto É o primeiro tique, e o que falta
+   * somar são os seguintes.
+   *
+   * Entra no bruto ANTES da chance de acerto de propósito. As três magias
+   * sustentadas do livro cobram teste de resistência, não rolagem de ataque — o
+   * ramo de resistência lá embaixo é o que se aplica, e ele reduz o total, não
+   * só o impacto. Se algum dia uma delas rolar contra CA, o tique seguinte não
+   * deveria depender do mesmo d20; quando isso acontecer, o teste vai acusar.
+   */
+  const sustentado = a.danoPorTurno
+    ? (mediaDados(a.danoPorTurno) + bonus) * (TURNOS_SUSTENTADOS - 1)
+    : 0;
+  const bruto = impacto + sustentado;
 
   if (!alvo) return bruto;
 
@@ -867,6 +968,24 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
   // Fogo: Em Chamas cobra 1d6 no início de cada turno do alvo
   if (a.fogo && !alvo.molhado) alvo.emChamas = 6;
   if (a.fogo && alvo.molhado) alvo.molhado = false; // fogo evapora a água
+
+  /*
+   * Magia sustentada: registra os tiques que ainda vão acontecer — 0.1.57.
+   *
+   * `TURNOS_SUSTENTADOS - 1` porque o turno do lançamento já foi pago pelo dano
+   * que esta função acabou de devolver. Guarda a MÉDIA, e não a fórmula, pelo
+   * motivo escrito em `Alvo.sustentados`: o BC é de quem lançou.
+   *
+   * Não empilha duas cópias da mesma magia sobre o mesmo alvo — o livro
+   * descreve estas como áreas e domínios, e duas Tempestades no mesmo lugar são
+   * uma Tempestade. Sem esta trava, uma IA que escolhesse a mesma magia dois
+   * turnos seguidos dobraria o relógio.
+   */
+  if (a.danoPorTurno && dano > 0) {
+    const media = mediaDados(a.danoPorTurno) + e.ficha.bc;
+    const jaTem = alvo.sustentados.some((x) => Math.abs(x.media - media) < 0.01);
+    if (!jaTem) alvo.sustentados.push({ media, turnos: TURNOS_SUSTENTADOS - 1 });
+  }
   return dano;
 }
 
@@ -1266,6 +1385,27 @@ export function turnoPersonagem(
   perdaDeFoco(e);
 }
 
+/**
+ * Aplica os efeitos de dano por turno e gasta um turno de cada um — 0.1.57.
+ *
+ * Roda junto com `tickChamas`, no início do turno de quem sofre, e pelo mesmo
+ * motivo: o dano de área sustentada acontece porque o alvo COMEÇOU o turno
+ * dentro dela. Devolve true se sobreviveu.
+ *
+ * Sem isto, a IA escolheria magia sustentada pelo dano esperado que
+ * `danoEsperado` promete e o motor pagaria uma fração dele — a decisão certa
+ * sobre um combate que não acontece, que é o pior dos dois mundos.
+ */
+export function tickSustentado(alvo: Alvo): boolean {
+  if (!alvo.vivo || alvo.sustentados.length === 0) return alvo.vivo;
+  for (const efeito of alvo.sustentados) {
+    aplicarDano(alvo, efeito.media);
+    efeito.turnos -= 1;
+  }
+  alvo.sustentados = alvo.sustentados.filter((x) => x.turnos > 0);
+  return alvo.vivo;
+}
+
 /** Queima no início do turno de quem está Em Chamas. Devolve true se sobreviveu. */
 export function tickChamas(alvo: Alvo, rng: Rng): boolean {
   if (!alvo.vivo || alvo.emChamas === 0) return alvo.vivo;
@@ -1319,7 +1459,7 @@ export function consumirReacao(alvo: Alvo): boolean {
 export const SIMPLIFICACOES = [
   "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: as quatro são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
-  "Dano por turno sustentado (\"5d8 por turno\", \"6d10/turno\", \"depois 6d10 por turno\") é contado UMA vez, não pela duração. O motor não tem relógio de magia sustentada — só Em Chamas, que é condição e não magia. Isso SUBESTIMA a Tempestade Cortante (Vento), o Trono de Chamas (Punho do Fogo) e o Rio de Magma (Terra), e é por isso que os três aparecem na auditoria de progressão como se o patamar deles não entregasse.",
+  "Dano por turno sustentado ENTRA desde a 0.1.57, por TRÊS turnos — o do lançamento mais dois. Três é escolha declarada, não do livro: a Tempestade Cortante dura \"1 minuto\" (dez turnos), e contar dez daria a ela um dano que nenhuma mesa vê, porque o alvo sai da área (não há mapa aqui) e o combate acaba antes. São sete magias, não três: Tomar o Ar, Tempestade Cortante e Vazio (Vento), Rio de Magma (Terra), Estrangular (Armas Pesadas), Prisão de Purgatório e Trono de Chamas (Punho do Fogo). Errar pra menos é o lado certo de errar.",
   "As duas Reações de Aguentar (Escudos) REDUZEM o dano de um golpe interceptado, e o motor não tem redução — ele as trata como PV Temporários, que é o mais próximo que sabe fazer. A diferença importa: casca some depois de gasta, redução vale em todo golpe que ela alcança. Até a 0.1.47 elas eram lidas como DANO CAUSADO, e davam a Cavalaria e Escudos uma técnica de 16,8 por Ação que ela não tem.",
   "O que de suporte segue de fora: Salvações, e a maior parte da Barreira e Proteção — muralha, domo, selo e anulação de magia são posição e regra de alcance, e este motor não tem mapa. Das 21 habilidades daquela árvore, só a Casca tem número que ele saiba usar. Julgamento e Luz Absoluta entram como as magias de DANO que são; a cura secundária que as duas descrevem na prosa não é contada.",
   "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",

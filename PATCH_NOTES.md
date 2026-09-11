@@ -5,6 +5,73 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.57 — "O Instrumento Não Escondia um Livro Certo" · 2026-09-11
+
+O livro escreve **"por turno"** em sete magias. O motor contava cada uma **uma vez só**. Agora conta
+pela duração — e o resultado desmente o que o backlog vinha dizendo há sete versões.
+
+### ⏱️ O relógio que faltava
+
+`Em Chamas` sempre teve relógio; magia sustentada não tinha nenhum. As sete — e eram **sete**, não as
+três que o backlog listava:
+
+| Árvore | Rank | Magia |
+| --- | --- | --- |
+| Vento | Avançado | `Tomar o Ar` |
+| Vento | Santo | `Tempestade Cortante` |
+| Vento | Rei | `Vazio` |
+| Terra | Rei | `Rio de Magma` |
+| Armas Pesadas | Avançado | `Estrangular [Impacto]` |
+| Punho do Fogo | Santo | `Prisão de Purgatório` |
+| Punho do Fogo | Rei | `Trono de Chamas` |
+
+O backlog só listava três porque só três apareciam como capstone quebrado. Ninguém tinha contado o
+resto.
+
+A Tempestade Cortante, medida: era **36 de dano**; agora é 36 de impacto + 34 + 34 = **104**.
+
+### 📏 Três turnos, e o número é meu
+
+A Tempestade dura *"1 minuto"* — dez turnos. Contar dez daria a ela um dano que nenhuma mesa vê, por
+duas razões que o motor não modela: **o alvo pode sair da área** (não há mapa) e **o combate acaba
+antes** (as batalhas do playtest fecham em 2 a 4 rodadas).
+
+Três é o turno do lançamento mais dois — a duração mediana de um combate deste simulador. É uma
+constante declarada, igual ao limiar de cura de 50%: escolhida por mim, não pelo livro, e por isso
+mora no topo do arquivo com o porquê escrito. Errar pra menos é o lado certo de errar.
+
+### 🔍 E aqui está o que ninguém esperava
+
+O item 14 do backlog dizia, desde a 0.1.50: *"as três são do MOTOR — o conserto é no simulador, não no
+livro"*.
+
+O simulador foi consertado. **As três saíram da lista, e o número subiu de três para quatro.**
+
+| | Antes | Agora |
+| --- | --- | --- |
+| Punho do Fogo | Rei (`Trono de Chamas`) | **Imperador** (`Colapso Solar`) |
+| Terra | Rei (`Rio de Magma`) | **Imperador** (`Sepultamento`) |
+| Vento | Santo (`Tempestade Cortante`) | **Rei** (`Vazio`) |
+| Armas Pesadas | — | **Santo** (`Ruína [Peso]`) |
+
+As quatro de agora são as técnicas que vêm **logo acima** das sustentadas. O instrumento não estava
+escondendo um livro certo: estava escondendo um problema **diferente**, e agora ele está visível.
+
+Testei a sensibilidade ao número de turnos: com 1 dá 3 capstones, com 2 dá 4, com 3 dá 4, com 4 dá 5.
+A lista quase não se move — o que sugere que o problema não é a constante, e sim que magia sustentada
+é forte e o patamar acima dela não acompanha. **Essa decisão é sua.**
+
+### 🎯 O que o playtest diz
+
+Nada — e isso está certo. As builds de 12 PA param no Avançado, e seis das sete magias são de Santo
+pra cima. O conserto move o `check:progressao`, que é exatamente onde o problema morava.
+
+De quebra, um número velho caiu: o backlog dizia *"o Vento desabou de 53 pra 19"*. A Iri marca hoje
+**117 de dano por batalha e 42% de sobrevivência** — terceiro lugar. Aquela evidência é da 0.1.35 e
+não sustenta mais nada.
+
+---
+
 ## 0.1.56 — "Verde Falso" · 2026-09-11
 
 Auditoria geral do projeto. O achado principal não está no site: está na ferramenta que diz se o site
