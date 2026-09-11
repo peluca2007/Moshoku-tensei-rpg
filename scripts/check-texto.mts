@@ -27,6 +27,7 @@
  *   npm run check:texto
  */
 import { TREES } from "../src/data/trees/index";
+import { WEAPON_GROUPS, weaponGroupName } from "../src/data/weaponGroups";
 import { RANKS, type AbilityDef, type TalentDef, type TreeRankDef, type Tree } from "../src/lib/types";
 
 interface Achado {
@@ -315,6 +316,64 @@ for (const tree of TREES) {
         `${tree.ranks[i].hpDiceFormula} desde ${tree.ranks[i - repetidos + 1].rank}`
       );
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+/*
+ * PROSA × LISTA de grupos de arma (Cap. 1, §4 — 0.1.52).
+ *
+ * Cada árvore diz duas vezes o que ela concede: em `proficiencies.armas`, que é
+ * o que o livro imprime, e em `proficiencies.gruposDeArma`, que é o que a ficha
+ * calcula. Duas fontes pra mesma verdade é exatamente o arranjo que apodrece em
+ * silêncio — alguém reescreve a frase e esquece a lista, ou vice-versa, e a
+ * mesa passa a ler uma regra que o site não aplica.
+ *
+ * A conferência é por NOME do grupo dentro da prosa. Ela é grosseira de
+ * propósito: exigir que a frase seja gerada da lista tiraria da prosa a
+ * liberdade de explicar POR QUE aquele estilo empunha aquilo, que é metade do
+ * valor dela.
+ */
+for (const tree of TREES as Tree[]) {
+  const prof = tree.proficiencies;
+  if (!prof) continue;
+
+  if (!prof.gruposDeArma) {
+    anota("FALHA", "Árvore sem grupos de arma declarados", tree.name, "proficiencies.gruposDeArma ausente");
+    continue;
+  }
+
+  const prosa = prof.armas.toLocaleLowerCase("pt-BR");
+  for (const id of prof.gruposDeArma) {
+    const nome = weaponGroupName(id).toLocaleLowerCase("pt-BR");
+    if (!prosa.includes(nome)) {
+      anota("FALHA", "Grupo na lista e ausente da prosa", tree.name, `"${weaponGroupName(id)}" não aparece em proficiencies.armas`);
+    }
+  }
+
+  for (const grupo of WEAPON_GROUPS) {
+    const nome = grupo.name.toLocaleLowerCase("pt-BR");
+    if (prosa.includes(nome) && !prof.gruposDeArma.includes(grupo.id)) {
+      anota("FALHA", "Grupo na prosa e ausente da lista", tree.name, `"${grupo.name}" é citado mas não está em gruposDeArma`);
+    }
+  }
+
+  // O vocabulário que a régua antiga usava. Ele não descreve mais nada: não
+  // existe "arma simples" nem "arma marcial" no livro depois de 0.1.52, e uma
+  // frase que ainda diga isso está descrevendo um sistema que foi embora.
+  for (const morto of ["arma simples", "armas simples", "arma marcial", "armas marciais", "arma exótica", "armas exóticas"]) {
+    if (prosa.includes(morto)) {
+      anota("FALHA", "Vocabulário da régua antiga", tree.name, `proficiencies.armas ainda diz "${morto}"`);
+    }
+  }
+
+  const escolha = prof.escolhaDeGrupo ?? 0;
+  const prometeEscolha = /à sua escolha|a sua escolha|à escolha/i.test(prof.armas);
+  if (escolha > 0 && !prometeEscolha) {
+    anota("FALHA", "Escolha na lista e ausente da prosa", tree.name, `escolhaDeGrupo: ${escolha}, mas a prosa não menciona escolha`);
+  }
+  if (escolha === 0 && prometeEscolha) {
+    anota("FALHA", "Escolha na prosa e ausente da lista", tree.name, "a prosa promete um grupo à escolha, mas escolhaDeGrupo é 0");
   }
 }
 

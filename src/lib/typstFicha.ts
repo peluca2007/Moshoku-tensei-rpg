@@ -49,6 +49,15 @@ export interface FichaWeaponRow {
   damage: string;
   /** Texto livre do item, quando houver. */
   description: string;
+  /**
+   * Cap. 1, §4: o personagem é proficiente no grupo desta arma? (0.1.52)
+   *
+   * A ficha impressa precisa dizer isto porque a penalidade é INVISÍVEL no
+   * número: Desvantagem no acerto não muda o "1d20+7" da coluna, e uma folha de
+   * papel não recalcula nada na mesa. Sem a marca, o jogador com a ficha na mão
+   * rolaria um dado a menos do que devia pelo resto da campanha.
+   */
+  proficient: boolean;
 }
 
 export interface FichaInventoryRow {
@@ -419,7 +428,16 @@ function weaponsTable(weapons: FichaWeaponRow[]): string {
   for (let i = 0; i < dataRowCount; i++) {
     const w = weapons[i];
     rows.push(
-      [w?.name ?? "", w?.baseDie ?? "", w?.steps ?? "", w?.attack ?? "", w?.damage ?? ""]
+      [
+        // O losango vazio na frente do nome é a marca de "sem proficiência" —
+        // mesma gramática do losango cheio que `attributesBlock` usa pra
+        // Vantagem em Teste de Resistência, e por isso a mesa já sabe ler.
+        w ? `${w.proficient ? "" : "◇ "}${w.name}` : "",
+        w?.baseDie ?? "",
+        w?.steps ?? "",
+        w?.attack ?? "",
+        w?.damage ?? "",
+      ]
         .map(tstr)
         .join(", ")
     );
@@ -429,12 +447,35 @@ function weaponsTable(weapons: FichaWeaponRow[]): string {
   // era justamente ela que sumia por completo do PDF. Vai como notas de rodapé
   // da tabela, uma linha por arma que tenha texto.
   const notas = weapons.filter((w) => w.description.trim().length > 0);
-  const notasBloco = notas.length
+
+  // A legenda do losango vazio só existe quando há uma arma marcada — legenda de
+  // símbolo ausente é ruído numa folha que já é densa.
+  const legenda = weapons.some((w) => !w.proficient)
+    ? `#(strong("◇") + ${tstr(" sem proficiência (Cap. 1, §4): ataque com Desvantagem. O dano não muda.")})`
+    : "";
+
+  /*
+   * O parêntese depois do `#` não é estilo: é o que faz a soma acontecer.
+   *
+   * Estas linhas moram num bloco `[...]`, que é MARKUP. Ali, `#strong("x")`
+   * fecha a expressão no fim da chamada — o ` + "texto"` que vinha depois volta
+   * a ser texto comum, e o PDF imprime, literalmente, `◇ + " sem proficiência"`,
+   * com o mais e as aspas. `#(a + b)` mantém tudo dentro de uma expressão só.
+   *
+   * O bug já existia antes de 0.1.52, na nota de rodapé das armas com
+   * descrição — nunca tinha aparecido porque nenhuma arma do catálogo mundano
+   * tem descrição própria, e só as seis especiais da loja têm.
+   */
+  const linhas = [
+    ...(legenda ? [legenda] : []),
+    ...notas.map((w) => `#(strong(${tstr(w.name)}) + ${tstr(` — ${w.description}`)})`),
+  ];
+  const notasBloco = linhas.length
     ? `
 #v(3pt)
 #block(width: 100%, inset: (x: 2pt))[
   #set text(size: 7.5pt)
-  ${notas.map((w) => `#strong(${tstr(w.name)}) + ${tstr(` — ${w.description}`)}`).join("\n  #linebreak()\n  ")}
+  ${linhas.join("\n  #linebreak()\n  ")}
 ]`
     : "";
 

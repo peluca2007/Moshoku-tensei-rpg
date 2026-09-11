@@ -49,7 +49,8 @@ export const DESINTOXICACAO_TREE: Tree = {
   tagline:
     "Trata veneno, doença, maldição e petrificação. Uma regra só: um feitiço de rank X remove uma aflição de rank X ou inferior. É a escola mais barata do livro em PA — não te faz vencer uma luta, te impede de perder a campanha.",
   proficiencies: {
-    armas: "Nenhuma além do padrão (armas simples, armadura leve).",
+    armas: "Não concede grupo de arma nenhum: quem abre esta escola fica com o piso que todo personagem tem, mais o grupo livre que escolheu na criação. Armadura leve apenas.",
+    gruposDeArma: [],
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Espírito. Usa a tabela barata de PA (Cap. 2, \"A Escola Barata\"), não a tabela comum de magia.",
   },

@@ -32,7 +32,8 @@ export const BARDO_TREE: Tree = {
     Imperador: "Voz do Mundo",
   },
   proficiencies: {
-    armas: "Adaga, espada curta e rapieira, mais todo instrumento musical. Armadura leve apenas.",
+    armas: "Grupos Lâminas Curtas e Espadas (a rapieira e a espada curta do trovador armado), mais todo instrumento musical. Armadura leve apenas.",
+    gruposDeArma: ["laminas-curtas", "espadas"],
     pericias: "O Bônus de Rank soma em Atuação, Persuasão, Intuição e História — mas só nas que você realmente possui (Cap. 3).",
     periciasCobertas: ["Atuação", "Persuasão", "Intuição", "História"],
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",

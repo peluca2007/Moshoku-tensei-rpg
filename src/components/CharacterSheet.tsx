@@ -40,6 +40,7 @@ import InventorySection from "./InventorySection";
 import LoreSection from "./LoreSection";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
+import GruposDeArmaSection from "./GruposDeArmaSection";
 import CondicoesSection from "./CondicoesSection";
 import DescansoSection from "./DescansoSection";
 import SimuladorPessoal from "./SimuladorPessoal";
@@ -1217,6 +1218,7 @@ export default function CharacterSheet() {
         <div className="space-y-4">
           <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
           <SkillsSection race={race} background={background} skills={skills} />
+          <GruposDeArmaSection />
 
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="flex items-center gap-2 text-lg font-bold text-parchment-900 dark:text-parchment-50">

@@ -38,6 +38,7 @@ function fichaCom(qtdArvores: number): CharacterData {
     skills: ["Arcanismo", "Percepção"],
     treeSkillChoices: [],
     proficiencies: [],
+    weaponGroupChoices: [],
     bonusHp: 0,
     bonusMp: 0,
     currentHp: 50,

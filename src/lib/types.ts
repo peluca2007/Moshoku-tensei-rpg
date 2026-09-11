@@ -1,3 +1,4 @@
+import { WeaponGroupId } from "@/data/weaponGroups";
 export type AttributeKey = "forca" | "agilidade" | "vigor" | "intelecto" | "espirito";
 
 export const ATTRIBUTES: { key: AttributeKey; label: string; short: string }[] = [
@@ -621,6 +622,29 @@ export interface Tree {
   proficiencies?: {
     /** Armas e armaduras que a árvore libera, e as que ela proíbe. */
     armas: string;
+    /**
+     * Os GRUPOS DE ARMA que esta árvore concede (Cap. 1, §4 — 0.1.52).
+     *
+     * Existe pelo mesmo motivo que `periciasCobertas`: a prosa de `armas` é o
+     * que o livro imprime, mas prosa não é computável. Até 0.1.51 a ficha não
+     * tinha como saber se o personagem é proficiente na arma que empunha —
+     * a informação existia só como frase escrita à mão, com vocabulário que
+     * nem era consistente entre as dezoito árvores ("armas simples", "arma
+     * exótica", "toda arma de uma mão", "escudo leve").
+     *
+     * `check:livro` confere que a lista e a prosa dizem a mesma coisa.
+     */
+    gruposDeArma?: WeaponGroupId[];
+    /**
+     * Quantos grupos o JOGADOR escolhe livremente, além dos fixos acima.
+     *
+     * Só as árvores do CORPO preenchem, e sempre com 1: o espadachim que também
+     * carrega arco é uma escolha dele, não do livro. O Deus do Norte é a única
+     * do Corpo sem escolha — ele já recebe todos os grupos, e escolher entre
+     * "tudo" e "tudo" não é escolha. As árvores de Magia e de Utilidade não dão
+     * escolha nenhuma: quem quer mais arma abre uma árvore do Corpo ou paga PA.
+     */
+    escolhaDeGrupo?: number;
     /** Perícias ligadas à árvore — e, na Utilidade, em quais o Bônus de Rank soma. */
     pericias: string;
     /**
@@ -813,6 +837,19 @@ export interface CharacterData {
    * Texto livre, porque a lista do mundo é aberta.
    */
   proficiencies: string[];
+  /**
+   * Os GRUPOS DE ARMA escolhidos pelo jogador (Cap. 1, §4 — 0.1.52).
+   *
+   * Junta duas escolhas que têm a mesma natureza e por isso moram no mesmo
+   * campo: **a da criação** (todo personagem escolhe 1 grupo, fora do piso de
+   * Desarmado e Improvisado) e **a das árvores do Corpo** (cada uma dá 1 grupo
+   * livre além dos fixos dela). O total permitido é calculado por
+   * `getWeaponGroupChoiceBudget`, e a ficha corta o excesso.
+   *
+   * Separado de `proficiencies` — que é texto livre de ferramenta e idioma —
+   * porque estes entram numa conta: decidem Vantagem/Desvantagem no acerto.
+   */
+  weaponGroupChoices: WeaponGroupId[];
   /** PV/PM Máximos comprados com PA (Cap. 1, seção 2: 2 PA = +12), fora da árvore. */
   bonusHp: number;
   bonusMp: number;

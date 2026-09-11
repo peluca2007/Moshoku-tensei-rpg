@@ -136,6 +136,7 @@ src/
 │   │   └── shared.ts    tabelas de custo: MAGIC_ACTIONS, RANK_PA_COST,
 │   │                    UTILITY_PA_COST, DESINTOX_PA_COST
 │   ├── races.ts · backgrounds.ts · skills.ts · proficiencies.ts
+│   ├── weaponGroups.ts   os 8 grupos de arma + Escudos (Cap. 1, §4)
 │   ├── shopItems.ts · startingKits.ts · combinedSpells.ts
 │   ├── rankDeus.ts · interview.ts · patchNotes.ts
 │   └── danoPorTurno.ts   a régua do Apêndice C, verificada por check:livro

@@ -24,7 +24,8 @@ export const TERRA_TREE: Tree = {
   tagline:
     "Atolado e Soterrado, nessa ordem. Terra prende primeiro e enterra depois: quase toda magia da escola ou aplica Atolado, ou cobra o dobro de quem já está Atolado. Também é a única escola que constrói, e o mago com mais PV do jogo.",
   proficiencies: {
-    armas: "Nenhuma além do padrão (armas simples, armadura leve).",
+    armas: "Não concede grupo de arma nenhum: quem abre esta escola fica com o piso que todo personagem tem, mais o grupo livre que escolheu na criação. Armadura leve apenas.",
+    gruposDeArma: [],
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",
   },

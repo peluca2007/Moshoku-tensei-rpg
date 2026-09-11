@@ -48,6 +48,7 @@ function ficha(patch: Partial<CharacterData> = {}): CharacterData {
     skills: [],
     treeSkillChoices: [],
     proficiencies: [],
+    weaponGroupChoices: [],
     bonusHp: 0,
     bonusMp: 0,
     currentHp: null,

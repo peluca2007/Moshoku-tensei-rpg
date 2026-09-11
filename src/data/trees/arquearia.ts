@@ -32,7 +32,9 @@ export const ARQUEARIA_TREE: Tree = {
     Imperador: "Lenda da Flecha",
   },
   proficiencies: {
-    armas: "Arco curto, arco longo, besta e funda. Armadura leve apenas — puxar corda com peitoral de placas não funciona.",
+    armas: "Grupos Arcos e Bestas, e Arremesso. Mais UM grupo à sua escolha. Armadura leve apenas — puxar corda com peitoral de placas não funciona.",
+    gruposDeArma: ["arcos-e-bestas", "arremesso"],
+    escolhaDeGrupo: 1,
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },

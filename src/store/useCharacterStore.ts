@@ -1,3 +1,4 @@
+import { WeaponGroupId } from "@/data/weaponGroups";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
@@ -35,6 +36,7 @@ function blankCharacter(id: string, name: string): CharacterData {
     skills: [],
     treeSkillChoices: [],
     proficiencies: [],
+    weaponGroupChoices: [],
     bonusHp: 0,
     bonusMp: 0,
     currentHp: null,
@@ -112,6 +114,8 @@ interface RosterState {
   setRaceAttributeChoice: (index: number, key: AttributeKey | null) => void;
   /** Escolha do `grantedSkills.choose` da Árvore Inicial (Cap. 1, §4). */
   setTreeSkillChoice: (index: number, skill: string | null) => void;
+  /** Cap. 1, §4: escolhe (ou limpa) um dos grupos de arma livres do personagem. */
+  setWeaponGroupChoice: (index: number, group: WeaponGroupId | null) => void;
   addProficiency: (name: string) => void;
   removeProficiency: (name: string) => void;
   /** Compra/desfaz uma melhoria racial (Cap. 1, §5) — o custo em PA entra em getPaSpent. */
@@ -227,6 +231,11 @@ export function migrarRoster(
           racialUpgrades: c.racialUpgrades ?? [],
           treeSkillChoices: c.treeSkillChoices ?? [],
           proficiencies: c.proficiencies ?? [],
+          // 0.1.52: ficha salva antes dos grupos de arma nasce sem escolha
+          // nenhuma, e a tela avisa que falta escolher. Preencher aqui com um
+          // palpite seria decidir pelo jogador qual arma o personagem dele sabe
+          // usar — e o piso (Desarmado e Improvisado) todo mundo já tem.
+          weaponGroupChoices: c.weaponGroupChoices ?? [],
           saveAdvantages: c.saveAdvantages ?? [],
           condicoes: c.condicoes ?? [],
           descansosCurtos: c.descansosCurtos ?? 0,
@@ -338,6 +347,15 @@ export const useCharacterStore = create<RosterState>()(
           if (skill === null) next.splice(index, 1);
           else next[index] = skill;
           return { ...c, treeSkillChoices: next.filter(Boolean) };
+        }),
+      setWeaponGroupChoice: (index, group) =>
+        updateActive(get, set, (c) => {
+          const next = [...(c.weaponGroupChoices ?? [])];
+          if (group === null) next.splice(index, 1);
+          else next[index] = group;
+          // Sem o Set, escolher o mesmo grupo em dois espaços gastaria duas
+          // escolhas pra entregar uma proficiência.
+          return { ...c, weaponGroupChoices: Array.from(new Set(next.filter(Boolean))) };
         }),
       addProficiency: (name) =>
         updateActive(get, set, (c) => {

@@ -24,7 +24,8 @@ export const BARREIRA_TREE: Tree = {
   tagline:
     "Anti-magia medida em regras, não em dano — e paredes com PV para o que a regra não alcança. Fraqueza estrutural: barreiras distorcem mana, e aço não é mana; contra o pilar do Corpo você atrasa, não proíbe.",
   proficiencies: {
-    armas: "Nenhuma além do padrão (armas simples, armadura leve).",
+    armas: "Não concede grupo de arma nenhum: quem abre esta escola fica com o piso que todo personagem tem, mais o grupo livre que escolheu na criação. Armadura leve apenas.",
+    gruposDeArma: [],
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Espírito.",
   },

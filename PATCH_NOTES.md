@@ -5,6 +5,65 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.52 — "Espada Sim, Adaga Não" · 2026-09-11
+
+Proficiência de arma agora é por **grupo**, e não por faixa de dano.
+
+### 🗡️ O que a régua antiga media
+
+O Cap. 1 §4 dizia: *"armas simples (Dado Base até d6): todo personagem é proficiente; armas marciais
+(d8+): exigem proficiência de uma árvore do Corpo"*. Vocabulário emprestado de outro sistema, medindo
+a coisa errada. Três consequências que ninguém tinha percebido:
+
+| | Sob a régua antiga |
+| --- | --- |
+| **Rapieira** (d6) | livre pra todo mundo |
+| **Espada Longa** (d8) | exigia árvore do Corpo |
+| **Arco Curto** (d6) e **Espada Curta** (d6) | mesma categoria |
+| **"Proficiente em espada mas não em adaga"** | impossível de representar |
+
+A adaga (d4) estava **abaixo** da faixa livre. Quem sabia espada sabia adaga por tabela — e o mago que
+nunca tocou numa arma esgrimia rapieira sem penalidade.
+
+### 🎯 Os oito grupos
+
+**Espadas · Lâminas Curtas · Machados e Marretas · Hastes · Arcos e Bestas · Arremesso · Flexíveis ·
+Desarmado e Improvisado**, mais **Escudos** à parte — escudo não é armadura que se veste, é arma que
+se empunha.
+
+Você é proficiente num grupo, e isso vale pra toda arma dele, do d4 ao d12.
+
+### 🎁 Como se ganha
+
+- **Desarmado e Improvisado** de graça, pra todo personagem.
+- **Mais um grupo à sua escolha** na criação — inclusive pra quem nunca vai abrir uma árvore do Corpo.
+  É aqui que o mago pega a adaga de reserva ou o cajado de combate.
+- **Os grupos de cada árvore aberta.** Diferente das Perícias de Árvore, esta vale por árvore aberta e
+  não só pela Inicial: perícia é hábito, empunhar arma é treino.
+- **Toda árvore do Corpo dá ainda um grupo livre**, além dos fixos. O espadachim que também carrega
+  arco é escolha dele. (O Deus do Norte não dá — já recebe os nove.)
+
+### 🛡️ O escudo, que o livro cobrava e o código ignorava
+
+O Cap. 1 já dizia que escudo exige proficiência. `getArmorClass` somava o bônus de qualquer coisa
+equipada, e um mago com escudo levava os +2 inteiros. Agora **rende +1 sem o grupo Escudos** — erguer
+uma tábua na frente do corpo ajuda um pouco mesmo sem treino, só não é defender.
+
+### ⚔️ Seis armas novas
+
+Quatro grupos ficariam com uma arma só dentro, e grupo com uma arma é a arma com nome comprido.
+Entraram **Katana, Machadinha, Cajado de Combate, Azagaia, Faca de Arremesso e Corrente de Combate** —
+na loja também, com o preço que o dado delas define.
+
+### 🔍 O que passou a ser conferido
+
+A prosa de cada árvore e a lista que a ficha calcula são duas fontes pra mesma verdade, e esse arranjo
+apodrece calado. O `check:texto` agora acusa: grupo na lista e ausente da prosa, grupo na prosa e
+ausente da lista, escolha prometida numa e não na outra, e qualquer resquício do vocabulário morto
+("arma simples", "arma marcial", "arma exótica"). **Ele já pegou dois erros meus na primeira execução.**
+
+---
+
 ## 0.1.51 — "A Ficha Impressa" · 2026-09-11
 
 O PDF da ficha existe pra ser **levado pra mesa em papel**. Renderizando fichas de verdade — uma

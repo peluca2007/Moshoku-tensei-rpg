@@ -8,6 +8,8 @@ import {
   getSpellDC,
   getTreeGrantedSkills,
   getWeaponDamage,
+  getWeaponGroups,
+  isProficientWithWeapon,
   hasSaveAdvantage,
 } from "@/store/selectors";
 import type { FichaPdfPayload } from "@/lib/typstFicha";
@@ -26,6 +28,7 @@ import {
   TalentDef,
 } from "@/lib/types";
 import { rotuloDeAcoes } from "./rotuloDeAcoes";
+import { weaponGroupName } from "@/data/weaponGroups";
 
 function actionLabel(ability: AbilityDef): string {
   if (ability.reaction) return "1 Reação";
@@ -121,6 +124,12 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
   if (manualSkills.length > 0) traits.push(`Perícias: ${manualSkills.join(", ")}.`);
   const proficiencias = character.proficiencies ?? [];
   if (proficiencias.length > 0) traits.push(`Proficiências e Línguas: ${proficiencias.join(", ")}.`);
+  // Cap. 1, §4 (0.1.52): os grupos de arma vão pra ficha impressa porque são o
+  // que decide Desvantagem no acerto — e uma ficha de papel não tem como
+  // calcular isso na hora. Quem joga com a folha na mão precisa ler a lista.
+  traits.push(
+    `Grupos de Arma: ${getWeaponGroups(character).map(weaponGroupName).join(", ")}.`
+  );
   // Cap. 1, §5: melhoria racial é comprada com PA e não aparecia em lugar nenhum
   // do PDF — o jogador pagava 3 PA por Sombra Absoluta e levava pra mesa uma
   // ficha que não sabia que ele a tinha.
@@ -159,6 +168,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
           attack: `1d20${sinal(attributeValue)}`,
           damage: item.baseDie ? `${item.baseDie}${sinal(attributeValue)} (${attributeShort})` : "—",
           description: item.description ?? "",
+          proficient: isProficientWithWeapon(character, item.name),
         };
       }
 
@@ -171,6 +181,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
         attack: `1d20${sinal(bonus)}`,
         damage: `${info.escalatedDie}${sinal(bonus)} · méd. ${media}`,
         description: item.description ?? "",
+        proficient: isProficientWithWeapon(character, item.name),
       };
     });
   const inventory = character.inventory.map((i) => ({

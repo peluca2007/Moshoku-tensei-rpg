@@ -32,7 +32,8 @@ export const TATICO_TREE: Tree = {
     Imperador: "Senhor da Guerra",
   },
   proficiencies: {
-    armas: "Armas simples, arco curto e lança. Armadura leve e média.",
+    armas: "Grupos Hastes e Arcos e Bestas — a lança do batedor e o arco de caça. Armadura leve e média.",
+    gruposDeArma: ["hastes", "arcos-e-bestas"],
     pericias: "O Bônus de Rank soma em Sobrevivência, Natureza, Investigação e Percepção (rastreio) — mas só nas que você realmente possui (Cap. 3).",
     periciasCobertas: ["Sobrevivência", "Natureza", "Investigação", "Percepção"],
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",

@@ -1,3 +1,11 @@
+import {
+  ESCOLHAS_INICIAIS,
+  GRUPO_BASE,
+  GRUPOS_ESCOLHIVEIS,
+  grupoDaArma,
+  WEAPON_GROUP_IDS,
+  WeaponGroupId,
+} from "@/data/weaponGroups";
 import { getRaceById } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
@@ -124,6 +132,90 @@ export function getPendingTreeSkillChoices(state: StoreState): number {
   if (!choose) return 0;
   const validas = (state.treeSkillChoices ?? []).filter((s) => choose.from.includes(s));
   return Math.max(0, choose.count - validas.length);
+}
+
+/**
+ * Todos os GRUPOS DE ARMA em que o personagem é proficiente (Cap. 1, §4 — 0.1.52).
+ *
+ * Três fontes, somadas:
+ *
+ * 1. **O piso.** `GRUPO_BASE` (Desarmado e Improvisado), que todo personagem
+ *    tem. Dar um soco e quebrar uma cadeira não é ofício.
+ * 2. **As árvores abertas.** Cada árvore declara `gruposDeArma`. Vale pra TODA
+ *    árvore aberta, não só a Inicial — diferente de `grantedSkills`, e de
+ *    propósito: perícia é hábito (você já era alguém quando chegou na segunda
+ *    árvore), mas empunhar arma é treino, e treino de arma é exatamente o que
+ *    uma árvore do Corpo ensina, em qualquer ordem que você a abra.
+ * 3. **As escolhas do jogador.** `weaponGroupChoices`, cortada no orçamento que
+ *    `getWeaponGroupChoiceBudget` calcula — 1 da criação, mais 1 por árvore do
+ *    Corpo aberta que declare `escolhaDeGrupo`.
+ *
+ * O corte no orçamento importa: sem ele, uma ficha que abriu uma árvore do
+ * Corpo e depois a trocou ficaria com a escolha extra pra sempre.
+ */
+export function getWeaponGroups(state: StoreState): WeaponGroupId[] {
+  const grupos = new Set<WeaponGroupId>([GRUPO_BASE]);
+
+  for (const treeId of new Set(state.unlockedRanks.map((u) => u.treeId))) {
+    for (const g of getTreeById(treeId)?.proficiencies?.gruposDeArma ?? []) grupos.add(g);
+  }
+
+  const orcamento = getWeaponGroupChoiceBudget(state);
+  for (const g of (state.weaponGroupChoices ?? []).slice(0, orcamento)) grupos.add(g);
+
+  return WEAPON_GROUP_IDS.filter((g) => grupos.has(g));
+}
+
+/**
+ * Quantos grupos à escolha este personagem tem direito.
+ *
+ * `ESCOLHAS_INICIAIS` da criação (todo personagem, inclusive o mago), mais 1
+ * por árvore aberta que declare `escolhaDeGrupo` — só as do Corpo declaram, e
+ * o Deus do Norte não declara porque já recebe os nove grupos.
+ */
+export function getWeaponGroupChoiceBudget(state: StoreState): number {
+  let total = ESCOLHAS_INICIAIS;
+  for (const treeId of new Set(state.unlockedRanks.map((u) => u.treeId))) {
+    total += getTreeById(treeId)?.proficiencies?.escolhaDeGrupo ?? 0;
+  }
+  return total;
+}
+
+/** Quantas escolhas de grupo ainda faltam o jogador fazer (0 quando está em dia). */
+export function getPendingWeaponGroupChoices(state: StoreState): number {
+  // Uma escolha que a árvore já cobriu de graça não conta como gasta: se você
+  // escolheu Espadas e depois abriu o Deus da Espada, a escolha voltou pra sua
+  // mão em vez de virar PA jogado fora.
+  const validas = (state.weaponGroupChoices ?? []).filter((g) => GRUPOS_ESCOLHIVEIS.includes(g));
+  const cobertasPorArvore = validas.filter((g) => grupoVemDeArvore(state, g));
+  return Math.max(0, getWeaponGroupChoiceBudget(state) - (validas.length - cobertasPorArvore.length));
+}
+
+/** O grupo já vem de graça de alguma árvore aberta? */
+function grupoVemDeArvore(state: StoreState, grupo: WeaponGroupId): boolean {
+  for (const treeId of new Set(state.unlockedRanks.map((u) => u.treeId))) {
+    if ((getTreeById(treeId)?.proficiencies?.gruposDeArma ?? []).includes(grupo)) return true;
+  }
+  return false;
+}
+
+/**
+ * O personagem é proficiente com esta arma? (Cap. 1, §4)
+ *
+ * Arma que o catálogo não conhece devolve `true`: loot de campanha e arma
+ * escrita à mão no inventário são do Mestre, e um sistema que dá Desvantagem
+ * calada porque não reconheceu um nome é pior que um que não dá nada. Ver a
+ * nota em `GRUPO_POR_ARMA`.
+ */
+export function isProficientWithWeapon(state: StoreState, weaponName: string): boolean {
+  const grupo = grupoDaArma(weaponName);
+  if (!grupo) return true;
+  return getWeaponGroups(state).includes(grupo);
+}
+
+/** Cap. 1, §4: arma sem proficiência ataca com Desvantagem. O dano nunca muda. */
+export function temDesvantagemPorArma(state: StoreState, weaponName: string): boolean {
+  return !isProficientWithWeapon(state, weaponName);
 }
 
 /** Quantos pontos do bônus livre da raça ainda faltam distribuir (0 se a raça não tem nenhum). */
@@ -407,10 +499,21 @@ export function getMaxCalor(state: StoreState): number {
  * (ex: Miko "Maldição do Ódio") + itens de armadura equipados.
  */
 export function getArmorClass(state: StoreState): number {
-  const equippedBonus = state.inventory.reduce(
-    (sum, item) => sum + (item.equipped && item.type === "armadura" ? (item.acBonus ?? 0) : 0),
-    0
-  );
+  const temEscudos = getWeaponGroups(state).includes("escudos");
+  const equippedBonus = state.inventory.reduce((sum, item) => {
+    if (!item.equipped || item.type !== "armadura") return sum;
+    const bonus = item.acBonus ?? 0;
+    // Cap. 1, §4 (0.1.52): escudo é o único item de defesa que se EMPUNHA, e por
+    // isso é o único que cobra proficiência aqui. Sem ela o escudo não deixa de
+    // funcionar — erguer uma tábua na frente do corpo ajuda um pouco mesmo sem
+    // treino —, mas rende +1 em vez de +2. A mão continua ocupada de qualquer
+    // jeito, que é o outro custo dele.
+    //
+    // Armadura vestida não passa por aqui de propósito: a penalidade dela é
+    // Desvantagem em Furtividade/Acrobacia e −3m de Deslocamento, não CA menor.
+    if (grupoDaArma(item.name) === "escudos" && !temEscudos) return sum + Math.min(bonus, 1);
+    return sum + bonus;
+  }, 0);
   // Quebrantado (Cap. 4, §2) é a ÚNICA condição do livro que mexe num número da
   // ficha: −1 de CA por acúmulo. Entra depois do override manual de propósito —
   // quem digitou uma CA à mão está declarando o corpo do personagem, e a
