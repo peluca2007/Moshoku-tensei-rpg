@@ -250,6 +250,27 @@ export const TURNOS_SUSTENTADOS = 3;
  * - `"12d8 + BC de dano de magma no impacto, depois 6d10 por turno"` — os dois,
  *   e a vírgula separa.
  */
+/**
+ * O efeito sustentado exige que o dono GASTE O TURNO mantendo? — 0.1.57
+ *
+ * Esta é a diferença entre uma área que fica lá sozinha e um agarrão. O
+ * `Estrangular [Impacto]` do Lutador diz *"enquanto você mantiver"* e exige alvo
+ * Agarrado: cada turno de dano custa o turno dele. Contar três tiques por uma
+ * Ação dava à técnica **51,6 de dano por Ação** — a segunda maior do livro
+ * inteiro, num rank Avançado, acima do Imperador do Deus da Espada.
+ *
+ * Quando a manutenção custa a Ação, o dano POR AÇÃO já está certo contando um
+ * turno só: cada tique a mais vem com uma Ação a mais.
+ *
+ * Manutenção que custa RECURSO é outra coisa e não entra aqui — o Trono de
+ * Chamas cobra "uma Sobrecarga por turno", e quem paga continua livre pra agir.
+ * Os turnos dele são reais; o que o motor não cobra é a Sobrecarga, e isso está
+ * declarado nas simplificações.
+ */
+export function exigeManutencao(efeito: string): boolean {
+  return /enquanto (você |vc )?mantiver|enquanto mantiver|manter custa (1 |uma )?ação/i.test(efeito);
+}
+
 export function separarSustentado(linha: string): { impacto: string; porTurno: string } {
   const temPorTurno = /(por turno|\/turno)/i.test(linha);
   if (!temPorTurno) return { impacto: linha, porTurno: "" };
@@ -588,7 +609,15 @@ export function acoesDe(c: CharacterData): Acao[] {
        * campo escapar pro lado de suporte reabriria exatamente a armadilha de
        * sinal que `formulaSuporte` foi criada pra fechar.
        */
-      danoPorTurno: ehSuporte ? "" : casoBase(separarSustentado(a.damage.normal).porTurno),
+      /*
+       * Zerado quando manter custa a Ação: aí cada tique já vem com a Ação dele,
+       * e multiplicar contaria de graça o turno que o personagem gastou. Ver
+       * `exigeManutencao`.
+       */
+      danoPorTurno:
+        ehSuporte || exigeManutencao(a.effect ?? "")
+          ? ""
+          : casoBase(separarSustentado(a.damage.normal).porTurno),
       formulaSuporte: ehSuporte ? casoBase(a.damage.normal) : "",
       sempreFresca: /sempre como ferida fresca/i.test(txt),
       // "+1 Dado de Arma", "+2 Dados de Arma", "Dado de arma rolado quatro vezes":
