@@ -16,6 +16,28 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.43",
+    date: "2026-09-10",
+    title: "Navegar as Árvores com o Polegar",
+    sections: [
+      {
+        heading: "O mapa era o único jeito, em qualquer tela",
+        items: [
+          "O mapa radial é a identidade visual do projeto, e era também a ÚNICA forma de navegar as árvores: dezenove delas, seis patamares cada, espremidos em 390px e alcançados por pinça e arrasto. O relato veio do autor, num aparelho de verdade — \"achei bem ruim navegar pelas árvores\" —, e nenhum script tinha como dizer isso: o check:mobile mede transbordo e alvo de toque, e os dois passavam há versões. O que ele não mede é quantos gestos custa chegar numa habilidade.",
+          "A tela ganhou dois modos, com alternador visível no topo. LISTA é o padrão no celular: pilar → árvore → patamar, três toques até qualquer habilidade, sem gesto nenhum. MAPA é o padrão acima de 640px e fica a um toque no celular, porque ele mostra o que a lista não mostra — as pontes entre árvores híbridas e o desenho do destino.",
+          "O padrão acompanha a largura ao vivo, mas a escolha explícita vence: a largura é um palpite sobre o aparelho, não sobre a pessoa. Um link com ?arvore=... sempre abre o mapa, porque a lista não sabe focar. E as duas telas compram pela MESMA porta — o cartão de habilidade saiu de dentro do mapa e virou componente próprio, porque duas telas que compram a mesma coisa por caminhos diferentes divergem em silêncio.",
+        ],
+      },
+      {
+        heading: "“2 Açãoões”",
+        items: [
+          "A lista nova expôs um erro de texto que já existia: o plural de \"Ação\" era feito grudando o sufixo na palavra inteira em vez de substituí-la, então 2 virava \"2 Açãoões\".",
+          "Estava copiado em sete lugares, em cinco arquivos: o detalhe de habilidade, a ficha, a busca global, a lista de árvores e — três vezes — o buildFichaPayload, que é o que vira PDF. Dava pra levar \"2 Açãoões\" impresso pra mesa. Sobreviveu porque sete cópias de uma linha curta não parecem duplicação: cada uma é pequena demais pra incomodar sozinha e nenhuma é grande o bastante pra alguém extrair. Agora é uma função com teste.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.42",
     date: "2026-09-10",
     title: "O Curandeiro na Tela do Mestre",
