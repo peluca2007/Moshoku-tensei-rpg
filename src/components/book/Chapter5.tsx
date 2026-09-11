@@ -1,14 +1,16 @@
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import ShopCatalog from "./ShopCatalog";
+import { LIMITES, MARCA_DO_MESTRE, PROVACOES, RECOMPENSA_POR_PATAMAR } from "@/data/dojos";
 
 export default function Chapter5() {
   return (
     <div className="space-y-8">
       <ChapterTitle id="cap5">Capítulo 5 — Entre Aventuras</ChapterTitle>
       <P className="dropcap">
-        Nem toda sessão é masmorra. Este capítulo reúne os quatro sistemas que rodam entre combates — tempo
-        livre, fama na Guilda, reputação com o mundo e o que dá pra fabricar com as próprias mãos — porque
-        eles se usam com a mesma frequência que qualquer regra do Capítulo 4, mesmo fora da luta.
+        Nem toda sessão é masmorra. Este capítulo reúne os cinco sistemas que rodam entre combates — tempo
+        livre, fama na Guilda, reputação com o mundo, o que dá pra fabricar com as próprias mãos, e os
+        Dojos, que são a única progressão do livro que não se compra — porque eles se usam com a mesma
+        frequência que qualquer regra do Capítulo 4, mesmo fora da luta.
       </P>
 
       <Section>
@@ -284,6 +286,124 @@ export default function Chapter5() {
             destino exige voltar ao mesmo encantador. Trate a fabricação como o final de um arco inteiro.
           </P>
         </Aside>
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap5-5">5. Dojos e Mestres — a progressão que não se compra</SectionTitle>
+        <P>
+          Todo o resto deste livro se compra com PA. Isso funciona, e tem um preço que só aparece depois de
+          umas vinte sessões: <b>o mundo deixa de importar para a ficha</b>. Dá pra jogar a campanha inteira
+          numa taverna e progredir igual a quem atravessou o continente.
+        </P>
+        <P>
+          Certos nós das árvores são <b>fechados a chave</b>, e a chave é uma pessoa. Não tem preço em PA,
+          não tem downtime que resolva, não tem loja que venda. Você encontra o mestre, ou não abre.
+        </P>
+
+        <SubTitle id="cap5-5-quem">Quem pode ensinar</SubTitle>
+        <List
+          items={[
+            <span key="a">
+              <b>Dois patamares acima</b> do aluno, no mínimo. Quem está um patamar acima é um colega com
+              mais estrada: pode dar conselho, não pode abrir a mente de ninguém.
+            </span>,
+            <span key="b">
+              <b>Divindades ignoram a escada.</b> Um Deus não está dois patamares acima de você — ele está
+              fora da contagem.
+            </span>,
+            <span key="c">
+              <b>Salto de patente vale por dois.</b> Um Imperador ensinando um Rei conta, mesmo sendo um só
+              patamar: o que mede aqui é o título, e a distância entre esses dois é maior que a distância
+              entre dois patamares quaisquer lá embaixo.
+            </span>,
+          ]}
+        />
+
+        <SubTitle id="cap5-5-provacao">A provação, e o que faz uma ser boa</SubTitle>
+        <P>
+          A provação não é uma missão difícil — é uma missão que <b>tira dos jogadores aquilo em que eles
+          são bons</b>. O Deus do Arco não pediu que o arqueiro atirasse melhor: ele obrigou o espadachim e
+          o mago a atirar. É dali que a sessão tira o que ela tem de memorável, e é por isso que o
+          critério de aprovação nunca deveria ser &ldquo;matou o monstro&rdquo;.
+        </P>
+        <Aside title="Concluir a provação abre a árvore de graça">
+          O desbloqueio não custa PA nenhum, e isso é de propósito: o preço já foi pago em sessão. O que
+          vem depois é o Dilema.
+        </Aside>
+
+        <SubTitle id="cap5-5-dilema">O Dilema de Recompensa</SubTitle>
+        <P>
+          Cada jogador escolhe <b>uma</b> das três portas. A escolha é individual: dois personagens podem
+          sair do mesmo dojo com recompensas diferentes.
+        </P>
+        <BookTable
+          headers={["Patamar do aluno", "PA travados na árvore nova", "PA livre", "A Marca do Mestre"]}
+          rows={RECOMPENSA_POR_PATAMAR.map((r) => [
+            `${r.patamares[0]}–${r.patamares[r.patamares.length - 1]}`,
+            `${r.travados} PA`,
+            `${r.livre} PA`,
+            "sempre disponível",
+          ])}
+        />
+        <List
+          items={[
+            <span key="t">
+              <b>PA travados</b> só podem ser gastos na árvore que a provação abriu. Se o personagem
+              abandonar a árvore, aquele PA morre com ela — é o preço de ter escolhido o número maior.
+            </span>,
+            <span key="l">
+              <b>PA livre</b> vale menos em quantidade e mais por unidade: ele vai onde você já tem Bônus de
+              Rank, e é ali que um PA rende de verdade.
+            </span>,
+            <span key="m">
+              <b>{MARCA_DO_MESTRE.nome}:</b> {MARCA_DO_MESTRE.texto}
+            </span>,
+          ]}
+        />
+        <Warning title="Por que a razão é 2:1, e não 3:1">
+          <P>
+            Duas quantidades da mesma moeda não fazem um dilema, fazem uma conta. A três por um, os PA
+            travados equivalem a <b>um patamar e meio</b> da árvore nova (abrir o Intermediário custa 1,
+            o Avançado custa 2) — qualquer um que pretenda usar a árvore pega sem pensar, e a porta do PA
+            livre nunca é aberta. A dois por um o PA livre volta a competir.
+          </P>
+          <P>
+            E a recompensa <b>escala com o patamar</b> porque um personagem de 3º tem cerca de 12 PA no
+            total e um de 5º tem cerca de 24: um valor fixo seria 25% do patrimônio do primeiro e 12% do
+            segundo — a mesma provação valendo o dobro pra quem menos precisa dela.
+          </P>
+        </Warning>
+
+        <SubTitle id="cap5-5-limites">Os limites</SubTitle>
+        <List items={LIMITES.map((l, i) => <span key={i}>{l}</span>)} />
+        <Warning title="A trava tem que ter uma válvula">
+          Um nó fechado a chave só é bom enquanto a chave existe. Se o Mestre trava uma árvore e nunca
+          coloca o dojo no mundo, o jogador não está jogando um sistema de exploração — está esperando.
+          <b> Regra de bolso: nenhuma trava sem pelo menos um rumor plantado na mesma sessão em que o
+          jogador esbarra nela.</b> O rumor pode ser falso, o dojo pode estar a um continente de distância,
+          o mestre pode estar morto e ter deixado um discípulo. O que não pode é o silêncio.
+        </Warning>
+
+        <SubTitle id="cap5-5-exemplos">Quatro mestres prontos</SubTitle>
+        {PROVACOES.map((p) => (
+          <Aside key={p.id} title={`${p.nome} — abre ${p.abre}`}>
+            <P>
+              <b>Patente:</b> {p.patenteDoMestre}
+            </P>
+            <P>
+              <b>A quebra:</b> {p.quebra}
+            </P>
+            <P>
+              <b>A provação:</b> {p.provacao}
+            </P>
+            <P>
+              <b>Regra da casa:</b> {p.regraDaCasa}
+            </P>
+            <P>
+              <b>Critério:</b> {p.criterio}
+            </P>
+          </Aside>
+        ))}
       </Section>
     </div>
   );

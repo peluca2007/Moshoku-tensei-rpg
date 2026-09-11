@@ -77,7 +77,7 @@ describe("A base", () => {
   });
 
   it("cada etapa nomeia o atributo ou a perícia que ela testa", () => {
-    for (const teste of ["Força", "Agilidade", "Intelecto ou Espírito", "Medicina", "Sobrevivência"]) {
+    for (const teste of ["Força", "Agilidade", "INTUIÇÃO", "Intelecto ou Espírito", "Medicina", "Sobrevivência"]) {
       expect(tiro.effect, teste).toContain(teste);
     }
   });
