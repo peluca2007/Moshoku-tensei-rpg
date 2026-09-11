@@ -397,7 +397,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           pmCost: 20,
           range: "Esfera de 45m",
           actions: { normal: 2 },
-          damage: { normal: "14d12 + BC (plasma)", condicional: "+1d6 no dano final por ponto de Calor gasto" },
+          damage: { normal: "19d12 + BC (plasma)", condicional: "+1d6 no dano final por ponto de Calor gasto" },
           effect: "Cria um micro-vácuo gravitacional que suga todos os inimigos para o centro (teste de Força, CD 8+BC, ou arrastados). " +
             "Depois implode: o plasma instável desestabiliza magia (efeitos mágicos de rank abaixo de Imperador na área falham automaticamente por 1 turno). " +
             "Detonação: gaste a barra inteira e cada ponto vale +1m no raio de sucção e +1d6 no dano final.",

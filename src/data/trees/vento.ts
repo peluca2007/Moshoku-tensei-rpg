@@ -44,7 +44,7 @@ export const VENTO_TREE: Tree = {
       talents: [
         { id: "pes-leves", name: "Pés Leves", paCost: RANK_PA_COST.talent.Principiante, description: "+3 metros de Deslocamento, e você não deixa pegadas nem faz ruído ao andar." },
         { id: "ouvido-do-vento", name: "Ouvido do Vento", paCost: RANK_PA_COST.talent.Principiante, description: "Você escuta qualquer conversa a até 60 metros, desde que exista ar entre vocês. Vantagem em Percepção auditiva." },
-        { id: "reserva-de-ar", name: "Reserva de Ar", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Vento. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
+        { id: "reserva-de-ar", name: "Reserva de Ar", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM e +2 PV por patamar seu em Vento. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2, hpPerRank: 2 } },
       ],
       abilities: [
         {
@@ -309,7 +309,7 @@ export const VENTO_TREE: Tree = {
           pmCost: 12,
           range: "Esfera de 18m",
           actions: MAGIC_ACTIONS.Rei,
-          damage: { normal: "4d10 por turno, sem teste" },
+          damage: { normal: "7d10 por turno, sem teste" },
           effect: "Remove todo o ar da área por 1 minuto. Impossível recitar, gritar ou fazer fogo ali dentro. Som não existe — nem o seu.",
           incantation:
             "Eu não crio nada aqui. Eu apenas retiro tudo — o ar que respiram, o som que fariam, a possibilidade de gritar por socorro pra alguém do lado de fora que talvez ouvisse.\nQue esta esfera inteira se torne o lugar mais silencioso que qualquer um de vocês jamais visitou em toda a vida,\ne que ninguém aqui dentro consiga sequer dizer o próprio nome em voz alta, nem pra si mesmo.\nVazio!",
@@ -351,7 +351,7 @@ export const VENTO_TREE: Tree = {
           actions: { normal: 3, silenciosa: 2 },
           costNote:
             "3 Ações em vez das 6 do rank Imperador, e 22 PM em vez de 18. O nome já entrega a lógica: uma explosão dessa escala sair em 3 Ações, sem o mundo perceber até o eco chegar quilômetros depois, é logisticamente impossível sem pagar o excedente de mana pela ausência do cântico completo — o vácuo que segura o som também segura parte do próprio feitiço.",
-          damage: { normal: "12d12 dividido igualmente entre ígneo, sônico e contundente" },
+          damage: { normal: "16d12 dividido igualmente entre ígneo, sônico e contundente" },
           effect: "Requer 1 patamar em Fogo. Teste de Vigor com Desvantagem Absoluta para metade. Ignora Resistência aos três tipos. Não faz som no momento — ele chega depois, a quilômetros de distância.",
           incantation:
             "Fogo.\nVácuo.\nAgora.",

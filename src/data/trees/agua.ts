@@ -52,8 +52,8 @@ export const AGUA_TREE: Tree = {
           id: "nascente-de-mana",
           name: "Nascente de Mana",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "+2 PM por patamar seu em Água. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.",
-          grants: { mpPerRank: 2 },
+          description: "+2 PM e +2 PV por patamar seu em Água. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.",
+          grants: { mpPerRank: 2, hpPerRank: 2 },
         },
         {
           id: "mao-firme",

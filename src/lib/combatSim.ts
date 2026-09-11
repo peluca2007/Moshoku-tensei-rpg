@@ -271,6 +271,28 @@ export function exigeManutencao(efeito: string): boolean {
   return /enquanto (você |vc )?mantiver|enquanto mantiver|manter custa (1 |uma )?ação/i.test(efeito);
 }
 
+/**
+ * O dano por turno depende de o alvo ESTAR num lugar? — 0.1.58
+ *
+ * O campo `damage.porTurno` do livro descreve duas coisas diferentes com a mesma
+ * forma. Uma o motor sabe contar; a outra não:
+ *
+ * - **"4d10 sufocando"** (Sepultamento) — o alvo está Soterrado. Ele não tem
+ *   como sair, e o dano acontece. Isto conta.
+ * - **"2d6 por turno a quem ENTRAR na cratera"**, **"a quem TOCAR os pilares"**,
+ *   **"a quem COMEÇAR O TURNO na área"** — depende de onde o alvo escolhe
+ *   pisar, e este motor não tem mapa. Contar seria inventar uma decisão que o
+ *   inimigo nunca tomou.
+ *
+ * Fica de fora, e o relatório declara. É a mesma régua de Atolado, Marcado e
+ * Soterrado: o que é posição, o motor não finge saber.
+ */
+export function dependeDePosicao(linha: string): boolean {
+  return /a quem (entrar|tocar|come[çc]ar|passar|pisar|atravessar)|quem estiver (na|no) [áa]rea|se permanecer/i.test(
+    linha
+  );
+}
+
 export function separarSustentado(linha: string): { impacto: string; porTurno: string } {
   const temPorTurno = /(por turno|\/turno)/i.test(linha);
   if (!temPorTurno) return { impacto: linha, porTurno: "" };
@@ -614,10 +636,27 @@ export function acoesDe(c: CharacterData): Acao[] {
        * e multiplicar contaria de graça o turno que o personagem gastou. Ver
        * `exigeManutencao`.
        */
-      danoPorTurno:
-        ehSuporte || exigeManutencao(a.effect ?? "")
-          ? ""
-          : casoBase(separarSustentado(a.damage.normal).porTurno),
+      /*
+       * Duas fontes, nesta ordem — 0.1.58.
+       *
+       * 1. `damage.porTurno`, o campo ESTRUTURADO que o livro já tinha e que o
+       *    motor ignorava. Quatro habilidades o usam, e a doc dele diz
+       *    exatamente o que é: "dano que se repete sozinho a cada turno (...)
+       *    sem gastar nova Ação".
+       * 2. O regex em `damage.normal`, pras sete que escrevem "por turno" na
+       *    própria linha de dano.
+       *
+       * Zerado quando manter custa a Ação (`exigeManutencao`) ou quando o dano
+       * depende de onde o alvo pisa (`dependeDePosicao`) — nos dois casos,
+       * multiplicar seria cobrar por um turno que ninguém pagou.
+       */
+      danoPorTurno: (() => {
+        if (ehSuporte || exigeManutencao(a.effect ?? "")) return "";
+        const estruturado = a.damage.porTurno ?? "";
+        if (estruturado && !dependeDePosicao(estruturado)) return casoBase(estruturado);
+        if (estruturado) return "";
+        return casoBase(separarSustentado(a.damage.normal).porTurno);
+      })(),
       formulaSuporte: ehSuporte ? casoBase(a.damage.normal) : "",
       sempreFresca: /sempre como ferida fresca/i.test(txt),
       // "+1 Dado de Arma", "+2 Dados de Arma", "Dado de arma rolado quatro vezes":
