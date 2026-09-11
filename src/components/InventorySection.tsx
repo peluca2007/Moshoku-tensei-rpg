@@ -4,9 +4,10 @@ import { useId, useState } from "react";
 import { Backpack, Plus, Trash2, ShieldCheck, Pencil, Swords, Check, X, Dices } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
-import { getWeaponDamage } from "@/store/selectors";
+import { getWeaponDamage, getWeaponGroups, isProficientWithWeapon } from "@/store/selectors";
 import { AttributeKey, InventoryItem } from "@/lib/types";
 import { WEAPON_PRESETS } from "@/lib/weaponDie";
+import { grupoDaArma, weaponGroupName } from "@/data/weaponGroups";
 import EmptyState from "@/components/ui/EmptyState";
 
 const TYPE_LABELS: Record<InventoryItem["type"], string> = {
@@ -197,6 +198,43 @@ function useItemForm(initial?: Partial<InventoryItem>) {
   };
 }
 
+/**
+ * O aviso de não-proficiência na linha do item — Cap. 1, §4 (0.1.52).
+ *
+ * Ele existe porque a penalidade é **invisível na hora de rolar**: Desvantagem
+ * no acerto não aparece em número nenhum da ficha, e sem este aviso a mesa só
+ * descobriria a regra lendo o livro no meio do combate. O aviso é da LINHA do
+ * item, e não do rolador, de propósito: a hora de descobrir que você não sabe
+ * usar aquela espada é quando você a guarda na mochila, não quando ataca.
+ *
+ * Fica calado quando o catálogo não conhece a arma — ver `grupoDaArma`.
+ */
+function AvisoDeProficiencia({ item }: { item: InventoryItem }) {
+  const character = useActiveCharacter();
+  if (!character) return null;
+
+  const grupo = grupoDaArma(item.name);
+  if (!grupo) return null;
+
+  // O escudo não ataca: a penalidade dele é de CA, e o texto tem que dizer isso
+  // em vez de falar de Desvantagem num acerto que ele nunca rola.
+  if (grupo === "escudos") {
+    if (getWeaponGroups(character).includes("escudos")) return null;
+    return (
+      <p className="mt-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+        Sem o grupo Escudos: +1 de CA em vez de +2.
+      </p>
+    );
+  }
+
+  if (item.type !== "arma" || isProficientWithWeapon(character, item.name)) return null;
+  return (
+    <p className="mt-1 text-xs font-medium text-amber-700 dark:text-amber-400">
+      Sem proficiência ({weaponGroupName(grupo)}): ataca com Desvantagem.
+    </p>
+  );
+}
+
 function WeaponDamageBadge({ item }: { item: InventoryItem }) {
   const character = useActiveCharacter();
   const requestDamageRoll = useDiceRollerStore((s) => s.requestDamageRoll);
@@ -326,6 +364,7 @@ export default function InventorySection() {
                 {item.description && (
                   <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-300">{item.description}</p>
                 )}
+                <AvisoDeProficiencia item={item} />
                 <WeaponDamageBadge item={item} />
               </div>
               <div className="flex shrink-0 items-center gap-1.5">

@@ -43,6 +43,7 @@ function fichaSalvaV13() {
     skills: ["Arcanismo", "Percepção"],
     treeSkillChoices: ["Natureza"],
     proficiencies: ["Língua Élfica"],
+    weaponGroupChoices: [],
     bonusHp: 4,
     bonusMp: 2,
     currentHp: 17,

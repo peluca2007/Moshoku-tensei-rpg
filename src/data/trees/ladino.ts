@@ -32,7 +32,8 @@ export const LADINO_TREE: Tree = {
     Imperador: "Lenda Oculta",
   },
   proficiencies: {
-    armas: "Adaga, punhal, espada curta, funda e besta leve. Armadura leve apenas.",
+    armas: "Grupos Lâminas Curtas, Arcos e Bestas, e Arremesso. Nada de espada: a arma do ladino é a que cabe na manga ou acerta de longe. Armadura leve apenas.",
+    gruposDeArma: ["laminas-curtas", "arcos-e-bestas", "arremesso"],
     pericias: "O Bônus de Rank soma em Furtividade, Ladinagem, Percepção, Acrobacia e Enganação (disfarce) — mas só nas que você realmente possui (Cap. 3).",
     periciasCobertas: ["Furtividade", "Ladinagem", "Percepção", "Acrobacia", "Enganação"],
     nota: "Ofício de Utilidade — gasta PP, nunca PT, e nunca recebe Touki.",

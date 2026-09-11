@@ -16,6 +16,23 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.52",
+    date: "2026-09-11",
+    title: "Espada Sim, Adaga Não",
+    sections: [
+      {
+        heading: "Proficiência de arma virou grupo, e não faixa de dano",
+        items: [
+          "A régua antiga era 'arma simples é até d6, arma marcial é d8+'. Isso deixava a Rapieira (d6) livre pra todo mundo e a Espada Longa (d8) não; punha o Arco Curto e a Espada Curta na mesma categoria; e tornava impossível o caso mais óbvio de todos — ser proficiente em espada e não em adaga, já que a adaga (d4) estava ABAIXO da faixa livre.",
+          "Agora são oito grupos por tipo — Espadas, Lâminas Curtas, Machados e Marretas, Hastes, Arcos e Bestas, Arremesso, Flexíveis, Desarmado e Improvisado — mais Escudos à parte. Você é proficiente num grupo, e vale pra toda arma dele, do d4 ao d12. Arma fora dos seus grupos ataca com Desvantagem; o dano nunca muda.",
+          "Todo personagem nasce com Desarmado e Improvisado, escolhe MAIS UM grupo na criação (é aqui que o mago pega a adaga de reserva ou o cajado), e recebe os grupos de cada árvore que abrir. Toda árvore do Corpo dá ainda um grupo livre além dos fixos dela — o Deus do Norte não dá, porque já recebe os nove.",
+          "O escudo passou a cobrar o que o livro já mandava: sem o grupo Escudos ele rende +1 de CA em vez de +2. A regra estava escrita no Cap. 1 desde sempre, e o código somava o bônus de qualquer coisa equipada.",
+          "Seis armas entraram no catálogo e na loja (Katana, Machadinha, Cajado de Combate, Azagaia, Faca de Arremesso, Corrente de Combate), porque quatro grupos ficariam com uma arma só dentro.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.51",
     date: "2026-09-11",
     title: "A Ficha Impressa",

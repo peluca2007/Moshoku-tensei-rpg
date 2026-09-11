@@ -6,6 +6,7 @@ import { DESINTOX_PA_COST, RANK_PA_COST } from "@/data/trees/shared";
 import { SKILLS } from "@/data/skills";
 import { STARTING_KITS } from "@/data/startingKits";
 import { TREES } from "@/data/trees";
+import { WEAPON_GROUPS } from "@/data/weaponGroups";
 import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
@@ -327,28 +328,57 @@ export default function Chapter1() {
           se refere a Persuasão — o livro usa um nome só.
         </Aside>
 
-        <SubTitle id="cap1-4-proficiencias">Proficiências: Armas e Armaduras</SubTitle>
+        <SubTitle id="cap1-4-proficiencias">Proficiências: Armas, Escudos e Armaduras</SubTitle>
         <P>
-          Toda árvore do Corpo já concede proficiência com o que ela usa — várias Maestrias de 1º patamar
-          dizem isso explicitamente. Faltava o padrão, pra quando nenhuma árvore ainda cobriu aquele
-          equipamento.
+          Saber usar uma arma não é sobre o quanto ela machuca — é sobre o que a mão aprendeu a fazer. Por
+          isso a proficiência aqui é por <b>grupo de arma</b>, e não por faixa de dano: quem estudou espada
+          sabe espada curta e espadão, e não sabe adaga. São ofícios diferentes.
         </P>
-        <Aside title="O Padrão">
+        <Aside title="Os Oito Grupos, e os Escudos">
+          <BookTable
+            headers={["Grupo", "O que o treino é", "Armas"]}
+            rows={WEAPON_GROUPS.map((g) => [g.name, g.description, g.examples.join(", ")])}
+          />
+        </Aside>
+        <SubTitle id="cap1-4-como-se-ganha">Como se ganha um grupo</SubTitle>
+        <List
+          items={[
+            <span key="piso">
+              <b>Desarmado e Improvisado</b> vem de graça pra todo personagem. Ninguém precisa de escola pra
+              dar um soco ou quebrar um banco na cabeça de alguém.
+            </span>,
+            <span key="escolha">
+              <b>Mais um grupo à sua escolha</b>, na criação — inclusive pra quem nunca vai abrir uma árvore
+              do Corpo. É aqui que o mago pega a adaga de reserva ou o cajado de combate.
+            </span>,
+            <span key="arvore">
+              <b>Os grupos de cada árvore que você abrir.</b> Diferente das Perícias de Árvore, esta vale por
+              árvore <b>aberta</b>, não só pela Inicial: perícia é hábito, mas empunhar arma é treino, e é
+              exatamente o que a árvore ensina — em qualquer ordem que você chegue nela.
+            </span>,
+            <span key="extra">
+              <b>Toda árvore do Corpo dá ainda um grupo livre</b>, além dos fixos dela. O espadachim que
+              também carrega arco é uma escolha dele, não do livro. (O Deus do Norte não dá: ele já recebe os
+              nove, e escolher entre tudo e tudo não é escolher.)
+            </span>,
+            <span key="pa">
+              <b>1 PA compra um grupo novo</b>, a qualquer momento, como qualquer proficiência.
+            </span>,
+          ]}
+        />
+        <Aside title="Armaduras continuam por peso">
           <List
             items={[
-              <span key="a">
-                <b>Armas simples</b> (Dado Base até d6): todo personagem é proficiente, sem exceção.
-              </span>,
-              <span key="b">
-                <b>Armas marciais</b> (Dado Base d8+): exigem proficiência do 1º patamar de uma árvore do
-                Corpo, ou de um talento específico.
-              </span>,
               <span key="c">
                 <b>Armadura leve:</b> todo personagem é proficiente.
               </span>,
               <span key="d">
-                <b>Armadura média/pesada e escudos:</b> exigem proficiência específica (ex: Escudeiro, Peso
-                Não Atrapalha do Suishin-ryū).
+                <b>Armadura média e pesada:</b> exigem proficiência específica de uma árvore (ex: Peso Não
+                Atrapalha, do Suishin-ryū) ou 1 PA.
+              </span>,
+              <span key="e">
+                <b>Escudo não é armadura</b> — é o grupo <b>Escudos</b>, porque escudo se empunha, não se
+                veste. Ele ocupa uma mão, e essa mão é parte do preço.
               </span>,
             ]}
           />
@@ -357,10 +387,16 @@ export default function Chapter1() {
           <List
             items={[
               "Arma sem proficiência: Desvantagem no teste de acerto. O dano continua normal — a Escada de Dados nunca reduz.",
+              "Escudo sem proficiência: +1 de CA em vez de +2. Erguer uma tábua na frente do corpo ajuda um pouco mesmo sem treino; só não é defender.",
               "Armadura sem proficiência: Desvantagem em Furtividade e Acrobacia, e Deslocamento -3m enquanto vestida.",
             ]}
           />
         </Warning>
+        <Aside title="Arma que o livro não previu">
+          O catálogo não conhece todo loot de campanha, e não deveria mesmo. Uma arma que não está em grupo
+          nenhum é <b>sempre proficiente</b> até o Mestre dizer de que grupo ela é — um sistema que dá
+          Desvantagem em silêncio porque não reconheceu um nome é pior que um que não dá nada.
+        </Aside>
 
         <SubTitle id="cap1-4-kit">Equipamento Inicial e a Árvore Inicial</SubTitle>
         <P>

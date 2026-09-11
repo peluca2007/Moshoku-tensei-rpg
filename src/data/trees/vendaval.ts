@@ -79,7 +79,9 @@ export const VENDAVAL_TREE: Tree = {
   prerequisiteNote:
     "Pré-requisito: Rank Avançado em Estilo Deus do Norte e em Magia de Vento. Não se escolhe na criação — surge da fusão das duas.",
   proficiencies: {
-    armas: "Toda espada e toda arma de haste. Armadura leve apenas — o estilo inteiro depende de deslocamento.",
+    armas: "Grupos Espadas e Hastes. Mais UM grupo à sua escolha. Armadura leve apenas — o estilo inteiro depende de deslocamento.",
+    gruposDeArma: ["espadas", "hastes"],
+    escolhaDeGrupo: 1,
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Árvore híbrida do Corpo — exige Avançado em Deus do Norte E em Magia de Vento.",
   },

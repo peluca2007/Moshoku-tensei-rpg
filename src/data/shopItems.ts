@@ -98,7 +98,7 @@ const WEAPON_PRICE_BY_DIE: Record<string, number> = {
  * e a tela sabe reconhecê-la como nota de grupo em vez de descrição de item.
  */
 const NOTA_ARMA_MUNDANA =
-  'Arma mundana, sem encantamento — ver Cap. 3, "O Dado de Arma", pra como ela escala com seu Rank.';
+  'Arma mundana, sem encantamento — ver Cap. 3, "O Dado de Arma", pra como ela escala com seu Rank, e Cap. 1, §4 pro grupo de proficiência dela.';
 
 const WEAPONS: ShopItem[] = WEAPON_PRESETS.map((preset) => ({
   id: `arma_${preset.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
@@ -186,7 +186,7 @@ const ARMOR: ShopItem[] = [
     name: "Escudo",
     category: "armadura",
     type: "armadura",
-    description: "Empunhado numa mão só — soma com qualquer outra armadura vestida.",
+    description: "Empunhado numa mão só — soma com qualquer outra armadura vestida. Exige o grupo de proficiência Escudos (Cap. 1, §4): sem ele, rende +1 de CA em vez de +2.",
     price: 25,
     guildRankRequired: "F",
     acBonus: 2,
