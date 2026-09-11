@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.47. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-11, depois da 0.1.53. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -182,9 +182,31 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
       Vento a diferença é maior ainda. Só Água e Terra têm a magia longa compensando. Ou o custo em
       Ações das magias de Santo pra cima está alto demais, ou o dano delas está baixo demais.
 
+16. **A escolha de grupo de arma virou decisão ou virou imposto?** *(aberto pela 0.1.52)* Todo
+    personagem agora escolhe **um grupo livre na criação**, além do piso de Desarmado e Improvisado. A
+    intenção era dar caracterização a quem não é guerreiro — a adaga de reserva do mago, o cajado de
+    combate. O risco é o oposto: a criação de ficha já é longa, e esta é mais uma tela onde a pessoa
+    não sabe o que escolher porque ainda não sabe como vai jogar.
+
+    Duas coisas a observar numa sessão de criação: **alguém hesitou?** (hesitar é bom — significa que a
+    escolha importa) e **alguém escolheu e nunca usou?** (aí ela é ruído, e o piso deveria ser maior).
+
+17. **O Tiro Perfeito vale quatro Ações?** *(aberto pela 0.1.53)* Ele é o primeiro sistema do livro que
+    cobra **tempo** em vez de recurso, e isso só se mede jogando: quatro Ações são dois turnos inteiros
+    em que o arqueiro não defendeu ninguém.
+
+    As três perguntas, em ordem de importância:
+    - **A Preparação sobrevive à mesa?** Levar dano exige Concentração, e um arqueiro no fundo leva
+      menos — mas se ele nunca é atingido, a técnica não tem custo real nenhum; se é atingido sempre,
+      ela nunca acontece. Não existe teste que responda: é posicionamento.
+    - **Falhar uma etapa dói o bastante?** A regra é que falhar não interrompe, só custa o bônus
+      daquele teste. Se a mesa sentir que dá no mesmo, as etapas viram burocracia com d20.
+    - **Etapa Encurtada (Intermediário) virou obrigatória?** Ela derruba o tiro de 4 para 3 Ações — ou
+      seja, faz a técnica caber num turno. Talento que muda tanto assim costuma deixar de ser escolha.
+
 ## Site
 
-16. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
+18. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
     aparelho mostrava foram achadas e corrigidas sem aparelho, lendo o que o navegador recebe: o
     **`apple-touch-icon` não existia** (o iPhone usava uma captura da página como ícone da tela de
     início), faltava o **`viewport-fit=cover`** que o `black-translucent` exige, e não havia **nenhuma
@@ -203,7 +225,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
       segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, mas nunca num
       aparelho.)*
 
-17. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+19. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
