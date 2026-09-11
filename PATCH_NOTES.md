@@ -5,6 +5,55 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.46 — "As Quatro Árvores que Ninguém Tinha Lido" · 2026-09-10
+
+O backlog pedia a auditoria linha a linha de **Suishin, Escudos, Ladino e Tático** — as quatro que
+nunca tinham sido lidas de ponta a ponta. Saiu. **Nada quebrado**: as quatro são coerentes com o que
+prometem. O que a leitura achou foi mais interessante que um bug.
+
+### 🎖️ O Tático não tem uma única habilidade de dano
+
+As dezenove habilidades de **Navegação e Liderança** fabricam **Ação e bônus pros outros** — `Avante`
+dá +1 Ação a todo aliado que ouvir, `Antecipação` dá uma Ação imediata, `A Batalha Que Você Escolheu`
+dá +1 por três turnos. E Ação é a **única moeda** que este combate gasta.
+
+O livro já sabia. O Cap. 4, §5 tem o teto escrito e nomeia o cenário exato:
+
+> *"Nenhum personagem age mais de 5 vezes num turno, e no máximo 2 dessas Ações podem vir de fontes
+> externas. Sem esta regra, um Norte Imperador (4 Ações) com um Tático Comandante na mesa chega a 7
+> Ações por turno, e o combate deixa de existir."*
+
+São quatro tetos no mesmo lugar: **Auxílio +6**, **Ações 5/2 externas**, **Duas Salvações por
+Combate** e **Vantagem é binária**. Fui conferir quais o motor honra.
+
+### ✅ Um dos quatro estava implementado e sem teste
+
+**"Vantagem é binária"** estava certo no motor desde sempre — e sem nada travando. Agora tem cinco
+testes, com um d20 de resultados ditados.
+
+O que mais importa ali é o **cancelamento**, porque o motor produz os dois lados sozinho: um
+personagem **Preso** ataca com Desvantagem, e um alvo **Caído** dá Vantagem a quem o ataca. Preso *e*
+atacando um Caído tem que rolar **um** d20, não quatro. Se essa linha sumir, o motor inventa uma
+mecânica que o livro proíbe em letra.
+
+Os outros três não são modelados — e agora está **declarado** nas simplificações, com o motivo: eles
+limitam coisas que o motor também não tem (habilidades que dão Ação ou bônus a outro personagem; e
+das cinco formas de impedir uma morte, só o Fio da Vida existe aqui).
+
+### 🔍 E as outras três árvores
+
+- **Suishin** é uma árvore inteira de **Reações** — aparar, contra-atacar, devolver — com uma única
+  habilidade de dano próprio. O Apêndice C é honesto e a marca como *"0 a ∞"*.
+- **Em Escudos, o dano todo vem de uma habilidade de Principiante**: o `Golpe de Escudo Soberano` (1
+  Ação, 3d8 + Força + Bônus de Rank) escala com o Rank pra sempre. É o mecanismo por trás da Mara
+  liderar o playtest — o mesmo do item 9 do backlog, visto por outro ângulo.
+- **O Ladino** tem uma habilidade de dano, no Principiante. Como o Tático, ele compra outra coisa.
+
+Nenhuma das quatro é bug. Todas as quatro são **invisíveis pro simulador**, e é por isso que elas só
+se respondem jogando — que é exatamente onde o backlog as deixou.
+
+---
+
 ## 0.1.45 — "Apagar o que Já Foi Feito" · 2026-09-10
 
 Faxina. Nada de regra mudou.

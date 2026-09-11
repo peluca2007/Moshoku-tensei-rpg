@@ -53,10 +53,24 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
      outra era a Ordem de Tiro, e a sessão respondeu por ela: foi **trocada** em 0.1.14, não ajustada,
      que era o plano escrito aqui desde o começo.
 
-7. **Auditoria linha a linha das magias que faltam** — Suishin, Escudos, Ladino e Tático. O
-   `check:texto` cobre CONTRADIÇÃO nas 601 habilidades, e Norte, Vendaval, Lutador, Arquearia e Punho
-   do Fogo já foram lidos de ponta a ponta. Nestas quatro o que falta é **julgamento**, que nenhum
-   script dá: se o efeito faz sentido, se a técnica é divertida, se o patamar entrega o que promete.
+7. **Jogar as quatro que foram lidas na 0.1.46** — Suishin, Escudos, Ladino e Tático. A leitura linha
+   a linha saiu, e **não achou nada quebrado**: as quatro são coerentes com o que prometem. O que ela
+   achou foi outra coisa, e é o que sobra pra mesa decidir:
+   - **O Tático não tem uma única habilidade de dano.** As dezenove fabricam **Ação e bônus pros
+     outros** — e Ação é a única moeda que este combate gasta. O Cap. 4 já escreveu o teto ("5 por
+     turno, no máximo 2 externas") e nomeia o cenário exato: *"um Norte Imperador com um Tático
+     Comandante chega a 7 Ações por turno, e o combate deixa de existir"*. O teto está escrito; o que
+     ninguém viu ainda é ele **segurando** numa mesa de verdade.
+   - **O Suishin é uma árvore inteira de Reações** — contra-ataque, aparar, devolver. Uma única
+     habilidade de dano próprio. O Apêndice C é honesto e a marca como *"0 a ∞"*. A pergunta de mesa é
+     se um jogador consegue **sentir** essa árvore funcionando, ou se ela vira "eu espero apanhar".
+   - **Em Escudos, o dano todo vem de uma habilidade de Principiante.** O `Golpe de Escudo Soberano`
+     (1 Ação, 3d8 + Força + Bônus de Rank) escala com o Rank pra sempre, e é o que fez a Mara liderar
+     o playtest. Ver o item 9 — é a mesma pergunta por outro ângulo.
+   - **O Ladino tem uma habilidade de dano, no Principiante.** Como o Tático, ele compra outra coisa.
+
+   Nenhuma das quatro é bug. Todas as quatro são **invisíveis pro simulador**, e é por isso que elas
+   só se respondem jogando.
 
 8. **Jogar as quatro árvores mexidas na 0.1.14** — Tático, Barreira, Desintoxicação e Punho do Fogo.
    Cada uma tem uma pergunta própria, e nenhuma delas se responde por script:
