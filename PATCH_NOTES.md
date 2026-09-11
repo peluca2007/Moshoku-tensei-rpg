@@ -5,6 +5,93 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.47 — "A Escada Que Não Subia" · 2026-09-10
+
+Quatro decisões de design tomadas pelo autor, e a calibragem que elas pediram.
+
+### 🕯️ O teto de conjuração caiu de 6 Ações pra 4
+
+A escada antiga subia **2-2-3-4-5-6**, e o custo em Ações **triplicava** do Principiante ao Imperador
+enquanto o dano não triplicava junto. O resultado medido: a magia suprema valia **menos por Ação** que
+a de dois ranks abaixo.
+
+Agora é **2-2-3-3-4-4**. Nenhum dado foi mexido — só o custo:
+
+| Árvore | Imperador, antes | Imperador, agora |
+| ------ | ---------------- | ---------------- |
+| Fogo | 13,6/Ação | **20,4** |
+| Água | 11,9 | **17,8** |
+| Terra | 13,2 | **19,8** |
+
+**E a Conjuração Dividida sobrevive**, que era o risco de fazer isso: 4 Ações continuam não cabendo
+num turno de 3, então Rei e Imperador seguem levando dois turnos, com Perda de Foco e teste de
+Concentração no meio. O que mudou é que a espera passou a pagar. Só o Santo desceu pra dentro de um
+turno.
+
+### 📐 Os dezesseis capstones viraram cinco — e onze deles não eram desequilíbrio
+
+O autor pediu as dezesseis corrigidas. Ao abrir uma por uma, **a maioria não era problema de
+balanceamento**:
+
+- **Três eram erro de leitura do motor.** `Aguentar` e `Aguentar Soberano` (Escudos) têm
+  `dano: "Reduz 2d10 + Vigor"` — é **redução** de dano, e o motor contava como dano causado, dando à
+  Cavalaria e Escudos uma técnica de 16,8 por Ação que ela não tem. E `Empunhadura Dupla` (Norte) é
+  regra de arma, não ataque. Corrigidos os dois, junto com "Metade do dado" e "arma secundária", que
+  o motor lia como zero.
+- **Uma era árvore que o próprio livro declara não ser medida de dano.** O Apêndice C marca Cura,
+  Desintoxicação, Barreira e Escudos com `regua: false`, e diz por quê. O `check:progressao` passou a
+  respeitar isso — cobrar progressão de dano delas é cobrar uma promessa que nunca fizeram.
+- **Três são dano por turno sustentado** que o motor conta uma vez só (Tempestade Cortante, Rio de
+  Magma, Trono de Chamas). Declarado nas simplificações; inflar o livro por causa disso seria
+  consertar o instrumento errado.
+
+**Sobraram sete de balanceamento real, e cinco foram corrigidas** — subindo o Fogo Avançado, a Água
+Avançado e Rei, a Aura Cortante do Norte, e a Ruína de Armas Pesadas.
+
+Duas delas foram corrigidas **do outro lado**, que é a lição da versão: a regressão não estava no
+patamar fraco, estava no **pico alto demais logo abaixo**. `Investida Devastadora` (Principiante!)
+caiu de +2 pra +1 Dado de Arma, `Esmagar` de três pra duas rolagens, e a `Prensa` — que era o **maior
+número do livro inteiro**, 44 por Ação num Rei de 1 Ação — caiu de 8d10 pra 5d10.
+
+Armas Pesadas agora **termina no topo**, como uma escada deve: 20,0 → 23,2 → 28,8 → 30,4 → 30,8 →
+**35,2**. E o teto do Corpo caiu de 44,0 pra 40,8, fechando o fosso com a Magia de 1,6× pra **1,5×**.
+
+### 🛡️ A Mara virou o que a descrição dela diz
+
+O `Golpe de Escudo Soberano` era **Principiante**, 1 Ação, 3d8 + Força + Bônus de Rank — e escalava
+com o Rank pra sempre. Era ele, sozinho, que fazia a build descrita como *"protege, não mata"* liderar
+o dano do playtest. Caiu pra **2d8**: a versão Soberana continua melhor que o Golpe de Escudo comum,
+mas pelo **controle** (empurra 6m, CD +2, a marca de última posição), não pelo dano.
+
+Resultado: de **196 de dano por batalha** pra **125 de dano e 57 PV devolvidos**. Ela protege.
+
+### 📊 O playtest inteiro, de novo
+
+| Ficha | Dano | PV devolvidos | Sobreviveu |
+| ----- | ---- | ------------- | ---------- |
+| **Sera** (Cura) | 18 | **222** | 54% |
+| Gorr (Armas Pesadas) | 176 | — | 25% |
+| **Mara** (Escudos) | 125 | 57 | 46% |
+| Lyn (Arquearia) | 105 | — | 38% |
+| **Vex** (Deus da Espada) | 24 | — | **1%** |
+
+**O 5×5 ficou 53,8% × 46,2%.** No começo do dia era 8,3% × 91,7%.
+
+E o chefe de 4º patamar caiu em **26% de dizimação** — o alvo de 25% que o autor pediu, atingido sem
+tocar no molde do Apêndice G, só porque o grupo mudou.
+
+### ⚠️ O que esta versão NÃO resolveu
+
+- **O Vex está em 1% de sobrevivência.** Baixar a Mara não consertou o Deus da Espada: o problema
+  dele é ficar em pé, que era a outra opção da pergunta. Ele agora é a pior build do playtest.
+- **Dois capstones seguem abertos** — `Espada de Luz` e `Golpe do Desespero`, os dois Santo. Nas duas
+  árvores o Santo é a **única habilidade de 2 Ações** num galho inteiro de 1 Ação, e por isso perde
+  por Ação. Consertar exige ou enfraquecer os ranks do meio (o oposto do que o autor decidiu) ou
+  inflar o topo em ~2×. É decisão de forma de árvore.
+- **O chefe de 3º e o de 5º** seguem em 0% e 100%.
+
+---
+
 ## 0.1.46 — "As Quatro Árvores que Ninguém Tinha Lido" · 2026-09-10
 
 O backlog pedia a auditoria linha a linha de **Suishin, Escudos, Ladino e Tático** — as quatro que

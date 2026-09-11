@@ -184,7 +184,7 @@ export const ESCUDOS_TREE: Tree = {
           paCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "3d8 + Força + Bônus de Rank (contundente)" },
+          damage: { normal: "2d8 + Força + Bônus de Rank (contundente)" },
           effect: "Requer o talento Puro Escudo. Teste de Força do alvo (CD 8 + Vigor + Rank + 2) ou é empurrado 6m e fica Caído. Você fica com marca de 'última posição' até o início do próximo turno — qualquer aliado que passar por essa posição recebe Cobertura contra o próximo ataque.",
         },
         {

@@ -259,7 +259,7 @@ export const AGUA_TREE: Tree = {
           pmCost: 4,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "3d8 + BC (perfurante) + 2d6 de frio (dobra contra Molhado)" },
+          damage: { normal: "5d8 + BC (perfurante) + 2d6 de frio (dobra contra Molhado)" },
           effect: "Ataque mágico à distância. Contra objetos e estruturas, o dano é dobrado.",
           incantation:
             "Magníficos espíritos da água, senhores do que congela e do que racha:\nolhai o insolente que ousou ficar de pé diante de mim.\nErguei contra ele a vossa majestosa espada de gelo,\ne não a useis para cortar — usai-a para estilhaçar.\nQuebra de Gelo!",
@@ -414,7 +414,7 @@ export const AGUA_TREE: Tree = {
           actions: { normal: 4, encurtada: 3, silenciosa: 2 },
           costNote:
             "4 Ações em vez das 5 do rank Rei, e 14 PM em vez de 12. A magia não constrói nada: a nuvem já está no céu, paga e cantada em Cumulonimbus, e o que resta é apontar. Cobrar cinco Ações por um gesto que só fecha um circuito já montado era punir o mago duas vezes pela mesma tempestade. O PM extra é o preço da pressa — puxar o relâmpago antes que ele desça sozinho custa mais mana do que esperar.",
-          damage: { normal: "8d10 + BC (elétrico)" },
+          damage: { normal: "10d10 + BC (elétrico)" },
           effect:
             "Pré-requisito: Cumulonimbus ativa acima de você. Ignora bônus de CA por Touki. Contra armadura metálica, acerto é Crítico automático. Contra alvo Molhado, dano dobrado.",
           incantation:

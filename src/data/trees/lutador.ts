@@ -60,7 +60,7 @@ export const LUTADOR_TREE: Tree = {
           paCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "+2 Dados de Arma" },
+          damage: { normal: "+1 Dado de Arma" },
           effect: "Requer 6m de corrida em linha reta. Se acertar, teste de Força (CD 8 + Força + Rank) ou o alvo fica Caído e ganha 2 acúmulos de Quebrantado.",
         },
         {
@@ -178,7 +178,7 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "Dado de arma rolado três vezes" },
+          damage: { normal: "Dado de arma rolado duas vezes" },
           effect: "Contra alvo Caído, Agarrado, Preso ou Atolado, acerta automaticamente e aplica 3 acúmulos de Quebrantado.",
         },
         {
@@ -236,7 +236,7 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 2 },
-          damage: { normal: "Dado de arma rolado quatro vezes (triplicado contra estruturas)" },
+          damage: { normal: "Dado de arma rolado cinco vezes (triplicado contra estruturas)" },
           effect: "Ignora todo bônus de CA de escudo e Cobertura, e aplica acúmulos de Quebrantado iguais ao seu Bônus de Rank de uma vez.",
         },
         {
@@ -279,7 +279,7 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "8d10 + Força + Bônus de Rank (contundente, automático)" },
+          damage: { normal: "5d10 + Força + Bônus de Rank (contundente, automático)" },
           effect: "Requer alvo Agarrado. O alvo fica Quebrantado ao máximo instantaneamente. Se isso o reduzir a 0 PV, não pode ser estabilizado por meios mundanos.",
         },
       ],

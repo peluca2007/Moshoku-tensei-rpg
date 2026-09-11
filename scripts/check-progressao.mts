@@ -29,6 +29,7 @@
  * pontua aqui". O que o check garante é que a decisão seja tomada olhando o
  * número, e não descoberta seis meses depois numa mesa.
  */
+import { COLUNAS_CORPO, COLUNAS_MAGIA } from "@/data/danoPorTurno";
 import { TREES } from "@/data/trees";
 import { acoesDe, danoEsperado, montarFicha, novoAlvo, novoEstado } from "@/lib/combatSim";
 import { AttributeKey, CharacterData, RANKS } from "@/lib/types";
@@ -138,6 +139,23 @@ function medir(treeId: string): Medida {
   return { arvore: treeId, pilar: PILAR[treeId] ?? "Corpo", porRank, teto };
 }
 
+/*
+ * As árvores que o próprio livro diz NÃO serem medida de dano — 0.1.47.
+ *
+ * O Apêndice C marca quatro colunas com `regua: false`, e diz por quê: Cura,
+ * Desintoxicação e Barreira *"não deveriam estar nesta tabela; estão só pra
+ * deixar claro que, se você escolher uma delas esperando causar dano, escolheu
+ * errado"*; e Escudos *"pressupõe todas as Ações gastas defendendo"*.
+ *
+ * Cobrar progressão de dano dessas quatro é cobrar uma promessa que elas nunca
+ * fizeram — foi o que este check fez na primeira versão, e a Desintoxicação
+ * apareceu com uma "queda de 47%" que é, na verdade, a escola sendo o que ela é.
+ * A régua do livro já tinha a resposta; faltava o check perguntar.
+ */
+const NAO_SAO_REGUA_DE_DANO = new Set(
+  [...COLUNAS_MAGIA, ...COLUNAS_CORPO].filter((c) => c.regua === false).map((c) => c.treeId)
+);
+
 const medidas = TREES.map((t) => medir(t.id)).filter((m) => m.teto !== null);
 
 // ---------------------------------------------------------------------------
@@ -158,10 +176,16 @@ console.log("\n" + "-".repeat(78));
 console.log("  1. CAPSTONES QUE NÃO COMPENSAM");
 console.log("-".repeat(78));
 console.log("  A melhor técnica de um rank alto que rende MENOS por Ação que a de");
-console.log("  um rank abaixo, na mesma árvore. Quem chega lá destrava e não usa.\n");
+console.log("  um rank abaixo, na mesma árvore. Quem chega lá destrava e não usa.");
+console.log(
+  `  (Fora da conta: ${[...NAO_SAO_REGUA_DE_DANO].join(", ")} — o Apêndice C as marca como\n` +
+    "   não sendo medida de dano, e cobrar progressão de dano delas é cobrar\n" +
+    "   uma promessa que elas nunca fizeram.)\n"
+);
 
 let capstones = 0;
 for (const m of medidas) {
+  if (NAO_SAO_REGUA_DE_DANO.has(m.arvore)) continue;
   const presentes = RANKS.filter((r) => m.porRank.has(r));
   for (let i = 1; i < presentes.length; i++) {
     const atual = m.porRank.get(presentes[i])!;

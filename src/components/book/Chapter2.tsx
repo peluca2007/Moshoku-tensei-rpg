@@ -210,9 +210,11 @@ export default function Chapter2() {
           ])}
         />
         <P>
-          Como o Capítulo 4 permite dividir o cântico entre turnos, magias de 4, 5 ou 6 Ações são
-          perfeitamente jogáveis — elas só exigem que alguém segure a linha de frente enquanto o apocalipse é
-          preparado.
+          Como o Capítulo 4 permite dividir o cântico entre turnos, magias de 4 Ações são perfeitamente
+          jogáveis — elas só exigem que alguém segure a linha de frente enquanto o apocalipse é preparado.
+          O teto é 4 de propósito: a escada antiga ia até 6, e uma magia que custava dois turnos inteiros
+          rendia menos por Ação que uma de dois ranks abaixo. O Rei e o Imperador continuam precisando de
+          dois turnos; a diferença é que agora a espera paga.
         </P>
       </Section>
 

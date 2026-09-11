@@ -465,8 +465,28 @@ export function acoesDe(c: CharacterData): Acao[] {
      * dano real das duas. Elas seguem como dano; a cura de brinde delas é uma
      * das simplificações declaradas.
      */
-    const ehSuporte = /de pv|pv temporários|recupera|cura /.test(txt);
-    const tipo: TipoDeAcao = !ehSuporte ? "dano" : /pv temporários/.test(txt) ? "escudo" : "cura";
+    /*
+     * "Reduz 2d10 + Vigor" é REDUÇÃO de dano, não dano — 0.1.47.
+     *
+     * As duas habilidades de Aguentar, em Escudos, são Reações que diminuem o
+     * golpe que o defensor está interceptando. O motor as lia como ataques e
+     * dava a Cavalaria e Escudos uma técnica de 16,8 de dano por Ação que ela
+     * não tem. Foi a auditoria dos capstones que denunciou: o Intermediário da
+     * árvore "rendia menos" que o Principiante, e a comparação inteira era entre
+     * um golpe de verdade e um escudo.
+     *
+     * Elas entram como `escudo` porque é o que mais se parece com o que fazem
+     * (tirar dano da conta antes de ele bater), e o que o motor sabe fazer com
+     * isso é PV Temporários. Não é a mesma mecânica — o livro dá redução, não
+     * casca — e a diferença está declarada nas simplificações.
+     */
+    const ehReducao = /^reduz/.test(txt);
+    const ehSuporte = ehReducao || /de pv|pv temporários|recupera|cura /.test(txt);
+    const tipo: TipoDeAcao = !ehSuporte
+      ? "dano"
+      : ehReducao || /pv temporários/.test(txt)
+        ? "escudo"
+        : "cura";
     out.push({
       nome: a.name,
       acoes: a.reaction ? 1 : Math.max(1, a.actions.normal),
@@ -499,6 +519,22 @@ export function acoesDe(c: CharacterData): Acao[] {
         if (m) return Number(m[1]);
         const v = a.damage.normal.match(/rolado (duas|três|quatro|cinco) vezes/i);
         if (v) return { duas: 2, três: 3, quatro: 4, cinco: 5 }[v[1].toLowerCase()] ?? 0;
+        /*
+         * "Metade do dado" e "arma secundária" — 0.1.47.
+         *
+         * Quatro técnicas descrevem o dano como uma FRAÇÃO ou uma repetição do
+         * dado de arma sem usar a palavra "Dados de Arma", e o motor lia zero
+         * dado nelas: a Cabeçada de Armas Pesadas, o Tiro Duplo da Arquearia, a
+         * de Deus do Norte, e a Empunhadura Dupla. Elas apareciam na auditoria
+         * de progressão como "este rank rende menos que o anterior", e a causa
+         * era a leitura, não o livro.
+         *
+         * "Um degrau abaixo" da arma secundária vira 1 dado inteiro: a Escada de
+         * Dados é do personagem, e o motor não guarda o degrau anterior. É uma
+         * aproximação PARA CIMA, e está declarada.
+         */
+        if (/metade do dado/i.test(a.damage.normal)) return 0.5;
+        if (/arma secund[áa]ria/i.test(a.damage.normal)) return 1;
         return 0;
       })(),
       /*
@@ -1283,6 +1319,8 @@ export function consumirReacao(alvo: Alvo): boolean {
 export const SIMPLIFICACOES = [
   "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: as quatro são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
+  "Dano por turno sustentado (\"5d8 por turno\", \"6d10/turno\", \"depois 6d10 por turno\") é contado UMA vez, não pela duração. O motor não tem relógio de magia sustentada — só Em Chamas, que é condição e não magia. Isso SUBESTIMA a Tempestade Cortante (Vento), o Trono de Chamas (Punho do Fogo) e o Rio de Magma (Terra), e é por isso que os três aparecem na auditoria de progressão como se o patamar deles não entregasse.",
+  "As duas Reações de Aguentar (Escudos) REDUZEM o dano de um golpe interceptado, e o motor não tem redução — ele as trata como PV Temporários, que é o mais próximo que sabe fazer. A diferença importa: casca some depois de gasta, redução vale em todo golpe que ela alcança. Até a 0.1.47 elas eram lidas como DANO CAUSADO, e davam a Cavalaria e Escudos uma técnica de 16,8 por Ação que ela não tem.",
   "O que de suporte segue de fora: Salvações, e a maior parte da Barreira e Proteção — muralha, domo, selo e anulação de magia são posição e regra de alcance, e este motor não tem mapa. Das 21 habilidades daquela árvore, só a Casca tem número que ele saiba usar. Julgamento e Luz Absoluta entram como as magias de DANO que são; a cura secundária que as duas descrevem na prosa não é contada.",
   "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",
   "O Fio da Vida (Cap. 4, §7) entra desde a 0.1.38: a 0 PV o personagem CAI inconsciente, rola 1d20+Vigor contra CD 8 + o Bônus de Rank de quem o derrubou, junta Marcas da Morte e morre de vez na terceira — e qualquer cura de aliado o levanta com todas as Marcas removidas. Quem estabiliza para de rolar (o livro diz \"temporariamente\" e não diz quando recomeça; esta é a leitura declarada). A Exaustão que o livro cobra de quem acorda fica de fora, porque Exaustão não é modelada. Criatura não tem Fio da Vida: a 0 PV ela morre.",
