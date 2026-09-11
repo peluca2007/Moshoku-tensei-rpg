@@ -107,7 +107,16 @@ function build(
   descricao: string,
   attrs: Partial<Record<AttributeKey, number>>,
   treeId: string,
-  ateRank: RankName
+  ateRank: RankName,
+  /**
+   * Quanto PA esta ficha pode gastar — 0.1.49.
+   *
+   * Era fixo em 12, e isso amarrava o playtest a um único nível de poder. A
+   * tabela de chefes precisa montar um grupo do PATAMAR DE CADA CHEFE pra medir
+   * calibragem em vez de diferença de nível, e pra isso o orçamento tem que
+   * subir junto com o rank.
+   */
+  paAlvo: number = PA_ALVO
 ): { c: CharacterData; descricao: string } {
   const tree = getTreeById(treeId)!;
   const limite = RANKS.indexOf(ateRank);
@@ -175,7 +184,7 @@ function build(
   });
   if (talentoDePv && !c.purchasedAbilities.some((x) => x.id === talentoDePv.id)) {
     const tentativa = { ...c, purchasedAbilities: [...c.purchasedAbilities, talentoDePv] };
-    if (getPaSpent(tentativa) <= PA_ALVO) c.purchasedAbilities = tentativa.purchasedAbilities;
+    if (getPaSpent(tentativa) <= paAlvo) c.purchasedAbilities = tentativa.purchasedAbilities;
   }
 
 
@@ -184,7 +193,7 @@ function build(
     const doRank = candidatas.filter((x) => x.rank === rank);
     for (const compra of doRank.slice(0, MINIMO_POR_PATAMAR)) {
       const tentativa = { ...c, purchasedAbilities: [...c.purchasedAbilities, compra] };
-      if (getPaSpent(tentativa) > PA_ALVO) continue;
+      if (getPaSpent(tentativa) > paAlvo) continue;
       c.purchasedAbilities = tentativa.purchasedAbilities;
     }
   }
@@ -192,7 +201,7 @@ function build(
   for (const compra of [...candidatas].reverse()) {
     if (c.purchasedAbilities.some((x) => x.id === compra.id)) continue;
     const tentativa = { ...c, purchasedAbilities: [...c.purchasedAbilities, compra] };
-    if (getPaSpent(tentativa) > PA_ALVO) continue;
+    if (getPaSpent(tentativa) > paAlvo) continue;
     c.purchasedAbilities = tentativa.purchasedAbilities;
   }
   return { c, descricao };
@@ -384,6 +393,7 @@ for (const l of linhas) {
 // ---------------------------------------------------------------------------
 /** Apêndice G, "Ajustando pra cima": chefe único = dobra o PV da linha, mantém o dano. */
 const CHEFES = MOLDES_CRIATURA.filter((m) => m.patamar >= 3 && m.patamar <= 5).map((m) => ({
+  patamar: m.patamar,
   nome: `${m.patamar}º — ${m.titulo} (chefe)`,
   pv: m.pv * 2,
   ca: m.ca,
@@ -409,13 +419,55 @@ const CHEFES = MOLDES_CRIATURA.filter((m) => m.patamar >= 3 && m.patamar <= 5).m
  * grupo". Aqui o grupo é uma mesa plausível, escrita à mão e nomeada: linha de
  * frente, dano corpo a corpo, dano à distância, mago e CURANDEIRO.
  */
-const GRUPO_DE_REFERENCIA = [9, 5, 8, 2, 4]; // Mara, Vex, Lyn, Kest, Sera
-const vencedor = GRUPO_DE_REFERENCIA;
-const nomeVencedor = "Grupo de referência (Mara, Vex, Lyn, Kest, Sera)";
+/*
+ * ...e na 0.1.49 ele passou a SUBIR DE PATAMAR junto com o chefe.
+ *
+ * A tabela punha um único grupo de 12 PA (Avançado, 3º) contra chefes de 3º, 4º
+ * e 5º: um abaixo do nível dele, um no nível, um dois acima. O que ela media não
+ * era "o chefe está calibrado?", era "quão longe do nível do grupo está este
+ * chefe?" — e foi por isso que nenhum ajuste global resolvia as três linhas ao
+ * mesmo tempo: os três patamares pediam correções em direções opostas.
+ *
+ * Agora cada linha monta o grupo do patamar DELA, e a pergunta vira a certa: um
+ * chefe do seu próprio patamar deve dizimar o grupo em 25% das vezes?
+ *
+ * O orçamento por patamar é calibragem declarada, não regra do livro — o livro
+ * não diz quanto PA um personagem de 4º patamar tem, porque quem dá PA é o
+ * Mestre. Os 12 do 3º são os que o playtest sempre usou; 18 e 24 mantêm a mesma
+ * proporção de "os desbloqueios mais uns oito de conhecimento".
+ */
+const GRUPO_POR_PATAMAR: Record<number, { rank: RankName; pa: number }> = {
+  3: { rank: "Avançado", pa: 12 },
+  4: { rank: "Santo", pa: 18 },
+  5: { rank: "Rei", pa: 24 },
+};
+
+/** A mesa plausível: linha de frente, corpo a corpo, distância, mago e CURANDEIRO. */
+const MOLDE_DO_GRUPO: {
+  nome: string;
+  descricao: string;
+  attrs: Partial<Record<AttributeKey, number>>;
+  arvore: string;
+}[] = [
+  { nome: "Mara", descricao: "Escudos", attrs: { vigor: 3, forca: 1 }, arvore: "cavalaria-e-escudos" },
+  { nome: "Vex", descricao: "Deus da Espada", attrs: { forca: 4 }, arvore: "deus-da-espada" },
+  { nome: "Lyn", descricao: "Arquearia", attrs: { agilidade: 4 }, arvore: "arquearia" },
+  { nome: "Kest", descricao: "Fogo", attrs: { intelecto: 4 }, arvore: "fogo" },
+  { nome: "Sera", descricao: "Cura", attrs: { espirito: 3, vigor: 1 }, arvore: "cura" },
+];
+
+export function grupoDoPatamar(patamar: number, paOverride?: number): FichaCombate[] {
+  const { rank } = GRUPO_POR_PATAMAR[patamar] ?? GRUPO_POR_PATAMAR[3];
+  const pa = paOverride ?? (GRUPO_POR_PATAMAR[patamar] ?? GRUPO_POR_PATAMAR[3]).pa;
+  return MOLDE_DO_GRUPO.map((m) => {
+    const { c, descricao } = build(m.nome, m.descricao, m.attrs, m.arvore, rank, pa);
+    return montarFicha(c, descricao);
+  });
+}
 
 console.log("\n" + "═".repeat(78));
-console.log(`  ${nomeVencedor}`);
-console.log(`  × CHEFE — ${TENTATIVAS} batalhas por patamar`);
+console.log("  GRUPO DO PATAMAR DO CHEFE x CHEFE — " + TENTATIVAS + " batalhas por patamar");
+console.log("  (Mara, Vex, Lyn, Kest, Sera — montados no rank e no orcamento de cada linha)");
 console.log("═".repeat(78));
 /*
  * A coluna DIZIMADO — 0.1.38.
@@ -431,6 +483,7 @@ console.log("═".repeat(78));
  */
 console.log(
   "CHEFE".padEnd(24) +
+    "GRUPO".padStart(8) +
     "PV".padStart(6) +
     "VITÓRIA".padStart(10) +
     "DIZIMADO".padStart(10) +
@@ -439,12 +492,13 @@ console.log(
 );
 
 for (const chefe of CHEFES) {
+  const fichasDoGrupo = grupoDoPatamar(chefe.patamar);
   let vitorias = 0;
   let dizimados = 0;
   let somaRodadas = 0;
   let somaMortes = 0;
   for (let i = 0; i < TENTATIVAS; i++) {
-    const grupo = novoTime(vencedor);
+    const grupo = fichasDoGrupo.map(novoEstado);
     let pvChefe = chefe.pv;
     let rodada = 0;
     for (; rodada < 20; rodada++) {
@@ -507,6 +561,7 @@ for (const chefe of CHEFES) {
   }
   console.log(
     chefe.nome.padEnd(24) +
+      `${GRUPO_POR_PATAMAR[chefe.patamar].pa}PA`.padStart(8) +
       String(chefe.pv).padStart(6) +
       ((vitorias / TENTATIVAS) * 100).toFixed(0).padStart(9) + "%" +
       ((dizimados / TENTATIVAS) * 100).toFixed(0).padStart(9) + "%" +
