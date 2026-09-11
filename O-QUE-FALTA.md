@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.44. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.47. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -84,19 +84,20 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    - **Punho do Fogo:** com Sobrecarga sempre a 3 de Calor, alguma técnica ficou barata demais? A
      suspeita é a Coroa Solar, que dispara uma vez por turno e antes custava 2.
 
-9. **As duas descrições invertidas** *(medido na 0.1.39, depois de o motor parar de ler a prosa com a
-   rede larga)*. O livro chama o **Deus da Espada** de *"o maior dano do livro"*, e o Vex entrega **29
-   de dano por batalha** com **8% de sobrevivência** — último entre os corpo a corpo. A **Mara**, cuja
-   build está descrita como *"protege, não mata"*, entrega **196** e lidera a sobrevivência com 67%.
-   As duas descrições estão invertidas em relação ao que o simulador mede.
+9. **O Deus da Espada não fica em pé** *(metade resolvida na 0.1.47)*. Das duas descrições invertidas,
+   você decidiu que a errada era a **Mara** — e ela foi. O `Golpe de Escudo Soberano` caiu de 3d8 pra
+   2d8 e ela passou de 196 de dano por batalha pra **125 de dano e 57 PV devolvidos**: *"protege, não
+   mata"* virou verdade.
 
-   O Vex não é fraco por turno: 35 de dano, o terceiro melhor da tabela. Ele **morre cedo**. Então a
-   pergunta é de design e é sua: o Deus da Espada deve ser o maior dano do livro **por turno** (e aí
-   está certo, e a descrição da Mara é que está errada), ou **por batalha** (e aí ele precisa aguentar
-   ficar em pé)? A resposta muda árvores diferentes.
+   **O Vex não melhorou com isso.** Ele está em **1% de sobrevivência** e 24 de dano por batalha, a
+   pior build do playtest. Por TURNO ele nunca foi ruim — ele morre antes de usar os turnos. Era a
+   outra opção daquela pergunta, e ela segue aberta: **dar sustentação ao Deus da Espada** (PV,
+   defesa, ou uma Reação) ou **aceitar que ele é vidro** e dizer isso no livro, em vez de chamá-lo de
+   "o maior dano do livro".
 
-   *(A pergunta anterior — a da 0.1.35 — era a mesma sobre a Mara, com números de antes dos consertos
-   de 0.1.37/0.1.39. Segue abaixo o que ela dizia sobre o Vento, que continua de pé.)*
+   *(Há também dois capstones que a 0.1.47 não fechou, e são do mesmo tipo de decisão: `Espada de Luz`
+   e `Golpe do Desespero` são, cada um, a única habilidade de 2 Ações num galho inteiro de 1 Ação, e
+   por isso perdem por Ação. Consertar exige enfraquecer os ranks do meio ou inflar o topo em ~2×.)*
 
 10. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
     cura no motor, na 0.1.37, a Mara marcou 91 e 92% e a Iri 27 e 57% — as duas perguntas continuam
@@ -135,20 +136,23 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     script — e o segundo passo é a tabela passar a montar um grupo do patamar de cada chefe, pra medir
     calibragem em vez de diferença de nível.
 
-13. **Dezesseis capstones que não compensam** — `npm run check:progressao` (novo na 0.1.41). A melhor
+13. **Cinco capstones que não compensam** *(eram dezesseis; onze caíram na 0.1.47)* — `npm run check:progressao`. A melhor
     técnica de um rank rendendo MENOS por Ação que a de um rank abaixo, na mesma árvore: quem chega lá
     destrava e não usa. As piores:
 
-    | Árvore | Rank | Rende | O rank anterior fazia |
-    | --- | --- | --- | --- |
-    | Punho do Fogo | Rei | 17,6 | 37,6 (**−53%**) |
-    | Desintoxicação | Avançado | 7,6 | 14,4 (−47%) |
-    | Armas Pesadas | Santo | 24,4 | 38,8 (−37%) |
-    | Deus da Espada | Santo | 19,4 | 28,8 (−33%) |
+    | Árvore | Rank | Rende | O rank anterior fazia | O que é |
+    | --- | --- | --- | --- | --- |
+    | Punho do Fogo | Rei | 17,6 | 37,6 | dano por turno, motor subestima |
+    | Terra | Rei | 13,0 | 17,6 | dano por turno, motor subestima |
+    | Vento | Santo | 8,9 | 10,1 | dano por turno, motor subestima |
+    | Deus da Espada | Santo | 19,4 | 28,8 | 2 Ações num galho de 1 (item 9) |
+    | Deus do Norte | Santo | 19,4 | 22,0 | 2 Ações num galho de 1 (item 9) |
 
-    Nem toda uma é erro — um rank pode entregar utilidade em vez de dano, e o personagem continua com
-    as técnicas antigas. Mas quatro quedas acima de 30% na mesma lista é padrão, não coincidência. O
-    check imprime as dezesseis e **não reprova o build**, de propósito: a decisão é sua.
+    **Das dezesseis originais, onze saíram na 0.1.47**: três eram erro de leitura do motor, uma era
+    árvore que o livro declara não ser medida de dano, três são dano por turno sustentado que o motor
+    subestima, e quatro foram corrigidas de verdade. Das cinco que sobram, **três continuam sendo o
+    dano sustentado** (Tempestade Cortante, Rio de Magma, Trono de Chamas) — o conserto delas é no
+    motor, não no livro — e duas são as do item 9.
 
 14. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
     longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:

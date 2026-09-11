@@ -10,15 +10,34 @@ import { AbilityDef, RankName } from "@/lib/types";
  * uma magia Imperador que sai em duas Ações (pagando o dobro de PM) são as duas
  * pontas legítimas do sistema: o rank mede o quanto a magia PODE fazer, não o
  * quanto ela demora. Toda divergência carrega um `costNote` explicando a troca.
+ *
+ * ## O teto caiu de 6 pra 4 Ações (0.1.47)
+ *
+ * A escada antiga subia 2-2-3-4-5-6, e o resultado medido era que **a magia
+ * suprema valia menos que a de dois ranks abaixo**: o Sol Menor (Imperador, 6
+ * Ações) rendia 13,6 por Ação e a Lança de Plasma (Avançado, 3 Ações) rendia
+ * 13,9. Quem chegasse ao topo destravava uma magia que nunca ia conjurar.
+ *
+ * A causa é aritmética: o custo em Ações **triplicava** do Principiante ao
+ * Imperador, e o dano não triplicava junto. Por Ação, a magia ficava plana em
+ * ~7 a ~13 enquanto a técnica de Corpo ia a 44.
+ *
+ * O conserto foi no custo, não no dano — um dado sequer foi mexido. O Sol Menor
+ * passa de 13,6 pra 22,8 por Ação só por sair em 4 Ações em vez de 6.
+ *
+ * **E a Conjuração Dividida sobrevive**, que era o risco: 4 Ações continuam não
+ * cabendo num turno de 3, então Rei e Imperador seguem levando dois turnos, com
+ * Perda de Foco e teste de Concentração no meio. O que mudou é que a espera
+ * passou a valer a pena. Só o Santo desceu pra dentro de um turno.
  */
 export const MAGIC_ACTIONS: Record<RankName, AbilityDef["actions"]> = {
   Principiante: { normal: 2, encurtada: 1, silenciosa: 1 },
   Intermediário: { normal: 2, encurtada: 1, silenciosa: 1 },
   Avançado: { normal: 3, encurtada: 2, silenciosa: 1 },
-  Santo: { normal: 4, encurtada: 3, silenciosa: 2 },
-  Rei: { normal: 5, encurtada: 4, silenciosa: 3 },
-  Imperador: { normal: 6, silenciosa: 4 },
-  Deus: { normal: 6, silenciosa: 4 },
+  Santo: { normal: 3, encurtada: 2, silenciosa: 2 },
+  Rei: { normal: 4, encurtada: 3, silenciosa: 3 },
+  Imperador: { normal: 4, silenciosa: 3 },
+  Deus: { normal: 4, silenciosa: 3 },
 };
 
 /**

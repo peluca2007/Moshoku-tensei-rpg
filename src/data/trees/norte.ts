@@ -303,7 +303,7 @@ export const NORTE_TREE: Tree = {
           ptCost: 3,
           range: "Linha de 27 metros",
           actions: { normal: 1 },
-          damage: { normal: "+2d10, somados ao dano de arma normal" },
+          damage: { normal: "+3d10, somados ao dano de arma normal" },
           effect: "Libera o Touki como lâmina em linha. Teste de Agilidade (CD 8 + Força + Rank) para metade. Corta estruturas de pedra e madeira no caminho.",
         },
       ],

@@ -16,6 +16,36 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.47",
+    date: "2026-09-10",
+    title: "A Escada Que Não Subia",
+    sections: [
+      {
+        heading: "O teto de conjuração caiu de 6 Ações pra 4",
+        items: [
+          "A escada antiga subia 2-2-3-4-5-6: o custo em Ações TRIPLICAVA do Principiante ao Imperador enquanto o dano não triplicava junto, e a magia suprema valia menos por Ação que a de dois ranks abaixo. Agora é 2-2-3-3-4-4, e nenhum dado foi mexido — só o custo. Fogo no Imperador foi de 13,6 pra 20,4 por Ação; Água de 11,9 pra 17,8; Terra de 13,2 pra 19,8.",
+          "E a Conjuração Dividida sobrevive, que era o risco: 4 Ações continuam não cabendo num turno de 3, então Rei e Imperador seguem levando dois turnos, com Perda de Foco e teste de Concentração no meio. O que mudou é que a espera passou a pagar. Só o Santo desceu pra dentro de um turno.",
+        ],
+      },
+      {
+        heading: "Os dezesseis capstones viraram cinco — e onze não eram desequilíbrio",
+        items: [
+          "Três eram ERRO DE LEITURA do motor: Aguentar e Aguentar Soberano (Escudos) têm \"Reduz 2d10 + Vigor\" no campo de dano — é redução, e o motor contava como dano causado; e Empunhadura Dupla (Norte) é regra de arma, não ataque. Corrigidos junto com \"Metade do dado\" e \"arma secundária\", que o motor lia como zero.",
+          "Uma era árvore que o próprio livro declara NÃO ser medida de dano: o Apêndice C marca Cura, Desintoxicação, Barreira e Escudos, e diz por quê. O check passou a respeitar isso. E três são dano por turno sustentado que o motor conta uma vez só — declarado nas simplificações, porque inflar o livro por causa disso seria consertar o instrumento errado.",
+          "Das sete de balanceamento real, cinco foram corrigidas. E duas delas do OUTRO LADO, que é a lição da versão: a regressão não estava no patamar fraco, estava no pico alto demais logo abaixo. Investida Devastadora (Principiante!) caiu de +2 pra +1 Dado de Arma, Esmagar de três pra duas rolagens, e a Prensa — o maior número do livro inteiro, 44 por Ação num Rei de 1 Ação — caiu de 8d10 pra 5d10. Armas Pesadas agora TERMINA no topo, e o teto do Corpo caiu de 44,0 pra 40,8, fechando o fosso com a Magia de 1,6× pra 1,5×.",
+        ],
+      },
+      {
+        heading: "A Mara virou o que a descrição dela diz",
+        items: [
+          "O Golpe de Escudo Soberano era PRINCIPIANTE, 1 Ação, 3d8 + Força + Bônus de Rank — e escalava com o Rank pra sempre. Era ele, sozinho, que fazia a build descrita como \"protege, não mata\" liderar o dano do playtest. Caiu pra 2d8: a versão Soberana continua melhor que o Golpe de Escudo comum, mas pelo CONTROLE (empurra 6m, CD +2, a marca de última posição), não pelo dano.",
+          "De 196 de dano por batalha pra 125 de dano e 57 PV devolvidos. Ela protege. O 5×5 inteiro ficou 53,8% × 46,2% — no começo do dia era 8,3% × 91,7% —, a Sera virou a maior contribuição do playtest com 222 PV devolvidos, e o chefe de 4º patamar caiu em 26% de dizimação, que é o alvo de 25% pedido, atingido sem tocar no molde do Apêndice G.",
+          "O que esta versão NÃO resolveu: o Vex está em 1% de sobrevivência — baixar a Mara não consertou o Deus da Espada, cujo problema é ficar em pé. Dois capstones seguem abertos (Espada de Luz e Golpe do Desespero, os dois Santo), porque nas duas árvores o Santo é a única habilidade de 2 Ações num galho de 1 Ação. E os chefes de 3º e 5º patamar seguem em 0% e 100%.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.44",
     date: "2026-09-10",
     title: "O iPhone Era Meio Cidadão",
