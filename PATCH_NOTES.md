@@ -5,6 +5,84 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.56 — "Verde Falso" · 2026-09-11
+
+Auditoria geral do projeto. O achado principal não está no site: está na ferramenta que diz se o site
+está bom.
+
+### 🟢 Os checks de tela passavam medindo a página 404
+
+Três dos checks — `mobile`, `a11y` e `contraste` — entram no site por `/semente-dev`, que semeia fichas
+no `localStorage` e só então redireciona pra rota pedida. Essa rota devolve **404 em produção**, de
+propósito: ela escreve no `localStorage` de quem abrir.
+
+A consequência ficou anos invisível. Rodados contra `npm run start`, os três faziam as dezesseis rotas
+pararem na **página de erro**, mediam essa página dezesseis vezes e imprimiam
+*"✅ nenhuma das 16 rotas transborda"*. A página de erro realmente não transborda. Ela também não é o site.
+
+Rodados como devem ser, os números mudam:
+
+| | Contra produção (falso) | Contra `dev` (real) |
+| --- | --- | --- |
+| Contraste | 0 falhas | **1 texto abaixo do AA** |
+| Alvos pequenos no `/livro` | 1 | **229** |
+
+Agora `exigirSemeador()` **aborta** em vez de avisar. Verde falso é pior que vermelho: vermelho manda
+investigar, verde encerra o assunto.
+
+### 🎯 Os dois achados que o verde falso escondia
+
+**O contraste era código desta mesma sessão.** A linha "Só por árvore ou 1 PA", da seção de Grupos de
+Arma (0.1.52), usava `parchment-500` — 2,86:1 no tema claro, contra o mínimo de 4,5. Virou
+`parchment-600`, 4,7:1, sem mudar a hierarquia.
+
+**Os 229 alvos pequenos eram quase todos falso positivo do contador**, não do site: 221 são os termos
+de condição (*Quebrantado*, *Caído*) grifados dentro do parágrafo, e o WCAG 2.5.8 isenta em letra o
+alvo que está "numa sentença ou bloco de texto" — aumentá-los quebraria a linha, que é o motivo da
+isenção existir. O check agora separa os dois: o `/livro` tem **7 pequenos de verdade**, e 221 isentos.
+
+### 📖 O sumário não descrevia o livro
+
+Vinte e quatro seções existiam e não estavam no índice — entre elas os **quatro sistemas compartilhados
+do Cap. 3** (Dado de Arma, Touki, Tiro Perfeito, Triângulo dos Estilos) e as Proficiências do Cap. 1,
+que tinham acabado de virar um sistema inteiro. Num documento de 87 mil pixels de rolagem, o que não
+está no sumário não existe.
+
+Virou `npm run check:sumario`, que acusa os dois defeitos opostos: âncora que o sumário promete e não
+existe, e seção que existe e o sumário não cita.
+
+### 🔒 RCE crítico no Next.js
+
+`next@16.3.2` carregava **GHSA-p293-qw3h-jr36** — execução remota de código não autenticada em servidor
+hospedado no Windows, **CVSS 9.0**. A correção é patch, não major: `16.3.4`. Depois dela, `npm audit`
+acusa zero vulnerabilidades, e nada no código precisou mudar.
+
+### ✒️ E o livro ficou mais bonito
+
+- **Medida de linha.** O corpo ficava com ~120 caracteres por linha numa janela de 1280. Tipografia de
+  livro trabalha entre 60 e 75. Agora 68ch, só no texto corrido — tabela e caixa de regra continuam
+  com a largura inteira, porque são consultadas, não lidas em fluxo.
+- **Filete dourado** marcando o começo de cada seção, que se reconhece de relance sem ler.
+- **Tabelas** com cabeçalho em versalete dourado e primeira coluna em destaque — numa tabela de regra
+  ela é quase sempre a chave, e é por ela que o olho procura.
+- **Subtítulos** na serifada de display: eles estavam perdendo a disputa com o `<b>` dentro das caixas,
+  e isso desmonta a hierarquia inteira de um documento longo.
+- **Barra de progresso** por `animation-timeline: scroll()` — CSS puro, sem JavaScript.
+
+### 🔭 A ferramenta que faltava
+
+`npm run tela <rota>` fotografa qualquer rota em PNG, em qualquer largura e tema. Os checks do projeto
+respondem certo-ou-errado; nenhum responde *isto está bonito?*. Este só salva PNG e não tem opinião.
+
+### ✅ O que a auditoria NÃO achou
+
+Zero TODO ou FIXME pendente no código, zero arquivo órfão, zero âncora quebrada, zero id duplicado,
+zero pré-requisito apontando pra habilidade inexistente, zero perícia ou grupo de arma inventado.
+Os sete checks de dados limpos, 481 testes passando. O `/livro` pesa 4,2 MB de HTML mas **523 KB na
+rede** — medido antes de ser chamado de problema.
+
+---
+
 ## 0.1.54 — "A Progressão Que Não Se Compra" · 2026-09-11
 
 O **Sistema de Dojo** entra como a quinta seção do Cap. 5. Ideia e regras do autor da mesa; esta versão
