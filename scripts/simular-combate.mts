@@ -134,6 +134,51 @@ function build(
   // Principiante larga, e ela apareceu no relatório com 8 de dano por batalha.
   // Comparar isso com um Deus da Espada Avançado não mede balanceamento nenhum.
   const c: CharacterData = { ...base, unlockedRanks, purchasedAbilities: [] };
+  /*
+   * O TALENTO DE PV, comprado PRIMEIRO — 0.1.48.
+   *
+   * Toda árvore de Corpo tem um talento de 1 PA que dá "+4 PV por patamar seu
+   * nesta árvore" — Braço de Ferro (Espada), Casco de Tartaruga (Suishin),
+   * Ombro de Pedra (Escudos). Nenhum jogador de verdade deixa isso na mesa: é o
+   * conhecimento mais barato do livro e o único que cresce sozinho a cada
+   * patamar novo.
+   *
+   * O algoritmo deixava. Ele compra três conhecimentos por patamar em ORDEM DE
+   * ARQUIVO, e as habilidades vêm antes dos talentos — então os talentos só
+   * apareciam no troco, quando já não havia PA.
+   *
+   * O custo disso foi medido, e não é pequeno: dando ao Vex o Braço de Ferro em
+   * troca da compra mais cara dele (uma troca de 2 PA por 1), o time inteiro
+   * dele passou de **45,1% pra 54,9%** de vitória. Dez pontos, num talento de 1
+   * PA. O relatório estava medindo a montagem da ficha e chamando aquilo de
+   * balanceamento da árvore.
+   *
+   * A regra é declarada e estreita: compra o talento da PRÓPRIA árvore que
+   * declara "+N PV por patamar", e só ele. Não é uma IA de build — é o mínimo
+   * que separa uma ficha de uma lista de compras.
+   *
+   * Ele vem ANTES da compra mínima por patamar, e não depois: comprado no fim,
+   * o orçamento já acabou e ele nunca entra. Comprado primeiro, o 1 PA fica
+   * reservado — e o talento ainda CONTA como um dos três conhecimentos que
+   * destravam o patamar seguinte, então não custa profundidade.
+   */
+  const talentoDePv = candidatas.find((x) => {
+    if (x.kind !== "talent") return false;
+    const rd = tree.ranks.find((r) => r.rank === x.rank);
+    const def = rd?.talents?.find((t) => t.id === x.id);
+    // PV, PM ou PT: toda árvore tem UM talento de 1 PA que escala sozinho a
+    // cada patamar, e qual recurso ele dá é a identidade do pilar — Corpo dá
+    // PV, Magia dá PM, as de Touki dão PT. Olhar só pra PV comprava defesa pros
+    // guerreiros e nada pros magos, e o time de Corpo saltou 20 pontos de
+    // vitória por causa disso. O jogador compra o da árvore DELE.
+    return def ? /\+\d+\s*(PV|PM|PT) por patamar/i.test(def.description ?? "") : false;
+  });
+  if (talentoDePv && !c.purchasedAbilities.some((x) => x.id === talentoDePv.id)) {
+    const tentativa = { ...c, purchasedAbilities: [...c.purchasedAbilities, talentoDePv] };
+    if (getPaSpent(tentativa) <= PA_ALVO) c.purchasedAbilities = tentativa.purchasedAbilities;
+  }
+
+
   const MINIMO_POR_PATAMAR = 3; // RANK_REQUIREMENTS: 3 conhecimentos destravam o rank seguinte
   for (const rank of RANKS.slice(0, limite + 1)) {
     const doRank = candidatas.filter((x) => x.rank === rank);
