@@ -128,26 +128,16 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
     decisão do simulador que veio de mim e não do livro.
 
-13. **O penhasco da dizimação** *(descoberto na 0.1.59, calibrando o ajuste de Chefe)*. O pedido de
-    "pelo menos 25% de dizimação" foi atendido — o ajuste de Chefe virou por patamar (×2,65 / ×1,9 /
-    ×1,29 de dano) e os três marcam 32%, 25% e 25%, contra 0% antes.
+13. **~~O penhasco da dizimação~~ — DECIDIDO em 2026-09-11.** O ajuste de Chefe virou por patamar
+    (×2,65 / ×1,9 / ×1,29 de dano) e os três marcam 32%, 25% e 25% de dizimação, contra 0% antes.
 
-    O que sobrou é outra coisa, e é uma decisão sua. A calibragem mediu, com 2000 batalhas por ponto e
-    RNG semeado:
+    A pergunta que sobrava era se o **penhasco** devia ser suavizado: trinta pontos de dizimação
+    separados por dois por cento de multiplicador, porque quem cai para de causar dano e a luta
+    desanda. O caminho medido pra suavizar seria dar ao chefe mais ações e menos dano por golpe.
 
-    ```
-    3º patamar   ×2,64 → 18% dizimado    ×2,65 → 32%    ×2,70 → 48%
-    5º patamar   ×1,28 → 20% dizimado    ×1,29 → 25%    ×1,31 → 53%
-    ```
-
-    Trinta pontos separados por dois por cento de multiplicador. Não é ruído: é **realimentação
-    positiva** — quem cai para de causar dano, a luta se alonga, e quem estava de pé cai também.
-
-    **A pergunta:** você quer que o combate contra chefe seja assim? Os 25% hoje são a média entre
-    noites tranquilas e noites de desastre, não a tensão de cada sessão. Se quiser tensão distribuída,
-    o caminho medido é **mais ações de chefe e menos dano por golpe** — o estrago se espalha pelo grupo
-    em vez de apagar um personagem por vez. Eu consigo implementar e medir; o que não posso decidir é
-    se o desastre ocasional é o que a sua mesa quer sentir.
+    **Resposta do autor: fica como está.** O combate contra chefe é de noites tranquilas e noites de
+    desastre, e é isso que ele quer que a mesa sinta. Não reabrir sem um pedido novo — o comportamento
+    está documentado no Apêndice G pra que ninguém o confunda com um defeito.
 
 14. **Três capstones que não compensam — e agora a bola está com você** *(eram dezesseis; treze
     caíram até a 0.1.50, e a 0.1.57 provou que os três restantes NÃO eram do motor)* —
