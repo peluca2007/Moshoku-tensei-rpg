@@ -44,7 +44,9 @@ export default function BookShell({ toc, children }: { toc: TocEntry[]; children
         ref={mobileToc}
         className="print-hide rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60 lg:hidden"
       >
-        <summary className="cursor-pointer text-sm font-semibold text-parchment-800 dark:text-parchment-200">
+        {/* `py-1`: o alvo tinha 20px de altura, e este é o botão mais tocado do
+            /livro no celular — é por ele que se navega o livro inteiro. */}
+        <summary className="cursor-pointer py-1 text-sm font-semibold text-parchment-800 dark:text-parchment-200">
           Sumário
         </summary>
         <div className="mt-3">

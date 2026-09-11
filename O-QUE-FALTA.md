@@ -236,13 +236,3 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     Fechar isso exigiria uma lista de todos os arquivos de `public/`, mantida à mão ou gerada por mais
     um passo de build — uma lista que envelhece calada, e cujo sintoma é exatamente o que ela deveria
     evitar. Antes de pagar esse preço, vale medir se alguém repara.
-
-20. **Sete alvos de toque abaixo de 24px no `/livro`** *(medido na 0.1.56, depois que o contador passou
-    a separar o que o WCAG isenta)*. O número bruto era 229 e assustava; 221 deles são os termos de
-    condição grifados dentro do parágrafo, que o critério 2.5.8 isenta em letra — aumentá-los quebraria
-    a linha do texto, que é o motivo da isenção existir.
-
-    Sobram **sete de verdade**: links dentro de células de tabela e o `<summary>` do sumário no celular.
-    Nenhum é grave, todos são um `py-` de distância. Ficou registrado porque é a única coisa que os
-    quatro checks de tela ainda acusam, e porque agora o número é confiável.
-
