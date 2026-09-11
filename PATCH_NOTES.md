@@ -5,6 +5,62 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.59 — "Vinte e Cinco Por Cento" · 2026-09-11
+
+O pedido era antigo e estava em letra: **um chefe deve dizimar o grupo em pelo menos 25% das vezes.**
+Hoje ele entrega — e a calibragem encontrou algo sobre o combate deste sistema que não estava escrito
+em lugar nenhum.
+
+### 🎲 O ajuste de Chefe virou por patamar
+
+O Apêndice G dizia, pros três: *"dobre o PV da linha, mantenha o dano"*. Um multiplicador para todos, e
+ele não podia servir aos três, porque as duas curvas que ele tenta casar não crescem juntas:
+
+| | 3º | 4º | 5º |
+| --- | --- | --- | --- |
+| PV somado do grupo | 334 | 435 | 548 |
+| Dano por turno do chefe | 35 | 55 | 80 |
+
+O PV do grupo sobe ~28% por patamar; o dano do molde, ~50%. **O dano corre 1,7× mais rápido.**
+
+| Patamar | PV | Dano | Dizima |
+| --- | --- | --- | --- |
+| 3º — Ameaça | ×2 | **×2,65** | 32% |
+| 4º — Elite | ×2 | **×1,9** | 25% |
+| 5º — Terror | ×2 | **×1,29** | 25% |
+
+Antes desta versão os três marcavam **0%**: o grupo vencia 100% das vezes, sem uma morte.
+
+### 🧗 O penhasco, que é o achado de verdade
+
+A varredura mediu, com 2000 batalhas por ponto e RNG semeado — **não é ruído amostral**:
+
+```
+3º patamar   ×2,64 → 18% dizimado    ×2,65 → 32%    ×2,70 → 48%
+5º patamar   ×1,28 → 20% dizimado    ×1,29 → 25%    ×1,31 → 53%
+```
+
+**Trinta pontos de dizimação separados por dois por cento de multiplicador.**
+
+A causa é realimentação positiva, e ela é do combate e não da tabela: quem cai para de causar dano, a
+luta se alonga, e quem estava de pé cai também. Ou o grupo aguenta o suficiente pra virar, ou desaba
+inteiro — quase não existe meio-termo. O Fio da Vida (0.1.38) já amaciou muito isso; o que sobra é
+estrutural.
+
+**O que isso significa na mesa:** os 25% são a média entre noites tranquilas e noites de desastre, não
+a temperatura de cada sessão. Um chefe calibrado em 25% não entrega 25% toda noite.
+
+E aponta o caminho pra quem quiser tensão distribuída em vez de concentrada: não é subir o
+multiplicador — é dar ao chefe **mais ações e menos dano por golpe**, pra espalhar o estrago pelo grupo
+em vez de apagar um personagem por vez. Está escrito no Apêndice G agora.
+
+### 🔍 O check:sumario pegou a seção nova
+
+A seção "O multiplicador de dano do Chefe" entrou no Apêndice G e não no índice. O check criado ontem
+acusou na primeira execução, que é exatamente pra isso que ele existe.
+
+---
+
 ## 0.1.58 — "Zero" · 2026-09-11
 
 Duas decisões de balanceamento do autor da mesa, aplicadas. E pela primeira vez desde que o

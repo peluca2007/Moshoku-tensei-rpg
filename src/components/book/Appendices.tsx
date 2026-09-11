@@ -375,11 +375,52 @@ export default function Appendices() {
           <List
             items={[
               "Grupo de criaturas fracas: use metade do PV e do dano do patamar, mas multiplique o número de criaturas.",
-              "Chefe único: dobre o PV da linha do patamar dele, mantenha o dano — e dê a ele UMA RODADA INTEIRA A CADA DOIS PERSONAGENS do grupo, arredondado pra baixo, mínimo 1. Um grupo de cinco enfrenta um chefe que age duas vezes por rodada.",
+              <span key="chefe">
+                <b>Chefe único:</b> dobre o PV da linha do patamar dele, multiplique o dano pela tabela
+                abaixo — e dê a ele <b>uma rodada inteira a cada dois personagens</b> do grupo,
+                arredondado pra baixo, mínimo 1. Um grupo de cinco enfrenta um chefe que age duas vezes
+                por rodada.
+              </span>,
               "Fera sem inteligência: role só o Atributo puro em testes sociais (sem Perícia).",
             ]}
           />
         </Aside>
+        <SubTitle id="apendice-g-chefe">O multiplicador de dano do Chefe</SubTitle>
+        <P>
+          Ele é <b>por patamar</b>, e não um número só, porque as duas curvas que ele tenta casar não
+          crescem juntas: o PV somado de um grupo sobe cerca de 28% por patamar, e o dano por turno das
+          linhas deste apêndice sobe cerca de 50%. O dano corre <b>1,7× mais rápido</b> — então o mesmo
+          multiplicador que deixa o 3º patamar fácil deixa o 5º impossível.
+        </P>
+        <BookTable
+          headers={["Patamar do chefe", "PV", "Dano por turno", "Chance de dizimar o grupo"]}
+          rows={[
+            ["3º — Ameaça", "×2", "×2,65", "32%"],
+            ["4º — Elite", "×2", "×1,9", "25%"],
+            ["5º — Terror", "×2", "×1,29", "25%"],
+          ]}
+        />
+        <P>
+          A última coluna é medida, não estimada: 2000 batalhas por linha contra um grupo de cinco
+          montado no patamar do chefe — linha de frente, corpo a corpo, distância, mago e curandeiro.
+        </P>
+        <Warning title="Um chefe de 25% não entrega 25% toda noite">
+          <P>
+            A medição encontrou um penhasco: no 5º patamar, <b>×1,28 dizima 20% das vezes e ×1,29 dizima
+            25%</b>; ×1,31 salta pra 53%. Trinta pontos separados por dois por cento de multiplicador.
+          </P>
+          <P>
+            A causa é realimentação positiva, e ela é do combate, não da tabela: quem cai para de causar
+            dano, a luta se alonga, e quem estava de pé cai também. <b>Ou o grupo aguenta o suficiente
+            pra virar, ou desaba inteiro</b> — quase não há meio-termo.
+          </P>
+          <P>
+            O que isso significa na sua mesa: os 25% são uma média de noites tranquilas e noites de
+            desastre, não a temperatura de cada sessão. Se você quiser tensão distribuída em vez de
+            concentrada, o caminho não é subir o multiplicador — é dar ao chefe <b>mais ações e menos
+            dano por golpe</b>, pra espalhar o estrago pelo grupo em vez de apagar um personagem por vez.
+          </P>
+        </Warning>
         <BookTable
           headers={["Criatura", "Patamar", "O que a torna perigosa"]}
           rows={CRIATURAS_PRONTAS.map((c) => [c.nome, rotuloPatamar(c.patamar), c.perigo])}

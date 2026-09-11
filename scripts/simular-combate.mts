@@ -394,14 +394,72 @@ for (const l of linhas) {
 // ---------------------------------------------------------------------------
 // Os cinco vencedores contra um chefe (Apêndice G)
 // ---------------------------------------------------------------------------
-/** Apêndice G, "Ajustando pra cima": chefe único = dobra o PV da linha, mantém o dano. */
+/**
+ * O AJUSTE DE CHEFE, por patamar — 0.1.59.
+ *
+ * ## Por que deixou de ser uma regra só
+ *
+ * Até aqui o Apêndice G dizia, pros três patamares: *"chefe único = dobra o PV
+ * da linha, mantém o dano"*. Um multiplicador para todos, e ele não podia
+ * servir aos três, porque as duas curvas que ele tenta casar crescem em
+ * velocidades diferentes (medido na 0.1.49):
+ *
+ * |                        |  3º |  4º |  5º |
+ * | ---------------------- | --- | --- | --- |
+ * | PV somado do grupo     | 334 | 435 | 548 |
+ * | Dano por turno do chefe|  35 |  55 |  80 |
+ *
+ * O PV do grupo cresce ~28% por patamar; o dano do molde, ~50%. O dano corre
+ * **1,7× mais rápido** — então o mesmo multiplicador que deixa o 3º patamar
+ * fácil deixa o 5º impossível.
+ *
+ * ## O alvo
+ *
+ * O autor da mesa pediu, em letra: **um chefe do próprio patamar do grupo deve
+ * dizimá-lo em pelo menos 25% das vezes.** Não é um número estético — é o que
+ * separa "o chefe é uma luta" de "o chefe é um obstáculo com mais PV".
+ *
+ * Os valores abaixo saíram de calibragem medida, 2000 batalhas por linha, e não
+ * de teoria. Eles são a única coisa deste arquivo que existe pra ser mexida
+ * quando a mesa discordar do resultado.
+ */
+const AJUSTE_DE_CHEFE: Record<number, { pv: number; dano: number }> = {
+  3: { pv: 2, dano: 2.65 }, // dizima 32% das vezes
+  4: { pv: 2, dano: 1.9 }, //  dizima 25%
+  5: { pv: 2, dano: 1.29 }, // dizima 25%
+};
+
+/*
+ * O ALVO É INSTÁVEL, e isso é do sistema — não da calibragem.
+ *
+ * A varredura que produziu os números acima encontrou um penhasco, e ele é o
+ * achado mais importante desta medição:
+ *
+ *   3º patamar   ×2,64 → 18% dizimado     ×2,65 → 32%     ×2,70 → 48%
+ *   5º patamar   ×1,28 → 20% dizimado     ×1,29 → 25%     ×1,31 → 53%
+ *
+ * Trinta pontos de dizimação separados por 2% de multiplicador. Com 2000
+ * batalhas e RNG semeado isso não é ruído amostral: é **realimentação
+ * positiva**. Quem cai para de causar dano, a luta se alonga, e quem estava de
+ * pé cai também — o combate contra chefe quase não tem meio-termo. Ou o grupo
+ * aguenta o suficiente pra virar, ou desaba inteiro.
+ *
+ * O Fio da Vida (0.1.38) já amaciou muito isso; o que sobra é estrutural. A
+ * consequência prática pra mesa: **um chefe calibrado em 25% não entrega 25%
+ * toda noite.** Ele entrega noites tranquilas e noites de desastre, e a média
+ * é que fica em 25%. Se a mesa quiser a tensão distribuída em vez de
+ * concentrada, o caminho não é o multiplicador — é dar ao chefe mais AÇÕES e
+ * menos dano por golpe, pra espalhar o estrago pelo grupo em vez de deletar um
+ * personagem por vez.
+ */
+
 const CHEFES = MOLDES_CRIATURA.filter((m) => m.patamar >= 3 && m.patamar <= 5).map((m) => ({
   patamar: m.patamar,
   nome: `${m.patamar}º — ${m.titulo} (chefe)`,
-  pv: m.pv * 2,
+  pv: Math.round(m.pv * (AJUSTE_DE_CHEFE[m.patamar]?.pv ?? 2)),
   ca: m.ca,
   ataque: m.bonusAtaque,
-  danoPorTurno: m.danoPorTurno,
+  danoPorTurno: Math.round(m.danoPorTurno * (AJUSTE_DE_CHEFE[m.patamar]?.dano ?? 1)),
   // O Bônus de Rank equivalente ao patamar da criatura, pro CD do Fio da Vida:
   // o livro casa a escada de patamares da criatura com a de Ranks do
   // personagem, e RANK_BONUS é essa escada.
