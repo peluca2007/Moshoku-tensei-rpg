@@ -144,6 +144,21 @@ const PREAMBLE = `
   text(weight: "bold", size: 11pt, fill: white)[#title]
 )
 
+// Cabeçalho GRUDADO no conteúdo dele.
+//
+// Sem isto, o "ARMAS E ATAQUES MARCIAIS" terminava a página 1 e a tabela dele
+// começava a 2 — um título sozinho no pé da folha, que numa ficha impressa lê
+// como seção vazia. O "breakable: false" empurra o par inteiro pra página
+// seguinte quando ele não cabe.
+//
+// (O "block(sticky: true)", que seria mais elegante, COMPILA nesta versão do
+// Typst e não faz nada: os dois PDFs saem byte a byte idênticos. Testado.)
+#let secao(title, corpo) = block(breakable: false, width: 100%)[
+  #section-title(title)
+  #v(4pt)
+  #corpo
+]
+
 #let field(label, value: "", width: 100%) = block(
   stroke: (bottom: 0.5pt + black), width: width, inset: (bottom: 4pt, top: 4pt),
   [#text(weight: "bold", size: 9pt)[#label] #text(size: 10pt, style: "italic")[#value]]
@@ -231,7 +246,15 @@ function attributesBlock(rows: FichaAttributeRow[]): string {
   ]`;
 }
 
-function resourcesBlock(p: FichaPdfPayload): string {
+/**
+ * As reservas e os status — e o que vier junto, DENTRO do mesmo bloco.
+ *
+ * `rodape` entra dentro dos colchetes deste bloco, e não envolto em outros: em
+ * Typst, `[...]` só abre conteúdo em modo de CÓDIGO. Envolver este bloco num
+ * segundo `[...]` põe o de dentro em modo de marcação, onde `[` é só um
+ * caractere — e a ficha sai com colchetes impressos na cara. Acontecido.
+ */
+function resourcesBlock(p: FichaPdfPayload, rodape = ""): string {
   return `
   [
     #section-title("RESERVAS VITAIS E COMBATE")
@@ -252,38 +275,76 @@ function resourcesBlock(p: FichaPdfPayload): string {
       stat-box-filled("PA GASTOS", ${tstr(p.paSpent)}, height: 36pt),
       stat-box-filled("RANK DE GUILDA", ${tstr(p.guildRank)}, height: 36pt)
     )
+    ${rodape}
   ]`;
 }
 
+/**
+ * O bloco mais o espaço DEPOIS dele — e nada, quando o bloco é nada.
+ *
+ * Sem isto, uma seção que some (a de conjuração, numa ficha sem magia) deixa o
+ * `#v(8pt)` dela pra trás, e a folha ganha um vão do tamanho de uma seção
+ * ausente. Espaço entre coisas é do par, não de cada uma.
+ */
+function comEspaco(bloco: string, pontos = 8, antes = false): string {
+  if (bloco.trim() === "") return "";
+  return antes ? `#v(8pt)
+${bloco}` : `${bloco}
+#v(${pontos}pt)
+`;
+}
+
 function spellcastingBlock(rows: FichaSpellcastingRow[]): string {
-  if (rows.length === 0) {
-    return `
-#section-title("BÔNUS DE CONJURAÇÃO (BC) E CD")
-#v(4pt)
-#block(stroke: 1pt + gray, radius: 4pt, inset: 10pt, width: 100%)[
-  #text(size: 8pt, fill: gray)[Nenhuma escola de magia desbloqueada ainda — BC = Intelecto (ou Espírito) + Bônus do Rank; CD = 8 + BC (Cap. 1, seção 7).]
-]`;
-  }
+  /*
+   * Sem escola de magia, a seção inteira SOME — 0.1.51.
+   *
+   * Ela imprimia uma faixa de título e uma caixa dizendo "nenhuma escola
+   * desbloqueada ainda", com a fórmula do BC dentro. Numa ficha de espadachim
+   * isso é um lembrete de regra ocupando o lugar de algo que ele usa — e a
+   * fórmula mora no Cap. 1, que é onde se procura por ela.
+   */
+  if (rows.length === 0) return "";
   const dataRows = rows
     .map((r) => `${tstr(r.treeName)}, ${tstr(r.bc)}, ${tstr(r.cd)}`)
     .join(",\n  ");
   return `
-#section-title("BÔNUS DE CONJURAÇÃO (BC) E CD")
-#v(4pt)
+#secao("BÔNUS DE CONJURAÇÃO (BC) E CD")[
 #table(
   columns: (2fr, 1fr, 1fr),
   stroke: 0.5pt + gray,
   align: (left, center, center),
   [*Escola*], [*BC*], [*CD*],
   ${dataRows}
-)`;
+)
+]`;
 }
 
 function treesBlock(pillars: FichaTreePillar[]): string {
-  const columns = pillars
+  /*
+   * Só as árvores ABERTAS — 0.1.51.
+   *
+   * O bloco listava as dezenove e escrevia "—" nas que o personagem não tem.
+   * Numa ficha de guerreiro isso são dezoito linhas de traço, e a única que
+   * importa fica perdida no meio delas. A lista completa é referência, e
+   * referência mora no livro; a ficha é o que VOCÊ tem.
+   */
+  const abertos = pillars
+    .map((pilar) => ({ ...pilar, rows: pilar.rows.filter((r) => r.rank && r.rank.trim() !== "") }))
+    .filter((pilar) => pilar.rows.length > 0);
+
+  if (abertos.length === 0) {
+    return `
+#secao("ÁRVORES DE PROGRESSÃO")[
+#block(stroke: 1pt + gray, radius: 4pt, inset: 10pt, width: 100%)[
+  #text(size: 8pt, fill: gray)[Nenhuma árvore aberta ainda — abra a primeira em /arvores e ela aparece aqui.]
+]
+]`;
+  }
+
+  const columns = abertos
     .map((pillar) => {
       const rows = pillar.rows
-        .map((r) => `rank-field-filled(${tstr(`${r.label}:`)}, ${tstr(r.rank || "—")})`)
+        .map((r) => `rank-field-filled(${tstr(`${r.label}:`)}, ${tstr(r.rank)})`)
         .join(", ");
       return `grid(columns: 1fr, row-gutter: 4pt,
       text(weight: "bold", fill: cor-principal, size: 9pt)[${pillar.title}],
@@ -293,56 +354,61 @@ function treesBlock(pillars: FichaTreePillar[]): string {
     .join(",\n    ");
 
   return `
-#section-title("ÁRVORES DE PROGRESSÃO")
-#v(4pt)
+#secao("ÁRVORES DE PROGRESSÃO")[
 #block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
   #grid(
-    columns: (1fr, 1fr, 1fr), gutter: 15pt,
+    columns: (${abertos.map(() => "1fr").join(", ")}), gutter: 15pt,
     ${columns}
   )
+]
 ]`;
 }
 
 function traitsBlock(traits: string[]): string {
   if (traits.length === 0) {
     return `
-#section-title("PERÍCIAS & TRAÇOS (RAÇA E ANTECEDENTE)")
-#v(4pt)
+#secao("PERÍCIAS & TRAÇOS (RAÇA E ANTECEDENTE)")[
 #block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
   #text(size: 8pt, fill: gray)[Nenhuma raça/antecedente definido ainda.]
-]`;
+]]`;
   }
   const lines = traits.map((t) => `filled-line(${tstr(t)})`).join(",\n  ");
   return `
-#section-title("PERÍCIAS & TRAÇOS (RAÇA E ANTECEDENTE)")
-#v(4pt)
+#secao("PERÍCIAS & TRAÇOS (RAÇA E ANTECEDENTE)")[
 #block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
   #grid(columns: 1fr, row-gutter: 5pt,
   ${lines}
   )
-]`;
+]]`;
 }
 
 function loreBlock(paragraphs: string[]): string {
   if (paragraphs.length === 0) {
+    /*
+     * Sem lore escrita, esta é a ÚLTIMA seção da parte retrato — e ela fechava
+     * a folha com um aviso de uma linha, deixando meia página em branco morta
+     * (0.1.51). Meia folha em branco não é erro de diagramação: é espaço que a
+     * ficha tinha pra dar e não deu. Doze linhas pautadas transformam o vão em
+     * lugar de escrever à mão na mesa, que é pra onde este PDF vai.
+     */
     return `
-#section-title("LORE E ANOTAÇÕES")
-#v(4pt)
-#block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
-  #text(size: 8pt, fill: gray)[Nada escrito ainda — edite em /ficha.]
-]`;
+#secao("LORE E ANOTAÇÕES")[
+#block(stroke: 1pt + gray, radius: 4pt, inset: 12pt, width: 100%)[
+  #text(size: 8pt, fill: gray)[Nada escrito ainda — anote aqui, ou edite em /ficha.]
+  #v(8pt)
+  #blank-lines(12, spacing: 17pt)
+]]`;
   }
   // Sem breakable: false de propósito — ao contrário do ability-card, um texto de lore pode ser
   // longo o bastante pra precisar quebrar entre páginas, e isso é permitido por padrão em Typst.
   const paras = paragraphs.map((para) => `lore-paragraph(${tstr(para)})`).join(",\n  ");
   return `
-#section-title("LORE E ANOTAÇÕES")
-#v(4pt)
+#secao("LORE E ANOTAÇÕES")[
 #block(stroke: 1pt + gray, radius: 4pt, inset: 10pt, width: 100%)[
   #grid(columns: 1fr, row-gutter: 2pt,
   ${paras}
   )
-]`;
+]]`;
 }
 
 function weaponsTable(weapons: FichaWeaponRow[]): string {
@@ -373,23 +439,29 @@ function weaponsTable(weapons: FichaWeaponRow[]): string {
     : "";
 
   return `
-#section-title("ARMAS E ATAQUES MARCIAIS")
-#v(4pt)
+#secao("ARMAS E ATAQUES MARCIAIS")[
 #table(
   columns: (2fr, 1fr, 1.2fr, 1fr, 2fr),
-  rows: (auto, ..range(${dataRowCount}).map(i => 28pt)),
+  // 24pt, e não 28: com o cabeçalho da seção grudado na tabela
+  // (breakable: false), a diferença de 20pt decidia se ela cabia no pé da
+  // primeira página ou pulava inteira pra segunda, deixando um vão do tamanho
+  // dela. 24pt continuam sendo linha de escrever à mão.
+  rows: (auto, ..range(${dataRowCount}).map(i => 24pt)),
   stroke: 0.5pt + gray,
   align: center + horizon,
   [*Arma / Manobra*], [*Dado Base*], [*Degraus (Rank)*], [*Acerto*], [*Dano Total (Dados + Bônus)*],
   ${rows.join(",\n  ")}
-)${notasBloco}`;
+)${notasBloco}
+]`;
 }
 
 function inventoryBlock(items: FichaInventoryRow[]): string {
   const half = Math.ceil(items.length / 2);
   const left = items.slice(0, half);
   const right = items.slice(half);
-  const rowsPerCol = Math.max(6, half, items.length - half);
+  // 9, e não 6: a parte retrato acaba com folga na última folha, e linha de
+  // inventário em branco é a que mais se usa numa mesa impressa.
+  const rowsPerCol = Math.max(9, half, items.length - half);
 
   function column(list: FichaInventoryRow[]): string {
     const lines = list.map((i) => `filled-line(${tstr(i.text)})`);
@@ -401,15 +473,14 @@ function inventoryBlock(items: FichaInventoryRow[]): string {
   }
 
   return `
-#section-title("EQUIPAMENTO E INVENTÁRIO")
-#v(4pt)
+#secao("EQUIPAMENTO E INVENTÁRIO")[
 #block(stroke: 1pt + gray, radius: 4pt, inset: 12pt, width: 100%)[
   #grid(
     columns: (1fr, 1fr), gutter: 20pt,
     ${column(left)},
     ${column(right)}
   )
-]`;
+]]`;
 }
 
 function abilityCardsPages(cards: FichaAbilityCard[]): string {
@@ -488,15 +559,19 @@ export function buildFichaTypstSource(p: FichaPdfPayload, retratoArquivo?: strin
 )
 #v(10pt)
 
+// O BC/CD mora DENTRO da coluna da direita, e não numa faixa própria — 0.1.51.
+//
+// A coluna dos atributos tem cinco caixas; a das reservas acaba logo depois da
+// fileira de status. Isso deixava um buraco de uns 120pt ao lado de INT e ESP, e
+// empurrava tudo que vinha depois pra baixo — a ponto de a tabela de armas não
+// caber mais na primeira página. A tabela de conjuração é pequena e cabe
+// exatamente ali.
 #grid(
   columns: (1fr, 2.5fr),
   gutter: 15pt,
   ${attributesBlock(p.attributes)},
-  ${resourcesBlock(p)}
+  ${resourcesBlock(p, comEspaco(spellcastingBlock(p.spellcasting), 0, true))}
 )
-#v(8pt)
-
-${spellcastingBlock(p.spellcasting)}
 #v(8pt)
 
 ${treesBlock(p.trees)}
@@ -511,13 +586,11 @@ ${weaponsTable(p.weapons)}
 ${inventoryBlock(p.inventory)}
 #v(10pt)
 
-#block(breakable: false)[
-  #section-title("VÍNCULOS, PACTOS E PROTEGIDOS")
-  #v(4pt)
+#secao("VÍNCULOS, PACTOS E PROTEGIDOS")[
   #block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
     #text(size: 8pt, fill: gray)[Anote aqui: criaturas com Pacto (Invocação), aliados "Sob Minha Guarda" (Escudos), ou contatos/tropas (Bardo/Tático).]
     #v(6pt)
-    #blank-lines(2, spacing: 16pt)
+    #blank-lines(4, spacing: 16pt)
   ]
 ]
 #v(10pt)
