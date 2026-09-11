@@ -5,9 +5,10 @@ import Link from "next/link";
 import { Backpack, Check, Coins, FlaskConical, Lock, Shield, Skull, Sparkles, Store, Swords, Wand2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
-import { getGuildRank, isGuildRankEstimated } from "@/store/selectors";
+import { getGuildRank, getWeaponGroups, isGuildRankEstimated } from "@/store/selectors";
 import { GUILD_RANK_ORDER, GuildRank, meetsGuildRank } from "@/lib/types";
 import { GUILD_RANK_COLORS } from "@/lib/rankColors";
+import { grupoDaArma, weaponGroupName } from "@/data/weaponGroups";
 import {
   SHOP_CATEGORY_ICONS,
   SHOP_CATEGORY_LABELS,
@@ -39,6 +40,22 @@ export default function Shop() {
   const character = useActiveCharacter();
   const guildRank = getGuildRank(character);
   const guildRankEstimated = isGuildRankEstimated(character);
+  // Calculado uma vez, e não por card: são 27 armas na tela, e `getWeaponGroups`
+  // varre as árvores abertas a cada chamada.
+  const gruposDoPersonagem = useMemo(() => (character ? getWeaponGroups(character) : []), [character]);
+  /*
+   * O aviso de falta de proficiência só aparece quando ele SIGNIFICA algo.
+   *
+   * Numa ficha recém-criada o personagem tem só o piso (Desarmado e
+   * Improvisado), e marcar as 27 armas da loja de âmbar não informa nada — é o
+   * mesmo defeito de uma coluna que repete o mesmo valor em toda linha. O nome
+   * do grupo continua aparecendo em todas, porque ELE é informação útil: é como
+   * o jogador descobre o que precisa destravar.
+   *
+   * A partir do momento em que a pessoa escolheu qualquer grupo de arma, o
+   * contraste passa a valer, e aí o aviso volta.
+   */
+  const avisaFaltaDeProficiencia = gruposDoPersonagem.length > 1;
   const [categoryFilter, setCategoryFilter] = useState<FilterCategory>("todos");
   const [rankFilter, setRankFilter] = useState<FilterRank>("todos");
   const [boughtId, setBoughtId] = useState<string | null>(null);
@@ -286,6 +303,35 @@ export default function Shop() {
                           {item.baseDie ? `Dado ${item.baseDie}` : `+${item.acBonus} CA`}
                         </span>
                       )}
+                      {/*
+                        O GRUPO da arma, e o aviso de quem não o tem — 0.1.60.
+
+                        A loja é onde a decisão acontece: é aqui que alguém troca
+                        de arma, e era aqui que a informação faltava. O card
+                        dizia "Dado d10" e mandava o leitor procurar o Cap. 1 §4
+                        pra descobrir se sabia usar aquilo. Quem compra uma
+                        Alabarda sem o grupo Hastes ataca com Desvantagem o resto
+                        da campanha, e descobria isso no primeiro combate.
+                      */}
+                      {(() => {
+                        const grupo = grupoDaArma(item.name);
+                        if (!grupo) return null;
+                        const tem = gruposDoPersonagem.includes(grupo);
+                        return (
+                          <span
+                            className={
+                              tem
+                                ? "text-parchment-600 dark:text-parchment-400"
+                                : avisaFaltaDeProficiencia
+                                  ? "font-semibold text-amber-700 dark:text-amber-400"
+                                  : "text-parchment-600 dark:text-parchment-400"
+                            }
+                          >
+                            {weaponGroupName(grupo)}
+                            {!tem && avisaFaltaDeProficiencia ? " · sem prof." : ""}
+                          </span>
+                        );
+                      })()}
                     </p>
                     {descricaoPropria && (
                       <p className="mb-3 flex-1 text-xs text-parchment-600 dark:text-parchment-400">

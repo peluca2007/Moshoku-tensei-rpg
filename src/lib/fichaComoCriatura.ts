@@ -128,10 +128,10 @@ export function criaturaDaFicha(
   // em 0.1.11 e que a 0.1.12 corrigiu.
   //
   // O bônus dele segue a mesma distinção de `combatSim.resolver`: quem não tem
-  // árvore do CORPO empunha "arma simples" e soma só o atributo, sem Bônus de
+  // árvore do CORPO dá um "golpe sem estilo" e soma só o atributo, sem Bônus de
   // Rank — a Escada de Dados e o Rank no golpe são exclusivos do Corpo (Cap. 3).
   // Somar `bc` aqui daria ao mago convertido o braço de um espadachim.
-  const bonusDoBasico = ficha.ataqueBasico.nome === "arma simples" ? ficha.bcSemRank : ficha.bc;
+  const bonusDoBasico = ficha.ataqueBasico.nome === "golpe sem estilo" ? ficha.bcSemRank : ficha.bc;
   const basico: AcaoCriatura = {
     id: novoId(),
     nome: `Ataque com ${ficha.ataqueBasico.nome}`,
