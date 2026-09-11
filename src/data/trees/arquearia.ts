@@ -54,9 +54,22 @@ export const ARQUEARIA_TREE: Tree = {
       talents: [
         { id: "aljava-cheia", name: "Aljava Cheia", paCost: 1, description: "Você nunca fica sem flechas em terreno com madeira, e fabrica munição durante um Descanso Curto." },
         { id: "passo-e-tiro", name: "Passo e Tiro", paCost: 1, description: "Disparar não provoca ataques de oportunidade." },
+        { id: "respiracao-contada", name: "Respiração Contada", paCost: 1, description: "Uma Preparação de Tiro Perfeito concluída pode ser GUARDADA até o fim do seu próximo turno antes da Solta. Sem isto, quatro Ações seguidas sem ser atingido é uma exigência que quase nenhuma mesa entrega." },
         { id: "braco-firme", name: "Braço Firme", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
       ],
       abilities: [
+        {
+          id: "tiro-perfeito",
+          name: "Tiro Perfeito",
+          paCost: 2,
+          ptCost: 1,
+          range: "Alcance da arma",
+          actions: { normal: 4 },
+          costNote:
+            "Quatro Ações num turno de três: o Tiro Perfeito SEMPRE atravessa turnos, e isso é o desenho, não um efeito colateral. Ele é a única técnica do livro que compra potência com tempo em vez de recurso — quem gasta quatro Ações preparando um disparo passou um turno inteiro sem defender ninguém, e a mesa vê isso acontecer.",
+          effect:
+            "Preparação em quatro etapas, 1 Ação cada, na ordem. Cada uma pede um teste CD 12; FALHAR NÃO INTERROMPE — você só perde o bônus daquela etapa. Sofrer dano exige teste de Concentração (Cap. 4, §3) ou a Preparação se perde. (1) A Corda, Força: +3 degraus no Dado de Arma deste disparo. (2) Os Dedos, Agilidade: o disparo ignora Cobertura e não pode ser aparado, desviado nem interceptado. (3) A Leitura, Intelecto ou Espírito (o maior): Vantagem no acerto, e o alvo não soma Agilidade na CA contra este tiro — você atirou onde ele ia estar. (4) A Solta: o teste de ataque normal. Opcionalmente, gaste 1 Ação a mais antes da Solta — O Ponto: Medicina contra humanoide, Sobrevivência contra fera ou monstro, CD 12; o disparo passa a critar em 19-20 e ignora Resistência a dano.",
+        },
         {
           id: "disparo-duplo",
           name: "Disparo Duplo",
@@ -104,6 +117,7 @@ export const ARQUEARIA_TREE: Tree = {
           "A condição Marcado passa a durar o combate inteiro. Você pode Marcar sem atacar (1 Ação de observação). Contra criaturas Marcadas, sabe automaticamente PV aproximado, resistências e se ela veste Touki.",
       },
       talents: [
+        { id: "etapa-encurtada", name: "Etapa Encurtada", paCost: 2, description: "A Corda e Os Dedos passam a caber numa Ação só — dois testes, uma Ação. O Tiro Perfeito inteiro cai de 4 Ações para 3, e passa a caber num único turno." },
         { id: "leitura-de-presa", name: "Leitura de Presa", paCost: 1, description: "Vantagem em Sobrevivência e Percepção para rastrear e emboscar. (Se você já tem isto pelo Tático ou pelo Norte, escolha outro talento — o mesmo bônus não empilha.)" },
         { id: "corda-rapida", name: "Corda Rápida", paCost: 1, description: "Recarregar besta deixa de custar Ação." },
         { id: "distancia-e-seguranca", name: "Distância É Segurança", paCost: 1, description: "Contra criaturas a mais de 18 metros, você recebe +2 na CA." },
@@ -161,6 +175,7 @@ export const ARQUEARIA_TREE: Tree = {
       talents: [
         { id: "folego-estavel", name: "Fôlego Estável", paCost: 2, description: "+1 PT por patamar seu em Arquearia. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { ptPerRank: 1 } },
         { id: "tres-na-corda", name: "Três na Corda", paCost: 2, description: "Disparo Duplo passa a ser triplo, com o terceiro disparo dois degraus abaixo." },
+        { id: "olho-que-ja-viu", name: "Olho Que Já Viu", paCost: 2, description: "A etapa da Leitura não pede mais teste: ela passa sempre. Você já sabe pra onde ele vai antes de ele saber." },
         { id: "nunca-aqui", name: "Nunca Aqui", paCost: 2, description: "Depois de atirar, gaste 1 PT para se mover 9m sem provocar oportunidade e refazer Furtividade imediatamente." },
       ],
       abilities: [
@@ -206,6 +221,13 @@ export const ARQUEARIA_TREE: Tree = {
           "Você acerta qualquer alvo que consiga ver, sem limite de alcance. Enxerga com precisão perfeita a até 1 km, atravessando neblina, escuridão e chuva. Contra alvos Marcados, seus disparos ignoram Cobertura Total, desde que exista qualquer trajetória física.",
       },
       talents: [
+        {
+          id: "ponto-vital-lido",
+          name: "Ponto Vital Lido",
+          paCost: 3,
+          description:
+            "A etapa d'O Ponto passa a custar 0 Ações — você lê a anatomia enquanto faz o resto. O teste de Medicina ou Sobrevivência continua sendo rolado.",
+        },
         {
           id: "marca-perene",
           name: "Marca Perene",
@@ -266,7 +288,7 @@ export const ARQUEARIA_TREE: Tree = {
       mastery: {
         name: "A Flecha que Fura",
         description:
-          "O patamar que o arqueiro esperou a campanha inteira: gastando 3 PT (Flecha de Touki), um único disparo ignora completamente o Manto de Touki do alvo e toda redução de dano contra projéteis. É caro de propósito, e não existe segunda forma.",
+          "O patamar que o arqueiro esperou a campanha inteira: gastando 3 PT (Flecha de Touki), um único disparo ignora completamente o Manto de Touki do alvo e toda redução de dano contra projéteis. É caro de propósito. A única outra forma é a Preparação Perfeita, deste mesmo patamar — e ela não é mais barata: cobra cinco etapas seguidas sem falhar nenhuma, em vez de 3 PT.",
       },
       talents: [
         { id: "aljava-divina", name: "Aljava Divina", paCost: RANK_PA_COST.talent.Rei, description: "A Flecha de Touki passa a custar 2 PT em vez de 3." },
@@ -282,6 +304,17 @@ export const ARQUEARIA_TREE: Tree = {
           actions: { normal: 1 },
           effect:
             "Escolha um alvo Marcado. Até o fim do combate, seus disparos contra ele têm Vantagem e critam em 18-20; e o primeiro disparo de cada turno que acertar causa +1d10 cumulativo, até o máximo de +3d10. Trocar de alvo encerra o efeito.",
+        },
+        {
+          id: "preparacao-perfeita",
+          name: "Preparação Perfeita",
+          paCost: 4,
+          range: "Alcance ilimitado (visão)",
+          actions: { normal: 0 },
+          costNote:
+            "0 Ações porque ela não é um disparo: é uma condição que passa a valer sobre o Tiro Perfeito, que já cobra as Ações dele. Cobrar Ações duas vezes pelo mesmo tiro seria cobrar o preço duas vezes.",
+          effect:
+            "Um Tiro Perfeito em que TODAS as etapas passaram — as quatro, mais O Ponto — ignora completamente o Manto de Touki do alvo e toda redução de dano contra projéteis, sem gastar PT. É a segunda forma de furar o Manto, e ela cobra em turnos o que a Flecha de Touki cobra em recurso: cinco etapas seguidas, cinco testes, e nenhuma delas pode ter falhado.",
         },
         {
           id: "flecha-do-fim-da-estrada",

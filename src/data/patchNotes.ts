@@ -16,6 +16,23 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.53",
+    date: "2026-09-11",
+    title: "Quatro Ações Num Turno de Três",
+    sections: [
+      {
+        heading: "O Tiro Perfeito: a única técnica que compra potência com tempo",
+        items: [
+          "Toda técnica do livro paga em recurso — PT, PM, PP. O Tiro Perfeito paga em TURNOS: quatro Ações num turno de três, então ele sempre atravessa turnos. Quem prepara um passou um turno inteiro sem defender ninguém.",
+          "Quatro etapas, 1 Ação cada, teste CD 12 em cada uma. A Corda (Força): +3 degraus no Dado de Arma. Os Dedos (Agilidade): ignora Cobertura e não pode ser aparado nem interceptado. A Leitura (Intelecto ou Espírito): Vantagem no acerto e o alvo não soma Agilidade na CA. A Solta: o ataque normal. Opcionalmente, +1 Ação n'O Ponto — Medicina contra humanoide, Sobrevivência contra fera ou monstro — e o tiro crita em 19-20 e ignora Resistência.",
+          "FALHAR NÃO INTERROMPE: errar um teste custa só o bônus daquela etapa, e a Preparação segue. Sem isso, um 7 no d20 jogaria fora dois turnos de jogo. Sofrer dano é outra coisa — aí é teste de Concentração, como em qualquer efeito que atravessa turnos.",
+          "A CD é fixa em 12, e não a escada de 8 + atributo + Rank: não há ninguém do outro lado desses testes. A dificuldade é da técnica, não de um alvo resistindo.",
+          "A Arquearia inteira ganhou uma escada em torno disso: Respiração Contada (guarda a Preparação pronta), Etapa Encurtada (o tiro cabe num turno), Olho Que Já Viu (a Leitura passa sempre), Ponto Vital Lido (O Ponto de graça) e, no Rei, Preparação Perfeita — com todas as etapas passadas, o tiro fura o Manto de Touki sem gastar PT. A Maestria do Rei prometia que 'não existe segunda forma' de furar o Manto; agora existe, no mesmo patamar, e cobra turnos em vez de recurso.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.52",
     date: "2026-09-11",
     title: "Espada Sim, Adaga Não",
