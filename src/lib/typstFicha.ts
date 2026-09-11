@@ -122,8 +122,6 @@ export interface FichaPdfPayload {
   guildRank: string;
   /** Cap. 1, §8: a Árvore Inicial, que decide quais perícias vieram de graça. */
   startingTreeName: string;
-  /** Cap. 1, §6: a entrada de sub-tabela sorteada (Miko, Olho, Laplace), quando o antecedente exige uma. */
-  subtableName: string;
   /** BC e CD por escola de magia desbloqueada (Cap. 1, seção 7) — cada árvore usa o próprio Rank. */
   spellcasting: FichaSpellcastingRow[];
   trees: FichaTreePillar[];
@@ -173,8 +171,27 @@ const PREAMBLE = `
   [#text(weight: "bold", size: 9pt)[#label] #text(size: 10pt, style: "italic")[#value]]
 )
 
-#let stat-box-filled(label, value, height: 35pt) = block(
-  stroke: 1.5pt + black, radius: 4pt, width: 100%, height: height, inset: 4pt, fill: rgb("F5F5F5"),
+// ALTURA AUTOMÁTICA, e não fixa — 0.1.61.
+//
+// O relato da mesa foi "tem algumas coisas fora dos quadrados", e o que estava
+// fora eram os VALORES: o 13 da Armadura, o +0 da Iniciativa, o 9m do
+// Deslocamento, o número de cada atributo. Todos impressos logo ABAIXO da caixa
+// que deveria contê-los.
+//
+// A conta explica: 4pt de inset em cima e embaixo, mais ~11pt da linha do
+// rótulo (8pt), mais o #v(3pt), mais ~18pt da linha do valor (13pt) dão perto
+// de 40pt de conteúdo — dentro de uma caixa declarada com 35, 36 ou 38pt de
+// altura FIXA. O Typst não corta nem encolhe nesse caso: ele desenha a moldura
+// no tamanho pedido e deixa o resto vazar por baixo.
+//
+// O "height: auto" faz a moldura seguir o conteúdo. As cinco caixas de uma mesma
+// linha do grid continuam saindo do mesmo tamanho, porque o conteúdo delas tem
+// a mesma forma — o que muda é que nenhuma mais mente sobre o próprio tamanho.
+// O parâmetro "height" continua aceito pra quem quiser impor um piso.
+// (Sem crase neste comentário de propósito: ele mora dentro de uma template
+//  literal do TypeScript, e uma crase aqui fecha a string e quebra o arquivo.)
+#let stat-box-filled(label, value, height: auto) = block(
+  stroke: 1.5pt + black, radius: 4pt, width: 100%, height: height, inset: 5pt, fill: rgb("F5F5F5"),
   align(top + center)[
     #text(size: 8pt, weight: "bold")[#label]
     #v(3pt)
@@ -183,7 +200,7 @@ const PREAMBLE = `
 )
 
 #let resource-box-filled(label, max) = block(
-  stroke: 2pt + cor-principal, radius: 6pt, width: 100%, height: 42pt, inset: 4pt, fill: cor-fundo,
+  stroke: 2pt + cor-principal, radius: 6pt, width: 100%, height: auto, inset: 5pt, fill: cor-fundo,
   align(top + center)[
     #text(size: 9pt, weight: "bold", fill: cor-principal)[#label]
     #v(2pt)
@@ -233,7 +250,7 @@ function attributesBlock(rows: FichaAttributeRow[]): string {
       (r) =>
         `stat-box-filled(${tstr(r.saveAdvantage ? `${r.short} ◆` : r.short)}, ${tstr(
           String(r.value)
-        )}, height: 38pt)`
+        )})`
     )
     .join(",\n      ");
   const comVantagem = rows.filter((r) => r.saveAdvantage);
@@ -278,11 +295,11 @@ function resourcesBlock(p: FichaPdfPayload, rodape = ""): string {
     #v(8pt)
     #grid(
       columns: (1fr, 1fr, 1fr, 1fr, 1fr), gutter: 8pt,
-      stat-box-filled("ARMADURA (CA)", ${tstr(p.armorClass)}, height: 36pt),
-      stat-box-filled("INICIATIVA", ${tstr(p.initiative)}, height: 36pt),
-      stat-box-filled("DESLOCAMENTO", ${tstr(p.deslocamento)}, height: 36pt),
-      stat-box-filled("PA GASTOS", ${tstr(p.paSpent)}, height: 36pt),
-      stat-box-filled("RANK DE GUILDA", ${tstr(p.guildRank)}, height: 36pt)
+      stat-box-filled("ARMADURA (CA)", ${tstr(p.armorClass)}),
+      stat-box-filled("INICIATIVA", ${tstr(p.initiative)}),
+      stat-box-filled("DESLOCAMENTO", ${tstr(p.deslocamento)}),
+      stat-box-filled("PA GASTOS", ${tstr(p.paSpent)}),
+      stat-box-filled("RANK DE GUILDA", ${tstr(p.guildRank)})
     )
     ${rodape}
   ]`;
@@ -590,11 +607,14 @@ export function buildFichaTypstSource(p: FichaPdfPayload, retratoArquivo?: strin
       field("Ouro (PO):", value: ${tstr(p.gold)})
     )
     #v(6pt)
+    // "Destino / Sub-tabela" saiu em 0.1.61, a pedido da mesa: a sub-tabela é
+    // sorteada uma vez na criação (Cap. 1, §6) e depois vira traço de
+    // personagem, não número de consulta — na ficha impressa ela ocupava meia
+    // linha pra mostrar um travessão na maioria das vezes. A Árvore Inicial
+    // ficou com a largura inteira, que é o que ela precisava.
     #grid(
-      columns: (2fr, 2fr),
-      gutter: 10pt,
-      field("Árvore Inicial:", value: ${tstr(p.startingTreeName)}),
-      field("Destino / Sub-tabela:", value: ${tstr(p.subtableName)})
+      columns: (1fr,),
+      field("Árvore Inicial:", value: ${tstr(p.startingTreeName)})
     )
   ]
 )

@@ -319,7 +319,6 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
       ? `${getGuildRank(character)} (est.)`
       : getGuildRank(character),
     startingTreeName: getTreeById(character.startingTreeId)?.name ?? "—",
-    subtableName: subtable?.name ?? "—",
     spellcasting,
     trees,
     traits,
