@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-11, depois da 0.1.56. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-11, depois da 0.1.60. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -86,16 +86,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    - **Punho do Fogo:** com Sobrecarga sempre a 3 de Calor, alguma técnica ficou barata demais? A
      suspeita é a Coroa Solar, que dispara uma vez por turno e antes custava 2.
 
-9. **+4 PV e +1 PM custam o mesmo 1 PA, e não valem o mesmo** *(descoberto na 0.1.48)*. Toda árvore
-   tem um talento de 1 PA que escala sozinho a cada patamar: **Corpo dá +4 PV**, **Magia dá +1 PM**.
-   Quando o playtest passou a comprá-los — porque nenhum jogador de verdade os deixa na mesa —, o time
-   com quatro árvores de Corpo saltou de 46% pra **74%** de vitória contra o time de quatro magias.
-   O PM destravou os magos (a Iri foi de 43 pra 117 de dano), mas PM não impede ninguém de morrer.
-
-   A pergunta é sua: os dois talentos deviam custar o mesmo? Ou o de Magia deveria dar outra coisa —
-   mais PM **e** algum PV, ou um desconto de conjuração?
-
-10. **O Deus da Espada continua frágil — mas a árvore está certa** *(investigado na 0.1.48)*. Você
+9. **O Deus da Espada continua frágil — mas a árvore está certa** *(investigado na 0.1.48)*. Você
     mandou conferir a ficha antes de mexer no livro, e estava certo: a árvore **tem** o talento de
     sustentação (`Braço de Ferro`, 1 PA, +4 PV por patamar), e o algoritmo do playtest nunca o
     comprava. Dar o talento ao Vex moveu o time inteiro dele de **45,1% pra 54,9%** de vitória — dez
@@ -106,7 +97,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     de PV, ou ele é vidro de propósito — e aí o livro deveria dizer isso em vez de chamá-lo de "o maior
     dano do livro".
 
-11. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
+10. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
     cura no motor, na 0.1.37, a Mara marcou 91 e 92% e a Iri 27 e 57% — as duas perguntas continuam
     valendo, e a da Mara ficou mais forte: ela lidera a sobrevivência do playtest inteiro)*. O simulador foi consertado em dois pontos
     (a CA não era consultada por técnica nenhuma; a IA não contava os Dados de Arma ao escolher), e o
@@ -123,12 +114,12 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
      Iri: é uma pergunta sobre o custo de 2 Ações no sistema inteiro. Se nenhuma técnica de 2 Ações
      compensa, ou elas estão fracas ou a economia de 3 Ações por turno precisa de outra coisa.
 
-12. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
+11. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
     número declarado no motor, não medido na mesa. Se numa sessão o curandeiro age mais cedo (ou mais
     tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
     decisão do simulador que veio de mim e não do livro.
 
-13. **~~O penhasco da dizimação~~ — DECIDIDO em 2026-09-11.** O ajuste de Chefe virou por patamar
+12. **~~O penhasco da dizimação~~ — DECIDIDO em 2026-09-11.** O ajuste de Chefe virou por patamar
     (×2,65 / ×1,9 / ×1,29 de dano) e os três marcam 32%, 25% e 25% de dizimação, contra 0% antes.
 
     A pergunta que sobrava era se o **penhasco** devia ser suavizado: trinta pontos de dizimação
@@ -139,51 +130,23 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     desastre, e é isso que ele quer que a mesa sinta. Não reabrir sem um pedido novo — o comportamento
     está documentado no Apêndice G pra que ninguém o confunda com um defeito.
 
-14. **Três capstones que não compensam — e agora a bola está com você** *(eram dezesseis; treze
-    caíram até a 0.1.50, e a 0.1.57 provou que os três restantes NÃO eram do motor)* —
-    `npm run check:progressao`.
-
-    | Árvore | Rank | Rende | O rank abaixo faz |
-    | --- | --- | --- | --- |
-    | Vento | Rei — `Vazio` | 19,8 | 26,8 (Santo) |
-    | Terra | Imperador — `Sepultamento` | 19,8 | 30,6 (Rei) |
-    | Punho do Fogo | Imperador — `Colapso Solar` | 40,8 | 52,8 (Rei) |
-
-    **O que mudou, e por que isto não é mais um item de motor.** A versão anterior deste item dizia
-    que as três de então — `Trono de Chamas`, `Rio de Magma`, `Tempestade Cortante` — apareciam
-    quebradas porque o motor contava UMA vez o dano que o livro escreve *"por turno"*, e concluía:
-    *"o conserto é no simulador, não no livro"*.
-
-    O simulador foi consertado na 0.1.57 (relógio de sustentado, três turnos declarados), e as três
-    saíram da lista. **O número não caiu.** As três de agora são outras: as
-    técnicas que vêm LOGO ACIMA das sustentadas — e que, medidas contra elas, rendem menos por Ação.
-
-    Ou seja: o instrumento não escondia um livro certo. Escondia um problema diferente, que agora
-    está visível e é de design. A pergunta é sua, e tem duas leituras possíveis:
-    - **Os três turnos são generosos demais?** a lista é pouco sensível ao número — mexer nele
-      troca quem aparece, não quanto.
-    - **Ou magia sustentada é forte mesmo, e o que está errado é o patamar acima dela?** Se for isso,
-      `Vazio`, `Sepultamento` e `Colapso Solar` é que precisam de dados.
-
-15. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
-    longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:
+13. **O Corpo rende 1,6× mais por Ação que a Magia** *(remedido na 0.1.58, com o dano sustentado no
+    motor — os números de antes, que diziam "o triplo", eram de quando sete magias por turno contavam
+    uma vez só)*.
 
     | Corpo | | Magia | |
     | --- | --- | --- | --- |
-    | Armas Pesadas | **43,2** | Vento | 23,7 |
-    | Punho do Fogo | 40,4 | **Fogo** | **13,9** |
-    | Vendaval | 34,4 | Terra | 13,2 |
-    | Deus da Espada | 29,0 | Água | 11,9 |
+    | Punho do Fogo | **53,8** | Terra | **33,0** |
+    | Deus da Espada | 39,4 | Vento | 30,7 |
+    | Armas Pesadas | 35,2 | Cura | 26,9 |
+    | Vendaval | 35,2 | Fogo | 20,4 |
+    | Deus do Norte | 34,8 | Água | 17,8 |
 
-    Duas perguntas separadas, e as duas são suas:
-    - **O teto do corpo é o triplo do teto da magia.** A magia compra alcance de 90m, área de verdade e
-      condição — coisas que este motor não pontua. A diferença é grande demais pra ser só isso?
-    - **A magia suprema é pior que a de dois ranks abaixo.** No Fogo, o **Sol Menor** (Imperador, 22 PM,
-      6 Ações) rende 13,6 por Ação e a **Lança de Plasma** (Avançado, 13 PM, 3 Ações) rende 13,9. No
-      Vento a diferença é maior ainda. Só Água e Terra têm a magia longa compensando. Ou o custo em
-      Ações das magias de Santo pra cima está alto demais, ou o dano delas está baixo demais.
+    A distância caiu de 3× pra 1,6× sem que nada fosse nerfado — só medido direito. **A pergunta que
+    sobra é se 1,6× ainda é demais.** A magia compra alcance de 90m, área de verdade e condição, e
+    nada disso pontua neste motor. Se a resposta for "está bom", este item sai da lista.
 
-16. **A escolha de grupo de arma virou decisão ou virou imposto?** *(aberto pela 0.1.52)* Todo
+14. **A escolha de grupo de arma virou decisão ou virou imposto?** *(aberto pela 0.1.52)* Todo
     personagem agora escolhe **um grupo livre na criação**, além do piso de Desarmado e Improvisado. A
     intenção era dar caracterização a quem não é guerreiro — a adaga de reserva do mago, o cajado de
     combate. O risco é o oposto: a criação de ficha já é longa, e esta é mais uma tela onde a pessoa
@@ -192,7 +155,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     Duas coisas a observar numa sessão de criação: **alguém hesitou?** (hesitar é bom — significa que a
     escolha importa) e **alguém escolheu e nunca usou?** (aí ela é ruído, e o piso deveria ser maior).
 
-17. **O Tiro Perfeito vale quatro Ações?** *(aberto pela 0.1.53)* Ele é o primeiro sistema do livro que
+15. **O Tiro Perfeito vale quatro Ações?** *(aberto pela 0.1.53)* Ele é o primeiro sistema do livro que
     cobra **tempo** em vez de recurso, e isso só se mede jogando: quatro Ações são dois turnos inteiros
     em que o arqueiro não defendeu ninguém.
 
@@ -207,7 +170,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Site
 
-18. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
+16. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
     aparelho mostrava foram achadas e corrigidas sem aparelho, lendo o que o navegador recebe: o
     **`apple-touch-icon` não existia** (o iPhone usava uma captura da página como ícone da tela de
     início), faltava o **`viewport-fit=cover`** que o `black-translucent` exige, e não havia **nenhuma
@@ -226,7 +189,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
       segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, mas nunca num
       aparelho.)*
 
-19. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+17. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
