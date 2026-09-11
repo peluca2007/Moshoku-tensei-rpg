@@ -213,7 +213,10 @@ export const ESPADA_TREE: Tree = {
           paCost: 4,
           ptCost: 3,
           range: "Corpo a corpo",
-          actions: { normal: 2 },
+          // 1 Ação desde a 0.1.50: era a ÚNICA habilidade de 2 Ações num galho
+          // inteiro de 1, e por isso o Santo rendia menos por Ação que o
+          // Avançado — quem chegava lá destravava e não usava.
+          actions: { normal: 1 },
           damage: { normal: "Dado de arma rolado três vezes (dobrado contra armadura pesada/estrutura)" },
           effect:
             "Ataque com Vantagem que ignora todo bônus de CA de armadura, escudo e Cobertura. Não pode ser alvo de Reação, exceto a Reversão de Luz. Preço: sua CA cai em 5 até o início do próximo turno. Pré-requisito para o rank Rei da Espada.",
@@ -284,7 +287,7 @@ export const ESPADA_TREE: Tree = {
           ptCost: 5,
           range: "Corpo a corpo",
           actions: { normal: 2 },
-          damage: { normal: "Dado de arma rolado cinco vezes" },
+          damage: { normal: "Dado de arma rolado sete vezes" },
           effect:
             "Uma vez por combate: acerta automaticamente, sem rolagem. Ignora CA, Cobertura, Manto de Touki, armadura mágica e barreira física. Só responde à Reversão de Luz de rank Rei ou superior (com Desvantagem). Preço: sua CA cai para 10 até o início do próximo turno, sem Reações.",
         },
