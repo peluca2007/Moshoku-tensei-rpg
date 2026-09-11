@@ -118,6 +118,7 @@ const TOC: TocEntry[] = [
       { id: "apendice-e", label: "E. Viagem entre Continentes" },
       { id: "apendice-f", label: "F. Cerco e Batalha em Exército" },
       { id: "apendice-g", label: "G. Bestiário" },
+      { id: "apendice-g-chefe", label: "— O multiplicador do Chefe" },
     ],
   },
 ];

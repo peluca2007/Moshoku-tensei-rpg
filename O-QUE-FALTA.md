@@ -128,31 +128,26 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
     decisão do simulador que veio de mim e não do livro.
 
-13. **O dano do Apêndice G cresce mais rápido que o PV dos personagens** *(medido na 0.1.49, com a
-    tabela de chefes finalmente montando um grupo do patamar de cada chefe)*.
+13. **O penhasco da dizimação** *(descoberto na 0.1.59, calibrando o ajuste de Chefe)*. O pedido de
+    "pelo menos 25% de dizimação" foi atendido — o ajuste de Chefe virou por patamar (×2,65 / ×1,9 /
+    ×1,29 de dano) e os três marcam 32%, 25% e 25%, contra 0% antes.
 
-    Primeiro o que a medição certa revelou, e é o oposto do que a tabela antiga dizia: **contra um
-    grupo do próprio patamar, todo chefe do livro perde 100% das vezes e não mata ninguém** — nos três
-    patamares. O "Terror invencível" era inteiramente artefato de jogar um grupo de 12 PA contra ele.
+    O que sobrou é outra coisa, e é uma decisão sua. A calibragem mediu, com 2000 batalhas por ponto e
+    RNG semeado:
 
-    E a causa de nenhum ajuste único servir:
+    ```
+    3º patamar   ×2,64 → 18% dizimado    ×2,65 → 32%    ×2,70 → 48%
+    5º patamar   ×1,28 → 20% dizimado    ×1,29 → 25%    ×1,31 → 53%
+    ```
 
-    | | 3º | 4º | 5º |
-    | --- | --- | --- | --- |
-    | PV somado do grupo | 334 | 435 (+30%) | 548 (+26%) |
-    | Dano por turno do chefe | 35 | 55 (**+57%**) | 80 (**+45%**) |
+    Trinta pontos separados por dois por cento de multiplicador. Não é ruído: é **realimentação
+    positiva** — quem cai para de causar dano, a luta se alonga, e quem estava de pé cai também.
 
-    O dano do molde cresce **~1,7× mais rápido** que o PV que os personagens ganham por patamar. Por
-    isso um mesmo multiplicador de Chefe dá 1% de dizimação no 3º e 99% no 5º (medido: PV ×2, dano ×2).
-
-    **As duas saídas, e a escolha é sua:** ou o ajuste de Chefe passa a ser **por patamar** em vez de
-    uma regra só, ou a coluna de **dano por turno do Apêndice G** cresce devagar demais lá embaixo /
-    rápido demais lá em cima e é ela que precisa ser reescrita. A segunda mexe em todo monstro do
-    livro; a primeira é local.
-
-    *(Uma ressalva honesta: o orçamento de PA por patamar — 12/18/24 — é palpite meu, porque o livro
-    não diz quanto PA um personagem de 4º tem. Mas ele é menos load-bearing do que parece: o PV do
-    grupo vem do PATAMAR, não do PA gasto, e subir o orçamento de 24 pra 44 no 5º não muda um PV.)*
+    **A pergunta:** você quer que o combate contra chefe seja assim? Os 25% hoje são a média entre
+    noites tranquilas e noites de desastre, não a tensão de cada sessão. Se quiser tensão distribuída,
+    o caminho medido é **mais ações de chefe e menos dano por golpe** — o estrago se espalha pelo grupo
+    em vez de apagar um personagem por vez. Eu consigo implementar e medir; o que não posso decidir é
+    se o desastre ocasional é o que a sua mesa quer sentir.
 
 14. **Três capstones que não compensam — e agora a bola está com você** *(eram dezesseis; treze
     caíram até a 0.1.50, e a 0.1.57 provou que os três restantes NÃO eram do motor)* —
