@@ -73,3 +73,4 @@ livro em txt.txt
 # servido, fora do git pra não pesar no repo, mas guardado em disco pra permitir
 # recortar de novo sem procurar a imagem outra vez.
 /assets-fonte/originais/
+.telas/
