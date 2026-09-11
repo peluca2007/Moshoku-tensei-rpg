@@ -2,6 +2,7 @@ import Link from "next/link";
 import { TREES, CATEGORY_LABELS } from "@/data/trees";
 import { RANK_BONUS, RANKS } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diagramas";
 import TreeCatalog from "./TreeCatalog";
 import TreeCrest from "../TreeCrest";
 
@@ -203,11 +204,7 @@ export default function Chapter3() {
           O dano de um guerreiro vem da arma, não do corpo. Conforme você sobe de Rank num estilo, o Dado
           Base sobe degraus nesta escada:
         </P>
-        <P>
-          <code className="rounded bg-parchment-100 px-2 py-1 text-xs dark:bg-parchment-800">
-            d4 → d6 → d8 → d10 → d12 → 2d8 → 2d10 → 2d12 → 3d10 → 3d12 → 4d10 → 4d12 → 5d10 → 5d12
-          </code>
-        </P>
+        <EscadaDeDados />
         <BookTable
           headers={["Rank no Estilo", "Degraus Ganhos", "Espada Curta (d6) vira", "Espada Longa (d8) vira"]}
           rows={[
@@ -330,6 +327,7 @@ export default function Chapter3() {
           habitual de 8 + atributo + Rank, porque não há ninguém do outro lado resistindo: a dificuldade é da
           técnica, não de um alvo.
         </P>
+        <EtapasDoTiroPerfeito />
         <BookTable
           headers={["Etapa", "Teste", "O que ela concede"]}
           rows={[
@@ -378,15 +376,8 @@ export default function Chapter3() {
         </Aside>
 
         <SubTitle id="cap3-triangulo">4. O Triângulo dos Estilos</SubTitle>
+        <TrianguloDosEstilos />
         <Quote attribution="Lema do Estilo Deus da Espada">A vitória é de quem se move primeiro.</Quote>
-        <BookTable
-          headers={["Estilo", "Filosofia", "Vence contra", "Perde para"]}
-          rows={[
-            ["Deus da Espada", "Velocidade e agressão; matar em um golpe. Sem defesa, sem contra-ataque.", "Deus do Norte", "Deus da Água"],
-            ["Deus da Água", "Defesa e contragolpe. Deixa o inimigo atacar e devolve.", "Deus da Espada", "Deus do Norte"],
-            ["Deus do Norte", "Sobreviver e vencer por qualquer meio. Truques, terreno, improviso.", "Deus da Água", "Deus da Espada"],
-          ]}
-        />
         <Aside title="Regra da Vantagem de Estilo">
           Quando você luta contra um praticante do estilo que o seu contra-ataca, e ambos possuem Rank
           naqueles estilos: você rola com Vantagem em todas as Disputas contra ele, e as Reações defensivas
