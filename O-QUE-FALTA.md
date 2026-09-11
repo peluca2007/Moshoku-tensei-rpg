@@ -154,7 +154,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     não diz quanto PA um personagem de 4º tem. Mas ele é menos load-bearing do que parece: o PV do
     grupo vem do PATAMAR, não do PA gasto, e subir o orçamento de 24 pra 44 no 5º não muda um PV.)*
 
-14. **Quatro capstones que não compensam — e agora a bola está com você** *(eram dezesseis; treze
+14. **Três capstones que não compensam — e agora a bola está com você** *(eram dezesseis; treze
     caíram até a 0.1.50, e a 0.1.57 provou que os três restantes NÃO eram do motor)* —
     `npm run check:progressao`.
 
@@ -162,7 +162,6 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     | --- | --- | --- | --- |
     | Vento | Rei — `Vazio` | 19,8 | 26,8 (Santo) |
     | Terra | Imperador — `Sepultamento` | 19,8 | 30,6 (Rei) |
-    | Armas Pesadas | Santo — `Ruína [Peso]` | 29,4 | 51,6 (Avançado) |
     | Punho do Fogo | Imperador — `Colapso Solar` | 40,8 | 52,8 (Rei) |
 
     **O que mudou, e por que isto não é mais um item de motor.** A versão anterior deste item dizia
@@ -171,15 +170,15 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     *"o conserto é no simulador, não no livro"*.
 
     O simulador foi consertado na 0.1.57 (relógio de sustentado, três turnos declarados), e as três
-    saíram da lista. **O número não caiu: subiu de três para quatro.** As quatro de agora são as
+    saíram da lista. **O número não caiu.** As três de agora são outras: as
     técnicas que vêm LOGO ACIMA das sustentadas — e que, medidas contra elas, rendem menos por Ação.
 
     Ou seja: o instrumento não escondia um livro certo. Escondia um problema diferente, que agora
     está visível e é de design. A pergunta é sua, e tem duas leituras possíveis:
-    - **Os três turnos são generosos demais?** Com dois turnos dá 4, com um dá 3, com quatro dá 5 —
-      a lista é pouco sensível ao número, o que sugere que não é isso.
+    - **Os três turnos são generosos demais?** a lista é pouco sensível ao número — mexer nele
+      troca quem aparece, não quanto.
     - **Ou magia sustentada é forte mesmo, e o que está errado é o patamar acima dela?** Se for isso,
-      `Vazio`, `Sepultamento`, `Ruína [Peso]` e `Colapso Solar` é que precisam de dados.
+      `Vazio`, `Sepultamento` e `Colapso Solar` é que precisam de dados.
 
 15. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
     longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:

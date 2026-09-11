@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  exigeManutencao,
   novoAlvo,
   separarSustentado,
   tickSustentado,
@@ -122,6 +123,42 @@ describe("A constante declarada", () => {
   it("é conservadora: menos que a duração escrita de qualquer uma das magias", () => {
     expect(TURNOS_SUSTENTADOS).toBeGreaterThanOrEqual(2);
     expect(TURNOS_SUSTENTADOS, "10 turnos seria a duração escrita, não a jogada").toBeLessThan(10);
+  });
+});
+
+describe("Manutenção", () => {
+  /*
+   * A diferença entre uma área que fica lá sozinha e um agarrão.
+   *
+   * O `Estrangular [Impacto]` diz "enquanto você mantiver" e exige alvo
+   * Agarrado: cada turno de dano custa o TURNO do lutador. Contar três tiques
+   * por uma Ação dava à técnica 51,6 de dano por Ação — a segunda maior do
+   * livro inteiro, num rank Avançado, acima do Imperador do Deus da Espada.
+   */
+  it("reconhece a manutenção que custa a Ação", () => {
+    expect(exigeManutencao("Requer alvo Agarrado. Ele não consegue falar enquanto você mantiver.")).toBe(true);
+    expect(exigeManutencao("Manter custa 1 Ação por turno.")).toBe(true);
+  });
+
+  it("manutenção de RECURSO não conta — quem paga continua livre pra agir", () => {
+    // O Trono de Chamas cobra "uma Sobrecarga por turno". Os turnos dele são
+    // reais; o que o motor não cobra é a Sobrecarga, e isso está declarado.
+    expect(exigeManutencao("Manter custa uma Sobrecarga por turno, e você pode dispensar quando quiser.")).toBe(false);
+  });
+
+  it("área autônoma não exige nada", () => {
+    expect(exigeManutencao("A área permanece coberta de magma por 10 minutos.")).toBe(false);
+    expect(exigeManutencao("Dura 1 minuto e se move 9m por turno para onde você quiser.")).toBe(false);
+    expect(exigeManutencao("Remove o ar da área por 3 turnos.")).toBe(false);
+  });
+
+  it("o Estrangular do livro é pego pelo detector", () => {
+    const lutador = TREES.find((t) => t.id === "armas-pesadas")!;
+    const estrangular = lutador.ranks
+      .flatMap((r) => r.abilities ?? [])
+      .find((a) => a.id === "estrangular")!;
+    expect(estrangular.damage?.normal).toMatch(/por turno/);
+    expect(exigeManutencao(estrangular.effect), "e por isto ele NÃO multiplica").toBe(true);
   });
 });
 
