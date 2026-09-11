@@ -129,7 +129,14 @@ export function Quote({ children, attribution }: { children: ReactNode; attribut
 export function BookTable({ headers, rows }: { headers: string[]; rows: (string | ReactNode)[][] }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-parchment-300 shadow-sm dark:border-parchment-800">
-      <table className="w-full min-w-[420px] border-collapse text-left text-sm">
+      {/*
+        `min-w-[320px]`, e não 420: o mínimo antigo era maior que a tela de um
+        celular de 390px, então TODA tabela do livro rolava de lado — inclusive as
+        de três colunas curtas, que caberiam inteiras. `min-width` é piso, não
+        largura: a tabela que precisa de mais continua empurrando e rolando, como
+        sempre. O que muda é que as pequenas param de rolar à toa.
+      */}
+      <table className="w-full min-w-[320px] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-gold-500/30 bg-parchment-100 dark:bg-parchment-900">
             {headers.map((h) => (
