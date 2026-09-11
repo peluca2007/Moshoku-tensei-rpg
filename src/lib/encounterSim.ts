@@ -24,6 +24,7 @@ import {
   rolarFormula,
   temDano,
   tickChamas,
+  tickSustentado,
   turnoPersonagem,
 } from "@/lib/combatSim";
 import { PapelCriatura, getMoldePorPatamar, rodadasDoChefe } from "@/data/bestiary";
@@ -489,6 +490,7 @@ export function simularEncontro(
           // já está a 0 PV.
           if (p.h.morto) continue;
           if (!p.h.inconsciente && !tickChamas(p.h, rng)) continue;
+          if (!p.h.inconsciente && !tickSustentado(p.h)) continue;
           turnoPersonagem(p.h, inimigos, rng, heroes);
           // O chefe reage ao turno que acabou de passar — 1 vez por rodada da
           // mesa, não 1 vez por herói: a Reação já foi gasta depois do primeiro
@@ -499,6 +501,7 @@ export function simularEncontro(
           }
         } else {
           if (!p.c.vivo || !tickChamas(p.c, rng)) continue;
+          if (!tickSustentado(p.c)) continue;
           turnoCriatura(p.c, heroes, rng);
         }
       }

@@ -116,7 +116,9 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
      não mata"* e terminou o playtest com 95 de dano por batalha e 93% de sobrevivência — à frente do
      Deus da Espada em dano E em sobrevivência. Ou a descrição está errada, ou o Golpe de Escudo
      Soberano está.
-    - **O Vento desabou de 53 pra 19.** As técnicas da Iri custam **duas Ações**, e a conta certa
+    - **O Vento desabou de 53 pra 19** *(número da 0.1.35; na 0.1.57 a Iri marca **117** de dano por
+     batalha e 42% de sobrevivência — terceiro lugar. A pergunta sobre o custo de 2 Ações continua
+     valendo, mas esta evidência específica não sustenta mais nada)*.** As técnicas da Iri custam **duas Ações**, e a conta certa
      mostra que duas Ações quase nunca compensam contra três golpes de uma. Isso não é um problema da
      Iri: é uma pergunta sobre o custo de 2 Ações no sistema inteiro. Se nenhuma técnica de 2 Ações
      compensa, ou elas estão fracas ou a economia de 3 Ações por turno precisa de outra coisa.
@@ -152,19 +154,32 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     não diz quanto PA um personagem de 4º tem. Mas ele é menos load-bearing do que parece: o PV do
     grupo vem do PATAMAR, não do PA gasto, e subir o orçamento de 24 pra 44 no 5º não muda um PV.)*
 
-14. **Três capstones que não compensam — e as três são do MOTOR** *(eram dezesseis; treze caíram até a
-    0.1.50)* — `npm run check:progressao`.
+14. **Quatro capstones que não compensam — e agora a bola está com você** *(eram dezesseis; treze
+    caíram até a 0.1.50, e a 0.1.57 provou que os três restantes NÃO eram do motor)* —
+    `npm run check:progressao`.
 
     | Árvore | Rank | Rende | O rank abaixo faz |
     | --- | --- | --- | --- |
-    | Punho do Fogo | Rei | 17,6 | 37,6 |
-    | Terra | Rei | 13,0 | 17,6 |
-    | Vento | Santo | 8,9 | 10,1 |
+    | Vento | Rei — `Vazio` | 19,8 | 26,8 (Santo) |
+    | Terra | Imperador — `Sepultamento` | 19,8 | 30,6 (Rei) |
+    | Armas Pesadas | Santo — `Ruína [Peso]` | 29,4 | 51,6 (Avançado) |
+    | Punho do Fogo | Imperador — `Colapso Solar` | 40,8 | 52,8 (Rei) |
 
-    As três — `Trono de Chamas`, `Rio de Magma`, `Tempestade Cortante` — descrevem dano **por turno
-    sustentado**, e o motor conta **uma vez só** porque não tem relógio de magia sustentada (só Em
-    Chamas, que é condição). **O conserto é no simulador, não no livro**: inflar os dados delas por
-    causa disso seria consertar o instrumento errado.
+    **O que mudou, e por que isto não é mais um item de motor.** A versão anterior deste item dizia
+    que as três de então — `Trono de Chamas`, `Rio de Magma`, `Tempestade Cortante` — apareciam
+    quebradas porque o motor contava UMA vez o dano que o livro escreve *"por turno"*, e concluía:
+    *"o conserto é no simulador, não no livro"*.
+
+    O simulador foi consertado na 0.1.57 (relógio de sustentado, três turnos declarados), e as três
+    saíram da lista. **O número não caiu: subiu de três para quatro.** As quatro de agora são as
+    técnicas que vêm LOGO ACIMA das sustentadas — e que, medidas contra elas, rendem menos por Ação.
+
+    Ou seja: o instrumento não escondia um livro certo. Escondia um problema diferente, que agora
+    está visível e é de design. A pergunta é sua, e tem duas leituras possíveis:
+    - **Os três turnos são generosos demais?** Com dois turnos dá 4, com um dá 3, com quatro dá 5 —
+      a lista é pouco sensível ao número, o que sugere que não é isso.
+    - **Ou magia sustentada é forte mesmo, e o que está errado é o patamar acima dela?** Se for isso,
+      `Vazio`, `Sepultamento`, `Ruína [Peso]` e `Colapso Solar` é que precisam de dados.
 
 15. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
     longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:

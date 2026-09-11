@@ -35,6 +35,7 @@ import {
   novoEstado,
   testeDoFioDaVida,
   tickChamas,
+  tickSustentado,
   turnoPersonagem,
 } from "../src/lib/combatSim";
 import { MOLDES_CRIATURA, rodadasDoChefe } from "../src/data/bestiary";
@@ -244,6 +245,7 @@ function batalha(timeA: EstadoPersonagem[], timeB: EstadoPersonagem[], maxRodada
       // Só o morto de vez é pulado, e as chamas não queimam quem já está a 0.
       if (e.morto) continue;
       if (!e.inconsciente && !tickChamas(e, rng)) continue;
+      if (!e.inconsciente && !tickSustentado(e)) continue;
       turnoPersonagem(e, time === "A" ? timeB : timeA, rng, time === "A" ? timeA : timeB);
     }
     if (timeB.every((x) => !x.vivo)) return "A";
