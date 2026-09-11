@@ -5,6 +5,57 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.53 — "Quatro Ações Num Turno de Três" · 2026-09-11
+
+O **Tiro Perfeito** entra como o quarto sistema do Cap. 3, ao lado do Dado de Arma, do Touki e do
+Triângulo dos Estilos. Ideia do autor da mesa; esta versão é ela virando regra.
+
+### 🏹 A única técnica que compra potência com tempo
+
+Toda técnica do livro paga em recurso — PT, PM, PP. O Tiro Perfeito paga em **turnos**: quatro Ações
+num turno de três, então ele sempre atravessa turnos. Quem prepara um passou um turno inteiro sem
+defender ninguém, e a mesa vê isso acontecer.
+
+| Etapa | Teste (CD 12) | O que concede |
+| --- | --- | --- |
+| **1. A Corda** | Força | **+3 degraus** no Dado de Arma deste disparo |
+| **2. Os Dedos** | Agilidade | Ignora Cobertura; não pode ser aparado, desviado nem interceptado |
+| **3. A Leitura** | Intelecto **ou** Espírito | Vantagem no acerto, e o alvo não soma Agilidade na CA |
+| *(opcional)* **O Ponto** | Medicina (humanoide) ou Sobrevivência (fera/monstro) | +1 Ação. Crita em 19-20 e ignora Resistência |
+| **4. A Solta** | o ataque normal | O disparo |
+
+### ✅ Falhar não interrompe
+
+Errar um teste não cancela nada e não devolve Ações: você perde **só o bônus daquela etapa** e segue.
+Sem isso, um 7 no d20 jogaria fora dois turnos de jogo — e ninguém aposta dois turnos num tiro que uma
+rolagem ruim anula. Sofrer dano no meio é outra coisa: aí é teste de Concentração (Cap. 4, §3).
+
+**A CD é fixa em 12**, e não a escada de 8 + atributo + Rank. Não há ninguém do outro lado desses
+testes: a dificuldade é da técnica, não de um alvo resistindo.
+
+### 🪜 A árvore inteira gira em torno dele
+
+- **Principiante** — o Tiro Perfeito, e **Respiração Contada**: guarde uma Preparação pronta até o fim
+  do turno seguinte antes de soltar.
+- **Intermediário — Etapa Encurtada:** A Corda e Os Dedos numa Ação só. O tiro cai de 4 para 3 Ações e
+  passa a caber num turno.
+- **Avançado — Olho Que Já Viu:** a Leitura não pede mais teste.
+- **Santo — Ponto Vital Lido:** a etapa d'O Ponto passa a custar 0 Ações.
+- **Rei — Preparação Perfeita:** com todas as etapas passadas, o tiro **fura o Manto de Touki sem
+  gastar PT**.
+
+### 🛡️ A promessa que precisou ser reescrita
+
+A Maestria do Rei dizia, em letra: *"É caro de propósito, e **não existe segunda forma**"* de furar o
+Manto. A Preparação Perfeita passou a ser a segunda — então a frase mudou, e as duas formas ficaram no
+**mesmo patamar**, porque furar o Manto é o capstone do Rei e uma alternativa mais cedo seria o
+capstone chegando adiantado. A nova cobra cinco etapas seguidas sem falhar nenhuma, em vez de 3 PT.
+
+Treze testes travam o sistema — incluindo um que recusa a Maestria do Rei voltar a prometer que a
+segunda forma não existe.
+
+---
+
 ## 0.1.52 — "Espada Sim, Adaga Não" · 2026-09-11
 
 Proficiência de arma agora é por **grupo**, e não por faixa de dano.

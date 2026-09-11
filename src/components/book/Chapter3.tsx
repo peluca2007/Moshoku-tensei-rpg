@@ -185,8 +185,8 @@ export default function Chapter3() {
       <Section>
         <SectionTitle id="cap3-corpo">A Árvore do Corpo — Sistemas Compartilhados</SectionTitle>
         <P>
-          Antes de qualquer estilo específico, três sistemas governam todos os guerreiros: o Dado de Arma, o
-          Touki e o Triângulo dos Estilos.
+          Antes de qualquer estilo específico, quatro sistemas governam todos os guerreiros: o Dado de Arma,
+          o Touki, a Preparação em Etapas e o Triângulo dos Estilos.
         </P>
         <Aside title="Espadachim ou Guerreiro">
           Apenas quem estudou uma das Três Grandes Escolas — Deus da Espada, Deus da Água e Deus do Norte —
@@ -303,7 +303,65 @@ export default function Chapter3() {
           ]}
         />
 
-        <SubTitle id="cap3-triangulo">3. O Triângulo dos Estilos</SubTitle>
+        <SubTitle id="cap3-preparacao">3. A Preparação em Etapas — o Tiro Perfeito</SubTitle>
+        <P>
+          Toda técnica do livro compra potência com <b>recurso</b>: PT, PM, PP. O Tiro Perfeito, da
+          Arquearia, é a única que compra com <b>tempo</b> — e é por isso que ele é um sistema, e não uma
+          habilidade. Quatro Ações num turno de três: ele <b>sempre</b> atravessa turnos.
+        </P>
+        <P>
+          Cada etapa custa 1 Ação e pede um teste de <b>CD 12</b>, na ordem. A CD é fixa, e não a escada
+          habitual de 8 + atributo + Rank, porque não há ninguém do outro lado resistindo: a dificuldade é da
+          técnica, não de um alvo.
+        </P>
+        <BookTable
+          headers={["Etapa", "Teste", "O que ela concede"]}
+          rows={[
+            ["1. A Corda", "Força", "+3 degraus no Dado de Arma deste disparo. Você puxa até o fim."],
+            ["2. Os Dedos", "Agilidade", "Ignora Cobertura, e o disparo não pode ser aparado, desviado nem interceptado."],
+            ["3. A Leitura", "Intelecto ou Espírito (o maior)", "Vantagem no acerto, e o alvo não soma Agilidade na CA — você atirou onde ele ia estar."],
+            ["(opcional) O Ponto", "Medicina (humanoide) ou Sobrevivência (fera, monstro)", "+1 Ação. Crita em 19-20 e ignora Resistência a dano."],
+            ["4. A Solta", "o ataque normal", "O disparo, com tudo que as etapas acima concederam."],
+          ]}
+        />
+        <Aside title="Falhar não interrompe">
+          <P>
+            Errar um teste não cancela a Preparação nem devolve as Ações: você apenas <b>não recebe o bônus
+            daquela etapa</b> e segue para a próxima. Sem esta regra, um 7 no d20 jogaria fora dois turnos de
+            jogo — e ninguém aposta dois turnos num tiro que uma rolagem ruim anula.
+          </P>
+          <P>
+            Sofrer dano no meio é outra coisa: aí é <b>teste de Concentração</b> (Cap. 4, §3), como em
+            qualquer efeito que atravessa turnos. Falhou, a Preparação inteira se perde.
+          </P>
+        </Aside>
+        <Aside title="A escada da Preparação">
+          <List
+            items={[
+              <span key="1">
+                <b>Principiante</b> — o Tiro Perfeito, e <b>Respiração Contada</b>, que deixa guardar uma
+                Preparação pronta até o fim do turno seguinte antes de soltar.
+              </span>,
+              <span key="2">
+                <b>Intermediário — Etapa Encurtada:</b> A Corda e Os Dedos passam a caber numa Ação só. O
+                tiro inteiro cai de 4 para 3 Ações, e passa a caber num turno.
+              </span>,
+              <span key="3">
+                <b>Avançado — Olho Que Já Viu:</b> a Leitura não pede mais teste. Ela passa sempre.
+              </span>,
+              <span key="4">
+                <b>Santo — Ponto Vital Lido:</b> a etapa d&rsquo;O Ponto passa a custar 0 Ações.
+              </span>,
+              <span key="5">
+                <b>Rei — Preparação Perfeita:</b> um Tiro Perfeito em que <b>todas</b> as etapas passaram
+                fura o Manto de Touki, sem gastar PT. É a segunda forma de furar o Manto, e cobra em turnos
+                o que a Flecha de Touki cobra em recurso.
+              </span>,
+            ]}
+          />
+        </Aside>
+
+        <SubTitle id="cap3-triangulo">4. O Triângulo dos Estilos</SubTitle>
         <Quote attribution="Lema do Estilo Deus da Espada">A vitória é de quem se move primeiro.</Quote>
         <BookTable
           headers={["Estilo", "Filosofia", "Vence contra", "Perde para"]}
