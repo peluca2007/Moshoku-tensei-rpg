@@ -36,7 +36,7 @@
  *   npm run dev            # em outro terminal
  *   npm run check:mobile
  */
-import { BASE, comNavegador, dormir, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
+import { BASE, comNavegador, dormir, exigirSemeador, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
 
 const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/comparar", "/sessao", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
 /** 320 = o iPhone SE mais estreito ainda em uso; 360 = a moda dos Androids; 414 = iPhone grande. */
@@ -70,6 +70,7 @@ const MEDICAO = String.raw`(() => {
     }
   }
   let pequenos = 0;
+  let inline = 0;
   for (const el of document.querySelectorAll("button,a,input,select,[role='button']")) {
     const r = el.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) continue;
@@ -89,15 +90,42 @@ const MEDICAO = String.raw`(() => {
       if (c.right > x1) x1 = c.right;
       if (c.bottom > y1) y1 = c.bottom;
     }
-    if (x1 - x0 < 24 || y1 - y0 < 24) pequenos++;
+    if (x1 - x0 >= 24 && y1 - y0 >= 24) continue;
+
+    // INLINE não conta — o WCAG 2.5.8 isenta, em letra, o alvo que está "numa
+    // sentença ou bloco de texto". Sem esta distinção o número era ruído: o
+    // /livro acusava 229 alvos pequenos, e 221 deles eram os termos de condição
+    // ("Quebrantado", "Caído") sublinhados dentro do parágrafo, que o critério
+    // perdoa justamente porque aumentá-los quebraria a linha do texto.
+    //
+    // A regra é a mesma do critério: o alvo é inline se ele mora dentro de um
+    // elemento de texto corrido e tem irmãos que são texto.
+    // "Inline" aqui é o que o critério descreve: o alvo se comporta como palavra
+    // dentro de um trecho de texto. Dois sinais juntos, porque nenhum sozinho
+    // basta: display inline pega o botão de condição, e "o pai tem muito mais
+    // texto que eu" é o que distingue uma palavra grifada no meio de um
+    // parágrafo de um link solto numa lista de navegação.
+    // (Sem crase neste comentário de propósito — ele mora dentro de uma template
+    // literal, e uma crase aqui fecha a string e quebra o arquivo inteiro.)
+    const meu = (el.textContent || "").trim().length;
+    const doPai = ((el.parentElement && el.parentElement.textContent) || "").trim().length;
+    const ehInline = getComputedStyle(el).display.startsWith("inline");
+    if (ehInline && doPai > meu + 20) {
+      inline++;
+      continue;
+    }
+    pequenos++;
   }
-  return JSON.stringify({ transbordo, culpados: culpados.slice(0, 6), pequenos });
+  return JSON.stringify({ transbordo, culpados: culpados.slice(0, 6), pequenos, inline });
 })()`;
 
 if (!(await servidorNoAr())) {
   console.error(`❌ ${BASE} não respondeu. Rode \`npm run dev\` antes.`);
   process.exit(1);
 }
+
+// Sem esta linha o check passa medindo a página 404 — ver `exigirSemeador`.
+await exigirSemeador();
 
 let quebradas = 0;
 await comNavegador(
@@ -124,7 +152,7 @@ await comNavegador(
         const quebrou = (d.transbordo ?? 0) > 1;
         if (quebrou) quebradas++;
         console.log(
-          `${quebrou ? "!!" : "ok"} ${rota.padEnd(14)} transbordo=${d.transbordo}px  alvos<24px=${d.pequenos}`
+          `${quebrou ? "!!" : "ok"} ${rota.padEnd(14)} transbordo=${d.transbordo}px  alvos<24px=${d.pequenos}${d.inline ? ` (+${d.inline} inline, isentos)` : ""}`
         );
         for (const c of d.culpados ?? []) {
           console.log(`     ↳ <${c.tag}> chega a ${c.direita}px (larg. ${c.largura}) "${c.texto}"`);
