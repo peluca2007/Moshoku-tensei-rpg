@@ -44,7 +44,7 @@ export const CURA_TREE: Tree = {
       },
       talents: [
         { id: "maos-firmes-cura", name: "Mãos Firmes", paCost: RANK_PA_COST.talent.Principiante, description: "Você conjura magias de Cura sem sofrer Desvantagem por corpo a corpo, chuva, escuro ou inimigo adjacente." },
-        { id: "reserva-do-curandeiro", name: "Reserva do Curandeiro", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Cura. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
+        { id: "reserva-do-curandeiro", name: "Reserva do Curandeiro", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM e +2 PV por patamar seu em Cura. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2, hpPerRank: 2 } },
         {
           id: "juramento",
           name: "Juramento",

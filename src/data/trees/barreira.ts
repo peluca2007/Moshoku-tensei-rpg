@@ -43,7 +43,7 @@ export const BARREIRA_TREE: Tree = {
           "[Selado / Fluxo Interrompido] Você desenha barreiras — esferas centradas num ponto à sua escolha —, sustenta uma por vez e aplica nelas o Selado e a face de Fluxo Interrompido que escolher. Nenhuma das duas se aplica a VOCÊ: quem escreve a lei não obedece a ela. E toda barreira sua é matéria, não só regra: ela tem 20 PV por patamar que você possua nesta árvore (a magia que declarar os próprios PV usa os dela), e quem está dentro tem Cobertura contra ataques à distância vindos de fora. Você vê mana: barreiras, encantamentos, itens mágicos e invisibilidade mágica aparecem como contorno luminoso, sem custo.",
       },
       talents: [
-        { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM por patamar seu em Barreira. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2 } },
+        { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM e +2 PV por patamar seu em Barreira. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2, hpPerRank: 2 } },
         { id: "circulo-portatil", name: "Círculo Portátil", paCost: RANK_PA_COST.talent.Principiante, description: "Sua barreira passa a se mover com você, centrada no seu corpo, em vez de ficar fixa num ponto." },
         { id: "mao-de-giz", name: "Mão de Giz", paCost: RANK_PA_COST.talent.Principiante, description: "Você desenha círculos permanentes em superfícies. Leva 1 hora e o dobro do PM, mas a barreira fica lá depois que você for embora." },
       ],

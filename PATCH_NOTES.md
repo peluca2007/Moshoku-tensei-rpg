@@ -5,6 +5,70 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.58 — "Zero" · 2026-09-11
+
+Duas decisões de balanceamento do autor da mesa, aplicadas. E pela primeira vez desde que o
+`check:progressao` existe: **nenhum capstone rende menos que o rank abaixo dele.**
+
+### 📉 Dezesseis → três → zero
+
+O contador vinha caindo há oito versões. Onde ele fechou:
+
+| | Capstones quebrados |
+| --- | --- |
+| 0.1.41 (quando o check nasceu) | 16 |
+| 0.1.50 | 3 |
+| 0.1.57 (o relógio de sustentado) | 3, mas outros três |
+| **0.1.58** | **0** |
+
+### 🔎 Antes de inflar dado nenhum, ler o que o livro já dizia
+
+A decisão era "subir os três do topo". Dois deles subiram; **o terceiro saiu sozinho**.
+
+O `Sepultamento` (Terra, Imperador) tinha, desde sempre, um campo `damage.porTurno` escrito:
+*"4d10 sufocando"*. O campo existe no tipo, quatro habilidades o usam, e a documentação dele diz
+exatamente o que é — *"dano que se repete sozinho a cada turno (...) sem gastar nova Ação"*. **O motor
+lia só `damage.normal`.**
+
+Com o campo lido, o Sepultamento passou de 19,8 para acima do Rio de Magma sem uma única alteração de
+dados. O teto da Magia subiu de 30,6 para 33,0/Ação, e a razão Corpo/Magia caiu de 1,7× para 1,6×.
+
+As outras três do campo ficaram de fora, e por um motivo declarado: *"a quem **entrar** na cratera"*,
+*"a quem **tocar** os pilares"*, *"a quem **começar o turno** na área"* dependem de onde o inimigo
+escolhe pisar, e este motor não tem mapa. Contar seria inventar uma decisão que ninguém tomou.
+
+### ⬆️ Os que precisaram mesmo de dados
+
+| Magia | Árvore/Rank | Antes | Agora |
+| --- | --- | --- | --- |
+| `Colapso Solar` | Punho do Fogo, Imperador | 14d12 + BC | **19d12 + BC** |
+| `Vazio` | Vento, Rei | 4d10 por turno | **7d10 por turno** |
+| `Explosão Silenciosa` | Vento, Imperador | 12d12 | **16d12** |
+
+A terceira não estava na conta original: consertar o `Vazio` revelou que a árvore de Vento **estagnava
+do Santo em diante** (26,8 → 26,4 → 23,7). Agora ela sobe inteira: 7,2 → 9,8 → 17,2 → 26,8 → 29,7 → 30,7.
+
+### 🩸 O talento de reserva das escolas de magia agora dá PV
+
+O problema medido: **PM destrava dano, mas não impede ninguém de morrer.** O time com mais árvores do
+Corpo ganhava 74% das batalhas.
+
+As seis escolas que têm talento de reserva passam a dar **+2 PM e +2 PV por patamar**, pelo mesmo 1 PA.
+(A Terra não entrou: ela já tem `Pele de Pedra`, +4 PV por patamar — é a identidade dela, "o mago com
+mais PV". A Invocação não tem talento de reserva nenhum, e isso ficou anotado.)
+
+Medido, 2000 batalhas:
+
+| | Antes | Agora |
+| --- | --- | --- |
+| Time com três magos | 25,6% | **36,5%** |
+| Time com quatro do Corpo | 74,4% | **63,4%** |
+
+Onze pontos num talento de 1 PA. Ainda não é meio a meio — e não deveria ser: o time B carrega a Mara
+(114 PV) e o Gorr (86 PV), que são as duas fichas mais duras do playtest.
+
+---
+
 ## 0.1.57 — "O Instrumento Não Escondia um Livro Certo" · 2026-09-11
 
 O livro escreve **"por turno"** em sete magias. O motor contava cada uma **uma vez só**. Agora conta

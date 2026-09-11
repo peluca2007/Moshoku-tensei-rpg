@@ -52,8 +52,8 @@ export const FOGO_TREE: Tree = {
           id: "folego-de-forja",
           name: "Fôlego de Forja",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "+2 PM por patamar seu em Fogo. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.",
-          grants: { mpPerRank: 2 },
+          description: "+2 PM e +2 PV por patamar seu em Fogo. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.",
+          grants: { mpPerRank: 2, hpPerRank: 2 },
         },
         {
           id: "maos-de-ferreiro",
