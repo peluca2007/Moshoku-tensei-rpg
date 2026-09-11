@@ -89,6 +89,8 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:mobile` | Procura transbordo horizontal de 320px a 414px (precisa de `npm run dev`) |
 | `npm run check:a11y` | Controle sem nome, campo sem rótulo, hierarquia de cabeçalho (precisa de `npm run dev`) |
 | `npm run check:offline` | Abre as 20 rotas **com o servidor morto** (precisa de `npm run build`; sobe e mata o próprio `next start`) |
+| `npm run check:sumario` | O sumário do `/livro` cita toda seção que existe, e só as que existem (precisa do servidor no ar) |
+| `npm run tela <rota>` | Fotografa uma rota em PNG, em qualquer largura e tema. Não reprova nada — existe pra a pergunta que nenhum check responde, que é *isto está bonito?* |
 | `npx tsx scripts/simular-combate.mts` | Playtest automatizado: builds de mesmo orçamento de PA se batendo |
 | `node scripts/logo-sem-fundo.mjs` | Regera `public/logo-real-alfa.png` a partir de `assets-fonte/` |
 | `node scripts/gerar-favicon.mjs` | Regera o favicon e os três ícones do PWA a partir de `assets-fonte/` |
@@ -98,7 +100,8 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 > binários nativos compilados para Linux (`lightningcss`, `esbuild`); chamá-los do Windows por
 > um caminho `\\wsl.localhost` falha. `tsc` e `eslint` funcionam dos dois lados.
 >
-> Os quatro checks de tela (`check:contraste`, `check:mobile`, `check:a11y`, `check:offline`) sobem um Chrome e falam
+> Os checks de tela (`check:contraste`, `check:mobile`, `check:a11y`, `check:offline`, `check:sumario`) e o
+> `npm run tela` sobem um Chrome e falam
 > com ele pela porta de depuração. Rode-os **do mesmo lado em que o Chrome está**: chamar um Chrome
 > do Windows a partir do WSL abre a porta do lado de lá e o script não a alcança. Aponte outro
 > navegador com `CHROME=/caminho/do/chrome` se precisar.
