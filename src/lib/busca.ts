@@ -1,4 +1,5 @@
 import { TREES } from "@/data/trees";
+import { SUMARIO_DO_LIVRO } from "@/data/sumarioDoLivro";
 import { COMBINED_SPELLS, CombinedSpell } from "@/data/combinedSpells";
 import { SHOP_CATEGORY_LABELS, SHOP_ITEMS, ShopItem } from "@/data/shopItems";
 import { RACES } from "@/data/races";
@@ -18,7 +19,8 @@ export type TipoDoc =
   | "raca"
   | "antecedente"
   | "pericia"
-  | "criatura";
+  | "criatura"
+  | "secao";
 
 /** Rótulo curto de cada tipo, usado nos filtros e no selo de cada resultado. */
 export const TIPO_LABELS: Record<TipoDoc, string> = {
@@ -32,6 +34,7 @@ export const TIPO_LABELS: Record<TipoDoc, string> = {
   antecedente: "Antecedentes",
   pericia: "Perícias",
   criatura: "Criaturas",
+  secao: "Regras do livro",
 };
 
 /** Ordem de exibição dos filtros — e o desempate quando dois resultados pontuam igual. */
@@ -46,6 +49,7 @@ export const TIPO_ORDEM: TipoDoc[] = [
   "antecedente",
   "pericia",
   "criatura",
+  "secao",
 ];
 
 /**
@@ -67,7 +71,8 @@ export type ConteudoDoc =
   | { tipo: "raca"; raca: Race }
   | { tipo: "antecedente"; antecedente: Background }
   | { tipo: "pericia"; pericia: SkillDef }
-  | { tipo: "criatura"; criatura: CriaturaPronta };
+  | { tipo: "criatura"; criatura: CriaturaPronta }
+  | { tipo: "secao"; titulo: string; onde: string };
 
 export interface DocBusca {
   chave: string;
@@ -316,6 +321,48 @@ function montarIndice(): DocBusca[] {
         [criatura.perigo, ...criatura.acoes.flatMap((a) => [a.nome, a.nota, a.dano, a.alcance])]
       )
     );
+  }
+
+  /*
+   * AS SEÇÕES DO LIVRO — 0.1.60.
+   *
+   * Tudo acima é ficha de alguma coisa: uma magia, um item, uma criatura. As
+   * regras que não são ficha de nada — o Dado de Arma, o Touki, a Preparação em
+   * Etapas, os Grupos de Arma, os Dojos, o Fio da Vida — não estavam em lugar
+   * nenhum do índice, e são metade do livro.
+   *
+   * O sintoma que achou isto: procurar "Dojo" devolvia *"Nada no livro fala em
+   * Dojo"*, com a §5 do Cap. 5 inteira falando nisso.
+   *
+   * A fonte é o SUMÁRIO, que já existe e já é conferido pelo `check:sumario` —
+   * ele cobra que a lista cite toda seção do livro e só as que existem. Indexar
+   * daqui faz essa garantia valer pra busca sem uma segunda lista pra manter.
+   *
+   * O que esta entrada NÃO tem é o texto da seção: o livro é JSX, não dado, e
+   * raspá-lo daria um índice que envelhece em silêncio. Ela acha por TÍTULO e
+   * leva pro lugar certo, que é o que faltava.
+   */
+  for (const capitulo of SUMARIO_DO_LIVRO) {
+    const secoes = [capitulo, ...(capitulo.children ?? [])];
+    for (const secao of secoes) {
+      const ehCapitulo = secao.id === capitulo.id;
+      // O travessão abre os sub-subtítulos no sumário ("— Quem pode ensinar").
+      // Ele é marca de indentação ali, e ruído no resultado de busca.
+      const titulo = secao.label.replace(/^—\s*/, "");
+      docs.push(
+        doc(
+          {
+            chave: `secao:${secao.id}`,
+            tipo: "secao",
+            nome: titulo,
+            contexto: ehCapitulo ? "Livro de regras" : `Livro · ${capitulo.label}`,
+            href: `/livro#${secao.id}`,
+            conteudo: { tipo: "secao", titulo, onde: ehCapitulo ? "Livro de regras" : capitulo.label },
+          },
+          [ehCapitulo ? undefined : capitulo.label]
+        )
+      );
+    }
   }
 
   return docs;

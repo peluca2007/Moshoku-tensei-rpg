@@ -124,6 +124,20 @@ function CartaoSimples({
  */
 function Conteudo({ conteudo, termos }: { conteudo: ConteudoDoc; termos: string[] }) {
   switch (conteudo.tipo) {
+    /*
+     * A seção do livro — 0.1.60.
+     *
+     * Ela não tem card porque não tem corpo: o índice guarda o TÍTULO e o
+     * caminho, e o texto da regra mora no JSX do livro. O resultado é
+     * deliberadamente um convite pra ir ler lá, e não um resumo que envelheceria
+     * sozinho ao lado da fonte.
+     */
+    case "secao":
+      return (
+        <p className="rounded-lg border border-wine-200 bg-wine-50/60 p-3 text-sm text-wine-950/80 dark:border-wine-900 dark:bg-wine-950/30 dark:text-wine-100/80">
+          Uma seção de regras em <b>{conteudo.onde}</b>. Abrir leva direto ao trecho no livro.
+        </p>
+      );
     case "habilidade":
       return <EntryCard kind="ability" def={conteudo.def} rank={conteudo.rank} />;
     case "talento":
