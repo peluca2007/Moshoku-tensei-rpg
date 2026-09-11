@@ -370,7 +370,7 @@ export default function DiceRoller() {
       <button
         type="button"
         onClick={toggleOpen}
-        className="print-hide fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
+        className="print-hide area-segura-fundo-5 fixed right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-wine-600 text-white shadow-lg ring-4 ring-wine-600/20 transition-transform hover:scale-105 hover:bg-wine-500"
         title="Rolador de Dados (atalho: R)"
         aria-label="Abrir rolador de dados"
       >

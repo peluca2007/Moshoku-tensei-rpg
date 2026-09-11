@@ -16,6 +16,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.44",
+    date: "2026-09-10",
+    title: "O iPhone Era Meio Cidadão",
+    sections: [
+      {
+        heading: "O ícone da tela de início era uma captura da página",
+        items: [
+          "A mesa usa iPhone E Android, e o caminho padrão de PWA é o do Chromium — três coisas que pareciam prontas cobriam só o Android.",
+          "O site tinha icon.png, que gera o favicon. O iOS não lê esse: ele quer apple-touch-icon, que no Next vem de um arquivo separado. Sem ele, \"Adicionar à Tela de Início\" no iPhone não usa o brasão — usa um SCREENSHOT da página como ícone. É o tipo de defeito que só aparece depois de instalar num aparelho.",
+          "Corrigido e conferido no HTML servido. O arquivo escolhido foi o de 192px, sem canal alfa — verificado lendo o cabeçalho do PNG, porque no iOS o transparente vira PRETO, e um brasão com fundo preto é pior que nenhum ícone.",
+        ],
+      },
+      {
+        heading: "O entalhe e a barra de gestos",
+        items: [
+          "O layout declarava a barra de status translúcida — que manda o conteúdo passar POR BAIXO dela — mas sem viewport-fit=cover. As duas regras brigam num aparelho com entalhe: uma manda o conteúdo pra baixo do relógio, a outra encaixa a página dentro da área segura.",
+          "Agora o par está completo, e quatro regras de área segura devolvem a margem a quem precisa: a barra do topo (e os lados, no modo paisagem), o botão de dados — o controle mais usado do site, que ficava embaixo da barra de gestos, onde o dedo acerta o sistema em vez do botão — e os dois avisos flutuantes das árvores. A inset de baixo vale pro Android também, que tem barra de gestos desde o Android 10.",
+          "Medido em Chrome headless com o recorte de um iPhone injetado: sem entalhe nada muda (o botão segue a 20px do fim, como antes); com entalhe, a barra ganha 47px e o botão sobe pra 54px. Cada classe traz o próprio afastamento em vez de reaproveitar o utilitário do Tailwind: duas regras declarando a mesma propriedade dependeriam da ordem da cascata, e a perdedora sumiria em silêncio num recorte que nenhum desktop mostra.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.43",
     date: "2026-09-10",
     title: "Navegar as Árvores com o Polegar",

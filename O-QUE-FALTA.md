@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-10, depois da 0.1.41. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-10, depois da 0.1.44. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -149,12 +149,24 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Site
 
-15. **Instalar o app num celular de verdade.** A 0.1.15 fez o site funcionar sem internet, e o
-    `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
-    em navegação suave, num Chrome headless. O que nenhum script responde é o resto do caminho —
-    "Adicionar à tela de início" aparece? o ícone sai certo recortado pelo launcher? a splash é a
-    nossa? e, no iPhone, o Safari respeita alguma coisa disso? São dez minutos com um aparelho na mão,
-    um Android e um iPhone.
+15. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
+    aparelho mostrava foram achadas e corrigidas sem aparelho, lendo o que o navegador recebe: o
+    **`apple-touch-icon` não existia** (o iPhone usava uma captura da página como ícone da tela de
+    início), faltava o **`viewport-fit=cover`** que o `black-translucent` exige, e não havia **nenhuma
+    regra de área segura** — a barra do topo ficava embaixo do relógio e o botão de dados embaixo da
+    barra de gestos, que vale pro Android também.
+
+    O `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
+    em navegação suave, num Chrome headless.
+
+    **O que ainda precisa dos dois aparelhos na mão**, e são dez minutos:
+    - "Adicionar à tela de início" aparece, nos dois?
+    - O ícone sai certo recortado pelo launcher do Android, e no iPhone aparece o brasão em vez de uma
+      captura da página? *(era esse o bug da 0.1.44 — vale conferir que sumiu)*
+    - A splash é a nossa?
+    - A barra do topo e o botão de dados fogem do entalhe e da barra de gestos? *(as regras de área
+      segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, mas nunca num
+      aparelho.)*
 
 16. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte

@@ -135,7 +135,7 @@ export default function TreeBrowser() {
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          className={`fixed bottom-8 left-1/2 z-50 -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg ${
+          className={`area-segura-fundo-8 fixed left-1/2 z-50 -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg ${
             toast.type === "success"
               ? "border-emerald-400 bg-emerald-600 text-white"
               : toast.type === "warning"
