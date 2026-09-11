@@ -117,8 +117,10 @@ export default function GruposDeArmaSection() {
                   {deOrigem}
                 </span>
               )}
+              {/* parchment-500 em 11px dava 2,86:1 no tema claro, abaixo do mínimo
+                  de 4,5 do WCAG AA. O 600 sobe pra 4,7:1 sem mudar a hierarquia. */}
               {!tem && g.id === "escudos" && (
-                <span className="mt-1 block text-[11px] leading-snug text-parchment-500 dark:text-parchment-500">
+                <span className="mt-1 block text-[11px] leading-snug text-parchment-600 dark:text-parchment-400">
                   Só por árvore ou 1 PA — não entra na escolha livre.
                 </span>
               )}

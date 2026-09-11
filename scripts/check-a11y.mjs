@@ -31,7 +31,7 @@
  *   npm run dev
  *   npm run check:a11y
  */
-import { BASE, comNavegador, dormir, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
+import { BASE, comNavegador, dormir, exigirSemeador, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
 
 const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/comparar", "/sessao", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
 
@@ -159,6 +159,9 @@ if (!(await servidorNoAr())) {
   console.error(`❌ ${BASE} não respondeu. Rode \`npm run dev\` antes.`);
   process.exit(1);
 }
+
+// Sem esta linha o check passa medindo a página 404 — ver `exigirSemeador`.
+await exigirSemeador();
 
 let total = 0;
 await comNavegador(

@@ -37,6 +37,47 @@ export function urlSemeada(rota, tema = "dark") {
   return `${BASE}/semente-dev?tema=${tema}&ir=${encodeURIComponent(rota)}`;
 }
 
+/**
+ * A porta de entrada dos checks está aberta? — 0.1.56
+ *
+ * ## O verde falso que isto existe pra matar
+ *
+ * `urlSemeada` manda o navegador pra `/semente-dev`, que semeia fichas no
+ * localStorage e SÓ ENTÃO redireciona pra rota pedida. Mas `/semente-dev`
+ * devolve **404 em produção**, de propósito e com uma boa razão (ela escreve no
+ * localStorage de quem abrir).
+ *
+ * A consequência passou anos invisível: rodar `check:mobile`, `check:a11y` ou
+ * `check:contraste` contra `npm run start` fazia as dezesseis rotas pararem na
+ * **página de erro**, e os três checks mediam essa página dezesseis vezes e
+ * imprimiam "✅ nenhuma das 16 rotas transborda". A página de erro realmente não
+ * transborda. Ela também não é o site.
+ *
+ * Verde falso é pior que vermelho: vermelho manda investigar, verde encerra o
+ * assunto. Por isso isto aborta em vez de avisar.
+ */
+export async function exigirSemeador() {
+  try {
+    const r = await fetch(`${BASE}/semente-dev`);
+    if (r.ok) return;
+  } catch {
+    /* cai no erro abaixo */
+  }
+  console.error(
+    [
+      "❌ /semente-dev responde 404 — este é um servidor de PRODUÇÃO.",
+      "",
+      "   Esta rota só existe em desenvolvimento, e é por ela que os checks de tela",
+      "   entram no site. Contra `npm run start` todas as rotas parariam na página",
+      "   de erro, e o check passaria medindo ela — verde falso.",
+      "",
+      "   Rode `npm run dev` noutro terminal e tente de novo.",
+      "   (O `check:offline` é a exceção: ele PRECISA do build, e não usa esta rota.)",
+    ].join("\n")
+  );
+  process.exit(1);
+}
+
 export async function servidorNoAr() {
   try {
     return (await fetch(BASE)).ok;
