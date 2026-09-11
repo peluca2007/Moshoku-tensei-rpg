@@ -5,6 +5,56 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.44 — "O iPhone Era Meio Cidadão" · 2026-09-10
+
+A mesa usa **iPhone e Android**. O caminho padrão de PWA é o do Chromium, e três coisas que pareciam
+prontas cobriam só o Android.
+
+### 🍎 O ícone da tela de início era uma captura da página
+
+O site tinha `src/app/icon.png`, que gera `<link rel="icon">` — o favicon. O iOS **não lê esse**. Ele
+quer `apple-touch-icon`, que no Next vem de um arquivo separado, `apple-icon.png`.
+
+Sem ele, "Adicionar à Tela de Início" no iPhone não usa o brasão: usa um **screenshot da página** como
+ícone. Isso é o tipo de defeito que só aparece depois de instalar num aparelho — nenhum check headless
+deste projeto o veria.
+
+Corrigido, e conferido no HTML servido. O arquivo escolhido foi o de 192px, **sem canal alfa** —
+verificado lendo o cabeçalho IHDR do PNG, porque no iOS o transparente vira **preto**, e um brasão com
+fundo preto é pior que nenhum ícone.
+
+### 📱 O entalhe e a barra de gestos
+
+O layout declarava `statusBarStyle: "black-translucent"` — que manda o conteúdo passar **por baixo** da
+barra de status — mas **sem `viewport-fit=cover`**. As duas regras brigam num aparelho com entalhe: uma
+manda o conteúdo pra baixo do relógio, a outra encaixa a página dentro da área segura.
+
+Agora o par está completo: `viewport-fit=cover` entrega a tela inteira, e quatro regras novas de
+`env(safe-area-inset-*)` devolvem a margem a quem precisa dela:
+
+- a **barra do topo** (e os lados, pro modo paisagem), pra não ficar embaixo do relógio;
+- o **botão de dados** — o controle mais usado do site —, pra não ficar embaixo da barra de gestos,
+  onde o dedo acerta o sistema em vez do botão;
+- os dois **avisos flutuantes** das árvores.
+
+**A inset de baixo vale pro Android também**, que tem barra de gestos desde o Android 10.
+
+Medido em Chrome headless, injetando o recorte de um iPhone: **sem entalhe nada muda** (o botão segue
+a 20px do fim, exatamente como antes); **com entalhe**, a barra ganha 47px e o botão sobe pra 54px. É
+a prova de que as regras reagem e são inertes onde não há recorte — inclusive no desktop.
+
+Cada classe traz o próprio afastamento em vez de reaproveitar o `bottom-N` do Tailwind: duas regras
+declarando `bottom` dependeriam da ordem da cascata pra decidir quem vence, e a perdedora sumiria em
+silêncio justamente num recorte que nenhum navegador de desktop mostra.
+
+### ✅ E o `check:offline` fez o trabalho dele
+
+A rota nova do ícone reprovou a checagem no primeiro try — *"está no build e NÃO está no ROTAS"*. Ela
+entrou na lista de ignoradas ao lado do favicon, com o motivo escrito: o iOS guarda esse ícone na
+**instalação**, não em navegação.
+
+---
+
 ## 0.1.43 — "Navegar as Árvores com o Polegar" · 2026-09-10
 
 ### 🌳 O mapa era o único jeito, em qualquer tela

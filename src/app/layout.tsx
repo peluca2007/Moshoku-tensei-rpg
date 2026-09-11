@@ -81,6 +81,20 @@ export const metadata: Metadata = {
  * plataforma, e é uma faixa de 4mm no topo.
  */
 export const viewport: Viewport = {
+  /*
+   * `cover` — o recorte do iPhone com entalhe (0.1.44).
+   *
+   * O `appleWebApp.statusBarStyle` acima é `black-translucent`, que manda o
+   * conteúdo passar POR BAIXO da barra de status. Sem `viewport-fit=cover`, o
+   * iOS faz o oposto: encaixa a página dentro da área segura e pinta as margens,
+   * e as duas regras brigam num aparelho com entalhe.
+   *
+   * `cover` entrega a tela inteira — e é por isso que as barras fixas passaram a
+   * respeitar `env(safe-area-inset-*)` no globals.css. Sem esse par, o topo do
+   * menu fica embaixo do relógio e o botão de dados embaixo da barra de gestos.
+   * Vale pro Android também, que tem a mesma barra de gestos embaixo.
+   */
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fdf6e3" },
     { media: "(prefers-color-scheme: dark)", color: "#1a1210" },

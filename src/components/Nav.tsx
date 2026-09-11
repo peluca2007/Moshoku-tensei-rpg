@@ -67,7 +67,7 @@ export default function Nav() {
      * na horizontal, e o translúcido deixa a folha passar por baixo — que é o
      * que faz a barra parecer apoiada NA página, e não colada por cima dela.
      */
-    <nav className="sticky top-0 z-40 border-b border-parchment-300/80 bg-parchment-50/85 text-sm font-medium text-parchment-600 shadow-[0_1px_0_rgba(212,169,78,0.25),0_8px_24px_-16px_rgba(43,24,16,0.5)] backdrop-blur-md dark:border-parchment-800/80 dark:bg-parchment-950/85 dark:text-parchment-300">
+    <nav className="area-segura-topo area-segura-lados sticky top-0 z-40 border-b border-parchment-300/80 bg-parchment-50/85 text-sm font-medium text-parchment-600 shadow-[0_1px_0_rgba(212,169,78,0.25),0_8px_24px_-16px_rgba(43,24,16,0.5)] backdrop-blur-md dark:border-parchment-800/80 dark:bg-parchment-950/85 dark:text-parchment-300">
       <div className="flex items-center gap-4 px-4 py-2">
         <button
           type="button"

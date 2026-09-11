@@ -59,6 +59,7 @@ const FORA_DO_PRECACHE = {
   "/_global-error": "página de erro do próprio framework",
   "/_not-found": "404 — não faz sentido guardar",
   "/icon.png": "favicon, servido pelo cache do navegador",
+  "/apple-icon.png": "ícone da tela de início do iPhone — o iOS o guarda na instalação, não em navegação",
   "/manifest.webmanifest": "guardado à parte, pela constante MANIFESTO",
   "/semente-dev": "rota só das checagens headless",
 };

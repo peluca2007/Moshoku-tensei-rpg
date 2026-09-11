@@ -833,7 +833,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-lg border ${
+          className={`area-segura-fundo-8 fixed left-1/2 z-50 -translate-x-1/2 px-4 py-3 rounded-xl text-sm font-medium shadow-lg border ${
             toast.type === "success"
               ? "bg-emerald-600 text-white border-emerald-400"
               : toast.type === "warning"

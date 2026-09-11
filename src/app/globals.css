@@ -861,3 +861,48 @@ input[type="number"],
     animation: none !important;
   }
 }
+
+/*
+ * ÁREA SEGURA — o entalhe do iPhone e a barra de gestos (0.1.44).
+ *
+ * O layout declara `viewport-fit=cover`, que entrega a tela INTEIRA ao site,
+ * incluindo o que fica embaixo do relógio, do entalhe e da barra de gestos. Sem
+ * as regras abaixo, isso quer dizer: menu do topo por baixo do relógio, e o
+ * botão de dados — o controle mais usado do site — por baixo da barra de gestos,
+ * onde o dedo acerta o sistema em vez do botão.
+ *
+ * Vale pros DOIS aparelhos que a mesa usa: o entalhe é do iPhone, mas a barra de
+ * gestos de baixo existe no Android desde a versão 10, e `env()` responde nas
+ * duas plataformas. Em tela sem recorte nenhum, `env()` vale 0 e nada muda —
+ * é por isso que isto é seguro no desktop.
+ *
+ * As classes são utilitárias e aplicadas nos componentes, em vez de globais no
+ * `body`: o `body` não pode ganhar padding porque a barra do topo é `sticky` e
+ * precisa encostar no zero real da tela pra ficar embaixo do relógio, não
+ * abaixo dele.
+ */
+.area-segura-topo {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.area-segura-lados {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/*
+ * O canto de baixo: a inset SOMADA ao afastamento que o elemento já tinha.
+ *
+ * Cada classe traz o próprio afastamento em vez de reaproveitar o `bottom-N` do
+ * Tailwind, e isso é de propósito: duas regras declarando `bottom` dependeriam
+ * da ordem da cascata pra decidir quem vence, e a que perdesse sumiria em
+ * silêncio — justamente num recorte de tela que nenhum navegador de desktop
+ * mostra.
+ */
+.area-segura-fundo-5 {
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+.area-segura-fundo-8 {
+  bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+}
