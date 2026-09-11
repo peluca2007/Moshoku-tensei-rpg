@@ -6,7 +6,7 @@ import { DESINTOX_PA_COST, RANK_PA_COST } from "@/data/trees/shared";
 import { SKILLS } from "@/data/skills";
 import { STARTING_KITS } from "@/data/startingKits";
 import { TREES } from "@/data/trees";
-import { WEAPON_GROUPS } from "@/data/weaponGroups";
+import { PA_POR_GRUPO, WEAPON_GROUPS } from "@/data/weaponGroups";
 import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
@@ -230,7 +230,7 @@ export default function Chapter1() {
               Perícias simultaneamente.
             </span>,
             <span key="b">
-              <b>Proficiências e Línguas (1 PA = 3):</b> qualquer personagem, de qualquer árvore, a qualquer
+              <b>Proficiências e Línguas (1 PA = 3, exceto grupo de arma):</b> qualquer personagem, de qualquer árvore, a qualquer
               momento. São mais baratas que Perícias porque são mais estreitas — cobrem um instrumento, uma
               ferramenta, um tipo de arma ou um idioma, não um campo inteiro de ação.
             </span>,
@@ -341,31 +341,52 @@ export default function Chapter1() {
           />
         </Aside>
         <SubTitle id="cap1-4-como-se-ganha">Como se ganha um grupo</SubTitle>
+        <P>
+          A regra é de uma linha: <b>você empunha o que estudou, ou o que pagou.</b>
+        </P>
         <List
           items={[
             <span key="piso">
-              <b>Desarmado e Improvisado</b> vem de graça pra todo personagem. Ninguém precisa de escola pra
-              dar um soco ou quebrar um banco na cabeça de alguém.
-            </span>,
-            <span key="escolha">
-              <b>Mais um grupo à sua escolha</b>, na criação — inclusive pra quem nunca vai abrir uma árvore
-              do Corpo. É aqui que o mago pega a adaga de reserva ou o cajado de combate.
+              <b>Desarmado e Improvisado</b> vem de graça pra todo personagem. Ninguém precisa de escola
+              pra dar um soco ou quebrar um banco na cabeça de alguém — mas veja o aviso abaixo: de
+              graça não quer dizer bom.
             </span>,
             <span key="arvore">
-              <b>Os grupos de cada árvore que você abrir.</b> Diferente das Perícias de Árvore, esta vale por
-              árvore <b>aberta</b>, não só pela Inicial: perícia é hábito, mas empunhar arma é treino, e é
-              exatamente o que a árvore ensina — em qualquer ordem que você chegue nela.
-            </span>,
-            <span key="extra">
-              <b>Toda árvore do Corpo dá ainda um grupo livre</b>, além dos fixos dela. O espadachim que
-              também carrega arco é uma escolha dele, não do livro. (O Deus do Norte não dá: ele já recebe os
-              nove, e escolher entre tudo e tudo não é escolher.)
+              <b>Os grupos de cada árvore que você abrir.</b> Diferente das Perícias de Árvore, esta vale
+              por árvore <b>aberta</b>, não só pela Inicial: perícia é hábito, mas empunhar arma é treino,
+              e é exatamente o que a árvore ensina — em qualquer ordem que você chegue nela.
             </span>,
             <span key="pa">
-              <b>1 PA compra um grupo novo</b>, a qualquer momento, como qualquer proficiência.
+              <b>{PA_POR_GRUPO} PA compram um grupo novo</b>, a qualquer momento.
             </span>,
           ]}
         />
+        <Warning title="Grupo de arma NÃO entra no pacote de três">
+          <P>
+            A regra geral desta seção é <b>1 PA compra três proficiências</b>, e ela vale pra língua,
+            ferramenta, instrumento e veículo — coisas estreitas, que removem uma penalidade de uma
+            situação.
+          </P>
+          <P>
+            Grupo de arma não pertence ali. Uma <b>perícia</b> (1 PA compra duas) dá Vantagem quando se
+            encaixa; um <b>grupo de arma</b> remove Desvantagem numa família inteira, pra sempre, em todo
+            combate. Por isso ele custa <b>{PA_POR_GRUPO} PA cada, e sozinho</b> — o preço diz o que ele
+            sempre valeu.
+          </P>
+        </Warning>
+        <Warning title="Improvisado trava em d6 — e só o Deus do Norte escapa">
+          <P>
+            A arma improvisada <b>não sobe na Escada de Dados</b>. Um Imperador quebra a mesma cadeira que
+            um Principiante quebra, e ela faz o mesmo estrago. Sem essa trava, o grupo gratuito seria a
+            melhor arma do jogo no rank alto: qualquer um pegaria um banco de taverna e rolaria 3d10 sem
+            ter estudado nada, contra o espadachim que pagou por cada degrau.
+          </P>
+          <P>
+            O <b>Estilo Deus do Norte</b> é a única exceção, e é a identidade dele em número. A árvore diz
+            que não existe arma proibida pra ele — <i>&ldquo;se dá pra empunhar, você é proficiente&rdquo;</i>
+            — e aqui isso deixa de ser prosa: só ele escala improvisado como arma de verdade.
+          </P>
+        </Warning>
         <Aside title="Armaduras continuam por peso">
           <List
             items={[
@@ -603,12 +624,17 @@ export default function Chapter1() {
           <P>Abrir uma árvore nova fica mais caro a cada árvore que você já tem:</P>
           <BookTable
             headers={["Árvore", "1ª", "2ª", "3ª", "4ª", "5ª"]}
-            rows={[["Custo de abertura", "1 PA", "2 PA", "3 PA", "4 PA", "5 PA"]]}
+            rows={[["Custo de abertura", "grátis", "1 PA", "2 PA", "3 PA", "4 PA"]]}
           />
           <P>
+            <b>A primeira é de graça</b>, e por um motivo: ela é a sua Árvore Inicial, já escolhida na
+            criação e já acompanhada de um kit (seção 4). Cobrar PA por ela seria cobrar duas vezes pela
+            mesma coisa.
+          </P>
+          <P>
             Cada 1º patamar entrega uma Maestria gratuita — sem o Custo de Abertura, a jogada ótima seria
-            abrir cinco árvores por 5 PA e colecionar cinco Maestrias sem nunca subir nenhuma. Agora isso
-            custa 15 PA, e continua sendo uma opção legítima — só não é mais de graça.
+            abrir cinco árvores por 4 PA e colecionar cinco Maestrias sem nunca subir nenhuma. Agora isso
+            custa <b>10 PA</b>, e continua sendo uma opção legítima — só não é mais de graça.
           </P>
         </Aside>
         <Aside title="5. Largura ou profundidade?">
@@ -619,7 +645,7 @@ export default function Chapter1() {
             PA. Em troca: Bônus de Rank +6, seis Maestrias, e as magias que só existem lá em cima.
           </P>
           <P>
-            <b>Largura custa 15 PA</b> por cinco árvores (Custo de Abertura 1+2+3+4+5, pergunta 4 abaixo) e
+            <b>Largura custa 10 PA</b> por cinco árvores (Custo de Abertura 0+1+2+3+4, pergunta 4 abaixo) e
             entrega cinco Maestrias de 1º patamar, versatilidade e nenhum teto — mas trava seu Bônus de Rank
             em +1, o que significa errar mais, causar menos dano e ter CDs que qualquer coisa resiste.
           </P>

@@ -156,7 +156,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
     .map((item) => {
       const attribute = item.damageAttribute ?? "forca";
       const attributeShort = ATTRIBUTES.find((a) => a.key === attribute)?.short ?? "FOR";
-      const info = item.baseDie ? getWeaponDamage(character, item.baseDie, attribute) : null;
+      const info = item.baseDie ? getWeaponDamage(character, item.baseDie, attribute, item.name) : null;
       const attributeValue = info?.attributeValue ?? attributes[attribute] ?? 0;
       const sinal = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 

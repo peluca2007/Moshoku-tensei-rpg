@@ -1,8 +1,9 @@
 import {
-  ESCOLHAS_INICIAIS,
+  ARVORE_QUE_ESCALA_IMPROVISADO,
   GRUPO_BASE,
-  GRUPOS_ESCOLHIVEIS,
+  GRUPOS_COMPRAVEIS,
   grupoDaArma,
+  PA_POR_GRUPO,
   WEAPON_GROUP_IDS,
   WeaponGroupId,
 } from "@/data/weaponGroups";
@@ -135,23 +136,25 @@ export function getPendingTreeSkillChoices(state: StoreState): number {
 }
 
 /**
- * Todos os GRUPOS DE ARMA em que o personagem é proficiente (Cap. 1, §4 — 0.1.52).
+ * Todos os GRUPOS DE ARMA em que o personagem é proficiente (Cap. 1, §4).
  *
- * Três fontes, somadas:
+ * Duas fontes desde 0.1.62, e só duas — a regra virou uma linha: **você empunha
+ * o que estudou, ou o que pagou.**
  *
  * 1. **O piso.** `GRUPO_BASE` (Desarmado e Improvisado), que todo personagem
- *    tem. Dar um soco e quebrar uma cadeira não é ofício.
+ *    tem. Quebrar uma cadeira é instinto — mas ver `IMPROVISADO_NAO_ESCALA`:
+ *    de graça não quer dizer bom.
  * 2. **As árvores abertas.** Cada árvore declara `gruposDeArma`. Vale pra TODA
  *    árvore aberta, não só a Inicial — diferente de `grantedSkills`, e de
  *    propósito: perícia é hábito (você já era alguém quando chegou na segunda
- *    árvore), mas empunhar arma é treino, e treino de arma é exatamente o que
- *    uma árvore do Corpo ensina, em qualquer ordem que você a abra.
- * 3. **As escolhas do jogador.** `weaponGroupChoices`, cortada no orçamento que
- *    `getWeaponGroupChoiceBudget` calcula — 1 da criação, mais 1 por árvore do
- *    Corpo aberta que declare `escolhaDeGrupo`.
+ *    árvore), mas empunhar arma é treino, e treino de arma é o que uma árvore
+ *    do Corpo ensina, em qualquer ordem que você a abra.
+ * 3. **Os comprados**, a `PA_POR_GRUPO` cada.
  *
- * O corte no orçamento importa: sem ele, uma ficha que abriu uma árvore do
- * Corpo e depois a trocou ficaria com a escolha extra pra sempre.
+ * O que SUMIU nesta versão: a escolha livre de criação e o grupo extra que cada
+ * árvore do Corpo dava. Os dois eram gratuitos, e somados à regra geral de "1
+ * PA compra três proficiências" faziam um personagem colecionar famílias
+ * inteiras de arma sem pagar por nenhuma.
  */
 export function getWeaponGroups(state: StoreState): WeaponGroupId[] {
   const grupos = new Set<WeaponGroupId>([GRUPO_BASE]);
@@ -160,43 +163,30 @@ export function getWeaponGroups(state: StoreState): WeaponGroupId[] {
     for (const g of getTreeById(treeId)?.proficiencies?.gruposDeArma ?? []) grupos.add(g);
   }
 
-  const orcamento = getWeaponGroupChoiceBudget(state);
-  for (const g of (state.weaponGroupChoices ?? []).slice(0, orcamento)) grupos.add(g);
+  for (const g of state.weaponGroupChoices ?? []) {
+    if (GRUPOS_COMPRAVEIS.includes(g)) grupos.add(g);
+  }
 
   return WEAPON_GROUP_IDS.filter((g) => grupos.has(g));
 }
 
 /**
- * Quantos grupos à escolha este personagem tem direito.
+ * O PA gasto em grupos de arma comprados.
  *
- * `ESCOLHAS_INICIAIS` da criação (todo personagem, inclusive o mago), mais 1
- * por árvore aberta que declare `escolhaDeGrupo` — só as do Corpo declaram, e
- * o Deus do Norte não declara porque já recebe os nove grupos.
+ * Um grupo que a ÁRVORE já dá não é cobrado, mesmo que esteja na lista de
+ * comprados: quem comprou Espadas e depois abriu o Deus da Espada não deve
+ * continuar pagando por uma coisa que passou a vir de graça. O PA volta pra
+ * mão dele, como qualquer refund de escolha que o livro faz.
  */
-export function getWeaponGroupChoiceBudget(state: StoreState): number {
-  let total = ESCOLHAS_INICIAIS;
+export function getWeaponGroupPaCost(state: StoreState): number {
+  const daArvore = new Set<WeaponGroupId>();
   for (const treeId of new Set(state.unlockedRanks.map((u) => u.treeId))) {
-    total += getTreeById(treeId)?.proficiencies?.escolhaDeGrupo ?? 0;
+    for (const g of getTreeById(treeId)?.proficiencies?.gruposDeArma ?? []) daArvore.add(g);
   }
-  return total;
-}
-
-/** Quantas escolhas de grupo ainda faltam o jogador fazer (0 quando está em dia). */
-export function getPendingWeaponGroupChoices(state: StoreState): number {
-  // Uma escolha que a árvore já cobriu de graça não conta como gasta: se você
-  // escolheu Espadas e depois abriu o Deus da Espada, a escolha voltou pra sua
-  // mão em vez de virar PA jogado fora.
-  const validas = (state.weaponGroupChoices ?? []).filter((g) => GRUPOS_ESCOLHIVEIS.includes(g));
-  const cobertasPorArvore = validas.filter((g) => grupoVemDeArvore(state, g));
-  return Math.max(0, getWeaponGroupChoiceBudget(state) - (validas.length - cobertasPorArvore.length));
-}
-
-/** O grupo já vem de graça de alguma árvore aberta? */
-function grupoVemDeArvore(state: StoreState, grupo: WeaponGroupId): boolean {
-  for (const treeId of new Set(state.unlockedRanks.map((u) => u.treeId))) {
-    if ((getTreeById(treeId)?.proficiencies?.gruposDeArma ?? []).includes(grupo)) return true;
-  }
-  return false;
+  const pagos = (state.weaponGroupChoices ?? []).filter(
+    (g) => GRUPOS_COMPRAVEIS.includes(g) && !daArvore.has(g)
+  );
+  return new Set(pagos).size * PA_POR_GRUPO;
 }
 
 /**
@@ -557,7 +547,15 @@ export interface WeaponDamageInfo {
 export function getWeaponDamage(
   state: StoreState,
   baseDie: string,
-  attribute: AttributeKey = "forca"
+  attribute: AttributeKey = "forca",
+  /**
+   * O nome da arma, quando se sabe — 0.1.62.
+   *
+   * Serve a uma coisa só: descobrir se ela é IMPROVISADA. Arma improvisada não
+   * sobe na Escada de Dados (Cap. 3, §1), e sem o nome não há como saber.
+   * Opcional porque a maior parte dos chamadores passa só o dado.
+   */
+  weaponName?: string
 ): WeaponDamageInfo | null {
   const corpoRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "corpo");
   if (corpoRanks.length === 0 || !baseDie) return null;
@@ -576,9 +574,29 @@ export function getWeaponDamage(
   if (!tree) return null;
   const rank = RANKS[bestRankIndex];
 
-  const steps = tree.ranks
+  const degrausDaArvore = tree.ranks
     .filter((r) => RANKS.indexOf(r.rank) <= bestRankIndex)
     .reduce((sum, r) => sum + (r.weaponDieSteps ?? 0), 0);
+
+  /*
+   * ARMA IMPROVISADA TRAVA EM d6 — Cap. 3, §1 (0.1.62).
+   *
+   * Ela é o único grupo de arma que todo personagem tem de graça, e sem esta
+   * trava ela viraria a MELHOR arma do rank alto: um Imperador pegaria um banco
+   * de taverna e rolaria 3d10 sem ter estudado nada, de graça, contra o espadachim
+   * que pagou por cada degrau.
+   *
+   * Um Imperador quebra a mesma cadeira que um Principiante quebra, e ela faz o
+   * mesmo estrago. O que muda é o que ele faz DEPOIS.
+   *
+   * **O Deus do Norte é a única exceção, e é a identidade dele em número.** A
+   * árvore diz em letra que não existe arma proibida pra ele — "se dá pra
+   * empunhar, você é proficiente" —, e aqui isso deixa de ser prosa: só ele
+   * escala improvisado como arma de verdade.
+   */
+  const ehImprovisada = weaponName ? grupoDaArma(weaponName) === GRUPO_BASE : false;
+  const temONorte = state.unlockedRanks.some((u) => u.treeId === ARVORE_QUE_ESCALA_IMPROVISADO);
+  const steps = ehImprovisada && !temONorte ? 0 : degrausDaArvore;
 
   const escalatedDie = escalateWeaponDie(baseDie, steps);
   const rankBonus = RANK_BONUS[rank];
@@ -805,12 +823,22 @@ export function getCombinedSpellPaCost(state: StoreState): number {
  * + PV/PM comprados.
  */
 export function getPaSpent(state: StoreState): number {
-  // Cap. 1, §8, "Custo de Abertura": desbloquear o Principiante de uma árvore
-  // nova custa PA igual à posição de abertura (1ª árvore = 1 PA, 2ª = 2 PA, ...),
-  // não o custo fixo de RANK_REQUIREMENTS.Principiante — senão a regra que o
-  // livro descreve como "corrigida" (impedir abrir 5 árvores por 5 PA de graça)
-  // nunca é aplicada de fato. A ordem de state.unlockedRanks já é cronológica
-  // (só cresce por append em unlockRank), então dá pra usar direto.
+  /*
+   * Cap. 1, §8, "Custo de Abertura": abrir o Principiante de uma árvore nova
+   * custa PA igual à posição de abertura, e a PRIMEIRA é de graça — 0, 1, 2, 3,
+   * 4, num total de 10 PA por cinco árvores.
+   *
+   * A Árvore Inicial sair de graça é a regra: ela já é escolhida na criação e já
+   * vem com kit, então cobrar por ela seria cobrar duas vezes pela mesma coisa.
+   *
+   * Até 0.1.62 este comentário dizia "1ª = 1 PA, 2ª = 2 PA" — copiado do livro,
+   * que dizia isso — enquanto o código logo abaixo fazia `size - 1` e cobrava o
+   * que está escrito aqui agora. Foi a auditoria de 2026-09-11 que achou a
+   * divergência, e a mesa decidiu: o código estava certo e o livro foi corrigido.
+   *
+   * A ordem de `state.unlockedRanks` já é cronológica (só cresce por append em
+   * `unlockRank`), então dá pra usar direto.
+   */
   const openedTrees = new Set<string>();
   const rankCost = state.unlockedRanks.reduce((sum, u) => {
     if (u.rank === "Principiante" && !openedTrees.has(u.treeId)) {
@@ -834,6 +862,7 @@ export function getPaSpent(state: StoreState): number {
     getSaveAdvantagePaCost(state) +
     getSkillPaCost(state) +
     getProficiencyPaCost(state) +
+    getWeaponGroupPaCost(state) +
     getCombinedSpellPaCost(state)
   );
 }

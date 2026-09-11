@@ -126,29 +126,68 @@ export function weaponGroupName(id: WeaponGroupId): string {
 }
 
 /**
- * O piso de proficiência de TODO personagem, antes de qualquer árvore.
+ * O ÚNICO grupo que todo personagem tem, antes de qualquer árvore.
  *
- * Um só grupo, e o mais humilde: dar um soco e quebrar uma cadeira não é ofício.
- * Além dele, todo personagem escolhe **um grupo qualquer** na criação — é o que
- * dá ao mago a adaga de reserva ou o cajado de combate sem entregar de graça o
- * arsenal inteiro a quem nunca abriu uma árvore do Corpo.
+ * Quebrar uma cadeira na cabeça de alguém é instinto, não ofício — e por isso
+ * ele é de graça. Mas ver `IMPROVISADO_NAO_ESCALA`: de graça não quer dizer bom.
+ *
+ * ## O que mudou em 0.1.62
+ *
+ * Até aqui, todo personagem ganhava este piso **mais um grupo à escolha**, e
+ * cada árvore do Corpo dava mais um livre por cima. A mesa julgou frouxo, e
+ * estava: com a regra geral de "1 PA compra três proficiências" valendo pra
+ * grupo de arma, um personagem comprava três famílias inteiras de arma pelo
+ * preço de metade de uma perícia.
+ *
+ * Agora é uma regra de uma linha: **você empunha o que estudou**. Grupo vem da
+ * árvore aberta, ou custa `PA_POR_GRUPO`.
  */
 export const GRUPO_BASE: WeaponGroupId = "desarmado-e-improvisado";
 
-/** Quantos grupos à escolha todo personagem ganha na criação, fora do piso. */
-export const ESCOLHAS_INICIAIS = 1;
+/**
+ * Improvisado é de graça, e **trava em d6** — Cap. 3, §1 (0.1.62).
+ *
+ * A arma improvisada não sobe na Escada de Dados: um Imperador quebra a mesma
+ * cadeira que um Principiante quebra, e ela faz o mesmo estrago. Sem esta trava,
+ * o piso gratuito viraria a melhor arma do jogo no rank alto — qualquer um
+ * pegaria um banco e rolaria 3d10 sem ter estudado nada.
+ *
+ * **O Deus do Norte é a única exceção, e é a identidade dele.** A árvore diz, em
+ * letra, que não existe arma proibida pra ele — *"se dá pra empunhar, você é
+ * proficiente"*. Aqui isso deixa de ser prosa e vira número: só ele escala
+ * improvisado como arma de verdade.
+ */
+export const IMPROVISADO_NAO_ESCALA = true;
+
+/** A árvore que escapa da trava acima. */
+export const ARVORE_QUE_ESCALA_IMPROVISADO = "deus-do-norte";
 
 /**
- * Os grupos que um jogador pode escolher livremente — todos menos o piso, que
- * ele já tem, e menos Escudos.
+ * O que custa comprar um grupo de arma com PA — Cap. 1, §4 (0.1.62).
  *
- * Escudos fica fora de propósito: ele é o único grupo que não some no ataque e
- * sim na CA, e liberá-lo na escolha inicial daria +2 de CA permanente por uma
- * escolha que não custa nada. Escudo se aprende em árvore (Cavalaria e Escudos,
- * Deus do Norte, Suishin-ryū) ou se compra com PA, como toda defesa do livro.
+ * ## Por que 2, e por que fora do pacote de proficiências
+ *
+ * A regra geral do livro é "1 PA compra **três** proficiências", e ela vale pra
+ * língua, ferramenta, instrumento e veículo — coisas estreitas, que removem uma
+ * penalidade de uma situação. Grupo de arma tinha entrado nesse mesmo pacote, e
+ * o resultado era comprar três famílias inteiras de arma por 1 PA.
+ *
+ * Ele não pertence ali. Uma perícia (1 PA = 2) dá Vantagem quando se encaixa;
+ * um grupo de arma remove Desvantagem em **toda uma família**, pra sempre, em
+ * **todo combate**. Dois PA o põem acima da perícia, que é onde ele estava o
+ * tempo todo sem que o preço dissesse isso.
  */
-export const GRUPOS_ESCOLHIVEIS: WeaponGroupId[] = WEAPON_GROUPS.filter(
-  (g) => g.id !== GRUPO_BASE && g.id !== "escudos"
+export const PA_POR_GRUPO = 2;
+
+/**
+ * Os grupos que se pode COMPRAR com PA — todos menos o piso, que já vem.
+ *
+ * Escudos entra: desde 0.1.62 não existe mais escolha gratuita, e o que fazia
+ * dele um caso especial era justamente ser gratuito. Pagando 2 PA como
+ * qualquer outro, não há razão pra proibir quem quer aprender a se defender.
+ */
+export const GRUPOS_COMPRAVEIS: WeaponGroupId[] = WEAPON_GROUPS.filter(
+  (g) => g.id !== GRUPO_BASE
 ).map((g) => g.id);
 
 /**

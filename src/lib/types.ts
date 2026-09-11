@@ -635,16 +635,6 @@ export interface Tree {
      * `check:livro` confere que a lista e a prosa dizem a mesma coisa.
      */
     gruposDeArma?: WeaponGroupId[];
-    /**
-     * Quantos grupos o JOGADOR escolhe livremente, além dos fixos acima.
-     *
-     * Só as árvores do CORPO preenchem, e sempre com 1: o espadachim que também
-     * carrega arco é uma escolha dele, não do livro. O Deus do Norte é a única
-     * do Corpo sem escolha — ele já recebe todos os grupos, e escolher entre
-     * "tudo" e "tudo" não é escolha. As árvores de Magia e de Utilidade não dão
-     * escolha nenhuma: quem quer mais arma abre uma árvore do Corpo ou paga PA.
-     */
-    escolhaDeGrupo?: number;
     /** Perícias ligadas à árvore — e, na Utilidade, em quais o Bônus de Rank soma. */
     pericias: string;
     /**
