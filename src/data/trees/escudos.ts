@@ -109,9 +109,8 @@ export const ESCUDOS_TREE: Tree = {
     Imperador: "Bastião",
   },
   proficiencies: {
-    armas: "Grupos Espadas, Lâminas Curtas, Machados e Marretas, Hastes e Escudos — toda arma que se empunha numa mão só, mais o escudo. Mais UM grupo à sua escolha. Armadura leve, média e pesada: o pacote de defesa mais completo do livro.",
+    armas: "Grupos Espadas, Lâminas Curtas, Machados e Marretas, Hastes e Escudos — toda arma que se empunha numa mão só, mais o escudo. Armadura leve, média e pesada: o pacote de defesa mais completo do livro.",
     gruposDeArma: ["espadas", "laminas-curtas", "machados-e-marretas", "hastes", "escudos"],
-    escolhaDeGrupo: 1,
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },

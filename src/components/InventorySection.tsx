@@ -240,7 +240,7 @@ function WeaponDamageBadge({ item }: { item: InventoryItem }) {
   const requestDamageRoll = useDiceRollerStore((s) => s.requestDamageRoll);
   if (item.type !== "arma" || !item.baseDie) return null;
 
-  const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca");
+  const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca", item.name);
   if (!info) {
     return (
       <p className="mt-1 flex items-center gap-1 text-xs text-parchment-600 dark:text-parchment-400">

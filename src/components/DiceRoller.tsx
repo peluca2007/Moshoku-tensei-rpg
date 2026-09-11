@@ -295,7 +295,7 @@ export default function DiceRoller() {
     setSelectedWeaponId(id);
     const item = weapons.find((w) => w.id === id);
     if (!item || !item.baseDie) return;
-    const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca");
+    const info = getWeaponDamage(character, item.baseDie, item.damageAttribute ?? "forca", item.name);
     if (info) {
       setDamageFormula(info.escalatedDie);
       setDamageModifier(info.attributeValue + info.rankBonus - info.penalidadeQuebrantado);
@@ -311,7 +311,7 @@ export default function DiceRoller() {
     let liveFormula = damageFormula;
     let liveModifier = damageModifier;
     if (weapon && weapon.baseDie) {
-      const info = getWeaponDamage(character, weapon.baseDie, weapon.damageAttribute ?? "forca");
+      const info = getWeaponDamage(character, weapon.baseDie, weapon.damageAttribute ?? "forca", weapon.name);
       if (info) {
         liveFormula = info.escalatedDie;
         liveModifier = info.attributeValue + info.rankBonus - info.penalidadeQuebrantado;

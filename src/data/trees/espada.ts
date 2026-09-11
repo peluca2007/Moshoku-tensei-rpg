@@ -23,9 +23,8 @@ export const ESPADA_TREE: Tree = {
   tagline:
     "\"A vitória é de quem se move primeiro.\" Sem defesa, sem contra-ataque, o maior dano do livro. Doutrina: sem armadura média/pesada (perde tudo se vestir), CA base -2, nenhuma técnica concede Reações defensivas — exceto a Reversão de Luz.",
   proficiencies: {
-    armas: "Grupo Espadas — da curta ao espadão, passando por rapieira e katana. Mais UM grupo à sua escolha. NÃO concede armadura média nem pesada: a doutrina proíbe vesti-las, e vestir desliga a árvore inteira.",
+    armas: "Grupo Espadas — da curta ao espadão, passando por rapieira e katana. NÃO concede armadura média nem pesada: a doutrina proíbe vesti-las, e vestir desliga a árvore inteira.",
     gruposDeArma: ["espadas"],
-    escolhaDeGrupo: 1,
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal do Corpo. Armadura leve apenas. CA base −2.",
   },

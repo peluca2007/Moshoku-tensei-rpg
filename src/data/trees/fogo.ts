@@ -23,7 +23,7 @@ export const FOGO_TREE: Tree = {
   resourceLabel: "PM",
   tagline: "Dano bruto e consequência — a única escola que destrói o que estava em volta.",
   proficiencies: {
-    armas: "Não concede grupo de arma nenhum: quem abre esta escola fica com o piso que todo personagem tem, mais o grupo livre que escolheu na criação. Armadura leve apenas.",
+    armas: "Não concede grupo de arma nenhum: quem abre esta escola fica só com o piso que todo personagem tem, e quem quiser mais paga 2 PA por família. Armadura leve apenas.",
     gruposDeArma: [],
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal de Magia. Conjura com Intelecto (BC = Intelecto + Bônus de Rank).",

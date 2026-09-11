@@ -76,9 +76,8 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
     Deus: "Deus do Fogo Marcial",
   },
   proficiencies: {
-    armas: "Grupo Desarmado e Improvisado (Dado Base d6 no punho). Mais UM grupo à sua escolha. Armadura leve; proíbe armadura pesada (desliga a árvore).",
+    armas: "Grupo Desarmado e Improvisado (Dado Base d6 no punho). Armadura leve; proíbe armadura pesada (desliga a árvore).",
     gruposDeArma: ["desarmado-e-improvisado"],
-    escolhaDeGrupo: 1,
     pericias: "—",
     nota: "Ofício do Corpo + Fogo. Usa Força ou Intelecto. Combustível: o custo de qualquer técnica desta árvore pode ser pago em PM, em PT, ou dividido entre os dois — corpo e mana queimam o mesmo fogo, e quem chegou aqui já pagou por duas árvores.",
   },

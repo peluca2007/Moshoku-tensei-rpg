@@ -30,9 +30,8 @@ export const LUTADOR_TREE: Tree = {
     Imperador: "Lenda Viva",
   },
   proficiencies: {
-    armas: "Grupos Desarmado e Improvisado (Dado Base d6 no punho), Machados e Marretas, e Hastes — o peso na ponta e o alcance, que é o que este estilo faz. Mais UM grupo à sua escolha. Armadura leve, média e pesada.",
+    armas: "Grupos Desarmado e Improvisado (Dado Base d6 no punho), Machados e Marretas, e Hastes — o peso na ponta e o alcance, que é o que este estilo faz. Armadura leve, média e pesada.",
     gruposDeArma: ["desarmado-e-improvisado", "machados-e-marretas", "hastes"],
-    escolhaDeGrupo: 1,
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Ofício do Corpo (sem patamar Deus).",
   },

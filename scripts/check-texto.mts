@@ -358,22 +358,30 @@ for (const tree of TREES as Tree[]) {
     }
   }
 
-  // O vocabulário que a régua antiga usava. Ele não descreve mais nada: não
-  // existe "golpe sem estilo" nem "arma marcial" no livro depois de 0.1.52, e uma
-  // frase que ainda diga isso está descrevendo um sistema que foi embora.
-  for (const morto of ["golpe sem estilo", "armas simples", "arma marcial", "armas marciais", "arma exótica", "armas exóticas"]) {
+  /*
+   * O vocabulário que a régua antiga usava. Ele não descreve mais nada: não
+   * existe "arma simples" nem "arma marcial" no livro depois de 0.1.52, e uma
+   * frase que ainda diga isso está descrevendo um sistema que foi embora.
+   *
+   * (Em 0.1.60 um `sed` global que renomeava a sentinela do motor passou por
+   * aqui e trocou "arma simples" por "golpe sem estilo" NESTA lista — ou seja,
+   * pôs o nome NOVO na lista do que é proibido, e tirou o morto de dentro dela.
+   * O check parou de vigiar exatamente o que ele existe pra vigiar, em
+   * silêncio. Restaurado em 0.1.62.)
+   */
+  for (const morto of ["arma simples", "armas simples", "arma marcial", "armas marciais", "arma exótica", "armas exóticas"]) {
     if (prosa.includes(morto)) {
       anota("FALHA", "Vocabulário da régua antiga", tree.name, `proficiencies.armas ainda diz "${morto}"`);
     }
   }
 
-  const escolha = prof.escolhaDeGrupo ?? 0;
-  const prometeEscolha = /à sua escolha|a sua escolha|à escolha/i.test(prof.armas);
-  if (escolha > 0 && !prometeEscolha) {
-    anota("FALHA", "Escolha na lista e ausente da prosa", tree.name, `escolhaDeGrupo: ${escolha}, mas a prosa não menciona escolha`);
-  }
-  if (escolha === 0 && prometeEscolha) {
-    anota("FALHA", "Escolha na prosa e ausente da lista", tree.name, "a prosa promete um grupo à escolha, mas escolhaDeGrupo é 0");
+  /*
+   * "à sua escolha" morreu em 0.1.62: não existe mais grupo livre, nem na
+   * criação nem por árvore do Corpo. Uma prosa que ainda prometa isso está
+   * descrevendo uma economia que foi embora.
+   */
+  if (/à sua escolha|a sua escolha|grupo livre/i.test(prof.armas)) {
+    anota("FALHA", "Promessa de grupo à escolha", tree.name, "a economia de grupo livre acabou em 0.1.62");
   }
 }
 

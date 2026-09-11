@@ -219,6 +219,17 @@ export default function Chapter3() {
             ["Imperador", "+6", "2d12", "3d10"],
           ]}
         />
+        <Warning title="Arma improvisada não sobe a escada">
+          <P>
+            A cadeira, a garrafa e a pedra do chão travam em <b>d6</b> e não ganham degrau nenhum. Um
+            Imperador quebra a mesma cadeira que um Principiante quebra.
+          </P>
+          <P>
+            O <b>Estilo Deus do Norte</b> é a única árvore que escapa disso — e é o que a frase dele
+            significa de verdade: <i>&ldquo;se dá pra empunhar, você é proficiente&rdquo;</i>. Na mão dele,
+            um banco de taverna escala como uma espada.
+          </P>
+        </Warning>
         <Aside title="Acima do topo da escada">
           <P>
             O 5d12 é o último degrau. Se um talento ou Maestria te der um degrau além dele — Espada
