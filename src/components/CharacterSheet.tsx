@@ -54,6 +54,7 @@ import { empacotarFicha } from "@/lib/fichaArquivo";
 import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import RaceCrest from "./RaceCrest";
+import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 
 interface ResolvedAbility {
   kind: "ability" | "talent";
@@ -1355,7 +1356,7 @@ export default function CharacterSheet() {
                             ? "1 Reação"
                             : ability.actions.normal === 0
                               ? "Passivo"
-                              : `${ability.actions.normal} Ação${ability.actions.normal > 1 ? "ões" : ""}`;
+                              : rotuloDeAcoes(ability.actions.normal);
                           return `${pm}${pt}${pp} · ${ability.range} · ${actionLabel}`;
                         })()}
                       </p>

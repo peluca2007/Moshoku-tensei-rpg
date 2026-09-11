@@ -25,11 +25,12 @@ import {
   SubtableEntry,
   TalentDef,
 } from "@/lib/types";
+import { rotuloDeAcoes } from "./rotuloDeAcoes";
 
 function actionLabel(ability: AbilityDef): string {
   if (ability.reaction) return "1 Reação";
   if (ability.actions.normal === 0) return "Passivo";
-  return `${ability.actions.normal} Ação${ability.actions.normal > 1 ? "ões" : ""}`;
+  return rotuloDeAcoes(ability.actions.normal);
 }
 
 function costLabel(kind: "ability" | "talent", def: AbilityDef | TalentDef): string {
@@ -184,11 +185,11 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
       a.ritual
         ? "Encurtada impossível (ritual)"
         : a.actions.encurtada !== undefined
-          ? `Encurtada ${a.actions.encurtada} Ação${a.actions.encurtada > 1 ? "ões" : ""} (metade dos dados, área -1/3)`
+          ? `Encurtada ${rotuloDeAcoes(a.actions.encurtada)} (metade dos dados, área -1/3)`
           : "Encurtada impossível (rank Imperador)"
     );
     if (a.actions.silenciosa !== undefined) {
-      const label = typeof a.actions.silenciosa === "number" ? `${a.actions.silenciosa} Ação${a.actions.silenciosa > 1 ? "ões" : ""}` : "1 Reação";
+      const label = typeof a.actions.silenciosa === "number" ? rotuloDeAcoes(a.actions.silenciosa) : "1 Reação";
       parts.push(`Silenciosa ${label} (dano da Encurtada + 1 benefício)`);
     }
     return parts.join(" · ");

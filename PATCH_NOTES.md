@@ -5,6 +5,52 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.43 — "Navegar as Árvores com o Polegar" · 2026-09-10
+
+### 🌳 O mapa era o único jeito, em qualquer tela
+
+O `DestinyBoard` é um mapa radial com pan e zoom, e é a identidade visual do projeto. Ele também era a
+**única** forma de navegar as árvores — dezenove delas, seis patamares cada, espremidos em 390px e
+alcançados por pinça e arrasto.
+
+O relato veio do autor, num aparelho de verdade: *"achei bem ruim navegar pelas árvores"*. **Nenhum
+script tinha como dizer isso.** O `check:mobile` mede transbordo e alvo de toque, e os dois passavam há
+versões. O que ele não mede é quantos gestos custa chegar numa habilidade.
+
+Agora a tela tem **dois modos**, com um alternador visível no topo:
+
+- **Lista** — o padrão no celular. **Pilar → árvore → patamar**: três toques até qualquer habilidade
+  do livro, sem gesto nenhum. Um acordeão, que é o idioma que um polegar já conhece.
+- **Mapa** — o padrão acima de 640px, e alcançável no celular a um toque. Ele mostra o que a lista não
+  mostra: as pontes entre árvores híbridas e o desenho do destino.
+
+O padrão acompanha a largura ao vivo, mas **a escolha explícita vence** — a largura é um palpite sobre
+o aparelho, não sobre a pessoa. E um link com `?arvore=…` sempre abre o mapa, porque a lista não sabe
+focar e mandar pro modo errado desperdiçaria o link.
+
+As duas telas compram pela **mesma porta**: o cartão de habilidade saiu de dentro do mapa e virou
+componente próprio. Duas telas que compram a mesma coisa por caminhos diferentes divergem em silêncio,
+e o que divergiria aqui é o custo em PA e o motivo de o botão estar desligado.
+
+### 🔤 "2 Açãoões"
+
+A lista nova expôs um erro de texto que já existia: o plural de "Ação" estava sendo feito grudando o
+sufixo na palavra inteira em vez de substituí-la.
+
+```
+`${n} Ação${n > 1 ? "ões" : ""}`   // 2 → "2 Açãoões"
+```
+
+Estava copiado em **sete lugares, em cinco arquivos**: o detalhe de habilidade, a ficha, a busca
+global, a lista de árvores e — três vezes — o `buildFichaPayload`, que é **o que vira PDF**. Dava pra
+levar *"2 Açãoões"* impresso pra mesa.
+
+Sobreviveu porque sete cópias de uma linha curta não parecem duplicação: cada uma é pequena demais pra
+incomodar sozinha e nenhuma é grande o bastante pra alguém extrair. O plural irregular é justamente o
+caso em que isso cobra o preço. Agora é uma função com teste.
+
+---
+
 ## 0.1.42 — "O Curandeiro na Tela do Mestre" · 2026-09-10
 
 O `/encontros` simula 300 batalhas contra as fichas de verdade do grupo e imprime **"Quem fez o quê"**.

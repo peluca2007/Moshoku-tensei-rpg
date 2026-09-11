@@ -19,6 +19,7 @@ import {
   trechoQueCasa,
 } from "@/lib/busca";
 import { normalizarAlinhado } from "@/lib/texto";
+import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 
 /** Quantos resultados entram em tela de uma vez. Mais que isso, o botão do fim. */
 const PAGINA = 40;
@@ -305,8 +306,8 @@ function Conteudo({ conteudo, termos }: { conteudo: ConteudoDoc; termos: string[
           <ul className="mt-1.5 space-y-1 text-xs text-parchment-600 dark:text-parchment-400">
             {c.acoes.map((a) => (
               <li key={a.nome}>
-                <b className="text-parchment-700 dark:text-parchment-300">{a.nome}</b> · {a.acoes} Ação
-                {a.acoes > 1 ? "ões" : ""} · {a.dano} · {a.alcance}
+                <b className="text-parchment-700 dark:text-parchment-300">{a.nome}</b> ·
+                {rotuloDeAcoes(a.acoes)} · {a.dano} · {a.alcance}
                 <br />
                 <Realce texto={a.nota} termos={termos} />
               </li>

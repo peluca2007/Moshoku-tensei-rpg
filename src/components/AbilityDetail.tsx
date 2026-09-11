@@ -1,8 +1,8 @@
 import { AbilityDef, qualifiesForRecitationBonus, RANK_BONUS, RankName } from "@/lib/types";
+import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 
-function actionText(n: number) {
-  return n === 0 ? "Passivo" : `${n} Ação${n > 1 ? "ões" : ""}`;
-}
+// Um alias local: o nome curto já era usado em vários pontos deste arquivo.
+const actionText = rotuloDeAcoes;
 
 /**
  * Cap. 2, §2: o que a Recitação Perfeita paga nesta magia — ou por que ela não
