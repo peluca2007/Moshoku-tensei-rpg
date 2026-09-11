@@ -42,11 +42,25 @@ export function SectionTitle({ id, children }: { id: string; children: ReactNode
   );
 }
 
+/**
+ * Subtítulo de seção.
+ *
+ * Ganhou peso em 0.1.56 porque ele estava PERDENDO a disputa com o texto: um
+ * `<b>` dentro de uma caixa de regra chamava mais atenção que o título da
+ * subseção que a continha, e num documento longo isso desmonta a hierarquia
+ * inteira — o leitor para de conseguir dizer, de relance, o que é título e o
+ * que é ênfase.
+ *
+ * A correção é de fonte, não de tamanho: a display serifada é a mesma dos
+ * títulos de capítulo e de seção, então o subtítulo passa a pertencer àquela
+ * família em vez de parecer um parágrafo em negrito. O respiro acima é o que
+ * separa uma subseção nova do fim da anterior.
+ */
 export function SubTitle({ id, children }: { id?: string; children: ReactNode }) {
   return (
     <h4
       id={id}
-      className="scroll-mt-24 text-lg font-semibold text-parchment-800 dark:text-parchment-200"
+      className="mt-2 scroll-mt-24 font-display text-lg font-bold text-parchment-900 sm:text-xl dark:text-parchment-100"
     >
       {children}
     </h4>

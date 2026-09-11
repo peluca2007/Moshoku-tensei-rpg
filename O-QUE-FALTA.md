@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-11, depois da 0.1.53. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-11, depois da 0.1.56. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -31,8 +31,10 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    é cobrado. Mede-se numa sessão: conte os ataques corpo a corpo que ACERTARAM o Vendaval e compare
    com o outro da linha de frente. A conta está no cabeçalho de `src/data/trees/vendaval.ts`.
 
-5. **Teste com leitor de tela.** O `check:a11y` cobre a camada estrutural. Falta saber se a ficha é
-   *usável* de ouvido: se a ordem de foco conta a história certa, se "Comprar" anuncia o que está
+5. **Teste com leitor de tela.** O `check:a11y` cobre a camada estrutural das 16 rotas e está limpo —
+   e ganhou um motivo a mais de urgência na 0.1.56: o livro recebeu filete de seção, barra de progresso
+   e uma hierarquia de subtítulo nova, tudo decidido **olhando a tela**. Nada disso foi ouvido. Falta
+   saber se a ficha é *usável* de ouvido: se a ordem de foco conta a história certa, se "Comprar" anuncia o que está
    comprando, se dá pra montar um personagem sem enxergar. Meia hora com o NVDA.
 
 > **Por que as pendências 6 e 7 são justamente essas** (descoberto na 0.1.37). O simulador foi medido:
@@ -234,3 +236,13 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     Fechar isso exigiria uma lista de todos os arquivos de `public/`, mantida à mão ou gerada por mais
     um passo de build — uma lista que envelhece calada, e cujo sintoma é exatamente o que ela deveria
     evitar. Antes de pagar esse preço, vale medir se alguém repara.
+
+20. **Sete alvos de toque abaixo de 24px no `/livro`** *(medido na 0.1.56, depois que o contador passou
+    a separar o que o WCAG isenta)*. O número bruto era 229 e assustava; 221 deles são os termos de
+    condição grifados dentro do parágrafo, que o critério 2.5.8 isenta em letra — aumentá-los quebraria
+    a linha do texto, que é o motivo da isenção existir.
+
+    Sobram **sete de verdade**: links dentro de células de tabela e o `<summary>` do sumário no celular.
+    Nenhum é grave, todos são um `py-` de distância. Ficou registrado porque é a única coisa que os
+    quatro checks de tela ainda acusam, e porque agora o número é confiável.
+
