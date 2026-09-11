@@ -1,6 +1,6 @@
 # O que falta
 
-Estado em 2026-09-11, depois da 0.1.60. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
+Estado em 2026-09-11, depois da 0.1.61. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
 o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
 
 ## Precisa de você (não dá pra fazer sozinho)
@@ -9,10 +9,9 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
    oito — as outras estão entre 960 e 1900. Reprocurar `open grimoire spellbook candlelight` filtrando
    por 1600px+; ampliar os 680 não cria detalhe, só borra.
 
-2. **Testar em celular de verdade — nos dois, iPhone e Android.** `npm run check:mobile` garante que
-   nada transborda entre 320 e 414px, e é só isso que ele sabe. Falta dedo em tela: rolagem com
-   inércia, teclado virtual cobrindo campo, e a pergunta que nenhum script responde — dá pra usar a
-   ficha com uma mão só numa mesa cheia? Três coisas específicas esperam aparelho:
+2. **Três coisas que ainda esperam aparelho** *(o grosso saiu em 2026-09-11: o autor navegou o site
+   num celular de verdade e o veredito foi "tá tudo certo no celular")*. O que sobrou não é
+   navegação, é caminho específico:
    - **O link de ficha abre no iPhone do seu amigo?** A causa provável foi tratada na 0.1.19: o link
      vai sempre comprimido, e `DecompressionStream` só existe no Safari do iOS 16.4+. Num iPhone mais
      velho o erro virava "link inválido" sem explicar nada. Hoje a tela de importar diagnostica e
@@ -170,24 +169,21 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
 
 ## Site
 
-16. **Instalar o app num celular de verdade** *(ficou bem menor na 0.1.44)*. Três coisas que só um
-    aparelho mostrava foram achadas e corrigidas sem aparelho, lendo o que o navegador recebe: o
-    **`apple-touch-icon` não existia** (o iPhone usava uma captura da página como ícone da tela de
-    início), faltava o **`viewport-fit=cover`** que o `black-translucent` exige, e não havia **nenhuma
-    regra de área segura** — a barra do topo ficava embaixo do relógio e o botão de dados embaixo da
-    barra de gestos, que vale pro Android também.
+16. **~~Instalar o app num celular~~ — CONFIRMADO em 2026-09-11.** O botão de instalar existia só no
+    rodapé, e num site cujo `/livro` tem 87 mil pixels de rolagem isso é o mesmo que não existir: o
+    relato foi *"não apareceu a opção de adicionar à tela inicial"*. Ele entrou no menu na 0.1.61, e o
+    autor confirmou no aparelho — **deu certo**.
 
-    O `check:offline` prova a parte que dá pra provar: as 19 rotas abrem com o servidor morto, em F5 e
-    em navegação suave, num Chrome headless.
+    Junto saiu um defeito que ninguém teria achado sem isso: o Safari do iPad se apresenta como
+    "Macintosh" desde o iPadOS 13, e a detecção procurava a palavra "iPad". O sinal que sobra é
+    plataforma de Mac COM tela de toque.
 
-    **O que ainda precisa dos dois aparelhos na mão**, e são dez minutos:
-    - "Adicionar à tela de início" aparece, nos dois?
+    **O que ainda não foi visto** — e são cinco minutos, com o app já instalado:
     - O ícone sai certo recortado pelo launcher do Android, e no iPhone aparece o brasão em vez de uma
-      captura da página? *(era esse o bug da 0.1.44 — vale conferir que sumiu)*
+      captura da página? *(era o bug da 0.1.44 — vale conferir que sumiu)*
     - A splash é a nossa?
     - A barra do topo e o botão de dados fogem do entalhe e da barra de gestos? *(as regras de área
-      segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, mas nunca num
-      aparelho.)*
+      segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, nunca num aparelho.)*
 
 17. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
