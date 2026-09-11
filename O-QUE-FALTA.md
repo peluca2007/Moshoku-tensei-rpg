@@ -124,22 +124,31 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
     decisão do simulador que veio de mim e não do livro.
 
-13. **Um chefe do SEU patamar não ameaça o grupo — e a decisão é de design.** Pedido: no mínimo 25% de
-    dizimação por chefe. O 4º patamar cumpre desde que o Fio da Vida entrou na 0.1.38 — e depois dos
-    consertos de leitura da 0.1.39 ele foi de 45% para **73%**, que já é mais brutal do que o pedido.
-    Os outros dois não se resolvem por calibragem, e isto foi medido (números de 0.1.38; a conclusão
-    não muda com os de 0.1.39, porque os três seguem em direções opostas):
-    - **3º patamar:** com **PV ×4 e dano ×1,3** o grupo ainda vence 98% e é dizimado em 2%. Vinte e
-      cinco combinações testadas, nenhuma passa de 2%.
-    - **5º patamar:** **0% de vitória em todas as 25**, inclusive com o dano cortado a 70%.
-    - Mexer só nas rodadas extras do chefe não move o 3º e **destrói** o 4º (55% → 0%).
+13. **O dano do Apêndice G cresce mais rápido que o PV dos personagens** *(medido na 0.1.49, com a
+    tabela de chefes finalmente montando um grupo do patamar de cada chefe)*.
 
-    A causa é estrutural: a tabela põe **um grupo de 12 PA (Avançado, 3º)** contra chefes de 3º, 4º e
-    5º — um abaixo do nível dele, um no nível, um dois acima. **A pergunta que só você responde:** um
-    chefe do patamar do próprio grupo deve ser uma luta de 25% de dizimação? Se sim, o ajuste de Chefe
-    do Apêndice G (*PV dobrado, mesmo dano*) está fraco na paridade e o conserto é no **livro**, não no
-    script — e o segundo passo é a tabela passar a montar um grupo do patamar de cada chefe, pra medir
-    calibragem em vez de diferença de nível.
+    Primeiro o que a medição certa revelou, e é o oposto do que a tabela antiga dizia: **contra um
+    grupo do próprio patamar, todo chefe do livro perde 100% das vezes e não mata ninguém** — nos três
+    patamares. O "Terror invencível" era inteiramente artefato de jogar um grupo de 12 PA contra ele.
+
+    E a causa de nenhum ajuste único servir:
+
+    | | 3º | 4º | 5º |
+    | --- | --- | --- | --- |
+    | PV somado do grupo | 334 | 435 (+30%) | 548 (+26%) |
+    | Dano por turno do chefe | 35 | 55 (**+57%**) | 80 (**+45%**) |
+
+    O dano do molde cresce **~1,7× mais rápido** que o PV que os personagens ganham por patamar. Por
+    isso um mesmo multiplicador de Chefe dá 1% de dizimação no 3º e 99% no 5º (medido: PV ×2, dano ×2).
+
+    **As duas saídas, e a escolha é sua:** ou o ajuste de Chefe passa a ser **por patamar** em vez de
+    uma regra só, ou a coluna de **dano por turno do Apêndice G** cresce devagar demais lá embaixo /
+    rápido demais lá em cima e é ela que precisa ser reescrita. A segunda mexe em todo monstro do
+    livro; a primeira é local.
+
+    *(Uma ressalva honesta: o orçamento de PA por patamar — 12/18/24 — é palpite meu, porque o livro
+    não diz quanto PA um personagem de 4º tem. Mas ele é menos load-bearing do que parece: o PV do
+    grupo vem do PATAMAR, não do PA gasto, e subir o orçamento de 24 pra 44 no 5º não muda um PV.)*
 
 14. **Cinco capstones que não compensam** *(eram dezesseis; onze caíram na 0.1.47)* — `npm run check:progressao`. A melhor
     técnica de um rank rendendo MENOS por Ação que a de um rank abaixo, na mesma árvore: quem chega lá
