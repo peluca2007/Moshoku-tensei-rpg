@@ -103,7 +103,12 @@ export default function Chapter3() {
             <Link
               key={t.id}
               href={`/arvores?arvore=${t.id}`}
-              className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300"
+              // `inline-block py-1` leva o alvo de 20px para 28px de altura, acima do
+              // mínimo de 24 do WCAG 2.5.8. Diferente dos links em prosa — que o
+              // critério isenta em letra, porque aumentá-los quebraria a linha do
+              // texto — este é alvo de NAVEGAÇÃO numa célula de tabela, e o dedo
+              // precisa acertá-lo.
+              className="inline-block py-1 text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300"
             >
               {t.name}
             </Link>,
