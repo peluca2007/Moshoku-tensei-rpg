@@ -1,5 +1,6 @@
 import { VIGOR_FACTOR_TABLE } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { AnatomiaDoTurno, FioDaVida } from "./Diagramas";
 import { CONDICOES } from "@/data/condicoes";
 
 export default function Chapter4() {
@@ -227,6 +228,7 @@ export default function Chapter4() {
           O combate do sistema tem 3 Ações por turno e 1 Reação por rodada. Abaixo estão as opções
           básicas que qualquer personagem tem acesso, mesmo sem habilidades específicas:
         </P>
+        <AnatomiaDoTurno />
         <BookTable
           headers={["Ação / Reação", "Custo", "Efeito"]}
           rows={[
@@ -325,6 +327,7 @@ export default function Chapter4() {
             a abriu.
           </P>
         </Aside>
+        <FioDaVida />
         <P>
           Se acumular <b>3 Marcas da Morte</b>, você morre permanentemente. Qualquer magia de cura ou poção
           aplicada por um aliado remove todas as Marcas da Morte instantaneamente e você acorda — mas

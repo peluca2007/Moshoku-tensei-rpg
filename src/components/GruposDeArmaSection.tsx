@@ -124,7 +124,10 @@ export default function GruposDeArmaSection() {
                 {tem ? (
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                 ) : (
-                  <span className="mt-0.5 flex shrink-0 items-center gap-1 text-[11px] font-bold text-parchment-500 dark:text-parchment-400">
+                  // parchment-600, e não 500: em 11px o 500 dá 2,86:1 no tema
+                  // claro, abaixo do mínimo de 4,5 do WCAG AA. É a segunda vez
+                  // que este componente cai nisso — o 500 é bonito e reprova.
+                  <span className="mt-0.5 flex shrink-0 items-center gap-1 text-[11px] font-bold text-parchment-600 dark:text-parchment-400">
                     <Lock className="h-3 w-3" /> {PA_POR_GRUPO} PA
                   </span>
                 )}

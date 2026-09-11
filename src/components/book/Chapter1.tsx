@@ -9,6 +9,7 @@ import { TREES } from "@/data/trees";
 import { PA_POR_GRUPO, WEAPON_GROUPS } from "@/data/weaponGroups";
 import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { EscadaDePatamares } from "./Diagramas";
 
 const SKILL_ATTRIBUTE_LABEL: Record<string, string> = {
   forca: "Força",
@@ -153,6 +154,7 @@ export default function Chapter1() {
 
       <Section>
         <SectionTitle id="cap1-3">3. A Regra de Desbloqueio de Ranks</SectionTitle>
+        <EscadaDePatamares />
         <P>
           O mundo é dividido em 7 Ranks de Maestria (Principiante, Intermediário, Avançado, Santo, Rei,
           Imperador e Deus). Você só recebe permissão pra comprar o desbloqueio de um Rank quando já possuir
