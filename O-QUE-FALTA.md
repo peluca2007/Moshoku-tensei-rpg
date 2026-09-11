@@ -150,23 +150,19 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     não diz quanto PA um personagem de 4º tem. Mas ele é menos load-bearing do que parece: o PV do
     grupo vem do PATAMAR, não do PA gasto, e subir o orçamento de 24 pra 44 no 5º não muda um PV.)*
 
-14. **Cinco capstones que não compensam** *(eram dezesseis; onze caíram na 0.1.47)* — `npm run check:progressao`. A melhor
-    técnica de um rank rendendo MENOS por Ação que a de um rank abaixo, na mesma árvore: quem chega lá
-    destrava e não usa. As piores:
+14. **Três capstones que não compensam — e as três são do MOTOR** *(eram dezesseis; treze caíram até a
+    0.1.50)* — `npm run check:progressao`.
 
-    | Árvore | Rank | Rende | O rank anterior fazia | O que é |
-    | --- | --- | --- | --- | --- |
-    | Punho do Fogo | Rei | 17,6 | 37,6 | dano por turno, motor subestima |
-    | Terra | Rei | 13,0 | 17,6 | dano por turno, motor subestima |
-    | Vento | Santo | 8,9 | 10,1 | dano por turno, motor subestima |
-    | Deus da Espada | Santo | 19,4 | 28,8 | 2 Ações num galho de 1 (item 9) |
-    | Deus do Norte | Santo | 19,4 | 22,0 | 2 Ações num galho de 1 (item 9) |
+    | Árvore | Rank | Rende | O rank abaixo faz |
+    | --- | --- | --- | --- |
+    | Punho do Fogo | Rei | 17,6 | 37,6 |
+    | Terra | Rei | 13,0 | 17,6 |
+    | Vento | Santo | 8,9 | 10,1 |
 
-    **Das dezesseis originais, onze saíram na 0.1.47**: três eram erro de leitura do motor, uma era
-    árvore que o livro declara não ser medida de dano, três são dano por turno sustentado que o motor
-    subestima, e quatro foram corrigidas de verdade. Das cinco que sobram, **três continuam sendo o
-    dano sustentado** (Tempestade Cortante, Rio de Magma, Trono de Chamas) — o conserto delas é no
-    motor, não no livro — e duas são as do item 9.
+    As três — `Trono de Chamas`, `Rio de Magma`, `Tempestade Cortante` — descrevem dano **por turno
+    sustentado**, e o motor conta **uma vez só** porque não tem relógio de magia sustentada (só Em
+    Chamas, que é condição). **O conserto é no simulador, não no livro**: inflar os dados delas por
+    causa disso seria consertar o instrumento errado.
 
 15. **A magia perde da técnica corporal na economia de Ações** *(medido na 0.1.40, quando as magias
     longas finalmente entraram na simulação)*. O melhor dano esperado **por Ação** de cada árvore:

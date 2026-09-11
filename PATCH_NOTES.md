@@ -5,6 +5,41 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.50 — "O Santo Que Ninguém Usava" · 2026-09-11
+
+Fecha a última das quatro decisões de balanceamento.
+
+`Espada de Luz` (Deus da Espada) e `Golpe do Desespero` (Deus do Norte) eram, cada um, a **única
+habilidade de 2 Ações num galho inteiro de 1 Ação** — e por isso rendiam menos por Ação que o rank
+abaixo deles. Quem chegava ao Santo destravava a magistral da árvore e continuava usando a técnica de
+três patamares atrás.
+
+O conserto foi no **custo**, não nos dados — a mesma lição da 0.1.47 com a magia:
+
+| | Antes | Agora |
+| --- | --- | --- |
+| **Espada de Luz** (Santo) | 2 Ações · 19,4/Ação | **1 Ação · 38,8** |
+| **Espada de Luz Verdadeira** (Imperador) | 5 rolagens · 29,4 | **7 rolagens · 39,4** |
+| **Golpe do Desespero** (Santo) | 3 rolagens · 19,4 | **4 rolagens · 24,4** |
+| **Aura Cortante** (Rei) | +3d10 · 22,0 | **+5d10 · 30,8** |
+| **Golpe do Fim da Linha** (Imperador) | 3 Ações · 23,2 | **2 Ações · 34,8** |
+
+As duas escadas agora **sobem do começo ao fim**:
+
+- Deus da Espada: 18,8 → 28,8 → 28,8 → 38,8 → — → **39,4**
+- Deus do Norte: 13,8 → 18,8 → 22,0 → 24,4 → 30,8 → **34,8**
+
+### 📊 De dezesseis capstones a três
+
+E os três que restam **não são problema do livro**: são a Tempestade Cortante (Vento), o Rio de Magma
+(Terra) e o Trono de Chamas (Punho do Fogo) — as três descrevem dano **por turno sustentado**, e o
+motor conta uma vez só. O conserto delas é no simulador.
+
+O playtest de 5×5 não se move com esta versão, e isso é o certo: as dez builds vão até Avançado, e
+tudo que mudou foi de Santo pra cima. O conserto é pra quem chega lá.
+
+---
+
 ## 0.1.49 — "O Terror Nunca Foi Invencível" · 2026-09-11
 
 A tabela de chefes punha **um único grupo de 12 PA** contra chefes de 3º, 4º e 5º patamar: um abaixo

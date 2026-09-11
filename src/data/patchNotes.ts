@@ -16,6 +16,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.50",
+    date: "2026-09-11",
+    title: "O Santo Que Ninguém Usava",
+    sections: [
+      {
+        heading: "A magistral da árvore rendia menos que a técnica de três patamares atrás",
+        items: [
+          "Espada de Luz (Deus da Espada) e Golpe do Desespero (Deus do Norte) eram, cada um, a ÚNICA habilidade de 2 Ações num galho inteiro de 1 Ação — e por isso rendiam menos por Ação que o rank abaixo deles. Quem chegava ao Santo destravava a magistral e continuava usando a técnica antiga.",
+          "O conserto foi no CUSTO, não nos dados, que é a mesma lição da 0.1.47 com a magia. Espada de Luz virou 1 Ação (19,4 → 38,8 por Ação) e a Espada de Luz Verdadeira subiu de cinco pra sete rolagens do dado de arma pra continuar sendo o topo. No Norte, o Golpe do Desespero foi de três pra quatro rolagens, a Aura Cortante de +3d10 pra +5d10, e o Golpe do Fim da Linha de 3 Ações pra 2.",
+          "As duas escadas agora sobem do começo ao fim: Deus da Espada 18,8 → 28,8 → 28,8 → 38,8 → 39,4, e Deus do Norte 13,8 → 18,8 → 22,0 → 24,4 → 30,8 → 34,8. Os dezesseis capstones que não compensavam viraram TRÊS — e os três que restam não são problema do livro: Tempestade Cortante, Rio de Magma e Trono de Chamas descrevem dano por turno sustentado, que o motor conta uma vez só.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.47",
     date: "2026-09-10",
     title: "A Escada Que Não Subia",

@@ -517,8 +517,8 @@ export function acoesDe(c: CharacterData): Acao[] {
       dadosDeArma: (() => {
         const m = a.damage.normal.match(/\+\s*(\d+)\s+Dados? de Arma/i);
         if (m) return Number(m[1]);
-        const v = a.damage.normal.match(/rolado (duas|três|quatro|cinco) vezes/i);
-        if (v) return { duas: 2, três: 3, quatro: 4, cinco: 5 }[v[1].toLowerCase()] ?? 0;
+        const v = a.damage.normal.match(/rolado (duas|três|quatro|cinco|seis|sete) vezes/i);
+        if (v) return { duas: 2, três: 3, quatro: 4, cinco: 5, seis: 6, sete: 7 }[v[1].toLowerCase()] ?? 0;
         /*
          * "Metade do dado" e "arma secundária" — 0.1.47.
          *
