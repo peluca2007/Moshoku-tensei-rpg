@@ -5,6 +5,76 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.49 — "O Terror Nunca Foi Invencível" · 2026-09-11
+
+A tabela de chefes punha **um único grupo de 12 PA** contra chefes de 3º, 4º e 5º patamar: um abaixo
+do nível dele, um no nível, um dois acima. O que ela media não era *"o chefe está calibrado?"* — era
+*"quão longe do nível do grupo está este chefe?"*. Agora cada linha monta o grupo do **patamar dela**.
+
+### O resultado é o oposto do que a tabela antiga dizia
+
+| Chefe | Grupo do mesmo patamar | Vitória | Dizimado |
+| ----- | ---------------------- | ------- | -------- |
+| 3º — Ameaça | 12 PA (Avançado) | 100% | **0%** |
+| 4º — Elite | 18 PA (Santo) | 100% | **0%** |
+| 5º — Terror | 24 PA (Rei) | 100% | **0%** |
+
+O **"Terror invencível"** — que atravessou várias versões deste histórico, inclusive como pendência no
+backlog — era inteiramente artefato do banco de provas. Contra um grupo do próprio patamar, **todo
+chefe do livro perde 100% das vezes e não mata ninguém.**
+
+### E por que nenhum ajuste único resolvia
+
+Varri PV ×2 a ×5 contra dano ×1 a ×3, nos três patamares. Nenhuma célula fica na faixa dos 25% de
+dizimação nas três linhas ao mesmo tempo — e o motivo apareceu ao medir as duas curvas:
+
+| | 3º | 4º | 5º |
+| --- | --- | --- | --- |
+| PV somado do grupo | 334 | 435 (+30%) | 548 (+26%) |
+| Dano por turno do chefe | 35 | 55 (**+57%**) | 80 (**+45%**) |
+
+**O dano do Apêndice G cresce ~1,7× mais rápido que o PV que os personagens ganham por patamar.** Um
+mesmo multiplicador dá 1% de dizimação no 3º e 99% no 5º.
+
+Isso é achado de curva do livro, não de calibragem de chefe, e virou o item 13 do `O-QUE-FALTA` com as
+duas saídas possíveis. **Nenhum número do Apêndice G foi mexido aqui** — reescrever a coluna de dano
+mexe em todo monstro do livro, e é decisão do autor.
+
+*Ressalva registrada junto: o orçamento por patamar (12/18/24) é calibragem declarada, porque o livro
+não diz quanto PA um personagem de 4º tem. É menos load-bearing do que parece — o PV do grupo vem do
+PATAMAR, não do PA gasto, e subir o orçamento de 24 pra 44 no 5º não muda um PV.*
+
+---
+
+## 0.1.48 — "Era a Ficha, Não a Árvore" · 2026-09-10
+
+O Vex estava em 1% de sobrevivência, e a pergunta era se o Deus da Espada precisava de sustentação. A
+resposta foi conferir a ficha antes de mexer no livro — e a ficha era o problema.
+
+A árvore **tem** o talento: `Braço de Ferro`, 1 PA, +4 PV por patamar — o mesmo padrão do `Casco de
+Tartaruga` (Suishin) e do `Ombro de Pedra` (Escudos). O algoritmo que monta as fichas do playtest
+nunca o comprava, porque compra três conhecimentos por patamar em **ordem de arquivo**, e as
+habilidades vêm antes dos talentos. Os talentos só sobravam pro troco, quando já não havia PA.
+
+Medido: trocando a compra mais cara do Vex pelo Braço de Ferro — 2 PA por 1 —, o time inteiro dele foi
+de **45,1% pra 54,9%** de vitória. **Dez pontos, num talento de 1 PA.** O relatório estava medindo a
+montagem da ficha e chamando aquilo de balanceamento da árvore.
+
+O algoritmo agora compra o talento de escala da própria árvore **primeiro**: comprado no fim o
+orçamento já acabou, e comprado primeiro o 1 PA fica reservado — e ele ainda conta como um dos três
+conhecimentos que destravam o patamar seguinte.
+
+**Um erro meu no caminho:** a primeira versão da regra olhava só `+N PV por patamar`, o que comprava
+defesa pros guerreiros e nada pros magos. O time de Corpo saltou 20 pontos por causa da minha regra,
+não do livro. Corrigido pra PV, PM **ou** PT — o jogador compra o da árvore dele. A Iri (Vento) foi de
+43 pra **117** de dano por batalha quando ganhou o PM.
+
+E isso expôs a pergunta que virou o item 9 do `O-QUE-FALTA`: **+4 PV por patamar e +1 PM por patamar
+custam o mesmo 1 PA e não valem o mesmo.** Com os dois comprados, o time de quatro árvores de Corpo
+ganha 74% contra o de quatro magias. PM destrava o mago; PM não impede ninguém de morrer.
+
+---
+
 ## 0.1.47 — "A Escada Que Não Subia" · 2026-09-10
 
 Quatro decisões de design tomadas pelo autor, e a calibragem que elas pediram.
