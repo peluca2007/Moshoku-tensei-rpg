@@ -184,6 +184,89 @@ h3 {
   font-family: var(--font-literata), Georgia, "Times New Roman", serif;
 }
 
+/*
+ * MEDIDA DE LINHA — a diferença entre uma página web e um livro (0.1.55).
+ *
+ * Numa janela de 1280px o corpo do livro ficava com ~900px de largura, que dá
+ * por volta de 120 caracteres por linha. A tipografia de livro trabalha entre
+ * 60 e 75: acima disso o olho perde a linha ao voltar pra esquerda, e a leitura
+ * vira um esforço que a pessoa sente sem saber nomear. É o defeito mais comum
+ * de documento longo na web, e o mais fácil de corrigir.
+ *
+ * Vale só pro TEXTO CORRIDO. Tabela, caixa de regra e citação continuam usando
+ * a largura inteira de propósito: elas são consultadas, não lidas em fluxo, e
+ * espremê-las em 68ch faria a tabela do Apêndice G rolar de lado à toa.
+ *
+ * O seletor é de filho direto (`>`) justamente pra não alcançar o parágrafo que
+ * mora dentro de um Aside — lá dentro a caixa já impõe a medida dela.
+ */
+.livro-shell .livro-prosa > p,
+.livro-shell .livro-prosa > ul,
+.livro-shell .livro-prosa > ol {
+  max-width: 68ch;
+}
+
+/*
+ * O filete que marca o começo de uma seção.
+ *
+ * Num documento de 87 mil pixels de rolagem, o tamanho da fonte sozinho não
+ * diz em que nível você está — quando o título entra na tela vindo de baixo,
+ * não há nada por perto pra comparar. O filete dourado é uma marca que se
+ * reconhece de relance, sem ler.
+ */
+.livro-secao-titulo {
+  position: relative;
+  padding-left: 0.875rem;
+}
+
+.livro-secao-titulo::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.18em;
+  bottom: 0.18em;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-gold-500, #c9a227),
+    color-mix(in srgb, var(--color-gold-500, #c9a227) 25%, transparent)
+  );
+}
+
+/*
+ * A barra de progresso de leitura do /livro.
+ *
+ * `animation-timeline: scroll()` faz isso sem uma linha de JavaScript e sem
+ * nenhum listener de scroll — a barra é pintada pelo compositor, então ela não
+ * disputa a thread principal com nada. Onde a propriedade não existe (Safari
+ * até o 25), a barra simplesmente fica em 0 e some: é decoração, e decoração
+ * que falha tem que falhar invisível.
+ */
+@supports (animation-timeline: scroll()) {
+  .livro-progresso {
+    transform-origin: 0 50%;
+    animation: livro-progresso-cresce linear;
+    animation-timeline: scroll(root block);
+  }
+
+  @keyframes livro-progresso-cresce {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .livro-progresso {
+    animation: none;
+    transform: scaleX(0);
+  }
+}
+
 /* Números que se alinham em coluna ou trocam de valor enquanto você edita
    (PV/PM/PT/PP, dano, preço) não podem dançar de largura. */
 input[type="number"],

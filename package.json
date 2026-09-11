@@ -17,7 +17,8 @@
     "check:a11y": "node scripts/check-a11y.mjs",
     "check:offline": "node scripts/check-offline.mjs",
     "check:texto": "tsx scripts/check-texto.mts",
-    "check:progressao": "tsx scripts/check-progressao.mts"
+    "check:progressao": "tsx scripts/check-progressao.mts",
+    "tela": "node scripts/tela.mjs"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

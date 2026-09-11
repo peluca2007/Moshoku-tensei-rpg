@@ -93,6 +93,10 @@ const TOC: TocEntry[] = [
       { id: "cap5-2", label: "2. A Guilda de Aventureiros" },
       { id: "cap5-3", label: "3. Reputação com Facções" },
       { id: "cap5-4", label: "4. Crafting e Alquimia" },
+      { id: "cap5-5", label: "5. Dojos e Mestres" },
+      { id: "cap5-5-quem", label: "— Quem pode ensinar" },
+      { id: "cap5-5-dilema", label: "— O Dilema de Recompensa" },
+      { id: "cap5-5-exemplos", label: "— Quatro mestres prontos" },
     ],
   },
   {
