@@ -668,7 +668,15 @@ export default function CharacterSheet() {
             onChange={(e) => useCharacterStore.getState().setName(e.target.value)}
             placeholder="Nome do personagem"
             aria-label="Nome do personagem"
-            className="w-full min-w-0 rounded-lg bg-transparent font-display text-2xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700 sm:flex-1 sm:text-3xl"
+            /*
+             * `sm:min-w-[18rem]`: o nome é o campo mais importante da ficha e
+             * estava saindo cortado pela metade — 130px de campo visível pra
+             * 235px de texto, medido com "Rudeus Greyrat". A causa são os seis
+             * botões à direita: eles têm `shrink-0` e não cedem espaço, então o
+             * `flex-1` do nome ficava com as sobras. Agora o piso é do nome, e
+             * quem quebra em duas linhas é a barra de botões.
+             */
+            className="w-full min-w-0 rounded-lg bg-transparent font-display text-2xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700 sm:min-w-[18rem] sm:flex-1 sm:text-3xl"
           />
           <div className="print-hide flex flex-wrap gap-2 sm:shrink-0">
             <button

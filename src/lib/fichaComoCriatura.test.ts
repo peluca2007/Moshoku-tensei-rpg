@@ -115,7 +115,7 @@ describe("ficha como criatura", () => {
   // `combatSim.resolver` faz a mesma distinção: a Escada de Dados e o Bônus de
   // Rank no golpe são exclusivos da Árvore do Corpo (Cap. 3). Somar o BC cheio
   // aqui daria ao mago convertido o braço de um espadachim.
-  it("o mago bate com arma simples, sem o Bônus de Rank no golpe", () => {
+  it("o mago bate sem estilo, e por isso sem o Bônus de Rank no golpe", () => {
     const mago = ficha({
       name: "Maga de Água",
       attributeBase: { ...ZERO, intelecto: 6, espirito: 4 },
@@ -130,7 +130,10 @@ describe("ficha como criatura", () => {
 
     const criatura = criaturaDaFicha(mago, novoId);
 
-    expect(criatura.acoes[0].nome).toBe("Ataque com arma simples");
+    // "golpe sem estilo" substituiu "arma simples" em 0.1.60: a regra é a
+    // mesma (Cap. 3 — sem árvore do Corpo, sem Bônus de Rank), mas "arma
+    // simples" deixou de ser uma categoria do livro na 0.1.52.
+    expect(criatura.acoes[0].nome).toBe("Ataque com golpe sem estilo");
     expect(criatura.acoes[0].dano).toBe(`${derivada.ataqueBasico.dano}+${derivada.bcSemRank}`);
     // O Bônus de Ataque da criatura (o d20) continua sendo o da árvore dela.
     expect(criatura.bonusAtaque).toBe(derivada.bc);

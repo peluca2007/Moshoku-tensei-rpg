@@ -831,7 +831,20 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
     // veio de árvore nenhuma. A primeira versão deste motor dava a escada a
     // todo mundo e fazia a curandeira bater 35 por turno de espada.
     ataqueBasico: novaAcao({
-      nome: degraus > 0 ? "golpe comum" : "arma simples",
+      /*
+       * "golpe sem estilo", e não "arma simples" — 0.1.60.
+       *
+       * O nome é uma SENTINELA: ele decide, três linhas abaixo, se o ataque
+       * soma o Bônus de Rank ou só o atributo. A regra que ele marca continua
+       * valendo (Cap. 3: quem não abriu árvore do Corpo não soma Rank no
+       * golpe); o nome é que morreu na 0.1.52, quando "arma simples" deixou de
+       * ser uma categoria do livro.
+       *
+       * E ele VAZA PRA TELA: o Painel do Mestre imprime "Maior golpe: arma
+       * simples", e um Mestre que procurasse esse termo no livro não acharia
+       * mais nada.
+       */
+      nome: degraus > 0 ? "golpe comum" : "golpe sem estilo",
       dano: `1d${ESCADA_DADOS[Math.min(ESCADA_DADOS.length - 1, 1 + degraus)]}`,
       ataque: true,
     }),
@@ -880,7 +893,7 @@ export function rankDaFicha(c: CharacterData): RankName | null {
  * tem que mudar junto.
  */
 export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): number {
-  const bonus = a.nome === "arma simples" ? e.ficha.bcSemRank : e.ficha.bc;
+  const bonus = a.nome === "golpe sem estilo" ? e.ficha.bcSemRank : e.ficha.bc;
 
   /*
    * O dano bruto é montado exatamente como `resolver` monta o dele: dados
@@ -990,7 +1003,7 @@ export function escolherAcao(
 /** Resolve UMA ação contra UM alvo e devolve o dano causado. */
 export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): number {
   // Quem não tem árvore do Corpo não soma Bônus de Rank num golpe de arma.
-  const bonus = a.nome === "arma simples" ? e.ficha.bcSemRank : e.ficha.bc;
+  const bonus = a.nome === "golpe sem estilo" ? e.ficha.bcSemRank : e.ficha.bc;
   // Preso, Caído e Envenenado (Cap. 4, §7-8): "seus ataques têm Desvantagem" é
   // igual pras três, então o personagem afetado por qualquer uma rola pior — e
   // "ataques contra você têm Vantagem" (só Preso e Caído) faz o ALVO comprado

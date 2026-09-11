@@ -16,6 +16,51 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.59",
+    date: "2026-09-11",
+    title: "Vinte e Cinco Por Cento",
+    sections: [
+      {
+        heading: "O chefe agora dizima o grupo em 25% das vezes — antes era 0%",
+        items: [
+          "O ajuste de Chefe do Apêndice G virou POR PATAMAR, porque um número só não podia servir aos três: o PV somado de um grupo sobe cerca de 28% por patamar e o dano por turno das linhas do bestiário sobe cerca de 50%. O dano corre 1,7 vez mais rápido, então o mesmo multiplicador que deixa o 3º patamar fácil deixa o 5º impossível.",
+          "O PV continua dobrando nos três. O dano passa a ser ×2,65 no 3º patamar (Ameaça), ×1,9 no 4º (Elite) e ×1,29 no 5º (Terror). Medido em 2000 batalhas por linha contra um grupo montado no patamar do chefe: 32%, 25% e 25% de chance de dizimar o grupo, contra 0% em todos antes desta versão.",
+          "A calibragem encontrou um penhasco, e ele está escrito no Apêndice G: no 5º patamar, ×1,28 dizima 20% das vezes e ×1,29 dizima 25%, mas ×1,31 salta pra 53%. A causa é realimentação positiva — quem cai para de causar dano, a luta se alonga, e quem estava de pé cai também. Na prática: um chefe calibrado em 25% não entrega 25% toda noite. Ele entrega noites tranquilas e noites de desastre, e a média é que fica em 25%.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.58",
+    date: "2026-09-11",
+    title: "Zero",
+    sections: [
+      {
+        heading: "Nenhum capstone rende menos que o rank abaixo dele — pela primeira vez",
+        items: [
+          "O contador nasceu em dezesseis na 0.1.41, caiu pra três na 0.1.50 e fechou em ZERO. A decisão era subir as três técnicas do topo; duas subiram e a terceira saiu sozinha, porque o Sepultamento (Terra, Imperador) já tinha o dano por turno escrito num campo estruturado que o motor não lia. Ler o campo bastou: o teto da Magia subiu de 30,6 pra 33,0 por Ação, e o Corpo deixou de render 1,7 vez mais que a Magia pra render 1,6.",
+          "As que precisaram de dados: Colapso Solar (Punho do Fogo, Imperador) foi de 14d12 pra 19d12, e o Vazio (Vento, Rei) de 4d10 pra 7d10 por turno. Consertar o Vazio revelou que a árvore de Vento estagnava do Santo em diante (26,8 → 26,4 → 23,7), então a Explosão Silenciosa foi de 12d12 pra 16d12. Agora o Vento sobe inteiro: 7,2 → 9,8 → 17,2 → 26,8 → 29,7 → 30,7.",
+          "O talento de reserva das escolas de magia passa a dar +2 PM E +2 PV por patamar, pelo mesmo 1 PA. O problema medido era que PM destrava dano mas não impede ninguém de morrer: o time com mais árvores do Corpo ganhava 74% das batalhas. Com o PV, o time com três magos foi de 25,6% pra 36,5% de vitória — onze pontos num talento de 1 PA. A Terra ficou de fora porque já tem Pele de Pedra (+4 PV por patamar), que é a identidade dela.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.57",
+    date: "2026-09-11",
+    title: "Por Turno",
+    sections: [
+      {
+        heading: "O livro escreve 'por turno' em sete magias, e o motor contava uma vez só",
+        items: [
+          "Em Chamas sempre teve relógio; magia sustentada não tinha nenhum. São sete e não três, que era quanto o backlog listava: Tomar o Ar, Tempestade Cortante e Vazio (Vento), Rio de Magma (Terra), Estrangular (Armas Pesadas), Prisão de Purgatório e Trono de Chamas (Punho do Fogo). Medida, a Tempestade Cortante era 36 de dano; agora é 36 de impacto mais 34 mais 34.",
+          "A duração contada é de TRÊS turnos — o do lançamento mais dois — e esse número é escolha declarada, não do livro. A Tempestade dura 'um minuto', que são dez turnos, e contar dez daria a ela um dano que nenhuma mesa vê: o alvo sai da área e o combate acaba antes, porque as batalhas fecham em duas a quatro rodadas.",
+          "Sustentado que exige MANUTENÇÃO não rende turno de graça. O Estrangular diz 'enquanto você mantiver' e exige alvo Agarrado: cada turno de dano custa o turno do lutador, então o dano por Ação já está certo contando um turno só. Manutenção de recurso é outra coisa e continua contando — o Trono de Chamas cobra uma Sobrecarga por turno, e quem paga segue livre pra agir.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.54",
     date: "2026-09-11",
     title: "A Progressão Que Não Se Compra",

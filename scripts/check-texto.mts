@@ -359,9 +359,9 @@ for (const tree of TREES as Tree[]) {
   }
 
   // O vocabulário que a régua antiga usava. Ele não descreve mais nada: não
-  // existe "arma simples" nem "arma marcial" no livro depois de 0.1.52, e uma
+  // existe "golpe sem estilo" nem "arma marcial" no livro depois de 0.1.52, e uma
   // frase que ainda diga isso está descrevendo um sistema que foi embora.
-  for (const morto of ["arma simples", "armas simples", "arma marcial", "armas marciais", "arma exótica", "armas exóticas"]) {
+  for (const morto of ["golpe sem estilo", "armas simples", "arma marcial", "armas marciais", "arma exótica", "armas exóticas"]) {
     if (prosa.includes(morto)) {
       anota("FALHA", "Vocabulário da régua antiga", tree.name, `proficiencies.armas ainda diz "${morto}"`);
     }
