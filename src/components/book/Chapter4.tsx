@@ -1,6 +1,8 @@
 import { VIGOR_FACTOR_TABLE } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { AnatomiaDoTurno, FioDaVida } from "./Diagramas";
+import ArteDaHabilidade from "./ArteDaHabilidade";
+import { ARTE_DO_FIO_DA_VIDA, ARTE_DO_TOUKI } from "@/data/midiaDeHabilidade";
 import { CONDICOES } from "@/data/condicoes";
 
 export default function Chapter4() {
@@ -291,6 +293,7 @@ export default function Chapter4() {
           O Touki não gasta PM — consome Pontos de Touki (PT), e é desbloqueado no terceiro patamar de
           qualquer árvore do Corpo (regras completas no Capítulo 3).
         </P>
+        <ArteDaHabilidade midia={ARTE_DO_TOUKI} />
         <Aside title="Por que magos temem espadachins">
           Um espadachim de rank Santo cruza 9 metros e decapita um mago antes que ele termine o segundo
           verso de uma magia Avançada. É por isso que a escola de Água investe tanto em barreiras, terreno
@@ -327,6 +330,7 @@ export default function Chapter4() {
             a abriu.
           </P>
         </Aside>
+        <ArteDaHabilidade midia={ARTE_DO_FIO_DA_VIDA} />
         <FioDaVida />
         <P>
           Se acumular <b>3 Marcas da Morte</b>, você morre permanentemente. Qualquer magia de cura ou poção

@@ -221,19 +221,45 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   },
 
   // --- Armas Pesadas -------------------------------------------------------
+  /*
+   * A maestria é "O CORPO É A ARMA" — 0.1.69.
+   *
+   * Ela recebe a luta desarmada, e não o gif de arma grande: pôr um machado na
+   * maestria que existe justamente pra dizer que você não precisa de um é a
+   * contradição mais visível que uma arte podia criar. O gif de arma pesada foi
+   * pra uma habilidade da linha [Peso], onde é o que ele ilustra.
+   */
   "armas-pesadas/maestria": {
+    src: "/luta no soco.gif",
+    alt: "A luta virando corpo a corpo, sem arma nenhuma, só punho e peso.",
+  },
+  "armas-pesadas/golpe-circular": {
     src: "/arma pesada.gif",
-    alt: "Uma arma enorme sendo girada como se não pesasse nada nas mãos certas.",
+    alt: "Uma arma enorme girando em círculo e varrendo tudo em volta de uma vez.",
   },
   "armas-pesadas/agarrao": {
-    src: "/luta no soco.gif",
-    alt: "A luta virando corpo a corpo, sem arma, no agarrão e no soco.",
+    src: "/agarrao.gif",
+    alt: "As mãos fechando em volta do corpo do alvo e tirando dele a chance de sair.",
+  },
+  "armas-pesadas/punho-de-mineiro": {
+    src: "/socos rapidos.gif",
+    alt: "Punhos fechados vindo de baixo, rápido demais pra se contar quantos foram.",
   },
 
   // --- Vendaval ------------------------------------------------------------
+  /*
+   * A maestria de Vendaval é PASSO SEM PESO — 0.1.69.
+   *
+   * Ela é movimento, não corte, e recebe o arquivo que mostra um avanço. Os dois
+   * gifs de corte foram pras duas habilidades que SÃO corte em área.
+   */
   "vendaval/maestria": {
+    src: "/vendava dash.gif",
+    alt: "Um avanço instantâneo, o corpo já do outro lado antes de o ar fechar.",
+  },
+  "vendaval/redemoinho-de-aco": {
     src: "/vendaval.gif",
-    alt: "O vento seguindo a lâmina, levantando poeira em volta de quem ataca.",
+    alt: "O vento seguindo a lâmina em volta do corpo, levantando poeira em círculo.",
   },
   "vendaval/vendaval-de-aco": {
     src: "/vendaval 2.gif",
@@ -312,14 +338,43 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     alt: "Um toque de dedos que planta no outro uma aflição que não vai embora.",
   },
 
-  // --- Magia elemental -----------------------------------------------------
-  "vento/maestria": {
-    src: "/Brisa.gif",
-    alt: "O ar se movendo em volta da mão, ainda sem força pra machucar ninguém.",
+  // --- Magia de Fogo -------------------------------------------------------
+  "fogo/bola-de-fogo": {
+    src: "/bola de fogo.webp",
+    alt: "Uma esfera de chamas girando sobre si mesma antes de sair da mão.",
   },
-  "terra/atoleiro": {
-    src: "/atolado.gif",
-    alt: "O chão firme virando lama e prendendo os pés de quem estava em cima.",
+  "fogo/lanca-de-fogo": {
+    src: "/flecha de fogo.gif",
+    alt: "Um projétil de fogo alongado cruzando o ar em linha reta.",
+  },
+  "fogo/clarao": {
+    src: "/clarao.gif",
+    alt: "Um estouro de luz branca tomando o quadro inteiro por um instante.",
+  },
+  "fogo/sopro": {
+    src: "/Flamethrower.webp",
+    alt: "Uma língua contínua de fogo saindo em cone e varrendo tudo à frente.",
+  },
+  "fogo/mar-de-chamas": {
+    src: "/Burning Place.webp",
+    alt: "Um terreno inteiro em chamas, sem um ponto livre pra pisar.",
+  },
+  /*
+   * Chama do Êxodo — o nome canônico, ver `src/data/trees/fogo.ts`. As duas
+   * artes são da MESMA magia (獄炎火弾 / Exodus Flame): a segunda foi pra
+   * Explosão, que é o mesmo gesto num rank abaixo.
+   */
+  "fogo/tempestade-de-fogo": {
+    src: "/Exodus Flame.webp",
+    alt: "Uma bola de fogo do tamanho de uma casa se abrindo, com o conjurador saltando de dentro do clarão.",
+  },
+  "fogo/explosao": {
+    src: "/ex flame.webp",
+    alt: "O fogo se abrindo em onda a partir do ponto onde a magia tocou o chão.",
+  },
+  "fogo/flashover": {
+    src: "/flame slice.webp",
+    alt: "O instante antes: a ponta do cajado carregada, e o ar já ondulando de calor em volta.",
   },
   "fogo/corpo-de-fogo": {
     src: "/Corpo de Fogo.gif",
@@ -328,6 +383,78 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   "punho-de-fogo/maestria": {
     src: "/punho de fogo.gif",
     alt: "O punho pegando fogo no instante em que sai em direção ao alvo.",
+  },
+
+  // --- Magia de Terra ------------------------------------------------------
+  "terra/bala-de-pedra": {
+    src: "/Rock Bullet.webp",
+    alt: "Uma pedra comprimida disparada como projétil.",
+  },
+  "terra/canhao-de-pedra": {
+    src: "/Stone Cannon.webp",
+    alt: "Um bloco de pedra lançado com força de cerco contra o alvo.",
+  },
+  "terra/fortaleza-rapida": {
+    src: "/Earth Fortress.webp",
+    alt: "Paredes de terra subindo do chão e fechando um abrigo em segundos.",
+  },
+  "terra/atoleiro": {
+    src: "/atolado.gif",
+    alt: "O chão firme virando lama e prendendo os pés de quem estava em cima.",
+  },
+
+  // --- Magia de Vento ------------------------------------------------------
+  "vento/maestria": {
+    src: "/Brisa.gif",
+    alt: "O ar se movendo em volta da mão, ainda sem força pra machucar ninguém.",
+  },
+  "vento/empurrao": {
+    src: "/Wind Blast.webp",
+    alt: "Uma rajada compacta de ar batendo de frente e tirando o alvo do lugar.",
+  },
+  "vento/sopro-de-poeira": {
+    src: "/Sand Cloud.webp",
+    alt: "Uma nuvem de areia levantada do chão, fechando a visão de quem está dentro.",
+  },
+  "vento/estrondo-sonico": {
+    src: "/Sonic Blast.webp",
+    alt: "O ar estourando num anel de choque em volta do ponto de impacto.",
+  },
+  "vento/asas-emprestadas": {
+    src: "/voar com vento.gif",
+    alt: "O corpo saindo do chão, sustentado por uma corrente de ar por baixo.",
+  },
+
+  // --- Magia de Barreira ---------------------------------------------------
+  "barreira/maestria": {
+    src: "/barreira anti magia.gif",
+    alt: "Um círculo de luz se fechando no ar e barrando a magia que vinha de fora.",
+  },
+
+  // --- Mais corpo a corpo --------------------------------------------------
+  "armas-pesadas/investida-devastadora": {
+    src: "/Investida Devastadora.gif",
+    alt: "A corrida em linha reta terminando no impacto que derruba quem estava parado.",
+  },
+  "armas-pesadas/esmagar": {
+    src: "/arma pesada machado grande.gif",
+    alt: "Um machado enorme descendo com o peso do corpo inteiro atrás, sobre quem já está no chão.",
+  },
+  "deus-do-norte/finta-do-norte": {
+    src: "/lutar bebado.gif",
+    alt: "Um corpo bambo e imprevisível, que erra de propósito pra acertar depois.",
+  },
+  "deus-do-norte/tumulo-de-aco": {
+    src: "/lutar no improviso.gif",
+    alt: "A luta feita com o que tinha por perto, sem arma e sem escolher como.",
+  },
+  "deus-do-norte/danca-de-aco": {
+    src: "/passos-de-danca.webp",
+    alt: "Os pés desenhando um passo depois do outro, a luta virando coreografia.",
+  },
+  "desintoxicacao/estomago-de-ferro": {
+    src: "/comer.gif",
+    alt: "Alguém comendo sem hesitar o que envenenaria qualquer outro.",
   },
 };
 
@@ -342,6 +469,18 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
 export const ARTE_DO_DOJO: MidiaDeHabilidade = {
   src: "/dojo deus da espada.webp",
   alt: "O pátio de um dojo de espada, com o mestre observando o treino dos alunos.",
+};
+
+/** A arte do **Manto de Touki** (Cap. 3) — a aura, e não uma técnica dela. */
+export const ARTE_DO_TOUKI: MidiaDeHabilidade = {
+  src: "/67 aura.webp",
+  alt: "Um espadachim de quimono escuro parado, com uma aura visível saindo do corpo e cobrindo a pele.",
+};
+
+/** A arte do **Fio da Vida** (Cap. 4, §7) — o corpo a 0 PV, ainda não morto. */
+export const ARTE_DO_FIO_DA_VIDA: MidiaDeHabilidade = {
+  src: "/quase morrendo.webp",
+  alt: "Uma personagem caída de lado no chão, ferida e quase sem consciência, ainda respirando.",
 };
 
 /** A arte desta habilidade (ou talento), se houver. */
