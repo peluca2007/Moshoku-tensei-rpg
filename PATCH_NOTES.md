@@ -5,6 +5,50 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.69 — "O Tiro Perfeito Não É de Todo Mundo" · 2026-09-11
+
+### 🏹 O pré-requisito da Arquearia virou a primeira linha da seção
+
+A regra nunca mudou. O Tiro Perfeito é a habilidade de assinatura de **Arquearia** no patamar
+Principiante, e sempre exigiu as duas coisas: ter comprado aquele nó da árvore com PA, e estar com
+**arco ou besta** em mãos.
+
+O problema era o **lugar**. A seção mora no Capítulo 3, que é o capítulo das regras universais — Ações,
+Reações, Touki — e o pré-requisito aparecia no meio do segundo parágrafo. Quem lê um capítulo de regras
+gerais assume que o que está nele é geral, e nenhuma frase no meio de um parágrafo desfaz isso.
+
+Agora o aviso abre a seção e diz o que não era óbvio: não há versão improvisada, não se compra avulso,
+nenhuma outra árvore concede, e nem Deus da Espada nem Deus do Norte têm equivalente.
+
+### 🐛 CORREÇÃO: o diagrama publicava uma CD que não existe
+
+A quarta etapa, **A Solta**, aparecia no diagrama como `ataque · CD 12`. A Solta é o ataque **normal**,
+contra a CA do alvo — a CD 12 fixa vale só para as três etapas de preparação, e o rótulo estava sendo
+repetido nas quatro caixas por ser fixo no componente.
+
+Quem jogasse pelo diagrama rolaria o disparo final contra 12 e acertaria o que devia errar. Corrigido
+para `ataque normal`, sem CD.
+
+### 🎨 Sessenta habilidades do livro passam a ter arte
+
+As 44 mídias paradas em `public/` entraram: Deus da Espada, Deus da Água, Deus do Norte, Cavalaria e
+Escudos, Armas Pesadas, Vendaval, Arquearia, Furtividade, Bardo, Navegação, Invocação, Desintoxicação e
+as magias elementares. **Talento** também pode ter arte agora — Marcha Forçada foi o caso que forçou a
+mudança. A arte do Dojo (Cap. 5, §5) abre a seção inteira em vez de ilustrar uma habilidade.
+
+Três correções técnicas vieram junto:
+
+- **Altura reservada.** `loading="lazy"` sem dimensão declarada dá altura zero até o arquivo chegar. Com
+  17 artes passava; com 60, o `/livro` virou um documento que **pula** durante a rolagem. A moldura
+  agora tem altura fixa.
+- **Nomes ASCII.** `armadilha de caça.gif` e outros sete foram renomeados em disco. Acento em caminho de
+  URL falha **calado** em parte dos servidores estáticos, e um teste novo trava a volta do problema.
+- **Fundo borrado.** `object-contain` numa moldura fixa deixa barras vazias em toda arte que não é
+  panorâmica, e num retrato elas ficam maiores que a imagem. A mesma imagem em `object-cover`, borrada,
+  preenche as barras sem custar um byte a mais.
+
+---
+
 ## 0.1.59 — "Vinte e Cinco Por Cento" · 2026-09-11
 
 O pedido era antigo e estava em letra: **um chefe deve dizimar o grupo em pelo menos 25% das vezes.**

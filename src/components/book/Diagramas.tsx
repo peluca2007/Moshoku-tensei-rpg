@@ -127,15 +127,35 @@ export function EscadaDeDados() {
  * informação: quem vence quem só é legível de relance quando o ciclo fecha
  * visualmente, e uma lista obriga o leitor a montar o círculo na cabeça.
  *
- * As setas giram devagar — 22 segundos por volta — porque o ciclo não tem
- * começo. Quem entra no triângulo por qualquer vértice chega no mesmo lugar.
+ * ## O que a animação ensina — refeita na 0.1.69
+ *
+ * Antes, um anel tracejado girava atrás de três bolinhas sem nome. Era
+ * movimento sem conteúdo: o anel não dizia nada, e quem os vértices ERAM só
+ * existia na lista ao lado.
+ *
+ * Agora um **golpe percorre o ciclo**, um lado de cada vez, na ordem em que
+ * cada estilo vence o próximo — e o vértice atingido **encolhe e fica vinho**
+ * no instante em que o golpe chega. Três coisas passam a ser lidas sem texto:
+ * a ordem (Espada → Norte → Água), o fato de que a volta FECHA (o terceiro
+ * golpe cai em quem deu o primeiro), e o de que ninguém está fora — todos os
+ * três apanham, um por volta.
+ *
+ * O ciclo inteiro leva 7,2 s, 2,4 s por lado. Devagar o suficiente pra o olho
+ * acompanhar de relance no meio da leitura, e não uma luz piscando.
+ *
+ * `pathLength={100}` normaliza os três lados: o dash do golpe é descrito em
+ * porcentagem do lado, e não em unidades do `viewBox`, então os três levam
+ * exatamente o mesmo tempo mesmo tendo comprimentos diferentes.
  */
 export function TrianguloDosEstilos() {
   const vertices = [
-    { nome: "Deus da Espada", lema: "Velocidade e agressão", x: 100, y: 26, ancora: "middle" as const },
-    { nome: "Deus do Norte", lema: "Sobreviver por qualquer meio", x: 172, y: 148, ancora: "end" as const },
-    { nome: "Deus da Água", lema: "Defesa e contragolpe", x: 28, y: 148, ancora: "start" as const },
+    { nome: "Deus da Espada", curto: "Espada", lema: "Velocidade e agressão", x: 100, y: 26, rx: 100, ry: 12 },
+    { nome: "Deus do Norte", curto: "Norte", lema: "Sobreviver por qualquer meio", x: 172, y: 148, rx: 172, ry: 168 },
+    { nome: "Deus da Água", curto: "Água", lema: "Defesa e contragolpe", x: 28, y: 148, rx: 28, ry: 168 },
   ];
+  /* O lado `i` sai de `vertices[i]` e cai em `vertices[(i + 1) % 3]`. */
+  const lados = ["M 108 46 L 166 132", "M 156 146 L 48 146", "M 36 132 L 92 46"];
+  const CICLO = 7.2;
   return (
     <Quadro
       titulo="O Triângulo dos Estilos"
@@ -143,8 +163,8 @@ export function TrianguloDosEstilos() {
     >
       <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-6">
         <svg
-          viewBox="0 0 200 176"
-          className="h-44 w-52 shrink-0"
+          viewBox="0 0 200 180"
+          className="h-48 w-56 shrink-0 sm:h-56 sm:w-64"
           role="img"
           aria-label="Deus da Espada vence Deus do Norte, que vence Deus da Água, que vence Deus da Espada"
         >
@@ -154,33 +174,66 @@ export function TrianguloDosEstilos() {
             </marker>
           </defs>
 
-          {/* O anel que gira: o ciclo não tem começo. */}
+          {/* O anel: o ciclo não tem começo. Ele gira devagar e fica atrás de tudo. */}
           <circle
-            className="triangulo-gira fill-none stroke-gold-500/25 [stroke-dasharray:3_9]"
+            className="triangulo-gira fill-none stroke-gold-500/20 [stroke-dasharray:3_9]"
             cx="100"
             cy="108"
-            r="72"
+            r="74"
             strokeWidth="1.5"
           />
 
-          {/* Os três lados, cada um uma seta de quem vence quem. */}
-          {[
-            "M 108 46 L 166 132",
-            "M 156 146 L 48 146",
-            "M 36 132 L 92 46",
-          ].map((d) => (
+          {/* Os três lados em repouso: a seta de quem vence quem. */}
+          {lados.map((d) => (
             <path
               key={d}
               d={d}
               markerEnd="url(#ponta)"
-              className="fill-none stroke-wine-500/70 dark:stroke-wine-400/60"
+              className="fill-none stroke-wine-500/45 dark:stroke-wine-400/35"
               strokeWidth="2"
             />
           ))}
 
-          {vertices.map((v) => (
+          {/*
+            O golpe. Um segundo traço por cima do mesmo lado, curto e brilhante,
+            que corre do atacante até o alvo. `pathLength={100}` deixa o dash em
+            porcentagem — ver o comentário do componente.
+          */}
+          {lados.map((d, i) => (
+            <path
+              key={`golpe-${d}`}
+              d={d}
+              pathLength={100}
+              style={{ animationDelay: `${i * (CICLO / 3)}s`, animationDuration: `${CICLO}s` }}
+              className="triangulo-golpe fill-none stroke-gold-400 [stroke-dasharray:13_87] dark:stroke-gold-300"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+          ))}
+
+          {vertices.map((v, i) => (
             <g key={v.nome}>
-              <circle cx={v.x} cy={v.y} r="7" className="fill-gold-400 stroke-gold-600/60" strokeWidth="1.5" />
+              {/*
+                O vértice `i` é atingido pelo lado `(i + 2) % 3` — o que sai de
+                quem o vence. O delay é o fim daquele lado: quando o golpe chega.
+              */}
+              <circle
+                cx={v.x}
+                cy={v.y}
+                r="7.5"
+                style={{ animationDelay: `${(((i + 2) % 3) + 1) * (CICLO / 3)}s`, animationDuration: `${CICLO}s` }}
+                className="triangulo-apanha fill-gold-400 stroke-gold-600/60"
+                strokeWidth="1.5"
+              />
+              <text
+                x={v.rx}
+                y={v.ry}
+                textAnchor="middle"
+                className="fill-parchment-800 text-[11px] font-bold dark:fill-parchment-100"
+                style={{ fontFamily: "inherit" }}
+              >
+                {v.curto}
+              </text>
             </g>
           ))}
         </svg>
@@ -217,15 +270,23 @@ export function TrianguloDosEstilos() {
  * seguinte.
  */
 export function EtapasDoTiroPerfeito() {
+  /*
+   * `cd: false` na Solta — 0.1.69.
+   *
+   * A CD 12 valia pras QUATRO caixas quando o rótulo era fixo, e a quarta
+   * estampava "ataque · CD 12", que é uma regra que não existe: a Solta é o
+   * ataque normal, contra a CA do alvo. Um jogador que lesse só o diagrama
+   * rolaria contra 12 e acertaria coisa que devia errar.
+   */
   const etapas = [
-    { n: "1", nome: "A Corda", teste: "Força", da: "+3 degraus no dado" },
-    { n: "2", nome: "Os Dedos", teste: "Agilidade", da: "ignora Cobertura" },
-    { n: "3", nome: "A Leitura", teste: "Intuição", da: "Vantagem no acerto" },
-    { n: "4", nome: "A Solta", teste: "ataque", da: "o disparo" },
+    { n: "1", nome: "A Corda", teste: "Força", cd: true, da: "+3 degraus no dado" },
+    { n: "2", nome: "Os Dedos", teste: "Agilidade", cd: true, da: "ignora Cobertura" },
+    { n: "3", nome: "A Leitura", teste: "Intuição", cd: true, da: "Vantagem no acerto" },
+    { n: "4", nome: "A Solta", teste: "ataque normal", cd: false, da: "o disparo" },
   ];
   return (
     <Quadro
-      titulo="O Tiro Perfeito, Ação por Ação"
+      titulo="O Tiro Perfeito, Ação por Ação — só quem tem Arquearia"
       nota="Quatro Ações num turno de três: ele sempre atravessa turnos. A linha tracejada é onde o seu turno acaba — e é por isso que levar dano no meio cobra teste de Concentração. O talento Etapa Encurtada junta as duas primeiras e faz o tiro caber num turno."
       rolavel
     >
@@ -243,7 +304,8 @@ export function EtapasDoTiroPerfeito() {
                 {e.nome}
               </span>
               <span className="mt-0.5 text-[10px] text-parchment-600 dark:text-parchment-400">
-                {e.teste} · CD 12
+                {e.teste}
+                {e.cd && " · CD 12"}
               </span>
               <span className="mt-auto pt-1.5 text-[10px] font-semibold text-wine-700 dark:text-wine-300">
                 {e.da}

@@ -120,28 +120,66 @@ await comNavegador(async ({ abrir }) => {
    */
   let recorte = null;
   if (ancora) {
-    const topo = await avaliar(`(() => {
-      const el = document.getElementById(${JSON.stringify(ancora)});
-      if (!el) return null;
-      return el.getBoundingClientRect().top + window.scrollY;
-    })()`);
-    if (topo === null || topo === undefined) {
-      console.error(`❌ Não achei #${ancora} na página.`);
-      process.exit(1);
+    /*
+     * MEDIR DUAS VEZES, com uma rolagem no meio — 0.1.69.
+     *
+     * Uma medição só saía sempre no mesmo lugar errado, e a causa não era
+     * timing: o `/livro` usa `content-visibility` e mídia `loading="lazy"`, e o
+     * navegador ESTIMA a altura do que ainda não pintou. Medir com a página no
+     * topo é medir um documento que ainda não existe no comprimento que terá.
+     *
+     * Rolar até a âncora força o navegador a pintar tudo que ficou pra trás.
+     * A segunda medição, depois disso, é sobre o documento de verdade.
+     */
+    for (let passada = 0; passada < 3; passada++) {
+      const achou = await avaliar(`(() => {
+        const el = document.getElementById(${JSON.stringify(ancora)});
+        if (!el) return false;
+        /*
+         * Abrir os <details> ANCESTRAIS antes de rolar.
+         *
+         * O catálogo de árvores do Cap. 3 mora dentro de um <details> por
+         * árvore, fechado por padrão. O id existe no DOM, o script achava, e
+         * mesmo assim a foto saía do topo da página: conteúdo de <details>
+         * fechado é \`display: none\`, e \`scrollIntoView\` num elemento que não
+         * tem caixa simplesmente não faz nada. O erro era mudo dos dois lados —
+         * o script dizia que achou, e a foto mostrava outra coisa.
+         */
+        for (let p = el.parentElement; p; p = p.parentElement) {
+          if (p.tagName === "DETAILS") p.open = true;
+        }
+        el.scrollIntoView({ block: "start" });
+        return true;
+      })()`);
+      if (!achou) {
+        console.error(`❌ Não achei #${ancora} na página.`);
+        process.exit(1);
+      }
+      await dormir(700);
     }
-    recorte = {
-      x: 0,
-      y: Math.max(0, topo - 24),
-      width: largura,
-      height: Number(alturaPedida ?? 900),
-      scale: 1,
-    };
+    /*
+     * A foto da âncora é da VIEWPORT ROLADA — 0.1.69.
+     *
+     * A versão anterior recortava por coordenada absoluta do documento, e saía
+     * sempre no mesmo lugar errado a partir de um certo ponto do `/livro`. A
+     * causa é um teto do compositor: `captureBeyondViewport` compõe a página
+     * inteira numa surface só, e acima de ~16 mil pixels o `clip` é
+     * silenciosamente ignorado — o que é exatamente onde o Capítulo 3 começa
+     * num livro de 87 mil pixels de rolagem.
+     *
+     * Rolar até a âncora e fotografar a viewport não tem teto nenhum: o que o
+     * navegador pinta é o que sai. O `scrollIntoView` acima já deixou a página
+     * na posição certa; aqui só se ajusta o cabeçalho `sticky`, que cobriria o
+     * topo do alvo.
+     */
+    await avaliar("window.scrollBy(0, -72)");
+    await dormir(400);
   }
 
   // Sem --altura, cresce a viewport até a página inteira: `captureBeyondViewport`
   // sozinho não resolve porque layout sticky e `100vh` continuam ancorados na
   // altura declarada, e a foto sai com o cabeçalho repetido no meio.
-  if (!alturaPedida && !recorte) {
+  if (!alturaPedida && !ancora) {
     const alturaTotal = Math.min((await avaliar("document.documentElement.scrollHeight")) ?? 900, 30000);
     await enviar("Emulation.setDeviceMetricsOverride", {
       width: largura,
@@ -157,7 +195,8 @@ await comNavegador(async ({ abrir }) => {
   // rolagem, ele devolve um PNG de 87 mil pixels de altura.
   const foto = await enviar("Page.captureScreenshot", {
     format: "png",
-    captureBeyondViewport: !alturaPedida || Boolean(recorte),
+    // Com âncora, a viewport JÁ está no lugar certo — ver o bloco da âncora.
+    captureBeyondViewport: !alturaPedida && !ancora,
     ...(recorte ? { clip: recorte } : {}),
   });
   writeFileSync(saida, Buffer.from(foto.result.data, "base64"));

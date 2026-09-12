@@ -317,6 +317,27 @@ export default function Chapter3() {
         />
 
         <SubTitle id="cap3-preparacao">3. A Preparação em Etapas — o Tiro Perfeito</SubTitle>
+        {/*
+          O aviso vem ANTES da explicação, e não depois — 0.1.69.
+
+          Esta seção mora no Capítulo 3, que é o capítulo das regras que valem
+          pra todo mundo (Ações, Reações, Touki). Ler "o Tiro Perfeito, da
+          Arquearia" no meio de um parágrafo não desfaz a impressão que o LUGAR
+          já deu: a de que é mais uma manobra universal. O pré-requisito tem que
+          ser a primeira coisa na tela, não uma aposta na atenção do leitor.
+        */}
+        <Warning title="Exclusivo da Arquearia — ninguém mais atira assim">
+          <P>
+            O Tiro Perfeito <b>não</b> é uma manobra aberta a qualquer personagem. É a habilidade de
+            assinatura de <b>Arquearia</b>, no patamar Principiante, e usar exige as duas coisas ao mesmo
+            tempo: ter <b>comprado aquele nó da árvore</b> com PA, e estar com <b>arco ou besta</b> em mãos.
+          </P>
+          <P>
+            Não há versão improvisada, não se compra avulso, nenhuma outra árvore concede, e nem Deus da
+            Espada nem Deus do Norte têm equivalente. Quem não é arqueiro mira e atira normalmente — a
+            escada de etapas abaixo <b>inteira</b> está fechada pra ele.
+          </P>
+        </Warning>
         <P>
           Toda técnica do livro compra potência com <b>recurso</b>: PT, PM, PP. O Tiro Perfeito, da
           Arquearia, é a única que compra com <b>tempo</b> — e é por isso que ele é um sistema, e não uma

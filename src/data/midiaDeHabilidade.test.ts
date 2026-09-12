@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { ehVideo, MIDIA_DE_HABILIDADE, midiaDaHabilidade } from "./midiaDeHabilidade";
+import { ARTE_DO_DOJO, ehVideo, MIDIA_DE_HABILIDADE, midiaDaHabilidade } from "./midiaDeHabilidade";
 import { TREES } from "./trees";
 
 /**
@@ -41,6 +41,26 @@ describe("Os arquivos", () => {
       expect(m.src.startsWith("/"), chave).toBe(true);
     }
   });
+
+  /*
+   * Acento em caminho de URL falha CALADO — 0.1.69.
+   *
+   * `armadilha de caça.gif` existe em disco, o teste acima passa, e a imagem
+   * simplesmente não aparece em parte dos servidores estáticos: o arquivo é
+   * gravado em NFC e pedido em NFD (ou o contrário), e os dois nomes não batem
+   * byte a byte. Espaço tudo bem — o navegador escapa sozinho, e `/water
+   * cannion.webm` funciona desde a 0.1.68. Acento e símbolo, não.
+   */
+  it("nenhum nome de arquivo tem caractere fora do ASCII", () => {
+    const comAcento = Object.entries(MIDIA_DE_HABILIDADE)
+      .filter(([, m]) => /[^\x20-\x7E]/.test(m.src))
+      .map(([chave, m]) => `${chave} → ${m.src}`);
+    expect(comAcento, `renomeie em disco:\n${comAcento.join("\n")}`).toEqual([]);
+  });
+
+  it("a arte do Dojo existe em disco", () => {
+    expect(existsSync(path.join(PUBLIC, ARTE_DO_DOJO.src))).toBe(true);
+  });
 });
 
 describe("As habilidades", () => {
@@ -49,9 +69,11 @@ describe("As habilidades", () => {
    * ou removida num ajuste de regra, e aí ela nunca mais aparece.
    */
   it("toda habilidade citada existe no livro", () => {
-    const existentes = new Set<string>(
-      TREES.flatMap((t) => t.ranks.flatMap((r) => (r.abilities ?? []).map((a) => `${t.id}/${a.id}`)))
-    );
+    const existentes = new Set<string>([
+      ...TREES.flatMap((t) => t.ranks.flatMap((r) => (r.abilities ?? []).map((a) => `${t.id}/${a.id}`))),
+      // Talento também pode ter arte desde a 0.1.69 — Marcha Forçada é o caso.
+      ...TREES.flatMap((t) => t.ranks.flatMap((r) => (r.talents ?? []).map((a) => `${t.id}/${a.id}`))),
+    ]);
     /*
      * A chave `treeId/maestria` é legítima e não aponta pra uma habilidade: a
      * Maestria é um campo do patamar, não uma entrada comprável. Ela entra na
@@ -63,6 +85,25 @@ describe("As habilidades", () => {
     }
     const orfas = Object.keys(MIDIA_DE_HABILIDADE).filter((k) => !existentes.has(k));
     expect(orfas, `arte sem habilidade: ${orfas.join(", ")}`).toEqual([]);
+  });
+
+  /*
+   * A chave é `treeId/id`, e desde a 0.1.69 o `id` pode ser de talento OU de
+   * habilidade. Isso só é seguro enquanto os dois namespaces não colidirem
+   * dentro da mesma árvore — se colidirem, a arte de um apareceria no outro, e
+   * nada no site diria que está errado.
+   */
+  it("nenhuma árvore tem talento e habilidade com o mesmo id", () => {
+    const colisoes: string[] = [];
+    for (const t of TREES) {
+      const habilidades = new Set(t.ranks.flatMap((r) => (r.abilities ?? []).map((a) => a.id)));
+      for (const r of t.ranks) {
+        for (const tal of r.talents ?? []) {
+          if (habilidades.has(tal.id)) colisoes.push(`${t.id}/${tal.id}`);
+        }
+      }
+    }
+    expect(colisoes, `id disputado por talento e habilidade: ${colisoes.join(", ")}`).toEqual([]);
   });
 
   it("a busca devolve a arte pela dupla árvore + habilidade", () => {
@@ -80,11 +121,14 @@ describe("O texto alternativo", () => {
    * repeti-lo faz o leitor de tela dizer a mesma coisa duas vezes seguidas.
    */
   it("nenhum alt é só o nome da habilidade", () => {
-    const nomePorChave = new Map<string, string>(
-      TREES.flatMap((t) =>
+    const nomePorChave = new Map<string, string>([
+      ...TREES.flatMap((t) =>
         t.ranks.flatMap((r) => (r.abilities ?? []).map((a) => [`${t.id}/${a.id}`, a.name] as const))
-      )
-    );
+      ),
+      ...TREES.flatMap((t) =>
+        t.ranks.flatMap((r) => (r.talents ?? []).map((a) => [`${t.id}/${a.id}`, a.name] as const))
+      ),
+    ]);
     for (const [chave, m] of Object.entries(MIDIA_DE_HABILIDADE)) {
       const nome = nomePorChave.get(chave);
       expect(m.alt.trim().toLowerCase(), chave).not.toBe(nome?.toLowerCase());
