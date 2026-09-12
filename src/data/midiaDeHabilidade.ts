@@ -372,9 +372,21 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/arte/furtividade-e-armadilhas/maestria.gif",
     alt: "A lâmina entrando pelas costas de quem nunca soube que havia alguém ali.",
   },
+  /*
+   * Passo Vazio ganhou o vídeo, e o gif foi pro Vento — 0.1.74.
+   *
+   * O gif mostra passos silenciosos, que é o talento Pés Leves (Vento,
+   * Principiante): "+3m de Deslocamento, e você não deixa pegadas nem faz
+   * ruído". Passo Vazio é outra coisa — você SOME do combate, não é alvo
+   * válido e ninguém determina sua posição —, e é isso que o vídeo mostra.
+   */
   "furtividade-e-armadilhas/passo-vazio": {
-    src: "/arte/furtividade-e-armadilhas/passo-vazio.gif",
-    alt: "Passos que atravessam a sala sem fazer barulho nem levantar poeira.",
+    src: "/arte/furtividade-e-armadilhas/passo-vazio.mp4",
+    alt: "Alguém se encolhendo atrás do tronco de uma árvore no meio do parque, até ninguém mais saber onde ele está.",
+  },
+  "furtividade-e-armadilhas/leitura-de-cena": {
+    src: "/arte/furtividade-e-armadilhas/leitura-de-cena.mp4",
+    alt: "Um homem de terno parado numa sala alheia, lendo os detalhes em volta e já sabendo o que aconteceu ali.",
   },
   "furtividade-e-armadilhas/primeiro-golpe": {
     src: "/arte/furtividade-e-armadilhas/primeiro-golpe.gif",
@@ -449,6 +461,19 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   "invocacao/maestria": {
     src: "/arte/invocacao/maestria.gif",
     alt: "Um círculo mágico se desenhando no chão e acendendo por inteiro.",
+  },
+  "invocacao/evolucao-forma-media": {
+    src: "/arte/invocacao/evolucao-forma-media.gif",
+    alt: "Um filhote de fogo sumindo dentro de um clarão branco e saindo dele maior, de garras e chifre.",
+  },
+  /*
+   * O id é `evolucao-forma-imortal`, e o nome no livro é "Evolução: Forma
+   * Suprema" — o id ficou de uma versão anterior do talento. A arte segue o
+   * id, que é o que a chave do mapa usa.
+   */
+  "invocacao/evolucao-forma-imortal": {
+    src: "/arte/invocacao/evolucao-forma-imortal.gif",
+    alt: "Três feras já no auge, lado a lado, ainda brilhando da evolução que acabou de terminar.",
   },
   "invocacao/pacto-golem-de-guerra": {
     src: "/arte/invocacao/pacto-golem-de-guerra.png",
@@ -549,6 +574,10 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   "vento/maestria": {
     src: "/arte/vento/maestria.gif",
     alt: "O ar se movendo em volta da mão, ainda sem força pra machucar ninguém.",
+  },
+  "vento/pes-leves": {
+    src: "/arte/vento/pes-leves.gif",
+    alt: "Passos que atravessam a sala sem fazer barulho nem levantar poeira.",
   },
   "vento/empurrao": {
     src: "/arte/vento/empurrao.webp",
