@@ -132,10 +132,16 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
               href={`#${chapter.id}`}
               onClick={onNavigate}
               aria-current={activeId === chapter.id ? "location" : undefined}
-              className={`block rounded px-1 py-0.5 font-semibold hover:text-wine-600 dark:hover:text-wine-300 ${
+              /*
+               * O capítulo ativo ganha um filete dourado à esquerda, e não só
+               * fundo — 0.1.64. Num sumário de 69 entradas, o fundo sozinho
+               * some entre as linhas: o filete é o que se acha de relance
+               * quando a pessoa volta pro sumário depois de ler.
+               */
+              className={`block rounded-lg border-l-[3px] px-2 py-1 font-display font-bold transition-all duration-150 hover:translate-x-0.5 hover:text-wine-600 dark:hover:text-wine-300 ${
                 activeId === chapter.id
-                  ? "bg-wine-500/10 text-wine-700 dark:text-wine-300"
-                  : "text-parchment-800 dark:text-parchment-200"
+                  ? "border-gold-500 bg-gradient-to-r from-wine-500/15 to-transparent text-wine-700 dark:text-wine-300"
+                  : "border-transparent text-parchment-800 dark:text-parchment-200"
               }`}
             >
               {chapter.label}
@@ -148,9 +154,9 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
                       href={`#${c.id}`}
                       onClick={onNavigate}
                       aria-current={activeId === c.id ? "location" : undefined}
-                      className={`-ml-3 block border-l-2 py-0.5 pl-3 hover:text-wine-600 dark:hover:text-wine-300 ${
+                      className={`-ml-3 block border-l-2 py-1 pl-3 transition-all duration-150 hover:translate-x-0.5 hover:border-wine-400/50 hover:text-wine-600 dark:hover:text-wine-300 ${
                         activeId === c.id
-                          ? "border-wine-500 font-medium text-wine-700 dark:text-wine-300"
+                          ? "border-gold-500 bg-gold-500/5 font-semibold text-wine-700 dark:text-wine-300"
                           : "border-transparent text-parchment-600 dark:text-parchment-400"
                       }`}
                     >
