@@ -989,3 +989,192 @@ input[type="number"],
 .area-segura-fundo-8 {
   bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
 }
+
+/* ===========================================================================
+   OS DIAGRAMAS DO LIVRO — 0.1.64
+   ===========================================================================
+
+   A primeira versão (0.1.63) estava certa e sem graça: barras estáticas, caixas
+   paradas. O relato foi direto — "ficou tudo meio feio, quero lindo, animado".
+
+   O princípio aqui é um só: **a animação tem que ensinar alguma coisa**. A
+   escada cresce porque ela é uma escalada; as etapas do Tiro Perfeito acendem
+   em sequência porque elas SÃO uma sequência que atravessa turnos; o Fio da
+   Vida pulsa porque é um coração que ainda bate. Animação que não ensina é
+   distração num documento de 87 mil pixels.
+
+   Tudo aqui respeita `prefers-reduced-motion`: quem pediu menos movimento
+   recebe o diagrama pronto, sem perder informação nenhuma.
+   =========================================================================== */
+
+.diagrama {
+  --brilho: color-mix(in srgb, var(--color-gold-400) 55%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+/* O brilho que atravessa a moldura uma vez, quando ela entra na tela. */
+.diagrama::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    color-mix(in srgb, var(--color-gold-300) 14%, transparent) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+}
+
+/* --- As barras da Escada de Dados e dos Patamares -------------------------- */
+.barra-cresce {
+  transform-origin: 50% 100%;
+  transform: scaleY(0.04);
+}
+
+/* --- As etapas que acendem em sequência ----------------------------------- */
+.etapa-acende {
+  transition:
+    border-color 240ms ease,
+    box-shadow 240ms ease,
+    transform 240ms ease;
+}
+
+/*
+ * `animation-timeline: view()` dispara quando o elemento ENTRA na tela, e não
+ * quando a página carrega. Num livro que rola por 87 mil pixels isso é a
+ * diferença entre a animação acontecer pra quem está olhando e acontecer três
+ * capítulos antes, sozinha.
+ */
+@supports (animation-timeline: view()) {
+  .barra-cresce {
+    animation: barra-cresce 620ms cubic-bezier(0.34, 1.4, 0.64, 1) both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 26%;
+  }
+
+  .diagrama::after {
+    animation: diagrama-brilho 1100ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 20% cover 40%;
+  }
+
+  .surge {
+    animation: surge 520ms ease-out both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 30%;
+  }
+}
+
+/* Sem `view()` (Safari até o 26), tudo aparece pronto — nada se perde. */
+@supports not (animation-timeline: view()) {
+  .barra-cresce {
+    transform: none;
+  }
+}
+
+@keyframes barra-cresce {
+  from {
+    transform: scaleY(0.04);
+    opacity: 0.2;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes diagrama-brilho {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes surge {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- O pulso do Fio da Vida ------------------------------------------------ */
+.pulso-vida {
+  animation: pulso-vida 1.9s ease-in-out infinite;
+}
+
+@keyframes pulso-vida {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.13);
+  }
+  24% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  34% {
+    opacity: 0.95;
+    transform: scale(1.07);
+  }
+}
+
+/* --- A sequência do Tiro Perfeito e do Turno ------------------------------ */
+.acende-em-sequencia > * {
+  animation: acende 4.8s ease-in-out infinite;
+}
+
+@keyframes acende {
+  0%,
+  62%,
+  100% {
+    box-shadow: none;
+    border-color: var(--cor-repouso, currentColor);
+  }
+  8%,
+  22% {
+    box-shadow: 0 0 0 2px var(--brilho), 0 6px 18px -8px var(--brilho);
+  }
+}
+
+/* --- O giro do Triângulo dos Estilos --------------------------------------- */
+.triangulo-gira {
+  animation: triangulo-gira 22s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+@keyframes triangulo-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/*
+ * Quem pediu menos movimento recebe o diagrama PRONTO — e não o diagrama
+ * congelado no primeiro quadro, que é o erro clássico: uma barra com
+ * `scaleY(0.04)` parada não é "sem animação", é um gráfico errado.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .barra-cresce,
+  .surge,
+  .pulso-vida,
+  .acende-em-sequencia > *,
+  .triangulo-gira,
+  .diagrama::after {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

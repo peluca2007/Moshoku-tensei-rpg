@@ -15,7 +15,12 @@ export function ChapterTitle({ id, children }: { id: string; children: ReactNode
     <header className="scroll-mt-24">
       <h2
         id={id}
-        className="scroll-mt-24 text-3xl font-black tracking-tight text-parchment-900 sm:text-4xl dark:text-parchment-50"
+        /*
+         * `text-balance` quebra o título em linhas de largura parecida em vez de
+         * deixar uma palavra órfã na segunda — num título de capítulo, que é a
+         * maior tipografia da página, uma órfã salta aos olhos.
+         */
+        className="scroll-mt-24 text-balance bg-gradient-to-br from-parchment-900 to-wine-800 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl dark:from-parchment-50 dark:to-gold-200"
       >
         {children}
       </h2>
@@ -74,7 +79,7 @@ export function P({ children, className = "" }: { children: ReactNode; className
 /** Caixa de regra/nota — equivalente às caixas indentadas (`#####`) do livro original. */
 export function Aside({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-l-[3px] border-wine-200 border-l-wine-400 bg-wine-50/60 p-3.5 text-sm dark:border-wine-900 dark:border-l-wine-600 dark:bg-wine-950/30">
+    <div className="rounded-xl border border-l-[3px] border-wine-200 border-l-wine-400 bg-gradient-to-br from-wine-50/70 to-wine-100/20 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-wine-900 dark:border-l-wine-600 dark:from-wine-950/40 dark:to-wine-950/10">
       {title && <p className="mb-1 font-semibold text-wine-800 dark:text-wine-300">{title}</p>}
       {/* `max-w-[74ch]`: a caixa usa a largura inteira de propósito (ela é
           consultada, não lida em fluxo), mas o TEXTO dentro dela continua sendo
@@ -93,7 +98,7 @@ export function Aside({ title, children }: { title?: string; children: ReactNode
  */
 export function Warning({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-l-[3px] border-gold-200 border-l-gold-500 bg-gold-50/70 p-3.5 text-sm dark:border-gold-800 dark:border-l-gold-500 dark:bg-gold-950/40">
+    <div className="rounded-xl border border-l-[3px] border-gold-200 border-l-gold-500 bg-gradient-to-br from-gold-50/80 to-gold-100/25 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
       {title && <p className="mb-1 font-semibold text-gold-800 dark:text-gold-200">{title}</p>}
       <div className="max-w-[74ch] space-y-1.5 text-parchment-800 dark:text-gold-100/85">{children}</div>
     </div>
