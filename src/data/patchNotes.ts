@@ -66,6 +66,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        heading: "🐛 Um gif de 6,75 MB entrou no livro sem passar pela dieta",
+        items: [
+          "A arte da Evolução: Forma Suprema foi mapeada logo depois de chegar — e a dieta (`comprimir-midia`) tinha rodado ANTES disso. Ela ficou no livro com 6,75 MB, mais que todas as outras artes da página somadas. Virou WebP animado de 765 KB, 88% menor.",
+          "A causa não era o arquivo, era o processo: nada entre 'salvei em public/' e 'está no livro' olhava o TAMANHO. O `check:midia` agora cobra peso, e cobra com precisão pra não virar ruído — acima de 900 KB ainda em .gif/.png/.jpg (nunca passou pela dieta, conserto de um comando) ou acima de 1,5 MB em qualquer formato (já é WebP e ainda pesa: é arquivo de muitos quadros, e o conserto é trocar por uma versão mais curta).",
+          "O aviso já achou o segundo caso na estreia: `touki-concentrado.webp`, 2,13 MB em 326 quadros, que a escada de qualidade não resolve.",
+        ],
+      },
+      {
         heading: "A arte saiu da raiz de public/ e passou a espelhar o livro",
         items: [
           "Os ~120 arquivos ficavam soltos na raiz, com o nome que tinham quando foram baixados — `300.webp`, `desarmar dn=deus do norte.jpg`, `hazy cross dn.webp` — e misturados com o ícone do PWA, o logo e a capa da home.",
