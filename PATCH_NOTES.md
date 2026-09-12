@@ -93,6 +93,26 @@ A raiz de `public/arte/` virou **caixa de entrada**: arquivo novo cai ali, o `ch
 `casar:midia` leva pra pasta da árvore quando o nome bate com o da habilidade. Nenhum script precisa
 mais de lista de exceções pra saber o que é arte e o que é cromo do site.
 
+### 🎚️ As barras de rolagem deixaram de ser do Windows
+
+Eram 15px de cinza com uma seta quadrada em cima e outra embaixo: uma correndo a página inteira ao
+lado do pergaminho, outra dentro do painel do sumário, colada nos títulos. Num site que cuida de
+textura, filete dourado e vinheta, elas eram o único pedaço de interface que ainda era do sistema
+operacional — e apareciam exatamente assim.
+
+Agora são um trilho transparente (a folha continua visível por baixo) e um polegar dourado
+arredondado, com folga feita por borda transparente + `background-clip: padding-box`. As setas
+sumiram: ninguém rola um livro de 100 mil pixels de quarenta em quarenta no clique.
+
+O Firefox fica atrás de um `@supports not selector(::-webkit-scrollbar)`, e não junto: no Chrome,
+definir `scrollbar-color` faz o motor usar a barra padrão e **ignorar** todo `::-webkit-scrollbar`
+daquele elemento. Com as duas famílias soltas no `*`, o resultado era pior que o original — as setas
+continuavam lá, agora pintadas de dourado, porque a barra padrão tinge as setas com a cor do polegar.
+
+**O que não mudou:** onde a barra da janela *começa*. Isso ela herda do viewport, e só mudaria
+tirando a rolagem da página e passando pro conteúdo — o que faz o celular parar de recolher a barra
+de endereço ao rolar. Num livro mobile-first, o preço é alto demais pro ganho.
+
 ### 🐛 As duas setinhas no meio do menu não eram um botão
 
 Era uma **barra de rolagem**. A faixa de links do topo tem `overflow-x-auto` pra caber em telas de

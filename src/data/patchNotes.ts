@@ -65,6 +65,15 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        heading: "As barras de rolagem deixaram de ser do Windows",
+        items: [
+          "Eram 15px de cinza com uma seta quadrada em cima e outra embaixo — uma correndo a página inteira ao lado do pergaminho, outra dentro do painel do sumário, colada nos títulos. Num site que cuida de textura, filete dourado e vinheta, elas eram o único pedaço de interface que ainda era do sistema operacional.",
+          "Agora são um trilho transparente (a folha aparece por baixo) e um polegar dourado arredondado, com folga feita por borda transparente. As setas sumiram: ninguém rola um livro de 100 mil pixels de quarenta em quarenta no clique.",
+          "O Firefox fica atrás de um `@supports`, e não junto: no Chrome, definir `scrollbar-color` faz o motor usar a barra padrão e IGNORAR todo `::-webkit-scrollbar`. Com as duas soltas, o resultado era pior que o original — as setas continuavam lá, agora pintadas de dourado. Cada motor recebe um caminho só.",
+          "O que NÃO mudou: onde a barra da janela começa. Isso ela herda do viewport, e só mudaria tirando a rolagem da página e passando pro conteúdo — o que faz o celular parar de recolher a barra de endereço ao rolar. Num livro que é mobile-first, o preço é alto demais pro ganho.",
+        ],
+      },
+      {
         heading: "🐛 As duas setinhas no meio do menu não eram um botão",
         items: [
           "Era uma BARRA DE ROLAGEM. A faixa de links do topo tem `overflow-x-auto` pra caber em telas de ~900px, e overflow num eixo faz o outro virar `auto` por especificação: o conteúdo tinha 37px de altura (o link mais o filete dourado do ativo, 9px abaixo dele) numa caixa de 28px, e o Chrome desenhava uma barra vertical de 15px com setinha em cima e embaixo, no meio do menu, pra rolar nove pixels.",
