@@ -215,10 +215,6 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/em cima do cavalo.webp",
     alt: "A carga a cavalo, lança baixada, ganhando velocidade sobre o terreno aberto.",
   },
-  "cavalaria-e-escudos/a-linha": {
-    src: "/300.webp",
-    alt: "Escudos encostados um no outro formando uma parede contínua de metal.",
-  },
 
   // --- Armas Pesadas -------------------------------------------------------
   /*
@@ -240,6 +236,10 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   "armas-pesadas/agarrao": {
     src: "/agarrao.gif",
     alt: "As mãos fechando em volta do corpo do alvo e tirando dele a chance de sair.",
+  },
+  "armas-pesadas/sem-vergonha": {
+    src: "/lutar bebado.gif",
+    alt: "As mãos enfaixadas em guarda alta, o corpo bambo de propósito pra o golpe não ser lido.",
   },
   "armas-pesadas/punho-de-mineiro": {
     src: "/socos rapidos.gif",
@@ -295,6 +295,10 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/bardo.gif",
     alt: "O bardo tocando pra plateia, medindo a sala pela reação dela.",
   },
+  "bardo-e-interacao/inspiracao": {
+    src: "/passos-de-danca.webp",
+    alt: "Uma dança curta e tímida, feita pra quem está olhando e não pra quem está lutando.",
+  },
   "bardo-e-interacao/o-fim-da-cancao": {
     src: "/o-fim-da-cancao.webp",
     alt: "A última nota da música, e o silêncio pesado que vem logo atrás.",
@@ -329,9 +333,16 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/envenenar alguem.gif",
     alt: "O veneno entrando e se espalhando pelo corpo de quem foi atingido.",
   },
-  "desintoxicacao/selar-a-maldicao": {
+  /*
+   * Purificação, e não Selar a Maldição — 0.1.70.
+   *
+   * As duas são regras opostas neste livro: Purificação REMOVE a aflição;
+   * Selar a Maldição é o que se faz quando não se consegue removê-la, e a
+   * deixa dormente por um ano. O arquivo diz "curar", e curar é remover.
+   */
+  "desintoxicacao/purificacao": {
     src: "/curar-maldicao.gif",
-    alt: "A maldição sendo congelada no corpo do alvo, parada mas ainda ali.",
+    alt: "A aflição saindo do corpo do alvo de vez, e não sendo apenas contida.",
   },
   "desintoxicacao/toque-do-fim": {
     src: "/amaldicoar alguem.gif",
@@ -440,17 +451,9 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/arma pesada machado grande.gif",
     alt: "Um machado enorme descendo com o peso do corpo inteiro atrás, sobre quem já está no chão.",
   },
-  "deus-do-norte/finta-do-norte": {
-    src: "/lutar bebado.gif",
-    alt: "Um corpo bambo e imprevisível, que erra de propósito pra acertar depois.",
-  },
   "deus-do-norte/tumulo-de-aco": {
     src: "/lutar no improviso.gif",
     alt: "A luta feita com o que tinha por perto, sem arma e sem escolher como.",
-  },
-  "deus-do-norte/danca-de-aco": {
-    src: "/passos-de-danca.webp",
-    alt: "Os pés desenhando um passo depois do outro, a luta virando coreografia.",
   },
   "desintoxicacao/estomago-de-ferro": {
     src: "/comer.gif",
@@ -469,12 +472,6 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
 export const ARTE_DO_DOJO: MidiaDeHabilidade = {
   src: "/dojo deus da espada.webp",
   alt: "O pátio de um dojo de espada, com o mestre observando o treino dos alunos.",
-};
-
-/** A arte do **Manto de Touki** (Cap. 3) — a aura, e não uma técnica dela. */
-export const ARTE_DO_TOUKI: MidiaDeHabilidade = {
-  src: "/67 aura.webp",
-  alt: "Um espadachim de quimono escuro parado, com uma aura visível saindo do corpo e cobrindo a pele.",
 };
 
 /** A arte do **Fio da Vida** (Cap. 4, §7) — o corpo a 0 PV, ainda não morto. */
