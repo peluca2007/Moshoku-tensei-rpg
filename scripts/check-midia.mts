@@ -23,7 +23,9 @@
  * Uso: `npm run check:midia`
  */
 
-import { listarArte, urlDaArte } from "./lib/arte.mjs";
+import { statSync } from "node:fs";
+import path from "node:path";
+import { listarArte, PASTA_DA_ARTE, urlDaArte } from "./lib/arte.mjs";
 import {
   ARTE_DO_DOJO,
   ARTE_DO_FIO_DA_VIDA,
@@ -53,6 +55,50 @@ const semUso = naPasta.filter((f) => !usados.has(urlDaArte(f)));
 console.log(`🎨 ${usados.size} artes mapeadas · ${naPasta.length} arquivos em public/arte/`);
 
 /*
+ * O PESO, e não só o destino — 0.1.74.
+ *
+ * `evolucao-forma-imortal.gif` entrou no livro com 6,75 MB e ficou mapeado
+ * assim, porque a dieta (`comprimir-midia`) tinha rodado ANTES de ele chegar.
+ * Nada no caminho entre "salvei o arquivo" e "está no livro" olhava o tamanho —
+ * e num livro que precisa abrir no 4G de quem chegou atrasado na sessão, um
+ * arquivo assim custa mais que todos os outros da página somados.
+ *
+ * O aviso é preciso de propósito, pra não virar ruído que se aprende a ignorar:
+ *
+ * - **Acima de 900 KB e ainda em `.gif`/`.png`/`.jpg`**: nunca passou pela
+ *   dieta, que converte tudo em WebP animado. É o caso que importa, e tem
+ *   conserto de um comando.
+ * - **Acima de 1,5 MB em qualquer formato**: já é WebP e ainda pesa isso, então
+ *   é um arquivo de MUITOS quadros, onde a escada de qualidade não resolve. O
+ *   conserto é trocar por uma versão mais curta, e isso é decisão de quem
+ *   escolheu a arte.
+ *
+ * Entre esses dois está a faixa dos três ou quatro arquivos que já desceram a
+ * escada inteira e pararam perto de 900 KB. Reclamar deles toda vez ensinaria a
+ * pular a lista onde um dia vai estar um de 6 MB.
+ */
+const ALVO = 900 * 1024;
+const TETO_ABSOLUTO = 1.5 * 1024 * 1024;
+const JA_COMPRIMIDO = /\.(webp|webm|mp4)$/i;
+
+const pesados = naPasta
+  .map((f) => ({ f, bytes: statSync(path.join(PASTA_DA_ARTE, f)).size }))
+  .filter(({ f, bytes }) => bytes > TETO_ABSOLUTO || (bytes > ALVO && !JA_COMPRIMIDO.test(f)))
+  .sort((a, b) => b.bytes - a.bytes);
+
+if (pesados.length > 0) {
+  console.log(`\n⚠️  ${pesados.length} acima do peso — o livro abre no 4G da mesa:`);
+  for (const { f, bytes } of pesados) {
+    console.log(`   ${(bytes / 1048576).toFixed(2)} MB  ${f}`);
+  }
+  console.log(
+    '\nRode `node scripts/comprimir-midia.mjs`. Se ele responder "já está no\n' +
+      'melhor que dá", o arquivo é de muitos quadros: o conserto é trocar por uma\n' +
+      "versão mais curta da mesma cena."
+  );
+}
+
+/*
  * O acento é avisado aqui, e não só no teste.
  *
  * O teste do mapa só vê o que já foi MAPEADO — um arquivo recém-baixado com
@@ -71,7 +117,7 @@ if (comAcento.length > 0) {
 }
 
 if (semUso.length === 0) {
-  if (comAcento.length === 0) console.log("✅ Nenhuma arte parada na pasta.");
+  if (comAcento.length === 0 && pesados.length === 0) console.log("✅ Nenhuma arte parada na pasta, e nenhuma acima do peso.");
   process.exit(0);
 }
 

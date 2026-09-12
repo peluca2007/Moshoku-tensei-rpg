@@ -471,7 +471,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
    * id, que é o que a chave do mapa usa.
    */
   "invocacao/evolucao-forma-imortal": {
-    src: "/arte/invocacao/evolucao-forma-imortal.gif",
+    src: "/arte/invocacao/evolucao-forma-imortal.webp",
     alt: "Três feras já no auge, lado a lado, ainda brilhando da evolução que acabou de terminar.",
   },
   "invocacao/pacto-golem-de-guerra": {

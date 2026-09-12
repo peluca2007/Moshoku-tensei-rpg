@@ -100,6 +100,26 @@ Os quatro maiores pesavam **14 MB** juntos e desceram pra **2,4 MB** em WebP ani
 arquivo. Antes descia a escada inteira até 400px pra ganhar 3% — perdendo resolução num arquivo que
 continuava sem caber no alvo.
 
+### 🐛 Um gif de 6,75 MB entrou no livro sem passar pela dieta
+
+A arte da **Evolução: Forma Suprema** foi mapeada logo depois de chegar, e a dieta
+(`comprimir-midia`) tinha rodado *antes* disso. Ela ficou no livro com **6,75 MB** — mais que todas as
+outras artes da página somadas. Virou WebP animado de **765 KB**, 88% menor.
+
+A causa não era o arquivo, era o processo: nada entre "salvei em `public/`" e "está no livro" olhava
+o **tamanho**. O `check:midia` agora cobra peso, e cobra com precisão pra não virar ruído que se
+aprende a ignorar:
+
+| Condição | O que significa | Conserto |
+| --- | --- | --- |
+| > 900 KB e ainda `.gif`/`.png`/`.jpg` | nunca passou pela dieta, que converte tudo em WebP animado | `node scripts/comprimir-midia.mjs` |
+| > 1,5 MB em qualquer formato | já é WebP e ainda pesa isso: é arquivo de muitos quadros | trocar por uma versão mais curta da mesma cena |
+
+Entre os dois fica a faixa dos três ou quatro arquivos que já desceram a escada inteira e pararam
+perto de 900 KB — reclamar deles toda vez ensinaria a pular a lista onde um dia vai estar um de 6 MB.
+
+O aviso achou o segundo caso na estreia: `touki-concentrado.webp`, 2,13 MB em 326 quadros.
+
 ### 📁 A arte saiu da raiz de `public/` e passou a espelhar o livro
 
 Os ~120 arquivos ficavam soltos na raiz, com o nome que tinham quando foram baixados — `300.webp`,
