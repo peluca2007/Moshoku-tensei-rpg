@@ -47,9 +47,30 @@ const porFolha = Number(process.argv.includes("--por-folha")
 
 mkdirSync(SAIDA, { recursive: true });
 
-const arquivos = readdirSync(PUBLIC)
+/*
+ * `--sem-uso` limita a folha ao que ainda não tem destino no livro.
+ *
+ * É o fluxo de trabalho real: `check:midia` lista o que está solto, e a folha
+ * mostra o que essas artes SÃO. Refazer a folha das 90 toda vez que chegam 5
+ * arquivos novos é caro e enterra o que interessa no meio do que já foi visto.
+ */
+let arquivos = readdirSync(PUBLIC)
   .filter((f) => LEGIVEIS.test(f) && !IGNORAR.has(f))
   .sort();
+
+if (process.argv.includes("--sem-uso")) {
+  const mapa = await import("../src/data/midiaDeHabilidade.ts");
+  /*
+   * Pega TODA export que tenha `src` — as artes de seção (`ARTE_DO_*`) crescem
+   * a cada capítulo ilustrado, e listá-las na mão aqui garante esquecer uma e
+   * refotografar uma arte que já tem destino.
+   */
+  const usados = new Set([
+    ...Object.values(mapa.MIDIA_DE_HABILIDADE).map((m) => m.src),
+    ...Object.values(mapa).filter((v) => v && typeof v === "object" && "src" in v).map((v) => v.src),
+  ]);
+  arquivos = arquivos.filter((f) => !usados.has(`/${f}`));
+}
 
 /** O quadro do meio, redimensionado pra caber na célula. */
 async function quadroDoMeio(arquivo) {

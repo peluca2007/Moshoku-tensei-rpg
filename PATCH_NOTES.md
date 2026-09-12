@@ -5,6 +5,60 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.72 — "Cento e Seis Artes, e Setenta Megabytes a Menos" · 2026-09-12
+
+### 📦 A arte pesava 115 MB. Agora pesa 44.
+
+Um único GIF tinha **18 MB**, e outros dois passavam de 7. Num livro que precisa abrir offline numa
+mesa — e no 4G de quem chegou atrasado na sessão — isso não é detalhe de build.
+
+Tudo virou **WebP animado**, descendo uma escada de largura e qualidade até caber no alvo. A escada
+existe porque o mesmo par que resolve um GIF de 30 quadros não resolve um de 330, e derrubar a
+qualidade de todos ao nível do pior seria pagar pelo pior em cima dos outros oitenta. Nada desceu
+abaixo de 400px de largura, numa moldura que mostra 256px de altura.
+
+Três ferramentas novas sustentam isso:
+
+| Comando | O que faz |
+| --- | --- |
+| `npm run check:midia` | Lista a arte que está na pasta e **não** está no livro — e avisa de acento no nome. |
+| `npm run casar:midia` | Liga arquivo a habilidade quando os nomes batem, e imprime a linha do mapa pronta. |
+| `node scripts/folha-de-contato.mjs --sem-uso` | Mosaico com o quadro do **meio** de cada arquivo animado. |
+
+### 🐛 CORREÇÃO: a falange de escudos era uma lâmina de água
+
+O arquivo se chamava `300.webp`. Foi mapeado como a parede de escudos do filme e foi parar em
+**A Linha**, a habilidade de Rei do Escudeiro. É um corte de espada sobre água rasa.
+
+A causa é de método: **nome de arquivo é a lembrança de quem baixou, não a descrição da cena.** E
+abrir o arquivo e olhar o primeiro quadro engana quase tanto — em arquivo animado o primeiro quadro
+costuma ser a transição: fundo branco, borrão, a tela antes do golpe. Daí a folha de contato pegar o
+quadro do meio.
+
+Outros quatro destinos caíram pelo mesmo motivo:
+
+- A maestria **O Corpo é a Arma** estava ilustrada com um machado. A tese dela é que você *não*
+  precisa de arma.
+- A maestria **Passo sem Peso** do Vendaval, que é movimento, estava com um gif de corte.
+- A dança era do **Bardo**, não do Deus do Norte.
+- `curar maldição` estava em **Selar a Maldição** — que é exatamente o que se faz quando *não* se
+  consegue curar. Foi pra Purificação.
+
+### 🔥 Chama do Êxodo
+
+*Tempestade de Fogo* passou a se chamar **Chama do Êxodo** (獄炎火弾 / Exodus Flame): magia de Fogo
+Avançado que existe no material original com a mesma forma da do livro — esfera grande, área que
+continua queimando. O `id` interno **não** mudou: ele é a chave das fichas já salvas na mesa, e
+trocá-lo apagaria a magia de quem já comprou.
+
+### 🎨 Arte de seção
+
+O Manto de Touki (Cap. 4, §6), o Fio da Vida (§7), o Dojo (Cap. 5, §5) e as duas técnicas de Touki
+que se compram com PT (Cap. 3, §2) ganharam arte. Elas ilustram a **regra**, e não uma habilidade de
+árvore — por isso ficam fora do mapa, que exige que toda chave exista como habilidade.
+
+---
+
 ## 0.1.69 — "O Tiro Perfeito Não É de Todo Mundo" · 2026-09-11
 
 ### 🏹 O pré-requisito da Arquearia virou a primeira linha da seção
