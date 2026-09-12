@@ -232,8 +232,21 @@ export const FOGO_TREE: Tree = {
       ],
       abilities: [
         {
+          /*
+           * "Chama do Êxodo" — o nome canônico, adotado na 0.1.69.
+           *
+           * 獄炎火弾 / Exodus Flame é magia de Fogo de rank Avançado no material
+           * original: uma bola de fogo que apaga uma manada inteira de uma vez,
+           * e cujo calor queima o próprio conjurador que estiver perto demais.
+           * É exatamente esta magia — esfera de 12m, Avançado, área que continua
+           * queimando — e ela estava com um nome inventado.
+           *
+           * O `id` continua `tempestade-de-fogo`: ele é a chave de fichas já
+           * salvas no localStorage da mesa, e trocá-lo apagaria a magia da ficha
+           * de quem já comprou. Nome é texto; id é dado.
+           */
           id: "tempestade-de-fogo",
-          name: "Tempestade de Fogo",
+          name: "Chama do Êxodo",
           signature: true,
           paCost: RANK_PA_COST.signature.Avançado,
           pmCost: 6,
@@ -243,7 +256,7 @@ export const FOGO_TREE: Tree = {
           effect:
             "Teste de Agilidade (CD 8 + BC), metade se passar. Falha: Em Chamas. A área continua queimando 1 minuto: quem começar o turno dentro sofre +2d6.",
           incantation:
-            "Vento que alimenta e chama que devora, girem juntos, um empurrando o outro,\ncada volta mais rápida que a anterior, cada rajada mais faminta,\naté que não reste ar para respirar nem nome pra lembrar deste lugar.\nTempestade de Fogo!",
+            "Que este fogo não se contente com um corpo, nem com dois, nem com a fileira inteira\nque veio até aqui achando que era muita gente pra mim;\nque ele desça sobre este chão como desce a sentença sobre quem já foi julgado\nantes mesmo de abrir a boca pra se explicar,\ne que não sobre nada de pé pra contar o que aconteceu neste lugar.\nChama do Êxodo!",
         },
         {
           id: "coluna-solar",
