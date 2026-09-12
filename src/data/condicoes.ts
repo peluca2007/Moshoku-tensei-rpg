@@ -1,3 +1,5 @@
+import { RANK_BONUS } from "@/lib/types";
+
 /**
  * O Glossário de Condições do Cap. 4, §2 — agora dado, e não tabela escrita à mão.
  *
@@ -252,6 +254,18 @@ export const CONDICOES: Condicao[] = [
       "Falha automaticamente em testes que dependam de audição. Não consegue usar Conjuração Padrão nem Encurtada (exigem cântico verbal) — só Conjuração Silenciosa continua funcionando pra você.",
   },
 ];
+
+/**
+ * O teto de acúmulos quando a mesa não disse QUEM aplicou a condição — 0.1.73.
+ *
+ * Quebrantado acumula "até o máximo do Bônus de Rank de quem aplicou", e a
+ * ficha só conhece o rank do alvo. Sem a fonte informada, o limite cai no maior
+ * Bônus de Rank que o livro concede a uma criatura que entra em combate.
+ *
+ * `Imperador` (6), e não `Deus` (7): o Rank Deus é narrativo, não se compra com
+ * PA, e nenhuma linha do bestiário aplica condição com ele.
+ */
+export const TETO_DE_ACUMULOS = RANK_BONUS.Imperador;
 
 export function getCondicaoPorId(id: string): Condicao | undefined {
   return CONDICOES.find((c) => c.id === id);

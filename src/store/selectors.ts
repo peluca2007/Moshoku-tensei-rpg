@@ -13,7 +13,7 @@ import { getTreeById } from "@/data/trees";
 import { getCombinedSpellById } from "@/data/combinedSpells";
 import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
-import { Condicao, getCondicaoPorId } from "@/data/condicoes";
+import { Condicao, getCondicaoPorId, TETO_DE_ACUMULOS } from "@/data/condicoes";
 import { getSkillByName } from "@/data/skills";
 import {
   ATTRIBUTE_CREATION_POINTS,
@@ -981,13 +981,22 @@ export interface CondicaoNaFicha {
   condicao: Condicao;
   acumulos: number;
   nota?: string;
+  /** O Bônus de Rank de quem aplicou, quando a mesa informou — ver `CondicaoAtiva`. */
+  bonusDeRankDaFonte?: number;
 }
 
 export function getCondicoesAtivas(state: StoreState): CondicaoNaFicha[] {
   return (state.condicoes ?? [])
     .map((ativa): CondicaoNaFicha | null => {
       const condicao = getCondicaoPorId(ativa.id);
-      return condicao ? { condicao, acumulos: ativa.acumulos ?? 1, nota: ativa.nota } : null;
+      return condicao
+        ? {
+            condicao,
+            acumulos: ativa.acumulos ?? 1,
+            nota: ativa.nota,
+            bonusDeRankDaFonte: ativa.bonusDeRankDaFonte,
+          }
+        : null;
     })
     .filter((x): x is CondicaoNaFicha => x !== null);
 }
@@ -1000,10 +1009,24 @@ export function getCondicoesAtivas(state: StoreState): CondicaoNaFicha[] {
  * o que se pode fazer (Ações, Deslocamento) — coisas que a ficha mostra, mas não
  * soma.
  */
-function getPenalidadeQuebrantado(state: StoreState): number {
+export function getPenalidadeQuebrantado(state: StoreState): number {
   const q = getCondicoesAtivas(state).find((c) => c.condicao.id === "quebrantado");
-  return q ? q.acumulos : 0;
+  if (!q) return 0;
+  /*
+   * O TETO — 0.1.73.
+   *
+   * A regra é "até o máximo do Bônus de Rank de quem aplicou", e o código
+   * devolvia `acumulos` cru. Nove cliques no `+` do Painel do Mestre levavam a
+   * CA a −9 e o dano de todo ataque a −9, sem nada no sistema dizendo que
+   * aquilo era impossível.
+   *
+   * Quando a mesa informou quem aplicou, o teto é o Bônus de Rank dessa fonte.
+   * Quando não informou, o teto é o maior Bônus de Rank que o livro concede a
+   * uma criatura jogável — não adivinha o número da mesa, só barra o absurdo.
+   */
+  return Math.min(q.acumulos, q.bonusDeRankDaFonte ?? TETO_DE_ACUMULOS);
 }
+
 
 export interface EfeitosDeCondicoes {
   /** Rolagens de ATAQUE saem com Desvantagem, e por causa de quais condições. */

@@ -16,6 +16,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.73",
+    date: "2026-09-12",
+    title: "Duas Regras Que o Livro Prometia e o Código Não Cumpria",
+    sections: [
+      {
+        heading: "Quebrantado tinha teto na regra e não tinha no sistema",
+        items: [
+          "A condição sempre disse 'até o máximo do Bônus de Rank de quem aplicou', e a árvore do Lutador repete isso na Mecânica Central. O código devolvia a contagem crua: nove cliques no + do Painel do Mestre levavam a CA a −9 e o dano de TODO ataque a −9, sem nada no sistema dizendo que aquilo era impossível.",
+          "Agora a condição guarda o Bônus de Rank de quem aplicou, e é ele que limita. Quando a mesa não informa a fonte, o teto cai em 6 — o maior Bônus de Rank que o livro concede a uma criatura que entra em combate (Imperador; o Rank Deus é narrativo e não se compra com PA). O sistema não adivinha o número da mesa, só barra o valor impossível.",
+          "O botão + para no teto, em vez de aceitar o clique e não mudar número nenhum. Um + que responde sem efeito é pior que um botão desligado: a mesa clica três vezes e conclui que a ficha está quebrada.",
+        ],
+      },
+      {
+        heading: "O Descanso Curto dizia três coisas diferentes",
+        items: [
+          "A tabela do Cap. 4 dava '25% dos seus PM, PP e PT'. O aviso logo abaixo dela dizia que PT voltam INTEIROS — corrigindo a tabela que estava três centímetros acima — e, no meio do argumento, que o Curto 'devolve metade da reserva de PM'. O Cap. 3 repetia a metade. Três números pro mesmo descanso.",
+          "O motor sempre aplicou 25% de PM e PP com PT inteiros, e é o que fica. O que mudou foi o TEXTO, nos três lugares: a tabela agora separa PT dos outros dois em vez de ser desmentida por um aviso abaixo, e as duas menções a 'metade' viraram 25%.",
+          "A aritmética do exemplo do curandeiro foi refeita com o número certo: cada Curto devolve 3 PM (42 PV via Juramento), e não metade da reserva. Com dois Curtos por dia ele fecha em 252 PV de cura — uma vez e meia a reserva cheia, e não um poço sem fundo. O argumento do teto continua de pé; só os números estavam errados.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.72",
     date: "2026-09-12",
     title: "Cento e Seis Artes, e Setenta Megabytes a Menos",

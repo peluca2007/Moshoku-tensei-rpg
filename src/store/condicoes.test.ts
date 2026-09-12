@@ -83,6 +83,49 @@ describe("o que a condição faz com os números", () => {
     expect(getArmorClass(ficha())).toBe(base - 2);
   });
 
+  /*
+   * O TETO de Quebrantado — 0.1.73.
+   *
+   * A regra sempre disse "até o máximo do Bônus de Rank de quem aplicou", e o
+   * código devolvia `acumulos` cru. O Painel do Mestre tem um `+` sem limite:
+   * nove cliques levavam a CA a −9 e o dano de TODO ataque a −9, sem nada no
+   * sistema dizendo que aquilo era impossível. Estes dois testes são o que
+   * impede a regressão de voltar calada.
+   */
+  it("Quebrantado para no Bônus de Rank de quem aplicou", () => {
+    const base = getArmorClass(ficha());
+    // Um Principiante aplicou: Bônus de Rank 1, então o teto é 1 — por mais
+    // vezes que a condição seja empilhada.
+    useCharacterStore.getState().aplicarCondicao("quebrantado");
+    useCharacterStore.setState((s) => ({
+      characters: {
+        ...s.characters,
+        [s.activeId!]: {
+          ...s.characters[s.activeId!],
+          condicoes: [{ id: "quebrantado", acumulos: 5, bonusDeRankDaFonte: 1 }],
+        },
+      },
+    }));
+    expect(getArmorClass(ficha())).toBe(base - 1);
+  });
+
+  it("sem saber quem aplicou, o teto é o maior Bônus de Rank do livro", () => {
+    const base = getArmorClass(ficha());
+    // 20 acúmulos e nenhuma fonte informada: o teto cai em 6 (Imperador). Não
+    // adivinha o número da mesa — só barra o valor impossível.
+    useCharacterStore.getState().aplicarCondicao("quebrantado");
+    useCharacterStore.setState((s) => ({
+      characters: {
+        ...s.characters,
+        [s.activeId!]: {
+          ...s.characters[s.activeId!],
+          condicoes: [{ id: "quebrantado", acumulos: 20 }],
+        },
+      },
+    }));
+    expect(getArmorClass(ficha())).toBe(base - 6);
+  });
+
   it("Envenenado NÃO mexe na CA — ele muda como se rola, não o corpo", () => {
     const base = getArmorClass(ficha());
     useCharacterStore.getState().aplicarCondicao("envenenado");

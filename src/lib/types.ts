@@ -703,6 +703,19 @@ export interface CondicaoAtiva {
    */
   acumulos?: number;
   /**
+   * O Bônus de Rank de QUEM APLICOU a condição — o teto dos acúmulos.
+   *
+   * A regra de Quebrantado diz "até o máximo do Bônus de Rank de quem aplicou",
+   * e sem este campo não havia como saber qual é esse máximo: a ficha conhece o
+   * rank do alvo, nunca o do atacante. O resultado é que o teto não existia, e
+   * um Mestre que clicasse o `+` nove vezes levava a CA do personagem a −9.
+   *
+   * Ausente, o teto cai no máximo que o livro permite a qualquer criatura, que
+   * é o Bônus de Rank de Imperador. Isso não inventa um número pra mesa que não
+   * informou a fonte — só impede o valor impossível.
+   */
+  bonusDeRankDaFonte?: number;
+  /**
    * O que a mesa combinou sobre esta aplicação: quem aplicou, até quando, qual
    * CD para se soltar. Texto livre de propósito — a duração das condições é
    * escrita em prosa no livro ("até quebrar o gelo", "enquanto a fonte estiver

@@ -390,7 +390,7 @@ export default function Chapter4() {
           rows={[
             [
               "Curto (1 a 2 horas)",
-              "Recupera 25% dos seus PM, PP e PT máximos (arredondado para baixo). Não recupera Pontos de Vida (0%)."
+              "Recupera 25% dos seus PM e PP máximos (arredondado para baixo) e TODOS os seus PT. Não recupera Pontos de Vida (0%)."
             ],
             [
               "Longo (8 horas de sono seguro)",
@@ -400,20 +400,21 @@ export default function Chapter4() {
         />
         <Warning title="Dois Curtos por dia, e nem um a mais">
           <P>
-            Sem esse teto, o Descanso Curto quebra o livro inteiro: ele devolve metade da reserva de PM, e a
-            Magia de Cura converte PM em PV. Um curandeiro de 1º patamar com <i>Juramento</i> cura 14 PV por
-            1 PM — a reserva de 12 PM vira 168 PV, e cada Curto acrescenta mais 84, indefinidamente. Um grupo
-            de quatro personagens de 1º patamar tem cerca de 144 PV somados: bastava descansar duas horas a
-            mais e a mesa voltava inteira.
+            Sem esse teto, o Descanso Curto quebra o livro inteiro, porque a Magia de Cura converte PM em
+            PV. Um curandeiro de 1º patamar com <i>Juramento</i> cura 14 PV por 1 PM: a reserva cheia de 12
+            PM vale 168 PV, e cada Curto devolve 3 PM — mais 42 PV, indefinidamente. Um grupo de quatro
+            personagens de 1º patamar tem cerca de 144 PV somados: sem teto, bastava sentar de hora em hora
+            e a mesa voltava inteira todas as vezes.
           </P>
           <P>
-            Com dois Curtos por dia, a reserva diária do curandeiro fica em duas vezes o máximo dele, PV
-            volta a ser finito, e o Aviso abaixo — a promessa de que um grupo sem curandeiro sangra na
-            segunda luta — volta a ser verdade. É a premissa de que este capítulo inteiro depende.
+            Com dois Curtos por dia, o curandeiro fecha o dia em 252 PV de cura — uma vez e meia a reserva
+            cheia dele, e não um poço sem fundo. PV volta a ser finito, e o Aviso abaixo — a promessa de que
+            um grupo sem curandeiro sangra na segunda luta — volta a ser verdade. É a premissa de que este
+            capítulo inteiro depende.
           </P>
           <P>
-            <b>PT são a exceção</b>, e voltam inteiros em qualquer Descanso Curto: é o que o Capítulo 3 já
-            dizia, e a tabela acima contradizia. O Touki é fôlego, não mana — recupera-se sentando.
+            <b>PT são a exceção</b>, e voltam inteiros em qualquer Descanso Curto — é por isso que a tabela
+            acima os separa dos outros dois. O Touki é fôlego, não mana: recupera-se sentando.
           </P>
         </Warning>
         <Warning title="A Carne Não Fecha Sozinha">

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Ban, Minus, Plus, Timer, X, Zap } from "lucide-react";
-import { CONDICOES } from "@/data/condicoes";
+import { CONDICOES, TETO_DE_ACUMULOS } from "@/data/condicoes";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getCondicoesAtivas, getEfeitosDeCondicoes } from "@/store/selectors";
 
@@ -71,7 +71,21 @@ export default function CondicoesSection() {
         </p>
       ) : (
         <ul className="space-y-2">
-          {ativas.map(({ condicao, acumulos, nota }) => (
+          {ativas.map(({ condicao, acumulos, nota, bonusDeRankDaFonte }) => {
+            /*
+             * O teto de acúmulos, mostrado — 0.1.73.
+             *
+             * Quebrantado vai "até o máximo do Bônus de Rank de quem aplicou", e
+             * o `+` não tinha limite nenhum. O cálculo agora ignora o que passa
+             * do teto, mas um `+` que aceita o clique e não muda número nenhum é
+             * pior que um botão desligado: a mesa clica três vezes e conclui que
+             * a ficha está quebrada.
+             */
+            const teto = condicao.mecanica?.acumulavel
+              ? (bonusDeRankDaFonte ?? TETO_DE_ACUMULOS)
+              : Infinity;
+            const noTeto = acumulos >= teto;
+            return (
             <li
               key={condicao.id}
               className="rounded-lg border border-wine-300/70 bg-wine-50/60 p-2 dark:border-wine-900 dark:bg-wine-950/30"
@@ -95,8 +109,18 @@ export default function CondicoesSection() {
                     <button
                       type="button"
                       onClick={() => useCharacterStore.getState().ajustarAcumulos(condicao.id, 1)}
-                      aria-label={`Mais um acúmulo de ${condicao.nome}`}
-                      className="flex h-6 w-6 items-center justify-center rounded text-wine-700 hover:bg-wine-500/20 dark:text-wine-300"
+                      disabled={noTeto}
+                      aria-label={
+                        noTeto
+                          ? `${condicao.nome} já está no teto de ${teto} acúmulos`
+                          : `Mais um acúmulo de ${condicao.nome}`
+                      }
+                      title={
+                        noTeto
+                          ? `Teto de ${teto}: o livro limita ao Bônus de Rank de quem aplicou.`
+                          : undefined
+                      }
+                      className="flex h-6 w-6 items-center justify-center rounded text-wine-700 hover:bg-wine-500/20 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:bg-transparent dark:text-wine-300"
                     >
                       <Plus className="h-3 w-3" aria-hidden />
                     </button>
@@ -127,7 +151,8 @@ export default function CondicoesSection() {
                 />
               </label>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
 
