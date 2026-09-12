@@ -95,7 +95,23 @@ export default function Nav() {
           <Logo className="h-16" priority />
         </Link>
 
-        <div className="hidden min-w-0 flex-1 items-center gap-4 overflow-x-auto sm:flex">
+        {/*
+          `overflow-y-hidden` e altura folgada — 0.1.74.
+
+          `overflow-x-auto` sozinho não é só horizontal: quando um eixo deixa de
+          ser `visible`, o outro vira `auto` por especificação. O conteúdo desta
+          faixa tem 37px de altura (o link mais o filete dourado do ativo, que
+          fica 9px abaixo dele) numa caixa de 28px — e o Chrome desenhava uma
+          BARRA DE ROLAGEM VERTICAL de 15px no meio do menu, com setinha em cima
+          e embaixo. Ninguém entendia o que eram aquelas duas setas, e não eram
+          nada: eram uma barra pra rolar 9 pixels.
+
+          `h-12` dá espaço pro filete caber (ele precisa de 43px), e o `overflow-y-hidden` garante que
+          nenhuma sobra futura traga a barra de volta. O scroll horizontal, que
+          é o motivo de tudo isto existir, continua: entre 640px e ~900px os
+          links não cabem todos na linha.
+        */}
+        <div className="hidden h-12 min-w-0 flex-1 items-center gap-4 overflow-x-auto overflow-y-hidden sm:flex">
           {LINKS.map((link) => (
             <Link
               key={link.href}

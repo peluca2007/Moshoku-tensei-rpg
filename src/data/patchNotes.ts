@@ -52,6 +52,7 @@ export const PATCH_NOTES: PatchNote[] = [
         heading: "Doze arquivos que estavam na pasta e ninguém via",
         items: [
           "Três Bainhas, Bala de Lágrimas e Desarme (Deus do Norte); Primeiro Golpe, Veneno Refinado, O Dossiê e A Mão Longa (Furtividade); Cantiga de Marcha e Cantiga de Ninar (Bardo); Emboscada Planejada (Navegação); Espada Emprestada (Deus da Espada) e Nome de Reidar (Deus da Água).",
+          "Mais cinco que chegaram no meio do caminho: Pacto: Golem de Guerra, Evolução Forma Média e Forma Suprema (Invocação), e os dois vídeos do Ladino — Leitura de Cena e Passo Vazio. O gif de passos silenciosos que estava no Passo Vazio foi pro talento Pés Leves, na Magia de Vento, que é o que ele mostra: Passo Vazio não é andar sem ruído, é SUMIR do combate.",
           "Os quatro maiores pesavam 14 MB juntos e desceram pra 2,4 MB em WebP animado. O `comprimir:midia` também aprendeu a desistir: abaixo de 20% de ganho ele não reescreve mais o arquivo — antes descia a escada inteira até 400px pra ganhar 3%, perdendo resolução num arquivo que continuava sem caber no alvo.",
         ],
       },
@@ -61,6 +62,20 @@ export const PATCH_NOTES: PatchNote[] = [
           "Os ~120 arquivos ficavam soltos na raiz, com o nome que tinham quando foram baixados — `300.webp`, `desarmar dn=deus do norte.jpg`, `hazy cross dn.webp` — e misturados com o ícone do PWA, o logo e a capa da home.",
           "Agora cada um mora em `public/arte/<árvore>/<habilidade>.<ext>`: a pasta de uma árvore É o catálogo visual dela, e o nome do arquivo é o id da habilidade. A arte que ilustra uma seção do livro (o Dojo, o Touki, o Fio da Vida) ficou em `arte/livro/`.",
           "A raiz de `public/arte/` virou caixa de entrada: arquivo novo cai ali, o `check:midia` cobra, e o `casar:midia` leva pra pasta da árvore quando o nome bate com o da habilidade. Nenhum script precisa mais de lista de exceções pra saber o que é arte e o que é cromo do site.",
+        ],
+      },
+      {
+        heading: "🐛 As duas setinhas no meio do menu não eram um botão",
+        items: [
+          "Era uma BARRA DE ROLAGEM. A faixa de links do topo tem `overflow-x-auto` pra caber em telas de ~900px, e overflow num eixo faz o outro virar `auto` por especificação: o conteúdo tinha 37px de altura (o link mais o filete dourado do ativo, 9px abaixo dele) numa caixa de 28px, e o Chrome desenhava uma barra vertical de 15px com setinha em cima e embaixo, no meio do menu, pra rolar nove pixels.",
+          "A faixa ganhou altura pro filete caber e o eixo vertical foi fechado. O scroll horizontal, que é o motivo de tudo isso existir, continua.",
+        ],
+      },
+      {
+        heading: "🐛 O sumário lateral do /livro começava debaixo do nav",
+        items: [
+          "Ele grudava a 16px do topo da janela — e o nav é `sticky top-0` com 81px de altura, ou seja, está sempre lá. O título 'Sumário' ficava borrado atrás da barra translúcida e a lista parecia começar cortada.",
+          "Agora ele para em `top-24`, a mesma compensação que todo título do livro já usa pra âncora: o painel começa exatamente onde a rolagem por link também para.",
         ],
       },
       {

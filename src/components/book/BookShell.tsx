@@ -32,7 +32,17 @@ export default function BookShell({ toc, children }: { toc: TocEntry[]; children
       </div>
 
       <aside className="print-hide hidden lg:block">
-        <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+        {/*
+          O sumário gruda ABAIXO do nav, e não a 16px do topo — 0.1.74.
+
+          O nav é `sticky top-0` e tem ~81px de altura: ele está sempre lá. Com
+          `top-4` o painel subia até 16px do topo da janela, quer dizer, até
+          DEBAixo da barra translúcida — o título "Sumário" ficava borrado atrás
+          do menu, e a lista parecia começar cortada. `top-24` é a mesma
+          compensação que todo título do livro já usa no `scroll-mt-24`, então o
+          painel para exatamente onde as âncoras param.
+        */}
+        <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
             Sumário
           </p>
