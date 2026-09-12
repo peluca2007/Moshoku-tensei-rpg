@@ -73,8 +73,17 @@ await comNavegador(async ({ abrir }) => {
    * que o site usa, antes da primeira pintura.
    */
   const { enviar, avaliar, fechar } = await abrir(`${BASE}${rota}`);
+  /*
+   * A chave é "theme", e não "tema" — 0.1.65.
+   *
+   * É o que o `next-themes` lê, e é o que o /semente-dev grava. Enquanto este
+   * script gravava "tema", TODA foto saía no tema escuro: o headless segue o
+   * tema do SO, o localStorage tinha uma chave que ninguém lê, e `--tema claro`
+   * não fazia nada. Foi descoberto tentando ver um defeito que a mesa relatou
+   * justamente no tema claro.
+   */
   await enviar("Page.addScriptToEvaluateOnNewDocument", {
-    source: `try { localStorage.setItem("tema", ${JSON.stringify(tema)}); } catch {}`,
+    source: `try { localStorage.setItem("theme", ${JSON.stringify(tema)}); } catch {}`,
   });
 
   await enviar("Emulation.setDeviceMetricsOverride", {

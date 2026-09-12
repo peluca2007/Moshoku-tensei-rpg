@@ -79,7 +79,17 @@ export function P({ children, className = "" }: { children: ReactNode; className
 /** Caixa de regra/nota — equivalente às caixas indentadas (`#####`) do livro original. */
 export function Aside({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-l-[3px] border-wine-200 border-l-wine-400 bg-gradient-to-br from-wine-50/70 to-wine-100/20 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-wine-900 dark:border-l-wine-600 dark:from-wine-950/40 dark:to-wine-950/10">
+    /*
+     * O fundo é PERGAMINHO tingido de vinho, e não `wine-50` — 0.1.65.
+     *
+     * `wine-50` é #fbeef3: um rosa FRIO, e quase branco (lab L=97). Num site
+     * inteiro de pergaminho quente (#fdf6e3) ele não lia como "caixa de regra",
+     * lia como retângulo branco sujo — foi exatamente essa a queixa da mesa.
+     *
+     * Agora a caixa é mais ESCURA que a página, não mais clara. É assim que uma
+     * caixa de destaque se comporta em papel: ela afunda, não flutua.
+     */
+    <div className="rounded-xl border border-l-[3px] border-wine-300/50 border-l-wine-500 bg-gradient-to-br from-parchment-200/70 to-parchment-100/50 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-wine-900 dark:border-l-wine-600 dark:from-wine-950/40 dark:to-wine-950/10">
       {title && <p className="mb-1 font-semibold text-wine-800 dark:text-wine-300">{title}</p>}
       {/* `max-w-[74ch]`: a caixa usa a largura inteira de propósito (ela é
           consultada, não lida em fluxo), mas o TEXTO dentro dela continua sendo
@@ -98,7 +108,9 @@ export function Aside({ title, children }: { title?: string; children: ReactNode
  */
 export function Warning({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-xl border border-l-[3px] border-gold-200 border-l-gold-500 bg-gradient-to-br from-gold-50/80 to-gold-100/25 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
+    // Mesma razão da caixa acima: `gold-50` (#fcf6e8) é quase indistinguível do
+    // fundo da página. O `gold-100` tem pigmento suficiente pra a caixa existir.
+    <div className="rounded-xl border border-l-[3px] border-gold-400/50 border-l-gold-500 bg-gradient-to-br from-gold-100/80 to-gold-100/40 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
       {title && <p className="mb-1 font-semibold text-gold-800 dark:text-gold-200">{title}</p>}
       <div className="max-w-[74ch] space-y-1.5 text-parchment-800 dark:text-gold-100/85">{children}</div>
     </div>
@@ -141,7 +153,7 @@ export function BookTable({ headers, rows }: { headers: string[]; rows: (string 
         largura: a tabela que precisa de mais continua empurrando e rolando, como
         sempre. O que muda é que as pequenas param de rolar à toa.
       */}
-      <table className="w-full min-w-[320px] border-collapse text-left text-sm">
+      <table className="w-full min-w-[320px] border-collapse bg-parchment-50/60 text-left text-sm dark:bg-parchment-950/40">
         <thead>
           <tr className="border-b border-gold-500/30 bg-parchment-100 dark:bg-parchment-900">
             {headers.map((h) => (

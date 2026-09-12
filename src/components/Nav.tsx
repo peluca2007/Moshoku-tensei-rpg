@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Logo from "./ui/Logo";
 import BotaoInstalar from "./BotaoInstalar";
+import BuscaRapida from "./BuscaRapida";
 import ThemeToggle from "./ThemeToggle";
 import FontSizeToggle from "./FontSizeToggle";
 
@@ -114,6 +115,13 @@ export default function Nav() {
         </div>
 
         <span className="ml-auto flex shrink-0 items-center gap-0.5">
+          {/*
+            A busca vem ANTES dos dois toggles — 0.1.65.
+            Ela é a única das três que responde uma pergunta; tamanho de fonte e
+            tema se ajusta uma vez e esquece. O que se usa no meio de uma sessão
+            fica mais perto do polegar.
+          */}
+          <BuscaRapida />
           <FontSizeToggle />
           <ThemeToggle />
         </span>
