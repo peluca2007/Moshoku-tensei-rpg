@@ -18,7 +18,6 @@ import {
   TipoDoc,
   trechoQueCasa,
 } from "@/lib/busca";
-import { normalizarAlinhado } from "@/lib/texto";
 import Realce from "./Realce";
 import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 
