@@ -50,12 +50,33 @@ herdeiro sem braço pra usá-la, um senhor que reconheceu o seu nome), ou amarra
 E se for a provação e você falhar, os **2 PA voltam inteiros** pro seu bolso. Nenhum talento deste
 livro fica pago e sem efeito: falhar custa a espada e a cena, não o ponto.
 
+### 🏹 BALANCEAMENTO: o Tiro Perfeito parou de garantir o acerto
+
+A Corda dava **+3 degraus** de uma vez, e as outras duas etapas empilhavam tudo que existe de
+garantia: Vantagem no acerto, o alvo sem somar Agilidade na CA, e um disparo que não podia ser
+aparado, desviado nem interceptado. Quatro Ações é caro — mas o que saía do outro lado era um tiro
+que praticamente não errava, e um ataque que não erra tira do alvo qualquer decisão.
+
+| Etapa | Antes | Agora |
+| --- | --- | --- |
+| 1. A Corda (Força) | +3 degraus | **+2 degraus** |
+| 2. Os Dedos (Agilidade) | ignora Cobertura, e não pode ser aparado/desviado/interceptado | **+1 degrau**, e ignora Cobertura |
+| 3. A Leitura (Intuição) | Vantagem no acerto, e o alvo não soma Agilidade na CA | o alvo não soma Agilidade na CA |
+
+O degrau total é o mesmo de antes (+3), só que dividido — e **a Solta voltou a ser um teste de ataque
+como qualquer outro**. O arqueiro que gastou quatro Ações ainda pode errar, e o Deus da Água ainda
+pode aparar.
+
+O que sobra de A Leitura é a única garantia que descreve *previsão* em vez de pontaria: o alvo não
+soma Agilidade na CA, porque você atirou onde ele ia estar. Dois testes novos travam as duas metades
+da mudança.
+
 ### 🎨 CORREÇÃO: cinco artes estavam na habilidade errada
 
 | Arte | Estava em | Foi pra | Por quê |
 | --- | --- | --- | --- |
 | Briga de corredor com cabo de vassoura | Túmulo de Aço | **Maestria do Deus do Norte** | Túmulo de Aço enterra alguém sob escombros; a cena é "se dá pra empunhar, você sabe usar", que é a maestria inteira |
-| `300.webp` | Fluxo Verdadeiro (Deus da Água) | **Flecha de Água** (Magia de Água) | Não é postura de espadachim nenhuma: é uma maga conjurando água que dispara do chão |
+| `300.webp` | Fluxo Verdadeiro (Deus da Água) | **fora do livro** | Nasceu como a parede de escudos do filme, virou Fluxo Verdadeiro, passou por Flecha de Água: três destinos, nenhum certo. A cena não é habilidade nenhuma deste livro |
 | "Nada toca você" | Nada Passa (Deus da Água) | **Nada Toca Você** (Vento, Imperador) | É uma barreira que trava o golpe no ar; o Deus da Água defende por leitura de movimento, não por barreira |
 | Cartaz com o VERSUS | Insulto que Fica | **Duelo de Canções** | O Insulto é uma farpa solta no meio da conversa — sem palco e sem convite |
 | Cara de deboche | Provocar Ódio (Escudos) | **as duas** | O Provocar do Deus da Água é a mesma cena. Um arquivo, dois destinos, nenhum download a mais |

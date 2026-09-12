@@ -95,17 +95,16 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     alt: "Uma esfera de água comprimida girando sobre a palma da mão.",
   },
   /*
-   * O `300.webp` saiu do Deus da Água e veio pra cá — 0.1.74.
+   * O `300.webp` NÃO está mais no livro — 0.1.74.
    *
-   * Ele ilustrava Fluxo Verdadeiro (Deus da Água), e não é isso: a cena é uma
-   * MAGA conjurando — jatos de água que disparam do chão, pegam quem corria e
-   * prendem o que estava em volta. Nada ali é postura de espadachim. Fluxo
-   * Verdadeiro ficou sem arte, que é melhor do que ilustrado com outra escola.
+   * Ele nasceu mapeado como a parede de escudos do filme (0.1.68), virou Fluxo
+   * Verdadeiro quando alguém finalmente o abriu (0.1.71), e passou por Flecha
+   * de Água. Três destinos, nenhum certo: a cena é uma maga conjurando água que
+   * dispara do chão, e nenhuma habilidade do livro é exatamente isso.
+   *
+   * O arquivo saiu de `public/` junto com esta entrada. Se ele voltar um dia,
+   * volta pra uma habilidade que a cena descreva — não pra preencher um vazio.
    */
-  "agua/flecha-de-agua": {
-    src: "/arte/agua/flecha-de-agua.webp",
-    alt: "Uma maga de chapéu conjurando, e a água disparando do chão em linhas que alcançam quem estava correndo.",
-  },
   "agua/escudo-de-agua": {
     src: "/arte/agua/escudo-de-agua.webp",
     alt: "Uma parede curva de água erguida na frente do conjurador.",

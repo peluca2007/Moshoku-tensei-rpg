@@ -279,9 +279,9 @@ export function EtapasDoTiroPerfeito() {
    * rolaria contra 12 e acertaria coisa que devia errar.
    */
   const etapas = [
-    { n: "1", nome: "A Corda", teste: "Força", cd: true, da: "+3 degraus no dado" },
-    { n: "2", nome: "Os Dedos", teste: "Agilidade", cd: true, da: "ignora Cobertura" },
-    { n: "3", nome: "A Leitura", teste: "Intuição", cd: true, da: "Vantagem no acerto" },
+    { n: "1", nome: "A Corda", teste: "Força", cd: true, da: "+2 degraus no dado" },
+    { n: "2", nome: "Os Dedos", teste: "Agilidade", cd: true, da: "+1 degrau, ignora Cobertura" },
+    { n: "3", nome: "A Leitura", teste: "Intuição", cd: true, da: "alvo sem Agilidade na CA" },
     { n: "4", nome: "A Solta", teste: "ataque normal", cd: false, da: "o disparo" },
   ];
   return (

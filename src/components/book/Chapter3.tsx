@@ -360,9 +360,9 @@ export default function Chapter3() {
         <BookTable
           headers={["Etapa", "Teste", "O que ela concede"]}
           rows={[
-            ["1. A Corda", "Força", "+3 degraus no Dado de Arma deste disparo. Você puxa até o fim."],
-            ["2. Os Dedos", "Agilidade", "Ignora Cobertura, e o disparo não pode ser aparado, desviado nem interceptado."],
-            ["3. A Leitura", "Intuição — ou Intelecto/Espírito puro, o maior, se você não tem a perícia", "Vantagem no acerto, e o alvo não soma Agilidade na CA — você atirou onde ele ia estar."],
+            ["1. A Corda", "Força", "+2 degraus no Dado de Arma deste disparo. Você puxa até o fim."],
+            ["2. Os Dedos", "Agilidade", "+1 degrau no Dado de Arma, e o disparo ignora Cobertura."],
+            ["3. A Leitura", "Intuição — ou Intelecto/Espírito puro, o maior, se você não tem a perícia", "O alvo não soma Agilidade na CA — você atirou onde ele ia estar."],
             ["(opcional) O Ponto", "Medicina (humanoide) ou Sobrevivência (fera, monstro)", "+1 Ação. Crita em 19-20 e ignora Resistência a dano."],
             ["4. A Solta", "o ataque normal", "O disparo, com tudo que as etapas acima concederam."],
           ]}

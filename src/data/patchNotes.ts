@@ -39,10 +39,19 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        heading: "BALANCEAMENTO: o Tiro Perfeito parou de garantir o acerto",
+        items: [
+          "A Corda dava +3 degraus de uma vez, e as outras duas etapas empilhavam tudo que existe de garantia: Vantagem no acerto, o alvo sem somar Agilidade na CA, e um disparo que não podia ser aparado, desviado nem interceptado. Quatro Ações é caro — mas o que saía do outro lado era um tiro que praticamente não errava, e ataque que não erra tira do alvo qualquer decisão.",
+          "Agora o degrau se divide entre as duas primeiras etapas, no mesmo total de antes: A Corda (Força) dá +2 degraus, Os Dedos (Agilidade) dá +1 degrau e continua ignorando Cobertura.",
+          "Saiu a Vantagem no acerto, e saiu o 'não pode ser aparado, desviado nem interceptado'. A Solta voltou a ser um teste de ataque como qualquer outro: o arqueiro que gastou quatro Ações ainda pode errar, e o Deus da Água ainda pode aparar.",
+          "O que sobra de A Leitura é a única garantia que descreve PREVISÃO em vez de pontaria: o alvo não soma Agilidade na CA, porque você atirou onde ele ia estar. Dois testes travam isso: os degraus e a ausência de acerto garantido.",
+        ],
+      },
+      {
         heading: "CORREÇÃO: cinco artes estavam na habilidade errada",
         items: [
           "Túmulo de Aço enterra alguém sob escombros, com dano contundente e a condição Preso. A arte que estava lá é uma briga de corredor com cabo de vassoura e carteira de escola de escudo — que é a MAESTRIA do Deus do Norte inteira ('se dá pra empunhar, você sabe usar'), e é pra lá que ela foi. Túmulo de Aço ficou sem arte.",
-          "O `300.webp` voltou a se mover: ele não é postura de espadachim nenhuma, é uma maga conjurando água que dispara do chão. Saiu de Fluxo Verdadeiro (Deus da Água) e foi pra Flecha de Água, na Magia de Água.",
+          "O `300.webp` saiu do livro de vez. Ele nasceu mapeado como a parede de escudos do filme (0.1.68), virou Fluxo Verdadeiro quando alguém finalmente o abriu (0.1.71) e passou por Flecha de Água — três destinos, nenhum certo. A cena é uma maga conjurando água que dispara do chão, e nenhuma habilidade do livro é exatamente isso. Fluxo Verdadeiro e Flecha de Água ficaram sem arte.",
           "'Nada toca você' era uma barreira que trava o golpe no ar antes de encostar — o talento de Imperador da Magia de Vento tem esse nome e é essa cena. Saiu de Nada Passa (Deus da Água), que defende por leitura de movimento e não por barreira.",
           "O cartaz de batalha com o VERSUS no meio é do Duelo de Canções, e estava ilustrando o Insulto que Fica — que é uma farpa solta no meio da conversa, sem palco e sem convite.",
           "A cara de deboche da provocação de Cavalaria e Escudos agora ilustra também o Provocar do Deus da Água: as duas árvores puxam o ódio do inimigo, e é a mesma cena. Um arquivo, dois destinos, e nenhum download a mais.",

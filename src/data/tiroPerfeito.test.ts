@@ -83,6 +83,35 @@ describe("A base", () => {
   });
 
   /*
+   * O que as etapas compram é DANO, e nunca o acerto — 0.1.74.
+   *
+   * Antes, A Corda dava +3 degraus e as outras duas etapas empilhavam tudo que
+   * existe de garantia: Vantagem no acerto, o alvo sem Agilidade na CA e um
+   * disparo que não podia ser aparado, desviado nem interceptado. Quatro Ações
+   * é caro, mas o resultado era um tiro que praticamente não errava — e um
+   * ataque que não erra tira do outro lado qualquer decisão.
+   *
+   * Agora o degrau se divide entre as duas primeiras etapas (+2 e +1, o mesmo
+   * total de antes) e a Solta é um teste de ataque como qualquer outro. O que
+   * sobra de A Leitura é a única garantia que descreve previsão em vez de
+   * pontaria: o alvo não soma Agilidade na CA, porque você atirou onde ele ia
+   * estar.
+   */
+  it("as etapas dão +2 e +1 degrau, e não +3 de uma vez", () => {
+    expect(tiro.effect).toMatch(/A Corda, Força: \+2 degraus/);
+    expect(tiro.effect).toMatch(/Os Dedos, Agilidade: \+1 degrau/);
+    expect(tiro.effect, "o +3 de A Corda foi dividido entre as duas etapas").not.toMatch(/\+3 degraus/);
+  });
+
+  it("nenhuma etapa garante o acerto", () => {
+    expect(tiro.effect, "Vantagem no acerto saiu da Leitura").not.toMatch(/Vantagem no acerto/i);
+    expect(tiro.effect, "o disparo voltou a poder ser aparado").not.toMatch(/não pode ser aparado/i);
+    expect(tiro.effect).toMatch(/nenhuma etapa garante o acerto/i);
+    // O que ficou: previsão, e não pontaria.
+    expect(tiro.effect).toMatch(/não soma Agilidade na CA/);
+  });
+
+  /*
    * A regra que dá identidade ao sistema. Sem ela, o Tiro Perfeito vira uma
    * corrente de quatro testes onde um 7 no d20 joga fora um turno inteiro — e
    * ninguém aposta dois turnos num tiro que uma rolagem ruim anula.
