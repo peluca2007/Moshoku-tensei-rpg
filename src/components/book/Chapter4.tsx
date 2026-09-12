@@ -223,6 +223,82 @@ export default function Chapter4() {
           de braço, arrancar um item das mãos de alguém: ambos rolam 1d20 + Atributo puro. Quem tirar o
           maior total vence. Em empate, a situação se mantém inalterada.
         </Aside>
+
+        <SubTitle id="cap4-duas-armas">Duas armas, uma em cada mão</SubTitle>
+        <P>
+          Qualquer personagem pode empunhar duas armas de uma mão — não custa PA, não exige talento nenhum e
+          não precisa de permissão do Mestre. O que isso te dá é <b>um golpe a mais por turno</b>, e não um
+          ataque a mais: as duas saem juntas, dentro da MESMA Ação.
+        </P>
+        <Aside title="O Golpe Duplo — 1 Ação, uma vez por turno">
+          <P>
+            Você ataca com as duas armas ao mesmo tempo. São <b>duas rolagens de acerto</b>, cada uma contra
+            a CA do alvo (podem ser alvos diferentes, se estiverem os dois ao seu alcance):
+          </P>
+          <List
+            items={[
+              <span key="principal">
+                <b>A mão principal</b> causa dano normal: Dado de Arma + Força + Bônus de Rank.
+              </span>,
+              <span key="apoio">
+                <b>A mão de apoio</b> causa <b>só o dado</b>, <b>um degrau abaixo</b> na Escada de Dados
+                (Cap. 3, §1) — sem somar Força, sem somar Bônus de Rank. É o golpe que você não treinou.
+              </span>,
+            ]}
+          />
+          <P className="text-sm">
+            Uma vez por turno. As outras 2 Ações continuam valendo ataques normais, com a arma que você
+            quiser — o Golpe Duplo é um acréscimo dentro de uma Ação, não uma quarta Ação.
+          </P>
+        </Aside>
+        <P>E o que se paga por ele:</P>
+        <List
+          items={[
+            <span key="permitido">
+              <b>As duas têm que ser de uma mão.</b> Arma de duas mãos ocupa as duas, escudo ocupa uma.
+              Sacar a segunda segue a regra normal: 1 Ação, ou livre se você tiver Três Bainhas.
+            </span>,
+            <span key="escudo">
+              <b>Você abre mão do escudo</b> — da CA dele e do <i>Bloquear com Escudo</i> (§4) — e da mão
+              vaga: beber poção, pegar corda ou agarrar exige guardar ou largar uma das armas antes.
+            </span>,
+            <span key="ca">
+              <b>Duas armas não dão CA</b>, e a de apoio não vale em Reação defensiva (aparar, travar,
+              devolver): essas Reações usam a arma principal.
+            </span>,
+          ]}
+        />
+        <Aside title="As três mãos do guerreiro, lado a lado">
+          <P>
+            <b>Duas mãos numa arma só:</b> o maior Dado de Arma, nos três ataques do turno. É o dano
+            constante.
+          </P>
+          <P>
+            <b>Arma e escudo:</b> menos dano, mais CA, e a Reação que anula um golpe inteiro. É a
+            sobrevivência.
+          </P>
+          <P>
+            <b>Uma arma em cada mão:</b> o dado menor, mas um golpe extra por turno e dois tipos de dano na
+            mão — o cortante e o perfurante juntos, sem gastar Ação pra trocar de arma quando o couro
+            resiste a um deles. E desarmar você exige tirar as duas.
+          </P>
+        </Aside>
+        <Aside title="O que o treino muda">
+          <P>
+            <b>Empunhadura Dupla</b> (Deus do Norte, Intermediário — 1 PA) tira a parte fraca do Golpe
+            Duplo: a mão de apoio passa a somar <b>Força e Bônus de Rank</b>, como um ataque de verdade.
+            Ainda por cima, <b>+1 na CA</b> enquanto as duas estiverem empunhadas, e a arma de apoio passa a
+            valer em Reação defensiva.
+          </P>
+          <P>
+            <b>Mão Trocada</b> (Deus do Norte, Avançado — 2 PA) tira o degrau: a mão de apoio rola o{" "}
+            <b>Dado de Arma cheio</b>, igual à principal. As duas mãos batem igual.
+          </P>
+          <P className="text-sm">
+            Nenhuma das duas dá Ação extra, e o Golpe Duplo continua sendo <b>uma vez por turno</b> com os
+            dois talentos comprados: seis golpes num turno não existem neste livro.
+          </P>
+        </Aside>
       </Section>
       <Section>
         <SectionTitle id="cap4-reacoes-combate">4. Reações e Ações Defensivas</SectionTitle>

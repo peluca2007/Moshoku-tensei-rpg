@@ -136,7 +136,7 @@ export const NORTE_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "Arma secundária: um degrau abaixo do normal" },
-          effect: "Você empunha duas armas de uma mão. Enquanto duas armas empunhadas, recebe +1 na CA.",
+          effect: "O Golpe Duplo (Cap. 4, §3) é livre pra qualquer um, e nele a mão de apoio causa SÓ o dado, um degrau abaixo. Este talento tira a parte fraca: a mão de apoio passa a somar Força e Bônus de Rank, como um ataque de verdade. Enquanto as duas estiverem empunhadas, +1 na CA, e a arma de apoio vale em Reação defensiva. Continua uma vez por turno, e continua um degrau abaixo até você comprar Mão Trocada.",
         },
         {
           id: "desarme",
@@ -176,7 +176,7 @@ export const NORTE_TREE: Tree = {
       },
       talents: [
         { id: "folego-longo-norte", name: "Fôlego Longo", paCost: 2, description: "+1 PT por patamar seu no Estilo Deus do Norte. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
-        { id: "mao-trocada", name: "Mão Trocada", paCost: 2, description: "Você usa Empunhadura Dupla sem redução de degrau na arma secundária." },
+        { id: "mao-trocada", name: "Mão Trocada", paCost: 2, description: "Requer Empunhadura Dupla. No Golpe Duplo (Cap. 4, §3), a mão de apoio rola o Dado de Arma CHEIO, sem o degrau a menos. As duas mãos passam a bater igual — o Golpe Duplo continua uma vez por turno." },
         { id: "instinto-de-presa", name: "Instinto de Presa", paCost: 2, description: "Você não pode ser surpreendido enquanto consciente, e rola Iniciativa com Vantagem." },
       ],
       abilities: [

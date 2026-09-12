@@ -91,6 +91,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "cap4-1", label: "1. Cálculos Vitais" },
       { id: "cap4-condicoes", label: "2. Glossário de Condições" },
       { id: "cap4-3-acoes", label: "3. Economia de Ações" },
+      { id: "cap4-duas-armas", label: "— Duas armas, uma em cada mão" },
       { id: "cap4-reacoes-combate", label: "4. Reações e Ações Defensivas" },
       { id: "cap4-4", label: "5. Empilhamento" },
       { id: "cap4-5", label: "6. Críticos e Touki" },

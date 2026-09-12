@@ -32,19 +32,12 @@
  *   --seco     só relata, não escreve
  */
 
-import { readFileSync, readdirSync, renameSync, statSync, unlinkSync, writeFileSync } from "node:fs";
+import { readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
+import { listarArte, PASTA_DA_ARTE } from "./lib/arte.mjs";
 
-const PUBLIC = path.join(process.cwd(), "public");
 const CONVERSIVEIS = /\.(gif|webp|png|jpe?g)$/i;
-const IGNORAR = new Set([
-  "icone-192.png",
-  "icone-512.png",
-  "icone-mascarado-512.png",
-  "logo-real-alfa.png",
-  "paisagem.jpg",
-]);
 
 const arg = (nome, padrao) =>
   process.argv.includes(nome) ? process.argv[process.argv.indexOf(nome) + 1] : padrao;
@@ -73,12 +66,10 @@ let antesTotal = 0;
 let depoisTotal = 0;
 const teimosos = [];
 
-const arquivos = readdirSync(PUBLIC)
-  .filter((f) => CONVERSIVEIS.test(f) && !IGNORAR.has(f))
-  .sort();
+const arquivos = listarArte().filter((f) => CONVERSIVEIS.test(f));
 
 for (const arquivo of arquivos) {
-  const origem = path.join(PUBLIC, arquivo);
+  const origem = path.join(PASTA_DA_ARTE, arquivo);
   const antes = statSync(origem).size;
   antesTotal += antes;
 
@@ -118,14 +109,28 @@ for (const arquivo of arquivos) {
     if (buf.length <= ALVO) break;
   }
 
-  // Reencodar pode ENGORDAR um webp já bem comprimido. Se engordou, desiste.
-  if (melhor.buf.length >= antes) {
-    console.log(`=  ${arquivo}: ${kb(antes)} já está no melhor que dá`);
+  /*
+   * Desistir cedo — 0.1.74.
+   *
+   * Reencodar pode ENGORDAR um webp já bem comprimido, e o teste original era
+   * só esse: "ficou maior, desiste". Faltava o caso do meio, que é pior porque
+   * passa por vitória: um arquivo de 330 quadros desce a escada inteira até o
+   * último degrau (400px, q42), fica 5% menor e é GRAVADO — perde-se resolução
+   * e qualidade num arquivo que continua sem caber no alvo. Abaixo de um quinto
+   * de ganho, o que se paga é sempre maior do que o que se leva.
+   */
+  const ganho = 1 - melhor.buf.length / antes;
+  if (ganho < 0.2) {
+    console.log(`=  ${arquivo}: ${kb(antes)} já está no melhor que dá (só ${(ganho * 100).toFixed(0)}% de ganho)`);
     depoisTotal += antes;
     continue;
   }
 
-  const destino = path.join(PUBLIC, `${path.basename(arquivo, path.extname(arquivo))}.webp`);
+  const destino = path.join(
+    PASTA_DA_ARTE,
+    path.dirname(arquivo),
+    `${path.basename(arquivo, path.extname(arquivo))}.webp`
+  );
   const marca = melhor.buf.length <= ALVO ? "✅" : "⚠️ ";
   const pct = (100 - (melhor.buf.length / antes) * 100).toFixed(0);
   console.log(
