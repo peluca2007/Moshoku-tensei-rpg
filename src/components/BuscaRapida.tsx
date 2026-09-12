@@ -17,7 +17,8 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { buscar, TIPO_LABELS, type TipoDoc } from "@/lib/busca";
+import { buscar, termosDe, TIPO_LABELS, TIPO_ORDEM, type TipoDoc } from "@/lib/busca";
+import Realce from "./Realce";
 
 /**
  * A BUSCA DO SITE INTEIRO, do topo de qualquer página — 0.1.65, redesenhada em 0.1.66.
@@ -83,6 +84,35 @@ export default function BuscaRapida() {
    * tela inteira deixa de ser um atalho e vira a página que ela queria evitar.
    */
   const resultados = useMemo(() => (termo.trim() ? buscar(termo).slice(0, 7) : []), [termo]);
+  const termos = useMemo(() => termosDe(termo), [termo]);
+
+  /*
+   * Agrupados POR TIPO — 0.1.67.
+   *
+   * Sem isto, uma busca por "fogo" devolvia sete linhas em que cinco repetiam
+   * "Técnicas e magias" no mesmo lugar. É o mesmo defeito da coluna que repete
+   * o valor em toda linha: o rótulo ocupava espaço em cada resultado pra dizer
+   * o que um cabeçalho diz uma vez.
+   *
+   * A ordem é a de `TIPO_ORDEM`, a mesma da página `/busca`, e dentro de cada
+   * grupo a ordem de pontuação que `buscar` devolveu.
+   */
+  const grupos = useMemo(() => {
+    const porTipo = new Map<TipoDoc, typeof resultados>();
+    for (const r of resultados) {
+      porTipo.set(r.doc.tipo, [...(porTipo.get(r.doc.tipo) ?? []), r]);
+    }
+    return TIPO_ORDEM.filter((t) => porTipo.has(t)).map((tipo) => ({
+      tipo,
+      itens: porTipo.get(tipo)!,
+    }));
+  }, [resultados]);
+
+  /** O índice global de um item, pra navegação com as setas atravessar os grupos. */
+  const indiceDe = useCallback(
+    (chave: string) => resultados.findIndex((r) => r.doc.chave === chave),
+    [resultados]
+  );
 
   const fechar = useCallback(() => {
     setAberta(false);
@@ -182,57 +212,47 @@ export default function BuscaRapida() {
 
             {termo.trim() && (
               <ul className="max-h-[54vh] overflow-y-auto p-2">
-                {resultados.map((r, i) => {
-                  const Icone = ICONE[r.doc.tipo] ?? Sparkles;
-                  const ativo = i === selecionado;
+                {grupos.map(({ tipo, itens }) => {
+                  const Icone = ICONE[tipo] ?? Sparkles;
                   return (
-                    <li key={r.doc.chave}>
-                      <button
-                        type="button"
-                        onClick={() => irPara(r.doc.href)}
-                        onMouseEnter={() => setSelecionado(i)}
-                        className={`flex w-full items-center gap-3 rounded-xl border-l-[3px] px-3 py-2.5 text-left transition-colors ${
-                          ativo
-                            ? "border-gold-500 bg-gradient-to-r from-wine-500/12 to-transparent"
-                            : "border-transparent hover:bg-parchment-900/[0.04] dark:hover:bg-white/[0.04]"
-                        }`}
-                      >
-                        <span
-                          aria-hidden
-                          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ring-1 transition-colors ${
-                            ativo
-                              ? "bg-gold-500/20 text-gold-700 ring-gold-500/40 dark:text-gold-300"
-                              : "bg-parchment-200/60 text-parchment-600 ring-parchment-300/60 dark:bg-parchment-900 dark:text-parchment-400 dark:ring-parchment-800"
-                          }`}
-                        >
-                          <Icone className="h-4 w-4" />
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate font-display text-sm font-bold text-parchment-900 dark:text-parchment-50">
-                            {r.doc.nome}
-                          </span>
-                          {/*
-                            O tipo entrou na linha de CONTEXTO, e não num selo na
-                            margem: solto à direita ele criava uma segunda coluna
-                            que o olho precisava atravessar, e o contexto —
-                            "Magia de Fogo · Principiante" — é o que responde
-                            "qual desses é o meu".
-                          */}
-                          <span className="block truncate text-xs text-parchment-600 dark:text-parchment-400">
-                            <span className="text-wine-700 dark:text-wine-300">
-                              {TIPO_LABELS[r.doc.tipo]}
-                            </span>
-                            {" · "}
-                            {r.doc.contexto}
-                          </span>
-                        </span>
-                        {ativo && (
-                          <CornerDownLeft
-                            className="h-3.5 w-3.5 shrink-0 text-gold-600 dark:text-gold-400"
-                            aria-hidden
-                          />
-                        )}
-                      </button>
+                    <li key={tipo}>
+                      <p className="flex items-center gap-1.5 px-2 pb-1 pt-2 text-[10px] font-black uppercase tracking-[0.14em] text-gold-700 dark:text-gold-400">
+                        <Icone className="h-3 w-3" aria-hidden />
+                        {TIPO_LABELS[tipo]}
+                      </p>
+                      <ul>
+                        {itens.map((r) => {
+                          const i = indiceDe(r.doc.chave);
+                          const ativo = i === selecionado;
+                          return (
+                            <li key={r.doc.chave}>
+                              <button
+                                type="button"
+                                onClick={() => irPara(r.doc.href)}
+                                onMouseEnter={() => setSelecionado(i)}
+                                className={`flex w-full items-baseline gap-2 rounded-lg border-l-[3px] py-1.5 pl-3 pr-2 text-left transition-colors ${
+                                  ativo
+                                    ? "border-gold-500 bg-gradient-to-r from-wine-500/12 to-transparent"
+                                    : "border-transparent hover:bg-parchment-900/[0.04] dark:hover:bg-white/[0.04]"
+                                }`}
+                              >
+                                <span className="min-w-0 flex-1 truncate font-display text-sm font-bold text-parchment-900 dark:text-parchment-50">
+                                  <Realce texto={r.doc.nome} termos={termos} />
+                                </span>
+                                <span className="hidden shrink-0 truncate text-xs text-parchment-600 dark:text-parchment-400 sm:block sm:max-w-[46%]">
+                                  {r.doc.contexto}
+                                </span>
+                                {ativo && (
+                                  <CornerDownLeft
+                                    className="h-3.5 w-3.5 shrink-0 self-center text-gold-600 dark:text-gold-400"
+                                    aria-hidden
+                                  />
+                                )}
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </li>
                   );
                 })}
