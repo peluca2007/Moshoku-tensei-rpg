@@ -19,6 +19,7 @@ import {
   trechoQueCasa,
 } from "@/lib/busca";
 import { normalizarAlinhado } from "@/lib/texto";
+import Realce from "./Realce";
 import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 
 /** Quantos resultados entram em tela de uma vez. Mais que isso, o botão do fim. */
@@ -32,58 +33,6 @@ const PAGINA = 40;
  * escondida em algum lugar — e a pessoa lê o parágrafo inteiro pra descobrir se
  * era esse mesmo.
  */
-function Realce({ texto, termos }: { texto: string; termos: string[] }) {
-  const partes = useMemo(() => {
-    if (termos.length === 0) return [texto];
-    const norm = normalizarAlinhado(texto);
-    const marcas: [number, number][] = [];
-    for (const termo of termos) {
-      let de = norm.indexOf(termo);
-      while (de !== -1) {
-        marcas.push([de, de + termo.length]);
-        de = norm.indexOf(termo, de + termo.length);
-      }
-    }
-    if (marcas.length === 0) return [texto];
-    marcas.sort((a, b) => a[0] - b[0]);
-
-    // Termos que se sobrepõem ("peco" e "peconha" na mesma consulta) viram uma
-    // marca só; duas marcas cruzadas cortariam o texto em pedaços fora de ordem.
-    const unidas: [number, number][] = [];
-    for (const [de, ate] of marcas) {
-      const ultima = unidas[unidas.length - 1];
-      if (ultima && de <= ultima[1]) ultima[1] = Math.max(ultima[1], ate);
-      else unidas.push([de, ate]);
-    }
-
-    const saida: (string | { marca: string })[] = [];
-    let cursor = 0;
-    for (const [de, ate] of unidas) {
-      if (de > cursor) saida.push(texto.slice(cursor, de));
-      saida.push({ marca: texto.slice(de, ate) });
-      cursor = ate;
-    }
-    if (cursor < texto.length) saida.push(texto.slice(cursor));
-    return saida;
-  }, [texto, termos]);
-
-  return (
-    <>
-      {partes.map((p, i) =>
-        typeof p === "string" ? (
-          p
-        ) : (
-          <mark
-            key={i}
-            className="rounded bg-gold-300/60 px-0.5 text-parchment-900 dark:bg-gold-500/30 dark:text-gold-100"
-          >
-            {p.marca}
-          </mark>
-        )
-      )}
-    </>
-  );
-}
 
 /** Lista de pares rótulo/valor, o formato de quase todo card que não é habilidade. */
 function Campos({ linhas }: { linhas: [string, React.ReactNode][] }) {
