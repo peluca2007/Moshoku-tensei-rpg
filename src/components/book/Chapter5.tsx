@@ -1,5 +1,7 @@
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import ShopCatalog from "./ShopCatalog";
+import ArteDaHabilidade from "./ArteDaHabilidade";
+import { ARTE_DO_DOJO } from "@/data/midiaDeHabilidade";
 import { LIMITES, MARCA_DO_MESTRE, PROVACOES, RECOMPENSA_POR_PATAMAR } from "@/data/dojos";
 
 export default function Chapter5() {
@@ -299,6 +301,7 @@ export default function Chapter5() {
           Certos nós das árvores são <b>fechados a chave</b>, e a chave é uma pessoa. Não tem preço em PA,
           não tem downtime que resolva, não tem loja que venda. Você encontra o mestre, ou não abre.
         </P>
+        <ArteDaHabilidade midia={ARTE_DO_DOJO} />
 
         <SubTitle id="cap5-5-quem">Quem pode ensinar</SubTitle>
         <List

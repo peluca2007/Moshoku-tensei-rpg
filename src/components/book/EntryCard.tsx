@@ -90,7 +90,9 @@ export default function EntryCard({
       )}
       {ability && <CastingBreakdown ability={ability} />}
       {ability && <IncantationBlock ability={ability} rank={rank} />}
-      {treeId && kind === "ability" && <ArteDaHabilidade treeId={treeId} abilityId={def.id} />}
+      {/* Talento também pode ter arte desde a 0.1.69 — a chave é `treeId/id`,
+          e um teste garante que talento e habilidade nunca disputam um id. */}
+      {treeId && <ArteDaHabilidade treeId={treeId} abilityId={def.id} />}
     </div>
   );
 }

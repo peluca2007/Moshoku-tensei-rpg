@@ -16,6 +16,33 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.69",
+    date: "2026-09-11",
+    title: "O Tiro Perfeito Não É de Todo Mundo",
+    sections: [
+      {
+        heading: "O Tiro Perfeito volta a ser exclusivo da Arquearia — na leitura, não só na regra",
+        items: [
+          "A regra nunca mudou: o Tiro Perfeito é a habilidade de assinatura de Arquearia no patamar Principiante, e sempre exigiu comprar aquele nó da árvore e estar com arco ou besta em mãos. O problema era onde ela está escrita — no Capítulo 3, que é o capítulo das regras que valem pra TODO MUNDO, ao lado de Ações, Reações e Touki. O pré-requisito aparecia no meio do segundo parágrafo, e o lugar dizia mais alto que o texto.",
+          "Agora o pré-requisito é a primeira coisa da seção, num aviso destacado, e diz o que não é óbvio: não há versão improvisada, não se compra avulso, nenhuma outra árvore concede, e nem Deus da Espada nem Deus do Norte têm equivalente.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: o diagrama do Tiro Perfeito publicava uma CD que não existe",
+        items: [
+          "A quarta etapa, A Solta, aparecia no diagrama como 'ataque · CD 12'. A Solta é o ataque NORMAL, rolado contra a CA do alvo — a CD 12 fixa vale só para as três etapas de preparação, e o rótulo estava sendo repetido nas quatro caixas. Quem jogasse pelo diagrama rolaria o disparo final contra 12 e acertaria coisa que devia errar. O diagrama agora diz 'ataque normal', sem CD.",
+        ],
+      },
+      {
+        heading: "Sessenta habilidades do livro passam a ter arte",
+        items: [
+          "As 44 mídias que estavam paradas em public/ entraram no livro: Deus da Espada, Deus da Água, Deus do Norte, Cavalaria e Escudos, Armas Pesadas, Vendaval, Arquearia, Furtividade, Bardo, Navegação, Invocação, Desintoxicação e as magias elementares. Talento também pode ter arte agora, e não só magia e técnica — Marcha Forçada foi o caso que forçou a mudança.",
+          "A arte do Dojo (Cap. 5, §5) não ilustra habilidade nenhuma: ela abre a seção inteira.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.59",
     date: "2026-09-11",
     title: "Vinte e Cinco Por Cento",

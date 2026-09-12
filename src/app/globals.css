@@ -1162,6 +1162,75 @@ input[type="number"],
 }
 
 /*
+ * O golpe que percorre o Triângulo dos Estilos — 0.1.69.
+ *
+ * O traço tem `stroke-dasharray: 13 87` sobre um `pathLength="100"`: um dash de
+ * 13% do lado, e 87% de vão. Animar o `stroke-dashoffset` de 13 até -87 leva
+ * esse dash da ponta de saída até a ponta de chegada — é o golpe viajando.
+ *
+ * A duração e o delay vêm do componente (7,2 s de ciclo, um terço por lado),
+ * porque a ordem dos lados é dado do diagrama, não do estilo. Cada lado só
+ * aparece durante o seu terço; nos outros dois ele fica invisível esperando.
+ */
+.triangulo-golpe {
+  animation-name: triangulo-golpe;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.3, 1);
+  animation-iteration-count: infinite;
+  opacity: 0;
+}
+
+@keyframes triangulo-golpe {
+  0% {
+    stroke-dashoffset: 13;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  28% {
+    opacity: 1;
+  }
+  33.33% {
+    stroke-dashoffset: -87;
+    opacity: 0;
+  }
+  100% {
+    stroke-dashoffset: -87;
+    opacity: 0;
+  }
+}
+
+/*
+ * O vértice que APANHA. Ele encolhe e vira vinho no instante em que o golpe do
+ * lado anterior chega nele, e volta ao dourado logo depois — é o que diz, sem
+ * texto, que a volta fecha: o terceiro golpe cai em quem deu o primeiro.
+ */
+.triangulo-apanha {
+  animation-name: triangulo-apanha;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes triangulo-apanha {
+  0%,
+  14%,
+  100% {
+    transform: scale(1);
+    fill: var(--color-gold-400);
+  }
+  3% {
+    transform: scale(0.62);
+    fill: var(--color-wine-500);
+  }
+  8% {
+    transform: scale(1.22);
+    fill: var(--color-wine-400);
+  }
+}
+
+/*
  * Quem pediu menos movimento recebe o diagrama PRONTO — e não o diagrama
  * congelado no primeiro quadro, que é o erro clássico: uma barra com
  * `scaleY(0.04)` parada não é "sem animação", é um gráfico errado.
@@ -1172,9 +1241,20 @@ input[type="number"],
   .pulso-vida,
   .acende-em-sequencia > *,
   .triangulo-gira,
+  .triangulo-apanha,
   .diagrama::after {
     animation: none !important;
     transform: none !important;
     opacity: 1 !important;
+  }
+
+  /*
+   * O golpe some de vez. Ele não tem estado de repouso que faça sentido: parado,
+   * viraria um risco dourado de 13% grudado na saída de cada lado, que é pior
+   * que nada — parece um quarto elemento do diagrama. O triângulo sem ele
+   * continua completo: os lados, as setas e os nomes já contam o ciclo.
+   */
+  .triangulo-golpe {
+    display: none !important;
   }
 }
