@@ -46,10 +46,15 @@ const LINKS = [
   { href: "/personagens", label: "Personagens" },
   { href: "/mestre", label: "Mestre" },
   { href: "/loja", label: "Loja" },
-  // "Livro" e não "Livro de Regras": o rótulo longo era o que empurrava a Busca
-  // pra fora da tela em telas de ~900px quando a barra tinha dez destinos.
+  // "Livro" e não "Livro de Regras": o rótulo longo era o que empurrava a barra
+  // pra fora da tela em telas de ~900px quando ela tinha dez destinos.
   { href: "/livro", label: "Livro" },
-  { href: "/busca", label: "Busca" },
+  /*
+   * A "Busca" saiu daqui em 0.1.66. Ela virou a lupa do canto direito, que abre
+   * de qualquer página e com Ctrl+K — ter as duas era oferecer o mesmo destino
+   * duas vezes na mesma barra, uma delas levando embora da página em que a
+   * pessoa está. A rota /busca continua existindo pra link direto.
+   */
 ];
 
 export default function Nav() {
