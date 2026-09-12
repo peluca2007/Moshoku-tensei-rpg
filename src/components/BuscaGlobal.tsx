@@ -87,7 +87,7 @@ function Conteudo({ conteudo, termos }: { conteudo: ConteudoDoc; termos: string[
         </p>
       );
     case "habilidade":
-      return <EntryCard kind="ability" def={conteudo.def} rank={conteudo.rank} />;
+      return <EntryCard kind="ability" def={conteudo.def} rank={conteudo.rank} treeId={conteudo.tree.id} />;
     case "talento":
       return <EntryCard kind="talent" def={conteudo.def} rank={conteudo.rank} />;
     case "maestria":
