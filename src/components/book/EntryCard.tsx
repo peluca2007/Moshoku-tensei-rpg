@@ -1,4 +1,5 @@
 import { AbilityDef, RankName, TalentDef } from "@/lib/types";
+import ArteDaHabilidade from "./ArteDaHabilidade";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "../AbilityDetail";
 import ProsaComCondicoes from "../ProsaComCondicoes";
 import { condicoesCitadas } from "@/lib/condicoesNaProsa";
@@ -31,10 +32,20 @@ export default function EntryCard({
   kind,
   def,
   rank,
+  /**
+   * A árvore desta entrada, quando quem desenha souber — 0.1.68.
+   *
+   * Serve a uma coisa só: achar a ARTE da habilidade. É opcional porque o id de
+   * habilidade não é único entre árvores (há mais de uma "Investida" no livro),
+   * então sem a árvore não dá pra procurar sem risco de mostrar a arte errada —
+   * e mostrar a arte errada é pior que não mostrar nenhuma.
+   */
+  treeId,
 }: {
   kind: "ability" | "talent";
   def: AbilityDef | TalentDef;
   rank: RankName;
+  treeId?: string;
 }) {
   const ability = isAbility(def) ? def : null;
   const description = isAbility(def) ? def.effect : def.description;
@@ -79,6 +90,7 @@ export default function EntryCard({
       )}
       {ability && <CastingBreakdown ability={ability} />}
       {ability && <IncantationBlock ability={ability} rank={rank} />}
+      {treeId && kind === "ability" && <ArteDaHabilidade treeId={treeId} abilityId={def.id} />}
     </div>
   );
 }

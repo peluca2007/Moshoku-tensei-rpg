@@ -2,6 +2,8 @@ import { RANK_BONUS, Tree } from "@/lib/types";
 import { getRankDeusForTree } from "@/data/rankDeus";
 import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import EntryCard from "./EntryCard";
+import ArteDaHabilidade from "./ArteDaHabilidade";
+import { midiaDaMaestria } from "@/data/midiaDeHabilidade";
 import { BookTable, SubTitle } from "./BookUI";
 
 /** Tabela de progressão por Rank — PV, e (conforme a árvore) PT/Escada de Arma ou PP, direto de TreeRankDef (nunca diverge da ficha). */
@@ -154,7 +156,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
       <MechanicCard tree={tree} />
       <ProficiencyCard tree={tree} />
       <ProgressionTable tree={tree} />
-      {nonEmptyRanks.map((rankDef) => {
+      {nonEmptyRanks.map((rankDef, i) => {
         const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;
         return (
           <div key={rankDef.rank} className="space-y-2">
@@ -165,13 +167,19 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
               <div className="print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
                 <p className="font-bold text-gold-700 dark:text-gold-400">◈ Maestria: {rankDef.mastery.name}</p>
                 <p className="mt-1 text-gold-900/80 dark:text-gold-200/80">{rankDef.mastery.description}</p>
+                {/*
+                  A arte da ESCOLA fica na Maestria de 1º patamar, e não numa
+                  magia específica: é a primeira coisa que se vê ao abrir a
+                  árvore, e o que ela ilustra é a escola inteira.
+                */}
+                {i === 0 && <ArteDaHabilidade midia={midiaDaMaestria(tree.id)} />}
               </div>
             )}
             {rankDef.talents.map((t) => (
               <EntryCard key={t.id} kind="talent" def={t} rank={rankDef.rank} />
             ))}
             {rankDef.abilities.map((a) => (
-              <EntryCard key={a.id} kind="ability" def={a} rank={rankDef.rank} />
+              <EntryCard key={a.id} kind="ability" def={a} rank={rankDef.rank} treeId={tree.id} />
             ))}
           </div>
         );
