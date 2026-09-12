@@ -160,6 +160,103 @@ body {
   }
 }
 
+/*
+ * AS BARRAS DE ROLAGEM — 0.1.74.
+ *
+ * ## O que estava errado
+ *
+ * Eram as do Windows: 15px de cinza, com uma seta quadrada em cima e outra
+ * embaixo. Uma corre a página inteira à direita do pergaminho; outra corre
+ * dentro do painel do sumário, colada nos títulos. Num site que passa o resto
+ * do tempo cuidando de textura, filete dourado e vinheta, elas são o único
+ * pedaço de interface que ainda é do sistema operacional — e é exatamente
+ * assim que aparecem.
+ *
+ * ## O que ficou
+ *
+ * Um trilho transparente (a folha continua visível por baixo) e um polegar
+ * dourado translúcido, arredondado, com 4px de folga feita por borda
+ * transparente + `background-clip: padding-box` — o truque que dá respiro sem
+ * precisar de um trilho colorido. As setas somem: `scrollbar-button` com
+ * `display: none` no WebKit, e no Firefox elas nunca existiram.
+ *
+ * ## Por que o Firefox fica atrás de um `@supports`
+ *
+ * As duas famílias NÃO convivem: no Chrome, definir `scrollbar-color` (ou
+ * `scrollbar-width`) faz o motor usar a barra padrão e ignorar todo
+ * `::-webkit-scrollbar` daquele elemento. Com as duas soltas no `*`, o efeito
+ * era pior que o original — as setas continuavam lá, agora pintadas de dourado,
+ * porque a barra padrão tinge as setas com a cor do polegar.
+ *
+ * Então o par padrão entra só onde o WebKit não existe: `@supports not
+ * selector(::-webkit-scrollbar)` é verdadeiro no Firefox e falso no
+ * Chrome/Edge/Safari. Cada motor recebe um caminho só, e é o melhor que ele tem.
+ *
+ * Não muda ONDE a barra da janela começa — isso ela herda do viewport, e só
+ * mudaria tirando a rolagem da página e passando pro conteúdo, o que quebra o
+ * recolher da barra de endereço no celular. O que muda é ela parar de ser um
+ * corpo estranho.
+ */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-gold-500) 55%, transparent) transparent;
+  }
+
+  .dark * {
+    scrollbar-color: color-mix(in srgb, var(--color-gold-400) 45%, transparent) transparent;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
+/* As setas do topo e da base: o resto do site não tem um único botão quadrado
+   cinza, e ninguém rola uma página de 100 mil pixels de 40 em 40 no clique. */
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-button:start:decrement,
+::-webkit-scrollbar-button:end:increment,
+::-webkit-scrollbar-button:vertical:start:increment,
+::-webkit-scrollbar-button:vertical:end:decrement {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-gold-500) 55%, transparent);
+  border: 4px solid transparent;
+  background-clip: padding-box;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-gold-500) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-gold-400) 45%, transparent);
+  background-clip: padding-box;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-gold-300) 70%, transparent);
+  background-clip: padding-box;
+}
+
+
 /* Força os itens do dropdown nativo a respeitarem o tema ativo. 
    Isso resolve o bug de fundo branco com texto claro no Chrome/Windows. */
 option {

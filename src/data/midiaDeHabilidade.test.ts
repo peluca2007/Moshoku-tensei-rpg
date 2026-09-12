@@ -37,6 +37,40 @@ describe("Os arquivos", () => {
     expect(faltando, `arquivos que não existem:\n${faltando.join("\n")}`).toEqual([]);
   });
 
+  /*
+   * O disco espelha o livro — 0.1.74.
+   *
+   * O caminho canônico é `/arte/<treeId>/<abilityId>.<ext>`, o mesmo par que
+   * forma a chave. Sem este teste a organização dura até o próximo arquivo
+   * salvo às pressas na raiz: nada quebra, a imagem aparece igual, e em três
+   * meses `public/arte/` está do jeito que estava antes da arrumação.
+   *
+   * A exceção são os arquivos COMPARTILHADOS por duas habilidades de árvores
+   * diferentes (a provocação de Cavalaria que serve também ao Deus da Água):
+   * o arquivo mora na pasta de quem o trouxe primeiro, e duplicá-lo só pra
+   * fazer o caminho bater seria pagar dois downloads pelo mesmo gif. Cada
+   * entrada aqui é uma decisão, e o `src` dela tem que ser citado por outra
+   * chave — se deixar de ser, o teste cobra.
+   */
+  const COMPARTILHADOS = new Set(["deus-da-agua-corpo/provocar"]);
+
+  it("todo arquivo está na pasta da própria árvore", () => {
+    const fora = Object.entries(MIDIA_DE_HABILIDADE)
+      .filter(([chave]) => !COMPARTILHADOS.has(chave))
+      .filter(([chave, m]) => m.src !== `/arte/${chave}${path.extname(m.src)}`)
+      .map(([chave, m]) => `${chave} → ${m.src}`);
+    expect(fora, `esperado /arte/<árvore>/<habilidade>.<ext>:\n${fora.join("\n")}`).toEqual([]);
+  });
+
+  it("todo compartilhado aponta pra um arquivo que outra chave também usa", () => {
+    for (const chave of COMPARTILHADOS) {
+      const alvo = MIDIA_DE_HABILIDADE[chave]?.src;
+      expect(alvo, `${chave} está na lista de compartilhados e não existe no mapa`).toBeDefined();
+      const donos = Object.entries(MIDIA_DE_HABILIDADE).filter(([, m]) => m.src === alvo);
+      expect(donos.length, `${chave} aponta pra ${alvo}, que nenhuma outra chave usa`).toBeGreaterThan(1);
+    }
+  });
+
   it("todo caminho começa com barra", () => {
     for (const [chave, m] of Object.entries(MIDIA_DE_HABILIDADE)) {
       expect(m.src.startsWith("/"), chave).toBe(true);
