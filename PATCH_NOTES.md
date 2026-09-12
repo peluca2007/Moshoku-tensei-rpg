@@ -5,6 +5,106 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.74 — "Duas Armas na Mão, Cento e Vinte Arquivos na Pasta" · 2026-09-12
+
+### ⚔️ NOVA REGRA: duas armas, uma em cada mão (Cap. 4, §3)
+
+O livro tinha a **Empunhadura Dupla** do Deus do Norte e nada mais. Quem não fosse dessa árvore e
+quisesse uma arma em cada mão não encontrava resposta em lugar nenhum, e a mesa decidia de novo toda
+vez que a pergunta aparecia.
+
+Agora está escrita, e o que ela dá é **um golpe a mais por turno** — não uma Ação a mais:
+
+> **O Golpe Duplo — 1 Ação, uma vez por turno.** Você ataca com as duas armas ao mesmo tempo: duas
+> rolagens de acerto, podendo ser em alvos diferentes. A **mão principal** causa dano normal (Dado de
+> Arma + Força + Bônus de Rank); a **mão de apoio** causa **só o dado, um degrau abaixo** — sem Força,
+> sem Bônus de Rank. É o golpe que você não treinou.
+
+| A pergunta | A resposta |
+| --- | --- |
+| Posso? | Sim, qualquer um. Não custa PA, não pede talento, não pede permissão. As duas têm que ser armas de uma mão. |
+| É uma Ação a mais? | **Não.** É dentro da mesma Ação, uma vez por turno. As outras 2 Ações continuam sendo ataques normais. |
+| O que custa? | O escudo (a CA dele e o *Bloquear com Escudo*) e a mão vaga pra poção, corda ou agarrão. Duas armas não dão CA. |
+| O que ganho além do golpe? | Dois tipos de dano na mão — cortante e perfurante juntos, sem gastar Ação pra trocar de arma quando o couro resiste a um deles. E te desarmar exige tirar as duas. |
+
+O motor de combate já contava assim desde a 0.1.47: *"arma secundária: um degrau abaixo"* sempre
+somou **dois golpes numa Ação só**. O que faltava era o livro dizer isso pra quem não é do Deus do
+Norte.
+
+É isso que os dois talentos do Norte passam a comprar, e agora dá pra ver o quê. **Empunhadura
+Dupla** (1 PA) faz a mão de apoio somar **Força e Bônus de Rank**, além do +1 de CA e da Reação com a
+arma de apoio; **Mão Trocada** (2 PA) tira o degrau a menos. Nenhuma das duas dá Ação extra, e o
+Golpe Duplo continua **uma vez por turno** com as duas compradas: seis golpes num turno não existem
+neste livro.
+
+### 🗡️ Espada Emprestada: o livro não dizia como a espada chega
+
+O talento dava "uma espada de qualidade superior" e parava aí. Na mesa isso vira duas leituras
+opostas — o Mestre entrega junto com o PA gasto, ou cobra uma missão inteira por ela — e nenhuma das
+duas estava errada, porque o texto não escolhia.
+
+Agora escolhe, e são só dois caminhos: ou o Mestre **entrega** na próxima cena (um antigo mestre, um
+herdeiro sem braço pra usá-la, um senhor que reconheceu o seu nome), ou amarra a entrega a uma
+**provação** — duelo, serviço, prova de caráter. Ele diz qual é *antes* de você confirmar a compra.
+
+E se for a provação e você falhar, os **2 PA voltam inteiros** pro seu bolso. Nenhum talento deste
+livro fica pago e sem efeito: falhar custa a espada e a cena, não o ponto.
+
+### 🎨 CORREÇÃO: cinco artes estavam na habilidade errada
+
+| Arte | Estava em | Foi pra | Por quê |
+| --- | --- | --- | --- |
+| Briga de corredor com cabo de vassoura | Túmulo de Aço | **Maestria do Deus do Norte** | Túmulo de Aço enterra alguém sob escombros; a cena é "se dá pra empunhar, você sabe usar", que é a maestria inteira |
+| `300.webp` | Fluxo Verdadeiro (Deus da Água) | **Flecha de Água** (Magia de Água) | Não é postura de espadachim nenhuma: é uma maga conjurando água que dispara do chão |
+| "Nada toca você" | Nada Passa (Deus da Água) | **Nada Toca Você** (Vento, Imperador) | É uma barreira que trava o golpe no ar; o Deus da Água defende por leitura de movimento, não por barreira |
+| Cartaz com o VERSUS | Insulto que Fica | **Duelo de Canções** | O Insulto é uma farpa solta no meio da conversa — sem palco e sem convite |
+| Cara de deboche | Provocar Ódio (Escudos) | **as duas** | O Provocar do Deus da Água é a mesma cena. Um arquivo, dois destinos, nenhum download a mais |
+
+Túmulo de Aço, Fluxo Verdadeiro e Insulto que Fica ficaram **sem arte** — que continua sendo melhor
+do que ilustrados com a cena de outra escola.
+
+### 🖼️ Doze arquivos que estavam na pasta e ninguém via
+
+Três Bainhas, Bala de Lágrimas e Desarme (Deus do Norte); Primeiro Golpe, Veneno Refinado, O Dossiê e
+A Mão Longa (Furtividade); Cantiga de Marcha e Cantiga de Ninar (Bardo); Emboscada Planejada
+(Navegação); Espada Emprestada (Deus da Espada) e Nome de Reidar (Deus da Água).
+
+Os quatro maiores pesavam **14 MB** juntos e desceram pra **2,4 MB** em WebP animado. O
+`comprimir:midia` também aprendeu a desistir: abaixo de 20% de ganho ele não reescreve mais o
+arquivo. Antes descia a escada inteira até 400px pra ganhar 3% — perdendo resolução num arquivo que
+continuava sem caber no alvo.
+
+### 📁 A arte saiu da raiz de `public/` e passou a espelhar o livro
+
+Os ~120 arquivos ficavam soltos na raiz, com o nome que tinham quando foram baixados — `300.webp`,
+`desarmar dn=deus do norte.jpg`, `hazy cross dn.webp` — e misturados com o ícone do PWA, o logo e a
+capa da home.
+
+Agora cada um mora em **`public/arte/<árvore>/<habilidade>.<ext>`**: a pasta de uma árvore *é* o
+catálogo visual dela, e o nome do arquivo é o `id` da habilidade. A arte que ilustra uma seção do
+livro (o Dojo, o Touki, o Fio da Vida) ficou em `arte/livro/`.
+
+A raiz de `public/arte/` virou **caixa de entrada**: arquivo novo cai ali, o `check:midia` cobra, e o
+`casar:midia` leva pra pasta da árvore quando o nome bate com o da habilidade. Nenhum script precisa
+mais de lista de exceções pra saber o que é arte e o que é cromo do site.
+
+### 🐛 O sumário do livro parava de acompanhar a leitura
+
+As posições dos títulos eram medidas **uma única vez**, e o livro não para de crescer depois disso:
+são ~120 artes carregando aos poucos, os catálogos de árvore abrindo e fechando, a fonte de display
+trocando quando termina de baixar. Cada uma empurra os títulos pra baixo, e o marcador ficava dezenas
+de milhares de pixels atrasado — o leitor no Cap. 4 e o sumário insistindo no Cap. 2.
+
+Agora ele remede sempre que o **documento** muda de altura, e não só quando a janela muda de tamanho
+— que era o único caso coberto, e o único que nunca acontece lendo.
+
+Mais duas no mesmo lugar: o **capítulo-pai acende junto** com a seção (antes, ler a §3 do Cap. 4
+deixava o Cap. 4 apagado), e o painel do sumário **rola sozinho** o mínimo pra manter a entrada acesa
+à vista — num índice de 71 linhas, acender a linha certa não adianta se ela está 400px abaixo do que
+se vê.
+
+---
+
 ## 0.1.73 — "Duas Regras Que o Livro Prometia e o Código Não Cumpria" · 2026-09-12
 
 ### 🐛 Quebrantado tinha teto na regra e não tinha no sistema

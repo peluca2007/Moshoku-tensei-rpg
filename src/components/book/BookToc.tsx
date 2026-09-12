@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { normalizar } from "@/lib/texto";
 
@@ -14,17 +14,35 @@ export interface TocEntry {
  * Sumário do /livro. O livro é um scroll único de 5 capítulos + 7 apêndices, então
  * sem estas duas coisas você não sabe onde está nem consegue chegar num lugar
  * específico sem rolar procurando:
- * - **Marcador de posição** (IntersectionObserver): destaca a seção que está na tela.
+ * - **Marcador de posição**: acende a seção em que a leitura está — e o capítulo
+ *   dela —, remedindo o documento sempre que ele muda de altura, e rolando o
+ *   próprio painel o mínimo pra manter a entrada acesa à vista.
  * - **Filtro por nome**: reduz o sumário enquanto você digita, sem acento e sem caixa.
  */
 export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNavigate?: () => void }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const navRef = useRef<HTMLElement | null>(null);
 
   const allIds = useMemo(
     () => toc.flatMap((c) => [c.id, ...(c.children ?? []).map((x) => x.id)]),
     [toc]
   );
+
+  /*
+   * De qual capítulo é cada seção — 0.1.74.
+   *
+   * `activeId` é UM id só: o último título que passou da linha de leitura.
+   * Enquanto ele for o de uma seção, o capítulo-pai não acendia, e o sumário
+   * parecia ter largado a leitura no meio do caminho — que é exatamente a
+   * queixa de quem estava lendo o Cap. 4 e via o Cap. 4 apagado.
+   */
+  const paiDaSecao = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const c of toc) for (const f of c.children ?? []) m.set(f.id, c.id);
+    return m;
+  }, [toc]);
+  const capituloAtivo = activeId ? paiDaSecao.get(activeId) ?? activeId : null;
 
   useEffect(() => {
     // Posição calculada direto do scroll, e não por IntersectionObserver: com uma
@@ -76,12 +94,59 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
+
+    /*
+     * Re-medir quando o DOCUMENTO muda de altura — 0.1.74.
+     *
+     * Medir uma vez no mount só valeria se a página parasse de crescer depois
+     * disso, e ela não para: são ~120 artes (várias de megabytes) carregando aos
+     * poucos, os `<details>` do catálogo de árvores abrindo e fechando, e a
+     * fonte de display trocando quando termina de baixar. Cada uma dessas
+     * empurra os títulos pra baixo — e como as posições eram de antes, o
+     * marcador ficava dezenas de milhares de pixels atrasado: o leitor estava
+     * no Cap. 4 e o sumário insistia no Cap. 2. É este o "sumário não
+     * acompanha".
+     *
+     * `resize` da janela não cobre nada disso: a janela não mudou de tamanho.
+     */
+    const observer = new ResizeObserver(() => {
+      measure();
+      onScroll();
+    });
+    observer.observe(document.documentElement);
+
     return () => {
       if (frame) cancelAnimationFrame(frame);
+      observer.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
   }, [allIds]);
+
+  /*
+   * Manter o item aceso à VISTA dentro do painel — 0.1.74.
+   *
+   * O sumário tem 70 entradas num painel de altura de tela com rolagem própria:
+   * acender a entrada certa não adianta se ela está 400px abaixo do que se vê.
+   * Aqui o painel (e só ele) rola o mínimo pra trazer a entrada de volta; a
+   * página nunca é tocada, e por isso não se usa `scrollIntoView`, que rolaria
+   * as duas.
+   */
+  useEffect(() => {
+    if (!activeId) return;
+    const link = navRef.current?.querySelector<HTMLElement>(`a[data-toc-id="${CSS.escape(activeId)}"]`);
+    if (!link) return;
+
+    let painel: HTMLElement | null = link.parentElement;
+    while (painel && painel.scrollHeight <= painel.clientHeight + 1) painel = painel.parentElement;
+    if (!painel || painel === document.body || painel === document.documentElement) return;
+
+    const alvo = link.getBoundingClientRect();
+    const caixa = painel.getBoundingClientRect();
+    const folga = 12;
+    if (alvo.top < caixa.top + folga) painel.scrollTop -= caixa.top + folga - alvo.top;
+    else if (alvo.bottom > caixa.bottom - folga) painel.scrollTop += alvo.bottom - (caixa.bottom - folga);
+  }, [activeId]);
 
   const filtered = useMemo(() => {
     const q = normalizar(query.trim());
@@ -125,13 +190,14 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
         )}
       </div>
 
-      <nav className="space-y-3 text-sm">
+      <nav ref={navRef} className="space-y-3 text-sm">
         {filtered.map((chapter) => (
           <div key={chapter.id}>
             <a
               href={`#${chapter.id}`}
+              data-toc-id={chapter.id}
               onClick={onNavigate}
-              aria-current={activeId === chapter.id ? "location" : undefined}
+              aria-current={capituloAtivo === chapter.id ? "location" : undefined}
               /*
                * O capítulo ativo ganha um filete dourado à esquerda, e não só
                * fundo — 0.1.64. Num sumário de 69 entradas, o fundo sozinho
@@ -139,7 +205,7 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
                * quando a pessoa volta pro sumário depois de ler.
                */
               className={`block rounded-lg border-l-[3px] px-2 py-1 font-display font-bold transition-all duration-150 hover:translate-x-0.5 hover:text-wine-600 dark:hover:text-wine-300 ${
-                activeId === chapter.id
+                capituloAtivo === chapter.id
                   ? "border-gold-500 bg-gradient-to-r from-wine-500/15 to-transparent text-wine-700 dark:text-wine-300"
                   : "border-transparent text-parchment-800 dark:text-parchment-200"
               }`}
@@ -152,6 +218,7 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
                   <li key={c.id}>
                     <a
                       href={`#${c.id}`}
+                      data-toc-id={c.id}
                       onClick={onNavigate}
                       aria-current={activeId === c.id ? "location" : undefined}
                       className={`-ml-3 block border-l-2 py-1 pl-3 transition-all duration-150 hover:translate-x-0.5 hover:border-wine-400/50 hover:text-wine-600 dark:hover:text-wine-300 ${

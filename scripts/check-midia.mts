@@ -15,16 +15,15 @@
  *
  * ## O que ele NÃO reclama
  *
- * A pasta `public/` também guarda o cromo do site — ícone de PWA, logo, faixa
- * de fundo, service worker. Nada disso é arte de habilidade, e nada disso passa
- * pelo mapa. A lista `NAO_E_ARTE` isenta esses; qualquer arquivo de mídia fora
- * dela é considerado arte e precisa de destino.
+ * Só `public/arte/`. O cromo do site — ícone de PWA, logo, capa da home,
+ * service worker — mora na raiz de `public/`, e é justamente por isso que a
+ * separação da 0.1.74 existe: antes era preciso manter à mão uma lista de
+ * exceções aqui, e uma exceção esquecida vira aviso falso.
  *
  * Uso: `npm run check:midia`
  */
 
-import { readdirSync } from "node:fs";
-import path from "node:path";
+import { listarArte, urlDaArte } from "./lib/arte.mjs";
 import {
   ARTE_DO_DOJO,
   ARTE_DO_FIO_DA_VIDA,
@@ -33,24 +32,6 @@ import {
   ARTE_LAMINA_DE_TOUKI,
   MIDIA_DE_HABILIDADE,
 } from "../src/data/midiaDeHabilidade";
-
-const PUBLIC = path.join(process.cwd(), "public");
-const EXTENSOES = /\.(webp|gif|webm|mp4|png|jpe?g|avif)$/i;
-
-/**
- * Cromo do site, e não arte de habilidade.
- *
- * Cada entrada é um arquivo que tem dono em outro lugar do código — o
- * manifesto do PWA, o `<Logo>`, a capa da home. Acrescentar aqui é dizer "este
- * não passa pelo mapa"; a alternativa é mapeá-lo.
- */
-const NAO_E_ARTE = new Set([
-  "icone-192.png",
-  "icone-512.png",
-  "icone-mascarado-512.png",
-  "logo-real-alfa.png",
-  "paisagem.jpg",
-]);
 
 /** As artes que ilustram uma SEÇÃO do livro, e não uma habilidade. */
 const ARTES_DE_SECAO = [
@@ -66,10 +47,10 @@ const usados = new Set<string>([
   ...ARTES_DE_SECAO.map((m) => m.src),
 ]);
 
-const naPasta = readdirSync(PUBLIC).filter((f) => EXTENSOES.test(f) && !NAO_E_ARTE.has(f));
-const semUso = naPasta.filter((f) => !usados.has(`/${f}`));
+const naPasta = listarArte();
+const semUso = naPasta.filter((f) => !usados.has(urlDaArte(f)));
 
-console.log(`🎨 ${usados.size} artes mapeadas · ${naPasta.length} arquivos de arte em public/`);
+console.log(`🎨 ${usados.size} artes mapeadas · ${naPasta.length} arquivos em public/arte/`);
 
 /*
  * O acento é avisado aqui, e não só no teste.
@@ -97,8 +78,9 @@ if (semUso.length === 0) {
 console.log(`\n⚠️  ${semUso.length} sem destino no livro:`);
 for (const f of semUso) console.log(`   ${f}`);
 console.log(
-  "\nMapeie em src/data/midiaDeHabilidade.ts, ou acrescente a NAO_E_ARTE neste\n" +
-    "arquivo se o arquivo for cromo do site e não arte de habilidade."
+  "\nMapeie em src/data/midiaDeHabilidade.ts — o mapa é quem decide em qual pasta\n" +
+    "de árvore o arquivo vai morar. Se não for arte de habilidade e sim cromo do\n" +
+    "site, o lugar dele é a raiz de public/, fora de public/arte/."
 );
 // Sai 0 de propósito: arte sem destino é uma LISTA DE TAREFAS, não um defeito.
 // Falhar aqui travaria o commit de quem acabou de baixar uma imagem boa.

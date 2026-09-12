@@ -20,22 +20,15 @@
  * Saída: `.telas/contato-N.png` + a legenda numerada no terminal.
  */
 
-import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
+import { listarArte, PASTA_DA_ARTE, urlDaArte } from "./lib/arte.mjs";
 
-const PUBLIC = path.join(process.cwd(), "public");
 const SAIDA = path.join(process.cwd(), ".telas");
 // `.webm` e `.mp4` ficam de fora: sharp não decodifica vídeo, e sem ffmpeg no
 // ambiente não há de onde tirar um quadro. São poucos, e vão no olho.
 const LEGIVEIS = /\.(webp|gif|png|jpe?g|avif)$/i;
-const IGNORAR = new Set([
-  "icone-192.png",
-  "icone-512.png",
-  "icone-mascarado-512.png",
-  "logo-real-alfa.png",
-  "paisagem.jpg",
-]);
 
 const COLUNAS = 4;
 const CEL_W = 300;
@@ -54,9 +47,7 @@ mkdirSync(SAIDA, { recursive: true });
  * mostra o que essas artes SÃO. Refazer a folha das 90 toda vez que chegam 5
  * arquivos novos é caro e enterra o que interessa no meio do que já foi visto.
  */
-let arquivos = readdirSync(PUBLIC)
-  .filter((f) => LEGIVEIS.test(f) && !IGNORAR.has(f))
-  .sort();
+let arquivos = listarArte().filter((f) => LEGIVEIS.test(f));
 
 if (process.argv.includes("--sem-uso")) {
   const mapa = await import("../src/data/midiaDeHabilidade.ts");
@@ -69,12 +60,12 @@ if (process.argv.includes("--sem-uso")) {
     ...Object.values(mapa.MIDIA_DE_HABILIDADE).map((m) => m.src),
     ...Object.values(mapa).filter((v) => v && typeof v === "object" && "src" in v).map((v) => v.src),
   ]);
-  arquivos = arquivos.filter((f) => !usados.has(`/${f}`));
+  arquivos = arquivos.filter((f) => !usados.has(urlDaArte(f)));
 }
 
 /** O quadro do meio, redimensionado pra caber na célula. */
 async function quadroDoMeio(arquivo) {
-  const caminho = path.join(PUBLIC, arquivo);
+  const caminho = path.join(PASTA_DA_ARTE, arquivo);
   let pagina = 0;
   try {
     const meta = await sharp(caminho, { animated: true }).metadata();

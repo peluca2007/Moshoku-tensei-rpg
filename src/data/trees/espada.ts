@@ -162,7 +162,7 @@ export const ESPADA_TREE: Tree = {
       talents: [
         { id: "folego-de-aco", name: "Fôlego de Aço", paCost: 2, description: "Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank no Estilo Deus da Espada. O estilo aposta tudo no primeiro turno; isto compra um segundo primeiro turno." },
         { id: "mira-no-osso", name: "Mira no Osso", paCost: 2, description: "Seus acertos críticos rolam o Dado de Arma três vezes em vez de duas." },
-        { id: "espada-emprestada", name: "Espada Emprestada", paCost: 2, description: "Você recebe uma espada de qualidade superior: +1 degrau de Dado de Arma permanente, e ela conta como mágica." },
+        { id: "espada-emprestada", name: "Espada Emprestada", paCost: 2, description: "Você recebe uma espada de qualidade superior: +1 degrau de Dado de Arma permanente, e ela conta como mágica. COMO ela chega até você é escolha do Mestre, e são só dois caminhos: ou ele simplesmente a entrega na próxima cena (um antigo mestre, um herdeiro sem braço pra usá-la, um senhor que reconheceu o seu nome), ou ele amarra a entrega a uma provação — um duelo, um serviço, uma prova de caráter. Se for a provação e você FALHAR, você não recebe a espada e os 2 PA voltam inteiros pro seu bolso, livres pra gastar em outra coisa: nenhum talento deste livro fica pago e sem efeito. O Mestre escolhe o caminho na hora da compra, e avisa qual é antes de você confirmar." },
       ],
       abilities: [
         {

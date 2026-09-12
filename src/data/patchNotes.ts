@@ -16,6 +16,64 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.74",
+    date: "2026-09-12",
+    title: "Duas Armas na Mão, Cento e Vinte Arquivos na Pasta",
+    sections: [
+      {
+        heading: "NOVA REGRA: duas armas, uma em cada mão (Cap. 4, §3)",
+        items: [
+          "O livro tinha a Empunhadura Dupla do Deus do Norte e nada mais: quem não fosse dessa árvore e quisesse uma arma em cada mão não encontrava resposta em lugar nenhum, e a mesa decidia de novo toda vez que a pergunta aparecia.",
+          "O GOLPE DUPLO: uma vez por turno, 1 Ação ataca com as DUAS armas ao mesmo tempo — duas rolagens de acerto, podendo ser em alvos diferentes. A mão principal causa dano normal; a mão de apoio causa só o dado, um degrau abaixo, sem Força e sem Bônus de Rank. É livre, não custa PA e não pede talento nenhum.",
+          "É dentro da mesma Ação, e não uma Ação a mais: as outras 2 continuam sendo ataques normais. E o motor de combate já contava assim desde a 0.1.47 — 'arma secundária: um degrau abaixo' sempre somou dois golpes numa Ação só. O que faltava era o livro dizer isso pra quem não é do Deus do Norte.",
+          "O preço é o que falta nas mãos: sem escudo (nem a CA dele, nem o Bloquear com Escudo), sem mão vaga pra poção ou corda, e duas armas não dão CA nenhuma. Em troca, o golpe extra por turno e dois tipos de dano na mão — o cortante e o perfurante juntos, sem gastar Ação pra trocar de arma quando o couro resiste a um deles.",
+          "É isso que os dois talentos do Norte passam a comprar, e agora dá pra ver o quê: Empunhadura Dupla faz a mão de apoio somar Força e Bônus de Rank (além do +1 de CA e da Reação com a arma de apoio); Mão Trocada tira o degrau a menos. Nem uma nem outra dá Ação extra, e o Golpe Duplo continua uma vez por turno com os dois comprados: seis golpes num turno não existem neste livro.",
+        ],
+      },
+      {
+        heading: "Espada Emprestada: o livro não dizia como a espada chega",
+        items: [
+          "O talento dava 'uma espada de qualidade superior' e parava aí. Na mesa isso vira duas leituras opostas — o Mestre entrega junto com o PA gasto, ou cobra uma missão inteira por ela — e nenhuma das duas estava errada, porque o texto não escolhia.",
+          "Agora escolhe, e são só dois caminhos: ou o Mestre entrega na próxima cena (um antigo mestre, um herdeiro sem braço pra usá-la, um senhor que reconheceu o seu nome), ou amarra a entrega a uma provação — duelo, serviço, prova de caráter. Ele diz qual é ANTES de você confirmar a compra.",
+          "E se for a provação e você falhar, os 2 PA voltam inteiros pro seu bolso. Nenhum talento deste livro fica pago e sem efeito: falhar custa a espada e a cena, não o ponto.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: cinco artes estavam na habilidade errada",
+        items: [
+          "Túmulo de Aço enterra alguém sob escombros, com dano contundente e a condição Preso. A arte que estava lá é uma briga de corredor com cabo de vassoura e carteira de escola de escudo — que é a MAESTRIA do Deus do Norte inteira ('se dá pra empunhar, você sabe usar'), e é pra lá que ela foi. Túmulo de Aço ficou sem arte.",
+          "O `300.webp` voltou a se mover: ele não é postura de espadachim nenhuma, é uma maga conjurando água que dispara do chão. Saiu de Fluxo Verdadeiro (Deus da Água) e foi pra Flecha de Água, na Magia de Água.",
+          "'Nada toca você' era uma barreira que trava o golpe no ar antes de encostar — o talento de Imperador da Magia de Vento tem esse nome e é essa cena. Saiu de Nada Passa (Deus da Água), que defende por leitura de movimento e não por barreira.",
+          "O cartaz de batalha com o VERSUS no meio é do Duelo de Canções, e estava ilustrando o Insulto que Fica — que é uma farpa solta no meio da conversa, sem palco e sem convite.",
+          "A cara de deboche da provocação de Cavalaria e Escudos agora ilustra também o Provocar do Deus da Água: as duas árvores puxam o ódio do inimigo, e é a mesma cena. Um arquivo, dois destinos, e nenhum download a mais.",
+        ],
+      },
+      {
+        heading: "Doze arquivos que estavam na pasta e ninguém via",
+        items: [
+          "Três Bainhas, Bala de Lágrimas e Desarme (Deus do Norte); Primeiro Golpe, Veneno Refinado, O Dossiê e A Mão Longa (Furtividade); Cantiga de Marcha e Cantiga de Ninar (Bardo); Emboscada Planejada (Navegação); Espada Emprestada (Deus da Espada) e Nome de Reidar (Deus da Água).",
+          "Os quatro maiores pesavam 14 MB juntos e desceram pra 2,4 MB em WebP animado. O `comprimir:midia` também aprendeu a desistir: abaixo de 20% de ganho ele não reescreve mais o arquivo — antes descia a escada inteira até 400px pra ganhar 3%, perdendo resolução num arquivo que continuava sem caber no alvo.",
+        ],
+      },
+      {
+        heading: "A arte saiu da raiz de public/ e passou a espelhar o livro",
+        items: [
+          "Os ~120 arquivos ficavam soltos na raiz, com o nome que tinham quando foram baixados — `300.webp`, `desarmar dn=deus do norte.jpg`, `hazy cross dn.webp` — e misturados com o ícone do PWA, o logo e a capa da home.",
+          "Agora cada um mora em `public/arte/<árvore>/<habilidade>.<ext>`: a pasta de uma árvore É o catálogo visual dela, e o nome do arquivo é o id da habilidade. A arte que ilustra uma seção do livro (o Dojo, o Touki, o Fio da Vida) ficou em `arte/livro/`.",
+          "A raiz de `public/arte/` virou caixa de entrada: arquivo novo cai ali, o `check:midia` cobra, e o `casar:midia` leva pra pasta da árvore quando o nome bate com o da habilidade. Nenhum script precisa mais de lista de exceções pra saber o que é arte e o que é cromo do site.",
+        ],
+      },
+      {
+        heading: "🐛 O sumário do livro parava de acompanhar a leitura",
+        items: [
+          "As posições dos títulos eram medidas uma única vez, e o livro não para de crescer depois disso: são ~120 artes carregando aos poucos, os catálogos de árvore abrindo e fechando, a fonte de display trocando quando termina de baixar. Cada uma empurra os títulos pra baixo, e o marcador ficava dezenas de milhares de pixels atrasado — o leitor no Cap. 4 e o sumário insistindo no Cap. 2.",
+          "Agora o sumário remede sempre que o documento muda de altura, e não só quando a janela muda de tamanho — que era o único caso que ele cobria, e o único que nunca acontece lendo.",
+          "Duas correções no mesmo lugar: o capítulo-pai acende junto com a seção (antes, ler a §3 do Cap. 4 deixava o Cap. 4 apagado), e o painel do sumário rola sozinho o mínimo pra manter a entrada acesa à vista — num índice de 71 linhas, acender a linha certa não adianta se ela está 400px abaixo do que se vê.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.73",
     date: "2026-09-12",
     title: "Duas Regras Que o Livro Prometia e o Código Não Cumpria",
