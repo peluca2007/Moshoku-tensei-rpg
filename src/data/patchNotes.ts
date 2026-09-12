@@ -16,6 +16,35 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.72",
+    date: "2026-09-12",
+    title: "Cento e Seis Artes, e Setenta Megabytes a Menos",
+    sections: [
+      {
+        heading: "A arte do livro pesava 115 MB — agora pesa 44",
+        items: [
+          "Um único GIF tinha 18 MB, e outros dois passavam de 7. Num livro que precisa abrir offline numa mesa e no 4G de quem chegou atrasado, isso não é detalhe de build. Tudo virou WebP animado, descendo uma escada de largura e qualidade até caber: 60% menor no total, e nenhum arquivo abaixo de 400px de largura numa moldura que mostra 256px de altura.",
+          "Três ferramentas novas sustentam isso: `check:midia` lista a arte que está na pasta e não está no livro, `casar:midia` liga arquivo a habilidade quando os nomes batem, e `folha-de-contato` monta um mosaico com o quadro do MEIO de cada arquivo animado.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: a falange de escudos era uma lâmina de água",
+        items: [
+          "O arquivo se chamava `300.webp` e foi mapeado como a parede de escudos do filme, em 'A Linha' — a habilidade de Rei do Escudeiro. É um corte de espada sobre água rasa, e foi parar em Fluxo Verdadeiro, no Deus da Água, que é onde ele sempre pertenceu.",
+          "A causa: nome de arquivo é a lembrança de quem baixou, não a descrição da cena. E abrir e olhar o primeiro quadro engana quase tanto, porque em arquivo animado o primeiro quadro costuma ser a transição — fundo branco, borrão, a tela antes do golpe.",
+          "Outros quatro destinos saíram errados pelo mesmo motivo e foram corrigidos: a maestria 'O Corpo é a Arma' estava ilustrada com um machado (a tese dela é que você NÃO precisa de arma), a maestria 'Passo sem Peso' do Vendaval estava com um gif de corte, a dança era do Bardo e não do Deus do Norte, e 'curar maldição' estava em Selar a Maldição — que é justamente o que se faz quando NÃO se consegue curar.",
+        ],
+      },
+      {
+        heading: "Chama do Êxodo, e o Manto de Touki ilustrado",
+        items: [
+          "'Tempestade de Fogo' passou a se chamar Chama do Êxodo (獄炎火弾 / Exodus Flame): magia de Fogo Avançado que existe no material original com a mesma forma que a do livro — esfera grande, área que continua queimando. O `id` interno não mudou, porque ele é a chave das fichas já salvas na mesa.",
+          "O Manto de Touki (Cap. 4, §6), o Fio da Vida (§7), o Dojo (Cap. 5, §5) e as duas técnicas de Touki que se compram com PT (Cap. 3, §2) ganharam arte de seção — ilustram a regra, e não uma habilidade de árvore.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.69",
     date: "2026-09-11",
     title: "O Tiro Perfeito Não É de Todo Mundo",

@@ -25,7 +25,14 @@
 
 import { readdirSync } from "node:fs";
 import path from "node:path";
-import { ARTE_DO_DOJO, ARTE_DO_FIO_DA_VIDA, MIDIA_DE_HABILIDADE } from "../src/data/midiaDeHabilidade";
+import {
+  ARTE_DO_DOJO,
+  ARTE_DO_FIO_DA_VIDA,
+  ARTE_DO_TOUKI,
+  ARTE_EXPLOSAO_DE_AURA,
+  ARTE_LAMINA_DE_TOUKI,
+  MIDIA_DE_HABILIDADE,
+} from "../src/data/midiaDeHabilidade";
 
 const PUBLIC = path.join(process.cwd(), "public");
 const EXTENSOES = /\.(webp|gif|webm|mp4|png|jpe?g|avif)$/i;
@@ -46,7 +53,13 @@ const NAO_E_ARTE = new Set([
 ]);
 
 /** As artes que ilustram uma SEÇÃO do livro, e não uma habilidade. */
-const ARTES_DE_SECAO = [ARTE_DO_DOJO, ARTE_DO_FIO_DA_VIDA];
+const ARTES_DE_SECAO = [
+  ARTE_DO_DOJO,
+  ARTE_DO_TOUKI,
+  ARTE_DO_FIO_DA_VIDA,
+  ARTE_LAMINA_DE_TOUKI,
+  ARTE_EXPLOSAO_DE_AURA,
+];
 
 const usados = new Set<string>([
   ...Object.values(MIDIA_DE_HABILIDADE).map((m) => m.src),

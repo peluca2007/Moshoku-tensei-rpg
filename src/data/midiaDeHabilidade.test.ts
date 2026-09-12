@@ -1,7 +1,8 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { ARTE_DO_DOJO, ehVideo, MIDIA_DE_HABILIDADE, midiaDaHabilidade } from "./midiaDeHabilidade";
+import * as mapa from "./midiaDeHabilidade";
+import { ehVideo, MIDIA_DE_HABILIDADE, midiaDaHabilidade } from "./midiaDeHabilidade";
 import { TREES } from "./trees";
 
 /**
@@ -58,8 +59,25 @@ describe("Os arquivos", () => {
     expect(comAcento, `renomeie em disco:\n${comAcento.join("\n")}`).toEqual([]);
   });
 
-  it("a arte do Dojo existe em disco", () => {
-    expect(existsSync(path.join(PUBLIC, ARTE_DO_DOJO.src))).toBe(true);
+  /*
+   * As artes de SEÇÃO são exports soltos (`ARTE_DO_DOJO`, `ARTE_DO_TOUKI`,
+   * `ARTE_LAMINA_DE_TOUKI`, …) porque não ilustram habilidade nenhuma. Listá-las
+   * uma a uma neste teste garantiria esquecer a próxima — que é justamente o
+   * caso em que o arquivo some e ninguém vê erro. O teste varre o módulo.
+   */
+  it("toda arte de seção existe em disco", () => {
+    const secoes = Object.entries(mapa).filter(
+      ([nome, v]) => nome.startsWith("ARTE_") && v && typeof v === "object" && "src" in v
+    ) as [string, { src: string; alt: string }][];
+
+    expect(secoes.length, "nenhuma arte de seção encontrada — o prefixo mudou?").toBeGreaterThan(0);
+
+    for (const [nome, arte] of secoes) {
+      expect(existsSync(path.join(PUBLIC, arte.src)), `${nome} → ${arte.src}`).toBe(true);
+      expect(arte.src.startsWith("/"), nome).toBe(true);
+      expect(/[^ -~]/.test(arte.src), `${nome}: acento no caminho`).toBe(false);
+      expect(arte.alt.length, `${nome}: alt curto demais`).toBeGreaterThan(20);
+    }
   });
 });
 

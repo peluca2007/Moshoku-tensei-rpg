@@ -4,6 +4,8 @@ import { RANK_BONUS, RANKS } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diagramas";
 import TreeCatalog from "./TreeCatalog";
+import ArteDaHabilidade from "./ArteDaHabilidade";
+import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
 import TreeCrest from "../TreeCrest";
 
 export default function Chapter3() {
@@ -315,6 +317,12 @@ export default function Chapter3() {
             ["3 PT", "Explosão de Aura", "1 Ação. Criaturas a 3m fazem teste de Força (CD 8 + Força + Rank) ou são arremessadas 4,5m e ficam Caídas."],
           ]}
         />
+        {/* As duas técnicas da tabela acima que têm arte. Elas não são de árvore
+            nenhuma — qualquer um com PT usa as duas — então vêm direto. */}
+        <div className="grid gap-2 sm:grid-cols-2">
+          <ArteDaHabilidade midia={ARTE_LAMINA_DE_TOUKI} />
+          <ArteDaHabilidade midia={ARTE_EXPLOSAO_DE_AURA} />
+        </div>
 
         <SubTitle id="cap3-preparacao">3. A Preparação em Etapas — o Tiro Perfeito</SubTitle>
         {/*

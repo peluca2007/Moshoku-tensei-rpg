@@ -128,7 +128,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     alt: "Um raio caindo do céu carregado.",
   },
   "agua/zero-absoluto": {
-    src: "/absolute-zero.gif",
+    src: "/absolute-zero.webp",
     alt: "Tudo ao redor congelando de uma vez, até o ar parar.",
   },
 
@@ -159,12 +159,16 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/deus da agua caracteristicas da.webp",
     alt: "A postura da escola: guarda baixa, peso centrado, esperando o outro vir.",
   },
+  "deus-da-agua-corpo/fluxo-verdadeiro": {
+    src: "/300.webp",
+    alt: "Uma lâmina azul cortando a água rasa sem levantar respingo, no movimento que a escola inteira persegue.",
+  },
   "deus-da-agua-corpo/aparar": {
-    src: "/parry da.gif",
+    src: "/parry da.webp",
     alt: "A lâmina desviando o golpe de lado em vez de bloqueá-lo de frente.",
   },
   "deus-da-agua-corpo/devolver": {
-    src: "/reflitir ataque.gif",
+    src: "/reflitir ataque.webp",
     alt: "O golpe recebido sendo devolvido no mesmo movimento em que foi aparado.",
   },
   "deus-da-agua-corpo/nada-passa": {
@@ -188,6 +192,10 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   "deus-do-norte/passo-do-terreno": {
     src: "/improviso dn.webp",
     alt: "O lutador usando o que o terreno deu: terra, pedra e o que estava por perto.",
+  },
+  "deus-do-norte/aura-de-comando-norte": {
+    src: "/67 aura.webp",
+    alt: "Um espadachim parado no meio do salão, e todo mundo em volta já sabendo quem manda ali.",
   },
   "deus-do-norte/cruz-nebulosa": {
     src: "/hazy cross dn.webp",
@@ -226,15 +234,15 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
    * pra uma habilidade da linha [Peso], onde é o que ele ilustra.
    */
   "armas-pesadas/maestria": {
-    src: "/luta no soco.gif",
+    src: "/luta no soco.webp",
     alt: "A luta virando corpo a corpo, sem arma nenhuma, só punho e peso.",
   },
   "armas-pesadas/golpe-circular": {
-    src: "/arma pesada.gif",
+    src: "/arma pesada.webp",
     alt: "Uma arma enorme girando em círculo e varrendo tudo em volta de uma vez.",
   },
   "armas-pesadas/agarrao": {
-    src: "/agarrao.gif",
+    src: "/agarrao.webp",
     alt: "As mãos fechando em volta do corpo do alvo e tirando dele a chance de sair.",
   },
   "armas-pesadas/sem-vergonha": {
@@ -299,6 +307,10 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/passos-de-danca.webp",
     alt: "Uma dança curta e tímida, feita pra quem está olhando e não pra quem está lutando.",
   },
+  "bardo-e-interacao/insulto-que-fica": {
+    src: "/duelo-de-cancoes.jpg",
+    alt: "Dois adversários frente a frente com um VERSUS entre eles, antes de a primeira farpa sair.",
+  },
   "bardo-e-interacao/o-fim-da-cancao": {
     src: "/o-fim-da-cancao.webp",
     alt: "A última nota da música, e o silêncio pesado que vem logo atrás.",
@@ -306,7 +318,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
 
   // --- Navegação e Liderança -----------------------------------------------
   "navegacao-e-lideranca/maestria": {
-    src: "/explorador.gif",
+    src: "/explorador.webp",
     alt: "O explorador lendo o terreno à frente antes do grupo avançar.",
   },
   "navegacao-e-lideranca/marcha-forcada": {
@@ -324,7 +336,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     alt: "Um círculo mágico se desenhando no chão e acendendo por inteiro.",
   },
   "invocacao/chamado": {
-    src: "/invocacao-rapida.gif",
+    src: "/invocacao-rapida.webp",
     alt: "Um círculo aberto às pressas, no meio da luta, sem tempo pro desenho completo.",
   },
 
@@ -341,7 +353,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
    * deixa dormente por um ano. O arquivo diz "curar", e curar é remover.
    */
   "desintoxicacao/purificacao": {
-    src: "/curar-maldicao.gif",
+    src: "/curar-maldicao.webp",
     alt: "A aflição saindo do corpo do alvo de vez, e não sendo apenas contida.",
   },
   "desintoxicacao/toque-do-fim": {
@@ -355,11 +367,11 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     alt: "Uma esfera de chamas girando sobre si mesma antes de sair da mão.",
   },
   "fogo/lanca-de-fogo": {
-    src: "/flecha de fogo.gif",
+    src: "/flecha de fogo.webp",
     alt: "Um projétil de fogo alongado cruzando o ar em linha reta.",
   },
   "fogo/clarao": {
-    src: "/clarao.gif",
+    src: "/clarao.webp",
     alt: "Um estouro de luz branca tomando o quadro inteiro por um instante.",
   },
   "fogo/sopro": {
@@ -459,6 +471,73 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     src: "/comer.gif",
     alt: "Alguém comendo sem hesitar o que envenenaria qualquer outro.",
   },
+  // --- Casados por nome exato de habilidade (0.1.72) ------------------------
+  /*
+   * Tudo daqui pra baixo entrou pelo `npm run casar:midia`: o arquivo chegou
+   * com o nome IDÊNTICO ao da habilidade, e o script casou os dois. O `alt`
+   * continua escrito na mão — ele descreve a CENA, e a cena só se sabe abrindo
+   * o arquivo no quadro do meio (`npm run folha --sem-uso`).
+   */
+  "armas-pesadas/arremesso": {
+    src: "/Arremesso.gif",
+    alt: "Um corpo saindo do chão e sendo jogado longe, ainda no ar.",
+  },
+  "armas-pesadas/cabecada": {
+    src: "/cabecada.gif",
+    alt: "A testa indo pra frente com o rosto fechado de raiva, sem arma nenhuma no quadro.",
+  },
+  "armas-pesadas/estrangular": {
+    src: "/Estrangular.webp",
+    alt: "A mão fechada na garganta de alguém no escuro, sem espaço pra um grito sair.",
+  },
+  "armas-pesadas/terremoto-pessoal": {
+    src: "/Terremoto Pessoal.webp",
+    alt: "Uma onda percorrendo o chão a partir do ponto onde o golpe caiu.",
+  },
+  "armas-pesadas/maos-grandes": {
+    src: "/mao grandes.webp",
+    alt: "Uma mão desproporcional, grande demais pro corpo que a carrega.",
+  },
+  "cavalaria-e-escudos/formacao": {
+    src: "/formacao.webp",
+    alt: "Seis figuras de pé, ombro a ombro, na mesma linha e sem uma fora do lugar.",
+  },
+  "furtividade-e-armadilhas/boticario": {
+    src: "/boticario.gif",
+    alt: "Uma boticária cobrindo o próprio nariz ao identificar o que tem no ar.",
+  },
+  "furtividade-e-armadilhas/duelista-de-rua": {
+    src: "/Duelista de Rua.gif",
+    alt: "Uma briga de rua de verdade, sem regra e sem plateia, no meio dos carros.",
+  },
+  "furtividade-e-armadilhas/nunca-preso": {
+    src: "/Nunca Preso.gif",
+    alt: "As mãos escorregando pra fora das algemas como se elas nunca tivessem fechado.",
+  },
+  "fogo/fagulha": {
+    src: "/Fagulha.gif",
+    alt: "Uma faísca única estourando no escuro, sem chama em volta ainda.",
+  },
+  "fogo/combustao-lenta": {
+    src: "/combustao-lenta.gif",
+    alt: "Alguma coisa queimando devagar, do lado de dentro, sem labareda visível.",
+  },
+  "fogo/sol-menor": {
+    src: "/Sol Menor.webp",
+    alt: "Uma figura dourada suspensa no céu, brilhando forte demais pra se olhar direto.",
+  },
+  "agua/lamina-de-gelo": {
+    src: "/lamina-de-gelo.webp",
+    alt: "Uma lâmina de gelo se formando do nada, fina e transparente na ponta.",
+  },
+  "agua/nevoa-densa": {
+    src: "/nevoa-densa.gif",
+    alt: "Uma silhueta sozinha no branco, a poucos metros e já quase invisível.",
+  },
+  "bardo-e-interacao/silencio-absoluto": {
+    src: "/silencio-absoluto.webp",
+    alt: "Uma sala forrada de espuma acústica, onde o som morre antes de voltar.",
+  },
 };
 
 /**
@@ -472,6 +551,35 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
 export const ARTE_DO_DOJO: MidiaDeHabilidade = {
   src: "/dojo deus da espada.webp",
   alt: "O pátio de um dojo de espada, com o mestre observando o treino dos alunos.",
+};
+
+/**
+ * A arte do **Manto de Touki** (Cap. 4, §6) — 0.1.72.
+ *
+ * "Touki Concentrado" não é uma habilidade com `id` no livro: é uma das formas
+ * do Touki, citada na prosa do Deus da Espada. Por isso ela entra como arte de
+ * SEÇÃO, e não no mapa — que exige que toda chave exista como habilidade.
+ */
+export const ARTE_DO_TOUKI: MidiaDeHabilidade = {
+  src: "/touki-concentrado.webp",
+  alt: "A aura explodindo em volta do corpo, dourada e densa o bastante pra distorcer o que está atrás.",
+};
+
+/**
+ * As duas técnicas de Touki que se COMPRAM com PT — Cap. 3, §2.
+ *
+ * Elas vivem numa tabela do capítulo, e não numa árvore: qualquer um com PT
+ * usa as duas, venha de que escola vier. Por isso ficam fora do mapa, que só
+ * aceita chave que exista como habilidade de árvore.
+ */
+export const ARTE_LAMINA_DE_TOUKI: MidiaDeHabilidade = {
+  src: "/lamina-de-touki.webp",
+  alt: "O fio da arma acendendo com a aura de quem a segura, do cabo até a ponta.",
+};
+
+export const ARTE_EXPLOSAO_DE_AURA: MidiaDeHabilidade = {
+  src: "/explosao-de-aura.webp",
+  alt: "A aura saindo de dentro pra fora de uma vez e empurrando tudo que estava perto.",
 };
 
 /** A arte do **Fio da Vida** (Cap. 4, §7) — o corpo a 0 PV, ainda não morto. */
