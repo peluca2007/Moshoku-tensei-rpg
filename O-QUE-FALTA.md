@@ -191,6 +191,17 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
     moldura vazia no lugar dos retratos.
 
-    Fechar isso exigiria uma lista de todos os arquivos de `public/`, mantida à mão ou gerada por mais
-    um passo de build — uma lista que envelhece calada, e cujo sintoma é exatamente o que ela deveria
-    evitar. Antes de pagar esse preço, vale medir se alguém repara.
+    **A decisão mudou de lado na 0.1.73, e por um motivo novo.** Quando esta nota foi escrita, o
+    obstáculo era não haver lista: fechar o buraco exigiria enumerar `public/` à mão, uma lista que
+    envelhece calada. Hoje a lista existe e é gerada — `MIDIA_DE_HABILIDADE` mais as `ARTE_*` de
+    `src/data/midiaDeHabilidade.ts`, com `npm run check:midia` garantindo que ela e a pasta não
+    divergem.
+
+    Só que agora **são 106 artes e 51 MB**, e pré-cachear tudo é pior do que o problema: o iOS derruba
+    o cache de um site que passa de algumas dezenas de megabytes, e derrubar o cache leva junto o
+    `/livro` inteiro — que é a única coisa que PRECISA abrir offline. Trocaríamos "sem arte no porão"
+    por "sem livro no porão".
+
+    Então o `loading="lazy"` fica, e o buraco fica com ele. O que vale medir na mesa é se alguém
+    repara — e, se reparar, o caminho é pré-cachear **só a arte de maestria** (19 arquivos, as capas de
+    árvore), não as 106.

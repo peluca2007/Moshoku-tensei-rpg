@@ -5,6 +5,46 @@ As mesmas notas aparecem dentro do site, em `/livro`, geradas de `src/data/patch
 
 ---
 
+## 0.1.73 — "Duas Regras Que o Livro Prometia e o Código Não Cumpria" · 2026-09-12
+
+### 🐛 Quebrantado tinha teto na regra e não tinha no sistema
+
+A condição sempre disse **"até o máximo do Bônus de Rank de quem aplicou"**, e a Mecânica Central do
+Lutador repete isso. O código devolvia a contagem crua.
+
+Nove cliques no `+` do Painel do Mestre levavam a CA a **−9** e o dano de todo ataque a −9, sem nada
+no sistema dizendo que aquilo era impossível.
+
+A condição agora guarda o Bônus de Rank de quem a aplicou, e é ele que limita. Quando a mesa não
+informa a fonte, o teto cai em **6** — o maior Bônus de Rank que o livro concede a uma criatura que
+entra em combate (Imperador; o Rank Deus é narrativo e não se compra com PA). O sistema não adivinha
+o número da mesa, só barra o valor impossível.
+
+O botão `+` **para** no teto. Um `+` que aceita o clique e não muda número nenhum é pior que um
+botão desligado: a mesa clica três vezes e conclui que a ficha está quebrada.
+
+### 🐛 O Descanso Curto dizia três coisas diferentes
+
+| Onde | O que dizia |
+| --- | --- |
+| Tabela do Cap. 4 | 25% de PM, PP **e PT** |
+| Aviso logo abaixo | PT voltam **inteiros**… e o Curto "devolve **metade** da reserva de PM" |
+| Cap. 3 | "PM voltam **pela metade**" |
+
+Três números pro mesmo descanso, e o aviso desmentia uma tabela que estava três centímetros acima
+dele.
+
+O motor sempre aplicou **25% de PM e PP, com PT inteiros**, e é o que fica. O que mudou foi o
+**texto**, nos três lugares: a tabela agora separa PT dos outros dois em vez de ser corrigida por um
+aviso, e as duas menções a "metade" viraram 25%.
+
+A aritmética do exemplo do curandeiro foi refeita com o número certo. Cada Curto devolve **3 PM** —
+42 PV via *Juramento* — e não metade da reserva. Com dois Curtos por dia ele fecha em **252 PV** de
+cura: uma vez e meia a reserva cheia, e não um poço sem fundo. O argumento do teto continua de pé; só
+os números estavam errados.
+
+---
+
 ## 0.1.72 — "Cento e Seis Artes, e Setenta Megabytes a Menos" · 2026-09-12
 
 ### 📦 A arte pesava 115 MB. Agora pesa 44.

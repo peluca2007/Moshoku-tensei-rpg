@@ -1,26 +1,22 @@
 /**
  * Descanso Curto e Longo (Cap. 4, §7) — a conta, separada de quem a aplica.
  *
- * ## A contradição do livro, e o que este arquivo faz com ela
+ * ## A contradição que existia até a 0.1.73
  *
- * Sobre o Descanso Curto existem TRÊS afirmações no livro, e elas não fecham:
+ * O livro dizia três coisas diferentes sobre o Descanso Curto: a tabela do Cap.
+ * 4, §7 dava "25% dos seus PM, PP e PT"; o aviso abaixo dela dizia que PT voltam
+ * INTEIROS e que o Curto "devolve metade da reserva de PM"; e o Cap. 3 repetia
+ * que "PM voltam pela metade".
  *
- * 1. **A tabela do Cap. 4, §7:** "Recupera 25% dos seus PM, PP e PT máximos".
- * 2. **O aviso logo abaixo da tabela:** "PT são a exceção, e voltam inteiros em
- *    qualquer Descanso Curto — é o que o Capítulo 3 já dizia, e a tabela acima
- *    contradizia". O mesmo aviso, ao argumentar, diz que o Curto "devolve
- *    **metade** da reserva de PM".
- * 3. **O Cap. 3:** "PT são recuperados integralmente em um Descanso Curto — e
- *    são o único recurso que volta inteiro nele (**PM voltam pela metade**)".
+ * Este arquivo seguiu sempre a **tabela** — 25% de PM e PP, PT inteiros —
+ * porque é o que a mesa lê na hora de aplicar, e porque dobrar por conta própria
+ * o recurso que a Magia de Cura converte em PV não é decisão de código.
  *
- * Sobre **PT** os três resolvem: dois deles corrigem a tabela explicitamente,
- * então PT voltam INTEIROS aqui.
- *
- * Sobre **PM** não resolvem: a tabela diz 25%, os outros dois dizem 50%. Este
- * arquivo segue a **tabela**, porque é o que a mesa lê na hora de aplicar — e
- * porque escolher o número maior sem o autor mandar seria dobrar, por conta
- * própria, o recurso do qual a Magia de Cura converte PV. A divergência está
- * anotada no `O-QUE-FALTA.md` e é decisão de balanceamento, não de código.
+ * Na 0.1.73 o **texto** foi alinhado a esta conta, nos três lugares: a tabela
+ * passou a separar PT dos outros dois em vez de ser corrigida por um aviso
+ * abaixo dela, e as duas menções a "metade" viraram 25%. A aritmética do exemplo
+ * do curandeiro foi refeita com o número certo. Não há mais divergência a
+ * arbitrar: o livro e este arquivo dizem a mesma coisa.
  */
 
 export interface ReservasMaximas {

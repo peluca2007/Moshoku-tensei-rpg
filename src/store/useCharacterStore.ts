@@ -2,6 +2,7 @@ import { WeaponGroupId } from "@/data/weaponGroups";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
+import { TETO_DE_ACUMULOS } from "@/data/condicoes";
 import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank } from "./selectors";
 import { comImagensSaneadas } from "@/lib/imagemDaFicha";
 import { getCondicaoPorId } from "@/data/condicoes";
@@ -495,7 +496,18 @@ export const useCharacterStore = create<RosterState>()(
           const atuais = c.condicoes ?? [];
           const alvo = atuais.find((x) => x.id === id);
           if (!alvo) return c;
-          const novo = (alvo.acumulos ?? 1) + delta;
+          /*
+           * O teto entra aqui TAMBÉM, e não só no cálculo — 0.1.73.
+           *
+           * `getPenalidadeQuebrantado` já ignora acúmulo acima do teto, então o
+           * número da ficha estaria certo de qualquer jeito. Mas a ficha mostra
+           * a contagem crua ao lado da condição: sem travar aqui, o Mestre
+           * clicaria até "20×" e leria uma penalidade de −20 que o sistema
+           * aplica como −6. Um número visível que o cálculo desobedece é pior
+           * que um botão que para.
+           */
+          const teto = alvo.bonusDeRankDaFonte ?? TETO_DE_ACUMULOS;
+          const novo = Math.min((alvo.acumulos ?? 1) + delta, teto);
           if (novo <= 0) return { ...c, condicoes: atuais.filter((x) => x.id !== id) };
           return { ...c, condicoes: atuais.map((x) => (x.id === id ? { ...x, acumulos: novo } : x)) };
         }),

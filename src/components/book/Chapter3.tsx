@@ -293,7 +293,7 @@ export default function Chapter3() {
           </P>
           <List
             items={[
-              "PT são recuperados integralmente em um Descanso Curto — e são o único recurso que volta inteiro nele (PM voltam pela metade). O Cap. 4, §7 limita a dois Descansos Curtos entre dois Longos.",
+              "PT são recuperados integralmente em um Descanso Curto — e são o único recurso que volta inteiro nele (PM e PP voltam a 25% do máximo). O Cap. 4, §7 limita a dois Descansos Curtos entre dois Longos.",
               "PT não podem ser convertidos em PM, nem PM em PT.",
               "Um personagem com Ranks em mais de um estilo marcial usa uma reserva única de PT.",
             ]}
