@@ -36,7 +36,7 @@ export const TERRA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d6+2",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Moldar",
         description:
@@ -113,7 +113,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d6+3",
+      hpDiceFormula: "1d6+2",
       mastery: {
         name: "Compressão",
         description:
@@ -176,7 +176,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Avançado",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+2",
       mastery: {
         name: "Domínio Mineral",
         description:
@@ -240,7 +240,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Santo",
-      hpDiceFormula: "1d8+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "O Chão Obedece",
         description:
@@ -278,7 +278,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d10+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "Metal e Magma",
         description:
@@ -321,7 +321,7 @@ export const TERRA_TREE: Tree = {
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "1d10+5",
+      hpDiceFormula: "1d8+4",
       mastery: {
         name: "O Continente é Seu",
         description:

@@ -35,7 +35,7 @@ export const AGUA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d4+1",
+      hpDiceFormula: "1d4",
       mastery: {
         name: "Afinidade Aquática",
         description:
@@ -139,7 +139,7 @@ export const AGUA_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d4+2",
+      hpDiceFormula: "1d4+1",
       mastery: {
         name: "Cântico Fluido",
         description:
@@ -231,7 +231,7 @@ export const AGUA_TREE: Tree = {
     },
     {
       rank: "Avançado",
-      hpDiceFormula: "1d6+2",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Termodinâmica Aplicada",
         description:
@@ -331,7 +331,7 @@ export const AGUA_TREE: Tree = {
     },
     {
       rank: "Santo",
-      hpDiceFormula: "1d6+3",
+      hpDiceFormula: "1d6+2",
       mastery: {
         name: "Domínio Climático",
         description:
@@ -390,7 +390,7 @@ export const AGUA_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+2",
       mastery: {
         name: "Condutividade",
         description:
@@ -438,7 +438,7 @@ export const AGUA_TREE: Tree = {
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "1d8+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "O Silêncio Primordial",
         description:

@@ -36,7 +36,7 @@ export const BARREIRA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d6+2",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "O Primeiro Círculo",
         description:
@@ -123,7 +123,7 @@ export const BARREIRA_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d6+3",
+      hpDiceFormula: "1d6+2",
       mastery: {
         name: "Interdição",
         description:
@@ -197,7 +197,7 @@ export const BARREIRA_TREE: Tree = {
     },
     {
       rank: "Avançado",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+2",
       mastery: {
         name: "Selo de Conjuração",
         description:
@@ -259,7 +259,7 @@ export const BARREIRA_TREE: Tree = {
     },
     {
       rank: "Santo",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+2",
       mastery: {
         name: "Espaço Recusado",
         description:
@@ -299,7 +299,7 @@ export const BARREIRA_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d8+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "Anulação",
         description:
@@ -338,7 +338,7 @@ export const BARREIRA_TREE: Tree = {
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "1d8+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "Lei Local",
         description:

@@ -101,8 +101,8 @@ export const COLUNAS_CORPO: ColunaDano[] = [
 export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = [
   { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "—", desintoxicacao: "~12", barreira: "—", invocacao: "~13" } },
   { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "—", desintoxicacao: "~13", barreira: "—", invocacao: "~24" } },
-  { patamar: "3º", porArvore: { agua: "~28", fogo: "~40", vento: "~32", terra: "~36", cura: "—", desintoxicacao: "~16", barreira: "—", invocacao: "~38" } },
-  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~52", cura: "—", desintoxicacao: "~17", barreira: "—", invocacao: "~55" } },
+  { patamar: "3º", porArvore: { agua: "~30", fogo: "~40", vento: "~32", terra: "~36", cura: "—", desintoxicacao: "~16", barreira: "—", invocacao: "~38" } },
+  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "—", desintoxicacao: "~17", barreira: "—", invocacao: "~55" } },
   { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~40", desintoxicacao: "~34", barreira: "~30", invocacao: "~80" } },
   { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~55", desintoxicacao: "~36", barreira: "~40", invocacao: "~110" } },
 ];

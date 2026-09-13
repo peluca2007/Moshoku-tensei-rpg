@@ -523,6 +523,29 @@ export interface AbilityDef {
 
 export interface TreeRankDef {
   rank: RankName;
+  /**
+   * O Dado de PV do patamar (Cap. 4, "Cálculos Vitais"). A soma das médias de
+   * todos os patamares abertos é o "corpo treinado" — ver `getTrainedBody`.
+   *
+   * **As três faixas** (2026-09-13, nerf de PV dos magos pedido pelo usuário:
+   * "diminui a vida de todos os magos"). Antes desta data as faixas se
+   * cruzavam: Terra fechava o Imperador em 99 PV e Barreira em 92, contra 100
+   * de Arquearia — a árvore de Corpo mais frágil do livro. O mago que abrisse
+   * a escola certa tinha corpo de guerreiro, e a única coisa que o livro cobra
+   * dele em troca de alcance, área e condição é justamente o corpo. Duas
+   * regras uniformes consertaram isso, aplicadas às oito árvores de `magia`:
+   *
+   * 1. **Nenhuma escola de magia passa do d8.** Os d10 de Terra (5º e 6º) e de
+   *    Invocação (6º) viraram d8 — d10 em diante é dado de Corpo.
+   * 2. **-1 no modificador de todos os seis patamares.** Um corte plano de
+   *    ~12% na reserva inteira, parelho entre as oito escolas: não muda a
+   *    ordem entre elas (Terra continua a mais dura, Fogo a mais frágil), só
+   *    afunda a faixa toda.
+   *
+   * O resultado é uma leitura de três faixas que não se tocam mais, no
+   * Imperador: **Magia 64-85 · Utilidade 85-95 · Corpo 100-135**. Nenhuma
+   * árvore de magia chega onde a mais frágil das de Corpo começa.
+   */
   hpDiceFormula: string;
   /** Árvore do Corpo: PT ganhos ao alcançar este rank (Cap. 3, "PT Pleno"). */
   ptGained?: number;

@@ -1,6 +1,13 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-10 — vinte e duas versões num dia (0.1.17 → 0.1.38), fechando as vinte e
+**Última atualização:** 2026-09-13 — a 0.1.75 nerfou os PV das oito escolas de magia (as faixas dos
+três pilares se cruzavam: Terra fechava o Imperador com 99 PV contra 100 da Arquearia) e abriu o
+`check:sobrevivencia`, que mede o lado do sistema que APANHA — PV contra o molde de criatura do mesmo
+patamar. Ele achou uma coisa que o nerf não causou e que está no item 16 do `O-QUE-FALTA.md`: a
+sobrevivência cai do 1º ao 6º patamar nos **três** pilares, porque o dano das criaturas cresce ×12 e
+o PV cresce ×5,4.
+
+**Antes disso:** 2026-09-10 — vinte e duas versões num dia (0.1.17 → 0.1.38), fechando as vinte e
 duas frentes daquele levantamento — o `TAREFAS.md`, que foi apagado na 0.1.45 depois de as vinte e
 duas serem endereçadas. O site ganhou **busca global** nos 879 verbetes, telas de
 **404 e de erro** em português, o **link de ficha diagnosticado** (com colagem e QR), **compartilhar
@@ -320,6 +327,8 @@ npm test                  # testes das fórmulas (vitest)
 npm run lint              # eslint
 npm run check:livro       # dados × texto do livro, e se toda arte existe em disco (rodar dentro do WSL)
 npm run check:arvores     # teto do turno de cada árvore × a régua do Apêndice C
+npm run check:progressao  # dano por Ação: a capstone compensa? os pilares estão no mesmo campeonato?
+npm run check:sobrevivencia # o outro lado: PV × o dano do molde de criatura do mesmo patamar
 npm run check:texto       # a PROSA das 601 habilidades × os campos delas
 npm run check:redundancia # habilidades que repetem um patamar anterior
 node scripts/gerar-favicon.mjs   # regera o favicon E os três ícones do PWA

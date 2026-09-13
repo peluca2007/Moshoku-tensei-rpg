@@ -145,6 +145,11 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     sobra é se 1,6× ainda é demais.** A magia compra alcance de 90m, área de verdade e condição, e
     nada disso pontua neste motor. Se a resposta for "está bom", este item sai da lista.
 
+    > **Leia junto com o 16, porque a 0.1.75 mexeu no outro prato da balança.** O nerf de PV dos magos
+    > não tocou em dano nenhum — a tabela acima continua idêntica —, mas agora o mago rende 1,6× menos
+    > por Ação **e** aguenta ~12% menos pancada. Se a resposta a este item for "1,6× é demais", o
+    > conserto passou a ser mais urgente, não menos: as duas desvantagens se somam na mesma ficha.
+
 14. **A escolha de grupo de arma virou decisão ou virou imposto?** *(aberto pela 0.1.52)* Todo
     personagem agora escolhe **um grupo livre na criação**, além do piso de Desarmado e Improvisado. A
     intenção era dar caracterização a quem não é guerreiro — a adaga de reserva do mago, o cajado de
@@ -167,9 +172,45 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     - **Etapa Encurtada (Intermediário) virou obrigatória?** Ela derruba o tiro de 4 para 3 Ações — ou
       seja, faz a técnica caber num turno. Talento que muda tanto assim costuma deixar de ser escolha.
 
+16. **A curva de dano das criaturas passou a curva de PV, e isso vale pros três pilares** *(aberto
+    pela auditoria da 0.1.75; mede-se com `npm run check:sobrevivencia`)*. Dividindo os PV de cada
+    árvore pelo `danoPorTurno` do molde do Apêndice G do MESMO patamar, a sobrevivência **cai
+    monotonicamente do 1º ao 6º**, em todo pilar:
+
+    | Vigor 0 | 1º | 2º | 3º | 4º | 5º | 6º |
+    | --- | --- | --- | --- | --- | --- | --- |
+    | Magia | 2,08 | 1,44 | 1,10 | 0,90 | 0,77 | **0,62** |
+    | Utilidade | 2,27 | 1,65 | 1,27 | 1,05 | 0,91 | **0,75** |
+    | Corpo | 2,67 | 2,06 | 1,66 | 1,37 | 1,19 | **0,97** |
+
+    A causa é aritmética e não tem nada de sutil: o molde vai de 10 pra 120 de dano por turno (**×12**)
+    e o PV mais alto do livro vai de 29 pra 135 (**×5,4**). O nerf dos magos empurrou a linha de cima
+    pra baixo, mas não criou a inclinação — ela é igual nas três linhas, e já existia.
+
+    **A pergunta não é "está errado?".** Um jogo em que o topo é mais letal que a base pode ser
+    exatamente o que você quer — é o que a ficção do Rank Deus promete. A pergunta é **qual das duas
+    pontas está fora do lugar**, e só a mesa responde:
+    - Se um combate de patamar alto acaba em dois turnos e ninguém teve tempo de fazer nada, o
+      problema é o **molde**: Terror (80) e Lenda (120) batem forte demais pro que existe de PV.
+    - Se o combate dura e o que mata é sempre o **foco** — o Mestre escolhe um alvo e ele cai antes de
+      agir —, o problema é o **PV do fim do livro**, e o conserto mora no multiplicador ×1,67 ou no
+      `PV_BASE`, não nos Dados de PV árvore a árvore.
+
+    O check **não conta** cura, Barreira, Touki nem esquiva, e pressupõe foco total num alvo só: é o
+    piso, não a expectativa. Se a mesa nunca sentiu isso, a resposta pode muito bem ser "a Barreira e a
+    Cura já pagam essa conta" — e aí a linha certa a puxar é a de quanto elas devolvem por turno.
+
+17. **Duas coisas que a auditoria da 0.1.75 deixou apontadas e não tocou**, porque são suas:
+    - **O cântico da Chama do Êxodo tem 344 caracteres, e o teto do Avançado é 280.** É o único aviso
+      que sobrou no `check:livro`. Cortar 64 caracteres é cortar uma linha inteira da poesia, e qual
+      linha vai embora é decisão sua — não minha.
+    - **`public/arte/livro/touki-concentrado.webp` tem 2,13 MB**, contra o teto de mídia do projeto. O
+      `comprimir-midia` responde "já está no melhor que dá (só 3% de ganho)": é arquivo de muitos
+      quadros, e o conserto é trocar por um recorte mais curto da mesma cena — o que exige ver o vídeo.
+
 ## Site
 
-16. **~~Instalar o app num celular~~ — CONFIRMADO em 2026-09-11.** O botão de instalar existia só no
+18. **~~Instalar o app num celular~~ — CONFIRMADO em 2026-09-11.** O botão de instalar existia só no
     rodapé, e num site cujo `/livro` tem 87 mil pixels de rolagem isso é o mesmo que não existir: o
     relato foi *"não apareceu a opção de adicionar à tela inicial"*. Ele entrou no menu na 0.1.61, e o
     autor confirmou no aparelho — **deu certo**.
@@ -185,7 +226,7 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     - A barra do topo e o botão de dados fogem do entalhe e da barra de gestos? *(as regras de área
       segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, nunca num aparelho.)*
 
-17. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
+19. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
     tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
     de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
     preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê

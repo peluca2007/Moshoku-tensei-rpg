@@ -35,7 +35,7 @@ export const FOGO_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d4+1",
+      hpDiceFormula: "1d4",
       mastery: {
         name: "Chama Viva",
         description:
@@ -130,7 +130,7 @@ export const FOGO_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d4+1",
+      hpDiceFormula: "1d4",
       mastery: {
         name: "Propagação",
         description:
@@ -209,7 +209,7 @@ export const FOGO_TREE: Tree = {
     },
     {
       rank: "Avançado",
-      hpDiceFormula: "1d6+2",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Termodinâmica Inversa",
         description:
@@ -298,7 +298,7 @@ export const FOGO_TREE: Tree = {
     },
     {
       rank: "Santo",
-      hpDiceFormula: "1d6+2",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Domínio da Combustão",
         description:
@@ -343,7 +343,7 @@ export const FOGO_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+2",
       mastery: {
         name: "Plasma",
         description:
@@ -389,7 +389,7 @@ export const FOGO_TREE: Tree = {
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+2",
       mastery: {
         name: "A Segunda Estrela",
         description:
