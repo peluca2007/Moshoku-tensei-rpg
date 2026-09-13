@@ -67,6 +67,22 @@ Trinta e três testes novos amarram a separação das três faixas (`src/data/fa
 guardava isso: as oito escadas de magia foram reescritas sem que **um único** dos 529 testes de então
 mudasse de cor, porque nenhum deles tocava num Dado de PV.
 
+### ✂️ E as duas pontas que a auditoria tinha deixado apontadas
+
+**O cântico da Chama do Êxodo** tinha 344 caracteres contra o teto de 280 do Avançado — a única magia
+do livro fora da faixa do próprio rank. Foi pra **270**, que continua acima do piso de 200 onde mora
+o Bônus de Recitação Perfeita. As cinco imagens continuam de pé; o que saiu foram os advérbios e as
+repetições. Com isso o `check:livro` fechou em **0 erros e 0 avisos** pela primeira vez.
+
+**A arte do Touki Concentrado** pesava 2,13 MB, e o compressor já tinha desistido dela com 3% de
+ganho: não era caso de qualidade, era de **duração** — 326 quadros, 13,7 segundos.
+
+A legenda dessa arte promete *"a aura explodindo em volta do corpo, **dourada** e densa o bastante pra
+distorcer o que está atrás"*. Os primeiros 221 quadros do clipe são roxo e magenta: **outra cena**. O
+arquivo agora são os quadros 222–325 — as lâminas sacadas, a aura dourada acendendo, e a explosão que
+distorce o fundo. **4,4 s, 0,70 MB**, metade do teto de 1,5 MB, e mais fiel ao que o alt text sempre
+disse que ela era.
+
 ### 🩹 As quatro divergências que a auditoria encontrou e consertou
 
 - **Apêndice C, duas células abaixo do que a própria árvore entrega.** Água no 3º prometia ~28 com um

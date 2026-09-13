@@ -41,6 +41,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        heading: "E as duas pontas que a auditoria tinha deixado apontadas",
+        items: [
+          "O CÂNTICO DA CHAMA DO ÊXODO tinha 344 caracteres contra o teto de 280 do Avançado — a única magia do livro fora da faixa do próprio rank. Foi pra 270, que continua acima do piso de 200 onde mora o Bônus de Recitação Perfeita. As cinco imagens do cântico continuam de pé; o que saiu foram os advérbios e as repetições. Com isso o check:livro fechou em 0 erros e 0 avisos pela primeira vez.",
+          "A ARTE DO TOUKI CONCENTRADO pesava 2,13 MB, e o compressor já tinha desistido dela com 3% de ganho: não era caso de qualidade, era de duração. Eram 326 quadros e 13,7 segundos.",
+          "A legenda dessa arte promete 'a aura explodindo em volta do corpo, DOURADA e densa o bastante pra distorcer o que está atrás' — e os primeiros 221 quadros do clipe são roxo e magenta, outra cena. O arquivo agora são os quadros 222-325: as lâminas sacadas, a aura dourada acendendo e a explosão que distorce o fundo. 4,4 segundos, 0,70 MB, metade do teto de 1,5 MB — e mais fiel ao que o alt text sempre disse que ela era.",
+        ],
+      },
+      {
         heading: "As quatro divergências que a auditoria encontrou e consertou",
         items: [
           "Apêndice C, duas células abaixo do que a própria árvore entrega: Água no 3º prometia ~28 com um golpe único de média 30, e Terra no 4º prometia ~52 com um de 55. A régua pode ficar acima do maior golpe (são três Ações, vários alvos), nunca abaixo. Foram pra ~30 e ~55.",
