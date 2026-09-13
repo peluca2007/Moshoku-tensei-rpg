@@ -256,7 +256,7 @@ export const FOGO_TREE: Tree = {
           effect:
             "Teste de Agilidade (CD 8 + BC), metade se passar. Falha: Em Chamas. A área continua queimando 1 minuto: quem começar o turno dentro sofre +2d6.",
           incantation:
-            "Que este fogo não se contente com um corpo, nem com dois, nem com a fileira inteira\nque veio até aqui achando que era muita gente pra mim;\nque ele desça sobre este chão como desce a sentença sobre quem já foi julgado\nantes mesmo de abrir a boca pra se explicar,\ne que não sobre nada de pé pra contar o que aconteceu neste lugar.\nChama do Êxodo!",
+            "Que este fogo não se contente com um corpo, nem com dois, nem com a fileira\nque veio achando que era muita gente pra mim;\nque desça como desce a sentença sobre quem foi julgado\nantes de abrir a boca pra se explicar,\ne que não sobre nada de pé pra contar.\nChama do Êxodo!",
         },
         {
           id: "coluna-solar",

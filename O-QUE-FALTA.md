@@ -200,13 +200,18 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     piso, não a expectativa. Se a mesa nunca sentiu isso, a resposta pode muito bem ser "a Barreira e a
     Cura já pagam essa conta" — e aí a linha certa a puxar é a de quanto elas devolvem por turno.
 
-17. **Duas coisas que a auditoria da 0.1.75 deixou apontadas e não tocou**, porque são suas:
-    - **O cântico da Chama do Êxodo tem 344 caracteres, e o teto do Avançado é 280.** É o único aviso
-      que sobrou no `check:livro`. Cortar 64 caracteres é cortar uma linha inteira da poesia, e qual
-      linha vai embora é decisão sua — não minha.
-    - **`public/arte/livro/touki-concentrado.webp` tem 2,13 MB**, contra o teto de mídia do projeto. O
-      `comprimir-midia` responde "já está no melhor que dá (só 3% de ganho)": é arquivo de muitos
-      quadros, e o conserto é trocar por um recorte mais curto da mesma cena — o que exige ver o vídeo.
+17. **~~As duas pontas soltas da auditoria da 0.1.75~~ — FEITAS no mesmo dia.**
+    - **O cântico da Chama do Êxodo** tinha 344 caracteres contra o teto de 280 do Avançado. Foi pra
+      **270** — dentro da faixa, e ainda acima do piso de 200 que paga o Bônus de Recitação Perfeita.
+      As cinco imagens continuam de pé; o que saiu foram os advérbios e as repetições ("até aqui",
+      "sobre este chão", "mesmo", "já", e o "o que aconteceu neste lugar" do fecho, que virou só "pra
+      contar"). O `check:livro` fechou em **0 erros e 0 avisos** pela primeira vez.
+    - **`touki-concentrado.webp`** foi de **2,13 MB pra 0,70 MB** — metade do teto de 1,5 MB. Não foi
+      compressão (a escada já tinha desistido, com 3% de ganho): foi **recorte**. Eram 326 quadros e
+      13,7 s de clipe, e a legenda da arte promete "a aura explodindo em volta do corpo, **dourada**".
+      Os primeiros 221 quadros são roxo e magenta — outra cena, e não a que o alt text descreve. O
+      arquivo agora são os quadros 222–325 (4,4 s): as lâminas sacadas, a aura dourada acendendo e a
+      explosão que distorce o fundo atrás. O original continua no git, no commit anterior a este.
 
 ## Site
 
