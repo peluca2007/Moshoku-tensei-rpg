@@ -16,6 +16,41 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.75",
+    date: "2026-09-13",
+    title: "O Mago Tinha Corpo de Guerreiro",
+    sections: [
+      {
+        heading: "BALANCEAMENTO: os PV de todas as oito escolas de magia caíram",
+        items: [
+          "O pedido foi 'diminui a vida de todos os magos', e a medição mostrou por quê: as faixas de PV dos três pilares se CRUZAVAM. Magia de Terra fechava o Imperador com 99 PV e Barreira com 92, contra 100 da Arquearia — a árvore de CORPO mais frágil do livro. Escolhendo a escola certa, o mago tinha corpo de guerreiro, e corpo é a única coisa que este livro cobra em troca de alcance, área e condição.",
+          "Duas regras, aplicadas igual às oito árvores de magia. PRIMEIRA: nenhuma escola de magia passa do d8 — os d10 de Terra (5º e 6º) e de Invocação (6º) viraram d8. Dado de dez lados pra cima é escada de Corpo.",
+          "SEGUNDA: -1 no modificador dos seis patamares de todas as oito. É um corte plano de ~12% na reserva inteira, parelho entre as escolas: a ordem entre elas não muda (Terra continua a mais dura, Fogo a mais frágil), a faixa inteira é que afunda.",
+          "O resultado, no Imperador e com Vigor 0: Magia 64-85 PV · Utilidade 85-95 · Corpo 100-135. As três faixas não se tocam mais em patamar nenhum — nenhuma árvore de magia chega onde a mais frágil das de Corpo começa. Fogo, a mais frágil do livro, sai de 74 pra 64.",
+          "O que isso custa na mesa, e está medido: um mago Imperador com Vigor 0 aguenta 0,62 turno de uma criatura Lenda focada nele (era 0,71 antes). Com Vigor 2, 0,88. Traduzindo: do 4º patamar em diante, mago sem Vigor investido cai no primeiro turno em que virar alvo. A escola de magia agora DEPENDE da linha de frente pra existir — que é exatamente o que o Cap. 4 sempre disse e o número nunca cobrou.",
+        ],
+      },
+      {
+        heading: "AUDITORIA: o livro nunca tinha medido o lado que APANHA",
+        items: [
+          "O projeto media o lado que bate por dois caminhos (check:arvores compara o teto do turno com a régua do Apêndice C; check:progressao mede dano por Ação). Nenhum dos dois olhava a reserva de PV contra o dano que vem de volta — e era justamente onde o livro não tinha número: dezenove escadas de Dado de PV escritas árvore a árvore, sem nada comparando uma com a outra nem com o inimigo do patamar.",
+          "Agora existe o `npm run check:sobrevivencia`. Ele pergunta duas coisas: as três faixas de PV se cruzam? e quantos turnos cada árvore aguenta, dividindo os PV pelo dano por turno do molde de criatura do MESMO patamar (Apêndice G: 10/20/35/55/80/120)?",
+          "A conta usa o molde de criatura de propósito, e não a régua do Apêndice C: a régua do C mede o que um PERSONAGEM entrega no turno, e sobrevivência medida contra ela seria sobrevivência num duelo entre jogadores — que não é o que a mesa joga. O molde do G é o inimigo que o Mestre monta, e é o dano que chega na ficha.",
+          "O achado que sobra pra mesa, e que o nerf dos magos NÃO causou: a sobrevivência cai em TODOS os pilares a cada patamar. No Vigor 0, o Corpo sai de 2,67 turnos no 1º pra 0,97 no 6º; a Magia de 2,08 pra 0,62. A curva de dano das criaturas (×12 do 1º ao 6º) cresce muito mais rápido que a curva de PV (×5,4). Ou os PV do fim do livro estão baixos, ou os moldes de Terror e Lenda batem forte demais — e a decisão é de mesa, não de planilha.",
+          "Trinta e três testes novos amarram a separação das três faixas (`src/data/faixasDePv.test.ts`). Nada guardava isso: as oito escadas de magia foram reescritas sem que um único dos 529 testes de então mudasse de cor, porque nenhum deles tocava num Dado de PV.",
+        ],
+      },
+      {
+        heading: "As quatro divergências que a auditoria encontrou e consertou",
+        items: [
+          "Apêndice C, duas células abaixo do que a própria árvore entrega: Água no 3º prometia ~28 com um golpe único de média 30, e Terra no 4º prometia ~52 com um de 55. A régua pode ficar acima do maior golpe (são três Ações, vários alvos), nunca abaixo. Foram pra ~30 e ~55.",
+          "Invocação, duas habilidades que gastavam mais Ações que a tabela do rank sem a nota que o Cap. 2 exige: Círculo de Convocação (4 onde a tabela pede 3) e O Chamado que Não se Recusa (6 onde pede 4). As notas agora estão escritas, e as duas dizem a mesma coisa que 'Corpo Emprestado' já dizia pelo avesso — nesta escola o custo em Ações mede o GESTO, não o rank.",
+          "A tabela de calibração dentro de `getMaxHp` estava com deriva de 1 a 2 PV em cinco dos seus números, envelhecida desde o rebalanceamento do ×1,67. Conferida e reescrita.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.74",
     date: "2026-09-12",
     title: "Duas Armas na Mão, Cento e Vinte Arquivos na Pasta",

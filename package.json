@@ -18,6 +18,7 @@
     "check:offline": "node scripts/check-offline.mjs",
     "check:texto": "tsx scripts/check-texto.mts",
     "check:progressao": "tsx scripts/check-progressao.mts",
+    "check:sobrevivencia": "tsx scripts/check-sobrevivencia.mts",
     "check:sumario": "node scripts/check-sumario.mjs",
     "check:midia": "tsx scripts/check-midia.mts",
     "casar:midia": "tsx scripts/casar-midia.mts",

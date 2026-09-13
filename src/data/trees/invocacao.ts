@@ -40,7 +40,7 @@ export const INVOCACAO_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d6+2",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "O Primeiro Círculo",
         description:
@@ -74,7 +74,7 @@ export const INVOCACAO_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d6+2",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Vínculo",
         description:
@@ -112,7 +112,7 @@ export const INVOCACAO_TREE: Tree = {
     },
     {
       rank: "Avançado",
-      hpDiceFormula: "1d6+3",
+      hpDiceFormula: "1d6+2",
       mastery: {
         name: "Círculo Rápido",
         description:
@@ -148,7 +148,7 @@ export const INVOCACAO_TREE: Tree = {
     },
     {
       rank: "Santo",
-      hpDiceFormula: "1d8+3",
+      hpDiceFormula: "1d8+2",
       mastery: {
         name: "Corpos Artificiais",
         description:
@@ -164,6 +164,8 @@ export const INVOCACAO_TREE: Tree = {
         {
           id: "circulo-de-convocacao",
           name: "Círculo de Convocação",
+          costNote:
+            "4 Ações em vez das 3 da tabela do Santo. É o desvio inverso do de Corpo Emprestado, e pela mesma razão: o custo em Ações desta escola mede o GESTO, não o rank. Puxar o fio de um Pacto é um gesto; abrir a porta para todos eles ao mesmo tempo é outro, e mais demorado — o círculo tem que aguentar cada um deles atravessando sem desenhar de novo entre um e outro. O turno inteiro mais um é o preço de não escolher qual deles vem.",
           signature: true,
           ritual: true,
           paCost: RANK_PA_COST.signature.Santo,
@@ -178,7 +180,7 @@ export const INVOCACAO_TREE: Tree = {
     },
     {
       rank: "Rei",
-      hpDiceFormula: "1d8+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "Círculo Permanente",
         description:
@@ -208,7 +210,7 @@ export const INVOCACAO_TREE: Tree = {
     },
     {
       rank: "Imperador",
-      hpDiceFormula: "1d10+4",
+      hpDiceFormula: "1d8+3",
       mastery: {
         name: "O Grande Círculo",
         description:
@@ -221,6 +223,8 @@ export const INVOCACAO_TREE: Tree = {
         {
           id: "o-chamado-que-nao-se-recusa",
           name: "O Chamado que Não se Recusa",
+          costNote:
+            "6 Ações em vez das 4 da tabela do Imperador — dois turnos inteiros, e a única habilidade da escola que custa mais de um. Toda outra invocação do livro cobra só o gesto porque o acordo já foi fechado fora de combate; esta não tem acordo nenhum pra puxar. O que estas 6 Ações pagam é o trabalho que o Pacto normalmente já teria feito: dizer o nome inteiro de alguém que nunca concordou em vir. Sem esse preço, a escola inteira pularia a etapa de fechar Pactos.",
           signature: true,
           ritual: true,
           paCost: RANK_PA_COST.signature.Imperador,

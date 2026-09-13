@@ -314,8 +314,10 @@ export function getTrainedBody(state: StoreState): number {
  * ×1,67 mantém a proporcionalidade entre classes (árvore com dado maior
  * continua dando mais PV) e tira o "andar pra cima e dobrar" que inflava a
  * reserva inteira. Tabela de calibração com Vigor 0, acumulado até o
- * patamar: Escudeiro 27/44/64 PV (P→A); Lutador 28/43/61; Espada
- * 27/41/57; Magia de Água 21/29/39; Terra 24/35/48.
+ * patamar (conferida em 2026-09-13, depois do nerf de PV dos magos descrito
+ * em `TreeRankDef.hpDiceFormula` — os cinco números estavam com deriva de 1 a
+ * 2 PV desde a 0.1.x): Escudeiro 27/44/64 PV (P→A); Lutador 29/44/62; Espada
+ * 27/42/59; Magia de Água 19/25/34; Terra 22/32/44.
  *
  * Bônus fixos (raça, antecedente, sub-tabela) e PV comprados com PA entram
  * DEPOIS do fator, de propósito: são placas de metal parafusadas no corpo, não
