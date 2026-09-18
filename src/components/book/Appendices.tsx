@@ -5,11 +5,16 @@ import {
   DANO_POR_TURNO_MAGIA,
 } from "@/data/danoPorTurno";
 import {
+  ARQUETIPOS_CRIATURA,
   CRIATURAS_PRONTAS,
   MOLDES_CRIATURA,
+  atributosDaCriatura,
   bonusResistencia,
+  getArquetipo,
   getMoldePorPatamar,
+  percepcaoPassiva,
   rotuloPatamar,
+  sinal,
 } from "@/data/bestiary";
 import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import Crest from "@/components/Crest";
@@ -28,7 +33,7 @@ export default function Appendices() {
         <List
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
-            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × soma dos dados de PV dos 12 ranks dela, nas 4 árvores ≈ 14 + 93 = 107) × Fator de Vigor 2 (×1,40) = 150 PV",
+            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × soma dos dados de PV dos 12 ranks dela, nas 4 árvores ≈ 14 + 93 = 107) × Fator de Vigor 2 (×1,40) = 149 PV",
             "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os PM do Migurd (3 × MB = 12) = 40 PM (acima do cap de Santo, então vale inteiro)",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
@@ -39,7 +44,7 @@ export default function Appendices() {
         />
         <P>
           Leitura da ficha: ela acerta praticamente qualquer coisa, tem uma reserva de mana que sustenta um
-          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 150 PV é bastante
+          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 149 PV é bastante
           numa conta isolada, mas fica baixo perto de um personagem do Corpo com a mesma quantidade de Ranks
           investidos, cujos dados de PV por patamar são bem maiores. É exatamente isso que ela é na história —
           uma professora genial dentro de um corpo frágil, que sobrevive porque nunca deixa ninguém chegar
@@ -61,7 +66,7 @@ export default function Appendices() {
           items={[
             "Uma condição-assinatura que a escola aplica de graça (Água → Molhado).",
             "Um combo interno que paga por aplicar a condição (Água: gelo dobra frio contra Molhado; eletricidade dobra tudo).",
-            "Uma curva de PV/PM própria que diferencie a escola (Água: PM alto, PV médio. Terra: PV altíssimo, PM baixo. Fogo: dano alto, defesa nenhuma. Vento: meio-termo com bônus de deslocamento).",
+            "Uma curva de Dados de PV própria que diferencie a escola. PM não tem curva de escola: a reserva sai do Cap. 4, §1, e a escola só mexe nela por talento comprado (como as Reservas, +2 PM e +2 PV por patamar) ou pelo custo das próprias magias. Exemplos: Fogo, dano alto e corpo frágil; Terra, o corpo mais duro entre as magias; Vento, meio-termo com bônus de deslocamento.",
             "Seis Maestrias automáticas, uma por rank — a do Avançado sempre destranca Magia Combinada, a do Rei sempre destranca um elemento secundário (Água → Eletricidade, Fogo → Explosão/Plasma, Vento → Som/Vácuo, Terra → Metal/Magma).",
             "Uma Magia Assinatura ◆ por rank, custando +1 PA.",
             "Uma magia de utilidade pura que não causa dano nenhum, mas define a identidade da escola fora de combate (Água: Afinidade Aquática e Névoa Densa. Terra: erguer abrigo. Vento: comunicação a distância. Fogo: forjar e iluminar).",
@@ -91,7 +96,7 @@ export default function Appendices() {
             ...COLUNAS_CORPO.map((c) => l.porArvore[c.treeId] ?? "—"),
           ])}
         />
-        <Warning title="Três coisas que a tabela não diz sozinha">
+        <Warning title="Quatro coisas que a tabela não diz sozinha">
           <P>
             <b>A Espada conta 4 Ações do Avançado em diante.</b> A Maestria &ldquo;Velocidade
             Encarnada&rdquo; dá uma Ação extra a quem não se move no turno, e os números dela já assumem
@@ -111,26 +116,28 @@ export default function Appendices() {
             regra que as puna.
           </P>
           <P>
-            <b>Magia não está amortizada pelas Ações.</b> Uma magia de Imperador custa 6 Ações — dois
-            turnos inteiros. O Sol Menor aparece como ~130, mas entrega ~65 por turno. Compare marcial com
-            marcial e magia com magia; cruzar as duas metades desta tabela engana.
+            <b>Magia não está amortizada pelas Ações.</b> Uma magia de Imperador custa 4 Ações — mais
+            que um turno inteiro. O Sol Menor aparece como ~130 contra alvo Em Chamas, mas rende ~97 a
+            cada 3 Ações. Compare marcial com marcial e magia com magia; cruzar as duas metades desta
+            tabela engana.
           </P>
         </Warning>
         <Aside title="Como ler esta tabela">
           <P>Número alto não significa personagem melhor. Significa personagem mais estreito.</P>
           <List
             items={[
-              "O Fogo tem o maior número e o menor corpo. 33 PV no Imperador. Mata tudo, morre de qualquer coisa, e queima o saque no processo.",
+              "O Fogo tem o maior número e o menor corpo: 64 PV no Imperador, com Vigor 0. Mata tudo, morre de qualquer coisa, e queima o saque no processo.",
               "A Água tem o menor número entre as ofensivas e vence campanhas — o valor dela é em área, a 45 metros, com aliados poupados e sem chance de errar.",
               "A Terra é a única que constrói. Metade do valor dela nunca aparece aqui: pontes, fortalezas, masmorras vedadas, um grupo que nunca mais dorme exposto.",
-              "O Arco só é real contra quem não veste aura. Contra um Santo ou superior, subtraia o dobro do Bônus de Rank do alvo de cada disparo.",
+              "O Arco só é real contra quem não veste o Manto de Touki. Contra um guerreiro do Corpo Avançado ou superior, subtraia o dobro do Bônus de Rank do alvo de cada disparo mundano.",
               "O Suishin-ryū não tem número. Contra quatro inimigos agressivos ele bate mais que qualquer coisa deste livro. Contra um inimigo parado, causa zero, pra sempre.",
               "O Lutador tem o número errado na tabela — o que ele realmente faz é acumular Quebrantado. No quarto turno, o inimigo já perdeu 6 de CA e 6 de dano e a luta já acabou sem a tabela registrar.",
               "Escudos é a menor coluna do livro e o personagem mais difícil de substituir. Ele bate, mas bater não é o trabalho dele: é decidir quem sobrevive.",
               "O Ladino é a maior das três colunas de Utilidade, e o número dela é da EMBOSCADA. O Dano Furtivo exige alvo desprevenido, cego, imobilizado ou com Vantagem — em luta aberta, sem preparação, o Ladino é o pior combatente direto das dezenove.",
               "O Tático é a coluna que decide quem executa. A Ordem de Tiro soma no primeiro ataque que acertar o alvo Apontado — de um aliado ou dele mesmo — e é só contra esse alvo que ele soma o Bônus de Rank no próprio golpe. Sem grupo, ele aponta e atira sozinho: perde a escolha de quem bate, não o número.",
               "O Bardo é a menor das três, e a única cujo dano é em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
-              "Cura, Desintoxicação e Barreira não deveriam estar nesta tabela — estão só pra deixar claro que, se você escolher uma delas esperando causar dano, escolheu errado.",
+              "O Vendaval e o Punho do Fogo são híbridas, e a linha é o patamar dentro delas: quem abre o 1º já chega Avançado no Norte e no Vento, ou Intermediário no Lutador e no Fogo, e por isso as duas começam acima das árvores-mãe. O número do Vendaval depende de quantos metros ele andou antes de golpear; o do Punho não conta o Quebrantado que empilha, que faz com ele o mesmo que faz com o Lutador.",
+              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. Desintoxicação e Barreira continuam fora desta régua: se você escolher uma delas esperando causar dano, escolheu errado.",
             ]}
           />
         </Aside>
@@ -156,8 +163,12 @@ export default function Appendices() {
 
         <SubTitle>Sobre Touki e PT</SubTitle>
         <QA
-          q="Eu abri o Deus da Espada no 2º patamar. Ele conta para o +1 por patamar de 3º ou superior?"
-          a="Sim — única exceção do livro. O Deus da Espada conta o 2º patamar dele nessa soma, porque foi lá que a aura acordou."
+          q="Tenho PT no Principiante?"
+          a="Sim. A reserva de PT existe desde o 1º patamar de qualquer árvore do Corpo: Vigor + Espírito + 1 por patamar (2 em Cavalaria e Escudos). O que você ainda não tem é o Manto de Touki: ele chega no Avançado (3º patamar), junto com as manobras de gasto."
+        />
+        <QA
+          q="Abri o Deus da Espada. Quando percebo o Touki?"
+          a="No 2º patamar, e é o único estilo assim: a Espada destrava Touki Concentrado e Lâmina de Touki ali. O Manto de Touki e as outras manobras vêm no 3º, como em todo o Corpo. A reserva de PT, você já tinha desde o 1º."
         />
         <QA q="Sou mago de Terra Imperador. Tenho PT?" a="Não. Nenhum PT, em patamar nenhum. Magia e Utilidade nunca recebem Touki." />
         <QA
@@ -169,15 +180,15 @@ export default function Appendices() {
         <SubTitle>Sobre Cura, Aflições e Descanso</SubTitle>
         <QA q="Magia de Cura cura veneno?" a="Não. Nunca, em patamar nenhum. Isso é Desintoxicação, e a separação é absoluta." />
         <QA q="Desintoxicação cura PV?" a="Não. Ela remove a causa; a carne continua aberta. Sangria até causa dano de propósito." />
-        <QA q="Ferida Selada conta como Ferida Fresca para a cura em dobro?" a="Conta. É exatamente pra isso que Selar a Ferida existe." />
+        <QA q="Ferida Selada conta como Ferida Fresca para dobrar os dados da cura?" a="Conta. É exatamente pra isso que Selar a Ferida existe." />
 
         <SubTitle>Sobre Condições</SubTitle>
         <QA
           q="Posso estar Molhado e Em Chamas ao mesmo tempo?"
-          a="Não. Fogo em alvo Molhado evapora a água (a condição some, o alvo sofre +2 pelo choque térmico, e não pega fogo naquele golpe). Água em alvo Em Chamas apaga o fogo e aplica Molhado."
+          a="Não. Dano ígneo em alvo Molhado seca a água: o dano entra normalmente, a condição some e o alvo não pega fogo naquele golpe. Água em alvo Em Chamas apaga o fogo e aplica Molhado."
         />
-        <QA q="Quebrantado some com magia de Cura?" a="Não. Não é ferimento — é o corpo parando de responder. Só um Descanso Curto limpa." />
-        <QA q="Desequilibrado tira todas as minhas Reações?" a="Não. Limita a uma por rodada. Um Suishin-ryū Desequilibrado ainda apara uma vez." />
+        <QA q="Quebrantado some com magia de Cura?" a="Não. Não é ferimento — é o corpo parando de responder. Some no fim do combate — ou num Descanso Curto, se foi aplicado fora de combate." />
+        <QA q="Desequilibrado tira todas as minhas Reações?" a="Tira. Enquanto durar, você não usa Reação nenhuma — nem ataque de oportunidade, nem bloqueio — e anda com metade do Deslocamento. Um Suishin-ryū Desequilibrado não apara, mas o Fluxo continua disparando: ele não gasta Reação." />
         <QA
           q="Congelado e Atolado ao mesmo tempo o Deslocamento fica negativo?"
           a="Deslocamento não fica abaixo de 0. As condições não se somam em efeito, mas escapar exige resolver as duas separadamente."
@@ -188,9 +199,12 @@ export default function Appendices() {
         <QA q="Posso usar a Reação no meu próprio turno?" a="Pode, desde que o gatilho aconteça." />
         <QA
           q="Conjurar uma magia de 4 Ações me deixa sem Reação?"
-          a="Não. Reação é independente do custo em Ações — mas USAR a Reação encerra a conjuração (Cap. 2, §6), e sofrer dano exige o teste de Concentração (CD 10 + Bônus de Rank de quem te acertou) ou você perde o cântico."
+          a="Não. Reação é independente do custo em Ações — mas USAR a Reação encerra a conjuração (Cap. 2, §6), e sofrer dano exige o teste de Concentração (CD 10 + Bônus de Rank de quem te acertou). Falhou, você perde o cântico e metade do PM investido (arredondado pra baixo)."
         />
-        <QA q="O invocado gasta minhas Ações?" a="Ordens gerais, não. Ordens específicas, 1 Ação sua. Ele tem Iniciativa própria e age sozinho no turno dele." />
+        <QA
+          q="O invocado gasta minhas Ações?"
+          a="Ordem geral (atacar o mais próximo, proteger alguém, seguir você) é grátis e vale até você mudar. Ordem específica (alvo exato, truque, ajudar alguém) custa 1 Ação sua, e ele a cumpre com a Ação dele; a partir do Vínculo (Intermediário), essa 1 Ação vale para todos os seus invocados de uma vez. Fora isso, ele age sozinho com a própria 1 Ação e 1 Reação por turno."
+        />
 
         <SubTitle>Sobre Preparação (PP)</SubTitle>
         <QA
@@ -325,7 +339,7 @@ export default function Appendices() {
         <SectionTitle id="apendice-g">G. Bestiário — Criaturas por Patamar</SectionTitle>
         <P>
           Em vez de um manual de monstros exaustivo, um molde por patamar calibrado com a curva que já existe
-          no livro, mais seis criaturas prontas pra reskinar.
+          no livro, mais seis criaturas prontas pra reskinar e um jeito de pôr na mesa o rival que tem ficha.
         </P>
         <BookTable
           headers={["Patamar", "PV", "CA", "Bônus de Ataque", "Dano por turno", "CD de resistência", "Bônus de Resistência"]}
@@ -339,6 +353,88 @@ export default function Appendices() {
             `+${bonusResistencia(m)}`,
           ])}
         />
+        <P>
+          <b>Bônus de Rank de uma criatura = o patamar dela</b> (+1 no 1º até +6 no 6º). Use esse número em
+          toda regra que peça o Bônus de Rank de quem acertou, derrubou ou aplicou: a CD de Concentração de
+          quem ela feriu, o Fio da Vida de quem ela derrubou, o teto de acúmulos de Quebrantado que ela aplica.
+        </P>
+        <SubTitle id="apendice-g-bloco">O Bloco do Monstro — duas escolhas, a ficha inteira</SubTitle>
+        <P>
+          A tabela acima dá os números do combate. Falta tudo o resto que a mesa pergunta no meio da cena:
+          <i> qual a Força dele? ele percebe o ladino? corre quanto? é grande?</i> Um Mestre que precisa parar
+          a sessão pra montar uma ficha de monstro não monta monstro nenhum — então o bloco inteiro sai de{" "}
+          <b>duas escolhas</b>, e nenhuma delas é um número.
+        </P>
+        <BookTable
+          headers={["Escolha", "O que ela decide"]}
+          rows={[
+            ["1. O PATAMAR (1 a 6)", "TODOS os números: PV, CA, acerto, CD, dano por turno, resistência, Bônus de Rank. É a tabela acima, e você não muda nada nela."],
+            ["2. O ARQUÉTIPO", "ONDE aqueles números aparecem: qual atributo é o forte, quanto ela anda, e o que ela percebe. É o que separa o ogro do necromante com o mesmo patamar."],
+          ]}
+        />
+        <P>
+          Escolhidas as duas, o bloco está pronto. O que vier depois — uma Resistência, um sentido especial,
+          uma perícia a mais — é <b>ajuste consciente</b>, e cada ajuste diz o que custa.
+        </P>
+
+        <SubTitle id="apendice-g-atributos">Os cinco atributos de uma criatura</SubTitle>
+        <P>
+          Ela não distribui pontos como um personagem. Os quatro valores saem do patamar, e o arquétipo diz
+          quem fica com qual:
+        </P>
+        <BookTable
+          headers={["Patamar", "Principal", "Bom", "Comum", "Fraco"]}
+          rows={MOLDES_CRIATURA.map((m) => {
+            const p = atributosDaCriatura(m.patamar);
+            return [
+              rotuloPatamar(m.patamar),
+              sinal(p.principal),
+              sinal(p.bom),
+              sinal(p.comum),
+              sinal(p.fraco),
+            ];
+          })}
+        />
+        <P className="text-sm">
+          A conta, pra quem quiser conferir: <b>Principal = Bônus de Ataque − patamar</b> (é o que faz a
+          coluna de acerto da tabela bater com o atributo dela). <b>Bom</b> é metade do Principal, arredondado
+          pra cima; <b>Comum</b> é o Bom menos 1; <b>Fraco</b> é sempre −1, em todo patamar. Uma Lenda continua
+          sendo burra se o arquétipo dela disser que é.
+        </P>
+        <BookTable
+          headers={["Arquétipo", "Principal", "Bom", "Comum", "Fraco", "Desloc.", "Exemplo"]}
+          rows={ARQUETIPOS_CRIATURA.map((a) => [
+            a.nome,
+            a.principal,
+            a.bom,
+            a.comum.join(", "),
+            a.fraco.join(", "),
+            `${a.deslocamento} m`,
+            a.exemplo,
+          ])}
+        />
+        <Aside title="O que cada atributo da criatura faz, e onde">
+          <List
+            items={[
+              <span key="ataque"><b>Acerto:</b> o Bônus de Ataque da tabela já É o atributo Principal mais o patamar. Um ataque que a ficção manda sair de outro atributo (a cabeçada do bruto ágil) soma esse outro no lugar.</span>,
+              <span key="cd"><b>CD do que ela impõe:</b> a da tabela, e ponto. Se a habilidade sai de um atributo que não é o Principal dela, <b>−2 na CD</b> — é a única conta do bloco, e ela existe pra que o arquétipo importe também no que a criatura faz, não só no que ela aguenta.</span>,
+              <span key="resist"><b>Resistir:</b> soma o Bônus de Resistência da tabela em TODO teste, e rola com <b>Vantagem</b> nos testes do atributo Principal dela. É por isso que agarrar o bruto e enganar o íncubo dão errado pelo mesmo motivo.</span>,
+              <span key="pericia"><b>Perícias:</b> ela tem Vantagem num número de campos igual a <b>metade do patamar, arredondado pra cima</b> (1 no 1º e 2º, 2 no 3º e 4º, 3 no 5º e 6º). Funciona igual à do personagem: perícia é Vantagem, nunca um número (Cap. 1, §4).</span>,
+              <span key="percepcao"><b>Percepção passiva = 10 + o Espírito dela</b>, exatamente como a regra de ficar Escondido (Cap. 4, §3). Um bruto de Espírito −1 é fácil de enganar mesmo sendo uma Lenda; um íncubo, não. Se o arquétipo tem sentido especial, ele fura o Escondido dentro do alcance dito — e é isso que faz o cão de caça ser assustador.</span>,
+            ]}
+          />
+        </Aside>
+        <Aside title="Proficiência, tamanho e o que a criatura NÃO tem">
+          <List
+            items={[
+              <span key="prof"><b>Criatura não tem proficiência de arma.</b> As armas dela são partes do corpo ou o que a ficção pôs na mão dela, e ela <b>nunca</b> sofre a Penalidade de Não-Proficiência (Cap. 1, §4). Não gaste tempo decidindo se o ogro treinou com o tronco.</span>,
+              <span key="tam"><b>Tamanho</b> vem da tabela do Cap. 4, §3 (Pequeno a Colossal), e serve pra uma coisa só: manobra genérica só pega alvo até uma categoria acima da sua. É o que impede empurrar o dragão.</span>,
+              <span key="res"><b>Resistência</b> a um tipo de dano é de graça quando a ficção pede — o esqueleto resiste a perfurante, o elemental de fogo a ígneo. <b>Imunidade custa:</b> uma criatura com Imunidade conta como <b>um patamar acima</b> no Orçamento de Encontro, porque ela apaga a jogada de alguém da mesa.</span>,
+              <span key="pa"><b>Criatura não tem PA, nem árvore, nem reservas.</b> O que ela sabe fazer está na lista de Ações dela; o custo daquilo é a Ação gasta, e nada mais. PM, PT e PP são economia de personagem — um monstro não guarda troco.</span>,
+            ]}
+          />
+        </Aside>
+
         <Aside title="As duas colunas que mudaram, e por quê">
           <P>
             <b>CA</b> subia +1 por patamar, e o bônus de ataque de um personagem sobe +1 de Rank <i>mais</i>{" "}
@@ -385,6 +481,88 @@ export default function Appendices() {
             ]}
           />
         </Aside>
+        <SubTitle id="apendice-g-rank">O Bônus de Rank de uma criatura</SubTitle>
+        <P>
+          Meia dúzia de regras do livro pedem <b>o Bônus de Rank de quem te acertou</b> — o Teste de
+          Concentração (Cap. 2, §6), o Fio da Vida (Cap. 4, §7), o teto do Quebrantado, a CD de escapar de
+          Atolado. Um monstro não tem árvore, então a pergunta aparecia em toda mesa e não tinha resposta.
+        </P>
+        <Warning title="O patamar DA criatura é o Bônus de Rank dela">
+          Patamar 1 dá +1, patamar 6 dá +6 — a mesma escada de sempre, sem tabela nova. Um lobo de 1º patamar
+          te derruba num Fio da Vida CD 9; o Dragão de 6º, num CD 14. É por isso que a coluna &ldquo;Patamar&rdquo;
+          desta seção não é enfeite de organização: ela é um número que a mesa usa.
+        </Warning>
+
+        <SubTitle id="apendice-g-acoes">Como escrever as Ações de uma criatura</SubTitle>
+        <P>
+          O bloco acima diz o que a criatura <b>é</b>. Falta o que ela <b>faz</b> — e aqui o Mestre trava,
+          porque inventar uma fórmula de dado do nada não é decisão de ficção, é calibragem. A régua já
+          está na tabela do topo desta seção, na coluna <b>Dano por turno</b>:
+        </P>
+        <Warning title="As três Ações de um turno somam o Dano por turno do patamar">
+          <P>
+            Escreva as Ações dela de modo que o <b>melhor turno possível</b> — três golpes do ataque comum,
+            ou um golpe grande de 2 Ações mais um comum — chegue perto do número da coluna. Um terço do
+            orçamento é o que uma Ação vale; um ataque de 2 Ações vale cerca de dois terços, e pode valer um
+            pouco mais, porque ele custa a flexibilidade do turno.
+          </P>
+          <P>
+            <b>Errar pra baixo é aceitável; errar pra cima não é</b>, e não por simetria. Uma criatura fraca
+            demais desperdiça uma cena. Uma forte demais mata um personagem, e o jogador não tem como saber
+            que foi a conta do Mestre que escorregou.
+          </P>
+        </Warning>
+        <P className="text-sm">
+          <b>O arquétipo também diz o formato.</b> O Bruto dá um golpe grande e uma investida lenta; o Ágil,
+          dois golpes rápidos; a Fortaleza troca metade do dano dela por não sair do lugar; o Conjurador e a
+          Mente trocam precisão por área — e área sempre pede <i>teste de resistência</i> contra a CD dela, e
+          nunca rolagem de ataque (Cap. 2, §7).
+        </P>
+        <Aside title="O piso do dado, e o lacaio de 1º patamar">
+          <P>
+            Um lacaio de 1º patamar tem <b>5</b> de orçamento no turno inteiro. O menor dado do livro é o d4,
+            que rende 2,5 — três ataques do menor dado que existe já dão 7,5, e a criatura mais fraca do livro
+            sairia 50% acima da própria régua. Não existe fórmula que resolva isso: o problema é a
+            granularidade do dado, não a conta.
+          </P>
+          <P>
+            A saída é de ficção, e é a certa: <b>lacaio não tem economia de ação</b>. Ele avança e dá UM
+            golpe, gastando 2 Ações, e a terceira é pra chegar perto. O perigo dele é o número de corpos, não
+            o que cada um faz — que é o que a palavra &ldquo;lacaio&rdquo; já prometia.
+          </P>
+        </Aside>
+
+        <SubTitle id="apendice-g-orcamento">Orçamento de Encontro</SubTitle>
+        <P>
+          Quantas criaturas, e de qual patamar? O livro nunca disse, e essa é a primeira pergunta de todo
+          Mestre montando a primeira sessão. A conta é uma só, e cabe numa linha:
+        </P>
+        <Warning title="Uma criatura do patamar do grupo por jogador">
+          <P>
+            <b>Encontro equilibrado = um número de criaturas do mesmo patamar do grupo igual ao número de
+            jogadores.</b> Quatro jogadores no 3º patamar encaram quatro criaturas de 3º. É o encontro que
+            custa recursos e não mata ninguém — e um grupo aguenta de três a quatro deles entre Descansos
+            Longos.
+          </P>
+          <P>
+            <b>Trocar patamar por número</b>, para montar o resto: uma criatura <b>um patamar acima</b> vale
+            duas do patamar do grupo; uma <b>um patamar abaixo</b> vale meia; <b>dois patamares abaixo</b>,
+            um quarto. Um <b>Chefe</b> (com o multiplicador desta seção) vale <b>três</b> criaturas do mesmo
+            patamar dele.
+          </P>
+          <P>
+            <b>As três temperaturas.</b> Metade do orçamento é um encontro <i>fácil</i>, de gastar munição e
+            mostrar o bicho. O orçamento cheio é <i>equilibrado</i>. <b>Uma vez e meia</b> é <i>mortal</i>:
+            alguém vai ao Fio da Vida, e é assim que deve ser — reserve para o fim do arco, e avise a mesa,
+            porque o Perigo do contrato (seção da Guilda, Cap. 5) existe exatamente para isso.
+          </P>
+          <P>
+            <b>O que a conta não enxerga:</b> terreno, distância e quem age primeiro. Três arqueiros a 90
+            metros num telhado valem o dobro dos mesmos três num corredor. A Iniciativa e o mapa mudam mais o
+            resultado que o orçamento — ele é o piso da preparação, não a preparação inteira.
+          </P>
+        </Warning>
+
         <SubTitle id="apendice-g-chefe">O multiplicador de dano do Chefe</SubTitle>
         <P>
           Ele é <b>por patamar</b>, e não um número só, porque as duas curvas que ele tenta casar não
@@ -422,9 +600,48 @@ export default function Appendices() {
           </P>
         </Warning>
         <BookTable
-          headers={["Criatura", "Patamar", "O que a torna perigosa"]}
-          rows={CRIATURAS_PRONTAS.map((c) => [c.nome, rotuloPatamar(c.patamar), c.perigo])}
+          headers={["Criatura", "Patamar", "Arquétipo", "Tam.", "Desloc.", "Perc.", "Vantagem em", "O que a torna perigosa"]}
+          rows={CRIATURAS_PRONTAS.map((c) => {
+            const arq = getArquetipo(c.arquetipo);
+            return [
+              c.nome,
+              rotuloPatamar(c.patamar),
+              arq?.nome ?? "—",
+              c.tamanho ?? "Médio",
+              `${c.deslocamento ?? arq?.deslocamento ?? 9} m`,
+              String(percepcaoPassiva(c.patamar, c.arquetipo)),
+              (c.pericias ?? []).join(", ") || "—",
+              c.perigo,
+            ];
+          })}
         />
+        <P className="text-sm">
+          As seis linhas acima são o Bloco do Monstro funcionando: nenhum número foi digitado nelas. O
+          arquétipo distribui os atributos, a Percepção sai do Espírito que ele deu, e o Deslocamento é o
+          dele — o que cada criatura declara à mão é só o que a ficção exige (o tamanho, o que ela sabe
+          fazer, e o que a torna perigosa).
+        </P>
+        <Aside title="O que cada uma tem além do molde">
+          <List
+            items={CRIATURAS_PRONTAS.filter(
+              (c) => c.movimentoEspecial || (c.resistencias ?? []).length > 0 || c.sentido || getArquetipo(c.arquetipo)?.sentido
+            ).map((c) => {
+              const arq = getArquetipo(c.arquetipo);
+              const partes = [
+                c.movimentoEspecial,
+                (c.resistencias ?? []).length > 0
+                  ? `Resistência a ${(c.resistencias ?? []).join(", ")}.`
+                  : null,
+                c.sentido ?? arq?.sentido,
+              ].filter(Boolean);
+              return (
+                <span key={c.id}>
+                  <b>{c.nome}:</b> {partes.join(" ")}
+                </span>
+              );
+            })}
+          />
+        </Aside>
         {/*
           As ações de cada uma, impressas dos MESMOS dados que a tela de
           Encontros usa pra montar a criatura (2026-09-03). Antes desta data a
@@ -465,6 +682,23 @@ export default function Appendices() {
             </div>
           ))}
         </div>
+
+        <SubTitle id="apendice-g-rivais">Rivais com ficha</SubTitle>
+        <P>
+          <i>Mushoku Tensei</i> é uma história de duelos: o espadachim do Norte que persegue o grupo, a discípula
+          renegada da Água, o colega de dojo que virou inimigo. Nenhum deles é um molde. Monte o rival como
+          um personagem, gastando o PA de um personagem do patamar que você quer, e ele entra na luta como
+          uma criatura <b>Padrão</b> desse patamar — com PV, CA, Bônus de Ataque e CD tirados da ficha, e
+          não da tabela acima.
+        </P>
+        <List
+          items={[
+            "O patamar dele é o maior patamar da ficha, e o Bônus de Rank também: é esse número que entra na Concentração, no Fio da Vida e no Quebrantado.",
+            "Os números vão sair diferentes do molde, e essa é a graça. Uma Espada de 3º patamar com Vigor 0 tem bem menos que os 90 PV da Ameaça e bate bem mais forte: o rival joga com as mesmas regras e as mesmas fraquezas do grupo, e o grupo pode estudá-lo.",
+            "Se ele for o chefe da noite, aplique a regra de Chefe único (acima) partindo dos números da ficha, e não da linha do molde.",
+            "No site, a tela de Encontros converte uma ficha em criatura. A conversão é uma cópia: mexer no rival não muda a ficha, e subir a ficha de patamar não muda o rival que já foi pra mesa.",
+          ]}
+        />
       </Section>
     </div>
   );

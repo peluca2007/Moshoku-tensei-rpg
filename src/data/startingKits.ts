@@ -50,7 +50,12 @@ export const STARTING_KITS: StartingKit[] = [
     subgroup: "Arqueiro",
     items: [
       { name: "Arco Curto", type: "arma", baseDie: "d6", description: "20 flechas inclusas." },
-      { name: "Adaga reserva", type: "arma", baseDie: "d4" },
+      // Revisão do livro: era "Adaga reserva", que é Lâminas Curtas — um grupo
+      // que a Arquearia não ensina. O kit de graça chegava com Desvantagem pelo
+      // livro e proficiente pela ficha (nome desconhecido = proficiente). A
+      // arma de reserva agora é do grupo Arremesso, que a árvore concede, e o
+      // nome é o exato de GRUPO_POR_ARMA.
+      { name: "Funda / Dardo", type: "arma", baseDie: "d4", description: "A arma de reserva, quando as flechas acabam." },
     ],
   },
   {
@@ -66,21 +71,26 @@ export const STARTING_KITS: StartingKit[] = [
     items: [
       { name: "Kit de cura", type: "geral", description: "Bandagens, ervas, um frasco vazio." },
       { name: "Símbolo do templo de origem", type: "geral" },
-      { name: "Cajado leve", type: "arma", baseDie: "d6" },
+      // Era "Cajado leve": Cajado de Combate é Hastes, que nenhuma escola de
+      // magia ensina. Mesmo item da Magia Ofensiva, que conta como improvisado.
+      { name: "Cajado / Foco Arcano", type: "arma", baseDie: "d6", description: "Conta como objeto improvisado corpo a corpo." },
     ],
   },
   {
     subgroup: "Invocação",
     items: [
       { name: "Giz e tinta ritual", type: "geral", description: "Material pra três círculos." },
-      { name: "Adaga", type: "arma", baseDie: "d4" },
+      // Era "Adaga": a Invocação não concede grupo de arma nenhum.
+      { name: "Cajado / Foco Arcano", type: "arma", baseDie: "d6", description: "Conta como objeto improvisado corpo a corpo." },
     ],
   },
   {
     subgroup: "Batedor e Ladrão",
     items: [
-      { name: "Adaga", type: "arma", baseDie: "d4" },
-      { name: "Adaga reserva", type: "arma", baseDie: "d4" },
+      // Nome exato de GRUPO_POR_ARMA, pra ficha reconhecer o grupo. Um item
+      // só, com as duas lâminas na descrição: a ficha e a criação listam o kit
+      // com o nome como chave, e dois itens de mesmo nome colidiriam.
+      { name: "Adaga / Punhal", type: "arma", baseDie: "d4", description: "Duas: a de mão e a de reserva." },
       { name: "Kit de arrombamento", type: "geral" },
       { name: "Roupas escuras", type: "geral" },
     ],
@@ -89,14 +99,17 @@ export const STARTING_KITS: StartingKit[] = [
     subgroup: "Bardo",
     items: [
       { name: "Instrumento musical", type: "geral", description: "Escolha o instrumento." },
-      { name: "Adaga", type: "arma", baseDie: "d4" },
+      { name: "Adaga / Punhal", type: "arma", baseDie: "d4" },
     ],
   },
   {
     subgroup: "Sobrevivência e Táticas",
     items: [
       { name: "Kit de sobrevivência", type: "geral", description: "Corda, mapa em branco, uma semana de provisões." },
-      { name: "Arma simples", type: "arma", baseDie: "d6", description: "Escolha qual." },
+      // Era "Arma simples (Escolha qual.)": a categoria "simples" morreu na
+      // 0.1.52. O Tático ensina Hastes e Arcos e Bestas, então a arma sai de um
+      // dos dois.
+      { name: "Alabarda / Lança", type: "arma", baseDie: "d10", description: "Ou troque por Arco Curto com 20 flechas." },
     ],
   },
 ];

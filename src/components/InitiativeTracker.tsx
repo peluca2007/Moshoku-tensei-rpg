@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { Plus, X, Swords, RotateCcw, ChevronRight, Heart, Download } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
-import { useInitiativeStore } from "@/store/useInitiativeStore";
+import { useInitiativeStore, type Combatant, type FichaDeCombate } from "@/store/useInitiativeStore";
 import { getInitiative, getMaxHp } from "@/store/selectors";
 import PageHeader from "@/components/ui/PageHeader";
 import Surface from "@/components/ui/Surface";
@@ -224,6 +224,7 @@ export default function InitiativeTracker() {
                         }
                         className="w-14 rounded-lg border border-parchment-300 bg-parchment-50 px-1.5 py-1 text-center text-sm dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
                       />
+                      <ContadorDeDano combatente={c} />
                     </div>
 
                     <button
@@ -246,6 +247,8 @@ export default function InitiativeTracker() {
                       />
                     </div>
                   )}
+
+                  {c.ficha && <FichaDoMonstro ficha={c.ficha} />}
 
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
                     {c.conditions.map((cond) => (
@@ -294,5 +297,164 @@ export default function InitiativeTracker() {
         </>
       )}
     </div>
+  );
+}
+
+/**
+ * Digitar o DANO, e não a vida que sobrou — pedido do autor (0.1.90).
+ *
+ * O rastreador já tinha os PV atuais editáveis, e isso obrigava o Mestre a
+ * fazer a conta de cabeça no meio da mesa: "tinha 47, levou 13, então… 34".
+ * Numa luta com seis criaturas, são seis subtrações por rodada, e a primeira
+ * que sai errada ninguém percebe.
+ *
+ * Aqui ele digita 13 e aperta Enter. A vida cai sozinha.
+ *
+ * ## Por que dano é o padrão do Enter
+ *
+ * Porque numa mesa de RPG o botão apertado noventa por cento das vezes é o de
+ * tirar vida. Curar existe (o botão +), mas quem cura costuma ser um jogador
+ * anunciando um número — e aí o Mestre tem tempo de mirar o botão certo. Quem
+ * causa dano está no meio de uma rodada.
+ *
+ * O valor nunca desce abaixo de 0: a 0 PV começa o Fio da Vida (Cap. 4, §7),
+ * e vida negativa não é estado nenhum deste livro.
+ */
+function ContadorDeDano({ combatente }: { combatente: Combatant }) {
+  const [valor, setValor] = useState("");
+
+  function aplicar(sinalDoAjuste: 1 | -1) {
+    const n = Math.abs(Number(valor));
+    if (!Number.isFinite(n) || n === 0) return;
+    const atual = combatente.currentHp ?? combatente.maxHp ?? 0;
+    const teto = combatente.maxHp ?? Number.POSITIVE_INFINITY;
+    const novo = Math.max(0, Math.min(teto, atual + sinalDoAjuste * n));
+    useInitiativeStore.getState().updateCombatant(combatente.id, { currentHp: novo });
+    setValor("");
+  }
+
+  return (
+    <div className="ml-1 flex items-center gap-0.5">
+      <input
+        type="number"
+        min={0}
+        value={valor}
+        placeholder="dano"
+        aria-label={`Dano ou cura em ${combatente.name}`}
+        onChange={(e) => setValor(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            aplicar(-1);
+          }
+        }}
+        className="w-16 rounded-lg border border-parchment-300 bg-parchment-50 px-1.5 py-1 text-center text-sm placeholder:text-2xs placeholder:text-parchment-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+      />
+      <button
+        type="button"
+        onClick={() => aplicar(-1)}
+        title="Tirar esse tanto de vida (Enter faz o mesmo)"
+        aria-label={`Causar dano em ${combatente.name}`}
+        className="rounded-lg border border-rose-400/50 px-1.5 py-1 text-sm font-bold leading-none text-rose-600 transition hover:bg-rose-100/60 dark:border-rose-500/40 dark:text-rose-300 dark:hover:bg-rose-950/40"
+      >
+        &minus;
+      </button>
+      <button
+        type="button"
+        onClick={() => aplicar(1)}
+        title="Curar esse tanto"
+        aria-label={`Curar ${combatente.name}`}
+        className="rounded-lg border border-emerald-400/50 px-1.5 py-1 text-sm font-bold leading-none text-emerald-600 transition hover:bg-emerald-100/60 dark:border-emerald-500/40 dark:text-emerald-300 dark:hover:bg-emerald-950/40"
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
+/**
+ * O Bloco do Monstro, na linha do combate — 0.1.90.
+ *
+ * Uma faixa densa e pequena, de propósito: ela fica ABERTA o tempo todo, porque
+ * um painel que precisa de clique não é consultado no meio de uma rodada. São
+ * os números que a mesa pergunta em voz alta e que o Mestre não tinha aqui:
+ * "qual a CA dele?", "ele me vê?", "resiste a fogo?", "corre quanto?".
+ *
+ * Só criaturas têm ficha. Personagem que entra na iniciativa continua sem
+ * nada aqui — a ficha dele é a ficha inteira, e ela mora na própria tela.
+ */
+function FichaDoMonstro({ ficha }: { ficha: FichaDeCombate }) {
+  return (
+    <div className="mt-2 rounded-lg border border-parchment-200 bg-parchment-50/70 px-2 py-1.5 text-3xs dark:border-parchment-800 dark:bg-parchment-950/40">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Dado rotulo="CA" valor={String(ficha.ca)} />
+        <Dado rotulo="CD" valor={String(ficha.cdResistencia)} dica="A CD que ela impõe. Menos 2 se a habilidade sai de um atributo que não é o Principal dela." />
+        <Dado
+          rotulo="Percep."
+          valor={String(ficha.percepcao)}
+          dica="Percepção passiva: a CD que alguém precisa bater na Furtividade pra ficar Escondido dela (Cap. 4, §3)."
+        />
+        <Dado
+          rotulo="Rank"
+          valor={`+${ficha.patamar}`}
+          dica="O Bônus de Rank dela é o patamar. Use nas CDs de Concentração e do Fio da Vida de quem ela acertar."
+        />
+        <Dado rotulo="Desloc." valor={`${ficha.deslocamento} m`} />
+        {ficha.tamanho && <Dado rotulo="Tam." valor={ficha.tamanho} />}
+        <span className="flex items-center gap-1.5 text-parchment-600 dark:text-parchment-400">
+          {ficha.atributos.map((a) => (
+            <span key={a.rotulo}>
+              <span className="opacity-60">{a.rotulo}</span> <b>{a.valor}</b>
+            </span>
+          ))}
+        </span>
+      </div>
+
+      {(ficha.pericias.length > 0 ||
+        ficha.resistencias.length > 0 ||
+        ficha.imunidades.length > 0 ||
+        ficha.sentido ||
+        ficha.movimentoEspecial) && (
+        <div className="mt-1 flex flex-col gap-0.5 text-parchment-600 dark:text-parchment-400">
+          {ficha.pericias.length > 0 && (
+            <span>
+              <b className="text-parchment-700 dark:text-parchment-300">Vantagem em</b>{" "}
+              {ficha.pericias.join(", ")}
+            </span>
+          )}
+          {ficha.resistencias.length > 0 && (
+            <span>
+              <b className="text-parchment-700 dark:text-parchment-300">Resistência</b> (metade){" "}
+              {ficha.resistencias.join(", ")}
+            </span>
+          )}
+          {ficha.imunidades.length > 0 && (
+            <span className="text-wine-600 dark:text-wine-300">
+              <b>Imunidade</b> (zero) {ficha.imunidades.join(", ")}
+            </span>
+          )}
+          {ficha.movimentoEspecial && (
+            <span>
+              <b className="text-parchment-700 dark:text-parchment-300">Movimento</b>{" "}
+              {ficha.movimentoEspecial}
+            </span>
+          )}
+          {ficha.sentido && (
+            <span>
+              <b className="text-parchment-700 dark:text-parchment-300">Sentido</b> {ficha.sentido}
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Dado({ rotulo, valor, dica }: { rotulo: string; valor: string; dica?: string }) {
+  return (
+    <span title={dica} className={dica ? "cursor-help" : undefined}>
+      <span className="opacity-60">{rotulo}</span>{" "}
+      <b className="text-parchment-800 dark:text-parchment-200">{valor}</b>
+    </span>
   );
 }

@@ -13,11 +13,11 @@ export const BARREIRA_TREE: Tree = {
       "Você não conjura contra o inimigo — você conjura contra o espaço, e escreve a lei que vale lá dentro.",
     loop: [
       "Desenhe. Toda barreira é uma esfera centrada num ponto à sua escolha, e você sustenta uma por vez (duas do Intermediário em diante). Ela tem 20 PV por patamar seu, e a lei dela nunca vale contra você.",
-      "Imponha o teto. Selado proíbe, dentro da esfera, magia de rank SUPERIOR ao seu rank em Barreira. Tentar mesmo assim gasta as Ações e o PM e falha.",
-      "Escolha a face do Fluxo Interrompido: Estagnação (toda magia lá dentro custa +1 PM por Bônus de Rank seu, e ninguém recupera PM) ou Fonte (você e seus aliados recuperam 1 PM por turno). Nunca as duas.",
+      "Imponha o teto, e ele é o SEU. A Régua do Selo vale para tudo que esta escola anula, sela ou barra: rank IGUAL OU INFERIOR ao seu em Barreira não acontece (as Ações e o PM se perdem); UM rank acima acontece pela metade — metade dos dados, da área e da duração; DOIS ou mais acima atravessa como se você não estivesse ali. Você sela até onde chegou, e nada além.",
+      "Escolha a face do Fluxo Interrompido: Estagnação (toda magia lá dentro custa +1 PM por Bônus de Rank seu, e ninguém recupera PM) ou Fonte (você e seus aliados recuperam 1 PM por turno, até a soma de todo mundo chegar ao PM que você pagou na barreira; aí ela seca). Nunca as duas.",
     ],
     cost:
-      "Barreiras distorcem mana, e aço não é mana. Contra o pilar do Corpo você não proíbe nada — só atrasa: um Deus da Espada atravessa a sua lei gastando turnos, e turnos é tudo o que você tira dele. Contra quem não conjura, metade do seu catálogo é papel em branco.",
+      "Dois tetos, e os dois doem. PRIMEIRO, a Régua do Selo: você sela até o seu próprio rank, e nada acima. Um rank acima passa pela metade, dois ou mais passa inteiro — contra um mago mais alto que você, a sua lei é uma sugestão. Um Principiante não para um Imperador, e essa é a regra, não uma falha dela. SEGUNDO, aço não é mana: contra o pilar do Corpo você não proíbe nada, só atrasa — um Deus da Espada atravessa a sua lei gastando turnos, e turnos é tudo o que você tira dele. Contra quem não conjura, metade do seu catálogo é papel em branco.",
   },
   keyAttributeLabel: "Espírito",
   resourceLabel: "PM",
@@ -40,7 +40,7 @@ export const BARREIRA_TREE: Tree = {
       mastery: {
         name: "O Primeiro Círculo",
         description:
-          "[Selado / Fluxo Interrompido] Você desenha barreiras — esferas centradas num ponto à sua escolha —, sustenta uma por vez e aplica nelas o Selado e a face de Fluxo Interrompido que escolher. Nenhuma das duas se aplica a VOCÊ: quem escreve a lei não obedece a ela. E toda barreira sua é matéria, não só regra: ela tem 20 PV por patamar que você possua nesta árvore (a magia que declarar os próprios PV usa os dela), e quem está dentro tem Cobertura contra ataques à distância vindos de fora. Você vê mana: barreiras, encantamentos, itens mágicos e invisibilidade mágica aparecem como contorno luminoso, sem custo.",
+          "[Selado / Fluxo Interrompido] Você desenha barreiras — esferas centradas num ponto à sua escolha —, sustenta uma por vez e aplica nelas o Selado e a face de Fluxo Interrompido que escolher. Nenhuma das duas se aplica a VOCÊ: quem escreve a lei não obedece a ela. E toda barreira sua é matéria, não só regra: ela tem 20 PV por patamar que você possua nesta árvore (a magia que declarar os próprios PV usa os dela), e quem está dentro tem Cobertura Parcial (+2 de CA) contra ataques à distância vindos de fora — mas nunca contra ataques seus nem dos seus aliados. Ataque ou magia que mire a própria barreira tira dos PV dela; a 0 PV ela se desfaz inteira, com a lei junto. Você vê mana: barreiras, encantamentos, itens mágicos e invisibilidade mágica aparecem como contorno luminoso, sem custo.",
       },
       talents: [
         { id: "reserva-do-selador", name: "Reserva do Selador", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM e +2 PV por patamar seu em Barreira. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2, hpPerRank: 2 } },
@@ -53,7 +53,7 @@ export const BARREIRA_TREE: Tree = {
           name: "Círculo Menor",
           signature: true,
           paCost: RANK_PA_COST.signature.Principiante,
-          pmCost: 3,
+          pmCost: 4,
           range: "Esfera de 6m",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "Barreira de 6m de raio por 1 minuto. Criaturas dentro ficam Seladas. Você escolhe Estagnação ou Fonte.",
@@ -64,7 +64,7 @@ export const BARREIRA_TREE: Tree = {
           name: "Recusa",
           reaction: true,
           paCost: RANK_PA_COST.talent.Principiante,
-          pmCost: 2,
+          pmCost: 3,
           range: "18 metros",
           actions: { normal: 1 },
           effect: "1 Reação, quando uma criatura conjurar magia de rank Principiante: a magia falha e o PM se perde. Contra rank Intermediário, ainda acontece, mas com metade dos dados.",
@@ -75,14 +75,15 @@ export const BARREIRA_TREE: Tree = {
           id: "casca",
           name: "Casca",
           paCost: RANK_PA_COST.common.Principiante,
-          pmCost: 2,
+          pmCost: 3,
           range: "9 metros",
           actions: { normal: 1 },
           costNote:
-            "1 Ação onde o rank pede 2. É a única magia da escola que responde a um golpe já a caminho, e uma casca que fica pronta dois terços de turno depois fica pronta tarde. Paga o desconto sendo pequena: ela cobre um impacto, não uma luta.",
-          damage: { normal: "2d8 + BC de PV Temporários" },
+            "1 Reação onde o rank pede 2 Ações. É a única magia da escola que responde a um golpe já a caminho, e uma casca que fica pronta dois terços de turno depois fica pronta tarde — a própria nota já dizia isso quando ela ainda custava Ação. Paga o desconto sendo pequena e curta: ela cobre UM impacto, não uma luta, e quem quer proteção preparada compra o Vigor Emprestado da Cura, que dura 10 minutos e dá o dobro dos dados.",
+          reaction: true,
+          damage: { normal: "1d8 + BC de PV Temporários" },
           effect:
-            "Um aliado recebe PV Temporários por 1 minuto e, enquanto a casca durar, soma o seu Bônus de Rank em testes de resistência contra magia. Não acumula com outra fonte de PV Temporários — vale o maior.",
+            "1 Reação, quando um aliado no alcance for alvo de um ataque: ele recebe PV Temporários até o fim do próximo turno dele e, enquanto a casca durar, soma o seu Bônus de Rank em testes de resistência contra magia. Não acumula com outra fonte de PV Temporários — vale o maior.",
           incantation:
             "Fecho a tua pele numa segunda pele que não é tua, e deixo o primeiro golpe quebrar nela em vez de quebrar em ti. Casca!",
         },
@@ -90,7 +91,7 @@ export const BARREIRA_TREE: Tree = {
           id: "selo-de-objeto",
           name: "Selo de Objeto",
           paCost: RANK_PA_COST.talent.Principiante,
-          pmCost: 1,
+          pmCost: 2,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "Um objeto mágico, arma encantada ou item amaldiçoado fica inerte por 1 hora.",
@@ -101,7 +102,7 @@ export const BARREIRA_TREE: Tree = {
           id: "anteparo",
           name: "Anteparo",
           paCost: RANK_PA_COST.talent.Principiante,
-          pmCost: 2,
+          pmCost: 3,
           range: "9 metros",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "Uma placa de mana de 3m × 3m por 3 turnos, com os PV das suas barreiras. Qualquer magia de rank Principiante que a atravesse é anulada; de rank Intermediário tem os dados reduzidos à metade. Flecha, virote e pedra param nela enquanto ela estiver de pé: quem está atrás tem Cobertura Total.",
@@ -112,7 +113,7 @@ export const BARREIRA_TREE: Tree = {
           id: "leitura-de-trama",
           name: "Leitura de Trama",
           paCost: RANK_PA_COST.talent.Principiante,
-          pmCost: 1,
+          pmCost: 2,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "Você identifica exatamente qual magia está ativa numa criatura/objeto/local, de qual escola e rank, e quanto tempo falta. Revela armadilhas mágicas e barreiras alheias.",
@@ -131,7 +132,7 @@ export const BARREIRA_TREE: Tree = {
       },
       talents: [
         { id: "trama-fina", name: "Trama Fina", paCost: RANK_PA_COST.talent.Intermediário, description: "Sua Recusa passa a anular magias de rank Intermediário por completo." },
-        { id: "barreira-persistente", name: "Barreira Persistente", paCost: RANK_PA_COST.talent.Intermediário, description: "Suas barreiras continuam de pé por 1 minuto depois de você ficar inconsciente ou sair do alcance." },
+        { id: "barreira-persistente", name: "Barreira Persistente", paCost: RANK_PA_COST.talent.Intermediário, description: "Suas barreiras continuam de pé por 1 minuto depois de você ficar Inconsciente, adormecer ou sair do alcance." },
         { id: "peneira", name: "Peneira", paCost: RANK_PA_COST.talent.Intermediário, description: "Você declara uma escola de magia à qual a sua barreira não se aplica." },
       ],
       abilities: [
@@ -140,10 +141,10 @@ export const BARREIRA_TREE: Tree = {
           name: "Domo",
           signature: true,
           paCost: RANK_PA_COST.signature.Intermediário,
-          pmCost: 5,
+          pmCost: 7,
           range: "Esfera de 12m",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "Barreira de 12m por 10 minutos. Além de Selado e Fluxo Interrompido, impede passagem de efeitos mágicos pela superfície nos dois sentidos. Criaturas e flechas atravessam normalmente.",
+          effect: "Barreira de 12m por 10 minutos. Além de Selado e Fluxo Interrompido, impede a passagem de efeitos mágicos pela superfície nos dois sentidos, pela Régua do Selo (rank igual ou inferior ao seu não passa; um acima passa pela metade). Criaturas e flechas atravessam normalmente.",
           incantation:
             "Domo translúcido que desce em esfera perfeita sobre o nosso grupo, fecha-te com força contra qualquer investida e protege-nos de tudo que vier de fora. Domo!",
         },
@@ -151,7 +152,7 @@ export const BARREIRA_TREE: Tree = {
           id: "muralha",
           name: "Muralha",
           paCost: RANK_PA_COST.common.Intermediário,
-          pmCost: 4,
+          pmCost: 6,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Intermediário,
           effect:
@@ -163,7 +164,7 @@ export const BARREIRA_TREE: Tree = {
           id: "amarra",
           name: "Amarra",
           paCost: RANK_PA_COST.talent.Intermediário,
-          pmCost: 4,
+          pmCost: 5,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Intermediário,
           effect: "Teste de Espírito (CD 8 + BC). Falha: por 1 minuto, o alvo não pode conjurar magia alguma. Ele ainda pode andar, correr e bater.",
@@ -175,7 +176,7 @@ export const BARREIRA_TREE: Tree = {
           name: "Espelho de Mana",
           reaction: true,
           paCost: RANK_PA_COST.talent.Intermediário,
-          pmCost: 4,
+          pmCost: 6,
           range: "Pessoal",
           actions: { normal: 1 },
           effect: "1 Reação. A próxima magia de alvo único de rank Intermediário ou inferior dirigida a você é devolvida ao conjurador, com a CD original dele.",
@@ -186,10 +187,10 @@ export const BARREIRA_TREE: Tree = {
           id: "silencio-de-mana",
           name: "Silêncio de Mana",
           paCost: RANK_PA_COST.talent.Intermediário,
-          pmCost: 3,
+          pmCost: 5,
           range: "Esfera de 9m",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "Por 1 minuto, criaturas na área não conseguem iniciar conjuração — quem já estava recitando pode terminar.",
+          effect: "Toda criatura na área quando ele é conjurado, aliados inclusive, menos você, faz teste de Espírito (CD 8 + BC). Falha: por 1 minuto, enquanto estiver dentro da área, não consegue iniciar conjuração — quem já estava recitando pode terminar.",
           incantation:
             "Que nenhuma centelha mágica consiga inflamar este espaço, silenciando o poder dos conjuradores enquanto eu sustentar este selo. Silêncio de Mana!",
         },
@@ -201,7 +202,7 @@ export const BARREIRA_TREE: Tree = {
       mastery: {
         name: "Selo de Conjuração",
         description:
-          "O Selado das suas barreiras impõe Desvantagem em testes de resistência contra as suas magias para quem está dentro. Criaturas dentro que tentarem conjurar acima do limite sofrem 2d10 de dano psíquico e perdem a Ação. Desbloqueia Magia Combinada.",
+          "O Selado das suas barreiras impõe Desvantagem em testes de resistência contra as suas magias para quem está dentro. Criaturas dentro que tentarem conjurar no limite ou acima dele, além de perder as Ações e o PM, sofrem 2d10 de dano psíquico. Desbloqueia Magia Combinada.",
       },
       talents: [
         { id: "trama-densa", name: "Trama Densa", paCost: RANK_PA_COST.talent.Avançado, description: "Todas as suas barreiras ganham o dobro de PV." },
@@ -214,7 +215,7 @@ export const BARREIRA_TREE: Tree = {
           name: "Recinto",
           signature: true,
           paCost: RANK_PA_COST.signature.Avançado,
-          pmCost: 7,
+          pmCost: 10,
           range: "Esfera de 18m",
           actions: MAGIC_ACTIONS.Avançado,
           effect:
@@ -226,10 +227,10 @@ export const BARREIRA_TREE: Tree = {
           id: "dissipar",
           name: "Dissipar",
           paCost: RANK_PA_COST.talent.Avançado,
-          pmCost: 6,
+          pmCost: 9,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "Encerre um efeito mágico ativo de rank Avançado ou inferior: magia sustentada, barreira alheia, encantamento, invocação, condição de origem mágica. Sem teste, sem disputa.",
+          effect: "Encerre um efeito mágico ativo de rank igual ou inferior ao seu rank em Barreira: magia sustentada, barreira alheia, encantamento, invocação, condição de origem mágica. Sem teste, sem disputa.",
           incantation:
             "Feitiço alheio que se apoia neste ar como se tivesse direito adquirido a ele: eu encontro o ponto exato em que a tua estrutura inteira se sustenta, encosto um dedo só nele, e retiro dali a única coisa que te mantinha de pé. O resto tu fazes sozinho. Dissipar!",
         },
@@ -237,7 +238,7 @@ export const BARREIRA_TREE: Tree = {
           id: "campo-nulo",
           name: "Campo Nulo",
           paCost: RANK_PA_COST.talent.Avançado,
-          pmCost: 6,
+          pmCost: 9,
           range: "Esfera de 12m",
           actions: MAGIC_ACTIONS.Avançado,
           effect: "Por 3 turnos, nenhuma magia funciona dentro da área, incluindo as suas. Sustentadas de fora são suspensas; invocações desaparecem; itens mágicos ficam inertes.",
@@ -248,10 +249,10 @@ export const BARREIRA_TREE: Tree = {
           id: "redoma",
           name: "Redoma",
           paCost: RANK_PA_COST.talent.Avançado,
-          pmCost: 5,
+          pmCost: 8,
           range: "9 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "Uma esfera de 1,5m encapsula uma criatura: totalmente isolada, não conjura. Tem 60 PV.",
+          effect: "Uma esfera de 1,5m encapsula uma criatura: nada entra, nada sai, e ela não conjura pra fora. EM VOCÊ OU EM ALIADO VOLUNTÁRIO: sem teste, e a esfera dura até o início do seu próximo turno — é um escudo, não uma prisão. EM CRIATURA HOSTIL: teste de Espírito (CD 8 + BC); se falhar, fica isolada por 1 minuto e repete o teste no fim de cada turno dela. Nos dois casos a esfera tem os PV das suas barreiras e pode ser atacada por dentro.",
           incantation:
             "Cúpula que eu ergo sem pedra, sem madeira e sem uma única mão além desta, fecha-te sobre nós como a casca se fecha sobre a semente que ainda não está pronta, e não deixes entrar nem o vento, nem a lâmina, nem a palavra de quem ficou do lado de fora. Redoma!",
         },
@@ -275,11 +276,11 @@ export const BARREIRA_TREE: Tree = {
           signature: true,
           ritual: true,
           paCost: RANK_PA_COST.signature.Santo,
-          pmCost: 12,
+          pmCost: 16,
           range: "Esfera de 45m",
           actions: MAGIC_ACTIONS.Santo,
           effect:
-            "Por 24 horas: ninguém conjura acima do rank Santo, ninguém recupera PM, ninguém teleporta, nenhuma invocação existe, e item mágico de rank Rei ou inferior fica inerte. Aliados designados ficam isentos.",
+            "Por 24 horas, pela Régua do Selo: ninguém conjura magia de rank Santo ou inferior — quem tem Rei conjura pela metade, e só o Imperador passa inteiro. Ninguém recupera PM, ninguém teleporta, nenhuma invocação de rank Santo ou inferior existe, e item mágico de rank Santo ou inferior fica inerte. Aliados designados ficam isentos. Num exército, isto apaga a magia de todo mundo menos a do general.",
           incantation:
             "Eu não te ataco, não te firo e não encosto um dedo em ti. Eu apenas escrevo, na borda deste círculo e com a minha própria mana, uma frase curta que diz o que não pode acontecer aqui dentro — e a partir do instante em que a última letra secar, o mundo inteiro vai obedecer a essa frase antes de obedecer a ti ou a qualquer coisa que tenha existido antes de nós dois. Interdito!",
         },
@@ -288,10 +289,10 @@ export const BARREIRA_TREE: Tree = {
           name: "Recusar o Mundo",
           reaction: true,
           paCost: RANK_PA_COST.common.Santo,
-          pmCost: 10,
+          pmCost: 14,
           range: "Pessoal",
           actions: { normal: 1 },
-          effect: "1 Reação. Anule completamente uma magia dirigida a você ou aliado a 18m, de rank Rei ou inferior, sem teste. Uma vez por combate. Contra Imperador, dano reduzido à metade sem condições.",
+          effect: "1 Reação. Anule completamente uma magia dirigida a você ou aliado a 18m, de rank Santo ou inferior, sem teste. Uma vez por combate. Pela Régua do Selo, contra rank Rei ela vem pela metade e sem condições; contra Imperador, você não alcança — a magia acontece inteira.",
           incantation:
             "Existe uma diferença entre proibir e recusar: proibir é dizer não a quem tenta, e recusar é fazer com que a tentativa nunca tenha chegado a existir. Eu recuso este espaço ao que vem de fora. Recuso a passagem, recuso a chegada, recuso o convite que ninguém fez — e recuso, por último, até a lembrança de que houve um caminho até aqui. Recusar o Mundo!",
         },
@@ -303,10 +304,10 @@ export const BARREIRA_TREE: Tree = {
       mastery: {
         name: "Anulação",
         description:
-          "Gastando 1 Reação e 4 PM, você anula qualquer magia de rank Imperador ou inferior no instante em que é conjurada, dentro de 45 metros, sem teste. Um número de vezes por combate igual ao seu Espírito. O conjurador perde o PM e as Ações gastas.",
+          "Gastando 1 Reação e 4 PM, você anula qualquer magia de rank REI ou inferior no instante em que é conjurada, dentro de 45 metros, sem teste. Um número de vezes por combate igual ao seu Espírito. O conjurador perde o PM e as Ações gastas. Pela Régua do Selo, uma magia de Imperador não é anulada: ela acontece pela metade. Anular o topo do livro é o que a Lei Local, no Imperador, compra — e só ela.",
       },
       talents: [
-        { id: "retorno", name: "Retorno", paCost: RANK_PA_COST.talent.Rei, description: "Quando você anular uma magia com Anulação, o conjurador sofre dano psíquico igual ao PM que gastou, e não pode reconjurar até o fim do combate." },
+        { id: "retorno", name: "Eco da Anulação", paCost: RANK_PA_COST.talent.Rei, description: "Quando você anular uma magia com Anulação, o conjurador sofre dano psíquico igual ao PM que gastou, e não pode reconjurar até o fim do combate." },
       ],
       abilities: [
         {
@@ -315,11 +316,11 @@ export const BARREIRA_TREE: Tree = {
           signature: true,
           ritual: true,
           paCost: RANK_PA_COST.signature.Rei,
-          pmCost: 16,
+          pmCost: 21,
           range: "Esfera de 300m",
           actions: MAGIC_ACTIONS.Rei,
           effect:
-            "Por uma semana, a região obedece a três regras à sua escolha: nenhuma magia acima de um rank; ninguém recupera PM; nada teleporta/invoca/atravessa; um tipo de criatura não entra; nada morre aqui.",
+            "Por uma semana, a região obedece a três regras à sua escolha: nenhuma magia acima de um rank; ninguém recupera PM; nada teleporta/invoca/atravessa; um tipo de criatura não entra; quem cai a 0 PV aqui fica Estabilizado sozinho, mas cada criatura só é salva assim duas vezes por combate.",
           incantation:
             "Todo círculo que eu tracei até hoje foi um pedido educado feito ao mundo, e o mundo aceitou por gentileza. Este não é um pedido. Este é a linha que um rei desenha no chão da própria sala do trono, e do lado de dentro dela não existe magia que eu não tenha permitido, não existe passo que eu não tenha autorizado, e não existe nome — vivo, morto ou antigo demais pra ser dito em voz alta — grande o bastante pra atravessá-la sem a minha licença expressa. O Círculo do Rei!",
         },
@@ -327,10 +328,10 @@ export const BARREIRA_TREE: Tree = {
           id: "prisao-absoluta",
           name: "Prisão Absoluta",
           paCost: RANK_PA_COST.common.Rei,
-          pmCost: 14,
+          pmCost: 19,
           range: "45 metros",
           actions: MAGIC_ACTIONS.Rei,
-          effect: "Teste de Espírito com Desvantagem (CD 8 + BC). Falha: selada numa redoma de 3m por 1 hora, isolada e sem agir. Criaturas de patamar igual ou superior ao seu repetem o teste ao fim de cada um dos seus turnos. Só libertável por você ou por Dissipar de rank Imperador.",
+          effect: "Teste de Espírito com Desvantagem (CD 8 + BC). Falha: selada numa redoma de 3m por 1 hora, isolada e sem agir. Criaturas de patamar igual ou superior ao seu repetem o teste ao fim de cada um dos seus turnos. Só libertável por você ou por um Dissipar de mago de Barreira de patamar Rei ou superior.",
           incantation:
             "Não é uma parede, porque parede se derruba. Não é uma corrente, porque corrente se arrebenta. É uma regra, e regra é a única coisa neste mundo que não se quebra pelo lado de dentro. Eu escrevo aqui, em volta de ti, a lei de que sair daqui é uma coisa que simplesmente não acontece — e a partir deste instante o mundo vai concordar comigo em vez de concordar contigo, todas as vezes, sem exceção e sem recurso, até que eu decida apagar o que escrevi. Prisão Absoluta!",
         },
@@ -342,7 +343,7 @@ export const BARREIRA_TREE: Tree = {
       mastery: {
         name: "Lei Local",
         description:
-          "O Selado das suas barreiras passa a valer contra todo rank, incluindo Deus. Ao erguer qualquer barreira, declare uma regra arbitrária proibitiva que passa a valer dentro dela. Uma vez por turno, erga ou desfaça uma barreira sem gastar Ação.",
+          "A ÚNICA exceção à Régua do Selo em todo o livro, e é o que o patamar mais caro compra: o Selado das suas barreiras deixa de ter teto e passa a valer contra todo rank, inclusive Imperador e Deus. Ao erguer qualquer barreira, escolha uma lei, uma por barreira, que passa a valer dentro dela: ninguém voa; ninguém fica invisível; ninguém recupera PV; ninguém sai sem antes reduzir a barreira a 0 PV; ou uma escola de magia à sua escolha não existe. Uma vez por turno, erga ou desfaça uma barreira sem gastar Ação.",
       },
       talents: [
         { id: "barreira-viva", name: "Barreira Viva", paCost: RANK_PA_COST.talent.Imperador, description: "Suas barreiras persistem mesmo depois da sua morte, até serem dissipadas por um Imperador ou por rank Deus." },
@@ -354,7 +355,7 @@ export const BARREIRA_TREE: Tree = {
           signature: true,
           ritual: true,
           paCost: RANK_PA_COST.signature.Imperador,
-          pmCost: 24,
+          pmCost: 30,
           range: "Esfera de 1,5 km",
           actions: MAGIC_ACTIONS.Imperador,
           effect:
@@ -365,10 +366,10 @@ export const BARREIRA_TREE: Tree = {
           id: "selo-do-nome",
           name: "Selo do Nome",
           paCost: RANK_PA_COST.common.Imperador,
-          pmCost: 20,
+          pmCost: 26,
           range: "Toque",
           actions: MAGIC_ACTIONS.Imperador,
-          effect: "Você sela permanentemente uma única magia, técnica ou habilidade de uma criatura tocada. Ela nunca mais consegue usar aquilo, até um mago de Barreira de patamar igual ou superior desfazer.",
+          effect: "Escolha uma única magia, técnica ou habilidade de uma criatura tocada. Teste de Espírito (CD 8 + BC). Falha: aquilo fica selado, e ela não consegue mais usá-lo até um mago de Barreira de patamar igual ou superior ao seu desfazer. Criaturas de rank Deus são imunes.",
           incantation:
             "Toda coisa que existe carrega um nome verdadeiro, e é por esse nome que o mundo a reconhece, a sustenta e a autoriza a continuar sendo aquilo que ela é. Eu aprendi o teu. Não o que te deram no berço, nem o que gritam quando te temem de longe — o outro, aquele que já estava lá antes de qualquer um dos dois ser inventado. E agora eu o escrevo nesta borda com a minha própria mão, dobro-o sobre si mesmo até que ele não caiba mais em nenhuma boca, e o fecho. O mundo vai continuar sabendo que tu existes. Só vai deixar, a partir deste instante, de saber como te obedecer. Selo do Nome!",
         },

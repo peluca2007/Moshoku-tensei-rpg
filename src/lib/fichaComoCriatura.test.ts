@@ -55,7 +55,6 @@ function ficha(patch: Partial<CharacterData> = {}): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     overrides: {},
     ...patch,
   };

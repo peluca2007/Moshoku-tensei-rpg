@@ -83,7 +83,6 @@ function comArvoreInteira(treeId: string): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     condicoes: [],
     descansosCurtos: 0,
     overrides: {},
@@ -395,15 +394,18 @@ describe("o efeito disso numa batalha inteira", () => {
     expect(com, `com cura sobrou ${com.toFixed(1)}, sem cura ${sem.toFixed(1)}`).toBeGreaterThan(sem);
   });
 
-  it("a janela da Ferida Fresca fecha com o passar dos turnos", () => {
+  /*
+   * 2026-09-17 (Revisão do Livro): a Ferida Fresca é o dano sofrido desde o
+   * início do último turno do próprio alvo. Ela vale até o alvo começar o
+   * próximo turno dele — o curandeiro que age antes disso cura em dobro.
+   */
+  it("a janela da Ferida Fresca fecha no início do próximo turno do alvo", () => {
     const rng = makeRng(1);
     const e = novoEstado(montarFicha(comArvoreInteira("cura")));
     aplicarDano(e, 1);
-    expect(e.feridaFresca).toBe(2);
+    expect(e.feridaFresca, "logo depois do golpe, fresca").toBe(1);
     turnoPersonagem(e, [novoAlvo({ nome: "s", pv: 10_000, ca: 30 })], rng);
-    expect(e.feridaFresca, "um turno depois, ainda fresca").toBe(1);
-    turnoPersonagem(e, [novoAlvo({ nome: "s", pv: 10_000, ca: 30 })], rng);
-    expect(e.feridaFresca, "dois turnos depois, a carne fechou").toBe(0);
+    expect(e.feridaFresca, "no turno dele a carne já não é fresca").toBe(0);
   });
 
   it("uma ação de cura nunca vira dano", () => {

@@ -8,7 +8,7 @@ export const BARDO_TREE: Tree = {
   category: "utilidade",
   subgroup: "Bardo",
   mechanic: {
-    tag: "Escopo: pessoas e reputação",
+    tag: "Domínio: pessoas e reputação",
     hook:
       "A pergunta dele é \"quem eu convenço?\". Faixa exclusiva: só o Bardo altera o que um inimigo SENTE.",
     loop: [
@@ -49,10 +49,10 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A Plateia",
         description:
-          "[Escopo: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida. [Dissonância] Uma vez por turno, quando você usa uma habilidade desta árvore, cada criatura hostil que te OUÇA sofre 1d4 de dano sônico por patamar que você possua nesta árvore. É a mesma fraqueza do resto da árvore, cobrada no dano: quem não ouve não sofre, e criatura sem emoção também não.",
+          "[Domínio: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida. [Dissonância] Uma vez por turno, quando você usa uma habilidade desta árvore, até um número de criaturas hostis igual ao seu patamar nesta árvore, à sua escolha entre as que te OUÇAM, sofre 1d4 de dano sônico por patamar seu. O limite de alvos existe porque sem ele a Dissonância escalava com o tamanho do grupo inimigo: contra doze goblins ela sozinha passava do dano de um guerreiro do mesmo patamar, e a Regra da Faixa (Cap. 3) deixava de valer. É a mesma fraqueza do resto da árvore, cobrada no dano: quem não ouve não sofre, e criatura sem emoção também não.",
       },
       talents: [
-        { id: "ouvido-absoluto", name: "Ouvido Absoluto", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você imita qualquer voz já ouvida e reproduz sotaques. Aprende idiomas em dias." },
+        { id: "ouvido-absoluto", name: "Voz Emprestada", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você imita qualquer voz já ouvida e reproduz sotaques. Aprende idiomas em dias." },
         { id: "cantiga-de-marcha", name: "Cantiga de Marcha", paCost: UTILITY_PA_COST.talent.Principiante, description: "O grupo viaja mais rápido e ignora o primeiro nível de Exaustão por marcha, enquanto você tocar." },
         { id: "insulto-afiado", name: "Insulto Afiado", paCost: UTILITY_PA_COST.talent.Principiante, description: "1 Ação: teste de Espírito contra Intuição do alvo. Se vencer, o próximo ataque dele tem Desvantagem." },
         { id: "colecionador-de-historias", name: "Colecionador de Histórias", paCost: UTILITY_PA_COST.talent.Principiante, description: "Sobre pessoa/família/cidade/artefato conhecidos, você sabe uma coisa verdadeira e uma exagerada, e distingue qual é qual." },
@@ -66,7 +66,7 @@ export const BARDO_TREE: Tree = {
           paCost: UTILITY_PA_COST.signature.Principiante,
           range: "Voz",
           actions: { normal: 1 },
-          effect: "Dado de Inspiração: 1d6 (1º-2º patamar), 2d6 (3º-4º), 3d6 (5º-6º). Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +5 (Cap. 4, §5).",
+          effect: "Dado de Inspiração: 1d6 (1º-2º patamar), 2d6 (3º-4º), 3d6 (5º-6º). Número de vezes por Descanso Longo igual ao seu Espírito. Um aliado que te ouça recebe um Dado de Inspiração, somável a qualquer teste até o fim da cena, mesmo após ver o resultado. O Dado de Inspiração e a Maestria A Plateia não contam para o Teto de Auxílio +6 (Cap. 4, §5).",
           incantation:
             "Que as minhas palavras de coragem ressoem no fundo do teu coração e despertem a força oculta que tu sempre guardaste. Inspiração!",
         },
@@ -113,7 +113,7 @@ export const BARDO_TREE: Tree = {
       },
       talents: [
         { id: "requiem", name: "Réquiem", paCost: UTILITY_PA_COST.talent.Avançado, description: "Aliados que te ouvem ficam imunes a Amedrontado e têm Vantagem contra efeitos que manipulem emoção ou mente." },
-        { id: "diplomata-de-guerra", name: "Diplomata de Guerra", paCost: UTILITY_PA_COST.talent.Avançado, description: "Você negocia trégua no meio de um combate: teste de Espírito (CD 8 + Espírito + Bônus de Rank), quem falhar para de lutar por 1 minuto e escuta." },
+        { id: "diplomata-de-guerra", name: "Diplomata de Guerra", paCost: UTILITY_PA_COST.talent.Avançado, description: "Você negocia trégua no meio de um combate. 1 Ação e 1 PP, uma vez por combate: criaturas hostis a até 9m que te ouçam fazem teste de Espírito (CD 8 + Espírito + Bônus de Rank); quem falhar não ataca por 2 turnos e escuta, e o efeito acaba em quem sofrer dano. Não funciona em criatura sem emoção." },
         { id: "voz-que-alcanca", name: "Voz que Alcança", paCost: UTILITY_PA_COST.talent.Avançado, description: "Sua voz é ouvida claramente a até 300 metros, atravessa tempestade e ruído de batalha." },
         { id: "a-balada-instrutiva", name: "A Balada Instrutiva", paCost: UTILITY_PA_COST.talent.Avançado, description: "Você transforma informação complexa em canção memorizável permanentemente pelo grupo em 10 minutos." },
       ],
@@ -199,7 +199,7 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A História Oficial",
         description:
-          "Escopo: um continente. Uma vez por Descanso Longo, gastando 4 PP, escolha um evento que testemunhou ou do qual participou: sua versão dele vira a verdade aceita. Desmentir exige provas materiais e testemunha de reputação equivalente. Recupere 2 PP em Descanso Curto.",
+          "Escopo: um continente. Uma vez por Descanso Longo, gastando 4 PP, escolha um evento que testemunhou ou do qual participou: sua versão dele vira a verdade aceita. Desmentir exige provas materiais e testemunha de reputação equivalente. Seu Descanso Curto recupera metade do seu PP máximo, em vez de 25%.",
       },
       talents: [
         { id: "nome-imortal", name: "Nome Imortal", paCost: UTILITY_PA_COST.talent.Imperador, description: "Escolha uma pessoa: ela entra pra história como herói ou monstro, permanentemente." },

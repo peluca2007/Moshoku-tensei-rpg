@@ -44,7 +44,8 @@ export const ESPADA_TREE: Tree = {
       talents: [
         { id: "braco-de-ferro", name: "Braço de Ferro", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "fio-perfeito", name: "Fio Perfeito", paCost: 1, description: "Sua arma nunca lasca, entorta ou quebra por meios mundanos, e ataques contra objetos/estruturas causam dano dobrado." },
-        { id: "pavio-curto-espada", name: "Pavio Curto", paCost: 1, description: "Vantagem em Intimidação, Desvantagem em qualquer teste social que exija paciência." },
+        { id: "pavio-curto-espada", name: "Sangue Esquentado", paCost: 1, description: "Vantagem em Intimidação, Desvantagem em qualquer teste social que exija paciência." },
+        { id: "postura-do-espadachim", name: "Postura do Espadachim", paCost: 1, description: "0 Ações, no seu turno: entre em uma das duas posturas, ou saia de ambas. Trocar é livre, 1 vez por turno. Sem postura é o padrão — quem não comprar este talento luta como antes. POSTURA DE VENTO (Kaze no Kamae): Ghislaine medindo o campo. A penalidade de CA do estilo (−2) é anulada, e você recebe +2 na CA enquanto empunhar espada de duas mãos ou mão e meia. Você NÃO pode usar técnicas Assinatura ◆ (Espada de Luz, Espada do Silêncio, Reversão de Luz, Espada de Luz Verdadeira) — golpe básico e técnicas comuns apenas. POSTURA DE TROVÃO (Ikazuchi no Kamae): Gal Farion atacando com tudo. A penalidade de CA do estilo dobra (−2 vira −4), mas todo ataque rola +1 Dado de Arma. Todas as técnicas estão disponíveis. É o modo que termina a luta no primeiro turno — ou que faz você não ter segundo." },
       ],
       abilities: [
         {
@@ -55,7 +56,7 @@ export const ESPADA_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           effect:
-            "Ataque. Se acertar, o alvo faz teste de Vigor (CD 8 + Força + Rank): falha larga o que segura e não usa aquele braço até o fim do próximo turno. Contra rank Santo ou superior, apenas larga a arma.",
+            "Ataque. Se acertar, o alvo faz teste de Vigor (CD 8 + Força + Rank): falha larga o que segura e não usa aquele braço até o fim do próximo turno. Contra rank Santo ou superior, apenas larga a arma. Contra quem está Conjurando (Cap. 2, §6), se acertar, o Teste de Concentração daquele golpe tem Desvantagem: é a ferramenta do Deus da Espada pra calar um mago.",
         },
         {
           id: "investida-espada",
@@ -73,7 +74,7 @@ export const ESPADA_TREE: Tree = {
           ptCost: 1,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          effect: "Se o ataque anterior neste turno acertou, este não pode errar por menos de 5.",
+          effect: "Ataque. Se você já acertou um ataque neste turno, +4 no acerto.",
         },
         {
           id: "roupa-leve",
@@ -101,7 +102,7 @@ export const ESPADA_TREE: Tree = {
       mastery: {
         name: "Aura Precoce",
         description:
-          "Exceção do livro: o Deus da Espada acorda o Touki no 2º patamar, não no 3º. Você recebe Pontos de Touki e pode usar Touki Concentrado e Lâmina de Touki. Ainda não recebe o Manto de Touki completo (chega no Avançado).",
+          "Exceção do livro: a sua reserva de PT existe desde o 1º patamar, como em toda árvore do Corpo, mas o Deus da Espada destrava Touki Concentrado e Lâmina de Touki já no 2º patamar. O Manto de Touki e as outras manobras vêm no Avançado (3º patamar).",
       },
       talents: [
         { id: "punho-duplo", name: "Punho Duplo", paCost: 1, description: "Você empunha arma de duas mãos com uma só, sem penalidade, e ganha +1 grau de Dado quando usa as duas mãos." },
@@ -143,9 +144,9 @@ export const ESPADA_TREE: Tree = {
           id: "leitura-de-abertura",
           name: "Leitura de Abertura",
           paCost: 1,
-          range: "Corpo a corpo",
-          actions: { normal: 1 },
-          effect: "Observe uma criatura por um turno inteiro sem atacar. No próximo turno, seu primeiro ataque contra ela tem Vantagem e crítico em 19-20.",
+          range: "Visão",
+          actions: { normal: 0 },
+          effect: "0 Ações, uma vez por combate: escolha uma criatura que você viu atacar alguém. Seu próximo ataque contra ela tem Vantagem, e nesse ataque a sua faixa de crítico aumenta em 1 (20 vira 19-20; 19-20 vira 18-20).",
         },
       ],
     },
@@ -157,7 +158,7 @@ export const ESPADA_TREE: Tree = {
       mastery: {
         name: "Velocidade Encarnada",
         description:
-          "Você recebe o Manto de Touki completo. Dois degraus de Dado de Arma neste patamar. Se você não se mover no turno, recebe 1 Ação adicional só para atacar.",
+          "Você veste o Manto de Touki e destrava as outras manobras de gasto. Dois degraus de Dado de Arma neste patamar. Se você não se mover no turno, recebe 1 Ação adicional só para atacar.",
       },
       talents: [
         { id: "folego-de-aco", name: "Fôlego de Aço", paCost: 2, description: "Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank no Estilo Deus da Espada. O estilo aposta tudo no primeiro turno; isto compra um segundo primeiro turno." },
@@ -246,7 +247,7 @@ export const ESPADA_TREE: Tree = {
           range: "3 metros",
           actions: { normal: 1 },
           effect:
-            "A única Reação da árvore inteira: 1 Reação quando alguém usar Espada de Luz contra você ou aliado a 3m. Anula por completo e ataca o conjurador — se acertar, ele perde permanentemente o uso da mão até receber Cura de rank Santo ou superior.",
+            "1 Reação quando uma criatura a 3m usar uma técnica Assinatura ◆ corpo a corpo contra você ou aliado. Anula a técnica e você ataca quem a usou. A perda permanente da mão só acontece se a técnica anulada for Espada de Luz: se o seu ataque acertar, ele perde o uso da mão até receber Cura de rank Santo ou superior.",
         },
         {
           id: "corte-do-horizonte",
@@ -255,7 +256,8 @@ export const ESPADA_TREE: Tree = {
           ptCost: 3,
           range: "Linha de 27m",
           actions: { normal: 1 },
-          effect: "Corte em linha reta de 27m por 1,5m. Cada criatura sofre dano completo, teste de Agilidade para metade. Corta paredes, portões e barreiras mágicas com PV ao meio.",
+          damage: { normal: "+6d10, somados ao dano de arma normal" },
+          effect: "Corte em linha reta de 27m por 1,5m. Cada criatura na linha sofre dano de arma normal + 6d10; teste de Agilidade (CD 8 + Força + Rank) para metade. Corta paredes, portões e barreiras mágicas com PV ao meio.",
         },
         {
           id: "um-so-movimento",
@@ -264,7 +266,7 @@ export const ESPADA_TREE: Tree = {
           ptCost: 2,
           range: "4,5 metros",
           actions: { normal: 1 },
-          effect: "Uma vez por combate: ataque todas as criaturas hostis dentro de 4,5m com uma única rolagem, comparada contra a CA de cada. Dano completo em todas.",
+          effect: "Ataque todas as criaturas hostis dentro de 4,5m com uma única rolagem, comparada contra a CA de cada. Dano completo em todas.",
         },
       ],
     },
@@ -276,7 +278,7 @@ export const ESPADA_TREE: Tree = {
       mastery: {
         name: "A Vitória de Quem Se Move Primeiro",
         description:
-          "Dois degraus de Dado de Arma. Críticos ocorrem em 18-20. A primeira vez em cada combate que acertar uma criatura com PV cheios, role o Dado de Arma duas vezes o normal — isto NÃO se aplica a técnicas que já multiplicam o Dado de Arma por três ou mais (Espada de Luz, Espada de Luz Verdadeira): elas já são o pico do estilo e não empilham com esta Maestria. Você não pode ser Atrasado, Lentificado nem ter a Iniciativa reduzida.",
+          "Dois degraus de Dado de Arma. Críticos ocorrem em 18-20. A primeira vez em cada combate que acertar uma criatura com PV cheios, role o Dado de Arma uma vez a mais — isto NÃO se aplica a técnicas que já multiplicam o Dado de Arma por três ou mais (Espada de Luz, Espada de Luz Verdadeira): elas já são o pico do estilo e não empilham com esta Maestria. Você não pode ser Atrasado, Lentificado nem ter a Iniciativa reduzida.",
       },
       talents: [],
       abilities: [

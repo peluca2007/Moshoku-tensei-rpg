@@ -43,7 +43,6 @@ function heroi(qtdArvores: number, ateORank: number): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     condicoes: [],
     overrides: {},
   };

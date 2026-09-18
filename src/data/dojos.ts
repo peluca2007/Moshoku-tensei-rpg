@@ -149,7 +149,7 @@ export const PROVACOES: Provacao[] = [
     provacao:
       "Caçar uma criatura rápida demais pra ser acertada por reflexo. Ela não pode ser encurralada, não pode ser cercada, e foge de qualquer um que ela veja mirar. A única forma de acertá-la é o Tiro Perfeito (Cap. 3, §3) — o que significa preparar durante turnos enquanto ela se move.",
     regraDaCasa:
-      "Durante a provação, a etapa da Leitura pode ser rolada com INTUIÇÃO por qualquer um, mesmo sem a árvore. O Deus do Arco está ensinando exatamente isso: não a mira, a previsão.",
+      "Durante a provação, qualquer um executa o Tiro Perfeito inteiro, sem o nó da árvore, com o arco que o Deus empresta. A Leitura segue o Cap. 3: INTUIÇÃO, ou Intelecto/Espírito puro, o maior, pra quem não tem a perícia. O Deus do Arco está ensinando exatamente isso: não a mira, a previsão.",
     criterio:
       "Um único acerto, do grupo inteiro, com as quatro etapas concluídas. Não importa quem atirou — importa que alguém tenha parado de tentar acertar e começado a prever.",
   },
@@ -157,7 +157,7 @@ export const PROVACOES: Provacao[] = [
     id: "a-que-nao-deixa-rastro",
     nome: "A Que Não Deixa Rastro",
     mestre: "A Que Não Deixa Rastro",
-    patenteDoMestre: "Rainha dos Ladrões — dois patamares acima do grupo",
+    patenteDoMestre: "Rainha dos Ladrões — Rei em Furtividade e Armadilhas: ensina alunos até o Avançado",
     abre: "Furtividade e Armadilhas",
     quebra:
       "Nenhum ponto de dano. Durante a provação inteira, reduzir os PV de qualquer criatura é falha automática — e isso inclui o dano acidental, o incêndio que se alastrou, o guarda que caiu da muralha.",
@@ -172,8 +172,9 @@ export const PROVACOES: Provacao[] = [
     id: "o-que-recita-devagar",
     nome: "O Que Recita Devagar",
     mestre: "O Que Recita Devagar",
-    patenteDoMestre: "Arquimago Imperador — ensina um Rei pelo salto de patente",
-    abre: "Uma escola de magia à escolha do grupo, decidida na primeira hora da sessão",
+    patenteDoMestre:
+      "Arquimago — Imperador em três escolas (Magia de Fogo; Magia de Água; Barreira e Proteção): ensina alunos até o Santo, e um Rei pelo salto de patente",
+    abre: "Magia de Fogo, Magia de Água ou Barreira e Proteção — uma das três escolas que ele domina, à escolha do grupo na primeira hora da sessão",
     quebra:
       "Conjuração sem cântico está proibida. Toda magia tem que ser recitada em voz alta pelo JOGADOR, na mesa, no tempo que o cântico levar — e o mestre conta os turnos enquanto a pessoa fala.",
     provacao:
@@ -187,7 +188,7 @@ export const PROVACOES: Provacao[] = [
     id: "o-que-nunca-ataca",
     nome: "O Que Nunca Ataca",
     mestre: "O Que Nunca Ataca",
-    patenteDoMestre: "Santo do Escudo — dois patamares acima do grupo",
+    patenteDoMestre: "Santo do Escudo — Santo em Cavalaria e Escudos e em Suishin-ryū: ensina alunos até o Intermediário",
     abre: "Cavalaria e Escudos, ou Suishin-ryū (Deus da Água), à escolha de cada aluno",
     quebra:
       "Você não tem turno. Durante a provação, nenhum personagem age no próprio turno: só em REAÇÃO, e só ao que o inimigo fizer. Quem não tem Reação nenhuma na ficha descobre isso da pior forma possível.",

@@ -118,8 +118,22 @@ const ASSETS_DO_CSS = ["/texturas/pergaminho.avif", "/texturas/fibra.jpg", "/orn
  */
 const MANIFESTO = "/manifest.webmanifest";
 
-/** Extensões que contam como asset estático de `public/`. */
-const EXTENSOES_DE_ASSET = /\.(png|jpe?g|avif|webp|gif|svg|ico|woff2?|ttf|otf)$/i;
+/**
+ * Extensões que contam como asset estático de `public/`.
+ *
+ * `webm` e `mp4` entraram em 0.1.92, e a falta deles era um buraco silencioso:
+ * sete peças de arte do livro são vídeo — a Maestria da Água, a do Deus da
+ * Espada, o Canhão de Água, a Tempestade, o Pilar de Gelo, o Passo Vazio e a
+ * Leitura de Cena —, e nenhuma passava por aqui. Elas não entravam no cache NEM
+ * DEPOIS DE VISTAS: quem abrisse a árvore de Água online e voltasse a ela sem
+ * sinal encontrava um retângulo vazio onde estava a arte, e o resto da página
+ * inteira funcionando. É o tipo de falha que parece bug de tema, e não de rede.
+ *
+ * Vídeo é pesado (as sete somam cerca de 6 MB), então elas continuam entrando
+ * SÓ depois de vistas — `cacheERevalida`, como as imagens. Pré-carregar tudo na
+ * instalação custaria 6 MB de dados de celular pra arte que talvez ninguém abra.
+ */
+const EXTENSOES_DE_ASSET = /\.(png|jpe?g|avif|webp|gif|svg|ico|woff2?|ttf|otf|webm|mp4)$/i;
 
 /** Tudo que o HTML de uma rota carrega e que o navegador buscaria sozinho. */
 const REFERENCIAS_NO_HTML = /\/_next\/(?:static\/[^"'\\\s>)]+|image\?[^"'\\\s>)]+)/g;

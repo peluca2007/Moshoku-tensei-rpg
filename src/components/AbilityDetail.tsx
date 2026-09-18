@@ -1,4 +1,4 @@
-import { AbilityDef, qualifiesForRecitationBonus, RANK_BONUS, RankName } from "@/lib/types";
+import { AbilityDef, qualifiesForRecitationBonus, RankName } from "@/lib/types";
 import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 
 // Um alias local: o nome curto já era usado em vários pontos deste arquivo.
@@ -33,18 +33,41 @@ function perfectRecitationBonus(
     return { ok: false, text: `Sem bônus — cântico curto demais para o rank ${rank}` };
   }
 
-  const hasAttackRoll = ability.damage?.normal !== undefined;
-  const imposesSave =
-    ability.effect.includes("teste") ||
-    ability.effect.includes("Teste") ||
-    ability.effect.includes("CD 8");
+  switch (tipoDeRecitacao(ability)) {
+    case "ataque":
+      return { ok: true, text: "Vantagem no teste de acerto" };
+    case "resistencia":
+      return { ok: true, text: "+2 na CD para resistir" };
+    default:
+      // O desconto é o Bônus de Rank do CONJURADOR na escola, não o rank da
+      // magia: `rank` aqui é o da carta, e um Rei conjurando Cura (Principiante)
+      // desconta 5, não 1. A carta não sabe quem conjura, então diz a regra.
+      return { ok: true, text: "Custa PM a menos igual ao seu Bônus de Rank na escola (mínimo 1)" };
+  }
+}
 
-  if (hasAttackRoll) return { ok: true, text: "Vantagem no teste de acerto" };
-  if (imposesSave) return { ok: true, text: "+2 na CD para resistir" };
-  return {
-    ok: true,
-    text: rank ? `Recupera ${RANK_BONUS[rank]} PM` : "Recupera PM (Bônus de Rank)",
-  };
+/**
+ * Qual das três recompensas do Cap. 2, §2 esta magia paga.
+ *
+ * Até a revisão do Cap. 2 isto era "tem `damage.normal`? então é ataque" e
+ * "o efeito contém 'teste'? então é resistência". As duas leituras erravam:
+ * Cura e Vigor Emprestado guardam a CURA em `damage.normal` (types.ts,
+ * `healing`) e ganhavam "Vantagem no acerto" numa magia sem acerto; e "Sem
+ * dano, sem teste" contava como teste de resistência. Magias de dano com teste
+ * (Explosão, Nevasca) também caíam em "ataque" só por terem dano.
+ *
+ * A ordem agora: acerto declarado > teste de resistência de atributo > dano que
+ * não é PV > suporte (cura, barreira, utilidade).
+ */
+function tipoDeRecitacao(ability: AbilityDef): "ataque" | "resistencia" | "suporte" {
+  const efeito = ability.effect;
+  const dano = ability.damage?.normal;
+  const curaNoDano = dano !== undefined && /\bPV\b/.test(dano);
+
+  if (/\b(se acertar|ataque mágico|teste de acerto)\b/i.test(efeito)) return "ataque";
+  if (/\bteste de (resistência de )?(Força|Agilidade|Vigor|Intelecto|Espírito)\b/i.test(efeito)) return "resistencia";
+  if (dano !== undefined && !curaNoDano) return "ataque";
+  return "suporte";
 }
 
 /**

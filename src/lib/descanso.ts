@@ -70,29 +70,25 @@ export const CURTOS_POR_DIA = 2;
 /**
  * Descanso Longo (8 horas de sono seguro).
  *
- * O PV é o único número deste arquivo que depende de rolagem: 25% do máximo,
- * mais `Vigor`d10 por cento (com piso de 5%). `percentualRolado` entra como
- * parâmetro em vez de ser sorteado aqui pra que a conta seja testável e pra que
- * a tela possa mostrar o dado que caiu — um número que aparece sem o dado ao
- * lado é um número que a mesa não confere.
+ * 2026-09-17 (Revisão do Livro, decisão A1): o Longo devolve TODAS as reservas
+ * e um pouco de PV fixo — Vigor + 2 × o maior Bônus de Rank, mínimo 1. Antes
+ * ele devolvia 50% de PM, PT e PP (menos PT que o Curto, que devolve inteiro) e
+ * 25% dos PV mais Vigor d10 por cento, enquanto o aviso logo abaixo da tabela
+ * dizia que dormir não cura. Agora o sono fecha pouco, sem dado, e a semana de
+ * cama tem nome próprio: Convalescença.
  */
-export function descansoLongo(max: ReservasMaximas, percentualRolado: number): GanhoDeDescanso {
-  const bonusPct = Math.max(5, percentualRolado);
-  const pvBase = porcento(max.pv, 25);
-  const pvBonus = porcento(max.pv, bonusPct);
-  const pm = porcento(max.pm, 50);
-  const pt = porcento(max.pt, 50);
-  const pp = porcento(max.pp, 50);
+export function descansoLongo(max: ReservasMaximas, vigor: number, maiorBonus: number): GanhoDeDescanso {
+  const pv = Math.max(1, vigor + 2 * maiorBonus);
   return {
-    pv: pvBase + pvBonus,
-    pm,
-    pt,
-    pp,
+    pv,
+    pm: max.pm,
+    pt: max.pt,
+    pp: max.pp,
     detalhe: [
-      `PV: +${pvBase + pvBonus} (25% de ${max.pv}, mais ${bonusPct}% rolado no Vigor)`,
-      `PM: +${pm} (50% de ${max.pm})`,
-      `PT: +${pt} (50% de ${max.pt})`,
-      `PP: +${pp} (50% de ${max.pp})`,
+      `PV: +${pv} (Vigor ${vigor} + 2 × Bônus de Rank ${maiorBonus}, mínimo 1)`,
+      `PM: +${max.pm} (todos)`,
+      `PT: +${max.pt} (todos)`,
+      `PP: +${max.pp} (todos)`,
     ],
   };
 }
@@ -125,7 +121,7 @@ export const DOWNTIME: AtividadeDeDowntime[] = [
     id: "recuperar",
     nome: "Recuperar-se",
     efeito:
-      "Como o Descanso Longo de uma semana (Cap. 4): todos os PV são restaurados, e mais 1 nível de Exaustão é removido além do normal.",
+      "Convalescença (Cap. 4): todos os PV são restaurados, e mais 1 nível de Exaustão é removido além do normal.",
     aplica: "pvCheio",
   },
   {

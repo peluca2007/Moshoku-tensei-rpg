@@ -66,7 +66,6 @@ function ficha(patch: Partial<CharacterData> = {}): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     condicoes: [],
     descansosCurtos: 0,
     overrides: {},
@@ -108,21 +107,26 @@ describe("o motor enxerga os acúmulos que o livro escreve", () => {
   const porNome = (nome: string) => acoes.find((a) => a.nome.startsWith(nome));
 
   it("lê o número quando o livro dá o número", () => {
-    // "o alvo fica Caído e ganha 2 acúmulos de Quebrantado"
-    expect(porNome("Investida Devastadora")?.aplicaQuebrantado).toBe(2);
     // "acerta automaticamente e aplica 3 acúmulos de Quebrantado"
     expect(porNome("Esmagar")?.aplicaQuebrantado).toBe(3);
     // "Falha: dano, Caído e 1 acúmulo de Quebrantado" — no singular
     expect(porNome("Onda de Choque")?.aplicaQuebrantado).toBe(1);
   });
 
+  /*
+   * A Investida Devastadora entrou nesta lista em 0.1.84: ela prometia "2
+   * acúmulos" num patamar cujo teto é 1 (Bônus de Rank +1), então metade da
+   * Assinatura era texto que o Cap. 4 apagava. Agora ela vai ao teto, e quem
+   * decide o número é o patamar de quem bate.
+   */
   it('lê "ao máximo" e "iguais ao seu Bônus de Rank" como o teto, não como um acúmulo', () => {
     expect(porNome("Ruína")?.aplicaQuebrantado).toBe("maximo");
     expect(porNome("Prensa")?.aplicaQuebrantado).toBe("maximo");
+    expect(porNome("Investida Devastadora")?.aplicaQuebrantado).toBe("maximo");
   });
 
   it("não vê Quebrantado onde não há", () => {
-    const semNada = acoes.filter((a) => !/Investida|Esmagar|Onda de Choque|Ruína|Prensa/.test(a.nome));
+    const semNada = acoes.filter((a) => !/Investida|Esmagar|Onda de Choque|Ruína|Prensa|Mão na Garganta/.test(a.nome));
     expect(semNada.length).toBeGreaterThan(0);
     for (const a of semNada) expect(a.aplicaQuebrantado, a.nome).toBe(0);
   });
@@ -134,6 +138,10 @@ describe("o motor enxerga os acúmulos que o livro escreve", () => {
    * REMOVER — o dia em que outra árvore escrever "remove todos os acúmulos de
    * Quebrantado", o leitor acima passa a contar remoção como aplicação. Este
    * teste é o alarme: ele quebra na hora em que a premissa deixar de valer.
+   *
+   * 2026-09-16: o Punho do Fogo entrou na lista de propósito. Ele é a híbrida
+   * de Lutador + Fogo e agora APLICA Quebrantado em alvo Em Chamas — aplica,
+   * nunca remove, e é o teste seguinte que guarda essa metade da premissa.
    */
   it("nenhuma outra árvore do livro toca na condição — é o que torna seguro ler a prosa", () => {
     const citacoes = new Set<string>();
@@ -145,7 +153,7 @@ describe("o motor enxerga os acúmulos que o livro escreve", () => {
         }
       }
     }
-    expect(citacoes).toEqual(new Set(["armas-pesadas"]));
+    expect(citacoes).toEqual(new Set(["armas-pesadas", "punho-de-fogo"]));
   });
 
   it("e nenhuma delas REMOVE acúmulos — remoção lida como aplicação seria o erro silencioso", () => {

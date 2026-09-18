@@ -22,6 +22,7 @@ import {
   saveAdvantagePaCostTotal,
   SKILLS_PER_PA,
   AttributeKey,
+  attributeKeysFromLabel,
   ATTRIBUTES,
   CharacterData,
   getVigorFactor,
@@ -37,11 +38,6 @@ import {
 
 export type { GuildRank };
 
-/** Cap. 3: o Deus da Espada acorda o Touki Pleno no 2º patamar (Intermediário); as demais árvores do Corpo, no 3º (Avançado). */
-function ptPlenoThresholdIndex(treeId: string): number {
-  return treeId === "deus-da-espada" ? RANKS.indexOf("Intermediário") : RANKS.indexOf("Avançado");
-}
-
 /** Cap. 3: atributo-chave de cada árvore de Utilidade, usado no cálculo de PP. */
 const UTILITY_KEY_ATTRIBUTE: Record<string, AttributeKey> = {
   "furtividade-e-armadilhas": "agilidade",
@@ -55,6 +51,26 @@ type Check = { ok: boolean; reason?: string };
 const OK: Check = { ok: true };
 
 /** Soma os bônus fixos de raça, antecedente e sub-tabela (Miko/Olho) para um atributo. */
+/**
+ * O atributo-chave de uma árvore PARA ESTE personagem.
+ *
+ * Quando o rótulo oferece escolha ("Força ou Agilidade" no Norte e no Vendaval,
+ * "Força ou Intelecto" no Punho do Fogo), devolve aquele em que o personagem é
+ * melhor — que é o que o livro promete e o que o código não fazia. Rótulo de um
+ * atributo só devolve ele mesmo.
+ */
+export function getTreeAttributeKey(
+  state: StoreState,
+  treeId: string | null | undefined,
+  padrao: AttributeKey
+): AttributeKey {
+  const chaves = attributeKeysFromLabel(getTreeById(treeId ?? "")?.keyAttributeLabel);
+  if (chaves.length === 0) return padrao;
+  return chaves.reduce((melhor, k) =>
+    getFinalAttribute(state, k) > getFinalAttribute(state, melhor) ? k : melhor
+  );
+}
+
 export function getFinalAttribute(state: StoreState, key: AttributeKey): number {
   const race = getRaceById(state.raceId);
   const background = getBackgroundById(state.backgroundId);
@@ -255,29 +271,22 @@ function getHighestRankBonus(state: StoreState, categoryFilter?: Tree["category"
 }
 
 /**
- * Soma dos Dados de PV de todos os patamares desbloqueados, DOBRADA — o "corpo
- * treinado" da fórmula do Cap. 4, antes do Vigor entrar. Exportado porque a
- * ficha mostra essa parcela separada do fator.
- *
- * O ×2 é o mesmo de sempre (Cap. 4 justifica: sem ele um Norte chega ao
- * Imperador com ~70 PV contra ~130 de dano por turno e o combate acaba antes
- * de o segundo personagem agir). O que saiu em 2026-08-29 foi o CASO ESPECIAL
- * que existia aqui: o dado do 1º patamar da Árvore Inicial contava pelo valor
- * máximo em vez da média. Além de ser a única exceção do livro a essa regra,
- * ele fazia os PV Máximos dependerem de `startingTreeId` — trocar a Árvore
- * Inicial numa ficha pronta mexia silenciosamente na vida. A constante
- * PV_BASE (20, contra os 10..13 da Constituição Base antiga) absorve o que
- * esse máximo entregava.
- */
-/**
  * Reserva concedida pelos talentos de árvore comprados (Cap. 1, "O Padrão das
  * Reservas"). Até 2026-08-29 nenhum desses 24 talentos mexia num número da
  * ficha: eram texto, e o jogador digitava o resultado à mão nos campos avulsos
  * de PV/PM — o que também significava que a metade PT deles não tinha campo
  * nenhum pra ser digitada.
  *
- * `hpPerRank`/`mpPerRank` escalam com quantos patamares você abriu NAQUELA
- * árvore (é o que "por patamar seu nesta árvore" quer dizer); `pt` é fixo.
+ * Todo talento de reserva é UMA compra de 1 PA (`canPurchaseAbility` recusa a
+ * segunda com "Já adquirido.") que cresce sozinha a cada patamar novo naquela
+ * árvore: nas escolas de magia, +2 PM e +2 PV por patamar; no Corpo, +4 PV
+ * por patamar ou +1 PT por patamar. É o que os dados fazem e o que o Cap. 1
+ * deve dizer — não "comprável várias vezes".
+ *
+ * `hpPerRank`/`mpPerRank`/`ptPerRank` escalam com quantos patamares você abriu
+ * NAQUELA árvore (é o que "por patamar seu nesta árvore" quer dizer); `pt` é
+ * valor fixo, e hoje só o Ombro de Pedra (Escudos) o usa: +4 PV por patamar E
+ * +1 PT fixo, a única exceção ao "ou" do Corpo.
  */
 function getTalentReserve(state: StoreState, field: keyof ReserveGrant): number {
   return state.purchasedAbilities.reduce((sum, a) => {
@@ -293,6 +302,15 @@ function getTalentReserve(state: StoreState, field: keyof ReserveGrant): number 
   }, 0);
 }
 
+/**
+ * O "corpo treinado" da fórmula do Cap. 4, antes do Vigor entrar:
+ * PV_BASE (14) + 1,67 × a soma das médias dos Dados de PV de todos os patamares
+ * desbloqueados. Exportado porque a ficha mostra essa parcela separada do fator.
+ *
+ * O que saiu em 2026-08-29 foi o CASO ESPECIAL que existia aqui: o dado do 1º
+ * patamar da Árvore Inicial contava pelo valor máximo em vez da média, e isso
+ * fazia os PV Máximos dependerem de `startingTreeId`.
+ */
 export function getTrainedBody(state: StoreState): number {
   const dados = state.unlockedRanks.reduce((total, unlocked) => {
     const rankDef = getTreeById(unlocked.treeId)?.ranks.find((r) => r.rank === unlocked.rank);
@@ -336,6 +354,24 @@ export function getMaxHp(state: StoreState): number {
 }
 
 /**
+ * PV de referência de uma árvore, pra tabela que o livro imprime (Cap. 4,
+ * "Cálculos Vitais") — revisão do livro.
+ *
+ * A tabela do Cap. 4 é escrita à mão (Escudeiro 27/44/64, Água 19/25/34...) e
+ * já derivou 1 a 2 PV da ficha antes, a cada mudança de Dado de PV. Esta função
+ * é a MESMA fórmula de `getTrainedBody` × `getVigorFactor` (com o arredondamento
+ * de `diceAverage`), sem raça, talento nem compra, pra que o livro gere a
+ * tabela em vez de copiá-la.
+ *
+ * `patamares` = quantos patamares daquela árvore, a partir do Principiante.
+ */
+export function getPvDeReferencia(treeId: string, patamares: number, vigor = 0): number {
+  const ranks = (getTreeById(treeId)?.ranks ?? []).filter((r) => RANKS.indexOf(r.rank) < patamares);
+  const dados = ranks.reduce((total, r) => total + diceAverage(r.hpDiceFormula), 0);
+  return Math.floor((PV_BASE + dados * 1.67) * getVigorFactor(vigor));
+}
+
+/**
  * PM Máximos (Cap. 4) — fórmula com cap nos 2 primeiros ranks (2026-08-30).
  *
  * Pedido do usuário: "para o mago pode usar uma magia no max 4 vezes nos
@@ -358,24 +394,42 @@ export function getMaxHp(state: StoreState): number {
  *   E=4, MB=1, +2 talento (Nascente de Mana): 14 PM
  *   E=4, MB=1, +2 talento, +8 PA: 14 PM (cap corta os 8 PA)
  *   E=4, MB=1, Migurd (+3 racial), +2 talento: 17 PM (racial entra)
- *   E=4, MB=1, +2 talento, +4 fixo Acólito: 14 PM (cap corta o fixo)
+ *   E=4, MB=1, +2 talento, Acólito (+1×MB): 15 PM (o escalar entra, como o racial)
  *   E=4, MB=2 (Intermediário) sem nada: 16 PM (5 casts máx da 3-PM)
  *   E=4, MB=6 (Imperador): base 32 PM, sem cap
  */
 export function getMaxMp(state: StoreState): number {
   const espirito = getFinalAttribute(state, "espirito");
   const maiorBonusMagia = getHighestRankBonus(state, "magia");
+  const background = getBackgroundById(state.backgroundId);
+  const subtable = background?.requiresSubtable
+    ? getSubtableEntryById(background.requiresSubtable, state.subtableEntryId)
+    : undefined;
   const atributoPiso = Math.max(espirito, 4);
   const baseSemCap = atributoPiso * maiorBonusMagia + 8;
-  const escalarRacial = (getRaceById(state.raceId)?.bonuses.mpPerMagicRank ?? 0) * maiorBonusMagia;
+  // PM ESCALAR — raça, antecedente e sub-tabela (2026-09-17).
+  //
+  // Era só a raça. Antecedente e sub-tabela davam PM FIXO (Acólito +4,
+  // Estudioso +8, Olho Místico +6, Acúmulo +10) e o teto dos dois primeiros
+  // patamares zerava os quatro: com Espírito 4 e MB 1 a reserva já bate no teto,
+  // então a descrição prometia PM que o jogador nunca via. No Acúmulo era pior —
+  // a maldição (Exaustão diária) valia da primeira sessão, e a bênção só
+  // aparecia no Avançado. Convertidos para múltiplo do MB, os quatro passam pelo
+  // teto como o bônus racial sempre passou, e valem ZERO pra quem não abriu
+  // escola nenhuma, que é o certo para um bônus de mana.
+  const escalarDeMana =
+    ((getRaceById(state.raceId)?.bonuses.mpPerMagicRank ?? 0) +
+      (background?.bonuses.mpPerMagicRank ?? 0) +
+      (subtable?.bonuses?.mpPerMagicRank ?? 0)) *
+    maiorBonusMagia;
   const talentoMp = getTalentReserve(state, "mpPerRank");
-  const baseComRacialETalentos = baseSemCap + escalarRacial + talentoMp;
+  const baseComRacialETalentos = baseSemCap + escalarDeMana + talentoMp;
   // Extras avulsos (PA, antecedentes, sub-tabela) são capados nos 2 primeiros
   // ranks. Cap = `4 × MB + 8 + talentoMp + escalarRacial` — talento entra
   // (não é cortado), racial entra (escala com MB, não é "compra avulsa"),
   // mas PA/antecedente/sub-tabela são capados em zero. Acima do 2º, sem cap.
   if (maiorBonusMagia <= 2) {
-    const capTotal = 4 * maiorBonusMagia + 8 + talentoMp + escalarRacial;
+    const capTotal = 4 * maiorBonusMagia + 8 + talentoMp + escalarDeMana;
     const extras = getFlatBonusSum(state, "maxMp") + state.bonusMp;
     return state.overrides.maxMp ?? Math.min(baseComRacialETalentos + extras, capTotal);
   }
@@ -387,15 +441,18 @@ export function getMaxMp(state: StoreState): number {
 }
 
 /**
- * Pontos de Touki (Cap. 3, "Pontos de Touki (PT) — as duas reservas"): sem
- * nenhum patamar do Corpo, 0. Com pelo menos um patamar mas nenhum "Pleno"
- * ainda, PT Menor = max(Vigor, 1). A partir do Touki Pleno (3º patamar em
- * geral; 2º no Deus da Espada, que também conta pra soma de Crescimento):
- * PT = Vigor + Espírito + Crescimento, onde Crescimento soma +1 por patamar
- * com Pleno já desbloqueado (+2 por patamar em Cavalaria e Escudos, que gasta
- * PT mais rápido que qualquer outra árvore). Corrigido em 2026-08-28: a
- * fórmula antiga daqui (Vigor + Espírito×Maior Bônus, multiplicativa) não
- * batia com o livro e deixava PT bem mais generoso que o pretendido.
+ * Pontos de Touki (Cap. 3, "Pontos de Touki"): sem nenhum patamar do Corpo, 0.
+ * Com qualquer patamar do Corpo: PT = máx(Vigor + Espírito, 0) + Crescimento, onde
+ * Crescimento soma o `ptGained` de TODO patamar do Corpo desbloqueado (1, ou 2
+ * em Cavalaria e Escudos).
+ *
+ * 2026-09-16: existiam duas reservas — o PT Menor (= Vigor) antes do Avançado e
+ * o PT Pleno depois —, e as árvores cobravam PT no Principiante e no
+ * Intermediário enquanto as próprias Maestrias diziam que a reserva só chegava
+ * no Avançado. Com a criação dando 2 pontos de atributo, o PT Menor era 1 ou 2:
+ * o Escudeiro Principiante usava a própria Assinatura uma ou duas vezes. A regra
+ * virou uma só: todo guerreiro tem Touki desde o 1º patamar, só não percebe; o
+ * Avançado dá o Manto, não a reserva.
  */
 export function getPtPool(state: StoreState): number {
   const corpoRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "corpo");
@@ -406,21 +463,21 @@ export function getPtPool(state: StoreState): number {
     const vigor = getFinalAttribute(state, "vigor");
     const espirito = getFinalAttribute(state, "espirito");
 
-    const plenoRanks = corpoRanks.filter((u) => RANKS.indexOf(u.rank) >= ptPlenoThresholdIndex(u.treeId));
-    if (plenoRanks.length === 0)
-      return Math.max(vigor, 1) + getTalentReserve(state, "pt") + getTalentReserve(state, "ptPerRank");
-
-    // Crescimento vem do campo `ptGained` de cada patamar — antes era um
-    // `treeId === "cavalaria-e-escudos" ? 2 : 1` escrito à mão aqui, e o campo
-    // do dado ficava morto, só alimentando o catálogo. Os valores coincidiam,
-    // mas nada impedia que divergissem em silêncio numa edição futura.
-    const crescimento = plenoRanks.reduce((sum, u) => {
+    // Crescimento vem do campo `ptGained` de cada patamar, e não de um
+    // `treeId === "cavalaria-e-escudos" ? 2 : 1` escrito à mão aqui.
+    const crescimento = corpoRanks.reduce((sum, u) => {
       const rankDef = getTreeById(u.treeId)?.ranks.find((r) => r.rank === u.rank);
       return sum + (rankDef?.ptGained ?? 1);
     }, 0);
 
+    // Piso no par de atributos, não no total: Vigor −2 e Espírito −1 davam
+    // PT −2 no Principiante, uma reserva negativa. O PP já tinha "mínimo 1";
+    // aqui o par nunca desce de 0 e os patamares somam por cima.
     return (
-      vigor + espirito + crescimento + getTalentReserve(state, "pt") + getTalentReserve(state, "ptPerRank")
+      Math.max(vigor + espirito, 0) +
+      crescimento +
+      getTalentReserve(state, "pt") +
+      getTalentReserve(state, "ptPerRank")
     );
   }
 
@@ -446,9 +503,13 @@ export function getPpPool(state: StoreState): number {
       if (key) {
         // Quando o atributo-chave da árvore JÁ É Intelecto (Navegação e
         // Liderança), ele não conta duas vezes — no lugar, entra o Bônus de
-        // Rank naquela árvore. Sem isso o Tático tinha a maior reserva de PP do
-        // livro (20 no Imperador, contra 15 do Bardo) investindo UM atributo
-        // onde as outras duas árvores de Utilidade investem dois.
+        // Rank naquela árvore. Sem isso o Tático chegava ao teto investindo um
+        // atributo só, onde os outros precisam de dois.
+        //
+        // Com mais de uma árvore de Utilidade (Ladino + Tático, por exemplo), o
+        // segundo termo é o MAIOR entre os atributos-chave delas, e no Tático
+        // quem disputa é o Bônus de Rank dele, não o Intelecto. Os +1 por
+        // patamar de 3º ou superior somam em todas as árvores do pilar.
         segundoTermo = Math.max(
           segundoTermo,
           key === "intelecto" ? RANK_BONUS[u.rank] : getFinalAttribute(state, key)
@@ -464,32 +525,31 @@ export function getPpPool(state: StoreState): number {
 }
 
 /**
- * Cap. 3 (Punho do Fogo): Calor máximo é o teto do patamar mais alto JÁ
- * desbloqueado NESSA árvore — nunca soma entre patamares.
- *
- * Diferente de PT/PP (getPtPool/getPpPool), que crescem por SOMA cumulativa de
- * `ptGained`/`ppGained` a cada patamar aberto: a prosa de Punho do Fogo sempre
- * falou em "Calor máximo SOBE PARA 8/12/16/20/25" — cada patamar novo
- * SUBSTITUI o teto do anterior, não empilha em cima dele. Por isso este
- * cálculo lê só o `heatCap` do rank mais alto (getHighestUnlockedRank), e
- * ignora os patamares abertos abaixo dele — ao contrário do reduce/soma que
- * getPtPool faz sobre `plenoRanks`.
- */
-export function getMaxCalor(state: StoreState): number {
-  function computeNatural(): number {
-    const rank = getHighestUnlockedRank(state, "punho-de-fogo");
-    if (!rank) return 0;
-    const rankDef = getTreeById("punho-de-fogo")?.ranks.find((r) => r.rank === rank);
-    return rankDef?.heatCap ?? 0;
-  }
-
-  return state.overrides.maxCalor ?? computeNatural();
-}
-
-/**
  * CA = 10 + Agilidade final + bônus fixo de raça/antecedente/sub-tabela
  * (ex: Miko "Maldição do Ódio") + itens de armadura equipados.
  */
+/**
+ * Deslocamento do personagem, em metros — Cap. 4, §1 e §3 (0.1.90).
+ *
+ * "9 metros, exceto onde a raça indicar outro valor", e as condições mexem
+ * nele: Atolado corta pela metade, Congelado e Paralisado zeram. A ficha
+ * mostrava CA, PV e PM e não mostrava este — e ele é o número que a mesa mais
+ * pergunta depois da CA, porque toda rodada começa com alguém decidindo se
+ * alcança.
+ *
+ * A penalidade de −3 m por vestir armadura sem proficiência (Cap. 1, §4) NÃO
+ * entra aqui, e não por esquecimento: a ficha não guarda em quais categorias de
+ * armadura o personagem é proficiente — isso vem da prosa de cada árvore. O dia
+ * em que virar dado, esta é a função que muda.
+ */
+export function getDeslocamento(state: StoreState): number {
+  const efeitos = getEfeitosDeCondicoes(state);
+  const base = 9;
+  if (efeitos.deslocamento === "zero") return 0;
+  if (efeitos.deslocamento === "metade") return base / 2;
+  return base;
+}
+
 export function getArmorClass(state: StoreState): number {
   const temEscudos = getWeaponGroups(state).includes("escudos");
   const equippedBonus = state.inventory.reduce((sum, item) => {
@@ -562,23 +622,34 @@ export function getWeaponDamage(
   const corpoRanks = state.unlockedRanks.filter((r) => getTreeById(r.treeId)?.category === "corpo");
   if (corpoRanks.length === 0 || !baseDie) return null;
 
-  let bestTreeId = corpoRanks[0].treeId;
-  let bestRankIndex = -1;
-  for (const u of corpoRanks) {
-    const idx = RANKS.indexOf(u.rank);
-    if (idx > bestRankIndex) {
-      bestRankIndex = idx;
-      bestTreeId = u.treeId;
-    }
-  }
+  const bestRankIndex = corpoRanks.reduce((m, u) => Math.max(m, RANKS.indexOf(u.rank)), -1);
+  const rank = RANKS[bestRankIndex];
+
+  const ehImprovisada = weaponName ? grupoDaArma(weaponName) === GRUPO_BASE : false;
+  const degrausAte = (treeId: string) =>
+    (getTreeById(treeId)?.ranks ?? [])
+      .filter((r) => RANKS.indexOf(r.rank) <= bestRankIndex)
+      .reduce((sum, r) => sum + (r.weaponDieSteps ?? 0), 0);
+
+  /*
+   * EMPATE DE RANK: "você escolhe" — Cap. 3, §1 (revisão do livro).
+   *
+   * Degraus e Bônus vêm da árvore de maior Rank. Até aqui o empate caía na
+   * árvore aberta primeiro, regra que o livro nunca escreveu. A ficha não tem
+   * onde guardar a escolha, então escolhe o que um jogador escolheria: com arma
+   * improvisada, o Deus do Norte se ele estiver no empate (é a única árvore que
+   * a escala); senão, a árvore que dá mais degraus.
+   */
+  const empatadas = [...new Set(corpoRanks.filter((u) => RANKS.indexOf(u.rank) === bestRankIndex).map((u) => u.treeId))];
+  const bestTreeId =
+    ehImprovisada && empatadas.includes(ARVORE_QUE_ESCALA_IMPROVISADO)
+      ? ARVORE_QUE_ESCALA_IMPROVISADO
+      : empatadas.reduce((m, id) => (degrausAte(id) > degrausAte(m) ? id : m));
 
   const tree = getTreeById(bestTreeId);
   if (!tree) return null;
-  const rank = RANKS[bestRankIndex];
 
-  const degrausDaArvore = tree.ranks
-    .filter((r) => RANKS.indexOf(r.rank) <= bestRankIndex)
-    .reduce((sum, r) => sum + (r.weaponDieSteps ?? 0), 0);
+  const degrausDaArvore = degrausAte(bestTreeId);
 
   /*
    * ARMA IMPROVISADA TRAVA EM d6 — Cap. 3, §1 (0.1.62).
@@ -595,10 +666,12 @@ export function getWeaponDamage(
    * árvore diz em letra que não existe arma proibida pra ele — "se dá pra
    * empunhar, você é proficiente" —, e aqui isso deixa de ser prosa: só ele
    * escala improvisado como arma de verdade.
+   *
+   * E só quando os degraus VÊM dele: antes bastava ter o Norte em algum
+   * lugar, e um Norte Principiante deixava a cadeira escalar com os 9 degraus
+   * de um Deus da Espada Imperador.
    */
-  const ehImprovisada = weaponName ? grupoDaArma(weaponName) === GRUPO_BASE : false;
-  const temONorte = state.unlockedRanks.some((u) => u.treeId === ARVORE_QUE_ESCALA_IMPROVISADO);
-  const steps = ehImprovisada && !temONorte ? 0 : degrausDaArvore;
+  const steps = ehImprovisada && bestTreeId !== ARVORE_QUE_ESCALA_IMPROVISADO ? 0 : degrausDaArvore;
 
   const escalatedDie = escalateWeaponDie(baseDie, steps);
   const rankBonus = RANK_BONUS[rank];
@@ -636,10 +709,6 @@ export function getCurrentPt(state: StoreState): number {
 }
 export function getCurrentPp(state: StoreState): number {
   return state.currentPp ?? getPpPool(state);
-}
-/** Calor atual (Punho do Fogo): mesmo padrão de currentPt/currentPp acima. */
-export function getCurrentCalor(state: StoreState): number {
-  return state.currentCalor ?? getMaxCalor(state);
 }
 
 /** CD da Habilidade = 8 + Atributo + Bônus do Rank daquela árvore (Cap. 1, seção 7). */
@@ -782,11 +851,35 @@ export function hasRacialUpgrade(state: StoreState, upgradeId: string): boolean 
  *   esta compra é incondicional e não tem teto.
  */
 function getHpMpPaCost(state: StoreState): number {
-  const hpRate = Math.max(1, getHighestRankBonus(state) * 4);
-  const mpRate = Math.max(1, getHighestRankBonus(state, "magia") * 2);
+  const { hpRate, mpRate } = getReserveBuyRates(state);
   const hpCost = Math.ceil(state.bonusHp / hpRate) * 2;
   const mpCost = Math.ceil(state.bonusMp / mpRate) * 2;
   return Math.max(0, hpCost) + Math.max(0, mpCost);
+}
+
+/**
+ * Quanto rende cada compra de reserva da tabela do Cap. 1, §2, e se ela rende
+ * ALGUMA coisa.
+ *
+ * `mpBloqueado` existe por causa de uma armadilha que a revisão do livro achou
+ * em 2026-09-17: nos dois primeiros patamares de magia o teto de PM (Cap. 4,
+ * §1) corta TODO extra avulso, e a compra de +PM é um deles. Um Principiante
+ * pagava 2 PA por +2 PM e o teto devolvia exatamente zero — a tabela vendia a
+ * compra sem avisar. A regra do teto continua de pé; o que muda é que o livro
+ * e a ficha passam a dizer, na cara, que a compra só rende do Avançado em
+ * diante.
+ */
+export function getReserveBuyRates(state: StoreState): {
+  hpRate: number;
+  mpRate: number;
+  mpBloqueado: boolean;
+} {
+  const bonusMagia = getHighestRankBonus(state, "magia");
+  return {
+    hpRate: Math.max(1, getHighestRankBonus(state) * 4),
+    mpRate: Math.max(1, bonusMagia * 2),
+    mpBloqueado: bonusMagia <= 2,
+  };
 }
 
 /**
@@ -923,6 +1016,53 @@ export function canUnlockRank(state: StoreState, treeId: string, rank: RankName)
   return OK;
 }
 
+/**
+ * O caminho MAIS BARATO até um rank numa árvore, em PA — revisão do livro.
+ *
+ * Existe pra que a pergunta "largura ou profundidade?" do Cap. 1, §8 imprima
+ * um número calculado, e não escrito à mão: o texto antigo contava 10
+ * conhecimentos onde RANK_REQUIREMENTS exige 15 pro Imperador.
+ *
+ * A conta é gulosa e é a mesma que a ficha permite: antes de cada desbloqueio,
+ * compra os conhecimentos mais baratos entre os patamares JÁ abertos até
+ * alcançar o exigido (`getKnowledgeCount` conta conhecimento de qualquer rank da
+ * árvore). Pré-requisito entre habilidades é ignorado — o número é um piso.
+ *
+ * `custoDeAbertura` é o preço do Principiante, e quem chama decide: o custo de
+ * abrir a Árvore Inicial (1 PA ou grátis) ainda está em aberto no livro, e as
+ * árvores seguintes pagam pela ordem de abertura (Cap. 1, §8). O padrão 0 só
+ * soma "nada" à abertura; não é regra.
+ */
+export function getCustoMinimoAteRank(
+  treeId: string,
+  ate: RankName = "Imperador",
+  custoDeAbertura = 0
+): { desbloqueios: number; conhecimentos: number; quantidade: number; total: number } {
+  const tree = getTreeById(treeId);
+  const alvo = RANKS.indexOf(ate);
+  let desbloqueios = custoDeAbertura;
+  let conhecimentos = 0;
+  let quantidade = 0;
+  const disponiveis: number[] = [];
+  for (let i = 0; i <= alvo; i++) {
+    const rank = RANKS[i];
+    if (i > 0) {
+      const exigido = RANK_REQUIREMENTS[rank].knowledgeRequired;
+      disponiveis.sort((x, y) => x - y);
+      while (quantidade < exigido && disponiveis.length > 0) {
+        conhecimentos += disponiveis.shift()!;
+        quantidade++;
+      }
+      desbloqueios += getRankUnlockPaCost(treeId, rank);
+    }
+    const rankDef = tree?.ranks.find((r) => r.rank === rank);
+    for (const item of [...(rankDef?.abilities ?? []), ...(rankDef?.talents ?? [])]) {
+      disponiveis.push(item.paCost);
+    }
+  }
+  return { desbloqueios, conhecimentos, quantidade, total: desbloqueios + conhecimentos };
+}
+
 /** Pode comprar esta magia/talento? Exige só o rank já desbloqueado nesta árvore. */
 /** O nome legível de um id dentro de uma árvore — pra mensagem de erro dizer o que falta. */
 function findNomeNaArvore(treeId: string, id: string): string | undefined {
@@ -958,6 +1098,39 @@ export function canPurchaseAbility(
     if (!state.purchasedAbilities.some((a) => a.treeId === treeId && a.id === requerido)) {
       const nome = findNomeNaArvore(treeId, requerido) ?? requerido;
       return { ok: false, reason: `Exige "${nome}" nesta árvore antes.` };
+    }
+  }
+
+  /*
+   * PRÉ-REQUISITO EM OUTRA ÁRVORE — "Requer 1 patamar em Água" (0.1.91).
+   *
+   * Quatro habilidades do livro são PONTES entre escolas: Vapor Seco (Fogo,
+   * pede Vento), Nova Congelante (Vento, pede Água), Explosão Silenciosa
+   * (Vento, pede Fogo) e Dedos de Mana (Ladino, pede qualquer escola de magia).
+   * As quatro diziam a exigência na prosa, e a ficha deixava comprar assim
+   * mesmo — porque `requires` só sabe olhar a PRÓPRIA árvore.
+   *
+   * O que elas vendem é a mistura. Comprar sem o outro lado é levar o efeito
+   * sem pagar a ponte, e era o único jeito de um mago de Vento puro sair com
+   * uma magia de gelo na ficha.
+   */
+  const comRequisito = findAbilityOrTalentDef(treeId, rank, kind, id);
+  const exigencia = comRequisito?.requiresRank;
+  if (exigencia) {
+    const ordemExigida = RANKS.indexOf(exigencia.rank);
+    const atende = state.unlockedRanks.some((u) => {
+      if (RANKS.indexOf(u.rank) < ordemExigida) return false;
+      if (exigencia.treeId) return u.treeId === exigencia.treeId;
+      if (exigencia.categoria) return getTreeById(u.treeId)?.category === exigencia.categoria;
+      return false;
+    });
+    if (!atende) {
+      const onde = exigencia.treeId
+        ? (getTreeById(exigencia.treeId)?.name ?? exigencia.treeId)
+        : exigencia.categoria === "magia"
+          ? "alguma escola de magia"
+          : `alguma árvore de ${exigencia.categoria}`;
+      return { ok: false, reason: `Exige o patamar ${exigencia.rank} em ${onde}.` };
     }
   }
 

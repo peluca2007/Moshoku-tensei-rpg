@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { CONDICOES } from "@/data/condicoes";
+import { CONDICOES, TETO_DE_ACUMULOS } from "@/data/condicoes";
 import { useCharacterStore } from "./useCharacterStore";
 import { getArmorClass, getCondicoesAtivas, getEfeitosDeCondicoes, getWeaponDamage } from "./selectors";
 
@@ -109,10 +109,12 @@ describe("o que a condição faz com os números", () => {
     expect(getArmorClass(ficha())).toBe(base - 1);
   });
 
-  it("sem saber quem aplicou, o teto é o maior Bônus de Rank do livro", () => {
+  it("sem saber quem aplicou, o teto é o maior que o livro permite", () => {
     const base = getArmorClass(ficha());
-    // 20 acúmulos e nenhuma fonte informada: o teto cai em 6 (Imperador). Não
-    // adivinha o número da mesa — só barra o valor impossível.
+    // 20 acúmulos e nenhuma fonte informada: o teto cai em 12, que é o dobro do
+    // Bônus de Imperador — a Maestria Nada Segura (Lutador, Avançado) dobra o
+    // limite de acúmulos, então 6 travava a ficha em METADE do que a própria
+    // árvore descreve. Não adivinha o número da mesa: só barra o impossível.
     useCharacterStore.getState().aplicarCondicao("quebrantado");
     useCharacterStore.setState((s) => ({
       characters: {
@@ -123,7 +125,7 @@ describe("o que a condição faz com os números", () => {
         },
       },
     }));
-    expect(getArmorClass(ficha())).toBe(base - 6);
+    expect(getArmorClass(ficha())).toBe(base - TETO_DE_ACUMULOS);
   });
 
   it("Envenenado NÃO mexe na CA — ele muda como se rola, não o corpo", () => {

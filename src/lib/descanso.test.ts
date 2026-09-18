@@ -43,32 +43,26 @@ describe("Descanso Curto (Cap. 4, §7)", () => {
 });
 
 describe("Descanso Longo (Cap. 4, §7)", () => {
-  it("devolve 50% de PM, PT e PP", () => {
-    const g = descansoLongo(MAX, 10);
-    expect(g.pm).toBe(8);
-    expect(g.pt).toBe(5);
-    expect(g.pp).toBe(3);
+  it("devolve TODOS os PM, PT e PP", () => {
+    const g = descansoLongo(MAX, 2, 3);
+    expect([g.pm, g.pt, g.pp]).toEqual([MAX.pm, MAX.pt, MAX.pp]);
   });
 
-  it("PV = 25% do máximo mais o percentual rolado no Vigor", () => {
-    // 25% de 40 = 10; 20% de 40 = 8.
-    expect(descansoLongo(MAX, 20).pv).toBe(18);
+  /* O Longo nunca pode devolver menos que o Curto — era o defeito da tabela antiga. */
+  it("nunca devolve menos PT que o Curto", () => {
+    expect(descansoLongo(MAX, 0, 1).pt).toBeGreaterThanOrEqual(descansoCurto(MAX).pt);
   });
 
-  /* O piso de 5% existe pra que um Vigor baixo com sorte ruim ainda durma alguma coisa. */
-  it("o percentual rolado tem piso de 5%", () => {
-    expect(descansoLongo(MAX, 1).pv).toBe(descansoLongo(MAX, 5).pv);
-    expect(descansoLongo(MAX, 0).pv).toBe(10 + 2); // 25% de 40, mais 5% de 40
+  it("PV = Vigor + 2 × maior Bônus de Rank, sem dado", () => {
+    expect(descansoLongo(MAX, 2, 3).pv).toBe(8);
   });
 
-  it("percentual alto continua sendo somado, sem teto artificial", () => {
-    expect(descansoLongo(MAX, 60).pv).toBe(10 + 24);
+  it("Vigor negativo ainda dorme alguma coisa: mínimo 1", () => {
+    expect(descansoLongo(MAX, -2, 1).pv).toBe(1);
   });
 
   it("mostra a conta de cada número, e não só o resultado", () => {
-    const g = descansoLongo(MAX, 20);
-    expect(g.detalhe.join(" ")).toContain("25% de 40");
-    expect(g.detalhe.join(" ")).toContain("20% rolado no Vigor");
+    expect(descansoLongo(MAX, 2, 3).detalhe.join(" ")).toContain("Vigor 2 + 2 × Bônus de Rank 3");
   });
 });
 

@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import BlocoDoMonstro from "./BlocoDoMonstro";
+import MedidorDeEncontro from "./MedidorDeEncontro";
 import {
   ArrowDown,
   ArrowUp,
@@ -52,7 +54,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import { CharacterData } from "@/lib/types";
-import { SIMPLIFICACOES, mediaFormula, patamarDaFicha, rankDaFicha } from "@/lib/combatSim";
+import { SIMPLIFICACOES, mediaFormula, patamarDaFicha, rankDaFicha, tiposDeDanoDaFicha } from "@/lib/combatSim";
 import {
   AcaoCriatura,
   CriaturaEncontro,
@@ -85,12 +87,18 @@ import {
 import {
   CRIATURAS_PRONTAS,
   MOLDES_CRIATURA,
+  NOME_DO_ATRIBUTO,
   PAPEIS,
+  acoesSugeridas,
   PapelCriatura,
   bonusResistencia,
+  fichaDeAtributos,
+  getArquetipo,
   getMoldePorPatamar,
+  percepcaoPassiva,
   rodadasDoChefe,
   rotuloPatamar,
+  sinal,
 } from "@/data/bestiary";
 
 /** Quantas batalhas o veredito roda. Alto o bastante pra estabilizar a % de vitória, baixo o bastante pra caber num clique. */
@@ -156,6 +164,9 @@ export default function EncounterBuilder() {
         nome: c.name || "Sem nome",
         pv: getMaxHp(c),
         ca: getArmorClass(c),
+        // Os tipos que ele sabe causar, tirados das fórmulas das habilidades
+        // dele — é o que deixa o aviso de Imunidade saber quem fica sem jogada.
+        tiposDeDano: tiposDeDanoDaFicha(c),
       })),
     [fichasDoGrupo]
   );
@@ -206,7 +217,29 @@ export default function EncounterBuilder() {
         const nome = criatura.quantidade > 1 ? `${criatura.nome} ${i + 1}` : criatura.nome;
         // Iniciativa rolada aqui porque o Apêndice G não dá bônus nenhum à
         // criatura — d20 puro, o mesmo que a simulação usa.
-        store.addCombatant(nome, Math.floor(Math.random() * 20) + 1, criatura.pv);
+        //
+        // O Bloco do Monstro vai JUNTO (0.1.90). Sem isto, o Mestre montava a
+        // criatura com atributos, perícias e resistências numa tela, e na hora
+        // da luta — que é outra tela — não tinha nada disso na frente.
+        const arq = getArquetipo(criatura.arquetipo);
+        const atributos = fichaDeAtributos(criatura.patamar, criatura.arquetipo);
+        store.addCombatant(nome, Math.floor(Math.random() * 20) + 1, criatura.pv, {
+          ca: criatura.ca,
+          percepcao: percepcaoPassiva(criatura.patamar, criatura.arquetipo),
+          atributos: (Object.keys(NOME_DO_ATRIBUTO) as (keyof typeof NOME_DO_ATRIBUTO)[]).map((k) => ({
+            rotulo: NOME_DO_ATRIBUTO[k].slice(0, 3),
+            valor: sinal(atributos[k]),
+          })),
+          pericias: criatura.pericias ?? [],
+          resistencias: criatura.resistencias ?? [],
+          imunidades: criatura.imunidades ?? [],
+          deslocamento: criatura.deslocamento ?? arq?.deslocamento ?? 9,
+          movimentoEspecial: criatura.movimentoEspecial,
+          tamanho: criatura.tamanho,
+          sentido: criatura.sentido ?? arq?.sentido,
+          cdResistencia: criatura.cdResistencia,
+          patamar: criatura.patamar,
+        });
       }
     }
   }
@@ -224,6 +257,12 @@ export default function EncounterBuilder() {
         characters={characters}
         grupo={grupo}
         patamarSugerido={patamarSugerido}
+      />
+
+      <MedidorDeEncontro
+        criaturas={criaturasDoEncontro}
+        tamanhoDoGrupo={fichasDoGrupo.length}
+        patamarDoGrupo={patamarSugerido}
       />
 
       <SecaoCriaturas
@@ -803,7 +842,19 @@ function SecaoCriaturas({
               type="button"
               onClick={() => {
                 const id = criar(p.patamar, p.papel, p.nome, pastaDestino);
-                atualizar(id, { perigo: p.perigo });
+                // O Bloco do Monstro vem junto (0.1.90): sem isto, a criatura
+                // pronta do Apêndice G chegava com o arquétipo genérico da
+                // `criaturaDoMolde`, e a Wyvern voadora virava um bruto.
+                atualizar(id, {
+                  perigo: p.perigo,
+                  arquetipo: p.arquetipo,
+                  tamanho: p.tamanho,
+                  pericias: p.pericias,
+                  resistencias: p.resistencias,
+                  imunidades: p.imunidades,
+                  movimentoEspecial: p.movimentoEspecial,
+                  sentido: p.sentido,
+                });
                 // As ações vêm do Apêndice G sem id — quem sorteia é a store.
                 for (const acao of p.acoes) adicionarAcao(id, acao);
               }}
@@ -1636,6 +1687,11 @@ function CartaoCriatura({
             />
           </div>
 
+          <BlocoDoMonstro
+            criatura={criatura}
+            atualizar={(patch) => atualizar(criatura.id, patch)}
+          />
+
           <EditorDeAcoes criatura={criatura} porAcoes={porAcoes} danoDasAcoes={danoDasAcoes} />
 
           <PainelDeAvisos criatura={criatura} avisos={avisos} temGrupo={alvosDoGrupo.length > 0} />
@@ -1760,6 +1816,29 @@ function EditorDeAcoes({
         >
           <Plus className="h-3.5 w-3.5" /> Nova ação
         </button>
+        {/*
+          SUGERIR AÇÕES (0.1.90) — o segundo buraco do bloco.
+
+          Definir os atributos resolveu "qual a Força dele?". Sobrou o mais
+          chato: inventar as fórmulas de dado. "Quanto uma Ameaça bate num
+          golpe?" é calibragem, não ficção — e a coluna Dano por turno da
+          tabela já sabe a resposta. O botão só aparece com a lista vazia,
+          porque ele ACRESCENTA: sugerir por cima do que o Mestre escreveu
+          seria apagar o trabalho dele.
+        */}
+        {criatura.acoes.length === 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              for (const acao of acoesSugeridas(criatura.patamar, criatura.papel, criatura.arquetipo))
+                adicionarAcao(criatura.id, acao);
+            }}
+            title="Cria ações calibradas pelo Dano por turno do patamar e pelo arquétipo. Troque os nomes à vontade — o que elas acertam é a conta."
+            className="flex items-center gap-1 rounded-lg border border-wine-400/50 px-2 py-1 text-xs font-semibold text-wine-700 hover:bg-wine-100/60 dark:border-wine-500/40 dark:text-wine-300 dark:hover:bg-wine-950/40"
+          >
+            <Wand2 className="h-3.5 w-3.5" /> Sugerir ações
+          </button>
+        )}
       </div>
 
       {criatura.acoes.length === 0 ? (

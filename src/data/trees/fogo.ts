@@ -39,7 +39,7 @@ export const FOGO_TREE: Tree = {
       mastery: {
         name: "Chama Viva",
         description:
-          "Acende, apaga, aquece e controla qualquer chama já existente a até 9m, sem PM e sem Ação. Você é imune a dano ígneo não-mágico e não sofre penalidade de calor extremo. [Em Chamas] Fogo é a escola que não prepara nada: ela cobra na hora. Toda magia de Fogo sua rola o dano cheio contra alvo Em Chamas, sem metade em caso de sucesso no teste de resistência.",
+          "Acende, apaga, aquece e controla qualquer chama já existente a até 9m, sem PM e sem Ação. Você tem Imunidade a dano ígneo mundano e não sofre penalidade de calor extremo. [Em Chamas] Fogo é a escola que não prepara nada: ela cobra na hora. Toda magia de Fogo sua rola o dano cheio contra alvo Em Chamas, sem metade em caso de sucesso no teste de resistência.",
       },
       talents: [
         {
@@ -118,7 +118,7 @@ export const FOGO_TREE: Tree = {
           name: "Clarão",
           paCost: RANK_PA_COST.common.Principiante,
           pmCost: 1,
-          range: "Esfera de 6 metros",
+          range: "Esfera de 6m de raio",
           actions: { normal: 1, encurtada: 1, silenciosa: 1 },
           costNote:
             "1 Ação em vez de 2. Sem dado de dano, sem duração além de um turno — o efeito inteiro é um clarão e um teste, mais rápido de soltar do que de descrever. Manter no padrão de 2 Ações faria dela a magia menos eficiente do próprio rank em termos de Ação gasta por efeito entregue.",
@@ -175,9 +175,9 @@ export const FOGO_TREE: Tree = {
           name: "Explosão",
           paCost: RANK_PA_COST.talent.Intermediário,
           pmCost: 4,
-          range: "Esfera de 6 metros",
+          range: "Esfera de 6m de raio",
           actions: MAGIC_ACTIONS.Intermediário,
-          damage: { normal: "3d6 + BC de explosão (+3d6 contra alvos Em Chamas)" },
+          damage: { normal: "3d6 + BC (contundente; +3d6 contra alvos Em Chamas)" },
           effect: "Teste de Resistência de Agilidade (CD 8 + BC), metade se passar. Falha: arremessadas 3m.",
           incantation:
             "Ar que eu comprimo até doer nas minhas próprias mãos, solta-te tudo de uma vez.\nNão precisas queimar — apenas empurra com toda a força que eu te emprestei.\nExplosão!",
@@ -213,7 +213,7 @@ export const FOGO_TREE: Tree = {
       mastery: {
         name: "Termodinâmica Inversa",
         description:
-          "Você controla a temperatura dentro das suas áreas: pode poupar aliados/objetos, ou fazer o fogo queimar só um material escolhido. Desbloqueia o direito de combinar escolas (Magia Combinada, Cap. 2).",
+          "Você controla a temperatura dentro das suas áreas. É aqui que o Fogo compra a exceção do Cap. 2, §7: escolha até INTELECTO criaturas para excluir de cada área sua, e faça o fogo queimar só um material escolhido. Antes deste patamar, área atinge todo mundo — inclusive o seu grupo. Desbloqueia o direito de combinar escolas (Magia Combinada, Cap. 2).",
       },
       talents: [
         { id: "coracao-de-brasa", name: "Coração de Brasa", paCost: RANK_PA_COST.talent.Avançado, description: "Você é imune a todo dano ígneo, mágico ou não, e à condição Em Chamas." },
@@ -221,7 +221,7 @@ export const FOGO_TREE: Tree = {
           id: "detonacao",
           name: "Detonação",
           paCost: RANK_PA_COST.talent.Avançado,
-          description: "Uma vez por turno, sem gastar Ação, apague a condição Em Chamas de um alvo para causar imediatamente 3d8 de dano de explosão nele.",
+          description: "Uma vez por turno, sem gastar Ação, apague a condição Em Chamas de um alvo para causar imediatamente 3d8 de dano ígneo nele, numa explosão.",
         },
         {
           id: "cantico-de-cinzas",
@@ -272,10 +272,11 @@ export const FOGO_TREE: Tree = {
         },
         {
           id: "vapor-seco",
+          requiresRank: { treeId: "vento", rank: "Principiante" },
           name: "Vapor Seco",
           paCost: RANK_PA_COST.talent.Avançado,
           pmCost: 4,
-          range: "Esfera de 9m",
+          range: "Esfera de 9m de raio",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "4d8 de dano ígneo" },
           effect:
@@ -302,7 +303,7 @@ export const FOGO_TREE: Tree = {
       mastery: {
         name: "Domínio da Combustão",
         description:
-          "Suas magias de Fogo ignoram Resistência a dano ígneo e de explosão. Você pode conjurar qualquer magia de Fogo de rank Avançado ou inferior com metade da área pelo dobro do dano, ou o inverso. Fogo aceso por você não se apaga enquanto você quiser.",
+          "Suas magias de Fogo ignoram Resistência a dano ígneo e contundente. Você pode conjurar qualquer magia de Fogo de rank Avançado ou inferior com metade da área e +50% dos dados de dano, ou com o dobro da área e metade dos dados (arredondando pra baixo nos dois casos; o BC nunca muda). A magia alterada assim não pode ser repetida pela Segunda Ignição. Fogo aceso por você não se apaga enquanto você quiser.",
       },
       talents: [
         {
@@ -322,8 +323,8 @@ export const FOGO_TREE: Tree = {
           pmCost: 12,
           range: "Raio de 60m",
           actions: MAGIC_ACTIONS.Santo,
-          damage: { normal: "10d8 + BC (ígneo)" },
-          effect: "Teste de Agilidade com Desvantagem. Falha: dano cheio e Em Chamas. Sucesso: metade. Aliados só são poupados pelo talento Calor Dirigido. Área continua em chamas por 10 minutos.",
+          damage: { normal: "12d8 + BC (ígneo)", porTurno: "2d6 (ígneo) a quem começar o turno na área em chamas" },
+          effect: "Teste de Agilidade (CD 8 + BC) com Desvantagem. Falha: dano cheio e Em Chamas. Sucesso: metade. A área continua em chamas por 10 minutos: quem começar o turno dentro sofre 2d6 de dano ígneo.",
           incantation:
             "Que o chão lembre do dia em que foi lava, muito antes de aprender a ser pedra,\nmuito antes de alguém plantar em cima e chamar aquilo de terra firme.\nEu não crio o fogo. Eu só devolvo a memória que ele tinha antes de esfriar.\nAcorda, chão. Lembra do que eras antes de qualquer coisa ter nome.\nQue nada aqui volte a ter nome quando eu terminar de falar.\nMar de Chamas!",
         },
@@ -379,7 +380,7 @@ export const FOGO_TREE: Tree = {
           range: "45 metros",
           actions: { normal: 3, encurtada: 2, silenciosa: 1 },
           costNote:
-            "3 Ações em vez das 5 do rank Rei, e 13 PM em vez de 10. É a magia de ataque único mais direta do rank — sem área, sem clima, sem preparo — e um mago Rei que já domina Plasma não precisa do cântico inteiro pra formar uma linha reta. A rapidez sai do bolso do PM: tira o fôlego mais do que a versão lenta tiraria. Por isso o encantamento também foge do piso de tamanho do rank Rei: é a única magia do livro cuja brevidade É o efeito — cantar mais devagar do que isto anularia a Ação que ela custou pra ser rápida.",
+            "3 Ações em vez das 4 do rank Rei, e 13 PM em vez de 10. É a magia de ataque único mais direta do rank — sem área, sem clima, sem preparo — e um mago Rei que já domina Plasma não precisa do cântico inteiro pra formar uma linha reta. A rapidez sai do bolso do PM: tira o fôlego mais do que a versão lenta tiraria. Por isso o encantamento também foge do piso de tamanho do rank Rei: é a única magia do livro cuja brevidade É o efeito — cantar mais devagar do que isto anularia a Ação que ela custou pra ser rápida.",
           damage: { normal: "8d8 + BC (plasma)" },
           effect: "Ataque mágico à distância. Atravessa o alvo em linha reta e atinge tudo atrás por mais 15m com metade do dano.",
           incantation:
@@ -400,7 +401,7 @@ export const FOGO_TREE: Tree = {
           id: "a-chama-que-escolhe",
           name: "A Chama Que Escolhe",
           paCost: RANK_PA_COST.talent.Imperador,
-          description: "Você poupa automaticamente um número de criaturas igual ao seu Espírito em qualquer magia sua, incluindo o Sol Menor.",
+          description: "As criaturas que você excluir de uma área sua (Termodinâmica Inversa) não só escapam do fogo: elas recebem PV Temporários iguais ao seu BC até o fim do próximo turno delas — o calor passa por fora e fecha a pele. Vale inclusive na exclusão do Sol Menor.",
         },
       ],
       abilities: [
@@ -411,11 +412,11 @@ export const FOGO_TREE: Tree = {
           ritual: true,
           paCost: RANK_PA_COST.signature.Imperador,
           pmCost: 22,
-          range: "Esfera de 30m",
+          range: "Esfera de 30m de raio",
           actions: MAGIC_ACTIONS.Imperador,
           damage: { normal: "14d12 de plasma (20d12 contra alvos Em Chamas)" },
           effect:
-            "Teste de Vigor com Desvantagem Absoluta. Aliados não são poupados automaticamente. Construções, terreno e cadáveres na área deixam de existir; a cratera é permanente.",
+            "Teste de Vigor com Desvantagem Absoluta. Construções, terreno e cadáveres na área deixam de existir; a cratera é permanente.",
           incantation:
             "Eu junto tudo o que o fogo seria em mil anos de fome lenta,\ntoda a lenha que ele nunca teve, toda a floresta que ele sonhou consumir e nunca alcançou,\ne devolvo isso em um único segundo, aqui, sobre estas cabeças que não sabem o que vem.\nQue o céu abaixe até o chão, e que o chão suba até não haver mais diferença entre os dois,\naté que ninguém mais consiga dizer onde terminava o mundo e onde começava o fogo.\nEu não trago um sol. Eu trago o que resta depois que um sol termina de existir.\nSol Menor!",
         },

@@ -39,14 +39,14 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "Afinidade Aquática",
         description:
-          "Cria, move, aquece levemente ou evapora até 20 litros de água limpa por minuto, sem gastar PM nem Ação. Não causa dano, mas serve pra tudo o mais: encher cantis, apagar fogueiras, limpar ferimentos, dar água a um cavalo. [Molhado] Sem PM e sem Ação, uma vez por turno, deixe Molhada uma criatura adjacente a você ou a qualquer água que você controle.",
+          "Cria, move, aquece levemente ou evapora até 20 litros de água limpa por minuto, sem gastar PM nem Ação. Não causa dano, mas serve pra tudo o mais: encher cantis, apagar fogueiras, limpar ferimentos, dar água a um cavalo. [Molhado] Sem PM e sem Ação, uma vez por turno, deixe Molhada uma criatura adjacente a você ou a qualquer água que você controle. A água que você cria ou move fica sempre a até 9m de você.",
       },
       talents: [
         {
           id: "condutor-de-gelo",
           name: "Condutor de Gelo",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "Magias de gelo suas contra alvos Molhados impõem Desvantagem no teste de resistência.",
+          description: "O Molhado que você aplica não seca até o fim do combate, nem com dano ígneo. E suas magias de frio rolam +1 dado de frio contra alvo Molhado (do tamanho do maior dado de frio da magia). Esse dado extra não dobra pelo Molhado.",
         },
         {
           id: "nascente-de-mana",
@@ -59,7 +59,7 @@ export const AGUA_TREE: Tree = {
           id: "mao-firme",
           name: "Mão Firme",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "Você não sofre Desvantagem ao conjurar com um inimigo adjacente a você.",
+          description: "+2 nos seus testes de Concentração, e ser empurrado ou derrubado não interrompe sua conjuração, mesmo que te tire do alcance ou da linha de visão do alvo.",
         },
       ],
       abilities: [
@@ -95,8 +95,8 @@ export const AGUA_TREE: Tree = {
           pmCost: 2,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Principiante,
-          damage: { normal: "1d4 contundente + 1d6 de frio (frio dobra contra Molhado)" },
-          effect: "Teste de Resistência de Agilidade (CD 8 + BC). Falha: deslocamento reduzido em 3m até o fim do próximo turno.",
+          damage: { normal: "1d8 de frio + BC (contundente); o frio dobra contra Molhado" },
+          effect: "O dano entra sempre, passe ou não no teste. Teste de Resistência de Agilidade (CD 8 + BC). Falha: também perde 3m de Deslocamento até o fim do próximo turno.",
           incantation:
             "Coloco diante de ti um berço de gelo, como desejas.\nDeita-te e esquece o calor que te trouxe.\nImpacto de Gelo!",
         },
@@ -129,7 +129,7 @@ export const AGUA_TREE: Tree = {
           name: "Névoa Densa",
           paCost: RANK_PA_COST.common.Principiante,
           pmCost: 1,
-          range: "Esfera de 6 metros",
+          range: "Esfera de 6m de raio",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "Área fortemente obscurecida por 5 minutos (efetivamente cega quem está dentro). Vento forte dissipa em 1 turno.",
           incantation:
@@ -143,7 +143,7 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "Cântico Fluido",
         description:
-          "Suas magias de Rank Principiante não sofrem mais penalidade na versão Encurtada — dano cheio, área cheia. Falhas críticas em magias de Principiante apenas falham em silêncio.",
+          "Suas magias de Rank Principiante não sofrem mais penalidade na versão Encurtada — dano cheio, área cheia. E um 1 natural num ataque mágico de Principiante seu não gasta o PM: a magia falha, mas a mana volta.",
       },
       talents: [
         {
@@ -235,7 +235,7 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "Termodinâmica Aplicada",
         description:
-          "Você troca livremente o dano de frio das suas magias por contundente (água pressurizada) ou ígneo (vapor), sem alterar os dados. [Congelado] O pagamento da escola, agora como regra geral: QUALQUER magia de frio sua que force teste de resistência deixa Congelado quem já estava Molhado e falhou no teste. Molhado é o preparo; Congelado é a cobrança. Desbloqueia o direito de aprender e executar Magias Combinadas (Cap. 2).",
+          "Você troca livremente o dano de frio das suas magias por contundente (água pressurizada) ou ígneo (vapor), sem alterar os dados. [Congelado] O pagamento da escola, agora como regra geral: QUALQUER magia de frio sua (magia de frio e magia de gelo são a mesma coisa: toda magia que cause dano de frio) que force teste de resistência deixa Congelado quem já estava Molhado e falhou no teste. Molhado é o preparo; Congelado é a cobrança. Desbloqueia o direito de aprender e executar Magias Combinadas (Cap. 2).",
       },
       talents: [
         { id: "zero-perfurante", name: "Zero Perfurante", paCost: RANK_PA_COST.talent.Avançado, description: "Seu gelo ignora Resistência a dano de frio." },
@@ -249,7 +249,7 @@ export const AGUA_TREE: Tree = {
           id: "nucleo-gelido",
           name: "Núcleo Gélido",
           paCost: RANK_PA_COST.talent.Avançado,
-          description: "Você é imune a dano de frio não-mágico e não sofre penalidades de clima gelado.",
+          description: "Você tem Imunidade a dano de frio mundano e não sofre penalidades de clima gelado.",
         },
       ],
       abilities: [
@@ -260,8 +260,8 @@ export const AGUA_TREE: Tree = {
           pmCost: 4,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "5d8 + BC (perfurante) + 2d6 de frio (dobra contra Molhado)" },
-          effect: "Ataque mágico à distância. Contra objetos e estruturas, o dano é dobrado.",
+          damage: { normal: "5d8 + BC (perfurante) + 2d6 de frio (dobra contra Molhado); +3d8 de frio contra alvo Congelado" },
+          effect: "Ataque mágico à distância. Contra objetos e estruturas, o dano é dobrado. E contra alvo CONGELADO ele acerta automaticamente, causa +3d8 de frio e estilhaça o gelo — o alvo deixa de estar Congelado. É a cobrança da escola: molha, congela, estilhaça. O acerto automático não é crítico e não multiplica dados.",
           incantation:
             "Magníficos espíritos da água, senhores do que congela e do que racha:\nolhai o insolente que ousou ficar de pé diante de mim.\nErguei contra ele a vossa majestosa espada de gelo,\ne não a useis para cortar — usai-a para estilhaçar.\nQuebra de Gelo!",
         },
@@ -285,7 +285,7 @@ export const AGUA_TREE: Tree = {
           range: "Esfera de 9m de raio",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "2d8 de frio (dobra contra Molhado)" },
-          effect: "Teste de Resistência de Vigor (CD 8 + BC). Falha: deslocamento reduzido a 0 até o fim do próximo turno (e Congelado, pela Maestria Termodinâmica Aplicada, se o alvo já estava Molhado).",
+          effect: "Teste de Resistência de Vigor (CD 8 + BC). Falha: dano cheio e deslocamento reduzido a 0 até o fim do próximo turno (e Congelado, pela Maestria Termodinâmica Aplicada, se o alvo já estava Molhado). Sucesso: metade do dano, sem perder deslocamento.",
           incantation:
             "Deusa Azul que desce dos céus quando a estação vira,\ne diante de quem o rio para no meio do próprio gesto:\nempunha o teu cajado e toca este solo uma única vez.\nQue a geada suba pelas pernas de quem estiver aqui,\ne que este mundo maldito aprenda a ficar parado.\nCampo de Gelo!",
         },
@@ -295,9 +295,9 @@ export const AGUA_TREE: Tree = {
           signature: true,
           paCost: RANK_PA_COST.signature.Avançado,
           pmCost: 5,
-          range: "Explosão de 9m centrada em você",
+          range: "Esfera de 9m de raio centrada em você",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "2d6 perfurante + 3d6 de frio + BC (dobra contra Molhado)" },
+          damage: { normal: "2d6 + BC (perfurante) + 3d6 de frio (o frio dobra contra Molhado)" },
           effect: "Teste de Resistência de Agilidade (CD 8 + BC). Falha: dano cheio e arremessadas 3m. Sucesso: metade e não empurradas. Você não é afetado.",
           incantation:
             "Soberano envolto em branco absoluto, que não caminha e mesmo assim chega,\ncujo frio rouba o calor da pele, do sangue e por fim da vontade:\neu te dou este campo inteiro como trono.\nGira ao meu redor e congela os que ousaram se aproximar.\nNevasca!",
@@ -308,9 +308,9 @@ export const AGUA_TREE: Tree = {
           paCost: 4,
           pmCost: 5,
           range: "Raio de 1 km",
-          actions: { normal: 5, encurtada: 4, silenciosa: 3 },
+          actions: { normal: 4, encurtada: 3, silenciosa: 2 },
           costNote:
-            "4 PA (o dobro do Avançado comum, mais que a maioria das magias Santo) e 5 Ações em vez de 3. Nenhuma magia de dano do livro decide um combate antes dele começar; esta decide. Um raio de 1 km com magia de Fogo até Intermediário desligada ao ar livre não é vantagem tática, é remover uma escola inteira do campo — e ainda mantém o grupo adversário Molhado, que é o gatilho de metade da árvore de Água. Custa caro pra aprender porque muda a guerra, e leva quase dois turnos porque clima não se convoca num estalo: a frente fria precisa chegar.",
+            "4 PA (o dobro do Avançado comum, mais que a maioria das magias Santo) e 4 Ações em vez de 3, o teto do livro. Nenhuma magia de dano do livro decide um combate antes dele começar; esta decide. Um raio de 1 km com magia de Fogo até Intermediário desligada ao ar livre não é vantagem tática, é remover uma escola inteira do campo — e ainda mantém o grupo adversário Molhado, que é o gatilho de metade da árvore de Água. Custa caro pra aprender porque muda a guerra, e não cabe num turno só porque clima não se convoca num estalo: a frente fria precisa chegar.",
           effect:
             "Chuva pesada por 1 hora. Todos sob ela mantêm Molhado permanentemente. Visibilidade reduzida à metade. Fogueiras e magia de fogo rank Intermediário ou inferior não funcionam ao ar livre.",
           incantation:
@@ -323,7 +323,9 @@ export const AGUA_TREE: Tree = {
           pmCost: 5,
           range: "9 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "Muralha ou domo com 80 PV (Cobertura Total). Se conjurada como Reação em Silenciosa, surge com apenas 30 PV. Dura 10 minutos.",
+          costNote:
+            "Uma vez por combate ela também sai como Reação, fora da tabela de Ações do rank. O preço da pressa está na muralha, não na mana: os mesmos 5 PM compram só 30 PV em vez de 80.",
+          effect: "Muralha ou domo com 80 PV (Cobertura Total). Dura 10 minutos. Uma vez por combate, você pode erguê-la como Reação a um ataque contra você ou contra um aliado a até 9m, pagando os mesmos 5 PM: ela surge antes do ataque, com apenas 30 PV.",
           incantation:
             "Guardião das geleiras eternas, que guardas o silêncio há mais tempo do que existem nomes:\nergue-te das profundezas onde nada te alcança e vem até onde tudo alcança.\nPõe-te entre mim e o que vem aí.\nSê o escudo intransponível, e não cedas antes de mim.\nFortaleza de Gelo!",
         },
@@ -335,14 +337,14 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "Domínio Climático",
         description:
-          "Você é imune aos danos e efeitos colaterais das suas próprias magias de área e de clima, e pode poupar um número de aliados igual ao seu Espírito. Enxerga perfeitamente através de chuva, névoa e nevasca, e mantém uma magia de clima ativa sem gastar concentração nem Ações.",
+          "Você é imune aos danos e efeitos colaterais das suas próprias magias de área e de clima, e pode poupar um número de aliados igual ao seu Intelecto. Enxerga perfeitamente através de chuva, névoa e nevasca, e mantém uma magia de clima ativa sem gastar concentração nem Ações. As magias de clima da escola são quatro: Tempestade, Cumulonimbus, Era Glacial e Dilúvio.",
       },
       talents: [
         {
           id: "olho-da-tempestade",
-          name: "Olho da Tempestade",
+          name: "Dois Céus",
           paCost: RANK_PA_COST.talent.Santo,
-          description: "Você mantém duas magias de clima simultaneamente, e o custo em PM de qualquer magia de clima da escola é reduzido à metade.",
+          description: "Você mantém duas magias de clima simultaneamente, e o custo em PM de qualquer magia de clima da escola (Tempestade, Cumulonimbus, Era Glacial e Dilúvio) é reduzido à metade.",
         },
       ],
       abilities: [
@@ -394,7 +396,7 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "Condutividade",
         description:
-          "A escola de Água passa a incluir o elemento Eletricidade. Todo dano elétrico que você causar a um alvo Molhado impõe Desvantagem no teste de resistência dele; se tirar 5 ou menos, fica Atordoado por 1 turno.",
+          "A eletricidade, que até aqui só descia do Cumulonimbus, vira elemento pleno da escola. Todo dano elétrico que você causar a um alvo Molhado impõe Desvantagem no teste de resistência dele; se tirar 5 ou menos, fica Atordoado por 1 turno.",
       },
       talents: [
         {
@@ -406,6 +408,21 @@ export const AGUA_TREE: Tree = {
       ],
       abilities: [
         {
+          id: "a-mare-que-lembra-o-vale",
+          name: "A Maré que Lembra o Vale",
+          paCost: RANK_PA_COST.common.Rei,
+          pmCost: 18,
+          range: "Área de 90m de raio, centrada em você",
+          actions: { normal: 6 },
+          ritual: true,
+          costNote:
+            "GRANDE OBRA — 6 Ações, o dobro do teto do rank, e Ritual (Cap. 2, §3). A Água é a escola que prepara antes de bater, e o preço disso sempre foi pagar o preparo de novo a cada alvo. Esta magia paga o preparo UMA vez, pelo campo inteiro e pelo resto da cena. Cobra por isso dois turnos parados, à vista de todos, com a maré já subindo antes da última palavra — e quem interromper leva os 18 PM junto.",
+          effect:
+            "A água sobe até os joelhos em toda a área e fica até o fim da cena. Toda criatura em contato com o chão dentro dela fica Molhada e CONTINUA Molhada enquanto estiver ali: dano ígneo não seca mais ninguém, porque a água volta no mesmo instante. A área é terreno difícil; você e os aliados que você nomear no início do ritual ignoram isso. Fora de combate, o vale alagado permanece por um dia inteiro.",
+          incantation:
+            "Este vale já foi fundo de mar, e não faz tanto tempo assim quanto as pedras daqui gostam de fingir que faz.\nA água não foi embora: ela só recuou, e ficou esperando do outro lado do mundo alguém educado o bastante\npra chamá-la de volta pelo nome antigo, em vez de mandar nela como se manda num balde.\nEu chamo. Sobe devagar, sem quebrar nada, até os joelhos de todo mundo que está aqui,\ne lembra a esta terra o que ela era antes de aprender a ficar seca.\nA Maré que Lembra o Vale!",
+        },
+        {
           id: "relampago",
           name: "Relâmpago",
           signature: true,
@@ -414,10 +431,10 @@ export const AGUA_TREE: Tree = {
           range: "Alcance ilimitado (linha de visão)",
           actions: { normal: 4, encurtada: 3, silenciosa: 2 },
           costNote:
-            "4 Ações em vez das 5 do rank Rei, e 14 PM em vez de 12. A magia não constrói nada: a nuvem já está no céu, paga e cantada em Cumulonimbus, e o que resta é apontar. Cobrar cinco Ações por um gesto que só fecha um circuito já montado era punir o mago duas vezes pela mesma tempestade. O PM extra é o preço da pressa — puxar o relâmpago antes que ele desça sozinho custa mais mana do que esperar.",
+            "Silenciosa em 2 Ações em vez das 3 do rank Rei, e 14 PM em vez de 12. A magia não constrói nada: a nuvem já está no céu, paga e cantada em Cumulonimbus, e o que resta é apontar. Cobrar a Silenciosa cheia por um gesto que só fecha um circuito já montado era punir o mago duas vezes pela mesma tempestade. O PM extra é o preço da pressa — puxar o relâmpago antes que ele desça sozinho custa mais mana do que esperar.",
           damage: { normal: "10d10 + BC (elétrico)" },
           effect:
-            "Pré-requisito: Cumulonimbus ativa acima de você. Ignora bônus de CA por Touki. Contra armadura metálica, acerto é Crítico automático. Contra alvo Molhado, dano dobrado.",
+            "Pré-requisito: Cumulonimbus ativa acima de você. Teste de Agilidade (CD 8 + BC), metade se passar; quem veste armadura metálica faz o teste com Desvantagem Absoluta. Contra alvo Molhado, dano dobrado — e, como é teste de resistência, a Condutividade encadeia o Atordoado.",
           incantation:
             "Ó espíritos das águas magníficas, que já me destes a nuvem e agora me deveis o resto:\neu não vos suplico mais. Eu cobro.\nPríncipe do Trovão, que dormes sobre a tempestade que eu mesmo ergui,\nabre um olho e olha para baixo — para aquele que continua de pé.\nEle crê que a altura o protege, que o metal o protege.\nDesce em linha reta, sem curva e sem trovão antes do clarão,\ne ensina ao insolente que o Imperador ainda reina supremo!\nRelâmpago!",
         },
@@ -426,7 +443,7 @@ export const AGUA_TREE: Tree = {
           name: "Era Glacial",
           paCost: RANK_PA_COST.common.Rei,
           pmCost: 11,
-          range: "Esfera de 30m",
+          range: "Esfera de 30m de raio",
           actions: MAGIC_ACTIONS.Rei,
           damage: { normal: "3d10 de frio (sem teste, a quem começar o turno dentro)" },
           effect:
@@ -450,7 +467,7 @@ export const AGUA_TREE: Tree = {
           name: "Essência do Inverno",
           paCost: RANK_PA_COST.talent.Imperador,
           description:
-            "Seu dano de frio passa a ignorar também Invulnerabilidade e proteção mágica de rank inferior ao seu. Uma vez por Descanso Longo, conjure Zero Absoluto pagando metade do PM.",
+            "Seu dano de frio passa a atravessar também barreiras e proteções mágicas de rank inferior ao seu. Uma vez por Descanso Longo, conjure Zero Absoluto pagando metade do PM.",
         },
       ],
       abilities: [
@@ -461,7 +478,7 @@ export const AGUA_TREE: Tree = {
           ritual: true,
           paCost: RANK_PA_COST.signature.Imperador,
           pmCost: 20,
-          range: "Esfera de 45 metros",
+          range: "Esfera de 45m de raio",
           actions: MAGIC_ACTIONS.Imperador,
           damage: { normal: "12d12 de frio (24d12 contra alvo Molhado)" },
           effect:

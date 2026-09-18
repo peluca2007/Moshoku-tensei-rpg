@@ -86,7 +86,6 @@ function ficha(
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     overrides: {},
     ...patch,
   };

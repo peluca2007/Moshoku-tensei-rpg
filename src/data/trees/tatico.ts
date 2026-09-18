@@ -8,11 +8,11 @@ export const TATICO_TREE: Tree = {
   category: "utilidade",
   subgroup: "Sobrevivência e Táticas",
   mechanic: {
-    tag: "Escopo: tempo e logística",
+    tag: "Domínio: tempo e logística",
     hook:
       "A pergunta dele é \"onde e quando isso acontece?\". Faixa exclusiva: economia de ação — só o Tático concede Ações.",
     loop: [
-      "Escolha o terreno e a hora. Enquanto lidera a marcha, o grupo não se perde, ignora terreno difícil natural e NUNCA é surpreendido.",
+      "Escolha o terreno e a hora. Enquanto lidera a marcha, o grupo não se perde, ignora terreno difícil natural e NUNCA fica Surpreso.",
       "Gaste PP antes do combate. Reconhecimento, posicionamento, suprimento — a preparação vira vantagem mecânica quando a luta começa.",
       "Dê Ações. Só esta árvore concede Ações a aliados, mexe na ordem de Iniciativa e reposiciona gente sem gastar o turno dela.",
     ],
@@ -49,7 +49,7 @@ export const TATICO_TREE: Tree = {
       mastery: {
         name: "Onde Pisar",
         description:
-          "[Escopo: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. O grupo nunca é surpreendido — emboscadas ainda acontecem, mas vocês agem no primeiro turno. Sempre encontram água, abrigo e um lugar defensável. [Ordem de Tiro] Uma vez por turno, sem gastar Ação, aponte um alvo que você enxergue: ele fica Apontado até o seu próximo turno. O primeiro ataque que acertar um alvo Apontado — SEU ou de um aliado — causa +1d6 de dano por patamar que você possua nesta árvore. Contra o alvo Apontado, os seus próprios ataques com arco curto ou lança somam o seu Bônus de Rank no acerto e no dano: o Tático só bate como quem treinou pra isso quando é ele mesmo executando a ordem que deu. E a ordem não se perde — se ninguém acertar o alvo até o seu próximo turno, aponte o mesmo alvo de novo e o bônus sobe outro 1d6, acumulando até o dobro do seu patamar.",
+          "[Domínio: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. Ninguém do grupo fica Surpreso — emboscadas ainda acontecem, mas vocês agem normalmente no primeiro turno. Sempre encontram água, abrigo e um lugar defensável. [Ordem de Tiro] Uma vez por turno, sem gastar Ação, aponte um alvo que você enxergue: ele fica Apontado até o seu próximo turno. O primeiro ataque que acertar um alvo Apontado — SEU ou de um aliado — causa +1d6 de dano por patamar que você possua nesta árvore. Contra o alvo Apontado, os seus próprios ataques com armas dos grupos Hastes ou Arcos e Bestas somam o seu Bônus de Rank no acerto e no dano: o Tático só bate como quem treinou pra isso quando é ele mesmo executando a ordem que deu. E a ordem não se perde — se ninguém acertar o alvo até o seu próximo turno, aponte o mesmo alvo de novo e o bônus sobe outro 1d6, acumulando até o dobro do seu patamar.",
       },
       talents: [
         { id: "mapa-vivo", name: "Mapa Vivo", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você desenha e lê mapas; regiões que já atravessou ficam registradas e podem ser vendidas." },
@@ -190,7 +190,7 @@ export const TATICO_TREE: Tree = {
       mastery: {
         name: "A Guerra Já Acabou",
         description:
-          "Escopo: o ano, uma guerra inteira. Uma vez por Descanso Longo, gastando 4 PP, declare uma condição estratégica já em vigor (estrada cortada, porto bloqueado, exército sem pagamento). Você pode declarar que um confronto planejado não vai acontecer. Recupere 2 PP em Descanso Curto.",
+          "Escopo: o ano, uma guerra inteira. Uma vez por Descanso Longo, gastando 4 PP, declare uma de duas coisas: uma condição estratégica já em vigor (estrada cortada, porto bloqueado, exército sem pagamento), ou que um confronto planejado não vai acontecer. Seu Descanso Curto recupera metade do seu PP máximo, em vez de 25%.",
       },
       talents: [
         { id: "o-mapa-e-meu", name: "O Mapa É Meu", paCost: UTILITY_PA_COST.talent.Imperador, description: "Seu Escopo passa a cobrir um continente inteiro: movimentação de tropas, rotas, colheitas, estações." },

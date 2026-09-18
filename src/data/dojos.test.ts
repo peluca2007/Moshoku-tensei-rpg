@@ -7,6 +7,7 @@ import {
   REQUISITO_DE_PATAMAR,
 } from "@/data/dojos";
 import { RANK_REQUIREMENTS, RANKS } from "@/lib/types";
+import { RANK_PA_COST } from "@/data/trees/shared";
 
 /**
  * O Sistema de Dojo — Cap. 5, §5 (0.1.54).
@@ -76,14 +77,21 @@ describe("A escala por patamar", () => {
    * Desbloquear Intermediário custa 1 e Avançado 2 — 4 PA travados já são os
    * dois, mais uma habilidade. Acima disso, a provação passaria a valer mais
    * que a decisão de criação de ficha de outro jogador.
+   *
+   * 2026-09-17: a conta somava `RANK_REQUIREMENTS.Principiante.paCost` pra
+   * chegar nos 4, e isso era coincidência — o Principiante NUNCA custou o
+   * valor da tabela, porque abrir uma árvore se paga pela ordem de abertura
+   * (Cap. 1, §8). Quando esse 1 morto virou 0, o teto caiu pra 3 sem ninguém
+   * ter decidido nada. Agora a soma é a que o comentário sempre descreveu:
+   * os dois desbloqueios reais mais uma habilidade de 1 PA.
    */
-  it("o travado nunca compra mais que os três primeiros desbloqueios de rank", () => {
-    const tresPrimeiros =
-      RANK_REQUIREMENTS.Principiante.paCost +
+  it("o travado nunca compra mais que os dois primeiros desbloqueios e uma habilidade", () => {
+    const doisDesbloqueiosEUmaHabilidade =
       RANK_REQUIREMENTS.Intermediário.paCost +
-      RANK_REQUIREMENTS.Avançado.paCost;
+      RANK_REQUIREMENTS.Avançado.paCost +
+      RANK_PA_COST.common.Principiante;
     for (const faixa of RECOMPENSA_POR_PATAMAR) {
-      expect(faixa.travados, faixa.patamares[0]).toBeLessThanOrEqual(tresPrimeiros);
+      expect(faixa.travados, faixa.patamares[0]).toBeLessThanOrEqual(doisDesbloqueiosEUmaHabilidade);
     }
   });
 

@@ -49,6 +49,12 @@ export interface CombinedSpell {
   actions: number;
   damage: string;
   effect: string;
+  /**
+   * Por que ESTA Combinada foge do teto de 4 Ações (Cap. 2, §3). Só o Meteoro
+   * usa, e por isso mesmo: uma Combinada que custa dois turnos precisa dizer
+   * na própria carta que isso é o desenho, e não um número esquecido.
+   */
+  costNote?: string;
 }
 
 export const COMBINED_SPELLS: CombinedSpell[] = [
@@ -76,12 +82,42 @@ export const COMBINED_SPELLS: CombinedSpell[] = [
       { treeId: "fogo", rank: "Intermediário" },
     ],
     paCost: 3,
-    pmCost: 12,
+    pmCost: 6,
     range: "Linha de 18 metros",
-    actions: 3,
-    damage: "4d6 perfurante + Em Chamas",
+    actions: 2,
+    damage: "6d6 perfurante + Em Chamas",
     effect:
-      "Muro de videiras espinhosas que crescem e queimam. Criaturas que atravessarem sofrem 4d6 perfurante e ficam Em Chamas por 1 turno. Dura 3 turnos.",
+      "Muro de videiras espinhosas que crescem e queimam. Dura 1 minuto. Quem atravessar sofre 6d6 perfurante e fica Em Chamas, e o muro e o chão até 3m de cada lado dele são terreno difícil.",
+  },
+  {
+    id: "fera-da-ventania",
+    name: "Fera da Ventania",
+    requires: [
+      { treeId: "invocacao", rank: "Avançado" },
+      { treeId: "vento", rank: "Intermediário" },
+    ],
+    paCost: 3,
+    pmCost: 5,
+    range: "18 metros",
+    actions: 2,
+    damage: "+2d6 cortante por acerto do invocado",
+    effect:
+      "Você sopra uma ventania dentro de um invocado seu (numa Alcateia ou Legião, só uma das criaturas). Por 1 minuto, ele ganha +3m de Deslocamento, e cada ataque dele que acertar causa +2d6 cortante e deixa o alvo Desequilibrado. Se ele cair a 0 PV antes disso, o vento se solta num estouro: toda criatura a até 3m faz teste de Força (CD 8 + BC) ou é empurrada 3m.",
+  },
+  {
+    id: "chuva-purificadora",
+    name: "Chuva Purificadora",
+    requires: [
+      { treeId: "desintoxicacao", rank: "Avançado" },
+      { treeId: "agua", rank: "Intermediário" },
+    ],
+    paCost: 3,
+    pmCost: 5,
+    range: "Esfera de 9m, centrada a até 18 metros",
+    actions: 2,
+    damage: "—",
+    effect:
+      "Chuva fina de água limpa. Aliados na área deixam de estar Envenenados, e venenos e doenças de rank Intermediário ou inferior neles são purgados. Toda criatura na área, aliada ou não, fica Molhada, sem teste — o preço da limpeza e o começo do combo de gelo.",
   },
 
   // --- Porta média: Avançado + Avançado ---
@@ -145,7 +181,7 @@ export const COMBINED_SPELLS: CombinedSpell[] = [
     actions: 4,
     damage: "6d10 elétrico",
     effect:
-      "Um único relâmpago que mescla eletricidade e mana curativa. Inimigos na linha fazem teste de Agilidade (CD 8 + BC) ou sofrem o dano cheio. Um aliado na linha recebe cura igual ao dano causado.",
+      "Um único relâmpago que mescla eletricidade e mana curativa. Inimigos na linha fazem teste de Agilidade (CD 8 + BC) ou sofrem o dano cheio. Escolha um inimigo atingido: um aliado na linha cura metade do dano causado a ele.",
   },
   {
     id: "tempestade-de-cura",
@@ -160,7 +196,7 @@ export const COMBINED_SPELLS: CombinedSpell[] = [
     actions: 3,
     damage: "—",
     effect:
-      "Chuva morna com mana curativa. Aliados na área curam 3d8 + BC de PV e ficam Molhados — e regeneram 1d4 PV no fim de cada turno por 3 turnos.",
+      "Chuva morna com mana curativa. Aliados na área curam 1d8 + BC de PV e ficam Molhados — e regeneram 1d4 PV no fim de cada turno por 3 turnos.",
   },
 
   // --- Porta de topo ---
@@ -177,7 +213,7 @@ export const COMBINED_SPELLS: CombinedSpell[] = [
     actions: 3,
     damage: "—",
     effect:
-      "Tempestade de neve com mana restauradora. Aliados na área curam 2d8 + BC por turno durante 3 turnos e ficam imunes a frio não-mágico. Inimigos fazem teste de Vigor ou têm o Deslocamento reduzido à metade enquanto durar.",
+      "Tempestade de neve com mana restauradora. Aliados na área curam 1d8 + BC por turno durante 3 turnos e ficam imunes a frio não-mágico. Inimigos fazem teste de Vigor (CD 8 + BC) ou têm o Deslocamento reduzido à metade enquanto durar.",
   },
   {
     id: "meteoro",
@@ -190,9 +226,11 @@ export const COMBINED_SPELLS: CombinedSpell[] = [
     pmCost: 25,
     range: "120 metros",
     actions: 6,
-    damage: "20d10 ígneo + 10d10 contundente",
+    damage: "14d10 ígneo + 7d10 contundente",
+    costNote:
+      "GRANDE OBRA — 6 Ações e Ritual (Cap. 2, §3), a única entre as Combinadas. Um meteoro não é uma magia que se lança: é uma coisa que alguém vê chegando. Vale aqui tudo que vale nas outras quatro Grandes Obras, inclusive o Ponto de Não Retorno — a partir da segunda Ação o céu muda de cor sobre a área inteira, e todo mundo tem um turno pra decidir se sai de baixo. Interrompido, perde os 25 PM inteiros.",
     effect:
-      "Você chama uma rocha flamejante do céu. Teste de Agilidade (CD 8 + BC) pra metade, em área de 9m. O epicentro vira cratera: terreno difícil permanente.",
+      "Você chama uma rocha flamejante do céu. Teste de Agilidade (CD 8 + BC) pra metade, em área de 9m. O epicentro vira cratera: terreno difícil permanente. Não pode ser Encurtado nem Silenciado.",
   },
 ];
 

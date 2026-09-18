@@ -11,11 +11,11 @@ import {
   getWeaponGroups,
   isProficientWithWeapon,
   hasSaveAdvantage,
+  getTreeAttributeKey,
 } from "@/store/selectors";
 import type { FichaPdfPayload } from "@/lib/typstFicha";
 import {
   AbilityDef,
-  attributeKeyFromLabel,
   ATTRIBUTES,
   AttributeKey,
   Background,
@@ -58,6 +58,8 @@ export interface FichaPayloadInputs {
   maxPt: number;
   maxPp: number;
   armorClass: number;
+  /** Metros por Ação de Andar (Cap. 4, §1). Condições mexem nele. */
+  deslocamento: number;
   initiativeBonus: number;
 }
 
@@ -66,7 +68,7 @@ function signed(value: number): string {
 }
 
 export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
-  const { character, race, background, subtable, attributes, maxHp, maxMp, maxPt, maxPp, armorClass, initiativeBonus } = input;
+  const { character, race, background, subtable, attributes, maxHp, maxMp, maxPt, maxPp, armorClass, deslocamento, initiativeBonus } = input;
 
   const highestRankByTree = new Map<string, RankName>();
   const unlockedRanksByTree = new Map<string, RankName[]>();
@@ -85,7 +87,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
   const spellcasting: FichaPdfPayload["spellcasting"] = TREES.filter(
     (t) => t.category === "magia" && highestRankByTree.has(t.id)
   ).map((t) => {
-    const attrKey = attributeKeyFromLabel(t.keyAttributeLabel) ?? "intelecto";
+    const attrKey = getTreeAttributeKey(character, t.id, "intelecto");
     return {
       treeName: t.name,
       bc: signed(getAttackBonus(character, t.id, attrKey)),
@@ -313,7 +315,10 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
     currentPp: String(character.currentPp ?? maxPp),
     armorClass: String(armorClass),
     initiative: signed(initiativeBonus),
-    deslocamento: "9m",
+    // Era "9m" cravado no texto (0.1.90): o PDF imprimia 9 metros mesmo pra
+    // quem estava Atolado ou Congelado, e o campo existia sem ligar em lugar
+    // nenhum. Agora sai do mesmo seletor da ficha.
+    deslocamento: `${String(deslocamento).replace(".", ",")}m`,
     paSpent: String(getPaSpent(character)),
     guildRank: isGuildRankEstimated(character)
       ? `${getGuildRank(character)} (est.)`

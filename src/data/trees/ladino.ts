@@ -8,13 +8,13 @@ export const LADINO_TREE: Tree = {
   category: "utilidade",
   subgroup: "Batedor e Ladrão",
   mechanic: {
-    tag: "Escopo: coisas e lugares",
+    tag: "Domínio: coisas e lugares",
     hook:
-      "A pergunta dele é \"como eu entro?\". Única árvore de Utilidade com dano de verdade — o Dano Furtivo.",
+      "A pergunta dele é \"como eu entro?\". A árvore de Utilidade que mais causa dano, e a única cujo dano é do próprio ataque dela — o Dano Furtivo.",
     loop: [
       "Prepare. PP (Pontos de Preparação) são gastos ANTES da cena: uma saída pronta, uma fechadura já estudada, uma armadilha já plantada.",
       "Entre. O Escopo cresce a cada patamar — de um cômodo, para um prédio, para uma cidade — e diz até onde a sua preparação alcança.",
-      "Cobre. O Dano Furtivo é a faixa exclusiva do Ladino: nenhuma outra árvore de Utilidade causa dano acima do trivial.",
+      "Cobre. O Dano Furtivo é a faixa exclusiva do Ladino: dano extra que você acrescenta ao seu próprio ataque, pago em posição. Bardo e Tático também causam dano, mas nunca assim — o dele é área que se ouve, o do Tático entra no golpe de um aliado.",
     ],
     cost:
       "Fora da preparação você é frágil. Sem PP gasto de antemão e sem surpresa, o Ladino é o pior combatente direto das dezenove.",
@@ -22,7 +22,7 @@ export const LADINO_TREE: Tree = {
   keyAttributeLabel: "Agilidade",
   resourceLabel: "PP",
   tagline:
-    "Domínio da Preparação: coisas e lugares. Faixa exclusiva: Dano Furtivo — só o Ladino causa dano acima do trivial nesta árvore. A pergunta dele: \"como eu entro?\"",
+    "Domínio da Preparação: coisas e lugares. Faixa exclusiva: Dano Furtivo — o dano extra do seu próprio ataque, condicionado a surpresa ou posição. A pergunta dele: \"como eu entro?\"",
   rankLabels: {
     Principiante: "Gatuno",
     Intermediário: "Sombra",
@@ -64,7 +64,7 @@ export const LADINO_TREE: Tree = {
         // exatamente 1 PA, o mesmo que as 2 perícias do outro lado — os dois
         // caminhos custam o mesmo, e é isso que faz a escolha ser de sabor.
         description:
-          "[Escopo: coisas e lugares] Escopo: um objeto, um cômodo, uma pessoa comum. Se Furtividade e Armadilhas NÃO for a sua Árvore Inicial, você aprende as perícias Furtividade e Percepção — esta é a única árvore do livro que ensina as próprias perícias a quem chegou depois. Se ELA for a sua Árvore Inicial, você já tem as duas; em vez delas, ganhe 3 proficiências ou línguas à sua escolha (a gíria de ladrão, as ferramentas de arrombamento, o kit de falsificação). Em qualquer um dos casos: uma vez por turno, ao acertar um alvo desprevenido, cego, imobilizado ou contra o qual tenha Vantagem, some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
+          "[Domínio: coisas e lugares] Escopo: um objeto, um cômodo, uma pessoa comum. Se Furtividade e Armadilhas NÃO for a sua Árvore Inicial, você aprende as perícias Furtividade e Percepção — esta é a única árvore do livro que ensina as próprias perícias a quem chegou depois. Se ELA for a sua Árvore Inicial, você já tem as duas; em vez delas, ganhe 3 proficiências ou línguas à sua escolha (a gíria de ladrão, as ferramentas de arrombamento, o kit de falsificação). Em qualquer um dos casos: uma vez por turno, ao acertar um alvo Desprevenido (ainda não agiu neste combate, está Surpreso, ou não sabe onde você está), Cego, imobilizado ou contra o qual tenha Vantagem (estar Escondido te dá as duas coisas de uma vez), some +1d6 de Dano Furtivo por patamar que possua nesta árvore.",
       },
       talents: [
         { id: "maos-rapidas", name: "Mãos Rápidas", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você tira e coloca objetos em bolsos alheios com teste de Agilidade contra a Percepção do alvo. Em combate, 1 Ação para roubar item não empunhado." },
@@ -83,7 +83,7 @@ export const LADINO_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "Dano Furtivo triplicado" },
-          effect: "Uma vez por combate. Requer que o alvo ainda não tenha agido, ou não saiba onde você está. Depois de usar, você é só alguém com uma faca.",
+          effect: "Uma vez por combate. Requer que o alvo esteja Desprevenido: ainda não agiu neste combate, está Surpreso, ou não sabe onde você está (você está Escondido dele). Depois de usar, você é só alguém com uma faca.",
         },
       ],
     },
@@ -100,8 +100,8 @@ export const LADINO_TREE: Tree = {
         { id: "mapa-dos-ratos", name: "Mapa dos Ratos", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Em cidade onde já passou um dia, conhece a geografia oculta: esgotos, becos, telhados, casas seguras — sem teste." },
         { id: "leitura-de-cena", name: "Leitura de Cena", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você reconstrói o que aconteceu num ambiente fechado só olhando: móveis arrastados, o que foi levado, quantas pessoas estiveram." },
         { id: "contrabandista", name: "Contrabandista", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você vende qualquer item incriminador e compra itens que não estão à venda — por preço alto e favores." },
-        { id: "dedos-de-mana", name: "Dedos de Mana", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Requer 1 patamar em escola de magia. Conjure magias de rank Principiante sem cântico nem gesto visível, ao custo da versão Encurtada." },
-        { id: "sombra-longa", name: "Sombra Longa", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você se esconde mesmo observado, com qualquer distração ou obstáculo parcial. Escuridão total dá Vantagem Absoluta em Furtividade." },
+        { id: "dedos-de-mana", name: "Dedos de Mana", paCost: UTILITY_PA_COST.talent.Intermediário, requiresRank: { categoria: "magia", rank: "Principiante" }, description: "Requer 1 patamar em escola de magia. Conjure magias de rank Principiante sem cântico nem gesto visível, ao custo da versão Encurtada." },
+        { id: "sombra-longa", name: "Sombra Longa", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você pode ficar Escondido mesmo observado: qualquer distração ou obstáculo parcial serve no lugar da Cobertura. Escuridão total dá Vantagem Absoluta em Furtividade." },
         { id: "passo-de-gato", name: "Passo de Gato", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você se move em velocidade normal sem ruído algum, e escalar custa deslocamento normal." },
       ],
       abilities: [
@@ -129,7 +129,7 @@ export const LADINO_TREE: Tree = {
       talents: [
         { id: "quem-puxa-as-cordas", name: "Quem Puxa as Cordas", paCost: UTILITY_PA_COST.talent.Avançado, description: "Teste de Enganação estendido ao longo de dias que planta uma decisão na cabeça do alvo, que jura tê-la pensado sozinho." },
         { id: "mestre-chave", name: "Mestre-Chave", paCost: UTILITY_PA_COST.talent.Avançado, description: "Fechaduras e cofres mundanos viram questão de tempo, não teste. Barreiras mágicas ainda te barram." },
-        { id: "veneno-refinado", name: "Veneno Refinado", paCost: UTILITY_PA_COST.talent.Avançado, description: "Requer Boticário. Seus venenos impõem Desvantagem no teste e podem ser calibrados: sono, paralisia parcial, mudez, febre retardada." },
+        { id: "veneno-refinado", name: "Veneno Refinado", paCost: UTILITY_PA_COST.talent.Avançado, requires: ["boticario"], description: "Requer Boticário. Seus venenos impõem Desvantagem no teste e podem ser calibrados: sono, paralisia parcial, mudez, febre retardada." },
         { id: "marca-da-casa", name: "Marca da Casa", paCost: UTILITY_PA_COST.talent.Avançado, description: "Estude uma organização por uma semana: hierarquia, senhas, uniformes. Vantagem em testes sociais e de Furtividade contra membros dela." },
       ],
       abilities: [
@@ -142,7 +142,7 @@ export const LADINO_TREE: Tree = {
           range: "Ambiente do combate",
           actions: { normal: 1 },
           effect:
-            "Declare uma sabotagem feita neste ambiente antes do combate: o lustre cai (4d6, Caído, 3m); a porta dos reforços está pregada (perdem 3 turnos); o chão está encharcado de óleo; a arma de um inimigo foi limada (quebra no crítico ou falha crítica).",
+            "Uma sabotagem por ambiente. Declare uma sabotagem feita neste ambiente antes do combate: o lustre cai (4d6, Caído, 3m); a porta dos reforços está pregada (perdem 3 turnos); o chão está encharcado de óleo (área de 6m: terreno difícil; quem entrar ou começar o turno nela faz teste de Agilidade, CD 8 + Agilidade + Bônus de Rank, ou fica Caído; fogo acende a área, e quem estiver dentro fica Em Chamas); a arma de um inimigo foi limada (quebra no crítico ou falha crítica).",
         },
       ],
     },
@@ -200,7 +200,7 @@ export const LADINO_TREE: Tree = {
           range: "Visão",
           actions: { normal: 1 },
           effect:
-            "1 Reação, quando um inimigo declara que vai alcançar um objetivo. Ele não chega — declare o motivo dentro do seu Escopo (ponte serrada, chave sumida, corredor murado). Não causa dano nenhum e frequentemente ganha o combate.",
+            "1 Reação, quando um inimigo visível se mover ou agir em direção a uma saída, alavanca, refém ou alvo fora do alcance dele. Ele não chega — declare o motivo dentro do seu Escopo (ponte serrada, chave sumida, corredor murado). Não causa dano nenhum e frequentemente ganha o combate.",
         },
       ],
     },
@@ -211,11 +211,11 @@ export const LADINO_TREE: Tree = {
       mastery: {
         name: "O Fato Consumado",
         description:
-          "Escopo: um reino, um continente, o registro histórico. Seus fatos podem ter sido executados por outra pessoa, anos atrás, a seu mando. Uma vez por Descanso Longo, gastando 4 PP, declare que a situação atual foi arranjada por você (o Mestre escolhe um detalhe que saiu do controle). Recupere 2 PP em Descanso Curto.",
+          "Escopo: um reino, um continente, o registro histórico. Seus fatos podem ter sido executados por outra pessoa, anos atrás, a seu mando. Uma vez por Descanso Longo, gastando 4 PP, declare que a situação atual foi arranjada por você (o Mestre escolhe um detalhe que saiu do controle). Seu Descanso Curto recupera metade do seu PP máximo, em vez de 25%.",
       },
       talents: [
         { id: "nome-que-nao-existe", name: "Nome que Não Existe", paCost: UTILITY_PA_COST.talent.Imperador, description: "Você apaga uma pessoa dos registros do mundo, ou insere uma. Leva meses e é irreversível." },
-        { id: "a-mao-longa", name: "A Mão Longa", paCost: UTILITY_PA_COST.talent.Imperador, description: "Seu Escopo passa a cobrir um continente inteiro." },
+        { id: "a-mao-longa", name: "A Mão Longa", paCost: UTILITY_PA_COST.talent.Imperador, description: "Fatos fora do seu Escopo custam +1 PP em vez de serem negados: o outro continente, a corte estrangeira, o arquivo que nunca passou pelas suas mãos." },
         { id: "heranca-ladino", name: "Herança", paCost: UTILITY_PA_COST.talent.Imperador, description: "Escolha um talento de qualquer patamar desta árvore que não possua — alguém do seu séquito sabe fazer aquilo. Troque a cada Descanso Longo; nunca mais de um por vez." },
       ],
       abilities: [

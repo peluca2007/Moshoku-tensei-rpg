@@ -24,6 +24,27 @@ export function attributeKeyFromLabel(label: string | undefined): AttributeKey |
   return ATTRIBUTE_KEY_BY_LABEL[first] ?? null;
 }
 
+/**
+ * TODAS as chaves que um rótulo oferece, e não só a primeira.
+ *
+ * Três árvores prometem escolha no rótulo — Deus do Norte e Estilo Vendaval
+ * ("Força ou Agilidade") e Punho do Fogo ("Força ou Intelecto") —, e o Cap. 1,
+ * §7 diz com todas as letras que o Punho usa "o MAIOR entre Força e Intelecto".
+ * Mesmo assim, até 2026-09-17 todo o código pegava o primeiro nome da frase:
+ * quem montava um Norte ágil descobria na mesa que o dano e as CDs ignoravam a
+ * Agilidade, e o rótulo virava armadilha de criação de personagem.
+ *
+ * Quem sabe o valor dos atributos escolhe o maior (`getTreeAttributeKey`, em
+ * selectors); quem não sabe continua com a primeira.
+ */
+export function attributeKeysFromLabel(label: string | undefined): AttributeKey[] {
+  if (!label) return [];
+  return label
+    .split(/\s+ou\s+/i)
+    .map((parte) => ATTRIBUTE_KEY_BY_LABEL[parte.trim()])
+    .filter((k): k is AttributeKey => k !== undefined);
+}
+
 export type RankName =
   | "Principiante"
   | "Intermediário"
@@ -117,7 +138,11 @@ export function qualifiesForRecitationBonus(
 // Capítulo 1, seção 3: quantos "conhecimentos" (magias/talentos) a árvore precisa ter
 // para liberar a COMPRA do próximo rank, e quanto custa em PA desbloquear esse rank.
 export const RANK_REQUIREMENTS: Record<RankName, { knowledgeRequired: number; paCost: number }> = {
-  Principiante: { knowledgeRequired: 0, paCost: 1 },
+  // 0 PA: o Principiante é a ABERTURA da árvore, e abertura tem preço próprio,
+  // pela ordem em que você abre (Cap. 1, §8 — 1ª grátis, 2ª 1 PA, 3ª 2 PA…).
+  // `getRankUnlockPaCost` sempre devolveu 0 aqui; o 1 que ficava nesta linha era
+  // um número morto que só vazava para a tabela impressa do §3 (2026-09-17).
+  Principiante: { knowledgeRequired: 0, paCost: 0 },
   Intermediário: { knowledgeRequired: 3, paCost: 1 },
   Avançado: { knowledgeRequired: 6, paCost: 2 },
   Santo: { knowledgeRequired: 9, paCost: 2 },
@@ -405,6 +430,25 @@ export interface ReserveGrant {
  * porque é o Mestre que julga na mesa, não a ficha.
  */
 export type PrerequisiteIds = string[];
+
+/**
+ * Pré-requisito de compra em OUTRA árvore — "Requer 1 patamar em Água".
+ *
+ * Quatro habilidades do livro exigem isto na prosa e nada checava, porque
+ * `requires` só olha a própria árvore: dava pra comprar o Vapor Seco sem ter
+ * Vento, a Nova Congelante sem ter Água, a Explosão Silenciosa sem ter Fogo e
+ * os Dedos de Mana sem ter escola nenhuma. As quatro são pontes entre escolas —
+ * o que elas vendem é justamente a mistura —, e comprá-las sem o outro lado é
+ * levar o efeito sem pagar a ponte.
+ *
+ * `treeId` nomeia a árvore; `categoria` aceita qualquer uma daquele pilar, que é
+ * o caso dos Dedos de Mana ("1 patamar em escola de magia", tanto faz qual).
+ */
+export interface PrerequisiteRank {
+  treeId?: string;
+  categoria?: Tree["category"];
+  rank: RankName;
+}
 export interface TalentDef {
   id: string;
   name: string;
@@ -414,6 +458,8 @@ export interface TalentDef {
   grants?: ReserveGrant;
   /** Ids da mesma árvore que precisam estar comprados antes deste. */
   requires?: PrerequisiteIds;
+  /** Patamar exigido em OUTRA árvore ("Requer 1 patamar em escola de magia"). */
+  requiresRank?: PrerequisiteRank;
 }
 
 /** Maestria: passiva automática e gratuita concedida ao desbloquear o rank (Cap. 2, seção 5). Não conta como conhecimento. */
@@ -460,6 +506,8 @@ export interface AbilityDef {
   costNote?: string;
   /** Ids da mesma árvore que precisam estar comprados antes desta. */
   requires?: PrerequisiteIds;
+  /** Patamar exigido em OUTRA árvore ("Requer 1 patamar em Água"). */
+  requiresRank?: PrerequisiteRank;
   /**
    * Perícias que ESTA habilidade ensina a quem a compra (2026-09-04).
    *
@@ -547,21 +595,10 @@ export interface TreeRankDef {
    * árvore de magia chega onde a mais frágil das de Corpo começa.
    */
   hpDiceFormula: string;
-  /** Árvore do Corpo: PT ganhos ao alcançar este rank (Cap. 3, "PT Pleno"). */
+  /** Árvore do Corpo: PT ganhos ao alcançar este rank, desde o 1º patamar (Cap. 3, "Pontos de Touki"). Ausente = 1. */
   ptGained?: number;
   /** Árvore de Utilidade: PP ganhos ao alcançar este rank (+1 a partir do 3º patamar). */
   ppGained?: number;
-  /**
-   * Teto FIXO (não cumulativo) de um recurso próprio da árvore neste patamar —
-   * hoje só o Calor de Punho do Fogo (2026-09-05).
-   *
-   * Diferente de `ptGained`/`ppGained`, que SOMAM a cada patamar desbloqueado
-   * (Cap. 3, "PT Pleno"): a prosa de Punho do Fogo sempre disse "Calor máximo
-   * sobe para 8/12/16/20/25" patamar a patamar, um valor que SUBSTITUI o
-   * anterior, nunca soma em cima dele. Um campo cumulativo aqui teria
-   * transformado o teto do Imperador em 5+8+12+16+20+25 = 86 em vez de 25.
-   */
-  heatCap?: number;
   /** Árvore do Corpo: degraus ganhos na Escada de Dados de Arma neste rank. */
   weaponDieSteps?: number;
   /** Exceção pontual ao custo de RANK_REQUIREMENTS (ex: Cap. 3 — Rei do Norte custa 2 PA em vez de 3, por ter quase 50 titulares vivos). */
@@ -890,13 +927,6 @@ export interface CharacterData {
   currentPt: number | null;
   currentPp: number | null;
   /**
-   * Calor atual de Punho do Fogo (2026-09-05) — mesmo padrão de currentPt/currentPp
-   * acima, mas pra um recurso que só existe nessa árvore. `null` = ainda não
-   * tocado, mostra igual ao teto do patamar (ver `heatCap`); uma vez definido,
-   * fica independente do teto — subir de patamar não reabastece Calor sozinho.
-   */
-  currentCalor: number | null;
-  /**
    * Sobrescreve o valor calculado quando não-nulo/indefinido — válvula de
    * escape pra itens, maldições ou exceções de mesa que o site não modela.
    * Sempre opcional: por padrão tudo continua 100% calculado a partir da
@@ -907,8 +937,6 @@ export interface CharacterData {
     maxMp?: number;
     maxPt?: number;
     maxPp?: number;
-    /** Teto de Calor (Punho do Fogo) — mesma válvula de escape que maxPt/maxPp. */
-    maxCalor?: number;
     armorClass?: number;
     initiative?: number;
     /** Cap. 5, §2: Rank de Guilda é decisão do Mestre, nunca uma fórmula — isto é o valor que ele fixou. Sem isso, o site mostra uma estimativa por PA gasto, só como chute inicial. */

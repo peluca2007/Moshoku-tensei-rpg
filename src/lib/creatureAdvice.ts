@@ -42,6 +42,16 @@ export interface AlvoDoGrupo {
   nome: string;
   pv: number;
   ca: number;
+  /**
+   * Os tipos de dano que ele sabe causar (0.1.90).
+   *
+   * Existe por causa de um aviso só, e ele vale a viagem: uma criatura com
+   * Imunidade a ígneo contra um grupo de três magos de Fogo não é um encontro
+   * difícil — é um encontro impossível, e nada na tela dizia isso. Vazio
+   * significa "não deu pra saber", e o aviso se cala: um palpite aqui mandaria
+   * o Mestre refazer um encontro que estava certo.
+   */
+  tiposDeDano?: string[];
 }
 
 export type NivelAviso = "grave" | "alerta" | "nota";
@@ -303,6 +313,48 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
         rotulo: `CD: ${c.cdResistencia} → ${molde.cdResistencia} (a do molde)`,
       },
     });
+  }
+
+  // -------------------------------------------------------------------------
+  // A IMUNIDADE QUE APAGA A JOGADA DE ALGUÉM — Cap. 4, §6 (0.1.90).
+  //
+  // O aviso mais caro de não ter. Uma criatura imune a ígneo contra um grupo de
+  // três magos de Fogo não é um encontro difícil: é um encontro impossível, e a
+  // mesa leva vinte minutos rolando dados que não fazem nada antes de alguém
+  // desconfiar. O Orçamento de Encontro já cobra um patamar pela Imunidade, mas
+  // ele mede DIFICULDADE — e isto aqui não é dificuldade, é um jogador sem
+  // jogada.
+  //
+  // Só dispara com o grupo escolhido e com os tipos conhecidos: sem saber o que
+  // o grupo causa, o silêncio é melhor que um palpite que manda refazer um
+  // encontro que estava certo.
+  // -------------------------------------------------------------------------
+  const imunidades = (c.imunidades ?? []).map((i) => i.toLowerCase());
+  if (imunidades.length > 0 && grupo.length > 0) {
+    const cegos = grupo.filter((p) => {
+      const tipos = (p.tiposDeDano ?? []).map((t) => t.toLowerCase());
+      // Sem tipo conhecido, não dá pra dizer nada sobre ele.
+      if (tipos.length === 0) return false;
+      // Cego = TUDO o que ele causa está na lista de imunidades.
+      return tipos.every((t) => imunidades.some((i) => t.includes(i)));
+    });
+    if (cegos.length > 0) {
+      const todos = cegos.length === grupo.length;
+      avisos.push({
+        id: "imunidade-cega",
+        nivel: todos ? "grave" : "alerta",
+        titulo: todos
+          ? "A Imunidade dela apaga o grupo inteiro"
+          : `A Imunidade dela apaga ${cegos.length === 1 ? "um personagem" : `${cegos.length} personagens`}`,
+        texto:
+          `Ela é imune a ${imunidades.join(", ")}, e é só isso que ${listarNomes(cegos.map((p) => p.nome))} ` +
+          (todos
+            ? "sabe causar. Esse encontro não é difícil: é impossível, e a mesa vai levar vinte minutos rolando dados que não fazem nada antes de desconfiar. "
+            : "sabe causar — quem estiver nessa lista passa o combate assistindo. ") +
+          "Troque a Imunidade por Resistência (metade do dano, e a jogada continua existindo), ou dê a ela " +
+          "uma fraqueza que o grupo alcance.",
+      });
+    }
   }
 
   return avisos.sort((a, b) => ORDEM[a.nivel] - ORDEM[b.nivel]);

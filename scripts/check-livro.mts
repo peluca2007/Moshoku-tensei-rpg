@@ -319,6 +319,38 @@ for (const url of ["/logo-real-alfa.png", "/paisagem.jpg", "/texturas/pergaminho
 // ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
+// "Requer 1 patamar em X" na prosa tem que existir no DADO (0.1.91)
+//
+// Por que existe: quatro habitantes do livro são pontes entre escolas — Vapor
+// Seco (Fogo, pede Vento), Nova Congelante (Vento, pede Água), Explosão
+// Silenciosa (Vento, pede Fogo) e Dedos de Mana (Ladino, pede qualquer escola
+// de magia). As quatro declaravam a exigência SÓ na prosa, e a ficha deixava
+// comprar todas sem o outro lado, porque o campo `requires` só sabe olhar a
+// própria árvore.
+//
+// O erro morava na distância entre o que o livro dizia e o que o código sabia,
+// e por isso não aparecia em lugar nenhum: o site deixava montar, e só na mesa
+// alguém lia a carta em voz alta e descobria. Esta checagem fecha essa
+// distância — quem escrever a frase sem o campo descobre aqui, e não lá.
+// ---------------------------------------------------------------------------
+let pontesSemCampo = 0;
+for (const tree of TREES) {
+  for (const rankDef of tree.ranks) {
+    for (const item of [...rankDef.abilities, ...rankDef.talents]) {
+      const texto = "effect" in item ? (item.effect ?? "") : (item.description ?? "");
+      // "Requer 1 patamar em Água", "Requer um patamar em escola de magia".
+      if (!/requer\s+(1|um)\s+patamar\s+em/i.test(texto)) continue;
+      if (item.requiresRank) continue;
+      falha(
+        `${tree.id} (${rankDef.rank}) → ${item.name}: a prosa exige patamar em outra árvore, ` +
+          "mas o campo `requiresRank` não existe — a ficha vai deixar comprar sem ele"
+      );
+      pontesSemCampo++;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // O sumário aponta pra âncoras que existem, e na ORDEM em que a página as tem
 // (0.1.7)
 //
@@ -377,6 +409,7 @@ console.log(`  sem cântico (erro)................... ${semCantico}`);
 console.log(`  sem bônus de recitação (por design).. ${semBonus}`);
 console.log(`    ...destas, sem costNote............ ${semBonusSemNota}`);
 console.log(`  acima do teto do rank................ ${acimaDoTeto}`);
+console.log(`Pontes entre escolas sem requiresRank.. ${pontesSemCampo}`);
 console.log(`Erros.................................. ${erros}`);
 console.log(`Avisos................................. ${avisos}`);
 console.log("========================================");

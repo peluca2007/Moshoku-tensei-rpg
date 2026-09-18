@@ -1,7 +1,7 @@
-import { CharacterData, attributeKeyFromLabel } from "./types";
+import { CharacterData } from "./types";
 import { AcaoCriatura, CriaturaEncontro } from "./encounterSim";
 import { Acao, mediaFormula, modificadorFixo, montarFicha, patamarDaFicha } from "./combatSim";
-import { getSpellDC, getPaSpent } from "@/store/selectors";
+import { getSpellDC, getPaSpent, getTreeAttributeKey } from "@/store/selectors";
 import { getTreeById } from "@/data/trees/index";
 import { rankDaFicha } from "./combatSim";
 
@@ -119,7 +119,7 @@ export function criaturaDaFicha(
 ): Omit<CriaturaEncontro, "id"> {
   const ficha = montarFicha(c);
   const tree = getTreeById(c.startingTreeId);
-  const attr = attributeKeyFromLabel(tree?.keyAttributeLabel) ?? "forca";
+  const attr = getTreeAttributeKey(c, c.startingTreeId, "forca");
   const facesDaArma = faceDoDado(ficha.ataqueBasico.dano);
 
   // O ataque comum vem SEMPRE e vem primeiro: nenhuma árvore o declara como
@@ -181,7 +181,7 @@ export function criaturaDaFicha(
     perigo: [
       `Ficha de personagem: ${tree?.name ?? "sem árvore inicial"}${rank ? `, ${rank}` : ""}, ${getPaSpent(c)} PA.`,
       sobraram > 0 ? `${sobraram} habilidade${sobraram > 1 ? "s" : ""} de dano ficaram de fora (as mais fracas).` : "",
-      "Os números vieram da ficha, não do molde do Apêndice G.",
+      `Os números vieram da ficha, não do molde (Apêndice G, "Rivais com ficha"). Bônus de Rank: +${patamar}.`,
     ]
       .filter(Boolean)
       .join(" "),

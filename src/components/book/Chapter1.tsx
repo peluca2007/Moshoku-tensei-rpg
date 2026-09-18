@@ -19,6 +19,42 @@ const SKILL_ATTRIBUTE_LABEL: Record<string, string> = {
   espirito: "Espírito",
 };
 
+/**
+ * Em quantas de 100 rolagens um antecedente sai: a largura da faixa do d100.
+ * Gerado da faixa, e não escrito à mão, porque o texto "Laplace em 6" ficou
+ * errado quando as faixas mudaram e ninguém lembrou de reescrever a frase.
+ */
+function chanceNoD100(id: string): number {
+  const bg = BACKGROUNDS.find((b) => b.id === id);
+  return bg ? bg.rollRange[1] - bg.rollRange[0] + 1 : 0;
+}
+
+/**
+ * O preço mínimo de levar UMA árvore ao Imperador (Cap. 1, §8, pergunta 5):
+ * os desbloqueios do 2º ao 6º patamar, mais os N conhecimentos mais baratos
+ * que o Imperador exige (RANK_REQUIREMENTS). O custo de abertura do 1º patamar
+ * fica fora, porque depende de qual árvore é a Inicial.
+ *
+ * Conhecimento de qualquer patamar da árvore conta (getKnowledgeCount), então
+ * os mais baratos saem quase todos do Principiante e do Intermediário.
+ */
+function custoDeProfundidade(treeId: string): { desbloqueios: number; conhecimentos: number; total: number } {
+  const tree = TREES.find((t) => t.id === treeId);
+  if (!tree) return { desbloqueios: 0, conhecimentos: 0, total: 0 };
+  let desbloqueios = 0;
+  const custos: number[] = [];
+  for (const r of tree.ranks) {
+    if (r.rank === "Deus") continue;
+    if (r.rank !== "Principiante") desbloqueios += r.unlockPaCostOverride ?? RANK_REQUIREMENTS[r.rank].paCost;
+    for (const item of [...r.abilities, ...r.talents]) custos.push(item.paCost);
+  }
+  custos.sort((a, b) => a - b);
+  const conhecimentos = custos
+    .slice(0, RANK_REQUIREMENTS.Imperador.knowledgeRequired)
+    .reduce((soma, c) => soma + c, 0);
+  return { desbloqueios, conhecimentos, total: desbloqueios + conhecimentos };
+}
+
 export default function Chapter1() {
   return (
     <div className="space-y-8">
@@ -68,15 +104,19 @@ export default function Chapter1() {
             do Sistema de Defeitos. É de propósito que ele seja também o único cuja escala negativa é{" "}
             <b>desproporcional</b>: a Escala do Vigor (Cap. 4, §1) multiplica seus PV Máximos por{" "}
             <b>×0,75</b> em -1 e por <b>×0,40</b> em -2 — o primeiro ponto tira um quarto da sua vida, o
-            segundo tira quase metade do que sobrou — e ainda te dá Desvantagem em toda resistência de Vigor:
-            veneno, doença, clima, fome, Exaustão e o Fio da Vida. Largar Força ou Intelecto custa um número
-            na rolagem; largar Vigor custa o personagem.
+            segundo tira quase metade do que sobrou, e você fica com 40% da vida de um corpo comum — e ainda
+            te dá Desvantagem em toda resistência de Vigor: veneno, doença, clima, fome, Exaustão e o Fio da
+            Vida. Em -2, o Fio da Vida ainda perde o Bônus de Rank e vira Falha Crítica em 1 ou 2. Largar
+            Força ou Intelecto custa um número na rolagem; largar Vigor custa o personagem.
           </Warning>
         </Aside>
         <Aside title="Os Dois Atributos do Mago">
           <P>
             <b>Intelecto</b> — a Precisão: define o quanto sua magia acerta e o quanto machuca.{" "}
-            <b>Espírito</b> — a Reserva: define quanto de mana o corpo consegue armazenar.
+            <b>Espírito</b> — a Reserva: define quanto de mana o corpo consegue armazenar. Isso vale para as
+            <b> quatro escolas elementais</b> (Fogo, Água, Vento e Terra), que conjuram com Intelecto. As
+            outras quatro — Cura, Barreira, Desintoxicação e Espíritos e Feras — conjuram com Espírito, e nelas
+            um atributo só faz as duas coisas (veja o quadro abaixo).
           </P>
           <P>
             <b>Escolas de magia não concedem PM.</b> A sua reserva inteira é{" "}
@@ -101,6 +141,25 @@ export default function Chapter1() {
             Greyrat é o segundo.
           </P>
         </Aside>
+        <Warning title="O Preço do Espírito">
+          <P>
+            Cura, Barreira, Desintoxicação e Espíritos e Feras conjuram com <b>Espírito</b> — o mesmo atributo
+            que enche a reserva. Quem estuda uma delas sobe um número só e recebe duas coisas: mira e mana. O
+            elementalista precisa de dois atributos altos pra chegar no mesmo lugar, e isso custa PA no alto da
+            escada progressiva.
+          </P>
+          <P>
+            O livro <b>não corrige isso proibindo</b>. Corrige cobrando: as magias das quatro escolas de
+            Espírito são <b>as mais caras em PM do livro inteiro</b>, patamar por patamar. A conta já vem feita
+            nas cartas — você não soma nada na mesa —, e ela é <b>+1 PM por patamar da escola</b> sobre o que
+            uma magia equivalente custaria numa escola elemental: +1 no Principiante, +6 no Imperador.
+          </P>
+          <P>
+            O resultado é que os dois magos lançam <b>o mesmo número de magias por descanso</b>. O
+            elementalista tem menos mana e gasta menos; o espiritualista tem muito mais mana e gasta muito
+            mais. O que muda é o que cada um faz com o turno, e é isso que devia mudar.
+          </P>
+        </Warning>
       </Section>
 
       <Section>
@@ -110,13 +169,19 @@ export default function Chapter1() {
           importantes ou arcos da história (como subir de Rank na Guilda). Ao criar o personagem, você
           recebe <b>3 PA iniciais</b>.
         </P>
+        <P>
+          <b>O ritmo:</b> <b>1 PA por sessão jogada</b>, igual para o grupo inteiro, e <b>+1 PA por marco</b> —
+          fim de arco, missão importante, subida de Rank na Guilda —, mais ou menos um marco a cada três
+          sessões. É o ritmo em que as tabelas do livro foram calibradas: cerca de 12 PA no 3º patamar e 24 no
+          5º (Cap. 5, Dojos).
+        </P>
         <BookTable
           headers={["Custo", "O que você recebe"]}
           rows={[
             ["1 PA", "2 Perícias à sua escolha."],
             ["1 PA", "3 Proficiências ou Línguas à sua escolha — qualquer personagem, de qualquer árvore."],
-            ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente)."],
-            ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente)."],
+            ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente). No 1º patamar são só +4 PV: comprar atributo rende mais cedo, e esta compra é pra quem já tem patamar alto."],
+            ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente). NÃO RENDE NADA enquanto o seu maior patamar de magia for Principiante ou Intermediário — o teto de PM (Cap. 4, §1) corta todo extra avulso. Libera no Avançado; a ficha bloqueia a compra até lá."],
             ["1 / 1 / 2 / 2 / 3 / 3… PA", "+1 ponto de Atributo Base permanente (teto 8). PROGRESSIVO: as duas primeiras compras custam 1 PA cada, as duas seguintes 2 PA cada, e assim por diante. Medido pela soma dos cinco atributos, então desfazer um defeito custa o mesmo que qualquer outro aumento."],
             ["2 / 3 / 4 / 4 / 4 PA", "Vantagem permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha — uma vez por atributo, no máximo 5 compras (17 PA pelas cinco). PROGRESSIVO: cada compra custa 1 PA a mais que a anterior, com teto em 4. Marcada na ficha e no PDF."],
             ["Variável", "Magias, Técnicas e Talentos de Árvore — o custo escala com o Rank (tabela na seção 3)."],
@@ -130,19 +195,23 @@ export default function Chapter1() {
             criação e lixo de ficha no topo — ela sempre pesa a mesma fração do que você já é.
           </P>
           <P>
-            Comparando com o talento de reserva que doze árvores vendem (Braço de Ferro, Osso Duro, Pele de
-            Pedra…): o talento rende mais por PA, mas é travado no número de patamares de <i>uma</i> árvore.
-            Esta compra rende menos por PA e não tem teto nem pré-requisito. As duas entregam o mesmo tanto
-            por compra — escolha pela trava, não pelo número.
+            Comparando com o talento de reserva que quase toda árvore de Magia e do Corpo vende (Braço de
+            Ferro, Osso Duro, Pele de Pedra…): o talento rende mais por PA, mas se compra uma vez só e é
+            travado no número de patamares de <i>uma</i> árvore. Esta compra rende menos por PA, se repete
+            quantas vezes você quiser e não tem pré-requisito. No Imperador, uma compra de cada entrega o
+            mesmo tanto — escolha pela trava, não pelo número.
           </P>
         </Aside>
         <Aside title="O Padrão das Reservas">
           <P>
-            Todo talento de árvore que compra reserva vale exatamente o mesmo, custe onde custar: 1 PA = +2
-            PM por patamar seu naquela árvore, ou +4 PV por patamar seu naquela árvore — comprável tantas
-            vezes quantos forem os seus patamares. No 1º patamar isso é +2 PM ou +4 PV, e é pouco; no 6º é
-            +12 PM ou +24 PV, e vale a compra. Isso
-            existe pra que nenhuma escola dê mais vida de graça — escolas se diferenciam pela curva de
+            Todo talento de reserva é <b>uma compra só</b>, que cresce sozinha a cada patamar novo que você
+            abre naquela árvore. Nas escolas de magia ele dá <b>+2 PM e +2 PV por patamar</b> (a Terra troca
+            por +4 PV, na Pele de Pedra); no Corpo, <b>+4 PV por patamar</b> ou <b>+1 PT por patamar</b>. No
+            1º patamar isso é pouco; no 6º é +12 PM e +12 PV, ou +24 PV, ou +6 PT, e a mesma compra de lá
+            de trás passa a valer tudo isso sem você gastar mais nada.
+          </P>
+          <P>
+            Isso existe pra que nenhuma escola dê mais vida de graça — escolas se diferenciam pela curva de
             progressão e pelas Maestrias, nunca por um talento genérico valer mais numa do que na outra.
           </P>
         </Aside>
@@ -173,7 +242,13 @@ export default function Chapter1() {
               ? [rank, "Narrativa", "—", "—", "—", "—"]
               : [
                   rank,
-                  `${RANK_REQUIREMENTS[rank].paCost} PA`,
+                  // O Principiante nunca custa o valor da tabela: ele é a abertura
+                  // da árvore, e a abertura tem preço próprio pela ORDEM (§8) — a 1ª
+                  // é grátis, a 2ª 1 PA, e assim por diante. Até 2026-09-17 esta
+                  // célula imprimia "1 PA" e contradizia o §8, o passo 5 do Comece
+                  // Aqui e o próprio código: o jogador novo fechava a ficha com 2 ou
+                  // com 3 PA livres dependendo da página que tivesse aberto.
+                  rank === "Principiante" ? "Custo de Abertura (§8)" : `${RANK_REQUIREMENTS[rank].paCost} PA`,
                   String(RANK_REQUIREMENTS[rank].knowledgeRequired || "—"),
                   `${RANK_PA_COST.common[rank]} PA`,
                   `${RANK_PA_COST.signature[rank]} PA`,
@@ -223,7 +298,35 @@ export default function Chapter1() {
         <SectionTitle id="cap1-4">4. O Sistema de Testes e Perícias</SectionTitle>
         <P>
           Sempre que um jogador tentar uma ação com chance de falha, ele rolará 1d20 + o Atributo
-          correspondente.
+          correspondente, contra uma <b>Classe de Dificuldade (CD)</b> que o Mestre escolhe nesta escada:
+        </P>
+        <BookTable
+          headers={["Dificuldade", "CD", "Exemplo"]}
+          rows={[
+            ["Fácil", "8", "Escalar um muro baixo com apoios; lembrar o nome do rei do próprio reino."],
+            ["Moderada", "12", "Arrombar uma fechadura comum; acalmar um cavalo assustado."],
+            ["Difícil", "15", "Seguir um rastro de três dias na chuva; convencer um guarda desconfiado."],
+            ["Muito Difícil", "18", "Escalar uma parede lisa de pedra; decifrar um selo arcano incompleto."],
+            ["Heroica", "21", "Atravessar uma ponte de corda em plena tempestade; achar a única passagem segura num pântano que muda toda noite."],
+            ["Lendária", "25", "Coisa de canção: saltar um desfiladeiro de armadura; escalar uma parede de gelo sem corda nem gancho."],
+          ]}
+        />
+        <P>
+          <b>A CD mede a tarefa, não o patamar do grupo.</b> A mesma muralha tem a mesma CD pro Principiante e
+          pro Imperador — quem cresce é você, não a parede.
+        </P>
+        <P>
+          <b>20 e 1 naturais fora do ataque.</b> Em teste de perícia, de atributo e de resistência, um{" "}
+          <b>20 natural</b> é sucesso automático (se a tarefa for possível), e um <b>1 natural</b> é falha
+          com uma complicação — a corda arrebenta, o guarda chama o sargento, a ferramenta quebra. A
+          complicação nunca é dano extra nem morte; só uma regra que diga isso por escrito (como o Fio da
+          Vida, Cap. 4) cobra mais que isso. Numa <b>Disputa</b> (Cap. 4, &ldquo;Testes Resistidos&rdquo;),
+          cada lado soma o que somaria no teste normal — Vantagem por perícia, Bônus de Rank de Utilidade —,
+          e não o atributo puro: numa queda de braço, quem tem Atletismo rola com Vantagem. Numa Disputa de
+          corpo contra corpo (empurrar, derrubar, desarmar, se soltar), cada lado soma também metade do seu
+          maior Bônus de Rank, arredondado pra cima. Na Disputa, o 20 e o 1 naturais não têm efeito
+          especial: vale o total. Se esconder não é Disputa: tem CD fixa, 10 + Espírito de cada inimigo que
+          possa te procurar (Cap. 4).
         </P>
         <List
           items={[
@@ -243,16 +346,17 @@ export default function Chapter1() {
           ]}
         />
 
-        <Warning title="Perícias de Árvore — as 19 ensinam, e só a Árvore Inicial entrega">
+        <Warning title="Perícias de Árvore — só a Árvore Inicial entrega">
           <P>
-            <b>TODAS as dezenove árvores deste livro ensinam perícias</b> — as oito de Magia, as oito do Corpo
-            e as três de Utilidade, sem exceção. Não existe árvore que não ensine nada. Elas entram na sua
-            ficha <b>automaticamente</b>, sem gastar PA e sem você precisar pedir.
+            <b>Toda árvore que pode ser Árvore Inicial ensina perícias</b> — as oito de Magia, as seis do
+            Corpo e as três de Utilidade. As duas híbridas (Estilo Vendaval e Punho do Fogo) ficam de fora:
+            nenhuma delas pode ser a primeira que você abre. As perícias entram na sua ficha{" "}
+            <b>automaticamente</b>, sem gastar PA e sem você precisar pedir.
           </P>
           <P>
             A condição é uma só: <b>você recebe as perícias da árvore que for a sua Árvore Inicial</b> — a
-            primeira que você abriu, aquela que também decidiu o seu kit. A tabela abaixo lista as dezenove e
-            o que cada uma ensina.
+            primeira que você abriu, aquela que também decidiu o seu kit. A tabela abaixo lista cada uma e o
+            que ela ensina.
           </P>
           <P>
             O motivo é de ficção, não de balanço: a Árvore Inicial é onde você passou a infância e a
@@ -261,9 +365,15 @@ export default function Chapter1() {
             conjurar; ele não vira estudioso de Arcanismo por isso.
           </P>
           <P>
-            Cada árvore ensina <b>duas perícias fixas</b>. As três de Utilidade ensinam ainda{" "}
-            <b>uma à sua escolha</b>, de uma lista curta — porque o Bônus de Rank delas cobre quatro ou cinco
-            perícias, e ninguém fica treinado em todas (ver Cap. 3, &ldquo;A Árvore de Utilidade&rdquo;).
+            Quanto cada pilar ensina: <b>Magia, 1 perícia fixa + 1 à sua escolha entre 3</b>.{" "}
+            <b>Corpo, 2 fixas</b>. <b>Utilidade, 2 fixas + 1 à sua escolha</b>, de uma lista curta — porque o
+            Bônus de Rank delas cobre quatro ou cinco perícias, e ninguém fica treinado em todas (ver Cap. 3,
+            &ldquo;A Árvore de Utilidade&rdquo;).
+          </P>
+          <P>
+            <b>Perícia repetida não se perde.</b> Sempre que raça, antecedente ou Árvore Inicial derem uma
+            perícia que você já tem, escolha outra perícia qualquer da lista no lugar. O Estudioso Precoce que
+            abre uma escola elemental não perde o Arcanismo do antecedente: ganha outra perícia.
           </P>
           <P>
             <b>A única exceção do livro</b> é a Maestria de 1º patamar de Furtividade e Armadilhas: ela ensina
@@ -275,7 +385,7 @@ export default function Chapter1() {
 
         <BookTable
           headers={["Pilar", "Árvore", "Ensina, se for a sua Árvore Inicial"]}
-          rows={TREES.map((t) => [
+          rows={TREES.filter((t) => !t.hiddenFromCreation).map((t) => [
             t.category === "magia" ? "Magia" : t.category === "corpo" ? "Corpo" : "Utilidade",
             t.name,
             [describeGrantedSkills(t) ?? "—", describeMasteryException(t)].filter(Boolean).join(" "),
@@ -294,6 +404,18 @@ export default function Chapter1() {
                 Não dá Vantagem — dá a capacidade de usar aquilo sem penalidade, ou de entender o que está
                 sendo dito. 1 PA compra três.
               </span>,
+              <span key="ling">
+                <b>Línguas de berço:</b> todo personagem fala a <b>Língua Humana (Comum)</b> e, se o seu povo
+                tiver uma, a língua dele, anotadas na raça (seção 5) — o Migurd fala a Língua Migurd, que é telepática. Qualquer
+                outra se compra como Proficiência. Sem a língua, você não entende o que é dito nem lê o que
+                está escrito; gestos e tom de voz continuam valendo.
+              </span>,
+              <span key="ferr">
+                <b>Ferramenta, instrumento e veículo sem proficiência:</b> o teste sai com <b>Desvantagem</b>.
+                Sem a ferramenta na mão, o teste só acontece se o Mestre permitir, e com CD +5. A perícia e a
+                ferramenta se somam, não se substituem: <b>Ofícios (Forja)</b> é o saber — dá Vantagem —, e a
+                proficiência em Ferramentas de Ferreiro é a mão — tira a Desvantagem.
+              </span>,
               <span key="br">
                 <b>Bônus de Rank em perícia</b> (só nas árvores de Utilidade): um número somado ao teste. Ele
                 soma nas perícias que aquela árvore cobre — mas <b>só naquelas que você realmente tem</b>. Se
@@ -311,6 +433,19 @@ export default function Chapter1() {
           <P>
             <b>Vantagem Absoluta:</b> alguns efeitos concedem Vantagem Absoluta — role 3d20 e escolha o
             maior. Desvantagem Absoluta funciona igual, mas escolhendo o menor.
+          </P>
+          <P>
+            <b>Ajudar:</b> quem ajuda dá Vantagem. Se quem recebe <b>já tem Vantagem</b> — e é quase sempre o
+            caso, porque o grupo entrega a tarefa a quem tem a perícia —, a ajuda vira <b>+2 no teste</b>, e
+            esse +2 conta no Teto de Auxílio +6 (Cap. 4, §5). Fora de combate vale o mesmo, com uma condição:
+            quem ajuda precisa ter <b>uma perícia ou proficiência que se aplique</b> à tarefa. Segurar a
+            tocha do ladino não é ajudar a arrombar a fechadura.
+          </P>
+          <P>
+            <b>Teste em grupo:</b> quando o grupo inteiro tenta a mesma coisa — atravessar o pântano sem
+            afundar, passar pela guarda sem chamar atenção —, todos rolam e o grupo passa se{" "}
+            <b>metade ou mais</b> passar. É o que impede que um Ogro de Agilidade −2 decida sozinho o destino
+            de uma cena de furtividade.
           </P>
         </Aside>
 
@@ -399,6 +534,12 @@ export default function Chapter1() {
                 <b>Armadura média e pesada:</b> exigem proficiência específica de uma árvore (ex: Peso Não
                 Atrapalha, do Suishin-ryū) ou 1 PA.
               </span>,
+              <span key="peso">
+                <b>O que o peso cobra, mesmo com proficiência.</b> <b>Leve:</b> soma toda a sua Agilidade na
+                CA. <b>Média:</b> soma no máximo +2 de Agilidade. <b>Pesada:</b> não soma Agilidade nenhuma e
+                dá Desvantagem em Furtividade. É isso que impede a pesada de ser simplesmente a melhor: ela
+                protege mais quem tem pouca Agilidade, e rouba de quem tem muita.
+              </span>,
               <span key="e">
                 <b>Escudo não é armadura</b> — é o grupo <b>Escudos</b>, porque escudo se empunha, não se
                 veste. Ele ocupa uma mão, e essa mão é parte do preço.
@@ -411,7 +552,7 @@ export default function Chapter1() {
             items={[
               "Arma sem proficiência: Desvantagem no teste de acerto. O dano continua normal — a Escada de Dados nunca reduz.",
               "Escudo sem proficiência: +1 de CA em vez de +2. Erguer uma tábua na frente do corpo ajuda um pouco mesmo sem treino; só não é defender.",
-              "Armadura sem proficiência: Desvantagem em Furtividade e Acrobacia, e Deslocamento -3m enquanto vestida.",
+              "Armadura sem proficiência: Desvantagem em todo teste de ataque (com arma ou com magia) e de Concentração, Desvantagem em Furtividade e Acrobacia, e Deslocamento -3m enquanto vestida.",
             ]}
           />
         </Warning>
@@ -423,9 +564,11 @@ export default function Chapter1() {
 
         <SubTitle id="cap1-4-kit">Equipamento Inicial e a Árvore Inicial</SubTitle>
         <P>
-          Ninguém começa do zero. Ao criar seu personagem, desbloqueie o 1º patamar de pelo menos uma árvore
-          — sua Árvore Inicial — com parte dos seus 3 PA iniciais. Ela decide o kit abaixo, recebido de graça
-          e além do dinheiro do Antecedente (seção 6): as duas coisas não competem entre si.
+          Ninguém começa do zero. Ao criar seu personagem, abra <b>de graça</b> o 1º patamar de pelo menos uma
+          árvore — sua Árvore Inicial. Ela é a sua 1ª árvore, e o Custo de Abertura da 1ª é zero (seção 8): os
+          3 PA iniciais ficam inteiros pra comprar magias, técnicas, talentos, perícias ou atributos. A Árvore
+          Inicial decide o kit abaixo, recebido de graça e além do dinheiro do Antecedente (seção 6): as duas
+          coisas não competem entre si.
         </P>
         <BookTable
           headers={["Árvore Inicial", "Kit Inicial"]}
@@ -444,10 +587,28 @@ export default function Chapter1() {
       <Section>
         <SectionTitle id="cap1-5">5. Raças do Mundo de Seis Faces</SectionTitle>
         <P>
-          O mundo é habitado por diversas raças com fisiologias e culturas vastamente diferentes. Escolha
-          sua linhagem pra determinar traços genéticos e mecânicos — os detalhes de cada uma também aparecem
-          direto na ficha ao selecionar a raça.
+          O mundo é habitado por diversas raças com fisiologias e culturas vastamente diferentes. A sua
+          linhagem determina traços genéticos e mecânicos — os detalhes de cada uma também aparecem direto na
+          ficha ao selecioná-la.
         </P>
+        <Warning title="Sorteio ou escolha: as duas portas, e o preço de cada uma">
+          <P>
+            <b>O padrão do livro é sortear</b> — a raça e o Antecedente (seção 6) saem do d100, e você joga o
+            que a vida te deu. As raças não são equilibradas entre si de propósito: um Superd e um Humano não
+            valem a mesma coisa, e é essa desigualdade que faz a rolagem valer a pena. A raridade está na
+            tabela: quanto mais forte, menos provável.
+          </P>
+          <P>
+            <b>Escolher é permitido, e custa.</b> Se você quiser escolher a raça, o Antecedente, ou os dois,
+            você começa com <b>2 PA em vez de 3</b>. É o preço de trocar a sorte por controle, e é o mesmo
+            preço para escolher um ou os dois — o que se compra aqui é a decisão, não a quantidade.
+          </P>
+          <P>
+            <b>A mesa decide uma vez, para todo mundo.</b> Um grupo em que metade sorteou e metade escolheu é
+            um grupo em que metade pagou por algo que a outra metade levou de graça. Combine antes da primeira
+            ficha: ou todo mundo rola, ou todo mundo pode escolher pagando 1 PA.
+          </P>
+        </Warning>
         <Aside title="Três formas de bônus racial, e por que elas são diferentes">
           <List
             items={[
@@ -456,9 +617,16 @@ export default function Chapter1() {
                 pelo Fator de Vigor, PM pelo Bônus de Rank, acerto e dano direto. <b>Nunca decai.</b>
               </span>,
               <span key="b">
-                <b>Bônus fixo de PV</b> (só o Anão, +10): somado <i>depois</i> do Fator de Vigor (Cap. 4,
-                §1). Vale muito no 1º patamar e pouco no Imperador — é um bônus de começo de campanha, de
-                propósito.
+                <b>Bônus fixo de PV</b> (
+                {RACES.filter((r) => r.bonuses.maxHp)
+                  .map((r) => `${r.name.split(" (")[0]} +${r.bonuses.maxHp}`)
+                  .join(", ")}
+                ): somado <i>depois</i> do Fator de Vigor (Cap. 4, §1). Vale muito no 1º patamar e pouco no
+                Imperador — é um bônus de começo de campanha, de propósito. A CA fixa da Raça Dragão (
+                {RACES.filter((r) => r.bonuses.armorClass)
+                  .map((r) => `+${r.bonuses.armorClass}`)
+                  .join(", ")}
+                , das escamas) segue a mesma lógica: um número que não cresce com você.
               </span>,
               <span key="c">
                 <b>Bônus escalar de PM</b> (Elfo ×2, Migurd ×3): multiplica o seu <b>Maior Bônus de Rank de
@@ -483,6 +651,9 @@ export default function Chapter1() {
                 <p className="font-semibold text-parchment-900 dark:text-parchment-50">{race.name}</p>
                 <p className="mt-0.5 text-parchment-600 dark:text-parchment-400">{race.description}</p>
                 <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-parchment-700 dark:text-parchment-300">
+                  {(race.fixedSkills ?? []).map((s) => (
+                    <li key={`pericia-${s}`}>Perícia: {s}.</li>
+                  ))}
                   {race.traits.map((t, i) => (
                     <li key={i}>{t}</li>
                   ))}
@@ -507,7 +678,11 @@ export default function Chapter1() {
             bg.name,
             [
               ...(bg.fixedSkills ?? []).map((s) => `Perícia: ${s}`),
-              ...(bg.bonusSkillChoices ? [`${bg.bonusSkillChoices} Perícias à escolha`] : []),
+              // A linha genérica some quando um traço já descreve a escolha (Plebeu,
+              // Órfão): impressas as duas, a mesa lia quatro perícias onde há duas.
+              ...(bg.bonusSkillChoices && !bg.traits.some((t) => t.includes("Perícias à escolha"))
+                ? [`${bg.bonusSkillChoices} Perícias à escolha`]
+                : []),
               ...bg.traits,
             ].join(" · ") || "—",
             `${bg.startingGold} PO`,
@@ -533,9 +708,10 @@ export default function Chapter1() {
             livro que conjura em silêncio com o feitiço inteiro.
           </P>
           <P>
-            É de propósito que o mais raro seja o mais forte: Gênio sai em 2 de 100 rolagens, Fator Laplace
-            em 6. Até 2026-08-29 estava invertido — o Laplace carregava +2 de Espírito, +8 PM e +6 PV fixos e
-            era, com folga, o melhor resultado da tabela apesar de ser três vezes mais comum.
+            É de propósito que o mais raro seja o mais forte: Gênio sai em {chanceNoD100("genio")} de 100
+            rolagens, Fator Laplace em {chanceNoD100("fator-laplace")}. Até 2026-08-29 estava invertido — o
+            Laplace carregava +2 de Espírito, +8 PM e +6 PV fixos e era, com folga, o melhor resultado da
+            tabela apesar de ser mais comum.
           </P>
         </Aside>
 
@@ -576,7 +752,9 @@ export default function Chapter1() {
         <SubTitle>O Bônus de Conjuração (BC)</SubTitle>
         <P>
           O número mais importante da ficha de um mago, e ele unifica as três fórmulas do sistema num único
-          valor. <b>BC = Intelecto + Bônus do Rank naquela escola.</b>
+          valor. <b>BC = atributo-chave da escola + Bônus do Rank naquela escola.</b> O atributo-chave vem
+          impresso no topo de cada árvore (Cap. 3): <b>Intelecto</b> em Fogo, Água, Vento e Terra;{" "}
+          <b>Espírito</b> em Cura, Barreira, Desintoxicação e Espíritos e Feras.
         </P>
         <List
           items={[
@@ -585,13 +763,27 @@ export default function Chapter1() {
             "Dano Mágico: dados da magia + BC",
           ]}
         />
+        <P className="text-sm">
+          <b>Punho do Fogo:</b> a árvore híbrida do Corpo também escala as técnicas por BC, e nela{" "}
+          <b>BC = o maior entre Força e Intelecto + Bônus de Rank no Punho do Fogo</b> — nunca o Rank da
+          Magia de Fogo.
+        </P>
         <SubTitle>As Fórmulas Marciais</SubTitle>
-        <P>Guerreiros usam a mesma lógica, trocando o atributo:</P>
+        <P>
+          Guerreiros usam a mesma lógica, trocando o atributo pelo <b>atributo-chave da árvore</b> — impresso
+          no topo dela, e sempre Força, Agilidade ou Vigor. O padrão do ataque com arma é <b>Força; ou
+          Agilidade com os grupos Lâminas Curtas, Arcos e Bestas, Arremesso e Flexíveis</b>. Duas árvores
+          fogem disso e dizem por quê. <b>Escudos e Fortificação</b> usa <b>Vigor</b>: ela vende aguentar, não
+          acertar. O <b>Deus da Água (Suishin-ryū)</b> usa <b>Agilidade</b> mesmo empunhando espada — um grupo
+          de Força —, porque o estilo inteiro é ler o golpe e chegar meio segundo antes dele; aparar, postura
+          e contragolpe são timing, e timing é Agilidade.
+        </P>
         <List
           items={[
-            "Acerto Físico = 1d20 + Força (ou Agilidade, para armas leves) + Bônus do Rank da Técnica.",
-            "CD de uma Técnica = 8 + Força (ou Agilidade) + Bônus do Rank da Técnica.",
-            "Dano Total = Dados da Arma + Atributo + Bônus do Rank da Técnica.",
+            "Acerto Físico = 1d20 + Atributo + Bônus de Rank.",
+            "CD de uma Técnica = 8 + Atributo + Bônus do Rank da Técnica.",
+            "Dano Total = Dados da Arma + Atributo + Bônus de Rank.",
+            "Qual Rank: numa técnica nomeada, o da árvore que a ensinou. Num ataque comum (sem técnica), o maior Rank entre as suas árvores do Corpo, ou +0 se você não tiver nenhuma (Cap. 3, \"A Árvore do Corpo — Sistemas Compartilhados\").",
           ]}
         />
       </Section>
@@ -605,7 +797,9 @@ export default function Chapter1() {
         </P>
         <Aside title="1. Qual Bônus de Rank eu uso?">
           O da árvore que concedeu a habilidade, sempre. Exceção: quando uma regra genérica pedir seu Bônus
-          de Rank sem dizer de qual árvore, use o maior que você possuir em qualquer uma.
+          de Rank sem dizer de qual árvore, use o maior que você possuir em qualquer uma — exceto no ataque
+          comum com arma, que usa só as árvores do Corpo (seção 7). Um Imperador de Fogo sem árvore do Corpo
+          ataca com espada somando +0, não +6.
         </Aside>
         <Aside title="2. Conhecimentos somam entre árvores?">
           Nunca. A contagem de conhecimentos pra desbloquear um patamar conta apenas magias, técnicas e
@@ -616,7 +810,7 @@ export default function Chapter1() {
             items={[
               "PV: uma reserva só, calculada de uma vez. Os Dados de PV de TODAS as suas árvores entram no mesmo somatório do Cap. 4, §1 — abrir uma segunda árvore acrescenta dados novos à mesma conta, não uma segunda barra de vida.",
               "PM somam apenas das escolas de magia.",
-              "PT: reserva única, mesmo com vários estilos marciais. Resumo: PT Pleno = Espírito + Vigor, +1 por patamar com Pleno já desbloqueado (contando todas as árvores do Corpo) — fórmula completa, incluindo o PT Menor de antes do Pleno e a exceção do Cavalaria e Escudos, no Cap. 3, \"Pontos de Touki\".",
+              "PT: reserva única, mesmo com vários estilos marciais. PT = Vigor + Espírito + 1 por patamar em qualquer árvore do Corpo, desde o 1º (+2 por patamar em Cavalaria e Escudos) — detalhes no Cap. 3, \"Pontos de Touki\".",
               "PP: reserva única, mesmo com várias árvores de Utilidade. PP = Intelecto + o maior atributo-chave entre suas árvores de Utilidade, +1 por patamar 3º ou superior em qualquer uma delas. No Tático, cujo atributo-chave já é Intelecto, o segundo termo vira o Bônus de Rank — ver Cap. 3, \"Pontos de Preparação\".",
             ]}
           />
@@ -641,13 +835,18 @@ export default function Chapter1() {
         </Aside>
         <Aside title="5. Largura ou profundidade?">
           <P>
-            <b>Profundidade custa 34 PA</b>, não 12. Os 12 PA são só os desbloqueios (1+1+2+2+3+3); pra ter
-            <i>direito</i> de comprá-los você precisa acumular 10 conhecimentos naquela mesma árvore (seção
-            3), e os 10 mais baratos possíveis custam outros 22 PA — dois de cada patamar, a 1, 1, 2, 3 e 4
-            PA. Em troca: Bônus de Rank +6, seis Maestrias, e as magias que só existem lá em cima.
+            <b>Profundidade custa cerca de {custoDeProfundidade("fogo").total} PA</b> na Magia de Fogo, fora a
+            abertura — não os {custoDeProfundidade("fogo").desbloqueios} que a escada de desbloqueios sugere.
+            Esses {custoDeProfundidade("fogo").desbloqueios} PA (1+2+2+3+3, do 2º ao 6º patamar) são só a
+            porta; pra ter <i>direito</i> de comprá-los você precisa acumular{" "}
+            {RANK_REQUIREMENTS.Imperador.knowledgeRequired} conhecimentos naquela mesma árvore (seção 3), e
+            os {RANK_REQUIREMENTS.Imperador.knowledgeRequired} mais baratos custam outros{" "}
+            {custoDeProfundidade("fogo").conhecimentos} PA — quase todo o Principiante e o Intermediário, a 1
+            PA cada, e o resto a 2. Em troca: Bônus de Rank +6, seis Maestrias, e as magias que só existem lá
+            em cima.
           </P>
           <P>
-            <b>Largura custa 10 PA</b> por cinco árvores (Custo de Abertura 0+1+2+3+4, pergunta 4 abaixo) e
+            <b>Largura custa 10 PA</b> por cinco árvores (Custo de Abertura 0+1+2+3+4, pergunta 4 acima) e
             entrega cinco Maestrias de 1º patamar, versatilidade e nenhum teto — mas trava seu Bônus de Rank
             em +1, o que significa errar mais, causar menos dano e ter CDs que qualquer coisa resiste.
           </P>
@@ -662,9 +861,9 @@ export default function Chapter1() {
           Deus em duas coisas ao mesmo tempo — o livro trata isso como impossível, não como difícil.
         </Aside>
         <Aside title="7. E se eu for fundo em duas árvores ao mesmo tempo?">
-          Algumas combinações de Rank Avançado ou superior revelam uma <b>árvore híbrida</b> que não existe
+          Algumas combinações de Rank Intermediário ou superior revelam uma <b>árvore híbrida</b> que não existe
           pra ninguém que não cumpriu os dois pré-requisitos — hoje são duas, ambas no catálogo da Árvore do Corpo: o
-          <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Avançado) e o <b>Punho de Fogo</b>
+          <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Avançado) e o <b>Punho do Fogo</b>
           (Lutador + Magia de Fogo, ambas no Intermediário). Nenhuma das duas aparece na escolha da Árvore Inicial, e o desbloqueio dela não é travado por código nenhum — o
           Mestre decide, do mesmo jeito que já decide a Raça Dragão e o Rank Deus.
         </Aside>

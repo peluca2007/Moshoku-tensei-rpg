@@ -107,7 +107,7 @@ export const WEAPON_GROUPS: WeaponGroup[] = [
     name: "Desarmado e Improvisado",
     description:
       "O punho, o cotovelo, o joelho — e a cadeira, a garrafa, a pedra do chão. Todo personagem nasce proficiente aqui: ninguém precisa de escola pra dar um soco ou quebrar um banco na cabeça de alguém.",
-    examples: ["Ataque Desarmado", "Objeto Improvisado"],
+    examples: ["Ataque Desarmado", "Objeto Improvisado", "Cajado / Foco Arcano"],
   },
   {
     id: "escudos",
@@ -244,6 +244,11 @@ const GRUPO_POR_ARMA: Record<string, WeaponGroupId> = {
   // Desarmado e Improvisado
   "Objeto Improvisado": "desarmado-e-improvisado",
   "Ataque Desarmado": "desarmado-e-improvisado",
+  // O cajado do kit de Magia Ofensiva, Cura e Suporte e Invocação: o livro diz
+  // que ele "conta como objeto improvisado corpo a corpo". Sem esta linha a
+  // ficha não o reconhecia e o tratava como arma fora de grupo — proficiente e
+  // escalando na Escada de Dados, contra a trava do improvisado.
+  "Cajado / Foco Arcano": "desarmado-e-improvisado",
 
   // Escudos
   Escudo: "escudos",

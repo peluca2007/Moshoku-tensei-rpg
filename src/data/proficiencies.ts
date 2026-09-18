@@ -10,6 +10,13 @@
  *
  * A lista é ABERTA: serve de sugestão no campo da ficha, não de trava. O Mestre
  * aprova qualquer proficiência que caiba no mundo, e o campo aceita texto livre.
+ *
+ * Revisão do livro (Cap. 1, §4): todo personagem já nasce falando a Língua
+ * Humana (Comum) e a língua do seu povo, escritas nos traços da raça — essas
+ * não se compram. Sem proficiência numa ferramenta, instrumento ou veículo, o
+ * teste sai com Desvantagem; sem a ferramenta na mão, só com permissão do
+ * Mestre e CD +5. Ofícios (perícia) é o saber e dá Vantagem; a ferramenta é a
+ * mão e tira a Desvantagem.
  */
 export interface ProficiencySuggestion {
   name: string;
@@ -25,6 +32,7 @@ export const PROFICIENCY_SUGGESTIONS: ProficiencySuggestion[] = [
   { name: "Língua Demoníaca", kind: "Língua" },
   { name: "Língua Divina", kind: "Língua" },
   { name: "Língua Dragônica", kind: "Língua" },
+  { name: "Língua do Oceano", kind: "Língua" },
   { name: "Língua Migurd (telepática)", kind: "Língua" },
   { name: "Escrita Antiga", kind: "Língua" },
   { name: "Gíria de Ladrão", kind: "Língua" },
