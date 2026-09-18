@@ -2,46 +2,32 @@ import { Tree } from "@/lib/types";
 import { RANK_PA_COST } from "./shared";
 
 /**
- * Punho de Fogo (Híbrida: Lutador + Magia de Fogo)
- * Identidade: "O golpe não termina no impacto — a explosão segue."
- * Mecânica central: Medidor Térmico (Calor) — acumula com acertos, gasta para explosões.
+ * Punho do Fogo (Híbrida: Lutador + Magia de Fogo)
+ * Identidade: "O Fogo e o Lutador que você já tem, no mesmo soco."
  *
- * ## Rework de clareza de 2026-09-05 — o Calor tinha seis regras, não uma
+ * ## Rework de 2026-09-16 — o Calor saiu, e nada entrou no lugar
  *
- * A árvore era a mais confusa do livro, e não por acaso: cada patamar reescrevia
- * o recurso do zero. O teto subia numa escada torta (5 → 8 → 12 → 16 → 20 → 25);
- * o decaimento mudava de regra no 2º patamar ("zera" virou "decai 1"); o estouro
- * tinha três nomes e três efeitos diferentes (Brasa Viva, Fúria Vulcânica,
- * Erupção Contínua); e cada técnica cobrava um número próprio de Calor — 1, 2,
- * 3, 4, 5, 6, 8, 10 por turno. Ninguém joga isso sem a página aberta na frente,
- * e quem pagou rank Intermediário em DUAS árvores pra chegar aqui merecia
- * coisa melhor.
+ * A revisão de design achou a árvore ilegível: três recursos ao mesmo tempo
+ * (PT, PM e Calor), técnicas de Corpo pagas em PM, quatro talentos com o nome
+ * da própria Maestria e efeito diferente, cinco condições que o livro nunca
+ * definiu (Lento, Queimadura Severa, Exaustão Térmica, Vulnerabilidade,
+ * Medo/Pânico), um dreno de 2 de Força e Agilidade por turno num sistema em
+ * que o atributo começa em 0 a 2, e o maior dano por Ação do livro.
  *
- * O rework não tira poder: tira aritmética. Quatro regras, e todas na Maestria
- * de 1º patamar, onde a mesa lê uma vez e nunca mais precisa voltar:
+ * A diretriz do autor: quem chega aqui JÁ TEM Magia de Fogo e Lutador na
+ * ficha. Então a árvore não inventa recurso nem condição — ela junta os dois:
  *
- * 1. GANHAR  — 1 de Calor por ataque desarmado que acerta.
- * 2. TETO    — 5 por patamar seu nesta árvore (5/10/15/20/25/30, o heatCap).
- * 3. PERDER  — 1 no fim de todo turno em que você não acertou ninguém. Nunca a
- *              barra inteira: "um turno sem acertar é um turno sem recurso" era
- *              a regra que punia o azar de errar um ataque com o recurso todo.
- * 4. GASTAR  — toda técnica tem uma SOBRECARGA, e toda Sobrecarga custa 3 de
- *              Calor. Um número só, em patamar nenhum diferente. As únicas
- *              exceções são as detonações declaradas (Soco de Nova, Erupção do
- *              Soberano, Colapso Solar, Manto de Supernova), que gastam a barra
- *              inteira porque É ISSO que elas são.
+ * 1. ACENDA     — todo soco que acerta aplica Em Chamas (a condição do Fogo).
+ * 2. QUEBRE     — soco em alvo JÁ Em Chamas aplica também Quebrantado (a do
+ *                 Lutador). O primeiro golpe acende; os seguintes desmontam.
+ * 3. SOBRECARGA — técnicas custam PT, como no Lutador; pagar 2 PM a mais (a
+ *                 reserva que o Fogo já dá) acende o efeito extra. Um número só.
  *
- * O estouro também virou um nome só: BRASA VIVA, que existe desde o 1º patamar
- * e melhora em cada um deles. E ela para de cobrar o 1d6 em você no patamar
- * Santo — porque o Santo é literalmente imune a fogo, e cobrar dano ígneo de um
- * imune era a contradição mais visível da árvore.
+ * O Imperador ganhou a ideia de "pegar fogo de propósito": enquanto você mesmo
+ * queima, toda Sobrecarga sai de graça — o recurso é o próprio corpo.
  *
- * ## Combustível: PM ou PT, à escolha
- *
- * As técnicas cobravam PM E PT ao mesmo tempo (5 PM + 2 PT num golpe só). O
- * personagem que chega aqui já rachou os PA dele em duas árvores e sustenta
- * duas reservas; cobrar as duas por golpe era o terceiro imposto. Agora cada
- * técnica tem UM custo, e ele se paga em PM, em PT, ou dividido entre os dois.
+ * Os ids das habilidades e talentos não mudaram, pra que fichas salvas e as
+ * artes de `midiaDeHabilidade.ts` continuem apontando pro lugar certo.
  */
 export const PUNHO_DE_FOGO_TREE: Tree = {
   id: "punho-de-fogo",
@@ -50,22 +36,23 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
   category: "corpo",
   subgroup: "Híbrida (Lutador + Magia de Fogo)",
   mechanic: {
-    tag: "Calor",
+    tag: "Soco Aceso",
     hook:
-      "O calor não é aura: é o recurso. Você acumula batendo e gasta explodindo — e toda explosão desta árvore custa o mesmo número.",
+      "Não é uma árvore nova: é o Fogo e o Lutador que você já tem, no mesmo soco. Nenhum recurso novo, nenhuma condição nova.",
     loop: [
-      "Bata. Cada ataque desarmado que acerta causa +1d6 ígneo e dá 1 de Calor. O teto é 5 por patamar seu nesta árvore: 5 no 1º, 30 no 6º.",
-      "Segure. Você perde 1 de Calor no fim de todo turno em que não acertou ninguém — 1, nunca a barra inteira.",
-      "Solte. Toda técnica desta árvore tem uma Sobrecarga, e toda Sobrecarga custa 3 de Calor. Encher a barra até o teto acende Brasa Viva sozinho, sem gastar nada.",
+      "Acenda. Todo soco que acerta deixa o alvo Em Chamas — a condição da Magia de Fogo.",
+      "Quebre. Se o alvo já estava Em Chamas, o soco também aplica 1 acúmulo de Quebrantado — a condição do Lutador. O primeiro golpe acende; os seguintes desmontam.",
+      "Sobrecarregue. As técnicas custam PT, como no Lutador. Pague 2 PM a mais, da reserva que o seu Fogo já te dá, e ela sai com o efeito extra.",
+      "No Imperador, pegue fogo de propósito: enquanto você mesmo queima, toda Sobrecarga sai de graça.",
     ],
     cost:
-      "É híbrida e escondida: exige rank Intermediário em Magia de Fogo E em Lutador antes de existir — dois patamares pagos antes do primeiro ponto de Calor. E ela não tem alcance nem defesa: sem alguém em quem bater, o recurso não sobe e a árvore inteira apaga.",
+      "É híbrida e escondida: exige rank Intermediário em Magia de Fogo E em Lutador antes de existir. Quase tudo aqui é corpo a corpo, e contra quem é imune a fogo o ciclo quebra no primeiro passo: sem Em Chamas não há Quebrantado.",
   },
   hiddenFromCreation: true,
   prerequisiteNote: "Pré-requisito: Rank Intermediário em Magia de Fogo e em Lutador.",
   keyAttributeLabel: "Força ou Intelecto",
-  resourceLabel: "PT / PM / Calor",
-  tagline: "O calor não é uma aura, é a extensão do seu punho. Cada impacto queima, cada golpe é uma explosão controlada.",
+  resourceLabel: "PT / PM",
+  tagline: "O golpe não termina no impacto: o primeiro soco acende, os seguintes desmontam.",
   rankLabels: {
     Principiante: "Iniciante",
     Intermediário: "Aspirante",
@@ -79,7 +66,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
     armas: "Grupo Desarmado e Improvisado (Dado Base d6 no punho). Armadura leve; proíbe armadura pesada (desliga a árvore).",
     gruposDeArma: ["desarmado-e-improvisado"],
     pericias: "—",
-    nota: "Ofício do Corpo + Fogo. Usa Força ou Intelecto. Combustível: o custo de qualquer técnica desta árvore pode ser pago em PM, em PT, ou dividido entre os dois — corpo e mana queimam o mesmo fogo, e quem chegou aqui já pagou por duas árvores.",
+    nota: "Ofício do Corpo + Fogo. Usa Força ou Intelecto. As técnicas custam PT; a Sobrecarga custa 2 PM, pagos da reserva que a sua Magia de Fogo já te dá.",
   },
   ranks: [
     // ===================== PRINCIPIANTE =====================
@@ -87,24 +74,20 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       rank: "Principiante",
       hpDiceFormula: "1d10+3",
       weaponDieSteps: 1,
-      // Teto de Calor deste patamar. A regra é 5 x patamar, e a Maestria abaixo
-      // a escreve por extenso — este campo é a mesma promessa em número, pra
-      // ficha calcular sem reler a prosa.
-      heatCap: 5,
       mastery: {
-        name: "Impacto Térmico",
+        name: "Soco Aceso",
         description:
-          "[Calor] Seus ataques desarmados causam +1d6 ígneo extra. As quatro regras do Calor, e não existe uma quinta: " +
-          "GANHAR — cada ataque desarmado que acerta dá 1 de Calor (as técnicas dizem quando dão mais). " +
-          "TETO — 5 de Calor por patamar que você possua nesta árvore. " +
-          "PERDER — 1 de Calor no fim de todo turno em que você não acertou ninguém. " +
-          "GASTAR — toda técnica desta árvore tem uma Sobrecarga, e toda Sobrecarga custa 3 de Calor, em qualquer patamar. " +
-          "Ao encher a barra até o teto você entra em Brasa Viva até o fim do próximo turno, sem gastar nada: os seus socos causam +1d6 ígneo por patamar seu, e você paga 1d6 ígneo em si mesmo ao fim de cada turno dela.",
+          "[Soco Aceso] Esta árvore junta as duas que você já tem, e não inventa recurso nenhum. " +
+          "O ATRIBUTO: nesta árvore, BC = o maior entre Força e Intelecto + o seu Bônus de Rank no Punho do Fogo — nunca o Rank da Magia de Fogo. É o que faz dela uma árvore do Corpo que escala por BC sem virar escola de magia: o punho do lutador bruto e o do estudioso chegam no mesmo lugar por caminhos diferentes. " +
+          "ACENDA — todo ataque desarmado seu que acerta deixa o alvo Em Chamas. " +
+          "QUEBRE — se o alvo JÁ estava Em Chamas, o soco também aplica 1 acúmulo de Quebrantado. O teto de Quebrantado dos seus socos é o maior Bônus de Rank entre Punho do Fogo e Lutador (o dobro do Bônus de Rank do Lutador, se você tiver o Avançado dele). Um soco que acerta alvo Em Chamas conta como tendo aplicado Quebrantado, mesmo com o alvo no teto. " +
+          "SOBRECARREGUE — toda técnica desta árvore custa PT e tem uma Sobrecarga: pague 2 PM a mais ao usá-la e ela sai com o efeito extra. " +
+          "Não existe quarta regra.",
       },
       talents: [
-        { id: "sangue-quente", name: "Sangue Quente", paCost: RANK_PA_COST.talent.Principiante, description: "Resistência a frio extremo e magias básicas de gelo; impede redução de deslocamento em ambientes gélidos." },
-        { id: "maos-de-brasa", name: "Mãos de Brasa", paCost: RANK_PA_COST.talent.Principiante, description: "Punhos emitem luz/calor constante (6m); acende fogueiras ao toque." },
-        { id: "calor-interno", name: "Calor Interno", paCost: RANK_PA_COST.talent.Principiante, description: "+4 PV por patamar nesta árvore.", grants: { hpPerRank: 4 } },
+        { id: "sangue-quente", name: "Sangue Quente", paCost: RANK_PA_COST.talent.Principiante, description: "Você tem Resistência a dano de frio e não sofre penalidade de clima gelado." },
+        { id: "maos-de-brasa", name: "Mãos de Brasa", paCost: RANK_PA_COST.talent.Principiante, description: "Seus punhos iluminam 6 metros quando você quiser e acendem qualquer coisa inflamável ao toque." },
+        { id: "calor-interno", name: "Calor Interno", paCost: RANK_PA_COST.talent.Principiante, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { hpPerRank: 4 } },
       ],
       abilities: [
         {
@@ -112,29 +95,29 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Centelha do Iniciante",
           signature: true,
           paCost: RANK_PA_COST.signature.Principiante,
-          pmCost: 1,
+          ptCost: 1,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "1d8 + BC (ígneo)", condicional: "+2d6 ao Sobrecarregar" },
-          effect: "Soco direto. Ganha 2 de Calor e aplica Em Chamas. O alvo faz teste de Vigor (CD 8+BC) ou fica com -2 em testes de concentração até o fim do próximo turno. Sobrecarga: +2d6 no golpe.",
+          damage: { normal: "Dado de arma + 1d6 (ígneo)", condicional: "+2d6 ígneo ao Sobrecarregar" },
+          effect: "Soco que acende. Se o alvo já estava Em Chamas, aplica 2 acúmulos de Quebrantado em vez de 1. Sobrecarga: +2d6 ígneo.",
         },
         {
           id: "passo-de-brasa",
           name: "Passo de Brasa",
           paCost: RANK_PA_COST.common.Principiante,
-          pmCost: 1,
+          ptCost: 1,
           range: "9 metros",
           actions: { normal: 1 },
-          effect: "Investida propulsada a fogo. Ignora ataques de oportunidade do ponto de partida. Ganha 1 de Calor se terminar adjacente a inimigo. Sobrecarga: o deslocamento dobra e você ignora terreno difícil no caminho.",
+          effect: "Investida propulsada a fogo: desloque-se até 9m em linha reta sem provocar ataque de oportunidade. Conta como corrida pro Momento do Lutador. Sobrecarga: toda criatura cujo espaço você atravessou fica Em Chamas.",
         },
         {
           id: "chicote-de-fumaca",
           name: "Chicote de Fumaça",
           paCost: RANK_PA_COST.common.Principiante,
-          pmCost: 2,
+          ptCost: 1,
           range: "Linha de 6m x 1,5m",
           actions: { normal: 1 },
-          effect: "Golpe de palma que libera nuvem de fuligem. Teste de Vigor (CD 8+BC): falha = Cego 1 turno + -2 no acerto (irritação). Sobrecarga: a linha vira 9m e a nuvem fica no ar até o fim do próximo turno.",
+          effect: "Golpe de palma que solta uma nuvem de fuligem. Teste de Vigor (CD 8 + BC) ou o alvo fica Cego até o fim do próximo turno dele. Sobrecarga: a linha vira 9m, e quem falhar também fica Em Chamas.",
         },
       ],
     },
@@ -144,15 +127,13 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "1d10+4",
       weaponDieSteps: 1,
       ptGained: 1,
-      heatCap: 10,
       mastery: {
         name: "Fornalha Interna",
         description:
-          "Enquanto estiver com 3 ou mais de Calor, seus socos ignoram Resistência a fogo e o custo das suas técnicas cai em 1 (mínimo 1). " +
-          "Sua Brasa Viva melhora: enquanto ela durar, cada soco seu também atinge todo inimigo adjacente ao alvo.",
+          "Seus socos ignoram Resistência a dano ígneo. Atiçar: uma vez por turno, quando um soco seu aplicar Quebrantado, o Em Chamas do alvo queima na hora, além de queimar no turno dele.",
       },
       talents: [
-        { id: "fornalha-interna", name: "Fornalha Interna", paCost: RANK_PA_COST.talent.Intermediário, description: "Ganhar Calor cura 1 PV por ponto. Perder Calor (por decaimento) concede +1 no próximo teste de Vigor." },
+        { id: "fornalha-interna", name: "Fôlego de Fornalha", paCost: RANK_PA_COST.talent.Intermediário, description: "+1 PT por patamar seu no Punho do Fogo. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
       ],
       abilities: [
         {
@@ -160,30 +141,30 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Sopro do Forja",
           signature: true,
           paCost: RANK_PA_COST.signature.Intermediário,
-          pmCost: 3,
+          ptCost: 2,
           range: "Cone de 6 metros",
           actions: { normal: 1 },
           damage: { normal: "3d6 + BC (ígneo)" },
-          effect: "Gancho giratório que empurra 3m e aplica Em Chamas. Sobrecarga: alvos que falharem no teste de Força (CD 8+BC) ficam Atolados no chão derretido por 1 turno.",
+          effect: "Gancho giratório. Teste de Agilidade (CD 8 + BC): falha sofre o dano, é empurrada 3m e fica Em Chamas; sucesso, metade do dano. Sobrecarga: quem falhar também fica Atolado no chão derretido até o fim do próximo turno dele.",
         },
         {
           id: "pele-de-cinzas",
           name: "Pele de Cinzas",
           paCost: RANK_PA_COST.common.Intermediário,
-          pmCost: 2,
+          ptCost: 1,
           range: "Pessoal",
           actions: { normal: 1 },
-          effect: "1 minuto: cauteriza feridas (cura 2d8 PV) e quem te atingir corpo a corpo sofre 2d6 ígneo. Enquanto ativa, ganha 1 Calor extra ao ser atingido.",
+          effect: "1 minuto: quem te atingir com ataque corpo a corpo fica Em Chamas. Sobrecarga: e sofre 2d6 ígneo na hora.",
         },
         {
           id: "circulo-de-cinzas",
           name: "Círculo de Cinzas",
           paCost: RANK_PA_COST.common.Intermediário,
-          pmCost: 3,
+          ptCost: 2,
           range: "Esfera de 4,5m",
           actions: { normal: 1 },
-          damage: { normal: "2d6 ígneo" },
-          effect: "Rasteira giratória. Teste de Agilidade (CD 8+BC): falha = Caído + Atolado. O anel residual queima quem atravessar (2d6 ígneo, aplica Em Chamas). Sobrecarga: o chão vira Terreno Difícil + Em Chamas por 2 turnos.",
+          damage: { normal: "2d6 + BC (ígneo)" },
+          effect: "Rasteira giratória. Teste de Agilidade (CD 8 + BC): falha sofre o dano, fica Caída e Em Chamas; sucesso, metade do dano. Sobrecarga: o chão fica em brasa por 2 turnos — terreno difícil, e quem começar o turno nele fica Em Chamas.",
         },
       ],
     },
@@ -191,17 +172,16 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
     {
       rank: "Avançado",
       hpDiceFormula: "1d12+4",
-      weaponDieSteps: 2,
+      weaponDieSteps: 1,
       ptGained: 1,
-      heatCap: 15,
       mastery: {
         name: "Punho de Nova",
         description:
-          "Encadeamento Térmico: no turno em que você Sobrecarregar uma técnica, o seu próximo ataque desarmado custa 1 Ação a menos (mínimo 0) e causa +1d6 ígneo. " +
-          "Soco de Nova: uma vez por combate, sem gastar Ação, detone a barra inteira — 3m de raio, 1d10 ígneo por ponto de Calor gasto, teste de Agilidade (CD 8+BC) para metade. Zera seu Calor e causa 1 nível de Exaustão.",
+          "Você veste o Manto de Touki e destrava as manobras de gasto. Encadeamento: no turno em que Sobrecarregar uma técnica, o seu próximo ataque desarmado neste turno não gasta Ação. " +
+          "Soco de Nova: uma vez por combate, com 1 Ação, apague o Em Chamas de todos os inimigos a até 3m de você — cada um sofre 1d10 ígneo por acúmulo de Quebrantado que carrega (teste de Agilidade, CD 8 + BC, para metade).",
       },
       talents: [
-        { id: "combustao-reativa", name: "Combustão Reativa", paCost: RANK_PA_COST.talent.Avançado, description: "Se sofrer crítico ou estiver Atordoado/Incapacitado, detona metade do Calor atual automaticamente (explosão 3m, repele 3m). Não causa Exaustão." },
+        { id: "combustao-reativa", name: "Combustão Reativa", paCost: RANK_PA_COST.talent.Avançado, description: "Quando você sofrer um acerto crítico ou ficar Atordoado, todo inimigo adjacente a você fica Em Chamas e é empurrado 3m." },
       ],
       abilities: [
         {
@@ -209,31 +189,31 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Lótus Carmesim",
           signature: true,
           paCost: RANK_PA_COST.signature.Avançado,
-          pmCost: 5,
+          ptCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "4d8 + BC (ígneo)", condicional: "+3d6 ao detonar Em Chamas no 3º soco" },
-          effect: "Sequência de 3 socos rápidos (rolagens separadas). Cada acerto ganha 2 Calor. O 3º soco ignora CA de escudo/barreira, aplica Atordoado 1 turno e, se o alvo estava Em Chamas, detona a condição para +3d6 explosão.",
+          damage: { normal: "Dado de arma rolado três vezes (três socos)", condicional: "+3d6 ígneo ao Sobrecarregar" },
+          effect: "Três socos rápidos contra o mesmo alvo, com rolagens separadas — o primeiro que acerta acende, os seguintes quebram. Se o 3º acertar, teste de Vigor (CD 8 + BC) ou o alvo fica Atordoado até o fim do próximo turno dele. Sobrecarga: o 3º soco apaga o Em Chamas do alvo numa explosão de +3d6 ígneo.",
         },
         {
           id: "impacto-meteorico",
           name: "Impacto Meteórico",
           paCost: RANK_PA_COST.common.Avançado,
-          pmCost: 4,
+          ptCost: 2,
           range: "9 metros",
           actions: { normal: 1 },
-          damage: { normal: "5d8 + BC (ígneo + contundente)", porTurno: "2d6 (ígneo) por turno a quem entrar na cratera de magma" },
-          effect: "Salto + mergulho explosivo. Onda de choque radial 6m: teste de Agilidade (CD 8+BC) ou Caído + Atolado. Sobrecarga: cria cratera de magma (Terreno Difícil, 2d6 ígneo/turno a quem entrar) por 2 turnos.",
+          damage: { normal: "4d8 + BC (ígneo e contundente)", porTurno: "2d6 (ígneo) por turno a quem entrar na cratera de magma" },
+          effect: "Salte até 9m e caia sobre um ponto: toda criatura a até 3m dele faz teste de Agilidade (CD 8 + BC) — falha sofre o dano, fica Caída e Em Chamas; sucesso, metade do dano. Sobrecarga: a cratera vira magma por 2 turnos — terreno difícil, e quem entrar ou começar o turno nela sofre 2d6 ígneo.",
         },
         {
           id: "lanca-incandescente",
           name: "Lança Incandescente",
           paCost: RANK_PA_COST.common.Avançado,
-          pmCost: 4,
+          ptCost: 2,
           range: "18 metros",
           actions: { normal: 1 },
-          damage: { normal: "6d6 + BC (ígneo perfurante)" },
-          effect: "Feixe perfurante disparado dos dedos. Ignora armaduras físicas (placas/malhas) ao derreter o metal. Sobrecarga: atravessa o alvo e atinge até 2 inimigos atrás em linha, com metade do dano neles.",
+          damage: { normal: "4d6 + BC (ígneo)" },
+          effect: "O único golpe à distância da árvore: um feixe disparado dos dedos, que ignora o bônus de CA de armadura de metal e deixa o alvo Em Chamas. Sobrecarga: atravessa o alvo e atinge até 2 criaturas atrás dele na linha, com metade do dano.",
         },
       ],
     },
@@ -243,18 +223,13 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "1d12+5",
       weaponDieSteps: 1,
       ptGained: 1,
-      heatCap: 20,
       mastery: {
         name: "Chama Eterna",
         description:
-          "Imunidade a fogo e calor — e, por isso, a Brasa Viva para de cobrar o 1d6 em você: daqui pra cima estourar a barra sai de graça. " +
-          "Recupera 1 PT sempre que causar dano ígneo. " +
-          "Cinza Viva: ao Sobrecarregar uma técnica, você pode deixar Cinza no local (dura 1 hora). " +
-          "Aliados em cima de Cinza ganham Resistência ígnea e +2 em testes de Vigor. " +
-          "Inimigos em Cinza sofrem -2 no deslocamento e Vulnerabilidade ígnea.",
+          "Você é imune a dano ígneo e à condição Em Chamas. Uma vez por turno, quando um soco seu aplicar Quebrantado num alvo Em Chamas, você recupera 1 PT.",
       },
       talents: [
-        { id: "chama-eterna", name: "Chama Eterna", paCost: RANK_PA_COST.talent.Santo, description: "Suas chamas não podem ser apagadas por água, vento ou vácuo mundano; apenas anulação superior (rank Santo+)." },
+        { id: "chama-eterna", name: "Brasa Funda", paCost: RANK_PA_COST.talent.Santo, description: "O Em Chamas que você aplica queima 1d10 em vez de 1d8." },
       ],
       abilities: [
         {
@@ -262,30 +237,30 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Fogo Purificador",
           signature: true,
           paCost: RANK_PA_COST.signature.Santo,
-          pmCost: 8,
+          ptCost: 3,
           range: "Pessoal",
           actions: { normal: 1 },
-          effect: "Aura de fogo branco por 1 turno. Remove maldições, venenos, feitiços mentais do usuário. Projéteis físicos disparados contra você no mesmo turno são vaporizados (sem ataque, sem dano). Sobrecarga: estende a aura a todos os aliados a 6m.",
+          effect: "Aura de fogo branco até o início do seu próximo turno: projéteis mundanos disparados contra você viram cinza antes de acertar, e quem te atacar corpo a corpo fica Em Chamas. Sobrecarga: a aura cobre também os aliados a até 6m.",
         },
         {
           id: "punho-da-condenacao",
           name: "Punho da Condenação",
           paCost: RANK_PA_COST.common.Santo,
-          pmCost: 7,
+          ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "8d8 + BC (ígneo)" },
-          effect: "Golpe cirúrgico injeta calor na corrente sanguínea. Teste de Vigor (CD 8+BC) com Desvantagem: falha = Paralisado por combustão interna 2 turnos (não age, CA -2). Sucesso: metade do dano, Lento 1 turno. Sobrecarga: a paralisia vira petrificação — uma aflição de rank Santo, que só um purificador de patamar Santo ou superior remove.",
+          damage: { normal: "6d8 + BC (ígneo)" },
+          effect: "Golpe que injeta calor no sangue. Teste de Vigor (CD 8 + BC): falha sofre o dano e fica Paralisado até o fim do próximo turno dele; sucesso, metade do dano. Se o alvo já estava Em Chamas e falhar, ele também recebe acúmulos de Quebrantado iguais ao seu Bônus de Rank. Sobrecarga: o teste tem Desvantagem.",
         },
         {
           id: "prisao-de-purgatorio",
           name: "Prisão de Purgatório",
           paCost: RANK_PA_COST.common.Santo,
-          pmCost: 9,
+          ptCost: 3,
           range: "18 metros",
           actions: { normal: 2 },
-          damage: { normal: "6d8 ígneo/turno" },
-          effect: "Ergue paredes de fogo cilíndricas (9m de diâmetro) ao redor do alvo ou do grupo. Atravessar custa 6d8 ígneo + Em Chamas que não se apaga (só anulação rank Santo+ remove). Sobrecarga: o teto da prisão fecha, causando asfixia (teste de Vigor por turno ou 1 nível de Exaustão). Dura 3 turnos ou até você dispensar.",
+          damage: { normal: "3d8 ígneo/turno" },
+          effect: "Um anel de fogo de 9m de diâmetro em volta de um ponto, por 3 turnos. Quem estiver dentro ou atravessar a parede sofre 3d8 ígneo no início de cada turno seu e fica Em Chamas. Sobrecarga: o anel dura 1 minuto.",
         },
       ],
     },
@@ -295,16 +270,13 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       hpDiceFormula: "2d8+5",
       weaponDieSteps: 2,
       ptGained: 1,
-      heatCap: 25,
       mastery: {
         name: "Presença do Vulcão",
         description:
-          "Aura passiva 9m. Aliados: imunidade a Medo/Pânico, +2 em testes de Vigor, ganham 1 PT/turno. " +
-          "Inimigos: Exaustão Térmica — Deslocamento -3m, -2 na Iniciativa, testes de Vigor com Desvantagem. " +
-          "Sua Brasa Viva vira Erupção Contínua: ao encher a barra ela não acaba no fim do próximo turno — todo soco seu explode em 3m até o Calor cair abaixo da metade do teto.",
+          "Todo inimigo que começar o turno a até 9m de você fica Em Chamas. Contra alvos Em Chamas, seus ataques desarmados têm +2 no acerto.",
       },
       talents: [
-        { id: "presenca-do-vulcao", name: "Presença do Vulcão", paCost: RANK_PA_COST.talent.Rei, description: "A aura afeta área de 18m. Inimigos que começarem o turno na área ganham 1 nível de Queimadura Severa (dano ígneo dobrado, cura recebida reduzida à metade)." },
+        { id: "presenca-do-vulcao", name: "Vulcão Largo", paCost: RANK_PA_COST.talent.Rei, description: "A Presença do Vulcão alcança 18 metros em vez de 9." },
       ],
       abilities: [
         {
@@ -312,31 +284,30 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Trono de Chamas",
           signature: true,
           paCost: RANK_PA_COST.signature.Rei,
-          pmCost: 12,
+          ptCost: 4,
           range: "Esfera de 18m",
           actions: { normal: 2 },
-          damage: { normal: "6d10 + BC/turno (ígneo)" },
-          effect: "Domínio territorial de magma. Inimigos na área drenam 2 de Força e Agilidade por turno (você ganha bônus igual) e estruturas derretem. Manter custa uma Sobrecarga por turno, e você pode dispensar quando quiser. Ao fim, a área vira Terreno Vulcânico permanente (magma, gás tóxico).",
+          damage: { normal: "4d10 + BC/turno (ígneo)" },
+          effect: "Um domínio de magma centrado em você, por 1 turno. Todo inimigo que começar o turno na área sofre o dano (teste de Vigor, CD 8 + BC, para metade) e fica Em Chamas. Sobrecarga: pagando os 2 PM de novo no início de cada turno seu, o domínio continua, por até 1 minuto.",
         },
         {
           id: "coroa-solar",
           name: "Coroa Solar",
           paCost: RANK_PA_COST.common.Rei,
-          pmCost: 10,
+          ptCost: 3,
           range: "Pessoal",
           actions: { normal: 1 },
-          effect: "Halo independente por 3 turnos. Dispara raios automáticos (Reação grátis, 1/turno) contra quem flanquear ou fugir: 4d10 ígneo, ignora Cobertura. Cada disparo custa uma Sobrecarga.",
+          damage: { normal: "3d10 (ígneo)" },
+          effect: "Um halo de fogo por 3 turnos. Uma vez por turno, sem gastar a sua Reação, quando um inimigo a até 9m fugir de você ou atacar um aliado seu, o halo dispara nele: o dano, ignorando Cobertura, e Em Chamas. Sobrecarga: o halo dura 1 minuto.",
         },
         {
           id: "avatar-das-cinzas",
           name: "Avatar das Cinzas",
           paCost: RANK_PA_COST.common.Rei,
-          pmCost: 14,
+          ptCost: 4,
           range: "Pessoal",
           actions: { normal: 1 },
-          effect: "Materializa 2 braços gigantes de magma (alcance corpo a corpo +3m, tamanho Grande). " +
-            "Permite Agarrar criaturas Gigantescas, Bloquear ataques em área (Reação e uma Sobrecarga: anula dano de área para aliados a 6m) e Esmagar estruturas (dano triplicado). " +
-            "Dura até você dispensar ou o Calor zerar. Manutenção: uma Sobrecarga por turno.",
+          effect: "Dois braços gigantes de magma por 1 minuto: seu alcance corpo a corpo aumenta em 3m, você agarra criaturas de qualquer tamanho, e seus ataques contam como armas de cerco contra estruturas. Sobrecarga: uma vez por turno, como Reação, os braços cobrem um aliado a até 6m e anulam contra ele o dano de um efeito de área.",
         },
       ],
     },
@@ -344,20 +315,17 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
     {
       rank: "Imperador",
       hpDiceFormula: "2d10+6",
-      weaponDieSteps: 2,
+      weaponDieSteps: 1,
       ptGained: 1,
-      heatCap: 30,
       mastery: {
-        name: "Soberania Térmica",
+        name: "O Corpo É o Pavio",
         description:
-          "Imunidade absoluta a fogo/calor/plasma. Todo dano ígneo recebido é absorvido: " +
-          "cura PV = metade do dano + restaura PT/PM iguais ao Bônus de Rank. " +
-          "Fusão Ambiental: enquanto engajado, CA dos inimigos -3, " +
-          "armaduras metálicas derretem (perdem bônus de CA), água evapora instantaneamente. " +
-          "Você pode transferir Calor para aliados (toque, 1 Ação): eles ganham buffs de fogo, você zera seu Calor.",
+          "Você pode pegar fogo de propósito. Com 1 Ação, você fica Em Chamas por vontade própria: sofre 2d10 ígneo no início de cada turno seu, e a sua imunidade a fogo não protege disso — é o seu próprio corpo queimando. " +
+          "Enquanto queimar assim, toda técnica desta árvore sai com a Sobrecarga de graça, sem pagar PM. " +
+          "Apagar-se custa 1 Ação e explode: todo inimigo a até 6m sofre 1d10 ígneo por turno que você passou queimando, até 10d10 (teste de Agilidade, CD 8 + BC, para metade).",
       },
       talents: [
-        { id: "soberania-termica", name: "Soberania Térmica", paCost: RANK_PA_COST.talent.Imperador, description: "Pode beber fogo ambiental (incêndios, lava, magias inimigas de rank Imperador ou inferior) como Ação grátis: ganha Calor igual ao rank da magia e cura PV/PT." },
+        { id: "soberania-termica", name: "Beber o Fogo", paCost: RANK_PA_COST.talent.Imperador, description: "Uma vez por turno, quando um efeito de fogo de uma criatura hostil te atingir, você o absorve: não sofre o efeito e recupera PT iguais ao seu Bônus de Rank." },
       ],
       abilities: [
         {
@@ -365,41 +333,33 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Erupção do Soberano",
           signature: true,
           paCost: RANK_PA_COST.signature.Imperador,
-          pmCost: 18,
+          ptCost: 5,
           range: "Esfera de 30m",
           actions: { normal: 2 },
           damage: {
-            normal: "12d10 + BC (ígneo + contundente)",
+            normal: "12d10 + BC (ígneo e contundente)",
             porTurno: "3d10 (ígneo) por turno a quem tocar os pilares de magma",
-            condicional: "+1d6 no raio inicial por ponto de Calor gasto",
           },
-          effect: "Soca as falhas tectônicas. Pilares de magma surgem (3d10 ígneo/turno a quem tocar). O campo de batalha vira Zona Vulcânica Permanente: terreno difícil, gás tóxico (teste de Vigor por hora), magma flui. Detonação: gaste a barra inteira e cada ponto vale +1d6 no raio inicial e +1 turno de duração dos pilares.",
+          effect: "Você soca o chão e abre as falhas. Teste de Agilidade (CD 8 + BC): falha sofre o dano e fica Em Chamas; sucesso, metade do dano. Pilares de magma ficam na área por 3 turnos, e quem os tocar sofre 3d10 ígneo. Sobrecarga: quem falhar também recebe acúmulos de Quebrantado iguais ao seu Bônus de Rank.",
         },
         {
           id: "manto-de-supernova",
           name: "Manto de Supernova",
           paCost: RANK_PA_COST.common.Imperador,
-          pmCost: 16,
+          ptCost: 4,
           range: "Pessoal",
           actions: { normal: 1 },
-          effect: "Corpo vira plasma puro por 3 turnos. " +
-            "Armas mundanas derretem ao tocar (destruídas). " +
-            "Ataques não respeitam defesa nenhuma (CA, Escudos, Barreiras, Manto de Touki, imunidades de rank abaixo de Imperador). " +
-            "Seus socos causam dano em área 3m automático. " +
-            "Ganha 5 Calor por turno, de graça. " +
-            "Ao fim, detona a barra inteira numa explosão final (1d12 por ponto, 15m).",
+          effect: "Seu corpo vira plasma por 3 turnos: seus socos ignoram CA de armadura, escudo, Cobertura e Manto de Touki, e atingem também todo inimigo a até 3m do alvo. Arma mundana que te acertar derrete. Quando acaba, você fica com 1 nível de Exaustão. Sobrecarga: em vez da Exaustão, o fim do manto explode — 6d12 ígneo em todo inimigo a até 9m (teste de Agilidade, CD 8 + BC, para metade).",
         },
         {
           id: "colapso-solar",
           name: "Colapso Solar",
           paCost: RANK_PA_COST.common.Imperador,
-          pmCost: 20,
+          ptCost: 5,
           range: "Esfera de 45m",
           actions: { normal: 2 },
-          damage: { normal: "19d12 + BC (plasma)", condicional: "+1d6 no dano final por ponto de Calor gasto" },
-          effect: "Cria um micro-vácuo gravitacional que suga todos os inimigos para o centro (teste de Força, CD 8+BC, ou arrastados). " +
-            "Depois implode: o plasma instável desestabiliza magia (efeitos mágicos de rank abaixo de Imperador na área falham automaticamente por 1 turno). " +
-            "Detonação: gaste a barra inteira e cada ponto vale +1m no raio de sucção e +1d6 no dano final.",
+          damage: { normal: "14d12 + BC (plasma)" },
+          effect: "Uma vez por combate. Um núcleo de plasma puxa todo inimigo na área 9m em direção ao centro (teste de Força, CD 8 + BC, evita o puxão) e implode: todos sofrem o dano (teste de Vigor para metade), e magias de rank inferior ao seu na área se desfazem. Sobrecarga: quem falhar no Vigor fica Em Chamas e recebe acúmulos de Quebrantado iguais ao seu Bônus de Rank.",
         },
       ],
     },

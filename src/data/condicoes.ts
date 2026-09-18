@@ -69,7 +69,7 @@ export interface Condicao {
   sinonimos?: string[];
 }
 
-/** As 24 do Cap. 4, §2, em ordem alfabética — a mesma ordem em que a tabela sempre saiu impressa. */
+/** As 25 do Cap. 4, §2, em ordem alfabética — a mesma ordem em que a tabela sempre saiu impressa. */
 export const CONDICOES: Condicao[] = [
   {
     id: "agarrado",
@@ -83,9 +83,9 @@ export const CONDICOES: Condicao[] = [
     id: "amedrontado",
     nome: "Amedrontado",
     efeito:
-      "Desvantagem em testes de atributo e em ataques enquanto a fonte do medo estiver visível. Não pode se mover voluntariamente pra mais perto dela.",
+      "Desvantagem em testes de atributo e em ataques enquanto a fonte do medo estiver visível. Não pode se mover voluntariamente pra mais perto dela. No fim de cada turno seu, repita o teste de resistência: um sucesso encerra a condição.",
     mecanica: { desvantagemEmAtaques: true, desvantagemEmTestes: true },
-    duracaoPadrao: "Enquanto a fonte estiver visível",
+    duracaoPadrao: "Novo teste no fim de cada turno",
   },
   {
     id: "apontado",
@@ -98,8 +98,9 @@ export const CONDICOES: Condicao[] = [
     id: "atolado",
     nome: "Atolado",
     efeito:
-      "Deslocamento reduzido à metade nesse terreno; gastar o dobro de Deslocamento pra sair dele. Não afeta ataques nem testes.",
+      "Deslocamento reduzido à metade. Dura até o fim do seu próximo turno, ou antes, se você gastar 1 Ação e passar num teste de Força (CD 8 + BC de quem te atolou). Não afeta ataques nem testes.",
     mecanica: { deslocamento: "metade" },
+    duracaoPadrao: "Até o fim do próximo turno",
   },
   {
     id: "atordoado",
@@ -113,7 +114,7 @@ export const CONDICOES: Condicao[] = [
     id: "caido",
     nome: "Caído",
     efeito:
-      "Desvantagem em qualquer ataque que você faça. Ataques corpo a corpo contra você têm Vantagem; ataques à distância contra você têm Desvantagem. Levantar-se custa metade do seu Deslocamento.",
+      "Desvantagem em qualquer ataque que você faça. Ataques corpo a corpo contra você têm Vantagem; ataques à distância contra você têm Desvantagem. Levantar-se gasta metade do Deslocamento de um Andar; com a outra metade, a mesma Ação ainda te move.",
     mecanica: { desvantagemEmAtaques: true, vantagemCorpoACorpo: true, desvantagemADistancia: true },
     duracaoPadrao: "Até se levantar",
   },
@@ -123,6 +124,7 @@ export const CONDICOES: Condicao[] = [
     efeito:
       "Falha automaticamente em qualquer teste que dependa de visão. Seus ataques têm Desvantagem; ataques contra você têm Vantagem.",
     mecanica: { desvantagemEmAtaques: true, vantagemParaQuemAtaca: true },
+    duracaoPadrao: "Até o fim do próximo turno",
   },
   {
     id: "congelado",
@@ -136,7 +138,7 @@ export const CONDICOES: Condicao[] = [
     id: "desequilibrado",
     nome: "Desequilibrado",
     efeito:
-      "Deslocamento reduzido à metade, não pode usar mais de uma Reação por rodada, e sofre Desvantagem em ataques de oportunidade. Dura até o fim do próximo turno do alvo, salvo instrução contrária da habilidade.",
+      "Deslocamento reduzido à metade, e não pode usar Reação nenhuma — nem ataque de oportunidade, nem bloqueio. Dura até o fim do próximo turno do alvo, salvo instrução contrária da habilidade.",
     mecanica: { deslocamento: "metade" },
     duracaoPadrao: "Até o fim do próximo turno",
   },
@@ -153,6 +155,7 @@ export const CONDICOES: Condicao[] = [
     nome: "Envenenado",
     efeito: "Desvantagem em ataques e em testes de atributo enquanto durar.",
     mecanica: { desvantagemEmAtaques: true, desvantagemEmTestes: true },
+    duracaoPadrao: "Até o fim do próximo turno",
   },
   {
     id: "estagnacao",
@@ -165,7 +168,7 @@ export const CONDICOES: Condicao[] = [
     id: "fonte",
     nome: "Fonte (Fluxo Interrompido)",
     efeito:
-      "A outra face do Fluxo Interrompido. Você e seus aliados dentro da barreira recuperam 1 PM no início de cada um dos seus turnos; quem não é seu aliado sofre Estagnação normalmente.",
+      "A outra face do Fluxo Interrompido. Você e seus aliados dentro da barreira recuperam 1 PM no início de cada um dos seus turnos. A Fonte devolve, somando todo mundo, no máximo o PM que você pagou na barreira; depois disso ela seca, e a barreira continua de pé sem face nenhuma.",
     // "Fonte" sozinha entra como sinônimo, contra o meu palpite inicial.
     //
     // Eu tinha deixado de fora com medo de "a fonte do medo" virar link. A
@@ -193,27 +196,28 @@ export const CONDICOES: Condicao[] = [
     id: "marcado",
     nome: "Marcado",
     efeito:
-      "Quem te marcou sabe seu PV aproximado, suas resistências e se você veste Touki, e ignora Cobertura parcial ao te atacar. Dura até ser removido pela habilidade que o concedeu, ou até você ficar fora do alcance dela por um Descanso Longo inteiro.",
-    duracaoPadrao: "Até ser removido",
+      "Quem te marcou sabe seu PV aproximado, suas resistências e se você veste Touki, e ignora Cobertura parcial ao te atacar. Dura até o fim do combate, salvo instrução contrária da habilidade que marcou.",
+    duracaoPadrao: "Até o fim do combate",
   },
   {
     id: "molhado",
     nome: "Molhado",
     efeito:
-      "Dano de frio contra você é dobrado. Desvantagem em testes de resistência contra magias de gelo de quem te molhou. Fogo aplicado a um alvo Molhado evapora a água em vez de acender.",
+      "Vulnerável a frio: dano de frio contra você é dobrado (Cap. 4, §6). Desvantagem em testes de resistência contra magias que causem dano de frio, se forem de quem te molhou. Dura 1 minuto, ou até você sofrer dano ígneo: o dano entra normalmente, não acende Em Chamas, e seca a água.",
+    duracaoPadrao: "1 minuto, ou até sofrer dano ígneo",
   },
   {
     id: "paralisado",
     nome: "Paralisado",
     efeito:
-      "Incapaz de agir e de se mover; falha automaticamente em testes de resistência de Força e Agilidade. Ataques corpo a corpo contra você são críticos automáticos se o atacante estiver adjacente.",
-    mecanica: { semAcoes: true, deslocamento: "zero", vantagemCorpoACorpo: true },
+      "Incapaz de agir e de se mover; falha automaticamente em testes de resistência de Força e Agilidade. Ataques contra você têm Vantagem, e os corpo a corpo são críticos automáticos se o atacante estiver adjacente.",
+    mecanica: { semAcoes: true, deslocamento: "zero", vantagemParaQuemAtaca: true },
   },
   {
     id: "petrificado",
     nome: "Petrificado",
     efeito:
-      "Vira pedra (ou material equivalente): Incapacitado, imune a veneno e doença, e Resistência a todo dano enquanto durar. Reverter exige a fonte específica que petrificou, ou magia de rank igual ou superior.",
+      "Vira pedra (ou material equivalente): Incapacitado, imune a veneno e doença, e Resistência a todo dano enquanto durar. Reverter exige a fonte específica que petrificou, ou Desintoxicação de rank igual ou superior ao da aflição que petrificou (Cap. 4, §8). Magia de Cura não reverte petrificação em rank nenhum.",
     mecanica: { semAcoes: true, deslocamento: "zero" },
     duracaoPadrao: "Até a fonte reverter",
   },
@@ -229,7 +233,7 @@ export const CONDICOES: Condicao[] = [
     id: "selado",
     nome: "Selado",
     efeito:
-      "Dentro da barreira, nenhuma criatura conjura magia de rank SUPERIOR ao rank em Barreira de quem a ergueu — um Selado de rank Avançado permite magia até Avançado e barra Santo pra cima. Tentar mesmo assim gasta as Ações e o PM e falha. Não impede técnicas de Touki, ataques com arma nem habilidades de Utilidade: Selado é sobre mana, e só.",
+      "A Régua do Selo (Cap. 3, Barreira e Proteção): dentro da barreira, magia de rank IGUAL OU INFERIOR ao rank em Barreira de quem a ergueu simplesmente não acontece — as Ações e o PM se perdem. UM rank acima acontece pela metade: metade dos dados, da área e da duração. DOIS ou mais acima atravessa inteira, como se a barreira não estivesse ali. Um Selado de Avançado barra até Avançado, corta o Santo pela metade e não toca em Rei nem Imperador. Não impede técnicas de Touki, ataques com arma nem habilidades de Utilidade: Selado é sobre mana, e só.",
   },
   {
     id: "preso",
@@ -243,15 +247,67 @@ export const CONDICOES: Condicao[] = [
     id: "quebrantado",
     nome: "Quebrantado",
     efeito:
-      "Acumulável: cada acúmulo dá −1 na CA e −1 no dano de todos os seus ataques, até o máximo do Bônus de Rank de quem aplicou. Não é ferimento — magia de Cura não remove. Some com um Descanso Curto, ou dura até o fim do combate, o que vier primeiro.",
+      "Acumulável: cada acúmulo dá −1 na CA e −1 no dano de todos os seus ataques, até o máximo do Bônus de Rank de quem aplicou — o DOBRO disso se quem aplicou tiver a Maestria Nada Segura (Lutador, Avançado). Não é ferimento — magia de Cura não remove. Dura até o fim do combate (ou até um Descanso Curto, se foi aplicado fora de combate).",
     mecanica: { acumulavel: true },
-    duracaoPadrao: "Até o Descanso Curto",
+    duracaoPadrao: "Até o fim do combate",
+  },
+  {
+    id: "surpreso",
+    nome: "Surpreso",
+    efeito:
+      "Na primeira rodada do combate você tem só 1 Ação e nenhuma Reação. Acaba no fim do seu primeiro turno. Fica Surpreso quem não percebeu a ameaça antes de a luta começar — na dúvida, a Furtividade de quem embosca contra a Percepção de cada alvo.",
+    duracaoPadrao: "Até o fim do seu primeiro turno",
   },
   {
     id: "surdo",
     nome: "Surdo",
     efeito:
       "Falha automaticamente em testes que dependam de audição. Não consegue usar Conjuração Padrão nem Encurtada (exigem cântico verbal) — só Conjuração Silenciosa continua funcionando pra você.",
+    duracaoPadrao: "Até o fim do próximo turno",
+  },
+];
+
+/**
+ * Estados que nascem de REGRA de capítulo, e não do efeito de uma habilidade.
+ *
+ * Moram fora de `CONDICOES` de propósito. O teste do glossário exige que toda
+ * condição de `CONDICOES` seja aplicada por alguma habilidade das árvores, e
+ * estes quatro vêm de outro lugar: cair a 0 PV (Cap. 4, §7), estabilizar,
+ * ficar Escondido com a Ação de Se Esconder (Cap. 4, §3) e estar Desprevenido. Mesmo assim o livro
+ * promete que "toda condição usada no livro está aqui, com número", e por isso
+ * a tabela do Cap. 4, §2 imprime as duas listas juntas, em ordem alfabética.
+ *
+ * Não entram no reconhecedor de prosa nem no seletor da ficha: ninguém marca
+ * "Desprevenido" com duração, e "inconsciente" aparece em minúscula na prosa
+ * como palavra comum.
+ */
+export const ESTADOS_DE_REGRA: Condicao[] = [
+  {
+    id: "desprevenido",
+    nome: "Desprevenido",
+    efeito:
+      "O alvo ainda não agiu neste combate, está Surpreso, ou não sabe onde você está. É o gatilho de técnicas como o Dano Furtivo e o Primeiro Golpe, que dizem o que ganham com ele.",
+  },
+  {
+    id: "escondido",
+    nome: "Escondido",
+    efeito:
+      "Se Esconder custa 1 Ação e exige Cobertura, escuridão ou estar fora da vista; teste de Agilidade (Furtividade) contra 10 + Espírito de cada inimigo que possa te procurar. Enquanto Escondido, seus ataques têm Vantagem e o alvo conta como Desprevenido. Atacar, falar alto ou sair do esconderijo revela você no fim daquela Ação.",
+    duracaoPadrao: "Até atacar, falar alto ou sair do esconderijo",
+  },
+  {
+    id: "estabilizado",
+    nome: "Estabilizado",
+    efeito:
+      "A 0 PV, mas fora de perigo imediato: para de rolar o Fio da Vida e acorda com 1 PV em 1d4 horas, ou na hora com qualquer cura. Sofrer dano tira o Estabilizado e dá 1 Marca da Morte (2 se for crítico). Qualquer um estabiliza alguém com 1 Ação e teste de Medicina CD 10 (Vantagem com Kit de Primeiros Socorros).",
+    duracaoPadrao: "Até acordar ou sofrer dano",
+  },
+  {
+    id: "inconsciente",
+    nome: "Inconsciente",
+    efeito:
+      "Incapacitado e Caído. Ataque corpo a corpo de criatura adjacente contra você é crítico. É onde você fica a 0 PV (Cap. 4, §7): nesse caso, sofrer dano dá 1 Marca da Morte (2 se for crítico) e tira o Estabilizado. Inconsciente com PV acima de 0 (sono de veneno, por exemplo) não ganha Marca: dura o que a fonte disser.",
+    duracaoPadrao: "Até recuperar PV, ou o que a fonte disser",
   },
 ];
 
@@ -265,7 +321,16 @@ export const CONDICOES: Condicao[] = [
  * `Imperador` (6), e não `Deus` (7): o Rank Deus é narrativo, não se compra com
  * PA, e nenhuma linha do bestiário aplica condição com ele.
  */
-export const TETO_DE_ACUMULOS = RANK_BONUS.Imperador;
+/**
+ * O teto ABSOLUTO que o livro permite, usado só como fallback quando o
+ * rastreador não sabe o Bônus de Rank de quem aplicou.
+ *
+ * É o dobro do Bônus de Imperador porque a Maestria Nada Segura (Lutador,
+ * Avançado) dobra o limite de acúmulos. Até 2026-09-17 isto era 6, e a ficha
+ * travava em metade do que o livro permite — o Imperador do Lutador não
+ * conseguia representar na tela os 12 acúmulos que a própria árvore descreve.
+ */
+export const TETO_DE_ACUMULOS = RANK_BONUS.Imperador * 2;
 
 export function getCondicaoPorId(id: string): Condicao | undefined {
   return CONDICOES.find((c) => c.id === id);

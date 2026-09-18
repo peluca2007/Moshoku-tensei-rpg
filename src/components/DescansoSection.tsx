@@ -35,7 +35,7 @@ import {
  * ## A conta aparece ANTES de ser aplicada
  *
  * Nada aqui muda a ficha sozinho. O descanso mostra quanto vai devolver de cada
- * reserva, com a origem de cada número ("25% de 40", "50% rolado no Vigor"), e
+ * reserva, com a origem de cada número ("25% de 40", "Vigor 2 + 2 × Bônus de Rank 3"), e
  * só aplica no segundo toque. É a mesma razão pela qual o rolador mostra os
  * dados que caíram: um número que aparece sem a conta ao lado é um número que a
  * mesa não confere — e o que a mesa não confere, ela não confia.
@@ -67,11 +67,8 @@ export default function DescansoSection() {
   }
 
   function prepararLongo() {
-    // O Vigor rola AGORA e o resultado entra na prévia: quem confere a conta
-    // precisa ver o dado que caiu, não só a porcentagem final.
-    const vigor = Math.max(1, getFinalAttribute(character, "vigor"));
-    const rolado = rollFormula(`${vigor}d10`).total;
-    setPrevia({ tipo: "longo", ganho: descansoLongo(maximos, rolado) });
+    const vigor = getFinalAttribute(character, "vigor");
+    setPrevia({ tipo: "longo", ganho: descansoLongo(maximos, vigor, Math.max(1, maiorBonus)) });
     setDowntime(null);
   }
 

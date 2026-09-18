@@ -21,14 +21,27 @@ import {
   aplicarDano,
   novoAlvo,
   novoEstado,
+  rolarDados,
   rolarFormula,
   temDano,
   tickChamas,
   tickSustentado,
   turnoPersonagem,
 } from "@/lib/combatSim";
-import { PapelCriatura, getMoldePorPatamar, rodadasDoChefe } from "@/data/bestiary";
+import { PapelCriatura, aplicarPapel, getMoldePorPatamar, rodadasDoChefe } from "@/data/bestiary";
 import { CharacterData } from "@/lib/types";
+
+/**
+ * O Bônus de Rank de uma criatura, pro que depende de "quem te acertou" — CD
+ * do Fio da Vida (8 + Bônus) e da Concentração (10 + Bônus).
+ *
+ * O patamar do Apêndice G É o rank: 1º patamar = Principiante (+1), 6º =
+ * Imperador (+6). Até a revisão do livro toda criatura batia com Bônus 2 fixo,
+ * e o goblin de estrada derrubava um mago com a mesma CD de um Rei-Demônio.
+ */
+export function bonusDeRankDaCriatura(patamar: number): number {
+  return Math.min(6, Math.max(1, Math.round(patamar)));
+}
 
 /** Quantas Ações um turno tem, pra criatura e pra personagem igual (Cap. 5). */
 export const ACOES_POR_TURNO = 3;
@@ -119,6 +132,31 @@ export interface CriaturaEncontro {
    * porque um id de pasta só faz sentido no bestiário que o sorteou.
    */
   pastaId?: string;
+  /**
+   * O BLOCO DO MONSTRO (Apêndice G, 0.1.90) — tudo daqui pra baixo é o que a
+   * mesa pergunta no meio da cena e a ficha não sabia responder.
+   *
+   * `arquetipo` é a segunda das duas escolhas que montam um monstro: o patamar
+   * dá os números, o arquétipo diz em qual atributo eles aparecem. Ele é a
+   * ÚNICA coisa guardada — atributos, Deslocamento, sentido e Percepção passiva
+   * saem dele por função (`fichaDeAtributos`, `percepcaoPassiva`), porque
+   * guardar derivado é como a tabela de PV do Cap. 4 envelheceu da última vez.
+   */
+  arquetipo?: string;
+  /** Sobrescreve o Deslocamento do arquétipo, em metros. Ausente = o do arquétipo. */
+  deslocamento?: number;
+  /** Voo, natação, escalada — o que não é andar. */
+  movimentoEspecial?: string;
+  /** Tamanho (Cap. 4, §3), que decide quem pode empurrá-la. */
+  tamanho?: string;
+  /** Os campos em que ela tem Vantagem. O Apêndice G dá metade do patamar, pra cima. */
+  pericias?: string[];
+  /** Tipos de dano com Resistência (metade). De graça quando a ficção pede. */
+  resistencias?: string[];
+  /** Tipos de dano com Imunidade. CUSTA: conta como um patamar acima no Orçamento. */
+  imunidades?: string[];
+  /** Sentido que fura o Escondido, quando não é o do arquétipo. */
+  sentido?: string;
 }
 
 /** Só as ações que causam dano — as outras são manobras que a simulação não modela. */
@@ -178,20 +216,17 @@ export function danoDasAcoesPorRodada(c: CriaturaEncontro): number {
 /**
  * Aplica o papel do Apêndice G ao molde do patamar.
  *
- * Os três papéis não são sabor: "Ajustando pra cima ou pra baixo" define cada
- * um como uma transformação numérica. Passar por aqui garante que uma criatura
- * criada na tela e uma citada no livro respondam pela mesma conta.
+ * Mudou de casa em 0.1.90: era daqui, e passou a morar em `bestiary.ts`, junto
+ * do resto do Apêndice G. O motivo é a regra do projeto — isto é REGRA DO
+ * LIVRO ("Ajustando pra cima ou pra baixo"), e o livro não pode depender da
+ * ferramenta. Quem precisou dela lá foi `acoesSugeridas`, que distribui o
+ * orçamento de dano do papel em Ações: se a conta ficasse aqui, o dado do livro
+ * passaria a importar do simulador.
+ *
+ * O reexport continua porque meia dúzia de arquivos a chamam por este caminho,
+ * e trocar o import de todos não deixaria nada mais claro.
  */
-export function aplicarPapel(patamar: number, papel: PapelCriatura) {
-  const molde = getMoldePorPatamar(patamar);
-  if (papel === "lacaio") {
-    return { pv: Math.round(molde.pv / 2), danoPorTurno: Math.round(molde.danoPorTurno / 2) };
-  }
-  if (papel === "chefe") {
-    return { pv: molde.pv * 2, danoPorTurno: molde.danoPorTurno };
-  }
-  return { pv: molde.pv, danoPorTurno: molde.danoPorTurno };
-}
+export { aplicarPapel };
 
 /** Uma criatura nova já com os números do molde preenchidos. */
 export function criaturaDoMolde(
@@ -215,6 +250,12 @@ export function criaturaDoMolde(
     quantidade: papel === "chefe" ? 1 : papel === "lacaio" ? 4 : 2,
     perigo: "",
     acoes: [],
+    // O arquétipo padrão é o Bruto porque ele é o monstro que a mesa mais usa e
+    // o mais fácil de reconhecer sem ler nada — e porque um monstro SEM
+    // arquétipo sai com os cinco atributos iguais, que é o bloco genérico que
+    // esta versão existe pra acabar. Trocar é um clique.
+    arquetipo: "bruto",
+    tamanho: "Médio",
   };
 }
 
@@ -248,17 +289,42 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng): void {
     // orçamento transbordar pro próximo alvo enquanto a casca deste ainda
     // estava de pé — o chefe atacaria dois pelo preço de um.
     const golpe = Math.min(restante, alvo.pv + alvo.pvTemp);
-    c.danoCausado += aplicarDano(alvo, golpe, 2, rng);
+    c.danoCausado += aplicarDano(alvo, golpe, bonusDeRankDaCriatura(c.fonte.patamar), rng);
     restante -= golpe;
   }
 }
 
 /** Aplica dano a um alvo e derruba se zerar. Um lugar só, pra contabilidade não divergir. */
-function bater(c: EstadoCriatura, alvo: Alvo, dano: number, rng?: Rng): void {
+function bater(
+  c: EstadoCriatura,
+  alvo: Alvo,
+  dano: number,
+  rng?: Rng,
+  critico = false,
+  /**
+   * O tipo do golpe, pra Resistência e Imunidade do ALVO (Cap. 4, §6).
+   *
+   * Vem da fórmula de dano da ação ("4d8 (cortante)"), como do outro lado.
+   * Hoje quase nenhum personagem tem Resistência — mas o Casco do Escudeiro e
+   * as raciais dão, e sem esta linha elas seriam texto de ficha que o motor
+   * nunca honra. O orçamento genérico por turno não tem tipo, e é o certo: ele
+   * não é um golpe, é uma média.
+   */
+  tipoDeDano?: string
+): void {
   // `danoCausado` conta o PV REAL perdido, e não o golpe desferido: o que a
   // casca absorveu não feriu ninguém, e é o mesmo critério que o lado dos
   // personagens usa desde a 0.1.37.
-  c.danoCausado += aplicarDano(alvo, Math.min(dano, alvo.pv + alvo.pvTemp), 2, rng);
+  // Quem já está a 0 PV leva o golpe sem teto: não há PV pra limitar, e o que
+  // conta ali é a Marca da Morte que o dano cobra (`aplicarDano`).
+  c.danoCausado += aplicarDano(
+    alvo,
+    alvo.inconsciente ? dano : Math.min(dano, alvo.pv + alvo.pvTemp),
+    bonusDeRankDaCriatura(c.fonte.patamar),
+    rng,
+    critico,
+    tipoDeDano
+  );
 }
 
 /**
@@ -285,10 +351,13 @@ function resolverAcaoCriatura(
   alvo: EstadoPersonagem,
   rng: Rng
 ): void {
-  const vantagem = alvo.preso || alvo.caido;
+  // Inconsciente é Incapacitado e Caído (Cap. 4, §7): quem ataca o caído tem a
+  // Vantagem do Caído.
+  const vantagem = alvo.preso || alvo.caido || alvo.inconsciente;
   const desvantagem = c.preso || c.caido || c.envenenado;
   let dano: number;
   let alvoFalhou = true;
+  let critico = false;
   if (acao.tipo === "ataque") {
     const rolagem = d20Ajustado(rng, vantagem, desvantagem);
     if (rolagem === 1) return;
@@ -299,18 +368,21 @@ function resolverAcaoCriatura(
     // é como um motor começa a divergir de si mesmo.
     if (rolagem !== 20 && rolagem + c.bonusAtaque < Math.max(1, alvo.ca - alvo.quebrantado)) return;
     dano = rolarFormula(acao.dano, rng);
-    if (rolagem === 20) dano += rolarFormula(acao.dano, rng);
+    // Crítico: os dados rolam de novo e o fixo ("+5") soma uma vez só (Cap. 4,
+    // §6). Rolar a fórmula inteira de novo somaria o +5 duas vezes.
+    critico = rolagem === 20;
+    if (critico) dano += rolarDados(acao.dano, rng);
   } else {
     dano = rolarFormula(acao.dano, rng);
-    // O bônus de resistência do personagem é metade do Bônus de Combate dele,
-    // a mesma conta que o motor já usa quando quem resiste é a criatura.
-    // Envenenado cobra Desvantagem em "testes de atributo" — resistir entra
-    // nisso.
-    const resistiu = d20Ajustado(rng, false, alvo.envenenado) + Math.ceil(alvo.ficha.bc / 2) >= c.cdResistencia;
+    // O personagem resiste com 1d20 + atributo + metade do maior Bônus de Rank
+    // (`FichaCombate.resistencia`). Antes era metade do BC dele, conta que o
+    // livro não tem. Envenenado cobra Desvantagem em "testes de atributo" —
+    // resistir entra nisso.
+    const resistiu = d20Ajustado(rng, false, alvo.envenenado) + alvo.ficha.resistencia >= c.cdResistencia;
     if (resistiu) dano = Math.floor(dano / 2);
     alvoFalhou = !resistiu;
   }
-  bater(c, alvo, Math.round(dano * c.escala), rng);
+  bater(c, alvo, Math.round(dano * c.escala), rng, critico, acao.dano);
   if (acao.aplicaMolhado) alvo.molhado = true;
   if (alvoFalhou) {
     if (acao.aplicaPreso) alvo.preso = true;
@@ -323,19 +395,27 @@ function resolverAcaoCriatura(
  * O turno da criatura COM ações declaradas.
  *
  * Três Ações por rodada, gastas pelo mesmo critério guloso do personagem. Ação
- * em área pega todo mundo que está de pé; ação normal vai no primeiro alvo
- * vivo, que é a mesma abstração de foco que o orçamento já usava.
+ * em área pega todo mundo no campo, INCLUSIVE quem caiu: "sofrer dano a 0 PV
+ * dá 1 Marca da Morte (2 se for crítico)" (Cap. 4, §7), e a Bola de Fogo não
+ * desvia do aliado no chão. Ação normal vai no primeiro alvo de pé, que é a
+ * mesma abstração de foco que o orçamento já usava: a IA não gasta golpe em
+ * quem já não luta.
  */
 function turnoPorAcoes(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng): void {
   for (let rodada = 0; rodada < c.rodadas; rodada++) {
     for (const acao of planoDoTurno(c.fonte)) {
       const vivos = alvos.filter((a) => a.vivo);
       if (vivos.length === 0) return;
-      for (const alvo of acao.area ? vivos : [vivos[0]]) {
+      for (const alvo of acao.area ? naArea(alvos) : [vivos[0]]) {
         resolverAcaoCriatura(c, acao, alvo, rng);
       }
     }
   }
+}
+
+/** Quem uma ação em área alcança: os de pé e os caídos que ainda não morreram. */
+function naArea(alvos: EstadoPersonagem[]): EstadoPersonagem[] {
+  return alvos.filter((a) => a.vivo || (a.inconsciente && !a.morto));
 }
 
 function turnoCriatura(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng): void {
@@ -366,7 +446,7 @@ function reagirComoChefe(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng)
     const candidatas = acoesOfensivas(c.fonte).filter((a) => Math.max(1, a.acoes) <= 1);
     if (candidatas.length === 0) return; // nada que caiba numa Reação — ela não dispara
     const acao = candidatas.reduce((m, a) => (mediaFormula(a.dano) > mediaFormula(m.dano) ? a : m));
-    for (const alvo of acao.area ? vivos : [vivos[0]]) resolverAcaoCriatura(c, acao, alvo, rng);
+    for (const alvo of acao.area ? naArea(alvos) : [vivos[0]]) resolverAcaoCriatura(c, acao, alvo, rng);
     return;
   }
 
@@ -454,6 +534,15 @@ export function simularEncontro(
             nome: criatura.quantidade > 1 ? `${criatura.nome} ${i + 1}` : criatura.nome,
             pv: Math.max(1, Math.round(criatura.pv * escala)),
             ca: criatura.ca,
+            // Apêndice G: Bônus de Resistência = metade do Bônus de Ataque, pra
+            // cima. Sem isto a criatura resistia com metade do BC de quem a
+            // atacava, e um mago mais forte deixava o bicho mais resistente.
+            bonusResistencia: Math.ceil(criatura.bonusAtaque / 2),
+            // O Bloco do Monstro (Apêndice G) chega na simulação por aqui. Sem
+            // estas duas linhas, marcar "Resistência a ígneo" na ficha mudava
+            // a tela e não mudava número nenhum — que é o pior tipo de campo.
+            resistencias: criatura.resistencias ?? [],
+            imunidades: criatura.imunidades ?? [],
           }),
           fonte: criatura,
           bonusAtaque: criatura.bonusAtaque,

@@ -45,7 +45,6 @@ function fichaCom(qtdArvores: number): CharacterData {
     currentMp: 40,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     overrides: {},
   };
 }

@@ -11,19 +11,24 @@ export const SUISHIN_TREE: Tree = {
     hook:
       "Você não abre a luta. Você cobra por ela — e é o único estilo que mantém outras pessoas vivas.",
     loop: [
-      "Deixe vir. Quando uma criatura adjacente ERRA um ataque corpo a corpo contra você, o Fluxo dispara: contra-ataque imediato com dano de arma normal, sem gastar PT.",
+      "Deixe vir. Quando uma criatura adjacente ERRA um ataque corpo a corpo contra você, o Fluxo dispara: contra-ataque imediato com dano de arma normal, sem gastar PT nem Reação.",
       "Suba a CA e a chance de errar. Aparar, postura e escudo leve existem pra transformar acerto em erro — cada erro do inimigo vira dano seu.",
       "Estenda. Do Avançado em diante o contra-ataque cobre quem está ao seu lado, não só você.",
     ],
     cost:
       "Contra quem não ataca, você não faz nada. É o mais fraco dos três estilos numa luta de iniciativa pura, e o único que precisa que o inimigo coopere.",
   },
-  keyAttributeLabel: "Vigor",
+  // Agilidade, e não Vigor (correção do autor, 0.1.83). O Suishin-ryū não
+  // vende aguentar o golpe: vende LER o golpe e chegar meio segundo antes dele.
+  // Aparar, postura e contragolpe são todos timing, e timing é Agilidade. O
+  // Vigor que estava aqui fazia a árvore de contra-ataque rolar com o atributo
+  // do tanque, e ainda punha o Suishin na mesma frase que Escudos no Cap. 1.
+  keyAttributeLabel: "Agilidade",
   resourceLabel: "PT",
   tagline:
     "Aparar e devolver. Considerado o mais fraco dos três estilos porque um Deus da Água que enfrenta quem não ataca não faz nada — mas é o único que mantém outras pessoas vivas. Sem relação com a Magia de Água — chamado Suishin-ryū nas referências cruzadas.",
   proficiencies: {
-    armas: "Grupos Espadas e Escudos. Proficiência com armadura leve e média ('Peso Não Atrapalha').",
+    armas: "Grupos Espadas e Escudos. Proficiência com armadura leve e média; pesada via 'Peso Não Atrapalha'.",
     gruposDeArma: ["espadas", "escudos"],
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Escola Formal do Corpo.",
@@ -39,7 +44,7 @@ export const SUISHIN_TREE: Tree = {
       mastery: {
         name: "Fluxo",
         description:
-          "[Contra-ataque] Reação: quando uma criatura adjacente erra um ataque corpo a corpo contra você, você contra-ataca imediatamente com dano de arma normal, sem custo de PT. No Principiante, uma vez por rodada. É toda a identidade da escola: você não abre a luta, você cobra por ela.",
+          "[Contra-ataque] Quando uma criatura adjacente erra um ataque corpo a corpo contra você, você contra-ataca imediatamente com dano de arma normal, sem custo de PT. O Fluxo NÃO gasta Reação: ele tem o próprio limite por rodada (1 no Principiante, 2 no Intermediário; a Maré de Retorno e o Domínio Absoluto sobem esse teto) e é um ataque corpo a corpo comum, com rolagem de acerto. É toda a identidade da escola: você não abre a luta, você cobra por ela.",
       },
       talents: [
         { id: "casco-de-tartaruga", name: "Casco de Tartaruga", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
@@ -56,7 +61,7 @@ export const SUISHIN_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           effect:
-            "1 Reação, quando alvo de ataque corpo a corpo: some seu Bônus de Rank à CA contra aquele ataque, resolvido depois de ver a rolagem. Se com isso o ataque errar, o Fluxo dispara e não consome sua Reação daquele turno.",
+            "1 Reação, quando alvo de ataque corpo a corpo: some seu Bônus de Rank à CA contra aquele ataque, resolvido depois de ver a rolagem. ESTE bônus soma com qualquer outro bônus de CA, inclusive o da Postura de Água e o do Manto de Touki — é a única exceção nomeada à regra de empilhamento do Cap. 4, §5, e existe porque sem ela o Aparar somava exatamente ZERO dentro da Postura, que é o modo que a árvore inteira monta. Se com isso o ataque errar, o Fluxo dispara normalmente (o Aparar gasta a Reação; o Fluxo, nunca).",
         },
         {
           id: "guarda-do-corpo",
@@ -73,7 +78,7 @@ export const SUISHIN_TREE: Tree = {
           paCost: 1,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Você usa armadura pesada sem penalidade de Furtividade, deslocamento ou fadiga, e dorme com ela vestida.",
+          effect: "Proficiência em armadura pesada desde o Principiante. Vestida, ela não te dá Desvantagem em Furtividade (o resto do preço da pesada, não somar Agilidade na CA, continua), e você dorme com ela sem prejuízo.",
         },
         {
           id: "provocar",
@@ -81,7 +86,7 @@ export const SUISHIN_TREE: Tree = {
           paCost: 1,
           range: "Visão e audição",
           actions: { normal: 1 },
-          effect: "Teste de Espírito (CD 8 + Espírito + Rank). Se falhar, no próximo turno o alvo tem que atacar você se conseguir alcançá-lo. Uma vez por criatura por combate. No rank Rei, a maestria 'A Arte da Provocação' torna isto gratuito (1/turno) e quem falhar ataca com Desvantagem — o talento torna-se opcional para quem não quer esperar o Rei.",
+          effect: "1 Ação, uma vez por turno. Teste de Espírito (CD 8 + Espírito + Rank). Se falhar, no próximo turno o alvo tem que atacar você se conseguir alcançá-lo. É o que dá ao Suishin uma decisão no PRÓPRIO turno: a árvore cobra por ser atacada, então convidar o golpe é a jogada, não esperar por ela. No rank Rei, a Maestria 'A Arte da Provocação' torna esta habilidade gratuita (sem gastar Ação) e quem falhar ataca com Desvantagem.",
         },
         {
           id: "base-firme",
@@ -100,7 +105,7 @@ export const SUISHIN_TREE: Tree = {
       mastery: {
         name: "A Armadura Não Pesa",
         description:
-          "Proficiência com toda armadura e escudo, ignorando penalidades. Usando armadura pesada, +1 na CA além do valor normal. O seu Fluxo passa a disparar duas vezes por rodada.",
+          "Usando armadura pesada, +1 na CA além do valor normal. O seu Fluxo passa a disparar duas vezes por rodada.",
       },
       talents: [
         { id: "guarda-longa", name: "Guarda Longa", paCost: 1, description: "Seu alcance de Reação corpo a corpo aumenta para 3 metros." },
@@ -122,23 +127,21 @@ export const SUISHIN_TREE: Tree = {
           id: "devolver",
           name: "Devolver",
           signature: true,
-          reaction: true,
           paCost: 2,
           ptCost: 1,
-          range: "Corpo a corpo",
-          actions: { normal: 1 },
+          range: "Contra-ataque de Fluxo",
+          actions: { normal: 0 },
           damage: { normal: "Dano de arma + metade do dano que o ataque causaria" },
-          effect: "1 Reação, quando um ataque corpo a corpo contra você errar. Você devolve o golpe com a força dele somada à sua.",
+          effect: "Quando o Fluxo disparar, pague 1 PT: aquele contra-ataque soma metade do dano que o ataque inimigo causaria. Não gasta Reação e não é um golpe a mais: você devolve o golpe dele com a força dele somada à sua.",
         },
         {
           id: "trava-de-lamina",
           name: "Trava de Lâmina",
-          reaction: true,
           paCost: 1,
           ptCost: 1,
           range: "Corpo a corpo",
-          actions: { normal: 1 },
-          effect: "1 Reação, ao aparar um ataque: disputa de Força. Se vencer, o inimigo não ataca no próximo turno, e você pode desarmá-lo.",
+          actions: { normal: 0 },
+          effect: "Quando o seu Aparar fizer um ataque errar, pague 1 PT: disputa de Força com o atacante. Se vencer, ele não ataca no próximo turno dele, e você pode desarmá-lo. Não gasta Reação. Cada Aparar aceita um modificador só: Trava de Lâmina ou Peso da Água.",
         },
         {
           id: "muralha-de-um-homem",
@@ -168,7 +171,7 @@ export const SUISHIN_TREE: Tree = {
       mastery: {
         name: "A Postura",
         description:
-          "Você recebe o Manto de Touki completo e a Postura de Água (Kamae, 1 Ação pra entrar): Deslocamento 0, não ataca, soma Bônus de Rank à CA, ganha Reações extras (Bônus de Rank ÷ 2, arredondado pra cima), e o Fluxo passa a disparar também quando você apara com sucesso. Sair é livre ao se mover.",
+          "Você veste o Manto de Touki e destrava as outras manobras de gasto. E aprende a Postura de Água (Kamae, 1 Ação pra entrar): Deslocamento 0, não ataca no seu turno (o Fluxo continua), soma Bônus de Rank à CA e ganha Reações extras (Bônus de Rank ÷ 2, arredondado pra cima). Sair é livre ao se mover.",
       },
       talents: [
         { id: "postura-movel", name: "Postura Móvel", paCost: 2, description: "Em Postura, você pode se mover até 3 metros por turno sem sair dela." },
@@ -200,12 +203,11 @@ export const SUISHIN_TREE: Tree = {
         {
           id: "peso-da-agua",
           name: "Peso da Água",
-          reaction: true,
           paCost: 2,
           ptCost: 1,
           range: "Corpo a corpo",
-          actions: { normal: 1 },
-          effect: "1 Reação, ao aparar: o atacante faz teste de Força ou fica Caído e perde o restante das Ações dele no turno.",
+          actions: { normal: 0 },
+          effect: "Quando o seu Aparar fizer um ataque errar, pague 1 PT: o atacante faz teste de Força ou fica Caído e perde o restante das Ações dele no turno. Não gasta Reação. Cada Aparar aceita um modificador só: Trava de Lâmina ou Peso da Água.",
         },
       ],
     },
@@ -231,7 +233,7 @@ export const SUISHIN_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           effect:
-            "1 Reação, no gatilho que você escolher. Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica uma condição — Caído, Preso, Desarmado ou Atordoado; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso).",
+            "1 Reação, no gatilho que você escolher. Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica uma condição — Caído, Preso, Desarmado ou Atordoado; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso). Limite de 'anula o efeito': nunca anula efeito de rank acima do seu nesta árvore, nem efeito que pega várias criaturas, a menos que 'atinge todos a 3m' também esteja entre as opções escolhidas.",
         },
         {
           id: "espelho-suishin",
@@ -253,7 +255,7 @@ export const SUISHIN_TREE: Tree = {
       mastery: {
         name: "A Arte da Provocação",
         description:
-          "Provocar vira gratuito, uma vez por turno. Quem falhar ataca você com Desvantagem. Em Postura, inimigos que optarem por não atacar você e estiverem ao alcance sofrem Desvantagem em tudo naquele turno. (O talento Provocar do Principiante torna-se opcional — esta maestria o substitui integralmente.)",
+          "Provocar vira gratuito, uma vez por turno. Quem falhar ataca você com Desvantagem. Em Postura, inimigos que optarem por não atacar você e estiverem ao alcance sofrem Desvantagem em tudo naquele turno.",
       },
       talents: [],
       abilities: [
@@ -275,7 +277,7 @@ export const SUISHIN_TREE: Tree = {
           ptCost: 3,
           range: "Postura",
           actions: { normal: 1 },
-          effect: "Requer Postura. Até o início do próximo turno, todo ataque corpo a corpo que errar você dispara Fluxo automaticamente, até um número de Reações igual ao seu Bônus de Rank por rodada (continua sendo a maior contagem de Reações do livro).",
+          effect: "Requer Postura. Até o início do próximo turno, todo ataque corpo a corpo que errar você dispara o Fluxo, até um número de vezes por rodada igual ao seu Bônus de Rank (o maior teto de Fluxo antes do Domínio Absoluto).",
         },
         {
           id: "nada-passa",
@@ -297,7 +299,7 @@ export const SUISHIN_TREE: Tree = {
       mastery: {
         name: "Domínio Absoluto",
         description:
-          "Suas Reações em Postura deixam de ter limite numérico (uma vez por criatura por turno). Seu alcance de Reação corpo a corpo aumenta para 4,5 metros. Você pode entrar em Postura como Reação no instante em que o combate começar.",
+          "Em Postura, o seu Fluxo e as suas Reações deixam de ter limite numérico por rodada (continua uma vez por criatura por turno). Seu alcance de Reação corpo a corpo aumenta para 4,5 metros. Você pode entrar em Postura como Reação no instante em que o combate começar.",
       },
       talents: [],
       abilities: [
@@ -310,16 +312,17 @@ export const SUISHIN_TREE: Tree = {
           range: "Esfera de 12m",
           actions: { normal: 2 },
           effect:
-            "Requer Postura (não pode sair). Estabelece um domínio esférico de 12m: qualquer hostil que se mova, ataque, conjure ou canalize mana dentro é atingido automaticamente, uma vez por turno dela. Dura enquanto mantiver Postura e tiver PT (1 PT/turno). Um alvo completamente imóvel não é atingido, e não responde à Espada de Luz Verdadeira a tempo.",
+            "Requer Postura (não pode sair). Estabelece um domínio esférico de 12m: qualquer hostil que se mova, ataque, conjure ou canalize mana dentro sofre dano de arma normal, sem rolagem de acerto, uma vez por turno dela. Dura enquanto mantiver Postura e tiver PT (1 PT/turno). Um alvo completamente imóvel não é atingido. A Espada de Luz Verdadeira ignora este domínio.",
         },
         {
           id: "o-terceiro-segredo",
           name: "O Terceiro Segredo",
+          reaction: true,
           paCost: 5,
           ptCost: 4,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          effect: "Invente seu terceiro Segredo, com quatro opções de orçamento.",
+          effect: "1 Reação, igual ao primeiro. Invente seu terceiro Segredo com o mesmo molde, escolhendo quatro opções de orçamento.",
         },
       ],
     },

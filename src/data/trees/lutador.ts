@@ -46,12 +46,12 @@ export const LUTADOR_TREE: Tree = {
       mastery: {
         name: "O Corpo é a Arma",
         description:
-          "[Quebrantado] Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência com toda arma pesada, de duas mãos e improvisada; empunhar arma de duas mãos com uma só custa apenas um degrau a menos. Você aplica a condição Quebrantado e usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar).",
+          "[Quebrantado] Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência nos grupos desta árvore (Desarmado e Improvisado, Machados e Marretas, Hastes); empunhar arma de duas mãos com uma só custa apenas um degrau a menos. A TAXA BÁSICA: o primeiro ataque corpo a corpo seu que acertar cada criatura no seu turno aplica 1 acúmulo de Quebrantado — é assim que a mecânica da árvore aparece desde o 1º patamar, sem depender de comprar técnica. As técnicas que dizem um número aplicam aquele número no lugar deste. Você também usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar). Os colchetes nos nomes das técnicas são só rótulos, sem regra própria: [Peso] marca as de arma pesada e corrida; [Impacto], as de agarrar e golpe de corpo.",
       },
       talents: [
         { id: "couro-grosso", name: "Couro Grosso", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
         { id: "punho-de-mineiro", name: "Punho de Mineiro", paCost: 1, description: "Seus ataques desarmados causam dano letal e contam como arma pesada para qualquer efeito." },
-        { id: "sem-vergonha", name: "Sem Vergonha", paCost: 1, description: "Você pega qualquer objeto do cenário e o usa como arma pesada (d6, todos os seus degraus); ele quebra depois de três acertos." },
+        { id: "sem-vergonha", name: "Sem Vergonha", paCost: 1, description: "Você pega qualquer objeto do cenário e ataca com ele (d6, sem degraus, como todo improvisado). Ele quebra no terceiro acerto, e esse golpe aplica 1 acúmulo de Quebrantado extra." },
       ],
       abilities: [
         {
@@ -61,8 +61,8 @@ export const LUTADOR_TREE: Tree = {
           paCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "+1 Dado de Arma" },
-          effect: "Requer 6m de corrida em linha reta. Se acertar, teste de Força (CD 8 + Força + Rank) ou o alvo fica Caído e ganha 2 acúmulos de Quebrantado.",
+          damage: { normal: "+2 Dados de Arma (o Momento em dobro)" },
+          effect: "Requer 6m de corrida em linha reta. O seu Momento conta em dobro neste ataque, no lugar de somar com ele: +2 Dados de Arma, ou +4 com Não Para de Vir. Se acertar, teste de Força (CD 8 + Força + Rank) ou o alvo fica Caído e vai ao máximo de acúmulos de Quebrantado que você consegue aplicar. No Principiante isso é 1, e não 2: a técnica não promete o que o teto corta.",
         },
         {
           id: "agarrao",
@@ -88,7 +88,7 @@ export const LUTADOR_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "Metade do dado (você sofre 1d4)" },
-          effect: "Teste de Vigor (CD 8 + Força + Rank) ou o alvo fica Atordoado até o fim do próximo turno dele.",
+          effect: "Uma vez por turno. Teste de Vigor (CD 8 + Força + Rank) ou o alvo fica Atordoado até o fim do próximo turno dele. Quem sai desse Atordoado fica imune à sua Cabeçada até o fim do turno seguinte dele.",
         },
         {
           id: "quebrar-equipamento",
@@ -111,7 +111,7 @@ export const LUTADOR_TREE: Tree = {
       },
       talents: [
         { id: "maos-grandes", name: "Mãos Grandes", paCost: 1, description: "Você agarra criaturas de qualquer tamanho e carrega o dobro de peso." },
-        { id: "folego-de-fosso", name: "Fôlego de Fosso", paCost: 1, description: "+1 PT por patamar seu em Armas Pesadas. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { ptPerRank: 1 } },
+        { id: "folego-de-fosso", name: "Fôlego de Fosso", paCost: 1, description: "+1 PT por patamar seu no Lutador. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { ptPerRank: 1 } },
         { id: "cicatriz-velha", name: "Cicatriz Velha", paCost: 1, description: "Enquanto estiver com metade ou menos dos PV, seus ataques ganham +1 Dado de Arma." },
       ],
       abilities: [
@@ -141,7 +141,7 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 1,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          effect: "Requer alvo Agarrado. Teste de Vigor do alvo (CD 8 + Força + Rank). Falha: Preso e Incapacitado enquanto você mantiver (você só pode manter).",
+          effect: "Requer alvo Agarrado. Teste de Vigor do alvo (CD 8 + Força + Rank). Falha: Preso e Incapacitado enquanto você mantiver (você só pode manter). No fim de cada turno dele, o alvo repete o teste de Vigor; num sucesso, se solta da Trava (e continua Agarrado).",
         },
         {
           id: "peso-contra-peso",
@@ -163,7 +163,7 @@ export const LUTADOR_TREE: Tree = {
       mastery: {
         name: "Nada Segura",
         description:
-          "Você recebe o Manto de Touki completo e a reserva de PT. Seus ataques atravessam: ao reduzir uma criatura a 0 PV, ou acertar alvo com 4+ acúmulos de Quebrantado, o ataque atinge outra criatura adjacente com dano completo. O limite de acúmulos passa a ser o dobro do seu Bônus de Rank.",
+          "Você veste o Manto de Touki e destrava as outras manobras de gasto. Seus ataques atravessam: ao reduzir uma criatura a 0 PV, ou acertar alvo com 4+ acúmulos de Quebrantado, o ataque atinge outra criatura adjacente com dano completo. O limite de acúmulos passa a ser o dobro do seu Bônus de Rank.",
       },
       talents: [
         { id: "braco-de-bigorna", name: "Braço de Bigorna", paCost: 2, description: "Seus ataques desarmados sobem um degrau adicional de Dado de Arma, permanentemente." },
@@ -223,7 +223,7 @@ export const LUTADOR_TREE: Tree = {
         },
         {
           id: "peso-absoluto-lutador",
-          name: "Peso Absoluto",
+          name: "Braço de Catapulta",
           paCost: 3,
           description: "O Arremesso alcança 18m e o dano dobra.",
         },
@@ -281,7 +281,7 @@ export const LUTADOR_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "5d10 + Força + Bônus de Rank (contundente, automático)" },
-          effect: "Requer alvo Agarrado. O alvo fica Quebrantado ao máximo instantaneamente. Se isso o reduzir a 0 PV, não pode ser estabilizado por meios mundanos.",
+          effect: "Requer alvo Agarrado. O alvo faz teste de Vigor (CD 8 + Força + Rank): se falhar, vai ao máximo de acúmulos de Quebrantado instantaneamente; se passar, ganha acúmulos de Quebrantado iguais ao seu Bônus de Rank. Se isso o reduzir a 0 PV, não pode ser estabilizado por meios mundanos.",
         },
       ],
     },
@@ -293,7 +293,7 @@ export const LUTADOR_TREE: Tree = {
       mastery: {
         name: "Nada Fica de Pé",
         description:
-          "Você recebe 1 Ação adicional por turno, usável só para atacar ou agarrar. Toda criatura que começar o turno adjacente a você ganha 1 acúmulo de Quebrantado. Criaturas com acúmulos iguais ao dobro do seu Bônus de Rank ficam Incapacitadas.",
+          "Você recebe 1 Ação adicional por turno, usável só para atacar ou agarrar. Toda criatura que começar o turno adjacente a você ganha 1 acúmulo de Quebrantado. Uma criatura que chegar ao máximo de acúmulos (o dobro do seu Bônus de Rank, por Nada Segura) faz teste de Vigor (CD 8 + Força + Rank) ou fica Atordoada até o fim do próximo turno dela — uma vez por combate por criatura. Não é Incapacitação permanente: tirar um chefe da luta inteira sem uma única rolagem não é o capstone desta árvore, é o fim dela.",
       },
       talents: [
         { id: "sem-arma-nenhuma", name: "Sem Arma Nenhuma", paCost: 4, description: "Seus ataques desarmados sobem para o Dado de Arma de um montante (d10 base) e contam como mágicos, de cerco e adamantinos." },

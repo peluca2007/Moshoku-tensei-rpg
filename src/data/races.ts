@@ -47,6 +47,7 @@ export const RACES: Race[] = [
     traits: [
       "Adaptabilidade: 2 Perícias extras à escolha e +1 em UM atributo à sua escolha, permanente — nenhuma outra raça deixa você decidir onde o sangue pesa.",
       "Determinação Humana: uma vez por sessão, repita um teste de Atributo (não de Perícia, não de dano) que tenha acabado de falhar e use o novo resultado — humanos vivem menos que qualquer raça deste livro e aprenderam a não desperdiçar a única tentativa que têm.",
+      "Línguas: Língua Humana (Comum), a que o mundo inteiro usa pra negociar.",
     ],
   },
   {
@@ -67,6 +68,7 @@ export const RACES: Race[] = [
       "Sentido da Floresta: Vantagem em Percepção auditiva e em Sobrevivência para navegação.",
       "+1 em Agilidade, permanente, e PM Máximos iguais ao DOBRO do seu Maior Bônus de Rank de magia (+2 no Principiante, +12 no Imperador) — séculos de convivência com a mana da Grande Floresta. Sem nenhuma escola de magia aberta, este bônus é 0.",
       "Sangue Longevo: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §8) — séculos de vida ensinam o corpo a esperar o pior.",
+      "Línguas: Língua Humana (Comum) e Língua Élfica.",
     ],
   },
   {
@@ -88,12 +90,18 @@ export const RACES: Race[] = [
     // recém-criado e ~+7% da de um Imperador: é um bônus de começo de campanha,
     // de propósito. O que segura o Anão no rank alto continua sendo o +1 de
     // Vigor, que multiplica.
+    //
+    // Revisão do livro: o desconto fixo de 1 PM não descontava nada numa magia
+    // de 1 PM (mínimo 1) e valia 5% no Imperador — o padrão de "fixo que decai"
+    // que o cabeçalho deste arquivo condena, pago com duas escolas fechadas pra
+    // sempre. Agora ele cresce com metade do Bônus de Rank da escola (1 a 3).
     bonuses: { attributes: { vigor: 1 }, maxHp: 10 },
     fixedSkills: ["Ofícios (Forja)"],
     traits: [
-      "Sangue da Forja: magias de Terra e Fogo custam 1 PM a menos para conjurar (mínimo 1). Não pode aprender magias de Água ou Vento.",
+      "Sangue da Forja: magias de Terra e de Fogo custam menos PM, num desconto igual à metade do seu Bônus de Rank naquela escola, arredondado pra cima (1 no Principiante e no Intermediário, 2 no Avançado e no Santo, 3 no Rei e no Imperador; o custo nunca cai abaixo de 1). Não soma com outros descontos de PM: vale o maior. A Sobrecarga e as técnicas do Punho do Fogo não são magia de Fogo e não recebem o desconto. Não pode aprender magias de Água ou Vento.",
       "+1 em Vigor e +10 PV Máximos, permanentes — o corpo mais denso do livro.",
-      "Fígado de Pedra: imune a ficar Embriagado e tem Vantagem em testes de resistência de Vigor contra Exaustão por privação (Cap. 4, seção 9).",
+      "Fígado de Pedra: bebida nenhuma te derruba (álcool não te impõe penalidade alguma) e você tem Vantagem em testes de resistência de Vigor contra Exaustão por privação (Cap. 4, seção 9).",
+      "Línguas: Língua Humana (Comum) e Língua Anã.",
     ],
   },
   {
@@ -125,6 +133,7 @@ export const RACES: Race[] = [
       "Sombra Absoluta (opcional, 3 PA): transforme a Vantagem racial acima em Vantagem Absoluta (Cap. 1, §4). É uma compra, não um bônus grátis — e é a única melhoria racial comprável do livro.",
       "+1 em Agilidade, permanente.",
       "Sorte do Povo Pequeno: uma vez por Descanso Longo, transforme uma Falha Crítica (1 Natural) sua em um resultado normal — o dado ainda rola, mas o desastre automático não acontece.",
+      "Línguas: Língua Humana (Comum) e Língua Bestial, a da Grande Floresta.",
     ],
   },
   {
@@ -149,6 +158,7 @@ export const RACES: Race[] = [
       "Howling · Eco de Caça (ecolocalização): o uivo volta e desenha o que tocou. Por 1 minuto você sabe a posição exata de toda criatura a até 30 metros, mesmo no escuro total, mesmo sob invisibilidade mágica, mesmo através de porta, mato ou parede fina. Você sabe ONDE, nunca O QUÊ: tamanho aproximado e posição, não identidade nem intenção. Pedra maciça, chumbo e qualquer barreira mágica bloqueiam o eco. Sem limite de usos.",
       "+1 em Força, permanente.",
       "Instinto de Caçada: Vantagem em Iniciativa contra qualquer criatura que você tenha farejado, rastreado ou observado antes do combate começar.",
+      "Línguas: Língua Humana (Comum) e Língua Bestial.",
     ],
   },
   {
@@ -160,14 +170,19 @@ export const RACES: Race[] = [
     traits: [
       // Voo irrestrito desde a criação é o traço racial mais forte do livro
       // (anula terreno difícil, alcance corpo a corpo e boa parte das armadilhas
-      // e quedas do Cap. 4) e não custava absolutamente nada — sozinho valia
+      // e dos buracos) e não custava absolutamente nada — sozinho valia
       // ~2 PC, metade do orçamento inicial inteiro. A trava de armadura e carga é
       // o preço: o Celestial escolhe entre voar e ser tanque, em vez de levar os
       // dois. Com ela a raça sai de 3,6 para 3,2 PC e vai pro tier raro do
       // sorteio (RACE_WEIGHT), onde esse patamar de poder pertence.
-      "Deslocamento de Voo igual ao de caminhada — só sem armadura média ou pesada e sem carregar mais da metade do seu limite de carga: asas não erguem aço.",
+      // Revisão do livro: voo, queda e limite de carga agora têm regra geral no
+      // Cap. 4 (§3, "Alcance, Levantar, Queda, Voo e Montaria"). O traço repete os
+      // mesmos números pra ficha se bastar sozinha; se um mudar, mude os dois.
+      "Deslocamento de Voo igual ao de caminhada — só sem armadura média ou pesada e sem carregar mais da metade do seu limite de carga (o limite de todo mundo é 15 kg × (Força + 5)): asas não erguem aço.",
+      "Voo na prática: voar é Andar pelo ar, pelo mesmo custo. Quem está no chão te alcança corpo a corpo se você estiver até 1,5 m acima do alcance normal dele. Se ficar Atordoado, Paralisado, Incapacitado ou a 0 PV no ar, você cai: 1d6 de dano de queda por 3 m de altura, até 20d6, e fica Caído.",
       "+1 em Espírito, permanente.",
       "Sangue do Continente Divino: Vantagem em testes de resistência de Espírito contra Medo e contra qualquer efeito de origem divina.",
+      "Línguas: Língua Humana (Comum) e Língua Divina.",
     ],
   },
   {
@@ -189,6 +204,7 @@ export const RACES: Race[] = [
       "Ignora penalidades de terreno difícil aquático.",
       "+1 em Vigor, permanente.",
       "Pressão das Profundezas: Resistência a dano contundente vindo de água em movimento (correnteza, magia de Água que usa força bruta, tsunami de cerco).",
+      "Línguas: Língua Humana (Comum) e Língua do Oceano.",
     ],
   },
   {
@@ -215,6 +231,7 @@ export const RACES: Race[] = [
       "+1 em Intelecto, permanente, e PM Máximos iguais ao TRIPLO do seu Maior Bônus de Rank de magia (+3 no Principiante, +18 no Imperador) — a maior reserva racial do livro, e a única que não decai. Sem nenhuma escola de magia aberta, este bônus é 0.",
       "Telepatia curta com outros Migurds ou seres com telepatia.",
       "Mente Fechada: Vantagem em testes de resistência de Espírito contra qualquer efeito que leia, controle ou confunda a mente — quem nasce falando por telepatia aprende a trancar a própria porta antes de aprender a andar.",
+      "Línguas: Língua Humana (Comum) e Língua Migurd, que é telepática: entre Migurds, a conversa não faz som.",
     ],
   },
   {
@@ -232,7 +249,9 @@ export const RACES: Race[] = [
     traits: [
       "Previsão de Movimento (1 Ação): escolha uma criatura a até 18m que você possa ver e leia o fluxo de mana dela por 1 minuto — você enxerga o golpe antes de ele sair. Enquanto durar: os ataques dela contra você têm Desvantagem, você tem Vantagem nos testes de resistência contra as habilidades dela, e ela nunca te pega Surpreso.",
       "Previsão de Movimento — limites: uma leitura por vez (trocar de alvo custa outra Ação), e não funciona contra o que não move mana: construto inerte, armadilha mecânica, uma pedra caindo. Ler o fluxo não é ver o futuro; é ver a intenção antes de ela virar movimento.",
-      "Sofre Desvantagem em interações sociais com humanos comuns (preconceito antigo, Cap. 1) — mas Vantagem Absoluta em Intuição para perceber a intenção real de quem esconde algo, porque o Terceiro Olho não mente.",
+      "Cauda-lança: a cauda bifurcada é uma arma racial de verdade — d8 perfurante, sobe a Escada de Dados com os seus degraus como qualquer arma, e você não precisa de mão livre para usá-la. É a arma que a descrição da raça sempre prometeu e nunca entregou.",
+      "Sofre Desvantagem em interações sociais com humanos comuns (preconceito antigo) — mas Vantagem Absoluta em Intuição para perceber a intenção real de quem esconde algo, porque a leitura de mana não mente.",
+      "Línguas: Língua Humana (Comum) e Língua Demoníaca.",
     ],
   },
   {
@@ -247,9 +266,10 @@ export const RACES: Race[] = [
     // forte do tier raro, só que por uma via só.
     bonuses: { attributes: { forca: 2 } },
     traits: [
-      "Brutamontes: Vantagem em testes de Força bruta.",
-      "Limite de carga dobrado.",
+      "Brutamontes: Vantagem em testes de Força e de Atletismo para quebrar, erguer ou empurrar.",
+      "Limite de carga dobrado: 30 kg × (Força + 5), contra os 15 kg × (Força + 5) de todo mundo.",
       "+2 em Força, permanente — o maior bônus de atributo de qualquer raça do livro.",
+      "Línguas: Língua Humana (Comum) e Língua Demoníaca.",
     ],
   },
   {
@@ -267,9 +287,14 @@ export const RACES: Race[] = [
       // +1 a +6 por turno, na mesma escala que PV, PM e a compra de reserva do
       // Cap. 1 §2 já usam. Custa 2 PV por turno no Principiante e devolve o dobro
       // no Imperador — de propósito: o preço de escalar é não ser adiantado.
-      "Regeneração Profunda: regenera PV iguais ao seu Maior Bônus de Rank (Cap. 1, §7) no início do seu turno, desde que esteja com mais de 0 PV.",
+      // Revisão do livro: "no início do seu turno" sem trava deixava a mesa ler
+      // que o Demônio volta ao máximo parado alguns minutos fora de combate, o
+      // que quebra a campanha de atrito do Cap. 4 ("A Carne Não Fecha Sozinha").
+      // A regeneração fica só em combate; fora dele, quem paga é o Descanso Curto.
+      "Regeneração Profunda: regenera PV iguais ao seu Maior Bônus de Rank (Cap. 1, §7) no início do seu turno, desde que esteja com mais de 0 PV. Só em combate. Fora dele, cada Descanso Curto devolve a você PV iguais a 5 × seu Maior Bônus de Rank (o teto de dois Descansos Curtos por dia, Cap. 4, §7, continua valendo).",
       "+8 PV Máximos, permanentes.",
       "Descendência Divina: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §8).",
+      "Línguas: Língua Humana (Comum) e Língua Demoníaca.",
     ],
   },
   {
@@ -296,13 +321,14 @@ export const RACES: Race[] = [
     //    por Descanso Curto, então não vira o recurso principal de ninguém.
     bonuses: { attributes: { forca: 2, vigor: 1 }, armorClass: 3 },
     traits: [
-      "Escamas Dracônicas: +3 na CA (permanente, empilha com armadura) e Resistência a dano cortante e perfurante não-mágico.",
+      "Escamas Dracônicas: +3 na CA (permanente, empilha com armadura) e Resistência a dano cortante e perfurante mundano.",
       "Garras e Presas: seus ataques desarmados usam Dado Base d10, contam como arma marcial mágica e sobem na Escada de Dados (Cap. 3) junto com o seu maior patamar do Corpo — um Dragão desarmado nunca está desarmado.",
       "Sopro Dracônico (1 Ação, 1 vez por Descanso Curto): cone de 12 metros do elemento que você escolheu ao criar o personagem. Dano igual a 1d10 por ponto do seu Maior Bônus de Rank (1d10 no Principiante, 6d10 no Imperador). Teste de resistência de Agilidade contra CD 8 + Vigor + Maior Bônus de Rank para metade do dano.",
-      "Asas: Deslocamento de Voo igual ao dobro do seu Deslocamento de caminhada, sem restrição de armadura ou carga — as asas de um Ryuzoku erguem aço sem esforço.",
-      "+2 em Força e +1 em Vigor, permanentes, e IMUNIDADE (não Resistência) a um elemento à escolha: Fogo, Gelo ou Eletricidade. É o mesmo elemento do seu Sopro.",
+      "Asas: Deslocamento de Voo igual ao dobro do seu Deslocamento de caminhada, sem restrição de armadura ou carga — as asas de um Ryuzoku erguem aço sem esforço. Voar é Andar pelo ar, pelo mesmo custo. Quem está no chão te alcança corpo a corpo se você estiver até 1,5 m acima do alcance normal dele. Se ficar Atordoado, Paralisado, Incapacitado ou a 0 PV no ar, você cai: 1d6 de dano de queda por 3 m de altura, até 20d6, e fica Caído.",
+      "+2 em Força e +1 em Vigor, permanentes, e IMUNIDADE (não Resistência) a um tipo de dano à escolha: ígneo, frio ou elétrico. É o mesmo elemento do seu Sopro.",
       "Cem Mil Anos: você não envelhece de forma perceptível, é imune a doença comum, e tem Vantagem em testes de resistência de Espírito contra qualquer efeito de Medo ou de controle mental.",
-      "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão, Lábia ou Diplomacia — nada que já foi um deus finge ser gente comum de verdade. É o único preço que a raça cobra, e ele é permanente.",
+      "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão e Lábia — nada que já foi um deus finge ser gente comum de verdade. É o único preço que a raça cobra, e ele é permanente.",
+      "Línguas: Língua Humana (Comum) e Língua Dragônica.",
     ],
   },
 ];

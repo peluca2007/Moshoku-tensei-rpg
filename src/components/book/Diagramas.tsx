@@ -67,6 +67,80 @@ function Quadro({
 }
 
 /**
+ * COBERTURA — Cap. 4, §3.
+ *
+ * Visão de cima, que é como a mesa realmente discute cobertura: alguém aponta
+ * pro mapa e pergunta "eu vejo ele?". As três linhas de tiro saem do MESMO
+ * arqueiro, então o que muda de uma linha pra outra é só o que está no meio —
+ * que é exatamente a regra. A linha Total para no muro em vez de chegar ao
+ * alvo: o desenho diz "não pode ser alvo" sem precisar da legenda.
+ */
+export function Cobertura() {
+  const linhas = [
+    { y: 34, nome: "Parcial", bonus: "+2 CA", obsX: 120, obsW: 9, obsH: 16, alvoX: 176, ate: 176 },
+    { y: 84, nome: "Superior", bonus: "+5 CA", obsX: 120, obsW: 9, obsH: 30, alvoX: 176, ate: 176 },
+    { y: 134, nome: "Total", bonus: "não pode ser alvo", obsX: 120, obsW: 9, obsH: 44, alvoX: 176, ate: 118 },
+  ];
+  return (
+    <Quadro
+      titulo="Cobertura, vista de cima"
+      nota="O mesmo arqueiro, o mesmo alvo, a mesma distância: o que muda é só o que está no meio. Duas coberturas não somam — vale a melhor. A Total não é um bônus grande, é uma resposta diferente: o tiro não acontece."
+    >
+      <svg
+        viewBox="0 0 250 172"
+        className="mx-auto h-52 w-full max-w-md"
+        role="img"
+        aria-label="Vista de cima: atrás de um parapeito a cobertura é Parcial e dá mais 2 de CA; atrás da quina de um muro é Superior e dá mais 5; atrás do muro inteiro é Total e o alvo não pode ser atacado"
+      >
+        {linhas.map((l) => (
+          <g key={l.nome}>
+            {/* O arqueiro, repetido em cada linha: é sempre o mesmo tiro. */}
+            <circle cx="22" cy={l.y} r="7" className="fill-wine-600 dark:fill-wine-400" />
+            <path
+              d={`M 32 ${l.y} L ${l.ate} ${l.y}`}
+              className={
+                l.nome === "Total"
+                  ? "fill-none stroke-parchment-400 [stroke-dasharray:4_4] dark:stroke-parchment-600"
+                  : "fill-none stroke-gold-500/70 [stroke-dasharray:4_4] dark:stroke-gold-400/60"
+              }
+              strokeWidth="2"
+            />
+            {/* O obstáculo cresce de linha em linha: é a única variável. */}
+            <rect
+              x={l.obsX}
+              y={l.y - l.obsH / 2}
+              width={l.obsW}
+              height={l.obsH}
+              rx="2"
+              className="fill-parchment-500 dark:fill-parchment-500"
+            />
+            <circle
+              cx={l.alvoX}
+              cy={l.y}
+              r="7"
+              className={
+                l.nome === "Total"
+                  ? "fill-parchment-400 dark:fill-parchment-700"
+                  : "fill-parchment-600 dark:fill-parchment-300"
+              }
+            />
+            <text
+              x="196"
+              y={l.y - 2}
+              className="fill-parchment-800 font-display text-[9px] font-black uppercase tracking-wider dark:fill-parchment-100"
+            >
+              {l.nome}
+            </text>
+            <text x="196" y={l.y + 9} className="fill-gold-700 text-[8px] font-semibold dark:fill-gold-300">
+              {l.bonus}
+            </text>
+          </g>
+        ))}
+      </svg>
+    </Quadro>
+  );
+}
+/**
  * A ESCADA DE DADOS — Cap. 3, §1.
  *
  * As barras crescem quando o leitor chega nelas, uma depois da outra: a escada
@@ -278,16 +352,21 @@ export function EtapasDoTiroPerfeito() {
    * ataque normal, contra a CA do alvo. Um jogador que lesse só o diagrama
    * rolaria contra 12 e acertaria coisa que devia errar.
    */
+  /*
+   * A ordem mudou em 0.1.82: a Leitura passou pra frente dos Dedos. Você puxa,
+   * lê pra onde o alvo vai, e só então coloca os dedos no vão que a leitura
+   * revelou — a etapa que fura Cobertura é a correção final, não a primeira.
+   */
   const etapas = [
-    { n: "1", nome: "A Corda", teste: "Força", cd: true, da: "+2 degraus no dado" },
-    { n: "2", nome: "Os Dedos", teste: "Agilidade", cd: true, da: "+1 degrau, ignora Cobertura" },
-    { n: "3", nome: "A Leitura", teste: "Intuição", cd: true, da: "alvo sem Agilidade na CA" },
-    { n: "4", nome: "A Solta", teste: "ataque normal", cd: false, da: "o disparo" },
+    { n: "1", nome: "A Corda", teste: "Força", cd: true, da: "+2 degraus de Dado" },
+    { n: "2", nome: "A Leitura", teste: "Intuição", cd: true, da: "alvo sem Agilidade na CA · +1 degrau" },
+    { n: "3", nome: "Os Dedos", teste: "Agilidade", cd: true, da: "+1 Dado · ignora Cobertura" },
+    { n: "4", nome: "A Solta", teste: "ataque normal", cd: false, da: "o disparo — também é uma jogada" },
   ];
   return (
     <Quadro
       titulo="O Tiro Perfeito, Ação por Ação — só quem tem Arquearia"
-      nota="Quatro Ações num turno de três: ele sempre atravessa turnos. A linha tracejada é onde o seu turno acaba — e é por isso que levar dano no meio cobra teste de Concentração. O talento Etapa Encurtada junta as duas primeiras e faz o tiro caber num turno."
+      nota="Quatro Ações num turno de três: ele sempre atravessa turnos. Cada etapa compra uma coisa diferente — potência, acerto contra quem se mexe, ângulo — e a quarta é o disparo, que pode errar como qualquer outro. A linha tracejada é onde o seu turno acaba, e é por isso que levar dano no meio cobra o teste de Espírito da Interrupção (CD 10 + o Bônus de Rank de quem te acertou). O talento Etapa Encurtada junta as duas primeiras e faz o tiro caber num turno."
       rolavel
     >
       <ol className="acende-em-sequencia flex min-w-max items-stretch gap-2 pt-1">

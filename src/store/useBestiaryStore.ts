@@ -252,6 +252,25 @@ export const useBestiaryStore = create<BestiaryState>()(
               // `criaturaDoMolde` nem sabe que o campo existe, e sem repassar
               // aqui "Recalibrar" apagaria a foto junto dos números.
               portrait: c.portrait,
+              pastaId: c.pastaId,
+              // O BLOCO DO MONSTRO é escolha do Mestre, não número de molde.
+              //
+              // Recalibrar existe pra devolver PV, CA, acerto e CD à tabela do
+              // Apêndice G — e mais nada. O arquétipo, o tamanho, as perícias e
+              // as resistências são a IDENTIDADE da criatura: um Mestre que
+              // apertasse o botão pra consertar o PV e descobrisse que o
+              // necromante dele virou bruto genérico não apertaria o botão de
+              // novo. Atributos, Percepção e Deslocamento não aparecem aqui
+              // porque são derivados: eles se recalibram sozinhos quando o
+              // patamar muda.
+              arquetipo: c.arquetipo,
+              tamanho: c.tamanho,
+              deslocamento: c.deslocamento,
+              movimentoEspecial: c.movimentoEspecial,
+              pericias: c.pericias,
+              resistencias: c.resistencias,
+              imunidades: c.imunidades,
+              sentido: c.sentido,
             };
           }),
         })),

@@ -11,11 +11,13 @@ import { Background, SubtableEntry, SubtableId } from "@/lib/types";
  *
  * O problema que a auditoria de 2026-08-28 achou aqui é diferente do das raças:
  * a tabela d100 tem uma curva de raridade explícita (rollRange) e a curva de
- * PODER estava quase INVERTIDA na cauda. Os oito por cento mais raros da tabela
- * (93-100: Miko, Olho Místico, Gênio) valiam em média ~1,3 PC, enquanto o
- * Estudioso Precoce (8%) valia 8,35 na criação e o Fator Laplace (6%) valia
- * 14,75 — os dois puxados por bônus de PM absurdos (+14 e +20 numa reserva
- * inicial de 12). Simultaneamente, o resultado MAIS comum da tabela (Plebeu,
+ * PODER estava quase INVERTIDA na cauda. Nas faixas daquela época, os oito por
+ * cento mais raros da tabela (93-100: Miko, Olho Místico, Gênio) valiam em média
+ * ~1,3 PC, enquanto o Estudioso Precoce (8%) valia 8,35 na criação e o Fator
+ * Laplace (então 6%) valia 14,75 — os dois puxados por bônus de PM absurdos (+14
+ * e +20 numa reserva inicial de 12). As faixas de hoje, sem sobreposição e
+ * somando 100, estão no comentário do Fator Laplace: Miko 87-91 (5%), Fator
+ * Laplace 92-95 (4%), Olho Místico 96-98 (3%), Gênio 99-100 (2%). Simultaneamente, o resultado MAIS comum da tabela (Plebeu,
  * 15%) era o mais fraco de todos e desabava pra 0,73 PC no Imperador.
  * Correções abaixo, cada uma comentada no lugar.
  */
@@ -34,7 +36,7 @@ export const BACKGROUNDS: Background[] = [
     bonusSkillChoices: 2,
     startingGold: "2d4",
     traits: [
-      "2 Perícias ligadas a trabalhos mundanos (Ofícios, Culinária, Lidar com Animais ou Natureza).",
+      "Suas 2 Perícias à escolha saem de trabalhos mundanos: Ofícios (Culinária, Carpintaria, Forja...), Lidar com Animais ou Natureza.",
       "+1 em Vigor, permanente — corpo calejado por uma infância inteira de trabalho braçal.",
     ],
   },
@@ -46,7 +48,7 @@ export const BACKGROUNDS: Background[] = [
     bonusSkillChoices: 2,
     startingGold: "1d4",
     traits: [
-      "2 Perícias de sobrevivência urbana (Furtividade, Ladinagem, Enganação ou Acrobacia).",
+      "Suas 2 Perícias à escolha saem da sobrevivência urbana: Furtividade, Ladinagem, Enganação ou Acrobacia.",
       "+1 em Agilidade, permanente.",
       "Instinto de Rua: Vantagem em Percepção para notar armadilhas, emboscadas, bolsos alheios e vigias — ninguém sobrevive na rua sem aprender a ler uma esquina.",
     ],
@@ -60,7 +62,7 @@ export const BACKGROUNDS: Background[] = [
     startingGold: "0",
     traits: [
       "+6 PV Máximos e +1 em Vigor, permanentes.",
-      "Rola Sobrevivência com Vantagem para achar comida, água e abrigo.",
+      "Criado pelo mato: Vantagem Absoluta (Cap. 1, §4) em Sobrevivência para achar comida, água e abrigo.",
     ],
   },
   {
@@ -72,7 +74,7 @@ export const BACKGROUNDS: Background[] = [
     startingGold: "4d4+10",
     traits: [
       "+1 em Intelecto, permanente.",
-      "Sexto Sentido Comercial: sempre sabe o preço justo de mercado de qualquer item comum, e tem Vantagem em testes pra perceber quando alguém está blefando numa negociação.",
+      "Sexto Sentido Comercial: sempre sabe o preço justo de mercado de qualquer item comum, e tem Vantagem Absoluta (Cap. 1, §4) em Intuição pra perceber blefe numa negociação.",
     ],
   },
   {
@@ -100,11 +102,11 @@ export const BACKGROUNDS: Background[] = [
     // atributo que ALIMENTA a reserva de PM (Cap. 4 §1) e o BC de Cura,
     // Barreira, Desintoxicação e Invocação — as quatro escolas de templo — e
     // ainda serve de resistência mental pra um acólito que nunca conjurou nada.
-    bonuses: { attributes: { espirito: 1 }, maxMp: 4 },
-    fixedSkills: ["Religião", "Medicina Básica"],
+    bonuses: { attributes: { espirito: 1 }, mpPerMagicRank: 1 },
+    fixedSkills: ["Religião", "Medicina"],
     startingGold: "2d4",
     traits: [
-      "+1 em Espírito e +4 PM Máximos, permanentes — a educação religiosa desperta uma afinidade latente com mana que nunca mais desaparece.",
+      "+1 em Espírito e +1 PM Máximo por Bônus de Rank de magia, permanentes — a educação religiosa desperta uma afinidade latente com mana que nunca mais desaparece. Sem nenhuma escola de magia aberta, são 0 PM: a afinidade existe, mas não tem onde correr.",
     ],
   },
   {
@@ -115,7 +117,7 @@ export const BACKGROUNDS: Background[] = [
     fixedSkills: ["Persuasão", "História"],
     startingGold: "6d4+20",
     traits: [
-      "Vantagem em testes sociais ao lidar com autoridades.",
+      "Vantagem Absoluta (Cap. 1, §4) em Persuasão ao lidar com autoridades.",
       "+1 em Espírito, permanente — comandar serviçais desde criança ensina presença antes de ensinar humildade.",
     ],
   },
@@ -127,12 +129,12 @@ export const BACKGROUNDS: Background[] = [
     // +117%) — um resultado de 8% da tabela entregando, sozinho, mais PM do que
     // a raça mais mágica do livro. Pela taxa do Cap. 1 §2 isso valia 14 PA, três
     // vezes e meia os 4 pontos que o jogador distribui na criação inteira. Com 8
-    // ele fica em +67%, empatado com o Fator Laplace corrigido logo abaixo — que
-    // é um resultado mais raro (6%) e traz duas Vantagens e +2 de atributo junto.
-    bonuses: { maxMp: 8, attributes: { intelecto: 1 } },
+    // ele fica em +67%. (Na época o Fator Laplace também dava PM fixo; hoje ele
+    // rola a LAPLACE_TABLE e é um resultado de 4%.)
+    bonuses: { mpPerMagicRank: 2, attributes: { intelecto: 1 } },
     fixedSkills: ["Arcanismo"],
     startingGold: "2d4",
-    traits: ["+8 PM Máximos e +1 em Intelecto, permanentes."],
+    traits: ["+2 PM Máximos por Bônus de Rank de magia e +1 em Intelecto, permanentes. Sem escola de magia aberta, o PM é 0."],
   },
   {
     id: "sobrevivente",
@@ -155,11 +157,11 @@ export const BACKGROUNDS: Background[] = [
   {
     id: "miko",
     name: "Miko (Abençoada/Amaldiçoada)",
-    rollRange: [87, 92],
+    rollRange: [87, 91],
     // Cinco das oito entradas da MIKO_TABLE têm `bonuses: {}` — não mexem em
     // número nenhum da ficha — e três delas carregam maldições pesadas o
     // bastante pra sair NEGATIVAS (Esquecimento, Telepatia, Confiança Absoluta).
-    // Resultado: o antecedente com 4% de chance, que o próprio texto descreve
+    // Resultado: o antecedente com 5% de chance (87-91), que o próprio texto descreve
     // como "cerca de 10 no mundo inteiro", valia em média 1,74 PC na criação e
     // 0,70 no Imperador — o pior da tabela d100, atrás do Plebeu de 15%. Um
     // piso de +1 Espírito no PRÓPRIO antecedente (a anomalia de mana que causa
@@ -178,14 +180,19 @@ export const BACKGROUNDS: Background[] = [
    {
     id: "fator-laplace",
     name: "Fator Laplace / Linhagem Antiga",
-    rollRange: [92, 94],
+    rollRange: [92, 95],
     // 2026-08-29: todos os bônus fixos saíram e o antecedente passou a rolar 1d4
     // na LAPLACE_TABLE. Duas razões.
     //
-    // A primeira é a que o usuário apontou: o Fator Laplace (6% da tabela) estava
-    // mecanicamente ACIMA do Gênio (2%, o resultado mais raro do livro). Um
-    // antecedente três vezes mais comum não pode ser o mais forte — a curva de
+    // A primeira é a que o usuário apontou: o Fator Laplace (na época, 6% da
+    // tabela) estava mecanicamente ACIMA do Gênio (2%, o resultado mais raro do
+    // livro). Um antecedente mais comum não pode ser o mais forte — a curva de
     // raridade e a de poder têm que apontar pro mesmo lado.
+    //
+    // Revisão do livro: as faixas da cauda se sobrepunham (92, 94 e 98 serviam a
+    // dois antecedentes, e a tabela somava 103%). Refeitas sem sobreposição e
+    // somando 100: Miko 87-91 (5%), Fator Laplace 92-95 (4%), Olho Místico 96-98
+    // (3%), Gênio 99-100 (2%). Roleta e Entrevista leem a largura da faixa.
     //
     // A segunda é de identidade. "Linhagem Antiga" é a única entrada da tabela
     // cujo texto promete algo IMPREVISÍVEL acordando no sangue, e ela era a mais
@@ -198,7 +205,7 @@ export const BACKGROUNDS: Background[] = [
     startingGold: "1d4",
     traits: [
       "Role 1d4 na Tabela do Fator Laplace: a linhagem acordou de um jeito, e não é o mesmo em dois portadores. A mutação sorteada é permanente.",
-      "Conjuração Silenciosa desde o nascimento (Cap. 2, seção 2): você manipula mana sem palavra alguma — ninguém te ensinou, você nunca soube fazer diferente. Sofre as penalidades normais do método (metade dos dados, área reduzida em um terço); quem não as sofre é o Gênio, e só ele.",
+      "Conjuração Silenciosa desde o nascimento (Cap. 2, seção 2): você manipula mana sem palavra alguma — ninguém te ensinou, você nunca soube fazer diferente. Sofre as penalidades normais do método (metade dos dados, área reduzida em um terço); o único antecedente que nasce sem elas, em qualquer escola, é o Gênio.",
       "Vantagem em testes de resistência de Espírito contra Medo, Amedrontado e qualquer efeito que tente controlar sua mente: o que quer que exista na sua linhagem, não se deixa comandar.",
       "Desvantagem em Persuasão com desconhecidos — pessoas comuns sentem, mesmo sem saber o porquê, que algo em você quer distância.",
     ],
@@ -207,9 +214,9 @@ export const BACKGROUNDS: Background[] = [
   {
     id: "olho-mistico",
     name: "Olho Místico Inato",
-    rollRange: [94, 98],
+    rollRange: [96, 98],
     // As DEZ entradas da OLHO_TABLE têm `bonuses: {}`: o segundo resultado mais
-    // raro do livro (2 em 100) não mexia em um único número da ficha. Pior, era
+    // raro do livro (3 em 100, 96-98) não mexia em um único número da ficha. Pior, era
     // autocontraditório — todo olho roda a PM (Previsão 3 PM/turno, Vazio
     // Absoluto 5 PM/turno, Olhos Que Tudo Veem 10 PM de uma vez) e o
     // antecedente não concedia PM nenhum, num personagem recém-criado que tem
@@ -217,24 +224,26 @@ export const BACKGROUNDS: Background[] = [
     // +6 PM fazem o olho ser jogável desde a primeira sessão (12 → 18, seis
     // turnos de Previsão em vez de quatro) e +1 de Intelecto é o valor que não
     // decai — e é o atributo certo, já que todo Magan aqui revela informação.
-    bonuses: { attributes: { intelecto: 1 }, maxMp: 6 },
+    bonuses: { attributes: { intelecto: 1 }, mpPerMagicRank: 1 },
     startingGold: "2d4",
     requiresSubtable: "olho",
     traits: [
-      "+1 em Intelecto e +6 PM Máximos, permanentes — o olho não vem sozinho: o corpo que o carrega já nasce com a mana de sobra que ele consome.",
+      "+1 em Intelecto e +1 PM Máximo por Bônus de Rank de magia, permanentes — o olho não vem sozinho: o corpo que o carrega já nasce com a mana de sobra que ele consome. Sem escola de magia aberta, o olho roda só com a reserva base.",
       "Role 1d10 na Tabela de Olhos Místicos para definir o Magan.",
     ],
   },
   {
     id: "genio",
     name: "Gênio (Conjuração Silenciosa)",
-    rollRange: [98, 100],
+    rollRange: [99, 100],
     // 99-100 é o resultado mais raro da tabela inteira (2%) e precisa ser o mais
     // forte, sem discussão — foi o pedido explícito do usuário em 2026-08-29,
-    // depois de o Fator Laplace (6%) estar acima dele.
+    // depois de o Fator Laplace (então 6%, hoje 4%) estar acima dele.
     //
     // Onde o Gênio ganha, e por que é definitivo: ele é o ÚNICO personagem do
-    // livro que conjura em silêncio com dano cheio e área cheia. Pela regra do
+    // livro que conjura em silêncio com dano cheio e área cheia em QUALQUER
+    // escola desde a criação (talentos e Maestrias que tiram a penalidade valem
+    // só pra própria escola e custam PA). Pela regra do
     // Cap. 2 §2, a Conjuração Silenciosa custa menos Ações que a Padrão E dá um
     // Bônus de Forma grátis — o preço disso são metade dos dados e um terço da
     // área. O Gênio simplesmente não paga esse preço. Na prática ele conjura a
@@ -249,8 +258,8 @@ export const BACKGROUNDS: Background[] = [
     bonuses: { attributes: { intelecto: 1, espirito: 1 } },
     startingGold: "2d4",
     traits: [
-      "Conjuração Silenciosa (Cap. 2, seção 2) sem sofrer a redução de dano nem a redução de área — você é o único no livro que conjura em silêncio com o feitiço inteiro. O custo de Ação reduzido e o Bônus de Forma gratuito continuam valendo: você não perde nada e ganha os dois.",
-      "Prodígio: a Conjuração Silenciosa gratuita da primeira magia de cada turno vale até o rank AVANÇADO, não só o Principiante (Cap. 2, §2). Todo outro conjurador silencioso do mundo tem essa cortesia só no patamar mais baixo que conhece.",
+      "Conjuração Silenciosa (Cap. 2, seção 2) sem sofrer a redução de dano nem a redução de área — você é o único que conjura em silêncio com o feitiço inteiro em QUALQUER escola desde a criação. Talentos e Maestrias que tiram essa penalidade valem só pra própria escola. O custo de Ação reduzido e o Bônus de Forma gratuito continuam valendo: você não perde nada e ganha os dois.",
+      "Prodígio: a Conjuração Silenciosa gratuita da primeira magia de cada turno vale até o rank AVANÇADO, não só o Principiante (Cap. 2, §2). Todo outro conjurador tem essa cortesia só no Principiante, até uma Maestria de Imperador dizer o contrário.",
       "+1 em Intelecto e +1 em Espírito, permanentes — precisão e reserva ao mesmo tempo, que é o que fez de você um gênio antes de qualquer aula.",
     ],
   },
@@ -263,7 +272,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     name: "Força Sobre-humana (Zanoba)",
     // +3 de Força era o maior bônus de atributo do livro inteiro (o segundo é o
     // +2 do Ogro): 75% do orçamento de criação vindo de UM resultado de 1d8
-    // dentro de um antecedente de 4%. Com o teto de criação em 4, isso punha o
+    // dentro de um antecedente de 5% (Miko, 87-91). Com o teto de criação em 4, isso punha o
     // personagem em Força 7 já na primeira sessão — +7 no acerto E +7 no dano de
     // todo golpe, contra os +4 de qualquer outra ficha. A maldição não paga por
     // isso: o Cap. 1 §4 diz que "Vigor não governa nenhuma perícia", então a
@@ -281,7 +290,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     name: "Leitura de Memórias",
     bonuses: {},
     traits: [
-      "Abençoada: 1 Ação de toque lê memórias superficiais e intenções (Vantagem em Intuição/Interrogatório).",
+      "Abençoada: 1 Ação de toque lê memórias superficiais e intenções (Vantagem em Intuição e Intimidação contra quem você tocou, até o fim da cena).",
       "Maldição: custa 3 PM por uso.",
     ],
   },
@@ -292,7 +301,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     bonuses: {},
     traits: [
       "Abençoada: 1x/semana rebobina o estado de um objeto inanimado em até 24h.",
-      "Maldição: drena 50% do PM Máximo atual; não funciona em criaturas vivas.",
+      "Maldição: gasta metade dos seus PM Máximos (arredondado pra cima), que precisam estar disponíveis na hora; não funciona em criaturas vivas.",
     ],
   },
   {
@@ -302,7 +311,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     bonuses: {},
     traits: [
       "Abençoada: lê pensamentos superficiais e fala telepaticamente num raio de 18m.",
-      "Maldição: fisicamente muda; Desvantagem em Iniciativa.",
+      "Maldição: fisicamente muda; Desvantagem em Iniciativa. Muda não é impedida de conjurar: toda magia sua sai obrigatoriamente em Conjuração Silenciosa (Cap. 2, §2), pagando a penalidade dela — metade dos dados, arredondado pra cima, e um terço menos de área. Você nunca ganha o Bônus de Recitação Perfeita, porque não há voz pra recitar. É o preço, e é caro; sem esta linha, o resultado mais raro da tabela proibia magia sem dizer isso.",
     ],
   },
   {
@@ -322,7 +331,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     bonuses: {},
     traits: [
       "Abençoada: Vantagem Absoluta em Furtividade (presença nula).",
-      "Maldição: quase ninguém lembra do seu rosto/nome/existência 10min após sair do campo de visão.",
+      "Maldição: 10 minutos depois de você sair do campo de visão de alguém, essa pessoa esquece seu rosto, seu nome e que você existiu. Só lembra quem já passou um Descanso Longo com você.",
     ],
   },
   {
@@ -335,10 +344,11 @@ export const MIKO_TABLE: SubtableEntry[] = [
     // entrada, num mesmo dado. 10 mantém o "reator infinito" (12 → 22 PM,
     // +83%, ainda o maior bônus de PM de qualquer resultado do livro) sem que
     // rolar 7 no 1d8 valha três vezes rolar 6.
-    bonuses: { maxMp: 10 },
+    bonuses: { mpPerMagicRank: 3 },
     traits: [
-      "Abençoada: +10 PM Máximos (reator infinito).",
-      "Maldição: exige 'liberação' semanal; falhar aplica 1 nível de Exaustão por dia até a morte.",
+      "Abençoada: +3 PM Máximos por Bônus de Rank de magia (reator infinito). No Imperador são +18; sem escola de magia aberta, 0.",
+      "Enquanto você não tiver nenhuma escola de magia aberta, a maldição da liberação fica suspensa: a bênção e o preço chegam juntos, e não a maldição primeiro.",
+      "Maldição: a mana precisa sair. Liberação é gastar 10 PM ou mais numa única cena. Se passar uma semana sem liberação, você ganha 1 nível de Exaustão por dia, até a morte, e toda essa Exaustão some na primeira liberação.",
     ],
   },
   {
@@ -348,7 +358,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     bonuses: { maxHp: 10, armorClass: 2 },
     traits: [
       "Abençoada: +2 na CA e +10 PV Máximos (aura primordial).",
-      "Maldição: todo ser que sinta mana sofre ódio instintivo e paranóico ao te ver.",
+      "Maldição: quem enxerga mana (todo Superd, todo mago Avançado ou superior) sente ódio instintivo ao te ver: começa hostil a você e, em combate, te escolhe como alvo prioritário.",
     ],
   },
 ];
@@ -359,16 +369,16 @@ export const MIKO_TABLE: SubtableEntry[] = [
 // sistema, junto do Terceiro Olho do Superd, que ainda fazia isso. Ativar o Magan
 // custa 1 das 3 Ações do turno, como qualquer outra coisa; manter, nada.
 export const OLHO_TABLE: SubtableEntry[] = [
-  { id: "previsao", roll: 1, name: "Olho da Previsão", bonuses: {}, traits: ["1 Ação pra ativar, 3 PM/turno: vê 2s no futuro (Vantagem em ataques, oponentes têm Desvantagem contra você). Mais de 3 turnos seguidos causa Tontura por 1h."] },
+  { id: "previsao", roll: 1, name: "Olho da Previsão", bonuses: {}, traits: ["1 Ação pra ativar, 3 PM/turno: vê 2s no futuro (Vantagem em ataques, oponentes têm Desvantagem contra você). Mais de 3 turnos seguidos deixa você Desequilibrado por 1 hora."] },
   { id: "poder-magico", roll: 2, name: "Olho do Poder Mágico", bonuses: {}, traits: ["1 Ação, 2 PM/cena: vê fluxo de mana, invisíveis mágicos, identifica itens mágicos e nível de perigo."] },
   { id: "clarividencia", roll: 3, name: "Olho da Clarividência", bonuses: {}, traits: ["1 Ação, 1 PM/km: visão telescópica tipo drone. Corpo físico fica Cego e indefeso (CA 10) enquanto em uso."] },
   { id: "permeacao", roll: 4, name: "Olho de Permeação", bonuses: {}, traits: ["1 Ação, 2 PM/cena: Raio-X através de paredes/roupas (9m). Não atravessa criaturas vivas ou materiais densos em mana."] },
   { id: "identificacao", roll: 5, name: "Olho de Identificação", bonuses: {}, traits: ["1 Ação, 1 PM/alvo: revela fraquezas, nome do feitiço e efeitos. Segredos divinos/de outros continentes aparecem como 'Desconhecido'."] },
-  { id: "absorcao", roll: 6, name: "Olho da Absorção", bonuses: {}, traits: ["Reação, PM igual ao da magia absorvida: anula magia inimiga. Lançar magia com o olho descoberto suga o próprio feitiço (perde ação, PM e a magia falha)."] },
-  { id: "tudo-veem", roll: 7, name: "Olhos Que Tudo Veem", bonuses: {}, traits: ["Ritual de 10min, 10 PM, 1x/semana: rastreia alguém no globo ou revela planta de masmorra. Deixa Visão Embaçada (-2 em acertos físicos) pelo resto do dia."] },
-  { id: "vazio-absoluto", roll: 8, name: "Olho do Vazio Absoluto", bonuses: {}, traits: ["1 Ação, 5 PM/turno mantido: barreira de repulsão de 9m. Não pode atacar ou se mover enquanto mantiver."] },
-  { id: "afeicao", roll: 9, name: "Olho de Afeição", bonuses: {}, traits: ["Passiva se descoberto, 1 PM/hora: quem olha nos seus olhos faz teste de Espírito com Desvantagem ou desenvolve infatuação perigosa (risco de obsessão yandere)."] },
-  { id: "rastreador", roll: 10, name: "Olho Rastreador", bonuses: {}, traits: ["1 Ação de Busca, 2 PM (recente) / 10 PM (décadas): revela rastros de vida, segue pegadas por continentes. Rastreio antigo tem cooldown de 1x/mês."] },
+  { id: "absorcao", roll: 6, name: "Olho da Absorção", bonuses: {}, traits: ["Reação, PM igual ao da magia absorvida: anula magia inimiga. Cobrir ou descobrir o olho custa 1 Ação. Lançar magia com o olho descoberto suga o próprio feitiço (perde as Ações, o PM e a magia falha)."] },
+  { id: "tudo-veem", roll: 7, name: "Olhos Que Tudo Veem", bonuses: {}, traits: ["Ritual de 10min, 10 PM, 1x/semana: rastreia alguém no globo ou revela planta de masmorra. A vista custa a voltar: você fica Desequilibrado pelo resto do dia."] },
+  { id: "vazio-absoluto", roll: 8, name: "Olho do Vazio Absoluto", bonuses: {}, traits: ["1 Ação, 5 PM/turno mantido: esfera de repulsão de 9m de raio centrada em você. Criaturas e projéteis não entram na esfera; quem já estava dentro é empurrado para a borda, menos quem você escolher ao ativar. Não pode atacar ou se mover enquanto mantiver."] },
+  { id: "afeicao", roll: 9, name: "Olho de Afeição", bonuses: {}, traits: ["1 Ação e 1 PM: uma criatura que te veja faz teste de resistência de Espírito contra CD 8 + seu Espírito + seu Maior Bônus de Rank; se falhar, por 1 hora não te ataca e te ajuda quando puder. O efeito acaba se você ou um aliado seu causar dano a ela. Maldição: enquanto o olho estiver descoberto, todo PdM que cruzar seu olhar faz o mesmo teste sem custo nenhum, e quem falha, em vez disso, fica obcecado por você (o Mestre conduz a obsessão). Cobrir ou descobrir o olho custa 1 Ação."] },
+  { id: "rastreador", roll: 10, name: "Olho Rastreador", bonuses: {}, traits: ["1 Ação, 2 PM (recente) / 10 PM (décadas): revela rastros de vida, segue pegadas por continentes. Rastreio antigo tem cooldown de 1x/mês."] },
 ];
 
 export function getBackgroundById(id: string | null): Background | undefined {
@@ -384,7 +394,7 @@ export function getBackgroundById(id: string | null): Background | undefined {
  * conhecimento e presença. Nenhuma toca em Conjuração Silenciosa: o que separa o
  * Fator Laplace do Gênio é justamente isso, e diluir essa fronteira desfaria a
  * correção inteira. Nenhuma face chega perto do pacote do Gênio, de propósito:
- * 6% da tabela não pode competir com 2%.
+ * 4% da tabela não pode competir com 2%.
  */
 export const LAPLACE_TABLE: SubtableEntry[] = [
   {
@@ -405,7 +415,7 @@ export const LAPLACE_TABLE: SubtableEntry[] = [
     bonuses: { attributes: { vigor: 1 } },
     traits: [
       "+1 em Vigor, permanente.",
-      "Uma vez por combate, ao chegar a 0 PV, você estabiliza automaticamente sem rolar o Fio da Vida (Cap. 4, §7) — a carne fecha antes de você decidir. Continua Inconsciente; só não morre.",
+      "Uma vez por combate, ao chegar a 0 PV, você fica Estabilizado na hora, sem rolar o Fio da Vida (Cap. 4, §7) — a carne fecha antes de você decidir. Continua Inconsciente, e sofrer dano a 0 PV ainda dá Marca da Morte e tira o Estabilizado, como pra qualquer um.",
       "Toda cicatriz sua reabre quando a linhagem é mencionada em voz alta perto de você. Não causa dano; causa perguntas.",
     ],
   },

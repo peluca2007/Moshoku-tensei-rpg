@@ -1,31 +1,9 @@
 # Progresso — Mushoku Tensei RPG
 
-**Última atualização:** 2026-09-13 — a 0.1.75 nerfou os PV das oito escolas de magia (as faixas dos
-três pilares se cruzavam: Terra fechava o Imperador com 99 PV contra 100 da Arquearia) e abriu o
-`check:sobrevivencia`, que mede o lado do sistema que APANHA — PV contra o molde de criatura do mesmo
-patamar. Ele achou uma coisa que o nerf não causou e que está no item 16 do `O-QUE-FALTA.md`: a
-sobrevivência cai do 1º ao 6º patamar nos **três** pilares, porque o dano das criaturas cresce ×12 e
-o PV cresce ×5,4.
-
-**Antes disso:** 2026-09-10 — vinte e duas versões num dia (0.1.17 → 0.1.38), fechando as vinte e
-duas frentes daquele levantamento — o `TAREFAS.md`, que foi apagado na 0.1.45 depois de as vinte e
-duas serem endereçadas. O site ganhou **busca global** nos 879 verbetes, telas de
-**404 e de erro** em português, o **link de ficha diagnosticado** (com colagem e QR), **compartilhar
-pela bandeja do celular** e **botão de instalar**, o **rolador em todas as rotas** com macro de
-Teste, as **condições como estado vivo** da ficha, **descanso e downtime jogáveis**, o **Painel do
-Mestre**, o **comparador de builds**, o **registro de sessão**, a **rolagem de perícia** e a **ficha
-imprimível**. O **Modo Mesa** saiu na 0.1.27 e foi **absorvido pela ficha na 0.1.36**, que é onde os
-passos de reserva e a faixa de "de quem é a vez" moram agora — na mesma versão em que a barra do topo
-caiu de dez destinos pra sete, com Iniciativa, Encontros e Comparador passando a morar nos cartões do
-Painel do Mestre.
-
-Sobraram três coisas, e as três precisam do autor: o iPhone do amigo, meia hora de NVDA, e a decisão
-sobre quanto PM o Descanso Curto devolve.
-Ver [`PATCH_NOTES.md`](PATCH_NOTES.md).
-
-> Este arquivo guarda **só o estado atual, o que falta e o porquê das decisões vivas**.
-> O histórico sessão a sessão vive no `git log`; o histórico de regras vive em `PATCH_NOTES.md`.
-> Ao terminar algo, mova para "Pronto" ou apague — não acumule uma entrada nova por sessão.
+> Este arquivo guarda **só o estado atual e o porquê das decisões vivas**.
+> O que falta fazer vive em [`O-QUE-FALTA.md`](O-QUE-FALTA.md); o histórico de regras vive no patch notes
+> do site (`src/data/patchNotes.ts`, visível em `/livro`). A regra do projeto está no `CLAUDE.md`: o livro
+> vem primeiro, e nada existe no site sem estar no livro.
 
 ---
 
@@ -70,61 +48,6 @@ mão duas vezes.
   landing e a textura de pergaminho. Toda ela passa por `Crest`, o mesmo medalhão. O favicon sai de
   `assets-fonte/icon-fonte.png` pelo `scripts/gerar-favicon.mjs`, que desde a 0.1.15 gera junto os
   três ícones do app instalável (192, 512 e o mascarado de 512).
-
----
-
-## Metas atuais
-
-**Elas vivem em [`O-QUE-FALTA.md`](O-QUE-FALTA.md), e só lá.** Esta seção repetia a lista inteira item
-a item, e duas listas da mesma coisa divergem — foi o que aconteceu: o `TAREFAS.md` (apagado na
-0.1.45) marcava como abertas oito frentes que já estavam entregues, e este arquivo tinha uma cópia
-delas com outras palavras.
-
-Aqui fica só o registro seco do que o projeto É; o que ainda falta fica lá.
-
-## Backlog
-
-**Auditado item a item em 2026-09-10.** Quatro entradas desta lista descreviam coisas que já estavam
-feitas — uma delas me custou duas investigações no mesmo dia. O que sobrou abaixo foi conferido
-contra o código na data acima; o que saiu está registrado no fim da seção, porque uma lista que só
-encolhe sem dizer por quê é tão pouco confiável quanto uma lista errada.
-
-- Sincronização em tempo real (WebSocket) para jogar online com a ficha atualizando ao vivo.
-- Bestiário: falta uma criatura de 6º patamar ("Ancião Demônio Esquecido", conceito esboçado). As
-  seis prontas vão do 1º ao 5º. Agora ela nasceria já com ações escritas, como as outras.
-- Não há Reação nem ação de Chefe (lendária) fora do turno: a rodada extra do chefe continua sendo a
-  única economia de ação que o motor conhece — e ela está declarada em `SIMPLIFICACOES`.
-- **Quatro condições fora da simulação**: Atolado, Desequilibrado, Marcado e Soterrado. As quatro
-  são sobre movimento, alcance e posição, e o motor não tem mapa — modelá-las exigiria dar ao
-  simulador uma noção de distância que ele nunca teve. Quebrantado saiu desta lista na 0.1.35.
-- **Um chefe do patamar do próprio grupo não ameaça ninguém.** Medido na 0.1.38, com a coluna de
-  dizimação nova: 0% no 3º patamar, 45% no 4º, 100% no 5º. O 3º não passa de 2% de dizimação nem com
-  PV ×4 e dano ×1,3 (25 combinações testadas), e o 5º não dá UMA vitória em nenhuma delas. Os três
-  pedem correções em direções opostas porque a tabela põe um grupo de 12 PA contra chefes de três
-  patamares diferentes. A decisão de design está no `O-QUE-FALTA` item 11; o conserto, se houver, é no
-  ajuste de Chefe do Apêndice G e não no script.
-- **O simulador enxerga o que é DANO, e pouco além.** Medido em 2026-09-10: das 601 habilidades e
-  talentos do livro, a lista de ações do motor tem 122 — e a distribuição é o problema, não a fração.
-  Cura e PV Temporários entraram na 0.1.37; o que segue invisível é **Espíritos e Feras (0 de 7)**,
-  **Bardo e Interação (0 de 6)**, **Navegação e Liderança (0 de 6)** e a maior parte de **Barreira e
-  Proteção (1 de 21)**. As quatro são economia de ação, interação social, informação e posição — não
-  dano —, e é por isso que o `O-QUE-FALTA` pede mesa de verdade justamente pra elas. **A lista de
-  pendências de playtest é a sombra do ponto cego da ferramenta**, e cada pedaço de motor que enxergar
-  mais tira uma linha daquela lista.
-- **A IA do simulador não dá valor a condição.** Ela escolhe pelo dano ESPERADO contra o alvo da vez
-  — desde a 0.1.35 com Dados de Arma, bônus fixo e chance de errar na conta —, e o valor de um
-  acúmulo continua fora dela. É por isso que Quebrantado, já modelado, não move um número sequer no
-  playtest das dez builds: as técnicas que empilham acúmulos quase nunca são as de maior dano, e a IA
-  nunca as escolhe. Uma IA que enxergasse o valor de uma condição é a próxima melhoria de verdade do
-  motor — e é ela que decide se Armas Pesadas está fraca ou se é só o robô que não sabe jogar de
-  Armas Pesadas.
-- Universidade de Ranoa como 4ª facção de Reputação. As três atuais (Reino Asura, Igreja de Millis,
-  Deuses Demônios) têm cinco degraus escritos cada; a quarta precisa dos cinco também.
-- Magias inatas de raça (ex: Howling da Raça Fera) só existem como texto em `traits`, não como
-  habilidade de verdade no Grimório — não dá pra rolar nem pra contar no dano por turno.
-- PDF via Typst: revisão visual fina (densidade dos cards, Deslocamento refletindo raça, BC em
-  multiclasse).
-- Tradução PT-BR / EN.
 
 ---
 

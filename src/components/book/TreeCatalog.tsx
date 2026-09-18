@@ -14,7 +14,8 @@ function ProgressionTable({ tree }: { tree: Tree }) {
   const rows = tree.ranks.map((rankDef) => {
     const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;
     const base = [label, `+${RANK_BONUS[rankDef.rank]}`, rankDef.hpDiceFormula];
-    if (isCorpo) base.push(rankDef.ptGained ? `+${rankDef.ptGained}` : "—", rankDef.weaponDieSteps ? `+${rankDef.weaponDieSteps} degrau(s)` : "—");
+    // Mesmo fallback de getPtPool (selectors.ts): campo ausente = +1 PT, desde o 1º patamar.
+    if (isCorpo) base.push(`+${rankDef.ptGained ?? 1}`, rankDef.weaponDieSteps ? `+${rankDef.weaponDieSteps} degrau(s)` : "—");
     if (isUtilidade) base.push(rankDef.ppGained ? `+${rankDef.ppGained}` : "—");
     return base;
   });

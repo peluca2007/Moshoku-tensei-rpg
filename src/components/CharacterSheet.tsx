@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Share2, Check, Thermometer } from "lucide-react";
+import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Share2, Check, Footprints } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { useSessionLog } from "@/store/useSessionLog";
-import { getGuildRank, getPaSpent, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
+import { getGuildRank, getPaSpent, getReserveBuyRates, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
 import { GUILD_RANK_ORDER } from "@/lib/types";
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
@@ -309,18 +309,39 @@ function AbilityQuickRoll({ label, hintText }: { label: string; hintText?: strin
   );
 }
 
-function BonusInput({ value, onChange }: { value: number; onChange: (value: number) => void }) {
+/**
+ * A compra de reserva da tabela do Cap. 1, §2 — 2 PA por +4×Bônus PV ou
+ * +2×Bônus PM.
+ *
+ * O `step` era 12 fixo e o título dizia "2 PA = +12", que é o valor do
+ * IMPERADOR. Um Principiante clicava na setinha e ganhava 12 PV por 2 PA numa
+ * ficha em que a regra dá 4. Agora os dois saem da taxa real (0.1.80).
+ */
+function BonusInput({
+  value,
+  onChange,
+  rate,
+  bloqueado,
+}: {
+  value: number;
+  onChange: (value: number) => void;
+  rate: number;
+  bloqueado?: string;
+}) {
   return (
-    <label className="flex shrink-0 flex-col items-center text-3xs font-semibold uppercase text-parchment-600 dark:text-parchment-400">
+    <label
+      className={`flex shrink-0 flex-col items-center text-3xs font-semibold uppercase ${bloqueado ? "text-parchment-400 dark:text-parchment-600" : "text-parchment-600 dark:text-parchment-400"}`}
+    >
       +PA
       <input
         type="number"
         min={0}
-        step={12}
+        step={rate}
         value={value}
+        disabled={!!bloqueado}
         onChange={(e) => onChange(Number(e.target.value))}
-        title="Comprado com PA (Cap. 1: 2 PA = +12)"
-        className="w-12 rounded border border-parchment-300 bg-parchment-50 px-1 py-1 text-center text-xs text-parchment-700 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200"
+        title={bloqueado ?? `Comprado com PA (Cap. 1, §2: 2 PA = +${rate})`}
+        className="w-12 rounded border border-parchment-300 bg-parchment-50 px-1 py-1 text-center text-xs text-parchment-700 outline-none focus:ring-2 focus:ring-wine-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200"
       />
     </label>
   );
@@ -358,6 +379,7 @@ export default function CharacterSheet() {
     overrides,
   } = character;
   const paSpent = getPaSpent(character);
+  const reserveRates = getReserveBuyRates(character);
   const attributeSum = ATTRIBUTES.reduce((sum, { key }) => sum + (attributeBase[key] ?? 0), 0);
   const guildRank = getGuildRank(character);
   const guildRankEstimated = isGuildRankEstimated(character);
@@ -399,13 +421,12 @@ export default function CharacterSheet() {
     maxMp,
     maxPt,
     maxPp,
-    maxCalor,
     currentHp,
     currentMp,
     currentPt,
     currentPp,
-    currentCalor,
     armorClass,
+    deslocamento,
     initiative,
   } = useCharacterDerived();
 
@@ -432,6 +453,7 @@ export default function CharacterSheet() {
         maxPt,
         maxPp,
         armorClass,
+        deslocamento,
         initiativeBonus: initiative.bonus,
       });
       const res = await fetch("/api/ficha-pdf", {
@@ -1049,7 +1071,13 @@ export default function CharacterSheet() {
               onCurrentChange={(v) => useCharacterStore.getState().setCurrentHp(v)}
               onMaxChange={(v) => useCharacterStore.getState().setOverride("maxHp", v)}
               onResetMax={() => useCharacterStore.getState().setOverride("maxHp", null)}
-              extra={<BonusInput value={bonusHp} onChange={(v) => useCharacterStore.getState().setBonusHp(v)} />}
+              extra={
+                <BonusInput
+                  value={bonusHp}
+                  rate={reserveRates.hpRate}
+                  onChange={(v) => useCharacterStore.getState().setBonusHp(v)}
+                />
+              }
               aoRegistrar={(delta) =>
                 useSessionLog.getState().registrar({
                   tipo: delta < 0 ? "dano" : "cura",
@@ -1069,7 +1097,18 @@ export default function CharacterSheet() {
               onCurrentChange={(v) => useCharacterStore.getState().setCurrentMp(v)}
               onMaxChange={(v) => useCharacterStore.getState().setOverride("maxMp", v)}
               onResetMax={() => useCharacterStore.getState().setOverride("maxMp", null)}
-              extra={<BonusInput value={bonusMp} onChange={(v) => useCharacterStore.getState().setBonusMp(v)} />}
+              extra={
+                <BonusInput
+                  value={bonusMp}
+                  rate={reserveRates.mpRate}
+                  bloqueado={
+                    reserveRates.mpBloqueado
+                      ? "Não rende nada enquanto o seu maior patamar de magia for Principiante ou Intermediário: o teto de PM do Cap. 4, §1 corta todo extra avulso. Libera no Avançado."
+                      : undefined
+                  }
+                  onChange={(v) => useCharacterStore.getState().setBonusMp(v)}
+                />
+              }
             />
             {(maxPt > 0 || overrides.maxPt !== undefined) && (
               <ResourceCard
@@ -1097,25 +1136,6 @@ export default function CharacterSheet() {
                 onResetMax={() => useCharacterStore.getState().setOverride("maxPp", null)}
               />
             )}
-            {/*
-              Calor só existe em Punho do Fogo — `maxCalor` já sai 0 de quem não
-              tem a árvore (getMaxCalor lê o `heatCap` do rank mais alto ali), a
-              mesma condição que PT/PP usam pra sumir da ficha de quem não tem
-              Corpo/Utilidade aberto.
-            */}
-            {(maxCalor > 0 || overrides.maxCalor !== undefined) && (
-              <ResourceCard
-                icon={<Thermometer className="h-5 w-5 text-white" />}
-                label="Calor · Punho do Fogo"
-                tone="bg-wine-700"
-                current={currentCalor}
-                max={maxCalor}
-                maxOverridden={overrides.maxCalor !== undefined}
-                onCurrentChange={(v) => useCharacterStore.getState().setCurrentCalor(v)}
-                onMaxChange={(v) => useCharacterStore.getState().setOverride("maxCalor", v)}
-                onResetMax={() => useCharacterStore.getState().setOverride("maxCalor", null)}
-              />
-            )}
             <EditableStatCard
               icon={<Shield className="h-5 w-5 text-white" />}
               label="CA"
@@ -1135,6 +1155,38 @@ export default function CharacterSheet() {
               onReset={() => useCharacterStore.getState().setOverride("initiative", null)}
               suffix={initiative.hasAdvantage ? "(Vantagem)" : undefined}
             />
+            {/*
+              DESLOCAMENTO (0.1.90) — o número que a mesa mais pergunta depois da
+              CA, porque toda rodada começa com alguém decidindo se alcança.
+              Não é editável: ele é 9 m (Cap. 4, §1) e o que muda nele são as
+              condições logo abaixo. Um campo editável aqui seria um convite a
+              digitar 6 e esquecer por quê.
+            */}
+            <div
+              title="Cap. 4, §1: 9 metros, exceto onde a raça indicar outro. Atolado corta pela metade; Congelado e Paralisado zeram."
+              className="surface flex items-center gap-3 rounded-xl border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-900/70"
+            >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-700 shadow-inner ring-1 ring-black/5">
+                <Footprints className="h-5 w-5 text-white" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-2xs font-bold uppercase tracking-widest text-parchment-600 dark:text-parchment-400">
+                  Deslocamento
+                </p>
+                <div className="flex items-baseline gap-1">
+                  <span
+                    className={`tabular font-display text-2xl font-black leading-tight ${
+                      deslocamento === 9
+                        ? "text-parchment-900 dark:text-parchment-50"
+                        : "text-wine-600 dark:text-wine-300"
+                    }`}
+                  >
+                    {String(deslocamento).replace(".", ",")}
+                  </span>
+                  <span className="text-xs text-parchment-600 dark:text-parchment-400">m</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/*

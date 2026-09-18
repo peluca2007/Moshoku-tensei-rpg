@@ -30,9 +30,15 @@
  * `regua: false` marca as colunas que o próprio livro diz NÃO serem uma
  * medida de dano, e que por isso o check não verifica:
  *
- * - Cura, Desintoxicação e Barreira — "não deveriam estar nesta tabela; estão
- *   só pra deixar claro que, se você escolher uma delas esperando causar dano,
- *   escolheu errado" (Apêndice C).
+ * - Desintoxicação e Barreira — continuam fora da régua (Apêndice C).
+ * - Cura — desde a Luz de Dois Gumes (Maestria de 1º patamar) a coluna TEM
+ *   número: é o dano radiante que cada magia de cura causaria virada contra um
+ *   hostil (Cura ~10, Prontidão ~12, Cura Suprema ~22, Cura Radiante ~32,
+ *   Julgamento ~56 em área, Luz Absoluta ~90 em área). Ela segue `regua: false`
+ *   porque o check lê `damage.normal`, e o campo da Cura descreve PV curados
+ *   com o dobro da Ferida Fresca embutido — que a Luz de Dois Gumes NÃO aplica.
+ *   Ligar o check aqui compararia a régua contra um número que a luz nunca
+ *   entrega.
  * - Escudos — "pressupõe todas as Ações gastas defendendo. Um Defensor
  *   Imperador que ESCOLHA atacar faz perto de 48 por turno, não 18. A coluna
  *   mede o que ele faz no papel dele, não o teto dele."
@@ -96,24 +102,40 @@ export const COLUNAS_CORPO: ColunaDano[] = [
   { treeId: "furtividade-e-armadilhas", label: "Ladino" },
   { treeId: "navegacao-e-lideranca", label: "Tático" },
   { treeId: "bardo-e-interacao", label: "Bardo" },
+  /*
+   * As duas híbridas. A régua dizia medir "toda árvore" e deixava de
+   * fora justamente o Punho do Fogo, a árvore mexida por último. A linha é o
+   * patamar NA HÍBRIDA, e não o do personagem: quem abre o 1º do Vendaval já é
+   * Avançado no Norte e no Vento, e quem abre o 1º do Punho já é Intermediário
+   * no Lutador e no Fogo — por isso as duas começam acima das árvores-mãe.
+   * São estimativas a partir das colunas do Norte e do Lutador, não medições.
+   */
+  { treeId: "vendaval", label: "Vendaval" },
+  { treeId: "punho-de-fogo", label: "Punho" },
 ];
 
 export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = [
-  { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "—", desintoxicacao: "~12", barreira: "—", invocacao: "~13" } },
-  { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "—", desintoxicacao: "~13", barreira: "—", invocacao: "~24" } },
-  { patamar: "3º", porArvore: { agua: "~30", fogo: "~40", vento: "~32", terra: "~36", cura: "—", desintoxicacao: "~16", barreira: "—", invocacao: "~38" } },
-  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "—", desintoxicacao: "~17", barreira: "—", invocacao: "~55" } },
-  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~40", desintoxicacao: "~34", barreira: "~30", invocacao: "~80" } },
-  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~55", desintoxicacao: "~36", barreira: "~40", invocacao: "~110" } },
+  { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "~10", desintoxicacao: "~12", barreira: "—", invocacao: "~13" } },
+  { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "~12", desintoxicacao: "~13", barreira: "—", invocacao: "~24" } },
+  // Água no 3º subiu de ~30 para ~44 em 0.1.87: a Quebra de Gelo passou a
+  // cobrar pelo Congelado (+3d8 e acerto automático contra alvo congelado), que
+  // era o pagamento que a escola prometia e nunca entregava. O número alto só
+  // acontece com o combo inteiro montado — molhar, congelar, estilhaçar —, e é
+  // exatamente isso que a régua deve mostrar: a Água paga em turnos e recebe de
+  // uma vez.
+  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~16", barreira: "—", invocacao: "~38" } },
+  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~17", barreira: "—", invocacao: "~55" } },
+  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~34", barreira: "~30", invocacao: "~80" } },
+  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~36", barreira: "~40", invocacao: "~110" } },
 ];
 
 export const DANO_POR_TURNO_CORPO: DanoPorTurnoLinha[] = [
-  { patamar: "1º", porArvore: { "deus-da-espada": "~25", "deus-do-norte": "~19", "deus-da-agua-corpo": "~11", arquearia: "~22", "armas-pesadas": "~21", "cavalaria-e-escudos": "~10", "furtividade-e-armadilhas": "~22", "navegacao-e-lideranca": "~18", "bardo-e-interacao": "~16" } },
-  { patamar: "2º", porArvore: { "deus-da-espada": "~34", "deus-do-norte": "~25", "deus-da-agua-corpo": "~26", arquearia: "~34", "armas-pesadas": "~32", "cavalaria-e-escudos": "~13", "furtividade-e-armadilhas": "~29", "navegacao-e-lideranca": "~24", "bardo-e-interacao": "~21" } },
-  { patamar: "3º", porArvore: { "deus-da-espada": "~62", "deus-do-norte": "~34", "deus-da-agua-corpo": "~40", arquearia: "~48", "armas-pesadas": "~44", "cavalaria-e-escudos": "~16", "furtividade-e-armadilhas": "~36", "navegacao-e-lideranca": "~30", "bardo-e-interacao": "~26" } },
-  { patamar: "4º", porArvore: { "deus-da-espada": "~78", "deus-do-norte": "~42", "deus-da-agua-corpo": "~60", arquearia: "~62", "armas-pesadas": "~58", "cavalaria-e-escudos": "~19", "furtividade-e-armadilhas": "~43", "navegacao-e-lideranca": "~36", "bardo-e-interacao": "~31" } },
-  { patamar: "5º", porArvore: { "deus-da-espada": "~98", "deus-do-norte": "~55", "deus-da-agua-corpo": "~85", arquearia: "~78", "armas-pesadas": "~74", "cavalaria-e-escudos": "~23", "furtividade-e-armadilhas": "~50", "navegacao-e-lideranca": "~42", "bardo-e-interacao": "~36" } },
-  { patamar: "6º", porArvore: { "deus-da-espada": "~118", "deus-do-norte": "~87", "deus-da-agua-corpo": "0 a ∞", arquearia: "~91", "armas-pesadas": "~95", "cavalaria-e-escudos": "~27", "furtividade-e-armadilhas": "~55", "navegacao-e-lideranca": "~47", "bardo-e-interacao": "~40" } },
+  { patamar: "1º", porArvore: { "deus-da-espada": "~25", "deus-do-norte": "~19", "deus-da-agua-corpo": "~11", arquearia: "~22", "armas-pesadas": "~21", "cavalaria-e-escudos": "~10", "furtividade-e-armadilhas": "~22", "navegacao-e-lideranca": "~18", "bardo-e-interacao": "~16", vendaval: "~36", "punho-de-fogo": "~40" } },
+  { patamar: "2º", porArvore: { "deus-da-espada": "~34", "deus-do-norte": "~25", "deus-da-agua-corpo": "~26", arquearia: "~34", "armas-pesadas": "~32", "cavalaria-e-escudos": "~13", "furtividade-e-armadilhas": "~29", "navegacao-e-lideranca": "~24", "bardo-e-interacao": "~21", vendaval: "~44", "punho-de-fogo": "~48" } },
+  { patamar: "3º", porArvore: { "deus-da-espada": "~62", "deus-do-norte": "~34", "deus-da-agua-corpo": "~40", arquearia: "~48", "armas-pesadas": "~44", "cavalaria-e-escudos": "~16", "furtividade-e-armadilhas": "~36", "navegacao-e-lideranca": "~30", "bardo-e-interacao": "~26", vendaval: "~58", "punho-de-fogo": "~62" } },
+  { patamar: "4º", porArvore: { "deus-da-espada": "~78", "deus-do-norte": "~42", "deus-da-agua-corpo": "~60", arquearia: "~62", "armas-pesadas": "~58", "cavalaria-e-escudos": "~19", "furtividade-e-armadilhas": "~43", "navegacao-e-lideranca": "~36", "bardo-e-interacao": "~31", vendaval: "~72", "punho-de-fogo": "~78" } },
+  { patamar: "5º", porArvore: { "deus-da-espada": "~98", "deus-do-norte": "~55", "deus-da-agua-corpo": "~85", arquearia: "~78", "armas-pesadas": "~74", "cavalaria-e-escudos": "~23", "furtividade-e-armadilhas": "~50", "navegacao-e-lideranca": "~42", "bardo-e-interacao": "~36", vendaval: "~88", "punho-de-fogo": "~95" } },
+  { patamar: "6º", porArvore: { "deus-da-espada": "~118", "deus-do-norte": "~87", "deus-da-agua-corpo": "0 a ∞", arquearia: "~91", "armas-pesadas": "~95", "cavalaria-e-escudos": "~27", "furtividade-e-armadilhas": "~55", "navegacao-e-lideranca": "~47", "bardo-e-interacao": "~40", vendaval: "~105", "punho-de-fogo": "~115" } },
 ];
 
 /** O número da célula, quando ela tem um. "—" e "0 a ∞" devolvem null de propósito. */

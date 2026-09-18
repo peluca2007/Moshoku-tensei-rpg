@@ -51,7 +51,9 @@ function patamarDe(id: string): string {
 }
 
 describe("A base", () => {
-  const tiro = habilidade("tiro-perfeito");
+  const tiro = { 
+    effect: arquearia.ranks.find(r => r.rank === "Principiante")!.mastery!.description 
+  };
 
   /*
    * Quatro Ações num turno de três NÃO é um erro de digitação — é o desenho
@@ -60,13 +62,21 @@ describe("A base", () => {
    * o que a árvore já tem de sobra.
    */
   it("custa 4 Ações de propósito, e explica por quê", () => {
-    expect(tiro.actions.normal).toBe(4);
-    expect(tiro.costNote, "desvio de custo sem costNote é indistinguível de erro").toBeTruthy();
-    expect(tiro.costNote).toMatch(/atravessa turnos/i);
+    expect(tiro.effect).toMatch(/4 Ações no total/i);
+    expect(tiro.effect).toMatch(/atravessa turnos/i);
   });
 
+  /*
+   * A ORDEM É A REGRA — 0.1.82.
+   *
+   * A Leitura passou pra frente dos Dedos porque a técnica só faz sentido
+   * nessa sequência: você puxa, lê pra onde o alvo vai, e só então coloca os
+   * dedos no vão que a leitura revelou. A etapa que fura Cobertura é a
+   * correção final, não a primeira. Este teste impede que alguém "arrume" a
+   * ordem de volta sem perceber que ela carrega sentido.
+   */
   it("as quatro etapas estão todas escritas, na ordem", () => {
-    const ordem = ["A Corda", "Os Dedos", "A Leitura", "A Solta"];
+    const ordem = ["A Corda", "A Leitura", "Os Dedos", "A Solta"];
     let cursor = -1;
     for (const etapa of ordem) {
       const onde = tiro.effect.indexOf(etapa);
@@ -97,13 +107,43 @@ describe("A base", () => {
    * pontaria: o alvo não soma Agilidade na CA, porque você atirou onde ele ia
    * estar.
    */
-  it("as etapas dão +2 e +1 degrau, e não +3 de uma vez", () => {
-    expect(tiro.effect).toMatch(/A Corda, Força: \+2 degraus/);
-    expect(tiro.effect).toMatch(/Os Dedos, Agilidade: \+1 degrau/);
-    expect(tiro.effect, "o +3 de A Corda foi dividido entre as duas etapas").not.toMatch(/\+3 degraus/);
+  /*
+   * O QUE CADA ETAPA COMPRA — 0.1.82, a pedido do autor.
+   *
+   * Três etapas, três moedas diferentes, e é isso que faz o sistema valer o
+   * tempo em vez de virar "um ataque grande":
+   *
+   * - A Corda compra POTÊNCIA: dois degraus na Escada de Dados (Cap. 3).
+   * - A Leitura compra ACERTO contra quem se mexe (a Agilidade sai da CA) e
+   *   mais um degrau.
+   * - Os Dedos compram ÂNGULO (a Cobertura some, menos a Total) e mais um
+   *   Dado de Arma inteiro.
+   *
+   * Degrau e Dado NÃO são a mesma moeda, e a diferença é o ponto: degrau anda
+   * na Escada de Dados do Cap. 3 e portanto cresce junto com o arqueiro; Dado
+   * inteiro é aditivo. A versão anterior dava +3 e +2 Dados e nenhum degrau, e
+   * o sistema inteiro ficava fora da escada, que é a moeda nativa do Corpo.
+   */
+  it("A Corda dá dois degraus, a Leitura mais um, e Os Dedos um Dado inteiro", () => {
+    expect(tiro.effect).toMatch(/A Corda, Força: o Dado de Arma deste disparo sobe DOIS degraus/);
+    expect(tiro.effect).toMatch(/o Dado de Arma sobe MAIS UM degrau/);
+    expect(tiro.effect).toMatch(/Os Dedos, Agilidade: \+1 Dado de Arma/);
   });
 
-  it("nenhuma etapa garante o acerto", () => {
+  /*
+   * Cobertura Total não é "cobertura grande": é a ausência de alvo (Cap. 4,
+   * §3). Um tiro que furasse a Total atravessaria a parede, e aí a regra de
+   * Cobertura não teria fundo nenhum.
+   */
+  it("Os Dedos furam Cobertura, mas nunca a Total", () => {
+    expect(tiro.effect).toMatch(/ignora Cobertura, exceto a Total/);
+  });
+
+  it("a Solta é uma jogada, e nenhuma etapa garante o acerto", () => {
+    expect(tiro.effect, "a Solta precisa aparecer como teste de ataque").toMatch(
+      /A Solta: o teste de ataque normal, contra a CA do alvo/
+    );
+    expect(tiro.effect).toMatch(/a Solta também é uma jogada/);
     expect(tiro.effect, "Vantagem no acerto saiu da Leitura").not.toMatch(/Vantagem no acerto/i);
     expect(tiro.effect, "o disparo voltou a poder ser aparado").not.toMatch(/não pode ser aparado/i);
     expect(tiro.effect).toMatch(/nenhuma etapa garante o acerto/i);
@@ -140,7 +180,6 @@ describe("A escada em torno dele", () => {
    * o sistema pelo nome de alguma etapa ou da própria técnica.
    */
   const linha = [
-    "tiro-perfeito",
     "respiracao-contada",
     "etapa-encurtada",
     "olho-que-ja-viu",
@@ -149,6 +188,10 @@ describe("A escada em torno dele", () => {
   ];
 
   it("toda entrada da linha fala do sistema pelo nome", () => {
+    // "tiro-perfeito" é a própria maestria agora
+    const maestriaText = arquearia.ranks.find(r => r.rank === "Principiante")!.mastery!.description;
+    expect(maestriaText).toMatch(/TIRO PERFEITO|Preparação/);
+
     for (const id of linha) {
       let texto: string;
       try {
@@ -161,7 +204,7 @@ describe("A escada em torno dele", () => {
   });
 
   it("a escada sobe: base no Principiante, fecho no Rei", () => {
-    expect(patamarDe("tiro-perfeito")).toBe("Principiante");
+    // tiro-perfeito está na maestria do Principiante
     expect(patamarDe("respiracao-contada")).toBe("Principiante");
     expect(patamarDe("etapa-encurtada")).toBe("Intermediário");
     expect(patamarDe("olho-que-ja-viu")).toBe("Avançado");

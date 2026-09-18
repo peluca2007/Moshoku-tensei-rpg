@@ -1,181 +1,102 @@
 # O que falta
 
-Estado em 2026-09-11, depois da 0.1.61. O `PROGRESS.md` é o registro completo e o `PATCH_NOTES.md` é
-o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu faria.
+Só o que **ainda não foi feito**. O que já foi feito sai daqui e fica registrado no patch notes do site
+(`src/data/patchNotes.ts`). Ordem: livro primeiro, depois mesa, depois aparelho, depois site.
 
-## Precisa de você (não dá pra fazer sozinho)
+## Livro (prioridade)
 
-1. **A faixa do livro está em baixa resolução.** `public/faixas/livro.jpg` tem 680×384 e é a menor das
-   oito — as outras estão entre 960 e 1900. Reprocurar `open grimoire spellbook candlelight` filtrando
-   por 1600px+; ampliar os 680 não cria detalhe, só borra.
+0. **O LIVRO NÃO TEM MAIS PENDÊNCIA** (0.1.91). As duas opções mortas que a revisão tinha separado
+   foram resolvidas — a Maestria da Invocação parou de apagar 6 PA de compras e a fraqueza declarada da
+   escola, e o Muro de Terra e a Fortaleza Rápida passaram a ter empregos diferentes em vez de uma ser a
+   outra com números maiores. A ficha também passou a cobrar os pré-requisitos de outra árvore, e o
+   `check:livro` impede que a frase volte a existir sem o campo.
 
-2. **Três coisas que ainda esperam aparelho** *(o grosso saiu em 2026-09-11: o autor navegou o site
-   num celular de verdade e o veredito foi "tá tudo certo no celular")*. O que sobrou não é
-   navegação, é caminho específico:
-   - **O link de ficha abre no iPhone do seu amigo?** A causa provável foi tratada na 0.1.19: o link
-     vai sempre comprimido, e `DecompressionStream` só existe no Safari do iOS 16.4+. Num iPhone mais
-     velho o erro virava "link inválido" sem explicar nada. Hoje a tela de importar diagnostica e
-     oferece saída — falta ver acontecer.
-   - **Compartilhar pela bandeja nativa.** Feito na 0.1.20, com quatro testes; mas o Chrome headless
-     não implementa Web Share, então o botão nunca foi visto aparecer de verdade.
-   - **O PDF sai certo do celular?** É o mesmo caminho do item 3, pela tela pequena.
+   O que sobra abaixo é **mesa, aparelho e site** — nada que se resolva lendo o livro.
 
-3. **Confirmar o PDF em produção.** O fix de `outputFileTracingIncludes` (binário do Typst na Vercel)
-   só é verificável no próximo deploy, e "exportável em PDF pra levar pra mesa" está escrito na
-   landing. O PDF agora também imprime o retrato do personagem — mais uma coisa pra conferir lá.
+0. **A mecânica de encontros foi refeita** (0.1.90): o Bloco do Monstro (Apêndice G) com arquétipos e
+   atributos derivados, o Orçamento de Encontro com medidor na tela, Resistência e Imunidade aplicadas
+   pelo motor, a ficha do monstro viajando para a Iniciativa, e o contador de dano. As decisões de
+   desenho estão em `ENCONTROS.md`; o resumo, no patch notes.
 
-4. **Validar a Distância Roubada na mesa** (Vendaval). A pergunta não é "18 metros é demais": é **o
-   Vendaval alguma vez apanha?** Ele desengaja de graça uma vez por turno e bate de 10,5 a 18m
-   mantendo o ataque como corpo a corpo. Se o inimigo nunca revida, o custo declarado da árvore nunca
-   é cobrado. Mede-se numa sessão: conte os ataques corpo a corpo que ACERTARAM o Vendaval e compare
+0. **A Revisão do Livro acabou** (0.1.80 a 0.1.89): os 230 achados foram aplicados, e o
+   `REVISAO-DO-LIVRO.md` foi apagado, como ele mesmo mandava. O histórico está no patch notes do site.
+
+## Balanceamento que só a mesa responde
+
+3. **O Vendaval alguma vez apanha?** Ele desengaja de graça uma vez por turno e bate de 10,5 a 18m com
+   ataque corpo a corpo. Numa sessão, conte os ataques corpo a corpo que acertaram o Vendaval e compare
    com o outro da linha de frente. A conta está no cabeçalho de `src/data/trees/vendaval.ts`.
 
-5. **Teste com leitor de tela.** O `check:a11y` cobre a camada estrutural das 16 rotas e está limpo —
-   e ganhou um motivo a mais de urgência na 0.1.56: o livro recebeu filete de seção, barra de progresso
-   e uma hierarquia de subtítulo nova, tudo decidido **olhando a tela**. Nada disso foi ouvido. Falta
-   saber se a ficha é *usável* de ouvido: se a ordem de foco conta a história certa, se "Comprar" anuncia o que está
-   comprando, se dá pra montar um personagem sem enxergar. Meia hora com o NVDA.
+4. **Jogar o Invocador, o Ladino e o Bardo.** Os números vieram de pedido, não de medição:
+   - **Ordem Partilhada:** se o invocado bate mais forte que você, a troca é sempre boa e o talento vira
+     obrigatório.
+   - **Dissonância** do Bardo: resolveu o turno vazio?
 
-> **Por que as pendências 6 e 7 são justamente essas** (descoberto na 0.1.37). O simulador foi medido:
-> das 601 habilidades do livro ele enxerga 122, e não espalhadas — Espíritos e Feras 0 de 7, Bardo 0
-> de 6, Navegação e Liderança 0 de 6, Barreira 1 de 21, Furtividade 1 de 6, Desintoxicação 4 de 20.
-> São **as mesmas seis árvores** que as duas pendências abaixo mandam levar pra mesa. Não é
-> coincidência: elas estão aqui porque a única ferramenta de medição do projeto é cega pra elas.
-> Cada pedaço de motor que passar a enxergar economia de ação, condição ou posição tira uma linha
-> desta lista — a cura saiu da lista assim, na 0.1.37.
+5. **Jogar Suishin, Escudos, Ladino e Tático.** As quatro são coerentes e invisíveis pro simulador:
+   - **Tático:** o teto de Ações do Cap. 4 ("5 por turno, no máximo 2 externas") segura na mesa? E o
+     acúmulo da Ordem de Tiro virou a jogada óbvia (apontar, esperar, apontar de novo)?
+   - **Suishin:** o jogador sente a árvore funcionando, ou vira "eu espero apanhar"?
 
-6. **Jogar o Invocador, o Ladino e o Bardo.** São as mudanças de 0.1.12 que **não** saíram de medição
-   — saíram de um pedido, e os números são meus:
-   - A **Ordem Partilhada** é a que mais me preocupa: ela troca uma Ação sua por uma do invocado, e se
-     o bicho bater mais forte que você a troca é sempre boa e o talento vira obrigatório.
-   - As **3 Ações** do Chamado de Emergência são o turno inteiro. Ou é o preço certo por invocar sem
-     preparo, ou ninguém usa nunca.
-   - A **Dissonância** do Bardo é a última das duas que foram inventadas só pra ter o que medir. A
-     outra era a Ordem de Tiro, e a sessão respondeu por ela: foi **trocada** em 0.1.14, não ajustada,
-     que era o plano escrito aqui desde o começo.
+6. **Barreira e Desintoxicação.** Barreira: 20 PV por patamar é o número certo? Se o guerreiro derruba
+   uma Muralha em um turno, a magia não existe; se leva quatro, o combate para. Desintoxicação: a
+   Peçonha virou a única coisa que o purificador faz?
 
-7. **Jogar as quatro que foram lidas na 0.1.46** — Suishin, Escudos, Ladino e Tático. A leitura linha
-   a linha saiu, e **não achou nada quebrado**: as quatro são coerentes com o que prometem. O que ela
-   achou foi outra coisa, e é o que sobra pra mesa decidir:
-   - **O Tático não tem uma única habilidade de dano.** As dezenove fabricam **Ação e bônus pros
-     outros** — e Ação é a única moeda que este combate gasta. O Cap. 4 já escreveu o teto ("5 por
-     turno, no máximo 2 externas") e nomeia o cenário exato: *"um Norte Imperador com um Tático
-     Comandante chega a 7 Ações por turno, e o combate deixa de existir"*. O teto está escrito; o que
-     ninguém viu ainda é ele **segurando** numa mesa de verdade.
-   - **O Suishin é uma árvore inteira de Reações** — contra-ataque, aparar, devolver. Uma única
-     habilidade de dano próprio. O Apêndice C é honesto e a marca como *"0 a ∞"*. A pergunta de mesa é
-     se um jogador consegue **sentir** essa árvore funcionando, ou se ela vira "eu espero apanhar".
-   - **Em Escudos, o dano todo vem de uma habilidade de Principiante.** O `Golpe de Escudo Soberano`
-     (1 Ação, 3d8 + Força + Bônus de Rank) escala com o Rank pra sempre, e é o que fez a Mara liderar
-     o playtest. Ver o item 9 — é a mesma pergunta por outro ângulo.
-   - **O Ladino tem uma habilidade de dano, no Principiante.** Como o Tático, ele compra outra coisa.
+7. **O Deus da Espada é vidro de propósito?** Mesmo com o Braço de Ferro, o Vex fica em ~8% de
+   sobrevivência e com o menor dano por batalha. Ou a árvore precisa de mais sustentação, ou o livro
+   deve dizer que ela é frágil em vez de chamá-la de "o maior dano do livro".
 
-   Nenhuma das quatro é bug. Todas as quatro são **invisíveis pro simulador**, e é por isso que elas
-   só se respondem jogando.
+8. **A Mara (Escudos) lidera dano e sobrevivência no playtest.** A árvore diz "protege, não mata". Ou a
+   descrição está errada, ou o Golpe de Escudo Soberano está.
 
-8. **Jogar as quatro árvores mexidas na 0.1.14** — Tático, Barreira, Desintoxicação e Punho do Fogo.
-   Cada uma tem uma pergunta própria, e nenhuma delas se responde por script:
-   - **Tático:** com o Bônus de Rank valendo contra o alvo Apontado e a marca acumulando quando
-     ninguém a executa, ele deixou de parecer um civil armado? E o acúmulo até o dobro do patamar não
-     virou a jogada óbvia (apontar, esperar, apontar de novo) em vez de mandar o grupo atirar?
-   - **Barreira:** 20 PV por patamar é o número certo? No 1º patamar são 20 PV — se o guerreiro
-     derruba uma Muralha em um turno, a magia não existe; se leva quatro, o combate para.
-   - **Desintoxicação:** a Peçonha resolveu o turno vazio, ou virou a única coisa que o purificador faz
-     (e aí a escola trocou um problema por outro)?
-   - **Punho do Fogo:** com Sobrecarga sempre a 3 de Calor, alguma técnica ficou barata demais? A
-     suspeita é a Coroa Solar, que dispara uma vez por turno e antes custava 2.
+9. **Técnicas de 2 Ações compensam?** *(Deliberadamente deixado de lado por ora).* Duas Ações quase nunca rendem mais que dois golpes de uma. Ou
+    elas estão fracas, ou a economia de 3 Ações por turno precisa de outra coisa.
 
-9. **O Deus da Espada continua frágil — mas a árvore está certa** *(investigado na 0.1.48)*. Você
-    mandou conferir a ficha antes de mexer no livro, e estava certo: a árvore **tem** o talento de
-    sustentação (`Braço de Ferro`, 1 PA, +4 PV por patamar), e o algoritmo do playtest nunca o
-    comprava. Dar o talento ao Vex moveu o time inteiro dele de **45,1% pra 54,9%** de vitória — dez
-    pontos, num talento de 1 PA. O algoritmo foi corrigido; era ele que estava errado, não a árvore.
-
-    **O que sobra da pergunta:** mesmo com o talento, o Vex fica em ~8% de sobrevivência e é o menor
-    dano por batalha. Por TURNO ele nunca foi ruim. Ou o Deus da Espada precisa de mais que um talento
-    de PV, ou ele é vidro de propósito — e aí o livro deveria dizer isso em vez de chamá-lo de "o maior
-    dano do livro".
-
-10. **Duas perguntas de balanceamento que a 0.1.35 abriu** *(os números abaixo são os da 0.1.35; com a
-    cura no motor, na 0.1.37, a Mara marcou 91 e 92% e a Iri 27 e 57% — as duas perguntas continuam
-    valendo, e a da Mara ficou mais forte: ela lidera a sobrevivência do playtest inteiro)*. O simulador foi consertado em dois pontos
-    (a CA não era consultada por técnica nenhuma; a IA não contava os Dados de Arma ao escolher), e o
-    playtest mudou de dono. Duas linhas agora precisam do seu julgamento — o script mede, ele não
-    decide:
-    - **A Mara é a maior causadora de dano do jogo.** Cavalaria e Escudos está descrita como *"protege,
-     não mata"* e terminou o playtest com 95 de dano por batalha e 93% de sobrevivência — à frente do
-     Deus da Espada em dano E em sobrevivência. Ou a descrição está errada, ou o Golpe de Escudo
-     Soberano está.
-    - **O Vento desabou de 53 pra 19** *(número da 0.1.35; na 0.1.57 a Iri marca **117** de dano por
-     batalha e 42% de sobrevivência — terceiro lugar. A pergunta sobre o custo de 2 Ações continua
-     valendo, mas esta evidência específica não sustenta mais nada)*.** As técnicas da Iri custam **duas Ações**, e a conta certa
-     mostra que duas Ações quase nunca compensam contra três golpes de uma. Isso não é um problema da
-     Iri: é uma pergunta sobre o custo de 2 Ações no sistema inteiro. Se nenhuma técnica de 2 Ações
-     compensa, ou elas estão fracas ou a economia de 3 Ações por turno precisa de outra coisa.
-
-11. **A cura tem limiar, e o limiar é meu.** A IA cura quem estiver na metade ou abaixo — 50% é um
-    número declarado no motor, não medido na mesa. Se numa sessão o curandeiro age mais cedo (ou mais
-    tarde) que isso, o número certo é outro e todos os relatórios se movem junto. É a única regra de
-    decisão do simulador que veio de mim e não do livro.
-
-12. **~~O penhasco da dizimação~~ — DECIDIDO em 2026-09-11.** O ajuste de Chefe virou por patamar
-    (×2,65 / ×1,9 / ×1,29 de dano) e os três marcam 32%, 25% e 25% de dizimação, contra 0% antes.
-
-    A pergunta que sobrava era se o **penhasco** devia ser suavizado: trinta pontos de dizimação
-    separados por dois por cento de multiplicador, porque quem cai para de causar dano e a luta
-    desanda. O caminho medido pra suavizar seria dar ao chefe mais ações e menos dano por golpe.
-
-    **Resposta do autor: fica como está.** O combate contra chefe é de noites tranquilas e noites de
-    desastre, e é isso que ele quer que a mesa sinta. Não reabrir sem um pedido novo — o comportamento
-    está documentado no Apêndice G pra que ninguém o confunda com um defeito.
-
-13. **O Corpo rende 1,6× mais por Ação que a Magia** *(remedido na 0.1.58, com o dano sustentado no
-    motor — os números de antes, que diziam "o triplo", eram de quando sete magias por turno contavam
-    uma vez só)*.
+10. **O Corpo rende 2,0× mais por Ação que a Magia** *(remedido em 2026-09-18; a tabela anterior era
+    da 0.1.78 e comparava outra coisa)*. `npm run check:progressao` mede o TETO de cada pilar — a melhor
+    técnica de cada árvore, em dano esperado por Ação contra CA 15:
 
     | Corpo | | Magia | |
     | --- | --- | --- | --- |
-    | Punho do Fogo | **53,8** | Terra | **33,0** |
-    | Deus da Espada | 39,4 | Vento | 30,7 |
-    | Armas Pesadas | 35,2 | Cura | 26,9 |
-    | Vendaval | 35,2 | Fogo | 20,4 |
-    | Deus do Norte | 34,8 | Água | 17,8 |
+    | Deus da Espada | **66,0** | Terra | **33,0** |
+    | Punho do Fogo | 40,8 | Vento | 30,7 |
+    | Deus do Norte | 35,6 | Cura | 26,9 |
+    | Armas Pesadas | 35,2 | Fogo | 20,4 |
+    | Vendaval | 35,2 | Água | 17,8 |
+    | Arquearia | 30,8 | Desintoxicação | 14,4 |
 
-    A distância caiu de 3× pra 1,6× sem que nada fosse nerfado — só medido direito. **A pergunta que
-    sobra é se 1,6× ainda é demais.** A magia compra alcance de 90m, área de verdade e condição, e
-    nada disso pontua neste motor. Se a resposta for "está bom", este item sai da lista.
+    **A coluna da Magia não mudou nada** desde a 0.1.78 — os cinco números são idênticos. O que subiu foi
+    o Deus da Espada, e ele sozinho é o 2,0×: sem ele, o teto do Corpo seria 40,8 contra 33,0, ou 1,2×,
+    que é onde a conta estava. A pergunta, então, não é "o Corpo rende demais": é **se a Espada de Luz
+    Verdadeira (7× o Dado de Arma em 2 Ações) é o pico declarado da árvore ou um número que escapou**. A
+    árvore se vende como "o maior dano do livro", e o custo dela está em outro lugar (item 7: ~8% de
+    sobrevivência no playtest).
 
-    > **Leia junto com o 16, porque a 0.1.75 mexeu no outro prato da balança.** O nerf de PV dos magos
-    > não tocou em dano nenhum — a tabela acima continua idêntica —, mas agora o mago rende 1,6× menos
-    > por Ação **e** aguenta ~12% menos pancada. Se a resposta a este item for "1,6× é demais", o
-    > conserto passou a ser mais urgente, não menos: as duas desvantagens se somam na mesma ficha.
+    O que o motor NÃO pontua continua valendo como ressalva: a magia compra alcance, área e condição, e
+    metade da coluna dela é de magias que afetam vários alvos.
 
-14. **A escolha de grupo de arma virou decisão ou virou imposto?** *(aberto pela 0.1.52)* Todo
-    personagem agora escolhe **um grupo livre na criação**, além do piso de Desarmado e Improvisado. A
-    intenção era dar caracterização a quem não é guerreiro — a adaga de reserva do mago, o cajado de
-    combate. O risco é o oposto: a criação de ficha já é longa, e esta é mais uma tela onde a pessoa
-    não sabe o que escolher porque ainda não sabe como vai jogar.
+11. **Cinco capstones que não compensam** *(medido em 2026-09-18)*. Uma técnica de rank alto que rende
+    MENOS por Ação que a de um rank abaixo, na mesma árvore — quem chega lá destrava e não usa:
 
-    Duas coisas a observar numa sessão de criação: **alguém hesitou?** (hesitar é bom — significa que a
-    escolha importa) e **alguém escolheu e nunca usou?** (aí ela é ruído, e o piso deveria ser maior).
+    | Árvore | Capstone | Rende | O rank abaixo fazia |
+    | --- | --- | --- | --- |
+    | Deus da Espada | Corte do Horizonte (Rei) | 35,2 | 61,6 (−43%) |
+    | Deus do Norte | Aura Cortante (Rei) | 30,8 | 50,4 (−39%) |
+    | Punho do Fogo | Punho da Condenação (Santo) | 30,4 | 48,4 (−37%) |
+    | Armas Pesadas | Arremesso (Intermediário) | 23,2 | 32,8 (−29%) |
+    | Magia de Fogo | Flashover (Rei) | 15,4 | 17,3 (−11%) |
 
-15. **O Tiro Perfeito vale quatro Ações?** *(aberto pela 0.1.53)* Ele é o primeiro sistema do livro que
-    cobra **tempo** em vez de recurso, e isso só se mede jogando: quatro Ações são dois turnos inteiros
-    em que o arqueiro não defendeu ninguém.
+    **Não mexi em nenhuma**, e de propósito: as três primeiras são de ÁREA ou linha, e o `check:progressao`
+    mede dano num alvo só — o próprio script avisa que não reprova. Corrigir pelo número cegamente
+    nivelaria por baixo justamente as técnicas que existem pra pegar vários. O que decide é a mesa: numa
+    sessão, o Rei do Espada usou o Corte do Horizonte alguma vez, ou só a Espada de Luz?
 
-    As três perguntas, em ordem de importância:
-    - **A Preparação sobrevive à mesa?** Levar dano exige Concentração, e um arqueiro no fundo leva
-      menos — mas se ele nunca é atingido, a técnica não tem custo real nenhum; se é atingido sempre,
-      ela nunca acontece. Não existe teste que responda: é posicionamento.
-    - **Falhar uma etapa dói o bastante?** A regra é que falhar não interrompe, só custa o bônus
-      daquele teste. Se a mesa sentir que dá no mesmo, as etapas viram burocracia com d20.
-    - **Etapa Encurtada (Intermediário) virou obrigatória?** Ela derruba o tiro de 4 para 3 Ações — ou
-      seja, faz a técnica caber num turno. Talento que muda tanto assim costuma deixar de ser escolha.
+    A exceção que talvez não seja de área: o **Golpe do Desespero** do Norte (Santo, 50,4/Ação) passa o
+    Rei e o Imperador da própria árvore. Ele exige metade dos PV ou menos e cobra Exaustão — condições que
+    o motor não pontua —, mas é a que mais parece número que escapou.
 
-16. **A curva de dano das criaturas passou a curva de PV, e isso vale pros três pilares** *(aberto
-    pela auditoria da 0.1.75; mede-se com `npm run check:sobrevivencia`)*. Dividindo os PV de cada
-    árvore pelo `danoPorTurno` do molde do Apêndice G do MESMO patamar, a sobrevivência **cai
-    monotonicamente do 1º ao 6º**, em todo pilar:
+12. **A curva de dano das criaturas passou a de PV** *(reconferido em 2026-09-18: os números abaixo
+    continuam exatos).* Dividindo os PV pelo dano do molde do mesmo
+    patamar (`npm run check:sobrevivencia`), a sobrevivência cai do 1º ao 6º em todo pilar:
 
     | Vigor 0 | 1º | 2º | 3º | 4º | 5º | 6º |
     | --- | --- | --- | --- | --- | --- | --- |
@@ -183,71 +104,52 @@ o histórico; aqui fica **só o que ainda não foi feito**, na ordem em que eu f
     | Utilidade | 2,27 | 1,65 | 1,27 | 1,05 | 0,91 | **0,75** |
     | Corpo | 2,67 | 2,06 | 1,66 | 1,37 | 1,19 | **0,97** |
 
-    A causa é aritmética e não tem nada de sutil: o molde vai de 10 pra 120 de dano por turno (**×12**)
-    e o PV mais alto do livro vai de 29 pra 135 (**×5,4**). O nerf dos magos empurrou a linha de cima
-    pra baixo, mas não criou a inclinação — ela é igual nas três linhas, e já existia.
+    O molde cresce ×12 e o PV ×5,4. Se o combate de patamar alto acaba em dois turnos, o problema é o
+    molde (Terror e Lenda); se o que mata é o foco num alvo só, é o PV do fim do livro.
 
-    **A pergunta não é "está errado?".** Um jogo em que o topo é mais letal que a base pode ser
-    exatamente o que você quer — é o que a ficção do Rank Deus promete. A pergunta é **qual das duas
-    pontas está fora do lugar**, e só a mesa responde:
-    - Se um combate de patamar alto acaba em dois turnos e ninguém teve tempo de fazer nada, o
-      problema é o **molde**: Terror (80) e Lenda (120) batem forte demais pro que existe de PV.
-    - Se o combate dura e o que mata é sempre o **foco** — o Mestre escolhe um alvo e ele cai antes de
-      agir —, o problema é o **PV do fim do livro**, e o conserto mora no multiplicador ×1,67 ou no
-      `PV_BASE`, não nos Dados de PV árvore a árvore.
+13. **O Tiro Perfeito vale quatro Ações?** Remedido na 0.1.82: rende entre 48% e 67% do que os mesmos
+    disparos comuns renderiam, estável em todos os patamares (antes decaía de 75% para 41%). O que falta é
+    de mesa: a Preparação sobrevive a quem leva dano? Falhar uma etapa dói o bastante? A Etapa Encurtada
+    virou obrigatória?
 
-    O check **não conta** cura, Barreira, Touki nem esquiva, e pressupõe foco total num alvo só: é o
-    piso, não a expectativa. Se a mesa nunca sentiu isso, a resposta pode muito bem ser "a Barreira e a
-    Cura já pagam essa conta" — e aí a linha certa a puxar é a de quanto elas devolvem por turno.
+14. **O grupo de arma livre da criação é decisão ou imposto?** Numa sessão de criação: alguém hesitou?
+    Alguém escolheu e nunca usou?
 
-17. **~~As duas pontas soltas da auditoria da 0.1.75~~ — FEITAS no mesmo dia.**
-    - **O cântico da Chama do Êxodo** tinha 344 caracteres contra o teto de 280 do Avançado. Foi pra
-      **270** — dentro da faixa, e ainda acima do piso de 200 que paga o Bônus de Recitação Perfeita.
-      As cinco imagens continuam de pé; o que saiu foram os advérbios e as repetições ("até aqui",
-      "sobre este chão", "mesmo", "já", e o "o que aconteceu neste lugar" do fecho, que virou só "pra
-      contar"). O `check:livro` fechou em **0 erros e 0 avisos** pela primeira vez.
-    - **`touki-concentrado.webp`** foi de **2,13 MB pra 0,70 MB** — metade do teto de 1,5 MB. Não foi
-      compressão (a escada já tinha desistido, com 3% de ganho): foi **recorte**. Eram 326 quadros e
-      13,7 s de clipe, e a legenda da arte promete "a aura explodindo em volta do corpo, **dourada**".
-      Os primeiros 221 quadros são roxo e magenta — outra cena, e não a que o alt text descreve. O
-      arquivo agora são os quadros 222–325 (4,4 s): as lâminas sacadas, a aura dourada acendendo e a
-      explosão que distorce o fundo atrás. O original continua no git, no commit anterior a este.
+15. **O limiar de cura do simulador é chute.** A IA cura quem está na metade da vida ou abaixo; 50% não
+    foi medido na mesa.
 
-## Site
+## Precisa de aparelho ou de pessoa *(Deliberadamente deixados de lado por ora)*
 
-18. **~~Instalar o app num celular~~ — CONFIRMADO em 2026-09-11.** O botão de instalar existia só no
-    rodapé, e num site cujo `/livro` tem 87 mil pixels de rolagem isso é o mesmo que não existir: o
-    relato foi *"não apareceu a opção de adicionar à tela inicial"*. Ele entrou no menu na 0.1.61, e o
-    autor confirmou no aparelho — **deu certo**.
+16. **Três caminhos no celular:** o link de ficha abre num iPhone antigo (iOS abaixo de 16.4)? O botão
+    de compartilhar pela bandeja aparece? O PDF sai certo do celular? E, com o app instalado: o ícone e
+    a splash saem certos, e a barra do topo foge do entalhe?
 
-    Junto saiu um defeito que ninguém teria achado sem isso: o Safari do iPad se apresenta como
-    "Macintosh" desde o iPadOS 13, e a detecção procurava a palavra "iPad". O sinal que sobra é
-    plataforma de Mac COM tela de toque.
+17. **Confirmar o PDF em produção** (binário do Typst na Vercel e retrato do personagem).
 
-    **O que ainda não foi visto** — e são cinco minutos, com o app já instalado:
-    - O ícone sai certo recortado pelo launcher do Android, e no iPhone aparece o brasão em vez de uma
-      captura da página? *(era o bug da 0.1.44 — vale conferir que sumiu)*
-    - A splash é a nossa?
-    - A barra do topo e o botão de dados fogem do entalhe e da barra de gestos? *(as regras de área
-      segura entraram na 0.1.44 e foram medidas em Chrome com recorte injetado, nunca num aparelho.)*
+18. **Meia hora com leitor de tela (NVDA).** A ordem de foco conta a história certa? "Comprar" anuncia
+    o que está comprando? Dá pra montar um personagem sem enxergar?
 
-19. **O que o pré-cache NÃO cobre, e se isso incomoda.** O worker guarda o HTML de cada rota mais
-    tudo que esse HTML cita. Imagem que só o JavaScript pede depois — retrato de raça na criação, arte
-    de criatura no `/encontros` — entra no cache na primeira vez que é VISTA, e não antes. Quem
-    preparou o personagem em casa não perde nada; quem abre a roleta pela primeira vez já no porão vê
-    moldura vazia no lugar dos retratos.
+19. **A faixa do livro está em baixa resolução.** `public/faixas/livro.jpg` tem 680×384; as outras têm
+    de 960 a 1900. Procurar outra imagem com 1600px ou mais.
 
-    **A decisão mudou de lado na 0.1.73, e por um motivo novo.** Quando esta nota foi escrita, o
-    obstáculo era não haver lista: fechar o buraco exigiria enumerar `public/` à mão, uma lista que
-    envelhece calada. Hoje a lista existe e é gerada — `MIDIA_DE_HABILIDADE` mais as `ARTE_*` de
-    `src/data/midiaDeHabilidade.ts`, com `npm run check:midia` garantindo que ela e a pasta não
-    divergem.
+## Site (depois do livro)
 
-    Só que agora **são 106 artes e 51 MB**, e pré-cachear tudo é pior do que o problema: o iOS derruba
-    o cache de um site que passa de algumas dezenas de megabytes, e derrubar o cache leva junto o
-    `/livro` inteiro — que é a única coisa que PRECISA abrir offline. Trocaríamos "sem arte no porão"
-    por "sem livro no porão".
+20. **Arte offline — metade resolvida** (0.1.92). *(Deliberadamente mantido como está)*. O buraco real era outro: `webm` e `mp4` não estavam na
+    lista de extensões do service worker, então as SETE peças de arte em vídeo do livro (a Maestria da
+    Água, a do Deus da Espada, o Canhão de Água, a Tempestade, o Pilar de Gelo, o Passo Vazio e a Leitura
+    de Cena) não entravam no cache NEM DEPOIS DE VISTAS. Corrigido.
 
-    Então o `loading="lazy"` fica, e o buraco fica com ele. O que vale medir na mesa é se alguém
-    repara — e, se reparar, o caminho é pré-cachear **só a arte de maestria** (19 arquivos, as capas de
-    árvore), não as 106.
+    O que sobra é a escolha antiga, e continua em aberto de propósito: imagens só entram no cache depois
+    de vistas uma vez. Pré-carregar as 15 artes de maestria na instalação custaria ~6,7 MB de dados de
+    celular por arte que talvez ninguém abra. Se alguém reparar na mesa, aí vale.
+
+## Ideias para depois *(Priorização sugerida: não fazer, documentado como deixado de lado)*
+
+- Sincronização em tempo real, pra jogar online.
+- A criatura de 6º patamar do bestiário ("Ancião Demônio Esquecido").
+- Reação e ação lendária de chefe fora do turno.
+- Universidade de Ranoa como 4ª facção de Reputação.
+- Magias inatas de raça (como o Howling da Raça Fera) como habilidade de verdade, não só texto.
+- Simulador: Atolado, Desequilibrado, Marcado e Soterrado precisam de noção de distância; Invocação,
+  Bardo, Tático e Barreira são invisíveis pra ele; e a IA não dá valor a condição.
+- Tradução pra inglês.

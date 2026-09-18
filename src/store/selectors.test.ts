@@ -82,7 +82,6 @@ function ficha(patch: Partial<CharacterData> = {}): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     overrides: {},
     ...patch,
   };
@@ -173,9 +172,23 @@ describe("Pontos de Touki (Cap. 3)", () => {
     expect(getPtPool(ficha({ attributeBase: { ...ZERO_ATTRS, vigor: 5 } }))).toBe(0);
   });
 
-  it("PT Menor antes do Pleno é o Vigor, com mínimo 1", () => {
-    const semVigor = ficha({ unlockedRanks: [{ treeId: "deus-do-norte", rank: "Principiante" }] });
-    expect(getPtPool(semVigor)).toBe(1);
+  it("a reserva existe desde o 1º patamar: Vigor + Espírito + 1 por patamar do Corpo", () => {
+    const novato = ficha({ unlockedRanks: [{ treeId: "deus-do-norte", rank: "Principiante" }] });
+    expect(getPtPool(novato)).toBe(1);
+
+    const intermediario = ficha({
+      attributeBase: { ...ZERO_ATTRS, vigor: 2, espirito: 1 },
+      unlockedRanks: [
+        { treeId: "deus-do-norte", rank: "Principiante" },
+        { treeId: "deus-do-norte", rank: "Intermediário" },
+      ],
+    });
+    expect(getPtPool(intermediario), "antes do Avançado o Touki já está lá").toBe(2 + 1 + 2);
+  });
+
+  it("Cavalaria e Escudos soma 2 por patamar desde o Principiante", () => {
+    const escudeiro = ficha({ unlockedRanks: [{ treeId: "cavalaria-e-escudos", rank: "Principiante" }] });
+    expect(getPtPool(escudeiro)).toBe(2);
   });
 
   it("magia e utilidade nunca dão PT, por mais alto que seja o rank", () => {
@@ -491,6 +504,7 @@ describe("Magias Combinadas na ficha exportada", () => {
       maxPt: 0,
       maxPp: 0,
       armorClass: 10,
+      deslocamento: 9,
       initiativeBonus: 0,
     });
     const carta = payload.abilityCards.find((a) => a.name.includes("Meteoro"));
@@ -509,6 +523,7 @@ describe("Magias Combinadas na ficha exportada", () => {
       maxPt: 0,
       maxPp: 0,
       armorClass: 10,
+      deslocamento: 9,
       initiativeBonus: 0,
     });
     const nomes = COMBINED_SPELLS.map((s) => s.name);

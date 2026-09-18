@@ -8,6 +8,35 @@ export interface Condition {
   duration?: number;
 }
 
+/**
+ * O que o Mestre precisa saber sobre um monstro DURANTE a luta — 0.1.90.
+ *
+ * O Bloco do Monstro (Apêndice G) mora na tela de Encontros, que é onde o
+ * encontro se monta. Só que a mesa acontece aqui, no rastreador — e era aqui
+ * que o Mestre não tinha a CA, a Percepção passiva nem as resistências na
+ * frente. Ele voltava pra outra tela no meio da rodada, ou chutava.
+ *
+ * Tudo aqui é CÓPIA, tirada da criatura no momento em que ela entra no
+ * combate, e de propósito: o combate é um instantâneo. Se o Mestre recalibrar a
+ * criatura no meio da luta, o bicho que já está na mesa não muda debaixo dele.
+ */
+export interface FichaDeCombate {
+  ca: number;
+  percepcao: number;
+  /** "+3" já formatado — o rastreador exibe, não calcula. */
+  atributos: { rotulo: string; valor: string }[];
+  pericias: string[];
+  resistencias: string[];
+  imunidades: string[];
+  deslocamento: number;
+  movimentoEspecial?: string;
+  tamanho?: string;
+  sentido?: string;
+  /** A CD que ela impõe, e o Bônus de Rank dela (= o patamar). */
+  cdResistencia: number;
+  patamar: number;
+}
+
 export interface Combatant {
   id: string;
   name: string;
@@ -15,6 +44,8 @@ export interface Combatant {
   currentHp?: number;
   maxHp?: number;
   conditions: Condition[];
+  /** Só criaturas têm. Personagem tem a ficha dele, que é bem maior que isto. */
+  ficha?: FichaDeCombate;
 }
 
 function makeId(prefix: string) {
@@ -26,7 +57,7 @@ interface InitiativeState {
   round: number;
   currentTurnId: string | null;
 
-  addCombatant: (name: string, initiative: number, maxHp?: number) => void;
+  addCombatant: (name: string, initiative: number, maxHp?: number, ficha?: FichaDeCombate) => void;
   removeCombatant: (id: string) => void;
   updateCombatant: (id: string, patch: Partial<Omit<Combatant, "id" | "conditions">>) => void;
   addCondition: (combatantId: string, name: string, duration?: number) => void;
@@ -42,7 +73,7 @@ export const useInitiativeStore = create<InitiativeState>()(
       round: 1,
       currentTurnId: null,
 
-      addCombatant: (name, initiative, maxHp) =>
+      addCombatant: (name, initiative, maxHp, ficha) =>
         set((state) => ({
           combatants: [
             ...state.combatants,
@@ -53,6 +84,7 @@ export const useInitiativeStore = create<InitiativeState>()(
               maxHp,
               currentHp: maxHp,
               conditions: [],
+              ficha,
             },
           ],
         })),

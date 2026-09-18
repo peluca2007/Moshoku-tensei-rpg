@@ -27,7 +27,7 @@ export const SKILLS: SkillDef[] = [
   { name: "Investigação", attribute: "intelecto", description: "Deduzir pistas e ligar evidências." },
   { name: "Medicina", attribute: "intelecto", description: "Primeiros socorros e diagnóstico físico." },
   { name: "Natureza", attribute: "intelecto", description: "Fauna, flora e clima." },
-  { name: "Ofícios", attribute: "intelecto", description: "Um ofício manual específico, escolhido ao adquirir (Forja, Culinária, Alquimia, Carpintaria...)." },
+  { name: "Ofícios", attribute: "intelecto", description: "Um ofício manual específico, escolhido ao adquirir (Forja, Culinária, Alquimia, Carpintaria...). É o saber; a ferramenta do ofício é proficiência à parte." },
   { name: "Religião", attribute: "intelecto", description: "Doutrina, templos e o Continente Divino." },
 
   { name: "Atuação", attribute: "espirito", description: "Performance, música, oratória de palco." },

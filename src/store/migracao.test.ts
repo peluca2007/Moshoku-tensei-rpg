@@ -50,7 +50,6 @@ function fichaSalvaV13() {
     currentMp: 9,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     overrides: { armorClass: 14 },
   } as unknown as CharacterData;
 }

@@ -90,7 +90,7 @@ export const ESCUDOS_TREE: Tree = {
       "A única árvore cujo recurso é gasto no dano dos outros. Você não sobrevive: você faz outra pessoa sobreviver.",
     loop: [
       "Designe. Escolha 1 aliado como protegido (2 no Intermediário, 3 do Avançado em diante).",
-      "Intercepte. A até 3m dele, gaste 1 Reação e TODO o dano de um ataque contra ele vem pra você — não reduzível por Resistência, mas sim pelo seu PT.",
+      "Intercepte. A até 3m dele, gaste 1 Reação e TODO o dano de um ataque contra ele vem pra você — não reduzível por Resistência, mas sim pelas técnicas desta árvore.",
       "Recarregue. Se o protegido sofrer dano que você NÃO interceptou, você recupera 1 PT. Falhar em proteger é o que te dá recurso pra proteger da próxima vez.",
     ],
     cost:
@@ -122,10 +122,11 @@ export const ESCUDOS_TREE: Tree = {
       rank: "Principiante",
       hpDiceFormula: "1d8+3",
       weaponDieSteps: 1,
+      ptGained: 2,
       mastery: {
         name: "Interpor",
         description:
-          "[Sob Minha Guarda] Você desbloqueia 'Sob Minha Guarda': designe 1 aliado como protegido; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim por PT). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo. Usar escudo concede +1 na CA (não empilha com magias de barreira).",
+          "[Sob Minha Guarda] Você desbloqueia 'Sob Minha Guarda': designe 1 aliado como protegido; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim pelas técnicas desta árvore). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo. Usar escudo concede +1 na CA (não empilha com magias de barreira).",
       },
       talents: [
         // 2026-08-30: buff — era +2 PV por patamar, virou +4 PV por patamar e
@@ -149,7 +150,7 @@ export const ESCUDOS_TREE: Tree = {
         // empunhar arma de dano — só escudo na mão. Cajado/Foco Arcano é
         // exceção (é conjuração, não dano), mas o jogador perde o ataque do
         // Cajado (1d6 contundente) enquanto segurar escudo.
-        { id: "puro-escudo", name: "Puro Escudo", paCost: 1, description: "Você escolhe a defesa total: enquanto tiver este talento, NÃO pode empunhar arma de dano (só escudo ou escudo grande). Em troca, todas as habilidades de Cavalaria e Escudos com versão 'Soberana' ficam disponíveis e seus efeitos defensivos passam a se aplicar também aos aliados adjacentes a você (não só os Sob Sua Guarda). É a identidade do Defensor: ele não devolve nada, ele absorve tudo." },
+        { id: "puro-escudo", name: "Puro Escudo", paCost: 1, description: "Você escolhe a defesa total: enquanto tiver este talento, NÃO pode empunhar arma de dano (só escudo ou escudo grande). Em troca, todas as habilidades de Cavalaria e Escudos com versão 'Soberana' ficam disponíveis, e os aliados ADJACENTES a você contam como Sob Sua Guarda, além do seu limite normal — é assim que os seus efeitos os alcançam, sem precisar de uma segunda lista de quais passam e quais não. É a identidade do Defensor: ele não devolve nada, ele absorve tudo." },
         { id: "montaria", name: "Montaria", paCost: 1, description: "Você monta, treina e acalma qualquer besta de carga. Sobre ela, você não cai por efeito que permita teste, e sua montaria também está Sob Sua Guarda." },
         { id: "sono-de-ferro", name: "Sono de Ferro", paCost: 1, description: "Você dorme de armadura completa sem penalidade e acorda pronto. Vantagem contra Exaustão por marcha ou vigília." },
       ],
@@ -223,6 +224,7 @@ export const ESCUDOS_TREE: Tree = {
       rank: "Intermediário",
       hpDiceFormula: "1d10+4",
       weaponDieSteps: 0,
+      ptGained: 2,
       mastery: {
         name: "Peso do Aço",
         description:
@@ -239,26 +241,24 @@ export const ESCUDOS_TREE: Tree = {
           id: "aguentar",
           name: "Aguentar o Baque",
           signature: true,
-          reaction: true,
           paCost: 2,
           ptCost: 1,
           range: "Pessoal",
-          actions: { normal: 1 },
+          actions: { normal: 0 },
           damage: { normal: "Reduz 1d10 + Vigor + Bônus de Rank" },
-          effect: "1 Reação, ao interceptar dano por Sob Minha Guarda: reduza aquele dano antes de aplicá-lo em você. Empilha com quantas Reações tiver.",
+          effect: "Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 1d10 + Vigor + Bônus de Rank antes de aplicá-lo em você. Uma vez por interceptação.",
         },
         {
           id: "aguentar-soberano",
           requires: ["puro-escudo"],
           name: "Aguentar Soberano",
           signature: true,
-          reaction: true,
           paCost: 3,
           ptCost: 1,
           range: "Pessoal",
-          actions: { normal: 1 },
+          actions: { normal: 0 },
           damage: { normal: "Reduz 2d10 + Vigor + Bônus de Rank" },
-          effect: "Requer Puro Escudo. 1 Reação ao interceptar dano: reduz o dano com 2d10 e se a redução zerar o dano, você recupera 1 PT imediatamente.",
+          effect: "Requer Puro Escudo. Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 2d10 + Vigor + Bônus de Rank antes de aplicá-lo em você. Uma vez por interceptação. Se a redução zerar o dano, você recupera 1 PT imediatamente.",
         },
         {
           id: "escudo-erguido",
@@ -295,7 +295,7 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Escudo Estendido",
         description:
-          "Você recebe o Manto de Touki completo e a reserva de PT — recebe 2 PT por patamar em vez de 1. O Touki é projetado para fora do corpo: Sob Minha Guarda alcança 9 metros e exige apenas linha de visão. Interceptar dano deixa de custar Reação uma vez por rodada. O limite de protegidos sobe para 3.",
+          "Você veste o Manto de Touki e destrava as manobras de gasto. O Touki é projetado para fora do corpo: Sob Minha Guarda alcança 9 metros e exige apenas linha de visão. Interceptar dano deixa de custar Reação uma vez por rodada. O limite de protegidos sobe para 3.",
       },
       talents: [
         { id: "casco-escudos", name: "Casco", paCost: 2, description: "Você tem Resistência a dano físico de armas mundanas enquanto empunhar escudo." },
@@ -328,7 +328,7 @@ export const ESCUDOS_TREE: Tree = {
         },
         {
           id: "redirecionar-escudos",
-          name: "Redirecionar",
+          name: "Rebater",
           reaction: true,
           paCost: 2,
           ptCost: 1,
@@ -396,7 +396,7 @@ export const ESCUDOS_TREE: Tree = {
           ptCost: 2,
           range: "12 metros",
           actions: { normal: 1 },
-          effect: "Requer Puro Escudo. 1 Reação, quando um aliado chegaria a 0 PV: ele recupera PV igual ao seu nível e você intercepte o dano com 2d12 de Resistência extra. Você pode gastar 1 PT pra repetir um teste de resistência falho por ele no próximo turno.",
+          effect: "Requer Puro Escudo. 1 Reação, quando um aliado chegaria a 0 PV: ele recupera PV iguais ao seu Vigor + Bônus de Rank, e o dano que você intercepta por ele é reduzido em 2d12. Você pode gastar 1 PT pra repetir um teste de resistência falho por ele no próximo turno.",
         },
         {
           id: "bastiao-menor",
@@ -450,10 +450,10 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Enquanto Eu Estiver de Pé",
         description:
-          "Nenhum aliado Sob Sua Guarda pode ser reduzido a menos de 1 PV enquanto você estiver consciente e a até 18m dele — o excedente vem para você, sempre, sem custo. Você recebe 1 Ação adicional (mover-se, interpor-se, proteger). Ao chegar a 0 PV, gaste todos os PT e volte a 1 PV, uma vez por combate.",
+          "Nenhum aliado Sob Sua Guarda pode ser reduzido a menos de 1 PV enquanto você estiver consciente e a até 18m dele — o excedente vem para você, sempre, sem custo. Você recebe 1 Ação adicional (mover-se, interpor-se, proteger). Ao chegar a 0 PV, gaste todos os PT e volte a 1 PV, uma vez por combate. Esta Maestria é exceção nomeada à regra das Duas Salvações por Combate (Cap. 4, §5): o que ela salva não conta pro limite nem é barrado por ele.",
       },
       talents: [
-        { id: "nome-na-porta", name: "Nome na Porta", paCost: 4, description: "Aliados Sob Sua Guarda ficam imunes a Amedrontado, e inimigos que falharem ao tentar atravessar sua linha ficam Abalados (Desvantagem até o fim do próximo turno)." },
+        { id: "nome-na-porta", name: "Nome na Porta", paCost: 4, description: "Aliados Sob Sua Guarda ficam imunes a Amedrontado, e inimigos que falharem ao tentar atravessar sua linha têm Desvantagem em ataques até o fim do próximo turno deles." },
       ],
       abilities: [
         {
@@ -472,7 +472,7 @@ export const ESCUDOS_TREE: Tree = {
           // um blefe que a Maestria desarma sozinha. "O Muro Final Soberano"
           // não precisa dela: a segurança dele já é explícita no próprio texto.
           effect:
-            "Uma vez por Descanso Longo. Por 1 minuto, nenhum aliado seu pode morrer — todo dano letal é transferido para você, e você não cai abaixo de 1 PV durante a duração. Quando acaba, todo o dano acumulado é aplicado em você de uma vez. Você provavelmente morre — nem Enquanto Eu Estiver de Pé te salva desse golpe final.",
+            "Uma vez por Descanso Longo. Por 1 minuto, nenhum aliado seu pode morrer — todo dano letal é transferido para você, e você não cai abaixo de 1 PV durante a duração. Quando acaba, todo o dano acumulado é aplicado em você de uma vez. Você provavelmente morre — nem Enquanto Eu Estiver de Pé te salva desse golpe final. Exceção nomeada à regra das Duas Salvações por Combate (Cap. 4, §5) enquanto durar.",
         },
         {
           id: "o-muro-final-soberano",
@@ -483,7 +483,7 @@ export const ESCUDOS_TREE: Tree = {
           ptCost: 0,
           range: "Todo o campo de batalha",
           actions: { normal: 2 },
-          effect: "Requer Puro Escudo. 1x por Descanso Longo. Igual a O Muro Final, mas sem custo de PT e você pode escolher até 3 aliados que ficam imunes a dano (você continua recebendo tudo). Ao terminar a duração, você não morre: cai a 1 PV e gera uma explosão de 4d10 + Vigor de dano de área centrada em você.",
+          effect: "Requer Puro Escudo. 1x por Descanso Longo. Igual a O Muro Final, mas sem custo de PT e você pode escolher até 3 aliados que ficam imunes a dano (você continua recebendo tudo). Também é exceção nomeada à regra das Duas Salvações por Combate (Cap. 4, §5). Ao terminar a duração, você não morre: cai a 1 PV e gera uma explosão de 4d10 + Vigor de dano de área centrada em você.",
         },
         {
           id: "aco-inquebravel",

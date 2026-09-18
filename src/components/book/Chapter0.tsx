@@ -56,8 +56,8 @@ export default function Chapter0() {
           rows={[
             ["Atributos", "Força, Agilidade, Vigor, Intelecto, Espírito. Somam direto na rolagem de d20.", "Cap. 1, §1"],
             ["PV", "Sua vida. A 0, você começa a morrer — mas não morre de imediato.", "Cap. 4, §1"],
-            ["PM / PT / PP", "Combustível. PM é magia, PT é aura de guerreiro, PP é preparação. Você nunca tem os três.", "Cap. 4, §1 · Cap. 3"],
-            ["CA", "O quanto é difícil te acertar. 10 + Agilidade + armadura.", "Cap. 4, §1"],
+            ["PM / PT / PP", "Combustível. PM é magia, PT é aura de guerreiro, PP é preparação. Quem estuda mais de um pilar carrega mais de uma reserva, nunca duas do mesmo tipo.", "Cap. 4, §1 · Cap. 3"],
+            ["CA", "O quanto é difícil te acertar. 10 + Agilidade + armadura (a armadura média limita a Agilidade a +2; a pesada não soma Agilidade).", "Cap. 4, §1"],
             ["Bônus de Rank", "O quão bom você é numa escola específica. +1 no começo, +6 no topo.", "Cap. 1, §7"],
             ["PA", "A moeda do crescimento. Tudo que você compra sai daqui.", "Cap. 1, §2"],
           ]}
@@ -79,20 +79,22 @@ export default function Chapter0() {
         <List
           items={[
             <span key="a"><b>Andar</b> — 1 Ação, até 9 metros.</span>,
-            <span key="b"><b>Atacar</b> — 1 Ação. Rola 1d20 + atributo + Bônus de Rank contra a CA do alvo.</span>,
-            <span key="c"><b>Conjurar</b> — de 2 a 6 Ações, conforme o rank da magia. Pode ser dividido entre turnos.</span>,
+            <span key="b"><b>Atacar</b> — 1 Ação. Rola 1d20 + atributo + o maior Bônus de Rank entre suas árvores do Corpo (+0 se não tiver nenhuma) contra a CA do alvo. Técnica nomeada usa o Rank da árvore que a ensinou.</span>,
+            <span key="c"><b>Conjurar</b> — de 2 a 6 Ações conforme o rank da magia: Principiante e Intermediário 2, Avançado e Santo 3, Rei e Imperador 4, e as quatro Grandes Obras 5 ou 6 (Encurtada e Silenciosa custam menos, Cap. 2). Pode ser dividido entre turnos: do Avançado em diante, já passa de um turno se você também se mover.</span>,
             <span key="d"><b>Usar item, ajudar, se esconder, esquivar</b> — 1 Ação cada.</span>,
           ]}
         />
         <Aside title="Não existe ação bônus">
-          Uma única exceção no livro inteiro, e ela é nomeada: a primeira Conjuração Silenciosa de rank
-          Principiante em cada turno (Cap. 2, §2). Qualquer outra coisa que pareça uma ação bônus é erro de
-          texto.
+          As exceções são poucas, todas nomeadas, e todas moram na mesma lista fechada: o quadro{" "}
+          <b>&ldquo;Silenciosa sem gastar Ação&rdquo;</b> do Cap. 2, §2 — a primeira Conjuração Silenciosa de
+          rank Principiante de cada turno (todo mundo), o Prodígio do Gênio e as Maestrias de Imperador de
+          Água, Fogo, Vento e Cura. Se uma habilidade parece dar ação bônus e não está naquele quadro, é erro
+          de texto.
         </Aside>
 
         <SubTitle id="cap0-exemplo">Uma rodada, jogada de verdade</SubTitle>
         <P>
-          Três aventureiros contra dois lobos de gelo. Repare em quantas coisas acontecem sem ninguém
+          Dois aventureiros contra dois lobos de gelo. Repare em quantas coisas acontecem sem ninguém
           consultar uma tabela.
         </P>
         <BookTable
@@ -109,7 +111,7 @@ export default function Chapter0() {
               "O chute é o Improviso da Maestria dele — 1 Ação, rola com Vantagem, o lobo fica Cego até o fim do turno. Ataca com Vantagem (alvo Cego): 1d10 + Força 3 + Rank 1.",
             ],
             [
-              "Elina (fim da rodada)",
+              "Lobo (turno dele)",
               "O lobo Molhado avança e morde Borg.",
               "Nada acontece de especial — mas o lobo continua Molhado, e é isso que importa no próximo turno dela.",
             ],
@@ -149,7 +151,7 @@ export default function Chapter0() {
             ["2", "Role o Antecedente (1d100)", "Sua infância. Decide perícias, traços e quanto ouro você começa com."],
             ["3", "Distribua 2 pontos de atributo", "Só dois. Você pode baixar um atributo a -1 e outro a -2 pra ganhar mais três — mas leia o aviso sobre o Vigor antes."],
             ["4", "Escolha a Árvore Inicial", "A mais importante das seis decisões: ela dá o seu kit grátis, as suas perícias iniciais, e define o que você faz numa luta."],
-            ["5", "Gaste os 3 PA iniciais", "Um deles abre o 1º patamar da Árvore Inicial. Os outros dois compram magias, técnicas, talentos ou perícias."],
+            ["5", "Gaste os 3 PA iniciais", "A Árvore Inicial abre de graça — ela é a sua 1ª árvore, e o Custo de Abertura da 1ª é zero (Cap. 1, §8). Os 3 PA compram magias, técnicas, talentos, perícias ou atributos."],
             ["6", "Anote PV, PM, CA", "Ou deixe o site calcular. As fórmulas estão no Cap. 4, §1."],
           ]}
         />

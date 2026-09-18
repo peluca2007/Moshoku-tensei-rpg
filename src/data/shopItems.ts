@@ -196,7 +196,7 @@ const ARMOR: ShopItem[] = [
     name: "Armadura Leve (couro)",
     category: "armadura",
     type: "armadura",
-    description: "Peito e braçadeiras de couro batido — não atrapalha a mobilidade.",
+    description: "Categoria: leve (todo personagem é proficiente, Cap. 1, §4). Peito e braçadeiras de couro batido — não atrapalha a mobilidade.",
     price: 20,
     guildRankRequired: "F",
     acBonus: 1,
@@ -206,7 +206,7 @@ const ARMOR: ShopItem[] = [
     name: "Armadura Média",
     category: "armadura",
     type: "armadura",
-    description: "Cota de malha com reforços — o padrão de quem pretende segurar a linha de frente.",
+    description: "Categoria: média (exige proficiência, Cap. 1, §4). Cota de malha com reforços — o padrão de quem pretende segurar a linha de frente.",
     price: 60,
     guildRankRequired: "F",
     acBonus: 3,
@@ -216,7 +216,7 @@ const ARMOR: ShopItem[] = [
     name: "Armadura Pesada",
     category: "armadura",
     type: "armadura",
-    description: "Placas completas — pesada o bastante pra sede exigir alguma reputação antes de vender.",
+    description: "Categoria: pesada (exige proficiência, Cap. 1, §4). Placas completas — pesada o bastante pra sede exigir alguma reputação antes de vender.",
     price: 150,
     guildRankRequired: "E",
     acBonus: 5,
@@ -226,7 +226,7 @@ const ARMOR: ShopItem[] = [
     name: "Cota Élfica",
     category: "armadura",
     type: "armadura",
-    description: "Tecelagem que nenhum ferreiro comum reproduz — tão leve quanto couro batido, protege quase como malha reforçada.",
+    description: "Categoria: leve (todo personagem é proficiente, Cap. 1, §4). Tecelagem que nenhum ferreiro comum reproduz — tão leve quanto couro batido, protege quase como malha reforçada.",
     price: 180,
     guildRankRequired: "D",
     acBonus: 2,
@@ -236,7 +236,7 @@ const ARMOR: ShopItem[] = [
     name: "Armadura Rúnica",
     category: "armadura",
     type: "armadura",
-    description: "Runas gravadas na superfície distribuem o impacto de um golpe por toda a peça — ligeiramente mais pesada que a Média, protege mais.",
+    description: "Categoria: média (exige proficiência, Cap. 1, §4). Runas gravadas na superfície distribuem o impacto de um golpe por toda a peça — ligeiramente mais pesada que a Média, protege mais.",
     price: 260,
     guildRankRequired: "C",
     acBonus: 4,
@@ -246,7 +246,7 @@ const ARMOR: ShopItem[] = [
     name: "Placas Dracônicas",
     category: "armadura",
     type: "armadura",
-    description: "Escamas de dragão menor reforçando o metal — Vantagem em testes de resistência contra Medo causado por criaturas dracônicas. Proteção física igual à Armadura Pesada.",
+    description: "Categoria: pesada (exige proficiência, Cap. 1, §4). Escamas de dragão menor reforçando o metal — Vantagem em testes de resistência contra Medo causado por criaturas dracônicas. Proteção física igual à Armadura Pesada.",
     price: 450,
     guildRankRequired: "B",
     acBonus: 5,
@@ -256,7 +256,7 @@ const ARMOR: ShopItem[] = [
     name: "Armadura Rúnica Maior",
     category: "armadura",
     type: "armadura",
-    description: "A evolução da Armadura Rúnica — mais runas, mais peso, mais proteção.",
+    description: "Categoria: média (exige proficiência, Cap. 1, §4). A evolução da Armadura Rúnica — mais runas, mais peso, mais proteção.",
     price: 650,
     guildRankRequired: "A",
     acBonus: 6,
@@ -266,7 +266,7 @@ const ARMOR: ShopItem[] = [
     name: "Égide Lendária",
     category: "armadura",
     type: "armadura",
-    description: "Uma vez por Descanso Longo, ignore completamente o dano de um único golpe recebido — decida depois de ver o resultado do ataque. Se isso evitar que o dano leve você a 0 PV, conta como a sua Salvação do combate (Cap. 4, §5): não empilha com Aguentar, Rejeitar a Morte, Sem Baixas ou Custe o Que Custar.",
+    description: "Categoria: pesada (exige proficiência, Cap. 1, §4). Uma vez por Descanso Longo, ignore completamente o dano de um único golpe recebido — decida depois de ver o resultado do ataque. Se isso evitar que o dano leve você a 0 PV, conta como a sua Salvação do combate (Cap. 4, §5): não empilha com Aguentar, Rejeitar a Morte, Sem Baixas ou Custe o Que Custar.",
     price: 1200,
     guildRankRequired: "S",
     acBonus: 6,
@@ -276,7 +276,7 @@ const ARMOR: ShopItem[] = [
 const ADVENTURE_GEAR: ShopItem[] = [
   { id: "geral_corda", name: "Corda (15m)", category: "aventura", type: "geral", description: "Trançada, aguenta o peso de uma pessoa em queda.", price: 2, guildRankRequired: "F" },
   { id: "geral_tocha", name: "Tocha (feixe de 5)", category: "aventura", type: "geral", description: "Cerca de 1 hora de luz cada.", price: 1, guildRankRequired: "F" },
-  { id: "geral_primeiros_socorros", name: "Kit de Primeiros Socorros", category: "aventura", type: "geral", description: "Bandagens, agulha, linha e um torniquete — não substitui Cura, só estabiliza.", price: 10, guildRankRequired: "F" },
+  { id: "geral_primeiros_socorros", name: "Kit de Primeiros Socorros", category: "aventura", type: "geral", description: "Bandagens, agulha, linha e um torniquete. Qualquer um estabiliza uma criatura a 0 PV com 1 Ação e teste de Medicina CD 10 (Cap. 4); com este kit, o teste tem Vantagem. Não cura PV.", price: 10, guildRankRequired: "F" },
   { id: "geral_racao", name: "Ração de Viagem (1 semana)", category: "aventura", type: "geral", description: "Seca, pesada, dura em qualquer clima.", price: 5, guildRankRequired: "F" },
   { id: "geral_cantil", name: "Cantil", category: "aventura", type: "geral", description: "Couro impermeabilizado, cerca de 1 litro.", price: 2, guildRankRequired: "F" },
   { id: "geral_mochila", name: "Mochila de Couro", category: "aventura", type: "geral", description: "Reforçada, com alças duplas pra carregar mais sem cansar.", price: 8, guildRankRequired: "F" },
@@ -295,14 +295,23 @@ const ADVENTURE_GEAR: ShopItem[] = [
   { id: "geral_mapa_continental", name: "Mapa Master de um Continente Inteiro", category: "aventura", type: "geral", description: "Levantamento cartográfico completo e atualizado — a maioria dos mapas assim é segredo de estado. Um dos poucos itens mundanos que vale uma fortuna sozinho.", price: 1000, guildRankRequired: "S" },
 ];
 
-/** Cap. 5, §4 ("Poções"): mesmo nome, CD e preço de venda já documentados no livro — só reempacotado como dado estruturado. */
+/**
+ * Cap. 5, §4 ("Poções"): mesmo nome, CD, preço e EFEITO do livro.
+ *
+ * Poção não é magia: efeito fixo, nunca copia feitiço, ritual ou Reação. Antes
+ * cada poção de cura "reproduzia uma magia de Cura de rank X" — a Imperial
+ * virava Corpo Íntegro em 1 Ação, e a Menor virava Escudo de Carne por 15 PO.
+ * A Ferida Fresca não dobra poção, e nenhuma poção apaga Ferimento Crítico.
+ */
+const NOTA_POCAO = "Poção não é magia: a Ferida Fresca não a dobra, e nenhuma poção apaga Ferimento Crítico.";
+
 const POTIONS: ShopItem[] = [
   {
     id: "pocao_menor_cura",
     name: "Poção Menor de Cura",
     category: "pocao",
     type: "geral",
-    description: "Reproduz uma magia de Cura de rank Principiante ou Intermediário, sem precisar de mago presente.",
+    description: `Cura 1d8 + 2 PV. Beber ou dar a um aliado adjacente é Usar Item (1 Ação). ${NOTA_POCAO}`,
     price: 15,
     guildRankRequired: "F",
   },
@@ -311,7 +320,7 @@ const POTIONS: ShopItem[] = [
     name: "Poção de Antídoto",
     category: "pocao",
     type: "geral",
-    description: "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §8). Contra ranks acima disso, não faz nada.",
+    description: "Remove um veneno ou uma doença de rank Principiante (Cap. 4, §8). Contra ranks acima disso, não faz nada — é uma dose, não um mago.",
     price: 25,
     guildRankRequired: "E",
   },
@@ -320,7 +329,7 @@ const POTIONS: ShopItem[] = [
     name: "Elixir de Foco",
     category: "pocao",
     type: "geral",
-    description: "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico.",
+    description: "Por 1 cena, ignore a Desvantagem que o Trauma impõe (Cap. 4) — o gole antes de uma negociação que não pode dar errado.",
     price: 40,
     guildRankRequired: "E",
   },
@@ -329,7 +338,7 @@ const POTIONS: ShopItem[] = [
     name: "Poção Maior de Cura",
     category: "pocao",
     type: "geral",
-    description: "Reproduz uma magia de Cura de rank Avançado ou Santo.",
+    description: `Cura 3d8 + 3 PV. Beber ou dar a um aliado adjacente é Usar Item (1 Ação). ${NOTA_POCAO}`,
     price: 60,
     guildRankRequired: "C",
   },
@@ -338,16 +347,25 @@ const POTIONS: ShopItem[] = [
     name: "Poção de Vigor Passageiro",
     category: "pocao",
     type: "geral",
-    description: "Vantagem no próximo teste de resistência de Vigor — a versão física do Elixir de Foco.",
+    description: "Vantagem no próximo teste de resistência de Vigor — contra um veneno, uma doença ou o frio que está chegando.",
     price: 45,
     guildRankRequired: "D",
+  },
+  {
+    id: "pocao_antidoto_forte",
+    name: "Poção de Antídoto Forte",
+    category: "pocao",
+    type: "geral",
+    description: "Remove um veneno ou uma doença de rank Intermediário ou inferior (Cap. 4, §8). Contra ranks acima disso, não faz nada.",
+    price: 120,
+    guildRankRequired: "C",
   },
   {
     id: "pocao_regia_cura",
     name: "Poção Régia de Cura",
     category: "pocao",
     type: "geral",
-    description: "Reproduz uma magia de Cura de rank Rei — um degrau acima da Poção Maior.",
+    description: `Cura 5d8 + 4 PV. Beber ou dar a um aliado adjacente é Usar Item (1 Ação). ${NOTA_POCAO}`,
     price: 120,
     guildRankRequired: "B",
   },
@@ -356,7 +374,7 @@ const POTIONS: ShopItem[] = [
     name: "Elixir de Regeneração",
     category: "pocao",
     type: "geral",
-    description: "Remove toda a Exaustão acumulada de quem bebe (Cap. 4, §9) — não cura PV nem PM, só o cansaço acumulado.",
+    description: "Remove 2 níveis de Exaustão de quem bebe (Cap. 4, §9) — não cura PV nem PM, só o cansaço acumulado. Não remove Exaustão cuja causa ainda esteja ativa: quem não comeu continua com fome.",
     price: 200,
     guildRankRequired: "A",
   },
@@ -365,7 +383,7 @@ const POTIONS: ShopItem[] = [
     name: "Poção Imperial de Cura",
     category: "pocao",
     type: "geral",
-    description: "Reproduz uma magia de Cura de rank Imperador — o topo da escada, engarrafado.",
+    description: `Cura 5d8 + 6 PV e remove toda a Exaustão de origem física (ferimento, trauma, ter acordado do Fio da Vida) — nunca a de fome, sede, frio ou marcha forçada. ${NOTA_POCAO}`,
     price: 400,
     guildRankRequired: "S",
   },
@@ -432,8 +450,8 @@ const POISONS: ShopItem[] = [
     name: "Antídoto Universal",
     category: "veneno",
     type: "geral",
-    description: "Remove uma aflição de QUALQUER rank até Imperador (Cap. 4, §8) — inclusive as de rank Santo ou acima, que nenhuma outra dose à venda alcança. Raríssimo por isso mesmo.",
-    price: 500,
+    description: "Remove um veneno ou uma doença de rank Santo ou inferior (Cap. 4, §8) — a dose mais forte à venda. Nunca toca maldição nem transformação: essas continuam exigindo alguém que conjure Desintoxicação.",
+    price: 800,
     guildRankRequired: "S",
   },
 ];
@@ -522,7 +540,7 @@ const MAGIC_TOOLS: ShopItem[] = [
     name: "Botas Velozes",
     category: "ferramenta-magica",
     type: "geral",
-    description: "Encantadas pra dobrar sua velocidade de corrida por curtos períodos — o Mestre define duração e limite de uso. Não empilha com outros efeitos de deslocamento.",
+    description: "Uma vez por Descanso Longo, sem gastar Ação, seu Deslocamento dobra por 1 minuto. Não empilha com outros efeitos de deslocamento.",
     price: 180,
     guildRankRequired: "C",
   },
@@ -540,7 +558,7 @@ const MAGIC_TOOLS: ShopItem[] = [
     name: "Brinco de Ilusão Breve",
     category: "ferramenta-magica",
     type: "geral",
-    description: "Cravado na pele com 1 Ação, cria uma distração visual ou muda levemente sua aparência por até 1 cena — duração e limites exatos ficam a critério do Mestre.",
+    description: "Uma vez por Descanso Longo, cravado na pele com 1 Ação, cria uma distração visual ou muda levemente sua aparência (rosto, cabelo, roupa — nunca altura nem porte) até o fim da cena.",
     price: 350,
     guildRankRequired: "B",
   },
@@ -549,7 +567,7 @@ const MAGIC_TOOLS: ShopItem[] = [
     name: "Anel Perturbador de Magia",
     category: "ferramenta-magica",
     type: "geral",
-    description: "Apontado pra um alvo, faz a magia dele simplesmente falhar ao tentar operar perto de você por alguns instantes. Raríssimo — como o Anel de Teleporte (Cap. 5 §4), cabe ao Mestre decidir se um artefato desse nível existe na sua campanha.",
+    description: "Uma vez por Descanso Longo, com 1 Reação, quando uma criatura a até 9 m termina de conjurar uma magia de rank Santo ou inferior: a magia falha e todo o PM investido nela é gasto. Raríssimo — como o Anel de Teleporte (Cap. 5 §4), cabe ao Mestre decidir se um artefato desse nível existe na sua campanha.",
     price: 900,
     guildRankRequired: "S",
   },
@@ -558,7 +576,7 @@ const MAGIC_TOOLS: ShopItem[] = [
     name: "Anel de Barreira Improvisada",
     category: "ferramenta-magica",
     type: "geral",
-    description: "Apontado a tempo, ergue uma barreira invisível que intercepta um único golpe físico vindo contra você. Mesmo aviso do item acima: raro, e o Mestre decide se existe na mesa.",
+    description: "Uma vez por Descanso Longo, com 1 Reação, quando um ataque de dano físico (cortante, perfurante ou contundente) acertaria você: ergue uma barreira invisível e o ataque é anulado. Mesmo aviso do item acima: raro, e o Mestre decide se existe na mesa.",
     price: 900,
     guildRankRequired: "S",
   },
@@ -576,7 +594,7 @@ const MAGIC_TOOLS: ShopItem[] = [
     name: "Amuleto de Respiração Aquática",
     category: "ferramenta-magica",
     type: "geral",
-    description: "Enquanto usado, respira embaixo d'água normalmente por um tempo curto — o Mestre define a duração. Não ajuda contra pressão de profundidade nem frio.",
+    description: "Uma vez por Descanso Longo, ativado com 1 Ação: você respira embaixo d'água normalmente por 10 minutos. Não ajuda contra pressão de profundidade nem frio.",
     price: 140,
     guildRankRequired: "D",
   },
@@ -606,9 +624,11 @@ const MAGIC_TOOLS: ShopItem[] = [
  * como item comprável. O que você recebe ao comprar é o SERVIÇO já pago e
  * encomendado, não um objeto novo: depois de comprar, edite a arma/armadura
  * que vai levar o efeito (ícone de lápis no Inventário) pra refletir o bônus
- * descrito. Só existem estes 4 níveis de propósito — o livro é explícito que
- * Encantamento exige um encantador vivo daquele Rank de árvore, e a Guilda só
- * libera a partir de Rank D (ver "A Loja da Guilda" acima); não inventamos
+ * descrito. Um item carrega no máximo um encantamento de CADA nível, e todos
+ * somam — antes era "um por item", e o Imperador de 1.500 PO apagava o Santo
+ * de 300 em troca de um degrau só. Só existem estes 4 níveis de propósito — o
+ * livro é explícito que Encantamento exige um encantador vivo daquele Rank de
+ * árvore, e a Guilda intermedeia a partir de Rank D (ver "A Loja da Guilda"); não inventamos
  * nível pra Rank F/E/C porque o livro não define um.
  */
 const ENCHANTMENTS: ShopItem[] = [
@@ -617,7 +637,7 @@ const ENCHANTMENTS: ShopItem[] = [
     name: "Encantamento Avançado",
     category: "encantamento",
     type: "geral",
-    description: "Serviço encomendado: +1 no Dado de Arma OU +1 na CA de um item que você já possui. Encantador precisa de Rank Avançado na árvore compatível. Depois de comprar, edite o item alvo pra refletir o bônus.",
+    description: "Serviço encomendado: +1 degrau na Escada de Dados (arma, Cap. 3) OU +1 na CA (armadura — o +1 entra no valor da própria armadura: +3 vira +4), num item que você já possui. Encantador precisa de Rank Avançado na árvore compatível. Um item carrega no máximo um encantamento de cada nível, e todos somam. Depois de comprar, edite o item alvo pra refletir o bônus.",
     price: 150,
     guildRankRequired: "D",
   },
@@ -644,7 +664,7 @@ const ENCHANTMENTS: ShopItem[] = [
     name: "Encantamento Imperador",
     category: "encantamento",
     type: "geral",
-    description: "Serviço encomendado: +1 no Bônus de Rank pra fins de Dado de Arma, num item que você já possui. Encantador precisa de Rank Imperador na árvore compatível. Depois de comprar, edite o item alvo pra refletir o bônus.",
+    description: "Serviço encomendado: +1 degrau na Escada de Dados (arma, Cap. 3), somado ao do Avançado, num item que você já possui; se o item tem o encantamento Santo, o dano elemental dele passa a 2d6. Encantador precisa de Rank Imperador na árvore compatível. Depois de comprar, edite o item alvo pra refletir o bônus.",
     price: 1500,
     guildRankRequired: "S",
   },

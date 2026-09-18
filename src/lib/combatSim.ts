@@ -16,14 +16,17 @@ import { getTreeById } from "@/data/trees/index";
 import {
   getArmorClass,
   getAttackBonus,
+  getFinalAttribute,
   getHighestUnlockedRank,
+  getInitiative,
   getMaxHp,
   getMaxMp,
   getPtPool,
+  getWeaponDamage,
+  getTreeAttributeKey,
 } from "@/store/selectors";
 import {
   AbilityDef,
-  attributeKeyFromLabel,
   CharacterData,
   RANK_BONUS,
   RankName,
@@ -323,6 +326,9 @@ export interface FichaCombate {
   bc: number;
   /** Bônus de quem bate com arma sem ter árvore do Corpo: só o atributo, sem Rank. */
   bcSemRank: number;
+  /** Tipos de dano que ele resiste (metade) e a que é imune (zero) — Cap. 4, §6. */
+  resistencias: string[];
+  imunidades: string[];
   /**
    * O Bônus de Rank SOZINHO, sem o atributo em cima (0.1.35).
    *
@@ -331,10 +337,30 @@ export interface FichaCombate {
    * e de um `bc` somado não dá pra separar de volta a parcela que interessa.
    */
   bonusDeRank: number;
+  /**
+   * Metade do MAIOR Bônus de Rank da ficha, de qualquer árvore, arredondada
+   * pra cima — a parcela que todo teste de resistência soma (Cap. 4, §1).
+   *
+   * Não é `bonusDeRank / 2`: aquele é o da árvore inicial, e o livro manda
+   * usar o maior. Até a revisão do livro o Fio da Vida e a Concentração
+   * rolavam sem esta parcela, e um Imperador resistia como um Principiante.
+   */
+  metadeDoMaiorRank: number;
+  /**
+   * O bônus do personagem quando uma CRIATURA pede teste de resistência.
+   *
+   * O livro é "1d20 + Atributo + metade do maior Bônus de Rank", e a ação da
+   * criatura não diz qual atributo cobra. Sem essa informação, o motor usa o
+   * do MEIO entre Vigor, Agilidade e Espírito: nem o melhor (otimista), nem o
+   * pior. Antes era metade do BC do próprio personagem, que não é conta do
+   * livro nenhuma. Declarado em SIMPLIFICACOES.
+   */
+  resistencia: number;
+  /** Iniciativa final (Agilidade com raça e antecedente), a mesma da ficha. */
   iniciativa: number;
-  /** Vigor — o atributo do teste do Fio da Vida (Cap. 4, §7). */
+  /** Vigor FINAL — o atributo do teste do Fio da Vida (Cap. 4, §7). */
   vigor: number;
-  /** Espírito — o atributo do teste de Concentração da conjuração (Cap. 2, §6). */
+  /** Espírito FINAL — o atributo do teste de Concentração da conjuração (Cap. 2, §6). */
   espirito: number;
   acoes: Acao[];
   ataqueBasico: Acao;
@@ -346,6 +372,21 @@ export interface Alvo {
   pv: number;
   ca: number;
   vivo: boolean;
+  /**
+   * Tipos de dano com Resistência e Imunidade — Cap. 4, §6 (0.1.90).
+   *
+   * O livro definiu as três palavras na revisão (Resistência = metade,
+   * Imunidade = zero, Vulnerável = dobro) e o motor continuou ignorando as
+   * três: um elemental de fogo levava dano ígneo cheio numa simulação de 2.000
+   * combates, e o Mestre calibrava o encontro por um número que não existia na
+   * mesa. Guardadas em minúscula, como o Apêndice G escreve.
+   *
+   * Vulnerável não está aqui de propósito: nenhuma CRIATURA do livro tem
+   * Vulnerabilidade permanente — ela vem de condição (Molhado é Vulnerável a
+   * frio), e condição já é estado, não ficha.
+   */
+  resistencias: string[];
+  imunidades: string[];
   molhado: boolean;
   emChamas: number;
   /**
@@ -376,6 +417,16 @@ export interface Alvo {
    * que o alvo carregasse uma referência ao conjurador.
    */
   sustentados: { media: number; turnos: number }[];
+  /**
+   * O bônus deste alvo num teste de resistência, quando ele é conhecido.
+   *
+   * Criatura: o "Bônus de Resistência" do Apêndice G, metade do Bônus de
+   * Ataque arredondado pra cima (`encounterSim.ts` preenche). Personagem: o
+   * `resistencia` da ficha. `null` = boneco de treino sem ficha, e aí o motor
+   * cai na conta antiga (metade do BC de quem ataca), que só serve pra medir
+   * uma técnica contra um alvo neutro.
+   */
+  bonusResistencia: number | null;
   /**
    * Preso, Caído e Envenenado (Cap. 4, §7-8) — as três condições que uma ação
    * de criatura pode aplicar de forma estruturada (`AcaoCriatura.aplicaPreso` e
@@ -410,14 +461,22 @@ export interface Alvo {
    */
   pvTemp: number;
   /**
-   * Ferida Fresca (Cap. 4) — a mecânica que dá identidade à Magia de Cura:
-   * *"toda a Magia de Cura cura em dobro contra uma Ferida Fresca. Ferida Fresca
-   * é o dano sofrido no turno atual ou no turno imediatamente anterior"*.
+   * Ferida Fresca (Cap. 4, §7) — a mecânica que dá identidade à Magia de Cura:
+   * é o dano sofrido desde o início do último turno do próprio alvo, e contra
+   * ela dobram os DADOS da cura (o BC soma uma vez só).
    *
    * É por isso que o curandeiro age cedo e não depois, e sem ela a escola vira
-   * um dado de cura genérico. Aqui o contador vale 2 quando o alvo leva dano e
-   * cai de 1 no início de cada turno DELE (`turnoPersonagem`) — a janela de dois
-   * turnos próprios que a regra descreve, na granularidade que este motor tem.
+   * um dado de cura genérico. Aqui o contador vale 1 quando o alvo leva dano e
+   * zera no início do turno DELE (`turnoPersonagem`): o golpe que chegou antes
+   * de o alvo começar o turno deixa de ser fresco nesse instante.
+   *
+   * Até a revisão do livro o contador valia 2 e atravessava dois turnos do
+   * alvo — a leitura antiga de "turno atual ou imediatamente anterior", que
+   * numa luta de seis criaturas podia querer dizer o turno do goblin ao lado.
+   *
+   * A exceção é o dano que chega NO início do turno (Em Chamas, área
+   * sustentada): ele acontece depois de o turno começar, então as funções de
+   * tique gravam 2, e o fechamento da janela em `turnoPersonagem` o deixa em 1.
    */
   feridaFresca: number;
   /**
@@ -440,7 +499,12 @@ export interface Alvo {
   fioDaVida: boolean;
   inconsciente: boolean;
   marcasDaMorte: number;
-  /** Passou no teste: para de rolar, mas segue desacordado até alguém curar. */
+  /**
+   * Estabilizado (Cap. 4, §7): para de rolar o Fio da Vida e acorda com 1 PV em
+   * 1d4 horas, ou na hora com qualquer cura. Nenhum combate deste motor dura
+   * horas, então aqui ele segue desacordado até alguém curar. Sofrer dano a 0
+   * PV tira o Estabilizado (`aplicarDano`).
+   */
   estabilizado: boolean;
   /** Três Marcas: acabou. Nenhuma cura deste motor traz de volta. */
   morto: boolean;
@@ -470,6 +534,7 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
     emChamas: p.emChamas ?? 0,
     quebrantado: p.quebrantado ?? 0,
     sustentados: p.sustentados ?? [],
+    bonusResistencia: p.bonusResistencia ?? null,
     preso: p.preso ?? false,
     caido: p.caido ?? false,
     envenenado: p.envenenado ?? false,
@@ -487,6 +552,8 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
     // 10 é o que o livro manda usar "se não houver um responsável claro, como
     // uma queda ou um desabamento".
     cdFioDaVida: p.cdFioDaVida ?? 10,
+    resistencias: p.resistencias ?? [],
+    imunidades: p.imunidades ?? [],
   };
 }
 
@@ -521,8 +588,8 @@ export interface EstadoPersonagem extends Alvo {
    * O cântico em andamento — Cap. 2, §6 e Cap. 4, §3, na 0.1.40.
    *
    * *"Magias poderosas exigem mais Ações do que você tem num turno — o sistema
-   * permite dividir o cântico."* Sem isto, as VINTE ações de dano que custam 4,
-   * 5 ou 6 Ações eram inalcançáveis pelo motor: `escolherAcao` filtrava por
+   * permite dividir o cântico."* Sem isto, as ações de dano que custam 4 Ações
+   * (Rei e Imperador; o teto é 4) eram inalcançáveis pelo motor: `escolherAcao` filtrava por
    * `acoes <= acoesRestantes` e um turno tem 3. Sol Menor, Zero Absoluto, Era
    * Glacial, Vazio — as maiores magias do livro nunca foram simuladas uma vez.
    *
@@ -541,8 +608,6 @@ export interface EstadoPersonagem extends Alvo {
    */
   pvCurado: number;
 }
-
-const ESCADA_DADOS = [4, 6, 8, 10, 12, 16, 20, 24];
 
 /**
  * Extrai as ações ofensivas das magias/técnicas compradas.
@@ -794,16 +859,28 @@ export function casoBase(formula: string): string {
 
 /** Resolve uma ficha do site nos números que a simulação usa. */
 export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
-  const tree = getTreeById(c.startingTreeId);
-  const attr = attributeKeyFromLabel(tree?.keyAttributeLabel) ?? "forca";
+  // O MAIOR entre os atributos que o rótulo oferece: o Norte e o Vendaval
+  // dizem "Força ou Agilidade", e o Punho do Fogo "Força ou Intelecto".
+  const attr = getTreeAttributeKey(c, c.startingTreeId, "forca");
   const bc = c.startingTreeId ? getAttackBonus(c, c.startingTreeId, attr) : 0;
 
-  // Degraus de Dado de Arma: soma só dos patamares de árvores do CORPO.
-  const degraus = c.unlockedRanks.reduce((n, u) => {
-    const t = getTreeById(u.treeId);
-    if (t?.category !== "corpo") return n;
-    return n + (t.ranks.find((r) => r.rank === u.rank)?.weaponDieSteps ?? 0);
-  }, 0);
+  /*
+   * O dado do golpe comum sai da MESMA função que a ficha usa — revisão do livro.
+   *
+   * Até aqui o motor somava os degraus de TODAS as árvores do Corpo (Espada e
+   * Norte juntos davam degraus que nenhuma das duas dá) e subia numa escada
+   * própria de d16, d20 e d24, dados que a Escada do Cap. 3 não tem. O livro
+   * diz "o maior Rank entre as árvores do Corpo", e `getWeaponDamage` já é essa
+   * regra, com empate e tudo. A base é o d6 de sempre.
+   */
+  const golpeComum = getWeaponDamage(c, "d6");
+
+  const maiorBonus = c.unlockedRanks.reduce((m, u) => Math.max(m, RANK_BONUS[u.rank]), 0);
+  const metadeDoMaiorRank = Math.ceil(maiorBonus / 2);
+  const vigor = getFinalAttribute(c, "vigor");
+  const agilidade = getFinalAttribute(c, "agilidade");
+  const espirito = getFinalAttribute(c, "espirito");
+  const atributoDoMeio = [vigor, agilidade, espirito].sort((x, y) => x - y)[1];
 
   return {
     id: c.id,
@@ -814,16 +891,24 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
     pmMax: getMaxMp(c),
     ptMax: getPtPool(c),
     bc,
-    bcSemRank: Math.max(0, ...Object.values(c.attributeBase)),
+    // Golpe sem estilo: "Força; ou Agilidade" (Cap. 3), a melhor das duas, e
+    // não o maior atributo qualquer — um mago de Intelecto 6 não bate com a
+    // cabeça. Atributo FINAL, com raça e antecedente.
+    bcSemRank: Math.max(getFinalAttribute(c, "forca"), agilidade),
+    ...resistenciasDe(c),
     // O Bônus de Rank da árvore inicial — a mesma de onde `bc` sai, pra que as
     // duas contas falem do mesmo personagem.
     bonusDeRank: (() => {
       const rank = c.startingTreeId ? getHighestUnlockedRank(c, c.startingTreeId) : undefined;
       return rank ? RANK_BONUS[rank] : 0;
     })(),
-    iniciativa: c.attributeBase.agilidade,
-    vigor: c.attributeBase.vigor,
-    espirito: c.attributeBase.espirito,
+    metadeDoMaiorRank,
+    resistencia: atributoDoMeio + metadeDoMaiorRank,
+    // Atributos FINAIS: até a revisão do livro saíam do atributo base, e o +1
+    // de Vigor do Anão ou a Iniciativa do antecedente não existiam em combate.
+    iniciativa: getInitiative(c).bonus,
+    vigor,
+    espirito,
     acoes: acoesDe(c),
     // Golpe comum. A Escada de Dados é EXCLUSIVA da Árvore do Corpo (Cap. 3):
     // um mago de Água Avançado não escala dado nenhum — ele empunha uma arma
@@ -844,17 +929,196 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
        * simples", e um Mestre que procurasse esse termo no livro não acharia
        * mais nada.
        */
-      nome: degraus > 0 ? "golpe comum" : "golpe sem estilo",
-      dano: `1d${ESCADA_DADOS[Math.min(ESCADA_DADOS.length - 1, 1 + degraus)]}`,
+      nome: golpeComum ? "golpe comum" : "golpe sem estilo",
+      // `escalatedDie` vem sem o "1" na frente ("d8", "2d10"); `rolarDados` só
+      // lê "NdM", então o número de dados é escrito aqui.
+      dano: (() => {
+        const die = golpeComum?.escalatedDie ?? "d6";
+        return /^d/i.test(die) ? `1${die}` : die;
+      })(),
       ataque: true,
     }),
   };
 }
 
 /** Estado zerado pra uma batalha nova, a partir da ficha já derivada. */
+/**
+ * As Resistências e Imunidades que o PERSONAGEM carrega — Cap. 4, §6 (0.1.90).
+ *
+ * Meia dúzia de Maestrias e traços raciais dão Resistência a um tipo de dano — o
+ * Casco do Escudeiro, a Chama Viva do Fogo, a pele do Anão — e o motor ignorava
+ * todas, porque nunca existiu um campo pra elas. Depois que o Apêndice G passou
+ * a dar Resistência às criaturas, deixar o lado dos personagens de fora seria a
+ * mesma regra valendo num sentido só.
+ *
+ * ## Por que lê a prosa
+ *
+ * Porque a prosa é onde a informação está. Nenhuma habilidade do livro declara
+ * resistência num campo estruturado, e criar um exigiria revisar as ~400 e
+ * torcer pra ninguém esquecer de preencher na próxima. Ler o texto tem um custo
+ * conhecido — ele erra quando a frase é criativa — e uma vantagem que paga: uma
+ * habilidade escrita amanhã já entra sozinha.
+ *
+ * É a mesma escolha que o motor já faz em três outros lugares (a detecção de
+ * fogo, a de Quebrantado, a de cura), e pelo mesmo motivo.
+ *
+ * ## O que ela NÃO pega
+ *
+ * "Resistência" condicional ("resiste enquanto estiver na Postura"), porque o
+ * motor não modela a condição — e uma resistência que vale sempre é pior que
+ * nenhuma. A regex exige o tipo logo depois da palavra, então "ignora
+ * Resistência a ígneo" (que é o contrário: FURA a do alvo) não vira resistência
+ * de quem tem a habilidade.
+ */
+export const TIPOS_DE_DANO_CONHECIDOS = [
+  "cortante",
+  "perfurante",
+  "contundente",
+  "ígneo",
+  "frio",
+  "elétrico",
+  "radiante",
+  "sônico",
+  "veneno",
+  "ácido",
+  "psíquico",
+  "físico",
+] as const;
+
+function tiposNaFrase(texto: string, palavra: "resistência" | "imunidade"): string[] {
+  const t = texto.toLowerCase();
+  const achados = new Set<string>();
+
+  /*
+   * DE QUEM É A RESISTÊNCIA — o invocado não é o invocador.
+   *
+   * Metade do catálogo de Espíritos e Feras descreve o que a CRIATURA INVOCADA
+   * ganha, com as mesmas palavras que uma habilidade de personagem usaria. Sem
+   * esta linha, o Filhote Evolutivo ("...PV = 25 × Bônus de Rank, Resistência a
+   * dano físico...") dava Resistência a dano físico ao INVOCADOR, que seria o
+   * talento mais forte do livro por uma larga margem.
+   *
+   * A checagem é no texto INTEIRO, e não numa janela em volta da palavra: o
+   * dono da frase costuma ser nomeado uma vez, lá no começo ("Seu filhote
+   * cresce…"), e o resto do parágrafo fala dele por elipse.
+   */
+  if (/invocad|filhote|pacto/.test(t)) return [];
+
+  // Cada ocorrência da palavra é olhada sozinha: uma Maestria longa pode dizer
+  // "ignora Resistência a ígneo" numa frase e "Resistência a frio" na seguinte,
+  // e testar o texto inteiro daria a resposta errada para as duas.
+  for (let i = t.indexOf(palavra); i >= 0; i = t.indexOf(palavra, i + 1)) {
+    const antes = t.slice(Math.max(0, i - 60), i);
+    const depois = t.slice(i, i + 90);
+
+    /*
+     * O CONTRÁRIO — "ignoram Resistência a perfurante".
+     *
+     * Metade das aparições da palavra no livro é de habilidades que FURAM a
+     * resistência do alvo, e não que dão a sua. A primeira versão desta leitura
+     * procurava "ignora" e deixava passar "ignoram": a Arquearia saiu resistindo
+     * a perfurante, que é o oposto exato do que a carta dela diz.
+     *
+     * O `[^.]*$` é o que faz a checagem valer até o fim da FRASE, e não até a
+     * palavra anterior: o plasma do Fogo Imperador diz "ignora Resistência e
+     * Imunidade a dano ígneo", e com uma janela curta a segunda palavra escapava
+     * — o mago de Fogo saía imune ao próprio elemento.
+     */
+    if (/(ignora|fura|atravessa|nega|anula)\w*[^.]*$/.test(antes)) continue;
+
+    /*
+     * O CONDICIONAL e o MUNDANO — o que o motor não sabe distinguir.
+     *
+     * "Resistência a dano físico MUNDANO" e "...ENQUANTO estiver com os pés no
+     * chão" são resistências de verdade, e não entram assim mesmo: a simulação
+     * não guarda se o golpe veio de arma mágica nem se o personagem saiu do
+     * chão. Contar uma resistência condicional como permanente é pior que não
+     * contar nenhuma — o playtest sairia otimista e ninguém saberia por quê.
+     */
+    if (/mundan|enquanto|salvo|exceto/.test(depois)) continue;
+
+
+    /*
+     * A PREPOSIÇÃO "A" — o que separa as duas "resistências" do livro.
+     *
+     * "Teste de resistência" é rolagem (Cap. 1, §7); "Resistência A dano ígneo"
+     * é metade do dano (Cap. 4, §6). A palavra é a mesma e o significado não
+     * tem nada a ver, e foi assim que a Desintoxicação saiu daqui resistindo a
+     * dano de veneno: a Maestria dela dá Vantagem em "testes de resistência
+     * CONTRA veneno, doença e maldição", que é outra coisa inteira.
+     *
+     * Exigir "a" (com ou sem "dano"/"de" no meio) separa as duas sem precisar
+     * entender a frase: quem dá resistência a dano escreve "a", e quem fala de
+     * rolagem escreve "de" ou "contra".
+     */
+    for (const tipo of TIPOS_DE_DANO_CONHECIDOS) {
+      const re = new RegExp(palavra + "\\s+a\\s+(dano\\s+)?(de\\s+)?" + tipo);
+      if (re.test(depois)) achados.add(tipo);
+    }
+  }
+  return [...achados];
+}
+
+/**
+ * Os tipos de dano que um personagem sabe causar — 0.1.90.
+ *
+ * Sai das fórmulas das habilidades dele ("6d10 + BC (ígneo)"), que é onde o
+ * tipo já vivia. Serve pro aviso de Imunidade da tela de encontros: uma
+ * criatura imune a ígneo contra um grupo que só causa ígneo não é um encontro
+ * difícil, é um jogador sem jogada — e nada na tela dizia isso.
+ *
+ * Devolve vazio quando não dá pra saber, e o aviso se cala. Um palpite aqui
+ * mandaria o Mestre refazer um encontro que estava certo.
+ */
+export function tiposDeDanoDaFicha(c: CharacterData): string[] {
+  const achados = new Set<string>();
+  for (const acao of acoesDe(c)) {
+    if (acao.tipo !== "dano") continue;
+    const f = acao.dano.toLowerCase();
+    for (const tipo of TIPOS_DE_DANO_CONHECIDOS) if (f.includes(tipo)) achados.add(tipo);
+  }
+  return [...achados];
+}
+
+export function resistenciasDe(c: CharacterData): { resistencias: string[]; imunidades: string[] } {
+  const textos: string[] = [];
+  // Maestrias dos patamares desbloqueados: elas são de graça, então valem
+  // sempre que o rank está aberto.
+  for (const u of c.unlockedRanks) {
+    const rd = getTreeById(u.treeId)?.ranks.find((r) => r.rank === u.rank);
+    if (rd?.mastery) textos.push(rd.mastery.description);
+  }
+  // E o que ele comprou com PA.
+  for (const compra of c.purchasedAbilities) {
+    const rd = getTreeById(compra.treeId)?.ranks.find((r) => r.rank === compra.rank);
+    const item =
+      rd?.abilities.find((x) => x.id === compra.id) ?? rd?.talents.find((x) => x.id === compra.id);
+    if (!item) continue;
+    textos.push("effect" in item ? (item.effect ?? "") : (item.description ?? ""));
+  }
+  const resistencias = new Set<string>();
+  const imunidades = new Set<string>();
+  for (const texto of textos) {
+    for (const t of tiposNaFrase(texto, "resistência")) resistencias.add(t);
+    for (const t of tiposNaFrase(texto, "imunidade")) imunidades.add(t);
+  }
+  // Imunidade engole Resistência: ter as duas ao mesmo tipo é redundância, e
+  // deixar as duas listadas faria a ficha parecer errada.
+  for (const i of imunidades) resistencias.delete(i);
+  return { resistencias: [...resistencias], imunidades: [...imunidades] };
+}
+
 export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
   return {
-    ...novoAlvo({ nome: ficha.nome, pv: ficha.pvMax, ca: ficha.ca, fioDaVida: true }),
+    ...novoAlvo({
+      nome: ficha.nome,
+      pv: ficha.pvMax,
+      ca: ficha.ca,
+      fioDaVida: true,
+      bonusResistencia: ficha.resistencia,
+      resistencias: ficha.resistencias,
+      imunidades: ficha.imunidades,
+    }),
     ficha,
     pm: ficha.pmMax,
     pt: ficha.ptMax,
@@ -936,18 +1200,22 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     const ca = Math.max(1, alvo.ca - alvo.quebrantado);
     const precisa = ca - bonus;
     const chance = Math.min(0.95, Math.max(0.05, (21 - precisa) / 20));
-    // O crítico (5% do d20) soma UMA rolagem a mais dos dados PRÓPRIOS da ação
-    // — não do bônus fixo nem dos Dados de Arma. É o que `resolver` faz, e a
-    // diferença aparece justamente nas técnicas de Dado de Arma, onde o bruto é
-    // várias vezes maior que os dados próprios.
-    return chance * bruto + 0.05 * mediaDados(a.dano);
+    // O crítico (5% do d20) rola TODOS os dados de novo — os próprios da ação
+    // e os Dados de Arma — e soma o bônus fixo uma vez só (Cap. 4, §6: "role os
+    // dados de dano duas vezes e some os bônus fixos uma vez só"). Até a revisão
+    // do livro só os dados próprios dobravam, e as técnicas de Dado de Arma
+    // tinham o crítico mais fraco do jogo.
+    return (
+      chance * bruto +
+      0.05 * (mediaDados(a.dano) + a.dadosDeArma * mediaDados(e.ficha.ataqueBasico.dano))
+    );
   }
 
-  // Ramo de resistência: metade quando o alvo passa. A CD e o bônus de quem
-  // resiste saem os dois do BC do atacante, como em `resolver` — o motor não
-  // guarda atributo de alvo.
+  // Ramo de resistência: metade quando o alvo passa. A CD é 8 + BC do atacante;
+  // o bônus de quem resiste é o dele (`bonusResistencia`), e só um boneco sem
+  // ficha cai na conta antiga de metade do BC do atacante. Igual a `resolver`.
   const cd = 8 + e.ficha.bc;
-  const bonusDoAlvo = Math.ceil(e.ficha.bc / 2);
+  const bonusDoAlvo = alvo.bonusResistencia ?? Math.ceil(e.ficha.bc / 2);
   const passa = Math.min(0.95, Math.max(0.05, (21 - (cd - bonusDoAlvo)) / 20));
   return bruto * (1 - passa / 2);
 }
@@ -979,8 +1247,9 @@ export function escolherAcao(
   /*
    * O filtro de Ações caiu na 0.1.40 — a Conjuração Dividida (Cap. 4, §3).
    *
-   * `a.acoes <= acoesRestantes` excluía toda magia de 4, 5 ou 6 Ações, porque um
-   * turno tem 3. Eram VINTE ações de dano invisíveis, e não as menores: Sol
+   * `a.acoes <= acoesRestantes` excluía toda magia de 4 Ações (Rei e Imperador —
+   * o teto do Cap. 2), porque um turno tem 3. Eram ações de dano invisíveis, e
+   * não as menores: Sol
    * Menor, Zero Absoluto, Era Glacial, Vazio. O livro não proíbe conjurá-las —
    * ele manda dividir o cântico entre turnos.
    *
@@ -1022,12 +1291,17 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
     if (rolagem === 1) return 0;
     if (rolagem !== 20 && rolagem + bonus < caDoAlvo) return 0;
     dano = rolarDados(a.dano, rng) + bonus + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
-    if (rolagem === 20) dano += rolarDados(a.dano, rng);
+    // Crítico: todos os dados de novo, Dados de Arma incluídos; o bônus fixo não.
+    if (rolagem === 20) {
+      dano += rolarDados(a.dano, rng) + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
+    }
   } else {
     // teste de resistência do alvo: metade se passar. Envenenado também cobra
     // Desvantagem em "testes de atributo" (Cap. 4, §7) — e resistir a uma
-    // magia é isso.
-    const resistencia = d20Ajustado(rng, false, alvo.envenenado) + Math.ceil(e.ficha.bc / 2);
+    // magia é isso. O bônus é o do ALVO; só o boneco sem ficha usa metade do
+    // BC de quem ataca.
+    const resistencia =
+      d20Ajustado(rng, false, alvo.envenenado) + (alvo.bonusResistencia ?? Math.ceil(e.ficha.bc / 2));
     dano = rolarDados(a.dano, rng) + bonus + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
     if (resistencia >= 8 + e.ficha.bc) dano = Math.floor(dano / 2);
   }
@@ -1093,9 +1367,52 @@ export function aplicarDano(
    * (Cap. 2, §6). Sem ele o cântico não é testado — é o que as contas puras
    * (`danoEsperado`, testes de unidade de absorção) querem.
    */
-  rng?: Rng
+  rng?: Rng,
+  /** O golpe foi um 20 natural? Só importa em quem já está a 0 PV: 2 Marcas em vez de 1. */
+  critico = false,
+  /**
+   * O tipo do dano, em minúscula ("ígneo", "cortante"…). Sem ele, Resistência
+   * e Imunidade não se aplicam — é o caso das contas puras e do dano genérico
+   * do orçamento por turno, que não tem tipo declarado.
+   */
+  tipoDeDano?: string
 ): number {
   if (dano <= 0) return 0;
+  /*
+   * RESISTÊNCIA E IMUNIDADE — Cap. 4, §6, antes de tudo o mais.
+   *
+   * A ordem é a do livro: "reduções fixas entram antes; depois, Resistência,
+   * Imunidade ou Vulnerável". As reduções fixas (Touki Concentrado, Defender)
+   * já saíram do número que chega aqui; PV Temporários NÃO são redução, são
+   * uma poça de vida — então eles vêm depois, e a casca absorve o valor já
+   * reduzido. Imunidade zera antes de a casca ser gastada, que é o certo: não
+   * se gasta escudo contra o que não machuca.
+   */
+  if (tipoDeDano) {
+    const t = tipoDeDano.toLowerCase();
+    if (alvo.imunidades.some((i) => t.includes(i))) return 0;
+    if (alvo.resistencias.some((r) => t.includes(r))) dano = Math.floor(dano / 2);
+    if (dano <= 0) return 0;
+  }
+  /*
+   * DANO A 0 PV — Cap. 4, §7 (revisão do livro).
+   *
+   * "Sofrer dano a 0 PV dá 1 Marca da Morte (2 se for crítico) e tira o
+   * Estabilizado." Antes o livro não dizia nada, e o motor tratava o golpe no
+   * caído como se ele caísse de novo: regravava a CD e zerava o Estabilizado,
+   * sem Marca nenhuma. A Bola de Fogo que pega o aliado no chão agora custa.
+   */
+  if (alvo.inconsciente && !alvo.morto) {
+    alvo.pv = 0;
+    alvo.feridaFresca = 1;
+    alvo.estabilizado = false;
+    alvo.marcasDaMorte += critico ? 2 : 1;
+    if (alvo.marcasDaMorte >= 3) {
+      alvo.morto = true;
+      alvo.inconsciente = false;
+    }
+    return 0;
+  }
   // "Gastos antes dos PV reais": a casca come o golpe primeiro, e só o que
   // sobrar chega na carne.
   const absorvido = Math.min(alvo.pvTemp, dano);
@@ -1104,12 +1421,13 @@ export function aplicarDano(
   alvo.pv -= real;
   // A ferida marca mesmo quando a casca comeu tudo: quem levou o golpe levou o
   // golpe, e a janela de cura em dobro é sobre o momento, não sobre o número.
-  alvo.feridaFresca = 2;
+  // Vale 1 e fecha no início do próximo turno do alvo (`turnoPersonagem`).
+  alvo.feridaFresca = 1;
   /*
    * Cap. 2, §6: *"sofrer dano NÃO interrompe automaticamente"* — quem conjura
    * faz um teste de Espírito contra CD 10 + o Bônus de Rank de quem acertou.
-   * Sucesso e o cântico segue com as Ações gastas valendo; falha e perde tudo
-   * que investiu mais metade do PM.
+   * Sucesso e o cântico segue com as Ações gastas valendo; falha e perde o
+   * cântico e metade do PM investido.
    */
   if (rng && "conjurando" in alvo) testeDeConcentracao(alvo as EstadoPersonagem, bonusDeRankDeQuemBate, rng);
   if (alvo.pv <= 0) {
@@ -1125,9 +1443,35 @@ export function aplicarDano(
       alvo.inconsciente = true;
       alvo.estabilizado = false;
       alvo.cdFioDaVida = 8 + bonusDeRankDeQuemBate;
+      /*
+       * Inconsciente é Incapacitado, e Incapacitado interrompe o cântico SEM
+       * teste (Cap. 2, §6). O preço é o mesmo da Concentração que falha: o
+       * cântico e metade do PM investido.
+       */
+      const conjurador = alvo as Partial<EstadoPersonagem>;
+      if (conjurador.conjurando && typeof conjurador.pm === "number") {
+        conjurador.pm += Math.ceil(conjurador.conjurando.acao.pm / 2);
+        conjurador.conjurando = null;
+      }
     }
   }
   return real;
+}
+
+/**
+ * O teste de resistência de Vigor com a Escala do Vigor (Cap. 4, §1 e §7).
+ *
+ * 1d20 + Vigor + metade do maior Bônus de Rank. Constituição Frágil (Vigor −1)
+ * rola com Desvantagem; Corpo Quebrado (Vigor −2) rola com Desvantagem, SEM a
+ * metade do Rank, e falha criticamente em 1 ou 2. Devolve a rolagem natural
+ * (pra quem precisa saber do 1) e o total.
+ */
+function testeDeVigor(e: EstadoPersonagem, rng: Rng): { natural: number; total: number; falhaCritica: boolean } {
+  const vigor = e.ficha.vigor;
+  const quebrado = vigor <= -2;
+  const natural = d20Ajustado(rng, false, vigor < 0 || e.envenenado);
+  const total = natural + vigor + (quebrado ? 0 : e.ficha.metadeDoMaiorRank);
+  return { natural, total, falhaCritica: natural === 1 || (quebrado && natural === 2) };
 }
 
 /**
@@ -1136,18 +1480,24 @@ export function aplicarDano(
  * *"Sempre que você sofrer dano enquanto estiver Conjurando, faça um teste de
  * resistência de Espírito contra CD 10 + o Bônus de Rank de quem te acertou.
  * Sucesso: o cântico segue, as Ações já gastas continuam valendo. Falha: a
- * conjuração é interrompida, você perde todas as Ações já gastas e metade do PM
- * da magia, arredondado pra cima."*
+ * conjuração é interrompida, e você perde o cântico e METADE do PM investido,
+ * arredondado pra baixo."*
  *
  * A meia devolução de PM é a parte fácil de errar: o livro cobra METADE, não o
  * total — quem foi interrompido perdeu tempo e mana, mas não a magia inteira.
+ * Como a perda arredonda pra baixo, o que VOLTA arredonda pra cima: uma magia de
+ * 5 PM interrompida custa 2 e devolve 3.
+ *
+ * É um teste de resistência como qualquer outro, então soma a metade do maior
+ * Bônus de Rank (Cap. 4, §1) — até a revisão do livro o motor rolava só
+ * d20 + Espírito, e o Imperador se concentrava como um Principiante.
  */
 export function testeDeConcentracao(e: EstadoPersonagem, bonusDeRankDeQuemBate: number, rng: Rng): void {
   if (!e.conjurando) return;
   const cd = 10 + bonusDeRankDeQuemBate;
-  if (d20(rng) + e.ficha.espirito >= cd) return;
-  // Falhou: metade do PM volta (o livro cobra a outra metade), e o cântico morre.
-  e.pm += Math.floor(e.conjurando.acao.pm / 2);
+  if (d20Ajustado(rng, false, e.envenenado) + e.ficha.espirito + e.ficha.metadeDoMaiorRank >= cd) return;
+  // Falhou: perde metade do PM (pra baixo), então volta a outra metade (pra cima).
+  e.pm += Math.ceil(e.conjurando.acao.pm / 2);
   e.conjurando = null;
 }
 
@@ -1170,20 +1520,23 @@ export function perdaDeFoco(e: EstadoPersonagem): void {
  * O teste do Fio da Vida, no início de cada turno de quem está a 0 PV.
  *
  * *"role 1d20 + Vigor contra CD 8 + o Bônus de Rank de quem te derrubou.
- * Sucesso: você estabiliza temporariamente. Falha: 1 Marca da Morte. Falha
- * Crítica (1 Natural): 2 Marcas. Três Marcas e você morre permanentemente."*
+ * Sucesso: você fica Estabilizado. Falha: 1 Marca da Morte. Falha Crítica
+ * (1 Natural): 2 Marcas. Três Marcas e você morre permanentemente."*
  *
- * **Estabilizar aqui PARA de rolar.** O livro diz "temporariamente" e não diz
- * quando recomeça; um motor tem que escolher, e esta é a escolha declarada — a
- * generosa. Quem estabilizou segue desacordado e fora da luta até um aliado
- * curá-lo, que é o que muda o resultado da batalha de qualquer jeito.
+ * É teste de resistência de Vigor, então soma a metade do maior Bônus de Rank
+ * e obedece a Escala do Vigor (`testeDeVigor`).
+ *
+ * **Estabilizado PARA de rolar** — agora é regra do livro, não escolha do
+ * motor: ele acorda com 1 PV em 1d4 horas, ou na hora com qualquer cura, e
+ * sofrer dano a 0 PV tira o Estabilizado (`aplicarDano`). Nenhum combate aqui
+ * dura horas, então quem estabilizou segue fora da luta até um aliado curá-lo.
  */
 export function testeDoFioDaVida(e: EstadoPersonagem, rng: Rng): void {
   if (!e.inconsciente || e.estabilizado || e.morto) return;
-  const rolagem = d20(rng);
-  if (rolagem === 1) {
+  const teste = testeDeVigor(e, rng);
+  if (teste.falhaCritica) {
     e.marcasDaMorte += 2;
-  } else if (rolagem + e.ficha.vigor < e.cdFioDaVida) {
+  } else if (teste.total < e.cdFioDaVida) {
     e.marcasDaMorte += 1;
   } else {
     e.estabilizado = true;
@@ -1200,8 +1553,13 @@ export function testeDoFioDaVida(e: EstadoPersonagem, rng: Rng): void {
  * Devolve o PV EFETIVAMENTE devolvido: curar 40 em quem está 8 abaixo do máximo
  * vale 8. Contar o rolado em vez do recebido faria um curandeiro parecer melhor
  * justamente quando ele está desperdiçando magia.
+ *
+ * `rolado` é só o que saiu dos DADOS; `bc` vem à parte porque a Ferida Fresca
+ * dobra os dados e soma o BC uma vez só (Cap. 4, §7). Até a revisão do livro
+ * o motor recebia dados + BC juntos e dobrava tudo, curando mais do que a carta
+ * promete ("1d8 + BC", "2d8 + BC se Ferida Fresca").
  */
-export function curar(alvo: Alvo, rolado: number, pvMax: number, sempreFresca = false): number {
+export function curar(alvo: Alvo, rolado: number, pvMax: number, sempreFresca = false, bc = 0): number {
   /*
    * Cap. 4, §7: *"qualquer magia de cura ou poção aplicada por um aliado remove
    * todas as Marcas da Morte instantaneamente e você acorda"*.
@@ -1222,8 +1580,8 @@ export function curar(alvo: Alvo, rolado: number, pvMax: number, sempreFresca = 
     alvo.pv = 0;
   }
   if (!alvo.vivo) return 0;
-  // Cap. 4: "toda a Magia de Cura cura em dobro contra uma Ferida Fresca".
-  const total = alvo.feridaFresca > 0 || sempreFresca ? rolado * 2 : rolado;
+  // Cap. 4, §7: contra Ferida Fresca dobram os DADOS da cura; o BC soma uma vez.
+  const total = (alvo.feridaFresca > 0 || sempreFresca ? rolado * 2 : rolado) + bc;
   const antes = alvo.pv;
   alvo.pv = Math.min(pvMax, alvo.pv + total);
   return alvo.pv - antes;
@@ -1331,8 +1689,9 @@ export function escolherSuporte(
 function melhorSuporte(candidatas: Acao[], alcance: number): Acao {
   const valor = (a: Acao) =>
     // `sempreFresca` dobra de verdade e a IA precisa saber: a Prontidão cura
-    // 2d8 escritos que valem 4d8 na mesa, e sem este fator ela era comparada
-    // pela metade do que entrega.
+    // 1d8 escritos que valem 2d8 na mesa, e sem este fator ela era comparada
+    // pela metade do que entrega. Só os dados entram aqui — o BC é igual em
+    // todas as curas do mesmo curandeiro e não muda a escolha.
     (mediaDados(a.formulaSuporte) * (a.area ? alcance : 1) * (a.sempreFresca ? 2 : 1)) / a.acoes;
   return candidatas.reduce((m, a) => (valor(a) > valor(m) ? a : m));
 }
@@ -1359,14 +1718,18 @@ export function turnoPersonagem(
    * Vem antes do `return`: um personagem inconsciente não age, mas o turno DELE
    * continua acontecendo — é nele que ele rola contra a morte.
    */
+  /*
+   * A janela da Ferida Fresca fecha no início do turno do próprio alvo: é "o
+   * dano sofrido desde o início do último turno do alvo" (Cap. 4, §7). Vem antes
+   * do teste do Fio da Vida porque o turno do caído também é turno dele, e a
+   * ferida que o derrubou deixa de ser fresca aqui, como a de qualquer um.
+   */
+  if (e.feridaFresca > 0) e.feridaFresca--;
   if (e.inconsciente) {
     testeDoFioDaVida(e, rng);
     return;
   }
   if (!e.vivo) return;
-  // A janela da Ferida Fresca fecha de um turno próprio por vez: "o dano
-  // sofrido no turno atual ou no imediatamente anterior".
-  if (e.feridaFresca > 0) e.feridaFresca--;
 
   let acoes = 3;
   let guarda = 0;
@@ -1397,7 +1760,10 @@ export function turnoPersonagem(
       e.conjurando = null;
       const alvos = c.acao.area ? vivos : [vivos[0]];
       for (const alvo of alvos) {
-        e.danoCausado += aplicarDano(alvo, resolver(e, c.acao, alvo, rng), e.ficha.bonusDeRank, rng);
+        // `c.acao.dano` é a fórmula inteira ("6d10 + BC (ígneo)") e serve de
+        // tipo: Resistência e Imunidade procuram a palavra dentro dela. É o
+        // mesmo lugar de onde a detecção de fogo do motor já lia.
+        e.danoCausado += aplicarDano(alvo, resolver(e, c.acao, alvo, rng), e.ficha.bonusDeRank, rng, false, c.acao.dano);
       }
       break;
     }
@@ -1426,13 +1792,14 @@ export function turnoPersonagem(
        * Quem está no máximo recebe 0 e não desperdiça nada além da magia, que é
        * o que aconteceria na mesa.
        */
-      const rolado = rolarDados(suporte.acao.formulaSuporte, rng) + e.ficha.bc;
+      // Dados e BC separados: a Ferida Fresca dobra só os dados (ver `curar`).
+      const dados = rolarDados(suporte.acao.formulaSuporte, rng);
       const alvos = suporte.acao.area ? aliados.filter((x) => x.vivo) : [suporte.alvo];
       for (const alvo of alvos) {
         e.pvCurado +=
           suporte.acao.tipo === "cura"
-            ? curar(alvo, rolado, alvo.ficha.pvMax, suporte.acao.sempreFresca)
-            : darPvTemp(alvo, rolado);
+            ? curar(alvo, dados, alvo.ficha.pvMax, suporte.acao.sempreFresca, e.ficha.bc)
+            : darPvTemp(alvo, dados + e.ficha.bc);
       }
       continue;
     }
@@ -1458,7 +1825,7 @@ export function turnoPersonagem(
     acoes -= a.acoes;
     const alvos = a.area ? vivos : [vivos[0]];
     for (const alvo of alvos) {
-      e.danoCausado += aplicarDano(alvo, resolver(e, a, alvo, rng), e.ficha.bonusDeRank, rng);
+      e.danoCausado += aplicarDano(alvo, resolver(e, a, alvo, rng), e.ficha.bonusDeRank, rng, false, a.dano);
     }
   }
 
@@ -1484,14 +1851,32 @@ export function tickSustentado(alvo: Alvo): boolean {
     efeito.turnos -= 1;
   }
   alvo.sustentados = alvo.sustentados.filter((x) => x.turnos > 0);
+  feridaDoInicioDoTurno(alvo);
   return alvo.vivo;
 }
 
 /** Queima no início do turno de quem está Em Chamas. Devolve true se sobreviveu. */
 export function tickChamas(alvo: Alvo, rng: Rng): boolean {
   if (!alvo.vivo || alvo.emChamas === 0) return alvo.vivo;
-  aplicarDano(alvo, dado(rng, alvo.emChamas));
+  // Em Chamas é dano ÍGNEO: um elemental de fogo imune a ígneo não queima, e
+  // era esse o caso mais óbvio que o motor errava em silêncio.
+  aplicarDano(alvo, dado(rng, alvo.emChamas), 2, undefined, false, "ígneo");
+  feridaDoInicioDoTurno(alvo);
   return alvo.vivo;
+}
+
+/**
+ * O dano do início do turno chega DEPOIS de o turno começar, então ele ainda é
+ * fresco durante o turno inteiro e até o início do próximo. Os tiques rodam
+ * antes de `turnoPersonagem`, que fecha a janela de 1 em 1; gravar 2 aqui faz
+ * a ferida sobreviver a esse fechamento.
+ *
+ * Se o tique derrubou o alvo, o laço pula o `turnoPersonagem` desta rodada e
+ * ninguém fecha a janela agora: aí grava 1, pra ela fechar no início do
+ * próximo turno dele, e não durar um turno a mais.
+ */
+function feridaDoInicioDoTurno(alvo: Alvo): void {
+  if (alvo.feridaFresca > 0) alvo.feridaFresca = alvo.vivo ? 2 : 1;
 }
 
 // ---------------------------------------------------------------------------
@@ -1544,13 +1929,16 @@ export const SIMPLIFICACOES = [
   "As duas Reações de Aguentar (Escudos) REDUZEM o dano de um golpe interceptado, e o motor não tem redução — ele as trata como PV Temporários, que é o mais próximo que sabe fazer. A diferença importa: casca some depois de gasta, redução vale em todo golpe que ela alcança. Até a 0.1.47 elas eram lidas como DANO CAUSADO, e davam a Cavalaria e Escudos uma técnica de 16,8 por Ação que ela não tem.",
   "O que de suporte segue de fora: Salvações, e a maior parte da Barreira e Proteção — muralha, domo, selo e anulação de magia são posição e regra de alcance, e este motor não tem mapa. Das 21 habilidades daquela árvore, só a Casca tem número que ele saiba usar. Julgamento e Luz Absoluta entram como as magias de DANO que são; a cura secundária que as duas descrevem na prosa não é contada.",
   "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",
-  "O Fio da Vida (Cap. 4, §7) entra desde a 0.1.38: a 0 PV o personagem CAI inconsciente, rola 1d20+Vigor contra CD 8 + o Bônus de Rank de quem o derrubou, junta Marcas da Morte e morre de vez na terceira — e qualquer cura de aliado o levanta com todas as Marcas removidas. Quem estabiliza para de rolar (o livro diz \"temporariamente\" e não diz quando recomeça; esta é a leitura declarada). A Exaustão que o livro cobra de quem acorda fica de fora, porque Exaustão não é modelada. Criatura não tem Fio da Vida: a 0 PV ela morre.",
+  "O Fio da Vida (Cap. 4, §7) entra desde a 0.1.38: a 0 PV o personagem CAI Inconsciente, rola 1d20 + Vigor + metade do maior Bônus de Rank (com a Escala do Vigor) contra CD 8 + o Bônus de Rank de quem o derrubou, junta Marcas da Morte e morre de vez na terceira — e qualquer cura de aliado o levanta com todas as Marcas removidas. Estabilizado para de rolar, como o livro manda; acordar sozinho leva 1d4 horas e nenhum combate daqui dura isso. Sofrer dano a 0 PV dá 1 Marca (2 no crítico) e tira o Estabilizado; aqui só a ação em ÁREA de uma criatura alcança quem está no chão, porque a IA não gasta golpe único em quem já não luta. O que fica de fora: a IA não gasta Ação estabilizando ninguém com Medicina (1 Ação, CD 10, Vantagem com Kit de Primeiros Socorros), o golpe corpo a corpo contra o caído não vira crítico automático (sem mapa, não há \"adjacente\"), e a Exaustão de quem acorda não é modelada. Criatura não tem Fio da Vida: a 0 PV ela morre.",
+  "A Ferida Fresca é o dano sofrido desde o início do último turno do próprio alvo, e contra ela dobram os DADOS da cura, com o BC somado uma vez. Qualquer dano nessa janela abre a Ferida, mesmo o que os PV Temporários absorveram inteiro, e aí os dados da cura inteira dobram: o motor não mede quanto do dano foi fresco nem limita a cura a ele. Até a revisão do livro o motor dobrava dados e BC juntos e contava a janela por dois turnos do alvo.",
+  "Testes de resistência: 1d20 + atributo + metade do maior Bônus de Rank. A criatura resiste com o Bônus de Resistência do Apêndice G (metade do Bônus de Ataque dela). O personagem resiste à ação de uma criatura com o atributo do MEIO entre Vigor, Agilidade e Espírito, porque a ação montada pelo Mestre não diz qual atributo cobra: nem o melhor, nem o pior. Contra um boneco sem ficha, o bônus de quem resiste continua sendo metade do BC de quem ataca.",
+  "A CD que a criatura impõe no Fio da Vida e na Concentração usa o Bônus de Rank do patamar dela (1 no 1º patamar, 6 no 6º). O golpe comum usa o dado da árvore do Corpo de maior Rank, igual à ficha, mas soma o BC da árvore INICIAL: o motor guarda um BC só por personagem.",
   "Antes disso o motor matava a 0 PV, e isso não era só infidelidade: era a razão de TODO combate contra chefe dar 0% ou 100%. Quem caía sumia da luta pra sempre, o dano do grupo despencava, a luta se alongava e caía o próximo — realimentação positiva não produz meio-termo. Com o Fio da Vida e um curandeiro, o 4º patamar virou 55% de vitória contra 45% de dizimação.",
-  "Conjuração Contínua e Dividida (Cap. 4, §3) entra na 0.1.40: magia que custa mais Ações do que o turno tem é recitada ao longo de turnos, com Perda de Foco (1 Ação por turno, no mínimo) e teste de Concentração de Espírito contra CD 10 + o Bônus de Rank de quem acertou, perdendo metade do PM na falha. Sem ela, VINTE ações de dano do livro eram inalcançáveis — Sol Menor, Zero Absoluto, Era Glacial, Vazio, as maiores magias do jogo.",
+  "Conjuração Contínua e Dividida (Cap. 4, §3) entra na 0.1.40: magia que custa mais Ações do que o turno tem é recitada ao longo de turnos, com Perda de Foco (1 Ação por turno, no mínimo) e teste de Concentração (1d20 + Espírito + metade do maior Bônus de Rank) contra CD 10 + o Bônus de Rank de quem acertou; na falha, o cântico se perde junto com metade do PM investido, arredondado pra baixo. Cair Inconsciente interrompe sem teste, com o mesmo preço. Sem ela, as magias de 4 Ações (Rei e Imperador; o teto é 4) eram inalcançáveis — Sol Menor, Zero Absoluto, Era Glacial, Vazio, as maiores magias do jogo.",
   "A IA só COMEÇA um cântico longo com o turno inteiro na mão: é regra de decisão declarada, não do livro. Sem ela, um mago com 1 Ação sobrando largava o golpe de arma pra começar um cântico de 3 Ações e amarrava o turno seguinte — o time dos magos perdia 16 pontos de vitória por isso. E a IA não desconta o risco de interrupção ao escolher: ela é otimista, e o relatório mede o preço mesmo assim. Cura e escudo seguem sem cântico dividido — um curandeiro que passa dois turnos recitando enquanto o grupo cai é jogada ruim, não simplificação.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
-  "Os quatro TETOS do Cap. 4, §5: só um é honrado aqui. \"Vantagem é binária\" está no motor e tem teste (`vantagem.test.ts`). Os outros três não são modelados porque o que eles limitam também não é: o Teto de Auxílio (+6 de bônus vindos de aliados) e o Teto de Ações (5 por turno, no máximo 2 externas) exigem habilidades que DÃO Ação ou bônus a outro personagem, e o motor não tem nenhuma; Duas Salvações por Combate limita cinco efeitos de impedir morte, e só o Fio da Vida está implementado.",
+  "Os quatro TETOS do Cap. 4, §5: só um é honrado aqui. \"Vantagem é binária\" está no motor e tem teste (`vantagem.test.ts`). Os outros três não são modelados porque o que eles limitam também não é: o Teto de Auxílio (+6 de bônus vindos de aliados) e o Teto de Ações (4 próprias + 2 concedidas) exigem habilidades que DÃO Ação ou bônus a outro personagem, e o motor não tem nenhuma; Duas Salvações por Combate limita cinco efeitos de impedir morte, e só o Fio da Vida está implementado.",
   "É por isso que Navegação e Liderança (o Tático) é a árvore mais invisível do livro aqui: as dezenove habilidades dela não causam dano NENHUM — ela fabrica Ação e bônus pros outros, que é a única moeda que este combate gasta. O próprio Cap. 4 diz o que acontece sem o teto: \"um Norte Imperador com um Tático Comandante na mesa chega a 7 Ações por turno, e o combate deixa de existir\". Nada disso é simulado, nem a favor nem contra.",
   "Proficiência de arma (Cap. 1, §4) não é conferida: o motor nunca dá a Desvantagem que o livro cobra de quem empunha arma fora dos seus grupos, nem sabe que escudo sem o grupo Escudos rende +1 de CA em vez de +2. Na prática isso não move estes números, porque as builds do playtest usam a arma da própria árvore — mas moveria na mesa, onde alguém pega o que dropou. A regra é de 0.1.52 e o motor é anterior a ela.",
   "Terreno, distância, posicionamento e surpresa não existem: todo mundo alcança todo mundo desde a primeira rodada.",

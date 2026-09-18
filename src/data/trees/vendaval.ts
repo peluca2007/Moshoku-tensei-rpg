@@ -152,7 +152,7 @@ export const VENDAVAL_TREE: Tree = {
       talents: [
         { id: "corrente-de-apoio-marcial", name: "Corrente de Apoio Marcial", paCost: 1, description: "Quando um aliado a até 9m for empurrado, arremessado ou puxado por qualquer efeito, gaste 1 PT como Reação pra dobrar a distância do movimento dele, na direção que ele quiser." },
         { id: "fuga-no-vendaval", name: "Fuga no Vendaval", paCost: 1, description: "Ao ser reduzido a 0 PV, o vento te arremessa 6m para longe da fonte do dano antes de cair." },
-        { id: "instinto-de-corrente-de-ar", name: "Instinto de Corrente de Ar", paCost: 1, description: "Você não pode ser surpreendido enquanto consciente, e sente a aproximação de qualquer voo hostil a até 30 metros." },
+        { id: "instinto-de-corrente-de-ar", name: "Instinto de Corrente de Ar", paCost: 1, description: "Você nunca fica Surpreso enquanto consciente, e sente a aproximação de qualquer voo hostil a até 30 metros." },
       ],
       abilities: [
         {
@@ -286,7 +286,7 @@ export const VENDAVAL_TREE: Tree = {
       mastery: {
         name: "Lâmina Sem Fronteira",
         description:
-          "Seus ataques corpo a corpo passam a ter alcance MÍNIMO de 6 metros, sempre — o vento carrega o fio da sua arma até o alvo, tenha você corrido ou não. A Vantagem de Estilo (Cap. 3) se aplica mesmo à distância. [Distância Roubada] Continua somando em cima desse piso: correr 12 metros e golpear alcança 18.",
+          "Seus ataques corpo a corpo passam a ter alcance MÍNIMO de 6 metros, sempre — o vento carrega o fio da sua arma até o alvo, tenha você corrido ou não. A Vantagem de Estilo (Cap. 3), que o Vendaval tem como Deus da Espada e que normalmente só vale em ataques corpo a corpo, passa a valer também nos seus ataques à distância. [Distância Roubada] Continua somando em cima desse piso: correr 12 metros e golpear alcança 18.",
       },
       talents: [],
       abilities: [
@@ -318,7 +318,7 @@ export const VENDAVAL_TREE: Tree = {
           paCost: 4,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Enquanto vestir o Manto de Touki, você tem Resistência a dano de projétil mundano, e ataques à distância contra você têm Desvantagem.",
+          effect: "Enquanto vestir o Manto de Touki, você tem Resistência a dano físico de projéteis mundanos, e ataques à distância contra você têm Desvantagem.",
         },
       ],
     },

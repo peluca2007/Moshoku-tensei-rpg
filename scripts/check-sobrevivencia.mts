@@ -101,7 +101,6 @@ function fichaAte(treeId: string, patamares: number, vigor: number): CharacterDa
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     condicoes: [],
     descansosCurtos: 0,
     overrides: {},

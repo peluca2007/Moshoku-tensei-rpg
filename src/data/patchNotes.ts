@@ -16,6 +16,840 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.93",
+    date: "2026-09-18",
+    title: "Venenos, Posturas e o Tiro Perfeito",
+    sections: [
+      {
+        heading: "DESINTOXICAÇÃO: O Catálogo de Venenos",
+        items: [
+          "A árvore tinha uma única habilidade de dano (Peçonha) nos três primeiros patamares. O purificador era obrigado a jogar reativamente, esperando alguém ficar doente ou envenenado para ter função.",
+          "O sistema novo funciona como os Pactos do Invocador: ao avançar de patamar, você ganha acesso a novas formas ofensivas de aplicar aflições do livro. Adicionamos cinco novos venenos baseados em criaturas e itens canônicos do Cap. 4: Rosa-Preta (Principiante, sutil, causa sono), Sangue de Serpente (Intermediário, reduz Vigor), Paralisia de Aranha (Avançado, zera deslocamento), Fel Alado (Santo, dano e cegueira) e a temível Sombra no Sangue (Imperador, letal de efeito retardado).",
+        ],
+      },
+      {
+        heading: "DEUS DA ESPADA: Postura de Vento e Postura de Trovão",
+        items: [
+          "O estilo é um canhão de vidro (-2 de CA base, maior dano do jogo), mas no nível da mecânica isso deixava o jogador com 8% de sobrevivência e pouca margem de decisão.",
+          "Adicionamos o talento 'Postura do Espadachim' (1 PA, Principiante). Ele permite trocar livremente, 1x por turno, entre duas posturas: Vento e Trovão.",
+          "A Postura de Vento anula a penalidade do estilo e dá +2 de CA (com espada de 2 mãos ou mão e meia), mas bloqueia habilidades Assinatura ◆. É pra quando você está medindo o oponente (estilo Ghislaine).",
+          "A Postura de Trovão dobra a penalidade do estilo (-4 CA), mas adiciona +1 Dado de Arma a todos os ataques. É o estilo verdadeiro de Gal Farion: vença antes que batam de volta.",
+          "Não ter postura continua sendo o padrão pra quem quiser ignorar a regra, sem prejuízo.",
+        ],
+      },
+      {
+        heading: "ARQUEARIA: O Tiro Perfeito não se compra, se aprende",
+        items: [
+          "O Tiro Perfeito perdeu o custo de 2 PA e saiu da lista de habilidades. Ele agora faz parte integral da Maestria 'Olho do Caçador'.",
+          "Mecanicamente ele continua igual (4 Ações, 4 testes, cresce com talentos da árvore), mas agora é a identidade gratuita da classe. Fichas salvas com o Tiro Perfeito comprado vão receber os 2 PA de volta automaticamente ao abrir.",
+        ],
+      },
+      {
+        heading: "TÁTICO: O Teto de Ações (Cap. 4, §5)",
+        items: [
+          "A regra antiga limitava o personagem a '5 ações por turno, sendo no máximo 2 externas'. Isso engessava classes que fabricam ações próprias (como a Velocidade Encarnada do Deus da Espada).",
+          "A nova redação foca na origem: 'Teto de 6 Ações num turno: 4 próprias (as 3 normais + qualquer extra da árvore) e no máximo 2 concedidas por aliados'. O Tático Comandante continua travado no teto sem quebrar o jogo, e as classes velozes respiram melhor.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.91",
+    date: "2026-09-18",
+    title: "Nenhuma Compra Morta",
+    sections: [
+      {
+        heading: "As duas opções mortas que a revisão tinha separado",
+        items: [
+          "Eram o último item de LIVRO em aberto, e as duas eram o mesmo erro: uma Maestria GRATUITA apagando PA que o jogador já tinha pago. É a prioridade 2 do projeto — nenhuma escolha obrigatória, nenhuma escolha morta.",
+        ],
+      },
+      {
+        heading: "INVOCAÇÃO: a Maestria do Avançado apagava 6 PA de compras",
+        items: [
+          "O Círculo Rápido dizia 'invocar deixa de exigir círculo desenhado: gaste 1 Ação e trace no ar'. Com isso, quatro compras do Principiante viravam lixo de ficha na hora: o Chamado de Emergência (2 PA, a ASSINATURA da escola), o Círculo Improvisado (1 PA), o Pacto Firmado (1 PA) e a Convocação Aprimorada (2 PA) — todos existiam pra invocar sem círculo, rápido e barato, que era exatamente o que a Maestria passou a dar de graça.",
+          "Pior: ela também apagava a fraqueza declarada da escola. O texto dela diz que 'um invocador emboscado sem círculo pronto é um mago de armadura leve' — e no 3º patamar isso deixava de ser verdade sem ninguém decidir nada.",
+          "Agora a Maestria acelera o preparo FORA de combate: o círculo de 10 minutos vira UM. Você desenha entre uma porta e outra de masmorra, e não entre uma sessão e outra — é o que mais muda a rotina da escola. Dentro de combate nada muda: sem círculo pronto, a única forma de chamar alguém continua sendo o Chamado de Emergência, e são os talentos dele que o deixam rápido, barato e inteiro.",
+        ],
+      },
+      {
+        heading: "TERRA: a Fortaleza Rápida tornava o Muro de Terra inútil",
+        items: [
+          "A Fortaleza (Intermediário, 4 PM, 2 Ações) dava um CÍRCULO de muralhas com 60 PV por seção e 1 hora de duração. O Muro (Principiante, 2 PM, 3 Ações e Ritual) dava UMA parede de 40 PV por 10 minutos. Mais barato em Ações, mais forte, mais longo, mais paredes — a magia do 1º patamar morria no dia em que você abria o 2º.",
+          "Elas passaram a ter empregos diferentes, em vez de uma ser a outra com números maiores. O MURO você escolhe onde nasce, a até 9 m: é a magia que corta um corredor, para uma investida ou separa dois inimigos — e ela aguenta peso, então quem sobe nela ganha Cobertura contra quem está no chão.",
+          "A FORTALEZA cerca você, e o muro não escolhe lado: quem está dentro também só sai pela abertura, e tiro de dentro pra fora sofre a mesma Cobertura que o de fora pra dentro. Erguida no meio de uma luta, ela prende o seu próprio grupo junto com o inimigo. É abrigo, não fortificação de combate — e os PV por seção caíram de 60 para 30, porque espalhar a mesma mana por seis paredes não pode dar seis paredes melhores que a única.",
+        ],
+      },
+      {
+        heading: "A FICHA passou a cobrar os pré-requisitos de outra árvore",
+        items: [
+          "Quatro habilidades do livro são PONTES entre escolas e diziam isso na prosa: Vapor Seco (Fogo, pede Vento), Nova Congelante (Vento, pede Água), Explosão Silenciosa (Vento, pede Fogo) e Dedos de Mana (Ladino, pede qualquer escola de magia). A ficha deixava comprar as quatro sem o outro lado, porque o campo de pré-requisito só sabia olhar a PRÓPRIA árvore.",
+          "O livro estava certo o tempo todo — o erro morava na distância entre a prosa e o código, e por isso não aparecia em lugar nenhum: o site deixava montar, e só na mesa alguém lia a carta em voz alta e descobria. Um mago de Vento puro podia sair com uma magia de gelo na ficha.",
+          "Agora a ficha cobra, e o check:livro impede que volte: quem escrever 'Requer 1 patamar em X' sem declarar a exigência no dado descobre na verificação, e não na mesa.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.90",
+    date: "2026-09-18",
+    title: "O Bloco do Monstro",
+    sections: [
+      {
+        heading: "O MESTRE NÃO CONSEGUIA DAR ATRIBUTO NEM PERÍCIA A UM MONSTRO",
+        items: [
+          "A tela de encontros dava PV, CA, acerto, dano e CD — e mais nada. Quando a mesa perguntava 'qual a Força dele?', 'ele percebe o ladino?', 'corre quanto?', 'resiste a fogo?', o Mestre inventava. O Apêndice G tinha os números do combate e nenhuma das respostas que a cena pede.",
+          "Agora o monstro inteiro sai de DUAS ESCOLHAS, e nenhuma delas é um número: o PATAMAR (que já dava todos os números) e o ARQUÉTIPO, que diz em qual atributo cada número aparece. Um Mestre que precisa parar a sessão pra preencher ficha de monstro não preenche — ele desiste e improvisa, que é exatamente o que a ficha devia evitar.",
+        ],
+      },
+      {
+        heading: "LIVRO: os cinco arquétipos e os atributos derivados",
+        items: [
+          "Bruto (ogro, urso, golem), Ágil (lobo, assassino, Wyvern), Fortaleza (tartaruga, cavaleiro), Conjurador (necromante, xamã) e Mente (íncubo, ilusionista, dragão antigo). São cinco, e não quinze, porque o arquétipo existe pra ser escolhido em voz alta no meio de uma frase — uma lista que não cabe na cabeça do Mestre vira uma tabela que ele não abre.",
+          "Os atributos DERIVAM: o Principal é o Bônus de Ataque menos o patamar, o Bom é metade dele, o Comum é um a menos, e o Fraco é −1 SEMPRE. O Fraco não escalar é a decisão mais importante da tabela: é o que faz um ogro de 6º patamar continuar sendo burro e enganável, e um íncubo de 1º não ser.",
+          "Nada é digitado duas vezes. A coluna de Bônus de Ataque da tabela passou a ser uma CONSEQUÊNCIA do atributo, e não um segundo número que alguém precisa lembrar de manter alinhado — é a mesma técnica da coluna de Bônus de Resistência, e é o que impede o Apêndice de envelhecer calado, como a tabela de PV do Cap. 4 e a régua do Apêndice C já envelheceram antes.",
+        ],
+      },
+      {
+        heading: "REGRA: Percepção passiva = 10 + o Espírito dela, sem exceção pra monstro",
+        items: [
+          "É a MESMA fórmula da regra de ficar Escondido (Cap. 4, §3). Se monstro tivesse fórmula própria, existiriam duas regras de furtividade no livro e a mesa aplicaria a errada.",
+          "O efeito colateral é bonito e foi mantido de propósito: esconder-se de um Bruto é CD 9 do 1º ao 6º patamar — ele é burro pra sempre —, e de uma Mente de 6º é CD 16. Pela primeira vez, o ladino tem monstros de quem é fácil se esconder e monstros de quem não é.",
+          "O Ágil tem Espírito Fraco e seria o monstro mais fácil de enganar do livro, o que é absurdo pra um lobo. Por isso o arquétipo carrega SENTIDO: faro que fura o Escondido a 9 m. O Conjurador vê mana a 18 m; a Mente sente intenção. É o que dá oposição à metade furtiva do livro — Ladino, Arquearia, Surpreso.",
+        ],
+      },
+      {
+        heading: "REGRA: Orçamento de Encontro, agora com medidor na tela",
+        items: [
+          "A regra entrou no livro na 0.1.89 e agora o site calcula enquanto o Mestre monta: adicionou um lobo, a barra andou. Um encontro equilibrado é uma criatura do patamar do grupo POR JOGADOR; uma acima vale duas, uma abaixo vale meia, um Chefe vale três.",
+          "O câmbio dobra a cada patamar de propósito. A tabela de moldes multiplica o PV por 16 e o dano por 12 do 1º ao 6º — uma escada aritmética diria que dois lacaios de 1º equivalem a uma Lenda, e a mesa descobriria o contrário na pior hora possível.",
+          "O medidor não compete com o simulador: ele é o ORÇAMENTO (a conta que cabe num guardanapo), e o simulador é a MEDIÇÃO. Quando os dois discordam, quem manda é o simulador — por isso o painel diz 'orçamento', e nunca 'resultado'.",
+        ],
+      },
+      {
+        heading: "O motor passou a aplicar Resistência e Imunidade",
+        items: [
+          "O Cap. 4, §6 definiu as três palavras na revisão do livro, e o motor ignorava as três: um elemental de fogo levava dano ígneo cheio em 2.000 combates simulados, e o Mestre calibrava o encontro por um número que não existia na mesa. Um campo de ficha que não muda número nenhum é o pior tipo de campo.",
+          "Agora aplica, na ordem que o livro manda: reduções fixas primeiro, depois Resistência e Imunidade, e só então os PV Temporários. A Imunidade zera ANTES de gastar a casca — não se gasta escudo contra o que não machuca. E Em Chamas é dano ígneo: o elemental de fogo não queima.",
+          "Resistência é de graça quando a ficção pede (o esqueleto resiste a perfurante). IMUNIDADE CUSTA: a criatura conta como um patamar acima no Orçamento, porque ela apaga a jogada de alguém da mesa — o mago de Fogo que investiu a campanha inteira numa escola descobre que ela não existe naquele combate.",
+        ],
+      },
+      {
+        heading: "A ficha do monstro vai junto pro combate, e o dano se digita",
+        items: [
+          "O bloco se monta na tela de Encontros, mas a mesa acontece no rastreador de Iniciativa — e era lá que o Mestre não tinha a CA, a Percepção passiva nem as resistências na frente. Ele voltava de tela no meio da rodada, ou chutava. Agora a ficha viaja junto, como cópia: recalibrar a criatura no meio da luta não muda o bicho que já está na mesa.",
+          "E o contador de PV parou de exigir conta de cabeça. Antes o Mestre editava a vida que SOBROU ('tinha 47, levou 13, então… 34') — com seis criaturas são seis subtrações por rodada, e a primeira que sai errada ninguém percebe. Agora ele digita 13 e aperta Enter. Enter é dano porque dano é o que se aperta noventa por cento das vezes; curar tem o botão +.",
+        ],
+      },
+      {
+        heading: "BOTÃO: Sugerir ações — o Mestre parou de inventar fórmula de dado",
+        items: [
+          "Definir os atributos resolveu 'qual a Força dele?'. Sobrou o mais chato: 'quanto uma Ameaça bate num golpe?' — que é calibragem, não ficção, e o livro já sabia a resposta na coluna Dano por turno.",
+          "Agora um botão devolve ações calibradas pelo patamar, pelo papel e pelo arquétipo: o Bruto dá um golpe grande e uma investida lenta; o Ágil, dois golpes rápidos; a Fortaleza troca metade do dano por não sair do lugar; o Conjurador e a Mente trocam precisão por área — e área sempre pede teste de resistência, nunca rolagem de ataque.",
+          "Os nomes são genéricos de propósito ('Golpe Pesado', e não 'Machadada do Ogro Sangrento'): o Mestre troca o nome em dois segundos e nunca vai querer o nome que uma função escolheu. O que ele não quer fazer é a conta. Em 90 combinações de arquétipo, papel e patamar, nenhuma passa de 110% da régua do livro.",
+          "E o Apêndice G ganhou a seção que faltava — 'Como escrever as Ações de uma criatura' —, porque o site não pode aplicar uma regra que o livro não ensina. Ela também explica o piso do dado: um lacaio de 1º patamar tem 5 de orçamento no turno, e três ataques do menor dado do livro já dariam 7,5. A saída é de ficção, e é a certa: lacaio não tem economia de ação. Ele avança e dá UM golpe.",
+        ],
+      },
+      {
+        heading: "O personagem também resiste — e o motor descobriu sozinho quem",
+        items: [
+          "Depois que o Apêndice G deu Resistência às criaturas, deixar o lado dos personagens de fora seria a mesma regra valendo num sentido só. Só que nenhuma habilidade do livro declara resistência num campo: está tudo na prosa. Agora o motor lê a prosa das Maestrias e talentos, como já fazia pra detectar fogo, Quebrantado e cura.",
+          "Ler texto erra, e errou cinco vezes antes de acertar: a Arquearia saiu RESISTINDO a perfurante quando a carta dela diz que ela FURA essa resistência; o mago de Fogo saiu imune ao próprio elemento por causa de 'ignora Resistência e Imunidade a dano ígneo'; a Desintoxicação saiu resistindo a veneno porque 'teste de resistência CONTRA veneno' usa a mesma palavra pra outra coisa; e o invocador saiu com a resistência do filhote dele.",
+          "As guardas que saíram disso: a negação vale até o fim da FRASE; exige-se a preposição 'a' (quem dá resistência a dano escreve 'a', quem fala de rolagem escreve 'de' ou 'contra'); resistência condicional e a dano MUNDANO não entram, porque o motor não sabe se o golpe veio de arma mágica. Sobraram duas no livro inteiro: Deus do Norte imune a veneno, Punho do Fogo resistente a frio.",
+        ],
+      },
+      {
+        heading: "AVISO: a Imunidade que apaga a jogada de alguém da mesa",
+        items: [
+          "O Orçamento cobra um patamar pela Imunidade, mas ele mede DIFICULDADE — e uma criatura imune a ígneo contra três magos de Fogo não é um encontro difícil: é um jogador sem jogada. A mesa leva vinte minutos rolando dados que não fazem nada antes de desconfiar.",
+          "A tela agora avisa, e com o peso certo: GRAVE quando o grupo inteiro fica cego, ALERTA quando sobra alguém que alcança. E se cala em três casos — sem grupo escolhido, sem saber o que o grupo causa, e quando é Resistência em vez de Imunidade, porque metade do dano ainda é dano.",
+        ],
+      },
+      {
+        heading: "Miudezas que fechavam buracos antigos",
+        items: [
+          "As seis criaturas prontas do Apêndice G ganharam o bloco: a Wyvern voa 18 m e tem faro, o Superd Renegado é Conjurador e vê mana, o Sapo-Lodo sente vibração na lama. Um bloco que nenhuma criatura do bestiário demonstra é uma regra que a mesa nunca vê funcionando.",
+          "Recalibrar deixou de apagar a identidade: ele devolve PV, CA, acerto e CD à tabela, e mais nada. Arquétipo, tamanho, perícias e resistências sobrevivem — um Mestre que apertasse o botão pra consertar o PV e descobrisse que o necromante virou bruto genérico não apertaria o botão de novo.",
+          "DESLOCAMENTO na ficha do jogador e no PDF. O campo do PDF existia com '9m' cravado no texto, imprimindo 9 metros até pra quem estava Atolado ou Congelado. Agora sai do mesmo seletor da ficha, e a ficha finalmente mostra o número que a mesa mais pergunta depois da CA.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.89",
+    date: "2026-09-17",
+    title: "A Revisão Acabou",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: as doze partes fecharam, e o arquivo foi apagado",
+        items: [
+          "230 achados, 24 agentes, doze partes. A última passagem fechou Raças e Antecedentes, Cap. 5 e a loja, Apêndices e Bestiário, e as costuras entre capítulos. O REVISAO-DO-LIVRO.md esvaziou e foi apagado — que era o que ele mesmo mandava fazer.",
+          "O livro inteiro passou: os cinco capítulos de regra, as 19 árvores, as raças, os antecedentes, a loja, o bestiário e os apêndices.",
+        ],
+      },
+      {
+        heading: "REGRA: Orçamento de Encontro",
+        items: [
+          "A primeira pergunta de todo Mestre montando a primeira sessão — quantas criaturas, e de qual patamar — não tinha resposta no livro. Agora tem, e cabe numa linha: um encontro equilibrado é uma criatura do patamar do grupo POR JOGADOR.",
+          "E o câmbio para montar o resto: criatura um patamar acima vale duas; um abaixo vale meia; dois abaixo, um quarto; um Chefe vale três do patamar dele. Metade do orçamento é fácil, o cheio é equilibrado, uma vez e meia é mortal — alguém vai ao Fio da Vida, e é para isso que ele serve.",
+          "Com a ressalva escrita junto: a conta não enxerga terreno, distância nem quem age primeiro. Três arqueiros num telhado a 90 metros valem o dobro dos mesmos três num corredor.",
+        ],
+      },
+      {
+        heading: "REGRA: o patamar da criatura É o Bônus de Rank dela",
+        items: [
+          "Meia dúzia de regras pedem 'o Bônus de Rank de quem te acertou' — Concentração, Fio da Vida, teto do Quebrantado, CD de escapar de Atolado. Monstro não tem árvore, então a pergunta aparecia em toda mesa e morria ali. O motor já resolvia assim há versões; o livro é que não dizia.",
+          "Patamar 1 dá +1, patamar 6 dá +6. Um lobo te derruba num Fio da Vida CD 9; o Dragão, num CD 14. A coluna 'Patamar' do bestiário deixou de ser enfeite de organização.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o PM de antecedente valia zero justamente quando era prometido",
+        items: [
+          "Acólito +4, Estudioso Precoce +8, Olho Místico +6, Miko Abençoada +10 — quatro promessas de PM fixo que o teto dos dois primeiros patamares zerava por completo. Com Espírito 4 e Bônus 1 a reserva já bate no teto: o jogador lia o número na ficha e recebia nada. No Acúmulo era pior — a maldição (Exaustão diária) valia da primeira sessão, e a bênção só chegava no Avançado.",
+          "Os quatro viraram PM ESCALAR, o mesmo modelo do bônus racial do Elfo e do Migurd, que sempre passou pelo teto: Acólito +1 por Bônus de Rank de magia, Olho Místico +1, Estudioso +2, Miko Abençoada +3. Valem zero para quem não abriu escola nenhuma — o certo para um bônus de mana — e crescem a vida inteira em vez de evaporar.",
+          "E a maldição da liberação da Miko fica suspensa enquanto não houver escola de magia aberta: a bênção e o preço chegam juntos.",
+        ],
+      },
+      {
+        heading: "REGRA: sortear ou escolher a raça, e o preço de cada porta",
+        items: [
+          "A roleta de raça e antecedente existia só no site; o livro mandava escolher. E as raças NÃO são equilibradas entre si, de propósito — é a desigualdade que faz a rolagem valer a pena.",
+          "Agora o livro tem as duas portas: o padrão é sortear, e quem quiser escolher a raça, o Antecedente ou os dois começa com 2 PA em vez de 3. Mesmo preço para um ou para os dois: o que se compra é a decisão, não a quantidade. E a mesa decide uma vez, para todo mundo — um grupo em que metade sorteou e metade escolheu é um grupo em que metade pagou por algo que a outra levou de graça.",
+        ],
+      },
+      {
+        heading: "As arestas que sobraram",
+        items: [
+          "A Miko muda podia ter rolado o resultado mais raro da tabela e descoberto que não conjurava nada. Agora ela conjura — obrigatoriamente em Conjuração Silenciosa, pagando a penalidade dela e sem nunca ganhar o Bônus de Recitação. É caro, e está escrito.",
+          "O Superd ganhou a cauda-lança que a descrição da raça prometia desde sempre e nunca entregava: arma racial d8 perfurante, que sobe a Escada de Dados e não ocupa mão.",
+          "E o 'não existe ação bônus' parou de dizer 'uma única exceção' quando já eram cinco. Agora aponta para a lista fechada do Cap. 2, §2: se parece ação bônus e não está naquele quadro, é erro de texto.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.88",
+    date: "2026-09-17",
+    title: "As Dezenove Fecharam",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: o catálogo inteiro está revisado",
+        items: [
+          "Oitava das doze partes: Escudos, Vendaval, Punho do Fogo, Arquearia, Ladino, Bardo e Tático. Com ela, AS 19 ÁRVORES DO LIVRO estão fechadas, e os cinco capítulos de regra também. Sobram 71 de 230 — e o que sobra é o que fica em volta: raças, loja, apêndices e as costuras entre capítulos.",
+        ],
+      },
+      {
+        heading: "O Punho do Fogo diz enfim com que atributo ele bate",
+        items: [
+          "A árvore anuncia 'Força ou Intelecto' e escala TUDO por BC — só que BC, no resto do livro, é o número de uma escola de magia. Um jogador que abrisse a carta não tinha como saber qual dos dois atributos entrava, nem se era o Rank do Punho ou o da Magia de Fogo. A resposta estava só no Cap. 1, §7, a dois capítulos de distância.",
+          "Agora a Maestria do 1º patamar abre com isso: 'BC = o maior entre Força e Intelecto + o seu Bônus de Rank no Punho do Fogo — nunca o Rank da Magia de Fogo'. É o que faz dela uma árvore do Corpo que escala por BC sem virar escola de magia: o punho do lutador bruto e o do estudioso chegam no mesmo lugar por caminhos diferentes.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o Disparo Duplo derrubava o alvo contra o próprio arqueiro",
+        items: [
+          "Ele não tinha limite por turno (três disparos duplos com as três Ações), o segundo tiro somava atributo e Bônus de Rank inteiros, e o alvo caía — o que é BOM para quem está no corpo a corpo e péssimo para quem atira de 90 metros, porque um alvo Caído em vantagem contra tiro.",
+          "Agora: uma vez por turno; o segundo disparo leva só o dado, um degrau abaixo, como a mão de apoio da corda; e em vez de Caído o alvo fica com Deslocamento 0 até o fim do próximo turno dele. Um alvo Caído a 90 metros é problema de quem está perto dele, não seu.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: a Dissonância do Bardo escalava com o tamanho do grupo inimigo",
+        items: [
+          "Ela causava dano sônico em CADA criatura hostil que ouvisse o bardo, todo turno, sem limite de alvos. Contra doze goblins, uma árvore de Utilidade sozinha passava do dano de um guerreiro do mesmo patamar — e a Regra da Faixa (Cap. 3), que existe justamente para que Ladino, Bardo e Tático não invadam a faixa um do outro, deixava de valer.",
+          "O dado continua o mesmo; o que entrou foi um teto de alvos: até um número de criaturas igual ao seu patamar na árvore, à sua escolha. Continua sendo dano em área e para de crescer com o tamanho da horda.",
+        ],
+      },
+      {
+        heading: "E o Puro Escudo parou de dizer 'os efeitos defensivos'",
+        items: [
+          "O talento que define o Defensor prometia que 'seus efeitos defensivos passam a se aplicar também aos aliados adjacentes' — sem dizer QUAIS efeitos, o que deixava a mesa decidindo carta por carta. Agora ele usa o termo que a própria árvore já define: aliados adjacentes contam como Sob Sua Guarda, além do seu limite normal. Uma frase no lugar de uma lista.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.87",
+    date: "2026-09-17",
+    title: "Molha, Congela, Estilhaça",
+    sections: [
+      {
+        heading: "O filhote aprendeu a conjurar de verdade",
+        items: [
+          "A Evolução: Forma Suprema dizia que o bicho 'pode conjurar uma magia menor da sua árvore'. Só que a árvore é Espíritos e Feras, e ela NÃO TEM magia menor nenhuma — o catálogo dela é pacto, invocação e troca de lugar. A recompensa do Avançado da linha mais longa da escola era uma frase que apontava para o vazio.",
+          "Agora ele aprende de verdade: escolha UMA escola de magia que não seja esta, e gaste 2 PA DO BICHO no 1º patamar dela, pelas tabelas normais do Cap. 1 — duas magias comuns, ou uma comum e um talento, ou uma Assinatura. Os 2 PA são dele e não saem do seu bolso.",
+          "E você NÃO precisa ter aquela escola. O fogo é dele, não seu. O invocador que nunca estudou Fogo na vida pode ter um lobo que cospe Bola de Fogo — que é exatamente a cena que a palavra 'Evolução' devia estar comprando.",
+          "Ele conjura com o SEU BC e gasta o SEU PM (a sua reserva é o limite dele), em 1 Ação e sem cântico, com a penalidade do Encantamento Encurtado. Uma fera não recita: ela cospe.",
+        ],
+      },
+      {
+        heading: "REVISÃO DO LIVRO: as quatro escolas elementais fecharam",
+        items: [
+          "Sétima das doze partes: Fogo, Água, Vento e Terra. Sobram 90 de 230.",
+        ],
+      },
+      {
+        heading: "O Congelado finalmente cobra alguma coisa",
+        items: [
+          "A Água inteira é montada sobre 'molhe primeiro, cobre depois' — e o Molhado cobrava (frio em dobro), mas o CONGELADO, que é o segundo tempo da escola, não cobrava nada. Nenhuma magia do livro ganhava qualquer coisa contra alvo congelado: o jogador gastava uma conjuração inteira pra aplicar uma condição que só reduzia Deslocamento.",
+          "A Quebra de Gelo virou o terceiro tempo: contra alvo Congelado ela acerta automaticamente, causa +3d8 de frio e ESTILHAÇA o gelo (o alvo deixa de estar Congelado). Molha, congela, estilhaça — e o acerto automático não é crítico, então não multiplica dados.",
+          "A régua do Apêndice C subiu junto, de ~30 para ~44 no 3º patamar da Água, porque agora ela entrega isso de verdade. O número alto só sai com o combo inteiro montado, que é exatamente o que a escola cobra: ela paga em turnos e recebe de uma vez.",
+        ],
+      },
+      {
+        heading: "Três regras gerais que faltavam no Cap. 2, §7",
+        items: [
+          "'Esfera de 9 m' é RAIO, sempre, em toda área do livro — cobre 18 m de ponta a ponta. Cone e linha saem de você. E quando a carta não diz onde a área nasce, o centro é um ponto visível a até 18 m (Principiante e Intermediário), 36 m (Avançado e Santo) ou 90 m (Rei e Imperador). A mesa discutia isso em toda magia de área.",
+          "ÁREA NÃO POUPA ALIADO. Existiam cinco regras diferentes espalhadas pelas cartas dizendo quem escapava de quê. Agora é uma só: toda área atinge todo mundo, inclusive você e o grupo, e a exceção se compra — a Maestria do Avançado de uma escola ofensiva exclui até INTELECTO criaturas das áreas dela. Antes do Avançado, mire melhor.",
+          "Magia com teste cuja carta só descreve a falha: no sucesso, metade do dano e nenhuma condição. E dano sem 'teste' nem 'ataque' escrito é Ataque mágico. Duas linhas que evitam a carta ter de repetir a mesma frase 150 vezes.",
+          "A Chama Que Escolhe (Fogo, Imperador) parou de ser uma cópia da Termodinâmica Inversa e virou outra coisa: quem você exclui de uma área sua recebe PV Temporários iguais ao seu BC — o calor passa por fora e fecha a pele.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.86",
+    date: "2026-09-17",
+    title: "A Régua do Selo",
+    sections: [
+      {
+        heading: "E a mesma régua consertou o Vento",
+        items: [
+          "O Vácuo Localizado emudecia um mago de QUALQUER rank, sem teste, por 2 PM — o mesmo erro da Barreira, numa carta de Intermediário. Agora ele segue a Régua do Selo: contra rank igual ou inferior ao seu em Vento, o ar simplesmente sai, sem teste; contra rank superior, a criatura testa Vigor e ignora se passar. E a mesma criatura não pode ser afetada em dois turnos seguidos — calar um mago é uma janela, não uma coleira.",
+          "A Tempestade Cortante (Santo) causava cerca de 300 de dano por alvo numa luta, contra os ~53 do Mar de Chamas, que é a assinatura de Santo do Fogo. O dano não pedia teste nenhum, numa esfera móvel de 30m de raio, por 11 PM. Agora: esfera de 15m, 3d8 + BC por turno com teste de Agilidade para metade, e ela ocupa a sua sustentação — enquanto a tempestade gira, você não conjura mais nada.",
+          "A assinatura do Avançado do Vento era a Nova Congelante, que é uma magia de ÁGUA (pede um patamar em Água e congela sem teste). O patamar do Vento agora é assinado pela Guilhotina de Vácuo, que é vento puro. A Nova Congelante continua na árvore como a ponte para a Água, com preço de magia comum e com teste.",
+        ],
+      },
+      {
+        heading: "REWORK: a Barreira selava para cima, e isso não fazia sentido nenhum",
+        items: [
+          "Pergunta do autor, e ela derruba a árvore inteira: qual é o sentido de um Principiante anular um Imperador? Era exatamente o que acontecia. O Selado barrava magia de rank SUPERIOR ao seu, então uma barreira de 3 PM erguida por um novato desligava o arquimago. A versão anterior (0.1.85) piorou: passou a barrar 'igual ou superior', ou seja, TUDO.",
+          "E não era só o Selado. A escola inteira apontava para cima: a Anulação (Rei) anulava Imperador; Recusar o Mundo (Santo) anulava Rei; o Interdito (Santo) desligava Rei e Imperador numa área de 45m por 24 horas. Cada uma dessas linhas dizia que o patamar de cima não vale nada.",
+        ],
+      },
+      {
+        heading: "A REGRA NOVA: você sela até onde chegou, e nada além",
+        items: [
+          "A Régua do Selo vale para tudo que a escola anula, sela ou barra, e são três linhas: rank IGUAL OU INFERIOR ao seu em Barreira não acontece (as Ações e o PM se perdem); UM rank acima acontece pela metade — metade dos dados, da área e da duração; DOIS ou mais acima atravessa como se você não estivesse ali.",
+          "Não é regra nova: é o que a Recusa e a Placa, do 1º e do 2º patamar, SEMPRE fizeram ('anula Principiante, corta Intermediário pela metade'). O que mudou é que agora a escola inteira obedece ao mesmo idioma, em vez de os patamares altos inventarem cada um o seu.",
+          "E ela consertou de quebra o problema oposto, que a revisão do livro tinha achado: antes, contra um inimigo do MESMO patamar, o Selado não fazia absolutamente nada, porque só barrava acima. Agora o mesmo patamar é exatamente o que ele barra.",
+        ],
+      },
+      {
+        heading: "O que mudou, carta por carta",
+        items: [
+          "Selado: barra rank igual ou inferior ao seu. Um Selado de Avançado barra até Avançado, corta o Santo pela metade e não toca em Rei nem Imperador.",
+          "Anulação (Rei): anula até rank Rei. Contra Imperador não anula — a magia vem pela metade.",
+          "Recusar o Mundo (Santo): anula até Santo; contra Rei vem pela metade; contra Imperador acontece inteira.",
+          "Interdito (Santo): em vez de 'ninguém conjura acima de Santo', agora apaga a magia de rank Santo PARA BAIXO. Num exército, isso desliga todo mundo menos o general — que é uma cena melhor que a anterior, e do tamanho certo para uma assinatura de Santo.",
+          "Domo (Intermediário): a superfície passou a obedecer à mesma Régua, em vez de barrar magia de qualquer rank.",
+        ],
+      },
+      {
+        heading: "E a Lei Local virou a única coisa que quebra a Régua",
+        items: [
+          "A Maestria de Imperador já dizia que o Selado 'passa a valer contra todo rank, incluindo Deus'. Antes isso era só mais um número num teto que já vazava por todo lado. Agora é a ÚNICA exceção à Régua do Selo em todo o livro — e é exatamente o que o patamar mais caro deveria comprar: o direito de dizer não para alguém acima de você.",
+          "O custo declarado da árvore foi reescrito para ter os dois tetos na cara: 'contra um mago mais alto que você, a sua lei é uma sugestão. Um Principiante não para um Imperador, e essa é a regra, não uma falha dela.'",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.85",
+    date: "2026-09-17",
+    title: "A Casca Chega no Meio do Golpe",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: Cura, Desintoxicação, Barreira e Invocação fecharam",
+        items: [
+          "Sexta das doze partes, e a maior delas: 23 achados. Sobram 110 de 230 — o livro passou da metade.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o mago de Barreira era o melhor curandeiro do 1º patamar",
+        items: [
+          "A Casca dava 2d8 + BC de PV Temporários por UMA Ação: 10 pontos por Ação no Principiante, mais um bônus em teste de resistência. O Vigor Emprestado, da escola que existe pra curar, dava 2,75 por Ação. A opção da Cura era simplesmente morta.",
+          "A Casca virou o que a própria nota de custo dela já prometia desde sempre — 'a única magia da escola que responde a um golpe já a caminho': agora é 1 REAÇÃO, com 1d8 + BC, durando até o fim do próximo turno do alvo. E o Vigor Emprestado subiu para 2d8 + BC, mantendo os 10 minutos.",
+          "As duas ficaram vivas e diferentes: a Casca é a reativa (metade dos dados, mas sai no meio do golpe e não custa Ação), o Vigor Emprestado é a preparada (o dobro dos dados, posta antes da porta abrir).",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: a Redoma tirava um chefe da luta por 5 PM",
+        items: [
+          "Sem teste, sem duração, sem dizer se o alvo era aliado ou inimigo: um Avançado neutralizava até um chefe de rank Rei, enquanto a Prisão Absoluta (Rei, 14 PM) pede teste com Desvantagem. E o cântico dela ('fecha-te sobre nós') sugeria que a magia era pra PROTEGER.",
+          "Agora ela faz as duas coisas, cada uma com o seu preço. Em você ou em aliado voluntário: sem teste, dura até o início do seu próximo turno — é um escudo. Em criatura hostil: teste de Espírito, e quem falha repete no fim de cada turno. Nos dois casos a esfera pode ser atacada por dentro.",
+        ],
+      },
+      {
+        heading: "O Selado passou a fazer alguma coisa contra inimigo do mesmo patamar",
+        items: [
+          "A tag principal da escola só barrava magia de rank SUPERIOR ao seu em Barreira. Num encontro equilibrado, contra um inimigo do mesmo patamar, ela não fazia absolutamente nada — e quem divide PA entre árvores fica atrás no rank de Barreira, o que piorava ainda mais.",
+          "Agora Selado barra magia de rank IGUAL OU SUPERIOR: um Selado Avançado deixa o inimigo só com Intermediário e Principiante. O contrapeso já existia e continua — os PV da barreira podem ser derrubados, e a 0 PV ela se desfaz com a lei junto.",
+        ],
+      },
+      {
+        heading: "A Ferida Mortal deixou de ser uma Maestria vazia",
+        items: [
+          "Ela prometia levar um aliado de 0 PV a PV positivos 'sem Exaustão' — só que o Cap. 4 já diz que qualquer cura remove as Marcas e acorda, a Cura Suprema do mesmo patamar já tirava a Exaustão, e a Mão que Acalma tira por 2 PM desde o Principiante. Era um patamar inteiro sem momento de mesa.",
+          "Agora ela liga na tag da escola: um aliado a 0 PV conta SEMPRE como Ferida Fresca pra você, não importa há quantos turnos esteja lá — a janela da escola nunca fecha sobre um moribundo. E quem levanta com uma magia sua pode gastar a Reação na hora, pra se mover ou atacar.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.84",
+    date: "2026-09-17",
+    title: "O Rótulo Não Era Armadilha",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: as quatro árvores do Corpo fecharam",
+        items: [
+          "Quinta das doze partes: os 21 achados de Espada, Suishin, Norte e Lutador — a maior concentração de problemas graves que restava. Sobram 133 de 230.",
+        ],
+      },
+      {
+        heading: "O rótulo 'Força ou Agilidade' passou a valer de verdade",
+        items: [
+          "Três árvores prometem escolha no atributo-chave — Deus do Norte e Estilo Vendaval ('Força ou Agilidade') e Punho do Fogo ('Força ou Intelecto') — e o Cap. 1, §7 diz com todas as letras que o Punho usa 'o MAIOR entre Força e Intelecto'. Mesmo assim, TODO o código pegava o primeiro nome da frase: ficha, rolador, PDF e simulador. Quem montava um Norte ágil descobria na mesa que o dano e as CDs ignoravam a Agilidade.",
+          "Agora o site escolhe o atributo em que o personagem é melhor, nos cinco lugares. E o Norte passou a dizer isso na própria Maestria: 'use o maior entre Força e Agilidade em toda fórmula de dano e em toda CD desta árvore que pedir Força'. O rótulo deixou de ser uma armadilha de criação de personagem.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o Aparar somava zero exatamente onde a árvore o queria",
+        items: [
+          "Na Postura de Água (Avançado), a Postura dá Bônus de Rank na CA e o Aparar dá o mesmo Bônus de Rank. Como bônus do mesmo tipo não somam, o Aparar acrescentava ZERO — e o jogador gastava a Reação à toa dentro do modo que a árvore inteira monta. O ciclo Postura, Aparar, Fluxo quebrava justamente no patamar em que devia amadurecer.",
+          "O Aparar virou a única exceção nomeada à regra de empilhamento do Cap. 4, §5: ele soma com qualquer outro bônus de CA, inclusive a Postura e o Manto.",
+        ],
+      },
+      {
+        heading: "O turno do Suishin deixou de ser 'esperar apanhar'",
+        items: [
+          "Do Principiante ao Santo quase tudo o que o Suishin compra é Reação. No próprio turno ele tinha o ataque comum e um Provocar limitado a uma vez POR CRIATURA por combate — ou seja, o jogador passava o turno sem decisão e a diversão dependia de o Mestre mandar os inimigos no corpo a corpo.",
+          "Provocar agora é 1 Ação, uma vez por turno, sem o limite por criatura. A árvore cobra por ser atacada, então convidar o golpe virou a jogada — e o turno dele passou a ter uma decisão.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o Lutador travava chefes sem uma única rolagem",
+        items: [
+          "No Imperador, Mão na Garganta (agarra sem disputa, 2 acúmulos) seguida de Prensa (Quebrantado ao máximo, sem teste) levava qualquer criatura aos 12 acúmulos, que era exatamente o limiar da Incapacitação — e Incapacitado não termina sozinho. Duas Ações, 5 PT, zero rolagens, chefe fora do combate inteiro.",
+          "Prensa agora pede teste de Vigor: falha leva ao máximo, sucesso dá acúmulos iguais ao seu Bônus de Rank. E a Maestria de Imperador troca a Incapacitação permanente por Atordoado até o fim do próximo turno, com teste e uma vez por combate por criatura. Tirar um chefe da luta inteira sem uma rolagem não é o capstone da árvore: é o fim dela.",
+        ],
+      },
+      {
+        heading: "O Quebrantado finalmente aparece no 1º patamar",
+        items: [
+          "'Seus golpes aplicam Quebrantado' não dizia quantos nem quando, então o motor lia zero no ataque comum e a única fonte no Principiante era a Investida Devastadora — que exigia 6m de corrida, um teste, e prometia 2 acúmulos contra um teto de 1. A identidade da árvore era invisível nos dois primeiros patamares.",
+          "Agora a Maestria dá a TAXA BÁSICA: o primeiro ataque corpo a corpo seu que acertar cada criatura no seu turno aplica 1 acúmulo. E a Investida parou de prometer o que o teto corta — ela vai ao máximo que você consegue aplicar, que no Principiante é 1.",
+          "A ficha também travava Quebrantado em 6 acúmulos, metade do que o livro permite: a Maestria Nada Segura dobra o limite, e o Imperador do Lutador não conseguia representar na tela os 12 que a própria árvore descreve. O teto do rastreador subiu para 12.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.83",
+    date: "2026-09-17",
+    title: "Três Golpes Fracos",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: o Cap. 2 fechou",
+        items: [
+          "Quarta das doze partes: os 17 achados do Cap. 2 — As Leis da Magia. Sobram 154 de 230, e os quatro capítulos de regra do livro estão fechados.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO DO AUTOR: o Deus da Água usa Agilidade",
+        items: [
+          "O Suishin-ryū estava com Vigor como atributo-chave, e isso fazia a árvore de contra-ataque rolar com o atributo do tanque. O estilo não vende aguentar o golpe: vende LER o golpe e chegar meio segundo antes dele. Aparar, postura e contragolpe são timing, e timing é Agilidade.",
+          "Ele agora é uma exceção interessante em vez de uma cópia dos Escudos: usa Agilidade mesmo empunhando espada, que é um grupo de Força. O Cap. 1 explica por quê em uma linha. Escudos e Fortificação continua em Vigor, sozinho, que é onde faz sentido.",
+        ],
+      },
+      {
+        heading: "REGRA: três golpes fracos calam um mago melhor que um forte",
+        items: [
+          "O livro mandava concentrar o dano num golpe só pra derrubar um cântico. A conta diz o contrário, e a conta é consequência de uma regra boa: como a CD de Concentração é fixa pelo RANK de quem acertou, e não pelo dano, cada acerto é um teste NOVO. Um Avançado com Espírito 2 falha 40% num teste — e 78% em três.",
+          "O texto foi invertido pra dizer a verdade em vez do palpite. Nenhuma regra nova: só a mesa passando a saber o que a regra que já existe realmente faz.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o Encurtado apagava magia de um dado",
+        items: [
+          "'Metade dos dados, arredondado pra baixo' transformava toda magia de UM dado em zero dados. A Bola de Fogo (1d8 + BC) encurtada virava só BC: a penalidade apagava a magia em vez de enfraquecê-la, e apagava justamente as magias que um Principiante tem. Agora arredonda PRA CIMA — 1d8 continua 1d8, 3d8 vira 2d8. Vale igual na Silenciosa.",
+          "E o buraco do outro lado: magia de controle puro (Amarra, Vácuo Localizado, Prisão de Ar) saía pela metade das Ações sem perder NADA, porque a penalidade só sabia falar de dados e área. Encurtar era jogada grátis. Agora: magia sem dados nem área perde metade da DURAÇÃO; se também não tem duração, não pode ser Encurtada.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o Meteoro virou a quinta Grande Obra",
+        items: [
+          "Ele fazia média 165 numa área de 9m por 25 PM, com portas de Fogo Rei e Terra Avançado — mais que o Sol Menor, que é a assinatura de IMPERADOR e pede a escola inteira. Por Ação rendia 27,5 contra 22,8 do Sol Menor. E as 6 Ações dele contradiziam o teto de 4 sem uma palavra de explicação.",
+          "As 6 Ações ficam, e agora são declaradas: o Meteoro entrou na categoria Grande Obra criada na 0.1.82 — Ritual, não encurta, não silencia, e com Ponto de Não Retorno (a partir da segunda Ação o céu muda de cor sobre a área inteira, e todo mundo tem um turno pra sair de baixo). Um meteoro não é uma magia que se lança: é uma coisa que alguém vê chegando.",
+          "O dano caiu de 20d10+10d10 para 14d10+7d10 (média 115): acima de qualquer outra Combinada, abaixo do Sol Menor contra alvo Em Chamas. É a única Grande Obra que exige duas escolas abertas.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.82",
+    date: "2026-09-17",
+    title: "Puxa, Lê, Coloca os Dedos",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: o Cap. 3 fechou",
+        items: [
+          "Terceira das doze partes: os 15 achados do Cap. 3 — Regras gerais das árvores. Sobram 171 de 230.",
+        ],
+      },
+      {
+        heading: "O TIRO PERFEITO FOI REDESENHADO",
+        items: [
+          "A ordem mudou, e a ordem é a regra: A Corda, A LEITURA, Os Dedos, A Solta. Você puxa, lê pra onde o alvo vai, e só ENTÃO coloca os dedos no vão que a leitura revelou. A etapa que fura Cobertura passou a ser a correção final, não a primeira — é assim que a técnica faz sentido sendo lida em voz alta.",
+          "Cada etapa compra uma moeda diferente, e é isso que faz o sistema valer o tempo. A Corda compra POTÊNCIA: dois degraus na Escada de Dados. A Leitura compra ACERTO contra quem se mexe (a Agilidade do alvo sai da CA) e mais um degrau. Os Dedos compram ÂNGULO (a Cobertura some, exceto a Total) e mais um Dado de Arma inteiro. A Solta é o disparo — e também é uma jogada: nenhuma etapa garante o acerto.",
+          "Degrau e Dado não são a mesma moeda, e a troca tem consequência medida. A versão anterior dava +3 e +2 Dados e ficava FORA da Escada de Dados, que é a moeda nativa do Corpo: rendia 75% de quatro disparos comuns no Principiante e decaía até 41% no Imperador — a técnica de assinatura piorava a campanha inteira. Agora ela rende entre 48% e 67% em TODOS os patamares. É menos no começo e a curva para de desabar.",
+          "O que ela compra além do dano continua: um golpe só contra o Manto de Touki em vez de três, Cobertura ignorada, e o alvo sem Agilidade na CA. O Ponto segue opcional, custando 1 Ação a mais, e ainda dá crítico em 19-20 e ignora Resistência.",
+          "A Etapa Encurtada acompanhou a inversão: agora ela junta A Corda e A Leitura, que são as duas primeiras.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o Punho do Fogo devolveu dois degraus",
+        items: [
+          "Ele subia NOVE degraus de Dado de Arma — exatamente os mesmos do Deus da Espada, cuja identidade declarada é 'o maior dano do livro' — e ainda somava Em Chamas e Quebrantado por cima. O aviso do Cap. 3 citava só a Espada e os Escudos, então o terceiro caso ficava escondido.",
+          "Avançado e Imperador caíram de 2 para 1 degrau: 9 viraram 7. O pico do Lótus Carmesim desceu de 61,6 para 48,4 por Ação, e o teto do Corpo voltou a ser a Espada de Luz Verdadeira, com 66,0. O Punho continua sendo a segunda árvore mais rápida da escada, e o aviso agora diz isso em vez de esconder.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o triângulo tinha uma aresta só funcionando",
+        items: [
+          "A regra era a mesma nas três: 'as Reações defensivas dele falham'. Só que o Deus da Espada quase não vende Reação defensiva, então perder Reações não custava nada a ele — enquanto desligava a Água inteira, que é o estilo FEITO de Reações. Das três arestas, uma funcionava.",
+          "Agora cada aresta tem o efeito dela. Espada vence Norte: o Improviso não funciona contra a sua primeira Ação do turno. Norte vence Água: as Reações defensivas falham (a regra antiga, que sempre foi desta aresta). Água vence Espada: o primeiro ataque dele contra você a cada turno tem Desvantagem — a Água não bloqueia a Espada, ela faz a Espada errar.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: Touki Concentrado virou duas manobras",
+        items: [
+          "A metade defensiva quase nunca disparava: ativada no SEU turno e durando 'até o fim do turno', ela protegia só do que te acertasse dentro do seu próprio turno — quase nada. Metade da manobra era texto morto, e como era 'Sem Ação' sem limite, dava pra ler 3 PT como três vezes o bônus.",
+          "Separadas: Touki Concentrado (1 PT, Sem Ação, uma vez por turno) soma o Bônus de Rank ao dano dos seus ataques até o fim do seu turno. Touki Endurecido (1 PT, 1 Reação, ao ser atingido) reduz o dano daquele golpe no DOBRO do Bônus de Rank. Cada metade agora dispara na hora em que ela faz sentido.",
+        ],
+      },
+      {
+        heading: "A RÉGUA DA UTILIDADE ERA MENTIRA — e o Ladino não foi nerfado",
+        items: [
+          "O livro dizia que Ladino, Bardo e Tático 'talvez somem 30 de dano na luta inteira'. Contando as cartas: no Imperador o Dano Furtivo é +6d6 POR TURNO, a Dissonância é 6d4 em cada hostil que ouve, e a Ordem de Tiro entrega 6d6 de uma vez. A frase era bonita e falsa.",
+          "A decisão foi mudar a TABELA, não a árvore: o Ladino deve causar dano mesmo. A régua verdadeira é 'uma árvore de Utilidade causa, sozinha, entre um terço e metade do dano de um guerreiro do mesmo patamar', e o Ladino fica no topo dessa faixa de propósito.",
+          "E a Regra da Faixa ganhou a definição que faltava: Dano Furtivo é o dano extra que o PRÓPRIO personagem acrescenta ao PRÓPRIO ataque, condicionado a surpresa ou posição. Por isso a Dissonância (área automática, sem ataque) e a Ordem de Tiro (entra no golpe de um aliado) ficam legitimamente fora dela, em vez de parecerem vazamentos.",
+        ],
+      },
+      {
+        heading: "REGRA: as quatro travas do fato de PP",
+        items: [
+          "É a mecânica mais divertida do pilar e a que mais gera briga na mesa. Quatro frases: um fato nunca contradiz o que já foi mostrado em cena; a complicação nunca desfaz nem anula o fato, cobra um preço ao lado dele; o Mestre diz ANTES se o fato custa 2 PP, e o jogador pode desistir sem gastar; e o limite é o seu Bônus de Rank em fatos por sessão — 1 no Principiante, 6 no Imperador.",
+          "Sem o limite, um Bardo com 15 PP encadeava quinze reescritas do mundo na mesma cena. O limite é por SESSÃO, não por cena: guardar o fato pro momento certo é metade da graça.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: o Manto de Touki e a palavra 'mundano'",
+        items: [
+          "O Manto reduzia 'projéteis mundanos', e a Maestria do Avançado da Arquearia torna os disparos mágicos — então o arqueiro furava o Manto três patamares antes da hora, de graça, e a Flecha de Touki de 3 PT no Rei não fazia sentido nenhum.",
+          "Agora: projétil é ataque de arma à distância, mágico ou não. Flecha encantada é projétil; Bola de Fogo não é, magia nunca é projétil. E a Arquearia parou de prometer 'uma única forma de furar o Manto', porque são duas desde que a Preparação Perfeita existe.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.81",
+    date: "2026-09-17",
+    title: "O Que Está No Meio",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: o Cap. 4 fechou",
+        items: [
+          "A segunda das doze partes saiu inteira: os 17 achados do Cap. 4 — Combate e Sobrevivência. Sobram 186 de 230.",
+        ],
+      },
+      {
+        heading: "REGRA: Cobertura finalmente tem número (e tem desenho)",
+        items: [
+          "Três capítulos citavam Cobertura parcial e Total, e nenhum dizia quanto ela valia. Agora: Parcial +2 de CA, Superior +5, Total não pode ser alvo — e as duas primeiras dão Vantagem contra efeito de área.",
+          "Duas coberturas não somam: vale a melhor. Atrás de um muro E de um aliado você tem Superior, não +7. Aliado só dá Cobertura Parcial, e só se for do seu tamanho ou maior — ninguém se esconde atrás de um Povo Pequeno.",
+          "E ganhou diagrama, porque cobertura é uma discussão de mapa: uma vista de cima com o mesmo arqueiro atirando três vezes, mudando só o que está no meio. Na linha da Total, o tiro para no muro em vez de chegar ao alvo.",
+          "Junto: empate de Iniciativa, que o livro nunca resolveu. Age antes quem tem a maior Agilidade; persistindo, o jogador age antes do Mestre.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: Bloquear com Escudo falhava 85% das vezes",
+        items: [
+          "O quadro das três mãos do guerreiro prometia 'uma Reação que anula um golpe inteiro'. Na prática o escudo dava +2, então o bloqueio só virava um acerto em erro quando o d20 caía exatamente na CA ou na CA+1 — cerca de 15% dos acertos. Nos outros 85%, a Reação era jogada fora.",
+          "Agora: +5 de CA contra aquele ataque (+2 sem proficiência em Escudos) e, se ainda assim acertar, o dano cai pela metade. Anula cerca de 38% dos acertos e NUNCA faz nada. Custa a Reação e custa a mão: quem empunha duas armas ou uma arma de duas mãos não tem esse botão.",
+        ],
+      },
+      {
+        heading: "REGRA: a Falha Crítica virou um menu de três",
+        items: [
+          "O 1 natural era 'o Mestre pode acrescentar uma complicação' — ou seja, nada, e uma discussão por rodada. Agora o Mestre escolhe um de três: você larga a arma (cai a 1,5 m), fica Caído, ou perde a Reação até o seu próximo turno. Menu curto de propósito: a mesa não para pra inventar, e nenhum dos três causa dano nem mata.",
+          "O 20 natural também ficou explícito num ponto que a mesa brigava: o crítico NÃO fura Resistência a dano. Quem fura precisa de uma habilidade que diga isso — como O Ponto, do Suishin-ryū, que existe justamente por causa disso.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: largar o Vigor cobra mais do que a tabela mostrava",
+        items: [
+          "O Fio da Vida dizia que 'A Escala do Vigor vale aqui' e listava duas penalidades — Desvantagem, e perder o Bônus de Rank — que a Escala não tinha. A Escala ganhou a coluna: Vigor −1 dá Desvantagem em todo teste de Vigor; Vigor −2 dá Desvantagem, tira a metade do Bônus de Rank e faz 1 ou 2 contarem como 1 natural. Vale pra veneno, clima, Exaustão e Fio da Vida, não só pra morrer.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: o teto de PM corta o Espírito, e agora o livro admite",
+        items: [
+          "O Aside dizia que o teto dos dois primeiros ranks 'corta só o que entra por fora da árvore'. Não é verdade: o teto usa 4 fixo, então um mago de Espírito 6 no Intermediário calcula 20 e leva 16, igual ao de Espírito 4. O texto prometia o contrário do que o motor faz há versões.",
+          "A regra fica: é o preço de o teto ser uma linha só. O que muda é a honestidade — o livro agora diz que o REATOR (Espírito alto) só começa a aparecer no Avançado, quando o teto some e cada ponto de Espírito passa a valer o Bônus de Rank inteiro.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.80",
+    date: "2026-09-17",
+    title: "O Preço do Espírito",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: o Núcleo fechou",
+        items: [
+          "A primeira das doze partes da revisão — Comece Aqui e Cap. 1 — está inteira resolvida: os 14 achados saíram do REVISAO-DO-LIVRO.md. Sobram 203 de 230.",
+        ],
+      },
+      {
+        heading: "REGRA: o BC não é de Intelecto — é do atributo-chave da escola",
+        items: [
+          "O §7 dizia 'BC = Intelecto + Bônus de Rank' e quatro escolas conjuravam com Espírito. A Cura mandava ler o §7 pra descobrir que usava Espírito, e o §7 dizia Intelecto. Agora está escrito: Intelecto em Fogo, Água, Vento e Terra; Espírito em Cura, Barreira, Desintoxicação e Espíritos e Feras.",
+          "As Fórmulas Marciais citavam só Força ou Agilidade, e duas árvores do Corpo usam Vigor. Escudos e Fortificação e o Deus da Água (Suishin-ryū) agora aparecem por nome: as duas vendem aguentar, não acertar.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: as escolas de Espírito ficaram as mais caras do livro",
+        items: [
+          "Quem conjura com Espírito subia UM atributo e recebia duas coisas: mira e reserva. Um Imperador de Cura com Espírito 8 tinha BC 14 e 56 PM; o de Fogo com Intelecto 8 e Espírito 4 tinha o mesmo BC 14 e só 32 PM — e empatar custaria ~20 PA no alto da escada progressiva.",
+          "O livro não corrige proibindo: corrige cobrando. As 71 magias de Cura, Barreira, Desintoxicação e Espíritos e Feras subiram +1 PM por patamar da escola — +1 no Principiante, +6 no Imperador. A conta já vem feita nas cartas; ninguém soma nada na mesa.",
+          "O efeito é que os dois magos passam a lançar o MESMO número de magias por descanso. O elementalista tem menos mana e gasta menos; o espiritualista tem muito mais e gasta muito mais. O que muda é o que cada um faz com o turno — e era isso que devia mudar.",
+        ],
+      },
+      {
+        heading: "NOVA CATEGORIA: Grande Obra — as magias de 5 e 6 Ações",
+        items: [
+          "O Comece Aqui dizia 'de 2 a 6 Ações' e o teto era 4 desde a 0.1.47. O teto caiu naquela versão por um motivo bom: uma magia de 6 Ações rendia MENOS dano por Ação que uma de dois ranks abaixo. A magia suprema era pior que a intermediária.",
+          "Agora existem quatro magias acima do teto, e elas são uma categoria com regra própria. Uma Grande Obra custa 5 ou 6 Ações, é sempre Ritual (não encurta, não silencia, não se retoma) e tem PONTO DE NÃO RETORNO: a partir da segunda Ação, a cena inteira vê o que vem — a maré sobe, o chão racha, o nome começa a ser dito — e ganha um turno pra reagir.",
+          "Nenhuma delas é 'mais dano por Ação', que foi exatamente o erro da escada antiga. Elas mudam A CENA, não o alvo: A Maré que Lembra o Vale (Água, Rei) alaga 90 m e deixa todo mundo Molhado pelo resto da cena, pagando o preparo da Água uma vez só; A Noite de Uma Hora (Cura, Rei) devolve TODOS os PT e PP do grupo no meio da luta; O Nome Que Não Se Grita (Espíritos e Feras, Rei) traz uma criatura de um patamar acima do seu, que obedece ao pé da letra a uma única frase que todo mundo ouviu você declarar; O Vale que Eu Desenho (Terra, Santo) finalmente põe número na promessa de 'reformular o campo de batalha'.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: a Árvore Inicial é de graça, e agora as três páginas concordam",
+        items: [
+          "O Comece Aqui e o §4 cobravam 1 PA pela Inicial, a tabela do §3 imprimia 'Principiante: 1 PA', e o §8 e o código cobravam 0. Dependendo da página aberta, o jogador novo fechava a ficha com 2 ou com 3 PA livres.",
+          "Vale o que o código sempre fez: a Inicial é a 1ª árvore, e o Custo de Abertura da 1ª é zero. A tabela do §3 passou a imprimir 'Custo de Abertura (§8)' na linha do Principiante, e o 1 PA morto saiu de RANK_REQUIREMENTS.",
+        ],
+      },
+      {
+        heading: "CORREÇÃO: comprar +PM com PA rendia exatamente zero",
+        items: [
+          "A tabela do §2 vendia '+PM por 2 PA' sem avisar que o teto dos dois primeiros patamares (Cap. 4, §1) corta todo extra avulso. Com Bônus de magia 1 ou 2, a compra rendia 0 PM. Agora a linha diz isso em maiúsculas, e a ficha bloqueia a compra até o Avançado, explicando por quê ao passar o mouse.",
+          "A setinha de +PA da ficha também estava errada: o passo era 12 fixo, que é o valor do IMPERADOR. Um Principiante clicava uma vez e ganhava 12 PV onde a regra dá 4. Agora o passo sai da taxa real do personagem.",
+        ],
+      },
+      {
+        heading: "REGRA: Ajudar quem já tem Vantagem",
+        items: [
+          "Perícia só dá Vantagem, e Vantagem não empilha — então ajudar o especialista valia ZERO, justamente na cena em que o grupo mais quer cooperar. Agora: se o aliado já tem Vantagem, a ajuda vira +2, e esse +2 conta no Teto de Auxílio +6.",
+          "Fora de combate vale o mesmo, com uma condição: quem ajuda precisa ter perícia ou proficiência que se aplique. Segurar a tocha do ladino não é ajudar a arrombar a fechadura.",
+          "Teste em grupo, que o livro nunca teve: todos rolam, e o grupo passa se metade ou mais passar. É o que impede um Ogro de Agilidade −2 decidir sozinho uma cena de furtividade.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.79",
+    date: "2026-09-17",
+    title: "A Noite Devolve Tudo",
+    sections: [
+      {
+        heading: "REVISÃO DO LIVRO: 24 agentes, 230 achados",
+        items: [
+          "O livro inteiro foi revisado — capítulos, apêndices, raças, antecedentes, loja, bestiário, condições, Rank Deus e as dezenove árvores — por doze revisores e doze céticos que abriram cada trecho citado e tentaram derrubar o achado. Sobraram 230 problemas confirmados, 51 deles graves. A lista completa, com proposta de conserto, está em REVISAO-DO-LIVRO.md. Esta versão aplica as oito primeiras decisões do autor.",
+        ],
+      },
+      {
+        heading: "REGRA: o Descanso Longo devolve todas as reservas",
+        items: [
+          "O Longo tinha três definições no livro e devolvia MENOS PT que o Curto: 50% contra 100%. A jogada ótima era tirar um Curto logo depois de dormir.",
+          "Agora a noite (8 horas) devolve TODOS os PM, PT e PP, e PV iguais ao Vigor + 2 × o maior Bônus de Rank (mínimo 1). Sem dado: dormir fecha pouco, e o curandeiro continua importante.",
+          "A semana de cama que cura todos os PV ganhou nome próprio, Convalescença, e parou de se chamar 'Descanso Longo de uma semana'. O aviso 'A Carne Não Fecha Sozinha' e a conta do 'Dois Curtos por dia' foram refeitos com a cura cortada pela metade da 0.1.77.",
+        ],
+      },
+      {
+        heading: "REGRA: quantos PA por sessão",
+        items: [
+          "O livro nunca dizia. Agora o Cap. 1 diz: 1 PA por sessão jogada, igual para o grupo, e +1 PA por marco (fim de arco, missão importante, subida de Rank na Guilda), mais ou menos um a cada três sessões. É o ritmo em que as tabelas foram calibradas: ~12 PA no 3º patamar e ~24 no 5º.",
+        ],
+      },
+      {
+        heading: "NOVA CONDIÇÃO: Surpreso",
+        items: [
+          "Várias árvores diziam 'nunca fica Surpreso' e o livro nunca definia surpresa. Agora: quem não percebeu a ameaça tem só 1 Ação e nenhuma Reação na primeira rodada. A emboscada assusta, mas ninguém passa uma rodada inteira só assistindo.",
+        ],
+      },
+      {
+        heading: "REGRA: toda condição tem duração",
+        items: [
+          "Molhado, Envenenado, Cego, Surdo e Atolado não tinham fim, e Amedrontado não deixava tentar de novo: um chefe que amedrontava tirava o jogador da luta inteira.",
+          "Duração padrão do glossário: sem duração escrita, a condição vai até o fim do próximo turno do alvo. Exceções no próprio verbete: Molhado dura 1 minuto ou até sofrer dano ígneo (que entra normal e seca a água); Amedrontado pede novo teste no fim de cada turno; Atolado sai também gastando 1 Ação num teste de Força.",
+          "Terreno difícil, citado em cinco magias, finalmente tem regra: cada 1,5 m custa 3 m de Deslocamento.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: Recitação Perfeita",
+        items: [
+          "Recitar bem na Encurtada e na Silenciosa apagava a penalidade delas, então quem recitava nunca usava a Padrão. E o reembolso de PM era maior que o custo das magias baratas de suporte: o curandeiro lucrava PM a cada Cura.",
+          "Agora o bônus só vale na Conjuração Padrão, e em feitiço sem rolagem ele vira desconto: a magia custa o seu Bônus de Rank a menos, nunca menos de 1 PM. A carta da magia no site mostra o desconto.",
+        ],
+      },
+      {
+        heading: "CONDIÇÃO: Desequilibrado passa a fazer alguma coisa",
+        items: [
+          "A cláusula 'no máximo uma Reação por rodada' repetia a regra geral e não fazia nada. Agora Desequilibrado tira TODA Reação (nem ataque de oportunidade, nem bloqueio): quem está desequilibrado não te alcança de volta, como a árvore do Vento sempre prometeu.",
+          "O +1 dado de dano do Vento contra Desequilibrado saiu do 2º patamar e entrou na Brisa, no 1º. O Sem Peso ganhou no lugar um empurrão de 3 m que sempre desequilibra quando o alvo bate em algo.",
+        ],
+      },
+      {
+        heading: "BALANCEAMENTO: o Tiro Perfeito virou um tiro de verdade",
+        items: [
+          "Quatro Ações de Tiro Perfeito rendiam 6 de dano esperado contra 19 de quatro disparos comuns: a assinatura do arqueiro perdia para não usar técnica nenhuma.",
+          "As etapas agora somam Dados de Arma inteiros: A Corda +3, Os Dedos +2 (e ignora Cobertura). Com tudo passando, um arco longo solta 6d10. E o tiro deixou de custar PT: ele paga só em tempo, como o Cap. 3 sempre disse.",
+          "Medido: ~13 de dano esperado no 1º patamar. Continua abaixo de quatro disparos contra alvo parado, de propósito. O que ele compra é um golpe só: a redução do Manto de Touki cai uma vez, e não em cada disparo, e a Cobertura some.",
+        ],
+      },
+      {
+        heading: "REGRA: armadura sem proficiência",
+        items: [
+          "Qualquer mago vestia Armadura Pesada por 150 PO e ganhava +5 de CA perdendo só 3 m. Agora, sem proficiência, a armadura dá Desvantagem em todo ataque (com arma ou com magia) e em Concentração, além da Furtividade, da Acrobacia e dos -3 m de antes.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.78",
+    date: "2026-09-16",
+    title: "O Primeiro Soco Acende",
+    sections: [
+      {
+        heading: "REWORK: o Punho do Fogo agora é o Fogo e o Lutador que você já tem",
+        items: [
+          "A árvore era a mais confusa do livro: três recursos ao mesmo tempo (PT, PM e Calor), técnicas de Corpo pagas em PM, quatro talentos com o nome da própria Maestria e cinco condições que o livro nunca definiu. A diretriz do autor foi uma frase: quem chega aqui já tem Magia de Fogo e Lutador na ficha — junte os dois sem confundir.",
+          "O Calor saiu, e nada entrou no lugar. A regra inteira cabe na Maestria de 1º patamar, Soco Aceso. ACENDA: todo soco que acerta deixa o alvo Em Chamas. QUEBRE: se ele já estava Em Chamas, o soco também aplica 1 acúmulo de Quebrantado. SOBRECARREGUE: as técnicas custam PT, e pagar 2 PM a mais (da reserva que o seu Fogo já dá) acende o efeito extra.",
+          "O Imperador pega fogo de propósito (O Corpo É o Pavio): com 1 Ação você mesmo fica Em Chamas, sofre 2d10 por turno que nem a sua imunidade segura, e enquanto queimar toda Sobrecarga sai de graça. Apagar-se explode em quem estiver perto, mais forte quanto mais tempo você queimou.",
+        ],
+      },
+      {
+        heading: "O que saiu",
+        items: [
+          "Os quatro nomes duplicados: os talentos viraram Fôlego de Fornalha (+1 PT por patamar), Brasa Funda (Em Chamas queima 1d10), Vulcão Largo (a Presença do Vulcão alcança 18m) e Beber o Fogo.",
+          "As condições inventadas (Lento, Queimadura Severa, Exaustão Térmica, Vulnerabilidade, Medo/Pânico), o dreno de 2 de Força e Agilidade por turno do Trono de Chamas, os terrenos vulcânicos permanentes e a cura da Pele de Cinzas.",
+          "O Fogo Purificador não remove mais maldição nem veneno: essa separação é da Desintoxicação, e ela é absoluta. Agora ele vaporiza projéteis e queima quem te ataca.",
+          "A barra de Calor saiu da ficha junto com o recurso.",
+        ],
+      },
+      {
+        heading: "Os números",
+        items: [
+          "O dano caiu pra perto do Lutador. Punho da Condenação: 8d8 → 6d8 + BC. Lança Incandescente: 6d6 → 4d6 + BC. Impacto Meteórico: 5d8 → 4d8 + BC. Colapso Solar: 19d12 → 14d12 + BC, uma vez por combate.",
+          "Medido com o check:progressao: o teto do Punho do Fogo foi de 53,8 pra 40,8 de dano por Ação, e a distância entre o melhor do Corpo e o melhor da Magia caiu de 1,6× pra 1,2×.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.77",
+    date: "2026-09-16",
+    title: "A Luz Que Fere",
+    sections: [
+      {
+        heading: "BALANCEAMENTO: toda cura caiu pela metade",
+        items: [
+          "A Cura do Principiante devolvia 19 PV com Ferida Fresca, a vida inteira de um mago Principiante, e três multiplicadores se empilhavam por cima: o dobro da Ferida Fresca, o custo de 1 PM no Intermediário e o +1d8 por rank de diferença no Rei. No Rei ela chegava a 59 PV por 1 PM; no Imperador, a 118.",
+          "Os dados de toda magia de cura caíram pela metade, e a Ferida Fresca continua dobrando. Cura: 1d8 + BC (2d8 com Ferida Fresca). Prontidão: 2d8 + BC, sempre. Bênção Coletiva: 1d4 + BC. Cura Suprema: 3d8 + BC (6d8). Círculo de Recuperação: 1d6 + BC por turno. Cura Radiante: 5d8 + BC (10d8). Julgamento: 3d4 + BC. Luz Absoluta: 5d8 + BC.",
+          "Saíram os dois empilhamentos. A Maestria do Intermediário não tira mais 1 PM: uma magia de Principiante pode alcançar dois alvos, cada um com o valor inteiro, por +1 PM. E o Rei não soma mais dados à magia barata.",
+          "O Vigor Emprestado não mudou: com a Cura menor, os PV temporários dele voltam a ser uma escolha.",
+        ],
+      },
+      {
+        heading: "NOVA REGRA: a Luz de Dois Gumes",
+        items: [
+          "A Magia de Cura agora fere qualquer inimigo, não só morto-vivo. Na Maestria de 1º patamar: toda magia de Cura pode, em vez de curar, mirar uma criatura hostil. A de alvo único vira ataque mágico, a de área pede teste de Vigor pra metade, e o alvo sofre como dano radiante o valor que a magia curaria, sem o dobro da Ferida Fresca. Contra morto-vivo, construto e corrompido, a luz acerta sempre e não permite teste.",
+          "A Prontidão pode queimar quem deu o golpe em vez de curar o aliado. O Julgamento e a Luz Absoluta ferem toda criatura hostil na área, com teste de Vigor pra metade.",
+          "O talento Juramento virou uma escolha de verdade: quem jura nunca ferir, nem com a luz, paga 1 PM a menos.",
+        ],
+      },
+      {
+        heading: "NOVA MAESTRIA DO REI: Culpa Fresca",
+        items: [
+          "O Golpe Divino, que só mordia morto-vivo, deu lugar ao espelho da regra da escola: quem feriu um aliado seu neste turno ou no anterior carrega Culpa Fresca e sofre a sua luz em DOBRO. A mesma janela que cura em dobro quem apanhou queima em dobro quem bateu.",
+          "O talento Sopro do Julgamento agora estende a Culpa Fresca até o fim do combate contra quem derrubar um aliado a 0 PV.",
+        ],
+      },
+      {
+        heading: "REGRA: todo guerreiro tem Touki desde o 1º patamar",
+        items: [
+          "As árvores cobravam PT no Principiante e no Intermediário enquanto as próprias Maestrias diziam que a reserva só chegava no Avançado. O PT Menor (igual ao Vigor) dava 1 ou 2 pontos, e o Escudeiro usava a própria Assinatura uma ou duas vezes.",
+          "Agora existe uma reserva só, desde o 1º patamar: Vigor + Espírito + 1 PT por patamar em qualquer árvore do Corpo (+2 em Cavalaria e Escudos). O novato já tem Touki, só não percebe: paga técnicas por instinto. É no Avançado (2º patamar no Deus da Espada) que ele percebe a aura, destrava as manobras de gasto e veste o Manto.",
+          "As Maestrias de Espada, Norte, Lutador, Escudos e Arquearia pararam de dizer que dão a reserva. E a mecânica da Arquearia deixou de dizer que nada nela gasta PT: o disparo comum é de graça, as técnicas nomeadas pagam PT.",
+        ],
+      },
+      {
+        heading: "CONSERTOS: o livro parou de se contradizer",
+        items: [
+          "Escudos: o Custe o Que Custar Soberano dava 'PV igual ao seu nível', num sistema sem nível. Agora devolve Vigor + Bônus de Rank, e reduz em 2d12 o dano interceptado. O Nome na Porta citava a condição 'Abalado', que não existe; agora diz o efeito direto.",
+          "Fogo e Água: A Chama Que Escolhe e o Domínio Climático usavam Espírito numa escola de Intelecto. A Condutividade (Água, Rei) reconhece que a eletricidade já descia do Cumulonimbus.",
+          "Terra: o texto da Fortaleza Rápida dizia '1 Ação' e a carta cobrava 2.",
+          "Invocação: a Quimera e a Fera Ancestral fazem os três ataques com UMA Ação, como manda a regra do invocado. A Alcateia deixou de citar um lobo de 3d8 que não existe. O Filhote Evolutivo parou de prometer que passa todos os outros Pactos.",
+          "Notas de custo da Cura e do Vento ainda citavam o teto antigo de 6 Ações; o teto é 4 desde a 0.1.47. O Provocar do Deus da Água era chamado de 'talento'.",
+          "Nomes repetidos entre árvores ganharam nome próprio: Sangue Esquentado (Espada), Braço de Catapulta (Lutador), Dor Dividida (Cura), Voz Emprestada (Bardo), Rebater (Escudos), Eco da Anulação (Barreira), O Primeiro Pacto (Invocação) e Dois Céus (Água).",
+          "A ficha passou a exigir Empunhadura Dupla pra Mão Trocada e Cruz Nebulosa, e Boticário pra Veneno Refinado. A exigência já existia no texto; só não travava a compra.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.76",
+    date: "2026-09-16",
+    title: "A Casa Arrumada Antes da Reforma",
+    sections: [
+      {
+        heading: "REVISÃO: as dezenove árvores lidas de ponta a ponta, e nenhuma regra mexida ainda",
+        items: [
+          "Uma leitura completa das 601 habilidades com três perguntas, nesta ordem: é divertido? está equilibrado? dá pra entender de primeira? Os consertos decididos entraram na 0.1.77; o que ficou aberto (Punho do Fogo, Invocação e o Muro de Terra) está no O-QUE-FALTA.",
+          "O achado mais grave: o Touki (PT) é cobrado antes de as próprias árvores dizerem que você o tem. Espada, Água, Lutador, Escudos e Arquearia gastam PT no Principiante e no Intermediário, enquanto as Maestrias dizem que a reserva só chega no Avançado. O PT Menor do Cap. 3 (igual ao Vigor) existe, mas com 1 ou 2 pontos o Escudeiro Principiante usa a própria Assinatura uma ou duas vezes. E a mecânica da Arquearia diz que nada nela gasta PT.",
+          "A Cura está muito acima do resto: com Ferida Fresca, a Cura do Principiante devolve 19 PV, a vida inteira de um mago Principiante. Os multiplicadores se empilham até 59 PV por 1 PM no Rei e 118 no Imperador.",
+          "O Punho do Fogo usa três recursos ao mesmo tempo (PT, PM e Calor), tem quatro talentos com o nome da própria Maestria e cinco condições que o livro nunca define. A Invocação vende em quatro compras o que a Maestria do Avançado dá de graça.",
+          "Os menores: 'PV igual ao seu nível' num sistema sem nível, notas de custo que citam o teto antigo de 6 Ações, oito nomes repetidos entre árvores e pré-requisitos escritos só na prosa.",
+        ],
+      },
+      {
+        heading: "O papel do designer, escrito",
+        items: [
+          "O CLAUDE.md agora diz quem revisa o livro e com que régua: diversão primeiro, balanceamento depois, simplicidade em terceiro. Uma mecânica legal e confusa reprova, e o designer sempre dá a própria opinião antes de o autor decidir.",
+          "E a regra que governa o projeto inteiro: o livro é a fonte. Nada pode existir no site sem estar escrito no livro. O site pode ter menos que o livro, nunca mais.",
+        ],
+      },
+      {
+        heading: "FAXINA: a documentação só guarda o que está vivo",
+        items: [
+          "O PATCH_NOTES.md foi apagado. Ele era uma segunda cópia deste histórico, e já tinha divergido: seis versões (0.1.41, 0.1.45, 0.1.46, 0.1.48, 0.1.49 e 0.1.56) existiam só lá e nunca apareceram no site. As seis entraram aqui antes de o arquivo sair. O patch notes do site é agora a única cópia.",
+          "O O-QUE-FALTA.md foi reescrito só com pendência aberta. Saíram três itens já resolvidos (o penhasco da dizimação, as pontas soltas da 0.1.75 e o botão de instalar) e as notas de histórico dentro dos itens. O backlog que o PROGRESS.md repetia foi pra lá.",
+          "O PROGRESS.md perdeu os parágrafos de histórico e a lista duplicada de pendências. Ficaram o estado atual, as rotas, as decisões vivas e como verificar.",
+        ],
+      },
+      {
+        heading: "Pedido anotado: a ficha de monstro",
+        items: [
+          "Na tela de encontros, a criatura feita à mão não tem atributos, bônus de acerto, Deslocamento, perícias, proficiências nem passivas, e na mesa o Mestre ficou sem saber quanto o monstro tem pra acertar. Também foram pedidos um contador de PV por criatura (digitar o dano e a vida cair ali) e o Deslocamento na ficha do jogador e no PDF.",
+          "Entrou no O-QUE-FALTA, mas espera o livro: primeiro o apêndice de criaturas define o bloco de estatísticas do monstro, depois a tela o lê.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.75",
     date: "2026-09-13",
     title: "O Mago Tinha Corpo de Guerreiro",
@@ -282,6 +1116,41 @@ export const PATCH_NOTES: PatchNote[] = [
     ],
   },
   {
+    version: "0.1.56",
+    date: "2026-09-11",
+    title: "Verde Falso",
+    sections: [
+      {
+        heading: "Os checks de tela passavam medindo a página 404",
+        items: [
+          "Os checks mobile, a11y e contraste entram no site por /semente-dev, que devolve 404 em produção de propósito. Rodados contra npm run start, os três mediam a página de erro dezesseis vezes e diziam que estava tudo certo.",
+          "Rodados como devem ser, os números mudaram: o contraste achou 1 texto abaixo do AA, e o /livro tinha 229 alvos de toque pequenos em vez de 1. Agora o check aborta quando não encontra o semeador, em vez de só avisar. Verde falso é pior que vermelho.",
+        ],
+      },
+      {
+        heading: "Os dois achados que o verde falso escondia",
+        items: [
+          "O texto 'Só por árvore ou 1 PA', dos Grupos de Arma, tinha contraste 2,86:1 no tema claro. Foi pra 4,7:1.",
+          "Dos 229 alvos pequenos, 221 eram termos de condição grifados dentro do parágrafo, que o WCAG isenta. O check agora separa os dois: 7 pequenos de verdade e 221 isentos.",
+        ],
+      },
+      {
+        heading: "O sumário não descrevia o livro",
+        items: [
+          "Vinte e quatro seções não estavam no índice, entre elas os quatro sistemas compartilhados do Cap. 3 (Dado de Arma, Touki, Tiro Perfeito e Triângulo dos Estilos). Virou o npm run check:sumario, que acusa âncora prometida e inexistente e seção existente e não citada.",
+        ],
+      },
+      {
+        heading: "Segurança e leitura",
+        items: [
+          "O next@16.3.2 tinha uma falha crítica de execução remota de código (GHSA-p293-qw3h-jr36, CVSS 9.0). Subiu pra 16.3.4, e o npm audit fechou em zero.",
+          "O livro ficou mais legível: linha de 68 caracteres no texto corrido, filete dourado no começo de cada seção, tabelas com cabeçalho em versalete, subtítulos na serifada de display e barra de progresso em CSS puro.",
+          "Nova ferramenta: npm run tela <rota> fotografa qualquer rota em PNG, em qualquer largura e tema.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.54",
     date: "2026-09-11",
     title: "A Progressão Que Não Se Compra",
@@ -364,6 +1233,35 @@ export const PATCH_NOTES: PatchNote[] = [
     ],
   },
   {
+    version: "0.1.49",
+    date: "2026-09-11",
+    title: "O Terror Nunca Foi Invencível",
+    sections: [
+      {
+        heading: "A tabela de chefes media a distância, não a calibragem",
+        items: [
+          "A tabela punha um único grupo de 12 PA contra chefes de 3º, 4º e 5º patamar. Agora cada linha monta o grupo do patamar dela, e o resultado é o oposto: contra um grupo do mesmo patamar, todo chefe perde 100% das vezes e não mata ninguém. O 'Terror invencível' era artefato do banco de provas.",
+          "Nenhum ajuste único resolvia, e a medição mostrou por quê: do 3º ao 5º patamar, o dano do chefe cresce cerca de 1,7 vez mais rápido que o PV do grupo. Nenhum número do Apêndice G foi mexido nesta versão.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.48",
+    date: "2026-09-10",
+    title: "Era a Ficha, Não a Árvore",
+    sections: [
+      {
+        heading: "O Deus da Espada tinha o talento, e o playtest nunca o comprava",
+        items: [
+          "O Vex estava em 1% de sobrevivência. A árvore tem o Braço de Ferro (1 PA, +4 PV por patamar), mas o algoritmo das fichas de playtest comprava em ordem de arquivo e nunca chegava nos talentos. Com o talento, o time do Vex foi de 45,1% pra 54,9% de vitória.",
+          "Agora o algoritmo compra primeiro o talento de reserva da própria árvore: PV, PM ou PT, o da árvore do personagem. A Iri (Vento) foi de 43 pra 117 de dano por batalha quando ganhou o PM.",
+          "A pergunta que isso abriu: +4 PV por patamar e +1 PM por patamar custam o mesmo 1 PA e não valem o mesmo.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.47",
     date: "2026-09-10",
     title: "A Escada Que Não Subia",
@@ -389,6 +1287,40 @@ export const PATCH_NOTES: PatchNote[] = [
           "O Golpe de Escudo Soberano era PRINCIPIANTE, 1 Ação, 3d8 + Força + Bônus de Rank — e escalava com o Rank pra sempre. Era ele, sozinho, que fazia a build descrita como \"protege, não mata\" liderar o dano do playtest. Caiu pra 2d8: a versão Soberana continua melhor que o Golpe de Escudo comum, mas pelo CONTROLE (empurra 6m, CD +2, a marca de última posição), não pelo dano.",
           "De 196 de dano por batalha pra 125 de dano e 57 PV devolvidos. Ela protege. O 5×5 inteiro ficou 53,8% × 46,2% — no começo do dia era 8,3% × 91,7% —, a Sera virou a maior contribuição do playtest com 222 PV devolvidos, e o chefe de 4º patamar caiu em 26% de dizimação, que é o alvo de 25% pedido, atingido sem tocar no molde do Apêndice G.",
           "O que esta versão NÃO resolveu: o Vex está em 1% de sobrevivência — baixar a Mara não consertou o Deus da Espada, cujo problema é ficar em pé. Dois capstones seguem abertos (Espada de Luz e Golpe do Desespero, os dois Santo), porque nas duas árvores o Santo é a única habilidade de 2 Ações num galho de 1 Ação. E os chefes de 3º e 5º patamar seguem em 0% e 100%.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.46",
+    date: "2026-09-10",
+    title: "As Quatro Árvores que Ninguém Tinha Lido",
+    sections: [
+      {
+        heading: "Suishin, Escudos, Ladino e Tático, lidas linha a linha",
+        items: [
+          "Nada quebrado: as quatro são coerentes com o que prometem. O Tático não tem uma única habilidade de dano, e as dezenove habilidades dele fabricam Ação e bônus pros outros. O Suishin é uma árvore inteira de Reações. Em Escudos, todo o dano vem do Golpe de Escudo Soberano, do Principiante. O Ladino tem uma habilidade de dano. As quatro são invisíveis pro simulador e só se respondem jogando.",
+        ],
+      },
+      {
+        heading: "Os tetos do Cap. 4 no motor",
+        items: [
+          "'Vantagem é binária' já funcionava no motor e ganhou cinco testes, inclusive o cancelamento: Preso atacando um alvo Caído rola um d20 só.",
+          "Os outros três tetos (Auxílio, Ações externas e Duas Salvações por Combate) não são modelados, e isso agora está declarado nas simplificações do simulador.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.45",
+    date: "2026-09-10",
+    title: "Apagar o que Já Foi Feito",
+    sections: [
+      {
+        heading: "Faxina, sem regra nova",
+        items: [
+          "Quatro funções mortas saíram (ACEITA_NA_IMPORTACAO_CRIATURA, getAvailableCombinedSpells, rollRandomCharacter e getCondicaoPorNome), e onze exports usados só dentro do próprio arquivo perderam o export.",
+          "O TAREFAS.md foi apagado: os oito itens que ele marcava como abertos estavam todos feitos. O PROGRESS.md deixou de repetir a lista de pendências, que passou a morar só no O-QUE-FALTA.",
         ],
       },
     ],
@@ -449,6 +1381,21 @@ export const PATCH_NOTES: PatchNote[] = [
           "O /encontros simula 300 batalhas contra as fichas de verdade do grupo e imprime quem fez o quê. A tabela tinha duas colunas — dano por combate e sobreviveu — e um curandeiro aparecia ali com um 0 ao lado do nome, na última linha. Isso lê como ficha ruim, e é papel diferente.",
           "É o mesmo defeito que o relatório de linha de comando tinha e que a 0.1.37 consertou; ele sobreviveu cinco versões a mais na tela. Agora a tabela tem PV DEVOLVIDOS ao lado do dano, e a ordem passou a ser por contribuição (dano mais cura) em vez de só dano. Quem não tem magia de suporte mostra traço, não zero — zero sugere que tentou e não conseguiu.",
           "Travado por um teste que roda 40 batalhas com uma curandeira no grupo e cobra que ela devolva PV, e que só ela devolva.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.41",
+    date: "2026-09-10",
+    title: "Subir de Rank Vale a Pena?",
+    sections: [
+      {
+        heading: "Um check novo: npm run check:progressao",
+        items: [
+          "Ele mede duas coisas por Ação: a melhor técnica de um rank rende mais que a do rank abaixo? E Corpo e Magia estão no mesmo campeonato?",
+          "Achou dezesseis capstones que não compensam. As piores: Punho do Fogo no Rei (-53% em relação ao Santo), Desintoxicação no Avançado (-47%), Armas Pesadas no Santo (-37%) e Deus da Espada no Santo (-33%). O teto do Corpo (44,0 por Ação) ficou 1,6 vez acima do da Magia (26,9).",
+          "O check não reprova: a magia compra alcance, área e condição, e nada disso pontua ali.",
         ],
       },
     ],

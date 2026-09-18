@@ -12,8 +12,8 @@ export const VENTO_TREE: Tree = {
     hook:
       "Não derruba nem prende: tira o inimigo do prumo e cobra por isso em cima.",
     loop: [
-      "Desequilibre. Quase toda magia de Vento aplica Desequilibrado — metade do Deslocamento, uma Reação por rodada, Desvantagem em ataque de oportunidade.",
-      "Cobre. Toda magia de Vento sua rola UM DADO DE DANO A MAIS contra alvo Desequilibrado.",
+      "Desequilibre. Quase toda magia de Vento aplica Desequilibrado — metade do Deslocamento e nenhuma Reação.",
+      "Cobre. Toda magia de Vento sua rola UM DADO DE DANO A MAIS contra alvo Desequilibrado — do maior tipo de dado da magia, uma vez por alvo.",
       "Suba. Do Avançado em diante você voa de graça, e quem está Desequilibrado não te alcança de volta.",
     ],
     cost:
@@ -39,7 +39,7 @@ export const VENTO_TREE: Tree = {
       mastery: {
         name: "Brisa",
         description:
-          "Controle constante e gratuito de ar num raio de 18 metros, sem PM e sem Ação. Você nunca sofre dano de queda de até 15 metros, e desce devagar de qualquer altura. [Desequilibrado] Uma vez por turno, sem gastar Ação nem PM, empurre uma criatura a até 9m em 1,5m — se isso a tirar de uma borda, telhado, ponte ou escada, ela fica Desequilibrada.",
+          "Controle constante e gratuito de ar num raio de 18 metros, sem PM e sem Ação. Você nunca sofre dano de queda de até 15 metros, e desce devagar de qualquer altura. [Desequilibrado] Uma vez por turno, sem gastar Ação nem PM, empurre 1,5m uma criatura a até 9m: ela faz teste de Força (CD 8 + BC) ou fica Desequilibrada, e falha automaticamente se o empurrão a tirar de uma borda, telhado, ponte ou escada, ou a jogar contra um obstáculo. E toda magia de Vento sua rola UM DADO DE DANO A MAIS contra um alvo Desequilibrado — é o equivalente exato do frio que dobra contra Molhado, na Água. O dado extra é do maior tipo de dado da magia, vale uma vez por alvo por conjuração (nas magias que duram, uma vez por turno), e um bônus contra Desequilibrado escrito na própria carta substitui este, não soma.",
       },
       talents: [
         { id: "pes-leves", name: "Pés Leves", paCost: RANK_PA_COST.talent.Principiante, description: "+3 metros de Deslocamento, e você não deixa pegadas nem faz ruído ao andar." },
@@ -102,8 +102,8 @@ export const VENTO_TREE: Tree = {
           pmCost: 2,
           range: "9 metros",
           actions: MAGIC_ACTIONS.Principiante,
-          damage: { normal: "1d6" },
-          effect: "Remove o ar ao redor da cabeça do alvo. Ele não consegue recitar cânticos, falar nem gritar por 1 turno. Não funciona em quem não respira.",
+          damage: { normal: "1d6 (sufocamento)" },
+          effect: "Remove o ar ao redor da cabeça do alvo: ele não recita cânticos, não fala e não grita por 1 turno. Contra criatura de rank IGUAL OU INFERIOR ao seu em Vento, não há teste — o ar simplesmente sai. Contra rank superior, ela faz teste de Vigor (CD 8 + BC) e ignora se passar. A mesma criatura não pode ser afetada em dois turnos seguidos: calar um mago é uma janela, não uma coleira. Não funciona em quem não respira.",
           incantation:
             "Ar que envolve a cabeça dele sem que ele perceba nada, eu te retiro agora mesmo, sem aviso.\nVácuo Localizado!",
         },
@@ -115,7 +115,7 @@ export const VENTO_TREE: Tree = {
       mastery: {
         name: "Sem Peso",
         description:
-          "Passo de Vento passa a custar 1 PM e pode ser usado uma vez por turno sem gastar Ação. Você ignora terreno difícil e não pode ser Caído nem Atolado enquanto consciente. Ataques à distância mundanos contra você sofrem Desvantagem. [Desequilibrado] O pagamento da escola: toda magia de Vento sua rola UM DADO DE DANO A MAIS contra um alvo Desequilibrado — é o equivalente exato do frio que dobra contra Molhado, na Água.",
+          "Passo de Vento passa a custar 1 PM e pode ser usado uma vez por turno sem gastar Ação. Você ignora terreno difícil e não pode ser Caído nem Atolado enquanto consciente. Ataques à distância mundanos contra você sofrem Desvantagem. O empurrão gratuito da Brisa passa a ser de 3m, e o alvo que bater numa criatura também falha automaticamente no teste.",
       },
       talents: [
         { id: "corrente-de-apoio", name: "Corrente de Apoio", paCost: RANK_PA_COST.talent.Intermediário, description: "Quando um aliado a até 18m conjurar magia de área, gaste 1 PM como Reação para aumentar a área dela em metade." },
@@ -156,7 +156,7 @@ export const VENTO_TREE: Tree = {
           range: "Esfera de 9m de raio",
           actions: MAGIC_ACTIONS.Intermediário,
           damage: { normal: "2d8 + BC (contundente)" },
-          effect: "Teste de Força (CD 8 + BC). Falha: dano, arremessadas 6m para longe do centro, Desequilibradas e Caídas. Vento forte na área por 1 minuto — projéteis mundanos erram.",
+          effect: "Teste de Força (CD 8 + BC). Falha: dano, arremessadas 6m para longe do centro, Desequilibradas e Caídas. Sucesso: metade do dano, sem arremesso nem condição. Vento forte na área por 1 minuto — projéteis mundanos erram.",
           incantation:
             "Vento que gira em volta de si mesmo até esquecer qual direção era a original,\nleva tudo que estiver perto contigo nessa dança, sem escolher quem fica de fora.\nCiclone!",
         },
@@ -189,14 +189,14 @@ export const VENTO_TREE: Tree = {
       abilities: [
         {
           id: "nova-congelante",
+          requiresRank: { treeId: "agua", rank: "Principiante" },
           name: "Nova Congelante",
-          signature: true,
-          paCost: RANK_PA_COST.signature.Avançado,
+          paCost: RANK_PA_COST.common.Avançado,
           pmCost: 6,
-          range: "Esfera de 12m",
+          range: "Esfera de 12m de raio",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "6d8 de frio (já contando a duplicação por Molhado)" },
-          effect: "Requer 1 patamar em Água (ou aliado mago de Água conjurando junto). Todos na área ficam Molhados e imediatamente Congelados, sem teste.",
+          effect: "Requer 1 patamar em Água (ou aliado mago de Água conjurando junto). Todos na área ficam Molhados e fazem teste de Vigor (CD 8 + BC): quem falha fica Congelado. Deixou de ser a assinatura do patamar — o Avançado do Vento é a Guilhotina de Vácuo, que é vento puro; esta continua aqui como a ponte para a Água, e paga preço de magia comum.",
           incantation:
             "Umidade que viaja comigo desde a última chuva que caiu, pare no meio do caminho e escolhe,\nagora, sem hesitar nenhum instante, ser vidro em vez de ser água que apenas corre e some no chão.\nNova Congelante!",
         },
@@ -213,13 +213,14 @@ export const VENTO_TREE: Tree = {
         },
         {
           id: "guilhotina-de-vacuo",
+          signature: true,
           name: "Guilhotina de Vácuo",
-          paCost: RANK_PA_COST.talent.Avançado,
+          paCost: RANK_PA_COST.signature.Avançado,
           pmCost: 5,
           range: "Linha de 45 metros",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "5d8 + BC (cortante, +2d8 contra Desequilibrado)" },
-          effect: "Corta madeira, corda e tecido com facilidade; não corta pedra.",
+          effect: "Teste de Agilidade (CD 8 + BC) para cada criatura na linha, metade do dano se passar; quem falhar também fica Desequilibrado. Os +2d8 só valem contra quem já estava Desequilibrado antes desta magia. Corta madeira, corda e tecido com facilidade; não corta pedra.",
           incantation:
             "Vazio que corta sem lâmina nenhuma, sem fio, sem peso algum e sem qualquer aviso a quem estiver por perto observando,\ntraça uma linha reta e exata por onde nada mais volta a se juntar depois de cortado em dois pedaços.\nGuilhotina de Vácuo!",
         },
@@ -228,12 +229,12 @@ export const VENTO_TREE: Tree = {
           name: "Tomar o Ar",
           paCost: 4,
           pmCost: 4,
-          range: "Esfera de 6m",
+          range: "Esfera de 6m de raio",
           actions: MAGIC_ACTIONS.Avançado,
           costNote:
             "4 PA em vez dos 2 do Avançado comum. Não é dano — é negar a magia inteira de um inimigo (sem ar, sem cântico) e apagar fogo em área, incluindo Em Chamas mágico. Contra um mago rival ou um incêndio fora de controle, isto vale mais que qualquer feitiço de dano do mesmo rank.",
-          damage: { normal: "3d6 por turno" },
-          effect: "Remove o ar da área por 3 turnos. Teste de Vigor por turno; quem falhar sofre dano e não pode recitar cântico. Apaga fogo na área, inclusive Em Chamas.",
+          damage: { normal: "3d6 de sufocamento por turno" },
+          effect: "Remove o ar da área por 3 turnos. Teste de Vigor (CD 8 + BC) por turno; quem falhar sofre dano e não pode recitar cântico, e quem passar não sofre nada naquele turno. Apaga fogo na área, inclusive Em Chamas.",
           incantation:
             "Ar que todos aqui respiram sem nunca agradecer por isso nem uma única vez sequer, eu te retiro deste espaço inteiro agora\ne devolvo só depois que a lição estiver bem aprendida por quem realmente precisa aprendê-la.\nTomar o Ar!",
         },
@@ -248,7 +249,7 @@ export const VENTO_TREE: Tree = {
           "Seu Voo passa ao dobro do Deslocamento, e você pode pairar imóvel indefinidamente. Você controla o vento num raio de 1 km: nega voo a hostis, encalha navios, derruba flechas, dispersa névoa. Nenhum ataque à distância mundano acerta você.",
       },
       talents: [
-        { id: "sem-cantico", name: "Sem Cântico", paCost: RANK_PA_COST.talent.Santo, description: "Suas magias de Vento de rank Avançado ou inferior podem ser conjuradas em Conjuração Silenciosa sem penalidade alguma." },
+        { id: "sem-cantico", name: "Sem Cântico", paCost: RANK_PA_COST.talent.Santo, description: "Você pode conjurar suas magias de Vento de rank Avançado ou inferior em Conjuração Silenciosa, mesmo sem tê-la por Antecedente, raça ou Maestria. Se já a tinha, essas magias saem sem a penalidade de dano e de área da Silenciosa." },
       ],
       abilities: [
         {
@@ -259,8 +260,8 @@ export const VENTO_TREE: Tree = {
           pmCost: 11,
           range: "Esfera de 30m de raio",
           actions: MAGIC_ACTIONS.Santo,
-          damage: { normal: "5d8 + BC de dano cortante por turno" },
-          effect: "Dura 1 minuto e se move 9m por turno para onde você quiser. Desequilibrado automático em quem falhar teste de Força.",
+          damage: { normal: "3d8 + BC de dano cortante por turno (metade se passar)" },
+          effect: "Sustentada, e ocupa a sua sustentação (Cap. 2, §7): até 1 minuto. Esfera de 15m de raio que se move 9m por turno para onde você quiser. No início de cada turno SEU, quem estiver dentro faz teste de Agilidade (CD 8 + BC): quem falha sofre o dano e fica Desequilibrado; quem passa sofre metade e nada mais. É a magia mais longa da escola, e o preço é você não conjurar mais nada enquanto ela gira.",
           incantation:
             "Que o ar se lembre de que já foi lâmina afiada, muito antes de aprender a ser apenas respiração calma e mansa demais.\nQue ele lembre mil vezes por segundo, sem parar nenhum instante sequer, sem descansar nunca, sem jamais esquecer de novo o que sempre foi de verdade.\nTempestade Cortante!",
         },
@@ -295,7 +296,7 @@ export const VENTO_TREE: Tree = {
           signature: true,
           paCost: RANK_PA_COST.signature.Rei,
           pmCost: 13,
-          range: "Esfera de 45m",
+          range: "Esfera de 45m de raio",
           actions: MAGIC_ACTIONS.Rei,
           damage: { normal: "10d10 + BC de dano sônico (ignora armadura, Cobertura e Manto de Touki)" },
           effect: "Teste de Vigor (CD 8 + BC). Falha: dano cheio, Desequilibrado, Atordoado 1 turno e Surdo 10 minutos. Sucesso: metade e Desequilibrado mesmo assim. Estruturas de pedra racham; vidro se despedaça.",
@@ -307,9 +308,9 @@ export const VENTO_TREE: Tree = {
           name: "Vazio",
           paCost: RANK_PA_COST.common.Rei,
           pmCost: 12,
-          range: "Esfera de 18m",
+          range: "Esfera de 18m de raio",
           actions: MAGIC_ACTIONS.Rei,
-          damage: { normal: "7d10 por turno, sem teste" },
+          damage: { normal: "7d10 de sufocamento por turno, sem teste" },
           effect: "Remove todo o ar da área por 1 minuto. Impossível recitar, gritar ou fazer fogo ali dentro. Som não existe — nem o seu.",
           incantation:
             "Eu não crio nada aqui. Eu apenas retiro tudo — o ar que respiram, o som que fariam, a possibilidade de gritar por socorro pra alguém do lado de fora que talvez ouvisse.\nQue esta esfera inteira se torne o lugar mais silencioso que qualquer um de vocês jamais visitou em toda a vida,\ne que ninguém aqui dentro consiga sequer dizer o próprio nome em voz alta, nem pra si mesmo.\nVazio!",
@@ -344,13 +345,14 @@ export const VENTO_TREE: Tree = {
         },
         {
           id: "explosao-silenciosa",
+          requiresRank: { treeId: "fogo", rank: "Principiante" },
           name: "Explosão Silenciosa",
           paCost: RANK_PA_COST.common.Imperador,
           pmCost: 22,
-          range: "Esfera de 60m",
+          range: "Esfera de 60m de raio",
           actions: { normal: 3, silenciosa: 2 },
           costNote:
-            "3 Ações em vez das 6 do rank Imperador, e 22 PM em vez de 18. O nome já entrega a lógica: uma explosão dessa escala sair em 3 Ações, sem o mundo perceber até o eco chegar quilômetros depois, é logisticamente impossível sem pagar o excedente de mana pela ausência do cântico completo — o vácuo que segura o som também segura parte do próprio feitiço.",
+            "3 Ações em vez das 4 do rank Imperador, e 22 PM em vez de 18. O nome já entrega a lógica: uma explosão dessa escala sair em 3 Ações, sem o mundo perceber até o eco chegar quilômetros depois, é logisticamente impossível sem pagar o excedente de mana pela ausência do cântico completo — o vácuo que segura o som também segura parte do próprio feitiço.",
           damage: { normal: "16d12 dividido igualmente entre ígneo, sônico e contundente" },
           effect: "Requer 1 patamar em Fogo. Teste de Vigor com Desvantagem Absoluta para metade. Ignora Resistência aos três tipos. Não faz som no momento — ele chega depois, a quilômetros de distância.",
           incantation:

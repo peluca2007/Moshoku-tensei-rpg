@@ -22,15 +22,20 @@ export default function Chapter5() {
         </P>
         <SubTitle>O Bloco de Tempo</SubTitle>
         <P>
-          Downtime é contado em <b>blocos de 1 semana</b> — a mesma unidade que o Descanso Longo (Cap. 4) já
-          usa pra curar todos os PV. No fim de cada semana livre, cada personagem escolhe <b>uma</b> atividade
+          Downtime é contado em <b>blocos de 1 semana</b> — a mesma unidade da Convalescença (Cap. 4), a semana de cama que cura todos os PV. No fim de cada semana livre, cada personagem escolhe <b>uma</b> atividade
           da lista abaixo.
+        </P>
+        <P>
+          Toda semana em lugar seguro traz as noites de sono junto, seja qual for a atividade: PM, PT e PP
+          voltam inteiros, e a Exaustão cuja causa já acabou vai embora (Descanso Longo, Cap. 4). <b>Os PV são
+          a exceção</b> — todos só voltam em Recuperar-se, que é a Convalescença; nas outras atividades, cada
+          noite devolve só o que um Descanso Longo devolve.
         </P>
         <BookTable
           headers={["Atividade", "Efeito"]}
           rows={[
             ["Treinar", "Ganhe Vantagem no próximo teste de uma Perícia à escolha, ligada à sua Árvore Inicial ou a uma Perícia que você já tenha — dura até ser usado ou até 1 mês passar. Não concede PA."],
-            ["Recuperar-se", "Como o Descanso Longo de uma semana (Cap. 4): todos os PV são restaurados, e mais 1 nível de Exaustão é removido além do normal."],
+            ["Recuperar-se", "Convalescença (Cap. 4): todos os PV são restaurados. Se a semana foi passada acompanhado de alguém de confiança, remove 1 ponto de Trauma (Cap. 4) — 2 pontos se alguém gastar a própria semana em Vigiar as Costas por você."],
             ["Trabalhar", "Ganhe PO igual a 2d6 × seu maior Bônus de Rank (mínimo 2d6), pelo seu Ofício, sua fama ou um trabalho comum da cidade."],
             ["Cultivar um Contato", "Anote um NPC nomeado e uma cidade ou facção. Da próxima vez que precisar de uma informação ou um favor pequeno, o Mestre pode deixar esse contato resolver — sem PP, sem teste."],
             ["Estudar um Ofício ou Ritual", "Com a Perícia de Ofícios ligada ao que quer fazer, produza um item mundano ou prepare os materiais de um ritual que já pode conjurar. O Mestre define o custo em PO — normalmente metade do preço de mercado."],
@@ -95,7 +100,8 @@ export default function Chapter5() {
         <SubTitle>Subindo de Rank e Obrigações</SubTitle>
         <P>
           A promoção nunca é automática, mesmo depois do Mestre decidir que o feito foi grande o bastante:
-          exige voltar à sede, ser avaliado, e — a partir de Rank C — pagar uma taxa de registro em PO.
+          exige voltar à sede, ser avaliado, e — a partir de Rank C — pagar uma taxa de registro: <b>50 PO</b>{" "}
+          pra C, <b>150 PO</b> pra B, <b>400 PO</b> pra A e <b>1.000 PO</b> pra S.
         </P>
         <P>
           A partir de <b>Rank C</b>, recusar um contrato marcado como emergência sem justificativa perde
@@ -103,9 +109,11 @@ export default function Chapter5() {
           sede.
         </P>
         <Aside title="Gancho pro Mestre">
-          O Rank de Aventureiro é a ferramenta mais simples deste livro pra calibrar dificuldade sem inventar
-          números: se o grupo é Rank D, o mural tem contratos de Rank D pra cima. Nenhuma tabela de
-          dificuldade de monstro é necessária além disso.
+          Todo contrato do mural leva duas etiquetas. O <b>Rank exigido</b> é fama: o grupo só aceita
+          contratos até o próprio Rank de Aventureiro. O <b>Perigo</b> é o patamar sugerido pra quem vai
+          encarar, e a Guilda diz isso ao grupo antes de ele assinar. Calibre o Perigo pelo patamar do grupo,
+          nunca pelo Rank — o Deus da Espada Rank F só pega contrato de F, mas nada impede que um contrato
+          de F venha etiquetado com Perigo de Santo.
         </Aside>
 
         <SubTitle>A Loja da Guilda</SubTitle>
@@ -119,11 +127,11 @@ export default function Chapter5() {
           rows={[
             ["F", "Poção Menor de Cura, equipamento mundano comum."],
             ["E", "Poção de Antídoto e Elixir de Foco; veneno de rank Principiante."],
-            ["D", "Encomenda de Encantamento nível Avançado (+1 no Dado de Arma ou na CA)."],
-            ["C", "Poção Maior de Cura; veneno de rank Intermediário, com licença registrada."],
+            ["D", "Encomenda de Encantamento nível Avançado (+1 degrau na Escada de Dados da arma, ou +1 na CA da armadura)."],
+            ["C", "Poção Maior de Cura e Poção de Antídoto Forte; veneno de rank Intermediário, com licença registrada."],
             ["B", "Encomenda de Encantamento nível Santo (dano elemental extra)."],
             ["A", "Encomenda de Encantamento nível Rei (ignora Resistência); veneno de rank Avançado, sob vigilância da sede."],
-            ["S", "Encomenda de Encantamento nível Imperador; a sede intermedia contato com um encantador de rank Deus pra um Item Mágico Único (seção 4 deste capítulo) — abre a porta, não garante o resultado."],
+            ["S", "Antídoto Universal; encomenda de Encantamento nível Imperador; a sede intermedia contato com um encantador de rank Deus pra um Item Mágico Único (seção 4 deste capítulo) — abre a porta, não garante o resultado."],
           ]}
         />
         <Aside title="Por que isso importa">
@@ -192,18 +200,18 @@ export default function Chapter5() {
         <List
           items={[
             "Quem: qualquer personagem com a Perícia de Ofícios (especializada em Alquimia, pra Poções e Venenos) ligada ao item. Encantamento é diferente — exige um encantador vivo no Rank de árvore listado na tabela, não a Perícia de Ofícios.",
-            "Até onde: uma poção que reproduz magia de rank X exige que o alquimista tenha um patamar igual ou superior a X em Cura (ou em Desintoxicação, pros antídotos). Um veneno de rank X exige um patamar igual ou superior a X em Desintoxicação, ou material colhido de uma criatura daquele porte. Sem isso, a receita simplesmente não é legível — não é uma CD mais alta, é um teste que você não pode tentar.",
+            "Até onde: a tabela de Poções diz o patamar que cada receita exige (Cura pras poções de cura, Desintoxicação pros antídotos) — o alquimista precisa de um patamar igual ou superior àquele. Receita marcada com — não exige patamar nenhum, só a Perícia. Um veneno de rank X exige um patamar igual ou superior a X em Desintoxicação, ou material colhido de uma criatura daquele porte. Sem isso, a receita simplesmente não é legível — não é uma CD mais alta, é um teste que você não pode tentar.",
             "Tempo: 1 bloco de Downtime (seção 1 deste capítulo, atividade Estudar um Ofício ou Ritual) por item, salvo quando a tabela disser outro valor.",
             "Custo em materiais: metade do valor listado na coluna de Custo — a mesma proporção que a regra de Downtime já usa pra qualquer produção. O valor cheio da coluna é o preço de venda, não o de fabricação.",
-            "Teste: role Ofícios (ou o teste do encantador) contra a CD da tabela ao fim do bloco. Sucesso: o item fica pronto. Falha: os materiais se perdem, mas o bloco de Downtime já foi gasto — tente de novo no próximo. Falha crítica (1 no dado): metade dos materiais é recuperável.",
+            "Teste (Poções e Venenos; Encantamento não tem teste): role Ofícios contra a CD da tabela ao fim do bloco. Sucesso: o item fica pronto. Falha: metade dos materiais é recuperável, mas o bloco de Downtime já foi gasto — tente de novo no próximo. Falha crítica (os dois d20 mostram 1): perdem-se todos os materiais, e se era veneno você se expõe à dose (teste de resistência de Vigor, Cap. 4, §8).",
           ]}
         />
         <Aside title="Por que existe um portão de Rank, e não só uma CD alta">
           <P>
             Sem ele, a CD era o único obstáculo — e a Perícia de Ofícios dá Vantagem (2d20). Um alquimista de
             1º patamar com Intelecto 4 batia a CD 20 da Poção Imperial de Cura em pouco mais da metade das
-            tentativas, e um grupo com uma semana livre por arco engarrafava cura de rank Imperador antes de
-            conhecer um mago de rank Avançado. O portão da Guilda (seção 2) cobria só a <i>compra</i>; a
+            tentativas, e um grupo com uma semana livre por arco engarrafava a poção mais forte do livro antes
+            de conhecer um mago de rank Avançado. O portão da Guilda (seção 2) cobria só a <i>compra</i>; a
             fabricação passava por baixo dele.
           </P>
           <P>
@@ -213,18 +221,24 @@ export default function Chapter5() {
           </P>
         </Aside>
         <SubTitle>Poções</SubTitle>
-        <P>Uma poção reproduz o efeito de uma magia de Cura ou Desintoxicação já existente no livro, engarrafado.</P>
+        <P>
+          <b>Poção não é magia.</b> Cada uma tem um efeito fixo, escrito na tabela, e nunca copia um feitiço,
+          um ritual ou uma Reação. Beber uma, ou fazer um aliado adjacente beber, é Usar Item (1 Ação, Cap. 4).
+          Por não ser magia, a Ferida Fresca não dobra os dados dela — e nenhuma poção apaga Ferimento Crítico.
+        </P>
         <BookTable
-          headers={["Poção", "CD de Ofícios", "Custo (venda / fabricação)", "Efeito"]}
+          headers={["Poção", "CD de Ofícios · receita", "Custo (venda / fabricação)", "Efeito"]}
           rows={[
-            ["Poção Menor de Cura", "11", "15 PO / 8 PO", "Reproduz uma magia de Cura de rank Principiante ou Intermediário, sem precisar de mago presente."],
-            ["Poção de Antídoto", "13", "25 PO / 13 PO", "Remove uma aflição de rank Principiante ou Intermediário (Cap. 4, §8). Contra ranks acima disso, não faz nada — é uma dose, não um mago."],
-            ["Poção Maior de Cura", "15", "60 PO / 30 PO", "Reproduz uma magia de Cura de rank Avançado ou Santo."],
-            ["Elixir de Foco", "13", "40 PO / 20 PO", "Vantagem no próximo teste de resistência de Espírito — ajuda a resistir Trauma num momento específico."],
-            ["Poção de Vigor Passageiro", "14", "45 PO / 23 PO", "Vantagem no próximo teste de resistência de Vigor — a versão física do Elixir de Foco."],
-            ["Poção Régia de Cura", "17", "120 PO / 60 PO", "Reproduz uma magia de Cura de rank Rei — um degrau acima da Poção Maior."],
-            ["Elixir de Regeneração", "18", "200 PO / 100 PO", "Remove 2 níveis de Exaustão de quem bebe (Cap. 4, §9) — não cura PV nem PM, só o cansaço acumulado. Não remove Exaustão cuja causa ainda esteja ativa: quem não comeu continua com fome."],
-            ["Poção Imperial de Cura", "20", "400 PO / 200 PO", "Reproduz uma magia de Cura de rank Imperador — o topo da escada, engarrafado."],
+            ["Poção Menor de Cura", "11 · Cura Principiante", "15 PO / 8 PO", "Cura 1d8 + 2 PV."],
+            ["Poção de Antídoto", "13 · Desintoxicação Principiante", "25 PO / 13 PO", "Remove um veneno ou uma doença de rank Principiante (Cap. 4, §8). Contra ranks acima disso, não faz nada — é uma dose, não um mago."],
+            ["Poção Maior de Cura", "15 · Cura Avançado", "60 PO / 30 PO", "Cura 3d8 + 3 PV."],
+            ["Elixir de Foco", "13 · —", "40 PO / 20 PO", "Por 1 cena, ignore a Desvantagem que o Trauma impõe (Cap. 4) — o gole antes de uma negociação que não pode dar errado."],
+            ["Poção de Vigor Passageiro", "14 · —", "45 PO / 23 PO", "Vantagem no próximo teste de resistência de Vigor — contra um veneno, uma doença ou o frio que está chegando."],
+            ["Poção de Antídoto Forte", "16 · Desintoxicação Intermediário", "120 PO / 60 PO", "Remove um veneno ou uma doença de rank Intermediário ou inferior (Cap. 4, §8)."],
+            ["Poção Régia de Cura", "17 · Cura Rei", "120 PO / 60 PO", "Cura 5d8 + 4 PV."],
+            ["Elixir de Regeneração", "18 · —", "200 PO / 100 PO", "Remove 2 níveis de Exaustão de quem bebe (Cap. 4, §9) — não cura PV nem PM, só o cansaço acumulado. Não remove Exaustão cuja causa ainda esteja ativa: quem não comeu continua com fome."],
+            ["Antídoto Universal", "19 · Desintoxicação Santo", "800 PO / 400 PO", "Remove um veneno ou uma doença de rank Santo ou inferior (Cap. 4, §8). Nunca toca maldição nem transformação: essas continuam exigindo alguém que conjure Desintoxicação."],
+            ["Poção Imperial de Cura", "20 · Cura Imperador", "400 PO / 200 PO", "Cura 5d8 + 6 PV e remove toda a Exaustão de origem física (ferimento, trauma, ter acordado do Fio da Vida) — nunca a de fome, sede, frio ou marcha forçada."],
           ]}
         />
         <SubTitle>Venenos</SubTitle>
@@ -252,21 +266,22 @@ export default function Chapter5() {
           Encantar não é uma Perícia de Ofícios — é um serviço prestado por um mago que já alcançou o Rank
           exigido numa árvore compatível com o efeito (dano elemental pede a Magia daquele elemento;
           resistência e CA pedem Barreira; qualquer efeito genérico aceita Invocação). Um personagem só
-          encanta os próprios itens se tiver esse Rank; caso contrário, é preciso encontrar e pagar um NPC
-          encantador — o que normalmente é um gancho de campanha, não uma visita à loja.
+          encanta os próprios itens se tiver esse Rank; caso contrário, é preciso pagar um NPC encantador. A
+          Guilda intermedeia o encantador a partir do Rank D (seção 2 deste capítulo); fora dela, achar um é
+          gancho de campanha.
         </P>
         <BookTable
           headers={["Efeito", "Rank exigido no encantador", "Tempo", "Custo em PO"]}
           rows={[
-            ["+1 no Dado de Arma ou +1 na CA", "Avançado", "1 bloco", "150 PO"],
+            ["+1 degrau na Escada de Dados (arma, Cap. 3) ou +1 na CA (armadura — o +1 entra no valor da própria armadura: +3 vira +4)", "Avançado", "1 bloco", "150 PO"],
             ["Dano elemental extra (+1d6, tipo à escolha)", "Santo", "2 blocos", "300 PO"],
             ["Ignora Resistência a um tipo de dano", "Rei", "4 blocos", "600 PO"],
-            ["+1 degrau na Escada de Dados de Arma (Cap. 3), acumulável com o do Avançado", "Imperador", "8 blocos", "1500 PO"],
+            ["+1 degrau na Escada de Dados (arma), somado ao do Avançado; se o item tem o encantamento Santo, o dano elemental dele passa a 2d6", "Imperador", "8 blocos", "1500 PO"],
           ]}
         />
         <List
           items={[
-            "Um item só carrega um encantamento por vez. Encantar de novo substitui o anterior — o efeito antigo não some primeiro para depois voltar; some pra sempre. O encantamento de Imperador é a única exceção parcial: ele sobe um degrau da Escada, e um item que já tinha o +1 do Avançado sobe dois no total.",
+            "Um item carrega no máximo um encantamento de cada nível (Avançado, Santo, Rei e Imperador), e todos somam. Encantar de novo no mesmo nível substitui o anterior daquele nível — o efeito antigo não some primeiro para depois voltar; some pra sempre. Uma espada com Avançado e Imperador sobe dois degraus da Escada.",
             "O custo em PO acima já é o total (materiais + o trabalho do encantador) — não se aplica a divisão por metade do Downtime comum, porque não é o próprio personagem fazendo o trabalho manual.",
             "O item-base (a arma ou armadura sem encantamento) precisa existir e estar em posse do encantador durante todo o tempo listado — ele não trabalha à distância.",
             "Não existe teste de falha aqui: se o encantador tem o Rank exigido, tempo e PO cobrem o serviço inteiro. O único jeito de um encantamento falhar é o Mestre decidir que os materiais raros da campanha ainda não foram conseguidos — nesse caso, PO sozinho não compra o item.",
@@ -306,6 +321,11 @@ export default function Chapter5() {
         <SubTitle id="cap5-5-quem">Quem pode ensinar</SubTitle>
         <List
           items={[
+            <span key="p">
+              <b>Patamar do aluno</b> é o maior patamar dele em qualquer árvore — mesmo que a árvore que o
+              mestre abre ainda nem exista na ficha. É esse número que conta aqui e na tabela do Dilema, mais
+              abaixo.
+            </span>,
             <span key="a">
               <b>Dois patamares acima</b> do aluno, no mínimo. Quem está um patamar acima é um colega com
               mais estrada: pode dar conselho, não pode abrir a mente de ninguém.

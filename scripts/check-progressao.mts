@@ -85,7 +85,6 @@ function comArvoreInteira(treeId: string): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     condicoes: [],
     descansosCurtos: 0,
     overrides: {},

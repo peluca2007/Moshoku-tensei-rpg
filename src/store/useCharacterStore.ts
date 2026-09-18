@@ -44,7 +44,6 @@ function blankCharacter(id: string, name: string): CharacterData {
     currentMp: null,
     currentPt: null,
     currentPp: null,
-    currentCalor: null,
     condicoes: [],
     descansosCurtos: 0,
     overrides: {},
@@ -134,7 +133,6 @@ interface RosterState {
   setCurrentMp: (value: number | null) => void;
   setCurrentPt: (value: number | null) => void;
   setCurrentPp: (value: number | null) => void;
-  setCurrentCalor: (value: number | null) => void;
   /** value === null apaga a sobrescrita e volta a usar o valor calculado. */
   setOverride: (stat: keyof Omit<CharacterData["overrides"], "guildRank">, value: number | null) => void;
   /** Rank de Guilda (Cap. 5, §2) é decisão do Mestre, não fórmula — value === null volta a mostrar a estimativa por PA. */
@@ -250,6 +248,12 @@ export function migrarRoster(
             .filter(
               (a) =>
                 !(a.treeId === "punho-de-fogo" && PUNHO_DE_FOGO_DEUS_IDS.includes(a.id))
+            )
+            // v16 (0.1.93): Tiro Perfeito saiu de habilidade comprável (2 PA)
+            // e foi pro texto da Maestria — todo Arqueiro tem de graça. Ficha
+            // salva que comprou perde o id e recupera os 2 PA automaticamente.
+            .filter(
+              (a) => !(a.treeId === "arquearia" && a.id === "tiro-perfeito")
             ),
           inventory: (c.inventory ?? []).map((item) => ({
             ...item,
@@ -435,7 +439,6 @@ export const useCharacterStore = create<RosterState>()(
       setCurrentMp: (currentMp) => updateActive(get, set, (c) => ({ ...c, currentMp })),
       setCurrentPt: (currentPt) => updateActive(get, set, (c) => ({ ...c, currentPt })),
       setCurrentPp: (currentPp) => updateActive(get, set, (c) => ({ ...c, currentPp })),
-      setCurrentCalor: (currentCalor) => updateActive(get, set, (c) => ({ ...c, currentCalor })),
       setOverride: (stat, value) =>
         updateActive(get, set, (c) => {
           const overrides = { ...c.overrides };
@@ -650,7 +653,10 @@ export const useCharacterStore = create<RosterState>()(
       // v13 (2026-09-05): `currentCalor`. Mesmo caso do v12 — campo novo,
       // nullable, e `getCurrentCalor` já trata ausência (`??`) igual a `null`
       // ("ainda não tocado"), então ficha antiga não precisa de conversão.
-      version: 15,
+      // Calor foi aposentado em 2026-09-16, junto com o recurso no Punho do
+      // Fogo. Ficha antiga ainda carrega o campo, e nada mais o lê.
+      // v16 (2026-09-18): Tiro Perfeito mudou de habilidade para Maestria.
+      version: 16,
       migrate: migrarRoster,
       // history é só uma conveniência de sessão pro botão "Desfazer" — não faz sentido inchar o
       // localStorage guardando fichas inteiras duplicadas, e não precisa sobreviver a um recarregamento.

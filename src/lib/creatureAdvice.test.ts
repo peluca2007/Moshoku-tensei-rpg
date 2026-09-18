@@ -174,3 +174,56 @@ describe("avisarSobreCriatura — o que ele fala e quando cala", () => {
     expect(avisarSobreCriatura(c, GRUPO)).toEqual([]);
   });
 });
+
+/**
+ * O AVISO DE IMUNIDADE — Cap. 4, §6 (0.1.90).
+ *
+ * O aviso mais caro de não ter. Uma criatura imune a ígneo contra um grupo de
+ * magos de Fogo não é um encontro difícil: é um encontro impossível, e a mesa
+ * leva vinte minutos rolando dados que não fazem nada antes de desconfiar.
+ *
+ * Ele é o primeiro aviso da tela que só existe porque o Bloco do Monstro
+ * existe — e por isso tem teste: um aviso que dispara demais é pior que
+ * nenhum, porque o Mestre aprende a ignorar o painel inteiro.
+ */
+describe("A Imunidade que apaga a jogada de alguém", () => {
+  const fogueteiros: AlvoDoGrupo[] = [
+    { id: "1", nome: "Lyn", pv: 50, ca: 16, tiposDeDano: ["ígneo"] },
+    { id: "2", nome: "Gis", pv: 70, ca: 15, tiposDeDano: ["ígneo"] },
+  ];
+
+  it("grita quando o grupo inteiro só causa o que ela ignora", () => {
+    const a = pegar(avisarSobreCriatura(criatura({ imunidades: ["ígneo"] }), fogueteiros), "imunidade-cega");
+    expect(a?.nivel).toBe("grave");
+    expect(a?.titulo).toMatch(/grupo inteiro/i);
+  });
+
+  it("e só alerta quando sobra alguém que alcança", () => {
+    const misto = [...fogueteiros, { id: "3", nome: "Rud", pv: 62, ca: 17, tiposDeDano: ["cortante"] }];
+    const a = pegar(avisarSobreCriatura(criatura({ imunidades: ["ígneo"] }), misto), "imunidade-cega");
+    expect(a?.nivel).toBe("alerta");
+    expect(a?.texto).toContain("Lyn");
+    expect(a?.texto, "quem alcança não entra na lista").not.toContain("Rud");
+  });
+
+  it("cala quando ninguém depende daquele tipo", () => {
+    const espadas: AlvoDoGrupo[] = [{ id: "1", nome: "Lyn", pv: 50, ca: 16, tiposDeDano: ["cortante"] }];
+    expect(pegar(avisarSobreCriatura(criatura({ imunidades: ["ígneo"] }), espadas), "imunidade-cega")).toBeUndefined();
+  });
+
+  it("cala quando não dá pra saber o que o grupo causa", () => {
+    // Silêncio é melhor que palpite: um aviso aqui mandaria o Mestre refazer um
+    // encontro que estava certo.
+    expect(pegar(avisarSobreCriatura(criatura({ imunidades: ["ígneo"] }), GRUPO), "imunidade-cega")).toBeUndefined();
+  });
+
+  it("cala sem grupo escolhido, e cala sem imunidade", () => {
+    expect(pegar(avisarSobreCriatura(criatura({ imunidades: ["ígneo"] }), []), "imunidade-cega")).toBeUndefined();
+    expect(pegar(avisarSobreCriatura(criatura({}), fogueteiros), "imunidade-cega")).toBeUndefined();
+  });
+
+  it("Resistência não dispara o aviso — a jogada continua existindo", () => {
+    const a = pegar(avisarSobreCriatura(criatura({ resistencias: ["ígneo"] }), fogueteiros), "imunidade-cega");
+    expect(a, "metade do dano ainda é dano").toBeUndefined();
+  });
+});

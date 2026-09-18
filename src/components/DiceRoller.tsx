@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Dices, Sparkles, Swords, X, Trash2, Star, Plus, Zap, ZapOff } from "lucide-react";
 import { useActiveCharacter } from "@/store/useCharacterStore";
-import { getAttackBonus, getEfeitosDeCondicoes, getFinalAttribute, getPericiasTreinadas, getSpellDC, getWeaponDamage } from "@/store/selectors";
+import { getAttackBonus, getEfeitosDeCondicoes, getFinalAttribute, getPericiasTreinadas, getSpellDC, getTreeAttributeKey, getWeaponDamage } from "@/store/selectors";
 import { getTreeById } from "@/data/trees";
-import { ATTRIBUTES, attributeKeyFromLabel, AttributeKey } from "@/lib/types";
+import { ATTRIBUTES, AttributeKey } from "@/lib/types";
 import { useMacroStore } from "@/store/useMacroStore";
 import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { useSessionLog } from "@/store/useSessionLog";
@@ -191,8 +191,7 @@ export default function DiceRoller() {
   function applySource(source: TestSource, attrKey = attributeKey, treeId = magicTreeId, marcialTree = marcialTreeId, marcialAttr = marcialAttribute) {
     if (source === "atributo") setTestModifier(getFinalAttribute(character, attrKey));
     else if (source === "magia" && treeId) {
-      const tree = getTreeById(treeId);
-      const attr = attributeKeyFromLabel(tree?.keyAttributeLabel) ?? "intelecto";
+      const attr = getTreeAttributeKey(character, treeId, "intelecto");
       setTestModifier(getAttackBonus(character, treeId, attr));
     } else if (source === "marcial" && marcialTree) {
       setTestModifier(getAttackBonus(character, marcialTree, marcialAttr));
@@ -354,7 +353,7 @@ export default function DiceRoller() {
 
   const spellDcInfo =
     testSource === "magia" && magicTreeId
-      ? getSpellDC(character, magicTreeId, attributeKeyFromLabel(getTreeById(magicTreeId)?.keyAttributeLabel) ?? "intelecto")
+      ? getSpellDC(character, magicTreeId, getTreeAttributeKey(character, magicTreeId, "intelecto"))
       : null;
 
   const resultCritical = isRolling ? null : (lastResult?.critical ?? null);

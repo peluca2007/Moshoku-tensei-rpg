@@ -12,7 +12,7 @@ export const NORTE_TREE: Tree = {
       "Não é esgrima refinada — é um método pra continuar vivo. A única árvore do livro sem uma única arma proibida.",
     loop: [
       "Pegue o que tiver. Proficiência UNIVERSAL em armas, sem exceção: simples, marcial, exótica, de haste, de arremesso, à distância, estrangeira — e qualquer objeto improvisado, com Dado Base d6.",
-      "Use o cenário. Uma vez por combate, descreva uma manobra com o que está em volta e role o atributo que o Mestre indicar COM VANTAGEM.",
+      "Use o cenário. Uma vez por combate, gaste 1 Ação e descreva uma manobra com o que está em volta: o alvo resiste COM DESVANTAGEM, e quem falha cai, fica cego, é empurrado ou abre a guarda pro seu próximo golpe.",
       "Suje a luta. Areia, joelho, mentira, terreno, a arma do inimigo. As técnicas do Norte compram truques, não dano.",
     ],
     cost:
@@ -38,7 +38,7 @@ export const NORTE_TREE: Tree = {
       mastery: {
         name: "Sobreviver é Vencer",
         description:
-          "+1 degrau no Dado de Arma. Proficiência universal em ARMAS, sem uma única exceção: simples, marcial, exótica, de haste, de arremesso, à distância, de outra cultura que você nunca viu — e qualquer objeto improvisado (Dado Base d6). Se dá pra empunhar, você sabe usar. Também toda armadura e todo escudo. [Improviso] O Improviso: uma vez por combate, descreva uma manobra usando o cenário e role o atributo indicado pelo Mestre com Vantagem.",
+          "No Deus do Norte, use o MAIOR entre Força e Agilidade em toda fórmula de dano e em toda CD desta árvore que pedir Força — o rótulo da árvore promete a escolha, e é aqui que ela vira regra. +1 degrau no Dado de Arma. Proficiência universal em ARMAS, sem uma única exceção: simples, marcial, exótica, de haste, de arremesso, à distância, de outra cultura que você nunca viu — e qualquer objeto improvisado (Dado Base d6). Se dá pra empunhar, você sabe usar. Também toda armadura e todo escudo. [Improviso] O Improviso (1 Ação, uma vez por combate): descreva uma manobra usando o cenário. O alvo faz teste de Força, Agilidade ou Vigor (você escolhe o que faz sentido na cena) com CD 8 + Força + Rank, e rola com Desvantagem. Se falhar, escolha um: fica Caído; fica Cego até o fim do próximo turno dele; é empurrado 3m; ou o seu próximo ataque contra ele neste turno tem Vantagem. Técnicas marcadas [Improviso] exigem cenário utilizável e não gastam o uso do Improviso.",
       },
       talents: [
         { id: "tres-bainhas", name: "Três Bainhas", paCost: 1, description: "Você carrega armas escondidas. Sacar uma arma nova é livre, e você nunca fica realmente desarmado." },
@@ -54,7 +54,7 @@ export const NORTE_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "+1d6 no ataque ao final do avanço" },
-          effect: "1 Ação: avance até o dobro do seu Deslocamento em linha reta (ataques à distância contra você têm Desvantagem durante o avanço). Ao final, gaste a próxima Ação para atacar com +1d6.",
+          effect: "1 Ação: avance até o dobro do seu Deslocamento em linha reta (ataques à distância contra você têm Desvantagem durante o avanço) e ataque ao final com +1d6. Se no caminho você passou por terreno difícil ou escalou alguma coisa, o ataque tem Vantagem.",
         },
         {
           id: "arremesso-de-espada",
@@ -116,7 +116,7 @@ export const NORTE_TREE: Tree = {
       talents: [
         { id: "segunda-chance", name: "Segunda Chance [Improviso]", paCost: 1, description: "Uma vez por combate, ao errar um ataque, reposicione usando o cenário e repita a rolagem." },
         { id: "faccao-errante", name: "Facção Errante", paCost: 1, description: "Escolha uma arma exótica: ganha dado base d8 e um efeito de condição (empurrar, prender ou derrubar) uma vez por combate." },
-        { id: "estomago-de-mercenario", name: "Estômago de Mercenário", paCost: 1, description: "Você ignora fome, sede, clima extremo e uma noite sem dormir. Vantagem contra veneno." },
+        { id: "folego-longo-norte", name: "Fôlego Longo", paCost: 1, description: "+1 PT por patamar seu no Estilo Deus do Norte. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
       ],
       abilities: [
         {
@@ -152,7 +152,7 @@ export const NORTE_TREE: Tree = {
           paCost: 1,
           range: "Deslocamento",
           actions: { normal: 1 },
-          effect: "Mova-se até o Deslocamento ignorando terreno difícil, escalando livremente. Ao terminar em posição elevada, +2 CA e Vantagem no próximo ataque, até sair de lá.",
+          effect: "Requer cenário utilizável (algo pra escalar, saltar ou pisar). Mova-se até o Deslocamento ignorando terreno difícil, escalando livremente. Ao terminar em posição elevada, +2 CA e Vantagem no próximo ataque, até sair de lá.",
         },
         {
           id: "ferro-frio",
@@ -172,11 +172,11 @@ export const NORTE_TREE: Tree = {
       mastery: {
         name: "O Despertar do Touki",
         description:
-          "Você passa a vestir Touki conscientemente: recebe o Manto de Touki e a reserva de Pontos de Touki (Cap. 3). Exclusivo do Norte: você pode aplicar Touki a objetos improvisados — uma cadeira revestida de aura parte um escudo de aço.",
+          "Você percebe o Touki que sempre gastou por instinto e passa a controlá-lo: você veste o Manto de Touki e destrava as outras manobras de gasto (Cap. 3). Exclusivo do Norte: um objeto improvisado revestido do seu Touki conta como arma de cerco (dano dobrado contra objetos e estruturas) e ignora bônus de escudo. Uma cadeira revestida de aura parte um escudo de aço.",
       },
       talents: [
-        { id: "folego-longo-norte", name: "Fôlego Longo", paCost: 2, description: "+1 PT por patamar seu no Estilo Deus do Norte. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nele.", grants: { ptPerRank: 1 } },
-        { id: "mao-trocada", name: "Mão Trocada", paCost: 2, description: "Requer Empunhadura Dupla. No Golpe Duplo (Cap. 4, §3), a mão de apoio rola o Dado de Arma CHEIO, sem o degrau a menos. As duas mãos passam a bater igual — o Golpe Duplo continua uma vez por turno." },
+        { id: "estomago-de-mercenario", name: "Estômago de Mercenário", paCost: 2, description: "Você ignora fome, sede, clima extremo e até três noites seguidas sem dormir. Imunidade a veneno: nem o dano de veneno nem a condição Envenenado te pegam." },
+        { id: "mao-trocada", name: "Mão Trocada", paCost: 2, requires: ["empunhadura-dupla"], description: "Requer Empunhadura Dupla. No Golpe Duplo (Cap. 4, §3), a mão de apoio rola o Dado de Arma CHEIO, sem o degrau a menos. As duas mãos passam a bater igual — o Golpe Duplo continua uma vez por turno." },
         { id: "instinto-de-presa", name: "Instinto de Presa", paCost: 2, description: "Você não pode ser surpreendido enquanto consciente, e rola Iniciativa com Vantagem." },
       ],
       abilities: [
@@ -235,6 +235,7 @@ export const NORTE_TREE: Tree = {
         {
           id: "cruz-nebulosa",
           name: "Cruz Nebulosa",
+          requires: ["empunhadura-dupla"],
           signature: true,
           paCost: 4,
           ptCost: 2,
@@ -259,9 +260,9 @@ export const NORTE_TREE: Tree = {
           paCost: 3,
           ptCost: 2,
           range: "Corpo a corpo",
-          actions: { normal: 2 },
+          actions: { normal: 1 },
           damage: { normal: "Dado de arma rolado quatro vezes" },
-          effect: "Só usável com metade ou menos dos PV. Depois de usar, 1 nível de Exaustão até o próximo Descanso Longo.",
+          effect: "Só usável com metade ou menos dos PV. Depois de usar, 1 nível de Exaustão até o próximo Descanso Curto.",
         },
       ],
     },

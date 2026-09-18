@@ -12,9 +12,9 @@ export const TERRA_TREE: Tree = {
     hook:
       "Prende primeiro, enterra depois. É a única escola que constrói, e o mago com mais PV do jogo.",
     loop: [
-      "Atole. Metade das magias de Terra aplica Atolado: metade do Deslocamento naquele terreno, e o dobro do Deslocamento pra sair dele.",
-      "Cobre. Bala de Pedra e Canhão de Pedra acertam AUTOMATICAMENTE contra alvo Atolado, sem rolagem de acerto.",
-      "Enterre. Cárcere, Prisão de Pedra e Sepultamento convertem um alvo já Atolado em Soterrado — Deslocamento 0, Preso, sem visão nem gesto, sufocando a 2d10 por turno.",
+      "Atole. Metade das magias de Terra aplica Atolado: metade do Deslocamento até o fim do próximo turno do alvo, ou até ele gastar 1 Ação num teste de Força pra se soltar.",
+      "Cobre. Contra alvo Atolado, Bala de Pedra e Canhão de Pedra acertam com qualquer resultado no d20 — você só rola pra ver se é crítico.",
+      "Enterre. Cárcere e Sepultamento convertem um alvo já Atolado em Soterrado — Deslocamento 0, Preso, sem visão nem gesto, sufocando a 2d10 por turno. A Prisão de Pedra enterra qualquer um, mas quem já estava Atolado resiste com Desvantagem.",
     ],
     cost:
       "É a escola mais lenta do livro: Muro de Terra é um ritual de 3 Ações e nada aqui resolve um turno sozinho. Você compra controle e concreto, não velocidade.",
@@ -22,7 +22,7 @@ export const TERRA_TREE: Tree = {
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PM",
   tagline:
-    "Atolado e Soterrado, nessa ordem. Terra prende primeiro e enterra depois: quase toda magia da escola ou aplica Atolado, ou cobra o dobro de quem já está Atolado. Também é a única escola que constrói, e o mago com mais PV do jogo.",
+    "Atolado e Soterrado, nessa ordem. Terra prende primeiro e enterra depois: quase toda magia da escola ou aplica Atolado, ou nunca erra quem já está Atolado. Também é a única escola que constrói, e o mago com mais PV do jogo.",
   proficiencies: {
     armas: "Não concede grupo de arma nenhum: quem abre esta escola fica só com o piso que todo personagem tem, e quem quiser mais paga 2 PA por família. Armadura leve apenas.",
     gruposDeArma: [],
@@ -40,7 +40,7 @@ export const TERRA_TREE: Tree = {
       mastery: {
         name: "Moldar",
         description:
-          "Sem PM e sem Ação, você molda terra, areia, argila e pedra macia num raio de 9 metros: abrir/fechar buraco, degrau, tigela, parede baixa. Em 10 minutos você ergue um abrigo fortificado pro grupo inteiro. [Atolado] O chão que você moldou neste turno conta como terreno difícil para criaturas hostis.",
+          "Sem PM e sem Ação, você molda terra, areia, argila e pedra macia num raio de 9 metros: abrir/fechar buraco, degrau, tigela, parede baixa. Em 10 minutos você ergue um abrigo fortificado pro grupo inteiro. [Atolado] O chão que você moldou neste turno conta como terreno difícil para criaturas hostis. Uma vez por turno, sem gastar Ação nem PM, escolha uma criatura hostil em cima desse chão: ela faz teste de Agilidade (CD 8 + BC) ou fica Atolada.",
       },
       talents: [
         { id: "pele-de-pedra", name: "Pele de Pedra", paCost: RANK_PA_COST.talent.Principiante, description: "+4 PV por patamar seu em Terra. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
@@ -57,7 +57,7 @@ export const TERRA_TREE: Tree = {
           range: "27 metros",
           actions: MAGIC_ACTIONS.Principiante,
           damage: { normal: "1d10 + BC (contundente)" },
-          effect: "Ataque mágico à distância. Contra alvo Atolado, acerta automaticamente.",
+          effect: "Ataque mágico à distância. Contra alvo Atolado, qualquer resultado no d20 acerta; só o 20 natural é crítico.",
           incantation:
             "Pó que já foi montanha, muito antes de virar caminho,\nlembra do peso que tinhas antes de aprender a ser pó, e vai.\nBala de Pedra!",
         },
@@ -82,7 +82,7 @@ export const TERRA_TREE: Tree = {
           ritual: true,
           costNote:
             "3 Ações em vez de 2, e Ritual: erguer 6 metros de parede sólida com 40 PV não é o mesmo gesto que atirar uma pedra. Toda outra magia Principiante deste livro é reação de combate; esta é engenharia, e engenharia leva tempo mesmo nas mãos de um mago.",
-          effect: "Parede de 6m de largura por 3m de altura, meio metro de espessura, 40 PV, dura 10 minutos. Cobertura Total.",
+          effect: "Parede de 6m de largura por 3m de altura, meio metro de espessura, 40 PV, dura 10 minutos. Cobertura Total. Você escolhe ONDE ela nasce, a até 9m — é a magia que corta um corredor, para uma investida ou separa dois inimigos, e é isso que a Fortaleza Rápida (que só cerca você) nunca faz. Ela aguenta peso: quem subir nela tem Cobertura contra quem está no chão.",
           incantation:
             "Pedra que dorme sob meus pés, levanta-te devagar, camada sobre camada, até que nada do que vier atrás de mim passe por cima. Muro de Terra!",
         },
@@ -105,7 +105,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 2,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Principiante,
-          effect: "Disputa de Força contra o seu BC. Se você vencer, o alvo fica Agarrado e Atolado, e pode ser arrastado 3m por turno.",
+          effect: "Teste de Força (CD 8 + BC) ou o alvo fica Agarrado e Atolado enquanto você sustentar a magia. Escapar custa 1 Ação e um teste de Força contra a mesma CD. No seu turno, 1 Ação arrasta o alvo 3m.",
           incantation:
             "Mão que eu não tenho, mas o chão empresta: fecha os dedos de pedra\nem volta de quem fugiu sobre uma terra que não é dele.\nMão de Terra!",
         },
@@ -117,10 +117,10 @@ export const TERRA_TREE: Tree = {
       mastery: {
         name: "Compressão",
         description:
-          "Suas magias de projétil de Terra sobem um degrau de dado (d10 vira d12, 2d6 vira 2d8) e passam a ignorar Resistência a dano contundente. Você endurece qualquer estrutura sua gastando 1 PM: o Muro de Terra passa a ter 80 PV.",
+          "Suas magias de projétil de Terra (Bala de Pedra, Canhão de Pedra e Lâmina de Aço) sobem um degrau de dado (d10 vira d12, 2d6 vira 2d8) e passam a ignorar Resistência a dano contundente. Você endurece qualquer estrutura sua gastando 1 PM: o Muro de Terra passa a ter 80 PV.",
       },
       talents: [
-        { id: "municao-infinita", name: "Munição Infinita", paCost: RANK_PA_COST.talent.Intermediário, description: "Suas magias de projétil de Terra funcionam mesmo sobre madeira, metal, água ou vazio — você carrega o próprio material." },
+        { id: "municao-infinita", name: "Munição Infinita", paCost: RANK_PA_COST.talent.Intermediário, description: "Você carrega o próprio material: suas magias de projétil de Terra (Bala de Pedra, Canhão de Pedra e Lâmina de Aço) ganham +9m de alcance e ignoram Cobertura Parcial." },
         { id: "chao-meu", name: "Chão Meu", paCost: RANK_PA_COST.talent.Intermediário, description: "Você ignora a condição Atolado e terreno difícil de qualquer origem, inclusive de magias inimigas, e sai de Soterrado gastando 1 Ação sem precisar de teste." },
         { id: "escultor", name: "Escultor", paCost: RANK_PA_COST.talent.Intermediário, description: "Você reproduz em pedra qualquer coisa que já tenha visto, com precisão perfeita." },
       ],
@@ -133,8 +133,8 @@ export const TERRA_TREE: Tree = {
           pmCost: 3,
           range: "90 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          damage: { normal: "3d8 + BC (contundente/perfurante)" },
-          effect: "Ataque mágico à distância. Ignora metade da CA de armadura não-mágica. Contra alvo Atolado, acerta automaticamente e crita em 19-20.",
+          damage: { normal: "3d8 + BC (contundente)" },
+          effect: "Ataque mágico à distância. Ignora metade da CA de armadura não-mágica. Contra alvo Atolado, role o ataque só pra ver o crítico: qualquer resultado acerta, e 19-20 é crítico.",
           incantation:
             "Pedra, esquece que és pedra. Esquece o peso, esquece o formato.\nSê a bala, e nada mais que a bala, até o momento do impacto.\nCanhão de Pedra!",
         },
@@ -146,7 +146,7 @@ export const TERRA_TREE: Tree = {
           range: "Esfera de 12m de raio",
           actions: MAGIC_ACTIONS.Intermediário,
           damage: { normal: "3d6 + BC (contundente)" },
-          effect: "Teste de Agilidade (CD 8 + BC). Falha: dano, Caído e Atolado. Estruturas de pedra sofrem dano dobrado.",
+          effect: "Teste de Agilidade (CD 8 + BC). Falha: dano, Caído e Atolado. Sucesso: metade do dano, sem cair nem atolar. Estruturas de pedra sofrem dano dobrado.",
           incantation:
             "Chão que finge estar parado desde que o mundo se lembra de existir,\ntreme agora do jeito que finges nunca tremer, revela a mentira,\ne derruba quem confiou demais em ti.\nTerremoto Menor!",
         },
@@ -168,7 +168,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 4,
           range: "Raio de 9m",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "Em 1 Ação, você ergue um círculo de muralhas de 3m em volta do grupo, com abertura à sua escolha. 60 PV por seção, dura 1 hora.",
+          effect: "Você ergue um círculo de muralhas de 3m em volta do grupo, com UMA abertura à sua escolha. 30 PV por seção, dura 1 hora. O muro não escolhe lado: quem está dentro também só sai pela abertura, e tiro de dentro pra fora sofre a mesma Cobertura que o de fora pra dentro. É abrigo, não fortificação de combate — erguida no meio de uma luta, ela prende o seu próprio grupo junto com o inimigo.",
           incantation:
             "Pedra que dorme em todas as direções ao mesmo tempo, acorda inteira de uma vez\ne cerca este grupo como se sempre tivesse sido tua função.\nFortaleza Rápida!",
         },
@@ -184,7 +184,7 @@ export const TERRA_TREE: Tree = {
       },
       talents: [
         { id: "segunda-bala", name: "Segunda Bala", paCost: RANK_PA_COST.talent.Avançado, description: "Uma vez por turno, ao conjurar Canhão de Pedra, você dispara duas pelo custo de uma. Alvos podem ser diferentes." },
-        { id: "nucleo-de-ferro", name: "Núcleo de Ferro", paCost: RANK_PA_COST.talent.Avançado, description: "Você recebe Resistência a dano contundente, cortante e perfurante de armas não-mágicas enquanto estiver com os pés no chão." },
+        { id: "nucleo-de-ferro", name: "Núcleo de Ferro", paCost: RANK_PA_COST.talent.Avançado, description: "Você recebe Resistência a dano físico mundano enquanto estiver com os pés no chão." },
         { id: "arquiteto-de-guerra", name: "Arquiteto de Guerra", paCost: RANK_PA_COST.talent.Avançado, description: "Suas construções ficam permanentes se você gastar uma hora consolidando." },
       ],
       abilities: [
@@ -208,7 +208,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 6,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "Um bloco maciço encapsula o alvo, que fica Soterrado (Cap. 4, §6) e, além disso, surdo e incapaz de conjurar por qualquer via. O bloco tem 100 PV, e sair dele exige derrubá-lo — o teste de Força de Soterrado não serve aqui. Não exige que o alvo esteja Atolado antes: é a exceção do Avançado.",
+          effect: "Teste de Força (CD 8 + BC), com Desvantagem se o alvo já estiver Atolado, Preso ou Caído quando a magia sair. Falha: um bloco maciço encapsula o alvo, que fica Soterrado (Cap. 4, §6) e, além disso, Surdo e incapaz de conjurar por qualquer via enquanto estiver dentro. O bloco tem 60 PV. A saída normal do Soterrado (1 Ação e teste de Força, ou 30 de dano na terra) não vale aqui: o alvo repete o teste de Força no fim de cada turno dele, sem a Desvantagem, e sai se passar ou quando o bloco cair. Sucesso: fica só Atolado. É a exceção do Avançado: não exige que o alvo já esteja Atolado, mas quem já estava quase nunca escapa.",
           incantation:
             "Bloco que eu arranco do coração da montanha ainda quente do próprio peso, ainda pesado do que carregava:\nfecha-te em volta dele, apaga a luz, apaga o som, apaga o ar que ele respira sem merecer,\ncomo se ele nunca tivesse existido fora de ti.\nPrisão de Pedra!",
         },
@@ -220,7 +220,7 @@ export const TERRA_TREE: Tree = {
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "6d8 + BC (perfurante)" },
-          effect: "Dispara metal extraído do solo em linha, ignorando toda CA de armadura metálica.",
+          effect: "Ataque mágico à distância: metal extraído do solo dispara em linha reta até o alvo. Ignora toda a CA vinda de armadura metálica.",
           incantation:
             "Minério que dorme fundo sob a terra sem saber que um dia seria espada nem que teria dono,\neu te acordo e te dou, num instante só, o formato que a mina levaria séculos inteiros pra te dar.\nLâmina de Aço!",
         },
@@ -231,7 +231,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 6,
           range: "45 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "8d6" },
+          damage: { normal: "8d6 (contundente)" },
           effect: "Uma estrutura à sua escolha desmorona. Criaturas embaixo fazem teste de Agilidade (CD 8 + BC) ou sofrem o dano e ficam Presas.",
           incantation:
             "Pedra sobre pedra, sustentada apenas pela promessa antiga de que ficaria de pé para sempre,\nfeita por gente que já morreu há muito tempo e não está aqui pra cumpri-la.\nEu retiro a promessa agora, sem aviso e sem cerimônia. Cai.\nColapso!",
@@ -244,12 +244,27 @@ export const TERRA_TREE: Tree = {
       mastery: {
         name: "O Chão Obedece",
         description:
-          "Você molda terra, pedra e metal num raio de 1 km, sem PM, fora de combate. Em combate, gaste 1 Ação para reformular o campo de batalha (aliados escolhem se são afetados; inimigos não). Não pode ser derrubado, empurrado, agarrado nem teleportado contra a vontade enquanto tocar o solo. [Soterrado] Toda magia sua que aplicaria Atolado passa a aplicar Soterrado se o alvo já estiver Atolado.",
+          "Você molda terra, pedra e metal num raio de 1 km, sem PM, fora de combate. Em combate, uma vez por turno, gaste 1 Ação para reformular o campo de batalha numa área de 9m de raio a até 36m (aliados escolhem se são afetados; inimigos não) e escolha uma: (a) inimigos na área fazem teste de Agilidade (CD 8 + BC) ou ficam Atolados; (b) parapeitos de pedra dão Cobertura Superior aos aliados na área até o início do seu próximo turno; (c) um fosso de 6m de profundidade se abre: inimigos na área fazem teste de Agilidade (CD 8 + BC) ou caem nele, sofrendo 2d6 de dano de queda e ficando Caídos. Não pode ser derrubado, empurrado, agarrado nem teleportado contra a vontade enquanto tocar o solo. [Soterrado] Toda magia sua que aplicaria Atolado passa a aplicar Soterrado se o alvo já estiver Atolado.",
       },
       talents: [
         { id: "peso-absoluto", name: "Peso Absoluto", paCost: RANK_PA_COST.talent.Santo, description: "Uma vez por combate, sem gastar Ação, triplique o peso de um alvo visível. Teste de Força ou fica Atolado e Caído (Soterrado, se já estava Atolado); voadores caem do céu." },
       ],
       abilities: [
+        {
+          id: "o-vale-que-eu-desenho",
+          name: "O Vale que Eu Desenho",
+          paCost: RANK_PA_COST.common.Santo,
+          pmCost: 14,
+          range: "Área de 60m de raio, a até 30 metros",
+          actions: { normal: 5 },
+          ritual: true,
+          costNote:
+            "GRANDE OBRA — 5 Ações em vez de 3, e Ritual (Cap. 2, §3). A Terra promete reformular o campo de batalha desde o 1º patamar, e até aqui isso era uma frase sem número nenhum. Esta é a frase com número — e o preço é que ela leva quase dois turnos, à vista de todos, com o chão já rachando enquanto você fala.",
+          effect:
+            "Escolha UMA forma ao começar o ritual; ela é permanente. ERGUER: um platô de 12m de altura no centro da área — quem está em cima tem Cobertura contra quem está embaixo, e ataque à distância de baixo pra cima sai com Desvantagem. ABRIR: uma bacia de 12m de profundidade — quem está dentro não vê nem é visto de fora, e sair custa um teste de Atletismo CD 15 ou 3 Ações de escalada. FECHAR: 30m de rocha maciça com 250 PV, selando uma passagem, porta, túnel ou vão de muralha.",
+          incantation:
+            "O chão não tem opinião nenhuma sobre a forma que tem. Ele só tem hábito, e hábito se perde.\nEu desenho aqui, com a voz e com a mana, a linha em que esta terra vai passar a acreditar a partir de agora,\ne ela vai acreditar pra sempre, porque pedra não sabe mudar de ideia duas vezes seguidas.\nO Vale que Eu Desenho!",
+        },
         {
           id: "falha-geologica",
           name: "Falha Geológica",
@@ -338,7 +353,7 @@ export const TERRA_TREE: Tree = {
           ritual: true,
           paCost: RANK_PA_COST.signature.Imperador,
           pmCost: 20,
-          range: "Esfera de 45m",
+          range: "Esfera de 45m de raio",
           actions: MAGIC_ACTIONS.Imperador,
           damage: {
             normal: "16d10 de dano contundente",
