@@ -16,6 +16,44 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.94",
+    date: "2026-09-18",
+    title: "A Grande Revisão (Resumo das atualizações 0.1.75 a 0.1.93)",
+    sections: [
+      {
+        heading: "O Livro Inteiro Passado a Limpo",
+        items: [
+          "Durante as últimas semanas de atualizações fechadas, revisamos literalmente todas as 601 habilidades das 19 árvores do sistema para garantir que as regras conversem perfeitamente com a matemática dos Apêndices.",
+          "O teto de ações foi flexibilizado, opções mortas foram removidas, o Manto de Touki (PT) passou a ser dado aos guerreiros desde o 1º patamar, e aberrações de cura (que quebravam a matemática de PV) foram rebalanceadas usando a regra de Culpa Fresca.",
+          "O livro agora obedece à sua própria matemática de design, sem contradições textuais ou pegadinhas escondidas nas entrelinhas."
+        ],
+      },
+      {
+        heading: "A Ferramenta do Mestre: O Construtor de Encontros",
+        items: [
+          "O site ganhou um painel profissional para o Mestre planejar o jogo. O Apêndice G deixou de ser um conceito e se tornou o Bloco do Monstro.",
+          "Agora você pode criar NPCs com orçamentos reais, preenchendo resistências, imunidades e ataques. O Medidor de Orçamento calcula a letalidade do encontro contra a *sua* party atual de jogadores em tempo real.",
+          "Com o rastreador de Iniciativa integrado e a simulação de combate, você consegue rodar a porradaria do seu jogo direto da tela do Mestre."
+        ],
+      },
+      {
+        heading: "Novas Identidades para Árvores (Espada, Arqueiro e Venenos)",
+        items: [
+          "DEUS DA ESPADA: Para resolver o problema de que o espadachim era um 'canhão de vidro incontrolável', criamos o talento Postura do Espadachim (Principiante), trazendo a Postura de Vento (defensiva) e a Postura de Trovão (agressiva extrema) para o arsenal. Agora você cadencia a luta.",
+          "ARQUEARIA: O famigerado 'Tiro Perfeito' deixou de ser uma habilidade que você precisava comprar e virou a essência (Maestria) do Atirador logo no nível Principiante. Ele deixou de gastar PT para gastar *tempo* (economia de Ações).",
+          "DESINTOXICAÇÃO: O suporte parou de ser reativo (esperar alguém adoecer) e ganhou o 'Catálogo de Venenos' (Rosa-Preta, Fel Alado, Sombra no Sangue...). Agora o Desintoxicador ofende aplicando condições pesadas nos inimigos."
+        ],
+      },
+      {
+        heading: "Qualidade de Vida e Offline de Verdade",
+        items: [
+          "O site ganhou uma ferramenta de Busca Global instantânea nos 879 verbetes das regras, abrindo explicações no mesmo instante.",
+          "Reescrevemos o Service Worker inteiro. Tudo isso (da sua ficha ao Construtor de Combate) não exige banco de dados e roda 100% offline, para jogar RPG até dentro de uma caverna sem 3G."
+        ],
+      }
+    ]
+  },
+  {
     version: "0.1.93",
     date: "2026-09-18",
     title: "Venenos, Posturas e o Tiro Perfeito",
