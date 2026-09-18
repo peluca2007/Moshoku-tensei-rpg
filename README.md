@@ -14,8 +14,8 @@ Instalável, e **funciona inteiro sem internet** — porque mesa de RPG acontece
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
-[![Versão do sistema](https://img.shields.io/badge/regras-0.1.79-8B1E3F)](src/data/patchNotes.ts)
-[![Testes](https://img.shields.io/badge/testes-152%20passando-3FB950)](src/store/selectors.test.ts)
+[![Versão do sistema](https://img.shields.io/badge/regras-0.1.91-8B1E3F)](src/data/patchNotes.ts)
+[![Testes](https://img.shields.io/badge/testes-633%20passando-3FB950)](src/store/selectors.test.ts)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>
@@ -201,7 +201,7 @@ correspondente em `src/components/book/*.tsx` — nunca só num lugar. Se uma mu
 lacuna de regra, a correção sai primeiro no livro e a ficha só reflete o que já está escrito lá.
 
 Mudanças de regra entram no patch notes do site, em [`src/data/patchNotes.ts`](src/data/patchNotes.ts) — a única cópia.
-O estado do projeto e as decisões vivas ficam em [`PROGRESS.md`](PROGRESS.md); o que falta, em [`O-QUE-FALTA.md`](O-QUE-FALTA.md).
+O estado do projeto e as decisões vivas ficam em [`PROGRESS.md`](PROGRESS.md) (com o registro de design do sistema de Monstros/Encontros em [`ENCONTROS.md`](ENCONTROS.md)); o que falta, em [`O-QUE-FALTA.md`](O-QUE-FALTA.md).
 
 ### Issues: como reportar
 
