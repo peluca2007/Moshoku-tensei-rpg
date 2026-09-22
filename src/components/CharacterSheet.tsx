@@ -330,7 +330,7 @@ function BonusInput({
 }) {
   return (
     <label
-      className={`flex shrink-0 flex-col items-center text-3xs font-semibold uppercase ${bloqueado ? "text-parchment-400 dark:text-parchment-600" : "text-parchment-600 dark:text-parchment-400"}`}
+      className="flex shrink-0 flex-col items-center text-3xs font-semibold uppercase text-parchment-600 dark:text-parchment-400"
     >
       +PA
       <input

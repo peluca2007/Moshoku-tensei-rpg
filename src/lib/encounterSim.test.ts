@@ -6,14 +6,17 @@ import {
   aplicarPapel,
   criaturaDoMolde,
   danoDasAcoesPorRodada,
+  escalaDaAcao,
+  planoDeCombate,
   planoDoTurno,
   simularEncontro,
   usaAcoes,
+  ordenarAlvosDaCriatura,
 } from "./encounterSim";
 import { ajustarParaEquilibrio, arredondarPv, avaliar } from "./encounterBalance";
 import { CRIATURAS_PRONTAS, MOLDES_CRIATURA, bonusResistencia, rodadasDoChefe } from "@/data/bestiary";
 import { getTreeById } from "@/data/trees";
-import { maxFormula, mediaFormula, modificadorFixo, patamarDaFicha, temDano } from "./combatSim";
+import { maxFormula, mediaFormula, modificadorFixo, patamarDaFicha, temDano, makeRng, novoAlvo } from "./combatSim";
 import { AttributeKey, CharacterData, RankName, RANKS } from "./types";
 
 /**
@@ -33,6 +36,44 @@ const ZERO_ATTRS: Record<AttributeKey, number> = {
   intelecto: 0,
   espirito: 0,
 };
+
+describe("decisões de alvo e entradas inválidas", () => {
+  it("considera proteção ao focar PV, ignora caídos e não altera a lista original", () => {
+    const alvos = [novoAlvo({ nome: "Tanque", pv: 3, pvTemp: 20, ca: 20 }), novoAlvo({ nome: "Frágil", pv: 10, ca: 12 }), novoAlvo({ nome: "Caído", pv: 0, ca: 1, vivo: false })];
+    expect(ordenarAlvosDaCriatura(alvos, "fragil", makeRng(1)).map((a) => a.nome)).toEqual(["Frágil", "Tanque"]);
+    expect(alvos.map((a) => a.nome)).toEqual(["Tanque", "Frágil", "Caído"]);
+    expect(ordenarAlvosDaCriatura(alvos, "estrategico", makeRng(1))[0].nome).toBe("Frágil");
+  });
+
+  it("o sorteio de alvo é reproduzível, sem substituir nem repetir participantes", () => {
+    const alvos = Array.from({ length: 8 }, (_, i) => novoAlvo({ nome: String(i), pv: 10, ca: 10 }));
+    const primeira = ordenarAlvosDaCriatura(alvos, "aleatorio", makeRng(50));
+    expect(primeira).toEqual(ordenarAlvosDaCriatura(alvos, "aleatorio", makeRng(50)));
+    expect(new Set(primeira)).toHaveLength(8);
+    expect(primeira).not.toEqual(alvos);
+  });
+
+  it("não entrega NaN nem trava com quantidade infinita", () => {
+    const c = criaturaDoMolde(1, "padrao", "Goblin", "g");
+    expect(() => simularEncontro([ficha()], [c], { batalhas: 0 })).toThrow("batalhas");
+    expect(() => simularEncontro([ficha()], [{ ...c, quantidade: Infinity }])).toThrow("quantidades");
+    expect(() => simularEncontro([ficha()], [c], { semente: NaN })).toThrow("semente");
+    expect(() => simularEncontro([], [c])).toThrow("personagem");
+  });
+
+  it.each(["ordem", "fragil", "estrategico", "aleatorio"] as const)("replay e médias concordam usando alvo %s", (tatica) => {
+    const grupo = [ficha({ id: "a" }), ficha({ id: "b", bonusHp: 20 })];
+    const criatura = { ...criaturaDoMolde(1, "padrao", "Goblin", "g"), tatica };
+    const sem = simularEncontro(grupo, [criatura], { batalhas: 8, semente: 400 });
+    const com = simularEncontro(grupo, [criatura], { batalhas: 8, semente: 400, gerarLogs: true });
+    expect({ ...com, logsExtremos: [] }).toEqual(sem);
+    for (const log of com.logsExtremos ?? []) {
+      const sozinho = simularEncontro(grupo, [criatura], { batalhas: 1, semente: log.seed });
+      expect(sozinho.rodadasMedia).toBe(log.resumo.rodadas);
+      expect(sozinho.pvRestante).toBe(log.resumo.pvRestantePct);
+    }
+  });
+});
 
 function ficha(patch: Partial<CharacterData> = {}): CharacterData {
   return {
@@ -159,6 +200,37 @@ describe("simularEncontro", () => {
     expect(a).toEqual(b);
   });
 
+  it("reexibe as batalhas notáveis com sementes únicas", () => {
+    const r = simularEncontro(grupo, [criatura()], { batalhas: 30, semente: 7, gerarLogs: true });
+    const logs = r.logsExtremos ?? [];
+    expect(logs.length).toBeGreaterThan(0);
+    expect(new Set(logs.map((log) => log.seed)).size).toBe(logs.length);
+    expect(logs.every((log) => log.linhas.some((linha) => linha.startsWith("Resultado:")))).toBe(true);
+    expect(logs.every((log) => log.motivo.length > 0)).toBe(true);
+
+    // A semente de um destaque precisa descrever a mesma batalha se for
+    // rodada isoladamente; senão o log seria só uma história parecida.
+    const destaque = logs[0];
+    if (!destaque) throw new Error("A simulação deveria ter ao menos uma batalha notável.");
+    const isolada = simularEncontro(grupo, [criatura()], {
+      batalhas: 1,
+      semente: destaque.seed,
+      gerarLogs: false,
+    });
+    expect(destaque.resumo.resultado).toBe(
+      isolada.vitorias === 1 ? "vitoria" : isolada.tpk === 1 ? "tpk" : "empate"
+    );
+    expect(destaque.resumo.rodadas).toBe(isolada.rodadasMedia);
+    expect(destaque.resumo.quedas).toBe(isolada.quedasMedia);
+    expect(destaque.resumo.pvRestantePct).toBeCloseTo(isolada.pvRestante, 10);
+  });
+
+  it("só reexecuta batalhas notáveis quando o chamador vai mostrá-las", () => {
+    const opcoes = { batalhas: 30, semente: 7 };
+    expect(simularEncontro(grupo, [criatura()], opcoes).logsExtremos ?? []).toEqual([]);
+    expect(simularEncontro(grupo, [criatura()], { ...opcoes, gerarLogs: false }).logsExtremos ?? []).toEqual([]);
+  });
+
   /*
    * A coluna "PV devolvidos" da tela do Mestre — 0.1.42.
    *
@@ -194,9 +266,17 @@ describe("simularEncontro", () => {
   });
 
   it("sementes diferentes dão resultados diferentes — não é uma constante disfarçada", () => {
-    const a = simularEncontro(grupo, [criatura()], { batalhas: 60, semente: 1 });
-    const b = simularEncontro(grupo, [criatura()], { batalhas: 60, semente: 99 });
-    expect(a).not.toEqual(b);
+    const opcoes = { batalhas: 60, gerarLogs: false };
+    const a = simularEncontro(grupo, [criatura()], { ...opcoes, semente: 1 });
+    const b = simularEncontro(grupo, [criatura()], { ...opcoes, semente: 99 });
+    expect([a.vitorias, a.tpk, a.empates, a.rodadasMedia, a.quedasMedia, a.pvRestante]).not.toEqual([
+      b.vitorias,
+      b.tpk,
+      b.empates,
+      b.rodadasMedia,
+      b.quedasMedia,
+      b.pvRestante,
+    ]);
   });
 
   it("as três frações somam 1: toda batalha vira vitória, TPK ou empate", () => {
@@ -394,6 +474,25 @@ describe("planoDoTurno", () => {
     // 6d6 (21) em 2 Ações = 10,5/Ação; 1d6 (3,5) em 1.
     const c = comAcoes({ id: "cara", dano: "6d6", acoes: 2 }, { id: "barata", dano: "1d6", acoes: 1 });
     expect(planoDoTurno(c).map((a) => a.id)).toEqual(["cara", "barata"]);
+  });
+
+  it("mantém a régua de orçamento por alvo, mas prefere área contra o grupo", () => {
+    // Contra uma pessoa, 3d6 por 1 Ação (10,5) bate 5d6 por 2 (8,75 por
+    // Ação). Contra três pessoas, a explosão vale 52,5 por 2 Ações e passa a
+    // ser a melhor decisão de combate.
+    const c = comAcoes(
+      { id: "unico", dano: "3d6", acoes: 1 },
+      { id: "area", dano: "5d6", acoes: 2, area: true }
+    );
+    expect(planoDoTurno(c).map((a) => a.id)).toEqual(["unico", "unico", "unico"]);
+    expect(planoDeCombate(c, 3).map((a) => a.id)).toEqual(["area", "unico"]);
+  });
+
+  it("inclui a escala persistida da ação na média e no plano", () => {
+    const c = comAcoes({ id: "golpe", dano: "2d6", escalaDano: 1.5 });
+    expect(escalaDaAcao(c.acoes[0])).toBe(1.5);
+    expect(danoDasAcoesPorRodada(c)).toBe(31.5);
+    expect(escalaDaAcao({ ...c.acoes[0], escalaDano: 0 })).toBe(1);
   });
 
   it("ignora manobra sem dano — a teia monta a armadilha, não é o golpe", () => {

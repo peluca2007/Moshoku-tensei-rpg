@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AlvoDoGrupo, Aviso, avisarSobreCriatura, chanceDeAcerto, escalarFormula } from "./creatureAdvice";
+import { AlvoDoGrupo, Aviso, avisarSobreCriatura, chanceDeAcerto } from "./creatureAdvice";
 import { AcaoCriatura, CriaturaEncontro, criaturaDoMolde } from "./encounterSim";
 import { mediaFormula } from "./combatSim";
 import { getMoldePorPatamar } from "@/data/bestiary";
@@ -43,21 +43,6 @@ function pegar(avisos: Aviso[], id: string): Aviso | undefined {
   return avisos.find((a) => a.id === id);
 }
 
-describe("escalarFormula", () => {
-  it("mexe na quantidade de dados e no fixo, nunca nas faces", () => {
-    expect(escalarFormula("3d8+5", 1.6)).toBe("5d8+8");
-    expect(escalarFormula("4d8", 0.5)).toBe("2d8");
-  });
-
-  it("nunca zera a fórmula: um dado é o piso", () => {
-    expect(escalarFormula("2d6", 0.01)).toBe("1d6");
-  });
-
-  it("some com o fixo quando ele arredonda pra zero, em vez de escrever '+0'", () => {
-    expect(escalarFormula("4d8+1", 0.25)).toBe("1d8");
-  });
-});
-
 describe("chanceDeAcerto", () => {
   it("é a régua do d20, com 1 sempre errando e 20 sempre acertando", () => {
     expect(chanceDeAcerto(5, 15)).toBeCloseTo(0.55, 5); // precisa de 10+
@@ -82,19 +67,19 @@ describe("avisarSobreCriatura — o que ele fala e quando cala", () => {
     expect(pegar(semGrupo, "orcamento")).toBeDefined();
   });
 
-  it("aponta o dano fraco contra o molde e sugere uma fórmula que fecha a conta", () => {
+  it("aponta o dano fraco contra o molde e sugere uma escala que fecha a conta", () => {
     // 1d4 (2,5) × 3 Ações = 7,5 contra os 35 que o 3º patamar pede.
     const c = criatura({ acoes: [acao({ dano: "1d4" })] });
     const aviso = pegar(avisarSobreCriatura(c, GRUPO), "orcamento");
     expect(aviso).toBeDefined();
     expect(aviso!.texto).toContain("35");
-    const corrigida = escalarFormula("1d4", 35 / 7.5);
+    const corrigida = 4.667;
     expect(aviso!.correcao).toEqual(
-      expect.objectContaining({ alvo: "acao", acaoId: "golpe", valor: corrigida })
+      expect.objectContaining({ alvo: "acao", acaoId: "golpe", campo: "escalaDano", valor: corrigida })
     );
     // A correção sugerida leva o turno pra perto do molde — que é o único
     // motivo de ela existir.
-    expect(mediaFormula(corrigida) * 3).toBeGreaterThan(35 * 0.8);
+    expect(mediaFormula("1d4") * corrigida * 3).toBeGreaterThan(35 * 0.8);
   });
 
   it("não reclama de quem está dentro da faixa do molde", () => {
@@ -111,8 +96,8 @@ describe("avisarSobreCriatura — o que ele fala e quando cala", () => {
     expect(aviso!.texto).toContain("Lyn");
     expect(aviso!.texto).toContain("50 PV");
 
-    const corrigida = (aviso!.correcao as { valor: string }).valor;
-    expect(mediaFormula(corrigida)).toBeLessThan(50);
+    const corrigida = (aviso!.correcao as { valor: number }).valor;
+    expect(mediaFormula("12d10") * corrigida).toBeLessThan(50);
   });
 
   it("separa 'mata em média' de 'pode matar na rolagem alta'", () => {

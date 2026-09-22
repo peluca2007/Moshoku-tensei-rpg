@@ -6,7 +6,7 @@ import {
   novaAcao,
   patamarDaFicha,
 } from "./combatSim";
-import { usaAcoes } from "./encounterSim";
+import { simularEncontro, usaAcoes } from "./encounterSim";
 import { getArmorClass, getMaxHp } from "@/store/selectors";
 import { AttributeKey, CharacterData } from "./types";
 import { getTreeById } from "@/data/trees";
@@ -134,8 +134,9 @@ describe("ficha como criatura", () => {
     // simples" deixou de ser uma categoria do livro na 0.1.52.
     expect(criatura.acoes[0].nome).toBe("Ataque com golpe sem estilo");
     expect(criatura.acoes[0].dano).toBe(`${derivada.ataqueBasico.dano}+${derivada.bcSemRank}`);
-    // O Bônus de Ataque da criatura (o d20) continua sendo o da árvore dela.
+    // A criatura mantém o bônus geral das técnicas, mas o golpe tem o seu próprio.
     expect(criatura.bonusAtaque).toBe(derivada.bc);
+    expect(criatura.acoes[0].bonusAtaque).toBe(derivada.arma.attackBonus);
   });
 
   it("o espadachim soma o BC cheio no golpe comum", () => {
@@ -157,16 +158,121 @@ describe("ficha como criatura", () => {
     expect(criatura.patamar).toBeGreaterThanOrEqual(1);
   });
 
-  it("traz no máximo 8 ações, as mais fortes, e diz quantas ficaram de fora", () => {
-    const c = espadachim();
+  it("Ladino convertido mantém Dano Furtivo e só usa Primeiro Golpe numa abertura por combate", () => {
+    const ladino = ficha({
+      id: "ladino",
+      name: "Rival Ladino",
+      startingTreeId: "furtividade-e-armadilhas",
+      attributeBase: { ...ZERO, agilidade: 7, vigor: 4 },
+      unlockedRanks: [{ treeId: "furtividade-e-armadilhas", rank: "Intermediário" }],
+      purchasedAbilities: [{ treeId: "furtividade-e-armadilhas", rank: "Principiante", kind: "ability", id: "primeiro-golpe" }],
+    });
+    const convertido = { ...criaturaDaFicha(ladino, novoId), id: "rival" };
+    const primeiro = convertido.acoes.find((a) => a.regra === "primeiro-golpe");
+    expect(convertido.dadosFurtivos).toBe(2);
+    expect(primeiro).toMatchObject({ tipo: "ataque", bonusAtaque: montarFicha(ladino).arma.attackBonus });
+    expect(primeiro?.dano).toContain("6d6");
+
+    const heroi = ficha({ id: "heroi", name: "Herói", bonusHp: 300 });
+    const resultado = simularEncontro([heroi], [convertido], {
+      batalhas: 10, semente: 42, gerarLogs: true,
+      cenario: { participantes: { rival: { escondido: true } } },
+    });
+    const logs = resultado.logsExtremos ?? [];
+    expect(logs.length).toBeGreaterThan(0);
+    expect(logs.some((l) => l.eventos?.some((e) => e.acao === "Primeiro Golpe"))).toBe(true);
+    for (const log of logs) {
+      expect(log.eventos?.filter((e) => e.acao === "Primeiro Golpe")).toHaveLength(1);
+      expect(log.eventos?.some((e) => e.acao === "Primeiro Golpe" && e.parcelas.some((p) => p.origem === "Dano Furtivo"))).toBe(true);
+    }
+  });
+
+  it("Ladino convertido não usa Primeiro Golpe depois de perder a abertura", () => {
+    const ladino = ficha({
+      id: "ladino-sem-abertura", startingTreeId: "furtividade-e-armadilhas",
+      unlockedRanks: [{ treeId: "furtividade-e-armadilhas", rank: "Principiante" }],
+      purchasedAbilities: [{ treeId: "furtividade-e-armadilhas", rank: "Principiante", kind: "ability", id: "primeiro-golpe" }],
+    });
+    const rival = { ...criaturaDaFicha(ladino, novoId), id: "rival" };
+    const heroi = ficha({ id: "heroi-rapido", bonusHp: 300,
+      attributeBase: { ...ZERO, agilidade: 100 },
+    });
+    const resultado = simularEncontro([heroi], [rival], { batalhas: 10, semente: 91, gerarLogs: true });
+    expect(resultado.logsExtremos?.every((log) => !log.eventos?.some((e) => e.acao === "Primeiro Golpe"))).toBe(true);
+  });
+
+  it("Passo Vazio da ficha reabre Primeiro Golpe do rival uma única vez", () => {
+    const ladino = ficha({
+      id: "ladino-passo", startingTreeId: "furtividade-e-armadilhas",
+      unlockedRanks: [{ treeId: "furtividade-e-armadilhas", rank: "Intermediário" }],
+      purchasedAbilities: [
+        { treeId: "furtividade-e-armadilhas", rank: "Principiante", kind: "ability", id: "primeiro-golpe" },
+        { treeId: "furtividade-e-armadilhas", rank: "Intermediário", kind: "ability", id: "passo-vazio" },
+      ],
+    });
+    const rival = { ...criaturaDaFicha(ladino, novoId), id: "rival" };
+    expect(rival.temPassoVazio).toBe(true);
+    const heroi = ficha({ id: "heroi-resistente", bonusHp: 1000 });
+    const resultado = simularEncontro([heroi], [rival], {
+      batalhas: 10, semente: 42, gerarLogs: true,
+      cenario: { participantes: { rival: { escondido: true } } },
+    });
+    const logs = resultado.logsExtremos ?? [];
+    expect(logs.length).toBeGreaterThan(0);
+    for (const log of logs) {
+      expect(log.eventos?.filter((e) => e.acao === "Primeiro Golpe")).toHaveLength(2);
+      expect(log.linhas.filter((linha) => linha.includes("Passo Vazio"))).toHaveLength(1);
+    }
+  });
+
+  it("preserva arma, degraus acima do teto e bônus no ataque do rival", () => {
+    const c = ficha({
+      startingTreeId: "deus-da-espada",
+      attributeBase: { ...ZERO, forca: 4 },
+      unlockedRanks: [{ treeId: "deus-da-espada", rank: "Imperador" }],
+      inventory: [{ id: "arma", type: "arma", name: "Espadão / Montante", baseDie: "4d12", equipped: true }],
+    });
+    const arma = montarFicha(c).arma;
+    const ataque = criaturaDaFicha(c, novoId).acoes[0];
+    expect(ataque.dano).toBe(`5d12+14+${arma.damageBonus}`);
+    expect(ataque.bonusAtaque).toBe(arma.attackBonus);
+    expect(ataque.nota).toContain("4d12 → 5d12+14");
+  });
+
+  it("não empresta o bônus mágico nem esconde a falta de proficiência no golpe", () => {
+    const c = ficha({
+      startingTreeId: "agua",
+      attributeBase: { ...ZERO, forca: 3, intelecto: 9 },
+      unlockedRanks: [{ treeId: "agua", rank: "Imperador" }],
+      inventory: [{ id: "arma", type: "arma", name: "Espadão / Montante", baseDie: "d10", equipped: true }],
+    });
+    const criatura = criaturaDaFicha(c, novoId);
+    expect(criatura.bonusAtaque).toBeGreaterThan(3);
+    expect(criatura.acoes[0]).toMatchObject({ dano: "1d10+3", bonusAtaque: 3, desvantagemAtaque: true });
+  });
+
+  it("traz todas as ações ofensivas compatíveis e nomeia as que ainda não simula", () => {
+    const tree = getTreeById("agua")!;
+    const c = ficha({
+      startingTreeId: tree.id,
+      unlockedRanks: tree.ranks.map((r) => ({ treeId: tree.id, rank: r.rank })),
+      purchasedAbilities: tree.ranks.flatMap((r) => r.abilities.map((a) => ({
+        kind: "ability" as const, treeId: tree.id, rank: r.rank, id: a.id,
+      }))),
+    });
     const criatura = criaturaDaFicha(c, novoId);
     const doLivro = criatura.acoes.slice(1);
 
-    expect(doLivro.length).toBeLessThanOrEqual(8);
+    const derivada = montarFicha(c);
+    const convertiveis = derivada.acoes.filter((a) => a.tipo === "dano" && !a.reacao &&
+      mediaFormula(formulaDaAcao(a, derivada.ataqueBasico.dano, derivada.bc)) > 0);
+    expect(convertiveis.length).toBeGreaterThan(8);
+    expect(doLivro).toHaveLength(convertiveis.length);
     const medias = doLivro.map((a) => mediaFormula(a.dano));
     expect([...medias].sort((x, y) => y - x)).toEqual(medias);
-    if (montarFicha(c).acoes.length > doLivro.length) {
-      expect(criatura.perigo).toMatch(/ficaram de fora/);
+    const naoSimuladas = derivada.acoes.filter((a) => !convertiveis.some((outra) => outra.nome === a.nome));
+    if (naoSimuladas.length > 0) {
+      expect(criatura.perigo).toContain(naoSimuladas[0].nome);
     }
   });
 
@@ -181,14 +287,14 @@ describe("ficha como criatura", () => {
     // entra. O cartão do Mestre segue a carta da habilidade, e não a
     // simplificação do motor (que soma BC em toda ação).
     it("soma o BC só onde o livro escreve BC", () => {
-      expect(formulaDaAcao({ ...acaoBase, dano: "1d8 + BC (cortante) + 1d4 de frio" }, 8, 5)).toBe("1d8+1d4+5");
-      expect(formulaDaAcao({ ...acaoBase, dano: "2d8 de frio" }, 8, 5)).toBe("2d8");
+      expect(formulaDaAcao({ ...acaoBase, dano: "1d8 + BC (cortante) + 1d4 de frio" }, 8, 5)).toBe("1d8+1d4+5 (cortante, frio)");
+      expect(formulaDaAcao({ ...acaoBase, dano: "2d8 de frio" }, 8, 5)).toBe("2d8 (frio)");
     });
 
     // "(24d12 contra alvo Molhado)" é o dano de OUTRO caso. Somado, virava um
     // cartão de 36d12.
     it("ignora o que está entre parênteses, que é condicional", () => {
-      expect(formulaDaAcao({ ...acaoBase, dano: "12d12 de frio (24d12 contra alvo Molhado)" }, 8, 5)).toBe("12d12");
+      expect(formulaDaAcao({ ...acaoBase, dano: "12d12 de frio (24d12 contra alvo Molhado)" }, 8, 5)).toBe("12d12 (frio)");
     });
 
     // Oito técnicas do livro multiplicam o Dado de Arma em vez de trazer dados
@@ -200,6 +306,14 @@ describe("ficha como criatura", () => {
 
     it("uma ação sem dado nenhum não vira dano inventado", () => {
       expect(formulaDaAcao({ ...acaoBase, dano: "empurra o alvo 3 metros" }, 8, 5)).toBe("");
+    });
+
+    it("multiplica todos os dados e o fixo da arma, sem perder o excesso de degraus", () => {
+      expect(formulaDaAcao({ ...acaoBase, dano: "+2 Dados de Arma", dadosDeArma: 2 }, "5d12+14", 5)).toBe("10d12+33");
+    });
+
+    it("não converte meia parcela de arma em cinco dados por acidente", () => {
+      expect(formulaDaAcao({ ...acaoBase, dano: "Metade do Dado de Arma", dadosDeArma: 0.5 }, "1d8", 5)).toBe("");
     });
   });
 });

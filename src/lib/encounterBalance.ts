@@ -16,7 +16,18 @@
  * - O mesmo apêndice trata a morte de personagem como consequência normal, não
  *   como falha do Mestre. "Equilibrado" aqui admite perder gente.
  */
-import { ResultadoEncontro } from "@/lib/encounterSim";
+import { escalaDaAcao, usaAcoes, type CriaturaEncontro, type ResultadoEncontro } from "@/lib/encounterSim";
+
+/** Mesmos números na projeção e no botão Aplicar, inclusive arredondamentos. */
+export function aplicarEscalaAoEncontro(criaturas: CriaturaEncontro[], escala: number): CriaturaEncontro[] {
+  return criaturas.map((c) => ({
+    ...c,
+    pv: arredondarPv(c.pv * escala),
+    ...(usaAcoes(c) ? { acoes: c.acoes.map((acao) => acao.dano ? {
+      ...acao, escalaDano: Math.max(0.001, Math.round(escalaDaAcao(acao) * escala * 1000) / 1000),
+    } : acao) } : { danoPorTurno: Math.max(1, Math.round(c.danoPorTurno * escala)) }),
+  }));
+}
 
 export type Faixa = "trivial" | "facil" | "equilibrado" | "perigoso" | "letal";
 
@@ -40,7 +51,7 @@ export function avaliar(r: ResultadoEncontro): Veredito {
       titulo: "Letal",
       resumo:
         r.tpk > 0.5
-          ? "O grupo morre inteiro na maioria das simulações. Isto não é um combate difícil: é uma cena de fuga ou de derrota narrada."
+          ? "O grupo inteiro cai na maioria das simulações. Considere uma rota de fuga ou reduza a dificuldade antes da sessão."
           : "O grupo perde mais vezes do que vence. Só use assim se a derrota fizer parte do plano da sessão.",
     };
   }
@@ -77,6 +88,7 @@ export function avaliar(r: ResultadoEncontro): Veredito {
 }
 
 export interface AjusteSugerido {
+  faixaProjetada?: Faixa;
   /** Multiplicador aplicado a PV e dano por turno de todas as criaturas. */
   escala: number;
   /** Taxa de vitória projetada com o ajuste. */

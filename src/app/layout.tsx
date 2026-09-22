@@ -41,7 +41,7 @@ const literata = Literata({
 });
 
 /**
- * O ícone da aba é `src/app/icon.svg`, achado por convenção do App Router — não
+ * O ícone da aba é `src/app/icon.png`, achado por convenção do App Router — não
  * precisa (nem deve) ser declarado aqui. Ele é gerado do logo por
  * `scripts/gerar-favicon.mjs`, e o `favicon.ico` padrão do Next saiu junto:
  * com os dois no lugar, cada navegador escolhia um.

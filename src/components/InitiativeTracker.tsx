@@ -386,8 +386,10 @@ function ContadorDeDano({ combatente }: { combatente: Combatant }) {
 function FichaDoMonstro({ ficha }: { ficha: FichaDeCombate }) {
   return (
     <div className="mt-2 rounded-lg border border-parchment-200 bg-parchment-50/70 px-2 py-1.5 text-3xs dark:border-parchment-800 dark:bg-parchment-950/40">
+      {ficha.notasCombate?.map((nota, i) => <p key={i} className="mb-1">{nota}</p>)}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <Dado rotulo="CA" valor={String(ficha.ca)} />
+        {ficha.bonusAtaque !== undefined && <Dado rotulo="Ataque" valor={`${ficha.bonusAtaque >= 0 ? "+" : ""}${ficha.bonusAtaque}`} />}
         <Dado rotulo="CD" valor={String(ficha.cdResistencia)} dica="A CD que ela impõe. Menos 2 se a habilidade sai de um atributo que não é o Principal dela." />
         <Dado
           rotulo="Percep."
@@ -444,6 +446,37 @@ function FichaDoMonstro({ ficha }: { ficha: FichaDeCombate }) {
               <b className="text-parchment-700 dark:text-parchment-300">Sentido</b> {ficha.sentido}
             </span>
           )}
+        </div>
+      )}
+
+      {ficha.acoes && ficha.acoes.length > 0 && (
+        <div className="mt-2 border-t border-parchment-200 pt-1.5 dark:border-parchment-800">
+          <span className="mb-1 block font-bold text-parchment-700 dark:text-parchment-300">Ações (3 por turno)</span>
+          <div className="flex flex-col gap-1">
+            {ficha.acoes.map((a, i) => (
+              <div key={i} className="flex items-start gap-1.5 text-parchment-700 dark:text-parchment-300">
+                <span className="mt-0.5 shrink-0 rounded bg-parchment-900/5 px-1 font-mono text-[9px] dark:bg-white/10">
+                  {a.acoes}A
+                </span>
+                <div>
+                  <b>{a.nome}</b>{" "}
+                  {a.dano && <span className="font-mono text-wine-600 dark:text-wine-400">{a.dano}</span>}
+                  {a.escalaDano && a.escalaDano !== 1 && (
+                    <span className="ml-1 font-mono text-parchment-500 dark:text-parchment-400">×{a.escalaDano}</span>
+                  )}
+                  {a.area && <span className="ml-1 rounded bg-wine-500/10 px-1 text-[9px] font-semibold text-wine-700 dark:text-wine-300">área</span>}{" "}
+                  {a.nota && <span className="opacity-80">{a.nota}</span>}
+                  <p className="mt-0.5">
+                    {a.alcance} · {a.tipo === "resistencia" ? `Resistência CD ${ficha.cdResistencia} (metade se passar)` : (a.bonusAtaque ?? ficha.bonusAtaque) !== undefined ? `Ataque ${((a.bonusAtaque ?? ficha.bonusAtaque) as number) >= 0 ? "+" : ""}${a.bonusAtaque ?? ficha.bonusAtaque} contra CA` : "Ataque contra CA"}
+                    {a.desvantagemAtaque && " · Desvantagem por falta de proficiência"}
+                  </p>
+                  {(a.aplicaPreso || a.aplicaCaido || a.aplicaMolhado || a.aplicaVeneno) && <p>
+                    Condições: {[a.aplicaPreso && "Preso", a.aplicaCaido && "Caído", a.aplicaMolhado && "Molhado", a.aplicaVeneno && "Envenenado"].filter(Boolean).join(", ")}.
+                  </p>}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

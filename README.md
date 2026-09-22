@@ -15,7 +15,7 @@ Instalável, e **funciona inteiro sem internet** — porque mesa de RPG acontece
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Zustand](https://img.shields.io/badge/Zustand-5-4B3621)](https://zustand.docs.pmnd.rs)
 [![Versão do sistema](https://img.shields.io/badge/regras-0.1.91-8B1E3F)](src/data/patchNotes.ts)
-[![Testes](https://img.shields.io/badge/testes-633%20passando-3FB950)](src/store/selectors.test.ts)
+[![Testes](https://img.shields.io/badge/testes-Vitest-3FB950)](src/store/selectors.test.ts)
 [![Licença](https://img.shields.io/badge/uso-fã%20não--comercial-6B7280)](#licença-e-créditos)
 
 </div>
@@ -91,7 +91,7 @@ Abra <http://localhost:3000>. Não há banco de dados, variável de ambiente nem
 | `npm run check:offline` | Abre as 20 rotas **com o servidor morto** (precisa de `npm run build`; sobe e mata o próprio `next start`) |
 | `npm run check:sumario` | O sumário do `/livro` cita toda seção que existe, e só as que existem (precisa do servidor no ar) |
 | `npm run tela <rota>` | Fotografa uma rota em PNG, em qualquer largura e tema. Não reprova nada — existe pra a pergunta que nenhum check responde, que é *isto está bonito?* |
-| `npx tsx scripts/simular-combate.mts` | Playtest automatizado: builds de mesmo orçamento de PA se batendo |
+| `npm run check:midia` | Confere se as artes publicadas estão mapeadas e dentro do limite de tamanho |
 | `node scripts/logo-sem-fundo.mjs` | Regera `public/logo-real-alfa.png` a partir de `assets-fonte/` |
 | `node scripts/gerar-favicon.mjs` | Regera o favicon e os três ícones do PWA a partir de `assets-fonte/` |
 

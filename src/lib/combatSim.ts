@@ -1,11 +1,9 @@
 /**
- * O motor de simulação de combate — compartilhado pelo playtest de linha de
- * comando (`scripts/simular-combate.mts`) e pela tela /encontros.
+ * O motor de simulação de combate usado pela tela /encontros e pelo
+ * comparador de builds.
  *
- * Ele nasceu dentro do script, e ficar lá era um problema em potencial: a tela
- * que diz ao Mestre "este encontro é justo" tem que responder pelos MESMOS
- * números que o playtest usa pra calibrar o livro. Duas cópias da mesma
- * simulação divergem em silêncio, e a que diverge é sempre a que ninguém roda.
+ * Ele nasceu em um script de playtest e foi compartilhado para que as telas
+ * usem as mesmas regras de combate, sem manter duas simulações divergentes.
  *
  * O que ele NÃO é: um motor de regras completo. As simplificações estão
  * declaradas em SIMPLIFICACOES, no fim do arquivo, e toda leitura de um
@@ -13,8 +11,10 @@
  * imprime na tela em vez de escondê-las.
  */
 import { getTreeById } from "@/data/trees/index";
+import { aproximar, alcanceEmMetros, distanciaEntre } from "./combatScenario";
 import {
   getArmorClass,
+  getDeslocamento,
   getAttackBonus,
   getFinalAttribute,
   getHighestUnlockedRank,
@@ -22,7 +22,6 @@ import {
   getMaxHp,
   getMaxMp,
   getPtPool,
-  getWeaponDamage,
   getTreeAttributeKey,
 } from "@/store/selectors";
 import {
@@ -32,6 +31,15 @@ import {
   RankName,
   RANKS,
 } from "@/lib/types";
+import { resolverArmaCombate, type ArmaCombate } from "./combatWeapon";
+import {
+  rolarComRegistro,
+  rolarCriticoComRegistro,
+  rolarD20ComRegistro,
+  formatarEventoAtaque,
+  type EventoAtaque,
+  type RegistroCombate,
+} from "./combatTrace";
 
 // ---------------------------------------------------------------------------
 // Dados
@@ -153,10 +161,14 @@ export function temDano(formula: string): boolean {
  * (`damage.normal`) e somar uma cura como dano contava a Prontidão como 105 de
  * dano por turno. O filtro estava certo em recusar; o erro era parar aí.
  */
-export type TipoDeAcao = "dano" | "cura" | "escudo";
+export type TipoDeAcao = "dano" | "cura" | "escudo" | "outro";
 
 /** Uma coisa que um combatente pode fazer no turno dele. */
 export interface Acao {
+  regra?: "primeiro-golpe" | "fluxo";
+  alcance?: string;
+  bonusContextual?: number;
+  gatilho?: string;
   nome: string;
   acoes: number;
   pm: number;
@@ -194,30 +206,18 @@ export interface Acao {
   frio: boolean;
   fogo: boolean;
   aplicaMolhado: boolean;
-  /**
-   * Acúmulos de Quebrantado que a ação aplica (0.1.35). Zero = não aplica.
-   *
-   * `"maximo"` é o teto do Cap. 4 — "até o máximo do Bônus de Rank de quem
-   * aplicou" — e existe porque três técnicas de Armas Pesadas dizem exatamente
-   * isso em vez de dar um número: "acúmulos iguais ao seu Bônus de Rank" e
-   * "fica Quebrantado ao máximo".
-   */
   aplicaQuebrantado: number | "maximo";
-  /**
-   * A fórmula que se REPETE a cada turno, enquanto o efeito durar (0.1.57).
-   *
-   * Vazia em quase tudo. Três magias do livro descrevem dano por turno
-   * sustentado — Trono de Chamas, Rio de Magma e Tempestade Cortante — e até
-   * aqui o motor contava cada uma UMA vez, porque `damage.normal` guarda a
-   * linha inteira e ninguém separava "o que acontece no impacto" de "o que
-   * acontece todo turno depois".
-   *
-   * O custo disso era visível e vinha sendo declarado como pendência desde a
-   * 0.1.50: as três apareciam no `check:progressao` como capstones que rendem
-   * MENOS que o rank abaixo delas. Não era o livro estar errado — era o
-   * instrumento não saber ler o que estava escrito.
-   */
+  aplicaPreso?: boolean;
+  aplicaCaido?: boolean;
+  aplicaVeneno?: boolean;
+  aplicaBuffCA?: number;
+  aplicaBuffDano?: number;
+  aplicaBuffVantagem?: boolean;
   danoPorTurno: string;
+  intercepta?: boolean;
+  aparar?: number;
+  reducaoDeDano?: string;
+  reacao?: boolean;
 }
 
 /**
@@ -315,6 +315,23 @@ export function separarSustentado(linha: string): { impacto: string; porTurno: s
  * custo dominante da simulação.
  */
 export interface FichaCombate {
+  invocadoDe?: string;
+  acoesPorTurno?: number;
+  ataquesPorAcao?: number;
+  rankLadino: number;
+  bonusFurtividade: number;
+  temSombraLonga: boolean;
+  rankAgua: number;
+  temAparar: boolean;
+  temDevolver: boolean;
+  temGuardaCorpo: boolean;
+  temPassoVazio: boolean;
+  reacaoExtraFixa: number;
+  temMareRetorno: boolean;
+  alcanceReacao: number;
+  deslocamento: number;
+  /** Arma efetivamente escolhida; preserva a origem dos dados e dos bônus. */
+  arma: ArmaCombate;
   id: string;
   nome: string;
   rotulo: string;
@@ -363,11 +380,23 @@ export interface FichaCombate {
   /** Espírito FINAL — o atributo do teste de Concentração da conjuração (Cap. 2, §6). */
   espirito: number;
   acoes: Acao[];
+  fluxoUsosMax: number;
+  fluxoDano: string;
+  posturaBonusCA: number;
+  posturaReacoesExtra: number;
+  protegidosMax: number;
   ataqueBasico: Acao;
 }
 
 /** Qualquer coisa que pode levar dano. Personagens e criaturas cabem aqui. */
 export interface Alvo {
+  posicao?: number;
+  terrenoDificil: boolean;
+  escondido: boolean;
+  percepcaoPassiva?: number;
+  surpreso: boolean;
+  jaAgiu: boolean;
+  cego: boolean;
   nome: string;
   pv: number;
   ca: number;
@@ -526,6 +555,13 @@ export interface Alvo {
  */
 export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: number }): Alvo {
   return {
+    posicao: p.posicao,
+    terrenoDificil: p.terrenoDificil ?? false,
+    escondido: p.escondido ?? false,
+    percepcaoPassiva: p.percepcaoPassiva,
+    surpreso: p.surpreso ?? false,
+    jaAgiu: p.jaAgiu ?? false,
+    cego: p.cego ?? false,
     nome: p.nome,
     pv: p.pv,
     ca: p.ca,
@@ -560,6 +596,10 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
 /** Uma `Acao` completa a partir do que a distingue. Mesmo motivo do `novoAlvo`. */
 export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
   return {
+    regra: p.regra,
+    alcance: p.alcance,
+    bonusContextual: p.bonusContextual,
+    gatilho: p.gatilho,
     nome: p.nome,
     acoes: p.acoes ?? 1,
     pm: p.pm ?? 0,
@@ -581,9 +621,21 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
 
 /** O que muda numa batalha, do lado do personagem. */
 export interface EstadoPersonagem extends Alvo {
+  usouFurtivo: boolean;
+  usouPassoVazio: boolean;
+  podeEsconderEmCombate: boolean;
+  alcanceArma?: number;
+  reacoesNesteTurno: Set<Alvo>;
+  fluxosNesteTurno: Set<Alvo>;
   ficha: FichaCombate;
   pm: number;
   pt: number;
+  buffs: { CA: number; dano: number; acerto: number; turnosRestantes?: number }[];
+  fluxoRestante: number;
+  emPostura: boolean;
+  protegidos: string[];
+  reacoesExtra: number;
+  usouPrimeiroGolpe: boolean;
   /**
    * O cântico em andamento — Cap. 2, §6 e Cap. 4, §3, na 0.1.40.
    *
@@ -665,12 +717,16 @@ export function acoesDe(c: CharacterData): Acao[] {
      */
     const ehReducao = /^reduz/.test(txt);
     const ehSuporte = ehReducao || /de pv|pv temporários|recupera|cura /.test(txt);
-    const tipo: TipoDeAcao = !ehSuporte
+    const isZeroAction = !a.reaction && a.actions.normal === 0;
+    const tipo: TipoDeAcao = isZeroAction ? "outro" : !ehSuporte
       ? "dano"
       : ehReducao || /pv temporários/.test(txt)
         ? "escudo"
         : "cura";
     out.push({
+      regra: a.id === "primeiro-golpe" ? "primeiro-golpe" : undefined,
+      alcance: a.range,
+      reacao: !!a.reaction,
       nome: a.name,
       acoes: a.reaction ? 1 : Math.max(1, a.actions.normal),
       pm: a.pmCost ?? 0,
@@ -688,7 +744,21 @@ export function acoesDe(c: CharacterData): Acao[] {
        * existe no livro e o motor sabe aplicá-la (frio dobra contra Molhado);
        * o que ele não pode é cobrar a exceção junto com a regra.
        */
-      dano: ehSuporte ? "" : casoBase(separarSustentado(a.damage.normal).impacto),
+      dano: (() => {
+        if (ehSuporte) return "";
+        let base = casoBase(separarSustentado(a.damage.normal).impacto);
+        if (/dano furtivo/i.test(base)) {
+          const ladinoRankStr = getHighestUnlockedRank(c, "furtividade-e-armadilhas");
+          if (ladinoRankStr) {
+            const idx = ["Principiante", "Intermediário", "Avançado", "Santo", "Rei", "Imperador"].indexOf(ladinoRankStr);
+            const diceCount = idx >= 0 ? idx + 1 : 0;
+            const multiplied = /triplicado/i.test(base) ? diceCount * 3 : diceCount;
+            base = base.replace(/dano furtivo triplicado/i, `${multiplied}d6`);
+            base = base.replace(/dano furtivo/i, `${diceCount}d6`);
+          }
+        }
+        return base;
+      })(),
       /*
        * O que se repete a cada turno (0.1.57).
        *
@@ -731,27 +801,26 @@ export function acoesDe(c: CharacterData): Acao[] {
       // aparecia em quarto lugar, porque CINCO das seis ações de dano dele
       // somam zero na conta.
       dadosDeArma: (() => {
-        const m = a.damage.normal.match(/\+\s*(\d+)\s+Dados? de Arma/i);
-        if (m) return Number(m[1]);
-        const v = a.damage.normal.match(/rolado (duas|três|quatro|cinco|seis|sete) vezes/i);
-        if (v) return { duas: 2, três: 3, quatro: 4, cinco: 5, seis: 6, sete: 7 }[v[1].toLowerCase()] ?? 0;
-        /*
-         * "Metade do dado" e "arma secundária" — 0.1.47.
-         *
-         * Quatro técnicas descrevem o dano como uma FRAÇÃO ou uma repetição do
-         * dado de arma sem usar a palavra "Dados de Arma", e o motor lia zero
-         * dado nelas: a Cabeçada de Armas Pesadas, o Tiro Duplo da Arquearia, a
-         * de Deus do Norte, e a Empunhadura Dupla. Elas apareciam na auditoria
-         * de progressão como "este rank rende menos que o anterior", e a causa
-         * era a leitura, não o livro.
-         *
-         * "Um degrau abaixo" da arma secundária vira 1 dado inteiro: a Escada de
-         * Dados é do personagem, e o motor não guarda o degrau anterior. É uma
-         * aproximação PARA CIMA, e está declarada.
-         */
-        if (/metade do dado/i.test(a.damage.normal)) return 0.5;
-        if (/arma secund[áa]ria/i.test(a.damage.normal)) return 1;
-        return 0;
+        if (ehSuporte) return 0;
+        const norm = a.damage.normal.toLowerCase();
+        let count = 0;
+
+        if (/dano de arma|dado de arma/.test(norm)) count = 1;
+
+        const v = norm.match(/rolado (duas|três|quatro|cinco|seis|sete) vezes/);
+        if (v) count = { duas: 2, três: 3, quatro: 4, cinco: 5, seis: 6, sete: 7 }[v[1]] ?? 0;
+
+        const m = norm.match(/\+\s*(\d+)\s+dados? de arma/);
+        if (m) {
+           // If it said "+X dados", we just add X to whatever base we had (which is usually 0 if "dado de arma" wasn't written, but if it was, it's 1)
+           // Actually, "+2 Dados de Arma" contains "dados de arma", so it triggered count=1 above!
+           count += Number(m[1]);
+        }
+
+        if (/metade do dado/i.test(norm)) return 0.5;
+        if (/arma secund[áa]ria/i.test(norm)) return 1;
+
+        return count;
       })(),
       /*
        * ÁREA — a palavra "linha" sozinha era larga demais (0.1.39).
@@ -792,7 +861,7 @@ export function acoesDe(c: CharacterData): Acao[] {
        * (Deus da Água), cuja frase descreve o ataque DO INIMIGO que dispara a
        * Reação, não uma rolagem dela.
        */
-      ataque: /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`),
+      ataque: a.id === "primeiro-golpe" || /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`),
       frio: /frio|gelo/.test(txt),
       fogo: /ígneo|chamas|fogo/.test(txt),
       aplicaMolhado: /molhad/.test(txt),
@@ -858,22 +927,13 @@ export function casoBase(formula: string): string {
 }
 
 /** Resolve uma ficha do site nos números que a simulação usa. */
-export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
+export function montarFicha(c: CharacterData, rotulo = "", armaId?: string | null): FichaCombate {
   // O MAIOR entre os atributos que o rótulo oferece: o Norte e o Vendaval
   // dizem "Força ou Agilidade", e o Punho do Fogo "Força ou Intelecto".
   const attr = getTreeAttributeKey(c, c.startingTreeId, "forca");
   const bc = c.startingTreeId ? getAttackBonus(c, c.startingTreeId, attr) : 0;
 
-  /*
-   * O dado do golpe comum sai da MESMA função que a ficha usa — revisão do livro.
-   *
-   * Até aqui o motor somava os degraus de TODAS as árvores do Corpo (Espada e
-   * Norte juntos davam degraus que nenhuma das duas dá) e subia numa escada
-   * própria de d16, d20 e d24, dados que a Escada do Cap. 3 não tem. O livro
-   * diz "o maior Rank entre as árvores do Corpo", e `getWeaponDamage` já é essa
-   * regra, com empate e tudo. A base é o d6 de sempre.
-   */
-  const golpeComum = getWeaponDamage(c, "d6");
+  const arma = resolverArmaCombate(c, armaId);
 
   const maiorBonus = c.unlockedRanks.reduce((m, u) => Math.max(m, RANK_BONUS[u.rank]), 0);
   const metadeDoMaiorRank = Math.ceil(maiorBonus / 2);
@@ -881,8 +941,24 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
   const agilidade = getFinalAttribute(c, "agilidade");
   const espirito = getFinalAttribute(c, "espirito");
   const atributoDoMeio = [vigor, agilidade, espirito].sort((x, y) => x - y)[1];
+  const rankDaArvore = (id: string) => { const rank = getHighestUnlockedRank(c, id); return rank ? RANK_BONUS[rank] : 0; };
+  const comprou = (id: string, treeId: string) => c.purchasedAbilities.some((a) => a.id === id && a.treeId === treeId);
+  const rankAgua = rankDaArvore("deus-da-agua-corpo");
 
   return {
+    rankLadino: rankDaArvore("furtividade-e-armadilhas"),
+    bonusFurtividade: agilidade + rankDaArvore("furtividade-e-armadilhas"),
+    temSombraLonga: comprou("sombra-longa", "furtividade-e-armadilhas"),
+    rankAgua,
+    temAparar: comprou("aparar", "deus-da-agua-corpo"),
+    temDevolver: comprou("devolver", "deus-da-agua-corpo"),
+    temGuardaCorpo: comprou("guarda-do-corpo", "deus-da-agua-corpo"),
+    temPassoVazio: comprou("passo-vazio", "furtividade-e-armadilhas"),
+    alcanceReacao: rankAgua >= 6 ? 4.5 : comprou("guarda-longa", "deus-da-agua-corpo") ? 3 : 1.5,
+    reacaoExtraFixa: comprou("segunda-guarda", "deus-da-agua-corpo") ? 1 : 0,
+    temMareRetorno: comprou("mare-de-retorno", "deus-da-agua-corpo"),
+    deslocamento: getDeslocamento(c),
+    arma,
     id: c.id,
     nome: c.name || "Sem nome",
     rotulo,
@@ -891,30 +967,28 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
     pmMax: getMaxMp(c),
     ptMax: getPtPool(c),
     bc,
-    // Golpe sem estilo: "Força; ou Agilidade" (Cap. 3), a melhor das duas, e
-    // não o maior atributo qualquer — um mago de Intelecto 6 não bate com a
-    // cabeça. Atributo FINAL, com raça e antecedente.
     bcSemRank: Math.max(getFinalAttribute(c, "forca"), agilidade),
     ...resistenciasDe(c),
-    // O Bônus de Rank da árvore inicial — a mesma de onde `bc` sai, pra que as
-    // duas contas falem do mesmo personagem.
     bonusDeRank: (() => {
       const rank = c.startingTreeId ? getHighestUnlockedRank(c, c.startingTreeId) : undefined;
       return rank ? RANK_BONUS[rank] : 0;
     })(),
     metadeDoMaiorRank,
     resistencia: atributoDoMeio + metadeDoMaiorRank,
-    // Atributos FINAIS: até a revisão do livro saíam do atributo base, e o +1
-    // de Vigor do Anão ou a Iniciativa do antecedente não existiam em combate.
     iniciativa: getInitiative(c).bonus,
     vigor,
     espirito,
     acoes: acoesDe(c),
-    // Golpe comum. A Escada de Dados é EXCLUSIVA da Árvore do Corpo (Cap. 3):
-    // um mago de Água Avançado não escala dado nenhum — ele empunha uma arma
-    // simples (d6) e soma o atributo, sem Bônus de Rank, porque a técnica não
-    // veio de árvore nenhuma. A primeira versão deste motor dava a escada a
-    // todo mundo e fazia a curandeira bater 35 por turno de espada.
+    fluxoUsosMax: rankAgua === 0 ? 0 : rankAgua === 1 ? 1 : 2,
+    fluxoDano: "1d6",
+    posturaBonusCA: rankAgua >= 3 ? rankAgua : 0,
+    posturaReacoesExtra: rankAgua >= 3 ? Math.ceil(rankAgua / 2) : 0,
+    protegidosMax: (() => {
+      const s = c.unlockedRanks.find((r) => r.treeId === "cavalaria-e-escudos")?.rank;
+      if (!s) return 0;
+      const idx = ["Principiante", "Intermediário", "Avançado", "Santo", "Rei", "Imperador"].indexOf(s);
+      return idx === 0 ? 1 : idx === 1 ? 2 : idx === 2 ? 3 : 99;
+    })(),
     ataqueBasico: novaAcao({
       /*
        * "golpe sem estilo", e não "arma simples" — 0.1.60.
@@ -929,11 +1003,11 @@ export function montarFicha(c: CharacterData, rotulo = ""): FichaCombate {
        * simples", e um Mestre que procurasse esse termo no livro não acharia
        * mais nada.
        */
-      nome: golpeComum ? "golpe comum" : "golpe sem estilo",
+      nome: arma.treeId ? "golpe comum" : "golpe sem estilo",
       // `escalatedDie` vem sem o "1" na frente ("d8", "2d10"); `rolarDados` só
       // lê "NdM", então o número de dados é escrito aqui.
       dano: (() => {
-        const die = golpeComum?.escalatedDie ?? "d6";
+        const die = arma.escalatedDie;
         return /^d/i.test(die) ? `1${die}` : die;
       })(),
       ataque: true,
@@ -1113,7 +1187,10 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     ...novoAlvo({
       nome: ficha.nome,
       pv: ficha.pvMax,
-      ca: ficha.ca,
+      // A ficha já desconta Quebrantado da CA; o estado aplica a condição
+      // dinamicamente, por isso recebe a CA anterior a esse desconto.
+      ca: ficha.ca + ficha.arma.penalidadeQuebrantado,
+      quebrantado: ficha.arma.penalidadeQuebrantado,
       fioDaVida: true,
       bonusResistencia: ficha.resistencia,
       resistencias: ficha.resistencias,
@@ -1124,6 +1201,17 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     pt: ficha.ptMax,
     pvCurado: 0,
     conjurando: null,
+    fluxoRestante: 0,
+    emPostura: false,
+    protegidos: [],
+    reacoesExtra: 0,
+    usouPrimeiroGolpe: false,
+    usouFurtivo: false,
+    usouPassoVazio: false,
+    podeEsconderEmCombate: ficha.temSombraLonga,
+    reacoesNesteTurno: new Set(),
+    fluxosNesteTurno: new Set(),
+    buffs: [],
   };
 }
 
@@ -1156,8 +1244,36 @@ export function rankDaFicha(c: CharacterData): RankName | null {
  * mesma conta que `resolver` faz com os dados na mão — se aquela mudar, esta
  * tem que mudar junto.
  */
+function ehGolpeBasico(a: Acao): boolean {
+  return a.nome === "golpe comum" || a.nome === "golpe sem estilo" || a.regra === "fluxo";
+}
+
+export function aberturaFurtiva(e: EstadoPersonagem, alvo: Alvo): string | null {
+  if (e.escondido) return "atacante Escondido do alvo";
+  if (alvo.surpreso) return "alvo Surpreso";
+  if (!alvo.jaAgiu) return "alvo ainda não agiu";
+  return null;
+}
+
+export function motivoFurtivo(e: EstadoPersonagem, alvo: Alvo): string | null {
+  if (!e.ficha.rankLadino || e.usouFurtivo) return null;
+  return aberturaFurtiva(e, alvo) ?? (alvo.cego ? "alvo Cego" : alvo.preso ? "alvo imobilizado" : alvo.caido && !(e.preso || e.caido || e.envenenado) ? "Vantagem contra alvo Caído" : null);
+}
+
+export function autorizarAcao(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): { legal: boolean; motivo: string } {
+  if (a.regra === "primeiro-golpe") {
+    if (e.usouPrimeiroGolpe) return { legal: false, motivo: "Primeiro Golpe já foi usado neste combate" };
+    const abertura = alvo && aberturaFurtiva(e, alvo);
+    return { legal: !!abertura, motivo: abertura ?? "Primeiro Golpe exige alvo Desprevenido" };
+  }
+  return { legal: true, motivo: a.gatilho ?? "ação disponível" };
+}
+
 export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): number {
-  const bonus = a.nome === "golpe sem estilo" ? e.ficha.bcSemRank : e.ficha.bc;
+  if (!autorizarAcao(e, a, alvo).legal) return 0;
+  const basico = ehGolpeBasico(a);
+  const bonus = a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc;
+  const bonusAcerto = basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc;
 
   /*
    * O dano bruto é montado exatamente como `resolver` monta o dele: dados
@@ -1171,8 +1287,9 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
    * erro da rolagem de ataque, na outra ponta do mesmo arquivo: a resolução
    * certa e a decisão cega.
    */
-  const impacto =
-    mediaDados(a.dano) + a.dadosDeArma * mediaDados(e.ficha.ataqueBasico.dano) + bonus;
+  const impacto = Math.max(0,
+    (basico ? mediaFormula(a.dano) : mediaDados(a.dano)) +
+    (a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0)) * mediaFormula(e.ficha.ataqueBasico.dano) + bonus - (basico ? e.quebrantado : 0));
 
   /*
    * O que a magia sustentada rende DEPOIS do turno em que saiu — 0.1.57.
@@ -1190,7 +1307,8 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
   const sustentado = a.danoPorTurno
     ? (mediaDados(a.danoPorTurno) + bonus) * (TURNOS_SUSTENTADOS - 1)
     : 0;
-  const bruto = impacto + sustentado;
+  const furtivo = a.ataque && alvo && motivoFurtivo(e, alvo) ? e.ficha.rankLadino * 3.5 : 0;
+  const bruto = impacto + sustentado + furtivo;
 
   if (!alvo) return bruto;
 
@@ -1198,8 +1316,13 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     // O d20 acerta quando `rolagem + bonus >= ca`; o 20 sempre acerta e dobra
     // os dados, o 1 sempre erra. Daí o piso e o teto de 5%.
     const ca = Math.max(1, alvo.ca - alvo.quebrantado);
-    const precisa = ca - bonus;
-    const chance = Math.min(0.95, Math.max(0.05, (21 - precisa) / 20));
+    const precisa = ca - bonusAcerto;
+    const simples = Math.min(0.95, Math.max(0.05, (21 - precisa) / 20));
+    const vantagem = e.escondido || alvo.preso || alvo.caido || alvo.cego;
+    const desvantagem = e.preso || e.caido || e.envenenado ||
+      ((basico || a.dadosDeArma > 0 || a.regra === "primeiro-golpe") && !e.ficha.arma.proficiente);
+    const chance = vantagem === desvantagem ? simples : vantagem ? 1 - (1 - simples) ** 2 : simples ** 2;
+    const chanceCritico = vantagem === desvantagem ? 0.05 : vantagem ? 0.0975 : 0.0025;
     // O crítico (5% do d20) rola TODOS os dados de novo — os próprios da ação
     // e os Dados de Arma — e soma o bônus fixo uma vez só (Cap. 4, §6: "role os
     // dados de dano duas vezes e some os bônus fixos uma vez só"). Até a revisão
@@ -1207,7 +1330,7 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     // tinham o crítico mais fraco do jogo.
     return (
       chance * bruto +
-      0.05 * (mediaDados(a.dano) + a.dadosDeArma * mediaDados(e.ficha.ataqueBasico.dano))
+      chanceCritico * (mediaDados(a.dano) + furtivo + (a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0)) * mediaDados(e.ficha.ataqueBasico.dano))
     );
   }
 
@@ -1258,58 +1381,127 @@ export function escolherAcao(
    */
   const viaveis = e.ficha.acoes.filter(
     (a) =>
-      a.tipo === "dano" &&
+      a.tipo === "dano" && !a.reacao && a.acoes > 0 &&
       a.pm <= e.pm &&
       a.pt <= e.pt &&
-      (permitirCantico || a.acoes <= acoesRestantes)
+      (permitirCantico || a.acoes <= acoesRestantes) &&
+      autorizarAcao(e, a, alvo).legal
   );
-  if (viaveis.length === 0) return e.ficha.ataqueBasico;
-  return viaveis.reduce((melhor, a) =>
-    danoEsperado(e, a, alvo) / a.acoes > danoEsperado(e, melhor, alvo) / melhor.acoes ? a : melhor
+  return viaveis.reduce(
+    (melhor, a) =>
+      danoEsperado(e, a, alvo) / a.acoes > danoEsperado(e, melhor, alvo) / melhor.acoes ? a : melhor,
+    e.ficha.ataqueBasico
   );
 }
 
 /** Resolve UMA ação contra UM alvo e devolve o dano causado. */
-export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): number {
-  // Quem não tem árvore do Corpo não soma Bônus de Rank num golpe de arma.
-  const bonus = a.nome === "golpe sem estilo" ? e.ficha.bcSemRank : e.ficha.bc;
+export function resolver(
+  e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng,
+  registrar?: (evento: EventoAtaque) => void
+): number {
+  const basico = ehGolpeBasico(a);
+  const usaArma = basico || a.dadosDeArma > 0 || a.regra === "primeiro-golpe";
+  const bonus = (a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc) + (a.bonusContextual ?? 0);
+  const bonusAcerto = basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc;
   // Preso, Caído e Envenenado (Cap. 4, §7-8): "seus ataques têm Desvantagem" é
   // igual pras três, então o personagem afetado por qualquer uma rola pior — e
   // "ataques contra você têm Vantagem" (só Preso e Caído) faz o ALVO comprado
   // por essas duas facilitar a vida de quem o ataca.
-  const desvantagemPropria = e.preso || e.caido || e.envenenado;
-  const vantagemContraAlvo = alvo.preso || alvo.caido;
+  const semProficiencia = usaArma && !e.ficha.arma.proficiente;
+  const desvantagemPropria = e.preso || e.caido || e.envenenado || semProficiencia;
+  const vantagemContraAlvo = e.escondido || alvo.preso || alvo.caido || alvo.cego;
   /*
    * Quebrantado (Cap. 4, §2): cada acúmulo tira 1 da CA do alvo e 1 do dano de
    * QUEM o carrega. Aqui aparecem os dois lados da mesma condição — a CA menor
    * do alvo facilita o acerto, e os acúmulos do próprio atacante cobram dele.
    */
   const caDoAlvo = Math.max(1, alvo.ca - alvo.quebrantado);
+  const evento: EventoAtaque | undefined = registrar ? {
+    atacante: e.nome, alvo: alvo.nome, acao: a.nome,
+    acertou: true, critico: false, parcelas: [], bonusDano: bonus,
+    bruto: 0, aposModificadores: 0,
+    arma: usaArma ? e.ficha.arma : undefined,
+    notas: [
+      ...(semProficiencia ? ["Desvantagem: sem proficiência com a arma"] : []),
+      ...(e.preso || e.caido || e.envenenado ? ["Desvantagem: condição do atacante"] : []),
+      ...(alvo.preso || alvo.caido || alvo.cego ? ["Vantagem: condição do alvo"] : []),
+      ...(basico ? [`Bônus de dano: atributo ${e.ficha.arma.attributeValue} + Rank ${e.ficha.arma.rankBonus}`] : []),
+    ],
+  } : undefined;
+  const autorizacao = autorizarAcao(e, a, alvo);
+  if (!autorizacao.legal) {
+    if (evento) { evento.acertou = false; evento.notas.push(autorizacao.motivo); registrar?.(evento); }
+    return 0;
+  }
+  if (a.regra || a.gatilho) evento?.notas.push(`Gatilho: ${autorizacao.motivo}`);
+  if (e.escondido) evento?.notas.push("Vantagem: atacante Escondido");
+  if (a.regra === "primeiro-golpe") e.usouPrimeiroGolpe = true;
+  const rolarParcela = (origem: string, formula: string, multiplicador = 1, critico = false) => {
+    if (!formula || multiplicador === 0) return 0;
+    const rolagem = critico
+      ? rolarCriticoComRegistro(formula, rng, multiplicador)
+      : rolarComRegistro(formula, rng, multiplicador);
+    evento?.parcelas.push({ origem: critico ? `${origem} (dados adicionais do crítico)` : origem, rolagem });
+    return rolagem.total;
+  };
+  // Dados próprios continuam separados dos bônus textuais da habilidade.
+  const proprios = basico ? a.dano : (a.dano.match(/\d+d\d+/gi) ?? []).join("+");
+  const rolarDano = (critico = false) =>
+    rolarParcela(basico ? "Arma" : "Habilidade", proprios, 1, critico) +
+    rolarParcela("Dados de Arma", e.ficha.ataqueBasico.dano, a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0), critico);
   let dano = 0;
   if (a.ataque) {
-    const rolagem = d20Ajustado(rng, vantagemContraAlvo, desvantagemPropria);
-    if (rolagem === 1) return 0;
-    if (rolagem !== 20 && rolagem + bonus < caDoAlvo) return 0;
-    dano = rolarDados(a.dano, rng) + bonus + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
+    const teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
+    const rolagem = teste.natural;
+    if (evento) evento.teste = { ...teste, tipo: "ataque", bonus: bonusAcerto, total: rolagem + bonusAcerto, defesa: caDoAlvo };
+    if (rolagem === 1 || (rolagem !== 20 && rolagem + bonusAcerto < caDoAlvo)) {
+      if (evento) { evento.acertou = false; registrar?.(evento); }
+      return 0;
+    }
+    dano = rolarDano() + bonus;
     // Crítico: todos os dados de novo, Dados de Arma incluídos; o bônus fixo não.
     if (rolagem === 20) {
-      dano += rolarDados(a.dano, rng) + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
+      dano += rolarDano(true);
+      if (evento) evento.critico = true;
     }
+    const furtivo = motivoFurtivo(e, alvo);
+    if (furtivo) {
+      const formula = `${e.ficha.rankLadino}d6`;
+      dano += rolarParcela("Dano Furtivo", formula);
+      if (rolagem === 20) dano += rolarParcela("Dano Furtivo", formula, 1, true);
+      e.usouFurtivo = true;
+      evento?.notas.push(`Dano Furtivo autorizado: ${furtivo}; uso deste turno consumido.`);
+    } else if (e.ficha.rankLadino) {
+      evento?.notas.push(e.usouFurtivo ? "Dano Furtivo já usado neste turno." : "Dano Furtivo não aplicado: sem abertura ou Vantagem.");
+    }
+    if (evento) evento.bruto = dano;
   } else {
     // teste de resistência do alvo: metade se passar. Envenenado também cobra
     // Desvantagem em "testes de atributo" (Cap. 4, §7) — e resistir a uma
     // magia é isso. O bônus é o do ALVO; só o boneco sem ficha usa metade do
     // BC de quem ataca.
-    const resistencia =
-      d20Ajustado(rng, false, alvo.envenenado) + (alvo.bonusResistencia ?? Math.ceil(e.ficha.bc / 2));
-    dano = rolarDados(a.dano, rng) + bonus + a.dadosDeArma * rolarDados(e.ficha.ataqueBasico.dano, rng);
-    if (resistencia >= 8 + e.ficha.bc) dano = Math.floor(dano / 2);
+    const teste = rolarD20ComRegistro(rng, false, alvo.envenenado);
+    const bonusResistencia = alvo.bonusResistencia ?? Math.ceil(e.ficha.bc / 2);
+    const resistencia = teste.natural + bonusResistencia;
+    dano = rolarDano() + bonus;
+    if (evento) {
+      evento.teste = { ...teste, tipo: "resistencia", bonus: bonusResistencia, total: resistencia, defesa: 8 + e.ficha.bc };
+      evento.bruto = dano;
+    }
+    if (resistencia >= 8 + e.ficha.bc) {
+      dano = Math.floor(dano / 2);
+      evento?.notas.push("Resistência bem-sucedida: metade do dano, arredondada para baixo");
+    }
   }
   // Água: frio dobra contra Molhado (Cap. 4, §5)
-  if (a.frio && alvo.molhado) dano *= 2;
+  if (a.frio && alvo.molhado) {
+    dano *= 2;
+    evento?.notas.push("Frio contra Molhado: dano ×2");
+  }
   // O próprio atacante Quebrantado bate mais fraco — 1 por acúmulo, e nunca
   // abaixo de zero: a condição enfraquece o golpe, não cura o alvo.
   dano = Math.max(0, dano - e.quebrantado);
+  if (e.quebrantado) evento?.notas.push(`Quebrantado do atacante: −${e.quebrantado}`);
   if (a.aplicaMolhado) alvo.molhado = true;
   if (a.aplicaQuebrantado) {
     // O teto é o Bônus de Rank de quem aplica ("até o máximo do Bônus de Rank
@@ -1340,6 +1532,10 @@ export function resolver(e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng): nu
     const media = mediaDados(a.danoPorTurno) + e.ficha.bc;
     const jaTem = alvo.sustentados.some((x) => Math.abs(x.media - media) < 0.01);
     if (!jaTem) alvo.sustentados.push({ media, turnos: TURNOS_SUSTENTADOS - 1 });
+  }
+  if (evento) {
+    evento.aposModificadores = dano;
+    registrar?.(evento);
   }
   return dano;
 }
@@ -1375,8 +1571,10 @@ export function aplicarDano(
    * e Imunidade não se aplicam — é o caso das contas puras e do dano genérico
    * do orçamento por turno, que não tem tipo declarado.
    */
-  tipoDeDano?: string
+  tipoDeDano?: string,
+  evento?: EventoAtaque
 ): number {
+  if (evento) evento.aplicacao = { aposResistencia: Math.max(0, dano), absorvidoTemporario: 0, perdaPv: 0, danoEfetivo: 0 };
   if (dano <= 0) return 0;
   /*
    * RESISTÊNCIA E IMUNIDADE — Cap. 4, §6, antes de tudo o mais.
@@ -1390,8 +1588,16 @@ export function aplicarDano(
    */
   if (tipoDeDano) {
     const t = tipoDeDano.toLowerCase();
-    if (alvo.imunidades.some((i) => t.includes(i))) return 0;
-    if (alvo.resistencias.some((r) => t.includes(r))) dano = Math.floor(dano / 2);
+    if (alvo.imunidades.some((i) => t.includes(i))) {
+      if (evento?.aplicacao) evento.aplicacao.aposResistencia = 0;
+      evento?.notas.push("Imunidade ao tipo de dano");
+      return 0;
+    }
+    if (alvo.resistencias.some((r) => t.includes(r))) {
+      dano = Math.floor(dano / 2);
+      evento?.notas.push("Resistência ao tipo de dano: metade");
+    }
+    if (evento?.aplicacao) evento.aplicacao.aposResistencia = dano;
     if (dano <= 0) return 0;
   }
   /*
@@ -1407,6 +1613,7 @@ export function aplicarDano(
     alvo.feridaFresca = 1;
     alvo.estabilizado = false;
     alvo.marcasDaMorte += critico ? 2 : 1;
+    evento?.notas.push(`Alvo a 0 PV: +${critico ? 2 : 1} Marca${critico ? "s" : ""} da Morte`);
     if (alvo.marcasDaMorte >= 3) {
       alvo.morto = true;
       alvo.inconsciente = false;
@@ -1416,6 +1623,7 @@ export function aplicarDano(
   // "Gastos antes dos PV reais": a casca come o golpe primeiro, e só o que
   // sobrar chega na carne.
   const absorvido = Math.min(alvo.pvTemp, dano);
+  const pvAntes = alvo.pv;
   alvo.pvTemp -= absorvido;
   const real = dano - absorvido;
   alvo.pv -= real;
@@ -1455,7 +1663,31 @@ export function aplicarDano(
       }
     }
   }
+  if (evento?.aplicacao) {
+    evento.aplicacao.absorvidoTemporario = absorvido;
+    evento.aplicacao.perdaPv = Math.max(0, pvAntes - alvo.pv);
+    evento.aplicacao.danoEfetivo = evento.aplicacao.perdaPv;
+  }
   return real;
+}
+
+/** Resolve e aplica o mesmo ataque; o recibo observa as rolagens já realizadas. */
+export function executarAtaquePersonagem(
+  e: EstadoPersonagem, acao: Acao, alvo: Alvo, rng: Rng, logger?: RegistroCombate
+): number {
+  let evento: EventoAtaque | undefined;
+  const dano = resolver(e, acao, alvo, rng, (registro) => { evento = registro; });
+  e.escondido = false;
+  const pvAntes = alvo.pv;
+  aplicarDano(alvo, dano, e.ficha.bonusDeRank, rng, evento?.critico ?? false, acao.dano, evento);
+  const causado = Math.max(0, pvAntes - alvo.pv);
+  if (evento?.aplicacao) evento.aplicacao.danoEfetivo = causado;
+  if (evento && logger) {
+    evento.notas.push(`Custo: ${acao.acoes} Ação(ões), ${acao.pm} PM, ${acao.pt} PT`);
+    if (logger.ataque) logger.ataque(evento);
+    else logger.log(formatarEventoAtaque(evento));
+  }
+  return causado;
 }
 
 /**
@@ -1698,6 +1930,16 @@ function melhorSuporte(candidatas: Acao[], alcance: number): Acao {
 
 /** Um turno inteiro de um personagem: 3 Ações gastas na melhor coisa disponível. */
 export function turnoPersonagem(
+  e: EstadoPersonagem, inimigos: Alvo[], rng: Rng,
+  aliados: EstadoPersonagem[] = [], logger?: RegistroCombate,
+): void {
+  e.jaAgiu = true;
+  e.usouFurtivo = false;
+  try { executarTurnoPersonagem(e, inimigos, rng, aliados, logger); }
+  finally { e.surpreso = false; }
+}
+
+function executarTurnoPersonagem(
   e: EstadoPersonagem,
   inimigos: Alvo[],
   rng: Rng,
@@ -1710,7 +1952,7 @@ export function turnoPersonagem(
    * aliado. Quem passa, passa o time INTEIRO incluindo `e`: o curandeiro se
    * cura, e o livro não diz o contrário.
    */
-  aliados: EstadoPersonagem[] = []
+  aliados: EstadoPersonagem[] = [], logger?: RegistroCombate
 ): void {
   /*
    * O turno de quem está no chão é o teste do Fio da Vida, e nada mais.
@@ -1731,8 +1973,9 @@ export function turnoPersonagem(
   }
   if (!e.vivo) return;
 
-  let acoes = 3;
+  let acoes = e.surpreso ? 1 : (e.ficha.acoesPorTurno ?? 3);
   let guarda = 0;
+  let tentouEsconder = false;
   if (e.conjurando) e.conjurando.acoesNesteTurno = 0;
 
   while (acoes > 0 && guarda++ < 10) {
@@ -1763,7 +2006,7 @@ export function turnoPersonagem(
         // `c.acao.dano` é a fórmula inteira ("6d10 + BC (ígneo)") e serve de
         // tipo: Resistência e Imunidade procuram a palavra dentro dela. É o
         // mesmo lugar de onde a detecção de fogo do motor já lia.
-        e.danoCausado += aplicarDano(alvo, resolver(e, c.acao, alvo, rng), e.ficha.bonusDeRank, rng, false, c.acao.dano);
+        e.danoCausado += executarAtaquePersonagem(e, c.acao, alvo, rng, logger);
       }
       break;
     }
@@ -1795,11 +2038,18 @@ export function turnoPersonagem(
       // Dados e BC separados: a Ferida Fresca dobra só os dados (ver `curar`).
       const dados = rolarDados(suporte.acao.formulaSuporte, rng);
       const alvos = suporte.acao.area ? aliados.filter((x) => x.vivo) : [suporte.alvo];
+      let amount = 0;
       for (const alvo of alvos) {
-        e.pvCurado +=
-          suporte.acao.tipo === "cura"
-            ? curar(alvo, dados, alvo.ficha.pvMax, suporte.acao.sempreFresca, e.ficha.bc)
-            : darPvTemp(alvo, dados + e.ficha.bc);
+        if (suporte.acao.tipo === "cura") {
+           const c = curar(alvo, dados, alvo.ficha.pvMax, suporte.acao.sempreFresca, e.ficha.bc);
+           e.pvCurado += c; amount += c;
+        } else {
+           const c = darPvTemp(alvo, dados + e.ficha.bc);
+           amount += c;
+        }
+      }
+      if (logger) {
+        logger.log(`[${e.nome}] usa ${suporte.acao.nome} em ${alvos.length > 1 ? "todos os aliados" : suporte.alvo.nome} (${suporte.acao.tipo}: ${amount})`);
       }
       continue;
     }
@@ -1807,7 +2057,44 @@ export function turnoPersonagem(
     // O alvo da vez entra na escolha: sem ele a IA não sabe se a técnica de
     // ataque que ela prefere tem chance de acertar este inimigo.
     // O cântico dividido só começa com o turno inteiro na mão — ver `escolherAcao`.
+    if (e.emPostura) {
+      if (e.ficha.temMareRetorno && e.pt >= 3 && e.ficha.rankAgua < 6) {
+        e.pt -= 3;
+        e.fluxoRestante = e.ficha.rankAgua;
+        logger?.log(`[${e.nome}] paga 3 PT e 1 Ação por Maré de Retorno: até ${e.ficha.rankAgua} Fluxos nesta rodada.`);
+      }
+      logger?.log(`[${e.nome}] mantém a Postura de Água e aguarda ataques.`);
+      break;
+    }
+    if (e.ficha.temPassoVazio && e.usouPrimeiroGolpe && !e.usouPassoVazio && acoes >= 2) {
+      acoes--;
+      e.usouPassoVazio = true;
+      e.usouPrimeiroGolpe = false;
+      e.escondido = true;
+      logger?.log(`[${e.nome}] gasta 1 Ação em Passo Vazio e reaparece na ação seguinte, reativando Primeiro Golpe.`);
+    }
+    if (e.ficha.rankLadino && e.podeEsconderEmCombate && !e.escondido &&
+        !tentouEsconder && acoes >= 2 && vivos[0].jaAgiu) {
+      tentouEsconder = true;
+      acoes--;
+      const rolagem = d20(rng);
+      const defesa = Math.max(...vivos.map((x) => x.percepcaoPassiva ?? 10));
+      e.escondido = rolagem + e.ficha.bonusFurtividade >= defesa;
+      logger?.log(`[${e.nome}] gasta 1 Ação para Se Esconder: ${rolagem} + ${e.ficha.bonusFurtividade} contra Percepção ${defesa} — ${e.escondido ? "conseguiu" : "falhou"}.`);
+      continue;
+    }
     const a = escolherAcao(e, acoes, vivos[0], acoes === 3);
+    const alcance = ehGolpeBasico(a) ? (e.alcanceArma ?? 1.5) : alcanceEmMetros(a.alcance);
+    const distancia = distanciaEntre(e, vivos[0]);
+    if (distancia !== undefined && distancia > alcance) {
+      if (!aproximar(e, vivos[0], alcance, e.ficha.deslocamento)) {
+        logger?.log(`[${e.nome}] não consegue alcançar o alvo.`);
+        break;
+      }
+      acoes--;
+      logger?.log(`[${e.nome}] gasta 1 Ação para se aproximar (${distanciaEntre(e, vivos[0])} m do alvo).`);
+      continue;
+    }
     e.pm -= a.pm;
     e.pt -= a.pt;
 
@@ -1825,7 +2112,10 @@ export function turnoPersonagem(
     acoes -= a.acoes;
     const alvos = a.area ? vivos : [vivos[0]];
     for (const alvo of alvos) {
-      e.danoCausado += aplicarDano(alvo, resolver(e, a, alvo, rng), e.ficha.bonusDeRank, rng, false, a.dano);
+      for (let golpe = 0; golpe < (e.ficha.ataquesPorAcao ?? 1) && alvo.vivo; golpe++) {
+        const dmg = executarAtaquePersonagem(e, a, alvo, rng, logger);
+        e.danoCausado += dmg;
+      }
     }
   }
 
@@ -1902,7 +2192,19 @@ function feridaDoInicioDoTurno(alvo: Alvo): void {
 
 /** Rearma a Reação/ação lendária no início de uma rodada da mesa, se elegível. */
 export function aoIniciarRodada(alvo: Alvo, elegivel: boolean): void {
-  if (elegivel) alvo.reacaoDisponivel = true;
+  if (elegivel) {
+    alvo.reacaoDisponivel = !alvo.surpreso;
+    if ("ficha" in alvo) {
+      const e = alvo as EstadoPersonagem;
+      e.fluxoRestante = e.emPostura && e.ficha.rankAgua >= 6 ? Infinity : e.ficha.fluxoUsosMax;
+      e.fluxosNesteTurno.clear();
+      if (e.emPostura) {
+        e.reacoesExtra = e.ficha.posturaReacoesExtra + e.ficha.reacaoExtraFixa;
+      } else {
+        e.reacoesExtra = e.ficha.reacaoExtraFixa;
+      }
+    }
+  }
 }
 
 /**
@@ -1910,7 +2212,14 @@ export function aoIniciarRodada(alvo: Alvo, elegivel: boolean): void {
  * consumiu — o que ela FAZ é responsabilidade de quem chamou.
  */
 export function consumirReacao(alvo: Alvo): boolean {
-  if (!alvo.vivo || !alvo.reacaoDisponivel) return false;
+  if (!alvo.vivo || alvo.surpreso) return false;
+  if (!alvo.reacaoDisponivel) {
+    if ("ficha" in alvo && (alvo as EstadoPersonagem).reacoesExtra > 0) {
+      (alvo as EstadoPersonagem).reacoesExtra--;
+      return true;
+    }
+    return false;
+  }
   alvo.reacaoDisponivel = false;
   return true;
 }
@@ -1932,7 +2241,7 @@ export const SIMPLIFICACOES = [
   "O Fio da Vida (Cap. 4, §7) entra desde a 0.1.38: a 0 PV o personagem CAI Inconsciente, rola 1d20 + Vigor + metade do maior Bônus de Rank (com a Escala do Vigor) contra CD 8 + o Bônus de Rank de quem o derrubou, junta Marcas da Morte e morre de vez na terceira — e qualquer cura de aliado o levanta com todas as Marcas removidas. Estabilizado para de rolar, como o livro manda; acordar sozinho leva 1d4 horas e nenhum combate daqui dura isso. Sofrer dano a 0 PV dá 1 Marca (2 no crítico) e tira o Estabilizado; aqui só a ação em ÁREA de uma criatura alcança quem está no chão, porque a IA não gasta golpe único em quem já não luta. O que fica de fora: a IA não gasta Ação estabilizando ninguém com Medicina (1 Ação, CD 10, Vantagem com Kit de Primeiros Socorros), o golpe corpo a corpo contra o caído não vira crítico automático (sem mapa, não há \"adjacente\"), e a Exaustão de quem acorda não é modelada. Criatura não tem Fio da Vida: a 0 PV ela morre.",
   "A Ferida Fresca é o dano sofrido desde o início do último turno do próprio alvo, e contra ela dobram os DADOS da cura, com o BC somado uma vez. Qualquer dano nessa janela abre a Ferida, mesmo o que os PV Temporários absorveram inteiro, e aí os dados da cura inteira dobram: o motor não mede quanto do dano foi fresco nem limita a cura a ele. Até a revisão do livro o motor dobrava dados e BC juntos e contava a janela por dois turnos do alvo.",
   "Testes de resistência: 1d20 + atributo + metade do maior Bônus de Rank. A criatura resiste com o Bônus de Resistência do Apêndice G (metade do Bônus de Ataque dela). O personagem resiste à ação de uma criatura com o atributo do MEIO entre Vigor, Agilidade e Espírito, porque a ação montada pelo Mestre não diz qual atributo cobra: nem o melhor, nem o pior. Contra um boneco sem ficha, o bônus de quem resiste continua sendo metade do BC de quem ataca.",
-  "A CD que a criatura impõe no Fio da Vida e na Concentração usa o Bônus de Rank do patamar dela (1 no 1º patamar, 6 no 6º). O golpe comum usa o dado da árvore do Corpo de maior Rank, igual à ficha, mas soma o BC da árvore INICIAL: o motor guarda um BC só por personagem.",
+  "A CD que a criatura impõe no Fio da Vida e na Concentração usa o Bônus de Rank do patamar dela (1 no 1º patamar, 6 no 6º). O golpe comum usa a arma escolhida no encontro ou a única equipada, os degraus da ficha e o atributo e Rank do contexto de arma. Sem escolha válida, usa uma referência d6 com aviso. As demais técnicas ainda compartilham o BC da árvore inicial; essa limitação não foi removida nesta etapa.",
   "Antes disso o motor matava a 0 PV, e isso não era só infidelidade: era a razão de TODO combate contra chefe dar 0% ou 100%. Quem caía sumia da luta pra sempre, o dano do grupo despencava, a luta se alongava e caía o próximo — realimentação positiva não produz meio-termo. Com o Fio da Vida e um curandeiro, o 4º patamar virou 55% de vitória contra 45% de dizimação.",
   "Conjuração Contínua e Dividida (Cap. 4, §3) entra na 0.1.40: magia que custa mais Ações do que o turno tem é recitada ao longo de turnos, com Perda de Foco (1 Ação por turno, no mínimo) e teste de Concentração (1d20 + Espírito + metade do maior Bônus de Rank) contra CD 10 + o Bônus de Rank de quem acertou; na falha, o cântico se perde junto com metade do PM investido, arredondado pra baixo. Cair Inconsciente interrompe sem teste, com o mesmo preço. Sem ela, as magias de 4 Ações (Rei e Imperador; o teto é 4) eram inalcançáveis — Sol Menor, Zero Absoluto, Era Glacial, Vazio, as maiores magias do jogo.",
   "A IA só COMEÇA um cântico longo com o turno inteiro na mão: é regra de decisão declarada, não do livro. Sem ela, um mago com 1 Ação sobrando largava o golpe de arma pra começar um cântico de 3 Ações e amarrava o turno seguinte — o time dos magos perdia 16 pontos de vitória por isso. E a IA não desconta o risco de interrupção ao escolher: ela é otimista, e o relatório mede o preço mesmo assim. Cura e escudo seguem sem cântico dividido — um curandeiro que passa dois turnos recitando enquanto o grupo cai é jogada ruim, não simplificação.",
@@ -1940,6 +2249,7 @@ export const SIMPLIFICACOES = [
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Os quatro TETOS do Cap. 4, §5: só um é honrado aqui. \"Vantagem é binária\" está no motor e tem teste (`vantagem.test.ts`). Os outros três não são modelados porque o que eles limitam também não é: o Teto de Auxílio (+6 de bônus vindos de aliados) e o Teto de Ações (4 próprias + 2 concedidas) exigem habilidades que DÃO Ação ou bônus a outro personagem, e o motor não tem nenhuma; Duas Salvações por Combate limita cinco efeitos de impedir morte, e só o Fio da Vida está implementado.",
   "É por isso que Navegação e Liderança (o Tático) é a árvore mais invisível do livro aqui: as dezenove habilidades dela não causam dano NENHUM — ela fabrica Ação e bônus pros outros, que é a única moeda que este combate gasta. O próprio Cap. 4 diz o que acontece sem o teto: \"um Norte Imperador com um Tático Comandante na mesa chega a 7 Ações por turno, e o combate deixa de existir\". Nada disso é simulado, nem a favor nem contra.",
-  "Proficiência de arma (Cap. 1, §4) não é conferida: o motor nunca dá a Desvantagem que o livro cobra de quem empunha arma fora dos seus grupos, nem sabe que escudo sem o grupo Escudos rende +1 de CA em vez de +2. Na prática isso não move estes números, porque as builds do playtest usam a arma da própria árvore — mas moveria na mesa, onde alguém pega o que dropou. A regra é de 0.1.52 e o motor é anterior a ela.",
-  "Terreno, distância, posicionamento e surpresa não existem: todo mundo alcança todo mundo desde a primeira rodada.",
+  "Proficiência de arma é conferida no golpe comum e nas técnicas com Dados de Arma: falta de proficiência impõe Desvantagem no acerto, sem reduzir o dano. O recibo mostra os dois d20. A arma de referência não pressupõe um grupo real de arma. O tipo físico de dano da arma ainda não vem do inventário, então resistências específicas a cortante, perfurante ou contundente não são inferidas nesse golpe.",
+  "A ficha do Ladino ativa Dano Furtivo em aberturas válidas. Primeiro Golpe soma o ataque de arma, seu dano triplicado e a parcela furtiva normal quando elegível. Antes da iniciativa o Ladino tenta Esconder-se contra a Percepção das criaturas; Passo Vazio reabre o Primeiro Golpe uma vez. Com cobertura, pode gastar 1 Ação para tentar Esconder-se novamente. Segredos personalizados e demais reações não descritas no recibo precisam de arbitragem.",
+  "Cenário opcional: distância em uma linha, alcance, terreno difícil, Escondido e Surpreso. Sem distância declarada, mantém o combate abstrato. Áreas atingem o grupo elegível; cobertura e geometria não são calculadas. Criaturas sem ações declaradas usam orçamento abstrato e não acionam Fluxo.",
 ];

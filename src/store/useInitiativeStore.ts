@@ -21,6 +21,8 @@ export interface Condition {
  * criatura no meio da luta, o bicho que já está na mesa não muda debaixo dele.
  */
 export interface FichaDeCombate {
+  notasCombate?: string[];
+  bonusAtaque?: number;
   ca: number;
   percepcao: number;
   /** "+3" já formatado — o rastreador exibe, não calcula. */
@@ -35,6 +37,24 @@ export interface FichaDeCombate {
   /** A CD que ela impõe, e o Bônus de Rank dela (= o patamar). */
   cdResistencia: number;
   patamar: number;
+  /** As ações/ataques que o Mestre montou pra ela (0.1.94). */
+  acoes?: {
+    bonusAtaque?: number;
+    desvantagemAtaque?: boolean;
+    aplicaPreso?: boolean;
+    aplicaCaido?: boolean;
+    aplicaMolhado?: boolean;
+    aplicaVeneno?: boolean;
+    nome: string;
+    acoes: number;
+    dano: string;
+    /** Multiplicador já aplicado à rolagem no construtor de encontros. */
+    escalaDano?: number;
+    alcance: string;
+    area: boolean;
+    tipo: string;
+    nota: string;
+  }[];
 }
 
 export interface Combatant {
@@ -57,7 +77,7 @@ interface InitiativeState {
   round: number;
   currentTurnId: string | null;
 
-  addCombatant: (name: string, initiative: number, maxHp?: number, ficha?: FichaDeCombate) => void;
+  addCombatant: (name: string, initiative: number, maxHp?: number, ficha?: FichaDeCombate, condicoes?: string[]) => void;
   removeCombatant: (id: string) => void;
   updateCombatant: (id: string, patch: Partial<Omit<Combatant, "id" | "conditions">>) => void;
   addCondition: (combatantId: string, name: string, duration?: number) => void;
@@ -73,7 +93,7 @@ export const useInitiativeStore = create<InitiativeState>()(
       round: 1,
       currentTurnId: null,
 
-      addCombatant: (name, initiative, maxHp, ficha) =>
+      addCombatant: (name, initiative, maxHp, ficha, condicoes = []) =>
         set((state) => ({
           combatants: [
             ...state.combatants,
@@ -83,7 +103,7 @@ export const useInitiativeStore = create<InitiativeState>()(
               initiative,
               maxHp,
               currentHp: maxHp,
-              conditions: [],
+              conditions: condicoes.map((name) => ({ id: makeId("cond"), name })),
               ficha,
             },
           ],
