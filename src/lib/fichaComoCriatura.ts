@@ -1,6 +1,6 @@
 import { CharacterData } from "./types";
 import { AcaoCriatura, CriaturaEncontro } from "./encounterSim";
-import { Acao, mediaFormula, modificadorFixo, montarFicha, patamarDaFicha } from "./combatSim";
+import { Acao, type FichaCombate, mediaFormula, modificadorFixo, montarFicha, patamarDaFicha } from "./combatSim";
 import { getSpellDC, getPaSpent, getTreeAttributeKey } from "@/store/selectors";
 import { getTreeById } from "@/data/trees/index";
 import { rankDaFicha } from "./combatSim";
@@ -46,14 +46,6 @@ import { rankDaFicha } from "./combatSim";
  * algo que a tabela não calibrou.
  */
 
-/** Quantas ações ofensivas a criatura herda. Além disso, o cartão vira um catálogo ilegível. */
-const MAX_ACOES = 8;
-
-function faceDoDado(formula: string): number {
-  const m = formula.match(/d\s*(\d+)/i);
-  return m ? Number(m[1]) : 6;
-}
-
 /**
  * A fórmula rolável de uma ação do livro.
  *
@@ -74,32 +66,63 @@ function faceDoDado(formula: string): number {
  *    ação como simplificação declarada: quem lê este cartão na mesa lê a carta
  *    da habilidade ao lado, e as duas têm que fechar.
  */
-export function formulaDaAcao(acao: Acao, facesDaArma: number, bc: number): string {
+const TIPOS_DE_DANO = ["cortante", "perfurante", "contundente", "ígneo", "frio", "elétrico", "radiante", "sônico", "veneno", "ácido", "psíquico"];
+
+export function formulaDaAcao(acao: Acao, dadoDaArma: number | string, bc: number): string {
   const semCondicional = acao.dano.replace(/\([^)]*\)/g, " ");
   const semContagem = semCondicional.replace(/[+-]?\s*\d+\s*Dados?\s+de\s+Arma/gi, " ");
   const proprios = semContagem.match(/\d+\s*d\s*\d+/gi)?.map((d) => d.replace(/\s+/g, "")) ?? [];
   const partes = [...proprios];
-  if (acao.dadosDeArma > 0) partes.push(`${acao.dadosDeArma}d${facesDaArma}`);
+  const formulaArma = typeof dadoDaArma === "number" ? `1d${dadoDaArma}` : dadoDaArma;
+  // Fórmula de criatura não expressa metade de uma parcela: não transformar
+  // 0,5 dado em "0.5d8", que o leitor interpretaria como CINCO dados.
+  if (!Number.isInteger(acao.dadosDeArma)) return "";
+  if (acao.dadosDeArma > 0) {
+    for (const dado of formulaArma.matchAll(/(\d*)d(\d+)/gi)) {
+      partes.push(`${Number(dado[1] || 1) * acao.dadosDeArma}d${dado[2]}`);
+    }
+  }
   if (partes.length === 0) return "";
   const usaBC = acao.dadosDeArma > 0 || /\bBC\b|Bônus de Combate/i.test(semCondicional);
-  const soma = modificadorFixo(semContagem) + (usaBC ? bc : 0);
-  return partes.join("+") + (soma > 0 ? `+${soma}` : soma < 0 ? `${soma}` : "");
+  const soma = modificadorFixo(semContagem) + (usaBC ? bc : 0) + acao.dadosDeArma * modificadorFixo(formulaArma);
+  let resultado = partes.join("+") + (soma > 0 ? `+${soma}` : soma < 0 ? `${soma}` : "");
+
+  // 0.1.94: Recupera os tipos de dano para que a simulação consiga ver Resistências/Imunidades
+  const tiposPresentes = TIPOS_DE_DANO.filter(t => acao.dano.toLowerCase().includes(t));
+  if (tiposPresentes.length > 0 && resultado !== "") {
+    resultado += ` (${tiposPresentes.join(", ")})`;
+  }
+
+  return resultado;
 }
 
-function acaoDaFicha(acao: Acao, facesDaArma: number, bc: number, id: string): AcaoCriatura {
-  const dano = formulaDaAcao(acao, facesDaArma, bc);
+function danoConvertido(acao: Acao, ficha: FichaCombate): string {
+  if (acao.regra === "primeiro-golpe") {
+    const bonus = ficha.arma.damageBonus;
+    return `${ficha.ataqueBasico.dano}+${acao.dano}${bonus >= 0 ? "+" : ""}${bonus}`;
+  }
+  return formulaDaAcao(acao, ficha.ataqueBasico.dano, ficha.bc);
+}
+
+function acaoDaFicha(acao: Acao, ficha: FichaCombate, id: string): AcaoCriatura {
+  const dano = danoConvertido(acao, ficha);
   return {
     id,
+    regra: acao.regra === "primeiro-golpe" ? "primeiro-golpe" : undefined,
     nome: acao.nome,
     acoes: Math.min(3, Math.max(1, acao.acoes)),
     dano,
     alcance: acao.area ? "Área" : "Ver a ficha",
     area: acao.area,
     tipo: acao.ataque ? "ataque" : "resistencia",
+    bonusAtaque: acao.regra === "primeiro-golpe" ? ficha.arma.attackBonus : undefined,
+    desvantagemAtaque: acao.regra === "primeiro-golpe" && !ficha.arma.proficiente,
     // O texto original do livro vai junto: a tradução acima resolve o dado, e
     // não resolve "empurra 3m", "ignora armadura" nem o custo em PM. Quem lê a
     // carta na mesa é o Mestre, e ele merece a frase inteira.
-    nota: acao.dano === dano ? "" : acao.dano,
+    nota: acao.regra === "primeiro-golpe"
+      ? `Uma vez por combate contra alvo Desprevenido. Parcela especial: ${acao.dano}; Dano Furtivo normal entra no primeiro acerto elegível do turno.`
+      : acao.dano === dano ? "" : acao.dano,
     aplicaPreso: false,
     aplicaCaido: false,
     aplicaMolhado: acao.aplicaMolhado,
@@ -120,7 +143,6 @@ export function criaturaDaFicha(
   const ficha = montarFicha(c);
   const tree = getTreeById(c.startingTreeId);
   const attr = getTreeAttributeKey(c, c.startingTreeId, "forca");
-  const facesDaArma = faceDoDado(ficha.ataqueBasico.dano);
 
   // O ataque comum vem SEMPRE e vem primeiro: nenhuma árvore o declara como
   // habilidade (é regra do Cap. 4), e uma criatura que só tem as técnicas
@@ -131,38 +153,43 @@ export function criaturaDaFicha(
   // árvore do CORPO dá um "golpe sem estilo" e soma só o atributo, sem Bônus de
   // Rank — a Escada de Dados e o Rank no golpe são exclusivos do Corpo (Cap. 3).
   // Somar `bc` aqui daria ao mago convertido o braço de um espadachim.
-  const bonusDoBasico = ficha.ataqueBasico.nome === "golpe sem estilo" ? ficha.bcSemRank : ficha.bc;
+  const bonusDoBasico = ficha.arma.damageBonus - ficha.arma.penalidadeQuebrantado;
   const basico: AcaoCriatura = {
     id: novoId(),
     nome: `Ataque com ${ficha.ataqueBasico.nome}`,
     acoes: 1,
-    dano: `${ficha.ataqueBasico.dano}+${bonusDoBasico}`,
+    dano: `${ficha.ataqueBasico.dano}${bonusDoBasico >= 0 ? "+" : ""}${bonusDoBasico}`,
+    bonusAtaque: ficha.arma.attackBonus,
+    desvantagemAtaque: !ficha.arma.proficiente,
     alcance: "Corpo a corpo",
     area: false,
     tipo: "ataque",
-    nota: "",
+    nota: `${ficha.arma.nome}: ${ficha.arma.baseDie} → ${ficha.arma.escalatedDie}; ${ficha.arma.steps} degraus. ${ficha.arma.aviso ?? ""}`.trim(),
     aplicaPreso: false,
     aplicaCaido: false,
     aplicaMolhado: false,
     aplicaVeneno: false,
   };
 
-  // As mais fortes primeiro, e um teto: um Imperador com vinte magias compradas
-  // viraria um cartão de duas telas, e a simulação só gasta 3 Ações por turno —
-  // da nona ação pra baixo, nada disso chega a ser rolado.
-  const doLivro = ficha.acoes
-    .map((a) => ({ a, media: mediaFormula(formulaDaAcao(a, facesDaArma, ficha.bc)) }))
+  // As mais fortes primeiro, mas sem um teto arbitrário: uma técnica situacional
+  // pode ser a melhor escolha quando o alvo ou o cenário muda. A ficha importada
+  // deve manter todas as ações de dano que conseguimos traduzir.
+  const convertiveis = ficha.acoes
+    .filter((a) => a.tipo === "dano" && !a.reacao)
+    .map((a) => ({ a, media: mediaFormula(danoConvertido(a, ficha)) }))
     .filter(({ media }) => media > 0)
-    .sort((x, y) => y.media - x.media)
-    .slice(0, MAX_ACOES)
-    .map(({ a }) => acaoDaFicha(a, facesDaArma, ficha.bc, novoId()));
+    .sort((x, y) => y.media - x.media);
+  const doLivro = convertiveis.map(({ a }) => acaoDaFicha(a, ficha, novoId()));
 
   const patamar = Math.min(6, Math.max(1, patamarDaFicha(c)));
   const rank = rankDaFicha(c);
-  const sobraram = ficha.acoes.length - doLivro.length;
+  const convertidas = new Set(convertiveis.map(({ a }) => a));
+  const naoSimuladas = ficha.acoes.filter((a) => !convertidas.has(a)).map((a) => a.nome);
 
   return {
     nome: ficha.nome,
+    dadosFurtivos: ficha.rankLadino || undefined,
+    temPassoVazio: ficha.temPassoVazio || undefined,
     patamar,
     // "Padrão" é o que uma ficha é: um indivíduo que joga UM turno de 3 Ações.
     // "Chefe" daria a ele a rodada extra do Apêndice G, que existe pra
@@ -180,7 +207,8 @@ export function criaturaDaFicha(
     quantidade: 1,
     perigo: [
       `Ficha de personagem: ${tree?.name ?? "sem árvore inicial"}${rank ? `, ${rank}` : ""}, ${getPaSpent(c)} PA.`,
-      sobraram > 0 ? `${sobraram} habilidade${sobraram > 1 ? "s" : ""} de dano ficaram de fora (as mais fracas).` : "",
+      naoSimuladas.length > 0 ? `Ainda não simuladas como ações desta criatura: ${naoSimuladas.join(", ")}.` : "",
+      ficha.temPassoVazio ? "Passo Vazio consome 1 Ação, uma vez por combate, e reabre Primeiro Golpe na ação seguinte." : "",
       `Os números vieram da ficha, não do molde (Apêndice G, "Rivais com ficha"). Bônus de Rank: +${patamar}.`,
     ]
       .filter(Boolean)

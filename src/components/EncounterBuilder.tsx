@@ -4,6 +4,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import BlocoDoMonstro from "./BlocoDoMonstro";
 import MedidorDeEncontro from "./MedidorDeEncontro";
+import EncounterScenes from "./EncounterScenes";
+import EncounterScenario from "./EncounterScenario";
+import EncounterCatalog from "./EncounterCatalog";
+import EncounterRewards from "./EncounterRewards";
+import EncounterCombatLogs from "./EncounterCombatLogs";
+import { BATALHAS_ENCONTRO as BATALHAS, type RelatorioEncontro, type RespostaSimulacao } from "@/lib/encounterReport";
 import {
   ArrowDown,
   ArrowUp,
@@ -55,14 +61,14 @@ import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import { CharacterData } from "@/lib/types";
 import { SIMPLIFICACOES, mediaFormula, patamarDaFicha, rankDaFicha, tiposDeDanoDaFicha } from "@/lib/combatSim";
+import { resolverArmaCombate } from "@/lib/combatWeapon";
 import {
   AcaoCriatura,
   CriaturaEncontro,
-  ResultadoEncontro,
   aplicarPapel,
   danoDasAcoesPorRodada,
+  escalaDaAcao,
   planoDoTurno,
-  simularEncontro,
   usaAcoes,
 } from "@/lib/encounterSim";
 import { criaturaDaFicha } from "@/lib/fichaComoCriatura";
@@ -78,10 +84,7 @@ import { AlvoDoGrupo, Aviso, NivelAviso, avisarSobreCriatura } from "@/lib/creat
 import {
   AjusteSugerido,
   Faixa,
-  Veredito,
-  ajustarParaEquilibrio,
-  arredondarPv,
-  avaliar,
+  aplicarEscalaAoEncontro,
   formatarPorcentagem,
 } from "@/lib/encounterBalance";
 import {
@@ -101,11 +104,6 @@ import {
   sinal,
 } from "@/data/bestiary";
 
-/** Quantas batalhas o veredito roda. Alto o bastante pra estabilizar a % de vitória, baixo o bastante pra caber num clique. */
-const BATALHAS = 300;
-/** O ajuste automático roda 11 simulações; elas usam menos batalhas pra tela não travar. */
-const BATALHAS_AJUSTE = 120;
-
 const CORES_FAIXA: Record<Faixa, string> = {
   trivial: "border-parchment-300 bg-parchment-100 text-parchment-700 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-300",
   facil: "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300",
@@ -114,12 +112,7 @@ const CORES_FAIXA: Record<Faixa, string> = {
   letal: "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-300",
 };
 
-interface Relatorio {
-  resultado: ResultadoEncontro;
-  veredito: Veredito;
-  ajuste: AjusteSugerido | null;
-  criaturas: CriaturaEncontro[];
-}
+type Relatorio = RelatorioEncontro;
 
 export default function EncounterBuilder() {
   const order = useCharacterStore((s) => s.order);
@@ -127,9 +120,19 @@ export default function EncounterBuilder() {
   const criaturas = useBestiaryStore((s) => s.criaturas);
   const selecionadas = useBestiaryStore((s) => s.selecionadas);
   const grupo = useBestiaryStore((s) => s.grupo);
+  const configuracao = useBestiaryStore((s) => s.configuracao);
+  const configurarEncontro = useBestiaryStore((s) => s.configurarEncontro);
+  const escolhasDeArma = configuracao.armasPorPersonagem;
+  const workerRef = useRef<Worker | null>(null);
+  const [progresso, setProgresso] = useState("");
+  useEffect(() => () => workerRef.current?.terminate(), []);
 
   const [rodando, setRodando] = useState(false);
   const [relatorio, setRelatorio] = useState<Relatorio | null>(null);
+  const [relatorioAnterior, setRelatorioAnterior] = useState<Relatorio | null>(null);
+  const [assinaturaDoRelatorio, setAssinaturaDoRelatorio] = useState<string | null>(null);
+  const [erroDaSimulacao, setErroDaSimulacao] = useState<string | null>(null);
+  const [mensagemDaIniciativa, setMensagemDaIniciativa] = useState<string | null>(null);
   const [novoPatamar, setNovoPatamar] = useState(3);
   const [novoPapel, setNovoPapel] = useState<PapelCriatura>("padrao");
   /**
@@ -149,6 +152,33 @@ export default function EncounterBuilder() {
     () => criaturas.filter((c) => selecionadas.includes(c.id)),
     [criaturas, selecionadas]
   );
+  const armasPorPersonagem = useMemo(
+    () => Object.fromEntries(
+      fichasDoGrupo
+        .filter((c) => Object.hasOwn(escolhasDeArma, c.id))
+        .map((c) => [c.id, escolhasDeArma[c.id]])
+    ),
+    [fichasDoGrupo, escolhasDeArma]
+  );
+
+  /**
+   * O relatório é uma fotografia, não uma previsão que se atualiza sozinha.
+   * Guardar a assinatura dos dados que entraram no teste evita o pior tipo de
+   * erro de interface: trocar o dano de uma criatura e continuar vendo, sem
+   * aviso, a chance de vitória do encontro anterior.
+   */
+  const assinaturaDaConfiguracao = useMemo(
+    () => JSON.stringify({
+      grupo: fichasDoGrupo,
+      criaturas: criaturasDoEncontro,
+      armasPorPersonagem,
+      semente: configuracao.semente,
+      cenario: configuracao.cenario,
+    }),
+    [fichasDoGrupo, criaturasDoEncontro, armasPorPersonagem, configuracao.semente, configuracao.cenario]
+  );
+  const relatorioDesatualizado =
+    relatorio !== null && assinaturaDoRelatorio !== assinaturaDaConfiguracao;
 
   /**
    * O grupo reduzido ao que os avisos citam: nome, PV e CA.
@@ -188,30 +218,40 @@ export default function EncounterBuilder() {
 
   function simular() {
     if (!podeSimular) return;
+    const assinaturaDaRodada = assinaturaDaConfiguracao;
+    setErroDaSimulacao(null);
     setRodando(true);
-    // Um respiro antes de travar o thread: sem isto o "Simulando…" nunca chega
-    // a pintar e o botão parece congelado durante o segundo de cálculo.
-    setTimeout(() => {
-      const resultado = simularEncontro(fichasDoGrupo, criaturasDoEncontro, {
-        batalhas: BATALHAS,
-      });
-      const veredito = avaliar(resultado);
-      const ajuste =
-        veredito.faixa === "equilibrado"
-          ? null
-          : ajustarParaEquilibrio((escala) =>
-              simularEncontro(fichasDoGrupo, criaturasDoEncontro, {
-                batalhas: BATALHAS_AJUSTE,
-                escala,
-              })
-            );
-      setRelatorio({ resultado, veredito, ajuste, criaturas: criaturasDoEncontro });
-      setRodando(false);
-    }, 30);
+    setProgresso("Preparando a simulação…");
+    try {
+      workerRef.current?.terminate();
+      const worker = new Worker(new URL("../workers/encounter.worker.ts", import.meta.url), { type: "module" });
+      workerRef.current = worker;
+      const terminar = () => { worker.terminate(); workerRef.current = null; setRodando(false); };
+      worker.onmessage = ({ data }: MessageEvent<RespostaSimulacao>) => {
+        if (workerRef.current !== worker) return;
+        if (data.tipo === "progresso") { setProgresso(data.mensagem); return; }
+        if (data.tipo === "resultado") {
+          if (relatorio) setRelatorioAnterior(relatorio);
+          setRelatorio(data.relatorio);
+          setAssinaturaDoRelatorio(assinaturaDaRodada);
+        } else setErroDaSimulacao(data.mensagem);
+        terminar();
+      };
+      worker.onerror = () => {
+        if (workerRef.current !== worker) return;
+        setErroDaSimulacao("A simulação foi interrompida. Tente novamente; se o problema continuar, recarregue a página.");
+        terminar();
+      };
+      worker.postMessage({ grupo: fichasDoGrupo, criaturas: criaturasDoEncontro, configuracao: { ...configuracao, armasPorPersonagem } });
+    } catch {
+      workerRef.current?.terminate(); workerRef.current = null; setRodando(false);
+      setErroDaSimulacao("Não foi possível iniciar a simulação neste navegador. Recarregue a página e tente novamente.");
+    }
   }
 
   function mandarParaIniciativa() {
     const store = useInitiativeStore.getState();
+    let enviados = 0;
     for (const criatura of criaturasDoEncontro) {
       for (let i = 0; i < criatura.quantidade; i++) {
         const nome = criatura.quantidade > 1 ? `${criatura.nome} ${i + 1}` : criatura.nome;
@@ -223,40 +263,65 @@ export default function EncounterBuilder() {
         // da luta — que é outra tela — não tinha nada disso na frente.
         const arq = getArquetipo(criatura.arquetipo);
         const atributos = fichaDeAtributos(criatura.patamar, criatura.arquetipo);
-        store.addCombatant(nome, Math.floor(Math.random() * 20) + 1, criatura.pv, {
+        const umPv = configuracao.cenario?.criaturasUmPv?.includes(criatura.id);
+        const inicio = configuracao.cenario?.participantes?.[criatura.id];
+        const condicoes = ([["escondido", "Escondido"], ["surpreso", "Surpreso"], ["molhado", "Molhado"], ["caido", "Caído"], ["preso", "Preso"], ["envenenado", "Envenenado"]] as const).filter(([id]) => inicio?.[id]).map(([, nome]) => nome);
+        store.addCombatant(nome, Math.floor(Math.random() * 20) + 1, umPv ? 1 : criatura.pv, {
+          notasCombate: [
+            ...(umPv ? ["Horda: 1 PV por cópia (variante da mesa)"] : []),
+            ...(configuracao.cenario?.distancia !== undefined ? [`Distância inicial entre as linhas: ${configuracao.cenario.distancia} m`] : []),
+            ...(configuracao.cenario?.terrenoDificil ? ["Terreno difícil"] : []),
+          ],
+          bonusAtaque: criatura.bonusAtaque,
           ca: criatura.ca,
           percepcao: percepcaoPassiva(criatura.patamar, criatura.arquetipo),
           atributos: (Object.keys(NOME_DO_ATRIBUTO) as (keyof typeof NOME_DO_ATRIBUTO)[]).map((k) => ({
             rotulo: NOME_DO_ATRIBUTO[k].slice(0, 3),
             valor: sinal(atributos[k]),
           })),
-          pericias: criatura.pericias ?? [],
-          resistencias: criatura.resistencias ?? [],
-          imunidades: criatura.imunidades ?? [],
+          pericias: [...(criatura.pericias ?? [])],
+          resistencias: [...(criatura.resistencias ?? [])],
+          imunidades: [...(criatura.imunidades ?? [])],
           deslocamento: criatura.deslocamento ?? arq?.deslocamento ?? 9,
           movimentoEspecial: criatura.movimentoEspecial,
           tamanho: criatura.tamanho,
           sentido: criatura.sentido ?? arq?.sentido,
           cdResistencia: criatura.cdResistencia,
           patamar: criatura.patamar,
-        });
+          acoes: criatura.acoes.map((acao) => ({ ...acao })),
+        }, condicoes);
+        enviados++;
       }
     }
+    setMensagemDaIniciativa(
+      `${enviados} combatente${enviados === 1 ? " foi enviado" : "s foram enviados"} para a Iniciativa.`
+    );
   }
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6">
       <PageHeader icon={Skull} title="Encontros" faixa="/faixas/encontros.jpg" faixaPosition="center 60%">
-        Monte NPCs, monstros e chefes a partir do molde do Apêndice G, escolha quais fichas do grupo
-        entram, e rode o combate {BATALHAS} vezes antes da sessão. O site diz se você acabou de matar a
-        mesa inteira.
+        Escolha as fichas, monte as criaturas e simule a luta. Use o relatório para ajustar a dificuldade
+        e entender quais regras mudam o resultado.
       </PageHeader>
 
+      <nav aria-label="Etapas do encontro" className="mb-6 grid gap-2 sm:grid-cols-3">
+        <a href="#grupo" className="rounded-xl border border-parchment-300 px-3 py-2.5 text-sm transition-colors hover:border-wine-400 hover:bg-parchment-100 dark:border-parchment-700 dark:hover:bg-parchment-900"><span className="mr-2 font-black text-wine-600 dark:text-wine-300">01</span> Grupo <span className="text-parchment-600 dark:text-parchment-400">· {fichasDoGrupo.length} {fichasDoGrupo.length === 1 ? "ficha" : "fichas"}</span></a>
+        <a href="#criaturas" className="rounded-xl border border-parchment-300 px-3 py-2.5 text-sm transition-colors hover:border-wine-400 hover:bg-parchment-100 dark:border-parchment-700 dark:hover:bg-parchment-900"><span className="mr-2 font-black text-wine-600 dark:text-wine-300">02</span> Criaturas <span className="text-parchment-600 dark:text-parchment-400">· {criaturasDoEncontro.reduce((s, c) => s + c.quantidade, 0)} em cena</span></a>
+        <a href="#simular" className="rounded-xl border border-parchment-300 px-3 py-2.5 text-sm transition-colors hover:border-wine-400 hover:bg-parchment-100 dark:border-parchment-700 dark:hover:bg-parchment-900"><span className="mr-2 font-black text-wine-600 dark:text-wine-300">03</span> Simulação <span className="text-parchment-600 dark:text-parchment-400">· {relatorio ? `${relatorio.resultado.batalhas} testes` : "aguardando"}</span></a>
+      </nav>
       <SecaoGrupo
         order={order}
         characters={characters}
         grupo={grupo}
         patamarSugerido={patamarSugerido}
+        escolhasDeArma={escolhasDeArma}
+        onEscolherArma={(personagemId, armaId) => {
+          const proximas = { ...escolhasDeArma };
+          if (armaId === undefined) delete proximas[personagemId];
+          else proximas[personagemId] = armaId;
+          configurarEncontro({ armasPorPersonagem: proximas });
+        }}
       />
 
       <MedidorDeEncontro
@@ -280,17 +345,30 @@ export default function EncounterBuilder() {
         alvosDoGrupo={alvosDoGrupo}
       />
 
-      <section className="mt-8">
+      <EncounterScenario grupo={fichasDoGrupo} criaturas={criaturasDoEncontro} />
+      <section id="simular" className="mt-8 scroll-mt-24">
+        <label className="mb-3 block text-xs font-semibold text-parchment-700 dark:text-parchment-300">
+          Semente da simulação
+          <input type="number" min={0} max={2147483000} step={1} value={configuracao.semente}
+            onChange={(e) => configurarEncontro({ semente: Math.min(2147483000, Math.max(0, Math.trunc(Number(e.target.value) || 0))) })}
+            className="mt-1 block w-40 rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 text-sm dark:border-parchment-700 dark:bg-parchment-950" />
+          <span className="mt-1 block font-normal text-parchment-600 dark:text-parchment-400">Com as mesmas fichas e criaturas, a mesma semente repete os resultados.</span>
+        </label>
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={simular}
             disabled={!podeSimular}
+            aria-busy={rodando}
             className="flex items-center gap-2 rounded-lg bg-wine-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Dices className="h-4 w-4" />
             {rodando ? "Simulando…" : `Testar o encontro (${BATALHAS} batalhas)`}
           </button>
+          {rodando && <button type="button" onClick={() => {
+            workerRef.current?.terminate(); workerRef.current = null; setRodando(false);
+            setProgresso("Simulação cancelada. Você pode ajustar o encontro e tentar de novo.");
+          }} className="rounded-lg border border-parchment-300 px-3 py-2 text-sm dark:border-parchment-700">Cancelar simulação</button>}
           <button
             type="button"
             onClick={mandarParaIniciativa}
@@ -310,13 +388,31 @@ export default function EncounterBuilder() {
                 : null}
           </p>
         )}
+        {progresso && (
+          <p role="status" aria-live="polite" className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">
+            {rodando ? progresso : progresso.startsWith("Simulação cancelada") ? progresso : relatorio ? `Relatório concluído · ${relatorio.resultado.batalhas} batalhas · semente ${relatorio.semente}.` : ""}
+          </p>
+        )}
+        {erroDaSimulacao && (
+          <p role="alert" className="mt-2 text-xs text-rose-700 dark:text-rose-300">
+            {erroDaSimulacao}
+          </p>
+        )}
+        {mensagemDaIniciativa && (
+          <p role="status" aria-live="polite" className="mt-2 text-xs text-emerald-700 dark:text-emerald-300">
+            {mensagemDaIniciativa} <Link href="/iniciativa" className="font-semibold underline">Abrir Iniciativa</Link>
+          </p>
+        )}
       </section>
 
-      {relatorio && <Relatorio relatorio={relatorio} tamanhoDoGrupo={fichasDoGrupo.length} />}
+      {relatorio && <Relatorio relatorio={relatorio} anterior={relatorioAnterior} desatualizado={relatorioDesatualizado} />}
+      <div className="mt-8 grid gap-4 lg:grid-cols-2">
+        <EncounterScenes />
+        <EncounterRewards tamanhoGrupo={fichasDoGrupo.length} />
+      </div>
     </div>
   );
 }
-
 // ---------------------------------------------------------------------------
 // O grupo
 // ---------------------------------------------------------------------------
@@ -325,17 +421,21 @@ function SecaoGrupo({
   characters,
   grupo,
   patamarSugerido,
+  escolhasDeArma,
+  onEscolherArma,
 }: {
   order: string[];
   characters: Record<string, CharacterData>;
   grupo: string[];
   patamarSugerido: number | null;
+  escolhasDeArma: Record<string, string | null>;
+  onEscolherArma: (personagemId: string, armaId: string | null | undefined) => void;
 }) {
   const alternarGrupo = useBestiaryStore((s) => s.alternarGrupo);
   const definirGrupo = useBestiaryStore((s) => s.definirGrupo);
 
   return (
-    <section>
+    <section id="grupo" className="scroll-mt-24">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <h2 className="flex items-center gap-2 font-bold text-parchment-900 dark:text-parchment-50">
           <Users className="h-5 w-5 text-wine-500" /> O grupo
@@ -432,7 +532,101 @@ function SecaoGrupo({
           <b>{rotuloPatamar(patamarSugerido)}</b> contra ele.
         </p>
       )}
+
+      {grupo.some((id) => characters[id]) && (
+        <fieldset className="mt-4 rounded-xl border border-parchment-300 p-3 dark:border-parchment-700">
+          <legend className="px-1 text-sm font-bold text-parchment-900 dark:text-parchment-50">
+            Armas neste encontro
+          </legend>
+          <p className="mb-3 text-xs text-parchment-600 dark:text-parchment-400">
+            Confira a arma e os degraus de cada personagem. O modo automático usa a única arma equipada;
+            sem uma escolha única, usa a referência d6. Esta escolha vale para este teste e seu ajuste de dificuldade.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {grupo.map((id) => {
+              const personagem = characters[id];
+              return personagem ? (
+                <ArmaDoEncontro
+                  key={id}
+                  personagem={personagem}
+                  escolha={escolhasDeArma[id]}
+                  onEscolher={(armaId) => onEscolherArma(id, armaId)}
+                />
+              ) : null;
+            })}
+          </div>
+        </fieldset>
+      )}
     </section>
+  );
+}
+
+function ArmaDoEncontro({
+  personagem,
+  escolha,
+  onEscolher,
+}: {
+  personagem: CharacterData;
+  escolha: string | null | undefined;
+  onEscolher: (armaId: string | null | undefined) => void;
+}) {
+  const armas = personagem.inventory.filter((item) => item.type === "arma");
+  const arma = resolverArmaCombate(personagem, escolha);
+  const estilo = arma.treeId ? getTreeById(arma.treeId) : null;
+  const escolhaAusente = typeof escolha === "string" && !armas.some((item) => item.id === escolha);
+  const origem = arma.origem === "selecionada"
+    ? "escolhida para o encontro"
+    : arma.origem === "equipada"
+      ? "equipada na ficha"
+      : "referência";
+  const avisoId = `arma-encontro-aviso-${personagem.id}`;
+
+  return (
+    <div className="min-w-0 rounded-lg bg-parchment-100/70 p-3 dark:bg-parchment-900/60">
+      <label className="block text-xs font-semibold text-parchment-900 dark:text-parchment-50">
+        Arma de {personagem.name || "Sem nome"}
+        <select
+          value={escolha === undefined ? "" : escolha === null ? "__referencia__" : escolha}
+          onChange={(event) => {
+            const valor = event.target.value;
+            onEscolher(valor === "" ? undefined : valor === "__referencia__" ? null : valor);
+          }}
+          aria-describedby={arma.aviso ? avisoId : undefined}
+          className="mt-1 block w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-2 text-xs font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+        >
+          <option value="">Automático — arma equipada ou referência</option>
+          <option value="__referencia__">Referência d6 (sem arma selecionada)</option>
+          {escolhaAusente && <option value={escolha}>Arma selecionada indisponível</option>}
+          {armas.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.name || "Arma sem nome"} · {item.baseDie || "sem dado cadastrado"}{item.equipped ? " · equipada" : ""}
+            </option>
+          ))}
+        </select>
+      </label>
+      <p className="mt-2 text-xs font-semibold text-parchment-900 dark:text-parchment-50">
+        {arma.nome} <span className="font-normal text-parchment-600 dark:text-parchment-400">({origem})</span>
+      </p>
+      <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">
+        Dado base <b>{arma.baseDie}</b> → <b>{arma.escalatedDie}</b> · {arma.steps} degrau{arma.steps === 1 ? "" : "s"}
+        {estilo ? ` de ${estilo.name}` : ""}.
+      </p>
+      <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">
+        {NOME_DO_ATRIBUTO[arma.attributeKey]} {sinal(arma.attributeValue)} · Rank {sinal(arma.rankBonus)}
+        {arma.penalidadeQuebrantado > 0 ? ` · Quebrantado −${arma.penalidadeQuebrantado}` : ""}
+        {" · "}dano <b className="font-mono">{arma.escalatedDie}{arma.damageBonus !== arma.penalidadeQuebrantado ? sinal(arma.damageBonus - arma.penalidadeQuebrantado) : ""}</b>.
+      </p>
+      {!arma.proficiente && (
+        <p className="mt-1 text-xs text-amber-800 dark:text-amber-200">
+          Sem proficiência: os ataques com esta arma têm Desvantagem.
+        </p>
+      )}
+      {arma.aviso && (
+        <p id={avisoId} className="mt-2 text-xs text-amber-800 dark:text-amber-200">
+          {arma.aviso}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -690,7 +884,7 @@ function SecaoCriaturas({
   }, [pastas, filtradas]);
 
   return (
-    <section className="mt-8">
+    <section id="criaturas" className="mt-8 scroll-mt-24">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <h2 className="flex items-center gap-2 font-bold text-parchment-900 dark:text-parchment-50">
           <Swords className="h-5 w-5 text-wine-500" /> As criaturas
@@ -825,7 +1019,8 @@ function SecaoCriaturas({
               PV, CA, Bônus de Ataque, CD, retrato e as técnicas de dano vêm da ficha — pelo mesmo
               derivador que a simulação usa do lado dos heróis. É uma <b>cópia</b>: mexer nela não
               toca na ficha do jogador, e o jogador subir de patamar não muda o inimigo que você já
-              ajustou.
+              ajustou. Ela entra neste encontro e também pode ser escolhida como alvo no{" "}
+              <Link href="/comparar" className="font-semibold text-wine-700 underline dark:text-wine-300">comparador de builds</Link>.
             </p>
           </div>
         )}
@@ -876,6 +1071,8 @@ function SecaoCriaturas({
           ))}
         </div>
       </details>
+
+      <EncounterCatalog pastaId={pastaDestino} />
 
       {/*
         A barra de organização aparece SEMPRE, e não só depois da primeira
@@ -1405,6 +1602,7 @@ function CartaoCriatura({
   );
   const porAcoes = usaAcoes(criatura);
   const danoDasAcoes = porAcoes ? danoDasAcoesPorRodada(criatura) : 0;
+  const temPrimeiroGolpe = criatura.acoes.some((acao) => acao.regra === "primeiro-golpe");
   // "Fora do molde" não é um erro — é informação. O Mestre tem todo o direito
   // de dar 300 PV a um monstro de 2º patamar; ele só precisa saber que fez isso.
   const foraDoMolde =
@@ -1426,7 +1624,9 @@ function CartaoCriatura({
     PAPEIS.find((p) => p.id === criatura.papel)?.nome,
     `${criatura.pv} PV`,
     `CA ${criatura.ca}`,
-    `${Math.round(porAcoes ? danoDasAcoes : criatura.danoPorTurno)} dano/turno`,
+    `${Math.round(porAcoes ? danoDasAcoes : criatura.danoPorTurno)} ${temPrimeiroGolpe ? "dano na abertura" : "dano/turno"}`,
+    criatura.dadosFurtivos ? `+${criatura.dadosFurtivos}d6 furtivo` : null,
+    criatura.temPassoVazio ? "Passo Vazio" : null,
   ]
     .filter(Boolean)
     .join(" · ");
@@ -1526,6 +1726,16 @@ function CartaoCriatura({
                 </option>
               ))}
             </select>
+            <label className="text-xs text-parchment-600 dark:text-parchment-400">
+              Escolha de alvo
+              <select value={criatura.tatica ?? "ordem"} onChange={(e) => atualizar(criatura.id, { tatica: e.target.value as CriaturaEncontro["tatica"] })}
+                className="ml-2 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50">
+                <option value="ordem">Ordem do grupo</option>
+                <option value="aleatorio">Aleatório</option>
+                <option value="fragil">Menos PV e proteção</option>
+                <option value="estrategico">Menor CA</option>
+              </select>
+            </label>
             {/*
               Mover de pasta é um `<select>`, e não arrastar-e-soltar, porque
               esta tela é mobile-first: arrastar um cartão de 300px de altura
@@ -1642,7 +1852,7 @@ function CartaoCriatura({
             </p>
           )}
 
-          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-6">
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
             <CampoNumero
               rotulo="Quantidade"
               valor={criatura.quantidade}
@@ -1685,7 +1895,20 @@ function CartaoCriatura({
               min={0}
               onChange={(v) => atualizar(criatura.id, { cdResistencia: v })}
             />
+            <CampoNumero
+              rotulo="Dano Furtivo (d6)"
+              valor={criatura.dadosFurtivos ?? 0}
+              min={0}
+              onChange={(v) => atualizar(criatura.id, { dadosFurtivos: v || undefined })}
+              dica="Dados extras no primeiro ataque que acertar um alvo desprevenido ou vulnerável neste turno. Zero desliga a regra."
+            />
           </div>
+          <label className="mt-2 flex items-center gap-2 text-xs font-semibold text-parchment-700 dark:text-parchment-300">
+            <input type="checkbox" checked={!!criatura.temPassoVazio}
+              onChange={(e) => atualizar(criatura.id, { temPassoVazio: e.target.checked || undefined })}
+              className="h-4 w-4 accent-wine-600" />
+            Passo Vazio: gasta 1 Ação uma vez por combate e reabre Primeiro Golpe
+          </label>
 
           <BlocoDoMonstro
             criatura={criatura}
@@ -1696,13 +1919,17 @@ function CartaoCriatura({
 
           <PainelDeAvisos criatura={criatura} avisos={avisos} temGrupo={alvosDoGrupo.length > 0} />
 
-          <input
-            value={criatura.perigo}
-            onChange={(e) => atualizar(criatura.id, { perigo: e.target.value })}
-            placeholder="O que a torna perigosa — veneno, voo, emboscada. (Anotação sua: a simulação não modela isso.)"
-            aria-label="O que torna a criatura perigosa"
-            className="mt-2 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
-          />
+          <label className="mt-3 block text-xs font-semibold text-parchment-600 dark:text-parchment-400">
+            Observações e limites da simulação
+            <textarea
+              value={criatura.perigo}
+              onChange={(e) => atualizar(criatura.id, { perigo: e.target.value })}
+              placeholder="Veneno, voo, emboscada ou habilidades que ainda precisam de decisão do Mestre. Este texto não altera a simulação."
+              aria-label="O que torna a criatura perigosa"
+              rows={2}
+              className="mt-1 block w-full resize-y rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs font-normal text-parchment-900 placeholder:text-parchment-500 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            />
+          </label>
 
           {/*
             O upload em si. `tipo="portrait"` reaproveita o mesmo teto de bytes e o
@@ -1802,6 +2029,7 @@ function EditorDeAcoes({
   const removerAcao = useBestiaryStore((s) => s.removerAcao);
   const doMolde = aplicarPapel(criatura.patamar, criatura.papel);
   const plano = planoDoTurno(criatura);
+  const temPrimeiroGolpe = criatura.acoes.some((acao) => acao.regra === "primeiro-golpe");
 
   return (
     <div className="mt-3 rounded-xl border border-parchment-300 bg-parchment-50/60 p-2.5 dark:border-parchment-800 dark:bg-parchment-950/40">
@@ -1861,10 +2089,13 @@ function EditorDeAcoes({
 
       {porAcoes && (
         <p className="mt-2 border-t border-parchment-300 pt-1.5 text-xs text-parchment-600 dark:border-parchment-800 dark:text-parchment-400">
-          Turno de 3 Ações:{" "}
+          {temPrimeiroGolpe ? "Abertura teórica de 3 Ações:" : "Turno de 3 Ações:"}{" "}
           <b className="font-mono">{plano.map((a) => a.nome).join(" + ") || "—"}</b> ={" "}
-          <b className="font-mono">~{Math.round(danoDasAcoes)}</b> de dano por rodada, antes da rolagem de
-          acerto. O molde deste patamar pede ~{doMolde.danoPorTurno}.
+          <b className="font-mono">~{Math.round(danoDasAcoes)}</b> de dano bruto, antes da rolagem de
+          acerto{criatura.dadosFurtivos ? ` e sem os ${criatura.dadosFurtivos}d6 de Dano Furtivo` : ""}.
+          {temPrimeiroGolpe ? " Primeiro Golpe exige abertura e só pode entrar uma vez por combate." : ""}
+          {temPrimeiroGolpe && criatura.temPassoVazio ? " Passo Vazio pode reativá-lo; esse segundo golpe não entra na estimativa acima." : ""}
+          {" "}O molde deste patamar pede ~{doMolde.danoPorTurno} por turno.
         </p>
       )}
     </div>
@@ -1880,7 +2111,8 @@ function LinhaDeAcao({
   onChange: (patch: Partial<Omit<AcaoCriatura, "id">>) => void;
   onRemove: () => void;
 }) {
-  const media = mediaFormula(acao.dano);
+  const escala = escalaDaAcao(acao);
+  const media = mediaFormula(acao.dano) * escala;
   return (
     <div className="rounded-lg border border-parchment-300 bg-parchment-100/70 p-2 dark:border-parchment-800 dark:bg-parchment-900/50">
       <div className="flex flex-wrap items-center gap-1.5">
@@ -1899,7 +2131,7 @@ function LinhaDeAcao({
         >
           {[1, 2, 3].map((n) => (
             <option key={n} value={n}>
-              {n} Ação{n > 1 ? "es" : ""}
+              {n} {n === 1 ? "Ação" : "Ações"}
             </option>
           ))}
         </select>
@@ -1938,6 +2170,19 @@ function LinhaDeAcao({
             média {media % 1 === 0 ? media : media.toFixed(1)}
           </span>
         )}
+        <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
+          Escala
+          <input
+            type="number"
+            min="0.001"
+            step="0.05"
+            value={escala}
+            onChange={(e) => onChange({ escalaDano: Math.max(0.001, Number(e.target.value) || 1) })}
+            aria-label="Multiplicador do dano"
+            className="w-16 rounded-lg border border-parchment-300 bg-parchment-50 px-1.5 py-1 font-mono text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+          />
+          ×
+        </label>
         <input
           value={acao.alcance}
           onChange={(e) => onChange({ alcance: e.target.value })}
@@ -1955,6 +2200,31 @@ function LinhaDeAcao({
           Em área
         </label>
       </div>
+
+      {acao.tipo === "ataque" && (
+        <div className="mt-1.5 flex flex-wrap items-center gap-3">
+          <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
+            Bônus de ataque próprio
+            <input
+              type="number"
+              value={acao.bonusAtaque ?? ""}
+              onChange={(e) => onChange({ bonusAtaque: e.target.value === "" ? undefined : Number(e.target.value) })}
+              placeholder="Herdado"
+              className="w-20 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 font-mono text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+            />
+          </label>
+          <CondicaoDaAcao
+            rotulo="Arma sem proficiência (Desvantagem)"
+            checked={!!acao.desvantagemAtaque}
+            onChange={(v) => onChange({ desvantagemAtaque: v })}
+          />
+          <CondicaoDaAcao
+            rotulo="Primeiro Golpe (abertura; uma vez por combate)"
+            checked={acao.regra === "primeiro-golpe"}
+            onChange={(v) => onChange({ regra: v ? "primeiro-golpe" : undefined })}
+          />
+        </div>
+      )}
 
       {/*
         As quatro condições que a simulação SABE aplicar (2026-09-05) —
@@ -2071,7 +2341,7 @@ function PainelDeAvisos({
                 type="button"
                 onClick={() => {
                   const c = aviso.correcao!;
-                  if (c.alvo === "acao") atualizarAcao(criatura.id, c.acaoId, { dano: c.valor });
+                  if (c.alvo === "acao") atualizarAcao(criatura.id, c.acaoId, { escalaDano: c.valor });
                   else atualizar(criatura.id, { [c.campo]: c.valor });
                 }}
                 className="mt-1.5 rounded-lg border border-current/30 bg-white/50 px-2 py-1 font-semibold hover:bg-white/80 dark:bg-black/20 dark:hover:bg-black/40"
@@ -2089,11 +2359,39 @@ function PainelDeAvisos({
 // ---------------------------------------------------------------------------
 // O veredito
 // ---------------------------------------------------------------------------
-function Relatorio({ relatorio, tamanhoDoGrupo }: { relatorio: Relatorio; tamanhoDoGrupo: number }) {
+function Relatorio({ relatorio, anterior, desatualizado }: { relatorio: Relatorio; anterior: Relatorio | null; desatualizado: boolean }) {
   const { resultado, veredito, ajuste, criaturas } = relatorio;
+  const z = 1.96;
+  const n = resultado.batalhas;
+  const p = resultado.vitorias;
+  const divisor = 1 + z * z / n;
+  const centro = (p + z * z / (2 * n)) / divisor;
+  const margem = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / divisor;
+  const quedasEmUmGolpe = [...new Set((resultado.logsExtremos ?? []).flatMap((log) =>
+    (log.eventos ?? []).filter((evento) => evento.notas.some((nota) => nota.startsWith("Queda em um golpe:"))).map((evento) => evento.alvo)
+  ))];
+  const chaveDaRecomendacao = ajuste
+    ? `${ajuste.escala}:${criaturas
+        .map(
+          (criatura) =>
+            `${criatura.id}:${criatura.pv}:${criatura.danoPorTurno}:${criatura.acoes
+              .map((acao) => escalaDaAcao(acao))
+              .join(",")}`
+        )
+        .join("|")}`
+    : "";
 
   return (
-    <section className="mt-8">
+    <section className="mt-8" aria-label="Resultado da simulação">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-xl font-black text-parchment-900 dark:text-parchment-50">Resultado do encontro</h2>
+        <button type="button" onClick={() => {
+          const conteudo = JSON.stringify({ formato: "encontro-moshoku", versao: 1, ...relatorio }, null, 2);
+          const url = URL.createObjectURL(new Blob([conteudo], { type: "application/json" }));
+          const link = document.createElement("a"); link.href = url; link.download = `encontro-${relatorio.semente}.json`; link.click();
+          window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }} className="rounded-lg border border-parchment-300 px-3 py-2 text-sm dark:border-parchment-700">Baixar relatório completo</button>
+      </div>
       <div className={`rounded-2xl border p-4 ${CORES_FAIXA[veredito.faixa]}`}>
         <h2 className="text-lg font-black">{veredito.titulo}</h2>
         <p className="mt-1 text-sm">{veredito.resumo}</p>
@@ -2105,10 +2403,21 @@ function Relatorio({ relatorio, tamanhoDoGrupo }: { relatorio: Relatorio; tamanh
         <Numero rotulo="Rodadas" valor={resultado.rodadasMedia.toFixed(1)} />
         <Numero
           rotulo="Caem por combate"
-          valor={`${resultado.quedasMedia.toFixed(1)} de ${tamanhoDoGrupo}`}
+          valor={`${resultado.quedasMedia.toFixed(1)} de ${relatorio.tamanhoDoGrupo}`}
         />
         <Numero rotulo="PV do grupo ao fim" valor={formatarPorcentagem(resultado.pvRestante)} />
       </div>
+      <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">{n} batalhas com semente {relatorio.semente}. Faixa estatística aproximada de 95% para a chance de vitória: {formatarPorcentagem(Math.max(0, centro - margem))} a {formatarPorcentagem(Math.min(1, centro + margem))}. Ela mede a variação dos sorteios, não as regras ainda não simuladas.</p>
+      {anterior && <div className="mt-3 rounded-xl border border-parchment-300 p-3 text-sm dark:border-parchment-700">
+        <h3 className="font-bold">Comparação com o teste anterior</h3>
+        <p className="mt-1">Vitórias: {formatarPorcentagem(anterior.resultado.vitorias)} → {formatarPorcentagem(resultado.vitorias)} ({Math.round((resultado.vitorias - anterior.resultado.vitorias) * 100) >= 0 ? "+" : ""}{Math.round((resultado.vitorias - anterior.resultado.vitorias) * 100)} pontos).</p>
+        <p>Quedas por combate: {anterior.resultado.quedasMedia.toFixed(1)} → {resultado.quedasMedia.toFixed(1)}.</p>
+        <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">{anterior.semente === relatorio.semente ? "As duas simulações usaram a mesma semente, reduzindo variação no confronto." : "As sementes são diferentes; parte da diferença pode vir dos sorteios."} {JSON.stringify(anterior.entrada.grupo) === JSON.stringify(relatorio.entrada.grupo) ? "As fichas são as mesmas." : "As fichas também mudaram entre os testes."}</p>
+      </div>}
+
+      {quedasEmUmGolpe.length > 0 && <p className="mt-3 rounded-xl border border-rose-300 bg-rose-50 p-3 text-sm text-rose-800 dark:border-rose-800 dark:bg-rose-950/30 dark:text-rose-200">
+        <b>Risco de queda em um golpe:</b> {quedasEmUmGolpe.join(", ")} {quedasEmUmGolpe.length === 1 ? "foi" : "foram"} de PV completos a zero em pelo menos uma batalha destacada. Confira os ataques nos registros abaixo. Cair não significa morte definitiva.
+      </p>}
 
       {resultado.empates > 0.02 && (
         <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">
@@ -2117,12 +2426,24 @@ function Relatorio({ relatorio, tamanhoDoGrupo }: { relatorio: Relatorio; tamanh
         </p>
       )}
 
-      {ajuste && <Recomendacao ajuste={ajuste} criaturas={criaturas} />}
+      {desatualizado && (
+        <p role="status" className="mt-3 rounded-xl border border-amber-300 bg-amber-50/70 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
+          Fichas, armas, criaturas, cenário ou semente mudaram depois deste teste. Estes números são do encontro anterior; rode de novo antes de tomar uma decisão.
+        </p>
+      )}
+
+      {ajuste && (
+        <Recomendacao
+          key={chaveDaRecomendacao}
+          ajuste={ajuste}
+          criaturas={criaturas}
+          desativada={desatualizado}
+        />
+      )}
       {!ajuste && veredito.faixa !== "equilibrado" && (
         <p className="mt-3 rounded-xl border border-parchment-300 p-3 text-sm text-parchment-600 dark:border-parchment-800 dark:text-parchment-400">
-          Nenhum ajuste de PV e dano põe este encontro na faixa Equilibrado — nem encolher, nem inflar. O
-          problema está na composição: mude o número de criaturas ou o patamar delas, não os números de
-          cada uma.
+          Os ajustes testados não encontraram uma sugestão para aproximar o encontro da faixa Equilibrado.
+          Experimente mudar o número de criaturas ou o patamar delas e rode novamente.
         </p>
       )}
 
@@ -2184,32 +2505,59 @@ function Relatorio({ relatorio, tamanhoDoGrupo }: { relatorio: Relatorio; tamanh
           ))}
         </ul>
         <p className="mt-2 text-xs text-amber-900 dark:text-amber-200/90">
-          Na prática o motor mede o piso: um grupo real, com cura, condições e táticas, se sai melhor do
-          que isto. Um encontro que aparece como <b>Equilibrado</b> aqui tende a ser confortável na mesa;
-          um que aparece como <b>Letal</b> é letal mesmo.
+          O resultado é uma estimativa para estas fichas e criaturas. Terreno, decisões dos jogadores e
+          habilidades ainda não modeladas podem mudar o combate para os dois lados; confira os registros
+          antes de ajustar a dificuldade da mesa.
         </p>
       </details>
+      {resultado.logsExtremos && resultado.logsExtremos.length > 0 && (
+        <EncounterCombatLogs logs={resultado.logsExtremos} />
+      )}
     </section>
   );
 }
 
-function Recomendacao({ ajuste, criaturas }: { ajuste: AjusteSugerido; criaturas: CriaturaEncontro[] }) {
+function Recomendacao({
+  ajuste,
+  criaturas,
+  desativada = false,
+}: {
+  ajuste: AjusteSugerido;
+  criaturas: CriaturaEncontro[];
+  desativada?: boolean;
+}) {
   const atualizar = useBestiaryStore((s) => s.atualizar);
   const [aplicado, setAplicado] = useState(false);
 
-  const sugestoes = criaturas.map((c) => ({
-    criatura: c,
-    pv: arredondarPv(c.pv * ajuste.escala),
-    dano: Math.max(1, Math.round(c.danoPorTurno * ajuste.escala)),
-  }));
-  const mudaAlgo = sugestoes.some((s) => s.pv !== s.criatura.pv || s.dano !== s.criatura.danoPorTurno);
+  const ajustadas = aplicarEscalaAoEncontro(criaturas, ajuste.escala);
+  const sugestoes = criaturas.map((c, indice) => {
+    const porAcoes = usaAcoes(c);
+    const { acoes, pv, danoPorTurno: dano } = ajustadas[indice];
+    const acoesAlteradas = acoes
+      .map((acao, indice) => ({ acao, original: c.acoes[indice] }))
+      .filter(({ acao, original }) => escalaDaAcao(acao) !== escalaDaAcao(original));
+    return {
+      criatura: c,
+      pv,
+      dano,
+      acoes,
+      porAcoes,
+      acoesAlteradas,
+    };
+  });
+  const mudaAlgo = sugestoes.some(
+    (s) =>
+      s.pv !== s.criatura.pv ||
+      (!s.porAcoes && s.dano !== s.criatura.danoPorTurno) ||
+      s.acoesAlteradas.length > 0
+  );
 
   if (!mudaAlgo) return null;
 
   return (
     <div className="mt-3 rounded-2xl border border-gold-300 bg-gold-50/60 p-4 dark:border-gold-700 dark:bg-gold-950/20">
       <h3 className="font-bold text-parchment-900 dark:text-parchment-50">
-        Pra cair na faixa Equilibrado
+        Ajuste sugerido de dificuldade
       </h3>
       <p className="mt-1 text-sm text-parchment-600 dark:text-parchment-400">
         {ajuste.escala > 1
@@ -2217,34 +2565,57 @@ function Recomendacao({ ajuste, criaturas }: { ajuste: AjusteSugerido; criaturas
           : "As criaturas estão fortes demais pra este grupo. Baixando PV e dano na mesma proporção:"}
       </p>
       <ul className="mt-2 space-y-1 text-sm">
-        {sugestoes.map(({ criatura, pv, dano }) => (
+        {sugestoes.map(({ criatura, pv, dano, porAcoes, acoesAlteradas }) => (
           <li key={criatura.id} className="text-parchment-900 dark:text-parchment-50">
             <b>{criatura.nome}</b>{" "}
             <span className="font-mono text-parchment-600 dark:text-parchment-400">
-              PV {criatura.pv} → {pv} · dano/turno {criatura.danoPorTurno} → {dano}
+              PV {criatura.pv} → {pv}
+              {porAcoes
+                ? acoesAlteradas.length > 0
+                  ? ` · ${acoesAlteradas
+                      .map(
+                        ({ acao, original }) =>
+                          `${acao.nome} (${acao.dano}) ${formatarEscalaDaAcao(escalaDaAcao(original))} → ${formatarEscalaDaAcao(escalaDaAcao(acao))}`
+                      )
+                      .join("; ")}`
+                  : " · ações já estão na escala sugerida"
+                : ` · dano/turno ${criatura.danoPorTurno} → ${dano}`}
             </span>
           </li>
         ))}
       </ul>
       <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">
         Projeção com o ajuste: grupo vence {formatarPorcentagem(ajuste.vitoriaProjetada)} das vezes,
-        perdendo {ajuste.quedasProjetadas.toFixed(1)} personagem por combate.
+        com {ajuste.quedasProjetadas.toFixed(1)} personagem(ns) caído(s) ao fim de cada combate.
+        {ajuste.faixaProjetada && ` Faixa projetada: ${({ trivial: "Trivial", facil: "Fácil", equilibrado: "Equilibrado", perigoso: "Perigoso", letal: "Letal" })[ajuste.faixaProjetada]}.`}
       </p>
+      {sugestoes.some((s) => s.porAcoes && s.acoesAlteradas.length > 0) && (
+        <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">
+          Nas criaturas com ações, a fórmula continua a mesma e a escala entra na rolagem inteira — inclusive em crítico.
+        </p>
+      )}
       <button
         type="button"
         onClick={() => {
-          for (const { criatura, pv, dano } of sugestoes) {
-            atualizar(criatura.id, { pv, danoPorTurno: dano });
+          for (const { criatura, pv, dano, acoes, porAcoes } of sugestoes) {
+            atualizar(criatura.id, {
+              pv,
+              ...(porAcoes ? { acoes } : { danoPorTurno: dano }),
+            });
           }
           setAplicado(true);
         }}
-        disabled={aplicado}
+        disabled={aplicado || desativada}
         className="mt-3 rounded-lg bg-wine-600 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-wine-500 disabled:opacity-40"
       >
-        {aplicado ? "Aplicado — rode o teste de novo" : "Aplicar às criaturas"}
+        {desativada ? "Rode o teste de novo para aplicar" : aplicado ? "Aplicado — rode o teste de novo" : "Aplicar às criaturas"}
       </button>
     </div>
   );
+}
+
+function formatarEscalaDaAcao(escala: number): string {
+  return `${escala.toLocaleString("pt-BR", { maximumFractionDigits: 3 })}×`;
 }
 
 function Numero({ rotulo, valor }: { rotulo: string; valor: string }) {

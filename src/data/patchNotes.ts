@@ -16,6 +16,43 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.95",
+    date: "2026-09-22",
+    title: "O Simulador de Combate Definitivo",
+    sections: [
+      {
+        heading: "O Fim do 'Bate-Bate' Cego: Cenário e Motor de Eventos",
+        items: [
+          "O simulador de combate parou de apenas rolar o maior dado do inventário. Ele agora roda com um motor de eventos completo, testando quem está Escondido, Surpreso, a distância do alvo e quem já agiu na rodada.",
+          "Com isso, Dano Furtivo, Primeiro Golpe, Passo Vazio, alcance de armas e recargas entram na conta real. O Mestre declara o cenário inicial e o motor executa com regras estritas.",
+          "Cada golpe agora deixa um Recibo Auditável: você consegue abrir os logs e ver cada dado que rolou, qual degrau da arma entrou, os bônus exatos aplicados e por que uma reação foi negada."
+        ],
+      },
+      {
+        heading: "Bestiário Turbinado: Cenas, Catálogo e Recompensas",
+        items: [
+          "O Bestiário ganhou suporte a Pastas e Cenas Salvas. Você pode preparar os encontros da sessão inteira, salvá-los e carregá-los com um clique no Tracker de Iniciativa.",
+          "O Catálogo de Criaturas Pré-prontas permite puxar monstros canônicos direto pro combate sem digitar um número.",
+          "E ao vencer, o botão de Recompensas já calcula o Loot do Encontro, gerando Ouro (PO) e itens dropados com base no nível de desafio enfrentado."
+        ],
+      },
+      {
+        heading: "Comparador de Builds e Fichas no Bestiário",
+        items: [
+          "A página ganhou um Comparador de Builds. Coloque duas fichas do grupo frente a frente contra o mesmo alvo, rode 400 batalhas, e descubra quem realmente sustenta a luta — com alerta se houver diferença de PA investido.",
+          "Fichas completas de jogadores (Roster) agora podem ser importadas direto como Rivais para o Bestiário. O sistema traduz PV, CA, Ataques e magias para o Bloco de Monstro, preservando técnicas como Dano Furtivo e Primeiro Golpe de forma simulada."
+        ],
+      },
+      {
+        heading: "Performance e Web Workers",
+        items: [
+          "Colocar milhares de simulações completas na tela travava a interface. Agora todo o motor de combate (incluindo o Comparador) roda isolado em Web Workers.",
+          "O site continua responsivo e liso enquanto os encontros são resolvidos em background."
+        ],
+      }
+    ]
+  },
+  {
     version: "0.1.94",
     date: "2026-09-18",
     title: "A Grande Revisão (Resumo das atualizações 0.1.75 a 0.1.93)",

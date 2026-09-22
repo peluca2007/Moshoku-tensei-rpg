@@ -62,6 +62,7 @@ export default function SimuladorPessoal() {
     return simularEncontro([character], [{ ...alvo, quantidade }], {
       batalhas: BATALHAS,
       semente: SEMENTE,
+      gerarLogs: false,
     });
   }, [alvo, quantidade, character]);
 

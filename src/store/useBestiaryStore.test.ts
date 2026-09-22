@@ -108,6 +108,23 @@ describe("pastas do bestiário", () => {
     expect(criaturas.find((c) => c.id === dirigida)?.pastaId).toBe(pasta);
   });
 
+  it("a ficha convertida entra no encontro com a regra furtiva preservada", () => {
+    const semente = useBestiaryStore.getState().criar(2, "padrao", "Ladino");
+    const base = useBestiaryStore.getState().criaturas.find((c) => c.id === semente)!;
+    const original = { ...base, dadosFurtivos: 2, acoes: [{
+      id: "golpe_do_arquivo", nome: "Primeiro Golpe", regra: "primeiro-golpe" as const,
+      acoes: 1, dano: "1d8+6d6+4", alcance: "Corpo a corpo", area: false,
+      tipo: "ataque" as const, nota: "Uma vez por combate",
+    }] };
+    const id = useBestiaryStore.getState().importarCriatura(original);
+    const estado = useBestiaryStore.getState();
+    const importada = estado.criaturas.find((c) => c.id === id)!;
+    expect(estado.selecionadas).toContain(id);
+    expect(importada.dadosFurtivos).toBe(2);
+    expect(importada.acoes[0].regra).toBe("primeiro-golpe");
+    expect(importada.acoes[0].id).not.toBe("golpe_do_arquivo");
+  });
+
   it("marcar o lote não duplica quem já estava no encontro, e desmarcar só tira o lote", () => {
     const um = useBestiaryStore.getState().criar(1, "padrao", "Um");
     const dois = useBestiaryStore.getState().criar(1, "padrao", "Dois");

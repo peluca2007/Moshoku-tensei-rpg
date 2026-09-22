@@ -12,6 +12,19 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AcaoCriatura, CriaturaEncontro, criaturaDoMolde } from "@/lib/encounterSim";
 import { PapelCriatura, getMoldePorPatamar } from "@/data/bestiary";
+import { SEMENTE_ENCONTRO, type ConfiguracaoEncontro } from "@/lib/encounterReport";
+
+export interface CenaEncontro {
+  id: string;
+  nome: string;
+  notas: string;
+  atualizadaEm: string;
+  criaturas: CriaturaEncontro[];
+  grupo: string[];
+  configuracao: ConfiguracaoEncontro;
+}
+
+const copiar = <T,>(dados: T): T => JSON.parse(JSON.stringify(dados)) as T;
 
 function makeId() {
   return `criatura_${Math.random().toString(36).slice(2, 10)}`;
@@ -114,6 +127,12 @@ function acaoVazia(nome = "Nova ação"): AcaoCriatura {
 }
 
 interface BestiaryState {
+  cenas: CenaEncontro[];
+  configuracao: ConfiguracaoEncontro;
+  configurarEncontro: (patch: Partial<ConfiguracaoEncontro>) => void;
+  salvarCena: (nome: string, notas: string, id?: string) => string | null;
+  carregarCena: (id: string) => boolean;
+  removerCena: (id: string) => void;
   criaturas: CriaturaEncontro[];
   /** As gavetas, na ordem em que aparecem na tela. Criatura sem `pastaId` fica fora de todas. */
   pastas: PastaCriaturas[];
@@ -168,6 +187,36 @@ function chegou(tipo: Chegada["tipo"], id: string): Chegada {
 export const useBestiaryStore = create<BestiaryState>()(
   persist(
     (set, get) => ({
+      cenas: [],
+      configuracao: { semente: SEMENTE_ENCONTRO, armasPorPersonagem: {} },
+      configurarEncontro: (patch) => set((s) => ({ configuracao: { ...s.configuracao, ...patch } })),
+      salvarCena: (nome, notas, id) => {
+        const s = get();
+        const criaturas = s.criaturas.filter((c) => s.selecionadas.includes(c.id));
+        if (!nome.trim() || criaturas.length === 0) return null;
+        const cena: CenaEncontro = copiar({
+          id: id ?? `cena_${crypto.randomUUID()}`, nome: nome.trim(), notas,
+          atualizadaEm: new Date().toISOString(), criaturas, grupo: s.grupo, configuracao: s.configuracao,
+        });
+        set({ cenas: [cena, ...s.cenas.filter((c) => c.id !== cena.id)] });
+        return cena.id;
+      },
+      carregarCena: (id) => {
+        const s = get();
+        const original = s.cenas.find((c) => c.id === id);
+        if (!original) return false;
+        const cena = copiar(original);
+        const ids = new Set(cena.criaturas.map((c) => c.id));
+        set({
+          // Restaurar uma cena repõe seus números, sem apagar o resto do bestiário.
+          criaturas: [...s.criaturas.filter((c) => !ids.has(c.id)), ...cena.criaturas.map((c) => ({
+            ...c, pastaId: s.pastas.some((p) => p.id === c.pastaId) ? c.pastaId : undefined,
+          }))],
+          selecionadas: [...ids], grupo: cena.grupo, configuracao: cena.configuracao,
+        });
+        return true;
+      },
+      removerCena: (id) => set((s) => ({ cenas: s.cenas.filter((c) => c.id !== id) })),
       criaturas: [],
       pastas: [],
       selecionadas: [],
@@ -271,6 +320,7 @@ export const useBestiaryStore = create<BestiaryState>()(
               resistencias: c.resistencias,
               imunidades: c.imunidades,
               sentido: c.sentido,
+              tatica: c.tatica,
             };
           }),
         })),
@@ -433,6 +483,8 @@ export const useBestiaryStore = create<BestiaryState>()(
        * chegado.
        */
       partialize: (s) => ({
+        cenas: s.cenas,
+        configuracao: s.configuracao,
         criaturas: s.criaturas,
         pastas: s.pastas,
         selecionadas: s.selecionadas,

@@ -254,7 +254,7 @@ export default function LandingPage() {
           >
             <ScrollText className="h-4 w-4" /> Fazer a Entrevista do Destino
           </Link>
-          <span className="hidden text-parchment-300 dark:text-parchment-700 sm:inline">·</span>
+          <span aria-hidden="true" className="hidden text-parchment-300 dark:text-parchment-700 sm:inline">·</span>
           <Link
             href="/iniciativa"
             /* `py-1` leva o alvo de 20 pra 28px de altura — o mínimo do WCAG 2.5.8

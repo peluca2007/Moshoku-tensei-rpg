@@ -30,6 +30,7 @@ import {
   acoesOfensivas,
   aplicarPapel,
   danoDasAcoesPorRodada,
+  escalaDaAcao,
   planoDoTurno,
   usaAcoes,
 } from "@/lib/encounterSim";
@@ -58,7 +59,7 @@ export type NivelAviso = "grave" | "alerta" | "nota";
 
 /** Uma troca pronta pra aplicar, se o Mestre quiser. */
 export type Correcao =
-  | { alvo: "acao"; acaoId: string; valor: string; rotulo: string }
+  | { alvo: "acao"; acaoId: string; campo: "escalaDano"; valor: number; rotulo: string }
   | { alvo: "criatura"; campo: "bonusAtaque" | "cdResistencia"; valor: number; rotulo: string };
 
 export interface Aviso {
@@ -71,24 +72,6 @@ export interface Aviso {
 }
 
 const ORDEM: Record<NivelAviso, number> = { grave: 0, alerta: 1, nota: 2 };
-
-/**
- * Multiplica uma fórmula por um fator, mantendo o tamanho do dado.
- *
- * Muda a QUANTIDADE de dados e o fixo, nunca as faces: "3d8+5" × 1,6 vira
- * "5d8+8". Trocar d8 por d12 mexeria na variância — e variância é o que decide
- * se um golpe às vezes mata alguém de uma vez, que é exatamente a coisa que os
- * avisos abaixo estão tentando controlar.
- */
-export function escalarFormula(formula: string, fator: number): string {
-  const escalado = formula.replace(/(\d+)\s*d\s*(\d+)/gi, (_, n: string, faces: string) => {
-    return `${Math.max(1, Math.round(Number(n) * fator))}d${faces}`;
-  });
-  return escalado.replace(/([+-])\s*(\d+)(?![\dd])/g, (_todo, sinal: string, v: string) => {
-    const novo = Math.round(Number(v) * fator);
-    return novo === 0 ? "" : `${sinal}${novo}`;
-  });
-}
 
 /** Chance de um d20 + bônus alcançar a CA. 1 sempre erra, 20 sempre acerta. */
 export function chanceDeAcerto(bonus: number, ca: number): number {
@@ -104,6 +87,14 @@ function numero(n: number): string {
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
 }
 
+function escalaSugerida(atual: number, fator: number): number {
+  return Math.max(0.001, Math.round(atual * fator * 1000) / 1000);
+}
+
+function textoDaEscala(escala: number): string {
+  return `${numero(escala)}×`;
+}
+
 function listarNomes(nomes: string[]): string {
   if (nomes.length === 1) return nomes[0];
   if (nomes.length === 2) return `${nomes[0]} e ${nomes[1]}`;
@@ -114,7 +105,9 @@ function listarNomes(nomes: string[]): string {
 function acaoMaisPesada(c: CriaturaEncontro): AcaoCriatura | null {
   const ofensivas = acoesOfensivas(c);
   if (ofensivas.length === 0) return null;
-  return ofensivas.reduce((m, a) => (mediaFormula(a.dano) > mediaFormula(m.dano) ? a : m));
+  return ofensivas.reduce((m, a) =>
+    mediaFormula(a.dano) * escalaDaAcao(a) > mediaFormula(m.dano) * escalaDaAcao(m) ? a : m
+  );
 }
 
 /**
@@ -158,7 +151,8 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
     if (razao < 0.75 || razao > 1.3) {
       const fraca = razao < 1;
       const fator = orcamento / Math.max(1, porRodada);
-      const sugerida = escalarFormula(melhor.dano, fator);
+      const escalaAtual = escalaDaAcao(melhor);
+      const sugerida = escalaSugerida(escalaAtual, fator);
       const acoesSobrando = 3 - plano.reduce((s, a) => s + Math.max(1, a.acoes), 0);
       avisos.push({
         id: "orcamento",
@@ -168,14 +162,15 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
           `Gastando as três Ações no melhor que ela tem (${usos}× ${melhor.nome}), sai ~${numero(porRodada)} ` +
           `de dano por rodada. O molde de ${rotuloPatamar(c.patamar)} no papel ${c.papel} pede ~${orcamento}. ` +
           (fraca
-            ? `Suba ${melhor.nome} pra ${sugerida}` +
+            ? `Suba a escala de ${melhor.nome} para ${textoDaEscala(sugerida)}` +
               (acoesSobrando > 0 ? ", ou dê a ela uma ação de 1 Ação a mais pra encher o turno." : ".")
-            : `Baixe ${melhor.nome} pra ${sugerida}, ou tire uma Ação do turno dela.`),
+            : `Baixe a escala de ${melhor.nome} para ${textoDaEscala(sugerida)}, ou tire uma Ação do turno dela.`),
         correcao: {
           alvo: "acao",
           acaoId: melhor.id,
+          campo: "escalaDano",
           valor: sugerida,
-          rotulo: `${melhor.nome}: ${melhor.dano} → ${sugerida}`,
+          rotulo: `${melhor.nome}: ${textoDaEscala(escalaAtual)} → ${textoDaEscala(sugerida)}`,
         },
       });
     }
@@ -186,8 +181,9 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
   // -------------------------------------------------------------------------
   const pesada = acaoMaisPesada(c);
   if (pesada && grupo.length > 0) {
-    const media = mediaFormula(pesada.dano);
-    const teto = maxFormula(pesada.dano);
+    const escala = escalaDaAcao(pesada);
+    const media = mediaFormula(pesada.dano) * escala;
+    const teto = Math.round(maxFormula(pesada.dano) * escala);
     const morrem = grupo.filter((p) => media >= p.pv);
     const podemMorrer = grupo.filter((p) => media < p.pv && teto >= p.pv);
 
@@ -195,21 +191,22 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
       const menorPv = Math.min(...morrem.map((p) => p.pv));
       // Alvo: a média do golpe em três quartos do PV de quem está pior. Sobra
       // margem pra ele ainda ser assustador sem decidir a luta numa rolagem.
-      const sugerida = escalarFormula(pesada.dano, (menorPv * 0.75) / media);
+      const sugerida = escalaSugerida(escala, (menorPv * 0.75) / media);
       avisos.push({
         id: "golpe-unico",
         nivel: "grave",
-        titulo: "Mata alguém num golpe",
+        titulo: "Pode derrubar alguém num golpe",
         texto:
           `${pesada.nome} tira ${numero(media)} em média. ` +
           `${listarNomes(morrem.map((p) => `${p.nome} (${p.pv} PV)`))} ` +
-          `${morrem.length > 1 ? "caem" : "cai"} num acerto só — sem chance de reagir, sem cura no meio. ` +
-          `Se a ideia era ameaçar e não executar, ${pesada.nome} vira ${sugerida}.`,
+          `${morrem.length > 1 ? "podem cair" : "pode cair"} num acerto só, antes de resistências ou proteções. ` +
+          `Para deixar margem de sobrevivência, baixe a escala de ${pesada.nome} para ${textoDaEscala(sugerida)}.`,
         correcao: {
           alvo: "acao",
           acaoId: pesada.id,
+          campo: "escalaDano",
           valor: sugerida,
-          rotulo: `${pesada.nome}: ${pesada.dano} → ${sugerida}`,
+          rotulo: `${pesada.nome}: ${textoDaEscala(escala)} → ${textoDaEscala(sugerida)}`,
         },
       });
     } else if (podemMorrer.length > 0) {
@@ -276,8 +273,10 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
   // -------------------------------------------------------------------------
   const areas = ofensivas.filter((a) => a.area);
   if (areas.length > 0 && grupo.length > 1) {
-    const maior = areas.reduce((m, a) => (mediaFormula(a.dano) > mediaFormula(m.dano) ? a : m));
-    const media = mediaFormula(maior.dano);
+    const maior = areas.reduce((m, a) =>
+      mediaFormula(a.dano) * escalaDaAcao(a) > mediaFormula(m.dano) * escalaDaAcao(m) ? a : m
+    );
+    const media = mediaFormula(maior.dano) * escalaDaAcao(maior);
     const pvTotal = grupo.reduce((s, p) => s + p.pv, 0);
     const fatia = (media * grupo.length) / pvTotal;
     avisos.push({

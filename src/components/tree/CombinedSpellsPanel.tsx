@@ -121,7 +121,7 @@ export default function CombinedSpellsPanel() {
                       title={p.ok ? `Você tem ${p.nome} no ${p.atual}` : `Você tem: ${p.atual}`}
                       className={`rounded-full px-2 py-0.5 text-2xs font-semibold ring-1 ${
                         p.ok
-                          ? "bg-emerald-500/10 text-emerald-700 ring-emerald-500/30 dark:text-emerald-300"
+                          ? "bg-emerald-500/10 text-emerald-800 ring-emerald-500/30 dark:text-emerald-300"
                           : "bg-parchment-500/10 text-parchment-600 ring-parchment-400/40 dark:text-parchment-400"
                       }`}
                     >

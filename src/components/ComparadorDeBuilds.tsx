@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GitCompare } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import { MOLDES_CRIATURA, rotuloPatamar } from "@/data/bestiary";
 import { useCharacterStore } from "@/store/useCharacterStore";
+import { useBestiaryStore } from "@/store/useBestiaryStore";
 import {
   getArmorClass,
   getHighestUnlockedRank,
@@ -17,9 +18,9 @@ import {
   getPpPool,
   getPtPool,
 } from "@/store/selectors";
-import { montarFicha } from "@/lib/combatSim";
-import { criaturaDoMolde, simularEncontro } from "@/lib/encounterSim";
-import { diceAverage } from "@/lib/dice";
+import { mediaFormula, montarFicha } from "@/lib/combatSim";
+import { criaturaDoMolde } from "@/lib/encounterSim";
+import { BATALHAS_COMPARADOR as BATALHAS, SEMENTE_COMPARADOR as SEMENTE, type RespostaComparacao, type ResultadoComparacao } from "@/lib/buildComparison";
 import { getTreeById } from "@/data/trees";
 import { CharacterData, RANKS } from "@/lib/types";
 
@@ -34,8 +35,8 @@ import { CharacterData, RANKS } from "@/lib/types";
  * mesa, e enquanto não se mede, "essa build é mais forte" é opinião com número
  * nenhum atrás.
  *
- * O `scripts/simular-combate.mts` já fazia builds de mesmo orçamento se baterem.
- * Isto é aquilo com cara de tela, pra quem não abre terminal.
+ * A comparação usa o motor de combate também empregado em /encontros e
+ * apresenta os resultados numa tela acessível durante a sessão.
  *
  * ## A regra que faz a comparação valer
  *
@@ -55,14 +56,16 @@ import { CharacterData, RANKS } from "@/lib/types";
  * que a mesa precisa, porque cura, controle e utilidade não aparecem numa luta
  * de um contra um. O texto na tela repete isso.
  */
-const BATALHAS = 400;
-const SEMENTE = 20260910;
-
 function resumoDe(c: CharacterData) {
   const ficha = montarFicha(c);
-  const maiorGolpe = [ficha.ataqueBasico, ...ficha.acoes].reduce(
+  const maiorGolpe = [ficha.ataqueBasico, ...ficha.acoes.filter((a) => a.tipo === "dano" && !a.reacao)].reduce(
     (melhor, a) => {
-      const media = diceAverage(a.dano) + a.dadosDeArma * diceAverage(ficha.ataqueBasico.dano);
+      const basico = a === ficha.ataqueBasico;
+      const primeiro = a.regra === "primeiro-golpe";
+      const media = mediaFormula(a.dano) +
+        (a.dadosDeArma + (primeiro ? 1 : 0)) * mediaFormula(ficha.ataqueBasico.dano) +
+        (basico || primeiro ? ficha.arma.damageBonus : ficha.bc) +
+        (a.ataque ? ficha.rankLadino * 3.5 : 0);
       return media > melhor.media ? { nome: a.nome, media } : melhor;
     },
     { nome: "—", media: 0 }
@@ -136,6 +139,7 @@ function Linha({
 export default function ComparadorDeBuilds() {
   const characters = useCharacterStore((s) => s.characters);
   const order = useCharacterStore((s) => s.order);
+  const criaturas = useBestiaryStore((s) => s.criaturas);
   const fichas = order.map((id) => characters[id]).filter((c): c is CharacterData => !!c);
 
   /*
@@ -176,17 +180,36 @@ export default function ComparadorDeBuilds() {
   const patamarSugerido = Math.min(MOLDES_CRIATURA.length, Math.max(1, maiorRank + 1));
   const [patamar, setPatamar] = useState<number | null>(null);
   const patamarAlvo = patamar ?? patamarSugerido;
+  const [alvoId, setAlvoId] = useState("");
+  const alvoSalvo = criaturas.find((c) => c.id === alvoId);
+  const [resultado, setResultado] = useState<{ chave: string; dados: ResultadoComparacao } | null>(null);
+  const [falha, setFalha] = useState<{ chave: string; mensagem: string } | null>(null);
+  const chave = a && b ? JSON.stringify({ primeira: a, segunda: b, alvo: alvoSalvo ?? patamarAlvo }) : "";
+  const duelo = resultado?.chave === chave ? { a: resultado.dados.primeira, b: resultado.dados.segunda } : null;
+  const erro = falha?.chave === chave ? falha.mensagem : null;
+  const calculando = !!a && !!b && !duelo && !erro;
 
-  // Alvo recriado pra cada lado, mas idêntico e com a MESMA semente: é o que
-  // transforma dois resultados em uma comparação.
-  const alvo = () => criaturaDoMolde(patamarAlvo, "padrao", "Alvo padrão", "cmp_alvo");
-  const duelo =
-    a && b
-      ? {
-          a: simularEncontro([a], [alvo()], { batalhas: BATALHAS, semente: SEMENTE }),
-          b: simularEncontro([b], [alvo()], { batalhas: BATALHAS, semente: SEMENTE }),
-        }
-      : null;
+  useEffect(() => {
+    if (!a || !b) return;
+    const alvo = alvoSalvo
+      ? { ...alvoSalvo, quantidade: 1 }
+      : { ...criaturaDoMolde(patamarAlvo, "padrao", "Alvo padrão", "cmp_alvo"), quantidade: 1 };
+    const worker = new Worker(new URL("../workers/build-comparison.worker.ts", import.meta.url), { type: "module" });
+    let ativo = true;
+    worker.onmessage = ({ data }: MessageEvent<RespostaComparacao>) => {
+      if (!ativo) return;
+      if (data.tipo === "resultado") setResultado({ chave, dados: data.resultado });
+      else setFalha({ chave, mensagem: data.mensagem });
+      worker.terminate();
+    };
+    worker.onerror = () => {
+      if (!ativo) return;
+      setFalha({ chave, mensagem: "A comparação foi interrompida. Recarregue a página e tente novamente." });
+      worker.terminate();
+    };
+    worker.postMessage({ primeira: a, segunda: b, alvo, semente: SEMENTE });
+    return () => { ativo = false; worker.terminate(); };
+  }, [a, b, alvoSalvo, patamarAlvo, chave]);
 
   if (fichas.length < 2) {
     return (
@@ -250,6 +273,29 @@ export default function ComparadorDeBuilds() {
         </label>
       </div>
 
+      <div className="mb-3 rounded-xl border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/50">
+        <label className="flex flex-wrap items-center gap-2 font-semibold">
+          Alvo comum das duas builds
+          <select value={alvoSalvo ? alvoId : ""} onChange={(e) => setAlvoId(e.target.value)} className="min-h-9 min-w-0 flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-2 text-sm font-normal dark:border-parchment-700 dark:bg-parchment-950">
+            <option value="">Molde do Apêndice G</option>
+            {criaturas.map((c) => <option key={c.id} value={c.id}>{c.nome} · {rotuloPatamar(c.patamar)}</option>)}
+          </select>
+        </label>
+        {!alvoSalvo ? <label className="mt-2 flex flex-wrap items-center gap-2 text-xs">Patamar do molde
+          <select value={patamarAlvo} onChange={(e) => setPatamar(Number(e.target.value))} className="min-h-8 rounded-lg border border-parchment-300 bg-parchment-50 px-2 dark:border-parchment-700 dark:bg-parchment-950">
+            {MOLDES_CRIATURA.map((m) => <option key={m.patamar} value={m.patamar}>{rotuloPatamar(m.patamar)}</option>)}
+          </select>
+        </label> : <div className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">
+          <p>Usando uma cópia desta criatura, com suas ações e números atuais, sozinha contra cada build. {alvoSalvo.dadosFurtivos ? `Dano Furtivo: ${alvoSalvo.dadosFurtivos}d6 por abertura.` : ""} O cenário de Encontros não é aplicado aqui.</p>
+          {alvoSalvo.perigo && <details className="mt-1"><summary className="cursor-pointer font-semibold">Origem e limites deste alvo</summary><p className="mt-1">{alvoSalvo.perigo}</p></details>}
+        </div>}
+        <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">Para testar contra uma ficha de personagem, <Link href="/encontros" className="font-semibold text-wine-700 underline dark:text-wine-300">traga-a como criatura em Encontros</Link>; ela aparecerá nesta lista.</p>
+      </div>
+
+      {resA && resB && resA.pa !== resB.pa && <p className="mb-3 rounded-lg border border-amber-300 bg-amber-50/70 p-2 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">As fichas gastaram {resA.pa} e {resB.pa} PA. A diferença de resultado mistura escolhas de build e investimento; compare o mesmo orçamento para avaliar balanceamento.</p>}
+      {calculando && !duelo && <p role="status" className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Calculando {BATALHAS} combates para cada ficha…</p>}
+      {erro && <p role="alert" className="mb-3 text-sm text-rose-700 dark:text-rose-300">{erro}</p>}
+
       {resA && resB && (
         <div className="surface rounded-2xl border border-parchment-300 bg-parchment-100/70 p-3 dark:border-parchment-800 dark:bg-parchment-900/60">
           <table className="w-full">
@@ -280,7 +326,7 @@ export default function ComparadorDeBuilds() {
               {(resA.pt > 0 || resB.pt > 0) && <Linha rotulo="PT" a={resA.pt} b={resB.pt} />}
               {(resA.pp > 0 || resB.pp > 0) && <Linha rotulo="PP" a={resA.pp} b={resB.pp} />}
               <Linha
-                rotulo="Maior golpe (média)"
+                rotulo="Maior ação (dano bruto)"
                 a={Math.round(resA.maiorGolpe.media)}
                 b={Math.round(resB.maiorGolpe.media)}
               />
@@ -310,27 +356,10 @@ export default function ComparadorDeBuilds() {
           </table>
 
           <p className="mt-2 text-2xs text-parchment-600 dark:text-parchment-400">
-            Golpe: <b>{resA.maiorGolpe.nome}</b> contra <b>{resB.maiorGolpe.nome}</b>.
+            Pico com abertura favorável, antes de acerto, resistências e custo de recursos: <b>{resA.maiorGolpe.nome}</b> contra <b>{resB.maiorGolpe.nome}</b>.
           </p>
 
-          <label className="mt-2 flex flex-wrap items-center gap-1.5 text-2xs text-parchment-700 dark:text-parchment-300">
-            Alvo do duelo:
-            <select
-              value={patamarAlvo}
-              onChange={(e) => setPatamar(Number(e.target.value))}
-              className="min-h-[2rem] rounded-lg border border-parchment-300 bg-parchment-50 px-2 text-2xs dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-100"
-            >
-              {MOLDES_CRIATURA.map((m) => (
-                <option key={m.patamar} value={m.patamar}>
-                  {rotuloPatamar(m.patamar)}
-                </option>
-              ))}
-            </select>
-            <span className="text-parchment-600 dark:text-parchment-400">
-              — o molde do Apêndice G, sem truques: ele gasta o orçamento de dano do patamar inteiro todo
-              turno, que é a criatura média contra a qual a régua do livro foi calibrada.
-            </span>
-          </label>
+          {!alvoSalvo && <p className="mt-2 text-2xs text-parchment-600 dark:text-parchment-400">O molde do Apêndice G não tem técnicas próprias; usa o orçamento de dano publicado para o patamar escolhido.</p>}
         </div>
       )}
 
