@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Backpack, Check, Coins, FlaskConical, Lock, Shield, Skull, Sparkles, Store, Swords, Wand2 } from "lucide-react";
+import { Backpack, Bone, Check, Coins, FlaskConical, Lock, Shield, Skull, Sparkles, Store, Swords, Wand2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { getGuildRank, getWeaponGroups, isGuildRankEstimated } from "@/store/selectors";
@@ -10,6 +10,7 @@ import { GUILD_RANK_ORDER, GuildRank, meetsGuildRank } from "@/lib/types";
 import { GUILD_RANK_COLORS } from "@/lib/rankColors";
 import { grupoDaArma, weaponGroupName } from "@/data/weaponGroups";
 import {
+  estaAVenda,
   SHOP_CATEGORY_ICONS,
   SHOP_CATEGORY_LABELS,
   SHOP_CATEGORY_ORDER,
@@ -32,7 +33,20 @@ const CATEGORY_ICONS: Record<ShopCategory, LucideIcon> = {
   veneno: Skull,
   "ferramenta-magica": Wand2,
   encantamento: Sparkles,
+  tralha: Bone,
 };
+
+/*
+ * As categorias que a LOJA tem — que não são as do livro.
+ *
+ * Tralha é a diferença: presa de lobo e casco de besouro têm preço (é o que o
+ * mercador paga por eles) e não têm prateleira — ninguém compra osso na
+ * Guilda, você chega com ele do campo. Derivar a lista do que está à venda
+ * evita o filtro morto: um chip "Tralhas e Espólios" que nunca traz nada.
+ */
+const CATEGORIAS_A_VENDA = SHOP_CATEGORY_ORDER.filter((cat) =>
+  SHOP_ITEMS.some((i) => estaAVenda(i) && i.category === cat)
+);
 
 type FilterCategory = "todos" | ShopCategory;
 type FilterRank = "todos" | GuildRank;
@@ -69,9 +83,16 @@ export default function Shop() {
     []
   );
 
+  /*
+   * `estaAVenda` é o primeiro filtro, e não um detalhe: desde o Compêndio
+   * (2026-09-23) o catálogo guarda também o que NÃO está na prateleira —
+   * contrabando, drop de chefe e relíquia sem preço. Esses moram no livro e
+   * chegam pela mesa, não pela vitrine da Guilda. Ele também é o que garante
+   * ao TypeScript que todo item daqui pra baixo tem preço.
+   */
   const items = useMemo(
     () =>
-      SHOP_ITEMS.filter(
+      SHOP_ITEMS.filter(estaAVenda).filter(
         (i) =>
           (categoryFilter === "todos" || i.category === categoryFilter) &&
           (rankFilter === "todos" || i.guildRankRequired === rankFilter)
@@ -107,7 +128,7 @@ export default function Shop() {
     }).filter((g) => g.itens.length > 0);
   }, [items]);
 
-  function handleBuy(item: ShopItem) {
+  function handleBuy(item: ShopItem & { price: number }) {
     const ok = useCharacterStore.getState().buyItem(toInventoryItem(item), item.price, item.guildRankRequired);
     if (!ok) return;
     if (boughtTimeoutRef.current) clearTimeout(boughtTimeoutRef.current);
@@ -159,7 +180,7 @@ export default function Shop() {
           <Chip aceso={categoryFilter === "todos"} onClick={() => setCategoryFilter("todos")}>
             Todos
           </Chip>
-          {SHOP_CATEGORY_ORDER.map((cat) => (
+          {CATEGORIAS_A_VENDA.map((cat) => (
             <Chip key={cat} aceso={categoryFilter === cat} onClick={() => setCategoryFilter(cat)}>
               {SHOP_CATEGORY_LABELS[cat]}
             </Chip>

@@ -1,7 +1,16 @@
 import { AttributeKey, GuildRank, InventoryItem } from "@/lib/types";
 import { WEAPON_PRESETS } from "@/lib/weaponDie";
+import { COMPENDIO_ITENS } from "./compendioDeItens";
 
-export type ShopCategory = "arma" | "armadura" | "aventura" | "pocao" | "veneno" | "ferramenta-magica" | "encantamento";
+export type ShopCategory =
+  | "arma"
+  | "armadura"
+  | "aventura"
+  | "pocao"
+  | "veneno"
+  | "ferramenta-magica"
+  | "encantamento"
+  | "tralha";
 
 export const SHOP_CATEGORY_ORDER: ShopCategory[] = [
   "arma",
@@ -11,7 +20,27 @@ export const SHOP_CATEGORY_ORDER: ShopCategory[] = [
   "veneno",
   "ferramenta-magica",
   "encantamento",
+  "tralha",
 ];
+
+/**
+ * ONDE O ITEM PODE SER OBTIDO (2026-09-23).
+ *
+ * Até aqui o catálogo só sabia descrever prateleira: tudo que existia estava à
+ * venda, e o único filtro era o Rank de Guilda. Metade do Compêndio não cabe
+ * nisso — uma lâmina do Continente Demônio não está na vitrine da Guilda por
+ * mais PO que você tenha, e uma relíquia da Guerra de Laplace não tem vitrine
+ * nenhuma.
+ *
+ *   loja         Está à venda na Guilda, respeitando o `guildRankRequired`.
+ *   restrito     Existe no mundo, não na prateleira: drop, missão, contrabando.
+ *                Tem preço porque alguém compra — só não é a Guilda.
+ *   inestimavel  Relíquia. Não tem preço: não se compra e não se vende, troca
+ *                de mão por história. É o que impede que um único drop pague o
+ *                catálogo inteiro várias vezes (ver a regra de revenda no
+ *                Cap. 5).
+ */
+export type Disponibilidade = "loja" | "restrito" | "inestimavel";
 
 /**
  * A imagem de cada categoria, em `public/loja/` (2026-09-03).
@@ -46,6 +75,7 @@ export const SHOP_CATEGORY_LABELS: Record<ShopCategory, string> = {
   veneno: "Venenos",
   "ferramenta-magica": "Ferramentas Mágicas",
   encantamento: "Encantamentos",
+  tralha: "Tralhas e Espólios",
 };
 
 export interface ShopItem {
@@ -54,13 +84,33 @@ export interface ShopItem {
   category: ShopCategory;
   type: InventoryItem["type"];
   description: string;
-  /** Preço de venda oficial da Guilda, em PO — mesmo valor mostrado no Livro de Regras (Cap. 5, §4). */
-  price: number;
+  /**
+   * Preço em PO — o mesmo valor mostrado no Livro de Regras (Cap. 5, §4).
+   *
+   * `null` é a relíquia: um item que NÃO TEM preço, e não um que custa zero.
+   * O tipo obriga cada tela a decidir o que fazer com isso, que é justamente o
+   * que se quer — um `0` silencioso viraria "de graça" na loja e "sem valor"
+   * no gerador de loot.
+   */
+  price: number | null;
   /** Cap. 5, §2 ("A Loja da Guilda"): Rank mínimo de Aventureiro pra esse item aparecer à venda. */
   guildRankRequired: GuildRank;
+  /** Ausente = `loja`, que é o caso dos 85 itens originais do catálogo. */
+  disponibilidade?: Disponibilidade;
   baseDie?: string;
   damageAttribute?: AttributeKey;
   acBonus?: number;
+}
+
+/**
+ * O que a Loja da Guilda tem na prateleira.
+ *
+ * O type predicate existe pra que a loja não precise perguntar "e se não tiver
+ * preço?" em cinco lugares: quem chega lá já chegou com preço, e o TypeScript
+ * sabe disso.
+ */
+export function estaAVenda(item: ShopItem): item is ShopItem & { price: number } {
+  return (item.disponibilidade ?? "loja") === "loja" && item.price !== null;
 }
 
 /** Converte um item da loja no formato que `useCharacterStore.buyItem` espera — mesmo shape de `addItem`. */
@@ -682,6 +732,15 @@ const ENCHANTMENTS: ShopItem[] = [
  * gancho de campanha, nunca compra de ficha.
  */
 
+/**
+ * TODO item que o livro conhece — inclusive o que não está à venda.
+ *
+ * O Compêndio (2026-09-23) trouxe 65 itens que em boa parte não são de
+ * prateleira: contrabando, drop de chefe e relíquia. Eles entram aqui, e não
+ * num array paralelo, porque tudo que lê o catálogo quer o livro inteiro: a
+ * busca do site, a tabela do Cap. 5 e o gerador de loot. Só a Loja pensa em
+ * prateleira, e é ela que filtra, com `estaAVenda`.
+ */
 export const SHOP_ITEMS: ShopItem[] = [
   ...WEAPONS,
   ...SPECIAL_WEAPONS,
@@ -691,4 +750,5 @@ export const SHOP_ITEMS: ShopItem[] = [
   ...POISONS,
   ...MAGIC_TOOLS,
   ...ENCHANTMENTS,
+  ...COMPENDIO_ITENS,
 ];
