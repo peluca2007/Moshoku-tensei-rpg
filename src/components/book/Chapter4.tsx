@@ -1,6 +1,6 @@
 import { VIGOR_FACTOR_TABLE } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
-import { AnatomiaDoTurno, Cobertura, FioDaVida } from "./Diagramas";
+import { AnatomiaDoTurno, Cobertura, FioDaVida, OrdemDoDano, QuebrantadoEmpilha } from "./Diagramas";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_DO_FIO_DA_VIDA, ARTE_DO_TOUKI } from "@/data/midiaDeHabilidade";
 import { CONDICOES, ESTADOS_DE_REGRA } from "@/data/condicoes";
@@ -191,6 +191,9 @@ export default function Chapter4() {
             .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"))
             .map((c) => [c.nome, c.efeito])}
         />
+        {/* A única condição da tabela que ACUMULA, e por isso a única que uma
+            linha de tabela não consegue mostrar: o efeito dela é a pilha. */}
+        <QuebrantadoEmpilha />
       </Section>
 
       <Section>
@@ -526,6 +529,7 @@ export default function Chapter4() {
             Primeiro a redução fixa: 17 − 3 = 14. Depois a Resistência: 7.
           </P>
         </Aside>
+        <OrdemDoDano />
       </Section>
 
       <Section>

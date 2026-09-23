@@ -502,6 +502,142 @@ export function EscadaDePatamares() {
 }
 
 /**
+ * A ORDEM DO DANO — Cap. 4, §6.
+ *
+ * O primeiro diagrama que DEMONSTRA em vez de descrever (2026-09-23): ele roda
+ * o exemplo do livro golpe a golpe, em vez de desenhar a estrutura da regra.
+ *
+ * A regra diz "reduções fixas entram antes; depois Resistência". Dita assim,
+ * ela parece detalhe de ordem — e não é: invertida, o mesmo golpe de 17 vira 5
+ * em vez de 7, e a diferença cresce com o patamar. O que faz a ordem ficar na
+ * cabeça é ver o número sendo cortado duas vezes, e nesta sequência.
+ *
+ * Os números são os mesmos do exemplo escrito na seção, de propósito: quem
+ * leu o parágrafo reconhece a conta, e quem pulou direto pro desenho já chega
+ * ao texto sabendo o resultado.
+ */
+export function OrdemDoDano() {
+  const passos = [
+    { valor: "17", rotulo: "O golpe", detalhe: "espada mundana, dano cheio" },
+    { valor: "−3", rotulo: "Redução fixa", detalhe: "Defender: Vigor 0 + Bônus de Rank +3" },
+    { valor: "14", rotulo: "Sobrou", detalhe: "é sobre ISTO que a Resistência age" },
+    { valor: "÷2", rotulo: "Resistência", detalhe: "Casco do Escudeiro: dano físico mundano" },
+    { valor: "7", rotulo: "Chega", detalhe: "o que sai dos PV dele", destaque: true },
+  ];
+
+  return (
+    <Quadro
+      titulo="A ordem do dano"
+      nota={
+        <>
+          A ordem não é detalhe: invertida — Resistência primeiro, redução depois — o mesmo golpe de 17
+          chegaria como <b>5</b>, e a diferença só cresce com o patamar. Reduções fixas (Touki, Defender)
+          sempre <b>antes</b>; Resistência, Imunidade e Vulnerável <b>depois</b>.
+        </>
+      }
+      rolavel
+    >
+      <ol className="flex min-w-[420px] items-stretch gap-1.5">
+        {passos.map((p, i) => (
+          <li
+            key={p.rotulo}
+            style={{ animationDelay: `${i * 260}ms` }}
+            className="surge flex flex-1 flex-col items-center"
+          >
+            <div
+              className={`flex w-full flex-1 flex-col items-center justify-center rounded-xl border p-2 text-center ${
+                p.destaque
+                  ? "border-gold-500/60 bg-gradient-to-b from-gold-100/80 to-gold-100/20 dark:border-gold-500/50 dark:from-gold-950/50 dark:to-gold-950/10"
+                  : "border-parchment-300 bg-parchment-50/70 dark:border-parchment-700 dark:bg-parchment-900/50"
+              }`}
+            >
+              <span
+                className={`font-display text-xl font-black tabular-nums ${
+                  p.destaque ? "text-gold-700 dark:text-gold-300" : "text-parchment-800 dark:text-parchment-200"
+                }`}
+              >
+                {p.valor}
+              </span>
+              <span className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-wine-700 dark:text-wine-300">
+                {p.rotulo}
+              </span>
+              <span className="mt-0.5 text-[10px] leading-tight text-parchment-600 dark:text-parchment-400">
+                {p.detalhe}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </Quadro>
+  );
+}
+
+/**
+ * O QUEBRANTADO EMPILHANDO — Cap. 4 (glossário) e Cap. 3 (Lutador).
+ *
+ * A mecânica de uma árvore inteira, e a mais difícil de enxergar de cabeça:
+ * cada acúmulo tira 1 da CA E 1 do dano de TODOS os ataques do alvo, até o
+ * teto do Bônus de Rank de quem aplicou. Em prosa isso é uma frase com três
+ * números que se multiplicam; aqui é uma coluna que desce.
+ *
+ * O desenho mostra o teto de propósito: o Lutador não empilha para sempre, e
+ * saber onde a conta para é o que impede a mesa de achar que a árvore desmonta
+ * qualquer coisa dado tempo suficiente.
+ */
+export function QuebrantadoEmpilha() {
+  const CA_INICIAL = 15;
+  const acumulos = [0, 1, 2, 3];
+
+  return (
+    <Quadro
+      titulo="Quebrantado, acúmulo a acúmulo"
+      nota={
+        <>
+          O teto é o <b>Bônus de Rank de quem aplicou</b> — aqui, um Veterano (+3). Não é ferimento: magia
+          de Cura não remove, e ele só sai num Descanso Curto ou quando o combate acaba. Cada acúmulo cobra
+          duas vezes: a CA que ele perde e o dano que ele deixa de causar.
+        </>
+      }
+      rolavel
+    >
+      <div className="flex min-w-[380px] items-end gap-2">
+        {acumulos.map((n, i) => (
+          <div key={n} className="group flex flex-1 flex-col items-center gap-1.5">
+            <span className="text-[10px] font-bold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+              {n === 0 ? "Intacto" : `${n}º acúmulo`}
+            </span>
+            <div
+              style={{ height: `${(CA_INICIAL - n) * 7}px`, animationDelay: `${i * 140}ms` }}
+              className={`barra-cresce w-full rounded-t-md ring-1 transition-transform duration-200 group-hover:-translate-y-0.5 ${
+                n === 0
+                  ? "bg-gradient-to-t from-parchment-400/40 to-parchment-300/70 ring-parchment-400/30"
+                  : "bg-gradient-to-t from-wine-800/50 via-wine-600/60 to-wine-400/70 ring-wine-500/30"
+              }`}
+            />
+            <span className="font-display text-sm font-black tabular-nums text-parchment-800 dark:text-parchment-100">
+              CA {CA_INICIAL - n}
+            </span>
+            <span className="text-[10px] tabular-nums text-wine-700 dark:text-wine-300">
+              {n === 0 ? "dano cheio" : `dano −${n}`}
+            </span>
+          </div>
+        ))}
+        <div className="flex flex-1 flex-col items-center justify-end gap-1.5 self-stretch">
+          <span className="text-[10px] font-bold uppercase tracking-wide text-gold-700 dark:text-gold-400">
+            4º acúmulo
+          </span>
+          <div className="surge flex w-full flex-1 items-center justify-center rounded-xl border-2 border-dashed border-gold-500/50 p-1 text-center">
+            <span className="text-[10px] leading-tight text-parchment-600 dark:text-parchment-400">
+              não entra: o teto é o Bônus de Rank
+            </span>
+          </div>
+        </div>
+      </div>
+    </Quadro>
+  );
+}
+
+/**
  * O TURNO — Cap. 4.
  *
  * As três Ações acendem em sequência, e a Reação fica de fora do ritmo — ela é
