@@ -164,6 +164,15 @@ export interface CriaturaEncontro {
    * guardar derivado é como a tabela de PV do Cap. 4 envelheceu da última vez.
    */
   arquetipo?: string;
+  /**
+   * O que ela É, enquanto o arquétipo diz o que ela FAZ (2026-09-23).
+   *
+   * Besta, Monstruosidade, Humanoide, Morto-Vivo, Construto ou Demônio. A
+   * simulação não lê este campo: ele existe pra recompensa sair do que foi
+   * derrotado em vez de um sorteio cego, e pra sugerir Ações, Resistência e
+   * Imunidade ao Mestre que está montando o bloco.
+   */
+  subArquetipo?: string;
   /** Sobrescreve o Deslocamento do arquétipo, em metros. Ausente = o do arquétipo. */
   deslocamento?: number;
   /** Voo, natação, escalada — o que não é andar. */

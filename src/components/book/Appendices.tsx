@@ -6,6 +6,7 @@ import {
 } from "@/data/danoPorTurno";
 import {
   ARQUETIPOS_CRIATURA,
+  SUBARQUETIPOS_CRIATURA,
   CRIATURAS_PRONTAS,
   MOLDES_CRIATURA,
   atributosDaCriatura,
@@ -18,6 +19,7 @@ import {
 } from "@/data/bestiary";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import Crest from "@/components/Crest";
+import { SHOP_ITEMS } from "@/data/shopItems";
 
 export default function Appendices() {
   return (
@@ -419,6 +421,48 @@ export default function Appendices() {
             a.exemplo,
           ])}
         />
+        <SubTitle id="apendice-g-subarquetipo">O sub-arquétipo — o que ela é</SubTitle>
+        <P>
+          O arquétipo diz o que a criatura <b>faz</b>: em qual atributo os números dela aparecem. O
+          sub-arquétipo diz o que ela <b>é</b> — e é dele que sai o que o corpo dela deixa quando ela cai.
+          Os dois se cruzam: um Bruto/Besta é um urso, um Bruto/Morto-Vivo é um zumbi grande, um
+          Conjurador/Humanoide é um necromante. Cinco por seis dão trinta criaturas reconhecíveis a partir
+          de onze palavras.
+        </P>
+        <BookTable
+          headers={["Sub-arquétipo", "O corpo deixa", "Moeda", "De graça", "Exemplo"]}
+          rows={SUBARQUETIPOS_CRIATURA.map((s) => [
+            s.nome,
+            s.espolios.map((id) => SHOP_ITEMS.find((i) => i.id === id)?.name ?? id).join(", "),
+            s.moeda === "bolsa" ? "Carrega bolsa" : s.moeda === "pouca" ? "Pouca" : "Nenhuma",
+            [
+              s.resistencias?.length ? `Resiste a ${s.resistencias.join(", ")}` : "",
+              s.imunidades?.length ? `Imune a ${s.imunidades.join(", ")}` : "",
+            ]
+              .filter(Boolean)
+              .join("; ") || "—",
+            s.exemplo,
+          ])}
+        />
+        <Aside title="Por que a moeda é do sub-arquétipo, e não do patamar">
+          <P>
+            Porque é metade da economia de escassez do Cap. 5. Um lobo não carrega bolsa: o que ele rende é
+            presa e chifre, que vendem pelo <b>preço cheio</b> por serem matéria-prima. Um bandido carrega
+            moeda, mas o equipamento dele revende <b>pela metade</b>.
+          </P>
+          <P>
+            É essa diferença que faz caçar valer mais que saquear — e ela só existe porque a tabela acima
+            sabe quem estava do outro lado. Sem sub-arquétipo, o espólio volta a ser um sorteio dentro do
+            catálogo inteiro, e um bando de lobos larga poção de mana.
+          </P>
+        </Aside>
+        <P>
+          As <b>Ações típicas</b> de cada sub-arquétipo estão na tela de Encontros, ao escolher um: elas são
+          sugestão pra montar um monstro sem inventar do zero, nunca obrigação. Resistência e Imunidade da
+          tabela também entram como sugestão — e a Imunidade continua custando um patamar no Orçamento de
+          Encontro, como manda a regra abaixo.
+        </P>
+
         <Aside title="O que cada atributo da criatura faz, e onde">
           <List
             items={[

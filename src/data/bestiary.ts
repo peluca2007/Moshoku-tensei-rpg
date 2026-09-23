@@ -201,6 +201,105 @@ export function getArquetipo(id: string | undefined): ArquetipoCriatura | undefi
   return ARQUETIPOS_CRIATURA.find((a) => a.id === id);
 }
 
+export interface SubArquetipoCriatura {
+  id: string;
+  nome: string;
+  /**
+   * O que o corpo dela deixa — ids da categoria `tralha` do catálogo.
+   *
+   * É por aqui que a recompensa deixa de ser sorteio e passa a sair do que foi
+   * derrotado: um lobo larga presa, e nunca mais uma poção de mana.
+   */
+  espolios: string[];
+  /**
+   * Quanto dela vem em moeda.
+   *
+   * `nenhuma` não é detalhe de sabor: é metade da economia de escassez do
+   * Cap. 5. Um lobo não carrega bolsa, então caçar rende espólio pra vender —
+   * e é por isso que vale mais que saquear bandido, cujo equipamento revende
+   * pela metade.
+   */
+  moeda: "nenhuma" | "pouca" | "bolsa";
+  /** Sugestão, não trava: o Mestre continua editando o bloco à mão. */
+  resistencias?: string[];
+  imunidades?: string[];
+  /** Duas ou três Ações típicas, pra montar um monstro sem inventar do zero. */
+  acoesSugeridas: string[];
+  exemplo: string;
+}
+
+/**
+ * Os seis sub-arquétipos do Apêndice G (2026-09-23).
+ *
+ * O arquétipo diz o que a criatura FAZ; o sub-arquétipo diz o que ela É. Os
+ * dois se cruzam: um Bruto/Besta é um urso, um Bruto/Morto-Vivo é um zumbi
+ * grande, um Conjurador/Humanoide é um necromante — 5 × 6 dá trinta criaturas
+ * reconhecíveis a partir de onze palavras.
+ *
+ * São seis pelo mesmo motivo que os arquétipos são cinco: a lista existe pra
+ * ser escolhida em voz alta no meio de uma frase. O que ela carrega é
+ * justamente o que o arquétipo não tem como saber — de onde vem o espólio, se
+ * o bicho carrega bolsa, e o que costuma não machucá-lo.
+ */
+export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
+  {
+    id: "besta",
+    nome: "Besta",
+    espolios: ["tralha_presa_lobo_gigante", "tralha_chifre_besta_terrestre", "tralha_casco_besouro_tartaruga"],
+    moeda: "nenhuma",
+    acoesSugeridas: ["Mordida", "Investida (corre e derruba)", "Uivo que chama o bando"],
+    exemplo: "Lobo de gelo, urso das cavernas, javali gigante.",
+  },
+  {
+    id: "monstruosidade",
+    nome: "Monstruosidade",
+    espolios: ["tralha_frasco_acido_gastrico", "tralha_po_asa_mariposa_ilusoria", "tralha_casco_besouro_tartaruga"],
+    moeda: "nenhuma",
+    acoesSugeridas: ["Ácido ou cuspe em área", "Agarrar e engolir", "Regenerar no início do turno"],
+    exemplo: "Sapo-lodo, mariposa ilusória, treant corrompido.",
+  },
+  {
+    id: "humanoide",
+    nome: "Humanoide",
+    espolios: ["tralha_moeda_antiga_shirone", "tralha_fivela_aventureiro_morto", "tralha_estatueta_madeira_engracada"],
+    moeda: "bolsa",
+    acoesSugeridas: ["Ataque com arma de verdade", "Pedir rendição ou fugir a 1/4 dos PV", "Flanquear em dupla"],
+    exemplo: "Bandido, guarda, cultista, mercenário.",
+  },
+  {
+    id: "morto-vivo",
+    nome: "Morto-Vivo",
+    espolios: ["tralha_pano_amaldicoado", "tralha_fivela_aventureiro_morto", "tralha_moeda_antiga_shirone"],
+    moeda: "pouca",
+    resistencias: ["veneno"],
+    imunidades: ["psíquico"],
+    acoesSugeridas: ["Garra que impede cura por 1 rodada", "Toque gélido", "Levantar-se uma vez com 1 PV"],
+    exemplo: "Zumbi, esqueleto, lich, fantasma de aventureiro.",
+  },
+  {
+    id: "construto",
+    nome: "Construto",
+    espolios: ["tralha_gema_magica_opaca", "tralha_casco_besouro_tartaruga"],
+    moeda: "nenhuma",
+    imunidades: ["veneno", "psíquico"],
+    acoesSugeridas: ["Golpe de peso que aplica Quebrantado", "Ignorar a primeira condição da cena", "Parar de funcionar a 0 PV, sem Fio da Vida"],
+    exemplo: "Golem de pedra, armadura animada, autômato de Ranoa.",
+  },
+  {
+    id: "demonio",
+    nome: "Demônio",
+    espolios: ["tralha_gema_magica_opaca", "tralha_pano_amaldicoado", "tralha_po_asa_mariposa_ilusoria"],
+    moeda: "pouca",
+    resistencias: ["psíquico"],
+    acoesSugeridas: ["Palavra que impõe Amedrontado", "Olho demoníaco (uma vez por cena)", "Trocar de lugar com um aliado"],
+    exemplo: "Íncubo, imperatriz demônio menor, espírito do Continente Demônio.",
+  },
+];
+
+export function getSubArquetipo(id: string | undefined): SubArquetipoCriatura | undefined {
+  return SUBARQUETIPOS_CRIATURA.find((s) => s.id === id);
+}
+
 /**
  * Os cinco atributos prontos de uma criatura, já distribuídos pelo arquétipo.
  *
