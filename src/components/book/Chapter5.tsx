@@ -146,6 +146,77 @@ export default function Chapter5() {
           confia em você o bastante pra deixar você chegar perto dele.
         </Aside>
 
+        <SubTitle id="cap5-2-fora-da-guilda">O que a Guilda não vende</SubTitle>
+        <P>
+          Nem tudo que existe no Mundo de Seis Faces tem prateleira. O catálogo abaixo traz o mundo
+          inteiro, em três disponibilidades:
+        </P>
+        <BookTable
+          headers={["Disponibilidade", "Onde se consegue", "Preço"]}
+          rows={[
+            [
+              "Guilda F–S",
+              "À venda na sede, respeitando o Rank mínimo da tabela acima. É o que a loja do site vende.",
+              "O da tabela.",
+            ],
+            [
+              "Fora da Guilda",
+              "Existe, e não na vitrine: cai de criatura, vem de contrato, de contrabando ou do mercado negro. O Mestre decide quando aparece.",
+              "O da tabela — alguém paga esse valor, só não é a Guilda que vende.",
+            ],
+            [
+              "Relíquia",
+              "Só pela história. Uma Lança Genuína de Superd, o Olho da Previsão ou a Armadura Zariff chegam pelas mãos de alguém, nunca por uma rolagem de tesouro.",
+              "Nenhum. Não se compra, não se vende, não se avalia.",
+            ],
+          ]}
+        />
+        <Aside title="Por que relíquia não tem preço">
+          Porque um preço serve pra duas coisas, e as duas quebram. Se ela pode ser comprada, basta juntar
+          PO — e um item que fecha a campanha vira questão de paciência. Se ela pode ser vendida, o grupo que
+          achar UMA nunca mais precisa de dinheiro: o maior preço do resto do livro é 1.500 PO, e trabalhar
+          uma semana inteira no Downtime rende 2d6 × Bônus de Rank. A relíquia fica fora da conta justamente
+          pra que a conta continue existindo.
+        </Aside>
+
+        <SubTitle id="cap5-2-vender">Vender o que caiu</SubTitle>
+        <P>
+          A Guilda e os mercadores não são seus amigos: eles querem lucro. Três regras, e elas valem pra
+          tudo que o grupo tirar do campo:
+        </P>
+        <BookTable
+          headers={["O que você está vendendo", "Quanto rende", "Por quê"]}
+          rows={[
+            [
+              "Espólio (presa, casco, gema esgotada, pano amaldiçoado)",
+              "100% do preço",
+              "É matéria-prima, e o ferreiro, o alquimista e o bruxo consomem isso mais rápido do que aparece. Tem demanda, então tem preço justo.",
+            ],
+            [
+              "Arma, armadura, poção, veneno e ferramenta",
+              "50% do preço",
+              "O lojista precisa de margem, e equipamento de bandido morto ainda vai ser limpo, afiado e legalizado antes de voltar pra vitrine.",
+            ],
+            [
+              "Relíquia",
+              "Não se vende",
+              "Não tem preço (acima). Ela troca de mão por acordo, dívida ou favor — e isso é cena, não transação.",
+            ],
+          ]}
+        />
+        <Aside title="O ciclo que isso cria">
+          <P>
+            Espólio vendendo a 100% e equipamento a 50% não é detalhe de contabilidade: é o que faz caçar
+            valer mais que saquear. Um grupo que limpa um acampamento de bandidos sai com cinco espadas
+            que rendem metade; o mesmo grupo, caçando a criatura certa, sai com presas e cascos que rendem
+            tudo.
+          </P>
+          <P>
+            E quando a relíquia aparece, ela não muda a planilha do grupo — muda a história dele, porque a
+            única coisa que dá pra fazer com ela é usá-la ou entregá-la a alguém que a queira muito.
+          </P>
+        </Aside>
+
         <SubTitle>Catálogo da Loja</SubTitle>
         <ShopCatalog />
       </Section>

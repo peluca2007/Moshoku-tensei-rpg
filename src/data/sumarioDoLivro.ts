@@ -111,6 +111,8 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
     children: [
       { id: "cap5-1", label: "1. Tempo Livre e Downtime" },
       { id: "cap5-2", label: "2. A Guilda de Aventureiros" },
+      { id: "cap5-2-fora-da-guilda", label: "— O que a Guilda não vende" },
+      { id: "cap5-2-vender", label: "— Vender o que caiu" },
       { id: "cap5-3", label: "3. Reputação com Facções" },
       { id: "cap5-4", label: "4. Crafting e Alquimia" },
       { id: "cap5-5", label: "5. Dojos e Mestres" },

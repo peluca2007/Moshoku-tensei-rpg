@@ -196,8 +196,13 @@ describe("invocações e recompensas", () => {
     for (const valor of [0, 1, 15, 150, 10000]) {
       const r = gerarLootDoEncontro(valor, 7);
       expect(r).toEqual(gerarLootDoEncontro(valor, 7));
-      expect(r.moedas + r.itens.reduce((s, i) => s + i.price, 0)).toBe(valor);
-      expect(r.itens.every((i) => i.id && i.description && i.price > 0)).toBe(true);
+      const caiu = [...r.tralhas, ...r.itens];
+      expect(r.moedas + caiu.reduce((s, i) => s + i.price, 0)).toBe(valor);
+      expect(caiu.every((i) => i.id && i.description && i.price > 0)).toBe(true);
+      // Relíquia não é sorteada: ela não tem preço, e o que entrega uma Lança
+      // de Superd é a história, nunca o d20.
+      expect(caiu.every((i) => (i.disponibilidade ?? "loja") !== "inestimavel")).toBe(true);
+      expect(r.tralhas.every((i) => i.category === "tralha")).toBe(true);
     }
     expect(() => gerarLootDoEncontro(-1, 0)).toThrow();
   });
