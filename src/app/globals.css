@@ -515,6 +515,61 @@ input[type="number"],
   font-variant-numeric: tabular-nums;
 }
 
+/* ============================================================================
+ * O SELECT (2026-09-23)
+ *
+ * São 41 deles, em 12 arquivos — a raça e o antecedente na ficha, a árvore
+ * inicial, o downtime, o alvo do "eu aguento isso?", os doze do construtor de
+ * encontros. Todos vinham crus do sistema operacional: caixa cinza, cantos do
+ * Windows, seta cinza. No meio de uma página de pergaminho com filete dourado
+ * eles eram, de longe, a coisa que mais denunciava "formulário web" — e eram
+ * também o controle que o jogador mais toca depois dos botões.
+ *
+ * A correção é no elemento, e não num componente novo: trocar 41 tags por um
+ * `<Select>` mexeria em 12 arquivos pra chegar no mesmo lugar que uma regra
+ * chega sozinha. A seta vai como `background-image` porque `appearance: none`
+ * apaga a nativa, e vai em duas versões porque data-uri não enxerga
+ * `currentColor`.
+ *
+ * O que NÃO é estilizável e por isso não se tenta aqui: a lista aberta
+ * (`<option>`) continua sendo desenhada pelo sistema. É o `color-scheme` do
+ * `:root` que faz ela abrir no tema certo — ver o topo deste arquivo.
+ *
+ * Vai em `@layer base` de propósito: assim é um PADRÃO, e não uma imposição.
+ * Fora de camada, este bloco venceria as utilitárias do Tailwind e pintaria
+ * até quem já tinha estilo próprio — o seletor de Rank da ficha, que mora
+ * dentro de uma pílula vinho e pede fundo transparente, virava uma caixa
+ * pergaminho dentro da pílula. Na camada base, quem declara no JSX continua
+ * mandando.
+ * ========================================================================== */
+
+@layer base {
+  select {
+    appearance: none;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-parchment-300);
+    background-color: var(--color-parchment-50);
+    color: var(--color-parchment-900);
+    padding: 0.375rem 1.875rem 0.375rem 0.625rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23726040' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .dark select {
+    border-color: var(--color-parchment-700);
+    background-color: var(--color-parchment-950);
+    color: var(--color-parchment-100);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c7ae80' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  select:hover {
+    border-color: var(--color-gold-500);
+  }
+}
+
 /*
  * Foco de teclado global. Antes de 2026-08-28 só 5 dos ~30 componentes
  * declaravam estilo de foco — a nav, o rolador de dados, a loja, o tracker de
