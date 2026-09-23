@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { normalizar } from "@/lib/texto";
+import { usePosicaoDeLeitura } from "./usePosicaoDeLeitura";
 
 export interface TocEntry {
   id: string;
@@ -20,108 +21,9 @@ export interface TocEntry {
  * - **Filtro por nome**: reduz o sumário enquanto você digita, sem acento e sem caixa.
  */
 export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNavigate?: () => void }) {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const { activeId, capituloAtivo } = usePosicaoDeLeitura(toc);
   const [query, setQuery] = useState("");
   const navRef = useRef<HTMLElement | null>(null);
-
-  const allIds = useMemo(
-    () => toc.flatMap((c) => [c.id, ...(c.children ?? []).map((x) => x.id)]),
-    [toc]
-  );
-
-  /*
-   * De qual capítulo é cada seção — 0.1.74.
-   *
-   * `activeId` é UM id só: o último título que passou da linha de leitura.
-   * Enquanto ele for o de uma seção, o capítulo-pai não acendia, e o sumário
-   * parecia ter largado a leitura no meio do caminho — que é exatamente a
-   * queixa de quem estava lendo o Cap. 4 e via o Cap. 4 apagado.
-   */
-  const paiDaSecao = useMemo(() => {
-    const m = new Map<string, string>();
-    for (const c of toc) for (const f of c.children ?? []) m.set(f.id, c.id);
-    return m;
-  }, [toc]);
-  const capituloAtivo = activeId ? paiDaSecao.get(activeId) ?? activeId : null;
-
-  useEffect(() => {
-    // Posição calculada direto do scroll, e não por IntersectionObserver: com uma
-    // faixa de observação estreita, um scroll rápido (ou um pulo por link do próprio
-    // sumário) faz todos os títulos atravessarem a faixa entre frames, nenhuma
-    // interseção é registrada e o marcador nunca acende. Aqui a resposta é sempre
-    // definida — o último título que já passou da linha de leitura — e vale também
-    // no primeiro render, antes de qualquer scroll.
-    const READING_LINE = 100;
-
-    // As posições são medidas UMA vez (e de novo só em resize), nunca durante o
-    // scroll: `getBoundingClientRect()` força layout síncrono, e chamar isso pros
-    // ~40 títulos a cada frame num documento de 60 mil pixels trava o navegador.
-    // Durante o scroll sobra só aritmética contra `scrollY`.
-    let positions: { id: string; top: number }[] = [];
-    function measure() {
-      positions = allIds
-        .map((id) => {
-          const el = document.getElementById(id);
-          return el ? { id, top: el.getBoundingClientRect().top + window.scrollY } : null;
-        })
-        .filter((p): p is { id: string; top: number } => p !== null)
-        .sort((a, b) => a.top - b.top);
-    }
-
-    let frame = 0;
-    function update() {
-      frame = 0;
-      const line = window.scrollY + READING_LINE;
-      let current: string | null = null;
-      for (const p of positions) {
-        if (p.top <= line) current = p.id;
-        else break;
-      }
-      setActiveId(current ?? positions[0]?.id ?? null);
-    }
-
-    function onScroll() {
-      if (frame) return;
-      frame = requestAnimationFrame(update);
-    }
-
-    function onResize() {
-      measure();
-      onScroll();
-    }
-
-    measure();
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize, { passive: true });
-
-    /*
-     * Re-medir quando o DOCUMENTO muda de altura — 0.1.74.
-     *
-     * Medir uma vez no mount só valeria se a página parasse de crescer depois
-     * disso, e ela não para: são ~120 artes (várias de megabytes) carregando aos
-     * poucos, os `<details>` do catálogo de árvores abrindo e fechando, e a
-     * fonte de display trocando quando termina de baixar. Cada uma dessas
-     * empurra os títulos pra baixo — e como as posições eram de antes, o
-     * marcador ficava dezenas de milhares de pixels atrasado: o leitor estava
-     * no Cap. 4 e o sumário insistia no Cap. 2. É este o "sumário não
-     * acompanha".
-     *
-     * `resize` da janela não cobre nada disso: a janela não mudou de tamanho.
-     */
-    const observer = new ResizeObserver(() => {
-      measure();
-      onScroll();
-    });
-    observer.observe(document.documentElement);
-
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      observer.disconnect();
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [allIds]);
 
   /*
    * Manter o item aceso à VISTA dentro do painel — 0.1.74.

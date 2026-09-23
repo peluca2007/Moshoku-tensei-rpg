@@ -1,4 +1,4 @@
-import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import ShopCatalog from "./ShopCatalog";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_DO_DOJO } from "@/data/midiaDeHabilidade";
@@ -7,7 +7,13 @@ import { LIMITES, MARCA_DO_MESTRE, PROVACOES, RECOMPENSA_POR_PATAMAR } from "@/d
 export default function Chapter5() {
   return (
     <div className="space-y-8">
-      <ChapterTitle id="cap5">Capítulo 5 — Entre Aventuras</ChapterTitle>
+      <ChapterTitle
+        id="cap5"
+        numero="Capítulo 5"
+        resumo="O jogo fora da luta: descanso, Guilda, Loja, Reputação com facções, crafting e o treino num Dojo."
+      >
+        Entre Aventuras
+      </ChapterTitle>
       <P className="dropcap">
         Nem toda sessão é masmorra. Este capítulo reúne os cinco sistemas que rodam entre combates — tempo
         livre, fama na Guilda, reputação com o mundo, o que dá pra fabricar com as próprias mãos, e os
@@ -434,6 +440,8 @@ export default function Chapter5() {
           </Aside>
         ))}
       </Section>
+
+      <FimDoCapitulo id="cap5" />
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { STARTING_KITS } from "@/data/startingKits";
 import { TREES } from "@/data/trees";
 import { PA_POR_GRUPO, WEAPON_GROUPS } from "@/data/weaponGroups";
 import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
-import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { EscadaDePatamares } from "./Diagramas";
 
 const SKILL_ATTRIBUTE_LABEL: Record<string, string> = {
@@ -58,7 +58,13 @@ function custoDeProfundidade(treeId: string): { desbloqueios: number; conhecimen
 export default function Chapter1() {
   return (
     <div className="space-y-8">
-      <ChapterTitle id="cap1">Capítulo 1 — O Núcleo do Sistema</ChapterTitle>
+      <ChapterTitle
+        id="cap1"
+        numero="Capítulo 1"
+        resumo="De onde vem cada número da ficha: atributos, Pontos de Aprimoramento, Ranks, perícias, raça e infância."
+      >
+        O Núcleo do Sistema
+      </ChapterTitle>
       <P className="dropcap">
         Este sistema abandona a ideia tradicional de Níveis de Personagem. Aqui, você não sobe de nível
         automaticamente; o seu crescimento é orgânico, baseado no estudo, no treinamento e no acúmulo de
@@ -868,6 +874,8 @@ export default function Chapter1() {
           Mestre decide, do mesmo jeito que já decide a Raça Dragão e o Rank Deus.
         </Aside>
       </Section>
+
+      <FimDoCapitulo id="cap1" />
     </div>
   );
 }

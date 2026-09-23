@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 /**
  * "Comece Aqui" — a porta de entrada do livro (2026-09-03).
@@ -20,7 +20,13 @@ import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitl
 export default function Chapter0() {
   return (
     <div className="space-y-8">
-      <ChapterTitle id="cap0">Comece Aqui</ChapterTitle>
+      <ChapterTitle
+        id="cap0"
+        numero="Abertura"
+        resumo="A leitura de cinco minutos que basta pra sentar na mesa hoje. Nenhuma regra inteira — a forma de todas elas."
+      >
+        Comece Aqui
+      </ChapterTitle>
       <P className="dropcap">
         Cinco minutos de leitura, e você joga. Este capítulo não tem nenhuma regra completa — ele tem a
         forma de todas elas. O resto do livro é referência: você consulta, não decora.
@@ -186,6 +192,8 @@ export default function Chapter0() {
           />
         </Aside>
       </Section>
+
+      <FimDoCapitulo id="cap0" />
     </div>
   );
 }

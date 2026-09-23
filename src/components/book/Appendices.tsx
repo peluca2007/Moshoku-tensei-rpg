@@ -16,13 +16,19 @@ import {
   rotuloPatamar,
   sinal,
 } from "@/data/bestiary";
-import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import Crest from "@/components/Crest";
 
 export default function Appendices() {
   return (
     <div className="space-y-8">
-      <ChapterTitle id="apendices">Apêndices</ChapterTitle>
+      <ChapterTitle
+        id="apendices"
+        numero="Consulta rápida"
+        resumo="As tabelas que ficam abertas na mesa: ficha de exemplo, dano por turno, ambiguidades resolvidas e o bestiário."
+      >
+        Apêndices
+      </ChapterTitle>
 
       <Section>
         <SectionTitle id="apendice-a">A. Ficha de Exemplo — Roxy Migurdia</SectionTitle>
@@ -700,6 +706,8 @@ export default function Appendices() {
           ]}
         />
       </Section>
+
+      <FimDoCapitulo id="apendices" />
     </div>
   );
 }

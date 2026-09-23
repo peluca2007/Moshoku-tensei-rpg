@@ -1,5 +1,5 @@
 import { VIGOR_FACTOR_TABLE } from "@/lib/types";
-import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { AnatomiaDoTurno, Cobertura, FioDaVida } from "./Diagramas";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_DO_FIO_DA_VIDA, ARTE_DO_TOUKI } from "@/data/midiaDeHabilidade";
@@ -8,7 +8,13 @@ import { CONDICOES, ESTADOS_DE_REGRA } from "@/data/condicoes";
 export default function Chapter4() {
   return (
     <div className="space-y-8">
-      <ChapterTitle id="cap4">Capítulo 4 — O Combate e a Sobrevivência</ChapterTitle>
+      <ChapterTitle
+        id="cap4"
+        numero="Capítulo 4"
+        resumo="O turno inteiro, das Ações ao dano: condições, críticos, e o que acontece quando os PV acabam."
+      >
+        O Combate e a Sobrevivência
+      </ChapterTitle>
       <P className="dropcap">Quando a diplomacia falha e as espadas são desembainhadas, o sistema adota um combate rápido, letal e tático.</P>
 
       <Section>
@@ -905,6 +911,8 @@ export default function Chapter4() {
           arrastando um Nível 4.
         </Aside>
       </Section>
+
+      <FimDoCapitulo id="cap4" />
     </div>
   );
 }

@@ -1,31 +1,113 @@
 import { ReactNode } from "react";
 import Ornament from "@/components/ui/Ornament";
+import { SUMARIO_DO_LIVRO } from "@/data/sumarioDoLivro";
 
 /**
- * Título de capítulo — âncora com margem de rolagem pra não ficar atrás do
- * header/ToC fixo.
+ * A FOLHA DE ROSTO DE CAPÍTULO (2026-09-23).
  *
- * A abertura de capítulo é a única hora em que a filigrana aparece (0.1.5): são
- * oito capítulos num documento de metros de scroll, e o ornamento é o que marca
- * "começou coisa nova" pra quem está rolando rápido. Entre seções ele viraria
+ * Antes era um `<h2>` com a filigrana embaixo, no meio do fluxo: num scroll de
+ * 87 mil pixels o capítulo novo chegava do mesmo jeito que uma seção qualquer,
+ * só com a fonte maior. Num livro de papel você SABE que virou um capítulo
+ * antes de ler uma palavra — a página muda de comportamento.
+ *
+ * O que faz essa página mudar de comportamento aqui: o respiro grande antes, o
+ * número do capítulo em versalete entre dois filetes, o título sozinho na
+ * largura inteira, a filigrana, e uma linha dizendo o que o capítulo cobre. A
+ * linha não é enfeite — ela responde "é aqui que eu procuro isso?" sem obrigar
+ * a descer até a primeira seção.
+ *
+ * A filigrana só aparece aqui (0.1.5): são oito capítulos, e o ornamento é o
+ * que marca "começou coisa nova" pra quem rola rápido. Entre seções viraria
  * barulho — lá o divisor é o filete de CSS, sem arte.
  */
-export function ChapterTitle({ id, children }: { id: string; children: ReactNode }) {
+export function ChapterTitle({
+  id,
+  numero,
+  resumo,
+  children,
+}: {
+  id: string;
+  numero?: string;
+  resumo?: string;
+  children: ReactNode;
+}) {
   return (
-    <header className="scroll-mt-24">
+    <header className="livro-abertura scroll-mt-24 text-center">
+      {numero && (
+        <p className="flex items-center justify-center gap-3 text-2xs font-bold uppercase tracking-[0.35em] text-gold-700 sm:text-xs dark:text-gold-400">
+          <span aria-hidden className="h-px w-8 bg-gradient-to-r from-transparent to-gold-600/60 sm:w-12" />
+          {numero}
+          <span aria-hidden className="h-px w-8 bg-gradient-to-l from-transparent to-gold-600/60 sm:w-12" />
+        </p>
+      )}
       <h2
         id={id}
         /*
          * `text-balance` quebra o título em linhas de largura parecida em vez de
          * deixar uma palavra órfã na segunda — num título de capítulo, que é a
          * maior tipografia da página, uma órfã salta aos olhos.
+         *
+         * `scroll-mt-32` (e não 24): a âncora é o título, mas quem pula pra cá
+         * pelo sumário precisa ver o número do capítulo acima dele, senão a
+         * folha de rosto chega pela metade.
          */
-        className="scroll-mt-24 text-balance bg-gradient-to-br from-parchment-900 to-wine-800 bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-4xl dark:from-parchment-50 dark:to-gold-200"
+        className="mt-3 scroll-mt-32 text-balance bg-gradient-to-br from-parchment-900 to-wine-800 bg-clip-text font-display text-3xl font-black tracking-tight text-transparent sm:text-5xl dark:from-parchment-50 dark:to-gold-200"
       >
         {children}
       </h2>
-      <Ornament arte className="!my-4" />
+      <Ornament arte className="!my-5" />
+      {resumo && (
+        <p className="mx-auto max-w-[46ch] text-pretty text-sm italic leading-relaxed text-parchment-600 sm:text-base dark:text-parchment-400">
+          {resumo}
+        </p>
+      )}
     </header>
+  );
+}
+
+/**
+ * O FÓLIO DE FIM DE CAPÍTULO (2026-09-23).
+ *
+ * Num livro o capítulo acaba: sobra papel em branco e o próximo começa na
+ * folha seguinte. Aqui o capítulo simplesmente parava e o texto continuava —
+ * quem estava rolando não tinha como saber que tinha terminado alguma coisa, e
+ * quem queria só aquele capítulo não tinha onde parar.
+ *
+ * O próximo capítulo sai do `SUMARIO_DO_LIVRO`, não de um parâmetro: a ordem do
+ * livro já mora lá, e repeti-la aqui seria mais um lugar pra esquecer de
+ * atualizar quando um capítulo nascer no meio.
+ */
+export function FimDoCapitulo({ id }: { id: string }) {
+  const i = SUMARIO_DO_LIVRO.findIndex((c) => c.id === id);
+  const atual = SUMARIO_DO_LIVRO[i];
+  const proximo = i >= 0 ? SUMARIO_DO_LIVRO[i + 1] : undefined;
+  if (!atual) return null;
+
+  // "Cap. 1 — O Núcleo do Sistema" → "Cap. 1". Quem não tem travessão (Comece
+  // Aqui, Apêndices) fica com o nome inteiro, que já é curto.
+  const folio = proximo ? atual.label.split(" — ")[0] : "Fim do Livro";
+
+  return (
+    <footer className="print-hide pt-4 text-center">
+      <p
+        aria-hidden
+        className="flex items-center justify-center gap-3 text-2xs font-bold uppercase tracking-[0.3em] text-parchment-500 dark:text-parchment-500"
+      >
+        <span className="h-px w-10 bg-gradient-to-r from-transparent to-parchment-400/50 sm:w-20" />
+        {folio}
+        <span className="h-px w-10 bg-gradient-to-l from-transparent to-parchment-400/50 sm:w-20" />
+      </p>
+
+      {proximo && (
+        <a
+          href={`#${proximo.id}`}
+          className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-parchment-300 bg-parchment-100/80 px-4 py-2 text-xs font-semibold text-parchment-700 transition-colors hover:border-gold-500/60 hover:text-wine-700 dark:border-parchment-800 dark:bg-parchment-900/60 dark:text-parchment-300 dark:hover:text-gold-200"
+        >
+          <span className="truncate">{proximo.label}</span>
+          <span aria-hidden>→</span>
+        </a>
+      )}
+    </footer>
   );
 }
 

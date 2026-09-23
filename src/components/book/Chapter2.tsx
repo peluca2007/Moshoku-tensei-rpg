@@ -2,7 +2,7 @@ import { INCANTATION_LENGTH, RANKS } from "@/lib/types";
 import { MAGIC_ACTIONS } from "@/data/trees/shared";
 import { COMBINED_SPELLS } from "@/data/combinedSpells";
 import { getTreeById, TREES } from "@/data/trees";
-import { Aside, BookTable, ChapterTitle, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
 function tex(s: string): string {
   return s
@@ -34,7 +34,13 @@ function pmDeReferencia(rank: (typeof RANKS)[number]) {
 export default function Chapter2() {
   return (
     <div className="space-y-8">
-      <ChapterTitle id="cap2">Capítulo 2 — As Leis da Magia</ChapterTitle>
+      <ChapterTitle
+        id="cap2"
+        numero="Capítulo 2"
+        resumo="O que a magia cobra e onde ela para: cântico, tempo de conjuração, combinação entre escolas e Maestrias."
+      >
+        As Leis da Magia
+      </ChapterTitle>
 
       <Section>
         <SectionTitle id="cap2-1">1. As Categorias da Magia</SectionTitle>
@@ -645,6 +651,8 @@ export default function Chapter2() {
           ]}
         />
       </Section>
+
+      <FimDoCapitulo id="cap2" />
     </div>
   );
 }

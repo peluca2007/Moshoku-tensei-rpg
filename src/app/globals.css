@@ -8,6 +8,11 @@
 :root {
   --background: #fdf6e3;
   --foreground: #2b1810;
+  /* A altura do nav, pra quem precisa grudar logo ABAIXO dele (hoje: o
+     cabeçalho corrente do livro). A logo tem 64px e a barra 8px de padding em
+     cima e embaixo; o `env()` é o entalhe do iPhone, que empurra o nav pra
+     baixo e levaria junto qualquer coisa colada nele. */
+  --altura-nav: calc(5rem + env(safe-area-inset-top, 0px));
   /* Sem isso, o navegador renderiza <select>/<option> nativos sempre no tema
      claro do SO, ilegível (texto claro em fundo claro) quando a página está
      escura. Isso avisa o navegador pra desenhar os controles nativos no tema
@@ -301,6 +306,145 @@ h3 {
 .livro-shell .livro-prosa > ul,
 .livro-shell .livro-prosa > ol {
   max-width: 68ch;
+}
+
+/*
+ * A PÁGINA — a folha em que o livro é impresso (2026-09-23).
+ *
+ * Até aqui o livro inteiro morava num cartão: `rounded-2xl`, borda nos quatro
+ * lados, 16px de padding. É o mesmo objeto que a loja, a ficha e um encontro
+ * usam pra conter UM bloco de informação — e o livro inteiro dentro de um só
+ * não lia como página, lia como um bloco do site que não acaba mais.
+ *
+ * Três diferenças fazem a folha:
+ *
+ * - **Canto quase reto.** Papel cortado não tem canto de 16px. `0.25rem` é o
+ *   bastante pra não parecer erro de renderização, e pouco o bastante pra não
+ *   parecer um cartão.
+ * - **Sombra de folha apoiada**, e não borda desenhada. A borda de 1px continua
+ *   lá, mas quase invisível: quem separa a folha do fundo é a sombra larga e
+ *   baixa de um papel pousado sobre outro.
+ * - **Margem de livro**, no JSX (`px-5 py-8 sm:px-10 sm:py-12 lg:px-14`). É o
+ *   respiro lateral que separa texto impresso de parede de pixels.
+ *
+ * A textura de fibra vem do `.surface`, que já a tem — a classe entra junto no
+ * JSX em vez de o livro declarar a sua. O seletor duplo (`.livro-pagina.surface`)
+ * não é enfeite: `.surface` também declara `box-shadow` e é definida mais
+ * abaixo neste arquivo, então sem as duas classes no seletor a sombra de cartão
+ * venceria a de folha por ordem de cascata.
+ */
+.livro-pagina.surface {
+  border-radius: 0.25rem;
+  border: 1px solid var(--color-parchment-300);
+  background-color: color-mix(in srgb, var(--color-parchment-50) 75%, transparent);
+  box-shadow:
+    0 1px 1px rgb(43 24 16 / 0.05),
+    0 12px 32px -18px rgb(43 24 16 / 0.35);
+}
+
+.dark .livro-pagina.surface {
+  border-color: color-mix(in srgb, var(--color-parchment-800) 80%, transparent);
+  background-color: color-mix(in srgb, var(--color-parchment-900) 55%, transparent);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 0.2),
+    0 12px 32px -18px rgb(0 0 0 / 0.6);
+}
+
+/*
+ * A arte da capa.
+ *
+ * Os números de cor são os MESMOS de `.faixa-arte` — as artes do projeto
+ * chegam em teal, azul e cinza, e é esse sépia que as traz pro âmbar da
+ * paleta. Sem ele a capa saía visivelmente mais fria que a folha logo abaixo,
+ * que é pergaminho quente: duas temperaturas na mesma tela, e a capa parecendo
+ * de outro site.
+ *
+ * O que ela NÃO herda é a máscara em degradê da `.faixa-arte`, que apaga a
+ * arte a partir de 55% — uma faixa some no fundo da página, mas uma capa é
+ * emoldurada, e a moldura ficaria com metade vazia. O blur entra no mesmo
+ * `filter` de propósito: escrito como utilitária do Tailwind ele substituiria
+ * esta regra inteira em vez de somar a ela.
+ */
+.livro-capa-arte {
+  filter: sepia(0.55) saturate(0.75) brightness(0.72) contrast(1.05) blur(3px);
+}
+
+.dark .livro-capa-arte {
+  filter: sepia(0.5) saturate(0.6) brightness(0.5) contrast(1.1) blur(3px);
+}
+
+/*
+ * A moldura dupla da capa.
+ *
+ * É ela que transforma um retângulo com foto atrás num objeto impresso: a
+ * borda externa é do elemento, esta é a de dentro, e o vão entre as duas é o
+ * que o olho lê como "isso foi diagramado". Um filete só não faz isso — lê
+ * como borda de card, que é o que a capa estava tentando deixar de ser.
+ */
+.livro-capa::after {
+  content: "";
+  position: absolute;
+  inset: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-gold-600) 35%, transparent);
+  border-radius: 0.125rem;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .livro-capa::after {
+    inset: 0.75rem;
+  }
+}
+
+/*
+ * O respiro antes de uma folha de rosto de capítulo.
+ *
+ * Num livro, o capítulo novo começa em página nova: o branco antes dele é o
+ * que avisa que a coisa anterior acabou. Aqui o equivalente é este respiro —
+ * junto com o fólio que fecha o capítulo anterior, ele é toda a "virada de
+ * página" que um scroll contínuo pode ter sem mentir sobre o que é.
+ *
+ * O PRIMEIRO capítulo não recebe: acima dele está o cabeçalho da rota, e o
+ * livro pareceria começar com um buraco.
+ */
+.livro-abertura {
+  padding-top: 2.5rem;
+}
+
+.livro-pagina > *:first-child .livro-abertura {
+  padding-top: 0;
+}
+
+/*
+ * Onde uma âncora do livro para, agora que há duas barras no topo.
+ *
+ * Todo título do livro carrega `scroll-mt-24` (96px) no JSX, medido pro nav
+ * sozinho. No mobile o cabeçalho corrente fica logo abaixo dele, e um pulo
+ * pelo sumário parava o título ATRÁS dessa segunda barra — a seção que você
+ * acabou de pedir chegava cortada pela metade.
+ *
+ * Aqui a conta é feita uma vez, pros títulos todos, em vez de corrigir a
+ * classe de cada um dos ~40. No desktop o cabeçalho corrente não existe
+ * (`lg:hidden`), então a compensação volta a ser só a do nav.
+ */
+.livro-pagina :is(h2, h3, h4)[id] {
+  scroll-margin-top: calc(var(--altura-nav) + 4rem);
+}
+
+@media (min-width: 1024px) {
+  .livro-pagina :is(h2, h3, h4)[id] {
+    scroll-margin-top: calc(var(--altura-nav) + 1rem);
+  }
+}
+
+/* A seta do cabeçalho corrente aponta pra onde o toque leva: pra baixo quando
+   abre o sumário, pra cima quando fecha. */
+.livro-cabecalho-corrente summary::-webkit-details-marker {
+  display: none;
+}
+
+.livro-cabecalho-corrente[open] .livro-cabecalho-seta {
+  transform: rotate(180deg);
 }
 
 /*
@@ -905,6 +1049,20 @@ input[type="number"],
  * `float` é o fallback pra quem não implementa (a letra fica grande e alinhada
  * ao topo em vez de encaixada, que é feio mas nunca quebra o parágrafo).
  */
+/*
+ * A capitular ocupa três linhas — então o parágrafo precisa ter três, mesmo
+ * quando o texto só enche duas (2026-09-23).
+ *
+ * `initial-letter` reserva as linhas DENTRO do parágrafo. Num parágrafo de
+ * abertura curto (o do Cap. 4 tem duas linhas em tela larga) a letra continua
+ * com três linhas de altura e transborda pra fora da caixa — na prática ela
+ * encostava no título da primeira seção logo abaixo. A altura mínima é a mesma
+ * conta que o navegador já faz: três linhas do `leading-relaxed` (1,625).
+ */
+.dropcap {
+  min-height: calc(3 * 1.625em);
+}
+
 .dropcap::first-letter {
   initial-letter: 3;
   float: left;
