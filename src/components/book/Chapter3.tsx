@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { TREES, CATEGORY_LABELS } from "@/data/trees";
 import { RANK_BONUS, RANKS } from "@/lib/types";
-import { Aside, BookTable, ChapterTitle, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diagramas";
 import TreeCatalog from "./TreeCatalog";
 import ArteDaHabilidade from "./ArteDaHabilidade";
@@ -13,7 +13,13 @@ export default function Chapter3() {
 
   return (
     <div className="space-y-8">
-      <ChapterTitle id="cap3">Capítulo 3 — As Árvores de Progressão</ChapterTitle>
+      <ChapterTitle
+        id="cap3"
+        numero="Capítulo 3"
+        resumo="As escolas de Corpo, Magia e Utilidade — como ler uma árvore, o que cada patamar destrava e o que ele custa."
+      >
+        As Árvores de Progressão
+      </ChapterTitle>
       <P className="dropcap">
         Não existem classes engessadas ou papéis que limitam suas escolhas. O sistema funciona através de
         Árvores de Progressão, divididas em três grandes pilares: a <b>Árvore da Magia</b> (feitiços de
@@ -725,6 +731,8 @@ export default function Chapter3() {
           </div>
         ))}
       </Section>
+
+      <FimDoCapitulo id="cap3" />
     </div>
   );
 }
