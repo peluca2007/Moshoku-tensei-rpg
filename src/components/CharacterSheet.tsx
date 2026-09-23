@@ -33,6 +33,7 @@ import {
   TalentDef,
   Tree,
 } from "@/lib/types";
+import Button from "./ui/Button";
 import { RANK_COLORS, CATEGORY_ACCENT } from "@/lib/rankColors";
 import { CATEGORY_LABELS } from "@/data/trees";
 import CombinedSpellsSection from "./CombinedSpellsSection";
@@ -700,138 +701,43 @@ export default function CharacterSheet() {
              */
             className="w-full min-w-0 rounded-lg bg-transparent font-display text-2xl font-black tracking-tight text-parchment-900 outline-none placeholder:text-parchment-300 focus:ring-2 focus:ring-wine-400 dark:text-parchment-50 dark:placeholder:text-parchment-700 sm:min-w-[18rem] sm:flex-1 sm:text-3xl"
           />
+          {/*
+            Só o que se usa NO MEIO DA SESSÃO fica à vista (2026-09-23).
+
+            Eram nove botões aqui em cima — desfazer, PDF, arquivo, compartilhar,
+            link, QR, e os quatro de foto e capa —, mais um parágrafo explicando
+            o que o link não leva. A primeira coisa que o jogador via ao abrir a
+            própria ficha era um painel de exportação; o personagem começava
+            depois dele.
+
+            Desfazer é a correção de um toque errado, e o PDF é o que vai pra
+            mesa impresso. O resto é gerenciamento: acontece uma vez, quando a
+            ficha nasce ou muda de dono, e agora mora atrás do "Exportar".
+          */}
           <div className="print-hide flex flex-wrap gap-2 sm:shrink-0">
-            <button
-              type="button"
+            <Button
               onClick={() => useCharacterStore.getState().undo()}
               disabled={!canUndo}
               title="Desfazer a última alteração nesta ficha"
-              className="flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900 sm:mt-1.5"
+              className="sm:mt-1.5"
             >
               <Undo2 className="h-3.5 w-3.5" /> Desfazer
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variante="primario"
               onClick={handleDownloadPdf}
               disabled={pdfState === "loading"}
               title="Baixar a ficha completa em PDF (via Typst)"
-              className="flex shrink-0 items-center gap-1.5 rounded-full bg-wine-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-60 sm:mt-1.5"
+              className="sm:mt-1.5"
             >
               {pdfState === "loading" ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileDown className="h-3.5 w-3.5" />}
               {pdfState === "loading" ? "Gerando..." : "Baixar PDF"}
-            </button>
-            <button
-              type="button"
-              onClick={handleBaixarFicha}
-              disabled={arquivoState === "loading"}
-              title="Baixar a ficha inteira num arquivo — com a foto e a capa dentro, comprimido"
-              className="flex shrink-0 items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900 sm:mt-1.5"
-            >
-              {arquivoState === "loading" ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <FileJson className="h-3.5 w-3.5" />
-              )}
-              {arquivoState === "loading" ? "Preparando..." : "Baixar ficha"}
-            </button>
-            {/*
-              O link é o caminho curto do que o JSON já fazia: até aqui, passar
-              uma ficha adiante era exportar o arquivo, achar ele, mandar, o
-              outro baixar e importar — cinco passos, uma vez por jogador, toda
-              vez que alguém mudava alguma coisa. O montador de encontros
-              depende de ter o grupo carregado, então esse atrito estava
-              exatamente no caminho da funcionalidade mais cara do site.
-            */}
-            {/*
-              A bandeja do sistema, quando o aparelho tem uma (0.1.20).
-
-              Fica ANTES do "Copiar link" porque no celular ela é o caminho
-              curto: um toque escolhe o contato e manda. No desktop, onde a API
-              quase nunca existe, o botão simplesmente não aparece e nada muda.
-            */}
-            {podeCompartilhar && (
-              <button
-                type="button"
-                onClick={handleCompartilhar}
-                title="Mandar esta ficha por WhatsApp, Discord, AirDrop… sem baixar arquivo"
-                className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-colors sm:mt-1.5 ${
-                  linkState === "compartilhado"
-                    ? "border-emerald-400 bg-emerald-500/10 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300"
-                    : "border-parchment-300 text-parchment-600 hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
-                }`}
-              >
-                {linkState === "compartilhado" ? (
-                  <>
-                    <Check className="h-3.5 w-3.5" /> Enviado
-                  </>
-                ) : (
-                  <>
-                    <Share2 className="h-3.5 w-3.5" /> Compartilhar
-                  </>
-                )}
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={handleCopiarLink}
-              title="Copiar um link com esta ficha inteira dentro — quem abrir escolhe se importa"
-              className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold shadow-sm transition-colors sm:mt-1.5 ${
-                linkState === "copiado"
-                  ? "border-emerald-400 bg-emerald-500/10 text-emerald-700 dark:border-emerald-600 dark:text-emerald-300"
-                  : "border-parchment-300 text-parchment-600 hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900"
-              }`}
-            >
-              {linkState === "copiado" ? (
-                <>
-                  <Check className="h-3.5 w-3.5" /> Link copiado
-                </>
-              ) : (
-                <>
-                  <Link2 className="h-3.5 w-3.5" /> Copiar link
-                </>
-              )}
-            </button>
-
-            {/*
-              O QR é o mesmo link por outro caminho: entre dois celulares na
-              mesma mesa, apontar a câmera é mais curto que qualquer aplicativo
-              de mensagem. O botão fica aqui; o painel abre embaixo da fileira,
-              porque um bloco de largura total dentro dela a quebrava.
-            */}
-            <BotaoQr aberto={qrAberto} aoAlternar={() => setQrAberto((v) => !v)} className="sm:mt-1.5" />
+            </Button>
           </div>
         </div>
-        {/*
-          O link foi copiado, mas não cabe numa mensagem do Discord.
-
-          Não bloqueia a cópia de propósito: pelo WhatsApp, pelo Telegram ou
-          colado direto na barra de endereço ele funciona — o teto de 2.000
-          caracteres é do Discord, e é o mais apertado dos caminhos que a mesa
-          usa. Avisar depois de copiar é o que evita o pior desfecho, que é o
-          link chegar cortado e ninguém dos dois lados entender por quê.
-        */}
-        {qrAberto && (
-          <PainelQr
-            gerarLink={() => linkDaFicha(character)}
-            titulo={`Ficha de ${character.name?.trim() || "personagem sem nome"}`}
-            aoFechar={() => setQrAberto(false)}
-          />
-        )}
-        {(linkState === "copiado" || linkState === "compartilhado") && passaDoDiscord(tamanhoDoLink) && (
-          <p className="mt-1 text-xs text-gold-700 dark:text-gold-400">
-            {linkState === "copiado" ? "Copiado" : "Compartilhado"}, mas são{" "}
-            <strong>{tamanhoDoLink.toLocaleString("pt-BR")} caracteres</strong> — mais que
-            os {LIMITE_DISCORD.toLocaleString("pt-BR")} de uma mensagem do Discord, que cortaria o link no
-            meio. Pelo WhatsApp ou pelo Telegram ele passa inteiro; pro Discord, mande o arquivo em{" "}
-            <strong>Baixar ficha</strong>.
-          </p>
-        )}
-        {linkState === "erro" && (
-          <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">
-            O navegador não deixou copiar. Isso costuma acontecer fora de HTTPS — exporte o JSON por
-            enquanto.
-          </p>
-        )}
+        {/* Os avisos do PDF ficam FORA do painel: o botão que os causa é um dos
+            dois que ficaram à vista, e um erro escondido atrás de um clique é
+            um erro que ninguém lê. */}
         {pdfState === "error" && (
           <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra gerar o PDF agora. Tente de novo em instantes.</p>
         )}
@@ -841,39 +747,153 @@ export default function CharacterSheet() {
             continua inteira aqui, e <strong>Baixar ficha</strong> funciona offline.
           </p>
         )}
-        {arquivoState === "erro" && (
-          <p className="mt-1 text-xs text-wine-500 dark:text-wine-300">Não deu pra montar o arquivo da ficha. Tente de novo.</p>
-        )}
-        {/*
-          Os dois controles de imagem, juntos e embaixo — e não flutuando por
-          cima da foto e da capa. Um botão que só aparece no hover da imagem
-          funciona no mouse e desaparece no toque, que é onde metade da mesa
-          abre o site.
 
-          O aviso do link não é rodapé: a foto é a única coisa da ficha que o
-          link NÃO leva, e quem descobre isso do outro lado não tem como saber
-          por quê.
-        */}
-        <div className="relative mt-3 flex flex-wrap items-center gap-2">
-          <ImagemDaFicha
-            tipo="portrait"
-            valorAtual={portrait}
-            rotulo="Adicionar foto"
-            onChange={(dataUrl) => useCharacterStore.getState().setPortrait(dataUrl)}
-          />
-          <ImagemDaFicha
-            tipo="cover"
-            valorAtual={cover}
-            rotulo="Adicionar capa"
-            onChange={(dataUrl) => useCharacterStore.getState().setCover(dataUrl)}
-          />
-          {(portrait || cover) && (
-            <p className="w-full text-xs text-parchment-600 dark:text-parchment-400">
-              Foto e capa ficam no seu navegador e vão junto em <b>Baixar ficha</b> — o arquivo leva as
-              duas, reduzidas pra caber. O <b>link</b> vai sem elas: imagem não cabe numa URL.
-            </p>
-          )}
-        </div>
+        <details className="print-hide mt-3">
+          <summary className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-parchment-300 px-3.5 py-1.5 text-xs font-semibold text-parchment-600 shadow-sm transition-colors hover:bg-parchment-100 dark:border-parchment-700 dark:text-parchment-300 dark:hover:bg-parchment-900">
+            <Share2 className="h-3.5 w-3.5" /> Exportar, compartilhar e imagens
+          </summary>
+
+          <div className="mt-3 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <Button
+                onClick={handleBaixarFicha}
+                disabled={arquivoState === "loading"}
+                title="Baixar a ficha inteira num arquivo — com a foto e a capa dentro, comprimido"
+              >
+                {arquivoState === "loading" ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <FileJson className="h-3.5 w-3.5" />
+                )}
+                {arquivoState === "loading" ? "Preparando..." : "Baixar ficha"}
+              </Button>
+
+              {/*
+                O link é o caminho curto do que o JSON já fazia: até aqui, passar
+                uma ficha adiante era exportar o arquivo, achar ele, mandar, o
+                outro baixar e importar — cinco passos, uma vez por jogador, toda
+                vez que alguém mudava alguma coisa. O montador de encontros
+                depende de ter o grupo carregado, então esse atrito estava
+                exatamente no caminho da funcionalidade mais cara do site.
+              */}
+              {/*
+                A bandeja do sistema, quando o aparelho tem uma (0.1.20).
+
+                Fica ANTES do "Copiar link" porque no celular ela é o caminho
+                curto: um toque escolhe o contato e manda. No desktop, onde a API
+                quase nunca existe, o botão simplesmente não aparece e nada muda.
+              */}
+              {podeCompartilhar && (
+                <Button
+                  variante={linkState === "compartilhado" ? "confirmado" : "secundario"}
+                  onClick={handleCompartilhar}
+                  title="Mandar esta ficha por WhatsApp, Discord, AirDrop… sem baixar arquivo"
+                >
+                  {linkState === "compartilhado" ? (
+                    <>
+                      <Check className="h-3.5 w-3.5" /> Enviado
+                    </>
+                  ) : (
+                    <>
+                      <Share2 className="h-3.5 w-3.5" /> Compartilhar
+                    </>
+                  )}
+                </Button>
+              )}
+
+              <Button
+                variante={linkState === "copiado" ? "confirmado" : "secundario"}
+                onClick={handleCopiarLink}
+                title="Copiar um link com esta ficha inteira dentro — quem abrir escolhe se importa"
+              >
+                {linkState === "copiado" ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" /> Link copiado
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="h-3.5 w-3.5" /> Copiar link
+                  </>
+                )}
+              </Button>
+
+              {/*
+                O QR é o mesmo link por outro caminho: entre dois celulares na
+                mesma mesa, apontar a câmera é mais curto que qualquer aplicativo
+                de mensagem. O botão fica aqui; o painel abre embaixo da fileira,
+                porque um bloco de largura total dentro dela a quebrava.
+              */}
+              <BotaoQr aberto={qrAberto} aoAlternar={() => setQrAberto((v) => !v)} />
+            </div>
+
+            {qrAberto && (
+              <PainelQr
+                gerarLink={() => linkDaFicha(character)}
+                titulo={`Ficha de ${character.name?.trim() || "personagem sem nome"}`}
+                aoFechar={() => setQrAberto(false)}
+              />
+            )}
+
+            {/*
+              O link foi copiado, mas não cabe numa mensagem do Discord.
+
+              Não bloqueia a cópia de propósito: pelo WhatsApp, pelo Telegram ou
+              colado direto na barra de endereço ele funciona — o teto de 2.000
+              caracteres é do Discord, e é o mais apertado dos caminhos que a mesa
+              usa. Avisar depois de copiar é o que evita o pior desfecho, que é o
+              link chegar cortado e ninguém dos dois lados entender por quê.
+            */}
+            {(linkState === "copiado" || linkState === "compartilhado") && passaDoDiscord(tamanhoDoLink) && (
+              <p className="text-xs text-gold-700 dark:text-gold-400">
+                {linkState === "copiado" ? "Copiado" : "Compartilhado"}, mas são{" "}
+                <strong>{tamanhoDoLink.toLocaleString("pt-BR")} caracteres</strong> — mais que
+                os {LIMITE_DISCORD.toLocaleString("pt-BR")} de uma mensagem do Discord, que cortaria o link no
+                meio. Pelo WhatsApp ou pelo Telegram ele passa inteiro; pro Discord, mande o arquivo em{" "}
+                <strong>Baixar ficha</strong>.
+              </p>
+            )}
+            {linkState === "erro" && (
+              <p className="text-xs text-wine-500 dark:text-wine-300">
+                O navegador não deixou copiar. Isso costuma acontecer fora de HTTPS — exporte o JSON por
+                enquanto.
+              </p>
+            )}
+            {arquivoState === "erro" && (
+              <p className="text-xs text-wine-500 dark:text-wine-300">Não deu pra montar o arquivo da ficha. Tente de novo.</p>
+            )}
+
+            {/*
+              Os dois controles de imagem, juntos — e não flutuando por cima da
+              foto e da capa. Um botão que só aparece no hover da imagem
+              funciona no mouse e desaparece no toque, que é onde metade da mesa
+              abre o site.
+
+              O aviso do link não é rodapé: a foto é a única coisa da ficha que o
+              link NÃO leva, e quem descobre isso do outro lado não tem como saber
+              por quê.
+            */}
+            <div className="relative flex flex-wrap items-center gap-2">
+              <ImagemDaFicha
+                tipo="portrait"
+                valorAtual={portrait}
+                rotulo="Adicionar foto"
+                onChange={(dataUrl) => useCharacterStore.getState().setPortrait(dataUrl)}
+              />
+              <ImagemDaFicha
+                tipo="cover"
+                valorAtual={cover}
+                rotulo="Adicionar capa"
+                onChange={(dataUrl) => useCharacterStore.getState().setCover(dataUrl)}
+              />
+              {(portrait || cover) && (
+                <p className="w-full text-xs text-parchment-600 dark:text-parchment-400">
+                  Foto e capa ficam no seu navegador e vão junto em <b>Baixar ficha</b> — o arquivo leva as
+                  duas, reduzidas pra caber. O <b>link</b> vai sem elas: imagem não cabe numa URL.
+                </p>
+              )}
+            </div>
+          </div>
+        </details>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
           <select
             value={raceId ?? ""}

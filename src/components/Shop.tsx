@@ -19,6 +19,7 @@ import {
   toInventoryItem,
 } from "@/data/shopItems";
 import Crest from "./Crest";
+import Chip from "./ui/Chip";
 import PageHeader from "./ui/PageHeader";
 import Surface from "./ui/Surface";
 import CountingNumber from "./ui/CountingNumber";
@@ -155,30 +156,13 @@ export default function Shop() {
           <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-500">
             Tipo
           </span>
-          <button
-            type="button"
-            onClick={() => setCategoryFilter("todos")}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-              categoryFilter === "todos"
-                ? "bg-wine-600 text-white"
-                : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300"
-            }`}
-          >
+          <Chip aceso={categoryFilter === "todos"} onClick={() => setCategoryFilter("todos")}>
             Todos
-          </button>
+          </Chip>
           {SHOP_CATEGORY_ORDER.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setCategoryFilter(cat)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                categoryFilter === cat
-                  ? "bg-wine-600 text-white"
-                  : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300"
-              }`}
-            >
+            <Chip key={cat} aceso={categoryFilter === cat} onClick={() => setCategoryFilter(cat)}>
               {SHOP_CATEGORY_LABELS[cat]}
-            </button>
+            </Chip>
           ))}
         </div>
 
@@ -186,30 +170,13 @@ export default function Shop() {
           <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-500">
             Rank
           </span>
-          <button
-            type="button"
-            onClick={() => setRankFilter("todos")}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-              rankFilter === "todos"
-                ? "bg-gold-500 text-parchment-950"
-                : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300"
-            }`}
-          >
+          <Chip cor="gold" aceso={rankFilter === "todos"} onClick={() => setRankFilter("todos")}>
             Todos
-          </button>
+          </Chip>
           {GUILD_RANK_ORDER.map((rank) => (
-            <button
-              key={rank}
-              type="button"
-              onClick={() => setRankFilter(rank)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                rankFilter === rank
-                  ? "bg-gold-500 text-parchment-950"
-                  : "bg-parchment-100 text-parchment-600 hover:bg-parchment-200 dark:bg-parchment-900 dark:text-parchment-300"
-              }`}
-            >
+            <Chip key={rank} cor="gold" aceso={rankFilter === rank} onClick={() => setRankFilter(rank)}>
               {rank}
-            </button>
+            </Chip>
           ))}
         </div>
       </div>

@@ -8,6 +8,7 @@ import { getBonusDePericia, getPendingTreeSkillChoices, getTreeGrantedSkills } f
 import { getTreeById } from "@/data/trees";
 import { Background, Race } from "@/lib/types";
 import { SKILLS, getSkillByName } from "@/data/skills";
+import Chip from "./ui/Chip";
 import { PROFICIENCY_SUGGESTIONS } from "@/data/proficiencies";
 
 const ATTRIBUTE_SHORT: Record<string, string> = {
@@ -118,9 +119,9 @@ export default function SkillsSection({
               const idx = (character.treeSkillChoices ?? []).indexOf(nome);
               const ativo = idx !== -1;
               return (
-                <button
+                <Chip
                   key={nome}
-                  type="button"
+                  aceso={ativo}
                   title={getSkillByName(nome)?.description}
                   onClick={() =>
                     useCharacterStore
@@ -131,14 +132,10 @@ export default function SkillsSection({
                       )
                   }
                   disabled={!ativo && pendentesArvore === 0}
-                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-                    ativo
-                      ? "bg-wine-600 text-white"
-                      : "bg-parchment-200 text-parchment-700 hover:bg-parchment-300 disabled:opacity-40 dark:bg-parchment-800 dark:text-parchment-200"
-                  }`}
+                  sobreCard
                 >
                   {nome}
-                </button>
+                </Chip>
               );
             })}
           </div>
