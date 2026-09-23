@@ -96,9 +96,19 @@ export default function BookShell({ toc, children }: { toc: TocEntry[]; children
             compensação que todo título do livro já usa no `scroll-mt-24`, então o
             painel para exatamente onde as âncoras param.
           */}
-          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
-              Sumário
+          {/*
+            O índice mora na MARGEM, não num cartão (2026-09-23).
+
+            Ele era `rounded-2xl` com borda nos quatro lados e fundo próprio —
+            o mesmo objeto que um card de loja. Do lado de uma folha de livro,
+            isso lia como um painel de ferramenta encostado na página. Agora o
+            que o separa do texto é um filete vertical, que é como uma margem
+            se separa da mancha em qualquer livro impresso.
+          */}
+          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto border-r border-parchment-300/70 pr-4 dark:border-parchment-800/70">
+            <p className="mb-3 flex items-center gap-2 text-2xs font-bold uppercase tracking-[0.3em] text-gold-700 dark:text-gold-400">
+              Índice
+              <span aria-hidden className="h-px flex-1 bg-gradient-to-r from-gold-600/40 to-transparent" />
             </p>
             <BookToc toc={toc} />
           </div>
