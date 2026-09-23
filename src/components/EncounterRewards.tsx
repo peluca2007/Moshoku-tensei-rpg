@@ -6,9 +6,23 @@ import { useBestiaryStore } from "@/store/useBestiaryStore";
 export default function EncounterRewards({ tamanhoGrupo }: { tamanhoGrupo: number }) {
   const configuracao = useBestiaryStore((s) => s.configuracao);
   const configurar = useBestiaryStore((s) => s.configurarEncontro);
+  const criaturas = useBestiaryStore((s) => s.criaturas);
+  const selecionadas = useBestiaryStore((s) => s.selecionadas);
   const [copiado, setCopiado] = useState(false);
   const recompensa = configuracao.recompensa ?? { orcamento: 0, semente: configuracao.semente };
-  const loot = gerarLootDoEncontro(recompensa.orcamento, recompensa.semente);
+  /*
+   * O espólio sai de QUEM foi derrotado (2026-09-23).
+   *
+   * Antes a tela sorteava dentro do catálogo inteiro, então um bando de lobos
+   * podia largar uma poção de mana. Agora os sub-arquétipos das criaturas em
+   * cena decidem o que o corpo deixa e quanto disso vem em moeda — um lobo não
+   * carrega bolsa, um bandido carrega.
+   */
+  const subArquetipos = criaturas
+    .filter((c) => selecionadas.includes(c.id))
+    .map((c) => c.subArquetipo)
+    .filter((s): s is string => Boolean(s));
+  const loot = gerarLootDoEncontro(recompensa.orcamento, recompensa.semente, subArquetipos);
   const texto = [
     `Recompensa do encontro: ${loot.valorTotal} PO de valor total`,
     `${loot.moedas} PO em moedas`,

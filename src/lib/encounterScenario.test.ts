@@ -206,4 +206,25 @@ describe("invocações e recompensas", () => {
     }
     expect(() => gerarLootDoEncontro(-1, 0)).toThrow();
   });
+
+  it("o espólio sai de quem foi derrotado, e o lobo não carrega bolsa", () => {
+    // Besta só larga o que um corpo de bicho deixa — nunca uma poção de mana,
+    // que era o que o sorteio cego fazia antes de 2026-09-23.
+    const doBicho = gerarLootDoEncontro(400, 3, ["besta"]);
+    const espoliosDaBesta = ["tralha_presa_lobo_gigante", "tralha_chifre_besta_terrestre", "tralha_casco_besouro_tartaruga"];
+    expect(doBicho.tralhas.every((t) => espoliosDaBesta.includes(t.id))).toBe(true);
+
+    const deMortoVivo = gerarLootDoEncontro(400, 3, ["morto-vivo"]);
+    expect(deMortoVivo.tralhas.some((t) => t.id === "tralha_pano_amaldicoado")).toBe(true);
+    expect(deMortoVivo.tralhas.every((t) => !espoliosDaBesta.includes(t.id))).toBe(true);
+
+    // Humanoide carrega bolsa; besta não. É metade da economia de escassez do
+    // Cap. 5 — é isso que faz caçar render mais que saquear.
+    const doBandido = gerarLootDoEncontro(400, 3, ["humanoide"]);
+    expect(doBandido.moedas).toBeGreaterThan(doBicho.moedas);
+
+    // Sem sub-arquétipo, o comportamento antigo continua valendo: encontro
+    // montado antes disso não quebra.
+    expect(gerarLootDoEncontro(400, 3).tralhas.length).toBeGreaterThan(0);
+  });
 });

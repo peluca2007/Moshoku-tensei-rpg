@@ -3,6 +3,8 @@
 import { useMemo } from "react";
 import {
   ARQUETIPOS_CRIATURA,
+  SUBARQUETIPOS_CRIATURA,
+  getSubArquetipo,
   NOME_DO_ATRIBUTO,
   type AtributoDaCriatura,
   fichaDeAtributos,
@@ -12,6 +14,7 @@ import {
   sinal,
 } from "@/data/bestiary";
 import { SKILLS } from "@/data/skills";
+import { SHOP_ITEMS } from "@/data/shopItems";
 import type { CriaturaEncontro } from "@/lib/encounterSim";
 
 /**
@@ -62,6 +65,17 @@ export default function BlocoDoMonstro({
   atualizar: (patch: Partial<CriaturaEncontro>) => void;
 }) {
   const arq = getArquetipo(criatura.arquetipo);
+  const sub = getSubArquetipo(criatura.subArquetipo);
+  // Os nomes dos espólios, e não os ids: o painel é lido pelo Mestre no meio
+  // da cena, e "tralha_presa_lobo_gigante" não é uma frase.
+  const espolioDoSub = useMemo(
+    () =>
+      (sub?.espolios ?? [])
+        .map((id) => SHOP_ITEMS.find((i) => i.id === id)?.name)
+        .filter(Boolean)
+        .join(", "),
+    [sub]
+  );
   const atributos = useMemo(
     () => fichaDeAtributos(criatura.patamar, criatura.arquetipo),
     [criatura.patamar, criatura.arquetipo]
@@ -94,22 +108,55 @@ export default function BlocoDoMonstro({
         </span>
       </div>
 
-      {/* 1. O ARQUÉTIPO: a segunda das duas escolhas. */}
-      <label className="block text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
-        Arquétipo
-        <select
-          value={criatura.arquetipo ?? ""}
-          onChange={(e) => atualizar({ arquetipo: e.target.value || undefined })}
-          className="mt-1 w-full rounded border border-parchment-300 bg-parchment-50 px-2 py-1 text-xs font-normal normal-case tracking-normal text-parchment-800 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
-        >
-          <option value="">Genérico (todos os atributos iguais)</option>
-          {ARQUETIPOS_CRIATURA.map((a) => (
-            <option key={a.id} value={a.id}>
-              {a.nome} — {a.exemplo}
-            </option>
-          ))}
-        </select>
-      </label>
+      {/* 1. O ARQUÉTIPO (o que ela FAZ) e o SUB-ARQUÉTIPO (o que ela É).
+          O primeiro decide em qual atributo os números aparecem; o segundo
+          decide o que o corpo dela deixa quando ela cai. */}
+      <div className="grid gap-2 sm:grid-cols-2">
+        <label className="block text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+          Arquétipo
+          <select
+            value={criatura.arquetipo ?? ""}
+            onChange={(e) => atualizar({ arquetipo: e.target.value || undefined })}
+            className="mt-1 w-full rounded border border-parchment-300 bg-parchment-50 px-2 py-1 text-xs font-normal normal-case tracking-normal text-parchment-800 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+          >
+            <option value="">Genérico (todos os atributos iguais)</option>
+            {ARQUETIPOS_CRIATURA.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.nome} — {a.exemplo}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="block text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+          Sub-arquétipo
+          <select
+            value={criatura.subArquetipo ?? ""}
+            onChange={(e) => atualizar({ subArquetipo: e.target.value || undefined })}
+            className="mt-1 w-full rounded border border-parchment-300 bg-parchment-50 px-2 py-1 text-xs font-normal normal-case tracking-normal text-parchment-800 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
+          >
+            <option value="">Sem natureza definida</option>
+            {SUBARQUETIPOS_CRIATURA.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.nome} — {s.exemplo}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {sub && (
+        <p className="mt-2 rounded-lg border border-dashed border-parchment-300 bg-parchment-100/50 p-2 text-2xs leading-relaxed text-parchment-600 dark:border-parchment-700 dark:bg-parchment-900/40 dark:text-parchment-400">
+          <b className="text-parchment-800 dark:text-parchment-200">Deixa:</b> {espolioDoSub}.{" "}
+          <b className="text-parchment-800 dark:text-parchment-200">Moeda:</b>{" "}
+          {sub.moeda === "bolsa" ? "carrega bolsa" : sub.moeda === "pouca" ? "pouca" : "nenhuma"}.
+          {sub.resistencias?.length ? ` Resiste a ${sub.resistencias.join(", ")}.` : ""}
+          {sub.imunidades?.length ? ` Imune a ${sub.imunidades.join(", ")}.` : ""}
+          <br />
+          <b className="text-parchment-800 dark:text-parchment-200">Ações típicas:</b>{" "}
+          {sub.acoesSugeridas.join(" · ")}
+        </p>
+      )}
 
       {/* 2. Os cinco atributos, derivados. Nunca editáveis: editar aqui seria
           guardar derivado, e a próxima recalibragem apagaria em silêncio. */}
