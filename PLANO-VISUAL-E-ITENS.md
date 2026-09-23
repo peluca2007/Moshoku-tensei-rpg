@@ -50,14 +50,24 @@ dobrado pela mesma resposta.
 documentação. Dá pra dar tipografia de índice impresso a ele, mas hoje ele funciona bem — fica
 para depois das fases que valem mais.
 
-## Fase 2 — Propagar padrões pro site
+## Fase 2 — Propagar padrões pro site — **FEITA (2026-09-23)**
 
-1. **Criar `Button` reutilizável** (`src/components/ui/Button.tsx`), no mesmo espírito do que
-   `Surface.tsx` já fez pra cards. Hoje há 181 ocorrências de `<button` cru espalhadas
-   (`BlocoDoMonstro.tsx`, `BuscaGlobal.tsx`, `Shop.tsx` etc.), cada uma com sua própria combinação
-   de classes Tailwind — sem padronização, sem `@apply` em `globals.css`.
-2. Levar pro site só o que fizer sentido dos tokens/tipografia que nascerem na Fase 1 — a
-   home e a `/loja` já estão visualmente consistentes hoje, não precisam de retrabalho forçado.
+1. **`Button` e `Chip`** (`src/components/ui/`). Eram 181 `<button>` com classes soltas. Viraram
+   dois componentes porque são duas gramáticas: o Button dispara uma ação e volta ao repouso; o
+   Chip fica ligado ou desligado e é sempre um de uma fileira. O seletor Mapa/Lista das árvores
+   ficou de fora de propósito — é um seletor de um-entre-dois dentro de uma moldura, e dar fundo
+   ao apagado viraria caixa dentro de caixa. Convertidos: barra de ações da ficha, filtros da loja
+   e perícias de árvore; o resto migra quando alguém encostar no arquivo.
+2. **Os 41 `<select>` do site entraram na paleta** (regra em `@layer base`, não em componente —
+   trocar 41 tags mexeria em 12 arquivos pra chegar no mesmo lugar). Eram caixas cinzas do sistema
+   operacional no meio do pergaminho, e o controle mais tocado depois dos botões.
+3. **O topo da ficha** deixou de ser um painel de exportação. Eram nove botões e um parágrafo
+   antes do primeiro número do personagem; ficaram Desfazer e Baixar PDF, que é o que se usa no
+   meio da sessão, e os outros sete foram pra trás de um "Exportar, compartilhar e imagens". Os
+   atributos agora aparecem na primeira tela do celular.
+
+De quebra: os 16 filtros da loja passaram a anunciar `aria-pressed` — antes um leitor de tela dava
+sete "Todos, botão" idênticos, sem dizer qual estava aceso.
 
 ## Fase 3 — Árvores: ajuste pontual, não redesenho
 
@@ -94,21 +104,39 @@ O schema `ShopItem` também não tem campo de disponibilidade (comprável vs. s�
 mercado negro) nem de raridade — precisa existir antes, senão a Loja vende a Lança Genuína de
 Superd por engano.
 
-**Ordem de execução (livro primeiro, sempre):**
-1. Trazer os dois arquivos de rascunho pra dentro deste branch/worktree (ou confirmar onde essa
-   frente está sendo tocada — ver pergunta em aberto abaixo).
-2. Revisão de balanceamento item a item, com decisões marcadas em Modo Entrevistador.
-3. Escrever a regra de disponibilidade + economia de revenda no livro (Cap. 5), estender
-   `ShopItem`/`InventoryItem` com os campos novos.
-4. Reescrever `lootGenerator.ts` pra pesar por Arquétipo/Subarquétipo e separar tralha de
-   equipamento, alimentando `EncounterRewards.tsx`.
-5. Site por último — `ShopCatalog.tsx` e `/loja` continuam puxando do mesmo dado do livro, como
-   já é hoje.
+**O que já foi feito (2026-09-23):**
+
+1. ✅ Os 65 itens entraram em `src/data/compendioDeItens.ts`, revisados. As quatro decisões de
+   design que o autor tomou estão registradas no cabeçalho do arquivo, com os números que as
+   motivaram.
+2. ✅ `ShopItem` ganhou `disponibilidade` (Guilda / Fora da Guilda / Relíquia) e `price` virou
+   nullable — relíquia não tem preço, e não custa zero. A categoria `tralha` nasceu junto.
+3. ✅ O livro (Cap. 5) ganhou "O que a Guilda não vende" e "Vender o que caiu" — a economia de
+   revenda em três linhas: espólio a 100%, equipamento a 50%, relíquia não se vende.
+4. ✅ `lootGenerator.ts` separa espólio de equipamento e nunca sorteia relíquia. `EncounterRewards`
+   mostra os dois grupos separados, porque eles vendem por regras diferentes.
+
+**Ainda falta:**
+
+5. A **pesagem do loot pela composição do grupo**, que o `SISTEMA_DE_LOOT.md` descreve — ver a
+   pergunta em aberto abaixo.
 
 ---
 
 ## Em aberto — decisão do autor
 
-- As WIP files da Fase 4 estão sem commit no checkout principal, fora deste branch. Trago esse
-  trabalho pra cá agora, ou isso já está sendo tocado em outra sessão e eu devo esperar o commit
-  chegar em `main`?
+**A pesagem de loot depende de uma mecânica que não existe.** O `SISTEMA_DE_LOOT.md` pesa os drops
+por "Arquétipo e Subarquétipo Narrativo" (Erudito Arcana, Guerreiro Intuitivo, Vampiro de Loot) —
+e nada disso existe no livro nem na ficha. Implementar como está escrito significa criar um
+sistema de classificação novo, que o jogador teria que declarar, num sistema cujo argumento de
+venda é justamente não ter classe.
+
+A alternativa que usa o que já existe: pesar pelas **árvores que o grupo comprou**. Um grupo com
+Magia de Água aberta puxa foco mágico e grimório; um com Ladino puxa veneno e lâmina oculta. Sai
+de graça da ficha, não exige o jogador declarar nada, e não contradiz o "ninguém tem classe".
+
+**Nota sobre os rascunhos:** `NOVOS_ITENS.md` e `SISTEMA_DE_LOOT.md` foram copiados para este
+worktree mas **não foram commitados** de propósito — eles existem sem commit no checkout principal,
+e versioná-los aqui faria o merge falhar lá ("untracked working tree file would be overwritten").
+O conteúdo dos dois já está aplicado no código e no livro; quando esta fase fechar, eles podem ser
+apagados dos dois lugares.
