@@ -46,9 +46,15 @@ dobrado pela mesma resposta.
 **Verificado:** `tsc`, `lint`, 704 testes, `check:livro`, `check:sumario`, e nos dois temas —
 `check:contraste` (WCAG AA), `check:a11y` e `check:mobile` (zero transbordo de 320px a 414px).
 
-**Ainda em aberto nesta fase:** o sumário lateral do desktop continua com cara de painel de
-documentação. Dá pra dar tipografia de índice impresso a ele, mas hoje ele funciona bem — fica
-para depois das fases que valem mais.
+7. **O sumário virou índice.** Os rótulos carregavam a numeração no meio do texto ("Cap. 1 — O
+   Núcleo do Sistema", "4. Testes e Perícias", "— Equipamento Inicial"), o que dava três
+   problemas de uma vez: o "Cap. 1 —" comia metade da coluna de 260px e empurrava o nome pra
+   segunda linha, a segunda linha voltava pra margem esquerda e parecia uma entrada nova, e o
+   travessão lia como traço solto em vez de hierarquia. Agora o número sai do texto e vai pra uma
+   coluna própria — romano no capítulo, arábico na seção, nada na subseção (ela ganha recuo) —, o
+   painel-cartão virou margem com filete, e a busca virou uma linha em vez de uma caixa de
+   formulário. O dado (`sumarioDoLivro.ts`) ficou intacto: o mesmo rótulo alimenta a busca global,
+   e lá "Cap. 1" é o que a pessoa digita.
 
 ## Fase 2 — Propagar padrões pro site — **FEITA (2026-09-23)**
 
