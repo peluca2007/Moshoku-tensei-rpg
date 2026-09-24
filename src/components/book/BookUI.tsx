@@ -171,7 +171,7 @@ export function Aside({ title, children }: { title?: string; children: ReactNode
      * Agora a caixa é mais ESCURA que a página, não mais clara. É assim que uma
      * caixa de destaque se comporta em papel: ela afunda, não flutua.
      */
-    <div className="rounded-xl border border-l-[3px] border-wine-300/50 border-l-wine-500 bg-gradient-to-br from-parchment-200/70 to-parchment-100/50 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-wine-900 dark:border-l-wine-600 dark:from-wine-950/40 dark:to-wine-950/10">
+    <div className="livro-caixa rounded-xl border border-l-[3px] border-wine-300/50 border-l-wine-500 bg-gradient-to-br from-parchment-200/70 to-parchment-100/50 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-wine-900 dark:border-l-wine-600 dark:from-wine-950/40 dark:to-wine-950/10">
       {title && <p className="mb-1 font-semibold text-wine-800 dark:text-wine-300">{title}</p>}
       {/* `max-w-[74ch]`: a caixa usa a largura inteira de propósito (ela é
           consultada, não lida em fluxo), mas o TEXTO dentro dela continua sendo
@@ -192,7 +192,7 @@ export function Warning({ title, children }: { title?: string; children: ReactNo
   return (
     // Mesma razão da caixa acima: `gold-50` (#fcf6e8) é quase indistinguível do
     // fundo da página. O `gold-100` tem pigmento suficiente pra a caixa existir.
-    <div className="rounded-xl border border-l-[3px] border-gold-400/50 border-l-gold-500 bg-gradient-to-br from-gold-100/80 to-gold-100/40 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
+    <div className="livro-caixa rounded-xl border border-l-[3px] border-gold-400/50 border-l-gold-500 bg-gradient-to-br from-gold-100/80 to-gold-100/40 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
       {title && <p className="mb-1 font-semibold text-gold-800 dark:text-gold-200">{title}</p>}
       <div className="max-w-[74ch] space-y-1.5 text-parchment-800 dark:text-gold-100/85">{children}</div>
     </div>
@@ -227,7 +227,7 @@ export function Quote({ children, attribution }: { children: ReactNode; attribut
  */
 export function BookTable({ headers, rows }: { headers: string[]; rows: (string | ReactNode)[][] }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-parchment-300 shadow-sm dark:border-parchment-800">
+    <div className="livro-tabela overflow-x-auto rounded-xl border border-parchment-300 shadow-sm dark:border-parchment-800">
       {/*
         `min-w-[320px]`, e não 420: o mínimo antigo era maior que a tela de um
         celular de 390px, então TODA tabela do livro rolava de lado — inclusive as
