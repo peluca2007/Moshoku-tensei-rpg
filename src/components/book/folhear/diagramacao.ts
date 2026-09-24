@@ -3,31 +3,102 @@ import type { TocEntry } from "../BookToc";
 /**
  * A matemática do livro folheado, separada do componente pra poder ser testada
  * sem navegador (a geometria) e lida sem React (a medição).
+ *
+ * ## Página de tamanho FIXO (2026-09-24, segunda versão)
+ *
+ * A primeira versão recalculava a página pro tamanho da tela e subia a letra
+ * pra 16–18px — legível, mas lia como site. O autor pôs o Livro do Jogador de
+ * D&D no AnyFlip do lado e a diferença era essa: livro de verdade tem página
+ * de tamanho fixo, duas colunas, letra densa, e quem se adapta à tela é o
+ * ZOOM, não a diagramação.
+ *
+ * Então a página agora é uma folha Carta (8,5 × 11 pol. a 96 dpi), diagramada
+ * uma vez só, e o livro inteiro é escalado pra caber no palco. De brinde, o
+ * número da página passa a ser o mesmo em qualquer aparelho: "página 42" volta
+ * a ser um endereço que a mesa pode falar em voz alta.
  */
 
-/** Os degraus do A−/A+ do leitor. Multiplicam o corpo que a geometria escolhe. */
-export const ESCALAS = [0.9, 1, 1.1, 1.2, 1.35];
+export const PAGINA = {
+  largura: 816,
+  altura: 1056,
+  /** Margem lateral (a mesma dos dois lados: ver as colunas externas em globals.css). */
+  margem: 60,
+  topo: 62,
+  /** Margem de baixo, onde moram o número e o rótulo da parte. */
+  pe: 84,
+  /** O vão entre as duas colunas de texto de uma página. */
+  calha: 26,
+  /** Corpo do texto — ~10pt, a densidade do livro impresso. */
+  fonte: 13.6,
+} as const;
 
-/** Tudo em px inteiros: as colunas repetem o passo centenas de vezes, e fração vira deriva. */
+/** A capa de couro que aparece em volta das folhas. */
+export const CAPA = 12;
+
+/** Degraus do zoom, multiplicando o "caber na tela". */
+export const ZOOMS = [1, 1.35, 1.75, 2.25];
+
 export interface Geometria {
-  /** Largura de UMA página. */
   pagina: number;
   altura: number;
-  /** Margem lateral, igual dos dois lados (colunas CSS só têm um `column-gap`). */
   margem: number;
-  /** Margem de cima — onde mora o cabeçalho corrente. */
   topo: number;
-  /** Margem de baixo — onde mora o fólio. */
   pe: number;
-  porDupla: 1 | 2;
-  /** Corpo do texto, em px. */
+  calha: number;
   fonte: number;
+  porDupla: 1 | 2;
+  /** A escala que faz o livro inteiro caber no palco. */
+  escala: number;
+  /** Largura e altura do livro sem escala (folhas + capa). */
+  larguraDoLivro: number;
+  alturaDoLivro: number;
+}
+
+/**
+ * Uma ou duas páginas, e a escala que faz o livro caber no palco.
+ * Nada aqui mexe no tamanho da
+ * letra dentro da página: isso é o que mantém a diagramação idêntica em toda
+ * tela.
+ */
+export function calcularGeometria(largura: number, altura: number): Geometria {
+  // Espaço pras setas laterais (no desktop, também pro botão de dados).
+  const lateral = largura >= 1100 ? 72 : largura >= 768 ? 48 : 8;
+  const w = Math.max(200, largura - lateral * 2);
+  const h = Math.max(200, altura - 16);
+
+  const escalaDe = (paginas: number) =>
+    Math.min(w / (paginas * PAGINA.largura + CAPA * 2), h / (PAGINA.altura + CAPA * 2));
+  // Dupla sempre que ela custar pouco: se mostrar duas páginas encolhe o
+  // livro menos de 20%, é livro aberto. Em tela baixa quem limita é a altura,
+  // e aí uma página sairia do MESMO tamanho que duas, só com mesa vazia do
+  // lado. Em pé (tablet, celular) a dupla encolheria pela metade: uma página.
+  const porDupla: 1 | 2 = escalaDe(2) >= escalaDe(1) * 0.8 ? 2 : 1;
+  const escala = Math.floor(escalaDe(porDupla) * 1000) / 1000;
+
+  return {
+    pagina: PAGINA.largura,
+    altura: PAGINA.altura,
+    margem: PAGINA.margem,
+    topo: PAGINA.topo,
+    pe: PAGINA.pe,
+    calha: PAGINA.calha,
+    fonte: PAGINA.fonte,
+    porDupla,
+    escala,
+    larguraDoLivro: porDupla * PAGINA.largura + CAPA * 2,
+    alturaDoLivro: PAGINA.altura + CAPA * 2,
+  };
+}
+
+/** Largura de UMA coluna de texto, dentro da página. */
+export function larguraDaColuna(g: Pick<Geometria, "pagina" | "margem" | "calha">): number {
+  return (g.pagina - g.margem * 2 - g.calha) / 2;
 }
 
 export interface Rotulo {
   capitulo?: string;
   secao?: string;
-  /** Página de abertura (sumário, folha de rosto de capítulo): sem cabeçalho corrente. */
+  /** Página de abertura (sumário, folha de rosto de capítulo): sem rótulo no rodapé. */
   abertura: boolean;
 }
 
@@ -41,75 +112,30 @@ export interface Paginacao {
 }
 
 /**
- * A página mais estreita que ainda merece ser página de LIVRO: abaixo disso a
- * linha cai pra menos de ~42 caracteres no corpo mínimo, e duas páginas assim
- * leem pior do que uma página só, larga. É o princípio 1 do plano: se faltar
- * espaço, o livro mostra menos páginas — nunca letra menor.
- */
-const PAGINA_MINIMA_DA_DUPLA = 390;
-
-/** O corpo nunca desce disso na escala 1 (e acompanha a raiz do navegador). */
-const CORPO_MINIMO = 16;
-const CORPO_MAXIMO = 18.5;
-
-/**
- * Escolhe a geometria a partir do espaço do palco.
+ * Onde a faixa de páginas começa na tela, e quanto a tela encolheu o livro.
  *
- * @param largura  largura útil do palco, em px
- * @param altura   altura útil do palco, em px
- * @param escala   degrau do A−/A+
- * @param raiz     font-size da <html> em px — quem aumentou a letra do site
- *                 inteiro (ou do navegador) recebe o livro proporcionalmente maior
+ * O livro é escalado com `transform`, então `getBoundingClientRect` devolve
+ * pixels de TELA; a diagramação vive em pixels de PÁGINA. Toda medida passa
+ * por aqui pra voltar pro sistema da página.
  */
-export function calcularGeometria(largura: number, altura: number, escala: number, raiz = 16): Geometria {
-  // Espaço pras setas laterais — e, no desktop, pro botão de dados, que
-  // flutua no canto de baixo e não pode cobrir o fólio.
-  const lateral = largura >= 1100 ? 88 : largura >= 768 ? 56 : 12;
-  const w = Math.max(240, largura - lateral * 2);
-  const h = Math.max(320, altura - 24);
+export interface Regua {
+  origem: number;
+  k: number;
+}
 
-  // Proporção de livro, com folga pra ficar mais largo em tela baixa: numa
-  // janela de notebook a página alta e estreita desperdiçaria a largura que sobra.
-  const paginaDaDupla = Math.floor(Math.min(w / 2, h * 0.8, 640));
-  const porDupla: 1 | 2 = paginaDaDupla >= PAGINA_MINIMA_DA_DUPLA ? 2 : 1;
-  const pagina = porDupla === 2 ? paginaDaDupla : Math.floor(Math.min(w, h * 0.8, 680));
-  // No telefone a tela é alta e estreita: limitar a página a 1,6× a largura
-  // deixava um palmo de mesa vazia em cima e embaixo. Página de bolso pode
-  // ser mais alta que a de livro de mesa.
-  const proporcaoMaxima = porDupla === 1 && pagina < 520 ? 2.1 : 1.6;
-  const alturaDaPagina = Math.floor(Math.min(h, pagina * proporcaoMaxima));
-
-  // Margem de bolso no telefone: os 9% de um livro de mesa comiam a linha
-  // abaixo de 38 caracteres numa página de 366px.
-  const margem = Math.round(Math.min(56, Math.max(20, pagina * (pagina < 520 ? 0.065 : 0.09))));
-  const topo = Math.round(Math.min(60, Math.max(36, alturaDaPagina * 0.075)));
-  const pe = topo - 4;
-
-  // ~27 px de medida por px de corpo dá linha de 55–60 caracteres na Literata.
-  const proporcaoDaRaiz = raiz / 16;
-  const texto = pagina - margem * 2;
-  const corpo =
-    Math.min(CORPO_MAXIMO * proporcaoDaRaiz, Math.max(CORPO_MINIMO * proporcaoDaRaiz, texto / 27)) * escala;
-
-  return {
-    pagina,
-    altura: alturaDaPagina,
-    margem,
-    topo,
-    pe,
-    porDupla,
-    fonte: Math.round(corpo * 10) / 10,
-  };
+export function regua(faixa: HTMLElement): Regua {
+  const r = faixa.getBoundingClientRect();
+  return { origem: r.left, k: faixa.offsetWidth > 0 ? r.width / faixa.offsetWidth : 1 };
 }
 
 /**
  * Em que página está um elemento.
  *
- * Um bloco partido entre duas colunas devolve a união dos pedaços, e o `left`
- * da união é a coluna onde ele COMEÇA — que é a página que interessa.
+ * Um bloco partido entre duas páginas devolve a união dos pedaços, e o `left`
+ * da união é a página onde ele COMEÇA — que é a que interessa.
  */
-export function paginaDoElemento(el: Element, origem: number, g: Geometria): number {
-  return Math.max(0, Math.floor((el.getBoundingClientRect().left - origem) / g.pagina));
+export function paginaDoElemento(el: Element, r: Regua, g: Pick<Geometria, "pagina">): number {
+  return Math.max(0, Math.floor((el.getBoundingClientRect().left - r.origem) / r.k / g.pagina));
 }
 
 /**
@@ -118,8 +144,7 @@ export function paginaDoElemento(el: Element, origem: number, g: Geometria): num
  * O Chrome não esconde mais esse conteúdo com `display: none`: ele usa
  * `content-visibility: hidden` (pra busca da página achar texto lá dentro), e
  * aí os elementos respondem a `getBoundingClientRect` com posições de um
- * layout que ninguém vê. Contá-los quebrava a busca do lugar de leitura e
- * fazia caixa invisível parecer caixa partida.
+ * layout que ninguém vê. Contá-los quebrava a busca do lugar de leitura.
  */
 export function visivel(el: Element): boolean {
   return !el.closest("details:not([open])");
@@ -135,8 +160,6 @@ const SELETOR_BLOCOS = "h2, h3, h4, p, li, tr:not(.folhear-cabecalho-repetido), 
  * monotônico e bastam ~12 medições num livro de milhares de blocos.
  */
 export function primeiroBloco(fluxo: Element, passou: (el: Element) => boolean): Element | null {
-  // Bloco escondido (dentro de um <details> fechado) mede zero e quebraria a
-  // monotonia — fica de fora.
   const lista = Array.from(fluxo.querySelectorAll<HTMLElement>(SELETOR_BLOCOS)).filter(
     (el) => el.offsetParent !== null && visivel(el)
   );
@@ -156,19 +179,16 @@ export function primeiroBloco(fluxo: Element, passou: (el: Element) => boolean):
 }
 
 /**
- * Caixa CURTA não se parte entre páginas; caixa LONGA pode.
+ * Caixa CURTA não se parte entre colunas; caixa LONGA pode.
  *
  * CSS não sabe dizer "evite partir, se for pequena": `break-inside: avoid` em
- * toda caixa empurraria cada caixa média pra página seguinte e deixaria meia
- * página em branco atrás dela — e o livro tem caixa de regra em quase toda
- * página. Então a primeira diagramação deixa o navegador partir o que quiser,
- * e aqui as caixas que saíram partidas mas cabem folgadas numa página (menos
- * de 40% da altura) ganham `folhear-inteira` e são recompostas inteiras.
- *
- * Roda de novo a cada geometria: o que era curto numa página alta pode não
- * ser numa baixa, então as marcas antigas saem antes.
+ * toda caixa empurraria cada caixa média pra coluna seguinte e deixaria meia
+ * coluna em branco atrás dela. Então a primeira diagramação deixa o navegador
+ * partir o que quiser, e aqui as caixas que saíram partidas mas cabem folgadas
+ * numa coluna (menos de 40% da altura) ganham `folhear-inteira` e são
+ * recompostas inteiras.
  */
-export function segurarCaixasCurtas(fluxo: Element, g: Geometria): void {
+export function segurarCaixasCurtas(fluxo: Element, g: Geometria, r: Regua): void {
   fluxo.querySelectorAll(".folhear-inteira").forEach((el) => el.classList.remove("folhear-inteira"));
   const limite = (g.altura - g.topo - g.pe) * 0.4;
   const partidas: Element[] = [];
@@ -177,7 +197,7 @@ export function segurarCaixasCurtas(fluxo: Element, g: Geometria): void {
     const pedacos = el.getClientRects();
     if (pedacos.length < 2) return;
     let altura = 0;
-    for (const r of pedacos) altura += r.height;
+    for (const p of pedacos) altura += p.height / r.k;
     if (altura < limite) partidas.push(el);
   });
   partidas.forEach((el) => el.classList.add("folhear-inteira"));
@@ -186,22 +206,20 @@ export function segurarCaixasCurtas(fluxo: Element, g: Geometria): void {
 /**
  * Tabela larga demais pra coluna: aperta, em dois degraus.
  *
- * Numa página de notebook baixo (~370px de texto) a tabela de Vigor, com cinco
- * colunas, não cabe nem com a célula mais justa — e uma tabela que invade a
- * margem, ou pior, a página vizinha, é o defeito que o plano proíbe. O
- * primeiro degrau diminui a letra SÓ daquela tabela (a leitura corrida não
- * muda); o segundo, se ainda faltar espaço, deixa a palavra quebrar na borda
- * da célula. Feio é melhor que cortado — e as duas marcas saem quando a
- * página alarga.
+ * A coluna do livro tem ~340px, e tabela de cinco colunas (a do Vigor) não
+ * cabe nem com a célula mais justa. O primeiro degrau diminui a letra SÓ
+ * daquela tabela; o segundo deixa a palavra quebrar na borda da célula. Feio
+ * é melhor que cortado — uma tabela invadindo a coluna vizinha é o defeito
+ * que o plano proíbe.
  *
- * A largura é a do PRIMEIRO pedaço: uma tabela partida entre duas páginas
- * devolve a união dos pedaços, que atravessa a lombada.
+ * A largura é a do PRIMEIRO pedaço: uma tabela partida entre duas colunas
+ * devolve a união dos pedaços.
  */
-export function ajustarTabelasLargas(fluxo: Element, g: Geometria): void {
+export function ajustarTabelasLargas(fluxo: Element, g: Geometria, r: Regua): void {
   const degraus = ["folhear-tabela-justa", "folhear-tabela-apertada"];
   fluxo.querySelectorAll("table").forEach((t) => t.classList.remove(...degraus));
-  const coluna = g.pagina - g.margem * 2 + 1;
-  const larga = (t: Element) => (t.getClientRects()[0]?.width ?? 0) > coluna;
+  const coluna = larguraDaColuna(g) + 1;
+  const larga = (t: Element) => (t.getClientRects()[0]?.width ?? 0) / r.k > coluna;
   for (const degrau of degraus) {
     const largas = Array.from(fluxo.querySelectorAll("table")).filter((t) => visivel(t) && larga(t));
     if (largas.length === 0) return;
@@ -209,26 +227,42 @@ export function ajustarTabelasLargas(fluxo: Element, g: Geometria): void {
   }
 }
 
+/**
+ * Diagrama que não cabe numa coluna atravessa a página inteira.
+ *
+ * Os diagramas nasceram pro contínuo, com ~700px de largura; alguns (a Ordem
+ * do Dano, com cinco cartões lado a lado) rolam de lado numa coluna de livro.
+ * O impresso resolve isso pondo a figura larga no alto ou no pé da página, de
+ * margem a margem — é o `column-span: all` da classe `folhear-larga`.
+ */
+export function ajustarFigurasLargas(fluxo: Element): void {
+  fluxo.querySelectorAll(".folhear-larga").forEach((el) => el.classList.remove("folhear-larga"));
+  const largas = Array.from(fluxo.querySelectorAll<HTMLElement>("figure.diagrama")).filter((fig) => {
+    if (!visivel(fig)) return false;
+    return Array.from(fig.querySelectorAll<HTMLElement>("*")).some((el) => el.scrollWidth > el.clientWidth + 2 && el.clientWidth > 0);
+  });
+  largas.forEach((fig) => fig.classList.add("folhear-larga"));
+}
+
 const CLASSE_CABECALHO = "folhear-cabecalho-repetido";
 
 /**
- * O cabeçalho da tabela repetido no alto de cada página em que ela continua.
+ * O cabeçalho da tabela repetido no alto de cada coluna em que ela continua.
  *
- * Uma tabela de condições que continua na página seguinte sem dizer o que é
- * cada coluna obriga o leitor a voltar a página. O Chrome repete o `<thead>`
- * dentro de colunas desde que ele seja inquebrável (o CSS garante); onde o
- * navegador não repete, o livro repete: uma cópia
- * da linha de cabeçalho (escondida do leitor de tela, que já ouviu o
- * original) entra antes da primeira linha de cada página nova.
+ * Uma tabela de condições que continua na coluna seguinte sem dizer o que é
+ * cada coluna obriga o leitor a voltar. O Chrome repete o `<thead>` dentro de
+ * colunas desde que ele seja inquebrável (o CSS garante); onde o navegador não
+ * repete, o livro repete: uma cópia da linha de cabeçalho (escondida do leitor
+ * de tela, que já ouviu o original) entra antes da primeira linha de cada
+ * coluna nova.
  *
  * Em LOTE, e não linha a linha: ler a posição depois de cada inserção faria o
- * navegador rediagramar o livro inteiro a cada cópia. Cada passada lê tudo,
- * depois muda tudo. A cópia empurra a página uma linha pra baixo, o que pode
- * mandar a última linha pra página seguinte — por isso até quatro passadas:
- * cópia que ficou no meio da página sai, página que começou sem cópia ganha.
+ * navegador rediagramar o livro inteiro a cada cópia.
  */
-export function repetirCabecalhos(fluxo: Element, origem: number, g: Geometria): void {
-  const pagina = (el: Element) => paginaDoElemento(el, origem, g);
+export function repetirCabecalhos(fluxo: Element): void {
+  // A coluna de uma linha é o `left` do retângulo dela: duas linhas na mesma
+  // coluna têm o mesmo `left`, e a coluna seguinte começa mais à direita.
+  const coluna = (el: Element) => Math.round(el.getBoundingClientRect().left);
   for (let passada = 0; passada < 4; passada++) {
     const remover: Element[] = [];
     const inserir: { corpo: HTMLTableSectionElement; cabecalho: HTMLTableRowElement; antes: HTMLTableRowElement }[] = [];
@@ -238,29 +272,25 @@ export function repetirCabecalhos(fluxo: Element, origem: number, g: Geometria):
       const cabecalho = tabela.tHead?.rows[0];
       const corpo = tabela.tBodies[0];
       if (!cabecalho || !corpo) return;
-      // O navegador que já repete o <thead> sozinho (o Chrome, com o thead
-      // inquebrável do CSS) devolve um retângulo por página. Aí a cópia seria
-      // um segundo cabeçalho — e as que sobraram de uma passada anterior saem.
       if (tabela.tHead!.getClientRects().length > 1) {
         corpo.querySelectorAll(`.${CLASSE_CABECALHO}`).forEach((el) => remover.push(el));
         return;
       }
-      let anterior = pagina(cabecalho);
+      let anterior = coluna(cabecalho);
       let vemDeCopia = false;
       for (const linha of Array.from(corpo.rows)) {
-        const p = pagina(linha);
+        const c = coluna(linha);
         if (linha.classList.contains(CLASSE_CABECALHO)) {
-          // Cópia só vale no ALTO de uma página nova.
-          if (p <= anterior) remover.push(linha);
+          if (c <= anterior) remover.push(linha);
           else {
             vemDeCopia = true;
-            anterior = p;
+            anterior = c;
           }
           continue;
         }
-        if (p > anterior && !vemDeCopia) inserir.push({ corpo, cabecalho, antes: linha });
+        if (c > anterior + 2 && !vemDeCopia) inserir.push({ corpo, cabecalho, antes: linha });
         vemDeCopia = false;
-        anterior = p;
+        anterior = c;
       }
     });
 
@@ -282,17 +312,10 @@ export function limparCabecalhosRepetidos(fluxo: Element): void {
 
 /**
  * Depois que o navegador diagramou: quantas páginas deu, e o que cada uma diz
- * no cabeçalho corrente.
+ * no rodapé.
  */
-export function medirPaginas(
-  fluxo: Element,
-  faixa: Element,
-  fim: Element,
-  g: Geometria,
-  toc: TocEntry[]
-): Paginacao {
-  const origem = faixa.getBoundingClientRect().left;
-  const pagina = (el: Element) => paginaDoElemento(el, origem, g);
+export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometria, toc: TocEntry[]): Paginacao {
+  const pagina = (el: Element) => paginaDoElemento(el, r, g);
   const total = pagina(fim) + 1;
 
   const paginaDe: Record<string, number> = {};
@@ -304,10 +327,8 @@ export function medirPaginas(
     eventos.push({ pagina: paginaDe[cap.id], capitulo: rotuloDoCapitulo(cap.label, true) });
     for (const s of cap.children ?? []) {
       const es = document.getElementById(s.id);
-      if (!es || !fluxo.contains(es)) continue;
+      if (!es || !fluxo.contains(es) || !visivel(es)) continue;
       paginaDe[s.id] = pagina(es);
-      // Subseção não sobe pro cabeçalho: ele diz a SEÇÃO, que é o nível que
-      // o leitor usa pra se localizar.
       if (!s.label.startsWith("—")) eventos.push({ pagina: paginaDe[s.id], secao: s.label });
     }
   }

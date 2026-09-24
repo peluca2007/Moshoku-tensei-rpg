@@ -3,6 +3,7 @@
 import {
   type CSSProperties,
   type MouseEvent,
+  type PointerEvent,
   type ReactNode,
   useCallback,
   useEffect,
@@ -13,13 +14,11 @@ import {
   useSyncExternalStore,
 } from "react";
 import {
-  AArrowDown,
-  AArrowUp,
   BookOpenText,
   ChevronLeft,
   ChevronRight,
-  Maximize2,
   House,
+  Maximize2,
   Minimize2,
   Moon,
   ScrollText,
@@ -27,68 +26,71 @@ import {
   Sun,
   TableOfContents,
   X,
+  ZoomIn,
+  ZoomOut,
 } from "lucide-react";
-import type { TocEntry } from "../BookToc";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import type { TocEntry } from "../BookToc";
+import { FONTES_DO_LIVRO } from "./fontes";
 import {
   type Geometria,
   type Paginacao,
-  ESCALAS,
+  CAPA,
+  ZOOMS,
+  ajustarFigurasLargas,
+  ajustarTabelasLargas,
   calcularGeometria,
+  limparCabecalhosRepetidos,
   medirPaginas,
+  numeralDoCapitulo,
   paginaDoElemento,
   primeiroBloco,
-  rotuloDoCapitulo,
-  numeralDoCapitulo,
-  segurarCaixasCurtas,
+  regua,
   repetirCabecalhos,
-  limparCabecalhosRepetidos,
-  ajustarTabelasLargas,
+  rotuloDoCapitulo,
+  segurarCaixasCurtas,
 } from "./diagramacao";
 
 /**
- * O LIVRO FOLHEADO — o /livro aberto em duas páginas (2026-09-24).
+ * O LIVRO FOLHEADO — o /livro aberto como livro impresso (2026-09-24).
  *
- * ## A decisão que sustenta tudo: quem pagina é o navegador
+ * ## O que ele é
  *
- * O livro inteiro vira UMA caixa de colunas CSS com a altura de uma página, e
- * as colunas que não cabem transbordam pra direita. Cada coluna é uma página;
- * a janela mostra duas por vez e rola na horizontal, encaixando de dupla em
- * dupla. É o truque de todo leitor de ebook na web, e ele dá de graça tudo que
- * um paginador escrito à mão teria que reinventar: parágrafo partido por linha,
- * viúvas e órfãs, título que não fica sozinho no pé, Ctrl+F, seleção de texto,
- * foco por teclado e link que funciona.
+ * Páginas de tamanho FIXO, em duas colunas, com o papel, a tipografia e as
+ * caixas de um livro de RPG impresso — o Livro do Jogador de D&D foi a régua.
+ * O livro inteiro é escalado pra caber na tela; quem precisa de letra maior
+ * usa o zoom (botões, ou duplo clique na página). A diagramação é a mesma em
+ * toda tela, então o número da página também é.
  *
- * O texto continua sendo o mesmo DOM do modo contínuo — os capítulos chegam
- * como `children`, renderizados no servidor. Trocar de modo troca só classe e
- * CSS; nada é desmontado, e é por isso que dá pra alternar no meio da leitura
- * sem perder o lugar.
+ * ## Quem pagina é o navegador
  *
- * ## O que o JavaScript faz, e só isso
+ * O texto vira colunas CSS aninhadas: as de FORA são as páginas (uma coluna
+ * por página, com a altura da mancha), as de DENTRO são as duas colunas de
+ * texto de cada página. O navegador parte parágrafo por linha, respeita
+ * viúvas, órfãs e `break-*`, e tudo continua HTML vivo: seleção, Ctrl+F,
+ * links, teclado, vídeo. O modo contínuo é o mesmo DOM com outra classe.
  *
- * 1. Mede o palco e escolhe a geometria (uma ou duas páginas, largura, corpo).
+ * ## O que o JavaScript faz
+ *
+ * 1. Mede o palco: uma página ou duas, e a escala que cabe.
  * 2. Depois que o navegador diagramou, descobre em que página caiu cada título
- *    — é daí que saem cabeçalho corrente, fólio e o sumário com página.
- * 3. Vira a folha: botão, seta do teclado, roda do mouse, canto da página.
- * 4. Guarda o bloco que você estava lendo antes de qualquer recomposição
- *    (janela, letra, modo) e volta pra ele depois. A página não é endereço:
- *    muda com a tela. O endereço é o bloco.
+ *    — é daí que saem o rodapé e o sumário com número de página.
+ * 3. Vira a folha (botão, teclado, roda, deslize, régua) e dá zoom.
+ * 4. Guarda o bloco que você lia antes de qualquer recomposição e volta pra ele.
  */
 
 type Modo = "livro" | "continuo";
 
 /*
- * As preferências (modo e tamanho da letra) moram no localStorage, que é um
- * sistema externo ao React — por isso `useSyncExternalStore`, igual ao
- * `FontSizeToggle`. A `memoria` é a fonte primária: numa aba anônima o
- * localStorage pode recusar a escrita, e sem ela o botão pararia de funcionar
- * em vez de só deixar de lembrar.
+ * O modo mora no localStorage, que é um sistema externo ao React — por isso
+ * `useSyncExternalStore`, igual ao `FontSizeToggle`. A `memoria` é a fonte
+ * primária: numa aba anônima o localStorage pode recusar a escrita, e sem ela
+ * o botão pararia de funcionar em vez de só deixar de lembrar.
  */
 const CHAVE_MODO = "livro-folhear-modo";
-const CHAVE_ESCALA = "livro-folhear-escala";
-const memoria: { modo?: Modo; escala?: number } = {};
+const memoria: { modo?: Modo } = {};
 const ouvintes = new Set<() => void>();
 
 function assinar(ouvinte: () => void) {
@@ -106,32 +108,22 @@ function lerModo(): Modo {
   } catch {
     /* sem armazenamento: vale o padrão da tela */
   }
-  // No celular o padrão é o contínuo: uma página de livro num telefone é uma
-  // tira estreita, e na mesa o que se faz no telefone é CONSULTAR.
+  // No celular o padrão é o contínuo: uma página de livro inteira numa tela de
+  // bolso fica pequena demais, e na mesa o que se faz no telefone é CONSULTAR.
   return window.matchMedia("(min-width: 768px)").matches ? "livro" : "continuo";
 }
 
-function lerEscala(): number {
-  if (memoria.escala) return memoria.escala;
+function gravarModo(m: Modo) {
+  memoria.modo = m;
   try {
-    const salvo = Number(localStorage.getItem(CHAVE_ESCALA));
-    if (ESCALAS.includes(salvo)) return salvo;
-  } catch {
-    /* idem */
-  }
-  return 1;
-}
-
-function gravar(chave: string, valor: string) {
-  try {
-    localStorage.setItem(chave, valor);
+    localStorage.setItem(CHAVE_MODO, m);
   } catch {
     /* fica só na memória desta aba */
   }
   ouvintes.forEach((o) => o());
 }
 
-const DURACAO_VIRADA_MS = 420;
+const DURACAO_VIRADA_MS = 460;
 
 export default function Folhear({ toc, children }: { toc: TocEntry[]; children: ReactNode }) {
   const raiz = useRef<HTMLDivElement>(null);
@@ -144,9 +136,9 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
   const router = useRouter();
 
   const modo = useSyncExternalStore<Modo | null>(assinar, lerModo, () => null);
-  const escala = useSyncExternalStore(assinar, lerEscala, () => 1);
 
-  const [tamanho, setTamanho] = useState<{ w: number; h: number; raiz: number } | null>(null);
+  const [tamanho, setTamanho] = useState<{ w: number; h: number } | null>(null);
+  const [zoom, setZoom] = useState(0);
   const [versao, setVersao] = useState(0);
   const [paginacao, setPaginacao] = useState<Paginacao | null>(null);
   const [dupla, setDupla] = useState(0);
@@ -155,9 +147,11 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
   const [telaCheia, setTelaCheia] = useState(false);
 
   const geo = useMemo<Geometria | null>(
-    () => (modo === "livro" && tamanho ? calcularGeometria(tamanho.w, tamanho.h, escala, tamanho.raiz) : null),
-    [modo, tamanho, escala]
+    () => (modo === "livro" && tamanho ? calcularGeometria(tamanho.w, tamanho.h) : null),
+    [modo, tamanho]
   );
+  const porDupla = geo?.porDupla;
+  const escalaVisual = geo ? geo.escala * ZOOMS[zoom] : 1;
 
   /*
    * Refs espelhando o estado, pros ouvintes de janela (teclado, roda) lerem o
@@ -166,9 +160,10 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
   const alvo = useRef(0); // a dupla pra onde a leitura está indo: cliques rápidos somam
   const ancora = useRef<Element | null>(null); // o bloco que tem que continuar à vista
   const primeiraVez = useRef(true);
-  const estado = useRef({ geo, paginacao, modo });
+  const focoDoZoom = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  const estado = useRef({ geo, paginacao, modo, zoom });
   useLayoutEffect(() => {
-    estado.current = { geo, paginacao, modo };
+    estado.current = { geo, paginacao, modo, zoom };
   });
 
   const duplas = geo && paginacao ? Math.ceil(paginacao.total / geo.porDupla) : 1;
@@ -176,15 +171,15 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
   /** Guarda o primeiro bloco da leitura atual, antes de qualquer recomposição. */
   const guardarAncora = useCallback(() => {
     const f = fluxo.current;
-    const { geo: g, modo: m } = estado.current;
+    const { geo: g, modo: m, paginacao: pg } = estado.current;
     if (!f) return;
     if (m === "livro") {
       // Antes da primeira diagramação não há lugar nenhum pra guardar — e uma
       // âncora "do topo" guardada aqui venceria o link que abriu a página.
-      if (!g || !faixa.current || !estado.current.paginacao) return;
+      if (!g || !faixa.current || !pg) return;
       const pagina = alvo.current * g.porDupla;
-      const origem = faixa.current.getBoundingClientRect().left;
-      ancora.current = primeiroBloco(f, (el) => paginaDoElemento(el, origem, g) >= pagina);
+      const r = regua(faixa.current);
+      ancora.current = primeiroBloco(f, (el) => paginaDoElemento(el, r, g) >= pagina);
     } else {
       const topo = alturaDoTopo();
       ancora.current = primeiroBloco(f, (el) => el.getBoundingClientRect().bottom > topo);
@@ -197,16 +192,14 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     if (modo !== "livro" || !el) return;
     let ultimo = "";
     const ro = new ResizeObserver(() => {
-      const raizPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-      const chave = `${el.clientWidth}x${el.clientHeight}@${raizPx}`;
+      const chave = `${el.clientWidth}x${el.clientHeight}`;
       if (chave === ultimo) return;
-      if (ultimo) guardarAncora();
       ultimo = chave;
-      setTamanho({ w: el.clientWidth, h: el.clientHeight, raiz: raizPx });
+      setTamanho({ w: el.clientWidth, h: el.clientHeight });
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, [modo, guardarAncora]);
+  }, [modo]);
 
   // ── Fontes e <details> mudam a diagramação sem mudar o tamanho ─────────
   useEffect(() => {
@@ -229,25 +222,38 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     };
   }, [modo, guardarAncora]);
 
+  // Uma ou duas páginas: a PÁGINA é a mesma, a dupla que a contém é que muda.
+  // Vem antes da diagramação, que lê o alvo já convertido.
+  const porDuplaAnterior = useRef(porDupla);
+  useLayoutEffect(() => {
+    if (porDuplaAnterior.current && porDupla && porDuplaAnterior.current !== porDupla) {
+      alvo.current = Math.floor((alvo.current * porDuplaAnterior.current) / porDupla);
+    }
+    porDuplaAnterior.current = porDupla;
+  }, [porDupla]);
+
   // ── Diagramar: medir onde cada coisa caiu e voltar ao bloco guardado ───
+  // Só a troca de UMA pra DUAS páginas mexe na diagramação; mudar a escala
+  // (janela, zoom) não muda nada dentro da página.
   useLayoutEffect(() => {
     const f = fluxo.current;
     const fx = faixa.current;
     const j = janela.current;
-    if (!geo || !f || !fx || !j || !fim.current) return;
+    const g = estado.current.geo;
+    if (!porDupla || !g || !f || !fx || !j || !fim.current) return;
 
-    segurarCaixasCurtas(f, geo);
-    ajustarTabelasLargas(f, geo);
-    repetirCabecalhos(f, fx.getBoundingClientRect().left, geo);
-    const p = medirPaginas(f, fx, fim.current, geo, toc);
-    const porDupla = geo.porDupla;
+    ajustarFigurasLargas(f);
+    segurarCaixasCurtas(f, g, regua(fx));
+    ajustarTabelasLargas(f, g, regua(fx));
+    repetirCabecalhos(f);
+    const r = regua(fx);
+    const p = medirPaginas(f, fim.current, r, g, toc);
     const total = Math.ceil(p.total / porDupla);
     // A faixa cresce aqui mesmo, antes do React pintar: o scroll logo abaixo
     // precisa de largura pra chegar na dupla certa.
-    fx.style.width = `${total * porDupla * geo.pagina}px`;
+    fx.style.width = `${total * porDupla * g.pagina}px`;
 
     let destino = Math.min(alvo.current, total - 1);
-    const origem = fx.getBoundingClientRect().left;
     const guardada = ancora.current;
     ancora.current = null;
     // Na primeira diagramação manda o link (#cap4-6); depois, o bloco guardado.
@@ -256,27 +262,25 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
         ? document.getElementById(decodeURIComponent(location.hash.slice(1)))
         : null;
     if (alvoDoLink && f.contains(alvoDoLink)) {
-      destino = Math.floor(paginaDoElemento(alvoDoLink, origem, geo) / porDupla);
+      destino = Math.floor(paginaDoElemento(alvoDoLink, r, g) / porDupla);
       destacar(alvoDoLink);
-      // O navegador também "rola até o #": no modo Livro isso desce a janela
-      // do site e esconde o livro atrás do nav. Quem mostra a seção aqui é a
-      // dupla, então a janela volta pro topo — agora e quando a página
-      // terminar de carregar, que é quando o navegador tenta de novo.
+      // O navegador também "rola até o #": no modo Livro isso desceria a
+      // janela do site. Quem mostra a seção aqui é a dupla.
       const aoTopo = () => window.scrollTo({ top: 0, behavior: "instant" });
       aoTopo();
       if (document.readyState !== "complete") window.addEventListener("load", aoTopo, { once: true });
     } else if (guardada && f.contains(guardada)) {
-      destino = Math.floor(paginaDoElemento(guardada, origem, geo) / porDupla);
+      destino = Math.floor(paginaDoElemento(guardada, r, g) / porDupla);
     }
     primeiraVez.current = false;
     alvo.current = destino;
-    j.scrollTo({ left: destino * porDupla * geo.pagina, behavior: "instant" });
+    j.scrollTo({ left: destino * porDupla * g.pagina, behavior: "instant" });
 
     // Medir o layout e só então pintar a moldura é exatamente o caso de uso
-    // do useLayoutEffect: sem isso o fólio piscaria errado por um quadro.
+    // do useLayoutEffect: sem isso o rodapé piscaria errado por um quadro.
     setPaginacao(p);
     setDupla(destino);
-  }, [geo, versao, toc]);
+  }, [porDupla, versao, toc]);
 
   // ── Voltar ao contínuo sem perder o lugar ───────────────────────────────
   useLayoutEffect(() => {
@@ -289,6 +293,37 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     window.scrollTo({ top: window.scrollY + guardada.getBoundingClientRect().top - topo - 16, behavior: "instant" });
   }, [modo]);
 
+  // ── Zoom: o ponto clicado continua embaixo do cursor ───────────────────
+  useLayoutEffect(() => {
+    const p = palco.current;
+    const foco = focoDoZoom.current;
+    focoDoZoom.current = null;
+    if (!p || !foco) return;
+    const livro = p.querySelector<HTMLElement>(".folhear-dimensao");
+    if (!livro) return;
+    p.scrollLeft = foco.x * livro.offsetWidth - foco.px;
+    p.scrollTop = foco.y * livro.offsetHeight - foco.py;
+  }, [zoom]);
+
+  const mudarZoom = useCallback((novo: number, ponto?: { clientX: number; clientY: number }) => {
+    const n = Math.max(0, Math.min(ZOOMS.length - 1, novo));
+    const p = palco.current;
+    const livro = p?.querySelector<HTMLElement>(".folhear-dimensao");
+    if (p && livro) {
+      const pr = p.getBoundingClientRect();
+      const lr = livro.getBoundingClientRect();
+      const cx = ponto?.clientX ?? pr.left + pr.width / 2;
+      const cy = ponto?.clientY ?? pr.top + pr.height / 2;
+      focoDoZoom.current = {
+        x: (cx - lr.left) / lr.width,
+        y: (cy - lr.top) / lr.height,
+        px: cx - pr.left,
+        py: cy - pr.top,
+      };
+    }
+    setZoom(n);
+  }, []);
+
   // ── Virar ───────────────────────────────────────────────────────────────
   const irPara = useCallback((d: number, animar: boolean) => {
     const { geo: g, paginacao: pg } = estado.current;
@@ -300,12 +335,9 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     if (destino === de) return;
     alvo.current = destino;
     const calmo = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const folheia = animar && !calmo && g.porDupla === 2 && Math.abs(destino - de) === 1;
+    const folheia = animar && !calmo && Math.abs(destino - de) === 1;
     if (folheia) setVirada({ dir: destino > de ? "prox" : "ant", chave: performance.now() });
-    j.scrollTo({
-      left: destino * g.porDupla * g.pagina,
-      behavior: animar && !calmo && !folheia ? "smooth" : "instant",
-    });
+    j.scrollTo({ left: destino * g.porDupla * g.pagina, behavior: "instant" });
     setDupla(destino);
   }, []);
 
@@ -313,8 +345,7 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     (el: Element) => {
       const { geo: g, modo: m } = estado.current;
       if (m === "livro" && g && faixa.current) {
-        const origem = faixa.current.getBoundingClientRect().left;
-        irPara(Math.floor(paginaDoElemento(el, origem, g) / g.porDupla), false);
+        irPara(Math.floor(paginaDoElemento(el, regua(faixa.current), g) / g.porDupla), false);
       } else {
         const topo = alturaDoTopo();
         window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - topo - 16, behavior: "smooth" });
@@ -324,31 +355,27 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     [irPara]
   );
 
-  // O dedo e o trackpad rolam a janela direto; aqui só se acompanha onde ela
-  // parou. O alvo espera a rolagem assentar, senão um clique no meio de um
-  // deslize contaria a partir de uma dupla que ainda está passando.
+  // A janela não rola pela mão (quem vira é o livro), mas o Ctrl+F do
+  // navegador rola ela até o trecho achado — aí a dupla se realinha.
   useEffect(() => {
     const j = janela.current;
     if (modo !== "livro" || !j) return;
-    let quadro = 0;
     let assentar = 0;
     const aoRolar = () => {
-      cancelAnimationFrame(quadro);
-      quadro = requestAnimationFrame(() => {
-        const g = estado.current.geo;
-        if (!g) return;
-        setDupla(Math.round(j.scrollLeft / (g.pagina * g.porDupla)));
-      });
       clearTimeout(assentar);
       assentar = window.setTimeout(() => {
         const g = estado.current.geo;
-        if (g) alvo.current = Math.round(j.scrollLeft / (g.pagina * g.porDupla));
-      }, 160);
+        if (!g) return;
+        const largura = g.pagina * g.porDupla;
+        const d = Math.round(j.scrollLeft / largura);
+        if (j.scrollLeft !== d * largura) j.scrollTo({ left: d * largura, behavior: "instant" });
+        alvo.current = d;
+        setDupla(d);
+      }, 140);
     };
     j.addEventListener("scroll", aoRolar, { passive: true });
     return () => {
       j.removeEventListener("scroll", aoRolar);
-      cancelAnimationFrame(quadro);
       clearTimeout(assentar);
     };
   }, [modo]);
@@ -368,21 +395,23 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     return () => window.removeEventListener("keydown", aoTeclar, true);
   }, [modo, router]);
 
-  // Teclado: setas e PageUp/PageDown viram; Home/End vão às pontas.
+  // Teclado: setas e PageUp/PageDown viram; Home/End vão às pontas; +/- dão zoom.
   useEffect(() => {
     if (modo !== "livro") return;
     const aoTeclar = (e: KeyboardEvent) => {
       if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
       const t = e.target as HTMLElement | null;
       if (t?.closest("input, textarea, select, [contenteditable='true']")) return;
-      const ultimo = Number.MAX_SAFE_INTEGER;
       const acao: Record<string, () => void> = {
         ArrowRight: () => irPara(alvo.current + 1, true),
         PageDown: () => irPara(alvo.current + 1, true),
         ArrowLeft: () => irPara(alvo.current - 1, true),
         PageUp: () => irPara(alvo.current - 1, true),
         Home: () => irPara(0, false),
-        End: () => irPara(ultimo, false),
+        End: () => irPara(Number.MAX_SAFE_INTEGER, false),
+        "+": () => mudarZoom(estado.current.zoom + 1),
+        "=": () => mudarZoom(estado.current.zoom + 1),
+        "-": () => mudarZoom(estado.current.zoom - 1),
       };
       const fazer = acao[e.key];
       if (!fazer) return;
@@ -391,22 +420,22 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     };
     window.addEventListener("keydown", aoTeclar);
     return () => window.removeEventListener("keydown", aoTeclar);
-  }, [modo, irPara]);
+  }, [modo, irPara, mudarZoom]);
 
-  // Roda do mouse: um GESTO vira uma folha. A inércia do trackpad manda
-  // dezenas de eventos por gesto; contar cada um viraria o capítulo inteiro.
+  // Roda do mouse: sem zoom, um GESTO vira uma folha (a inércia do trackpad
+  // manda dezenas de eventos por gesto). Com zoom, a roda passeia pela página.
   useEffect(() => {
     const p = palco.current;
     if (modo !== "livro" || !p) return;
     let gesto = false;
     let fimDoGesto = 0;
     const aoRodar = (e: WheelEvent) => {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // deslize lateral: a rolagem nativa resolve
-      if ((e.target as HTMLElement).closest(".folhear-indice")) return;
+      if (e.ctrlKey || estado.current.zoom > 0) return;
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       e.preventDefault();
-      if (!gesto && Math.abs(e.deltaY) >= 4) {
+      if (!gesto && Math.abs(delta) >= 4) {
         gesto = true;
-        irPara(alvo.current + (e.deltaY > 0 ? 1 : -1), true);
+        irPara(alvo.current + (delta > 0 ? 1 : -1), true);
       }
       clearTimeout(fimDoGesto);
       fimDoGesto = window.setTimeout(() => (gesto = false), 220);
@@ -417,6 +446,21 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
       clearTimeout(fimDoGesto);
     };
   }, [modo, irPara]);
+
+  // Deslize com o dedo vira a folha (sem zoom; com zoom o dedo passeia).
+  const toque = useRef<{ x: number; y: number } | null>(null);
+  const aoTocar = (e: PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse" || zoom > 0) return;
+    toque.current = { x: e.clientX, y: e.clientY };
+  };
+  const aoSoltar = (e: PointerEvent<HTMLDivElement>) => {
+    const t = toque.current;
+    toque.current = null;
+    if (!t) return;
+    const dx = e.clientX - t.x;
+    const dy = e.clientY - t.y;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) irPara(alvo.current + (dx < 0 ? 1 : -1), true);
+  };
 
   // Tela cheia
   useEffect(() => {
@@ -459,16 +503,8 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     if (m === modo) return;
     guardarAncora();
     setPaginacao(null);
-    memoria.modo = m;
-    gravar(CHAVE_MODO, m);
-  };
-
-  const trocarEscala = (passo: 1 | -1) => {
-    const i = ESCALAS.indexOf(escala) + passo;
-    if (i < 0 || i >= ESCALAS.length) return;
-    guardarAncora();
-    memoria.escala = ESCALAS[i];
-    gravar(CHAVE_ESCALA, String(ESCALAS[i]));
+    setZoom(0);
+    gravarModo(m);
   };
 
   const alternarTelaCheia = () => {
@@ -480,7 +516,6 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
   const pronto = modo === "continuo" || (livro && paginacao !== null);
   const paginaInicial = geo ? dupla * geo.porDupla : 0;
   const rotuloAtual = paginacao?.rotulos[Math.min(paginaInicial + (geo?.porDupla ?? 1) - 1, paginacao.total - 1)];
-  const progresso = duplas > 1 ? dupla / (duplas - 1) : 0;
 
   const variaveis = geo
     ? ({
@@ -489,19 +524,20 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
         "--margem": `${geo.margem}px`,
         "--topo": `${geo.topo}px`,
         "--pe": `${geo.pe}px`,
-        "--por-dupla": geo.porDupla,
+        "--calha": `${geo.calha}px`,
         "--fonte": `${geo.fonte}px`,
-        "--lido": `${Math.round(progresso * 7) + 1}px`,
-        "--resta": `${Math.round((1 - progresso) * 7) + 1}px`,
+        "--por-dupla": geo.porDupla,
+        "--capa": `${CAPA}px`,
       } as CSSProperties)
     : undefined;
 
   return (
     <div
       ref={raiz}
-      className="folhear livro-shell"
+      className={`folhear livro-shell ${FONTES_DO_LIVRO}`}
       data-modo={modo ?? undefined}
       data-pronto={pronto ? "" : undefined}
+      data-zoom={zoom > 0 ? "" : undefined}
       style={variaveis}
       onClick={aoClicar}
     >
@@ -558,23 +594,23 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
             <>
               <button
                 type="button"
-                className="folhear-botao hidden sm:inline-flex"
-                onClick={() => trocarEscala(-1)}
-                disabled={escala === ESCALAS[0]}
-                aria-label="Diminuir a letra"
-                title="Diminuir a letra"
+                className="folhear-botao inline-flex"
+                onClick={() => mudarZoom(zoom - 1)}
+                disabled={zoom === 0}
+                aria-label="Afastar"
+                title="Afastar (−)"
               >
-                <AArrowDown className="h-4 w-4" aria-hidden />
+                <ZoomOut className="h-4 w-4" aria-hidden />
               </button>
               <button
                 type="button"
-                className="folhear-botao hidden sm:inline-flex"
-                onClick={() => trocarEscala(1)}
-                disabled={escala === ESCALAS[ESCALAS.length - 1]}
-                aria-label="Aumentar a letra"
-                title="Aumentar a letra"
+                className="folhear-botao inline-flex"
+                onClick={() => mudarZoom(zoom + 1)}
+                disabled={zoom === ZOOMS.length - 1}
+                aria-label="Aproximar"
+                title="Aproximar (+) — ou duplo clique na página"
               >
-                <AArrowUp className="h-4 w-4" aria-hidden />
+                <ZoomIn className="h-4 w-4" aria-hidden />
               </button>
               <BotaoTema />
             </>
@@ -606,12 +642,7 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
       {/* ── O índice, com a página de cada seção ──────────────────────── */}
       {indiceAberto && (
         <div className="folhear-indice-fundo print-hide" onClick={() => setIndiceAberto(false)}>
-          <aside
-            id="folhear-indice"
-            className="folhear-indice"
-            aria-label="Índice"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <aside id="folhear-indice" className="folhear-indice" aria-label="Índice" onClick={(e) => e.stopPropagation()}>
             <div className="mb-3 flex items-center justify-between">
               <p className="text-2xs font-bold uppercase tracking-[0.3em] text-gold-700 dark:text-gold-400">Índice</p>
               <button
@@ -631,8 +662,8 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
         </div>
       )}
 
-      {/* ── O palco: a mesa com o livro aberto em cima ────────────────── */}
-      <div ref={palco} className="folhear-palco">
+      {/* ── A mesa: o livro aberto em cima, as setas dos lados ────────── */}
+      <div className="folhear-mesa">
         {livro && (
           <button
             type="button"
@@ -642,48 +673,67 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
             disabled={dupla === 0}
             aria-label="Página anterior"
           >
-            <ChevronLeft className="h-7 w-7" aria-hidden />
+            <ChevronLeft className="h-8 w-8" aria-hidden />
           </button>
         )}
 
-        <div className="folhear-livro" data-por-dupla={geo?.porDupla}>
-          {livro && <span aria-hidden className="folhear-borda" data-lado="esq" />}
-          {livro && <span aria-hidden className="folhear-borda" data-lado="dir" />}
-
-          <div ref={janela} className="folhear-janela">
-            <div ref={faixa} className="folhear-faixa">
-              {livro && geo && paginacao && (
-                <Folhas geo={geo} paginacao={paginacao} duplas={duplas} />
-              )}
-
-              <div ref={fluxo} className={livro ? "folhear-fluxo" : "folhear-continuo livro-pagina surface"}>
-                <Sumario toc={toc} paginaDe={paginacao?.paginaDe} abertura />
-                {children}
-                <span ref={fim} aria-hidden className="folhear-fim" />
-              </div>
-            </div>
-          </div>
-
-          {livro && virada && (
+        <div ref={palco} className="folhear-palco">
+          <div
+            className="folhear-dimensao"
+            style={geo ? { width: geo.larguraDoLivro * escalaVisual, height: geo.alturaDoLivro * escalaVisual } : undefined}
+          >
             <div
-              key={virada.chave}
-              aria-hidden
-              className="folhear-virada"
-              data-dir={virada.dir}
-              style={{ "--virada-ms": `${DURACAO_VIRADA_MS}ms` } as CSSProperties}
-              onAnimationEnd={(e) => {
-                if (e.target === e.currentTarget) setVirada(null);
+              className="folhear-livro"
+              data-por-dupla={geo?.porDupla}
+              style={geo ? { transform: `scale(${escalaVisual})` } : undefined}
+              onDoubleClick={(e) => {
+                if (!livro || (e.target as Element).closest("a, button, summary, input")) return;
+                mudarZoom(zoom > 0 ? 0 : 2, e);
               }}
             >
-              <div className="folhear-virada-face">
-                <div className="folhear-virada-texto" />
-              </div>
-              <div className="folhear-virada-face" data-verso="">
-                <div className="folhear-virada-texto" />
-              </div>
-            </div>
-          )}
+              <div
+                ref={janela}
+                className="folhear-janela"
+                onPointerDown={aoTocar}
+                onPointerUp={aoSoltar}
+                onPointerCancel={() => (toque.current = null)}
+              >
+                <div ref={faixa} className="folhear-faixa">
+                  {livro && geo && paginacao && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} />}
 
+                  <div
+                    ref={fluxo}
+                    className={livro ? "folhear-fluxo sem-escuro" : "folhear-continuo livro-pagina surface"}
+                  >
+                    <Sumario toc={toc} paginaDe={paginacao?.paginaDe} abertura />
+                    {children}
+                    <span ref={fim} aria-hidden className="folhear-fim" />
+                  </div>
+                </div>
+              </div>
+
+              {livro && virada && geo && (
+                <div
+                  key={virada.chave}
+                  aria-hidden
+                  className="folhear-virada"
+                  data-dir={virada.dir}
+                  data-unica={geo.porDupla === 1 ? "" : undefined}
+                  style={{ "--virada-ms": `${DURACAO_VIRADA_MS}ms` } as CSSProperties}
+                  onAnimationEnd={(e) => {
+                    if (e.target === e.currentTarget) setVirada(null);
+                  }}
+                >
+                  <div className="folhear-virada-face">
+                    <div className="folhear-virada-texto" />
+                  </div>
+                  <div className="folhear-virada-face" data-verso="">
+                    <div className="folhear-virada-texto" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {livro && (
@@ -695,7 +745,7 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
             disabled={dupla >= duplas - 1}
             aria-label="Próxima página"
           >
-            <ChevronRight className="h-7 w-7" aria-hidden />
+            <ChevronRight className="h-8 w-8" aria-hidden />
           </button>
         )}
       </div>
@@ -719,27 +769,34 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
 }
 
 /**
- * As folhas: cabeçalho corrente, fólio e o ponto de encaixe de cada dupla.
+ * As folhas: o papel de cada página e o rodapé — número e o nome da parte,
+ * como no livro impresso.
  *
- * Elas rolam JUNTO com o texto (moram na mesma faixa), então o fólio da
- * página 12 está sempre embaixo do texto da página 12 — inclusive no meio de
- * um deslize com o dedo.
+ * Elas moram na mesma faixa do texto e rolam junto: o número da página 12
+ * está sempre embaixo do texto da página 12.
  */
 function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginacao; duplas: number }) {
   const total = duplas * geo.porDupla;
   return (
     <div aria-hidden className="folhear-folhas">
-      {Array.from({ length: duplas }, (_, d) => (
-        <span key={`m${d}`} className="folhear-marco" style={{ left: d * geo.porDupla * geo.pagina }} />
-      ))}
       {Array.from({ length: total }, (_, k) => {
         const r = paginacao.rotulos[k];
-        const lado = geo.porDupla === 1 ? "unica" : k % 2 === 0 ? "esq" : "dir";
-        const cabeca = !r || r.abertura ? "" : lado === "esq" ? r.capitulo : lado === "dir" ? (r.secao ?? r.capitulo) : (r.secao ?? r.capitulo);
+        const lado = geo.porDupla === 1 ? (k % 2 === 0 ? "dir" : "esq") : k % 2 === 0 ? "esq" : "dir";
+        const parte = !r || r.abertura ? "" : (r.capitulo ?? "").replace(" · ", " | ");
         return (
-          <div key={k} className="folhear-folha" data-lado={lado} style={{ left: k * geo.pagina }}>
-            {cabeca && <span className="folhear-cabeca">{cabeca}</span>}
-            {k < paginacao.total && <span className="folhear-folio">{k + 1}</span>}
+          <div
+            key={k}
+            className="folhear-folha"
+            data-lado={lado}
+            data-variante={k % 4}
+            style={{ left: k * geo.pagina }}
+          >
+            {k < paginacao.total && (
+              <span className="folhear-rodape">
+                <span className="folhear-rodape-numero">{k + 1}</span>
+                {parte && <span className="folhear-rodape-parte">{parte}</span>}
+              </span>
+            )}
           </div>
         );
       })}
@@ -774,12 +831,10 @@ function Sumario({
     <nav aria-label={abertura ? "Sumário deste volume" : "Índice"} className={abertura ? "folhear-sumario" : "folhear-sumario-lista"}>
       {abertura && (
         <header className="folhear-sumario-topo">
-          <p className="folhear-sumario-selo">
-            <span aria-hidden>◆</span> Sumário <span aria-hidden>◆</span>
-          </p>
+          <p className="folhear-sumario-selo">Sumário</p>
         </header>
       )}
-      <ol className="space-y-4">
+      <ol className="folhear-sumario-capitulos">
         {toc.map((cap, i) => (
           <li key={cap.id}>
             <a ref={i === 0 ? primeiro : undefined} href={`#${cap.id}`} className="folhear-entrada" data-nivel="capitulo">
@@ -789,7 +844,7 @@ function Sumario({
               <span className="folhear-entrada-pagina">{pagina(cap.id)}</span>
             </a>
             {cap.children && (
-              <ol className="mt-1.5 space-y-1">
+              <ol>
                 {cap.children.map((s) => {
                   const sub = s.label.startsWith("—");
                   return (
@@ -807,13 +862,19 @@ function Sumario({
           </li>
         ))}
       </ol>
+      {abertura && (
+        <figure aria-hidden className="folhear-sumario-arte">
+          {/* eslint-disable-next-line @next/next/no-img-element -- arte impressa no papel, sem otimização de tamanho. */}
+          <img src="/faixas/livro.jpg" alt="" width={680} height={384} />
+        </figure>
+      )}
     </nav>
   );
 }
 
 /**
  * O tema, dentro da barra do livro — no modo Livro o menu do site some, e com
- * ele o botão de tema. Mesmo cuidado de hidratação do `ThemeToggle`.
+ * ele o botão de tema. O papel do livro é sempre papel; o tema muda a mesa.
  */
 function BotaoTema() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -825,8 +886,8 @@ function BotaoTema() {
       type="button"
       className="folhear-botao hidden sm:inline-flex"
       onClick={() => setTheme(escuro ? "light" : "dark")}
-      aria-label={escuro ? "Papel claro" : "Papel escuro"}
-      title={escuro ? "Papel claro" : "Papel escuro"}
+      aria-label={escuro ? "Mesa clara" : "Mesa escura"}
+      title={escuro ? "Mesa clara" : "Mesa escura"}
     >
       {escuro ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
     </button>

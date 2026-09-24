@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { ESCALAS, calcularGeometria, numeralDoCapitulo, rotuloDoCapitulo } from "./diagramacao";
+import { CAPA, PAGINA, calcularGeometria, larguraDaColuna, numeralDoCapitulo, rotuloDoCapitulo } from "./diagramacao";
 
 /*
- * O princípio 1 do plano do livro digital, em teste: se faltar espaço, o livro
- * mostra MENOS PÁGINAS — nunca letra menor. A geometria é a única peça do
- * livro folheado que dá pra verificar sem navegador, e é justamente a que
- * decide se ele é legível.
+ * O livro folheado tem página de tamanho FIXO: a diagramação é uma só, e quem
+ * se adapta à tela é a escala (e o zoom). Estes testes guardam as duas
+ * promessas que dependem disso: o livro sempre cabe no palco, e a página só
+ * vira dupla quando a dupla ainda sai grande o bastante pra ler.
  */
 
 const TELAS = [
@@ -18,42 +18,44 @@ const TELAS = [
 ];
 
 describe("calcularGeometria", () => {
-  it.each(TELAS)("$nome: corpo nunca abaixo de 16px na escala padrão", ({ w, h }) => {
-    expect(calcularGeometria(w, h, 1).fonte).toBeGreaterThanOrEqual(16);
+  it.each(TELAS)("$nome: o livro inteiro cabe no palco", ({ w, h }) => {
+    const g = calcularGeometria(w, h);
+    expect(g.larguraDoLivro * g.escala).toBeLessThanOrEqual(w);
+    expect(g.alturaDoLivro * g.escala).toBeLessThanOrEqual(h);
   });
 
-  it.each(TELAS)("$nome: o livro cabe no palco", ({ w, h }) => {
-    const g = calcularGeometria(w, h, 1);
-    expect(g.pagina * g.porDupla).toBeLessThanOrEqual(w);
-    expect(g.altura).toBeLessThanOrEqual(h);
+  it.each(TELAS)("$nome: a página não muda com a tela", ({ w, h }) => {
+    const g = calcularGeometria(w, h);
+    expect([g.pagina, g.altura, g.fonte]).toEqual([PAGINA.largura, PAGINA.altura, PAGINA.fonte]);
+    expect(g.larguraDoLivro).toBe(g.porDupla * PAGINA.largura + CAPA * 2);
   });
 
-  it.each(TELAS)("$nome: a linha tem medida de livro (38 a 70 caracteres)", ({ w, h }) => {
-    const g = calcularGeometria(w, h, 1);
-    // Literata: ~0,5em por caractere em média.
-    const caracteres = (g.pagina - g.margem * 2) / (g.fonte * 0.5);
-    expect(caracteres).toBeGreaterThanOrEqual(38);
-    expect(caracteres).toBeLessThanOrEqual(70);
+  it("dupla no desktop, no notebook baixo e no tablet deitado; uma página em pé", () => {
+    expect(calcularGeometria(1920, 984).porDupla).toBe(2);
+    expect(calcularGeometria(1440, 804).porDupla).toBe(2);
+    expect(calcularGeometria(1280, 584).porDupla).toBe(2);
+    expect(calcularGeometria(1024, 672).porDupla).toBe(2);
+    expect(calcularGeometria(820, 1084).porDupla).toBe(1);
+    expect(calcularGeometria(390, 748).porDupla).toBe(1);
   });
 
-  it("duas páginas no desktop, uma no tablet em pé e no celular", () => {
-    expect(calcularGeometria(1440, 804, 1).porDupla).toBe(2);
-    expect(calcularGeometria(1280, 584, 1).porDupla).toBe(2);
-    expect(calcularGeometria(820, 1084, 1).porDupla).toBe(1);
-    expect(calcularGeometria(390, 748, 1).porDupla).toBe(1);
-  });
-
-  it("tudo em pixel inteiro: as colunas repetem o passo centenas de vezes", () => {
+  it("a dupla nunca encolhe o livro mais de 20% em relação a uma página só", () => {
     for (const { w, h } of TELAS) {
-      const g = calcularGeometria(w, h, 1);
-      for (const v of [g.pagina, g.altura, g.margem, g.topo, g.pe]) expect(Number.isInteger(v)).toBe(true);
+      const g = calcularGeometria(w, h);
+      const umaSo = Math.min((w - 2 * (w >= 1100 ? 72 : w >= 768 ? 48 : 8)) / (PAGINA.largura + CAPA * 2), (h - 16) / (PAGINA.altura + CAPA * 2));
+      if (g.porDupla === 2) expect(g.escala).toBeGreaterThanOrEqual(umaSo * 0.8 - 0.001);
     }
   });
 
-  it("o A+ aumenta a letra, e quem aumentou a raiz do navegador ganha livro maior", () => {
-    const base = calcularGeometria(1440, 804, 1);
-    expect(calcularGeometria(1440, 804, ESCALAS[ESCALAS.length - 1]).fonte).toBeGreaterThan(base.fonte);
-    expect(calcularGeometria(1440, 804, 1, 20).fonte).toBeGreaterThan(base.fonte);
+  it("no tablet em pé a página sai perto do tamanho real (letra ~12px)", () => {
+    expect(calcularGeometria(820, 1084).escala).toBeGreaterThan(0.85);
+  });
+
+  it("a coluna tem medida de livro impresso (45 a 60 caracteres)", () => {
+    // Alegreya: ~0,5em por caractere em média.
+    const caracteres = larguraDaColuna(calcularGeometria(1440, 804)) / (PAGINA.fonte * 0.5);
+    expect(caracteres).toBeGreaterThanOrEqual(45);
+    expect(caracteres).toBeLessThanOrEqual(60);
   });
 });
 

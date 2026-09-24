@@ -192,7 +192,7 @@ export function Warning({ title, children }: { title?: string; children: ReactNo
   return (
     // Mesma razão da caixa acima: `gold-50` (#fcf6e8) é quase indistinguível do
     // fundo da página. O `gold-100` tem pigmento suficiente pra a caixa existir.
-    <div className="livro-caixa rounded-xl border border-l-[3px] border-gold-400/50 border-l-gold-500 bg-gradient-to-br from-gold-100/80 to-gold-100/40 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
+    <div className="livro-caixa livro-aviso rounded-xl border border-l-[3px] border-gold-400/50 border-l-gold-500 bg-gradient-to-br from-gold-100/80 to-gold-100/40 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
       {title && <p className="mb-1 font-semibold text-gold-800 dark:text-gold-200">{title}</p>}
       <div className="max-w-[74ch] space-y-1.5 text-parchment-800 dark:text-gold-100/85">{children}</div>
     </div>
