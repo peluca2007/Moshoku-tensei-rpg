@@ -1,5 +1,6 @@
 import { CriaturaEncontro } from "./encounterSim";
 import { comprimirTexto, descomprimirBytes } from "./compactacao";
+import { ehCriaturaImportavel, sanearRetratoDaCriatura } from "./validarCriaturaImportada";
 
 /**
  * A criatura do Mestre num arquivo só — mesma ideia de `fichaArquivo.ts`, sem a
@@ -87,11 +88,10 @@ export async function lerArquivoDeCriatura(file: File): Promise<Omit<CriaturaEnc
   } catch {
     throw new CriaturaIlegivel("Esse arquivo não é uma criatura deste site.");
   }
-  // `papel` é o campo que toda criatura tem e que nenhum outro JSON teria por
-  // acaso — mesmo raciocínio de `attributeBase` em `fichaArquivo.ts`, e o que
-  // impede um `.mtficha` de personagem de entrar aqui por engano.
-  if (!dados || typeof dados !== "object" || !("papel" in dados) || !("acoes" in dados)) {
+  // Além de distinguir criatura de ficha, confere os campos que a prévia, o
+  // bestiário e a simulação precisam antes de deixar o arquivo entrar.
+  if (!ehCriaturaImportavel(dados)) {
     throw new CriaturaIlegivel("Esse arquivo não parece ser uma criatura exportada deste site.");
   }
-  return dados as Omit<CriaturaEncontro, "id">;
+  return sanearRetratoDaCriatura(dados);
 }

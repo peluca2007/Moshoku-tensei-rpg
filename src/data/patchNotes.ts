@@ -16,6 +16,36 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.96",
+    date: "2026-09-24",
+    title: "Chefes que lutam como a própria ficha",
+    sections: [
+      {
+        heading: "Da ficha para o encontro",
+        items: [
+          "Agora dá para levar uma ficha completa do roster para Encontros como Rival padrão ou Chefe único. O rival conserva atributos, defesa, reservas, técnicas e custos; o Chefe dobra os PV e recebe os turnos extras do seu papel. A conversão cria uma cópia, então os ajustes do Mestre não alteram o personagem original.",
+          "O cartão do rival mostra as árvores, reações, Pactos e habilidades da ficha. Ataques, magias de até quatro Ações, cura e PV temporários entram no combate; cânticos longos exigem Concentração quando o rival sofre dano.",
+        ],
+      },
+      {
+        heading: "Invocações, Água e Fogo",
+        items: [
+          "Pactos de combate preparados entram com PV e iniciativa próprios e agem com uma Ação por turno. Chamado de Emergência pode trazer reforços durante a luta, respeitando PM, limite de Pactos e os talentos Círculo Improvisado, Convocação Aprimorada, Pacto Firmado e Duas Vidas.",
+          "Magias de Água aplicam Molhado quando a carta manda; a parcela fria dobra contra um alvo Molhado. Magias de Fogo secam esse alvo e aplicam Em Chamas somente quando a habilidade diz: Lança de Fogo não incendeia, Sopro depende da falha na resistência e Chuva de Brasas funciona mesmo sem dano inicial.",
+          "Aparar e Fluxo do Deus da Água entram nas reações do rival. A simulação também usa Preso, Caído, Envenenado, Quebrantado, dano sustentado e as resistências e imunidades declaradas.",
+        ],
+      },
+      {
+        heading: "Resultado mais claro",
+        items: [
+          "A régua de orçamento inclui os Pactos preparados e mostra, à parte, uma estimativa do peso dos reforços possíveis por Chamado de Emergência. O relatório continua usando os PV, ataques e recursos reais da batalha simulada.",
+          "Caído voltou a seguir o glossário: favorece ataques corpo a corpo e atrapalha os à distância. Quebrantado reduz também o dano causado pelo rival. A ordem de frio contra Molhado e resistência foi corrigida para não inflar o dano.",
+          "O guia Como funciona? de Encontros ganhou um sumário, um roteiro de uso, a explicação da conta e os limites do simulador. Pactos de apoio, escolhas narrativas e efeitos de terreno que pedem posição ficam sinalizados para condução do Mestre, em vez de produzirem um ataque automático incorreto.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.95",
     date: "2026-09-22",
     title: "O Simulador de Combate Definitivo",

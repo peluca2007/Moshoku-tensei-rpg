@@ -390,6 +390,12 @@ export interface FichaCombate {
 
 /** Qualquer coisa que pode levar dano. Personagens e criaturas cabem aqui. */
 export interface Alvo {
+  /** Reação própria de um rival criado de ficha quando o atacante erra corpo a corpo. */
+  aoErrarCorpoACorpo?: (atacante: EstadoPersonagem, formula: string, rng: Rng, logger?: RegistroCombate) => void;
+  /** Aparar do rival pode aumentar a CA depois da rolagem, antes de resolver o acerto. */
+  caAposAparar?: (atacante: EstadoPersonagem, natural: number, total: number) => number;
+  /** Um rival que está em cântico testa Concentração ao sofrer dano. */
+  aoSofrerDano?: (bonusDeRankDeQuemBate: number, rng: Rng, evento?: EventoAtaque) => void;
   posicao?: number;
   terrenoDificil: boolean;
   escondido: boolean;
@@ -864,7 +870,11 @@ export function acoesDe(c: CharacterData): Acao[] {
       ataque: a.id === "primeiro-golpe" || /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`),
       frio: /frio|gelo/.test(txt),
       fogo: /ígneo|chamas|fogo/.test(txt),
-      aplicaMolhado: /molhad/.test(txt),
+      // Ler apenas a palavra "Molhado" confundia um gatilho ("frio dobra
+      // contra Molhado") com a aplicação da condição. A própria carta diz
+      // quando alguém FICA Molhado; só esse caso altera o estado do alvo.
+      aplicaMolhado: /\b(?:fica|ficam|deixa|deixam|aplica|aplicam|mant[eé]m)\b[^.;]{0,90}\bmolhad[oa]s?\b/i.test(a.effect) ||
+        /\b(?:falha|sucesso):[^.;]{0,90}\bmolhad[oa]s?\b/i.test(a.effect),
       /*
        * Quebrantado, lido do EFEITO e não do dano (0.1.35).
        *
@@ -1255,9 +1265,9 @@ export function aberturaFurtiva(e: EstadoPersonagem, alvo: Alvo): string | null 
   return null;
 }
 
-export function motivoFurtivo(e: EstadoPersonagem, alvo: Alvo): string | null {
+export function motivoFurtivo(e: EstadoPersonagem, alvo: Alvo, corpoACorpo = true): string | null {
   if (!e.ficha.rankLadino || e.usouFurtivo) return null;
-  return aberturaFurtiva(e, alvo) ?? (alvo.cego ? "alvo Cego" : alvo.preso ? "alvo imobilizado" : alvo.caido && !(e.preso || e.caido || e.envenenado) ? "Vantagem contra alvo Caído" : null);
+  return aberturaFurtiva(e, alvo) ?? (alvo.cego ? "alvo Cego" : alvo.preso ? "alvo imobilizado" : corpoACorpo && alvo.caido && !(e.preso || e.caido || e.envenenado) ? "Vantagem contra alvo Caído" : null);
 }
 
 export function autorizarAcao(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): { legal: boolean; motivo: string } {
@@ -1307,7 +1317,8 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
   const sustentado = a.danoPorTurno
     ? (mediaDados(a.danoPorTurno) + bonus) * (TURNOS_SUSTENTADOS - 1)
     : 0;
-  const furtivo = a.ataque && alvo && motivoFurtivo(e, alvo) ? e.ficha.rankLadino * 3.5 : 0;
+  const corpoACorpo = /corpo a corpo|toque/i.test(a.alcance ?? "") || ehGolpeBasico(a);
+  const furtivo = a.ataque && alvo && motivoFurtivo(e, alvo, corpoACorpo) ? e.ficha.rankLadino * 3.5 : 0;
   const bruto = impacto + sustentado + furtivo;
 
   if (!alvo) return bruto;
@@ -1318,8 +1329,8 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     const ca = Math.max(1, alvo.ca - alvo.quebrantado);
     const precisa = ca - bonusAcerto;
     const simples = Math.min(0.95, Math.max(0.05, (21 - precisa) / 20));
-    const vantagem = e.escondido || alvo.preso || alvo.caido || alvo.cego;
-    const desvantagem = e.preso || e.caido || e.envenenado ||
+    const vantagem = e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
+    const desvantagem = e.preso || e.caido || e.envenenado || (!corpoACorpo && alvo.caido) ||
       ((basico || a.dadosDeArma > 0 || a.regra === "primeiro-golpe") && !e.ficha.arma.proficiente);
     const chance = vantagem === desvantagem ? simples : vantagem ? 1 - (1 - simples) ** 2 : simples ** 2;
     const chanceCritico = vantagem === desvantagem ? 0.05 : vantagem ? 0.0975 : 0.0025;
@@ -1408,8 +1419,9 @@ export function resolver(
   // "ataques contra você têm Vantagem" (só Preso e Caído) faz o ALVO comprado
   // por essas duas facilitar a vida de quem o ataca.
   const semProficiencia = usaArma && !e.ficha.arma.proficiente;
-  const desvantagemPropria = e.preso || e.caido || e.envenenado || semProficiencia;
-  const vantagemContraAlvo = e.escondido || alvo.preso || alvo.caido || alvo.cego;
+  const corpoACorpo = /corpo a corpo|toque/i.test(a.alcance ?? "") || ehGolpeBasico(a);
+  const desvantagemPropria = e.preso || e.caido || e.envenenado || semProficiencia || (!corpoACorpo && alvo.caido);
+  const vantagemContraAlvo = e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
   /*
    * Quebrantado (Cap. 4, §2): cada acúmulo tira 1 da CA do alvo e 1 do dano de
    * QUEM o carrega. Aqui aparecem os dois lados da mesma condição — a CA menor
@@ -1424,7 +1436,8 @@ export function resolver(
     notas: [
       ...(semProficiencia ? ["Desvantagem: sem proficiência com a arma"] : []),
       ...(e.preso || e.caido || e.envenenado ? ["Desvantagem: condição do atacante"] : []),
-      ...(alvo.preso || alvo.caido || alvo.cego ? ["Vantagem: condição do alvo"] : []),
+      ...(alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego ? ["Vantagem: condição do alvo"] : []),
+      ...(!corpoACorpo && alvo.caido ? ["Desvantagem: ataque à distância contra alvo Caído"] : []),
       ...(basico ? [`Bônus de dano: atributo ${e.ficha.arma.attributeValue} + Rank ${e.ficha.arma.rankBonus}`] : []),
     ],
   } : undefined;
@@ -1453,8 +1466,13 @@ export function resolver(
   if (a.ataque) {
     const teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
     const rolagem = teste.natural;
-    if (evento) evento.teste = { ...teste, tipo: "ataque", bonus: bonusAcerto, total: rolagem + bonusAcerto, defesa: caDoAlvo };
-    if (rolagem === 1 || (rolagem !== 20 && rolagem + bonusAcerto < caDoAlvo)) {
+    const total = rolagem + bonusAcerto;
+    const caEfetiva = corpoACorpo ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
+    if (evento) {
+      evento.teste = { ...teste, tipo: "ataque", bonus: bonusAcerto, total, defesa: caEfetiva };
+      if (caEfetiva > caDoAlvo) evento.notas.push(`Aparar: CA ${caDoAlvo} → ${caEfetiva}.`);
+    }
+    if (rolagem === 1 || (rolagem !== 20 && total < caEfetiva)) {
       if (evento) { evento.acertou = false; registrar?.(evento); }
       return 0;
     }
@@ -1464,7 +1482,7 @@ export function resolver(
       dano += rolarDano(true);
       if (evento) evento.critico = true;
     }
-    const furtivo = motivoFurtivo(e, alvo);
+    const furtivo = motivoFurtivo(e, alvo, corpoACorpo);
     if (furtivo) {
       const formula = `${e.ficha.rankLadino}d6`;
       dano += rolarParcela("Dano Furtivo", formula);
@@ -1502,7 +1520,7 @@ export function resolver(
   // abaixo de zero: a condição enfraquece o golpe, não cura o alvo.
   dano = Math.max(0, dano - e.quebrantado);
   if (e.quebrantado) evento?.notas.push(`Quebrantado do atacante: −${e.quebrantado}`);
-  if (a.aplicaMolhado) alvo.molhado = true;
+  if (a.aplicaMolhado) { alvo.molhado = true; alvo.emChamas = 0; }
   if (a.aplicaQuebrantado) {
     // O teto é o Bônus de Rank de quem aplica ("até o máximo do Bônus de Rank
     // de quem aplicou"). O motor não guarda o Bônus de Rank isolado — `bc` é
@@ -1638,6 +1656,7 @@ export function aplicarDano(
    * cântico e metade do PM investido.
    */
   if (rng && "conjurando" in alvo) testeDeConcentracao(alvo as EstadoPersonagem, bonusDeRankDeQuemBate, rng);
+  if (rng) alvo.aoSofrerDano?.(bonusDeRankDeQuemBate, rng, evento);
   if (alvo.pv <= 0) {
     alvo.pv = 0;
     alvo.vivo = false;
@@ -1686,6 +1705,10 @@ export function executarAtaquePersonagem(
     evento.notas.push(`Custo: ${acao.acoes} Ação(ões), ${acao.pm} PM, ${acao.pt} PT`);
     if (logger.ataque) logger.ataque(evento);
     else logger.log(formatarEventoAtaque(evento));
+  }
+  if (evento?.acertou === false && acao.ataque &&
+    (/corpo a corpo|toque/i.test(acao.alcance ?? "") || acao.nome === "golpe comum" || acao.nome === "golpe sem estilo")) {
+    alvo.aoErrarCorpoACorpo?.(e, acao.dano, rng, logger);
   }
   return causado;
 }

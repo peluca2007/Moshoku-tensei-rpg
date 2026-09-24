@@ -66,6 +66,7 @@ export default function BlocoDoMonstro({
 }) {
   const arq = getArquetipo(criatura.arquetipo);
   const sub = getSubArquetipo(criatura.subArquetipo);
+  const rival = !!criatura.perfilDeFicha;
   // Os nomes dos espólios, e não os ids: o painel é lido pelo Mestre no meio
   // da cena, e "tralha_presa_lobo_gigante" não é uma frase.
   const espolioDoSub = useMemo(
@@ -77,10 +78,10 @@ export default function BlocoDoMonstro({
     [sub]
   );
   const atributos = useMemo(
-    () => fichaDeAtributos(criatura.patamar, criatura.arquetipo),
-    [criatura.patamar, criatura.arquetipo]
+    () => criatura.perfilDeFicha?.atributos ?? fichaDeAtributos(criatura.patamar, criatura.arquetipo),
+    [criatura.patamar, criatura.arquetipo, criatura.perfilDeFicha]
   );
-  const percepcao = percepcaoPassiva(criatura.patamar, criatura.arquetipo);
+  const percepcao = rival ? 10 + atributos.espirito : percepcaoPassiva(criatura.patamar, criatura.arquetipo);
   const quantasPericias = periciasDaCriatura(criatura.patamar);
   const pericias = criatura.pericias ?? [];
   const deslocamento = criatura.deslocamento ?? arq?.deslocamento ?? 9;
@@ -101,10 +102,10 @@ export default function BlocoDoMonstro({
     <div className="mt-3 rounded-xl border border-parchment-300 bg-parchment-50/60 p-3 dark:border-parchment-700 dark:bg-parchment-900/40">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <span className="font-display text-2xs font-black uppercase tracking-[0.14em] text-gold-700 dark:text-gold-300">
-          Bloco do Monstro
+          {rival ? "Atributos da ficha" : "Bloco do Monstro"}
         </span>
         <span className="text-2xs text-parchment-500 dark:text-parchment-400">
-          Apêndice G — tudo abaixo sai do patamar e do arquétipo
+          {rival ? "Copiados do personagem no momento da conversão" : "Apêndice G — patamar, arquétipo e sub-arquétipo"}
         </span>
       </div>
 
@@ -112,7 +113,7 @@ export default function BlocoDoMonstro({
           O primeiro decide em qual atributo os números aparecem; o segundo
           decide o que o corpo dela deixa quando ela cai. */}
       <div className="grid gap-2 sm:grid-cols-2">
-        <label className="block text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
+        {!rival && <label className="block text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
           Arquétipo
           <select
             value={criatura.arquetipo ?? ""}
@@ -126,7 +127,7 @@ export default function BlocoDoMonstro({
               </option>
             ))}
           </select>
-        </label>
+        </label>}
 
         <label className="block text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
           Sub-arquétipo
@@ -163,14 +164,14 @@ export default function BlocoDoMonstro({
       <div className="mt-3 grid grid-cols-5 gap-1.5">
         {(Object.keys(NOME_DO_ATRIBUTO) as AtributoDaCriatura[]).map((k) => {
           const v = atributos[k];
-          const principal = arq && NOME_DO_ATRIBUTO[k] === arq.principal;
+          const principal = !rival && arq && NOME_DO_ATRIBUTO[k] === arq.principal;
           return (
             <div
               key={k}
               title={
                 principal
                   ? `Atributo Principal: ela resiste a testes de ${NOME_DO_ATRIBUTO[k]} com Vantagem (Apêndice G).`
-                  : `${NOME_DO_ATRIBUTO[k]} da criatura, derivado do patamar e do arquétipo.`
+                  : rival ? `${NOME_DO_ATRIBUTO[k]} copiado da ficha.` : `${NOME_DO_ATRIBUTO[k]} da criatura, derivado do patamar e do arquétipo.`
               }
               className={`rounded-lg border px-1 py-1.5 text-center ${
                 principal
@@ -188,7 +189,7 @@ export default function BlocoDoMonstro({
           );
         })}
       </div>
-      {arq && (
+      {!rival && arq && (
         <p className="mt-1 text-3xs leading-relaxed text-parchment-500 dark:text-parchment-400">
           Resiste com <b>Vantagem</b> em testes de {arq.principal}. CD do que ela impõe:{" "}
           <b>{criatura.cdResistencia}</b>, ou <b>{criatura.cdResistencia - 2}</b> quando a habilidade sai de
@@ -260,13 +261,12 @@ export default function BlocoDoMonstro({
           Perícias
           <span
             className={`font-normal normal-case tracking-normal ${
-              pericias.length > quantasPericias
+              !rival && pericias.length > quantasPericias
                 ? "text-wine-600 dark:text-wine-300"
                 : "text-parchment-500 dark:text-parchment-400"
             }`}
           >
-            {pericias.length} de {quantasPericias} — o patamar dela dá {quantasPericias}, e cada uma é
-            Vantagem, nunca um número
+            {rival ? `${pericias.length} da ficha` : `${pericias.length} de ${quantasPericias} — o patamar dela dá ${quantasPericias}`} — cada uma é Vantagem, nunca um número
           </span>
         </div>
         <div className="flex flex-wrap gap-1">

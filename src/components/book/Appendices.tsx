@@ -366,23 +366,26 @@ export default function Appendices() {
           toda regra que peça o Bônus de Rank de quem acertou, derrubou ou aplicou: a CD de Concentração de
           quem ela feriu, o Fio da Vida de quem ela derrubou, o teto de acúmulos de Quebrantado que ela aplica.
         </P>
-        <SubTitle id="apendice-g-bloco">O Bloco do Monstro — duas escolhas, a ficha inteira</SubTitle>
+        <SubTitle id="apendice-g-bloco">O Bloco do Monstro — três escolhas, a ficha inteira</SubTitle>
         <P>
           A tabela acima dá os números do combate. Falta tudo o resto que a mesa pergunta no meio da cena:
           <i> qual a Força dele? ele percebe o ladino? corre quanto? é grande?</i> Um Mestre que precisa parar
           a sessão pra montar uma ficha de monstro não monta monstro nenhum — então o bloco inteiro sai de{" "}
-          <b>duas escolhas</b>, e nenhuma delas é um número.
+          <b>três escolhas curtas</b>: um patamar e dois tipos de criatura.
         </P>
         <BookTable
           headers={["Escolha", "O que ela decide"]}
           rows={[
             ["1. O PATAMAR (1 a 6)", "TODOS os números: PV, CA, acerto, CD, dano por turno, resistência, Bônus de Rank. É a tabela acima, e você não muda nada nela."],
             ["2. O ARQUÉTIPO", "ONDE aqueles números aparecem: qual atributo é o forte, quanto ela anda, e o que ela percebe. É o que separa o ogro do necromante com o mesmo patamar."],
+            ["3. O SUB-ARQUÉTIPO", "O QUE ela é: espólio, moeda, resistências e imunidades sugeridas e Ações típicas. Besta e Humanoide podem lutar do mesmo jeito, mas deixam recompensas diferentes."],
           ]}
         />
         <P>
-          Escolhidas as duas, o bloco está pronto. O que vier depois — uma Resistência, um sentido especial,
-          uma perícia a mais — é <b>ajuste consciente</b>, e cada ajuste diz o que custa.
+          Escolhidas as três, o bloco básico está pronto. Sem arquétipo ou sub-arquétipo, o site ainda aceita
+          uma criatura genérica para não quebrar encontros antigos; a recompensa também fica genérica. O que
+          vier depois — um sentido especial, uma perícia a mais — é <b>ajuste consciente</b>, e cada ajuste diz
+          o que custa.
         </P>
 
         <SubTitle id="apendice-g-atributos">Os cinco atributos de uma criatura</SubTitle>
@@ -461,6 +464,13 @@ export default function Appendices() {
           sugestão pra montar um monstro sem inventar do zero, nunca obrigação. Resistência e Imunidade da
           tabela também entram como sugestão — e a Imunidade continua custando um patamar no Orçamento de
           Encontro, como manda a regra abaixo.
+        </P>
+        <P>
+          Na recompensa de um encontro, o orçamento em PO é um <b>teto</b>, não uma quantia garantida. Uma
+          Besta não deixa moedas nem equipamento aleatório: se as partes do corpo não alcançarem o teto, a
+          diferença simplesmente não aparece. Humanoides podem carregar bolsa e equipamento; encontros
+          mistos usam a média dos sub-arquétipos presentes. O Mestre escolhe o teto conforme a história,
+          porque perigo em combate não determina riqueza.
         </P>
 
         <Aside title="O que cada atributo da criatura faz, e onde">
@@ -737,16 +747,21 @@ export default function Appendices() {
         <P>
           <i>Mushoku Tensei</i> é uma história de duelos: o espadachim do Norte que persegue o grupo, a discípula
           renegada da Água, o colega de dojo que virou inimigo. Nenhum deles é um molde. Monte o rival como
-          um personagem, gastando o PA de um personagem do patamar que você quer, e ele entra na luta como
-          uma criatura <b>Padrão</b> desse patamar — com PV, CA, Bônus de Ataque e CD tirados da ficha, e
-          não da tabela acima.
+          um personagem, gastando o PA de um personagem do patamar que você quer. Como rival <b>Padrão</b>,
+          ele usa os PV, a CA, o ataque, as reservas e as técnicas da ficha. Como <b>Chefe único</b>,
+          começa com o dobro dos PV da ficha e recebe os turnos adicionais da regra de chefe acima;
+          o dano de cada técnica permanece o mesmo.
         </P>
         <List
           items={[
             "O patamar dele é o maior patamar da ficha, e o Bônus de Rank também: é esse número que entra na Concentração, no Fio da Vida e no Quebrantado.",
             "Os números vão sair diferentes do molde, e essa é a graça. Uma Espada de 3º patamar com Vigor 0 tem bem menos que os 90 PV da Ameaça e bate bem mais forte: o rival joga com as mesmas regras e as mesmas fraquezas do grupo, e o grupo pode estudá-lo.",
-            "Se ele for o chefe da noite, aplique a regra de Chefe único (acima) partindo dos números da ficha, e não da linha do molde.",
-            "No site, a tela de Encontros converte uma ficha em criatura. A conversão é uma cópia: mexer no rival não muda a ficha, e subir a ficha de patamar não muda o rival que já foi pra mesa.",
+            "O rival conserva atributos, perícias, deslocamento, resistências, imunidades, iniciativa e reservas de PM, PT e PP da ficha. Uma técnica usa o bônus e a CD da sua própria árvore, mesmo se o rival estudou várias árvores.",
+            "No site, Encontros converte a ficha em Padrão ou Chefe único. A simulação usa ataques, técnicas de dano e magias de cura e proteção de até quatro Ações, descontando PM, PT e PP. Técnicas de quatro Ações exigem cântico; sofrer dano pede Concentração. Molhado, Em Chamas, frio contra Molhado e Quebrantado alteram o combate; Aparar pode transformar um acerto corpo a corpo em erro, e o Fluxo do Deus da Água contra-ataca após esse erro.",
+            "O invocador pode levar Pactos de combate preparados para o encontro: escolha os Pactos no perfil, respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, o invocador pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha; os talentos Círculo Improvisado, Convocação Aprimorada, Pacto Firmado e Duas Vidas também valem. O orçamento conta Pactos como lacaios por aproximação e mostra uma estimativa de reforços; a simulação usa seus valores próprios.",
+            "Pactos de apoio, efeitos especiais que pedem decisão e reações específicas além de Aparar e Fluxo continuam descritos no perfil para o Mestre conduzir na mesa. Uma ficha com tais efeitos exige essa condução além da simulação.",
+            "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 120 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
+            "A conversão é uma cópia: mexer no rival não muda a ficha, e subir a ficha de patamar não muda o rival que já foi pra mesa.",
           ]}
         />
       </Section>

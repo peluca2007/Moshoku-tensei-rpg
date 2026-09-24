@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { TEMPERATURAS, orcamentoDeEncontro, rotuloPatamar } from "@/data/bestiary";
+import { TEMPERATURAS, orcamentoDeEncontro, pesoNoOrcamento, rotuloPatamar } from "@/data/bestiary";
 import type { CriaturaEncontro } from "@/lib/encounterSim";
 
 /**
@@ -35,18 +35,39 @@ export default function MedidorDeEncontro({
   tamanhoDoGrupo: number;
   patamarDoGrupo: number | null;
 }) {
-  const resultado = useMemo(() => {
-    if (patamarDoGrupo === null) return null;
-    return orcamentoDeEncontro(
-      criaturas.map((c) => ({
-        patamar: c.patamar,
-        papel: c.papel,
-        quantidade: c.quantidade,
-        temImunidade: (c.imunidades ?? []).length > 0,
-      })),
-      tamanhoDoGrupo,
-      patamarDoGrupo
-    );
+  const { resultado, comReforcos } = useMemo(() => {
+    if (patamarDoGrupo === null) return { resultado: null, comReforcos: null };
+    const iniciais = criaturas.flatMap((c) => [
+        { patamar: c.patamar, papel: c.papel, quantidade: c.quantidade, temImunidade: (c.imunidades ?? []).length > 0 },
+        ...(c.perfilDeFicha?.pactos?.opcoes ?? [])
+          .filter((p) => c.perfilDeFicha?.pactos?.preparados.includes(p.id))
+          .map((p) => ({ patamar: p.patamar, papel: "lacaio" as const, quantidade: p.quantidade * c.quantidade, temImunidade: false })),
+      ]);
+    const reforcos = criaturas.flatMap((c) => {
+      const perfil = c.perfilDeFicha;
+      const pactos = perfil?.pactos;
+      if (!perfil || !pactos?.emergencia) return [];
+      let pm = perfil.reservas.pm - pactos.opcoes.filter((p) => pactos.preparados.includes(p.id))
+        .reduce((s, p) => s + p.custo, 0);
+      let vagas = Math.max(0, pactos.limite - pactos.preparados.length);
+      const candidatos = pactos.opcoes.filter((p) => !pactos.preparados.includes(p.id))
+        .sort((a, b) => pesoNoOrcamento(b.patamar, "lacaio", patamarDoGrupo) * b.quantidade -
+          pesoNoOrcamento(a.patamar, "lacaio", patamarDoGrupo) * a.quantidade);
+      const escolhidos = [];
+      for (const p of candidatos) {
+        const custo = pactos.emergencia.custoBase + Math.max(0, p.custo - 3);
+        if (vagas && custo <= pm) {
+          escolhidos.push({ patamar: p.patamar, papel: "lacaio" as const, quantidade: p.quantidade * c.quantidade, temImunidade: false });
+          pm -= custo;
+          vagas--;
+        }
+      }
+      return escolhidos;
+    });
+    return {
+      resultado: orcamentoDeEncontro(iniciais, tamanhoDoGrupo, patamarDoGrupo),
+      comReforcos: reforcos.length ? orcamentoDeEncontro([...iniciais, ...reforcos], tamanhoDoGrupo, patamarDoGrupo) : null,
+    };
   }, [criaturas, tamanhoDoGrupo, patamarDoGrupo]);
 
   if (!resultado || patamarDoGrupo === null) return null;
@@ -100,11 +121,15 @@ export default function MedidorDeEncontro({
       <p className="mt-1.5 text-2xs leading-relaxed text-parchment-600 dark:text-parchment-400">
         {resultado.descricao}
       </p>
+      {comReforcos && <p className="mt-1 text-2xs leading-relaxed font-semibold text-amber-800 dark:text-amber-300">
+        Com Chamados de Emergência possíveis: {comReforcos.nome} ({comReforcos.razao.toFixed(2).replace(".", ",")}×).
+        Estimativa de reforços com as vagas e PM iniciais; a simulação acompanha as invocações durante a luta.
+      </p>}
       <p className="mt-1 text-3xs leading-relaxed text-parchment-500 dark:text-parchment-400">
         Este encontro pesa <b>{resultado.peso.toFixed(2).replace(".", ",")}</b> contra um orçamento de{" "}
         <b>{resultado.orcamento}</b> — uma criatura de {rotuloPatamar(patamarDoGrupo)} por jogador
         (Apêndice G). Uma acima vale duas; uma abaixo, meia; um Chefe vale três; Imunidade conta como um
-        patamar acima. A conta não enxerga terreno nem quem age primeiro — pra isso, rode a simulação.
+        patamar acima. Pactos preparados entram como lacaios nesta régua aproximada; a simulação usa os PV, ataques e PM reais deles. A conta não enxerga terreno nem quem age primeiro — pra isso, rode a simulação.
       </p>
     </div>
   );

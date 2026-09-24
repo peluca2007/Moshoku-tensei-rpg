@@ -1,9 +1,13 @@
-import { CharacterData } from "./types";
-import { AcaoCriatura, CriaturaEncontro } from "./encounterSim";
-import { Acao, type FichaCombate, mediaFormula, modificadorFixo, montarFicha, patamarDaFicha } from "./combatSim";
-import { getSpellDC, getPaSpent, getTreeAttributeKey } from "@/store/selectors";
+import { CharacterData, RANK_BONUS } from "./types";
+import { AcaoCriatura, CriaturaEncontro, PerfilDeFicha } from "./encounterSim";
+import { Acao, type FichaCombate, mediaDados, mediaFormula, modificadorFixo, montarFicha, patamarDaFicha } from "./combatSim";
+import { getAttackBonus, getFinalAttribute, getFinalAttributes, getHighestUnlockedRank, getPpPool, getSpellDC, getPaSpent, getTreeAttributeKey, getTreeGrantedSkills } from "@/store/selectors";
 import { getTreeById } from "@/data/trees/index";
+import { getRaceById } from "@/data/races";
+import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
+import { getCombinedSpellById } from "@/data/combinedSpells";
 import { rankDaFicha } from "./combatSim";
+import { pactosDeCombate } from "./combatSummons";
 
 /**
  * Uma ficha de personagem virando criatura do Mestre.
@@ -40,10 +44,9 @@ import { rankDaFicha } from "./combatSim";
  * escreve "+ BC", porque quem lê o cartão na mesa tem a carta ao lado, e as
  * duas precisam fechar.
  *
- * O molde do Apêndice G fica de fora de propósito: uma ficha de personagem é
- * exatamente o caso em que os números NÃO vêm da tabela. O cartão vai acusar
- * "fora do molde", e isso é a informação certa — o Mestre está pondo na mesa
- * algo que a tabela não calibrou.
+ * O molde do Apêndice G fica de fora: uma ficha de personagem tem seus
+ * próprios números. O cartão identifica sua origem e não sugere recalibrá-los
+ * para um monstro comum.
  */
 
 /**
@@ -96,37 +99,164 @@ export function formulaDaAcao(acao: Acao, dadoDaArma: number | string, bc: numbe
   return resultado;
 }
 
-function danoConvertido(acao: Acao, ficha: FichaCombate): string {
+function danoConvertido(acao: Acao, ficha: FichaCombate, bc = ficha.bc): string {
   if (acao.regra === "primeiro-golpe") {
     const bonus = ficha.arma.damageBonus;
     return `${ficha.ataqueBasico.dano}+${acao.dano}${bonus >= 0 ? "+" : ""}${bonus}`;
   }
-  return formulaDaAcao(acao, ficha.ataqueBasico.dano, ficha.bc);
+  return formulaDaAcao(acao, ficha.ataqueBasico.dano, bc);
 }
 
-function acaoDaFicha(acao: Acao, ficha: FichaCombate, id: string): AcaoCriatura {
-  const dano = danoConvertido(acao, ficha);
+function acaoDaFicha(acao: Acao, ficha: FichaCombate, id: string, bc: number, cd: number, efeito: string, ppCost = 0, danoDoLivro = ""): AcaoCriatura {
+  const dano = danoConvertido(acao, ficha, bc);
+  const base = (danoDoLivro || acao.dano).split(";")[0];
+  const indicesFrio = [...base.matchAll(/\d+\s*d\s*\d+/gi)]
+    .flatMap((dado, indice) => /^\s+de frio\b/i.test(base.slice((dado.index ?? 0) + dado[0].length)) ? [indice] : []);
+  const frio = indicesFrio.length > 0 && !/já contando a duplicação/i.test(base);
+  const fogo = /ígneo|plasma/i.test((danoDoLivro || acao.dano).split(";")[0]) || /\b(?:brasas|chamas)\b/i.test(acao.nome);
+  const textoDeAplicacao = efeito.split(/\bSucesso\s*:/i)[0];
+  const aplicaEmChamas = /(?:fica|ficam|aplica|aplicam)\s+Em Chamas|\b(?:ou|e)\s+Em Chamas\b|\bEm Chamas\s+(?:a quem falhar|automático em falha)|\bFalha\s*:[^.;]{0,100}\bEm Chamas\b/i.test(textoDeAplicacao);
+  const emChamasSoNaFalha = aplicaEmChamas && !acao.ataque &&
+    /\bFalha\s*:|\ba quem falhar\b|\bem falha\b|\bou Em Chamas\b|\bfalha\b[^.;]{0,100}\bEm Chamas\b/i.test(textoDeAplicacao);
+  // Só o ramo de resistência tem o gatilho "falha: fica ..." resolvido pelo
+  // simulador. Ataques com teste secundário ou múltiplos acertos permanecem na
+  // carta: aplicar a condição no primeiro acerto mudaria a regra.
+  const condicaoNaFalha = (nome: string) => {
+    if (acao.ataque) return false;
+    const fica = new RegExp(`\\bfic(?:a|am)\\s+${nome}\\b`, "i");
+    const antesDoSucesso = efeito.split(/\bSucesso\s*:/i)[0];
+    const falha = antesDoSucesso.match(/\bFalha\s*:\s*([^.;]+)/i)?.[1] ?? "";
+    return (!/\bnão\s+fic(?:a|am)\b/i.test(antesDoSucesso) && fica.test(antesDoSucesso)) ||
+      !!falha && new RegExp(`\\b${nome}\\b`, "i").test(falha);
+  };
   return {
     id,
     regra: acao.regra === "primeiro-golpe" ? "primeiro-golpe" : undefined,
     nome: acao.nome,
-    acoes: Math.min(3, Math.max(1, acao.acoes)),
+    acoes: acao.acoes,
+    pmCost: acao.pm || undefined,
+    ptCost: acao.pt || undefined,
+    ppCost: ppCost || undefined,
+    cdResistencia: !acao.ataque ? cd : undefined,
     dano,
-    alcance: acao.area ? "Área" : "Ver a ficha",
+    danoPorTurno: acao.danoPorTurno || undefined,
+    alcance: acao.alcance || "Corpo a corpo",
     area: acao.area,
     tipo: acao.ataque ? "ataque" : "resistencia",
-    bonusAtaque: acao.regra === "primeiro-golpe" ? ficha.arma.attackBonus : undefined,
+    bonusAtaque: acao.regra === "primeiro-golpe" ? ficha.arma.attackBonus : bc,
     desvantagemAtaque: acao.regra === "primeiro-golpe" && !ficha.arma.proficiente,
     // O texto original do livro vai junto: a tradução acima resolve o dado, e
-    // não resolve "empurra 3m", "ignora armadura" nem o custo em PM. Quem lê a
+    // não resolve "empurra 3m" nem "ignora armadura". Quem lê a
     // carta na mesa é o Mestre, e ele merece a frase inteira.
     nota: acao.regra === "primeiro-golpe"
-      ? `Uma vez por combate contra alvo Desprevenido. Parcela especial: ${acao.dano}; Dano Furtivo normal entra no primeiro acerto elegível do turno.`
-      : acao.dano === dano ? "" : acao.dano,
-    aplicaPreso: false,
-    aplicaCaido: false,
+      ? `Uma vez por combate contra alvo Desprevenido. Parcela especial: ${acao.dano}; Dano Furtivo normal entra no primeiro acerto elegível do turno. ${efeito}`.trim()
+      : [acao.dano === dano ? "" : `No livro: ${acao.dano}`, efeito].filter(Boolean).join(" · "),
+    aplicaPreso: acao.aplicaPreso || condicaoNaFalha("Pres[oa]s?") || undefined,
+    aplicaCaido: acao.aplicaCaido || condicaoNaFalha("Ca[ií]d[oa]s?") || undefined,
     aplicaMolhado: acao.aplicaMolhado,
-    aplicaVeneno: false,
+    frio: frio || undefined,
+    indicesFrio: frio ? indicesFrio : undefined,
+    fogo: fogo || undefined,
+    // A mesma regra do lado do jogador: dano ígneo acende Em Chamas, salvo se
+    // o alvo estava Molhado (o primeiro golpe apenas seca a água).
+    aplicaEmChamas: aplicaEmChamas || undefined,
+    emChamasSoNaFalha: emChamasSoNaFalha || undefined,
+    aplicaQuebrantado: acao.aplicaQuebrantado || undefined,
+    aplicaVeneno: acao.aplicaVeneno || condicaoNaFalha("Envenenad[oa]s?") || undefined,
+  };
+}
+
+function suporteDaFicha(acao: Acao, id: string, bc: number, efeito: string, ppCost = 0): AcaoCriatura {
+  return {
+    id, nome: acao.nome, acoes: acao.acoes, dano: "", tipo: acao.tipo === "cura" ? "cura" : "escudo",
+    formulaSuporte: acao.formulaSuporte, bonusSuporte: bc, sempreFresca: acao.sempreFresca || undefined,
+    alcance: acao.alcance || "Toque", area: acao.area, nota: efeito,
+    pmCost: acao.pm || undefined, ptCost: acao.pt || undefined, ppCost: ppCost || undefined,
+  };
+}
+
+function perfilDaFicha(c: CharacterData, ficha: FichaCombate, simuladas: Set<string>): PerfilDeFicha {
+  const raca = getRaceById(c.raceId);
+  const antecedente = getBackgroundById(c.backgroundId);
+  const subtable = antecedente?.requiresSubtable
+    ? getSubtableEntryById(antecedente.requiresSubtable, c.subtableEntryId) : undefined;
+  const habilidades: PerfilDeFicha["habilidades"] = [];
+  const incluir = (nome: string, origem: string, tipo: string, efeito: string, custo = "") =>
+    habilidades.push({ nome, origem, tipo, efeito, custo });
+  const incluirTraco = (traco: string, origem: string) =>
+    incluir(traco.includes(":") ? traco.slice(0, traco.indexOf(":")) : traco.slice(0, 60), origem, "Traço", traco);
+  for (const traco of raca?.traits ?? []) incluirTraco(traco, raca?.name ?? "Raça");
+  for (const traco of antecedente?.traits ?? []) incluirTraco(traco, antecedente?.name ?? "Antecedente");
+  for (const traco of subtable?.traits ?? []) incluirTraco(traco, subtable?.name ?? "Origem");
+  for (const id of c.racialUpgrades ?? []) {
+    const upgrade = raca?.upgrades?.find((u) => u.id === id);
+    if (upgrade) incluir(upgrade.name, raca?.name ?? "Raça", "Melhoria", upgrade.description);
+  }
+  for (const desbloqueio of c.unlockedRanks) {
+    const rank = getTreeById(desbloqueio.treeId)?.ranks.find((r) => r.rank === desbloqueio.rank);
+    if (rank?.mastery) incluir(rank.mastery.name, getTreeById(desbloqueio.treeId)?.name ?? desbloqueio.treeId, "Maestria", rank.mastery.description);
+  }
+  for (const compra of c.purchasedAbilities) {
+    const arvore = getTreeById(compra.treeId);
+    const rank = arvore?.ranks.find((r) => r.rank === compra.rank);
+    if (compra.kind === "talent") {
+      const talento = rank?.talents.find((t) => t.id === compra.id);
+      if (talento) incluir(talento.name, arvore?.name ?? compra.treeId, "Talento", talento.description);
+    } else {
+      const habilidade = rank?.abilities.find((a) => a.id === compra.id);
+      if (habilidade && !simuladas.has(habilidade.name)) {
+        const custos = [`${habilidade.actions.normal} Ações`, habilidade.pmCost ? `${habilidade.pmCost} PM` : "", habilidade.ptCost ? `${habilidade.ptCost} PT` : "", habilidade.ppCost ? `${habilidade.ppCost} PP` : ""].filter(Boolean);
+        incluir(habilidade.name, arvore?.name ?? compra.treeId, habilidade.reaction ? "Reação" : "Habilidade", habilidade.effect, custos.join(" · "));
+      }
+    }
+  }
+  for (const id of c.purchasedCombinedSpells ?? []) {
+    const magia = getCombinedSpellById(id);
+    if (magia) incluir(magia.name, "Magia combinada", "Magia", magia.effect, `${magia.actions} Ações · ${magia.pmCost} PM`);
+  }
+  for (const acao of ficha.acoes) {
+    if (!simuladas.has(acao.nome) && !habilidades.some((h) => h.nome === acao.nome))
+      incluir(acao.nome, "Ficha", acao.reacao ? "Reação" : "Ação manual", acao.dano || acao.formulaSuporte || acao.gatilho || "Consulte a habilidade na ficha.", `${acao.acoes} Ações${acao.pm ? ` · ${acao.pm} PM` : ""}${acao.pt ? ` · ${acao.pt} PT` : ""}`);
+  }
+  const arvores = [...new Set(c.unlockedRanks.map((r) => r.treeId))].map((id) => {
+    const ranks = c.unlockedRanks.filter((r) => r.treeId === id);
+    return { nome: getTreeById(id)?.name ?? id, rank: ranks.at(-1)?.rank ?? "" };
+  });
+  const rankInvocacao = getHighestUnlockedRank(c, "invocacao");
+  const comprouInvocacao = (id: string) => c.purchasedAbilities.some((a) => a.treeId === "invocacao" && a.id === id);
+  const bonusInvocacao = rankInvocacao ? RANK_BONUS[rankInvocacao] : 0;
+  const opcoesDePacto = bonusInvocacao ? pactosDeCombate(c).map((pacto) => {
+    const pv = Math.max(1, Math.floor((pacto.pvPorRank ?? (bonusInvocacao >= 3 ? 15 : 10)) * bonusInvocacao / (pacto.quantidade > 1 ? 4 : 1)));
+    const danoBonus = pacto.id === "pacto-filhote" && pacto.custo === 6
+      ? getFinalAttribute(c, "espirito") + bonusInvocacao : bonusInvocacao >= 3 ? bonusInvocacao : 0;
+    const dano = danoBonus ? pacto.dano.replace(/(\s*\([^)]*\))?$/, (_, tipo: string | undefined) => `+${danoBonus}${tipo ?? ""}`) : pacto.dano;
+    return {
+      id: pacto.id, nome: pacto.nome, patamar: Math.min(6, Math.max(1, Math.ceil(pacto.custo / 3))), custo: pacto.custo, quantidade: pacto.quantidade,
+      golpes: pacto.golpes, dano, pv, ca: 10 + bonusInvocacao,
+      bonusAtaque: getFinalAttribute(c, "espirito") + bonusInvocacao,
+      cdVeneno: pacto.id === "pacto-serpente-de-nevoa" ? 8 + getFinalAttribute(c, "espirito") + bonusInvocacao : undefined,
+      deslocamento: pacto.deslocamento ?? 9,
+      resistencias: pacto.resistencia ? ["cortante", "perfurante", "contundente"] : [],
+    };
+  }) : [];
+  const primeiroPacto = [...opcoesDePacto].filter((p) => p.custo <= ficha.pmMax)
+    .sort((a, b) => mediaFormula(b.dano) * b.golpes * b.quantidade - mediaFormula(a.dano) * a.golpes * a.quantidade)[0];
+  return {
+    raca: raca?.name, antecedente: antecedente?.name,
+    arvores, atributos: getFinalAttributes(c),
+    reservas: { pm: ficha.pmMax, pt: ficha.ptMax, pp: getPpPool(c) },
+    iniciativa: ficha.iniciativa, habilidades,
+    fluxo: ficha.fluxoUsosMax ? { usosPorRodada: ficha.fluxoUsosMax, devolver: ficha.temDevolver } : undefined,
+    aparar: ficha.temAparar ? { bonusCA: ficha.rankAgua, alcance: ficha.alcanceReacao } : undefined,
+    pactos: opcoesDePacto.length ? {
+      limite: bonusInvocacao, opcoes: opcoesDePacto, preparados: primeiroPacto ? [primeiroPacto.id] : [],
+      emergencia: comprouInvocacao("chamado") ? {
+        custoBase: comprouInvocacao("invocacao-de-emergencia") ? 4 : 7,
+        acoes: comprouInvocacao("convocacao-aprimorada") ? 1 : 3,
+        semPenalidade: comprouInvocacao("pacto-firmado"),
+        duasVidas: comprouInvocacao("duas-vidas"),
+      } : undefined,
+    } : undefined,
   };
 }
 
@@ -138,10 +268,12 @@ function acaoDaFicha(acao: Acao, ficha: FichaCombate, id: string): AcaoCriatura 
  */
 export function criaturaDaFicha(
   c: CharacterData,
-  novoId: () => string
+  novoId: () => string,
+  papel: "padrao" | "chefe" = "padrao",
 ): Omit<CriaturaEncontro, "id"> {
   const ficha = montarFicha(c);
   const tree = getTreeById(c.startingTreeId);
+  const raca = getRaceById(c.raceId);
   const attr = getTreeAttributeKey(c, c.startingTreeId, "forca");
 
   // O ataque comum vem SEMPRE e vem primeiro: nenhuma árvore o declara como
@@ -174,29 +306,60 @@ export function criaturaDaFicha(
   // As mais fortes primeiro, mas sem um teto arbitrário: uma técnica situacional
   // pode ser a melhor escolha quando o alvo ou o cenário muda. A ficha importada
   // deve manter todas as ações de dano que conseguimos traduzir.
+  const origemDaAcao = new Map(c.purchasedAbilities.filter((p) => p.kind === "ability").map((p) => {
+    const def = getTreeById(p.treeId)?.ranks.find((r) => r.rank === p.rank)?.abilities.find((a) => a.id === p.id);
+    return [def?.name, { def, treeId: p.treeId }] as const;
+  }).filter(([nome]) => !!nome));
   const convertiveis = ficha.acoes
-    .filter((a) => a.tipo === "dano" && !a.reacao)
-    .map((a) => ({ a, media: mediaFormula(danoConvertido(a, ficha)) }))
-    .filter(({ media }) => media > 0)
+    .filter((a) => a.tipo === "dano" && !a.reacao && a.acoes >= 1 && a.acoes <= 4)
+    .filter((a) => !/a quem atravess|a quem tocar|quem (?:te )?atingir|a quem começar o turno/i
+      .test(origemDaAcao.get(a.nome)?.def?.damage?.normal ?? ""))
+    .map((a) => {
+      const treeId = origemDaAcao.get(a.nome)?.treeId ?? c.startingTreeId;
+      const attr = getTreeAttributeKey(c, treeId, "forca");
+      const bc = treeId ? getAttackBonus(c, treeId, attr) : ficha.bc;
+      return { a, bc, treeId, media: mediaFormula(danoConvertido(a, ficha, bc)) };
+    })
+    .filter(({ a, media }) => media > 0 || /\bou Em Chamas\b/i.test(origemDaAcao.get(a.nome)?.def?.effect ?? ""))
     .sort((x, y) => y.media - x.media);
-  const doLivro = convertiveis.map(({ a }) => acaoDaFicha(a, ficha, novoId()));
+  const doLivro = convertiveis.map(({ a, bc, treeId }) => {
+    const def = origemDaAcao.get(a.nome)?.def;
+    return acaoDaFicha(a, ficha, novoId(), bc, treeId ? getSpellDC(c, treeId, getTreeAttributeKey(c, treeId, "forca")) : 8, def?.effect ?? "", def?.ppCost, def?.damage?.normal);
+  });
+  // Chuva de Brasas não tem linha de dano e, por isso, o derivador do lado
+  // do jogador não a lista entre as ações ofensivas. No encontro, seu teste
+  // e Em Chamas ainda precisam acontecer.
+  const chuvaComprada = origemDaAcao.get("Chuva de Brasas")?.def;
+  const chuvaDeBrasas: AcaoCriatura[] = chuvaComprada ? [{
+    id: novoId(), nome: chuvaComprada.name, acoes: chuvaComprada.actions.normal,
+    pmCost: chuvaComprada.pmCost, ptCost: chuvaComprada.ptCost, ppCost: chuvaComprada.ppCost,
+    dano: "", alcance: chuvaComprada.range, area: true, tipo: "resistencia",
+    cdResistencia: getSpellDC(c, "fogo", getTreeAttributeKey(c, "fogo", "forca")),
+    fogo: true, aplicaEmChamas: true, emChamasSoNaFalha: true, nota: chuvaComprada.effect,
+  }] : [];
+  const suportes = ficha.acoes
+    .filter((a) => (a.tipo === "cura" || a.tipo === "escudo") && !a.reacao &&
+      a.acoes >= 1 && a.acoes <= 4 && mediaDados(a.formulaSuporte) > 0)
+    .map((a) => {
+      const origem = origemDaAcao.get(a.nome);
+      const treeId = origem?.treeId ?? c.startingTreeId;
+      const atributo = getTreeAttributeKey(c, treeId, "forca");
+      const bc = treeId ? getAttackBonus(c, treeId, atributo) : ficha.bc;
+      return suporteDaFicha(a, novoId(), bc, origem?.def?.effect ?? "", origem?.def?.ppCost);
+    });
 
   const patamar = Math.min(6, Math.max(1, patamarDaFicha(c)));
   const rank = rankDaFicha(c);
-  const convertidas = new Set(convertiveis.map(({ a }) => a));
-  const naoSimuladas = ficha.acoes.filter((a) => !convertidas.has(a)).map((a) => a.nome);
+  const convertidas = new Set([...convertiveis.map(({ a }) => a.nome), ...suportes.map((a) => a.nome), ...chuvaDeBrasas.map((a) => a.nome)]);
+  const perfilDeFicha = perfilDaFicha(c, ficha, convertidas);
 
   return {
     nome: ficha.nome,
     dadosFurtivos: ficha.rankLadino || undefined,
     temPassoVazio: ficha.temPassoVazio || undefined,
     patamar,
-    // "Padrão" é o que uma ficha é: um indivíduo que joga UM turno de 3 Ações.
-    // "Chefe" daria a ele a rodada extra do Apêndice G, que existe pra
-    // compensar um monstro solo contra cinco — e o Mestre pode ligar isso na
-    // mão, se for esse o caso.
-    papel: "padrao",
-    pv: ficha.pvMax,
+    papel,
+    pv: ficha.pvMax * (papel === "chefe" ? 2 : 1),
     ca: ficha.ca,
     bonusAtaque: ficha.bc,
     // Ignorado enquanto houver ação ofensiva declarada (`usaAcoes`), mas
@@ -207,13 +370,20 @@ export function criaturaDaFicha(
     quantidade: 1,
     perigo: [
       `Ficha de personagem: ${tree?.name ?? "sem árvore inicial"}${rank ? `, ${rank}` : ""}, ${getPaSpent(c)} PA.`,
-      naoSimuladas.length > 0 ? `Ainda não simuladas como ações desta criatura: ${naoSimuladas.join(", ")}.` : "",
+      perfilDeFicha.habilidades.length > 0 ? "O Perfil da ficha guarda habilidades que não viram ataques automáticos; aplique seus efeitos narrativos e de suporte na mesa." : "",
       ficha.temPassoVazio ? "Passo Vazio consome 1 Ação, uma vez por combate, e reabre Primeiro Golpe na ação seguinte." : "",
       `Os números vieram da ficha, não do molde (Apêndice G, "Rivais com ficha"). Bônus de Rank: +${patamar}.`,
     ]
       .filter(Boolean)
       .join(" "),
-    acoes: [basico, ...doLivro],
+    acoes: [basico, ...doLivro, ...chuvaDeBrasas, ...suportes],
     portrait: c.portrait,
+    perfilDeFicha,
+    bonusResistencia: ficha.resistencia,
+    bonusIniciativa: ficha.iniciativa,
+    deslocamento: ficha.deslocamento,
+    pericias: [...new Set([...(c.skills ?? []), ...(raca?.fixedSkills ?? []), ...(getBackgroundById(c.backgroundId)?.fixedSkills ?? []), ...getTreeGrantedSkills(c)])],
+    resistencias: ficha.resistencias,
+    imunidades: ficha.imunidades,
   };
 }
