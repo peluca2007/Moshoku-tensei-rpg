@@ -2,11 +2,23 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "moshoku-dev",
+      "name": "moshoku-main",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 3000,
-      "autoPort": true
+      "autoPort": false
+    },
+    {
+      "name": "moshoku-feature",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:feature"],
+      "port": 3010,
+      "autoPort": false
+    },
+    {
+      "name": "moshoku-gpt",
+      "url": "http://localhost:3020",
+      "port": 3020
     }
   ]
 }
