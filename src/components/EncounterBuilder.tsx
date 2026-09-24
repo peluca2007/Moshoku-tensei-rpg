@@ -3,12 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import BlocoDoMonstro from "./BlocoDoMonstro";
+import PerfilDoRival from "./PerfilDoRival";
 import MedidorDeEncontro from "./MedidorDeEncontro";
 import EncounterScenes from "./EncounterScenes";
 import EncounterScenario from "./EncounterScenario";
 import EncounterCatalog from "./EncounterCatalog";
 import EncounterRewards from "./EncounterRewards";
 import EncounterCombatLogs from "./EncounterCombatLogs";
+import EncounterExplanation from "./EncounterExplanation";
 import { BATALHAS_ENCONTRO as BATALHAS, type RelatorioEncontro, type RespostaSimulacao } from "@/lib/encounterReport";
 import {
   ArrowDown,
@@ -60,7 +62,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import { CharacterData } from "@/lib/types";
-import { SIMPLIFICACOES, mediaFormula, patamarDaFicha, rankDaFicha, tiposDeDanoDaFicha } from "@/lib/combatSim";
+import { SIMPLIFICACOES, mediaDados, mediaFormula, patamarDaFicha, rankDaFicha, tiposDeDanoDaFicha } from "@/lib/combatSim";
 import { resolverArmaCombate } from "@/lib/combatWeapon";
 import {
   AcaoCriatura,
@@ -300,7 +302,13 @@ export default function EncounterBuilder() {
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6">
-      <PageHeader icon={Skull} title="Encontros" faixa="/faixas/encontros.jpg" faixaPosition="center 60%">
+      <PageHeader
+        icon={Skull}
+        title="Encontros"
+        faixa="/faixas/encontros.jpg"
+        faixaPosition="center 60%"
+        actions={<EncounterExplanation />}
+      >
         Escolha as fichas, monte as criaturas e simule a luta. Use o relatório para ajustar a dificuldade
         e entender quais regras mudam o resultado.
       </PageHeader>
@@ -747,6 +755,7 @@ function SecaoCriaturas({
   const [pastaEditando, setPastaEditando] = useState<string | null>(null);
   /** Qual ficha do roster está prestes a virar criatura. */
   const [fichaEscolhida, setFichaEscolhida] = useState("");
+  const [papelDaFicha, setPapelDaFicha] = useState<"padrao" | "chefe">("chefe");
   /** O que acabou de chegar, piscando por alguns segundos. */
   const [destaque, setDestaque] = useState<string | null>(null);
 
@@ -834,7 +843,7 @@ function SecaoCriaturas({
     if (!ficha) return;
     let n = 0;
     importarCriatura(
-      criaturaDaFicha(ficha, () => `acao_ficha_${n++}`),
+      criaturaDaFicha(ficha, () => `acao_ficha_${n++}`, papelDaFicha),
       pastaDestino
     );
   }
@@ -1007,6 +1016,14 @@ function SecaoCriaturas({
                 })}
               </select>
             </label>
+            <label className="text-xs font-semibold text-parchment-600 dark:text-parchment-400">
+              Papel no encontro
+              <select value={papelDaFicha} onChange={(e) => setPapelDaFicha(e.target.value as "padrao" | "chefe")}
+                className="mt-1 block rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50">
+                <option value="chefe">Chefe único · PV dobrados</option>
+                <option value="padrao">Rival padrão · PV da ficha</option>
+              </select>
+            </label>
             <button
               type="button"
               onClick={handleTrazerFicha}
@@ -1016,8 +1033,7 @@ function SecaoCriaturas({
               <UserPlus className="h-4 w-4" /> Trazer como criatura
             </button>
             <p className="w-full text-xs text-parchment-600 dark:text-parchment-400">
-              PV, CA, Bônus de Ataque, CD, retrato e as técnicas de dano vêm da ficha — pelo mesmo
-              derivador que a simulação usa do lado dos heróis. É uma <b>cópia</b>: mexer nela não
+              A criatura guarda atributos, perícias, defesas, reservas, técnicas e outras habilidades da ficha. A simulação desconta os custos das ações ofensivas; habilidades que pedem decisão ficam no cartão para o Mestre. É uma <b>cópia</b>: mexer nela não
               toca na ficha do jogador, e o jogador subir de patamar não muda o inimigo que você já
               ajustou. Ela entra neste encontro e também pode ser escolhida como alvo no{" "}
               <Link href="/comparar" className="font-semibold text-wine-700 underline dark:text-wine-300">comparador de builds</Link>.
@@ -1624,7 +1640,7 @@ function CartaoCriatura({
     PAPEIS.find((p) => p.id === criatura.papel)?.nome,
     `${criatura.pv} PV`,
     `CA ${criatura.ca}`,
-    `${Math.round(porAcoes ? danoDasAcoes : criatura.danoPorTurno)} ${temPrimeiroGolpe ? "dano na abertura" : "dano/turno"}`,
+    `${Math.round(porAcoes ? danoDasAcoes : criatura.danoPorTurno)} ${temPrimeiroGolpe ? "dano na abertura" : criatura.perfilDeFicha ? "dano inicial/turno" : "dano/turno"}`,
     criatura.dadosFurtivos ? `+${criatura.dadosFurtivos}d6 furtivo` : null,
     criatura.temPassoVazio ? "Passo Vazio" : null,
   ]
@@ -1716,11 +1732,16 @@ function CartaoCriatura({
             </select>
             <select
               value={criatura.papel}
-              onChange={(e) => atualizar(criatura.id, { papel: e.target.value as PapelCriatura })}
+              onChange={(e) => {
+                const papel = e.target.value as PapelCriatura;
+                if (criatura.perfilDeFicha && papel !== criatura.papel) {
+                  atualizar(criatura.id, { papel, pv: papel === "chefe" ? criatura.pv * 2 : Math.max(1, Math.round(criatura.pv / 2)) });
+                } else atualizar(criatura.id, { papel });
+              }}
               aria-label="Papel"
               className="rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
             >
-              {PAPEIS.map((p) => (
+              {PAPEIS.filter((p) => !criatura.perfilDeFicha || p.id !== "lacaio").map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.nome}
                 </option>
@@ -1915,6 +1936,8 @@ function CartaoCriatura({
             atualizar={(patch) => atualizar(criatura.id, patch)}
           />
 
+          <PerfilDoRival criatura={criatura} atualizar={(patch) => atualizar(criatura.id, patch)} />
+
           <EditorDeAcoes criatura={criatura} porAcoes={porAcoes} danoDasAcoes={danoDasAcoes} />
 
           <PainelDeAvisos criatura={criatura} avisos={avisos} temGrupo={alvosDoGrupo.length > 0} />
@@ -1946,8 +1969,8 @@ function CartaoCriatura({
           />
 
           <p className="mt-1.5 text-xs text-parchment-600 dark:text-parchment-400">
-            Resistência da criatura: <b>+{bonusResistencia(molde)}</b> (metade do Bônus de Ataque do molde).
-            {foraDoMolde && (
+            Resistência da criatura: <b>+{criatura.bonusResistencia ?? bonusResistencia(molde)}</b> {criatura.perfilDeFicha ? "(calculada na ficha)." : "(metade do Bônus de Ataque do molde)."}
+            {!criatura.perfilDeFicha && foraDoMolde && (
               <>
                 {" · "}
                 <span className="text-amber-700 dark:text-amber-300">
@@ -2076,13 +2099,24 @@ function EditorDeAcoes({
         </p>
       ) : (
         <div className="mt-2 flex flex-col gap-2">
-          {criatura.acoes.map((acao) => (
-            <LinhaDeAcao
-              key={acao.id}
-              acao={acao}
+          {criatura.acoes.map((acao) => criatura.perfilDeFicha ? (
+            <details key={acao.id} className="rounded-lg border border-parchment-300 bg-parchment-100/70 p-2 dark:border-parchment-800 dark:bg-parchment-900/50">
+              <summary className="cursor-pointer text-xs font-semibold text-parchment-800 dark:text-parchment-200">
+                {acao.nome} · {acao.acoes} {acao.acoes === 1 ? "Ação" : "Ações"} · {acao.tipo === "cura" ? "Cura" : acao.tipo === "escudo" ? "PV temporários" : acao.dano}
+                {acao.formulaSuporte ? ` ${acao.formulaSuporte}` : ""}
+                {acao.danoPorTurno ? ` · ${acao.danoPorTurno}/turno` : ""}
+                {acao.pmCost ? ` · ${acao.pmCost} PM` : ""}{acao.ptCost ? ` · ${acao.ptCost} PT` : ""}{acao.ppCost ? ` · ${acao.ppCost} PP` : ""}
+                {acao.aplicaMolhado ? " · Molhado" : ""}{acao.aplicaEmChamas ? ` · Em Chamas${acao.emChamasSoNaFalha ? " na falha" : ""}` : ""}
+                {acao.frio ? " · Frio ×2 contra Molhado" : ""}
+              </summary>
+              <div className="mt-2"><LinhaDeAcao acao={acao}
+                onChange={(patch) => atualizarAcao(criatura.id, acao.id, patch)}
+                onRemove={() => removerAcao(criatura.id, acao.id)} /></div>
+            </details>
+          ) : (
+            <LinhaDeAcao key={acao.id} acao={acao}
               onChange={(patch) => atualizarAcao(criatura.id, acao.id, patch)}
-              onRemove={() => removerAcao(criatura.id, acao.id)}
-            />
+              onRemove={() => removerAcao(criatura.id, acao.id)} />
           ))}
         </div>
       )}
@@ -2095,7 +2129,7 @@ function EditorDeAcoes({
           acerto{criatura.dadosFurtivos ? ` e sem os ${criatura.dadosFurtivos}d6 de Dano Furtivo` : ""}.
           {temPrimeiroGolpe ? " Primeiro Golpe exige abertura e só pode entrar uma vez por combate." : ""}
           {temPrimeiroGolpe && criatura.temPassoVazio ? " Passo Vazio pode reativá-lo; esse segundo golpe não entra na estimativa acima." : ""}
-          {" "}O molde deste patamar pede ~{doMolde.danoPorTurno} por turno.
+          {criatura.perfilDeFicha ? " Projeção inicial com reservas cheias; técnicas podem se esgotar ao longo do combate." : ` O molde deste patamar pede ~${doMolde.danoPorTurno} por turno.`}
         </p>
       )}
     </div>
@@ -2112,7 +2146,8 @@ function LinhaDeAcao({
   onRemove: () => void;
 }) {
   const escala = escalaDaAcao(acao);
-  const media = mediaFormula(acao.dano) * escala;
+  const suporte = acao.tipo === "cura" || acao.tipo === "escudo";
+  const media = suporte ? mediaDados(acao.formulaSuporte ?? "") + (acao.bonusSuporte ?? 0) : mediaFormula(acao.dano) * escala;
   return (
     <div className="rounded-lg border border-parchment-300 bg-parchment-100/70 p-2 dark:border-parchment-800 dark:bg-parchment-900/50">
       <div className="flex flex-wrap items-center gap-1.5">
@@ -2129,7 +2164,7 @@ function LinhaDeAcao({
           aria-label="Custo em Ações"
           className="rounded-lg border border-parchment-300 bg-parchment-50 px-1.5 py-1 text-xs text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
         >
-          {[1, 2, 3].map((n) => (
+          {[1, 2, 3, 4].map((n) => (
             <option key={n} value={n}>
               {n} {n === 1 ? "Ação" : "Ações"}
             </option>
@@ -2143,6 +2178,8 @@ function LinhaDeAcao({
         >
           <option value="ataque">Ataque (contra a CA)</option>
           <option value="resistencia">Resistência (metade se passar)</option>
+          <option value="cura">Cura</option>
+          <option value="escudo">PV temporários</option>
         </select>
         <button
           type="button"
@@ -2156,12 +2193,12 @@ function LinhaDeAcao({
 
       <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
         <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
-          Dano
+          {suporte ? "Dados de suporte" : "Dano"}
           <input
-            value={acao.dano}
-            onChange={(e) => onChange({ dano: e.target.value })}
-            placeholder="4d8+5"
-            aria-label="Fórmula de dano"
+            value={suporte ? acao.formulaSuporte ?? "" : acao.dano}
+            onChange={(e) => onChange(suporte ? { formulaSuporte: e.target.value } : { dano: e.target.value })}
+            placeholder={suporte ? "2d8" : "4d8+5"}
+            aria-label={suporte ? "Fórmula de suporte" : "Fórmula de dano"}
             className="w-24 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 font-mono text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
           />
         </label>
@@ -2170,7 +2207,7 @@ function LinhaDeAcao({
             média {media % 1 === 0 ? media : media.toFixed(1)}
           </span>
         )}
-        <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
+        {!suporte && <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
           Escala
           <input
             type="number"
@@ -2182,7 +2219,13 @@ function LinhaDeAcao({
             className="w-16 rounded-lg border border-parchment-300 bg-parchment-50 px-1.5 py-1 font-mono text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
           />
           ×
-        </label>
+        </label>}
+        {!suporte && <label className="flex items-center gap-1 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
+          Por turno
+          <input value={acao.danoPorTurno ?? ""} onChange={(e) => onChange({ danoPorTurno: e.target.value })}
+            placeholder="2d6" aria-label="Dano sustentado por turno"
+            className="w-20 rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1 font-mono text-sm font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50" />
+        </label>}
         <input
           value={acao.alcance}
           onChange={(e) => onChange({ alcance: e.target.value })}
@@ -2226,6 +2269,33 @@ function LinhaDeAcao({
         </div>
       )}
 
+      {suporte && <div className="mt-1.5 flex flex-wrap items-center gap-3 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
+        <label>Bônus de suporte
+          <input type="number" value={acao.bonusSuporte ?? 0}
+            onChange={(e) => onChange({ bonusSuporte: Number(e.target.value) || 0 })}
+            className="ml-1 w-14 rounded border border-parchment-300 bg-parchment-50 p-1 dark:border-parchment-700 dark:bg-parchment-950" />
+        </label>
+        {acao.tipo === "cura" && <CondicaoDaAcao rotulo="Sempre Ferida Fresca"
+          checked={!!acao.sempreFresca} onChange={(v) => onChange({ sempreFresca: v })} />}
+      </div>}
+
+      {(acao.pmCost !== undefined || acao.ptCost !== undefined || acao.ppCost !== undefined || acao.cdResistencia !== undefined) && (
+        <div className="mt-1.5 flex flex-wrap gap-2 text-2xs font-semibold text-parchment-600 dark:text-parchment-400">
+          {(["pmCost", "ptCost", "ppCost"] as const).map((campo) => (
+            <label key={campo}>{campo.slice(0, 2).toUpperCase()}
+              <input type="number" min={0} value={acao[campo] ?? 0}
+                onChange={(e) => onChange({ [campo]: Math.max(0, Number(e.target.value) || 0) })}
+                className="ml-1 w-14 rounded border border-parchment-300 bg-parchment-50 p-1 dark:border-parchment-700 dark:bg-parchment-950" />
+            </label>
+          ))}
+          {acao.tipo === "resistencia" && <label>CD
+            <input type="number" value={acao.cdResistencia ?? 0}
+              onChange={(e) => onChange({ cdResistencia: Number(e.target.value) || 0 })}
+              className="ml-1 w-14 rounded border border-parchment-300 bg-parchment-50 p-1 dark:border-parchment-700 dark:bg-parchment-950" />
+          </label>}
+        </div>
+      )}
+
       {/*
         As quatro condições que a simulação SABE aplicar (2026-09-05) —
         checkbox, não texto, porque só assim `resolverAcaoCriatura` (em
@@ -2233,7 +2303,7 @@ function LinhaDeAcao({
         depois, Desvantagem pra ele. O resto do que uma ação faz continua
         sendo a Anotação de baixo.
       */}
-      <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+      {!suporte && <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
         <CondicaoDaAcao
           rotulo="Preso"
           checked={!!acao.aplicaPreso}
@@ -2254,7 +2324,18 @@ function LinhaDeAcao({
           checked={!!acao.aplicaVeneno}
           onChange={(v) => onChange({ aplicaVeneno: v })}
         />
-      </div>
+        <>
+          <CondicaoDaAcao rotulo="Fogo (seca Molhado)" checked={!!acao.fogo}
+            onChange={(v) => onChange({ fogo: v })} />
+          <CondicaoDaAcao rotulo="Em Chamas" checked={!!acao.aplicaEmChamas}
+            onChange={(v) => onChange({ aplicaEmChamas: v })} />
+          {acao.tipo === "resistencia" && acao.aplicaEmChamas && <CondicaoDaAcao
+            rotulo="Em Chamas só na falha" checked={!!acao.emChamasSoNaFalha}
+            onChange={(v) => onChange({ emChamasSoNaFalha: v })} />}
+          <CondicaoDaAcao rotulo="Frio dobra contra Molhado" checked={!!acao.frio}
+            onChange={(v) => onChange({ frio: v })} />
+        </>
+      </div>}
 
       <input
         value={acao.nota}
@@ -2320,7 +2401,7 @@ function PainelDeAvisos({
     return (
       <p className="mt-2 flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-300">
         <Info className="h-3.5 w-3.5" />
-        Dentro do molde do Apêndice G
+        {criatura.perfilDeFicha ? "Nenhum alerta para este rival" : "Dentro do molde do Apêndice G"}
         {temGrupo ? " e sem golpe que mate alguém do grupo de uma vez." : ". Escolha as fichas do grupo acima pra o site conferir contra o PV e a CA reais deles."}
       </p>
     );

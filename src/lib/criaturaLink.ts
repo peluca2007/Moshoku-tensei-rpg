@@ -1,6 +1,7 @@
 import { CriaturaEncontro } from "./encounterSim";
 import { bytesParaBase64Url, comprimirTexto } from "./compactacao";
 import { LeituraDeLink, lerFragmento } from "./diagnosticoDeLink";
+import { ehCriaturaImportavel, sanearRetratoDaCriatura } from "./validarCriaturaImportada";
 
 /**
  * A criatura do Mestre dentro de um link — mesma ideia de `fichaLink.ts`,
@@ -35,7 +36,7 @@ async function codificarCriatura(criatura: CriaturaEncontro): Promise<string> {
  *
  * Igual `decodificarFicha`: os cinco passos e o texto de cada falha moram em
  * `diagnosticoDeLink.ts`, e aqui fica só o que é específico de CRIATURA — a
- * marca própria (`gm`/`jm`) e a validação de forma (`papel` + `acoes`), a mesma
+ * marca própria (`gm`/`jm`) e a validação dos campos da criatura, a mesma
  * que `lerArquivoDeCriatura` já faz.
  */
 export async function decodificarCriatura(
@@ -46,10 +47,10 @@ export async function decodificarCriatura(
 
   const caracteres = lido.json.length;
   const dados = JSON.parse(lido.json);
-  if (!dados || typeof dados !== "object" || !("papel" in dados) || !("acoes" in dados)) {
+  if (!ehCriaturaImportavel(dados)) {
     return { ok: false, motivo: "nao-e-isso", caracteres };
   }
-  return { ok: true, conteudo: dados as Omit<CriaturaEncontro, "id"> };
+  return { ok: true, conteudo: sanearRetratoDaCriatura(dados) };
 }
 
 /** A URL completa de compartilhamento, a partir da origem atual. */

@@ -141,7 +141,7 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
   // -------------------------------------------------------------------------
   // O orçamento do turno contra o molde do Apêndice G.
   // -------------------------------------------------------------------------
-  if (ofensivas.length > 0) {
+  if (ofensivas.length > 0 && !c.perfilDeFicha) {
     const porRodada = danoDasAcoesPorRodada(c);
     const plano = planoDoTurno(c);
     const razao = porRodada / Math.max(1, orcamento);
@@ -241,9 +241,9 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
         texto:
           `Com +${c.bonusAtaque} contra a CA média ${numero(caMedia)} deste grupo, ela acerta ${porcentagem(media)} ` +
           "das vezes. O turno dela vira nada na maioria das rodadas, e o combate arrasta sem perigo nenhum — " +
-          `o molde de ${rotuloPatamar(c.patamar)} prevê +${molde.bonusAtaque}.`,
+          (c.perfilDeFicha ? "Revise o desafio esperado para este grupo." : `o molde de ${rotuloPatamar(c.patamar)} prevê +${molde.bonusAtaque}.`),
         correcao:
-          alvo !== c.bonusAtaque
+          !c.perfilDeFicha && alvo !== c.bonusAtaque
             ? { alvo: "criatura", campo: "bonusAtaque", valor: alvo, rotulo: `Bônus de Ataque: +${c.bonusAtaque} → +${alvo}` }
             : undefined,
       });
@@ -256,7 +256,7 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
           `Com +${c.bonusAtaque} ela acerta ${porcentagem(media)} das vezes contra este grupo. Quem investiu em ` +
           "armadura não recebe nada por isso neste encontro — o que não é errado, mas é bom ser de propósito.",
         correcao:
-          c.bonusAtaque !== molde.bonusAtaque
+          !c.perfilDeFicha && c.bonusAtaque !== molde.bonusAtaque
             ? {
                 alvo: "criatura",
                 campo: "bonusAtaque",
@@ -287,7 +287,7 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
         `${maior.nome} pega os ${grupo.length} de uma vez: ~${numero(media * grupo.length)} de dano somado, ` +
         `${porcentagem(fatia)} da reserva de PV do grupo, numa ação de ${Math.max(1, maior.acoes)} Ação(ões). ` +
         (maior.tipo === "resistencia"
-          ? `Quem passa no teste (CD ${c.cdResistencia}) ainda leva metade.`
+          ? `Quem passa no teste (CD ${maior.cdResistencia ?? c.cdResistencia}) ainda leva metade.`
           : "Como é ataque, cada alvo tem a própria rolagem contra a CA."),
     });
   }
@@ -296,7 +296,7 @@ export function avisarSobreCriatura(c: CriaturaEncontro, grupo: AlvoDoGrupo[]): 
   // A CD contra o molde.
   // -------------------------------------------------------------------------
   const pedeResistencia = ofensivas.some((a) => a.tipo === "resistencia");
-  if (pedeResistencia && c.cdResistencia !== molde.cdResistencia) {
+  if (pedeResistencia && !c.perfilDeFicha && c.cdResistencia !== molde.cdResistencia) {
     avisos.push({
       id: "cd-fora-do-molde",
       nivel: "nota",

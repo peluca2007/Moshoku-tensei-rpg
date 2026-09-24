@@ -1,11 +1,20 @@
-# Mecânica de Encontros — o trabalho de 2026-09-18
+# Mecânica de Encontros — histórico e decisões
 
-**Está feito** (0.1.90). Este arquivo deixou de ser plano e virou registro: o autor pediu que tudo
-ficasse documentado porque o chat seria limpo, e a razão de cada decisão não cabe num patch note.
+Este arquivo registra a primeira implementação (0.1.90) e as revisões posteriores, inclusive os
+rivais de ficha (0.1.96). As notas antigas descrevem o estado daquela etapa; as seções mais recentes
+e o guia **Como funciona?** na tela de Encontros descrevem o comportamento atual.
 
 O que a mesa lê está no livro (Apêndice G) e no patch notes. O que está aqui é **por que** cada número
 é aquele — o tipo de coisa que, sem registro, alguém "conserta" daqui a três meses sem saber o que
 estava consertando.
+
+## Sumário
+
+- [Pedido, plano e princípio de desenho](#o-pedido)
+- [Estado e escolhas de implementação](#estado--tudo-feito)
+- [Decisões técnicas e motivos](#decisões-tomadas-e-o-porquê)
+- [Rivais feitos com fichas de personagem](#2026-09-23--chefe-feito-com-ficha-de-personagem)
+- [Efeitos da ficha na simulação](#revisão-dos-efeitos-da-ficha-no-encontro)
 
 ## O pedido
 
@@ -55,8 +64,9 @@ uma ficha de monstro não vai montar. O bloco tem que caber numa linha de conver
 - **Gerador de monstro por IA.** O autor levantou a ideia ("uma IA bem baratinha pra gerar os
   monstros"). Não foi feito: exige chave de API e rede, e o site inteiro funciona offline hoje. O
   botão "Sugerir ações" cobre o caso de uso principal — a conta — sem nada disso.
-- **Posição e distância no simulador.** Atolado, Desequilibrado e Marcado continuam invisíveis pro
-  motor pelo mesmo motivo de sempre: ele não tem mapa. Está no `O-QUE-FALTA.md`.
+- **Posição e distância no simulador naquela etapa.** A versão 0.1.90 ainda não tratava distância.
+  Revisões posteriores passaram a aceitar distância inicial e deslocamento, mas o motor continua
+  sem um mapa geométrico completo para terreno e efeitos que exigem posição exata.
 
 ## Decisões tomadas (e o porquê)
 
@@ -212,3 +222,76 @@ JavaScript trata como "tudo o que vem antes do match".
 Consertado por recorte, e a lição virou hábito: **substituição com texto que contém `$` usa função**
 (`s.replace(velho, () => novo)`), nunca string. O `tsc` pegou na hora — sem ele, o arquivo teria ido
 pro commit parecendo maior e não muito diferente.
+
+## 2026-09-23 — chefe feito com ficha de personagem
+
+O Mestre pode montar um chefe pelas regras completas de personagem e trazê-lo do roster para Encontros.
+Na entrada ele escolhe **Rival padrão** ou **Chefe único**. O padrão mantém os PV da ficha; o chefe
+recebe o dobro de PV e os turnos extras previstos no Apêndice G. CA, dano das técnicas e demais
+números partem da ficha, sem substituição pelos valores do molde.
+
+A criatura guarda um retrato da ficha no momento da conversão: raça, antecedente, árvores e ranks,
+atributos, perícias, deslocamento, iniciativa, resistência, resistências e imunidades, PM/PT/PP,
+maestrias, talentos, traços e habilidades. As técnicas de dano de até quatro Ações entram no editor
+compacto de ações; suas fórmulas usam o bônus da árvore de origem, e cada ação mantém alcance,
+custo, CD, condições e texto da habilidade. Magias de cura e PV temporários também entram como ações.
+As técnicas de quatro Ações preservam o cântico em dois turnos. Técnicas mais longas, reações
+específicas e habilidades passivas de escolha aparecem no perfil para o Mestre conduzir na mesa.
+
+Na simulação, cada cópia do rival começa com as próprias reservas. PM, PT e PP são descontados
+por uso, inclusive nas reações do chefe; uma técnica sem recursos disponíveis deixa de ser escolhida.
+O ataque comum segue disponível. A iniciativa e a resistência usam os valores da ficha. O painel
+de aconselhamento mantém alertas contra o grupo, mas não tenta recalibrar esse rival para o molde
+de monstro. O livro explica essa escolha na seção **Rivais com ficha** do Apêndice G.
+
+A conversão é uma cópia independente. Editar a criatura não altera o personagem original; novas
+compras do personagem também não mudam uma criatura já salva. O arquivo de criatura e seu link
+transportam esse perfil com a criatura, e a importação valida seus campos.
+
+### Revisão dos efeitos da ficha no encontro
+
+Uma lista de habilidades no cartão não era suficiente: o chefe parecia ter a técnica, mas a
+simulação continuava jogando como um monstro genérico. A revisão liga os exemplos mais comuns ao
+estado da batalha:
+
+- **Água e Fogo:** as ações importadas carregam Molhado, frio, fogo e Em Chamas. Água apaga Em Chamas;
+  fogo seca Molhado sem incendiar no mesmo golpe; apenas a parcela fria dobra contra o alvo Molhado
+  (o dano contundente ou cortante do mesmo golpe não dobra). A leitura de
+  Molhado foi apertada: uma carta que diz apenas "dobra contra Molhado" não aplica a condição.
+  Em Chamas segue a carta: Lança de Fogo causa dano ígneo mas não incendeia; Sopro incendeia
+  apenas na falha; Chuva de Brasas pode incendiar mesmo sem dano inicial.
+- **Condições na falha de resistência:** técnicas ofensivas cuja carta diz claramente que o alvo
+  fica Preso, Caído ou Envenenado ao falhar passam a aplicar a condição. O registro indica a
+  aplicação. Gatilhos que exigem dois acertos ou um segundo teste continuam na carta para a mesa.
+- **Fluxo do Deus da Água:** o rival guarda os usos por rodada. Quando o herói erra um ataque corpo
+  a corpo, o rival pode contra-atacar gratuitamente. Se tiver Devolver e PT disponível, gasta 1 PT
+  para acrescentar metade do dano do golpe que errou. Sem mapa, o próprio ataque corpo a corpo
+  estabelece a adjacência; com posições, a distância é conferida.
+- **Aparar:** se o rival comprou a técnica, pode gastar sua Reação depois de ver um ataque corpo a
+  corpo que o acertaria. Soma o Rank de Água à CA apenas quando isso converte o acerto em erro;
+  esse erro pode disparar Fluxo. Com mapa, respeita o alcance de Reação da ficha. Para o Chefe,
+  Aparar e a reação extra do papel disputam a mesma Reação naquela rodada.
+- **Pactos:** o perfil exportado guarda as opções que a ficha comprou. Um Pacto preparado fica
+  selecionado por padrão, e o Mestre pode trocar ou ampliar a seleção até o limite do Rank e dos
+  PM disponíveis. O preparo desconta PM antes da iniciativa. Cada invocado tem PV, CA, acerto,
+  dano, deslocamento e uma Ação própria; o simulador cria e executa esses combatentes nos dois
+  caminhos de batalha, inclusive no replay do relatório. O medidor inclui os preparados como
+  lacaios por aproximação, e o simulador usa os números próprios. A Serpente de Névoa testa
+  Vigor depois da mordida para aplicar Envenenado; outros efeitos especiais de Pactos ainda
+  dependem do Mestre.
+- **Chamado de Emergência:** se a ficha comprou a habilidade, o rival usa 3 Ações e 7 PM para
+  invocar durante a luta, mais o adicional do Pacto. Círculo Improvisado baixa o custo para
+  4 PM; Convocação Aprimorada baixa para 1 Ação; Pacto Firmado tira a penalidade de metade dos
+  PV e do dano; Duas Vidas permite o retorno uma vez no mesmo combate. O Pacto age a partir da
+  rodada seguinte. A régua mostra a estimativa de reforços possíveis com as vagas e PM iniciais.
+- **Cura e proteção:** o rival cura aliados feridos, cria PV temporários e paga as reservas da
+  ficha. Ferida Fresca dobra os dados da cura. Magias de 4 Ações exigem cântico e teste de
+  Concentração se o rival sofrer dano; a falha perde metade do PM investido, arredondada para
+  baixo, como no livro.
+- **Dano sustentado:** ações convertidas carregam os tiques automáticos que a ficha já distingue
+  de perigos de posição; o alvo sofre esses tiques no início dos próximos turnos.
+
+**Limite visível:** Pactos de apoio, efeitos especiais que pedem decisões, outras reações
+específicas e escolhas de passivas ainda exigem condução do Mestre. O perfil conserva o texto
+e os custos para isso. O relatório mede automaticamente os efeitos acima, não a ficha inteira
+em todos os seus ramos narrativos.
