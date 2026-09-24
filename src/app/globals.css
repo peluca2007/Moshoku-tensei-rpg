@@ -1568,3 +1568,1027 @@ input[type="number"],
     display: none !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * O LIVRO FOLHEADO — /livro/folhear (2026-09-24)
+ *
+ * Duas páginas abertas sobre uma mesa. Quem pagina é o navegador: o texto é
+ * uma caixa de colunas CSS com a altura de uma página, e cada coluna que
+ * transborda pra direita é uma página nova (ver Folhear.tsx).
+ *
+ * Tudo que é do modo Livro fica atrás de `[data-modo="livro"]`: no modo
+ * contínuo os mesmos elementos são blocos comuns, e o texto volta a ser a
+ * folha única de sempre.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.folhear {
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 30%, #4b3829 0%, #2f2219 55%, #1b130e 100%);
+  --folhear-papel: #fbf5e4;
+  --folhear-verso: #eadcbd;
+  --folhear-verso-sombra: #d2bf98;
+  --folhear-dobra: #fffaf0;
+  --folhear-mesa-canto: #2a1e16;
+  --folhear-borda-a: #efe4c9;
+  --folhear-borda-b: #c9b58f;
+  --folhear-cabeca: var(--color-gold-700);
+  --folhear-folio: var(--color-parchment-600);
+  --folhear-fantasma: rgb(70 50 30 / 0.16);
+  --folhear-filete: color-mix(in srgb, var(--color-parchment-900) 55%, transparent);
+  --folhear-topo: var(--altura-nav);
+}
+
+/* À noite o papel escurece junto: página creme numa tela escura é um holofote. */
+.dark .folhear {
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 30%, #211813 0%, #140d0a 60%, #090605 100%);
+  --folhear-papel: #221a15;
+  --folhear-verso: #2e241d;
+  --folhear-verso-sombra: #231b16;
+  --folhear-dobra: #3d3128;
+  --folhear-mesa-canto: #0e0907;
+  --folhear-borda-a: #3b2f26;
+  --folhear-borda-b: #1a1310;
+  --folhear-cabeca: var(--color-gold-400);
+  --folhear-folio: var(--color-parchment-500);
+  --folhear-fantasma: rgb(235 220 195 / 0.1);
+  --folhear-filete: color-mix(in srgb, var(--color-gold-400) 45%, transparent);
+}
+
+/* ── Contínuo (e o primeiro quadro, antes do JavaScript decidir) ────────── */
+.folhear:not([data-modo="livro"]) {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .folhear:not([data-modo="livro"]) {
+    padding: 1.5rem;
+  }
+}
+
+.folhear-continuo {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .folhear-continuo {
+    padding: 3rem 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .folhear-continuo {
+    padding: 3rem 3.5rem;
+  }
+}
+
+.folhear-continuo > * + * {
+  margin-top: 4rem;
+}
+
+.folhear-continuo > .folhear-sumario {
+  display: none;
+}
+
+.folhear-continuo > .folhear-sumario + * {
+  margin-top: 0;
+}
+
+/* O palco espera a diagramação escondido, pra não mostrar o livro inteiro em
+   rolagem por um instante antes de virar livro. Sem JavaScript, o <noscript>
+   da página devolve a visibilidade. */
+@media (min-width: 768px) {
+  .folhear:not([data-modo]) .folhear-palco {
+    visibility: hidden;
+  }
+}
+
+.folhear[data-modo="livro"]:not([data-pronto]) .folhear-palco {
+  visibility: hidden;
+}
+
+/* ── A barra ──────────────────────────────────────────────────────────── */
+.folhear-barra {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 3rem;
+  padding: 0 0.75rem;
+}
+
+.folhear[data-modo="livro"] .folhear-barra {
+  color: #eadcc2;
+}
+
+.folhear:not([data-modo="livro"]) .folhear-barra {
+  position: sticky;
+  top: var(--altura-nav);
+  z-index: 30;
+  max-width: 56rem;
+  margin: 0 auto 1.5rem;
+  border: 1px solid var(--color-parchment-300);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--color-parchment-100) 95%, transparent);
+  backdrop-filter: blur(4px);
+  color: var(--color-parchment-800);
+}
+
+.dark .folhear:not([data-modo="livro"]) .folhear-barra {
+  border-color: var(--color-parchment-800);
+  background: color-mix(in srgb, var(--color-parchment-900) 95%, transparent);
+  color: var(--color-parchment-200);
+}
+
+/* Sem `display` aqui de propósito: CSS fora de camada vence as utilitárias do
+   Tailwind, e um `display` nesta classe anularia o `hidden sm:inline-flex`
+   que esconde botões no telefone. Quem diz o display é o JSX. */
+.folhear-botao {
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  padding: 0 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+
+.folhear-botao:hover:not(:disabled) {
+  background: rgb(160 125 75 / 0.18);
+}
+
+.folhear-botao:disabled {
+  opacity: 0.35;
+}
+
+.folhear-alternador {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid rgb(184 134 46 / 0.4);
+  border-radius: 0.6rem;
+}
+
+.folhear-alternador button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: 0.45rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.folhear-alternador button[aria-pressed="true"] {
+  background: var(--color-gold-500);
+  color: var(--color-gold-950);
+}
+
+.folhear-barra-lado {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.folhear-posicao {
+  display: flex;
+  flex: 0 1 auto;
+  max-width: 50%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.folhear-posicao-titulo {
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 0.9375rem;
+  font-style: italic;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folhear[data-modo="livro"] .folhear-posicao-titulo {
+  color: var(--color-gold-200);
+}
+
+.folhear-posicao-paginas {
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+}
+
+.folhear-posicao-rotulo {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 0.6875rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+/* ── A mesa e o livro ─────────────────────────────────────────────────── */
+.folhear[data-modo="livro"] {
+  display: flex;
+  min-height: calc(100dvh - var(--folhear-topo));
+  flex-direction: column;
+  background: var(--folhear-mesa);
+}
+
+/*
+ * O LEITOR IMERSIVO. No modo Livro o menu e o rodapé do site somem: a creme
+ * da barra do site em cima da mesa escura eram dois mundos brigando na mesma
+ * tela. Fica a mesa, o livro e a barra do próprio livro — que carrega a volta
+ * pro site e o tema. Voltar ao modo Contínuo devolve o site inteiro.
+ */
+@supports selector(:has(*)) {
+  body:has(.folhear[data-modo="livro"]) > :is(nav, footer) {
+    display: none;
+  }
+
+  body:has(.folhear[data-modo="livro"]) {
+    overflow: hidden;
+  }
+
+  .folhear[data-modo="livro"] {
+    --folhear-topo: 0px;
+  }
+}
+
+/* Em tela cheia o nav não existe, e o palco ganha a altura dele. */
+.folhear[data-modo="livro"]:fullscreen {
+  --folhear-topo: 0px;
+}
+
+.folhear[data-modo="livro"] .folhear-palco {
+  position: relative;
+  display: flex;
+  height: calc(100dvh - var(--folhear-topo) - 6rem);
+  min-height: 22rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.folhear[data-modo="livro"] .folhear-livro {
+  position: relative;
+  isolation: isolate;
+  width: calc(var(--pagina) * var(--por-dupla));
+  height: var(--altura);
+  border-radius: 4px;
+  background-color: var(--folhear-papel);
+  /* Luz de cima e pé que cai: papel é curvo, não um retângulo chapado. */
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgb(255 255 255 / 0.28), transparent 70%),
+    linear-gradient(to bottom, transparent 85%, rgb(60 40 20 / 0.06));
+  box-shadow:
+    inset 12px 0 16px -14px rgb(60 40 20 / 0.35),
+    inset -12px 0 16px -14px rgb(60 40 20 / 0.35),
+    0 40px 70px -30px rgb(0 0 0 / 0.8),
+    0 12px 24px -12px rgb(0 0 0 / 0.5);
+  perspective: 4200px;
+}
+
+/* A fibra do papel — a mesma textura repetível do `.surface`. */
+.folhear[data-modo="livro"] .folhear-livro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: url("/texturas/fibra.jpg") repeat;
+  background-size: 180px 180px;
+  mix-blend-mode: multiply;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.dark .folhear[data-modo="livro"] .folhear-livro {
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% 0%, rgb(255 235 210 / 0.05), transparent 70%),
+    linear-gradient(to bottom, transparent 85%, rgb(0 0 0 / 0.18));
+}
+
+.dark .folhear[data-modo="livro"] .folhear-livro::before {
+  mix-blend-mode: soft-light;
+  opacity: 0.14;
+}
+
+/* A lombada: a curva do papel entrando na costura. É ela que faz duas
+   colunas lerem como UM livro aberto, e não duas caixas lado a lado. */
+.folhear[data-modo="livro"] .folhear-livro[data-por-dupla="2"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: 3;
+  width: 9%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(70 45 20 / 0.06) 30%,
+    rgb(50 30 10 / 0.2) 47%,
+    rgb(30 18 8 / 0.34) 50%,
+    rgb(50 30 10 / 0.2) 53%,
+    rgb(70 45 20 / 0.06) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.dark .folhear[data-modo="livro"] .folhear-livro[data-por-dupla="2"]::after {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(0 0 0 / 0.12) 30%,
+    rgb(0 0 0 / 0.35) 47%,
+    rgb(0 0 0 / 0.55) 50%,
+    rgb(0 0 0 / 0.35) 53%,
+    rgb(0 0 0 / 0.12) 70%,
+    transparent 100%
+  );
+}
+
+/* As bordas das folhas: o maço da esquerda engorda conforme você lê. É o
+   "quanto falta" que um livro de papel responde sem número nenhum. */
+.folhear[data-modo="livro"] .folhear-borda {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  background: repeating-linear-gradient(to right, var(--folhear-borda-a) 0 1px, var(--folhear-borda-b) 1px 2px);
+}
+
+.folhear[data-modo="livro"] .folhear-borda[data-lado="esq"] {
+  right: 100%;
+  width: var(--lido);
+  border-radius: 3px 0 0 3px;
+}
+
+.folhear[data-modo="livro"] .folhear-borda[data-lado="dir"] {
+  left: 100%;
+  width: var(--resta);
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── A janela que rola e a faixa de páginas ───────────────────────────── */
+.folhear[data-modo="livro"] .folhear-janela {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.folhear[data-modo="livro"] .folhear-janela::-webkit-scrollbar {
+  display: none;
+}
+
+.folhear[data-modo="livro"] .folhear-faixa {
+  position: relative;
+  height: 100%;
+  min-width: 100%;
+}
+
+.folhear-folhas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Um ponto de encaixe por dupla; `always` faz um deslize rápido parar na
+   próxima dupla em vez de atravessar o capítulo. */
+.folhear-marco {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.folhear-folha {
+  position: absolute;
+  top: 0;
+  width: var(--pagina);
+  height: 100%;
+}
+
+.folhear-cabeca {
+  position: absolute;
+  top: calc(var(--topo) * 0.36);
+  right: var(--margem);
+  left: var(--margem);
+  overflow: hidden;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--folhear-cabeca) 28%, transparent);
+  color: var(--folhear-cabeca);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.folhear-folha[data-lado="dir"] .folhear-cabeca {
+  text-align: right;
+}
+
+.folhear-folha[data-lado="unica"] .folhear-cabeca {
+  text-align: center;
+}
+
+.folhear-folio {
+  position: absolute;
+  bottom: calc(var(--pe) * 0.36);
+  color: var(--folhear-folio);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 0.8125rem;
+  font-variant-numeric: oldstyle-nums;
+}
+
+.folhear-folha[data-lado="esq"] .folhear-folio {
+  left: var(--margem);
+}
+
+.folhear-folha[data-lado="dir"] .folhear-folio {
+  right: var(--margem);
+}
+
+.folhear-folha[data-lado="unica"] .folhear-folio {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ── O texto em colunas ───────────────────────────────────────────────── */
+.folhear-fluxo {
+  position: absolute;
+  top: var(--topo);
+  left: var(--margem);
+  z-index: 1;
+  width: calc(var(--pagina) * var(--por-dupla) - var(--margem) * 2);
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  column-count: var(--por-dupla);
+  column-gap: calc(var(--margem) * 2);
+  column-fill: auto;
+  font-family: var(--font-literata), Georgia, serif;
+  font-size: var(--fonte);
+  line-height: 1.6;
+  orphans: 2;
+  widows: 2;
+}
+
+/* Corpo alinhado à esquerda, e não justificado. Justificar sem hifenização
+   abre buracos entre as palavras numa coluna de ~55 caracteres — e o
+   dicionário de hifenização do português não existe em todo navegador (o
+   Chrome do Windows baixa sob demanda; o headless dos checks nunca tem).
+   Margem direita irregular com `text-wrap: pretty` lê melhor que rio. */
+.folhear-fluxo p {
+  hyphens: auto;
+  text-wrap: pretty;
+}
+
+/*
+ * A TABELA DE LIVRO IMPRESSO: filetes, não caixa.
+ *
+ * No contínuo a tabela é um cartão com borda nos quatro lados. Partida entre
+ * duas páginas, essa caixa se estica até o pé da coluna e sobra um retângulo
+ * vazio emoldurado embaixo da última linha. Livro impresso resolve isso há
+ * séculos: filete grosso em cima e embaixo, filete fino entre as linhas —
+ * e a tabela pode parar em qualquer linha sem deixar moldura pendurada.
+ */
+.folhear-fluxo .livro-tabela {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.folhear-fluxo .livro-tabela table {
+  min-width: 0;
+  border-top: 2px solid var(--folhear-filete);
+  border-bottom: 2px solid var(--folhear-filete);
+  background: transparent;
+}
+
+.folhear-fluxo .livro-tabela thead tr {
+  border-bottom: 1px solid var(--folhear-filete);
+  background: transparent;
+}
+
+/* Tabela que não cabe na coluna (ver ajustarTabelasLargas): primeiro a letra
+   diminui, depois a palavra pode quebrar na borda da célula. */
+.folhear-fluxo table.folhear-tabela-justa {
+  font-size: calc(var(--fonte) * 0.8);
+}
+
+.folhear-fluxo table.folhear-tabela-justa :is(td, th) {
+  padding-inline: 0.35em;
+}
+
+.folhear-fluxo table.folhear-tabela-apertada :is(td, th) {
+  overflow-wrap: anywhere;
+}
+
+/* O cabeçalho não fica sozinho no pé da página: desce junto com a 1ª linha. */
+.folhear-fluxo thead {
+  break-after: avoid;
+  break-inside: avoid;
+}
+
+/* A cópia do cabeçalho no alto da página em que a tabela continua (ver
+   repetirCabecalhos) — com o filete de abertura, e o "(cont.)" que todo
+   livro de regras usa. */
+.folhear-fluxo .livro-tabela tr.folhear-cabecalho-repetido {
+  border-top: 2px solid var(--folhear-filete);
+  border-bottom: 1px solid var(--folhear-filete);
+  background: transparent;
+  break-after: avoid;
+}
+
+.folhear-fluxo tr.folhear-cabecalho-repetido > :first-child::after {
+  content: " (cont.)";
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Célula mais justa pra tabela caber na coluna (a de Vigor saía 16px pra
+   fora com o respiro do contínuo); palavra longa quebra na borda, mas a
+   largura mínima da coluna continua sendo a da maior palavra. */
+.folhear-fluxo :is(td, th) {
+  padding-inline: 0.5em;
+  text-align: left;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* O tamanho da letra dentro do livro segue o corpo escolhido pelo leitor, e
+   não a raiz do site: as utilitárias de tamanho viram múltiplos de --fonte.
+   Múltiplo da variável, e não `em`, pra um text-sm dentro de outro text-sm
+   não encolher duas vezes. */
+.folhear-fluxo .text-3xs {
+  font-size: calc(var(--fonte) * 0.625);
+}
+.folhear-fluxo .text-2xs {
+  font-size: calc(var(--fonte) * 0.6875);
+}
+.folhear-fluxo .text-xs {
+  font-size: calc(var(--fonte) * 0.75);
+}
+.folhear-fluxo .text-sm {
+  font-size: calc(var(--fonte) * 0.875);
+}
+.folhear-fluxo .text-base {
+  font-size: var(--fonte);
+}
+.folhear-fluxo .text-lg {
+  font-size: calc(var(--fonte) * 1.125);
+}
+.folhear-fluxo .text-xl {
+  font-size: calc(var(--fonte) * 1.25);
+}
+.folhear-fluxo .text-2xl {
+  font-size: calc(var(--fonte) * 1.5);
+}
+.folhear-fluxo .text-3xl {
+  font-size: calc(var(--fonte) * 1.875);
+}
+
+.folhear-fluxo h3 {
+  margin-top: 0.4em;
+  font-size: calc(var(--fonte) * 1.4);
+  line-height: 1.25;
+}
+
+.folhear-fluxo h4 {
+  font-size: calc(var(--fonte) * 1.15);
+  line-height: 1.3;
+}
+
+/* Título nunca termina sozinho no pé da página. */
+.folhear-fluxo :is(h2, h3, h4, figcaption) {
+  break-after: avoid;
+  break-inside: avoid;
+}
+
+/* Capítulo começa em página nova, com o respiro de abertura de livro. */
+.folhear-fluxo .livro-abertura {
+  break-before: column;
+  padding-top: calc((var(--altura) - var(--topo) - var(--pe)) * 0.12);
+}
+
+.folhear-fluxo .livro-abertura h2 {
+  font-size: calc(var(--fonte) * 2.3);
+  line-height: 1.1;
+}
+
+.folhear-fluxo :is(figure, blockquote, tr, .folhear-inteira) {
+  break-inside: avoid;
+}
+
+/* Caixa partida entre páginas ganha borda e respiro nos dois pedaços. */
+.folhear-fluxo :is(.livro-caixa, .livro-tabela) {
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* A tabela do livro rola de lado no contínuo; aqui uma caixa com rolagem
+   seria inquebrável (e cortaria a tabela no pé da página). */
+.folhear-fluxo .livro-tabela {
+  overflow: visible;
+}
+
+.folhear-fluxo :is(figure, img, video) {
+  max-height: calc(var(--altura) - var(--topo) - var(--pe));
+}
+
+.folhear-fluxo .folhear-sumario {
+  break-after: column;
+}
+
+.folhear-fim {
+  display: block;
+  height: 0;
+}
+
+/* ── O sumário ────────────────────────────────────────────────────────── */
+.folhear-sumario-topo {
+  margin-bottom: 1.6em;
+  padding-top: 0.8em;
+  text-align: center;
+}
+
+.folhear-sumario-selo {
+  color: var(--folhear-cabeca);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: calc(var(--fonte) * 0.8);
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+}
+
+.folhear-entrada {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  color: var(--color-parchment-700);
+}
+
+.dark .folhear-entrada {
+  color: var(--color-parchment-300);
+}
+
+.folhear-entrada[data-nivel="capitulo"] {
+  color: var(--color-parchment-900);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.12em;
+  font-weight: 700;
+}
+
+.dark .folhear-entrada[data-nivel="capitulo"] {
+  color: var(--color-parchment-50);
+}
+
+.folhear-entrada[data-nivel="secao"] {
+  padding-left: 2.1em;
+}
+
+.folhear-entrada[data-nivel="sub"] {
+  padding-left: 3.1em;
+  font-size: 0.92em;
+  font-style: italic;
+}
+
+.folhear-entrada-numero {
+  min-width: 1.6em;
+  color: var(--color-wine-600);
+}
+
+.dark .folhear-entrada-numero {
+  color: var(--color-gold-400);
+}
+
+.folhear-entrada-pontos {
+  flex: 1;
+  min-width: 1em;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.35;
+  transform: translateY(-0.28em);
+}
+
+.folhear-entrada-pagina {
+  min-width: 1.5em;
+  font-variant-numeric: oldstyle-nums tabular-nums;
+  text-align: right;
+}
+
+.folhear-entrada:hover .folhear-entrada-titulo {
+  color: var(--color-wine-600);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-gold-500) 60%, transparent);
+  text-underline-offset: 0.2em;
+}
+
+.dark .folhear-entrada:hover .folhear-entrada-titulo {
+  color: var(--color-gold-200);
+}
+
+/* ── O índice lateral ─────────────────────────────────────────────────── */
+.folhear-indice-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(10 6 4 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.folhear-indice {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(22rem, 88vw);
+  overflow-y: auto;
+  padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  background: var(--color-parchment-50);
+  box-shadow: 12px 0 40px -12px rgb(0 0 0 / 0.5);
+  font-family: var(--font-literata), Georgia, serif;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.dark .folhear-indice {
+  background: var(--color-parchment-950);
+}
+
+/* ── Setas, cantos e régua ────────────────────────────────────────────── */
+.folhear-seta {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  display: grid;
+  width: 3rem;
+  height: 5rem;
+  place-items: center;
+  border-radius: 999px;
+  color: #eadcc2;
+  opacity: 0.55;
+  transform: translateY(-50%);
+  transition:
+    opacity 0.2s,
+    background-color 0.2s;
+}
+
+.folhear-seta:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.08);
+  opacity: 1;
+}
+
+.folhear-seta:disabled {
+  cursor: default;
+  opacity: 0.15;
+}
+
+.folhear-seta[data-lado="ant"] {
+  left: max(0.5rem, calc(50% - var(--pagina) * var(--por-dupla) / 2 - 4.5rem));
+}
+
+.folhear-seta[data-lado="prox"] {
+  right: max(0.5rem, calc(50% - var(--pagina) * var(--por-dupla) / 2 - 4.5rem));
+}
+
+/* No telefone a folha ocupa a largura toda: vira com o dedo, não com seta. */
+@media (max-width: 767px) {
+  .folhear-seta {
+    display: none;
+  }
+}
+
+/* A régua: um fio de ouro, não um controle de vídeo. */
+.folhear-regua {
+  display: flex;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.folhear-regua input {
+  width: min(28rem, 70%);
+  height: 1rem;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.folhear-regua input::-webkit-slider-runnable-track {
+  height: 1px;
+  background: rgb(234 220 194 / 0.3);
+}
+
+.folhear-regua input::-moz-range-track {
+  height: 1px;
+  background: rgb(234 220 194 / 0.3);
+}
+
+.folhear-regua input::-webkit-slider-thumb {
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-top: calc(-0.35rem + 0.5px);
+  border: 0;
+  background: var(--color-gold-400);
+  transform: rotate(45deg);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.folhear-regua input::-moz-range-thumb {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-gold-400);
+  transform: rotate(45deg);
+}
+
+/* ── A folha virando ──────────────────────────────────────────────────────
+ * O texto de verdade troca na hora; o que gira é uma folha de papel com
+ * "linhas de texto" desenhadas. Em 400 ms o olho lê página virando — e o
+ * livro nunca precisa clonar o DOM nem virar imagem, que é o que um flipbook
+ * de PDF faz e o que tiraria o texto vivo. */
+.folhear-virada {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 8;
+  width: 50%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  animation-duration: var(--virada-ms, 420ms);
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.3, 0.1, 0.25, 1);
+}
+
+.folhear-virada[data-dir="prox"] {
+  left: 50%;
+  transform-origin: left center;
+  animation-name: folhear-vira-prox;
+}
+
+.folhear-virada[data-dir="ant"] {
+  left: 0;
+  transform-origin: right center;
+  animation-name: folhear-vira-ant;
+}
+
+@keyframes folhear-vira-prox {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(-180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes folhear-vira-ant {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+}
+
+.folhear-virada-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--folhear-papel);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.folhear-virada-face[data-verso] {
+  transform: rotateY(180deg);
+}
+
+/* A sombra que a folha faz ao levantar: escurece perto da lombada. */
+.folhear-virada-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.22), transparent 40%);
+  animation: folhear-vira-sombra var(--virada-ms, 420ms) ease-in-out both;
+}
+
+.folhear-virada[data-dir="ant"] .folhear-virada-face:not([data-verso])::after,
+.folhear-virada[data-dir="prox"] .folhear-virada-face[data-verso]::after {
+  background: linear-gradient(to left, rgb(0 0 0 / 0.22), transparent 40%);
+}
+
+@keyframes folhear-vira-sombra {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.folhear-virada-texto {
+  position: absolute;
+  top: var(--topo);
+  right: var(--margem);
+  bottom: var(--pe);
+  left: var(--margem);
+  /* Linhas finas e fracas, com parágrafos: o olho tem que ler "texto", não
+     "listras". A segunda máscara quebra a margem direita como texto real. */
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(var(--fonte) * 0.62),
+    var(--folhear-fantasma) calc(var(--fonte) * 0.62) calc(var(--fonte) * 0.92),
+    transparent calc(var(--fonte) * 0.92) calc(var(--fonte) * 1.6)
+  );
+  -webkit-mask-image:
+    linear-gradient(to right, #000 70%, rgb(0 0 0 / 0.2)),
+    repeating-linear-gradient(to bottom, #000 0 calc(var(--fonte) * 9), transparent calc(var(--fonte) * 9) calc(var(--fonte) * 10.4));
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, #000 70%, rgb(0 0 0 / 0.2)),
+    repeating-linear-gradient(to bottom, #000 0 calc(var(--fonte) * 9), transparent calc(var(--fonte) * 9) calc(var(--fonte) * 10.4));
+  mask-composite: intersect;
+}
+
+/* O título que você pediu acende por um instante. É cor, não movimento. */
+.folhear-destaque {
+  border-radius: 4px;
+  animation: folhear-destaque 1.6s ease-out;
+}
+
+@keyframes folhear-destaque {
+  0%,
+  30% {
+    background-color: color-mix(in srgb, var(--color-gold-300) 45%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* No papel, o livro folheado vira o fluxo contínuo de sempre. */
+@media print {
+  .folhear[data-modo] {
+    background: none !important;
+  }
+
+  .folhear .folhear-palco,
+  .folhear .folhear-livro,
+  .folhear .folhear-janela,
+  .folhear .folhear-faixa,
+  .folhear .folhear-fluxo {
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    visibility: visible !important;
+    box-shadow: none !important;
+    background: none !important;
+    columns: auto !important;
+  }
+
+  .folhear .folhear-folhas,
+  .folhear .folhear-borda,
+  .folhear .folhear-sumario,
+  .folhear .folhear-livro::before,
+  .folhear .folhear-livro::after {
+    display: none !important;
+  }
+}
