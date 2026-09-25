@@ -873,6 +873,8 @@ export interface CharacterData {
   startingTreeId: string | null;
   unlockedRanks: UnlockedRank[];
   purchasedAbilities: PurchasedAbility[];
+  /** Compras da antiga Barreira arquivadas na conversão para Magia Teórica. Não contam como PA gasto: o valor foi devolvido. */
+  legacyBarreira?: { purchases: (PurchasedAbility & { name: string; paCost: number })[]; refundedPa: number };
   /**
    * Ids de Magias Combinadas compradas (Cap. 2, §4) — 2026-09-03.
    *

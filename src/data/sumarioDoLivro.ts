@@ -66,6 +66,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "cap2-5", label: "5. Maestrias" },
       { id: "cap2-6", label: "6. Interromper uma Conjuração" },
       { id: "cap2-7", label: "7. Regras Gerais de Conjuração" },
+      { id: "cap2-8", label: "8. Magia Teórica — Oficina de Fórmulas" },
     ],
   },
   {
