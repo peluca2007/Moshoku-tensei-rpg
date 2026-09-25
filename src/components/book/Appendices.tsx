@@ -11,8 +11,6 @@ import {
   MOLDES_CRIATURA,
   atributosDaCriatura,
   bonusResistencia,
-  getArquetipo,
-  percepcaoPassiva,
   rotuloPatamar,
   sinal,
 } from "@/data/bestiary";
@@ -658,56 +656,22 @@ export default function Appendices() {
             dano por golpe</b>, pra espalhar o estrago pelo grupo em vez de apagar um personagem por vez.
           </P>
         </Warning>
-        <BookTable
-          headers={["Criatura", "Patamar", "Arquétipo", "Tam.", "Desloc.", "Perc.", "Vantagem em", "O que a torna perigosa"]}
-          rows={CRIATURAS_PRONTAS.map((c) => {
-            const arq = getArquetipo(c.arquetipo);
-            return [
-              c.nome,
-              rotuloPatamar(c.patamar),
-              arq?.nome ?? "—",
-              c.tamanho ?? "Médio",
-              `${c.deslocamento ?? arq?.deslocamento ?? 9} m`,
-              String(percepcaoPassiva(c.patamar, c.arquetipo)),
-              (c.pericias ?? []).join(", ") || "—",
-              c.perigo,
-            ];
-          })}
-        />
-        <P className="text-sm">
-          As seis linhas acima são o Bloco do Monstro funcionando: nenhum número foi digitado nelas. O
-          arquétipo distribui os atributos, a Percepção sai do Espírito que ele deu, e o Deslocamento é o
-          dele — o que cada criatura declara à mão é só o que a ficção exige (o tamanho, o que ela sabe
-          fazer, e o que a torna perigosa).
-        </P>
-        <Aside title="O que cada uma tem além do molde">
-          <List
-            items={CRIATURAS_PRONTAS.filter(
-              (c) => c.movimentoEspecial || (c.resistencias ?? []).length > 0 || c.sentido || getArquetipo(c.arquetipo)?.sentido
-            ).map((c) => {
-              const arq = getArquetipo(c.arquetipo);
-              const partes = [
-                c.movimentoEspecial,
-                (c.resistencias ?? []).length > 0
-                  ? `Resistência a ${(c.resistencias ?? []).join(", ")}.`
-                  : null,
-                c.sentido ?? arq?.sentido,
-              ].filter(Boolean);
-              return (
-                <span key={c.id}>
-                  <b>{c.nome}:</b> {partes.join(" ")}
-                </span>
-              );
-            })}
-          />
-        </Aside>
         {/*
-          A ficha COMPLETA de cada uma (2026-09-25): atributos, CA, PV, ataque,
-          CD, sentidos, resistências e as ações, tudo saído dos mesmos dados que
-          /encontros usa pra montar a criatura. Antes era uma linha de PV/CA e a
-          lista de ações, e o Mestre abria três tabelas pra saber a Força do bicho.
+          As seis criaturas prontas, com a ficha COMPLETA de cada uma
+          (2026-09-25): atributos, CA, PV, ataque, CD, sentidos, resistências e
+          as ações, tudo saído dos mesmos dados que /encontros usa pra montar a
+          criatura. Antes eram uma tabela-resumo, uma caixa "o que cada uma tem
+          além do molde" e uma linha de PV/CA por criatura — o Mestre juntava
+          três lugares pra saber a Força do bicho. A ficha já traz tudo aquilo,
+          e a tabela e a caixa saíram por repetirem o que ela diz.
         */}
-        <SubTitle id="apendice-g-fichas">As fichas</SubTitle>
+        <SubTitle id="apendice-g-fichas">As fichas das criaturas prontas</SubTitle>
+        <P>
+          As seis fichas abaixo são o Bloco do Monstro funcionando: nenhum número foi digitado nelas. O
+          patamar dá CA, PV, ataque e CD; o arquétipo distribui os atributos (o Principal vem marcado), a
+          Percepção sai do Espírito que ele deu, e o Deslocamento é o dele. O que cada criatura declara à mão
+          é só o que a ficção exige: o tamanho, o que ela sabe fazer, e o que a torna perigosa.
+        </P>
         <div className="mt-2 space-y-4">
           {CRIATURAS_PRONTAS.map((c) => (
             <FichaDeCriatura key={c.id} c={c} />

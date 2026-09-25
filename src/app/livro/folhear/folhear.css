@@ -2294,11 +2294,14 @@ html.livro-imersivo .folhear[data-modo="livro"] {
  * No site ele é navegação ("próximo capítulo →"). No livro vira o fecho: o
  * kanji do capítulo grande, um filete, e o convite pro próximo — o que
  * transforma o resto da última página em espaço de propósito. */
+/* Bloco comum da coluna, e NÃO column-span: o conteúdo entre dois blocos
+   que atravessam a página é equilibrado em duas colunas iguais, e no
+   bestiário (seis fichas altas antes do fecho) esse equilíbrio mandava a
+   seção inteira pra página seguinte, deixando três quartos em branco. */
 .folhear-fluxo .livro-fim {
   display: block;
   margin-top: 2.2em;
   padding-top: 0;
-  column-span: all;
   text-align: center;
   break-inside: avoid;
 }
@@ -2515,6 +2518,10 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 /* ── A ficha de criatura: um bloco de estatísticas de verdade ─────────── */
+/* A ficha pode partir entre colunas (fundo nos dois pedaços): inteira, ela
+   é mais alta que o resto de uma página, e o navegador empurrava a seção
+   INTEIRA pra página seguinte, deixando três quartos de página em branco.
+   O que não parte é o miolo de consulta: cabeçalho, números e atributos. */
 .folhear-fluxo .livro-ficha {
   margin-block: 1.2em;
   border: 0;
@@ -2522,7 +2529,20 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   border-radius: 0;
   background: var(--papel-2);
   font-size: inherit;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.folhear-fluxo .livro-ficha-cabeca {
+  break-after: avoid;
+}
+
+.folhear-fluxo :is(.livro-ficha-vitais, .livro-ficha-atributos, .livro-ficha-acoes li) {
   break-inside: avoid;
+}
+
+.folhear-fluxo .livro-ficha-vitais {
+  break-after: avoid;
 }
 
 .folhear-fluxo .livro-ficha-cabeca {
