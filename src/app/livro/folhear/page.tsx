@@ -35,7 +35,7 @@ export default function FolhearPage() {
         <Chapter0 />
         <Chapter1 />
         <Chapter2 />
-        <Chapter3 />
+        <Chapter3 arvoresAbertas />
         <Chapter4 />
         <Chapter5 />
         <Appendices />
