@@ -5,7 +5,7 @@ import { VENTO_TREE } from "./vento";
 import { TERRA_TREE } from "./terra";
 import { CURA_TREE } from "./cura";
 import { DESINTOXICACAO_TREE } from "./desintoxicacao";
-import { BARREIRA_TREE } from "./barreira";
+import { TEORICA_TREE } from "./teorica";
 import { INVOCACAO_TREE } from "./invocacao";
 import { ESPADA_TREE } from "./espada";
 import { SUISHIN_TREE } from "./suishin";
@@ -27,7 +27,7 @@ export const TREES: Tree[] = [
   TERRA_TREE,
   CURA_TREE,
   DESINTOXICACAO_TREE,
-  BARREIRA_TREE,
+  TEORICA_TREE,
   INVOCACAO_TREE,
   ESPADA_TREE,
   SUISHIN_TREE,
