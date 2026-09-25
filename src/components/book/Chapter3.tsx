@@ -712,7 +712,7 @@ export default function Chapter3() {
               {CATEGORY_LABELS[category]}
             </h3>
             {TREES.filter((t) => t.category === category).map((tree) => (
-              <details key={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
+              <details key={tree.id} data-categoria={category} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
                 <summary className="livro-arvore-cabeca flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
                   <TreeCrest tree={tree} size={44} />
                   <span className="min-w-0">

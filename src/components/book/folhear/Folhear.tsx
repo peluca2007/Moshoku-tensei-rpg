@@ -146,11 +146,14 @@ function lerPaginaGuardada(): number | null {
 export default function Folhear({
   toc,
   edicao,
+  identidade = "classica",
   children,
 }: {
   toc: TocEntry[];
   /** A versão do livro, pra folha de rosto ("Edição 0.1.96"). */
   edicao?: string;
+  /** A identidade visual (em avaliação): a clássica, de livro de RPG, ou a de Ranoa. */
+  identidade?: string;
   children: ReactNode;
 }) {
   const raiz = useRef<HTMLDivElement>(null);
@@ -618,6 +621,7 @@ export default function Folhear({
       ref={raiz}
       className={`folhear livro-shell ${FONTES_DO_LIVRO}`}
       data-modo={modo ?? undefined}
+      data-identidade={identidade}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
       style={variaveis}
@@ -797,6 +801,18 @@ export default function Folhear({
                 </div>
               </div>
 
+              {livro && identidade === "ranoa" && paginacao && geo && (
+                <Abas
+                  toc={toc}
+                  paginaDe={paginacao.paginaDe}
+                  paginaAtual={paginaInicial + geo.porDupla - 1}
+                  aoEscolher={(id) => {
+                    const el = document.getElementById(id);
+                    if (el) irParaElemento(el);
+                  }}
+                />
+              )}
+
               {livro && virada && geo && (
                 <div
                   key={virada.chave}
@@ -888,6 +904,56 @@ function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginac
         );
       })}
     </div>
+  );
+}
+
+/**
+ * AS ABAS — o índice de dedo de um livro de consulta, na borda das folhas.
+ *
+ * Cada capítulo tem uma aba da cor dele saindo por baixo das páginas; a do
+ * capítulo aberto sai mais. Clicar leva ao capítulo. É o jeito mais rápido de
+ * pular do Combate pro Bestiário no meio da sessão — e a cor da aba é a cor
+ * que o capítulo usa por dentro.
+ */
+const CORES_DAS_ABAS = ["#a8843a", "#2c7f8c", "#22305c", "#4d5a26", "#7a1f2b", "#8a4f1c", "#4a4f5c"];
+
+function Abas({
+  toc,
+  paginaDe,
+  paginaAtual,
+  aoEscolher,
+}: {
+  toc: TocEntry[];
+  paginaDe: Record<string, number>;
+  paginaAtual: number;
+  aoEscolher: (id: string) => void;
+}) {
+  let atual = 0;
+  toc.forEach((c, i) => {
+    const p = paginaDe[c.id];
+    if (p !== undefined && p <= paginaAtual) atual = i;
+  });
+  return (
+    <nav className="folhear-abas print-hide" aria-label="Capítulos">
+      {toc.map((c, i) => {
+        const numeral = i === 0 ? "0" : c.label.startsWith("Apênd") ? "Ap" : numeralDoCapitulo(c.label);
+        return (
+          <button
+            key={c.id}
+            type="button"
+            className="folhear-aba"
+            data-atual={i === atual ? "" : undefined}
+            style={{ "--cor-aba": CORES_DAS_ABAS[i % CORES_DAS_ABAS.length] } as CSSProperties}
+            onClick={() => aoEscolher(c.id)}
+            aria-label={c.label}
+            aria-current={i === atual ? "true" : undefined}
+            title={c.label}
+          >
+            <span>{numeral}</span>
+          </button>
+        );
+      })}
+    </nav>
   );
 }
 
