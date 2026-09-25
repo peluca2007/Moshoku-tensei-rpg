@@ -40,7 +40,20 @@
      seria uma referência circular e a fonte nunca aplicaria. */
   --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
   --font-serif: var(--font-literata), Georgia, "Times New Roman", serif;
+}
 
+/*
+ * As três paletas temáticas moram num `@theme` SEM `inline` (2026-09-25).
+ *
+ * Com `inline`, o Tailwind escreve o valor cru em cada utilitária
+ * (`.text-parchment-700 { color: rgb(100 84 58) }`), e nada de fora consegue
+ * trocar a cor. Sem `inline`, a utilitária lê a variável
+ * (`color: var(--color-parchment-700)`) — o site fica idêntico, e o livro
+ * folheado (`src/app/livro/folhear/folhear.css`) pode redefinir as três
+ * paletas dentro dele: o pergaminho vira o cinza do livro noturno e o vinho e
+ * o dourado viram a cor do capítulo, sem tocar em componente nenhum.
+ */
+@theme {
   /* Paleta temática — pergaminho (neutro, substitui slate) + vinho (acento
      primário, substitui sky) + dourado (acento secundário/especial, substitui
      violet). Mesma identidade da ficha em PDF (Typst). */
@@ -85,6 +98,9 @@
   --color-gold-800: #4d370d;
   --color-gold-900: #332408;
   --color-gold-950: #1f1505;
+}
+
+@theme inline {
 
   /*
    * Oliva — o terceiro ramo do mapa de progressão (Utilidade), acrescentado em
