@@ -8,7 +8,13 @@ import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
 import TreeCrest from "../TreeCrest";
 
-export default function Chapter3() {
+/**
+ * @param arvoresAbertas  o catálogo das árvores já sai aberto do servidor. O
+ *   livro folheado imprime o catálogo inteiro; abrir os 19 <details> depois
+ *   de montar custava uma diagramação a mais do livro todo (~0,6 s). As
+ *   árvores saem marcadas, e o modo contínuo do folhear as fecha de novo.
+ */
+export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: boolean } = {}) {
   const rankLabelTrees = TREES.filter((t) => t.rankLabels);
 
   return (
@@ -712,7 +718,7 @@ export default function Chapter3() {
               {CATEGORY_LABELS[category]}
             </h3>
             {TREES.filter((t) => t.category === category).map((tree) => (
-              <details key={tree.id} data-categoria={category} data-arvore={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
+              <details key={tree.id} open={arvoresAbertas} data-folhear-aberto={arvoresAbertas ? "" : undefined} data-categoria={category} data-arvore={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
                 <summary className="livro-arvore-cabeca flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
                   <TreeCrest tree={tree} size={44} />
                   <span className="min-w-0">

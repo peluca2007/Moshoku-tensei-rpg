@@ -257,10 +257,26 @@ export default function Folhear({
   }, []);
 
   // ── Tamanho do palco ────────────────────────────────────────────────────
+  /*
+   * Primeiro palpite SEM medir: no modo Livro o palco é a janela inteira menos
+   * a barra e a régua (3rem cada, com a raiz presa em 16 px). Medir o palco
+   * obrigaria o navegador a diagramar o livro inteiro sem a geometria — uma
+   * diagramação jogada fora (~0,6 s). Com o palpite, a troca pro modo Livro e a
+   * geometria entram no mesmo quadro. O ResizeObserver abaixo corrige se o
+   * palpite errar (e acompanha a janela mudando de tamanho).
+   */
+  useLayoutEffect(() => {
+    if (modo !== "livro") return;
+    // A renderização extra é o ponto: ela entra no MESMO quadro da troca de
+    // modo, antes da pintura, em vez de esperar o ResizeObserver medir.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTamanho((t) => t ?? { w: window.innerWidth, h: Math.max(0, window.innerHeight - 96) });
+  }, [modo]);
+
   useEffect(() => {
     const el = palco.current;
     if (modo !== "livro" || !el) return;
-    let ultimo = "";
+    let ultimo = `${window.innerWidth}x${Math.max(0, window.innerHeight - 96)}`;
     const ro = new ResizeObserver(() => {
       const chave = `${el.clientWidth}x${el.clientHeight}`;
       if (chave === ultimo) return;
