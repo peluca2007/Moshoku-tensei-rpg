@@ -11,6 +11,7 @@ import { getRaceById } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
 import { getCombinedSpellById } from "@/data/combinedSpells";
+import { conheceSimboloTeorico, origemNaturalDoSimbolo } from "@/lib/simbolosTeoricos";
 import { diceAverage } from "@/lib/dice";
 import { escalateWeaponDie } from "@/lib/weaponDie";
 import { Condicao, getCondicaoPorId, TETO_DE_ACUMULOS } from "@/data/condicoes";
@@ -727,7 +728,7 @@ export function getAttackBonus(state: StoreState, treeId: string, attribute: Att
 
 /** Quantos "conhecimentos" (magias/talentos) o personagem já tem numa árvore. */
 export function getKnowledgeCount(state: StoreState, treeId: string): number {
-  return state.purchasedAbilities.filter((a) => a.treeId === treeId).length;
+  return state.purchasedAbilities.filter((a) => a.treeId === treeId && !origemNaturalDoSimbolo(state, a.id)).length;
 }
 
 function findAbilityOrTalentDef(treeId: string, rank: RankName, kind: "ability" | "talent", id: string) {
@@ -944,8 +945,10 @@ export function getPaSpent(state: StoreState): number {
     const rankDef = getTreeById(u.treeId)?.ranks.find((r) => r.rank === u.rank);
     return sum + (rankDef?.unlockPaCostOverride ?? RANK_REQUIREMENTS[u.rank].paCost);
   }, 0);
-  const abilityCost = state.purchasedAbilities.reduce((sum, a) => {
-    const def = findAbilityOrTalentDef(a.treeId, a.rank, a.kind, a.id);
+    const abilityCost = state.purchasedAbilities.reduce((sum, a) => {
+      // Se a escola foi aberta depois da compra avulsa, o símbolo tornou-se gratuito.
+      if (a.treeId === "teorica" && origemNaturalDoSimbolo(state, a.id)) return sum;
+      const def = findAbilityOrTalentDef(a.treeId, a.rank, a.kind, a.id);
     return sum + (def?.paCost ?? 0);
   }, 0);
   return (
@@ -1088,6 +1091,9 @@ export function canPurchaseAbility(
   if (state.purchasedAbilities.some((a) => a.treeId === treeId && a.id === id)) {
     return { ok: false, reason: "Já adquirido." };
   }
+  if (treeId === "teorica" && origemNaturalDoSimbolo(state, id)) {
+    return { ok: false, reason: "Símbolo concedido pela árvore de origem." };
+  }
 
   // Pré-requisito de compra (2026-09-03). Dez habilidades declaram `requires`:
   // as sete Soberanas do Escudeiro, que só existem pra quem comprou Puro Escudo,
@@ -1095,7 +1101,8 @@ export function canPurchaseAbility(
   // exigência vivia só na prosa do efeito, e nada a checava.
   const defParaRequisito = findAbilityOrTalentDef(treeId, rank, kind, id);
   for (const requerido of defParaRequisito?.requires ?? []) {
-    if (!state.purchasedAbilities.some((a) => a.treeId === treeId && a.id === requerido)) {
+    if (!state.purchasedAbilities.some((a) => a.treeId === treeId && a.id === requerido)
+      && !(treeId === "teorica" && conheceSimboloTeorico(state, requerido))) {
       const nome = findNomeNaArvore(treeId, requerido) ?? requerido;
       return { ok: false, reason: `Exige "${nome}" nesta árvore antes.` };
     }

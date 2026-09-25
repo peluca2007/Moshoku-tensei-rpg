@@ -201,9 +201,8 @@ describe("as ações de suporte deixaram de ser descartadas", () => {
   });
 
   it("PV Temporários são classificados como escudo, e não como cura", () => {
-    const barreira = acoesDe(comArvoreInteira("barreira"));
-    const casca = barreira.find((a) => a.nome === "Casca");
-    expect(casca?.tipo).toBe("escudo");
+    const vigor = cura.find((a) => a.nome === "Vigor Emprestado");
+    expect(vigor?.tipo).toBe("escudo");
   });
 
   it("a Prontidão cura sempre como Ferida Fresca — é o que define a escola", () => {

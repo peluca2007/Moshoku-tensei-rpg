@@ -7,6 +7,7 @@ import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRa
 import { comImagensSaneadas } from "@/lib/imagemDaFicha";
 import { getCondicaoPorId } from "@/data/condicoes";
 import { CURTOS_POR_DIA } from "@/lib/descanso";
+import { BARREIRA_TREE } from "@/data/trees/barreira";
 
 const DEFAULT_ATTRIBUTES: Record<AttributeKey, number> = {
   forca: 0,
@@ -81,6 +82,29 @@ const PUNHO_DE_FOGO_DEUS_IDS = [
   "ignicao-da-alma",
   "julgamento-de-prometeu",
 ];
+
+/** Guarda um recibo legível das compras antigas e devolve seus PA ao retirá-las do catálogo ativo. */
+function converterBarreira(c: CharacterData): CharacterData {
+  const antigas = (c.purchasedAbilities ?? []).filter((a) => a.treeId === "barreira");
+  const temRank = (c.unlockedRanks ?? []).some((u) => u.treeId === "barreira");
+  if (!antigas.length && !temRank && c.startingTreeId !== "barreira") return c;
+  const purchases = antigas.map((a) => {
+    const rank = BARREIRA_TREE.ranks.find((r) => r.rank === a.rank);
+    const def = a.kind === "ability"
+      ? rank?.abilities.find((entry) => entry.id === a.id)
+      : rank?.talents.find((entry) => entry.id === a.id);
+    return { ...a, name: def?.name ?? a.id, paCost: def?.paCost ?? 0 };
+  });
+  const anteriores = c.legacyBarreira?.purchases ?? [];
+  const recibo = [...anteriores, ...purchases];
+  return {
+    ...c,
+    startingTreeId: c.startingTreeId === "barreira" ? "teorica" : c.startingTreeId,
+    unlockedRanks: (c.unlockedRanks ?? []).map((u) => u.treeId === "barreira" ? { ...u, treeId: "teorica" } : u),
+    purchasedAbilities: (c.purchasedAbilities ?? []).filter((a) => a.treeId !== "barreira"),
+    legacyBarreira: { purchases: recibo, refundedPa: recibo.reduce((sum, a) => sum + a.paCost, 0) },
+  };
+}
 
 interface RosterState {
   characters: Record<string, CharacterData>;
@@ -223,7 +247,7 @@ export function migrarRoster(
     characters: Object.fromEntries(
       Object.entries(prev.characters).map(([id, c]) => [
         id,
-        {
+        converterBarreira({
           ...c,
           lore: c.lore ?? "",
           raceAttributeChoices: c.raceAttributeChoices ?? [],
@@ -262,7 +286,7 @@ export function migrarRoster(
           unlockedRanks: (c.unlockedRanks ?? []).filter(
             (u) => !(u.treeId === "punho-de-fogo" && u.rank === "Deus")
           ),
-        },
+        }),
       ])
     ),
   };
@@ -294,7 +318,7 @@ export const useCharacterStore = create<RosterState>()(
         // do teto: o JSON vem de outra pessoa, e uma imagem apontando pra fora
         // entregaria o IP de quem abre a ficha a um servidor que ele não escolheu
         // (`imagemDaFicha.ts` explica os dois motivos).
-        const character: CharacterData = comImagensSaneadas({ ...data, id, lore: data.lore ?? "" });
+        const character: CharacterData = converterBarreira(comImagensSaneadas({ ...data, id, lore: data.lore ?? "" }));
         set((state) => ({
           characters: { ...state.characters, [id]: character },
           order: [...state.order, id],
@@ -656,7 +680,9 @@ export const useCharacterStore = create<RosterState>()(
       // Calor foi aposentado em 2026-09-16, junto com o recurso no Punho do
       // Fogo. Ficha antiga ainda carrega o campo, e nada mais o lê.
       // v16 (2026-09-18): Tiro Perfeito mudou de habilidade para Maestria.
-      version: 16,
+      // v17: Barreira e Proteção vira Magia Teórica; patamares são mantidos,
+      // compras antigas recebem recibo e devolução automática de PA.
+      version: 17,
       migrate: migrarRoster,
       // history é só uma conveniência de sessão pro botão "Desfazer" — não faz sentido inchar o
       // localStorage guardando fichas inteiras duplicadas, e não precisa sobreviver a um recarregamento.

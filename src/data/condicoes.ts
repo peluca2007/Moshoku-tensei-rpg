@@ -161,14 +161,14 @@ export const CONDICOES: Condicao[] = [
     id: "estagnacao",
     nome: "Estagnação (Fluxo Interrompido)",
     efeito:
-      "Uma das duas faces do Fluxo Interrompido. Dentro da barreira, toda magia custa +1 PM por Bônus de Rank de quem a ergueu, e ninguém recupera PM por meio nenhum — nem descanso, nem item, nem habilidade.",
+      "Regra legada da antiga Barreira e Proteção; fórmulas novas não a recebem automaticamente. Na campanha antiga, dentro da barreira toda magia custa +1 PM por Bônus de Rank de quem a ergueu, e ninguém recupera PM.",
     sinonimos: ["Estagnação"],
   },
   {
     id: "fonte",
     nome: "Fonte (Fluxo Interrompido)",
     efeito:
-      "A outra face do Fluxo Interrompido. Você e seus aliados dentro da barreira recuperam 1 PM no início de cada um dos seus turnos. A Fonte devolve, somando todo mundo, no máximo o PM que você pagou na barreira; depois disso ela seca, e a barreira continua de pé sem face nenhuma.",
+      "Regra legada da antiga Barreira e Proteção; fórmulas novas não a recebem automaticamente. Na campanha antiga, você e aliados dentro da barreira recuperam 1 PM no início de cada turno, até a soma alcançar o PM pago na barreira.",
     // "Fonte" sozinha entra como sinônimo, contra o meu palpite inicial.
     //
     // Eu tinha deixado de fora com medo de "a fonte do medo" virar link. A
@@ -182,7 +182,7 @@ export const CONDICOES: Condicao[] = [
     id: "fluxo-interrompido",
     nome: "Fluxo Interrompido",
     efeito:
-      "A barreira decide como a mana se move lá dentro. Ao erguer uma barreira você escolhe uma das duas faces — Estagnação ou Fonte — e ela vale pela duração inteira. Nunca as duas.",
+      "Regra legada da antiga Barreira e Proteção. Estagnação e Fonte eram duas faces exclusivas da mesma barreira. A nova Magia Teórica exige símbolos e custos explícitos para alterar fluxo de mana; Conter e Rejeitar não concedem nenhuma das duas faces.",
   },
   {
     id: "incapacitado",
@@ -233,7 +233,7 @@ export const CONDICOES: Condicao[] = [
     id: "selado",
     nome: "Selado",
     efeito:
-      "A Régua do Selo (Cap. 3, Barreira e Proteção): dentro da barreira, magia de rank IGUAL OU INFERIOR ao rank em Barreira de quem a ergueu simplesmente não acontece — as Ações e o PM se perdem. UM rank acima acontece pela metade: metade dos dados, da área e da duração. DOIS ou mais acima atravessa inteira, como se a barreira não estivesse ali. Um Selado de Avançado barra até Avançado, corta o Santo pela metade e não toca em Rei nem Imperador. Não impede técnicas de Touki, ataques com arma nem habilidades de Utilidade: Selado é sobre mana, e só.",
+      "Condição legada da antiga Barreira e Proteção, preservada em fichas anteriores à Magia Teórica. Em campanhas que ainda a usam, aplica-se a Régua do Selo da carta original. Nas novas fórmulas, use Rejeitar: a potência inscrita compara o rank da magia que cruza a fronteira, sem aplicar Selado automaticamente a criaturas na área.",
   },
   {
     id: "preso",
