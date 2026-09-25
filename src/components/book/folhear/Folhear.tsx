@@ -1112,7 +1112,7 @@ function Colofao({ edicao }: { edicao?: string }) {
         {edicao && <>, edição {edicao}</>}.
       </p>
       <p>
-        Composto em Alegreya, Alegreya SC e Alegreya Sans, com capitulares em UnifrakturMaguntia. Diagramado
+        Composto em Literata, Shippori Mincho, Barlow Condensed e Zen Kaku Gothic. Diagramado
         pelo próprio navegador, página a página, a partir do mesmo texto do site: o que está impresso aqui é
         o que está na ficha.
       </p>
