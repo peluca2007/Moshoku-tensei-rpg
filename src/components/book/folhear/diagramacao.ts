@@ -280,18 +280,24 @@ export function ajustarFigurasLargas(fluxo: Element): void {
  * verbete ou catálogo de árvore: lá dentro ela não pode sair da caixa.
  */
 export function espalharTabelasEspremidas(fluxo: Element, g: Geometria, r: Regua): void {
-  fluxo.querySelectorAll(".livro-tabela.folhear-larga").forEach((el) => el.classList.remove("folhear-larga"));
+  fluxo
+    .querySelectorAll(".livro-tabela.folhear-larga, .livro-caixa.folhear-larga")
+    .forEach((el) => el.classList.remove("folhear-larga"));
   const alturaMaxima = g.fonte * 1.3 * 7;
   const espremidas = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-tabela")).filter((caixa) => {
-    if (!visivel(caixa) || caixa.closest(".livro-caixa, .livro-arvore, .livro-verbete, .livro-maestria, .livro-catalogo-itens"))
+    if (!visivel(caixa) || caixa.closest(".livro-arvore, .livro-verbete, .livro-maestria, .livro-catalogo-itens"))
       return false;
+    // Tabela dentro de uma caixa de regra: se ela for espremida, quem
+    // atravessa a página é a caixa inteira (a tabela não pode sair dela).
+    const dentroDeCaixa = caixa.closest(".livro-caixa");
+    if (dentroDeCaixa && dentroDeCaixa.closest(".livro-caixa .livro-caixa")) return false;
     const tabela = caixa.querySelector("table");
     if (!tabela) return false;
     const colunas = tabela.tHead?.rows[0]?.cells.length ?? tabela.rows[0]?.cells.length ?? 0;
     if (colunas >= 4) return true;
     return Array.from(tabela.tBodies[0]?.rows ?? []).some((tr) => tr.getBoundingClientRect().height / r.k > alturaMaxima);
   });
-  espremidas.forEach((caixa) => caixa.classList.add("folhear-larga"));
+  espremidas.forEach((caixa) => (caixa.closest(".livro-caixa") ?? caixa).classList.add("folhear-larga"));
 }
 
 /**
