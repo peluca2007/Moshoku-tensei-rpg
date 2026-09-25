@@ -77,9 +77,8 @@ describe("o glossário e o livro", () => {
    * Verbete morto é verbete que ninguém lê: se nenhuma habilidade do livro
    * aplica a condição, ou ela foi esquecida na prosa, ou ela não deveria estar
    * no glossário. As exceções abaixo são condições que existem como REGRA de
-   * capítulo (a barreira do Cap. 3, o Fluxo Interrompido) e não como efeito
-   * citado por uma habilidade — elas são explicadas no próprio texto que as
-   * cria.
+   * capítulo ou foram preservadas para fichas da antiga Barreira. Estagnação,
+   * Fonte e Fluxo Interrompido não são concedidos pela nova Magia Teórica.
    */
   it("toda condição do glossário é aplicada por alguma habilidade", () => {
     const citadas = new Set(
@@ -91,7 +90,8 @@ describe("o glossário e o livro", () => {
         ])
       )
     );
-    const orfas = CONDICOES.filter((c) => !citadas.has(c.id)).map((c) => c.id);
+    const legadas = new Set(["estagnacao", "fonte", "fluxo-interrompido"]);
+    const orfas = CONDICOES.filter((c) => !citadas.has(c.id) && !legadas.has(c.id)).map((c) => c.id);
     expect(orfas).toEqual([]);
   });
 });

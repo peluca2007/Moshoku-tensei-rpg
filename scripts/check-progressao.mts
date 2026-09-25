@@ -113,7 +113,7 @@ const PILAR: Record<string, Medida["pilar"]> = {
   terra: "Magia",
   cura: "Magia",
   desintoxicacao: "Magia",
-  barreira: "Magia",
+  teorica: "Magia",
   invocacao: "Magia",
   "bardo-e-interacao": "Utilidade",
   "navegacao-e-lideranca": "Utilidade",

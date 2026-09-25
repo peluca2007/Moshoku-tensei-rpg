@@ -173,8 +173,8 @@ export const PROVACOES: Provacao[] = [
     nome: "O Que Recita Devagar",
     mestre: "O Que Recita Devagar",
     patenteDoMestre:
-      "Arquimago — Imperador em três escolas (Magia de Fogo; Magia de Água; Barreira e Proteção): ensina alunos até o Santo, e um Rei pelo salto de patente",
-    abre: "Magia de Fogo, Magia de Água ou Barreira e Proteção — uma das três escolas que ele domina, à escolha do grupo na primeira hora da sessão",
+      "Arquimago — Imperador em três escolas (Magia de Fogo; Magia de Água; Magia Teórica): ensina alunos até o Santo, e um Rei pelo salto de patente",
+    abre: "Magia de Fogo, Magia de Água ou Magia Teórica — uma das três escolas que ele domina, à escolha do grupo na primeira hora da sessão",
     quebra:
       "Conjuração sem cântico está proibida. Toda magia tem que ser recitada em voz alta pelo JOGADOR, na mesa, no tempo que o cântico levar — e o mestre conta os turnos enquanto a pessoa fala.",
     provacao:

@@ -7,6 +7,7 @@ import { canPurchaseAbility } from "@/store/selectors";
 import { AbilityDef, CharacterData, RankName, TalentDef } from "@/lib/types";
 import { CastingBreakdown, IncantationBlock } from "@/components/AbilityDetail";
 import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
+import { origemNaturalDoSimbolo } from "@/lib/simbolosTeoricos";
 
 /**
  * O cartão de uma habilidade comprável — e a ÚNICA porta de compra da tela de
@@ -33,7 +34,8 @@ export default function AbilityListItem({
   def: AbilityDef | TalentDef;
   showToast: (msg: string, type?: "info" | "success" | "warning") => void;
 }) {
-  const owned = character.purchasedAbilities.some((a) => a.treeId === treeId && a.id === def.id);
+  const natural = treeId === "teorica" && kind === "talent" ? origemNaturalDoSimbolo(character, def.id) : null;
+  const owned = Boolean(natural) || character.purchasedAbilities.some((a) => a.treeId === treeId && a.id === def.id);
   const check = canPurchaseAbility(character, treeId, rank, kind, def.id);
   const ability = kind === "ability" ? (def as AbilityDef) : undefined;
   const talent = kind === "talent" ? (def as TalentDef) : undefined;
@@ -59,7 +61,7 @@ export default function AbilityListItem({
         {owned && <CheckCircle2 className="h-4 w-4 text-emerald-500 flex-shrink-0" />}
       </div>
       <p className="text-xs text-parchment-600 dark:text-parchment-400 mb-2">
-        {kind === "ability" ? "Habilidade" : "Talento"} · {def.paCost} PA
+        {kind === "ability" ? "Habilidade" : "Talento"} · {natural ? "Concedido pela árvore de origem" : `${def.paCost} PA`}
         {ability &&
           ` · ${ability.pmCost !== undefined ? `${ability.pmCost} PM · ` : ""}${
             ability.ptCost !== undefined ? `${ability.ptCost} PT · ` : ""

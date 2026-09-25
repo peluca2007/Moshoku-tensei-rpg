@@ -143,6 +143,27 @@ export default function ListaDeArvores({
 
                     {aberta && (
                       <div className="border-t border-parchment-300 p-3 dark:border-parchment-800">
+                        {tree.id === "teorica" && (
+                          <a href="/livro#cap2-8" className="mb-3 block rounded-lg border border-teal-600/40 bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-950 hover:bg-teal-100 dark:bg-teal-950/30 dark:text-teal-100">
+                            Abrir a oficina de fórmulas no livro →
+                          </a>
+                        )}
+                        {tree.id === "teorica" && character.legacyBarreira && (
+                          <div className="mb-3 rounded-lg border border-amber-400/60 bg-amber-50 p-3 text-xs text-amber-950 dark:bg-amber-950/30 dark:text-amber-100">
+                            <b>Conversão da antiga Barreira:</b> seus patamares agora pertencem à Magia Teórica.
+                            {" "}A nova árvore usa Intelecto onde a antiga usava Espírito; revise esse atributo com a mesa.
+                            {character.legacyBarreira.purchases.length > 0 && (
+                              <> As {character.legacyBarreira.purchases.length} compras antigas foram arquivadas e seus {character.legacyBarreira.refundedPa} PA deixaram de contar como gastos. Você pode escolher os novos conhecimentos livremente; confira PV e PM máximos se tinha talentos de reserva.</>
+                            )}
+                            {character.legacyBarreira.purchases.length > 0 && (
+                              <details className="mt-2"><summary className="cursor-pointer font-semibold">Ver compras anteriores</summary>
+                                <ul className="mt-1 list-inside list-disc">
+                                  {character.legacyBarreira.purchases.map((a, index) => <li key={`${a.id}-${index}`}>{a.name} ({a.rank}, {a.paCost} PA)</li>)}
+                                </ul>
+                              </details>
+                            )}
+                          </div>
+                        )}
                         {tree.prerequisiteNote && (
                           <p className="mb-2 text-2xs italic text-parchment-600 dark:text-parchment-400">
                             {tree.prerequisiteNote}
