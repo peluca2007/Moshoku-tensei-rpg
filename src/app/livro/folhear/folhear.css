@@ -3102,3 +3102,44 @@ html.livro-imersivo {
 .folhear-fluxo .livro-arvore-cabeca {
   break-inside: avoid;
 }
+
+/* ── Recitação Perfeita: nota de rodapé do encantamento, não um botão ─────
+ * No site ela é uma pílula com um ponto pulsando. No livro vira uma linha
+ * miúda em versalete com o losango da árvore — e sem o pulso: eram 160
+ * animações infinitas rodando pelo livro inteiro, fora da vista. */
+.folhear-fluxo .livro-recitacao {
+  display: flex;
+  gap: 0.4em;
+  margin-top: 0.3em;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.74em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-recitacao > span:first-child {
+  display: none;
+}
+
+.folhear-fluxo .livro-recitacao::before {
+  content: "◆";
+  flex: none;
+}
+
+.folhear-fluxo .livro-recitacao-sem {
+  color: var(--tinta-suave);
+}
+
+.folhear-fluxo .livro-recitacao-sem::before {
+  content: "—";
+}
+
+.folhear[data-modo="livro"] .folhear-fluxo .animate-ping {
+  animation: none;
+}
