@@ -34,6 +34,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
+import { ARTE_DA_FOLHA_DE_ROSTO } from "../arteDasAberturas";
 import {
   type Geometria,
   type Paginacao,
@@ -42,6 +43,7 @@ import {
   ajustarFigurasLargas,
   ajustarTabelasLargas,
   calcularGeometria,
+  espalharTabelasEspremidas,
   limparCabecalhosRepetidos,
   medirPaginas,
   numeralDoCapitulo,
@@ -125,7 +127,32 @@ function gravarModo(m: Modo) {
 
 const DURACAO_VIRADA_MS = 460;
 
-export default function Folhear({ toc, children }: { toc: TocEntry[]; children: ReactNode }) {
+/*
+ * "Voltar de onde parei". Com a página de tamanho fixo, o número da página é
+ * o mesmo em qualquer tela — então guardar a página basta. Só vale quando o
+ * livro abre sem link pra uma seção (o link sempre ganha).
+ */
+const CHAVE_PAGINA = "livro-folhear-pagina";
+
+function lerPaginaGuardada(): number | null {
+  try {
+    const n = Number(localStorage.getItem(CHAVE_PAGINA));
+    return Number.isInteger(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+export default function Folhear({
+  toc,
+  edicao,
+  children,
+}: {
+  toc: TocEntry[];
+  /** A versão do livro, pra folha de rosto ("Edição 0.1.96"). */
+  edicao?: string;
+  children: ReactNode;
+}) {
   const raiz = useRef<HTMLDivElement>(null);
   const palco = useRef<HTMLDivElement>(null);
   const janela = useRef<HTMLDivElement>(null);
@@ -211,16 +238,52 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
       setVersao((v) => v + 1);
     });
     const f = fluxo.current;
+    // Vários <details> mudando juntos viram UMA recomposição, não uma por
+    // details — e os que o próprio livro abriu (logo abaixo) não contam.
+    let espera = 0;
     const aoAlternar = () => {
-      guardarAncora();
-      setVersao((v) => v + 1);
+      if (togglesDoLivro.current > 0) {
+        togglesDoLivro.current--;
+        return;
+      }
+      clearTimeout(espera);
+      espera = window.setTimeout(() => {
+        guardarAncora();
+        setVersao((v) => v + 1);
+      }, 80);
     };
     f?.addEventListener("toggle", aoAlternar, true);
     return () => {
       vivo = false;
+      clearTimeout(espera);
       f?.removeEventListener("toggle", aoAlternar, true);
     };
   }, [modo, guardarAncora]);
+
+  /*
+   * O catálogo das 19 árvores mora em <details> fechados no contínuo — lá,
+   * abrir uma árvore é consultar. No livro impresso não existe "clique pra
+   * abrir": o catálogo inteiro está impresso, página após página. Então no
+   * modo Livro todo <details> abre (antes da diagramação, pra ela já medir o
+   * livro completo), e volta a fechar no contínuo.
+   */
+  const togglesDoLivro = useRef(0);
+  useLayoutEffect(() => {
+    const f = fluxo.current;
+    if (!f) return;
+    if (modo === "livro") {
+      f.querySelectorAll<HTMLDetailsElement>("details:not([open])").forEach((d) => {
+        d.setAttribute("data-folhear-aberto", "");
+        d.open = true;
+        togglesDoLivro.current++;
+      });
+    } else if (modo === "continuo") {
+      f.querySelectorAll<HTMLDetailsElement>("details[data-folhear-aberto]").forEach((d) => {
+        d.removeAttribute("data-folhear-aberto");
+        d.open = false;
+      });
+    }
+  }, [modo]);
 
   // Uma ou duas páginas: a PÁGINA é a mesma, a dupla que a contém é que muda.
   // Vem antes da diagramação, que lê o alvo já convertido.
@@ -243,6 +306,7 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     if (!porDupla || !g || !f || !fx || !j || !fim.current) return;
 
     ajustarFigurasLargas(f);
+    espalharTabelasEspremidas(f, g, regua(fx));
     segurarCaixasCurtas(f, g, regua(fx));
     ajustarTabelasLargas(f, g, regua(fx));
     repetirCabecalhos(f);
@@ -271,6 +335,9 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
       if (document.readyState !== "complete") window.addEventListener("load", aoTopo, { once: true });
     } else if (guardada && f.contains(guardada)) {
       destino = Math.floor(paginaDoElemento(guardada, r, g) / porDupla);
+    } else if (primeiraVez.current) {
+      const onde = lerPaginaGuardada();
+      if (onde !== null) destino = Math.min(Math.floor(onde / porDupla), total - 1);
     }
     primeiraVez.current = false;
     alvo.current = destino;
@@ -281,6 +348,16 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
     setPaginacao(p);
     setDupla(destino);
   }, [porDupla, versao, toc]);
+
+  // Guarda a página a cada virada (a primeira da dupla aberta).
+  useEffect(() => {
+    if (modo !== "livro" || !paginacao || !porDupla) return;
+    try {
+      localStorage.setItem(CHAVE_PAGINA, String(dupla * porDupla));
+    } catch {
+      /* sem armazenamento: o livro só não lembra */
+    }
+  }, [modo, paginacao, porDupla, dupla]);
 
   // ── Voltar ao contínuo sem perder o lugar ───────────────────────────────
   useLayoutEffect(() => {
@@ -483,6 +560,11 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
 
   /** Todo link interno do livro passa por aqui: no modo Livro, âncora vira dupla. */
   const aoClicar = (e: MouseEvent<HTMLDivElement>) => {
+    // No livro impresso o catálogo não fecha: clicar no nome da árvore é ler.
+    if (estado.current.modo === "livro" && (e.target as Element).closest?.(".folhear-fluxo summary")) {
+      e.preventDefault();
+      return;
+    }
     const a = (e.target as Element).closest?.("a[href^='#']");
     if (!a) return;
     const id = decodeURIComponent(a.getAttribute("href")!.slice(1));
@@ -705,8 +787,11 @@ export default function Folhear({ toc, children }: { toc: TocEntry[]; children: 
                     ref={fluxo}
                     className={livro ? "folhear-fluxo sem-escuro" : "folhear-continuo livro-pagina surface"}
                   >
+                    <Guarda />
+                    <FolhaDeRosto edicao={edicao} />
                     <Sumario toc={toc} paginaDe={paginacao?.paginaDe} abertura />
                     {children}
+                    <Colofao edicao={edicao} />
                     <span ref={fim} aria-hidden className="folhear-fim" />
                   </div>
                 </div>
@@ -789,9 +874,11 @@ function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginac
             className="folhear-folha"
             data-lado={lado}
             data-variante={k % 4}
+            data-pagina={k}
             style={{ left: k * geo.pagina }}
           >
-            {k < paginacao.total && (
+            {/* A guarda e a folha de rosto não levam número, como no impresso. */}
+            {k >= 2 && k < paginacao.total && (
               <span className="folhear-rodape">
                 <span className="folhear-rodape-numero">{k + 1}</span>
                 {parte && <span className="folhear-rodape-parte">{parte}</span>}
@@ -801,6 +888,72 @@ function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginac
         );
       })}
     </div>
+  );
+}
+
+/**
+ * A GUARDA — o verso da capa, a primeira página que se vê ao abrir o livro.
+ *
+ * O papel dela é pintado pela folha (`[data-pagina="0"]` no CSS); aqui fica só
+ * o ex-líbris, o selo de "este livro pertence a". Só existe no modo Livro.
+ */
+function Guarda() {
+  return (
+    <section aria-hidden className="folhear-guarda">
+      <div className="folhear-exlibris">
+        <p className="folhear-exlibris-rotulo">Ex Libris</p>
+        <p className="folhear-exlibris-nome">Mushoku Tensei RPG</p>
+        <p className="folhear-exlibris-lema">O Mundo de Seis Faces</p>
+      </div>
+    </section>
+  );
+}
+
+/** A FOLHA DE ROSTO: título, subtítulo, arte e edição. Só no modo Livro. */
+function FolhaDeRosto({ edicao }: { edicao?: string }) {
+  return (
+    <section className="folhear-rosto" aria-label="Folha de rosto">
+      <p className="folhear-rosto-selo">Livro de Regras</p>
+      <h1 className="folhear-rosto-titulo">Mushoku Tensei RPG</h1>
+      <p className="folhear-rosto-sub">O Mundo de Seis Faces</p>
+      <figure className="folhear-rosto-arte">
+        {/* eslint-disable-next-line @next/next/no-img-element -- arte impressa no papel, sem otimização de tamanho. */}
+        <img src={ARTE_DA_FOLHA_DE_ROSTO.src} alt={ARTE_DA_FOLHA_DE_ROSTO.alt} width={1920} height={1080} />
+      </figure>
+      {edicao && <p className="folhear-rosto-edicao">Edição {edicao}</p>}
+    </section>
+  );
+}
+
+/**
+ * O COLOFÃO — a última página, a que diz como o livro foi feito e de quem é.
+ *
+ * O aviso de projeto de fã é o mesmo do rodapé do site: no modo Livro o
+ * rodapé some, e o aviso não pode sumir junto. Só existe no modo Livro.
+ */
+function Colofao({ edicao }: { edicao?: string }) {
+  return (
+    <section className="folhear-colofao" aria-label="Colofão">
+      <p className="folhear-colofao-selo">Colofão</p>
+      <p>
+        <b>Mushoku Tensei RPG — Livro de Regras</b>
+        {edicao && <>, edição {edicao}</>}.
+      </p>
+      <p>
+        Composto em Alegreya, Alegreya SC e Alegreya Sans, com capitulares em UnifrakturMaguntia. Diagramado
+        pelo próprio navegador, página a página, a partir do mesmo texto do site: o que está impresso aqui é
+        o que está na ficha.
+      </p>
+      <p>
+        Projeto de fã, sem fins lucrativos e sem vínculo com Rifujin na Magonote, a editora ou qualquer
+        detentor dos direitos de <i>Mushoku Tensei</i>. Todo o sistema de regras aqui é uma criação homebrew
+        original, feita só pra jogar com amigos — nomes e ambientação da obra original são usados apenas como
+        inspiração e referência.
+      </p>
+      <p className="folhear-colofao-fim" aria-hidden>
+        ◆
+      </p>
+    </section>
   );
 }
 
