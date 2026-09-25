@@ -9,13 +9,11 @@ import Appendices from "@/components/book/Appendices";
 import Folhear from "@/components/book/folhear/Folhear";
 import { SUMARIO_DO_LIVRO } from "@/data/sumarioDoLivro";
 import { PATCH_NOTES } from "@/data/patchNotes";
+import "./folhear.css";
 
 export const metadata: Metadata = {
   title: "Folhear o Livro — Mushoku Tensei RPG",
 };
-
-/** As identidades visuais em avaliação (ver PLANO-LIVRO-DIGITAL.md). */
-const IDENTIDADES = ["classica", "ranoa"] as const;
 
 /**
  * O livro inteiro, aberto como livro impresso (ver Folhear.tsx).
@@ -24,12 +22,8 @@ const IDENTIDADES = ["classica", "ranoa"] as const;
  * entregues ao leitor como `children` —, então o que a mesa lê no modo Livro
  * e no contínuo é sempre o mesmo texto. O /livro de sempre continua no ar até
  * este ser aprovado.
- *
- * `?identidade=ranoa` mostra a identidade própria em avaliação.
  */
-export default async function FolhearPage(props: PageProps<"/livro/folhear">) {
-  const { identidade } = await props.searchParams;
-  const escolhida = IDENTIDADES.find((i) => i === identidade) ?? "classica";
+export default function FolhearPage() {
   return (
     <>
       {/* Sem JavaScript, o palco não pode ficar escondido esperando a
@@ -37,11 +31,11 @@ export default async function FolhearPage(props: PageProps<"/livro/folhear">) {
       <noscript>
         <style>{`.folhear .folhear-palco{visibility:visible!important}`}</style>
       </noscript>
-      <Folhear toc={SUMARIO_DO_LIVRO} edicao={PATCH_NOTES[0]?.version} identidade={escolhida}>
+      <Folhear toc={SUMARIO_DO_LIVRO} edicao={PATCH_NOTES[0]?.version}>
         <Chapter0 />
         <Chapter1 />
         <Chapter2 />
-        <Chapter3 />
+        <Chapter3 arvoresAbertas />
         <Chapter4 />
         <Chapter5 />
         <Appendices />
