@@ -829,6 +829,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 /* Diagrama e tabela que não cabem numa coluna atravessam a página. */
 .folhear-fluxo figure.diagrama.folhear-larga,
 .folhear-fluxo .livro-tabela.folhear-larga,
+.folhear-fluxo .livro-caixa.folhear-larga,
 .folhear-fluxo :is(h3, h4).folhear-larga {
   column-span: all;
 }
