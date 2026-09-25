@@ -712,8 +712,8 @@ export default function Chapter3() {
               {CATEGORY_LABELS[category]}
             </h3>
             {TREES.filter((t) => t.category === category).map((tree) => (
-              <details key={tree.id} className="surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
-                <summary className="flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
+              <details key={tree.id} data-categoria={category} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
+                <summary className="livro-arvore-cabeca flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
                   <TreeCrest tree={tree} size={44} />
                   <span className="min-w-0">
                     <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
@@ -723,7 +723,7 @@ export default function Chapter3() {
                     )}
                   </span>
                 </summary>
-                <div className="border-t border-parchment-300 p-3 dark:border-parchment-800">
+                <div className="livro-arvore-corpo border-t border-parchment-300 p-3 dark:border-parchment-800">
                   <TreeCatalog tree={tree} />
                 </div>
               </details>

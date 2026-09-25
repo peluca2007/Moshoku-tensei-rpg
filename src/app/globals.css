@@ -3,7 +3,10 @@
 /* Ativa a variante `dark:` por classe (`.dark` na <html>, controlada pelo
    ThemeProvider/next-themes) em vez de só seguir prefers-color-scheme — é o
    que permite o botão de tema sobrepor a preferência do sistema. */
-@custom-variant dark (&:where(.dark, .dark *));
+/* ...exceto dentro de `.sem-escuro`: a página do livro folheado é PAPEL nos
+   dois temas (o tema muda a mesa em volta), e o texto dela precisa das cores
+   de papel claro mesmo com a <html> no escuro. */
+@custom-variant dark (&:where(.dark, .dark *):not(:where(.sem-escuro, .sem-escuro *)));
 
 :root {
   --background: #fdf6e3;
@@ -1567,4 +1570,1992 @@ input[type="number"],
   .triangulo-golpe {
     display: none !important;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * O LIVRO FOLHEADO — /livro/folhear (2026-09-24)
+ *
+ * O /livro como livro IMPRESSO: página de tamanho fixo, duas colunas, papel
+ * manchado, títulos em versalete vermelho-escuro com filete dourado, caixas
+ * verde-claras, tabelas listradas, capa de couro em volta. O Livro do Jogador
+ * de D&D foi a régua — o autor quer que o leitor ache que alguém escaneou o
+ * livro.
+ *
+ * Quem pagina é o navegador (colunas CSS aninhadas; ver Folhear.tsx). Tudo
+ * que é do modo Livro fica atrás de `[data-modo="livro"]` ou `.folhear-fluxo`:
+ * no modo contínuo os mesmos elementos são blocos comuns e os componentes do
+ * livro voltam à cara de sempre.
+ *
+ * As regras do texto são CSS fora de camada DE PROPÓSITO: assim elas vencem
+ * as utilitárias do Tailwind que os componentes trazem (rounded-xl, sombras,
+ * gradientes de cartão) — é isso que tira a cara de site da página.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.folhear {
+  --livro-tinta: #211a13;
+  --livro-titulo: #58180d;
+  --livro-filete: #c9ad6a;
+  /* Translúcidas: a mancha do papel atravessa a caixa, como tinta impressa. */
+  --livro-nota: rgb(216 224 178 / 0.62);
+  --livro-listra: rgb(216 224 178 / 0.55);
+  --livro-aviso: rgb(255 250 232 / 0.55);
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #4a3a2e 0%, #2b2019 55%, #17110d 100%);
+  --folhear-topo: var(--altura-nav);
+}
+
+.dark .folhear {
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #211915 0%, #120d0a 60%, #070504 100%);
+}
+
+/* ── Contínuo (e o primeiro quadro, antes do JavaScript decidir) ────────── */
+.folhear:not([data-modo="livro"]) {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .folhear:not([data-modo="livro"]) {
+    padding: 1.5rem;
+  }
+}
+
+.folhear-continuo {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .folhear-continuo {
+    padding: 3rem 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .folhear-continuo {
+    padding: 3rem 3.5rem;
+  }
+}
+
+.folhear-continuo > * + * {
+  margin-top: 4rem;
+}
+
+.folhear-continuo > .folhear-sumario {
+  display: none;
+}
+
+.folhear-continuo > .folhear-sumario + * {
+  margin-top: 0;
+}
+
+/* O palco espera a diagramação escondido, pra não mostrar o livro inteiro em
+   rolagem por um instante antes de virar livro. Sem JavaScript, o <noscript>
+   da página devolve a visibilidade. */
+@media (min-width: 768px) {
+  .folhear:not([data-modo]) .folhear-palco {
+    visibility: hidden;
+  }
+}
+
+.folhear[data-modo="livro"]:not([data-pronto]) .folhear-palco {
+  visibility: hidden;
+}
+
+/* ── A barra ──────────────────────────────────────────────────────────── */
+.folhear-barra {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 3rem;
+  padding: 0 0.75rem;
+}
+
+.folhear[data-modo="livro"] .folhear-barra {
+  color: #eadcc2;
+}
+
+.folhear:not([data-modo="livro"]) .folhear-barra {
+  position: sticky;
+  top: var(--altura-nav);
+  z-index: 30;
+  max-width: 56rem;
+  margin: 0 auto 1.5rem;
+  border: 1px solid var(--color-parchment-300);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--color-parchment-100) 95%, transparent);
+  backdrop-filter: blur(4px);
+  color: var(--color-parchment-800);
+}
+
+.dark .folhear:not([data-modo="livro"]) .folhear-barra {
+  border-color: var(--color-parchment-800);
+  background: color-mix(in srgb, var(--color-parchment-900) 95%, transparent);
+  color: var(--color-parchment-200);
+}
+
+.folhear-barra-lado {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Sem `display` aqui de propósito: CSS fora de camada vence as utilitárias do
+   Tailwind, e um `display` nesta classe anularia o `hidden sm:inline-flex`
+   que esconde botões no telefone. Quem diz o display é o JSX. */
+.folhear-botao {
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  padding: 0 0.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+
+.folhear-botao:hover:not(:disabled) {
+  background: rgb(160 125 75 / 0.18);
+}
+
+.folhear-botao:disabled {
+  opacity: 0.35;
+}
+
+.folhear-alternador {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid rgb(184 134 46 / 0.4);
+  border-radius: 0.6rem;
+}
+
+.folhear-alternador button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2rem;
+  padding: 0 0.6rem;
+  border-radius: 0.45rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.folhear-alternador button[aria-pressed="true"] {
+  background: var(--color-gold-500);
+  color: var(--color-gold-950);
+}
+
+.folhear-posicao {
+  display: flex;
+  flex: 0 1 auto;
+  max-width: 50%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.folhear-posicao-titulo {
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--font-livro-sc), var(--font-fraunces), Georgia, serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folhear[data-modo="livro"] .folhear-posicao-titulo {
+  color: var(--color-gold-200);
+}
+
+.folhear-posicao-paginas {
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  opacity: 0.65;
+}
+
+/* ── O leitor imersivo ────────────────────────────────────────────────────
+ * No modo Livro o menu e o rodapé do site somem: a barra creme do site em
+ * cima da mesa eram dois mundos brigando. Fica a mesa, o livro e a barra do
+ * próprio livro. Voltar ao modo Contínuo devolve o site inteiro. */
+@supports selector(:has(*)) {
+  body:has(.folhear[data-modo="livro"]) > :is(nav, footer) {
+    display: none;
+  }
+
+  body:has(.folhear[data-modo="livro"]) {
+    overflow: hidden;
+  }
+
+  .folhear[data-modo="livro"] {
+    --folhear-topo: 0px;
+  }
+}
+
+.folhear[data-modo="livro"] {
+  display: flex;
+  min-height: calc(100dvh - var(--folhear-topo));
+  flex-direction: column;
+  background: var(--folhear-mesa);
+}
+
+.folhear[data-modo="livro"]:fullscreen {
+  --folhear-topo: 0px;
+}
+
+/* ── A mesa, o palco e o livro ────────────────────────────────────────── */
+.folhear[data-modo="livro"] .folhear-mesa {
+  position: relative;
+  height: calc(100dvh - var(--folhear-topo) - 6rem);
+  min-height: 20rem;
+}
+
+.folhear[data-modo="livro"] .folhear-palco {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Com zoom o livro fica maior que a mesa, e a mesa passa a rolar. */
+.folhear[data-modo="livro"][data-zoom] .folhear-palco {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* `margin: auto` num flex centraliza sem cortar o começo quando o filho é
+   maior que o pai — que é exatamente o caso do zoom. */
+.folhear[data-modo="livro"] .folhear-dimensao {
+  position: relative;
+  flex: none;
+  margin: auto;
+}
+
+.folhear[data-modo="livro"] .folhear-livro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--pagina) * var(--por-dupla) + var(--capa) * 2);
+  height: calc(var(--altura) + var(--capa) * 2);
+  transform-origin: 0 0;
+  border-radius: 7px;
+  /* O couro da capa: o que aparece em volta das folhas num livro de capa dura. */
+  background:
+    radial-gradient(ellipse at 30% 20%, rgb(255 255 255 / 0.08), transparent 60%),
+    linear-gradient(135deg, #53291a 0%, #3b1c10 45%, #2a130a 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 220 180 / 0.08),
+    0 0 0 1px rgb(0 0 0 / 0.45),
+    0 50px 80px -30px rgb(0 0 0 / 0.85),
+    0 16px 30px -14px rgb(0 0 0 / 0.6);
+  perspective: 4000px;
+}
+
+/* A lombada: a curva do papel entrando na costura. */
+.folhear[data-modo="livro"] .folhear-livro[data-por-dupla="2"]::after {
+  content: "";
+  position: absolute;
+  top: var(--capa);
+  bottom: var(--capa);
+  left: 50%;
+  z-index: 3;
+  width: 120px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(70 40 15 / 0.07) 28%,
+    rgb(50 28 10 / 0.26) 46%,
+    rgb(25 12 4 / 0.5) 50%,
+    rgb(50 28 10 / 0.26) 54%,
+    rgb(70 40 15 / 0.07) 72%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.folhear[data-modo="livro"] .folhear-janela {
+  position: absolute;
+  inset: var(--capa);
+  z-index: 1;
+  overflow: hidden;
+  /* O maço de folhas aparecendo por cima do couro, nas duas bordas. */
+  box-shadow:
+    -2px 0 0 #e7d9b6,
+    -4px 0 0 #c6ae80,
+    -6px 0 0 #e1d2ab,
+    2px 0 0 #e7d9b6,
+    4px 0 0 #c6ae80,
+    6px 0 0 #e1d2ab;
+  /* O dedo desliza pra virar; pinça continua sendo do navegador. */
+  touch-action: pinch-zoom;
+}
+
+.folhear[data-modo="livro"][data-zoom] .folhear-janela {
+  touch-action: auto;
+}
+
+.folhear[data-modo="livro"] .folhear-faixa {
+  position: relative;
+  height: 100%;
+  min-width: 100%;
+}
+
+/* ── As folhas: papel e rodapé ────────────────────────────────────────── */
+.folhear-folhas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.folhear-folha {
+  position: absolute;
+  top: 0;
+  width: var(--pagina);
+  height: 100%;
+  overflow: hidden;
+  background: #efe0bd;
+}
+
+/* O pergaminho manchado — a mesma folha, girada e espelhada de página em
+   página, pra nenhuma dupla repetir a mancha da anterior. */
+.folhear-folha::before {
+  content: "";
+  position: absolute;
+  inset: -2%;
+  background: url("/texturas/pergaminho.avif") center / cover no-repeat;
+}
+
+.folhear-folha[data-variante="1"]::before {
+  transform: scaleX(-1);
+}
+
+.folhear-folha[data-variante="2"]::before {
+  transform: scaleY(-1);
+}
+
+.folhear-folha[data-variante="3"]::before {
+  transform: scale(-1, -1);
+}
+
+/* A sombra da costura, do lado de dentro de cada página. */
+.folhear-folha::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.folhear-folha[data-lado="esq"]::after {
+  background: linear-gradient(to left, rgb(70 40 15 / 0.22), transparent 7%), linear-gradient(to right, rgb(70 40 15 / 0.08), transparent 3%);
+}
+
+.folhear-folha[data-lado="dir"]::after {
+  background: linear-gradient(to right, rgb(70 40 15 / 0.22), transparent 7%), linear-gradient(to left, rgb(70 40 15 / 0.08), transparent 3%);
+}
+
+.folhear-rodape {
+  position: absolute;
+  bottom: calc(var(--pe) * 0.38);
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+}
+
+.folhear-folha[data-lado="esq"] .folhear-rodape {
+  left: var(--margem);
+}
+
+.folhear-folha[data-lado="dir"] .folhear-rodape {
+  right: var(--margem);
+  flex-direction: row-reverse;
+}
+
+.folhear-rodape-numero {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.folhear-rodape-parte {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+}
+
+/* ── O texto: colunas de páginas, e duas colunas dentro de cada página ── */
+.folhear-fluxo {
+  position: absolute;
+  top: var(--topo);
+  left: var(--margem);
+  z-index: 1;
+  width: calc(var(--pagina) * var(--por-dupla) - var(--margem) * 2);
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  /* As colunas de FORA: uma por página. */
+  column-count: var(--por-dupla);
+  column-gap: calc(var(--margem) * 2);
+  column-fill: auto;
+  color: var(--livro-tinta);
+  font-family: var(--font-livro), Georgia, serif;
+  font-size: var(--fonte);
+  line-height: 1.3;
+  orphans: 2;
+  widows: 2;
+}
+
+/* As colunas de DENTRO: cada capítulo (e o sumário) em duas colunas de texto,
+   e cada um começa em página nova. */
+.folhear-fluxo > :not(.folhear-fim) {
+  column-count: 2;
+  column-gap: var(--calha);
+  column-fill: auto;
+  break-before: column;
+}
+
+/* Tira a cara de site: margens de cartão e cores de interface saem de tudo
+   que não é diagrama. `:where` deixa essas regras sem peso, pra as regras de
+   livro logo abaixo mandarem. */
+.folhear-fluxo :where(:not(.diagrama, .diagrama *)) {
+  margin-block: 0;
+  color: inherit;
+}
+
+/* O rodapé "próximo capítulo →" é navegação de site; no livro, vira a folha. */
+.folhear-fluxo footer.print-hide {
+  display: none;
+}
+
+.folhear-fluxo p {
+  max-width: none;
+  text-align: justify;
+  hyphens: auto;
+}
+
+.folhear-fluxo p + p {
+  text-indent: 1em;
+}
+
+.folhear-fluxo :is(h2, h3, h4, figcaption, thead) {
+  break-after: avoid;
+  break-inside: avoid;
+}
+
+.folhear-fluxo :is(figure, blockquote, tr, .folhear-inteira) {
+  break-inside: avoid;
+}
+
+/* Título de seção: versalete vermelho-escuro sobre filete dourado. */
+.folhear-fluxo h3 {
+  margin-top: 0.7em;
+  margin-bottom: 0.25em;
+  padding: 0 0 0.05em;
+  border-bottom: 2px solid var(--livro-filete);
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.6em;
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.folhear-fluxo .livro-secao-titulo {
+  padding-left: 0;
+}
+
+.folhear-fluxo .livro-secao-titulo::before {
+  display: none;
+}
+
+.folhear-fluxo h4 {
+  margin-top: 0.6em;
+  margin-bottom: 0.1em;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.24em;
+  font-weight: 700;
+  line-height: 1.12;
+}
+
+.folhear-fluxo h3 + h4 {
+  margin-top: 0.25em;
+}
+
+.folhear-fluxo strong,
+.folhear-fluxo b {
+  font-weight: 700;
+}
+
+.folhear-fluxo ul {
+  margin-block: 0.25em;
+  padding-left: 1.15em;
+  list-style: disc;
+}
+
+.folhear-fluxo li::marker {
+  color: var(--livro-titulo);
+}
+
+.folhear-fluxo a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--livro-titulo) 35%, transparent);
+  text-underline-offset: 0.15em;
+}
+
+/* ── A abertura de capítulo: o título atravessa a página ──────────────── */
+.folhear-fluxo .livro-abertura {
+  column-span: all;
+  margin-bottom: 0.9em;
+  padding: 0 0 0.55em;
+  border-bottom: 2px solid var(--livro-filete);
+  text-align: left;
+}
+
+.folhear-fluxo .livro-abertura > p:first-child {
+  justify-content: flex-start;
+  color: #8a6a2c;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1em;
+  letter-spacing: 0.3em;
+}
+
+.folhear-fluxo .livro-abertura > p:first-child > span:first-child {
+  display: none;
+}
+
+.folhear-fluxo .livro-abertura h2 {
+  margin-top: 0.05em;
+  background: none;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 3em;
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+  text-align: left;
+  -webkit-text-fill-color: currentColor;
+}
+
+.folhear-fluxo .livro-abertura .rule-ornate {
+  display: none;
+}
+
+.folhear-fluxo .livro-abertura > p:last-child {
+  max-width: none;
+  margin-top: 0.4em;
+  color: #5b4630;
+  font-size: 1.1em;
+  text-align: left;
+}
+
+/* A capitular gótica, com a primeira linha em versalete — como no impresso. */
+.folhear-fluxo .dropcap::first-letter {
+  margin-right: 0.1em;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-gotica), Georgia, serif;
+  font-weight: 400;
+}
+
+.folhear-fluxo .dropcap::first-line {
+  font-variant: small-caps;
+  letter-spacing: 0.02em;
+}
+
+/* ── Caixas: a nota verde e o aviso ───────────────────────────────────── */
+.folhear-fluxo .livro-caixa {
+  margin-block: 0.75em;
+  padding: 0.5em 0.75em 0.6em;
+  border: 0;
+  border-radius: 0;
+  background: var(--livro-nota);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 0.1),
+    0 4px 9px -3px rgb(0 0 0 / 0.4);
+  font-family: var(--font-livro-sans), sans-serif;
+  font-size: 0.93em;
+  line-height: 1.28;
+  transition: none;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* O título da caixa desce junto com o começo do texto: uma caixa com só o
+   título no pé da coluna é uma caixa vazia. */
+.folhear-fluxo .livro-caixa > p:first-child {
+  break-after: avoid;
+  margin-bottom: 0.2em;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.14em;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.folhear-fluxo .livro-caixa p {
+  text-align: left;
+  text-indent: 0;
+}
+
+.folhear-fluxo .livro-caixa :is(p, ul) + :is(p, ul) {
+  margin-top: 0.35em;
+}
+
+/* O aviso ("o que a regra NÃO faz"): papel mais claro entre filetes vinho. */
+.folhear-fluxo .livro-aviso {
+  border-block: 3px solid var(--livro-titulo);
+  background: var(--livro-aviso);
+  box-shadow: 0 3px 7px -3px rgb(0 0 0 / 0.35);
+}
+
+.folhear-fluxo .livro-aviso > p:first-child {
+  color: var(--livro-titulo);
+}
+
+/* ── Tabelas: listradas, sem caixa ────────────────────────────────────── */
+.folhear-fluxo .livro-tabela {
+  margin-block: 0.55em 0.8em;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.folhear-fluxo .livro-tabela table {
+  min-width: 0;
+  background: transparent;
+  font-family: var(--font-livro-sans), sans-serif;
+  font-size: 0.92em;
+  line-height: 1.22;
+}
+
+.folhear-fluxo .livro-tabela tr {
+  border: 0;
+  background: transparent;
+}
+
+.folhear-fluxo .livro-tabela tbody tr:nth-child(odd) {
+  background: var(--livro-listra);
+}
+
+.folhear-fluxo .livro-tabela th {
+  padding: 0.2em 0.45em;
+  color: var(--livro-tinta);
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-align: left;
+  text-transform: none;
+  vertical-align: bottom;
+}
+
+.folhear-fluxo .livro-tabela td {
+  padding: 0.18em 0.45em;
+  text-align: left;
+  vertical-align: top;
+}
+
+.folhear-fluxo table.folhear-tabela-justa {
+  font-size: 0.8em;
+}
+
+.folhear-fluxo table.folhear-tabela-justa :is(td, th) {
+  padding-inline: 0.3em;
+}
+
+.folhear-fluxo table.folhear-tabela-apertada :is(td, th) {
+  overflow-wrap: anywhere;
+}
+
+/* A cópia do cabeçalho onde o navegador não repete o <thead> sozinho. */
+.folhear-fluxo tr.folhear-cabecalho-repetido {
+  background: transparent;
+  break-after: avoid;
+}
+
+/* ── Arte impressa no papel ───────────────────────────────────────────── */
+.folhear-fluxo figure:not(.diagrama) {
+  margin-block: 0.6em;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.folhear-fluxo figure:not(.diagrama) img.blur-2xl {
+  display: none;
+}
+
+/* `multiply` é tinta sobre papel: o branco some e a mancha do pergaminho
+   atravessa a arte; a máscara dissolve a borda, como a arte do impresso. */
+.folhear-fluxo figure:not(.diagrama) :is(img, video) {
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 38%, transparent 100%);
+  mask-image: radial-gradient(ellipse 62% 58% at 50% 50%, #000 38%, transparent 100%);
+}
+
+/* Diagrama que não cabe numa coluna atravessa a página, como as tabelas e
+   figuras largas do impresso (ver ajustarFigurasLargas). */
+.folhear-fluxo figure.diagrama.folhear-larga,
+.folhear-fluxo .livro-tabela.folhear-larga {
+  column-span: all;
+}
+
+.folhear-fluxo figure.diagrama {
+  margin-block: 0.75em;
+  border: 1px solid rgb(88 24 13 / 0.25);
+  border-radius: 0;
+  background: rgb(255 250 235 / 0.35);
+  box-shadow: none;
+}
+
+.folhear-fluxo :is(figure, img, video) {
+  max-height: calc(var(--altura) - var(--topo) - var(--pe));
+}
+
+.folhear-fim {
+  display: block;
+  height: 0;
+}
+
+/* ── O sumário do volume ──────────────────────────────────────────────── */
+.folhear-fluxo .folhear-sumario-topo {
+  column-span: all;
+  margin-bottom: 0.8em;
+}
+
+.folhear-sumario-selo {
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-weight: 800;
+}
+
+.folhear-fluxo .folhear-sumario-selo {
+  font-size: 3em;
+  line-height: 1;
+  text-align: center;
+}
+
+.folhear-fluxo .folhear-sumario-capitulos {
+  font-size: 1.2em;
+  line-height: 1.45;
+}
+
+/* O frontispício: a arte do livro aberto, impressa no papel, fechando a
+   página do sumário. Só existe no modo Livro. */
+.folhear-sumario-arte {
+  display: none;
+}
+
+.folhear-fluxo .folhear-sumario-arte {
+  display: block;
+  column-span: all;
+  margin-top: 1.6em;
+}
+
+.folhear-fluxo .folhear-sumario-arte img {
+  width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 60% 62% at 50% 50%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 60% 62% at 50% 50%, #000 35%, transparent 100%);
+}
+
+.folhear-entrada {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+}
+
+.folhear-entrada[data-nivel="capitulo"] {
+  font-weight: 700;
+}
+
+.folhear-entrada[data-nivel="secao"] {
+  padding-left: 1.2em;
+}
+
+.folhear-entrada[data-nivel="sub"] {
+  padding-left: 2.2em;
+  font-size: 0.92em;
+  font-style: italic;
+}
+
+.folhear-entrada-numero {
+  min-width: 1.4em;
+}
+
+.folhear-entrada-pontos {
+  flex: 1;
+  min-width: 1em;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.45;
+  transform: translateY(-0.25em);
+}
+
+.folhear-entrada-pagina {
+  min-width: 1.4em;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.folhear-entrada:hover .folhear-entrada-titulo {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.folhear-fluxo .folhear-entrada[data-nivel="capitulo"] {
+  margin-top: 0.4em;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.45em;
+}
+
+.folhear-fluxo .folhear-entrada {
+  text-decoration: none;
+}
+
+/* ── O índice lateral ─────────────────────────────────────────────────── */
+.folhear-indice-fundo {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgb(10 6 4 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+.folhear-indice {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: min(22rem, 88vw);
+  overflow-y: auto;
+  padding: 1.25rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  background: var(--color-parchment-50);
+  box-shadow: 12px 0 40px -12px rgb(0 0 0 / 0.5);
+  color: var(--color-parchment-800);
+  font-family: var(--font-livro), Georgia, serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.dark .folhear-indice {
+  background: var(--color-parchment-950);
+  color: var(--color-parchment-200);
+}
+
+.folhear-indice .folhear-entrada[data-nivel="capitulo"] {
+  color: var(--color-wine-600);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.1em;
+}
+
+.dark .folhear-indice .folhear-entrada[data-nivel="capitulo"] {
+  color: var(--color-gold-300);
+}
+
+/* ── Setas e régua ────────────────────────────────────────────────────── */
+.folhear-seta {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+  display: grid;
+  width: 3.25rem;
+  height: 6rem;
+  place-items: center;
+  border-radius: 999px;
+  color: #eadcc2;
+  opacity: 0.5;
+  transform: translateY(-50%);
+  transition:
+    opacity 0.2s,
+    background-color 0.2s;
+}
+
+.folhear-seta:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.08);
+  opacity: 1;
+}
+
+.folhear-seta:disabled {
+  cursor: default;
+  opacity: 0.12;
+}
+
+.folhear-seta[data-lado="ant"] {
+  left: 0.5rem;
+}
+
+.folhear-seta[data-lado="prox"] {
+  right: 0.5rem;
+}
+
+@media (max-width: 767px) {
+  .folhear-seta {
+    display: none;
+  }
+}
+
+/* A régua: um fio de ouro, não um controle de vídeo. */
+.folhear-regua {
+  display: flex;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.folhear-regua input {
+  width: min(28rem, 70%);
+  height: 1rem;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.folhear-regua input::-webkit-slider-runnable-track {
+  height: 1px;
+  background: rgb(234 220 194 / 0.3);
+}
+
+.folhear-regua input::-moz-range-track {
+  height: 1px;
+  background: rgb(234 220 194 / 0.3);
+}
+
+.folhear-regua input::-webkit-slider-thumb {
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-top: calc(-0.35rem + 0.5px);
+  border: 0;
+  background: var(--color-gold-400);
+  transform: rotate(45deg);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.folhear-regua input::-moz-range-thumb {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-gold-400);
+  transform: rotate(45deg);
+}
+
+/* ── A folha virando ──────────────────────────────────────────────────────
+ * O texto de verdade troca na hora; o que gira é uma folha do mesmo
+ * pergaminho com duas colunas de "linhas de texto" desenhadas. Em meio
+ * segundo o olho lê página virando — e o livro nunca precisa clonar o DOM nem
+ * virar imagem, que é o que um flipbook de PDF faz. */
+.folhear-virada {
+  position: absolute;
+  top: var(--capa);
+  z-index: 8;
+  width: var(--pagina);
+  height: var(--altura);
+  transform-style: preserve-3d;
+  pointer-events: none;
+  animation-duration: var(--virada-ms, 460ms);
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.3, 0.1, 0.25, 1);
+}
+
+.folhear-virada[data-dir="prox"] {
+  left: calc(var(--capa) + var(--pagina));
+  transform-origin: left center;
+  animation-name: folhear-vira-prox;
+}
+
+.folhear-virada[data-dir="ant"] {
+  left: var(--capa);
+  transform-origin: right center;
+  animation-name: folhear-vira-ant;
+}
+
+/* Uma página só: a folha levanta pela esquerda (ou volta, pra trás). */
+.folhear-virada[data-unica][data-dir="prox"] {
+  left: var(--capa);
+  transform-origin: left center;
+  animation-name: folhear-levanta;
+}
+
+.folhear-virada[data-unica][data-dir="ant"] {
+  left: var(--capa);
+  transform-origin: left center;
+  animation-name: folhear-assenta;
+}
+
+@keyframes folhear-vira-prox {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(-180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes folhear-vira-ant {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes folhear-levanta {
+  0% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(-95deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes folhear-assenta {
+  0% {
+    transform: rotateY(-95deg);
+    opacity: 0.4;
+  }
+  85% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: rotateY(0deg);
+    opacity: 0;
+  }
+}
+
+.folhear-virada-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #efe0bd url("/texturas/pergaminho.avif") center / cover no-repeat;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.folhear-virada-face[data-verso] {
+  transform: rotateY(180deg);
+}
+
+/* A sombra que a folha faz ao levantar: escurece perto da costura. */
+.folhear-virada-face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgb(40 20 5 / 0.3), transparent 45%);
+  animation: folhear-vira-sombra var(--virada-ms, 460ms) ease-in-out both;
+}
+
+.folhear-virada[data-dir="ant"] .folhear-virada-face:not([data-verso])::after,
+.folhear-virada[data-dir="prox"] .folhear-virada-face[data-verso]::after {
+  background: linear-gradient(to left, rgb(40 20 5 / 0.3), transparent 45%);
+}
+
+@keyframes folhear-vira-sombra {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Duas colunas de linhas finas, com parágrafos. */
+.folhear-virada-texto {
+  position: absolute;
+  top: var(--topo);
+  right: var(--margem);
+  bottom: var(--pe);
+  left: var(--margem);
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(var(--fonte) * 0.5),
+    rgb(40 28 16 / 0.22) calc(var(--fonte) * 0.5) calc(var(--fonte) * 0.85),
+    transparent calc(var(--fonte) * 0.85) calc(var(--fonte) * 1.3)
+  );
+  -webkit-mask-image:
+    linear-gradient(
+      to right,
+      #000 0 calc(50% - var(--calha) / 2),
+      transparent calc(50% - var(--calha) / 2) calc(50% + var(--calha) / 2),
+      #000 calc(50% + var(--calha) / 2)
+    ),
+    repeating-linear-gradient(to bottom, #000 0 calc(var(--fonte) * 10.4), transparent calc(var(--fonte) * 10.4) calc(var(--fonte) * 11.7));
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(
+      to right,
+      #000 0 calc(50% - var(--calha) / 2),
+      transparent calc(50% - var(--calha) / 2) calc(50% + var(--calha) / 2),
+      #000 calc(50% + var(--calha) / 2)
+    ),
+    repeating-linear-gradient(to bottom, #000 0 calc(var(--fonte) * 10.4), transparent calc(var(--fonte) * 10.4) calc(var(--fonte) * 11.7));
+  mask-composite: intersect;
+}
+
+/* O título que você pediu acende por um instante. É cor, não movimento. */
+.folhear-destaque {
+  animation: folhear-destaque 1.6s ease-out;
+}
+
+@keyframes folhear-destaque {
+  0%,
+  30% {
+    background-color: rgb(201 173 106 / 0.45);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+/* No papel, o livro folheado vira o fluxo contínuo de sempre. */
+@media print {
+  .folhear[data-modo] {
+    background: none !important;
+  }
+
+  .folhear .folhear-mesa,
+  .folhear .folhear-palco,
+  .folhear .folhear-dimensao,
+  .folhear .folhear-livro,
+  .folhear .folhear-janela,
+  .folhear .folhear-faixa,
+  .folhear .folhear-fluxo,
+  .folhear .folhear-fluxo > * {
+    position: static !important;
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    visibility: visible !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    columns: auto !important;
+  }
+
+  .folhear .folhear-folhas,
+  .folhear .folhear-sumario,
+  .folhear .folhear-livro::after {
+    display: none !important;
+  }
+}
+
+/* ═══ O livro folheado, parte 2: o livro inteiro (2026-09-24) ═══════════════
+ * Guarda, folha de rosto, arte de abertura, catálogo das árvores e verbetes.
+ * Mesma regra da parte 1: tudo atrás de `.folhear-fluxo`, fora de camada. */
+
+/* Tamanhos do Tailwind (em rem, presos à raiz do SITE) viram múltiplos do
+   corpo do livro: a página tem tamanho fixo, e a letra dentro dela também. */
+.folhear-fluxo .text-3xs {
+  font-size: calc(var(--fonte) * 0.72);
+}
+.folhear-fluxo .text-2xs {
+  font-size: calc(var(--fonte) * 0.78);
+}
+.folhear-fluxo .text-xs {
+  font-size: calc(var(--fonte) * 0.86);
+}
+.folhear-fluxo .text-sm {
+  font-size: calc(var(--fonte) * 0.95);
+}
+.folhear-fluxo .text-base {
+  font-size: var(--fonte);
+}
+.folhear-fluxo .text-lg {
+  font-size: calc(var(--fonte) * 1.1);
+}
+.folhear-fluxo .text-xl {
+  font-size: calc(var(--fonte) * 1.2);
+}
+.folhear-fluxo .text-2xl {
+  font-size: calc(var(--fonte) * 1.4);
+}
+.folhear-fluxo .text-3xl {
+  font-size: calc(var(--fonte) * 1.7);
+}
+
+/* Texto branco em selo colorido continua branco (a regra geral põe tinta). */
+.folhear-fluxo .text-white {
+  color: #fbf3df;
+}
+
+/* ── A guarda: o verso da capa ────────────────────────────────────────── */
+.folhear-guarda,
+.folhear-rosto {
+  display: none;
+}
+
+.folhear-fluxo > :is(.folhear-guarda, .folhear-rosto) {
+  display: flex;
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  column-count: auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* O papel da guarda: vinho marmorizado com uma treliça dourada. */
+.folhear-folha[data-pagina="0"] {
+  background: #4a1b17;
+}
+
+.folhear-folha[data-pagina="0"]::before {
+  inset: 0;
+  transform: none;
+  background:
+    repeating-linear-gradient(45deg, rgb(214 180 110 / 0.14) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(-45deg, rgb(214 180 110 / 0.14) 0 1px, transparent 1px 26px),
+    radial-gradient(ellipse at 40% 35%, #7a2e25 0%, #561d18 45%, #33100c 100%);
+}
+
+.folhear-exlibris {
+  padding: 2.4em 3em 2.2em;
+  outline: 1px solid rgb(201 173 106 / 0.8);
+  outline-offset: 7px;
+  border: 2px solid var(--livro-titulo);
+  background: #f1e2bd url("/texturas/pergaminho.avif") center / cover;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.45);
+  color: var(--livro-titulo);
+}
+
+.folhear-exlibris-rotulo {
+  font-family: var(--font-livro-gotica), Georgia, serif;
+  font-size: 3em;
+  line-height: 1;
+}
+
+.folhear-exlibris-nome {
+  margin-top: 0.5em;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.6em;
+  font-weight: 800;
+}
+
+.folhear-exlibris-lema {
+  margin-top: 0.3em;
+  color: #6b5236;
+  font-style: italic;
+}
+
+/* ── A folha de rosto ─────────────────────────────────────────────────── */
+.folhear-rosto-selo {
+  color: #8a6a2c;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.1em;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+}
+
+.folhear-fluxo .folhear-rosto-titulo {
+  margin-top: 0.15em;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 4.2em;
+  font-weight: 800;
+  line-height: 0.95;
+}
+
+.folhear-rosto-sub {
+  margin-top: 0.35em;
+  padding-bottom: 0.5em;
+  border-bottom: 2px solid var(--livro-filete);
+  color: #5b4630;
+  font-size: 1.5em;
+  font-style: italic;
+}
+
+.folhear-rosto-arte {
+  width: 100%;
+  margin-top: 1.4em;
+}
+
+.folhear-rosto-arte img {
+  width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 58% 60% at 50% 50%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 58% 60% at 50% 50%, #000 40%, transparent 100%);
+}
+
+.folhear-rosto-edicao {
+  margin-top: 1.2em;
+  color: #6b5236;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1em;
+  letter-spacing: 0.25em;
+}
+
+/* ── Arte de abertura de capítulo: sangra até a borda da página ───────── */
+.livro-abertura-arte {
+  display: none;
+}
+
+.folhear-fluxo .livro-abertura-arte {
+  display: block;
+  height: 330px;
+  margin: calc(-1 * var(--topo)) calc(-1 * var(--margem)) 0.8em;
+  overflow: hidden;
+}
+
+.folhear-fluxo .livro-abertura-arte img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 98%);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 98%);
+}
+
+/* A arte agora vem antes do "Capítulo N": os seletores da abertura contam por tipo. */
+.folhear-fluxo .livro-abertura > p:first-of-type {
+  justify-content: flex-start;
+  color: #8a6a2c;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1em;
+  letter-spacing: 0.3em;
+}
+
+.folhear-fluxo .livro-abertura > p:first-of-type > span:first-child {
+  display: none;
+}
+
+/* ── O catálogo das árvores: cada árvore é uma "classe" do livro ──────── */
+/* Sem quebra forçada antes de cada árvore: quando a anterior acabava no alto
+   da coluna, o resto dela ficava em branco (a medição achou páginas com 2%
+   de uma coluna ocupada). A árvore flui, e o cabeçalho dela nunca fica no pé. */
+.folhear-fluxo .livro-arvore {
+  margin-top: 1.4em;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.folhear-fluxo .livro-arvore::before {
+  display: none;
+}
+
+.folhear-fluxo .livro-arvore-cabeca {
+  gap: 0.7em;
+  padding: 0 0 0.35em;
+  border-bottom: 3px double var(--livro-filete);
+  border-radius: 0;
+  background: none;
+  cursor: default;
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-arvore-cabeca:hover {
+  background: none;
+}
+
+.folhear-fluxo .livro-arvore-cabeca > span > span:first-child {
+  display: block;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 2.1em;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(2) {
+  margin-left: 0;
+  color: #8a6a2c;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1em;
+  letter-spacing: 0.12em;
+}
+
+.folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(3) {
+  margin-top: 0.2em;
+  font-size: 1em;
+}
+
+.folhear-fluxo .livro-arvore-corpo {
+  padding: 0.5em 0 0;
+  border: 0;
+}
+
+/* As caixas do catálogo seguem as do livro: nota verde, aviso vinho. */
+.folhear-fluxo :is(.livro-mecanica, .livro-proficiencias, .livro-prerequisito) {
+  margin-block: 0.7em;
+  padding: 0.5em 0.75em 0.6em;
+  border: 0;
+  border-radius: 0;
+  background: var(--livro-nota);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 0.1),
+    0 4px 9px -3px rgb(0 0 0 / 0.4);
+  font-family: var(--font-livro-sans), sans-serif;
+  line-height: 1.28;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.folhear-fluxo .livro-mecanica .rounded-full {
+  border-radius: 2px;
+}
+
+.folhear-fluxo .livro-mecanica .bg-wine-600 {
+  background: var(--livro-titulo);
+}
+
+.folhear-fluxo :is(.livro-mecanica, .livro-proficiencias) > p:first-child,
+.folhear-fluxo .livro-mecanica > div:first-child > p {
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.1em;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.folhear-fluxo .livro-maestria {
+  margin-block: 0.6em;
+  padding: 0.5em 0.75em 0.6em;
+  border: 0;
+  border-block: 3px solid var(--livro-titulo);
+  border-radius: 0;
+  background: var(--livro-aviso);
+  box-shadow: 0 3px 7px -3px rgb(0 0 0 / 0.35);
+  line-height: 1.3;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.folhear-fluxo .livro-maestria > p:first-child {
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.15em;
+  font-weight: 800;
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-catalogo h4 {
+  margin-top: 0.9em;
+  padding-bottom: 0.05em;
+  border-bottom: 1px solid var(--livro-filete);
+}
+
+/* ── O verbete: cada habilidade como uma magia do Livro do Jogador ────── */
+.folhear-fluxo .livro-verbete {
+  margin-top: 0.75em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: inherit;
+  line-height: 1.3;
+}
+
+.folhear-fluxo .livro-verbete > div:first-child {
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-verbete-nome {
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.22em;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.folhear-fluxo .livro-verbete-meta {
+  display: block;
+  margin: 0.1em 0 0;
+  color: var(--livro-tinta);
+  font-family: var(--font-livro), Georgia, serif;
+  font-size: 0.72em;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.folhear-fluxo .livro-verbete > :is(p, span, dl, div) + :is(p, span, dl, div) {
+  margin-top: 0.2em;
+}
+
+/* O encantamento: uma citação à margem, não um cartão. */
+.folhear-fluxo .livro-verbete blockquote {
+  margin-top: 0.3em;
+  padding: 0.15em 0 0.15em 0.7em;
+  border: 0;
+  border-left: 2px solid var(--livro-filete);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.folhear-fluxo .livro-verbete .-z-10 {
+  display: none;
+}
+
+.folhear-fluxo .livro-verbete dl {
+  padding-top: 0.2em;
+  border-top: 1px dashed rgb(88 24 13 / 0.3);
+}
+
+/* Brasões e selos das raças e árvores: tinta no papel. */
+.folhear-fluxo :is(.livro-arvore-cabeca, .livro-catalogo) img {
+  mix-blend-mode: multiply;
+}
+
+/* Na caixa de proficiências, o rótulo fica em cima do texto: lado a lado, a
+   coluna de rótulo de 11rem deixava o texto com um palmo de largura. */
+.folhear-fluxo .livro-proficiencias dl > div {
+  flex-direction: column;
+  gap: 0;
+}
+
+.folhear-fluxo .livro-proficiencias dt {
+  width: auto;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-weight: 700;
+}
+
+.folhear-fluxo .livro-proficiencias dl > div + div {
+  margin-top: 0.3em;
+}
+
+/* ── O colofão: a última página ───────────────────────────────────────── */
+.folhear-colofao {
+  display: none;
+}
+
+.folhear-fluxo > .folhear-colofao {
+  display: flex;
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  column-count: auto;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.7em;
+  padding: 0 8%;
+  color: #4a3a28;
+  font-size: 0.92em;
+  text-align: center;
+}
+
+.folhear-fluxo > .folhear-colofao p {
+  text-align: center;
+  text-indent: 0;
+}
+
+.folhear-colofao-selo {
+  margin-bottom: 0.3em;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.5em;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.folhear-fluxo .folhear-colofao-fim {
+  margin-top: 0.8em;
+  color: var(--livro-filete);
+  font-size: 1.4em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * IDENTIDADE "RANOA" — o grimório da Universidade de Magia (em avaliação)
+ *
+ * A estrutura do livro impresso fica (duas colunas, caixas, tabelas); a
+ * linguagem visual é nossa. Três ideias:
+ *
+ * 1. O HEXÁGONO do Mundo de Seis Faces — seis faces, seis lados — como marca:
+ *    medalhão da abertura, capitular, número da página, marcador de seção,
+ *    marca d'água no canto da folha, treliça da guarda.
+ * 2. O AZUL DA MANA no lugar do vermelho de D&D: índigo nos títulos, azul-
+ *    petróleo nos detalhes, ouro velho nos filetes. Capa de tecido índigo com
+ *    douração, e não couro marrom.
+ * 3. COR COM FUNÇÃO: cada capítulo tem uma cor (a da aba na borda do livro),
+ *    e no catálogo cada árvore veste a cor da sua categoria — índigo pra
+ *    Magia, vinho pro Corpo, oliva pra Utilidade. A mesa acha a árvore pela
+ *    cor antes de ler o nome.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.folhear[data-identidade="ranoa"] {
+  --livro-tinta: #1c1a18;
+  --livro-titulo: #22305c;
+  --livro-filete: #b8963f;
+  --livro-mana: #2c7f8c;
+  --livro-fita: #7a1f2b;
+  --livro-nota: rgb(221 230 238 / 0.8);
+  --livro-listra: rgb(34 48 92 / 0.06);
+  --livro-aviso: rgb(255 249 234 / 0.72);
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #2e3548 0%, #1a1e2b 55%, #0e1017 100%);
+}
+
+.dark .folhear[data-identidade="ranoa"] {
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #171b27 0%, #0b0d14 60%, #050609 100%);
+}
+
+/* A capa: tecido índigo, com a trama aparecendo. */
+.folhear[data-identidade="ranoa"][data-modo="livro"] .folhear-livro {
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 0.03) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.06) 0 2px, transparent 2px 4px),
+    radial-gradient(ellipse at 30% 20%, rgb(255 255 255 / 0.1), transparent 60%),
+    linear-gradient(135deg, #2d3c72 0%, #1f2b55 50%, #141b37 100%);
+}
+
+.folhear[data-identidade="ranoa"][data-modo="livro"] .folhear-janela {
+  box-shadow:
+    -2px 0 0 #efe6d2,
+    -4px 0 0 #cfc2a4,
+    -6px 0 0 #e9dfc8,
+    2px 0 0 #efe6d2,
+    4px 0 0 #cfc2a4,
+    6px 0 0 #e9dfc8;
+}
+
+/* O papel: marfim de livro novo, não pergaminho de masmorra. */
+.folhear[data-identidade="ranoa"] .folhear-folha {
+  background: #f4ecda;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-folha::before {
+  filter: sepia(0.2) saturate(0.65) brightness(1.1) contrast(0.9);
+  opacity: 0.8;
+}
+
+/* A marca d'água do hexágono, no canto de fora de cada página. */
+.folhear[data-identidade="ranoa"] .folhear-folha[data-lado="dir"]::after {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,3 91,26 91,74 50,97 9,74 9,26' fill='none' stroke='%2322305c' stroke-width='1.1' opacity='.13'/%3E%3Cpolygon points='50,16 80,33 80,67 50,84 20,67 20,33' fill='none' stroke='%2322305c' stroke-width='.7' opacity='.1'/%3E%3C/svg%3E")
+      no-repeat right -90px bottom -80px / 300px,
+    linear-gradient(to right, rgb(40 45 70 / 0.18), transparent 7%),
+    linear-gradient(to left, rgb(40 45 70 / 0.07), transparent 3%);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-folha[data-lado="esq"]::after {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,3 91,26 91,74 50,97 9,74 9,26' fill='none' stroke='%2322305c' stroke-width='1.1' opacity='.13'/%3E%3Cpolygon points='50,16 80,33 80,67 50,84 20,67 20,33' fill='none' stroke='%2322305c' stroke-width='.7' opacity='.1'/%3E%3C/svg%3E")
+      no-repeat left -90px bottom -80px / 300px,
+    linear-gradient(to left, rgb(40 45 70 / 0.18), transparent 7%),
+    linear-gradient(to right, rgb(40 45 70 / 0.07), transparent 3%);
+}
+
+/* A guarda: índigo com treliça de hexágonos dourados. */
+.folhear[data-identidade="ranoa"] .folhear-folha[data-pagina="0"] {
+  background: #1b2548;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-folha[data-pagina="0"]::before {
+  filter: none;
+  opacity: 1;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='60' viewBox='0 0 52 60'%3E%3Cpolygon points='26,2 50,16 50,44 26,58 2,44 2,16' fill='none' stroke='%23c9ad6a' stroke-width='1' opacity='.28'/%3E%3C/svg%3E")
+      repeat,
+    radial-gradient(ellipse at 45% 40%, #2f3f78 0%, #1f2a55 50%, #121935 100%);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-exlibris {
+  border-color: var(--livro-titulo);
+  color: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-exlibris-rotulo {
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 2.2em;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/* O rodapé: o número dentro de um hexágono índigo. */
+.folhear[data-identidade="ranoa"] .folhear-rodape {
+  align-items: center;
+  color: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-rodape-numero {
+  display: grid;
+  width: 34px;
+  height: 38px;
+  place-items: center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 38'%3E%3Cpolygon points='17,1 33,10 33,28 17,37 1,28 1,10' fill='%2322305c'/%3E%3Cpolygon points='17,4 30,11.5 30,26.5 17,34 4,26.5 4,11.5' fill='none' stroke='%23c9ad6a' stroke-width='.8'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  color: #ead49a;
+  font-size: 13px;
+}
+
+/* ── Títulos ──────────────────────────────────────────────────────────── */
+.folhear[data-identidade="ranoa"] .folhear-fluxo h3 {
+  border-bottom: 1.5px solid var(--livro-filete);
+}
+
+/* O marcador de seção: um hexágono cor de mana antes do título. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo h3::before {
+  content: "";
+  position: static;
+  display: inline-block;
+  width: 0.6em;
+  height: 0.68em;
+  margin-right: 0.35em;
+  border-radius: 0;
+  background: var(--livro-mana);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  vertical-align: -0.02em;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-secao-titulo::before {
+  display: inline-block;
+}
+
+/* A abertura: medalhão hexagonal com o numeral do capítulo. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura {
+  position: relative;
+  border-bottom: 1.5px solid var(--livro-filete);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura > :not(.livro-abertura-arte) {
+  margin-left: 104px;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura::before {
+  content: attr(data-numeral);
+  position: absolute;
+  top: 2px;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  width: 88px;
+  height: 100px;
+  place-items: center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 100'%3E%3Cpolygon points='44,2 86,26 86,74 44,98 2,74 2,26' fill='%231f2b55' stroke='%23c9ad6a' stroke-width='3'/%3E%3Cpolygon points='44,10 79,30 79,70 44,90 9,70 9,30' fill='none' stroke='%23c9ad6a' stroke-width='1' opacity='.6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  color: #ead49a;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 32px;
+  font-weight: 800;
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.35));
+}
+
+/* Com arte, o medalhão se apoia na borda de baixo dela. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura:has(.livro-abertura-arte)::before {
+  top: calc(330px - var(--topo) - 50px);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura > p:first-of-type {
+  color: var(--livro-mana);
+}
+
+/* A capitular: a letra dentro de um hexágono dourado, não gótica. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .dropcap::first-letter {
+  margin-right: 0.14em;
+  padding: 0.1em 0.2em 0.04em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 100' preserveAspectRatio='none'%3E%3Cpolygon points='44,2 86,26 86,74 44,98 2,74 2,26' fill='none' stroke='%23b8963f' stroke-width='3'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-weight: 800;
+}
+
+/* ── Caixas ───────────────────────────────────────────────────────────── */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-caixa {
+  border-top: 3px solid var(--livro-titulo);
+  box-shadow:
+    0 1px 0 rgb(34 48 92 / 0.2),
+    0 5px 12px -5px rgb(20 25 45 / 0.4);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-caixa > p:first-child {
+  color: var(--livro-titulo);
+}
+
+/* O aviso ("o que a regra NÃO faz"): fita vinho na lateral, como marcador de página. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-aviso {
+  border-block: 0;
+  border-top: 0;
+  border-left: 5px solid var(--livro-fita);
+  background: var(--livro-aviso);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-aviso > p:first-child {
+  color: var(--livro-fita);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-maestria {
+  border: 1px solid rgb(184 150 63 / 0.7);
+  border-left: 5px solid var(--livro-filete);
+  background: rgb(255 249 234 / 0.65);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-maestria > p:first-child {
+  color: var(--livro-titulo);
+}
+
+/* A Mecânica Central abre com uma faixa da cor da categoria. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica > div:first-child {
+  margin: 0 -0.75em 0.45em;
+  padding: 0.3em 0.75em;
+  background: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica > div:first-child p {
+  color: #f4ecda;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica .bg-wine-600 {
+  background: var(--livro-filete);
+  color: #1c1a18;
+}
+
+/* ── Tabelas: cabeçalho índigo, linhas finas ──────────────────────────── */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela table {
+  border-bottom: 2px solid var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela thead tr,
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tr.folhear-cabecalho-repetido {
+  background: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela th {
+  padding: 0.32em 0.5em;
+  color: #f4ecda;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.04em;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tbody tr {
+  border-bottom: 1px solid rgb(34 48 92 / 0.14);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tbody tr:nth-child(odd) {
+  background: transparent;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tbody tr:nth-child(even) {
+  background: var(--livro-listra);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela td {
+  padding: 0.28em 0.5em;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela td:first-child {
+  color: var(--livro-titulo);
+  font-weight: 700;
+}
+
+/* ── O catálogo: cada árvore veste a cor da sua categoria ─────────────── */
+.folhear[data-identidade="ranoa"] .livro-arvore[data-categoria="magia"] {
+  --livro-titulo: #22305c;
+}
+
+.folhear[data-identidade="ranoa"] .livro-arvore[data-categoria="corpo"] {
+  --livro-titulo: #7a1f2b;
+}
+
+.folhear[data-identidade="ranoa"] .livro-arvore[data-categoria="utilidade"] {
+  --livro-titulo: #4a5724;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca {
+  padding: 0.5em 0.65em;
+  border-bottom: 0;
+  background: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca > span > span:first-child {
+  color: #f4ecda;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(2) {
+  color: #e2c883;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(3) {
+  color: rgb(244 236 218 / 0.85);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca img {
+  border-radius: 4px;
+  background: #f4ecda;
+  mix-blend-mode: normal;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-verbete-meta {
+  color: var(--livro-mana);
+}
+
+/* ── As abas de capítulo na borda do livro ────────────────────────────── */
+.folhear-abas {
+  position: absolute;
+  top: 110px;
+  right: -34px;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.folhear-aba {
+  display: flex;
+  width: 46px;
+  height: 104px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 9px;
+  border-radius: 0 9px 9px 0;
+  background:
+    linear-gradient(to right, rgb(0 0 0 / 0.25), transparent 40%),
+    var(--cor-aba);
+  box-shadow: 2px 3px 6px rgb(0 0 0 / 0.4);
+  color: #f4ecda;
+  cursor: pointer;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 17px;
+  font-weight: 800;
+  transform: translateX(-14px);
+  transition: transform 0.18s;
+}
+
+.folhear-aba span {
+  writing-mode: vertical-rl;
+}
+
+.folhear-aba:hover {
+  transform: translateX(-6px);
+}
+
+.folhear-aba[data-atual] {
+  transform: translateX(0);
+}
+
+.folhear-aba:focus-visible {
+  outline: 2px solid #ead49a;
+  outline-offset: 2px;
 }
