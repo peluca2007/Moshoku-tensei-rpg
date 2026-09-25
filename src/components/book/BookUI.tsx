@@ -110,7 +110,7 @@ export function FimDoCapitulo({ id }: { id: string }) {
   const folio = proximo ? atual.label.split(" — ")[0] : "Fim do Livro";
 
   return (
-    <footer className="print-hide pt-4 text-center">
+    <footer className="livro-fim print-hide pt-4 text-center">
       <p
         aria-hidden
         className="flex items-center justify-center gap-3 text-2xs font-bold uppercase tracking-[0.3em] text-parchment-500 dark:text-parchment-500"

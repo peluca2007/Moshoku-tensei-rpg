@@ -269,7 +269,8 @@ export function espalharTabelasEspremidas(fluxo: Element, g: Geometria, r: Regua
   fluxo.querySelectorAll(".livro-tabela.folhear-larga").forEach((el) => el.classList.remove("folhear-larga"));
   const alturaMaxima = g.fonte * 1.3 * 7;
   const espremidas = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-tabela")).filter((caixa) => {
-    if (!visivel(caixa) || caixa.closest(".livro-caixa, .livro-arvore, .livro-verbete, .livro-maestria")) return false;
+    if (!visivel(caixa) || caixa.closest(".livro-caixa, .livro-arvore, .livro-verbete, .livro-maestria, .livro-catalogo-itens"))
+      return false;
     const tabela = caixa.querySelector("table");
     if (!tabela) return false;
     const colunas = tabela.tHead?.rows[0]?.cells.length ?? tabela.rows[0]?.cells.length ?? 0;
@@ -443,7 +444,8 @@ export function repetirCabecalhos(fluxo: Element): void {
     const inserir: { corpo: HTMLTableSectionElement; cabecalho: HTMLTableRowElement; antes: HTMLTableRowElement }[] = [];
 
     fluxo.querySelectorAll("table").forEach((tabela) => {
-      if (!visivel(tabela)) return;
+      // O catálogo de itens vira verbetes no livro (sem cabeçalho de tabela).
+      if (!visivel(tabela) || tabela.closest(".livro-catalogo-itens")) return;
       const cabecalho = tabela.tHead?.rows[0];
       const corpo = tabela.tBodies[0];
       if (!cabecalho || !corpo) return;
