@@ -1200,8 +1200,8 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   border-bottom: 3px solid var(--cor);
   background: transparent;
   font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 0.86em;
-  line-height: 1.4;
+  font-size: 0.84em;
+  line-height: 1.32;
 }
 
 .folhear-fluxo .livro-tabela thead tr,
@@ -1211,7 +1211,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 .folhear-fluxo .livro-tabela th {
-  padding: 0.4em 0.6em 0.3em;
+  padding: 0.35em 0.55em 0.25em;
   color: var(--sobre-cor);
   font-family: var(--font-livro-grito), system-ui, sans-serif;
   font-size: 1.12em;
@@ -1233,7 +1233,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 .folhear-fluxo .livro-tabela td {
-  padding: 0.4em 0.6em;
+  padding: 0.3em 0.55em;
   text-align: left;
   vertical-align: top;
 }
