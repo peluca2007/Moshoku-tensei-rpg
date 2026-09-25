@@ -146,14 +146,11 @@ function lerPaginaGuardada(): number | null {
 export default function Folhear({
   toc,
   edicao,
-  identidade = "classica",
   children,
 }: {
   toc: TocEntry[];
   /** A versão do livro, pra folha de rosto ("Edição 0.1.96"). */
   edicao?: string;
-  /** A identidade visual (em avaliação): a clássica, de livro de RPG, ou a de Ranoa. */
-  identidade?: string;
   children: ReactNode;
 }) {
   const raiz = useRef<HTMLDivElement>(null);
@@ -621,7 +618,6 @@ export default function Folhear({
       ref={raiz}
       className={`folhear livro-shell ${FONTES_DO_LIVRO}`}
       data-modo={modo ?? undefined}
-      data-identidade={identidade}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
       style={variaveis}
@@ -785,7 +781,7 @@ export default function Folhear({
                 onPointerCancel={() => (toque.current = null)}
               >
                 <div ref={faixa} className="folhear-faixa">
-                  {livro && geo && paginacao && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} />}
+                  {livro && geo && paginacao && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} toc={toc} />}
 
                   <div
                     ref={fluxo}
@@ -801,7 +797,7 @@ export default function Folhear({
                 </div>
               </div>
 
-              {livro && identidade === "ranoa" && paginacao && geo && (
+              {livro && paginacao && geo && (
                 <Abas
                   toc={toc}
                   paginaDe={paginacao.paginaDe}
@@ -870,29 +866,49 @@ export default function Folhear({
 }
 
 /**
- * As folhas: o papel de cada página e o rodapé — número e o nome da parte,
- * como no livro impresso.
+ * As folhas: o papel de cada página, o rodapé (número e capítulo) e a marca
+ * de aba impressa na borda de fora — como o índice de dedo de um livro de
+ * consulta, que se vê de lado com o livro fechado.
  *
  * Elas moram na mesma faixa do texto e rolam junto: o número da página 12
  * está sempre embaixo do texto da página 12.
  */
-function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginacao; duplas: number }) {
+function Folhas({
+  geo,
+  paginacao,
+  duplas,
+  toc,
+}: {
+  geo: Geometria;
+  paginacao: Paginacao;
+  duplas: number;
+  toc: TocEntry[];
+}) {
   const total = duplas * geo.porDupla;
   return (
     <div aria-hidden className="folhear-folhas">
       {Array.from({ length: total }, (_, k) => {
         const r = paginacao.rotulos[k];
         const lado = geo.porDupla === 1 ? (k % 2 === 0 ? "dir" : "esq") : k % 2 === 0 ? "esq" : "dir";
-        const parte = !r || r.abertura ? "" : (r.capitulo ?? "").replace(" · ", " | ");
+        const parte = !r || r.abertura ? "" : (r.capitulo ?? "").replace(" · ", " — ");
+        const indice = r?.capituloId ? toc.findIndex((c) => c.id === r.capituloId) : -1;
         return (
           <div
             key={k}
             className="folhear-folha"
             data-lado={lado}
-            data-variante={k % 4}
             data-pagina={k}
-            style={{ left: k * geo.pagina }}
+            data-capitulo={r?.capituloId}
+            style={{
+              left: k * geo.pagina,
+              // A guarda é a prancha colorida: pintada na folha, que vai de
+              // borda a borda — dentro das colunas, a arte não passaria da mancha.
+              backgroundImage: k === 0 ? `url(${ARTE_DA_FOLHA_DE_ROSTO.src})` : undefined,
+            }}
           >
+            {k >= 2 && indice >= 0 && (
+              <span className="folhear-marca" style={{ "--aba-i": indice } as CSSProperties} />
+            )}
             {/* A guarda e a folha de rosto não levam número, como no impresso. */}
             {k >= 2 && k < paginacao.total && (
               <span className="folhear-rodape">
@@ -908,15 +924,13 @@ function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginac
 }
 
 /**
- * AS ABAS — o índice de dedo de um livro de consulta, na borda das folhas.
+ * AS ABAS — o índice de dedo, saindo da borda das folhas.
  *
- * Cada capítulo tem uma aba da cor dele saindo por baixo das páginas; a do
- * capítulo aberto sai mais. Clicar leva ao capítulo. É o jeito mais rápido de
- * pular do Combate pro Bestiário no meio da sessão — e a cor da aba é a cor
- * que o capítulo usa por dentro.
+ * Cada capítulo tem uma aba da cor dele; a do capítulo aberto sai mais.
+ * Clicar leva ao capítulo — o jeito mais rápido de pular do Combate pro
+ * Bestiário no meio da sessão. A cor da aba é a cor que o capítulo usa por
+ * dentro (definida uma vez só, no folhear.css, por id de capítulo).
  */
-const CORES_DAS_ABAS = ["#a8843a", "#2c7f8c", "#22305c", "#4d5a26", "#7a1f2b", "#8a4f1c", "#4a4f5c"];
-
 function Abas({
   toc,
   paginaDe,
@@ -942,8 +956,8 @@ function Abas({
             key={c.id}
             type="button"
             className="folhear-aba"
+            data-capitulo={c.id}
             data-atual={i === atual ? "" : undefined}
-            style={{ "--cor-aba": CORES_DAS_ABAS[i % CORES_DAS_ABAS.length] } as CSSProperties}
             onClick={() => aoEscolher(c.id)}
             aria-label={c.label}
             aria-current={i === atual ? "true" : undefined}
@@ -958,34 +972,30 @@ function Abas({
 }
 
 /**
- * A GUARDA — o verso da capa, a primeira página que se vê ao abrir o livro.
- *
- * O papel dela é pintado pela folha (`[data-pagina="0"]` no CSS); aqui fica só
- * o ex-líbris, o selo de "este livro pertence a". Só existe no modo Livro.
+ * A GUARDA — uma ilustração colorida de página inteira, como as pranchas que
+ * abrem um volume de light novel. A arte é pintada na folha da página 1 (ver
+ * Folhas); aqui fica a página no fluxo, com a legenda no pé. Só no modo Livro.
  */
 function Guarda() {
   return (
-    <section aria-hidden className="folhear-guarda">
-      <div className="folhear-exlibris">
-        <p className="folhear-exlibris-rotulo">Ex Libris</p>
-        <p className="folhear-exlibris-nome">Mushoku Tensei RPG</p>
-        <p className="folhear-exlibris-lema">O Mundo de Seis Faces</p>
-      </div>
+    <section className="folhear-guarda" aria-label={ARTE_DA_FOLHA_DE_ROSTO.alt}>
+      <p className="folhear-guarda-legenda">O Mundo de Seis Faces</p>
     </section>
   );
 }
 
-/** A FOLHA DE ROSTO: título, subtítulo, arte e edição. Só no modo Livro. */
+/** A FOLHA DE ROSTO: título, subtítulo e edição, no branco. Só no modo Livro. */
 function FolhaDeRosto({ edicao }: { edicao?: string }) {
   return (
     <section className="folhear-rosto" aria-label="Folha de rosto">
       <p className="folhear-rosto-selo">Livro de Regras</p>
-      <h1 className="folhear-rosto-titulo">Mushoku Tensei RPG</h1>
+      <h1 className="folhear-rosto-titulo">
+        Mushoku Tensei <span>RPG</span>
+      </h1>
       <p className="folhear-rosto-sub">O Mundo de Seis Faces</p>
-      <figure className="folhear-rosto-arte">
-        {/* eslint-disable-next-line @next/next/no-img-element -- arte impressa no papel, sem otimização de tamanho. */}
-        <img src={ARTE_DA_FOLHA_DE_ROSTO.src} alt={ARTE_DA_FOLHA_DE_ROSTO.alt} width={1920} height={1080} />
-      </figure>
+      <p className="folhear-rosto-nota">
+        Um sistema de RPG de mesa para jogar no mundo de <i>Mushoku Tensei</i>.
+      </p>
       {edicao && <p className="folhear-rosto-edicao">Edição {edicao}</p>}
     </section>
   );
@@ -1055,7 +1065,7 @@ function Sumario({
       )}
       <ol className="folhear-sumario-capitulos">
         {toc.map((cap, i) => (
-          <li key={cap.id}>
+          <li key={cap.id} data-capitulo={cap.id}>
             <a ref={i === 0 ? primeiro : undefined} href={`#${cap.id}`} className="folhear-entrada" data-nivel="capitulo">
               <span className="folhear-entrada-numero">{numeralDoCapitulo(cap.label)}</span>
               <span className="folhear-entrada-titulo">{rotuloDoCapitulo(cap.label, false)}</span>

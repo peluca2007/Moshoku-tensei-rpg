@@ -33,12 +33,22 @@ export function ChapterTitle({
   children: ReactNode;
 }) {
   const arte = ARTE_DAS_ABERTURAS[id];
-  // O numeral do capítulo (IV), pro medalhão da abertura no livro folheado.
-  const n = numero?.match(/\d+/)?.[0];
-  const numeral = n ? (["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"][Number(n) - 1] ?? n) : "◆";
+  /*
+   * O número grande ("04") e o capítulo em kanji na vertical ("第四章") da
+   * abertura no livro folheado — o jeito de um volume de light novel abrir
+   * capítulo. Abertura é o prólogo (序章); os Apêndices, o apêndice (付録).
+   */
+  const n = Number(numero?.match(/\d+/)?.[0] ?? NaN);
+  const kanji = ["〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+  const numeroGrande = Number.isNaN(n) ? (id === "cap0" ? "00" : "Ap") : String(n).padStart(2, "0");
+  const numeroKanji = Number.isNaN(n) ? (id === "cap0" ? "序章" : "付録") : `第${kanji[n] ?? n}章`;
   return (
-    <header className="livro-abertura scroll-mt-24 text-center" data-numeral={numeral}>
-      {/* A arte da abertura só aparece no livro folheado (ver globals.css). */}
+    <header
+      className="livro-abertura scroll-mt-24 text-center"
+      data-num={numeroGrande}
+      data-kanji={numeroKanji}
+    >
+      {/* A arte da abertura só aparece no livro folheado (ver folhear.css). */}
       {arte && (
         <figure aria-hidden className="livro-abertura-arte">
           {/* eslint-disable-next-line @next/next/no-img-element -- arte impressa no papel; carrega só no livro folheado. */}

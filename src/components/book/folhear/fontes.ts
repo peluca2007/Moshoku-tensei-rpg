@@ -1,45 +1,31 @@
-import { Alegreya, Alegreya_SC, Alegreya_Sans, UnifrakturMaguntia } from "next/font/google";
+import { Shippori_Mincho, Zen_Kaku_Gothic_New } from "next/font/google";
 
 /**
- * As letras do livro impresso.
+ * As letras do livro — a voz de um volume de light novel.
  *
- * O Livro do Jogador usa três vozes: uma serifada de livro no corpo, versalete
- * nos títulos e uma sem serifa nas caixas laterais e tabelas. A família
- * Alegreya tem as três desenhadas juntas (serifada, SC e Sans), com um traço
- * de pena que combina com fantasia sem virar fonte "de fantasia". A gótica
- * fica só na capitular.
+ * Mushoku Tensei nasceu light novel, e a identidade do livro vem de lá, não do
+ * livro de RPG ocidental: títulos em Shippori Mincho (um mincho japonês, com o
+ * contraste fino dos títulos de volume) e rótulos, tabelas e números em Zen
+ * Kaku Gothic (o gótico que acompanha o mincho nos livros japoneses). O corpo
+ * continua em Literata, que o site já carrega e que foi desenhada pra ler em
+ * tela.
  *
  * Carregadas aqui, e não no layout, pra que só o livro folheado pague por
  * elas. O next/font hospeda os arquivos com o site, então funcionam offline.
  */
-const corpo = Alegreya({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-livro",
-  display: "swap",
-});
-
-const versalete = Alegreya_SC({
-  subsets: ["latin"],
+const titulos = Shippori_Mincho({
+  subsets: ["latin", "latin-ext"],
   weight: ["500", "700", "800"],
-  variable: "--font-livro-sc",
+  variable: "--font-livro-titulo",
   display: "swap",
 });
 
-const semSerifa = Alegreya_Sans({
-  subsets: ["latin"],
+const rotulos = Zen_Kaku_Gothic_New({
+  subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-livro-sans",
+  variable: "--font-livro-rotulo",
   display: "swap",
 });
 
-const gotica = UnifrakturMaguntia({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-livro-gotica",
-  display: "swap",
-});
-
-/** As variáveis das quatro, pra entrar no `className` da raiz do livro. */
-export const FONTES_DO_LIVRO = [corpo, versalete, semSerifa, gotica].map((f) => f.variable).join(" ");
+/** As variáveis das duas, pra entrar no `className` da raiz do livro. */
+export const FONTES_DO_LIVRO = [titulos, rotulos].map((f) => f.variable).join(" ");
