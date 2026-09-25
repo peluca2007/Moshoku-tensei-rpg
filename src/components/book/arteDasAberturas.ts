@@ -12,9 +12,12 @@ export const ARTE_DAS_ABERTURAS: Record<string, { src: string; alt: string }> = 
     src: "/faixas/convite.jpg",
     alt: "Um grupo de aventureiros entrando numa masmorra à luz de tocha.",
   },
+  // Era a foto de uma pena desenhando um círculo mágico em pergaminho — o
+  // visual do livro antigo, que o autor não quer mais (2026-09-25). O livro
+  // mágico aberto, com as runas roxas acesas, é da cor do capítulo.
   cap2: {
-    src: "/faixas/criar.jpg",
-    alt: "Uma mão desenhando um círculo mágico a pena, sobre pergaminho.",
+    src: "/faixas/livro.jpg",
+    alt: "Um livro de magia aberto entre velas, com runas roxas acesas nas páginas.",
   },
   cap4: {
     src: "/faixas/iniciativa.jpg",

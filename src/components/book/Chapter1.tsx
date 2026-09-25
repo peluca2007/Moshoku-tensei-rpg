@@ -1,5 +1,5 @@
 import { RACES } from "@/data/races";
-import RaceCrest from "../RaceCrest";
+import FichaDeRaca, { QuadroDasRacas, VitrineDasRacas } from "./FichaDeRaca";
 import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
 import { RANK_BONUS, RANK_REQUIREMENTS, RANKS } from "@/lib/types";
 import { DESINTOX_PA_COST, RANK_PA_COST } from "@/data/trees/shared";
@@ -597,6 +597,7 @@ export default function Chapter1() {
           linhagem determina traços genéticos e mecânicos — os detalhes de cada uma também aparecem direto na
           ficha ao selecioná-la.
         </P>
+        <QuadroDasRacas />
         <Warning title="Sorteio ou escolha: as duas portas, e o preço de cada uma">
           <P>
             <b>O padrão do livro é sortear</b> — a raça e o Antecedente (seção 6) saem do d100, e você joga o
@@ -649,23 +650,11 @@ export default function Chapter1() {
             decide se investe.
           </P>
         </Aside>
-        <div className="space-y-2.5">
-          {RACES.map((race) => (
-            <div key={race.id} data-raca={race.id} className="livro-raca print-avoid-break flex gap-3 rounded-xl border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40">
-              <RaceCrest race={race} size={56} />
-              <div className="min-w-0">
-                <p className="livro-raca-nome font-semibold text-parchment-900 dark:text-parchment-50">{race.name}</p>
-                <p className="livro-raca-descricao mt-0.5 text-parchment-600 dark:text-parchment-400">{race.description}</p>
-                <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-parchment-700 dark:text-parchment-300">
-                  {(race.fixedSkills ?? []).map((s) => (
-                    <li key={`pericia-${s}`}>Perícia: {s}.</li>
-                  ))}
-                  {race.traits.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+        <VitrineDasRacas />
+        {/* Uma página inteira por raça no livro folheado (ver FichaDeRaca). */}
+        <div className="livro-racas space-y-4">
+          {RACES.map((race, i) => (
+            <FichaDeRaca key={race.id} race={race} ordem={i + 1} total={RACES.length} />
           ))}
         </div>
       </Section>

@@ -45,6 +45,7 @@ import {
   ajustarTabelasLargas,
   calcularGeometria,
   espalharTabelasEspremidas,
+  esticarVitrines,
   limparCabecalhosRepetidos,
   medirPaginas,
   numeralDoCapitulo,
@@ -408,6 +409,7 @@ export default function Folhear({
     });
     esquecerIndice(f);
     medir("cabecalhos", () => repetirCabecalhos(f));
+    medir("vitrines", () => esticarVitrines(f, g, regua(fx)));
     const r = regua(fx);
     const p = medir("medir", () => medirPaginas(f, fim.current!, r, g, toc));
     const total = Math.ceil(p.total / porDupla);
@@ -1070,7 +1072,8 @@ function Folhas({
         const r = paginacao.rotulos[k];
         const lado = geo.porDupla === 1 ? (k % 2 === 0 ? "dir" : "esq") : k % 2 === 0 ? "esq" : "dir";
         const capitulo = (r?.capitulo ?? "").split(" · ")[0];
-        const parte = !r || r.abertura ? "" : r.arvoreNome ? `${capitulo} — ${r.arvoreNome}` : (r.capitulo ?? "").replace(" · ", " — ");
+        const nome = r?.arvoreNome ?? r?.racaNome;
+        const parte = !r || r.abertura ? "" : nome ? `${capitulo} — ${nome}` : (r.capitulo ?? "").replace(" · ", " — ");
         const indice = r?.capituloId ? toc.findIndex((c) => c.id === r.capituloId) : -1;
         return (
           <div
@@ -1080,6 +1083,7 @@ function Folhas({
             data-pagina={k}
             data-capitulo={r?.capituloId}
             data-arvore={r?.arvoreId}
+            data-raca={r?.racaId}
             style={{
               left: k * geo.pagina,
               // A guarda é a prancha colorida: pintada na folha, que vai de
@@ -1279,8 +1283,9 @@ function Sumario({
       </ol>
       {abertura && (
         <figure aria-hidden className="folhear-sumario-arte">
+          {/* O livro mágico que ficava aqui abre o Capítulo 2 (arteDasAberturas.ts). */}
           {/* eslint-disable-next-line @next/next/no-img-element -- arte impressa no papel, sem otimização de tamanho. */}
-          <img src="/faixas/livro.jpg" alt="" width={680} height={384} />
+          <img src="/faixas/encontros.jpg" alt="" width={736} height={368} />
         </figure>
       )}
     </nav>
@@ -1367,7 +1372,7 @@ function PainelDeBusca({
 
   const onde = (p: number) => {
     const r = rotulos[p];
-    return r?.arvoreNome ?? r?.secao ?? r?.capitulo ?? "";
+    return r?.arvoreNome ?? r?.racaNome ?? r?.secao ?? r?.capitulo ?? "";
   };
 
   let aviso: string;

@@ -1,9 +1,9 @@
 # Arte para o livro — lista de pedidos
 
-O livro folheado (`/livro/folhear`) tem a cara de um **artbook de light novel**: papel claro, arte
-colorida e nítida, uma cor por capítulo. Ele ainda roda com as artes que o projeto tinha — e numa
-identidade assim, **a arte é o que mais pesa**. Esta é a lista do que falta pra ele ficar no nível do Livro do Jogador. **Você pega, eu
-organizo e ligo no livro.**
+O livro folheado (`/livro/folhear`) é um **livro noturno**: página quase preta, letra gritada, uma cor
+por capítulo, por árvore e por raça. Nele a arte de anime acende em cima do papel escuro, e **a arte é o
+que mais pesa**. O livro ainda roda com as artes provisórias que o projeto tinha. Esta é a lista do que
+falta. **Você pega, eu organizo e ligo no livro.**
 
 ## Como mandar
 
@@ -17,11 +17,44 @@ organizo e ligo no livro.**
 **Tamanho mínimo:** o livro é mostrado grande e com zoom. Imagem pequena fica borrada, então vale mais uma
 imagem boa do que três médias.
 
-## Prioridade 1 — o que mais muda a cara do livro
+## Prioridade 1 — as doze raças (entram sozinhas)
+
+Cada raça tem uma página inteira no Cap. 1, com um quadro grande reservado pra ilustração. **Não precisa
+mexer em código:** salve o arquivo com o nome da tabela e recarregue o livro. A arte aparece no quadro da
+página da raça e na vitrine das doze raças. Enquanto não chega, o quadro mostra o brasão, e no
+`npm run dev` escreve o nome do arquivo que falta.
+
+- **Pasta:** `public/livro/racas/` (crie a pasta).
+- **Formato:** `.webp`, `.jpg`, `.png` ou `.avif`. O nome é **em minúsculas**, igual à tabela: o servidor
+  diferencia maiúsculas.
+- **Enquadramento:** o quadro é **deitado e largo**, mais ou menos 16:9 nas raças de texto curto e 3:1
+  nas de texto longo (o quadro cede lugar aos traços). O livro recorta pelo centro e sobe um pouco (mira o
+  terço de cima), então **o rosto no terço de cima**. Deixe calmos a **borda direita** (onde desce o nome
+  em japonês) e o **canto de baixo à esquerda** (onde entra o carimbo da raridade).
+- **Tamanho mínimo:** 1600 × 900.
+- **Onde procurar:** Zerochan, Pixiv, Safebooru, Wallhaven, capturas do anime em pausa (Crunchyroll), a
+  Wiki de Mushoku Tensei (Fandom) pra saber quem é de qual raça.
+
+| Arquivo | Raça | Quem pode ser (sugestão) | O que buscar | Fonte |
+| --- | --- | --- | --- | --- |
+| `humano.webp` | Humano (Jinzoku) | Paul, Zenith ou o Rudeus adulto | `paul greyrat`, `rudeus greyrat adult` | |
+| `elfo.webp` | Elfo (Erufu) | Elinalise Dragonroad | `elinalise dragonroad` | |
+| `anao.webp` | Anão (Dowaafu) | Talhand | `talhand mushoku tensei` | |
+| `hobbit.webp` | Povo Pequeno / Hobbit (Hobitto) | Qualquer hobbit/halfling de anime, ou um PNG de fantasia | `halfling anime art`, `hobbit fantasy art` | |
+| `raca-fera.webp` | Raça Fera (Juuzoku) | Ghislaine, Rinia ou Pursena | `ghislaine dedoldia`, `rinia pursena` | |
+| `celestial.webp` | Raça Celestial (Tenzoku) | Um guerreiro alado da Raça Celestial | `mushoku tensei heaven race`, `winged warrior anime` | |
+| `oceano.webp` | Raça do Oceano (Kaizoku) | Um tritão ou sereia guerreira | `merfolk warrior anime`, `mushoku tensei sea race` | |
+| `migurd.webp` | Migurd | Roxy Migurdia | `roxy migurdia` | |
+| `superd.webp` | Superd | Ruijerd Superdia | `ruijerd superdia` | |
+| `ogro.webp` | Ogro (Onizoku) | Um guerreiro oni | `oni warrior anime`, `mushoku tensei oni` | |
+| `demonio-imortal.webp` | Demônio Imortal | Badigadi ou Atoferatofe | `badigadi`, `atofe mushoku tensei` | |
+| `dragao.webp` | Raça Dragão (Ryuzoku) | Orsted, ou a Raça Dragão da lenda (Laplace) | `orsted mushoku tensei`, `laplace mushoku tensei` | |
+
+## Prioridade 2 — aberturas e capa
 
 | Arquivo | Pasta | O que é | Tamanho mínimo | Onde procurar | O que buscar | Fonte |
 | --- | --- | --- | --- | --- | --- | --- |
-| `abertura-cap0.jpg` … `abertura-cap5.jpg`, `abertura-apendices.jpg` | `public/livro/capitulos/` | A arte do alto da página de abertura de cada capítulo, de margem a margem, com o número grande e o kanji do capítulo por cima. **Arte de anime, colorida, sem texto e sem legenda**; o canto de cima à direita precisa ser mais calmo (é onde entra o kanji). Uma cena por capítulo; sugestões abaixo. | 1600 × 900 (deitada) | Capturas do anime (Crunchyroll, em pausa, na maior resolução); Wallhaven; Zerochan; Pixiv; ArtStation; Safebooru | `mushoku tensei scenery`, `mushoku tensei wallpaper 4k`, o nome da cena | |
+| `abertura-cap0.jpg` … `abertura-cap5.jpg`, `abertura-apendices.jpg` | `public/livro/capitulos/` | A arte do alto da página de abertura de cada capítulo, de margem a margem, com o número grande e o kanji do capítulo por cima. **Arte de anime, colorida, sem texto e sem legenda**; o canto de cima à direita precisa ser mais calmo (é onde entra o kanji). Uma cena por capítulo; sugestões abaixo. Hoje os capítulos 1 e 3 e os Apêndices abrem sem arte. | 1600 × 900 (deitada) | Capturas do anime (Crunchyroll, em pausa, na maior resolução); Wallhaven; Zerochan; Pixiv; ArtStation; Safebooru | `mushoku tensei scenery`, `mushoku tensei wallpaper 4k`, o nome da cena | |
 | `guarda.jpg` | `public/livro/capa/` | A prancha colorida de página inteira que abre o livro (hoje é a paisagem do vale). Arte **em pé**, bonita sozinha, de preferência com os personagens. | 1700 × 2200 (em pé) | Pixiv, Zerochan (arte oficial de volume ou de "key visual"), Wallhaven | `mushoku tensei key visual`, `mushoku tensei light novel illustration` | |
 | `capa.jpg` | `public/livro/capa/` | A capa do livro, a primeira página. Arte em pé, com espaço vazio em cima pro título. | 1700 × 2200 (em pé) | Wallhaven, Pixiv, Zerochan (arte oficial de volume da light novel funciona muito bem) | `mushoku tensei key visual`, `mushoku tensei light novel cover` | |
 
@@ -37,17 +70,16 @@ imagem boa do que três médias.
 | Cap. 5 — Entre Aventuras | Taverna, Guilda de Aventureiros ou o acampamento do Dead End. |
 | Apêndices | O mapa do Mundo de Seis Faces. |
 
-## Prioridade 2 — acabamento
+## Prioridade 3 — acabamento
 
 | Arquivo | Pasta | O que é | Tamanho mínimo | Onde procurar | O que buscar | Fonte |
 | --- | --- | --- | --- | --- | --- | --- |
-| `livro.jpg` (substitui o atual) | `public/faixas/` | A arte do livro mágico aberto com velas, que abre o sumário. A atual tem só 680 × 384 (já estava no `O-QUE-FALTA.md`). A mesma imagem em resolução maior, ou outra parecida. | 1600 × 900 | Busca reversa da atual no Google Imagens ou TinEye; Freepik | `magic book open candles fantasy art` | |
+| `livro.jpg` (substitui o atual) | `public/faixas/` | O livro mágico aberto com velas e runas roxas, que hoje abre o Capítulo 2 (até chegar a `abertura-cap2.jpg`). A atual tem só 680 × 384. A mesma imagem em resolução maior, ou outra parecida. | 1600 × 900 | Busca reversa da atual no Google Imagens ou TinEye; Freepik | `magic book open candles fantasy art` | |
+| `sumario.jpg` | `public/livro/capa/` | A arte da página do sumário (hoje é a caverna de cristal, 736 × 368). Uma paisagem do mundo, deitada. | 1600 × 900 | Wallhaven, Zerochan | `mushoku tensei scenery` | |
 | `mapa-do-mundo.jpg` | `public/livro/mapa/` | O mapa do Mundo de Seis Faces, pra página inteira do Apêndice. | 2400 × 1600 | Wiki de Mushoku Tensei (Fandom), Reddit r/mushokutensei, Pixiv | `mushoku tensei world map`, `six faced world map` | |
 | `pagina-inteira-cap1.jpg` … `pagina-inteira-cap5.jpg` | `public/livro/capitulos/` | Ilustrações de página inteira, pra pôr entre capítulos, como as pranchas do livro impresso. Opcional: duas ou três já mudam o livro. | 1700 × 2200 (em pé) | Pixiv, ArtStation, Zerochan | nome do personagem + `mushoku tensei fanart` | |
-| `marca-dagua.png` | `public/livro/ornamentos/` | Um emblema pra aparecer bem apagado no fundo de algumas páginas (como o "&" do D&D). PNG **com fundo transparente**, de uma cor só. | 1000 × 1000 | Freepik, rawpixel (domínio público), Wikimedia Commons | `fantasy emblem png transparent`, `heraldic crest png`, `magic circle png transparent` | |
-| `cantoneira.png` | `public/livro/ornamentos/` | Um ornamento de canto (filigrana) pra moldura das páginas de abertura. PNG transparente. | 800 × 800 | Old Book Illustrations, rawpixel, Freepik | `vintage corner ornament png`, `filigree corner transparent` | |
 
-## Prioridade 3 — vídeo e movimento
+## Prioridade 4 — vídeo e movimento
 
 O livro já toca os vídeos curtos das habilidades. Pra página de abertura de um capítulo ganhar movimento,
 o que serve é um **laço curto**:
@@ -58,8 +90,8 @@ o que serve é um **laço curto**:
 
 ## O que eu faço com cada coisa
 
-- **Papel e couro:** entram direto como o papel e a capa de todas as páginas. É a mudança mais visível.
-- **Aberturas e capa:** arte impressa no papel (a tinta se funde com a mancha do pergaminho), de margem a
-  margem no alto da página.
+- **Raças:** entram sozinhas pelo nome do arquivo (ver Prioridade 1). Eu só confiro o recorte.
+- **Aberturas e capa:** arte sangrando de margem a margem no alto da página, com o número vazado e o kanji
+  do capítulo por cima, e a sombra da cor do capítulo fora de registro.
 - **Pranchas e mapa:** páginas inteiras entre os capítulos.
 - **Vídeos:** tocam só quando a página está aberta, sem som, e param ao virar.

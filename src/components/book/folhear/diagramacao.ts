@@ -102,6 +102,9 @@ export interface Rotulo {
   /** A árvore do catálogo que ocupa a página (fogo, deus-da-espada…): a cor e o kanji dela. */
   arvoreId?: string;
   arvoreNome?: string;
+  /** A raça dona da página (cada raça tem uma página inteira no Cap. 1): a cor e o kanji dela. */
+  racaId?: string;
+  racaNome?: string;
   secao?: string;
   /** Página de abertura (sumário, folha de rosto de capítulo): sem rótulo no rodapé. */
   abertura: boolean;
@@ -362,7 +365,10 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
   };
   const empurrar = new Set<Element>();
   fluxo.querySelectorAll(SELETOR_TITULOS).forEach((t) => {
-    if (!visivel(t) || t.closest(".livro-abertura, .folhear-sumario, .folhear-rosto, .folhear-colofao")) return;
+    // A página de raça é uma página inteira de altura fixa: o título dela não
+    // tem como ficar longe do texto, e a leitura japonesa à direita do nome
+    // enganaria a conferência (ela mora na metade direita da página).
+    if (!visivel(t) || t.closest(".livro-abertura, .folhear-sumario, .folhear-rosto, .folhear-colofao, .livro-raca")) return;
     const rt = t.getClientRects();
     if (rt.length === 0) return;
     const titulo = rt[rt.length - 1];
@@ -452,6 +458,40 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     mudou++;
   });
   return mudou;
+}
+
+/**
+ * A VITRINE ESTICA ATÉ O PÉ DA PÁGINA.
+ *
+ * Um bloco de página inteira (as páginas de raça) sempre começa numa página
+ * nova, e o texto que vem antes dele termina onde terminar: sobrava um buraco
+ * de meia página, às vezes mais, antes da primeira raça. A vitrine
+ * (`.livro-vitrine`) mora nesse lugar. Ela nasce com altura zero, e aqui ganha
+ * a altura exata que falta até o pé da página — o CSS reorganiza o conteúdo
+ * pelo tamanho que ela recebeu (consulta de contêiner). Com menos de ~150 px
+ * sobrando ela não aparece: um pé de página curto em branco é normal.
+ *
+ * Roda por último, depois de tudo que mexe em onde as coisas caem: o que vem
+ * depois da vitrine começa numa página nova de qualquer jeito, então esticá-la
+ * não muda mais nada no livro.
+ */
+export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
+  const alturaDaColuna = g.altura - g.topo - g.pe;
+  const vitrines = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-vitrine"));
+  if (vitrines.length === 0) return;
+  vitrines.forEach((el) => {
+    el.classList.remove("folhear-vitrine-cheia");
+    el.style.removeProperty("--altura-vitrine");
+  });
+  const topo = fluxo.getBoundingClientRect().top;
+  // Lê tudo antes de escrever: cada escrita rediagramaria o livro.
+  const medidas = vitrines.map((el) => alturaDaColuna - (el.getBoundingClientRect().top - topo) / r.k);
+  vitrines.forEach((el, i) => {
+    const resto = Math.floor(medidas[i]) - 2;
+    if (resto < 150) return;
+    el.style.setProperty("--altura-vitrine", `${resto}px`);
+    el.classList.add("folhear-vitrine-cheia");
+  });
 }
 
 /**
@@ -594,6 +634,12 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
     eventos.push({ pagina: pagina(el), arvoreId: el.dataset.arvore, arvoreNome: nome });
   });
 
+  // As raças: uma página cada, e a página toma a cor e o kanji da raça.
+  const racas = new Map<number, { id?: string; nome?: string }>();
+  fluxo.querySelectorAll<HTMLElement>(".livro-raca[data-raca]").forEach((el) => {
+    racas.set(pagina(el), { id: el.dataset.raca, nome: el.querySelector(".livro-raca-nome")?.textContent ?? undefined });
+  });
+
   const aberturas = new Set<number>();
   fluxo.querySelectorAll(".folhear-guarda, .folhear-rosto, .folhear-sumario, .livro-abertura, .folhear-colofao").forEach((el) => aberturas.add(pagina(el)));
 
@@ -622,7 +668,17 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
         secao = e.secao;
       }
     }
-    rotulos.push({ capitulo, capituloId, arvoreId, arvoreNome, secao, abertura: aberturas.has(p) });
+    const raca = racas.get(p);
+    rotulos.push({
+      capitulo,
+      capituloId,
+      arvoreId,
+      arvoreNome,
+      racaId: raca?.id,
+      racaNome: raca?.nome,
+      secao,
+      abertura: aberturas.has(p),
+    });
   }
 
   return { total, rotulos, paginaDe };

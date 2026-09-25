@@ -33,6 +33,15 @@ em `src/data/` e `src/components/book/`; esta frente mexe em **como** o livro é
   alvo, pauta…), o selo antes do nome de cada habilidade, e o jeito de falar da família (magia em
   Fraunces com círculo mágico, corpo condensado itálico com corte de golpe, utilidade em etiqueta
   tracejada). As páginas da árvore assumem a cor e o kanji dela.
+- **As doze raças, uma página cada:** o nome gritado, a ilustração (ou o quadro reservado pra ela, com o
+  brasão e o selo), o carimbo da raridade no sorteio, uma faixa de números sempre no mesmo lugar (Atributo,
+  PV, PM, CA, Perícias), a epígrafe e os traços em duas colunas. Cada raça tem cor, nome em japonês e selo,
+  e a página assume os três. A ilustração **estica**: fica com o que os traços deixarem, então página
+  nenhuma sobra ou transborda. Antes delas, o quadro comparativo das doze e a **vitrine** (os doze
+  brasões, que levam à página de cada uma).
+- **Nada do livro antigo:** as paletas do site (pergaminho, vinho, dourado) são redefinidas dentro do
+  livro — o pergaminho vira a escala neutra do papel, o vinho e o dourado viram a cor do capítulo, da
+  árvore ou da raça. Todo componente que vem do site adota a identidade sem ser reescrito.
 - **Caos pensado**, sempre fora do texto corrido: carimbos e artes levemente tortos, cabeçalhos das
   árvores pendendo alternados, faixa listrada de alerta nos avisos, kanji gigante e apagado no canto.
 
@@ -59,6 +68,9 @@ O CSS do livro mora em `src/app/livro/folhear/folhear.css`, importado só pela r
 | Só a dupla aberta se mexe | **IntersectionObserver** na janela do livro | Diagramas animados e vídeos fora da vista repintavam o livro inteiro. |
 | Onde roda | **Rota `/livro/folhear`**, com botão Livro/Contínuo; `/livro` intacto até aprovação | Comparar antes de trocar o livro de todo mundo. |
 | Tela | **Leitor imersivo**: no modo Livro somem o menu e o rodapé do site | A barra do site sobre a mesa brigava com o livro. |
+| Paletas do site | **`@theme` sem `inline`** pro pergaminho, vinho e dourado (globals.css) | Com `inline` o Tailwind grava a cor crua em cada utilitária; como variável, o livro redefine a paleta por dentro e o site fica idêntico. |
+| Página inteira | **Bloco de altura fixa que atravessa a página** (`column-span: all` + `break-before`) | As páginas de raça. O buraco antes da primeira é ocupado pela vitrine, que estica até o pé da página (`esticarVitrines`) e se arruma por consulta de contêiner. |
+| Arte das raças | **Pelo nome do arquivo** (`public/livro/racas/<id>.webp`, lido no servidor) | O autor salva a imagem e ela aparece, sem mexer em código. |
 | Busca | **Painel dentro do livro** (lupa ou Ctrl+K), com a página de cada trecho e o termo pintado no texto | O autor quer ver no livro onde está o que procura, não ir pro `/busca`. |
 
 ## Casos tratados (em `src/components/book/folhear/diagramacao.ts`)
@@ -77,9 +89,11 @@ O CSS do livro mora em `src/app/livro/folhear/folhear.css`, importado só pela r
 
 ## O que foi medido (2026-09-25)
 
-- **Livro inteiro:** 241 páginas. **0** títulos separados do texto, **0** blocos passando da coluna ou da
-  página (com a letra do site em Padrão e em Maior), 2 páginas com pouco mais de 18% de mancha vazia.
-- **Desempenho (build de produção, Chrome headless sem GPU):** livro pronto em ~3,1 s; virar a folha, 0 ms
+- **Livro inteiro:** 250 páginas (as raças ganharam 12). **0** títulos separados do texto, **0** blocos
+  passando da coluna ou da página, 3 páginas com 19–22% de mancha vazia (todas antes de uma tabela de
+  página inteira).
+- **Desempenho (build de produção, Chrome headless sem GPU):** livro pronto em ~3,1 s (3,8–4,5 s numa
+  segunda medição com a máquina mais carregada, igual à versão anterior medida junto); virar a folha, 0 ms
   de tarefa longa; nenhuma animação infinita rodando. Três coisas pesavam e foram resolvidas: o
   `perspective` no livro (4–8 s por repintura), os diagramas/vídeos/pílulas animando fora da vista (~1 s
   por folha virada) e as fontes japonesas (366 arquivos de fonte baixados).
