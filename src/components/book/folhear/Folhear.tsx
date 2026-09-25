@@ -202,6 +202,13 @@ export default function Folhear({
   const [tamanho, setTamanho] = useState<{ w: number; h: number } | null>(null);
   const [zoom, setZoom] = useState(0);
   const [versao, setVersao] = useState(0);
+  /*
+   * As fontes do livro chegam depois do HTML. Diagramar antes delas é
+   * trabalho jogado fora — cada diagramação do livro inteiro custa ~1 s — e a
+   * página fica escondida até ficar pronta de qualquer jeito. Então a
+   * primeira diagramação espera as fontes.
+   */
+  const [fontesProntas, setFontesProntas] = useState(false);
   const [paginacao, setPaginacao] = useState<Paginacao | null>(null);
   const [dupla, setDupla] = useState(0);
   const [virada, setVirada] = useState<{ dir: "prox" | "ant"; chave: number } | null>(null);
@@ -268,11 +275,15 @@ export default function Folhear({
   useEffect(() => {
     if (modo !== "livro") return;
     let vivo = true;
-    document.fonts?.ready.then(() => {
+    performance.mark("folhear:montado");
+    const aoCarregar = () => {
+      performance.mark("folhear:fontes");
       if (!vivo) return;
       guardarAncora();
-      setVersao((v) => v + 1);
-    });
+      setFontesProntas(true);
+    };
+    if (document.fonts) void document.fonts.ready.then(aoCarregar);
+    else aoCarregar();
     const f = fluxo.current;
     // Vários <details> mudando juntos viram UMA recomposição, não uma por
     // details — e os que o próprio livro abriu (logo abaixo) não contam.
@@ -355,24 +366,34 @@ export default function Folhear({
     const fx = faixa.current;
     const j = janela.current;
     const g = estado.current.geo;
-    if (!porDupla || !g || !f || !fx || !j || !fim.current) return;
+    if (!fontesProntas || !porDupla || !g || !f || !fx || !j || !fim.current) return;
 
-    soltarTitulos(f);
-    ajustarFigurasLargas(f);
-    espalharTabelasEspremidas(f, g, regua(fx));
-    segurarCaixasCurtas(f, g, regua(fx));
-    ajustarTabelasLargas(f, g, regua(fx));
+    // Cada passo mede o próprio tempo (performance.measure "folhear:…"), pra
+    // quem for otimizar a diagramação saber onde o tempo vai.
+    const medir = <T,>(nome: string, passo: () => T): T => {
+      const t0 = performance.now();
+      const v = passo();
+      performance.measure(`folhear:${nome}`, { start: t0, end: performance.now() });
+      return v;
+    };
+    medir("soltar", () => soltarTitulos(f));
+    medir("figuras", () => ajustarFigurasLargas(f));
+    medir("tabelas-largas", () => espalharTabelasEspremidas(f, g, regua(fx)));
+    medir("caixas", () => segurarCaixasCurtas(f, g, regua(fx)));
+    medir("tabelas-apertar", () => ajustarTabelasLargas(f, g, regua(fx)));
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
-    for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
-    // Calço que ficou fora do lugar sai, e a conferência roda de novo.
-    for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx)) > 0; rodada++) {
+    medir("titulos", () => {
       for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
-    }
+      // Calço que ficou fora do lugar sai, e a conferência roda de novo.
+      for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx)) > 0; rodada++) {
+        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+      }
+    });
     esquecerIndice(f);
-    repetirCabecalhos(f);
+    medir("cabecalhos", () => repetirCabecalhos(f));
     const r = regua(fx);
-    const p = medirPaginas(f, fim.current, r, g, toc);
+    const p = medir("medir", () => medirPaginas(f, fim.current!, r, g, toc));
     const total = Math.ceil(p.total / porDupla);
     // A faixa cresce aqui mesmo, antes do React pintar: o scroll logo abaixo
     // precisa de largura pra chegar na dupla certa.
@@ -408,7 +429,7 @@ export default function Folhear({
     // do useLayoutEffect: sem isso o rodapé piscaria errado por um quadro.
     setPaginacao(p);
     setDupla(destino);
-  }, [porDupla, versao, toc]);
+  }, [porDupla, versao, toc, fontesProntas]);
 
   /*
    * SÓ A DUPLA ABERTA SE MEXE (2026-09-25).
@@ -1165,7 +1186,7 @@ function Colofao({ edicao }: { edicao?: string }) {
         {edicao && <>, edição {edicao}</>}.
       </p>
       <p>
-        Composto em Literata, Shippori Mincho, Barlow Condensed e Zen Kaku Gothic. Diagramado
+        Composto em Literata, Fraunces, Barlow e Barlow Condensed; os kanji, na fonte japonesa do seu aparelho. Diagramado
         pelo próprio navegador, página a página, a partir do mesmo texto do site: o que está impresso aqui é
         o que está na ficha.
       </p>

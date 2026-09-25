@@ -17,7 +17,7 @@
  *   Existe o papel DIA pra quem lê de dia; a escolha é do livro, não do site
  *   (`data-papel` na raiz, e a variante `dark:` segue ela — globals.css).
  * - DUAS VOZES: a gritada (Barlow Condensed, caixa alta, pesada) nos números,
- *   títulos de seção, carimbos e tabelas; a elegante (Shippori Mincho) nos
+ *   títulos de seção, carimbos e tabelas; a elegante (Fraunces) nos
  *   subtítulos e nomes; o corpo em Literata.
  * - A COR DO CAPÍTULO É TINTA DE MARCA-TEXTO: sublinha os títulos como um
  *   traço de marcador, carimba as caixas, pinta o cabeçalho das tabelas, faz
@@ -34,6 +34,10 @@
 
 /* ── As duas paletas ──────────────────────────────────────────────────── */
 .folhear {
+  /* Os kanji do livro saem da fonte japonesa do próprio sistema (ver fontes.ts). */
+  --font-livro-kanji: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Noto Serif CJK JP",
+    "Noto Serif JP", "Source Han Serif JP", "MS Mincho", "Noto Sans CJK JP", serif;
+
   /* Noite é o padrão, inclusive antes do JavaScript decidir. */
   --papel: #141418;
   --papel-2: #1e1e24;
@@ -400,7 +404,7 @@
 .folhear-posicao-titulo {
   max-width: 100%;
   overflow: hidden;
-  font-family: var(--font-livro-titulo), var(--font-fraunces), Georgia, serif;
+  font-family: var(--font-fraunces), var(--font-fraunces), Georgia, serif;
   font-size: 1rem;
   font-weight: 700;
   text-overflow: ellipsis;
@@ -632,7 +636,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   position: absolute;
   bottom: -110px;
   color: var(--cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 440px;
   font-weight: 800;
   line-height: 1;
@@ -866,7 +870,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   margin-top: 1em;
   margin-bottom: 0.25em;
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
   font-size: 1.22em;
   font-weight: 800;
   line-height: 1.22;
@@ -983,7 +987,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   top: 0.2em;
   right: 0;
   color: var(--cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", "Hiragino Mincho ProN", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 2.6em;
   font-weight: 800;
   letter-spacing: 0.2em;
@@ -1159,7 +1163,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 
 .folhear-fluxo .livro-mecanica > p:nth-of-type(1) {
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
   font-size: 1.15em;
   letter-spacing: 0;
   text-transform: none;
@@ -1413,7 +1417,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 
 .folhear-fluxo .livro-verbete-nome {
   color: var(--cor);
-  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
   font-size: 1.3em;
   font-weight: 800;
   line-height: 1.15;
@@ -1531,7 +1535,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 .folhear-fluxo .folhear-rosto-sub {
   margin-top: 0.5em;
   color: var(--tinta-suave);
-  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
   font-size: 1.7em;
   font-weight: 700;
 }
@@ -2143,7 +2147,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   top: 0.55em;
   right: 0.55em;
   color: var(--sobre-cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 1.25em;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -2166,7 +2170,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   background: var(--papel);
   box-shadow: 0 2px 0 rgb(0 0 0 / 0.25);
   color: var(--cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 1.5em;
   font-weight: 800;
   line-height: 1;
@@ -2186,7 +2190,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 .folhear-fluxo .livro-arvore[data-categoria="magia"] > .livro-arvore-cabeca > span > span:first-child {
-  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
   font-size: 2.1em;
   font-weight: 800;
   letter-spacing: 0;
@@ -2270,7 +2274,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   top: 0.1em;
   left: 0;
   color: var(--cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 1.1em;
   font-style: normal;
   font-weight: 800;
@@ -2310,7 +2314,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   content: var(--selo, "◆");
   display: block;
   color: var(--cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 4.2em;
   font-weight: 800;
   line-height: 1;
@@ -2433,7 +2437,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 .folhear-fluxo .livro-raca-nome::after {
   content: var(--jp, "");
   color: var(--cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 0.72em;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -2664,7 +2668,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 
 .folhear-fluxo .livro-qa-pergunta {
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
   font-size: 1.08em;
   font-weight: 800;
   line-height: 1.25;
@@ -2674,7 +2678,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   content: "問";
   margin-right: 0.35em;
   color: var(--cor);
-  font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif;
+  font-family: var(--font-livro-kanji);
 }
 
 .folhear-fluxo .livro-qa > p + p {
@@ -3058,7 +3062,7 @@ html.livro-imersivo {
   place-items: center;
   background: var(--cor);
   color: var(--sobre-cor);
-  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-family: var(--font-livro-kanji);
   font-size: 0.7em;
   font-style: normal;
   font-weight: 800;
