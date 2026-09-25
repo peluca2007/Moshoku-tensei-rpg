@@ -17,7 +17,30 @@ falta. **Você pega, eu organizo e ligo no livro.**
 **Tamanho mínimo:** o livro é mostrado grande e com zoom. Imagem pequena fica borrada, então vale mais uma
 imagem boa do que três médias.
 
-## Prioridade 1 — as doze raças (entram sozinhas)
+## Já no livro (2026-09-25)
+
+As 48 imagens que chegaram no `public/` foram olhadas uma a uma e organizadas em `public/livro/`:
+11 raças, os 13 antecedentes, os olhos demoníacos (três cenas animadas e a Kishirika), os retratos de seis
+árvores (Água, Deus da Espada, Deus do Norte, Cura, Furtividade, Terra) e as aberturas do Comece Aqui (a
+party) e do Cap. 1 (Eris e Rudeus). Os originais soltos em `public/` do checkout principal podem ser
+apagados: as cópias do livro já estão reduzidas (os GIFs viraram WebP animado).
+
+Ficaram de fora, por enquanto: `AstofeCooll.jpeg`, `Badigadi.jpg`, `Orsted.webp`, `osterdENanahoshi.jpg`,
+`ogroCompararTam.webp`, `simbolo deles Migurd.webp`, `mercador.jpg`, `gessePulandokk.png`,
+`kirishikikaOlhomistico.gif` e `gislaine-olho-mistico.webp` (não sei qual olho é esse).
+
+**Personagem de fundo transparente:** salve como `<id>.recorte.webp` (ou `.png`). Ele entra inteiro, de pé
+sobre a trama da cor, com a sombra deslocada; sem o `.recorte`, a imagem é uma cena e preenche o quadro.
+
+## Prioridade 1 — o que ainda falta nas raças e nas árvores
+
+- `public/livro/racas/oceano.webp` — a Raça do Oceano é a única raça sem arte.
+- `public/livro/arvores/<id>.webp` — as outras 13 árvores ainda abrem sem retrato: `fogo`, `vento`,
+  `desintoxicacao`, `teorica`, `invocacao`, `deus-da-agua-corpo`, `armas-pesadas`, `cavalaria-e-escudos`,
+  `vendaval`, `punho-de-fogo`, `arquearia`, `bardo-e-interacao`, `navegacao-e-lideranca`. Quem encarna a
+  escola: um personagem de pé (de preferência de fundo branco ou transparente), ou uma cena.
+
+## As doze raças (entram sozinhas)
 
 Cada raça tem uma página inteira no Cap. 1, com um quadro grande reservado pra ilustração. **Não precisa
 mexer em código:** salve o arquivo com o nome da tabela e recarregue o livro. A arte aparece no quadro da

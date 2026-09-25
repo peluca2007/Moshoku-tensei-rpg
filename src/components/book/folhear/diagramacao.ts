@@ -102,6 +102,8 @@ export interface Rotulo {
   /** A árvore do catálogo que ocupa a página (fogo, deus-da-espada…): a cor e o kanji dela. */
   arvoreId?: string;
   arvoreNome?: string;
+  /** A família da árvore (magia, corpo, utilidade): o caos de reserva de árvore sem tema próprio. */
+  arvoreFamilia?: string;
   /** A raça dona da página (cada raça tem uma página inteira no Cap. 1): a cor e o kanji dela. */
   racaId?: string;
   racaNome?: string;
@@ -613,6 +615,7 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
     secao?: string;
     arvoreId?: string;
     arvoreNome?: string;
+    arvoreFamilia?: string;
   }[] = [];
   for (const cap of toc) {
     const el = document.getElementById(cap.id);
@@ -631,7 +634,7 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   fluxo.querySelectorAll<HTMLElement>(".livro-arvore[data-arvore]").forEach((el) => {
     if (!visivel(el)) return;
     const nome = el.querySelector(".livro-arvore-cabeca > span > span:first-child")?.textContent ?? undefined;
-    eventos.push({ pagina: pagina(el), arvoreId: el.dataset.arvore, arvoreNome: nome });
+    eventos.push({ pagina: pagina(el), arvoreId: el.dataset.arvore, arvoreNome: nome, arvoreFamilia: el.dataset.categoria });
   });
 
   // As raças: uma página cada, e a página toma a cor e o kanji da raça.
@@ -652,6 +655,7 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   let secao: string | undefined;
   let arvoreId: string | undefined;
   let arvoreNome: string | undefined;
+  let arvoreFamilia: string | undefined;
   let i = 0;
   for (let p = 0; p < total; p++) {
     while (i < eventos.length && eventos[i].pagina <= p) {
@@ -660,10 +664,11 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
         capitulo = e.capitulo;
         capituloId = e.capituloId;
         secao = undefined;
-        arvoreId = arvoreNome = undefined;
+        arvoreId = arvoreNome = arvoreFamilia = undefined;
       } else if (e.arvoreId) {
         arvoreId = e.arvoreId;
         arvoreNome = e.arvoreNome;
+        arvoreFamilia = e.arvoreFamilia;
       } else {
         secao = e.secao;
       }
@@ -674,6 +679,7 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
       capituloId,
       arvoreId,
       arvoreNome,
+      arvoreFamilia,
       racaId: raca?.id,
       racaNome: raca?.nome,
       secao,

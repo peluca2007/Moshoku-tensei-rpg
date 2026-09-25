@@ -4,7 +4,7 @@ import { COMBINED_SPELLS } from "@/data/combinedSpells";
 import { getTreeById, TREES } from "@/data/trees";
 import { LIMITES_TEORICOS, RANKS_TEORICOS } from "@/lib/magiaTeorica";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
-import FormulaWorkshop from "./FormulaWorkshop";
+import LaboratorioDeFormulas from "./LaboratorioDeFormulas";
 
 function tex(s: string): string {
   return s
@@ -723,7 +723,7 @@ export default function Chapter2() {
           Experimente abaixo. Comece com um dos três exemplos e mude uma peça por vez. O laboratório{" "}
           mostra o custo e explica por que uma combinação funciona ou ultrapassa o limite do rank.
         </P>
-        <FormulaWorkshop />
+        <LaboratorioDeFormulas />
         <P className="text-sm">
           Esta oficina apresenta as regras em teste da Magia Teórica. O editor
           calcula uma célula por vez; fórmulas com várias células, talentos e armazenamento de PM ainda

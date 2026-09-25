@@ -162,10 +162,12 @@
   --jp: "解毒魔術";
   --selo: "解";
 }
-.folhear [data-arvore="barreira"] {
-  --cor-arvore: #ffd24d;
-  --jp: "結界魔術";
-  --selo: "結";
+/* A Magia Teórica (2026-09-25) substituiu a Barreira: a cor é a da essência
+   Mana, que o rework definiu como a da própria escola (magiaTeorica.ts). */
+.folhear [data-arvore="teorica"] {
+  --cor-arvore: #78d5d0;
+  --jp: "理論魔術";
+  --selo: "式";
 }
 .folhear [data-arvore="invocacao"] {
   --cor-arvore: #ff7ec4;
@@ -3421,11 +3423,13 @@ html.livro-imersivo {
     radial-gradient(circle, rgb(255 255 255 / 0.14) 1.2px, transparent 1.8px) 7px 7px / 14px 14px;
 }
 
-.folhear [data-arvore="barreira"] {
+/* A Teórica: o caderno quadriculado de quem desenha fórmulas, com os
+   círculos de construção saindo do canto. */
+.folhear [data-arvore="teorica"] {
   --padrao:
-    linear-gradient(rgb(0 0 0 / 0.16) 1.5px, transparent 1.5px) 0 0 / 18px 18px,
-    linear-gradient(90deg, rgb(0 0 0 / 0.16) 1.5px, transparent 1.5px) 0 0 / 18px 18px,
-    radial-gradient(ellipse at 80% 50%, rgb(255 255 255 / 0.35), transparent 60%);
+    linear-gradient(rgb(0 0 0 / 0.13) 1px, transparent 1px) 0 0 / 12px 12px,
+    linear-gradient(90deg, rgb(0 0 0 / 0.13) 1px, transparent 1px) 0 0 / 12px 12px,
+    repeating-radial-gradient(circle at 85% 50%, transparent 0 22px, rgb(255 255 255 / 0.24) 22px 23.5px);
 }
 
 .folhear [data-arvore="invocacao"] {
@@ -3845,4 +3849,208 @@ html.livro-imersivo {
 /* Dado se escreve em caixa baixa: 4d4+10, não 4D4+10. */
 .folhear-fluxo .livro-antecedente-ouro b {
   text-transform: none;
+}
+
+/* ══ O CAOS CONTROLADO (2026-09-25) ═══════════════════════════════════════
+ *
+ * Pedido do autor: "um caos controlado, diferente dependendo do capítulo —
+ * o Deus do Norte com umas armas jogadas". Cada capítulo e cada árvore tem os
+ * seus motivos nas bordas da página: dados rolando no Comece Aqui, círculos
+ * rúnicos na Magia, marcas de garra e sangue no Combate, armas jogadas no
+ * Deus do Norte, brasas subindo no Fogo, glifos compostos na Teórica.
+ *
+ * Os desenhos são gerados por scripts/gerar-caos.mjs (public/livro/caos/),
+ * só forma, e aqui viram MÁSCARA de uma camada pintada com a cor da página:
+ * o mesmo arquivo serve no papel noite e no dia. Cada arquivo tem três
+ * variantes lado a lado, e a página escolhe uma pela posição (então duas
+ * páginas vizinhas nunca repetem); a página da esquerda usa o desenho
+ * espelhado. O que invade a mancha de texto já vem apagado no próprio
+ * desenho. Árvore sem tema próprio (uma árvore nova, ou renomeada) herda o
+ * da família dela (data-familia).
+ */
+.folhear-caos {
+  --caos: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27/%3E");
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--cor) 44%, transparent);
+  pointer-events: none;
+  -webkit-mask: var(--caos) 0 0 / 300% 100% no-repeat;
+  mask: var(--caos) 0 0 / 300% 100% no-repeat;
+}
+
+.folhear[data-papel="dia"] .folhear-caos {
+  background: color-mix(in srgb, var(--cor) 36%, transparent);
+}
+
+.folhear-folha:nth-child(3n + 2) .folhear-caos {
+  -webkit-mask-position: 50% 0;
+  mask-position: 50% 0;
+}
+
+.folhear-folha:nth-child(3n) .folhear-caos {
+  -webkit-mask-position: 100% 0;
+  mask-position: 100% 0;
+}
+
+.folhear-folha[data-lado="esq"] .folhear-caos {
+  transform: scaleX(-1);
+}
+
+/* As páginas de raça já têm a arte e o selo delas: sem caos por cima. */
+.folhear-folha[data-raca] .folhear-caos {
+  display: none;
+}
+
+/* Capítulos */
+.folhear-folha[data-capitulo="apendices"] .folhear-caos {
+  --caos: url("/livro/caos/apendices.svg");
+}
+.folhear-folha[data-capitulo="cap0"] .folhear-caos {
+  --caos: url("/livro/caos/cap0.svg");
+}
+.folhear-folha[data-capitulo="cap1"] .folhear-caos {
+  --caos: url("/livro/caos/cap1.svg");
+}
+.folhear-folha[data-capitulo="cap2"] .folhear-caos {
+  --caos: url("/livro/caos/cap2.svg");
+}
+.folhear-folha[data-capitulo="cap3"] .folhear-caos {
+  --caos: url("/livro/caos/cap3.svg");
+}
+.folhear-folha[data-capitulo="cap4"] .folhear-caos {
+  --caos: url("/livro/caos/cap4.svg");
+}
+.folhear-folha[data-capitulo="cap5"] .folhear-caos {
+  --caos: url("/livro/caos/cap5.svg");
+}
+
+/* Famílias (reserva da árvore sem tema próprio) */
+.folhear-folha[data-familia="corpo"] .folhear-caos {
+  --caos: url("/livro/caos/familia-corpo.svg");
+}
+.folhear-folha[data-familia="magia"] .folhear-caos {
+  --caos: url("/livro/caos/familia-magia.svg");
+}
+.folhear-folha[data-familia="utilidade"] .folhear-caos {
+  --caos: url("/livro/caos/familia-utilidade.svg");
+}
+
+/* Árvores */
+.folhear-folha[data-arvore="agua"] .folhear-caos {
+  --caos: url("/livro/caos/agua.svg");
+}
+.folhear-folha[data-arvore="armas-pesadas"] .folhear-caos {
+  --caos: url("/livro/caos/armas-pesadas.svg");
+}
+.folhear-folha[data-arvore="arquearia"] .folhear-caos {
+  --caos: url("/livro/caos/arquearia.svg");
+}
+.folhear-folha[data-arvore="bardo-e-interacao"] .folhear-caos {
+  --caos: url("/livro/caos/bardo-e-interacao.svg");
+}
+.folhear-folha[data-arvore="cavalaria-e-escudos"] .folhear-caos {
+  --caos: url("/livro/caos/cavalaria-e-escudos.svg");
+}
+.folhear-folha[data-arvore="cura"] .folhear-caos {
+  --caos: url("/livro/caos/cura.svg");
+}
+.folhear-folha[data-arvore="desintoxicacao"] .folhear-caos {
+  --caos: url("/livro/caos/desintoxicacao.svg");
+}
+.folhear-folha[data-arvore="deus-da-agua-corpo"] .folhear-caos {
+  --caos: url("/livro/caos/deus-da-agua-corpo.svg");
+}
+.folhear-folha[data-arvore="deus-da-espada"] .folhear-caos {
+  --caos: url("/livro/caos/deus-da-espada.svg");
+}
+.folhear-folha[data-arvore="deus-do-norte"] .folhear-caos {
+  --caos: url("/livro/caos/deus-do-norte.svg");
+}
+.folhear-folha[data-arvore="fogo"] .folhear-caos {
+  --caos: url("/livro/caos/fogo.svg");
+}
+.folhear-folha[data-arvore="furtividade-e-armadilhas"] .folhear-caos {
+  --caos: url("/livro/caos/furtividade-e-armadilhas.svg");
+}
+.folhear-folha[data-arvore="invocacao"] .folhear-caos {
+  --caos: url("/livro/caos/invocacao.svg");
+}
+.folhear-folha[data-arvore="navegacao-e-lideranca"] .folhear-caos {
+  --caos: url("/livro/caos/navegacao-e-lideranca.svg");
+}
+.folhear-folha[data-arvore="punho-de-fogo"] .folhear-caos {
+  --caos: url("/livro/caos/punho-de-fogo.svg");
+}
+.folhear-folha[data-arvore="teorica"] .folhear-caos {
+  --caos: url("/livro/caos/teorica.svg");
+}
+.folhear-folha[data-arvore="terra"] .folhear-caos {
+  --caos: url("/livro/caos/terra.svg");
+}
+.folhear-folha[data-arvore="vendaval"] .folhear-caos {
+  --caos: url("/livro/caos/vendaval.svg");
+}
+.folhear-folha[data-arvore="vento"] .folhear-caos {
+  --caos: url("/livro/caos/vento.svg");
+}
+
+/* ── O Laboratório de Fórmulas (Magia Teórica) no livro ───────────────────
+   A oficina é uma ferramenta de tela inteira: no livro a página mostra a
+   chamada, e o laboratório abre por cima (LaboratorioDeFormulas.tsx). */
+.folhear[data-modo="livro"] .livro-laboratorio-inline {
+  display: none;
+}
+
+.folhear[data-modo="livro"] .livro-laboratorio-chamada {
+  display: flow-root;
+  margin: 0.9em 0;
+  padding: 0.8em 0.9em 0.9em;
+  border-top: 3px solid var(--cor);
+  background:
+    linear-gradient(rgb(255 255 255 / 0.04) 1px, transparent 1px) 0 0 / 12px 12px,
+    linear-gradient(90deg, rgb(255 255 255 / 0.04) 1px, transparent 1px) 0 0 / 12px 12px,
+    var(--papel-2);
+  break-inside: avoid;
+}
+
+.folhear[data-modo="livro"] .livro-laboratorio-glifo {
+  float: left;
+  width: 64px;
+  height: 64px;
+  margin: 0.1em 0.8em 0.3em 0;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px var(--cor);
+}
+
+.folhear[data-modo="livro"] .livro-laboratorio-selo {
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.45em;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.folhear[data-modo="livro"] .livro-laboratorio-texto {
+  margin-top: 0.35em;
+  color: var(--tinta-suave);
+}
+
+.folhear[data-modo="livro"] .livro-laboratorio-abrir {
+  display: inline-flex;
+  margin-top: 0.7em;
+  padding: 0.45em 1em;
+  border: 2px solid var(--cor);
+  background: none;
+  color: var(--tinta);
+  cursor: pointer;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.05em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.folhear[data-modo="livro"] .livro-laboratorio-abrir:hover {
+  background: color-mix(in srgb, var(--cor) 22%, transparent);
 }
