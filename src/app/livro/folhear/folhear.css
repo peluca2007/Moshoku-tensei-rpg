@@ -2885,3 +2885,220 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 html.livro-imersivo {
   font-size: 16px !important;
 }
+
+/* ═══ A IDENTIDADE DE CADA ÁRVORE (2026-09-25) ═════════════════════════════
+ * "Quero muita identidade de cada árvore... um caos pensado, bonito."
+ *
+ * Além da cor, do nome japonês e do selo, cada árvore tem agora a TEXTURA
+ * dela — um padrão que diz o elemento antes de qualquer palavra: brasas no
+ * Fogo, ondas na Água, rajadas no Vento, estratos na Terra, grade na
+ * Barreira, alvo na Arquearia, pauta no Bardo. A textura vive em `--padrao`
+ * e entra no cabeçalho da árvore e na faixa da Mecânica Central.
+ *
+ * As texturas são só luz e sombra (branco e preto translúcidos) sobre a cor
+ * da árvore, então funcionam no papel noite e no dia sem duas versões.
+ * ═════════════════════════════════════════════════════════════════════════ */
+
+.folhear [data-arvore="fogo"] {
+  --padrao:
+    radial-gradient(circle at 18% 118%, rgb(255 236 150 / 0.55), transparent 42%),
+    radial-gradient(circle at 62% 125%, rgb(255 210 110 / 0.45), transparent 40%),
+    radial-gradient(2px 2px at 32% 38%, rgb(255 250 210 / 0.9), transparent),
+    radial-gradient(1.5px 1.5px at 47% 22%, rgb(255 250 210 / 0.8), transparent),
+    radial-gradient(2px 2px at 71% 30%, rgb(255 250 210 / 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 86% 58%, rgb(255 250 210 / 0.8), transparent);
+}
+
+.folhear [data-arvore="agua"] {
+  --padrao:
+    repeating-radial-gradient(ellipse 140% 90% at 50% 150%, transparent 0 13px, rgb(255 255 255 / 0.16) 13px 15px),
+    linear-gradient(to top, rgb(255 255 255 / 0.12), transparent 60%);
+}
+
+.folhear [data-arvore="vento"] {
+  --padrao:
+    repeating-linear-gradient(-18deg, transparent 0 17px, rgb(255 255 255 / 0.2) 17px 18.5px, transparent 18.5px 29px),
+    repeating-linear-gradient(-18deg, transparent 0 41px, rgb(255 255 255 / 0.1) 41px 44px);
+}
+
+.folhear [data-arvore="terra"] {
+  --padrao:
+    repeating-linear-gradient(0deg, rgb(0 0 0 / 0.14) 0 5px, transparent 5px 13px, rgb(0 0 0 / 0.07) 13px 21px, transparent 21px 30px),
+    linear-gradient(to top, rgb(0 0 0 / 0.22), transparent 55%);
+}
+
+.folhear [data-arvore="cura"] {
+  --padrao:
+    radial-gradient(circle at 82% 50%, rgb(255 255 255 / 0.45), transparent 48%),
+    linear-gradient(90deg, transparent 79%, rgb(255 255 255 / 0.3) 79% 85%, transparent 85%),
+    linear-gradient(0deg, transparent 36%, rgb(255 255 255 / 0.3) 36% 64%, transparent 64%) right 12% center / 14% 100% no-repeat;
+}
+
+.folhear [data-arvore="desintoxicacao"] {
+  --padrao:
+    radial-gradient(circle, rgb(255 255 255 / 0.26) 1.6px, transparent 2.2px) 0 0 / 14px 14px,
+    radial-gradient(circle, rgb(255 255 255 / 0.14) 1.2px, transparent 1.8px) 7px 7px / 14px 14px;
+}
+
+.folhear [data-arvore="barreira"] {
+  --padrao:
+    linear-gradient(rgb(0 0 0 / 0.16) 1.5px, transparent 1.5px) 0 0 / 18px 18px,
+    linear-gradient(90deg, rgb(0 0 0 / 0.16) 1.5px, transparent 1.5px) 0 0 / 18px 18px,
+    radial-gradient(ellipse at 80% 50%, rgb(255 255 255 / 0.35), transparent 60%);
+}
+
+.folhear [data-arvore="invocacao"] {
+  --padrao:
+    repeating-radial-gradient(circle at 80% 50%, transparent 0 11px, rgb(255 255 255 / 0.2) 11px 12.5px),
+    radial-gradient(circle at 80% 50%, rgb(255 255 255 / 0.25), transparent 30%);
+}
+
+.folhear [data-arvore="deus-da-espada"] {
+  --padrao:
+    linear-gradient(118deg, transparent 46%, rgb(255 255 255 / 0.55) 46% 47.2%, transparent 47.2%),
+    linear-gradient(118deg, transparent 58%, rgb(255 255 255 / 0.3) 58% 58.7%, transparent 58.7%),
+    linear-gradient(118deg, transparent 72%, rgb(255 255 255 / 0.18) 72% 72.5%, transparent 72.5%);
+}
+
+.folhear [data-arvore="deus-da-agua-corpo"] {
+  --padrao:
+    repeating-radial-gradient(circle at 0 110%, transparent 0 15px, rgb(255 255 255 / 0.17) 15px 16.5px),
+    repeating-radial-gradient(circle at 100% -10%, transparent 0 22px, rgb(255 255 255 / 0.1) 22px 23.5px);
+}
+
+.folhear [data-arvore="deus-do-norte"] {
+  --padrao:
+    linear-gradient(135deg, rgb(0 0 0 / 0.16) 25%, transparent 25%) -11px 0 / 22px 22px,
+    linear-gradient(225deg, rgb(0 0 0 / 0.16) 25%, transparent 25%) -11px 0 / 22px 22px,
+    linear-gradient(315deg, rgb(0 0 0 / 0.16) 25%, transparent 25%) 0 0 / 22px 22px,
+    linear-gradient(45deg, rgb(0 0 0 / 0.16) 25%, transparent 25%) 0 0 / 22px 22px;
+}
+
+.folhear [data-arvore="armas-pesadas"] {
+  --padrao:
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.17) 0 11px, transparent 11px 23px),
+    linear-gradient(to right, transparent 60%, rgb(0 0 0 / 0.2));
+}
+
+.folhear [data-arvore="cavalaria-e-escudos"] {
+  --padrao:
+    linear-gradient(135deg, rgb(255 255 255 / 0.14) 25%, transparent 25%) 0 0 / 26px 26px,
+    linear-gradient(225deg, rgb(255 255 255 / 0.14) 25%, transparent 25%) 0 0 / 26px 26px;
+}
+
+.folhear [data-arvore="vendaval"] {
+  --padrao:
+    repeating-linear-gradient(162deg, transparent 0 9px, rgb(255 255 255 / 0.2) 9px 10.5px, transparent 10.5px 15px),
+    radial-gradient(ellipse at 90% 30%, rgb(255 255 255 / 0.25), transparent 50%);
+}
+
+.folhear [data-arvore="punho-de-fogo"] {
+  --padrao:
+    radial-gradient(circle at 85% 120%, rgb(255 236 150 / 0.55), transparent 45%),
+    radial-gradient(2px 2px at 60% 35%, rgb(255 250 210 / 0.9), transparent),
+    radial-gradient(2px 2px at 75% 20%, rgb(255 250 210 / 0.7), transparent),
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.12) 0 6px, transparent 6px 16px);
+}
+
+.folhear [data-arvore="arquearia"] {
+  --padrao:
+    repeating-radial-gradient(circle at 86% 50%, rgb(255 255 255 / 0.24) 0 2.5px, transparent 2.5px 11px),
+    linear-gradient(90deg, transparent 40%, rgb(255 255 255 / 0.35) 40% 86%, transparent 86%) 0 50% / 100% 1.5px no-repeat;
+}
+
+.folhear [data-arvore="furtividade-e-armadilhas"] {
+  --padrao:
+    radial-gradient(circle, rgb(255 255 255 / 0.22) 0.9px, transparent 1.3px) 0 0 / 9px 9px,
+    radial-gradient(ellipse at 25% 50%, color-mix(in srgb, var(--cor) 40%, transparent), transparent 70%);
+}
+
+.folhear [data-arvore="bardo-e-interacao"] {
+  --padrao:
+    linear-gradient(0deg, transparent 0 calc(50% - 22px), color-mix(in srgb, var(--cor) 45%, transparent) calc(50% - 22px) calc(50% - 21px),
+      transparent calc(50% - 21px) calc(50% - 11px), color-mix(in srgb, var(--cor) 45%, transparent) calc(50% - 11px) calc(50% - 10px),
+      transparent calc(50% - 10px) 50%, color-mix(in srgb, var(--cor) 45%, transparent) 50% calc(50% + 1px),
+      transparent calc(50% + 1px) calc(50% + 11px), color-mix(in srgb, var(--cor) 45%, transparent) calc(50% + 11px) calc(50% + 12px),
+      transparent calc(50% + 12px) calc(50% + 22px), color-mix(in srgb, var(--cor) 45%, transparent) calc(50% + 22px) calc(50% + 23px), transparent calc(50% + 23px));
+}
+
+.folhear [data-arvore="navegacao-e-lideranca"] {
+  --padrao:
+    linear-gradient(color-mix(in srgb, var(--cor) 28%, transparent) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(90deg, color-mix(in srgb, var(--cor) 28%, transparent) 1px, transparent 1px) 0 0 / 28px 28px,
+    radial-gradient(circle at 88% 50%, transparent 0 20px, color-mix(in srgb, var(--cor) 55%, transparent) 20px 21.5px, transparent 21.5px);
+}
+
+/* A textura entra por cima da cor, no cabeçalho de cada família. */
+.folhear-fluxo .livro-arvore[data-categoria="magia"] > .livro-arvore-cabeca {
+  background: var(--padrao, none), var(--cor);
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="corpo"] > .livro-arvore-cabeca {
+  background: var(--padrao, none), var(--cor);
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="utilidade"] > .livro-arvore-cabeca {
+  background: var(--padrao, none), var(--papel-2);
+}
+
+/* E na faixa da Mecânica Central, que abre o catálogo da árvore. */
+.folhear-fluxo .livro-arvore .livro-mecanica > div:first-child {
+  background: var(--padrao, none), var(--cor);
+}
+
+/* ── O selo da árvore ao lado de cada habilidade ──────────────────────────
+ * O kanji da escola num quadradinho da cor dela, antes do nome: folheando
+ * rápido, você sabe de qual árvore é a magia sem voltar ao cabeçalho. */
+.folhear-fluxo .livro-arvore .livro-verbete-nome::before {
+  content: var(--selo, "");
+  display: inline-grid;
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.35em;
+  place-items: center;
+  background: var(--cor);
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-size: 0.7em;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
+  vertical-align: 0.12em;
+}
+
+/* O filete entre uma habilidade e outra, na cor da árvore, curto. */
+.folhear-fluxo .livro-arvore .livro-verbete + .livro-verbete::before {
+  content: "";
+  display: block;
+  width: 2.2em;
+  height: 2px;
+  margin-bottom: 0.7em;
+  background: color-mix(in srgb, var(--cor) 60%, transparent);
+}
+
+/* ── Caos pensado ─────────────────────────────────────────────────────────
+ * Pequenas quebras de ritmo, sempre fora do texto corrido: o cabeçalho de
+ * cada árvore pende pra um lado (alternando), o do Corpo com o corte de golpe
+ * e o selo carimbado mais torto; a Maestria da árvore de cabeça meio fora do
+ * alinhamento, como uma etiqueta colada à mão. */
+.folhear-fluxo .livro-arvore:nth-of-type(odd) > .livro-arvore-cabeca {
+  transform: rotate(-0.6deg);
+}
+
+.folhear-fluxo .livro-arvore:nth-of-type(even) > .livro-arvore-cabeca {
+  transform: rotate(0.5deg);
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="corpo"] > .livro-arvore-cabeca::before {
+  transform: rotate(-11deg);
+}
+
+.folhear-fluxo .livro-arvore .livro-maestria {
+  margin-left: -0.35em;
+}
+
+/* O cabeçalho da árvore é um bloco só: partido entre colunas, a frase da
+   escola ficava no pé de uma coluna e o selo no alto da outra. */
+.folhear-fluxo .livro-arvore-cabeca {
+  break-inside: avoid;
+}
