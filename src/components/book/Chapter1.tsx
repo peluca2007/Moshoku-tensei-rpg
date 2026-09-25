@@ -1,5 +1,6 @@
 import { RACES } from "@/data/races";
 import FichaDeRaca, { QuadroDasRacas, VitrineDasRacas } from "./FichaDeRaca";
+import AntecedentesIlustrados, { OlhosEmMovimento } from "./FichaDeAntecedente";
 import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
 import { RANK_BONUS, RANK_REQUIREMENTS, RANKS } from "@/lib/types";
 import { DESINTOX_PA_COST, RANK_PA_COST } from "@/data/trees/shared";
@@ -666,23 +667,7 @@ export default function Chapter1() {
           lugar no mundo. Durante a criação da ficha, role 1d100 (ou escolha em conjunto com o Mestre) pra
           descobrir sua origem e seu dinheiro inicial em Peças de Ouro (PO).
         </P>
-        <BookTable
-          headers={["d100", "Antecedente", "Efeito", "Dinheiro Inicial"]}
-          rows={BACKGROUNDS.map((bg) => [
-            `${String(bg.rollRange[0]).padStart(2, "0")}-${String(bg.rollRange[1]).padStart(2, "0")}`,
-            bg.name,
-            [
-              ...(bg.fixedSkills ?? []).map((s) => `Perícia: ${s}`),
-              // A linha genérica some quando um traço já descreve a escolha (Plebeu,
-              // Órfão): impressas as duas, a mesa lia quatro perícias onde há duas.
-              ...(bg.bonusSkillChoices && !bg.traits.some((t) => t.includes("Perícias à escolha"))
-                ? [`${bg.bonusSkillChoices} Perícias à escolha`]
-                : []),
-              ...bg.traits,
-            ].join(" · ") || "—",
-            `${bg.startingGold} PO`,
-          ])}
-        />
+        <AntecedentesIlustrados />
 
         <SubTitle id="cap1-6-laplace">Tabela do Fator Laplace (1d4)</SubTitle>
         <P>
@@ -723,6 +708,7 @@ export default function Chapter1() {
 
         <SubTitle id="cap1-6-olho">Tabela de Olhos Demoníacos / Místicos (1d10)</SubTitle>
         <P>Cada olho possui regras estritas de economia de ação e custo de PM.</P>
+        <OlhosEmMovimento />
         <BookTable
           headers={["1d10", "Olho Místico", "Mecânica"]}
           rows={OLHO_TABLE.map((e) => [String(e.roll), e.name, e.traits.join(" ")])}

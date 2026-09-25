@@ -8,9 +8,15 @@
  * Capítulo sem entrada abre sem arte, só com o título.
  */
 export const ARTE_DAS_ABERTURAS: Record<string, { src: string; alt: string }> = {
+  // 2026-09-25: as primeiras artes de Mushoku Tensei de verdade, trazidas
+  // pelo autor (antes eram fotos genéricas de fantasia).
   cap0: {
-    src: "/faixas/convite.jpg",
-    alt: "Um grupo de aventureiros entrando numa masmorra à luz de tocha.",
+    src: "/livro/capitulos/abertura-cap0.webp",
+    alt: "O grupo de Mushoku Tensei avançando junto num campo aberto, armas e magias em punho.",
+  },
+  cap1: {
+    src: "/livro/capitulos/abertura-cap1.webp",
+    alt: "Eris avançando de espada contra Rudeus num salão da mansão.",
   },
   // Era a foto de uma pena desenhando um círculo mágico em pergaminho — o
   // visual do livro antigo, que o autor não quer mais (2026-09-25). O livro
