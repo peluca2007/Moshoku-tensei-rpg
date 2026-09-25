@@ -1,28 +1,29 @@
-import { Barlow_Condensed, Shippori_Mincho, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Barlow, Barlow_Condensed } from "next/font/google";
 
 /**
- * As letras do livro — a voz de um volume de light novel.
+ * As letras do livro.
  *
- * Mushoku Tensei nasceu light novel, e a identidade do livro vem de lá, não do
- * livro de RPG ocidental: títulos em Shippori Mincho (um mincho japonês, com o
- * contraste fino dos títulos de volume) e rótulos, tabelas e números em Zen
- * Kaku Gothic (o gótico que acompanha o mincho nos livros japoneses). O corpo
- * continua em Literata, que o site já carrega e que foi desenhada pra ler em
- * tela.
+ * ## Por que não mais fontes japonesas (2026-09-25)
  *
- * Carregadas aqui, e não no layout, pra que só o livro folheado pague por
- * elas. O next/font hospeda os arquivos com o site, então funcionam offline.
+ * Os títulos eram Shippori Mincho e os rótulos Zen Kaku Gothic. As duas são
+ * fontes japonesas, e o Google as serve fatiadas em centenas de pedaços por
+ * faixa de caractere: o livro chegava a baixar 366 arquivos de fonte (medido)
+ * só pra desenhar travessões, aspas e meia dúzia de kanji — segundos de
+ * carregamento antes da primeira página aparecer.
+ *
+ * Agora:
+ * - a voz GRITADA (números, títulos de seção, carimbos, tabelas) é a Barlow
+ *   Condensed, e os rótulos miúdos a Barlow, da mesma família;
+ * - a voz ELEGANTE (subtítulos, nomes de habilidade) é a Fraunces, que o
+ *   site já carrega (--font-fraunces, no layout) — custo zero;
+ * - o corpo continua em Literata, também já carregada pelo site;
+ * - os kanji (selos, capítulos na vertical, marcas d'água) usam a fonte
+ *   japonesa do próprio sistema (Yu Mincho no Windows, Hiragino no iPhone,
+ *   Noto no Android), ver --font-livro-kanji no folhear.css.
  */
-const titulos = Shippori_Mincho({
+const rotulos = Barlow({
   subsets: ["latin", "latin-ext"],
-  weight: ["500", "700", "800"],
-  variable: "--font-livro-titulo",
-  display: "swap",
-});
-
-const rotulos = Zen_Kaku_Gothic_New({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-livro-rotulo",
   display: "swap",
 });
@@ -41,5 +42,5 @@ const grito = Barlow_Condensed({
   display: "swap",
 });
 
-/** As variáveis das três, pra entrar no `className` da raiz do livro. */
-export const FONTES_DO_LIVRO = [titulos, rotulos, grito].map((f) => f.variable).join(" ");
+/** As variáveis das fontes do livro, pra entrar no `className` da raiz. */
+export const FONTES_DO_LIVRO = [rotulos, grito].map((f) => f.variable).join(" ");
