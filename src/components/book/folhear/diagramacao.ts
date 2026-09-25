@@ -363,6 +363,24 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     const bloco = t.closest(BLOCOS_COM_TITULO);
     empurrar.add(bloco && abre(bloco, t) ? bloco : t);
   });
+  // TABELA QUE ABRE NO PÉ DA COLUNA com o cabeçalho e uma ou duas linhas: é o
+  // título órfão das tabelas. Ela desce inteira, pelos mesmos degraus.
+  fluxo.querySelectorAll(".livro-tabela").forEach((caixa) => {
+    if (!visivel(caixa) || caixa.closest(".livro-catalogo-itens")) return;
+    const linhas = Array.from(caixa.querySelectorAll("tbody tr:not(.folhear-cabecalho-repetido)"));
+    if (linhas.length < 4) return;
+    const primeira = linhas[0].getClientRects()[0];
+    if (!primeira) return;
+    const c0 = coluna(primeira);
+    let juntas = 0;
+    for (const l of linhas) {
+      const q = l.getClientRects()[0];
+      if (!q || coluna(q) !== c0) break;
+      juntas++;
+    }
+    if (juntas < 3) empurrar.add(caixa);
+  });
+
   // Cada caso sobe um degrau por passada, e só conta como mudança se subiu:
   // 1) título antes de algo que atravessa a página passa a atravessar também;
   // 2) o bloco vai pra próxima coluna;
@@ -396,19 +414,51 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     calco.setAttribute("aria-hidden", "true");
     calco.style.height = `${Math.ceil(resto * 2 + 2)}px`;
     el.before(calco);
+    // O calço substitui a quebra: com as duas, o bloco pularia duas vezes.
+    el.classList.remove("folhear-empurra");
     el.classList.add("folhear-calcado");
   };
   let mudou = 0;
   empurrar.forEach((el) => {
     const c = el.classList;
-    if (c.contains("folhear-larga") && !c.contains("folhear-titulo-largo")) c.add("folhear-titulo-largo");
+    if (el.matches("h3, h4") && c.contains("folhear-larga") && !c.contains("folhear-titulo-largo")) c.add("folhear-titulo-largo");
     else if (!c.contains("folhear-empurra")) c.add("folhear-empurra");
     else if (!c.contains("folhear-inteira") && cabeNumaColuna(el)) c.add("folhear-inteira", "folhear-segura");
-    else if (!c.contains("folhear-calcado")) calcar(el);
+    else if (!c.contains("folhear-calcado") && !c.contains("folhear-tentou-calco")) {
+      c.add("folhear-tentou-calco");
+      calcar(el);
+    }
     else return;
     mudou++;
   });
   return mudou;
+}
+
+/**
+ * Tira os calços que ficaram no lugar errado.
+ *
+ * O calço é medido pro layout da hora em que entrou; um empurrão posterior
+ * (outro título, outra tabela) pode mudar tudo antes dele, e aí ele cai no
+ * topo de uma coluna — uma coluna inteira em branco — ou vaza pra coluna
+ * seguinte. Esses saem, e o bloco que eles empurravam volta a ser conferido
+ * do zero na próxima rodada, com a medida nova.
+ *
+ * @returns quantos calços saíram
+ */
+export function limparCalcosInuteis(fluxo: Element, r: Regua): number {
+  const topo = fluxo.getBoundingClientRect().top;
+  let saiu = 0;
+  fluxo.querySelectorAll(".folhear-calco").forEach((calco) => {
+    // Vazar uns pixels pra página seguinte é o esperado (é o que empurra o
+    // bloco); inútil é o calço que já começa no topo de uma coluna.
+    const primeiro = calco.getClientRects()[0];
+    if (!primeiro || (primeiro.top - topo) / r.k >= 8) return;
+    const seguinte = calco.nextElementSibling;
+    seguinte?.classList.remove("folhear-calcado", "folhear-inteira", "folhear-segura", "folhear-empurra");
+    calco.remove();
+    saiu++;
+  });
+  return saiu;
 }
 
 /** Tira os empurrões antes de uma nova diagramação (outra geometria, outro texto). */
@@ -416,7 +466,7 @@ export function soltarTitulos(fluxo: Element): void {
   fluxo.querySelectorAll(".folhear-empurra").forEach((el) => el.classList.remove("folhear-empurra"));
   fluxo.querySelectorAll(".folhear-titulo-largo").forEach((el) => el.classList.remove("folhear-titulo-largo", "folhear-larga"));
   fluxo.querySelectorAll(".folhear-segura").forEach((el) => el.classList.remove("folhear-segura", "folhear-inteira"));
-  fluxo.querySelectorAll(".folhear-calcado").forEach((el) => el.classList.remove("folhear-calcado"));
+  fluxo.querySelectorAll(".folhear-calcado, .folhear-tentou-calco").forEach((el) => el.classList.remove("folhear-calcado", "folhear-tentou-calco"));
   fluxo.querySelectorAll(".folhear-calco").forEach((el) => el.remove());
 }
 

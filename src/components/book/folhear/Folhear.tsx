@@ -56,6 +56,7 @@ import {
   segurarCaixasCurtas,
   segurarTitulos,
   soltarTitulos,
+  limparCalcosInuteis,
 } from "./diagramacao";
 
 /**
@@ -364,6 +365,10 @@ export default function Folhear({
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
     for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+    // Calço que ficou fora do lugar sai, e a conferência roda de novo.
+    for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx)) > 0; rodada++) {
+      for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+    }
     esquecerIndice(f);
     repetirCabecalhos(f);
     const r = regua(fx);
