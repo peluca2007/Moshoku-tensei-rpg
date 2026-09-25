@@ -12,13 +12,12 @@ import {
   atributosDaCriatura,
   bonusResistencia,
   getArquetipo,
-  getMoldePorPatamar,
   percepcaoPassiva,
   rotuloPatamar,
   sinal,
 } from "@/data/bestiary";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
-import Crest from "@/components/Crest";
+import FichaDeCriatura from "./FichaDeCriatura";
 import { SHOP_ITEMS } from "@/data/shopItems";
 
 export default function Appendices() {
@@ -703,43 +702,15 @@ export default function Appendices() {
           />
         </Aside>
         {/*
-          As ações de cada uma, impressas dos MESMOS dados que a tela de
-          Encontros usa pra montar a criatura (2026-09-03). Antes desta data a
-          criatura pronta era três colunas de prosa: o Mestre sabia que a Wyvern
-          mergulha, e tinha que inventar na hora quanto a mordida dela tira.
+          A ficha COMPLETA de cada uma (2026-09-25): atributos, CA, PV, ataque,
+          CD, sentidos, resistências e as ações, tudo saído dos mesmos dados que
+          /encontros usa pra montar a criatura. Antes era uma linha de PV/CA e a
+          lista de ações, e o Mestre abria três tabelas pra saber a Força do bicho.
         */}
-        <div className="mt-4 space-y-3">
+        <SubTitle id="apendice-g-fichas">As fichas</SubTitle>
+        <div className="mt-2 space-y-4">
           {CRIATURAS_PRONTAS.map((c) => (
-            <div
-              key={c.id}
-              className="print-avoid-break surface flex gap-3 rounded-lg border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40"
-            >
-              {c.icon && <Crest src={c.icon} size={72} rounded="rounded-lg" className="mt-0.5 hidden sm:flex" />}
-              <div className="min-w-0 flex-1">
-              <p className="font-bold text-parchment-900 dark:text-parchment-50">
-                {c.nome}{" "}
-                <span className="text-xs font-normal text-parchment-600 dark:text-parchment-400">
-                  — {rotuloPatamar(c.patamar)} · {getMoldePorPatamar(c.patamar).pv} PV · CA{" "}
-                  {getMoldePorPatamar(c.patamar).ca} · ataque +{getMoldePorPatamar(c.patamar).bonusAtaque} ·
-                  CD {getMoldePorPatamar(c.patamar).cdResistencia}
-                </span>
-              </p>
-              <ul className="mt-1.5 space-y-1">
-                {c.acoes.map((a) => (
-                  <li key={a.nome} className="text-parchment-700 dark:text-parchment-300">
-                    <b>{a.nome}</b>{" "}
-                    <span className="text-xs text-parchment-600 dark:text-parchment-400">
-                      — {a.acoes} Ação{a.acoes > 1 ? "es" : ""} ·{" "}
-                      {a.dano ? `${a.dano} de dano` : "sem dano"} · {a.alcance} ·{" "}
-                      {a.tipo === "ataque" ? "ataque contra a CA" : "teste de resistência"}
-                      {a.area && " · em área"}
-                    </span>
-                    <span className="block text-xs text-parchment-600 dark:text-parchment-400">{a.nota}</span>
-                  </li>
-                ))}
-              </ul>
-              </div>
-            </div>
+            <FichaDeCriatura key={c.id} c={c} />
           ))}
         </div>
 
@@ -773,8 +744,8 @@ export default function Appendices() {
 
 function QA({ q, a }: { q: string; a: string }) {
   return (
-    <div className="rounded-lg border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40">
-      <p className="font-semibold text-parchment-900 dark:text-parchment-50">{q}</p>
+    <div className="livro-qa rounded-lg border border-parchment-300 bg-parchment-100/60 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-900/40">
+      <p className="livro-qa-pergunta font-semibold text-parchment-900 dark:text-parchment-50">{q}</p>
       <p className="mt-1 text-parchment-600 dark:text-parchment-400">{a}</p>
     </div>
   );

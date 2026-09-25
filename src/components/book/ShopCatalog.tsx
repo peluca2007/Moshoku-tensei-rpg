@@ -46,7 +46,7 @@ export default function ShopCatalog() {
         const items = SHOP_ITEMS.filter((i) => i.category === category);
         if (items.length === 0) return null;
         return (
-          <div key={category} className="space-y-2">
+          <div key={category} className="livro-catalogo-itens space-y-2">
             <SubTitle>{SHOP_CATEGORY_LABELS[category]}</SubTitle>
             <BookTable
               headers={["Item", "Onde se acha", "Preço (PO)", "Descrição"]}

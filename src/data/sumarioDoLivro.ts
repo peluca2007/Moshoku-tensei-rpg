@@ -141,6 +141,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "apendice-g-acoes", label: "— Como escrever as Ações dela" },
       { id: "apendice-g-orcamento", label: "— Orçamento de Encontro" },
       { id: "apendice-g-chefe", label: "— O multiplicador do Chefe" },
+      { id: "apendice-g-fichas", label: "— As fichas das criaturas" },
       { id: "apendice-g-rivais", label: "— Rivais com ficha" },
     ],
   },

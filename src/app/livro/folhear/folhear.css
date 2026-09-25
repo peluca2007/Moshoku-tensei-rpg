@@ -788,7 +788,7 @@
 }
 
 /* O rodapé "próximo capítulo →" é navegação de site; no livro, vira a folha. */
-.folhear-fluxo footer.print-hide {
+.folhear-fluxo footer.print-hide:not(.livro-fim) {
   display: none;
 }
 
@@ -2286,4 +2286,378 @@
 .folhear-calco {
   display: block;
   margin: 0;
+}
+
+/* ═══ Blocos redesenhados pro livro (2026-09-25) ═══════════════════════ */
+
+/* ── O fecho de capítulo ──────────────────────────────────────────────
+ * No site ele é navegação ("próximo capítulo →"). No livro vira o fecho: o
+ * kanji do capítulo grande, um filete, e o convite pro próximo — o que
+ * transforma o resto da última página em espaço de propósito. */
+.folhear-fluxo .livro-fim {
+  display: block;
+  margin-top: 2.2em;
+  padding-top: 0;
+  column-span: all;
+  text-align: center;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-fim::before {
+  content: var(--selo, "◆");
+  display: block;
+  color: var(--cor);
+  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-size: 4.2em;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.folhear-fluxo .livro-fim > p {
+  justify-content: center;
+  margin-top: 0.6em;
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1em;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+}
+
+.folhear-fluxo .livro-fim > p > span {
+  background: var(--fio);
+}
+
+.folhear-fluxo .livro-fim > a {
+  display: inline-flex;
+  margin-top: 1em;
+  padding: 0.5em 1.1em;
+  border: 2px solid var(--cor);
+  border-radius: 0;
+  background: none;
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.1em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+/* ── As raças: verbete de espécie, sem caixa ─────────────────────────── */
+.folhear [data-raca="humano"] {
+  --jp: "人族";
+}
+.folhear [data-raca="elfo"] {
+  --jp: "エルフ";
+}
+.folhear [data-raca="anao"] {
+  --jp: "ドワーフ";
+}
+.folhear [data-raca="hobbit"] {
+  --jp: "小人族";
+}
+.folhear [data-raca="raca-fera"] {
+  --jp: "獣族";
+}
+.folhear [data-raca="celestial"] {
+  --jp: "天族";
+}
+.folhear [data-raca="oceano"] {
+  --jp: "海族";
+}
+.folhear [data-raca="migurd"] {
+  --jp: "ミグルド族";
+}
+.folhear [data-raca="superd"] {
+  --jp: "スペルド族";
+}
+.folhear [data-raca="ogro"] {
+  --jp: "鬼族";
+}
+.folhear [data-raca="demonio-imortal"] {
+  --jp: "不死魔族";
+}
+.folhear [data-raca="dragao"] {
+  --jp: "龍族";
+}
+
+.folhear-fluxo .livro-raca {
+  gap: 0.8em;
+  margin-top: 1.1em;
+  padding: 0.9em 0 0;
+  border: 0;
+  border-top: 2px solid var(--cor);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-size: inherit;
+}
+
+/* O brasão em traço: no papel noite a arte (traço preto em fundo branco)
+   inverte e vira traço claro sobre o papel, sem o quadrado branco. */
+.folhear-fluxo .livro-raca > span:first-child {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 999px;
+  background: var(--papel-2);
+  box-shadow: 0 0 0 2px var(--cor);
+}
+
+.folhear[data-papel="noite"] .folhear-fluxo .livro-raca > span:first-child img {
+  filter: invert(1) brightness(0.92);
+  mix-blend-mode: screen;
+}
+
+.folhear[data-papel="dia"] .folhear-fluxo .livro-raca > span:first-child img {
+  mix-blend-mode: multiply;
+}
+
+.folhear-fluxo .livro-raca-nome {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5em;
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.55em;
+  font-weight: 800;
+  line-height: 1.05;
+  text-transform: uppercase;
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-raca-nome::after {
+  content: var(--jp, "");
+  color: var(--cor);
+  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.folhear-fluxo .livro-raca-descricao {
+  margin-top: 0.25em;
+  color: var(--tinta-suave);
+  font-style: italic;
+}
+
+.folhear-fluxo .livro-raca ul {
+  margin-top: 0.45em;
+}
+
+/* ── O catálogo de itens: verbetes em duas colunas, não uma parede ──── */
+.folhear-fluxo .livro-catalogo-itens .livro-tabela table,
+.folhear-fluxo .livro-catalogo-itens .livro-tabela tbody,
+.folhear-fluxo .livro-catalogo-itens .livro-tabela tr,
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td {
+  display: block;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela table {
+  border-bottom: 0;
+  font-family: var(--font-literata), Georgia, serif;
+  font-size: 0.95em;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela thead,
+.folhear-fluxo .livro-catalogo-itens .livro-tabela tr.folhear-cabecalho-repetido {
+  display: none;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela tbody tr,
+.folhear-fluxo .livro-catalogo-itens .livro-tabela tbody tr:nth-child(even) {
+  padding: 0.55em 0 0.6em;
+  border-bottom: 1px solid var(--fio);
+  background: none;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td {
+  padding: 0;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td:nth-child(1) {
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.28em;
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td:nth-child(2),
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td:nth-child(3) {
+  display: inline;
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.86em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td:nth-child(2)::after {
+  content: "  ·  ";
+  white-space: pre;
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td:nth-child(3)::before {
+  content: "Preço ";
+}
+
+.folhear-fluxo .livro-catalogo-itens .livro-tabela td:nth-child(4) {
+  margin-top: 0.2em;
+  color: var(--tinta);
+  font-weight: 400;
+}
+
+/* ── A ficha de criatura: um bloco de estatísticas de verdade ─────────── */
+.folhear-fluxo .livro-ficha {
+  margin-block: 1.2em;
+  border: 0;
+  border-top: 4px solid var(--cor);
+  border-radius: 0;
+  background: var(--papel-2);
+  font-size: inherit;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-ficha-cabeca {
+  gap: 0.8em;
+  padding: 0.8em 0.9em;
+  border: 0;
+  background: color-mix(in srgb, var(--cor) 14%, var(--papel-2));
+}
+
+.folhear-fluxo .livro-ficha-retrato {
+  width: 64px;
+  height: 64px;
+  border-radius: 0;
+  box-shadow: 4px 4px 0 var(--cor);
+  transform: rotate(-2deg);
+}
+
+.folhear-fluxo .livro-ficha-nome {
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.7em;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-ficha-tipo {
+  margin-top: 0.3em;
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.9em;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-ficha > div {
+  padding: 0.7em 0.9em 0.9em;
+}
+
+.folhear-fluxo .livro-ficha > div > * + * {
+  margin-top: 0.65em;
+}
+
+.folhear-fluxo .livro-ficha-vitais > div,
+.folhear-fluxo .livro-ficha-atributos > div {
+  border: 0;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--tinta) 6%, transparent);
+}
+
+.folhear-fluxo .livro-ficha-vitais dt,
+.folhear-fluxo .livro-ficha-atributos dt {
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.folhear-fluxo .livro-ficha-vitais dd {
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.55em;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.folhear-fluxo .livro-ficha-atributos dd {
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.2em;
+  font-weight: 800;
+}
+
+/* O atributo Principal do arquétipo, marcado. */
+.folhear-fluxo .livro-ficha-atributos > div[data-principal] {
+  background: var(--cor);
+}
+
+.folhear-fluxo .livro-ficha-atributos > div[data-principal] :is(dt, dd) {
+  color: var(--sobre-cor);
+}
+
+.folhear-fluxo .livro-ficha-linhas dt,
+.folhear-fluxo .livro-ficha-perigo b,
+.folhear-fluxo .livro-ficha-acoes li > b {
+  color: var(--cor);
+}
+
+.folhear-fluxo .livro-ficha-acoes > p {
+  border-bottom: 2px solid var(--cor);
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.2em;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.folhear-fluxo .livro-ficha-acao-meta {
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.88em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ── Ambiguidades resolvidas: a pergunta marcada, a resposta embaixo ─── */
+.folhear-fluxo .livro-qa {
+  margin-top: 0.9em;
+  padding: 0 0 0 0.8em;
+  border: 0;
+  border-left: 3px solid var(--cor);
+  border-radius: 0;
+  background: none;
+  font-size: inherit;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-qa-pergunta {
+  color: var(--tinta);
+  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-size: 1.08em;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.folhear-fluxo .livro-qa-pergunta::before {
+  content: "問";
+  margin-right: 0.35em;
+  color: var(--cor);
+  font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif;
+}
+
+.folhear-fluxo .livro-qa > p + p {
+  margin-top: 0.3em;
+  color: var(--tinta);
 }
