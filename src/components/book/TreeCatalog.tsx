@@ -56,7 +56,7 @@ function ProficiencyCard({ tree }: { tree: Tree }) {
     ["Bônus de Rank", p.pericias],
   ];
   return (
-    <div className="print-avoid-break rounded-lg border border-parchment-400 bg-parchment-100 p-3 text-sm dark:border-parchment-700 dark:bg-parchment-900/70">
+    <div className="livro-proficiencias print-avoid-break rounded-lg border border-parchment-400 bg-parchment-100 p-3 text-sm dark:border-parchment-700 dark:bg-parchment-900/70">
       <p className="mb-2 text-xs font-bold uppercase tracking-wide text-wine-700 dark:text-wine-300">
         Proficiências e perícias desta árvore
       </p>
@@ -96,7 +96,7 @@ function MechanicCard({ tree }: { tree: Tree }) {
   const m = tree.mechanic;
   if (!m) return null;
   return (
-    <div className="print-avoid-break rounded-xl border-2 border-wine-400 bg-wine-50/70 p-4 dark:border-wine-800 dark:bg-wine-950/40">
+    <div className="livro-mecanica print-avoid-break rounded-xl border-2 border-wine-400 bg-wine-50/70 p-4 dark:border-wine-800 dark:bg-wine-950/40">
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
         <p className="text-xs font-bold uppercase tracking-wider text-wine-700 dark:text-wine-300">
           Mecânica Central
@@ -147,9 +147,9 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="livro-catalogo space-y-4">
       {tree.prerequisiteNote && (
-        <div className="rounded-lg border border-wine-300 bg-wine-50/60 p-3 text-sm text-wine-800 dark:border-wine-900 dark:bg-wine-950/30 dark:text-wine-200">
+        <div className="livro-prerequisito rounded-lg border border-wine-300 bg-wine-50/60 p-3 text-sm text-wine-800 dark:border-wine-900 dark:bg-wine-950/30 dark:text-wine-200">
           <b>Pré-requisito: </b>
           {tree.prerequisiteNote}
         </div>
@@ -165,7 +165,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
               {label} <span className="font-normal text-parchment-600 dark:text-parchment-400">(Bônus +{RANK_BONUS[rankDef.rank]})</span>
             </SubTitle>
             {rankDef.mastery && (
-              <div className="print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
+              <div className="livro-maestria print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
                 <p className="font-bold text-gold-700 dark:text-gold-400">◈ Maestria: {rankDef.mastery.name}</p>
                 <p className="mt-1 text-gold-900/80 dark:text-gold-200/80">{rankDef.mastery.description}</p>
                 {/*
@@ -189,7 +189,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
         <div className="space-y-2">
           <SubTitle id={`${tree.id}-rank-deus`}>◈ Rank Deus</SubTitle>
           <p className="text-xs italic text-parchment-600 dark:text-parchment-400">Narrativo. Não se compra.</p>
-          <div className="print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
+          <div className="livro-maestria print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">
             <p className="font-bold text-gold-700 dark:text-gold-400">◈ {rankDeus.title}</p>
             {rankDeus.body.map((paragraph, i) => (
               <p key={i} className="mt-2 leading-relaxed text-gold-900/80 dark:text-gold-200/80">
