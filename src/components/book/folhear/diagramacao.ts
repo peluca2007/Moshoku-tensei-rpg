@@ -97,6 +97,8 @@ export function larguraDaColuna(g: Pick<Geometria, "pagina" | "margem" | "calha"
 
 export interface Rotulo {
   capitulo?: string;
+  /** O id do capítulo (cap4) — a cor da página sai dele. */
+  capituloId?: string;
   secao?: string;
   /** Página de abertura (sumário, folha de rosto de capítulo): sem rótulo no rodapé. */
   abertura: boolean;
@@ -349,12 +351,12 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   const total = pagina(fim) + 1;
 
   const paginaDe: Record<string, number> = {};
-  const eventos: { pagina: number; capitulo?: string; secao?: string }[] = [];
+  const eventos: { pagina: number; capitulo?: string; capituloId?: string; secao?: string }[] = [];
   for (const cap of toc) {
     const el = document.getElementById(cap.id);
     if (!el || !fluxo.contains(el)) continue;
     paginaDe[cap.id] = pagina(el);
-    eventos.push({ pagina: paginaDe[cap.id], capitulo: rotuloDoCapitulo(cap.label, true) });
+    eventos.push({ pagina: paginaDe[cap.id], capitulo: rotuloDoCapitulo(cap.label, true), capituloId: cap.id });
     for (const s of cap.children ?? []) {
       const es = document.getElementById(s.id);
       if (!es || !fluxo.contains(es) || !visivel(es)) continue;
@@ -371,6 +373,7 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   eventos.sort((a, b) => a.pagina - b.pagina);
   const rotulos: Rotulo[] = [];
   let capitulo: string | undefined;
+  let capituloId: string | undefined;
   let secao: string | undefined;
   let i = 0;
   for (let p = 0; p < total; p++) {
@@ -378,12 +381,13 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
       const e = eventos[i++];
       if (e.capitulo) {
         capitulo = e.capitulo;
+        capituloId = e.capituloId;
         secao = undefined;
       } else {
         secao = e.secao;
       }
     }
-    rotulos.push({ capitulo, secao, abertura: aberturas.has(p) });
+    rotulos.push({ capitulo, capituloId, secao, abertura: aberturas.has(p) });
   }
 
   return { total, rotulos, paginaDe };

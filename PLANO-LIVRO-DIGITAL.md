@@ -1,9 +1,8 @@
-# Plano do livro digital — o `/livro` como livro impresso
+# Plano do livro digital — o `/livro` como livro de verdade
 
-> **Visão:** abrir o `/livro` e achar que alguém escaneou um livro de RPG — papel manchado, duas colunas,
-> títulos em versalete, caixas coloridas, arte impressa no papel, capa de couro, folha virando — **sem
-> deixar de ser HTML**: texto selecionável, busca, links, tabelas de verdade, vídeo e interação.
-> Régua: o Livro do Jogador de D&D 5e no AnyFlip. A identidade é a do Mushoku Tensei RPG.
+> **Visão:** abrir o `/livro` e ver um livro aberto — páginas de tamanho fixo, duas colunas, folha
+> virando — com a cara de um **artbook de light novel**, e **sem deixar de ser HTML**: texto
+> selecionável, busca, links, tabelas de verdade, vídeo e interação.
 
 Dono da aparência do livro: o Claude (decisão do autor, 2026-09-24). Conteúdo e regras continuam nascendo
 em `src/data/` e `src/components/book/`; esta frente mexe em **como** o livro é lido. Pedidos de arte em
@@ -15,6 +14,26 @@ A primeira versão do protótipo seguia "legibilidade antes de efeito": página 
 16–18 px, uma coluna. Ficou legível e **parecia o site**. O autor comparou com o Livro do Jogador e pediu
 livro de verdade — letra densa, duas colunas —, com o zoom resolvendo a letra pequena. A segunda versão faz
 isso, e ganhou de brinde páginas iguais em toda tela.
+
+## A identidade: artbook de light novel (2026-09-24, escolha do autor)
+
+A segunda versão seguiu o Livro do Jogador de D&D ao pé da letra (pergaminho manchado, versalete
+vermelho, caixas verdes, couro) e o autor achou feia: "D&D demais", sem identidade. O diagnóstico: a arte
+do jogo é de anime, limpa e colorida, e estava impressa sobre pergaminho sujo — a arte e o papel
+brigavam. A terceira assume a origem de Mushoku Tensei:
+
+- **Papel claro e limpo** (marfim), fibra quase invisível, muito respiro; arte nítida, sem mistura.
+- **Tipografia de volume japonês:** títulos em **Shippori Mincho**, rótulos/tabelas/números em
+  **Zen Kaku Gothic**, corpo em **Literata**.
+- **Cada capítulo tem a sua cor** — a da aba na borda do livro — e tudo dentro dele usa essa cor:
+  traço sobre o título de seção, subtítulos, caixas tingidas, cabeçalho das tabelas, número da página.
+  No catálogo, cada árvore veste a cor da categoria (Magia violeta, Corpo vermelho, Utilidade verde).
+- **Aberturas de volume:** arte grande sangrando até a borda, número grande ("04") e o capítulo em kanji
+  na vertical ("第四章").
+- **Abas de capítulo** clicáveis saindo da borda do livro, com a marca impressa na borda de cada página.
+- **Guarda** com prancha colorida de página inteira; **folha de rosto** no branco; capa de tecido grafite.
+
+O CSS do livro mora em `src/app/livro/folhear/folhear.css`, importado só pela rota.
 
 ## Princípios
 
@@ -34,7 +53,7 @@ isso, e ganhou de brinde páginas iguais em toda tela.
 | Motor | **Colunas CSS aninhadas**: as de fora são páginas, as de dentro são as duas colunas de cada página | O navegador parte o texto por linha e respeita viúvas/órfãs. O título do capítulo e as figuras largas atravessam a página com `column-span: all`. |
 | Pele | **CSS fora de camada sobre os componentes do livro** | Vence as utilitárias do Tailwind (cartões arredondados, sombras) sem mexer nos componentes: o contínuo continua igual. |
 | Papel | **Sempre papel**, nos dois temas | O tema escuro muda a mesa em volta. A variante `dark:` não vale dentro de `.sem-escuro`. |
-| Tipografia | **Alegreya** (corpo), **Alegreya SC** (títulos), **Alegreya Sans** (caixas e tabelas), **UnifrakturMaguntia** (capitular) | As três vozes do livro impresso, numa família só. Carregadas só no livro folheado. |
+| Tipografia | **Shippori Mincho** (títulos), **Zen Kaku Gothic** (rótulos e tabelas), **Literata** (corpo) | A voz dos volumes japoneses. Carregadas só no livro folheado. |
 | Virada | **Folha de pergaminho com duas colunas de "texto" girando por 460 ms**; o texto real troca na hora | Curvar HTML vivo exigiria clonar a dupla. Com movimento reduzido, a troca é instantânea. |
 | Onde roda | **Rota `/livro/folhear`**, com botão Livro/Contínuo; `/livro` intacto até aprovação | Comparar antes de trocar o livro de todo mundo. |
 | Tela | **Leitor imersivo**: no modo Livro somem o menu e o rodapé do site | A barra do site sobre a mesa brigava com o livro. |
@@ -58,7 +77,8 @@ isso, e ganhou de brinde páginas iguais em toda tela.
 
 ## O que foi medido
 
-- **Livro inteiro:** **225 páginas** com o catálogo aberto. Diagramar e medir tudo leva ~0,9 s no
+- **Livro inteiro:** **241 páginas** com o catálogo aberto (versão artbook; a entrelinha maior custou
+  páginas e comprou leitura). Uma só página com mais de 18% de mancha vazia. Diagramar e medir tudo leva ~0,9 s no
   servidor de desenvolvimento (uma vez, ao abrir).
 - **Capítulo 4:** 18 páginas. As tabelas continuam na coluna seguinte com o cabeçalho repetido, e os
   diagramas largos atravessam a página.
@@ -89,7 +109,7 @@ isso, e ganhou de brinde páginas iguais em toda tela.
 
 ## Limites conhecidos
 
-- Verificado só no Chrome (headless), em cinco tamanhos de tela e nos dois temas. **Safari e Firefox não.**
+- Verificado no Chrome e no Firefox (headless). **Safari (iPhone/iPad) não.**
 - O texto é justificado sem garantia de hifenização (o dicionário de português não existe em todo
   navegador); algumas linhas abrem espaço entre palavras, como em muito livro impresso.
 - No modo Livro, a busca (lupa ou Ctrl+K) leva à página `/busca`; o painel rápido mora no menu escondido.
