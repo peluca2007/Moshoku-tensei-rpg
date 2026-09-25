@@ -50,12 +50,12 @@ export default function EntryCard({
   const ability = isAbility(def) ? def : null;
   const description = isAbility(def) ? def.effect : def.description;
   return (
-    <div className="print-avoid-break rounded-lg border border-parchment-300 bg-parchment-50/80 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-950/40">
+    <div className="livro-verbete print-avoid-break rounded-lg border border-parchment-300 bg-parchment-50/80 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-950/40">
       <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <p className="font-bold text-parchment-900 dark:text-parchment-50">
+        <p className="livro-verbete-nome font-bold text-parchment-900 dark:text-parchment-50">
           {ability?.signature && <span className="text-gold-600 dark:text-gold-400">◆ </span>}
           {def.name}
-          <span className="ml-1 text-xs font-normal text-parchment-600 dark:text-parchment-400">
+          <span className="livro-verbete-meta ml-1 text-xs font-normal text-parchment-600 dark:text-parchment-400">
             — {kind === "talent" ? "Talento" : "Técnica/Magia"} · {costLabel(def)}
           </span>
         </p>

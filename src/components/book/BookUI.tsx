@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Ornament from "@/components/ui/Ornament";
 import { SUMARIO_DO_LIVRO } from "@/data/sumarioDoLivro";
+import { ARTE_DAS_ABERTURAS } from "./arteDasAberturas";
 
 /**
  * A FOLHA DE ROSTO DE CAPÍTULO (2026-09-23).
@@ -31,8 +32,16 @@ export function ChapterTitle({
   resumo?: string;
   children: ReactNode;
 }) {
+  const arte = ARTE_DAS_ABERTURAS[id];
   return (
     <header className="livro-abertura scroll-mt-24 text-center">
+      {/* A arte da abertura só aparece no livro folheado (ver globals.css). */}
+      {arte && (
+        <figure aria-hidden className="livro-abertura-arte">
+          {/* eslint-disable-next-line @next/next/no-img-element -- arte impressa no papel; carrega só no livro folheado. */}
+          <img src={arte.src} alt="" loading="lazy" decoding="async" />
+        </figure>
+      )}
       {numero && (
         <p className="flex items-center justify-center gap-3 text-2xs font-bold uppercase tracking-[0.35em] text-gold-700 sm:text-xs dark:text-gold-400">
           <span aria-hidden className="h-px w-8 bg-gradient-to-r from-transparent to-gold-600/60 sm:w-12" />

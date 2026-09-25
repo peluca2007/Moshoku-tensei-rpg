@@ -8,24 +8,21 @@ import Chapter5 from "@/components/book/Chapter5";
 import Appendices from "@/components/book/Appendices";
 import Folhear from "@/components/book/folhear/Folhear";
 import { SUMARIO_DO_LIVRO } from "@/data/sumarioDoLivro";
+import { PATCH_NOTES } from "@/data/patchNotes";
 
 export const metadata: Metadata = {
   title: "Folhear o Livro — Mushoku Tensei RPG",
 };
 
 /**
- * O protótipo do livro em duas páginas (Etapa A do plano do livro digital).
+ * O livro inteiro, aberto como livro impresso (ver Folhear.tsx).
  *
- * Mostra o Capítulo 4 — o que tem mais tabela, caixa de regra e diagrama por
- * página, ou seja, o que mais pode quebrar. `?tudo` carrega o livro inteiro,
- * pra medir o custo de diagramar ~87 mil pixels de texto em colunas. O `/livro`
- * de sempre não muda até o protótipo ser aprovado.
+ * Os capítulos são os mesmos do /livro — renderizados aqui no servidor e
+ * entregues ao leitor como `children` —, então o que a mesa lê no modo Livro
+ * e no contínuo é sempre o mesmo texto. O /livro de sempre continua no ar até
+ * este ser aprovado.
  */
-export default async function FolhearPage(props: PageProps<"/livro/folhear">) {
-  const { tudo } = await props.searchParams;
-  const inteiro = tudo !== undefined;
-  const toc = inteiro ? SUMARIO_DO_LIVRO : SUMARIO_DO_LIVRO.filter((c) => c.id === "cap4");
-
+export default function FolhearPage() {
   return (
     <>
       {/* Sem JavaScript, o palco não pode ficar escondido esperando a
@@ -33,20 +30,14 @@ export default async function FolhearPage(props: PageProps<"/livro/folhear">) {
       <noscript>
         <style>{`.folhear .folhear-palco{visibility:visible!important}`}</style>
       </noscript>
-      <Folhear toc={toc}>
-        {inteiro ? (
-          <>
-            <Chapter0 />
-            <Chapter1 />
-            <Chapter2 />
-            <Chapter3 />
-            <Chapter4 />
-            <Chapter5 />
-            <Appendices />
-          </>
-        ) : (
-          <Chapter4 />
-        )}
+      <Folhear toc={SUMARIO_DO_LIVRO} edicao={PATCH_NOTES[0]?.version}>
+        <Chapter0 />
+        <Chapter1 />
+        <Chapter2 />
+        <Chapter3 />
+        <Chapter4 />
+        <Chapter5 />
+        <Appendices />
       </Folhear>
     </>
   );

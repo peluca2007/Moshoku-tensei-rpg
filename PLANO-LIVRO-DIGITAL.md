@@ -39,12 +39,29 @@ isso, e ganhou de brinde páginas iguais em toda tela.
 | Onde roda | **Rota `/livro/folhear`**, com botão Livro/Contínuo; `/livro` intacto até aprovação | Comparar antes de trocar o livro de todo mundo. |
 | Tela | **Leitor imersivo**: no modo Livro somem o menu e o rodapé do site | A barra do site sobre a mesa brigava com o livro. |
 
+## O livro inteiro (2026-09-24, terceira volta)
+
+`/livro/folhear` agora é o livro todo, do começo ao fim:
+
+- **Guarda** (papel vinho com treliça dourada e ex-líbris), **folha de rosto** (título, arte, edição),
+  **sumário** com número de página e frontispício, os sete capítulos e o **colofão** — que carrega o
+  aviso de projeto de fã, já que no modo Livro o rodapé do site some.
+- **Aberturas de capítulo com arte** que sangra até a borda da página (provisórias, de artes que o projeto
+  já tinha; as definitivas estão pedidas).
+- **O catálogo das 19 árvores impresso por inteiro**: no modo Livro todo `<details>` abre (e volta a
+  fechar no contínuo). Cada árvore vira uma "classe" — nome em versalete com o brasão, Mecânica Central e
+  Proficiências em nota verde, Maestrias em caixa vinho — e cada habilidade vira um verbete no estilo das
+  magias do Livro do Jogador: nome, linha de custo em itálico, texto, encantamento à margem.
+- **Tabela espremida atravessa a página** (4+ colunas, ou alguma linha com mais de 7 linhas de texto) —
+  a dos Antecedentes, as comparativas do Cap. 3.
+- **Voltar de onde parei**: o livro guarda a página e reabre nela (o link `#secao` sempre ganha).
+
 ## O que foi medido
 
+- **Livro inteiro:** **225 páginas** com o catálogo aberto. Diagramar e medir tudo leva ~0,9 s no
+  servidor de desenvolvimento (uma vez, ao abrir).
 - **Capítulo 4:** 18 páginas. As tabelas continuam na coluna seguinte com o cabeçalho repetido, e os
   diagramas largos atravessam a página.
-- **Livro inteiro** (`/livro/folhear?tudo`): **107 páginas**, recomposição completa em ~240 ms. Cada
-  capítulo abre em página nova.
 - **Telas:** dupla no desktop, no notebook baixo e no tablet deitado; uma página no tablet em pé (86% do
   tamanho real) e no celular.
 
@@ -62,9 +79,10 @@ isso, e ganhou de brinde páginas iguais em toda tela.
 
 - **Arte** (depende do autor, ver `ARTE-PARA-O-LIVRO.md`): papel em alta resolução, couro, aberturas de
   capítulo, capa, pranchas e mapa.
-- **B — Leitura completa:** trocar `/livro` pelo leitor novo, com capa, créditos e "voltar de onde parei".
-- **C — Editorial:** modelo de página para o catálogo das árvores (hoje é o `<details>` do contínuo,
-  partido em colunas) e revisão página a página das caixas em sequência.
+- **B — Trocar o `/livro`:** o leitor novo no lugar do atual (modo Livro no desktop, contínuo no celular,
+  que hoje ainda perde o índice lateral e o cabeçalho corrente do `/livro`).
+- **C — Editorial:** revisão página a página das 225 (caixas verdes em sequência, páginas quase vazias
+  antes de tabela alta) e página de créditos das artes quando as definitivas chegarem.
 - **D — Mídia:** vídeo que pausa ao virar a página, laços nas aberturas de capítulo.
 - **E — Acabamento:** Safari/iPad e Firefox (colunas aninhadas são o ponto de risco), leitor de tela,
   impressão, offline.

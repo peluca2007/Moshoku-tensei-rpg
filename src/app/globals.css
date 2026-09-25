@@ -2029,7 +2029,8 @@ input[type="number"],
   color: inherit;
 }
 
-.folhear-fluxo .print-hide {
+/* O rodapé "próximo capítulo →" é navegação de site; no livro, vira a folha. */
+.folhear-fluxo footer.print-hide {
   display: none;
 }
 
@@ -2301,7 +2302,8 @@ input[type="number"],
 
 /* Diagrama que não cabe numa coluna atravessa a página, como as tabelas e
    figuras largas do impresso (ver ajustarFigurasLargas). */
-.folhear-fluxo figure.diagrama.folhear-larga {
+.folhear-fluxo figure.diagrama.folhear-larga,
+.folhear-fluxo .livro-tabela.folhear-larga {
   column-span: all;
 }
 
@@ -2764,4 +2766,416 @@ input[type="number"],
   .folhear .folhear-livro::after {
     display: none !important;
   }
+}
+
+/* ═══ O livro folheado, parte 2: o livro inteiro (2026-09-24) ═══════════════
+ * Guarda, folha de rosto, arte de abertura, catálogo das árvores e verbetes.
+ * Mesma regra da parte 1: tudo atrás de `.folhear-fluxo`, fora de camada. */
+
+/* Tamanhos do Tailwind (em rem, presos à raiz do SITE) viram múltiplos do
+   corpo do livro: a página tem tamanho fixo, e a letra dentro dela também. */
+.folhear-fluxo .text-3xs {
+  font-size: calc(var(--fonte) * 0.72);
+}
+.folhear-fluxo .text-2xs {
+  font-size: calc(var(--fonte) * 0.78);
+}
+.folhear-fluxo .text-xs {
+  font-size: calc(var(--fonte) * 0.86);
+}
+.folhear-fluxo .text-sm {
+  font-size: calc(var(--fonte) * 0.95);
+}
+.folhear-fluxo .text-base {
+  font-size: var(--fonte);
+}
+.folhear-fluxo .text-lg {
+  font-size: calc(var(--fonte) * 1.1);
+}
+.folhear-fluxo .text-xl {
+  font-size: calc(var(--fonte) * 1.2);
+}
+.folhear-fluxo .text-2xl {
+  font-size: calc(var(--fonte) * 1.4);
+}
+.folhear-fluxo .text-3xl {
+  font-size: calc(var(--fonte) * 1.7);
+}
+
+/* Texto branco em selo colorido continua branco (a regra geral põe tinta). */
+.folhear-fluxo .text-white {
+  color: #fbf3df;
+}
+
+/* ── A guarda: o verso da capa ────────────────────────────────────────── */
+.folhear-guarda,
+.folhear-rosto {
+  display: none;
+}
+
+.folhear-fluxo > :is(.folhear-guarda, .folhear-rosto) {
+  display: flex;
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  column-count: auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* O papel da guarda: vinho marmorizado com uma treliça dourada. */
+.folhear-folha[data-pagina="0"] {
+  background: #4a1b17;
+}
+
+.folhear-folha[data-pagina="0"]::before {
+  inset: 0;
+  transform: none;
+  background:
+    repeating-linear-gradient(45deg, rgb(214 180 110 / 0.14) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(-45deg, rgb(214 180 110 / 0.14) 0 1px, transparent 1px 26px),
+    radial-gradient(ellipse at 40% 35%, #7a2e25 0%, #561d18 45%, #33100c 100%);
+}
+
+.folhear-exlibris {
+  padding: 2.4em 3em 2.2em;
+  outline: 1px solid rgb(201 173 106 / 0.8);
+  outline-offset: 7px;
+  border: 2px solid var(--livro-titulo);
+  background: #f1e2bd url("/texturas/pergaminho.avif") center / cover;
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.45);
+  color: var(--livro-titulo);
+}
+
+.folhear-exlibris-rotulo {
+  font-family: var(--font-livro-gotica), Georgia, serif;
+  font-size: 3em;
+  line-height: 1;
+}
+
+.folhear-exlibris-nome {
+  margin-top: 0.5em;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.6em;
+  font-weight: 800;
+}
+
+.folhear-exlibris-lema {
+  margin-top: 0.3em;
+  color: #6b5236;
+  font-style: italic;
+}
+
+/* ── A folha de rosto ─────────────────────────────────────────────────── */
+.folhear-rosto-selo {
+  color: #8a6a2c;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.1em;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+}
+
+.folhear-fluxo .folhear-rosto-titulo {
+  margin-top: 0.15em;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 4.2em;
+  font-weight: 800;
+  line-height: 0.95;
+}
+
+.folhear-rosto-sub {
+  margin-top: 0.35em;
+  padding-bottom: 0.5em;
+  border-bottom: 2px solid var(--livro-filete);
+  color: #5b4630;
+  font-size: 1.5em;
+  font-style: italic;
+}
+
+.folhear-rosto-arte {
+  width: 100%;
+  margin-top: 1.4em;
+}
+
+.folhear-rosto-arte img {
+  width: 100%;
+  height: auto;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: radial-gradient(ellipse 58% 60% at 50% 50%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(ellipse 58% 60% at 50% 50%, #000 40%, transparent 100%);
+}
+
+.folhear-rosto-edicao {
+  margin-top: 1.2em;
+  color: #6b5236;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1em;
+  letter-spacing: 0.25em;
+}
+
+/* ── Arte de abertura de capítulo: sangra até a borda da página ───────── */
+.livro-abertura-arte {
+  display: none;
+}
+
+.folhear-fluxo .livro-abertura-arte {
+  display: block;
+  height: 330px;
+  margin: calc(-1 * var(--topo)) calc(-1 * var(--margem)) 0.8em;
+  overflow: hidden;
+}
+
+.folhear-fluxo .livro-abertura-arte img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 98%);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 98%);
+}
+
+/* A arte agora vem antes do "Capítulo N": os seletores da abertura contam por tipo. */
+.folhear-fluxo .livro-abertura > p:first-of-type {
+  justify-content: flex-start;
+  color: #8a6a2c;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1em;
+  letter-spacing: 0.3em;
+}
+
+.folhear-fluxo .livro-abertura > p:first-of-type > span:first-child {
+  display: none;
+}
+
+/* ── O catálogo das árvores: cada árvore é uma "classe" do livro ──────── */
+.folhear-fluxo .livro-arvore {
+  margin-top: 1.4em;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  break-before: column;
+}
+
+.folhear-fluxo .livro-arvore::before {
+  display: none;
+}
+
+.folhear-fluxo .livro-arvore-cabeca {
+  gap: 0.7em;
+  padding: 0 0 0.35em;
+  border-bottom: 3px double var(--livro-filete);
+  border-radius: 0;
+  background: none;
+  cursor: default;
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-arvore-cabeca:hover {
+  background: none;
+}
+
+.folhear-fluxo .livro-arvore-cabeca > span > span:first-child {
+  display: block;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 2.1em;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(2) {
+  margin-left: 0;
+  color: #8a6a2c;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1em;
+  letter-spacing: 0.12em;
+}
+
+.folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(3) {
+  margin-top: 0.2em;
+  font-size: 1em;
+}
+
+.folhear-fluxo .livro-arvore-corpo {
+  padding: 0.5em 0 0;
+  border: 0;
+}
+
+/* As caixas do catálogo seguem as do livro: nota verde, aviso vinho. */
+.folhear-fluxo :is(.livro-mecanica, .livro-proficiencias, .livro-prerequisito) {
+  margin-block: 0.7em;
+  padding: 0.5em 0.75em 0.6em;
+  border: 0;
+  border-radius: 0;
+  background: var(--livro-nota);
+  box-shadow:
+    0 1px 1px rgb(0 0 0 / 0.1),
+    0 4px 9px -3px rgb(0 0 0 / 0.4);
+  font-family: var(--font-livro-sans), sans-serif;
+  line-height: 1.28;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.folhear-fluxo .livro-mecanica .rounded-full {
+  border-radius: 2px;
+}
+
+.folhear-fluxo .livro-mecanica .bg-wine-600 {
+  background: var(--livro-titulo);
+}
+
+.folhear-fluxo :is(.livro-mecanica, .livro-proficiencias) > p:first-child,
+.folhear-fluxo .livro-mecanica > div:first-child > p {
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.1em;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.folhear-fluxo .livro-maestria {
+  margin-block: 0.6em;
+  padding: 0.5em 0.75em 0.6em;
+  border: 0;
+  border-block: 3px solid var(--livro-titulo);
+  border-radius: 0;
+  background: var(--livro-aviso);
+  box-shadow: 0 3px 7px -3px rgb(0 0 0 / 0.35);
+  line-height: 1.3;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.folhear-fluxo .livro-maestria > p:first-child {
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.15em;
+  font-weight: 800;
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-catalogo h4 {
+  margin-top: 0.9em;
+  padding-bottom: 0.05em;
+  border-bottom: 1px solid var(--livro-filete);
+}
+
+/* ── O verbete: cada habilidade como uma magia do Livro do Jogador ────── */
+.folhear-fluxo .livro-verbete {
+  margin-top: 0.75em;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: inherit;
+  line-height: 1.3;
+}
+
+.folhear-fluxo .livro-verbete > div:first-child {
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-verbete-nome {
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.22em;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.folhear-fluxo .livro-verbete-meta {
+  display: block;
+  margin: 0.1em 0 0;
+  color: var(--livro-tinta);
+  font-family: var(--font-livro), Georgia, serif;
+  font-size: 0.72em;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.folhear-fluxo .livro-verbete > :is(p, span, dl, div) + :is(p, span, dl, div) {
+  margin-top: 0.2em;
+}
+
+/* O encantamento: uma citação à margem, não um cartão. */
+.folhear-fluxo .livro-verbete blockquote {
+  margin-top: 0.3em;
+  padding: 0.15em 0 0.15em 0.7em;
+  border: 0;
+  border-left: 2px solid var(--livro-filete);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.folhear-fluxo .livro-verbete .-z-10 {
+  display: none;
+}
+
+.folhear-fluxo .livro-verbete dl {
+  padding-top: 0.2em;
+  border-top: 1px dashed rgb(88 24 13 / 0.3);
+}
+
+/* Brasões e selos das raças e árvores: tinta no papel. */
+.folhear-fluxo :is(.livro-arvore-cabeca, .livro-catalogo) img {
+  mix-blend-mode: multiply;
+}
+
+/* Na caixa de proficiências, o rótulo fica em cima do texto: lado a lado, a
+   coluna de rótulo de 11rem deixava o texto com um palmo de largura. */
+.folhear-fluxo .livro-proficiencias dl > div {
+  flex-direction: column;
+  gap: 0;
+}
+
+.folhear-fluxo .livro-proficiencias dt {
+  width: auto;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-weight: 700;
+}
+
+.folhear-fluxo .livro-proficiencias dl > div + div {
+  margin-top: 0.3em;
+}
+
+/* ── O colofão: a última página ───────────────────────────────────────── */
+.folhear-colofao {
+  display: none;
+}
+
+.folhear-fluxo > .folhear-colofao {
+  display: flex;
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  column-count: auto;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.7em;
+  padding: 0 8%;
+  color: #4a3a28;
+  font-size: 0.92em;
+  text-align: center;
+}
+
+.folhear-fluxo > .folhear-colofao p {
+  text-align: center;
+  text-indent: 0;
+}
+
+.folhear-colofao-selo {
+  margin-bottom: 0.3em;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.5em;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.folhear-fluxo .folhear-colofao-fim {
+  margin-top: 0.8em;
+  color: var(--livro-filete);
+  font-size: 1.4em;
 }

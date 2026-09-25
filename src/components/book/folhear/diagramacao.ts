@@ -218,8 +218,11 @@ export function segurarCaixasCurtas(fluxo: Element, g: Geometria, r: Regua): voi
 export function ajustarTabelasLargas(fluxo: Element, g: Geometria, r: Regua): void {
   const degraus = ["folhear-tabela-justa", "folhear-tabela-apertada"];
   fluxo.querySelectorAll("table").forEach((t) => t.classList.remove(...degraus));
-  const coluna = larguraDaColuna(g) + 1;
-  const larga = (t: Element) => (t.getClientRects()[0]?.width ?? 0) / r.k > coluna;
+  // Tabela que atravessa a página (ver espalharTabelasEspremidas) tem a
+  // largura da página inteira; as outras, a de uma coluna.
+  const limite = (t: Element) =>
+    (t.closest(".folhear-larga") ? g.pagina - g.margem * 2 : larguraDaColuna(g)) + 1;
+  const larga = (t: Element) => (t.getClientRects()[0]?.width ?? 0) / r.k > limite(t);
   for (const degrau of degraus) {
     const largas = Array.from(fluxo.querySelectorAll("table")).filter((t) => visivel(t) && larga(t));
     if (largas.length === 0) return;
@@ -242,6 +245,33 @@ export function ajustarFigurasLargas(fluxo: Element): void {
     return Array.from(fig.querySelectorAll<HTMLElement>("*")).some((el) => el.scrollWidth > el.clientWidth + 2 && el.clientWidth > 0);
   });
   largas.forEach((fig) => fig.classList.add("folhear-larga"));
+}
+
+/**
+ * Tabela espremida numa coluna atravessa a página inteira.
+ *
+ * Uma coluna de livro tem ~335px. Tabela de quatro colunas ou mais — a dos
+ * Antecedentes, a do Vigor — cabia ali só virando torre: a coluna "Efeito"
+ * com 90px e cada linha com vinte linhas de texto. O impresso resolve do
+ * jeito de sempre: a tabela larga vai de margem a margem (`column-span: all`),
+ * e o texto em volta continua em duas colunas acima e abaixo dela.
+ *
+ * Também atravessa a tabela de poucas colunas que ainda saiu com alguma linha
+ * mais alta que sete linhas de texto. Não mexe em tabela dentro de caixa,
+ * verbete ou catálogo de árvore: lá dentro ela não pode sair da caixa.
+ */
+export function espalharTabelasEspremidas(fluxo: Element, g: Geometria, r: Regua): void {
+  fluxo.querySelectorAll(".livro-tabela.folhear-larga").forEach((el) => el.classList.remove("folhear-larga"));
+  const alturaMaxima = g.fonte * 1.3 * 7;
+  const espremidas = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-tabela")).filter((caixa) => {
+    if (!visivel(caixa) || caixa.closest(".livro-caixa, .livro-arvore, .livro-verbete, .livro-maestria")) return false;
+    const tabela = caixa.querySelector("table");
+    if (!tabela) return false;
+    const colunas = tabela.tHead?.rows[0]?.cells.length ?? tabela.rows[0]?.cells.length ?? 0;
+    if (colunas >= 4) return true;
+    return Array.from(tabela.tBodies[0]?.rows ?? []).some((tr) => tr.getBoundingClientRect().height / r.k > alturaMaxima);
+  });
+  espremidas.forEach((caixa) => caixa.classList.add("folhear-larga"));
 }
 
 const CLASSE_CABECALHO = "folhear-cabecalho-repetido";
@@ -334,7 +364,7 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   }
 
   const aberturas = new Set<number>();
-  fluxo.querySelectorAll(".folhear-sumario, .livro-abertura").forEach((el) => aberturas.add(pagina(el)));
+  fluxo.querySelectorAll(".folhear-guarda, .folhear-rosto, .folhear-sumario, .livro-abertura, .folhear-colofao").forEach((el) => aberturas.add(pagina(el)));
 
   // `sort` é estável: capítulo e primeira seção na mesma página mantêm a
   // ordem do sumário, e o capítulo zera a seção antes de ela entrar.
