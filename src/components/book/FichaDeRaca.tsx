@@ -123,10 +123,17 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
       <figure
         className="livro-raca-arte relative mx-4 mt-3 flex aspect-[21/9] items-center justify-center overflow-hidden rounded-lg border border-parchment-300 bg-parchment-200/50 dark:border-parchment-800 dark:bg-parchment-950/50"
         data-vazia={arte ? undefined : ""}
+        data-recorte={arte?.recorte ? "" : undefined}
       >
         {arte ? (
           // eslint-disable-next-line @next/next/no-img-element -- ilustração de página inteira; o tamanho vem do quadro, não do otimizador.
-          <img src={arte} alt={`Ilustração: ${nome}.`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+          <img
+            src={arte.src}
+            alt={`Ilustração: ${nome}.`}
+            loading="lazy"
+            decoding="async"
+            className={`h-full w-full ${arte.recorte ? "object-contain object-bottom" : "object-cover"}`}
+          />
         ) : (
           <span
             className="livro-raca-brasao"
@@ -242,7 +249,14 @@ export function VitrineDasRacas() {
                 <span className="livro-vitrine-retrato">
                   {arte ? (
                     // eslint-disable-next-line @next/next/no-img-element -- miniatura da ilustração da raça, recortada em círculo.
-                    <img src={arte} alt="" loading="lazy" decoding="async" className="h-14 w-14 rounded-full object-cover" />
+                    <img
+                      src={arte.src}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      data-recorte={arte.recorte ? "" : undefined}
+                      className={`h-14 w-14 rounded-full object-cover ${arte.recorte ? "object-[center_8%]" : ""}`}
+                    />
                   ) : (
                     <RaceCrest race={race} size={56} rounded="rounded-full" />
                   )}

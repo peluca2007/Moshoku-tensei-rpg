@@ -2601,7 +2601,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 /* Sem recorte: o carimbo pendura pra fora da borda. O selo e o brasão é que
    se medem pelo quadro (consulta de contêiner), pra caber no quadro baixo
    da raça de texto longo. */
-.folhear-fluxo .livro-raca .livro-raca-arte[data-vazia] {
+.folhear-fluxo .livro-raca .livro-raca-arte:is([data-vazia], [data-recorte]) {
   container-type: size;
   background:
     repeating-linear-gradient(-45deg, color-mix(in srgb, var(--cor) 13%, transparent) 0 1.5px, transparent 1.5px 10px),
@@ -2609,7 +2609,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
     var(--papel-2);
 }
 
-.folhear-fluxo .livro-raca .livro-raca-arte[data-vazia]::before {
+.folhear-fluxo .livro-raca .livro-raca-arte:is([data-vazia], [data-recorte])::before {
   content: var(--selo);
   position: absolute;
   inset: 0;
@@ -3626,7 +3626,223 @@ html.livro-imersivo {
 }
 
 /* No papel dia o quadro reservado é claro: o nome japonês sai na cor da raça. */
-.folhear[data-papel="dia"] .folhear-fluxo .livro-raca .livro-raca-arte[data-vazia]::after {
+.folhear[data-papel="dia"] .folhear-fluxo .livro-raca .livro-raca-arte:is([data-vazia], [data-recorte])::after {
   color: var(--cor);
   text-shadow: none;
+}
+
+/* A raça em RECORTE (personagem de fundo transparente): de pé sobre a trama,
+   um pouco à esquerda, com o selo atrás à direita e a sombra deslocada da cor
+   da raça — um adesivo colado na página. */
+.folhear-fluxo .livro-raca .livro-raca-arte[data-recorte]::before {
+  justify-content: flex-end;
+  padding-right: 9%;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-arte[data-recorte] img {
+  position: absolute;
+  inset: 4% 0 0;
+  z-index: 1;
+  width: 100%;
+  height: 96%;
+  object-fit: contain;
+  object-position: 30% bottom;
+  filter: drop-shadow(8px 8px 0 color-mix(in srgb, var(--cor) 75%, transparent));
+}
+
+/* A miniatura da vitrine em recorte: o rosto, no alto, sobre o papel. */
+.folhear-fluxo .livro-vitrine-retrato img[data-recorte] {
+  object-position: center 6%;
+}
+
+/* ── Os antecedentes: fichas com o retrato da infância (2026-09-25) ────── */
+.folhear-fluxo .livro-antecedentes > .livro-antecedente {
+  display: flow-root;
+  margin: 0 0 0.9em;
+  padding: 0.55em 0.7em 0.65em;
+  overflow: visible;
+  border: 0;
+  border-top: 3px solid var(--cor);
+  border-radius: 0;
+  background: var(--papel-2);
+  font-size: 1em;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-antecedente-cabeca {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45em;
+}
+
+.folhear-fluxo .livro-antecedente-faixa {
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.55em;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.folhear-fluxo .livro-antecedente .livro-antecedente-nome {
+  margin: 0;
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.3em;
+  font-weight: 800;
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-antecedente .livro-antecedente-nome::before {
+  display: none;
+}
+
+.folhear-fluxo .livro-antecedente-ouro {
+  margin-top: 0.2em;
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 0.78em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-antecedente-ouro b {
+  color: var(--cor);
+}
+
+.folhear-fluxo .livro-antecedente-efeitos {
+  margin: 0.4em 0 0;
+  padding-left: 1.05em;
+}
+
+/* O retrato pula pra fora da ficha, torto, com a sombra da cor do capítulo. */
+.folhear-fluxo .livro-antecedente .livro-antecedente-retrato {
+  float: right;
+  width: 36%;
+  height: auto;
+  margin: -1.4em -0.3em 0.4em 0.8em;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border-radius: 0;
+  background: #0c0c0e;
+  box-shadow: 5px 5px 0 var(--cor);
+  transform: rotate(2deg);
+}
+
+.folhear-fluxo .livro-antecedente[data-lado="esq"] .livro-antecedente-retrato {
+  box-shadow: -5px 5px 0 var(--cor);
+  transform: rotate(-1.6deg);
+}
+
+.folhear-fluxo .livro-antecedente .livro-antecedente-retrato img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Retrato em recorte (fundo transparente): sobre a trama da cor. */
+.folhear-fluxo .livro-antecedente .livro-antecedente-retrato[data-recorte] {
+  background:
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--cor) 16%, transparent) 0 1.5px, transparent 1.5px 8px),
+    var(--papel);
+}
+
+/* ── Os olhos em movimento ─────────────────────────────────────────────── */
+.folhear-fluxo figure.livro-olhos {
+  display: grid;
+  margin: 0.7em 0 0.9em;
+  overflow: visible;
+  aspect-ratio: auto;
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+.folhear-fluxo .livro-olho img {
+  aspect-ratio: 1;
+  border-radius: 0;
+  box-shadow: 0 0 0 2px var(--cor);
+  object-fit: cover;
+}
+
+.folhear-fluxo .livro-olho:nth-child(2) img {
+  transform: rotate(1.5deg);
+}
+
+.folhear-fluxo .livro-olho-legenda {
+  margin-top: 0.4em;
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.85em;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+}
+
+.folhear-fluxo figure.livro-kishirika {
+  aspect-ratio: auto;
+  overflow: visible;
+  background: none;
+  box-shadow: none;
+}
+
+.folhear-fluxo figure.livro-kishirika img {
+  aspect-ratio: 16 / 9;
+  height: auto;
+  box-shadow: 6px 6px 0 var(--cor);
+}
+
+.folhear-fluxo figure.livro-kishirika figcaption {
+  margin-top: 0.7em;
+  color: var(--tinta-suave);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 0.92em;
+}
+
+/* ── O retrato da árvore ──────────────────────────────────────────────── */
+.folhear-fluxo .livro-arvore .livro-arvore-retrato {
+  float: right;
+  width: 44%;
+  max-width: none;
+  height: auto;
+  margin: 0.2em 0 0.5em 0.8em;
+  overflow: visible;
+  aspect-ratio: 4 / 5;
+  border: 0;
+  border-radius: 0;
+  box-shadow: 6px 6px 0 var(--cor);
+  transform: rotate(1.4deg);
+}
+
+.folhear-fluxo .livro-arvore .livro-arvore-retrato img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+
+.folhear-fluxo .livro-arvore .livro-arvore-retrato[data-recorte] {
+  background: none;
+  box-shadow: none;
+  transform: none;
+}
+
+.folhear-fluxo .livro-arvore .livro-arvore-retrato[data-recorte] img {
+  object-fit: contain;
+  object-position: center bottom;
+  filter: drop-shadow(6px 6px 0 color-mix(in srgb, var(--cor) 75%, transparent));
+}
+
+.folhear-fluxo .livro-antecedente-faixa {
+  white-space: nowrap;
+}
+
+.folhear-fluxo .livro-antecedente .livro-antecedente-nome {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Dado se escreve em caixa baixa: 4d4+10, não 4D4+10. */
+.folhear-fluxo .livro-antecedente-ouro b {
+  text-transform: none;
 }

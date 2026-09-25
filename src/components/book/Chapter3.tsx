@@ -4,6 +4,7 @@ import { RANK_BONUS, RANKS } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diagramas";
 import TreeCatalog from "./TreeCatalog";
+import RetratoDaArvore from "./RetratoDaArvore";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
 import TreeCrest from "../TreeCrest";
@@ -730,6 +731,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
                   </span>
                 </summary>
                 <div className="livro-arvore-corpo border-t border-parchment-300 p-3 dark:border-parchment-800">
+                  <RetratoDaArvore id={tree.id} nome={tree.name} />
                   <TreeCatalog tree={tree} />
                 </div>
               </details>
