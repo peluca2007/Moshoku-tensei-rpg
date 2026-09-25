@@ -236,6 +236,72 @@
   --cor: color-mix(in oklab, var(--cor-arvore) 64%, #000);
 }
 
+/*
+ * AS PALETAS DO SITE, TRADUZIDAS PRO LIVRO (2026-09-25).
+ *
+ * Os componentes do livro nasceram no site, pintados com as utilitárias do
+ * pergaminho (`parchment`), do vinho (`wine`) e do dourado (`gold`). Era o
+ * que ainda deixava pedaços do livro com cara do livro antigo, o de
+ * pergaminho, que o autor não quer mais: chips beges, bordas marrons, notas
+ * douradas no meio do livro noturno.
+ *
+ * Desde que as paletas viraram variáveis (globals.css), o livro as redefine
+ * aqui dentro, e todo componente adota a identidade de uma vez:
+ * - o PERGAMINHO vira a escala neutra do livro (o papel dia no 50, o papel
+ *   noite no 950), então claro continua claro e escuro continua escuro;
+ * - o VINHO vira a cor do capítulo (ou da árvore), em degraus: o 500 é a
+ *   própria cor, os de cima clareiam, os de baixo escurecem;
+ * - o DOURADO vira a mesma cor, apagada na tinta: o acento secundário da
+ *   página, parente do primeiro, pra nada de fora do capítulo aparecer.
+ *
+ * As escalas dependem de `--cor`, e variável que lê variável se resolve no
+ * elemento onde foi declarada. Por isso a declaração se repete onde a cor
+ * muda: no fluxo, em cada capítulo e em cada árvore.
+ */
+.folhear[data-modo="livro"] .folhear-fluxo {
+  --color-parchment-50: #f7f3ea;
+  --color-parchment-100: #ece6da;
+  --color-parchment-200: #dcd6ca;
+  --color-parchment-300: #c6c1b7;
+  --color-parchment-400: #a19c92;
+  --color-parchment-500: #807c76;
+  --color-parchment-600: #5d616e;
+  --color-parchment-700: #454852;
+  --color-parchment-800: #2e2f37;
+  --color-parchment-900: #1e1e24;
+  --color-parchment-950: #141418;
+}
+
+.folhear[data-modo="livro"] .folhear-fluxo,
+.folhear[data-modo="livro"] .folhear-fluxo [data-capitulo],
+.folhear[data-modo="livro"] .folhear-fluxo [data-arvore],
+.folhear[data-modo="livro"] .folhear-fluxo [data-raca] {
+  --color-wine-50: color-mix(in oklab, var(--cor) 9%, #fff);
+  --color-wine-100: color-mix(in oklab, var(--cor) 18%, #fff);
+  --color-wine-200: color-mix(in oklab, var(--cor) 36%, #fff);
+  --color-wine-300: color-mix(in oklab, var(--cor) 58%, #fff);
+  --color-wine-400: color-mix(in oklab, var(--cor) 80%, #fff);
+  --color-wine-500: var(--cor);
+  --color-wine-600: color-mix(in oklab, var(--cor) 78%, #0b0b0e);
+  --color-wine-700: color-mix(in oklab, var(--cor) 62%, #0b0b0e);
+  --color-wine-800: color-mix(in oklab, var(--cor) 44%, #0b0b0e);
+  --color-wine-900: color-mix(in oklab, var(--cor) 28%, #0b0b0e);
+  --color-wine-950: color-mix(in oklab, var(--cor) 16%, #0b0b0e);
+
+  --tinta-da-cor: color-mix(in oklab, var(--cor) 55%, #aaa59c);
+  --color-gold-50: color-mix(in oklab, var(--tinta-da-cor) 10%, #fff);
+  --color-gold-100: color-mix(in oklab, var(--tinta-da-cor) 20%, #fff);
+  --color-gold-200: color-mix(in oklab, var(--tinta-da-cor) 40%, #fff);
+  --color-gold-300: color-mix(in oklab, var(--tinta-da-cor) 62%, #fff);
+  --color-gold-400: color-mix(in oklab, var(--tinta-da-cor) 82%, #fff);
+  --color-gold-500: var(--tinta-da-cor);
+  --color-gold-600: color-mix(in oklab, var(--tinta-da-cor) 76%, #0b0b0e);
+  --color-gold-700: color-mix(in oklab, var(--tinta-da-cor) 58%, #0b0b0e);
+  --color-gold-800: color-mix(in oklab, var(--tinta-da-cor) 42%, #0b0b0e);
+  --color-gold-900: color-mix(in oklab, var(--tinta-da-cor) 28%, #0b0b0e);
+  --color-gold-950: color-mix(in oklab, var(--tinta-da-cor) 16%, #0b0b0e);
+}
+
 /* ── Contínuo (e o primeiro quadro, antes do JavaScript decidir) ────────── */
 .folhear:not([data-modo="livro"]) {
   padding: 1rem;
@@ -2352,108 +2418,518 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   text-transform: uppercase;
 }
 
-/* ── As raças: verbete de espécie, sem caixa ─────────────────────────── */
+/* ══ AS RAÇAS: uma página inteira cada (2026-09-25) ═══════════════════════
+ *
+ * Pedido do autor: as raças com "uma parte maior" e lugar pra ilustração.
+ * Cada raça ocupa uma página: o nome gritado, a ilustração (ou o quadro
+ * reservado pra ela), o carimbo da raridade no sorteio, a faixa de números
+ * sempre no mesmo lugar, a epígrafe e os traços em duas colunas.
+ *
+ * Como as árvores, cada raça tem cor, nome em japonês e selo, e a página
+ * inteira assume os três (a folha recebe `data-raca`, ver medirPaginas).
+ * A ilustração é o que ESTICA: a página tem a altura da mancha, e o quadro
+ * da arte fica com o que os traços deixarem — raça de texto curto ganha arte
+ * maior, e página nenhuma sobra em branco ou transborda.
+ */
 .folhear [data-raca="humano"] {
+  --cor-raca: #ff7a93;
   --jp: "人族";
+  --selo: "人";
 }
 .folhear [data-raca="elfo"] {
+  --cor-raca: #6fdc9c;
   --jp: "エルフ";
+  --selo: "森";
 }
 .folhear [data-raca="anao"] {
+  --cor-raca: #ff8a4c;
   --jp: "ドワーフ";
+  --selo: "鉄";
 }
 .folhear [data-raca="hobbit"] {
+  --cor-raca: #c6e070;
   --jp: "小人族";
+  --selo: "小";
 }
 .folhear [data-raca="raca-fera"] {
+  --cor-raca: #f2b33d;
   --jp: "獣族";
+  --selo: "獣";
 }
 .folhear [data-raca="celestial"] {
+  --cor-raca: #c5dcff;
   --jp: "天族";
+  --selo: "天";
 }
 .folhear [data-raca="oceano"] {
+  --cor-raca: #3ccfd6;
   --jp: "海族";
+  --selo: "海";
 }
 .folhear [data-raca="migurd"] {
+  --cor-raca: #7aa7ff;
   --jp: "ミグルド族";
+  --selo: "念";
 }
 .folhear [data-raca="superd"] {
+  --cor-raca: #2fe0a0;
   --jp: "スペルド族";
+  --selo: "槍";
 }
 .folhear [data-raca="ogro"] {
+  --cor-raca: #ff5e57;
   --jp: "鬼族";
+  --selo: "鬼";
 }
 .folhear [data-raca="demonio-imortal"] {
+  --cor-raca: #b38cff;
   --jp: "不死魔族";
+  --selo: "魔";
 }
 .folhear [data-raca="dragao"] {
+  --cor-raca: #ffd046;
   --jp: "龍族";
+  --selo: "龍";
 }
 
-.folhear-fluxo .livro-raca {
-  gap: 0.8em;
-  margin-top: 1.1em;
-  padding: 0.9em 0 0;
+.folhear [data-raca] {
+  --cor: var(--cor-raca);
+}
+
+.folhear[data-papel="dia"] [data-raca] {
+  --cor: color-mix(in oklab, var(--cor-raca) 58%, #000);
+}
+
+/* A página. */
+.folhear-fluxo .livro-racas > .livro-raca {
+  display: flex;
+  flex-direction: column;
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  margin: 0;
+  padding: 0;
+  overflow: visible;
   border: 0;
-  border-top: 2px solid var(--cor);
   border-radius: 0;
   background: none;
   box-shadow: none;
-  font-size: inherit;
+  font-size: 1em;
+  column-span: all;
+  break-before: column;
+  break-inside: avoid;
 }
 
-/* O brasão em traço: no papel noite a arte (traço preto em fundo branco)
-   inverte e vira traço claro sobre o papel, sem o quadrado branco. */
-.folhear-fluxo .livro-raca > span:first-child {
-  width: 58px !important;
-  height: 58px !important;
-  border-radius: 999px;
-  background: var(--papel-2);
-  box-shadow: 0 0 0 2px var(--cor);
+/* O cabeçalho: a ordem e a leitura japonesa num fio, o nome embaixo. */
+.folhear-fluxo .livro-raca .livro-raca-cabeca {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 0 1em;
+  padding: 0;
 }
 
-.folhear[data-papel="noite"] .folhear-fluxo .livro-raca > span:first-child img {
+.folhear-fluxo .livro-raca .livro-raca-ordem {
+  margin: 0 0 0.35em;
+  color: var(--cor);
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-nome {
+  margin: 0;
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 4.1em;
+  font-weight: 900;
+  letter-spacing: -0.005em;
+  line-height: 0.86;
+  text-transform: uppercase;
+  text-decoration-color: color-mix(in srgb, var(--cor) 60%, transparent);
+  text-decoration-thickness: 0.26em;
+  text-underline-offset: -0.1em;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-leitura {
+  padding: 0 0 0.3em;
+  color: var(--tinta-suave);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.15em;
+}
+
+/* A ilustração: estica até onde o texto deixar. */
+.folhear-fluxo .livro-raca .livro-raca-arte {
+  display: flex;
+  flex: 1 1 0;
+  min-height: 7.5em;
+  margin: 0.9em 10px 1.3em 5px;
+  aspect-ratio: auto;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: #0c0c0e;
+  box-shadow: 9px 9px 0 var(--cor);
+  transform: rotate(-0.6deg);
+}
+
+.folhear-fluxo .livro-raca .livro-raca-arte img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+}
+
+/* O nome em japonês, na vertical, descendo pela borda da arte. */
+.folhear-fluxo .livro-raca .livro-raca-arte::after {
+  content: var(--jp);
+  position: absolute;
+  top: 0.4em;
+  right: 0.35em;
+  color: #ffffff;
+  font-family: var(--font-livro-kanji);
+  font-size: 1.9em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-shadow: 0 0 0.35em rgb(0 0 0 / 0.8), 2px 2px 0 var(--cor);
+  writing-mode: vertical-rl;
+}
+
+/* O quadro reservado, enquanto a ilustração não chega: o selo enorme na
+   trama da cor da raça, e o brasão no meio. Tem que ficar bonito sozinho,
+   porque é assim que a página vai ser lida até a arte chegar. */
+/* Sem recorte: o carimbo pendura pra fora da borda. O selo e o brasão é que
+   se medem pelo quadro (consulta de contêiner), pra caber no quadro baixo
+   da raça de texto longo. */
+.folhear-fluxo .livro-raca .livro-raca-arte[data-vazia] {
+  container-type: size;
+  background:
+    repeating-linear-gradient(-45deg, color-mix(in srgb, var(--cor) 13%, transparent) 0 1.5px, transparent 1.5px 10px),
+    radial-gradient(ellipse at 50% 55%, color-mix(in srgb, var(--cor) 20%, transparent), transparent 70%),
+    var(--papel-2);
+}
+
+.folhear-fluxo .livro-raca .livro-raca-arte[data-vazia]::before {
+  content: var(--selo);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: color-mix(in srgb, var(--cor) 12%, transparent);
+  font-family: var(--font-livro-kanji);
+  font-size: min(15em, 80cqh);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-brasao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9em;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-brasao > span {
+  width: min(104px, 50cqh) !important;
+  height: min(104px, 50cqh) !important;
+  background: var(--papel);
+  box-shadow:
+    0 0 0 3px var(--cor),
+    0 0 0 9px color-mix(in srgb, var(--cor) 22%, transparent);
+}
+
+.folhear[data-papel="noite"] .folhear-fluxo .livro-raca-brasao img {
   filter: invert(1) brightness(0.92);
   mix-blend-mode: screen;
 }
 
-.folhear[data-papel="dia"] .folhear-fluxo .livro-raca > span:first-child img {
+.folhear[data-papel="dia"] .folhear-fluxo .livro-raca-brasao img {
   mix-blend-mode: multiply;
 }
 
-.folhear-fluxo .livro-raca-nome {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5em;
+.folhear-fluxo .livro-raca .livro-raca-brasao::after {
+  content: "ILUSTRAÇÃO A CAMINHO";
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 0.68em;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-align: center;
+  white-space: pre;
+}
+
+/* Em desenvolvimento, o nome do arquivo que preenche o quadro — em caixa
+   baixa, do jeito que tem que ser salvo (o servidor diferencia). */
+.folhear-fluxo .livro-raca .livro-raca-brasao[data-arquivo]::after {
+  content: "ILUSTRAÇÃO A CAMINHO\A" attr(data-arquivo);
+  line-height: 1.6;
+}
+
+/* O carimbo da raridade, torto, mordendo a borda de baixo da arte. */
+.folhear-fluxo .livro-raca .livro-raca-carimbo {
+  top: auto;
+  right: auto;
+  bottom: -1.1em;
+  left: 0.9em;
+  z-index: 2;
+  padding: 0.3em 0.7em 0.35em;
+  border: 2px solid var(--cor);
+  border-radius: 0;
+  background: var(--papel);
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.25em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-align: left;
+  transform: rotate(-3deg);
+}
+
+.folhear-fluxo .livro-raca .livro-raca-carimbo small {
+  margin-top: 0.25em;
+  color: var(--tinta);
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 0.56em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* A faixa de números: as cinco coisas que a raça põe na ficha. */
+.folhear-fluxo .livro-raca .livro-raca-numeros {
+  margin: 0.5em 0 0;
+  border: 0;
+  border-top: 3px solid var(--cor);
+  border-radius: 0;
+  background: var(--papel-2);
+}
+
+.folhear-fluxo .livro-raca .livro-raca-numeros > div {
+  padding: 0.45em 0.3em 0.5em;
+  border-color: var(--fio);
+}
+
+.folhear-fluxo .livro-raca .livro-raca-numeros dt {
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 0.66em;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-numeros dd {
   color: var(--tinta);
   font-family: var(--font-livro-grito), system-ui, sans-serif;
-  font-size: 1.55em;
+  font-size: 1.75em;
   font-weight: 800;
   line-height: 1.05;
-  text-transform: uppercase;
-  break-after: avoid;
 }
 
-.folhear-fluxo .livro-raca-nome::after {
-  content: var(--jp, "");
+.folhear-fluxo .livro-raca .livro-raca-numeros [data-vazio] dd {
+  color: color-mix(in srgb, var(--tinta-suave) 45%, transparent);
+}
+
+.folhear-fluxo .livro-raca .livro-raca-numeros dd.livro-raca-nota {
   color: var(--cor);
-  font-family: var(--font-livro-kanji);
-  font-size: 0.72em;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: none;
-  white-space: nowrap;
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 0.66em;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
-.folhear-fluxo .livro-raca-descricao {
-  margin-top: 0.25em;
+/* A epígrafe: a raça em uma frase, com as aspas da cor dela. */
+.folhear-fluxo .livro-raca .livro-raca-descricao {
+  position: relative;
+  margin: 0.9em 0 0;
+  padding-left: 1.6em;
+  color: var(--tinta);
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.12em;
+  line-height: 1.4;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-descricao::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.12em;
+  left: 0;
+  color: var(--cor);
+  font-size: 2.6em;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Os traços, em duas colunas, cada um com o nome gritado na cor da raça. */
+.folhear-fluxo .livro-raca .livro-raca-tracos {
+  margin: 0.8em 0 0;
+  padding: 0;
+  columns: 2;
+  column-gap: var(--calha);
+  color: var(--tinta);
+  list-style: none;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-tracos > li {
+  margin: 0 0 0.5em;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-traco-nome {
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.12em;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-raca .livro-raca-linguas {
+  margin: auto 0 0;
+  padding-top: 0.55em;
+  border-top: 1px solid var(--fio);
   color: var(--tinta-suave);
-  font-style: italic;
+  font-size: 0.92em;
 }
 
-.folhear-fluxo .livro-raca ul {
-  margin-top: 0.45em;
+.folhear-fluxo .livro-raca .livro-raca-linguas b {
+  margin-right: 0.5em;
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.1em;
+  letter-spacing: 0.14em;
+}
+
+/* O nome da raça no quadro comparativo leva à página dela. */
+.folhear-fluxo .livro-raca-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── A vitrine das raças: estica até o pé da página ───────────────────────
+   Nasce com altura zero; esticarVitrines (diagramacao.ts) dá a ela o resto
+   da página antes da primeira raça. Os brasões se arrumam pelo espaço que
+   ela recebeu: doze numa fileira, seis por dois ou quatro por três. */
+.folhear-fluxo .livro-vitrine {
+  height: var(--altura-vitrine, 0px);
+  margin: 0;
+  overflow: hidden;
+  visibility: hidden;
+  column-span: all;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-vitrine.folhear-vitrine-cheia {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1.4em;
+  visibility: visible;
+  container-type: size;
+}
+
+.folhear-fluxo .livro-vitrine-titulo {
+  margin: 0;
+  padding-top: 0.6em;
+  border-top: 3px solid var(--cor);
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.35em;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.folhear-fluxo .livro-vitrine-lista {
+  flex: 1 1 0;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 0.7em;
+  margin: 0.8em 0 0;
+  padding: 0;
+  list-style: none;
+  --lado: min(calc(50cqh - 5.2em), calc(16.6cqw - 1.6em));
+}
+
+@container (min-height: 560px) {
+  .folhear-fluxo .livro-vitrine-lista {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    --lado: min(calc(33.3cqh - 5.4em), calc(25cqw - 2em));
+  }
+}
+
+@container (max-height: 300px) {
+  .folhear-fluxo .livro-vitrine-lista {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 0.4em;
+    --lado: min(calc(100cqh - 6.4em), calc(8.3cqw - 0.9em));
+  }
+
+  .folhear-fluxo .livro-vitrine-raridade {
+    display: none;
+  }
+}
+
+.folhear-fluxo .livro-vitrine-lista > li {
+  margin: 0;
+  min-height: 0;
+}
+
+.folhear-fluxo .livro-vitrine-item {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  padding: 0.5em 0.3em;
+  border-radius: 0;
+  border-top: 2px solid var(--cor);
+  background: var(--papel-2);
+  color: var(--tinta);
+  text-decoration: none;
+}
+
+.folhear-fluxo .livro-vitrine-item:nth-child(odd) {
+  transform: rotate(-0.5deg);
+}
+
+.folhear-fluxo .livro-vitrine-retrato > * {
+  width: var(--lado) !important;
+  height: var(--lado) !important;
+  border-radius: 999px;
+  background: var(--papel);
+  box-shadow:
+    0 0 0 2px var(--cor),
+    0 0 0 6px color-mix(in srgb, var(--cor) 20%, transparent);
+}
+
+.folhear[data-papel="noite"] .folhear-fluxo .livro-vitrine-retrato span img {
+  filter: invert(1) brightness(0.92);
+  mix-blend-mode: screen;
+}
+
+.folhear[data-papel="dia"] .folhear-fluxo .livro-vitrine-retrato span img {
+  mix-blend-mode: multiply;
+}
+
+.folhear-fluxo .livro-vitrine-nome {
+  color: var(--tinta);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.05em;
+  font-weight: 800;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-vitrine-raridade {
+  color: var(--cor);
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 0.66em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
 }
 
 /* ── O catálogo de itens: verbetes em duas colunas, não uma parede ──── */
@@ -3147,4 +3623,10 @@ html.livro-imersivo {
 
 .folhear[data-modo="livro"] .folhear-fluxo .animate-ping {
   animation: none;
+}
+
+/* No papel dia o quadro reservado é claro: o nome japonês sai na cor da raça. */
+.folhear[data-papel="dia"] .folhear-fluxo .livro-raca .livro-raca-arte[data-vazia]::after {
+  color: var(--cor);
+  text-shadow: none;
 }
