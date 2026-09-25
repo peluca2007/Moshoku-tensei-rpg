@@ -151,7 +151,7 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
         </div>
       </blockquote>
       {bonus?.ok === true && (
-        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-3xs font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300 dark:ring-gold-500/20">
+        <div className="livro-recitacao mt-2 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-3xs font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300 dark:ring-gold-500/20">
           <span className="relative flex h-3 w-3">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-400 opacity-75" />
             <span className="relative inline-flex h-3 w-3 rounded-full bg-gold-500" />
@@ -160,7 +160,7 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
         </div>
       )}
       {bonus?.ok === false && (
-        <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-parchment-500/10 px-2.5 py-1 text-3xs font-semibold text-parchment-600 ring-1 ring-parchment-500/30 dark:text-parchment-400">
+        <div className="livro-recitacao livro-recitacao-sem mt-2 inline-flex items-center gap-1.5 rounded-full bg-parchment-500/10 px-2.5 py-1 text-3xs font-semibold text-parchment-600 ring-1 ring-parchment-500/30 dark:text-parchment-400">
           {/*
             O travessão é o "ícone" deste selo — quem carrega a informação é a
             frase ao lado. Vai `aria-hidden` pelo mesmo motivo da aspa do
