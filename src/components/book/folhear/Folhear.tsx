@@ -33,10 +33,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
+import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } from "./buscaNoLivro";
 import { ARTE_DA_FOLHA_DE_ROSTO } from "../arteDasAberturas";
 import {
   type Geometria,
   type Paginacao,
+  type Rotulo,
   CAPA,
   ZOOMS,
   ajustarFigurasLargas,
@@ -203,6 +205,7 @@ export default function Folhear({
   const [dupla, setDupla] = useState(0);
   const [virada, setVirada] = useState<{ dir: "prox" | "ant"; chave: number } | null>(null);
   const [indiceAberto, setIndiceAberto] = useState(false);
+  const [buscaAberta, setBuscaAberta] = useState(false);
   const [telaCheia, setTelaCheia] = useState(false);
 
   const geo = useMemo<Geometria | null>(
@@ -300,6 +303,22 @@ export default function Folhear({
    * livro completo), e volta a fechar no contínuo.
    */
   const togglesDoLivro = useRef(0);
+
+  // Cada capítulo no fluxo ganha o id dele (a cor e o selo saem daí, no CSS).
+  useLayoutEffect(() => {
+    fluxo.current?.querySelectorAll(":scope > *").forEach((el) => {
+      const id = el.querySelector(":scope > .livro-abertura h2[id]")?.id;
+      if (id) (el as HTMLElement).dataset.capitulo = id;
+    });
+  }, []);
+
+  // O leitor imersivo: no modo Livro, o menu e o rodapé do site somem.
+  useEffect(() => {
+    if (modo !== "livro") return;
+    const html = document.documentElement;
+    html.classList.add("livro-imersivo");
+    return () => html.classList.remove("livro-imersivo");
+  }, [modo]);
   useLayoutEffect(() => {
     const f = fluxo.current;
     if (!f) return;
@@ -345,6 +364,7 @@ export default function Folhear({
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
     for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+    esquecerIndice(f);
     repetirCabecalhos(f);
     const r = regua(fx);
     const p = medirPaginas(f, fim.current, r, g, toc);
@@ -493,20 +513,20 @@ export default function Folhear({
     };
   }, [modo]);
 
-  // Ctrl+K no modo Livro: o modal da busca rápida mora dentro do menu do site,
-  // que está escondido — abriria invisível e ainda engoliria as setas. Aqui o
-  // atalho leva à página de busca, que é o mesmo índice.
+  // Ctrl+K no modo Livro abre a busca DENTRO do livro. O modal da busca do
+  // site mora no menu, que está escondido — e ele mandaria pra fora do livro.
   useEffect(() => {
     if (modo !== "livro") return;
     const aoTeclar = (e: KeyboardEvent) => {
       if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "k") return;
       e.preventDefault();
       e.stopPropagation();
-      router.push("/busca");
+      setIndiceAberto(false);
+      setBuscaAberta(true);
     };
     window.addEventListener("keydown", aoTeclar, true);
     return () => window.removeEventListener("keydown", aoTeclar, true);
-  }, [modo, router]);
+  }, [modo]);
 
   // Teclado: setas e PageUp/PageDown viram; Home/End vão às pontas; +/- dão zoom.
   useEffect(() => {
@@ -617,6 +637,11 @@ export default function Folhear({
     irParaElemento(el);
   };
 
+  const fecharBusca = useCallback(() => {
+    limparRealce();
+    setBuscaAberta(false);
+  }, []);
+
   const trocarModo = (m: Modo) => {
     if (m === modo) return;
     guardarAncora();
@@ -672,9 +697,20 @@ export default function Folhear({
               <Link href="/" className="folhear-botao inline-flex" aria-label="Voltar ao site" title="Voltar ao site">
                 <House className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/busca" className="folhear-botao inline-flex" aria-label="Buscar (Ctrl+K)" title="Buscar — Ctrl+K">
+              <button
+                type="button"
+                className="folhear-botao inline-flex"
+                aria-label="Buscar no livro (Ctrl+K)"
+                title="Buscar no livro — Ctrl+K"
+                aria-expanded={buscaAberta}
+                aria-controls="folhear-busca"
+                onClick={() => {
+                  setIndiceAberto(false);
+                  setBuscaAberta((v) => !v);
+                }}
+              >
                 <Search className="h-4 w-4" aria-hidden />
-              </Link>
+              </button>
             </>
           )}
           <button
@@ -757,6 +793,17 @@ export default function Folhear({
           )}
         </div>
       </div>
+
+      {/* ── A busca dentro do livro ─────────────────────────────────────── */}
+      {livro && buscaAberta && geo && paginacao && (
+        <PainelDeBusca
+          fluxo={fluxo}
+          paginaDe={(el) => (faixa.current ? paginaDoElemento(el, regua(faixa.current), geo) : 0)}
+          rotulos={paginacao.rotulos}
+          aoIr={(el) => irParaElemento(el)}
+          aoFechar={fecharBusca}
+        />
+      )}
 
       {/* ── O índice, com a página de cada seção ──────────────────────── */}
       {indiceAberto && (
@@ -1158,6 +1205,145 @@ function BotaoPapel({ papel }: { papel: Papel }) {
     >
       {noite ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
     </button>
+  );
+}
+
+/** O último termo buscado, pra reabrir o painel onde ele estava. */
+let ultimoTermo = "";
+
+/**
+ * O PAINEL DE BUSCA do livro: procura no texto diagramado e mostra a página
+ * de cada achado. Clicar vira o livro até lá e pinta o termo na página.
+ *
+ * Fica aberto enquanto se clica nos resultados (é assim que se percorre
+ * "todas as vezes que o livro fala em Molhado"), sem escurecer o livro atrás.
+ */
+function PainelDeBusca({
+  fluxo,
+  paginaDe,
+  rotulos,
+  aoIr,
+  aoFechar,
+}: {
+  fluxo: React.RefObject<HTMLDivElement | null>;
+  paginaDe: (el: Element) => number;
+  rotulos: Rotulo[];
+  aoIr: (el: Element) => void;
+  aoFechar: () => void;
+}) {
+  const [termo, setTermo] = useState(() => ultimoTermo);
+  const [resultado, setResultado] = useState<{ achados: Achado[]; total: number }>(() =>
+    ultimoTermo && fluxo.current ? buscarNoLivro(fluxo.current, ultimoTermo, paginaDe) : { achados: [], total: 0 }
+  );
+  const [escolhido, setEscolhido] = useState<Element | null>(null);
+  const espera = useRef(0);
+  const campo = useRef<HTMLInputElement>(null);
+
+  const procurar = (t: string) => {
+    const f = fluxo.current;
+    if (!f) return;
+    ultimoTermo = t;
+    setResultado(buscarNoLivro(f, t, paginaDe));
+    setEscolhido(null);
+    realcar(f, t);
+  };
+
+  // Ao abrir: foco no campo, e o realce da última busca de volta.
+  useEffect(() => {
+    campo.current?.focus();
+    campo.current?.select();
+    if (ultimoTermo && fluxo.current) realcar(fluxo.current, ultimoTermo);
+    return () => clearTimeout(espera.current);
+  }, [fluxo]);
+
+  useEffect(() => {
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (e.key === "Escape") aoFechar();
+    };
+    window.addEventListener("keydown", aoTeclar);
+    return () => window.removeEventListener("keydown", aoTeclar);
+  }, [aoFechar]);
+
+  const ir = (a: Achado) => {
+    setEscolhido(a.el);
+    if (fluxo.current) realcar(fluxo.current, termo, a.el);
+    aoIr(a.el);
+  };
+
+  const onde = (p: number) => {
+    const r = rotulos[p];
+    return r?.arvoreNome ?? r?.secao ?? r?.capitulo ?? "";
+  };
+
+  let aviso: string;
+  if (termo.trim().length < 2) {
+    aviso = "Digite ao menos duas letras. A busca procura no texto inteiro do livro, catálogo das árvores incluso.";
+  } else if (resultado.total === 0) {
+    aviso = "Nada no livro com esse termo.";
+  } else {
+    const mais = resultado.total > resultado.achados.length ? ` — mostrando ${resultado.achados.length}` : "";
+    aviso = `${resultado.total} trecho${resultado.total > 1 ? "s" : ""}${mais}`;
+  }
+
+  return (
+    <aside id="folhear-busca" className="folhear-busca print-hide" role="search" aria-label="Buscar no livro">
+      <div className="folhear-busca-topo">
+        <Search className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
+        <input
+          ref={campo}
+          type="search"
+          value={termo}
+          placeholder="Buscar no livro…"
+          aria-label="Termo da busca"
+          onChange={(e) => {
+            const t = e.target.value;
+            setTermo(t);
+            clearTimeout(espera.current);
+            espera.current = window.setTimeout(() => procurar(t), 140);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && resultado.achados[0]) ir(resultado.achados[0]);
+          }}
+        />
+        <button type="button" className="folhear-botao inline-flex" aria-label="Fechar a busca" onClick={aoFechar}>
+          <X className="h-4 w-4" aria-hidden />
+        </button>
+      </div>
+
+      <p className="folhear-busca-conta" aria-live="polite">
+        {aviso}
+      </p>
+
+      <ol className="folhear-busca-lista">
+        {resultado.achados.map((a, i) => (
+          <li key={i}>
+            <button
+              type="button"
+              className="folhear-busca-item"
+              data-titulo={a.titulo ? "" : undefined}
+              data-escolhido={escolhido === a.el ? "" : undefined}
+              onClick={() => ir(a)}
+            >
+              <span className="folhear-busca-pagina">{a.pagina + 1}</span>
+              <span className="min-w-0">
+                <span className="folhear-busca-onde">{onde(a.pagina)}</span>
+                <span className="folhear-busca-trecho">
+                  {a.antes}
+                  <mark>{a.casou}</mark>
+                  {a.depois}
+                </span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+
+      {termo.trim().length >= 2 && (
+        <Link href={`/busca?q=${encodeURIComponent(termo.trim())}`} className="folhear-busca-site">
+          Buscar no site inteiro →
+        </Link>
+      )}
+    </aside>
   );
 }
 

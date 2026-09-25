@@ -47,6 +47,7 @@ export function ChapterTitle({
       className="livro-abertura scroll-mt-24 text-center"
       data-num={numeroGrande}
       data-kanji={numeroKanji}
+      data-arte={arte ? "" : undefined}
     >
       {/* A arte da abertura só aparece no livro folheado (ver folhear.css). */}
       {arte && (
