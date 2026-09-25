@@ -31,7 +31,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
 import { ARTE_DA_FOLHA_DE_ROSTO } from "../arteDasAberturas";
@@ -53,6 +52,8 @@ import {
   repetirCabecalhos,
   rotuloDoCapitulo,
   segurarCaixasCurtas,
+  segurarTitulos,
+  soltarTitulos,
 } from "./diagramacao";
 
 /**
@@ -125,6 +126,36 @@ function gravarModo(m: Modo) {
   ouvintes.forEach((o) => o());
 }
 
+/*
+ * O PAPEL do livro — noite (padrão) ou dia —, escolhido à parte do tema do
+ * site: o livro é um objeto, e um livro de capa preta não fica branco porque
+ * o site está claro. Mesmo esquema de loja externa do modo.
+ */
+type Papel = "noite" | "dia";
+const CHAVE_PAPEL = "livro-folhear-papel";
+const memoriaDoPapel: { papel?: Papel } = {};
+
+function lerPapel(): Papel {
+  if (memoriaDoPapel.papel) return memoriaDoPapel.papel;
+  try {
+    const salvo = localStorage.getItem(CHAVE_PAPEL);
+    if (salvo === "noite" || salvo === "dia") return salvo;
+  } catch {
+    /* sem armazenamento: vale o padrão */
+  }
+  return "noite";
+}
+
+function gravarPapel(p: Papel) {
+  memoriaDoPapel.papel = p;
+  try {
+    localStorage.setItem(CHAVE_PAPEL, p);
+  } catch {
+    /* fica só na memória desta aba */
+  }
+  ouvintes.forEach((o) => o());
+}
+
 const DURACAO_VIRADA_MS = 460;
 
 /*
@@ -163,6 +194,7 @@ export default function Folhear({
   const router = useRouter();
 
   const modo = useSyncExternalStore<Modo | null>(assinar, lerModo, () => null);
+  const papel = useSyncExternalStore<Papel>(assinar, lerPapel, () => "noite");
 
   const [tamanho, setTamanho] = useState<{ w: number; h: number } | null>(null);
   const [zoom, setZoom] = useState(0);
@@ -305,10 +337,14 @@ export default function Folhear({
     const g = estado.current.geo;
     if (!porDupla || !g || !f || !fx || !j || !fim.current) return;
 
+    soltarTitulos(f);
     ajustarFigurasLargas(f);
     espalharTabelasEspremidas(f, g, regua(fx));
     segurarCaixasCurtas(f, g, regua(fx));
     ajustarTabelasLargas(f, g, regua(fx));
+    // Por último, porque tudo acima mexe em onde as coisas caem. Cada
+    // empurrão pode criar outro caso adiante: repete até zerar.
+    for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
     repetirCabecalhos(f);
     const r = regua(fx);
     const p = medirPaginas(f, fim.current, r, g, toc);
@@ -618,6 +654,7 @@ export default function Folhear({
       ref={raiz}
       className={`folhear livro-shell ${FONTES_DO_LIVRO}`}
       data-modo={modo ?? undefined}
+      data-papel={papel}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
       style={variaveis}
@@ -694,7 +731,7 @@ export default function Folhear({
               >
                 <ZoomIn className="h-4 w-4" aria-hidden />
               </button>
-              <BotaoTema />
+              <BotaoPapel papel={papel} />
             </>
           )}
           <div className="folhear-alternador" role="group" aria-label="Modo de leitura">
@@ -785,7 +822,7 @@ export default function Folhear({
 
                   <div
                     ref={fluxo}
-                    className={livro ? "folhear-fluxo sem-escuro" : "folhear-continuo livro-pagina surface"}
+                    className={livro ? "folhear-fluxo" : "folhear-continuo livro-pagina surface"}
                   >
                     <Guarda />
                     <FolhaDeRosto edicao={edicao} />
@@ -890,7 +927,8 @@ function Folhas({
       {Array.from({ length: total }, (_, k) => {
         const r = paginacao.rotulos[k];
         const lado = geo.porDupla === 1 ? (k % 2 === 0 ? "dir" : "esq") : k % 2 === 0 ? "esq" : "dir";
-        const parte = !r || r.abertura ? "" : (r.capitulo ?? "").replace(" · ", " — ");
+        const capitulo = (r?.capitulo ?? "").split(" · ")[0];
+        const parte = !r || r.abertura ? "" : r.arvoreNome ? `${capitulo} — ${r.arvoreNome}` : (r.capitulo ?? "").replace(" · ", " — ");
         const indice = r?.capituloId ? toc.findIndex((c) => c.id === r.capituloId) : -1;
         return (
           <div
@@ -899,6 +937,7 @@ function Folhas({
             data-lado={lado}
             data-pagina={k}
             data-capitulo={r?.capituloId}
+            data-arvore={r?.arvoreId}
             style={{
               left: k * geo.pagina,
               // A guarda é a prancha colorida: pintada na folha, que vai de
@@ -907,7 +946,12 @@ function Folhas({
             }}
           >
             {k >= 2 && indice >= 0 && (
-              <span className="folhear-marca" style={{ "--aba-i": indice } as CSSProperties} />
+              <>
+                <span className="folhear-marca" style={{ "--aba-i": indice } as CSSProperties} />
+                {/* O kanji do capítulo (ou da árvore), enorme e quase apagado no
+                    canto de fora. Vem do CSS (--selo), junto com a cor. */}
+                <span className="folhear-marca-dagua" />
+              </>
             )}
             {/* A guarda e a folha de rosto não levam número, como no impresso. */}
             {k >= 2 && k < paginacao.total && (
@@ -1101,30 +1145,20 @@ function Sumario({
   );
 }
 
-/**
- * O tema, dentro da barra do livro — no modo Livro o menu do site some, e com
- * ele o botão de tema. O papel do livro é sempre papel; o tema muda a mesa.
- */
-function BotaoTema() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const montado = useSyncExternalStore(assinarNada, () => true, () => false);
-  if (!montado) return <span className="inline-block h-9 w-9" />;
-  const escuro = resolvedTheme === "dark";
+/** Papel noite ou dia — o do livro, não o do site. */
+function BotaoPapel({ papel }: { papel: Papel }) {
+  const noite = papel === "noite";
   return (
     <button
       type="button"
       className="folhear-botao hidden sm:inline-flex"
-      onClick={() => setTheme(escuro ? "light" : "dark")}
-      aria-label={escuro ? "Mesa clara" : "Mesa escura"}
-      title={escuro ? "Mesa clara" : "Mesa escura"}
+      onClick={() => gravarPapel(noite ? "dia" : "noite")}
+      aria-label={noite ? "Livro claro" : "Livro escuro"}
+      title={noite ? "Livro claro" : "Livro escuro"}
     >
-      {escuro ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
+      {noite ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
     </button>
   );
-}
-
-function assinarNada() {
-  return () => {};
 }
 
 /** A altura do que cobre o topo da janela no modo contínuo: o nav e a barra. */

@@ -1,100 +1,240 @@
 /* ═══════════════════════════════════════════════════════════════════════════
  * O LIVRO FOLHEADO — /livro/folhear
  *
- * A identidade: um ARTBOOK DE LIGHT NOVEL (2026-09-24, escolha do autor).
+ * A identidade (2026-09-24, quarta volta): um LIVRO NOTURNO com coragem
+ * gráfica.
  *
- * Mushoku Tensei nasceu light novel, e a arte do jogo é de anime: limpa,
- * colorida, de traço nítido. As duas primeiras versões punham essa arte sobre
- * pergaminho manchado, com a cara de livro de RPG ocidental — a arte e o
- * papel brigavam, e o livro parecia "D&D com prints de anime". Esta assume a
- * origem:
+ * Voltas anteriores: página do tamanho da tela (parecia o site); cópia do
+ * Livro do Jogador de D&D (sem identidade); artbook de light novel claro
+ * (bonito, "claro demais" e comportado demais). O autor apontou Vampiro: A
+ * Máscara e Mörk Borg — livros que se reconhecem por uma página só — e pediu
+ * um livro escuro, com vida própria, mantendo as cores por capítulo.
  *
- * - papel claro e limpo, com muito respiro; a arte entra nítida, sem mistura;
- * - títulos em mincho (Shippori), rótulos e tabelas em gótico (Zen Kaku) —
- *   a tipografia dos volumes japoneses — e o corpo em Literata;
- * - cada capítulo tem a SUA cor (a da aba na borda do livro), e tudo dentro
- *   dele — títulos, caixas, tabelas — usa essa cor;
- * - aberturas de capítulo como as de um volume: arte grande, número grande e
- *   o capítulo em kanji na vertical;
- * - a guarda é uma prancha colorida de página inteira.
+ * O que faz esta ser NOSSA, e não uma terceira cópia:
  *
- * A estrutura continua a mesma: página de tamanho fixo em duas colunas,
- * paginada pelo navegador (colunas CSS aninhadas; ver Folhear.tsx). As
- * regras do texto ficam fora de camada DE PROPÓSITO, pra vencer as
- * utilitárias do Tailwind que os componentes do livro trazem do contínuo.
+ * - PAPEL NOITE: página quase preta, com grão, e a arte de anime acendendo
+ *   em cima — a mesma arte que brigava com pergaminho aqui fica em casa.
+ *   Existe o papel DIA pra quem lê de dia; a escolha é do livro, não do site
+ *   (`data-papel` na raiz, e a variante `dark:` segue ela — globals.css).
+ * - DUAS VOZES: a gritada (Barlow Condensed, caixa alta, pesada) nos números,
+ *   títulos de seção, carimbos e tabelas; a elegante (Shippori Mincho) nos
+ *   subtítulos e nomes; o corpo em Literata.
+ * - A COR DO CAPÍTULO É TINTA DE MARCA-TEXTO: sublinha os títulos como um
+ *   traço de marcador, carimba as caixas, pinta o cabeçalho das tabelas, faz
+ *   a sombra deslocada das artes (como impressão fora de registro).
+ * - CAOS CONTROLADO: carimbos e artes levemente tortos, faixa de aviso em
+ *   listras, o kanji do capítulo enorme e apagado no canto de cada página.
+ *   Nada disso encosta no texto corrido, que continua reto e legível.
+ *
+ * A estrutura continua: página de tamanho fixo em duas colunas, paginada
+ * pelo navegador (colunas CSS aninhadas; ver Folhear.tsx). As regras do texto
+ * ficam fora de camada DE PROPÓSITO, pra vencer as utilitárias do Tailwind
+ * que os componentes trazem do modo contínuo.
  * ═══════════════════════════════════════════════════════════════════════════ */
 
+/* ── As duas paletas ──────────────────────────────────────────────────── */
 .folhear {
-  --papel: #fbf8f1;
-  --tinta: #23252c;
-  --tinta-suave: #5d616e;
-  --fio: rgb(35 37 44 / 0.12);
+  /* Noite é o padrão, inclusive antes do JavaScript decidir. */
+  --papel: #141418;
+  --papel-2: #1e1e24;
+  --tinta: #e8e3d9;
+  --tinta-suave: #a19c92;
+  --fio: rgb(232 227 217 / 0.13);
+  --sobre-cor: #111114;
+  --sombra: rgb(0 0 0 / 0.55);
 
-  /* As cores dos capítulos — as mesmas das abas. */
-  --cor-cap0: #cf8134;
-  --cor-cap1: #3a78b8;
-  --cor-cap2: #6c56b8;
-  --cor-cap3: #2e8660;
-  --cor-cap4: #c43c3c;
-  --cor-cap5: #b07424;
-  --cor-apendices: #4e6377;
-  --cor: #3b4a6b;
+  --cor-cap0: #ffa94d;
+  --cor-cap1: #5eb1ff;
+  --cor-cap2: #b197fc;
+  --cor-cap3: #38d9a9;
+  --cor-cap4: #ff6b6b;
+  --cor-cap5: #ffd43b;
+  --cor-apendices: #a5b4c4;
+  --cor: #c9c3b8;
 
-  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #f1efeb 0%, #dedad3 60%, #cbc6bd 100%);
-  --folhear-barra: #2b2f3a;
-  --folhear-barra-forte: #1b1e27;
-  --folhear-barra-fundo: rgb(0 0 0 / 0.06);
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #1e1e23 0%, #101013 60%, #070709 100%);
+  --folhear-capa: linear-gradient(135deg, #1b1b20 0%, #111114 55%, #09090b 100%);
+  --folhear-maco: #2a2a31, #18181d, #25252b;
+  --folhear-barra: #dcd6cb;
+  --folhear-barra-forte: #ffffff;
+  --folhear-barra-fundo: rgb(255 255 255 / 0.08);
   --folhear-topo: var(--altura-nav);
 }
 
-.dark .folhear {
-  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #25272e 0%, #16171b 60%, #0c0d0f 100%);
-  --folhear-barra: #e4e0d8;
-  --folhear-barra-forte: #ffffff;
-  --folhear-barra-fundo: rgb(255 255 255 / 0.08);
+.folhear[data-papel="dia"] {
+  --papel: #f7f3ea;
+  --papel-2: #ece6da;
+  --tinta: #1d1e24;
+  --tinta-suave: #5d616e;
+  --fio: rgb(29 30 36 / 0.13);
+  --sobre-cor: #ffffff;
+  --sombra: rgb(40 32 20 / 0.28);
+
+  --cor-cap0: #c9742a;
+  --cor-cap1: #2f6fb3;
+  --cor-cap2: #6546b8;
+  --cor-cap3: #22805a;
+  --cor-cap4: #c43c3c;
+  --cor-cap5: #a8740f;
+  --cor-apendices: #4e6377;
+  --cor: #3b4a6b;
+
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #efece6 0%, #dcd7cf 60%, #c8c2b8 100%);
+  --folhear-capa: linear-gradient(135deg, #34373f 0%, #25272e 55%, #1a1c21 100%);
+  --folhear-barra: #2b2f3a;
+  --folhear-barra-forte: #14161c;
+  --folhear-barra-fundo: rgb(0 0 0 / 0.06);
 }
 
 /* A cor de cada capítulo vale pra tudo que mora nele. */
 .folhear-fluxo > :has(> .livro-abertura #cap0),
 .folhear [data-capitulo="cap0"] {
   --cor: var(--cor-cap0);
+  --selo: "序";
 }
 .folhear-fluxo > :has(> .livro-abertura #cap1),
 .folhear [data-capitulo="cap1"] {
   --cor: var(--cor-cap1);
+  --selo: "壱";
 }
 .folhear-fluxo > :has(> .livro-abertura #cap2),
 .folhear [data-capitulo="cap2"] {
   --cor: var(--cor-cap2);
+  --selo: "弐";
 }
 .folhear-fluxo > :has(> .livro-abertura #cap3),
 .folhear [data-capitulo="cap3"] {
   --cor: var(--cor-cap3);
+  --selo: "参";
 }
 .folhear-fluxo > :has(> .livro-abertura #cap4),
 .folhear [data-capitulo="cap4"] {
   --cor: var(--cor-cap4);
+  --selo: "四";
 }
 .folhear-fluxo > :has(> .livro-abertura #cap5),
 .folhear [data-capitulo="cap5"] {
   --cor: var(--cor-cap5);
+  --selo: "五";
 }
 .folhear-fluxo > :has(> .livro-abertura #apendices),
 .folhear [data-capitulo="apendices"] {
   --cor: var(--cor-apendices);
+  --selo: "付";
 }
 
-/* No catálogo, cada árvore veste a cor da categoria — a mesma do capítulo
-   que explica aquela categoria: Magia é o violeta das Leis da Magia, Corpo o
-   vermelho do Combate, Utilidade o verde das Árvores. */
-.folhear .livro-arvore[data-categoria="magia"] {
-  --cor: var(--cor-cap2);
+/*
+ * AS DEZENOVE ÁRVORES — cada uma com a sua cor, o seu nome em japonês e o
+ * seu selo (2026-09-24, pedido do autor: "cada árvore ter uma cor",
+ * "símbolos", "escrita em japonês").
+ *
+ * Os nomes são os das escolas de Mushoku Tensei (火魔術, 水神流, 結界魔術…);
+ * o selo é o kanji que carimba o cabeçalho e fica de marca d’água em toda
+ * página daquela árvore. A cor de noite é a daqui; a de dia, a mesma
+ * escurecida (mais abaixo), pra ter contraste no papel claro.
+ */
+.folhear [data-arvore="fogo"] {
+  --cor-arvore: #ff6f4a;
+  --jp: "火魔術";
+  --selo: "火";
 }
-.folhear .livro-arvore[data-categoria="corpo"] {
-  --cor: var(--cor-cap4);
+.folhear [data-arvore="agua"] {
+  --cor-arvore: #5a9bff;
+  --jp: "水魔術";
+  --selo: "水";
 }
-.folhear .livro-arvore[data-categoria="utilidade"] {
-  --cor: var(--cor-cap3);
+.folhear [data-arvore="vento"] {
+  --cor-arvore: #8be28f;
+  --jp: "風魔術";
+  --selo: "風";
+}
+.folhear [data-arvore="terra"] {
+  --cor-arvore: #c89a6a;
+  --jp: "土魔術";
+  --selo: "土";
+}
+.folhear [data-arvore="cura"] {
+  --cor-arvore: #d4e157;
+  --jp: "治癒魔術";
+  --selo: "癒";
+}
+.folhear [data-arvore="desintoxicacao"] {
+  --cor-arvore: #c07dff;
+  --jp: "解毒魔術";
+  --selo: "解";
+}
+.folhear [data-arvore="barreira"] {
+  --cor-arvore: #ffd24d;
+  --jp: "結界魔術";
+  --selo: "結";
+}
+.folhear [data-arvore="invocacao"] {
+  --cor-arvore: #ff7ec4;
+  --jp: "召喚魔術";
+  --selo: "召";
+}
+.folhear [data-arvore="deus-da-espada"] {
+  --cor-arvore: #ff4d6a;
+  --jp: "剣神流";
+  --selo: "剣";
+}
+.folhear [data-arvore="deus-da-agua-corpo"] {
+  --cor-arvore: #4fc4ff;
+  --jp: "水神流";
+  --selo: "流";
+}
+.folhear [data-arvore="deus-do-norte"] {
+  --cor-arvore: #a9bcd6;
+  --jp: "北神流";
+  --selo: "北";
+}
+.folhear [data-arvore="armas-pesadas"] {
+  --cor-arvore: #e0a86a;
+  --jp: "闘士";
+  --selo: "闘";
+}
+.folhear [data-arvore="cavalaria-e-escudos"] {
+  --cor-arvore: #7d8cff;
+  --jp: "騎士道";
+  --selo: "盾";
+}
+.folhear [data-arvore="vendaval"] {
+  --cor-arvore: #33d6b0;
+  --jp: "疾風流";
+  --selo: "嵐";
+}
+.folhear [data-arvore="punho-de-fogo"] {
+  --cor-arvore: #ff9a3d;
+  --jp: "炎拳";
+  --selo: "拳";
+}
+.folhear [data-arvore="arquearia"] {
+  --cor-arvore: #a8c46a;
+  --jp: "弓術";
+  --selo: "弓";
+}
+.folhear [data-arvore="furtividade-e-armadilhas"] {
+  --cor-arvore: #9d8df1;
+  --jp: "隠密";
+  --selo: "影";
+}
+.folhear [data-arvore="bardo-e-interacao"] {
+  --cor-arvore: #ffab91;
+  --jp: "吟遊詩人";
+  --selo: "詩";
+}
+.folhear [data-arvore="navegacao-e-lideranca"] {
+  --cor-arvore: #e3c88f;
+  --jp: "統率";
+  --selo: "導";
+}
+
+.folhear [data-arvore] {
+  --cor: var(--cor-arvore);
+}
+
+.folhear[data-papel="dia"] [data-arvore] {
+  --cor: color-mix(in oklab, var(--cor-arvore) 64%, #000);
 }
 
 /* ── Contínuo (e o primeiro quadro, antes do JavaScript decidir) ────────── */
@@ -239,8 +379,8 @@
   color: var(--papel);
 }
 
-.dark .folhear-alternador button[aria-pressed="true"] > * {
-  color: #16171b;
+.folhear:not([data-papel="dia"]) .folhear-alternador button[aria-pressed="true"] > * {
+  color: #111114;
 }
 
 .folhear:not([data-modo="livro"]) .folhear-alternador button[aria-pressed="true"] {
@@ -339,8 +479,7 @@
   margin: auto;
 }
 
-/* A capa: tecido grafite, com a trama aparecendo — um livro de capa dura
-   bonito, que deixa as páginas brancas acenderem. */
+/* A capa: tecido escuro com a trama aparecendo. */
 .folhear[data-modo="livro"] .folhear-livro {
   position: absolute;
   top: 0;
@@ -350,17 +489,17 @@
   transform-origin: 0 0;
   border-radius: 7px;
   background:
-    repeating-linear-gradient(45deg, rgb(255 255 255 / 0.03) 0 2px, transparent 2px 4px),
-    repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.07) 0 2px, transparent 2px 4px),
-    linear-gradient(135deg, #353945 0%, #262932 55%, #1b1d24 100%);
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 0.025) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.08) 0 2px, transparent 2px 4px),
+    var(--folhear-capa);
   box-shadow:
-    0 0 0 1px rgb(0 0 0 / 0.35),
-    0 60px 90px -40px rgb(0 0 0 / 0.55),
-    0 18px 34px -16px rgb(0 0 0 / 0.4);
+    0 0 0 1px rgb(0 0 0 / 0.5),
+    0 60px 90px -40px rgb(0 0 0 / 0.7),
+    0 18px 34px -16px rgb(0 0 0 / 0.5);
   perspective: 4000px;
 }
 
-/* A lombada: a curva do papel entrando na costura, suave em papel branco. */
+/* A lombada: a curva do papel entrando na costura. */
 .folhear[data-modo="livro"] .folhear-livro[data-por-dupla="2"]::after {
   content: "";
   position: absolute;
@@ -373,14 +512,18 @@
   background: linear-gradient(
     to right,
     transparent 0%,
-    rgb(40 36 30 / 0.05) 30%,
-    rgb(40 36 30 / 0.16) 47%,
-    rgb(25 22 18 / 0.3) 50%,
-    rgb(40 36 30 / 0.16) 53%,
-    rgb(40 36 30 / 0.05) 70%,
+    rgb(0 0 0 / 0.08) 30%,
+    rgb(0 0 0 / 0.28) 47%,
+    rgb(0 0 0 / 0.5) 50%,
+    rgb(0 0 0 / 0.28) 53%,
+    rgb(0 0 0 / 0.08) 70%,
     transparent 100%
   );
   pointer-events: none;
+}
+
+.folhear[data-modo="livro"][data-papel="dia"] .folhear-livro[data-por-dupla="2"]::after {
+  opacity: 0.6;
 }
 
 .folhear[data-modo="livro"] .folhear-janela {
@@ -390,14 +533,24 @@
   overflow: hidden;
   /* O maço de folhas aparecendo por cima da capa, nas duas bordas. */
   box-shadow:
+    -2px 0 0 #2b2b31,
+    -4px 0 0 #1a1a1f,
+    -6px 0 0 #26262c,
+    2px 0 0 #2b2b31,
+    4px 0 0 #1a1a1f,
+    6px 0 0 #26262c;
+  /* O dedo desliza pra virar; a pinça continua sendo do navegador. */
+  touch-action: pinch-zoom;
+}
+
+.folhear[data-modo="livro"][data-papel="dia"] .folhear-janela {
+  box-shadow:
     -2px 0 0 #f4f1ea,
     -4px 0 0 #d6d1c6,
     -6px 0 0 #eeeae2,
     2px 0 0 #f4f1ea,
     4px 0 0 #d6d1c6,
     6px 0 0 #eeeae2;
-  /* O dedo desliza pra virar; a pinça continua sendo do navegador. */
-  touch-action: pinch-zoom;
 }
 
 .folhear[data-modo="livro"][data-zoom] .folhear-janela {
@@ -410,7 +563,7 @@
   min-width: 100%;
 }
 
-/* ── As folhas: papel, rodapé e a marca de aba ────────────────────────── */
+/* ── As folhas: papel, marca d'água, marca de aba, rodapé ─────────────── */
 .folhear-folhas {
   position: absolute;
   inset: 0;
@@ -426,17 +579,23 @@
   background: var(--papel);
 }
 
-/* A fibra do papel: presente, mas só pra quem procura. */
+/* O grão do papel. */
 .folhear-folha::before {
   content: "";
   position: absolute;
   inset: 0;
   background: url("/texturas/fibra.jpg") repeat;
   background-size: 220px 220px;
+  mix-blend-mode: screen;
+  opacity: 0.045;
+}
+
+.folhear[data-papel="dia"] .folhear-folha::before {
   mix-blend-mode: multiply;
   opacity: 0.05;
 }
 
+/* A costura, e a borda da folha escurecendo como papel de verdade. */
 .folhear-folha::after {
   content: "";
   position: absolute;
@@ -446,14 +605,55 @@
 
 .folhear-folha[data-lado="esq"]::after {
   background:
-    linear-gradient(to left, rgb(40 36 30 / 0.12), transparent 6%),
-    linear-gradient(to right, rgb(40 36 30 / 0.05), transparent 2.5%);
+    linear-gradient(to left, rgb(0 0 0 / 0.3), transparent 7%),
+    radial-gradient(ellipse 110% 90% at 60% 50%, transparent 60%, rgb(0 0 0 / 0.28) 100%);
 }
 
 .folhear-folha[data-lado="dir"]::after {
   background:
+    linear-gradient(to right, rgb(0 0 0 / 0.3), transparent 7%),
+    radial-gradient(ellipse 110% 90% at 40% 50%, transparent 60%, rgb(0 0 0 / 0.28) 100%);
+}
+
+.folhear[data-papel="dia"] .folhear-folha[data-lado="esq"]::after {
+  background:
+    linear-gradient(to left, rgb(40 36 30 / 0.12), transparent 6%),
+    linear-gradient(to right, rgb(40 36 30 / 0.05), transparent 2.5%);
+}
+
+.folhear[data-papel="dia"] .folhear-folha[data-lado="dir"]::after {
+  background:
     linear-gradient(to right, rgb(40 36 30 / 0.12), transparent 6%),
     linear-gradient(to left, rgb(40 36 30 / 0.05), transparent 2.5%);
+}
+
+/* O kanji do capítulo (ou da árvore), enorme e quase apagado, cortado pelo
+   canto de fora. */
+.folhear-marca-dagua::before {
+  content: var(--selo, "");
+}
+
+.folhear-marca-dagua {
+  position: absolute;
+  bottom: -110px;
+  color: var(--cor);
+  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-size: 440px;
+  font-weight: 800;
+  line-height: 1;
+  opacity: 0.06;
+}
+
+.folhear-folha[data-lado="dir"] .folhear-marca-dagua {
+  right: -70px;
+}
+
+.folhear-folha[data-lado="esq"] .folhear-marca-dagua {
+  left: -70px;
+}
+
+.folhear[data-papel="dia"] .folhear-marca-dagua {
+  opacity: 0.05;
 }
 
 /* A marca de aba impressa na borda de fora, na altura da aba do capítulo. */
@@ -476,15 +676,16 @@
   border-radius: 0 3px 3px 0;
 }
 
+/* O rodapé: o número num bloco da cor do capítulo, no canto de fora. */
 .folhear-rodape {
   position: absolute;
-  bottom: calc(var(--pe) * 0.4);
+  bottom: calc(var(--pe) * 0.36);
   z-index: 1;
   display: flex;
-  align-items: baseline;
-  gap: 14px;
+  align-items: center;
+  gap: 12px;
   color: var(--tinta-suave);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
 }
 
 .folhear-folha[data-lado="esq"] .folhear-rodape {
@@ -497,16 +698,21 @@
 }
 
 .folhear-rodape-numero {
-  color: var(--cor);
-  font-size: 14px;
+  min-width: 30px;
+  padding: 2px 7px 1px;
+  background: var(--cor);
+  color: var(--sobre-cor);
+  font-size: 17px;
   font-variant-numeric: tabular-nums;
-  font-weight: 700;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .folhear-rodape-parte {
-  font-size: 9.5px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
@@ -586,8 +792,6 @@
   display: none;
 }
 
-/* Corpo alinhado à esquerda, com respiro entre parágrafos: é o texto de um
-   livro moderno, e sem hifenização garantida justificar abriria buracos. */
 .folhear-fluxo p {
   max-width: none;
   text-align: left;
@@ -608,6 +812,12 @@
   break-inside: avoid;
 }
 
+/* Título que ficaria longe do texto dele muda de coluna junto com o bloco
+   (ver segurarTitulos em diagramacao.ts). */
+.folhear-fluxo .folhear-empurra {
+  break-before: column;
+}
+
 .folhear-fluxo :is(figure, img, video) {
   max-height: calc(var(--altura) - var(--topo) - var(--pe));
 }
@@ -619,64 +829,78 @@
 
 /* Diagrama e tabela que não cabem numa coluna atravessam a página. */
 .folhear-fluxo figure.diagrama.folhear-larga,
-.folhear-fluxo .livro-tabela.folhear-larga {
+.folhear-fluxo .livro-tabela.folhear-larga,
+.folhear-fluxo :is(h3, h4).folhear-larga {
   column-span: all;
 }
 
-/* ── Títulos ──────────────────────────────────────────────────────────── */
+/* ── Títulos: a voz gritada e a voz elegante ──────────────────────────── */
+
+/* Seção: caixa alta condensada, com um traço de marca-texto da cor do
+   capítulo passando por baixo das letras. */
 .folhear-fluxo h3 {
-  margin-top: 1.15em;
+  margin-top: 1.1em;
   margin-bottom: 0.35em;
   padding: 0;
   border: 0;
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.6em;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 2.05em;
   font-weight: 800;
-  line-height: 1.18;
+  letter-spacing: 0.005em;
+  line-height: 0.98;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--cor) 55%, transparent);
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: 0.3em;
+  text-underline-offset: -0.14em;
 }
 
-/* O traço curto da cor do capítulo, em cima do título da seção. */
 .folhear-fluxo h3::before,
 .folhear-fluxo .livro-secao-titulo::before {
-  content: "";
-  position: static;
-  display: block;
-  width: 36px;
-  height: 3px;
-  margin-bottom: 0.4em;
-  border-radius: 2px;
-  background: var(--cor);
+  display: none;
 }
 
 .folhear-fluxo .livro-secao-titulo {
   padding-left: 0;
 }
 
+/* Subseção: mincho, com um quadradinho da cor do capítulo. */
 .folhear-fluxo h4 {
-  margin-top: 0.95em;
-  margin-bottom: 0.2em;
-  color: var(--cor);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 1.04em;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  line-height: 1.3;
+  margin-top: 1em;
+  margin-bottom: 0.25em;
+  color: var(--tinta);
+  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-size: 1.22em;
+  font-weight: 800;
+  line-height: 1.22;
+}
+
+.folhear-fluxo h4::before {
+  content: "";
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  margin-right: 0.4em;
+  background: var(--cor);
+  transform: rotate(45deg) translateY(-0.12em);
 }
 
 .folhear-fluxo h3 + h4 {
-  margin-top: 0.3em;
+  margin-top: 0.35em;
 }
 
 .folhear-fluxo strong,
 .folhear-fluxo b {
+  color: var(--tinta);
   font-weight: 700;
 }
 
 .folhear-fluxo ul {
   margin-block: 0.35em;
   padding-left: 1.15em;
-  list-style: disc;
+  list-style: square;
 }
 
 .folhear-fluxo li + li {
@@ -688,28 +912,29 @@
 }
 
 .folhear-fluxo a {
+  color: var(--cor);
   text-decoration: underline;
   text-decoration-color: color-mix(in srgb, var(--cor) 45%, transparent);
   text-underline-offset: 0.15em;
 }
 
-/* A capitular: a letra grande na cor do capítulo, em mincho. */
+/* A capitular: gritada, na cor do capítulo. */
 .folhear-fluxo .dropcap::first-letter {
-  margin-right: 0.12em;
+  margin-right: 0.1em;
   color: var(--cor);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-weight: 800;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-weight: 900;
 }
 
-/* ── A abertura de capítulo, como a de um volume de light novel ───────── */
+/* ── A abertura de capítulo ─────────────────────────────────────────────── */
 .folhear-fluxo .livro-abertura {
   position: relative;
   display: flex;
   column-span: all;
   flex-direction: column;
-  margin-bottom: 1.2em;
-  padding: 2.4em 0 1.1em;
-  border-bottom: 1px solid var(--fio);
+  margin-bottom: 1.3em;
+  padding: 1.6em 0 0;
+  border: 0;
   text-align: left;
 }
 
@@ -717,8 +942,9 @@
   padding-top: 0;
 }
 
-/* A arte grande, de margem a margem, nítida — e se desfazendo no papel no pé. */
-/* Uma margem negativa em cima seria cortada no começo da coluna (o navegador
+/* A arte grande, de borda a borda, dissolvendo no papel.
+
+   Uma margem negativa em cima seria cortada no começo da coluna (o navegador
    não deixa conteúdo subir acima do começo do fragmento). Então a arte é
    DESLOCADA pra cima com position: relative, que não mexe na diagramação, e a
    margem de baixo devolve o espaço que o deslocamento abriu. */
@@ -727,8 +953,8 @@
   top: calc(-1 * var(--topo));
   display: block;
   order: 0;
-  height: 460px;
-  margin: 0 calc(-1 * var(--margem)) calc(1.2em - var(--topo));
+  height: 600px;
+  margin: 0 calc(-1 * var(--margem)) calc(-200px - var(--topo));
   overflow: hidden;
 }
 
@@ -736,58 +962,59 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 100%);
 }
 
-/* O número grande do capítulo ("04"). */
+/* O número do capítulo, gigante e vazado, subindo por cima da arte. */
 .folhear-fluxo .livro-abertura::before {
   content: attr(data-num);
+  position: relative;
+  z-index: 1;
   order: 1;
-  color: var(--cor);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 4.6em;
-  font-weight: 800;
+  color: transparent;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 11em;
+  font-weight: 900;
   letter-spacing: -0.02em;
-  line-height: 0.9;
+  line-height: 0.78;
+  -webkit-text-stroke: 3px var(--cor);
 }
 
-/* O capítulo em kanji, na vertical, no canto de fora — em branco por cima
-   da arte, ou na cor do capítulo quando a abertura não tem arte. */
+/* O capítulo em kanji, na vertical, no canto de fora. */
 .folhear-fluxo .livro-abertura::after {
   content: attr(data-kanji);
   position: absolute;
-  top: 0.4em;
+  top: 0.2em;
   right: 0;
   color: var(--cor);
   font-family: var(--font-livro-titulo), "Yu Mincho", "Hiragino Mincho ProN", serif;
-  font-size: 1.9em;
-  font-weight: 700;
-  letter-spacing: 0.25em;
+  font-size: 2.6em;
+  font-weight: 800;
+  letter-spacing: 0.2em;
   writing-mode: vertical-rl;
 }
 
-/* Dentro da caixa do cabeçalho: acima do começo da mancha, o navegador
-   empurraria o kanji pra página anterior. A arte começa antes (margem
-   negativa), então este ponto já está por cima dela. */
 .folhear-fluxo .livro-abertura:has(.livro-abertura-arte)::after {
   top: 14px;
   right: calc(-1 * var(--margem) + 26px);
   color: #ffffff;
   text-shadow:
-    0 1px 3px rgb(0 0 0 / 0.55),
-    0 0 18px rgb(0 0 0 / 0.35);
+    0 1px 3px rgb(0 0 0 / 0.6),
+    0 0 20px rgb(0 0 0 / 0.4);
 }
 
 .folhear-fluxo .livro-abertura > p:first-of-type {
+  position: relative;
+  z-index: 1;
   order: 2;
   justify-content: flex-start;
-  margin-top: 0.5em;
+  margin-top: 0.8em;
   color: var(--cor);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 0.78em;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.05em;
   font-weight: 700;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.4em;
 }
 
 .folhear-fluxo .livro-abertura > p:first-of-type > span {
@@ -795,16 +1022,19 @@
 }
 
 .folhear-fluxo .livro-abertura h2 {
+  position: relative;
+  z-index: 1;
   order: 3;
-  margin-top: 0.15em;
+  margin-top: 0.05em;
   background: none;
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 2.7em;
-  font-weight: 800;
-  letter-spacing: 0;
-  line-height: 1.08;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 4.6em;
+  font-weight: 900;
+  letter-spacing: -0.005em;
+  line-height: 0.86;
   text-align: left;
+  text-transform: uppercase;
   -webkit-text-fill-color: currentColor;
 }
 
@@ -813,22 +1043,28 @@
 }
 
 .folhear-fluxo .livro-abertura > p:last-child {
+  position: relative;
+  z-index: 1;
   order: 4;
-  max-width: none;
-  margin-top: 0.55em;
+  max-width: 34em;
+  margin-top: 0.8em;
+  padding-left: 0.8em;
+  border-left: 3px solid var(--cor);
   color: var(--tinta-suave);
-  font-size: 1.1em;
+  font-size: 1.12em;
   font-style: italic;
   text-align: left;
 }
 
-/* ── Caixas: tingidas com a cor do capítulo, sem moldura de cartão ────── */
-.folhear-fluxo :is(.livro-caixa, .livro-mecanica, .livro-proficiencias, .livro-prerequisito) {
-  margin-block: 0.9em;
-  padding: 0.75em 0.95em 0.8em;
+/* ── Caixas ───────────────────────────────────────────────────────────────
+ * Uma laje um tom acima do papel, com o título CARIMBADO: uma etiqueta da
+ * cor do capítulo, levemente torta, colada na borda de cima. */
+.folhear-fluxo :is(.livro-caixa, .livro-mecanica, .livro-proficiencias, .livro-prerequisito, .livro-maestria) {
+  margin-block: 1.35em 0.9em;
+  padding: 0.95em 0.95em 0.8em;
   border: 0;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--cor) 9%, var(--papel));
+  border-radius: 0;
+  background: var(--papel-2);
   box-shadow: none;
   font-family: var(--font-literata), Georgia, serif;
   font-size: 0.94em;
@@ -838,20 +1074,32 @@
   -webkit-box-decoration-break: clone;
 }
 
-/* O título da caixa: gótico, na cor do capítulo, e nunca sozinho no pé. */
-.folhear-fluxo :is(.livro-caixa, .livro-proficiencias) > p:first-child {
-  margin-bottom: 0.3em;
-  color: var(--cor);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 1em;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  line-height: 1.3;
-  text-transform: none;
+.folhear-fluxo :is(.livro-caixa, .livro-proficiencias, .livro-maestria) > p:first-child {
+  display: table;
+  margin: -1.65em 0 0.5em -0.35em;
+  padding: 0.12em 0.5em 0.08em;
+  background: var(--cor);
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.08em;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  transform: rotate(-1.2deg);
   break-after: avoid;
 }
 
-.folhear-fluxo :is(.livro-caixa, .livro-mecanica, .livro-proficiencias) p {
+.folhear-fluxo :is(.livro-caixa, .livro-proficiencias, .livro-maestria) > p:first-child * {
+  color: inherit;
+}
+
+/* Carimbos alternam a inclinação, pra não parecerem carimbados em série. */
+.folhear-fluxo .livro-caixa:nth-of-type(even) > p:first-child {
+  transform: rotate(0.9deg);
+}
+
+.folhear-fluxo :is(.livro-caixa, .livro-mecanica, .livro-proficiencias, .livro-maestria) p {
   text-align: left;
 }
 
@@ -859,91 +1107,92 @@
   margin-top: 0.45em;
 }
 
-/* O aviso ("o que a regra NÃO faz"): contorno em vez de fundo. */
+/* O aviso ("o que a regra NÃO faz"): faixa de alerta listrada em cima. */
 .folhear-fluxo :is(.livro-aviso, .livro-prerequisito) {
-  border: 1.5px solid color-mix(in srgb, var(--cor) 60%, transparent);
-  background: var(--papel);
+  border-top: 7px solid transparent;
+  border-image: repeating-linear-gradient(-45deg, var(--cor) 0 7px, transparent 7px 14px) 7;
 }
 
-/* A Maestria: um filete da cor da árvore na lateral. */
+/* A Maestria: laje com a borda da cor da árvore. */
 .folhear-fluxo .livro-maestria {
-  margin-block: 0.8em;
-  padding: 0.65em 0.9em 0.7em;
-  border: 0;
-  border-left: 3px solid var(--cor);
-  border-radius: 0 5px 5px 0;
-  background: color-mix(in srgb, var(--cor) 6%, var(--papel));
-  line-height: 1.45;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
+  border-left: 4px solid var(--cor);
 }
 
 .folhear-fluxo .livro-maestria > p:first-child {
-  color: var(--cor);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.1em;
-  font-weight: 800;
-  break-after: avoid;
+  transform: rotate(-0.8deg);
 }
 
-/* A Mecânica Central abre com uma faixa da cor da árvore. */
+/* A Mecânica Central abre com uma faixa cheia da cor da árvore. */
 .folhear-fluxo .livro-mecanica {
   padding-top: 0;
 }
 
 .folhear-fluxo .livro-mecanica > div:first-child {
-  margin: 0 -0.95em 0.55em;
+  margin: 0 -0.95em 0.6em;
   padding: 0.4em 0.95em;
-  border-radius: 5px 5px 0 0;
   background: var(--cor);
 }
 
 .folhear-fluxo .livro-mecanica > div:first-child p {
-  color: #ffffff;
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-weight: 700;
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.15em;
+  font-weight: 800;
   letter-spacing: 0.08em;
 }
 
 .folhear-fluxo .livro-mecanica > div:first-child span {
-  border-radius: 3px;
-  background: #ffffff;
+  border-radius: 0;
+  background: var(--sobre-cor);
   color: var(--cor);
 }
 
 .folhear-fluxo .livro-mecanica li > span:first-child {
+  border-radius: 0;
   background: var(--cor);
   box-shadow: none;
-  color: #ffffff;
+  color: var(--sobre-cor);
 }
 
 .folhear-fluxo .livro-mecanica > p {
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  letter-spacing: 0.02em;
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.05em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.folhear-fluxo .livro-mecanica > p:nth-of-type(1) {
+  color: var(--tinta);
+  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-size: 1.15em;
+  letter-spacing: 0;
   text-transform: none;
 }
 
-/* Proficiências: rótulo em cima do texto — lado a lado, a coluna de rótulo
-   de 11rem deixava o texto com um palmo de largura. */
+/* Proficiências: rótulo em cima do texto. */
 .folhear-fluxo .livro-proficiencias dl > div {
   flex-direction: column;
   gap: 0;
 }
 
 .folhear-fluxo .livro-proficiencias dl > div + div {
-  margin-top: 0.35em;
+  margin-top: 0.4em;
 }
 
 .folhear-fluxo .livro-proficiencias dt {
   width: auto;
   color: var(--cor);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.05em;
   font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
-/* ── Tabelas: cabeçalho na cor do capítulo, linhas finas ──────────────── */
+/* ── Tabelas: cabeçalho gritado na cor do capítulo ────────────────────── */
 .folhear-fluxo .livro-tabela {
-  margin-block: 0.8em 1em;
+  margin-block: 0.9em 1em;
   overflow: visible;
   border: 0;
   border-radius: 0;
@@ -953,7 +1202,7 @@
 
 .folhear-fluxo .livro-tabela table {
   min-width: 0;
-  border-bottom: 2px solid var(--cor);
+  border-bottom: 3px solid var(--cor);
   background: transparent;
   font-family: var(--font-livro-rotulo), system-ui, sans-serif;
   font-size: 0.86em;
@@ -967,33 +1216,35 @@
 }
 
 .folhear-fluxo .livro-tabela th {
-  padding: 0.45em 0.6em;
-  color: #ffffff;
-  font-size: 0.95em;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  padding: 0.4em 0.6em 0.3em;
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.12em;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   text-align: left;
-  text-transform: none;
+  text-transform: uppercase;
   vertical-align: bottom;
 }
 
 .folhear-fluxo .livro-tabela tbody tr {
   border: 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--cor) 16%, transparent);
+  border-bottom: 1px solid var(--fio);
   background: transparent;
 }
 
 .folhear-fluxo .livro-tabela tbody tr:nth-child(even) {
-  background: color-mix(in srgb, var(--cor) 5%, var(--papel));
+  background: color-mix(in srgb, var(--cor) 7%, var(--papel));
 }
 
 .folhear-fluxo .livro-tabela td {
-  padding: 0.38em 0.6em;
+  padding: 0.4em 0.6em;
   text-align: left;
   vertical-align: top;
 }
 
 .folhear-fluxo .livro-tabela td:first-child {
+  color: var(--cor);
   font-weight: 700;
 }
 
@@ -1002,7 +1253,6 @@
   overflow-wrap: break-word;
 }
 
-/* O cabeçalho da tabela desce junto com a 1ª linha. */
 .folhear-fluxo thead {
   break-after: avoid;
   break-inside: avoid;
@@ -1026,23 +1276,31 @@
   overflow-wrap: anywhere;
 }
 
-/* ── Arte: nítida, de canto levemente arredondado ─────────────────────── */
-.folhear-fluxo figure:not(.diagrama) {
+/* ── Arte: torta, com a sombra da cor do capítulo fora de registro ────── */
+.folhear-fluxo figure:not(.diagrama, .livro-abertura-arte, .folhear-sumario-arte) {
   display: block;
   height: auto;
-  margin-block: 0.8em;
-  overflow: hidden;
+  margin: 1.1em 8px 1.2em 0;
+  overflow: visible;
   border: 0;
-  border-radius: 5px;
-  background: #ece7dd;
+  border-radius: 0;
+  background: #0c0c0e;
+  box-shadow: 7px 7px 0 var(--cor);
   aspect-ratio: 16 / 9;
+  transform: rotate(-0.9deg);
 }
 
-.folhear-fluxo figure:not(.diagrama) img.blur-2xl {
+.folhear-fluxo figure:not(.diagrama, .livro-abertura-arte, .folhear-sumario-arte):nth-of-type(even) {
+  box-shadow: -7px 7px 0 var(--cor);
+  margin: 1.1em 0 1.2em 8px;
+  transform: rotate(0.8deg);
+}
+
+.folhear-fluxo figure:not(.diagrama, .livro-abertura-arte, .folhear-sumario-arte) img.blur-2xl {
   display: none;
 }
 
-.folhear-fluxo figure:not(.diagrama) :is(img, video) {
+.folhear-fluxo figure:not(.diagrama, .livro-abertura-arte, .folhear-sumario-arte) :is(img, video) {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1050,15 +1308,16 @@
 
 .folhear-fluxo figure.diagrama {
   margin-block: 0.9em;
-  border: 1px solid color-mix(in srgb, var(--cor) 25%, transparent);
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--cor) 4%, var(--papel));
+  border: 1px solid var(--fio);
+  border-top: 3px solid var(--cor);
+  border-radius: 0;
+  background: var(--papel-2);
   box-shadow: none;
 }
 
 /* ── O catálogo das árvores ───────────────────────────────────────────── */
 .folhear-fluxo .livro-arvore {
-  margin-top: 1.6em;
+  margin-top: 1.8em;
   border: 0;
   border-radius: 0;
   background: none;
@@ -1069,12 +1328,12 @@
   display: none;
 }
 
-/* O cabeçalho da árvore: um cartão na cor da categoria. */
+/* O cabeçalho da árvore: um bloco cheio da cor da categoria. */
 .folhear-fluxo .livro-arvore-cabeca {
   gap: 0.8em;
-  padding: 0.75em 0.85em;
+  padding: 0.8em 0.85em 0.75em;
   border: 0;
-  border-radius: 6px;
+  border-radius: 0;
   background: var(--cor);
   cursor: default;
   break-after: avoid;
@@ -1085,33 +1344,34 @@
 }
 
 .folhear-fluxo .livro-arvore-cabeca img {
-  padding: 3px;
-  border-radius: 6px;
-  background: #ffffff;
+  padding: 4px;
+  border-radius: 999px;
+  background: #f4efe4;
 }
 
 .folhear-fluxo .livro-arvore-cabeca > span > span:first-child {
   display: block;
-  color: #ffffff;
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.9em;
-  font-weight: 800;
-  line-height: 1.1;
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 2.35em;
+  font-weight: 900;
+  line-height: 0.95;
+  text-transform: uppercase;
 }
 
 .folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(2) {
   margin-left: 0;
-  color: rgb(255 255 255 / 0.8);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 0.78em;
-  font-weight: 500;
-  letter-spacing: 0.16em;
+  color: color-mix(in srgb, var(--sobre-cor) 75%, transparent);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.95em;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
 }
 
 .folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(3) {
-  margin-top: 0.25em;
-  color: rgb(255 255 255 / 0.92);
+  margin-top: 0.3em;
+  color: var(--sobre-cor);
   font-size: 0.98em;
 }
 
@@ -1122,18 +1382,28 @@
 
 /* O título de cada patamar dentro da árvore. */
 .folhear-fluxo .livro-catalogo h4 {
-  margin-top: 1.15em;
-  padding-bottom: 0.1em;
-  border-bottom: 1.5px solid var(--cor);
+  margin-top: 1.3em;
+  padding-bottom: 0.15em;
+  border-bottom: 2px solid var(--cor);
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.22em;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.5em;
   font-weight: 800;
+  text-transform: uppercase;
 }
 
-/* O verbete: cada habilidade como uma entrada de enciclopédia. */
+.folhear-fluxo .livro-catalogo h4::before {
+  display: none;
+}
+
+.folhear-fluxo .livro-catalogo h4 span {
+  color: var(--tinta-suave);
+  font-weight: 600;
+}
+
+/* O verbete: cada habilidade como uma entrada de grimório. */
 .folhear-fluxo .livro-verbete {
-  margin-top: 1em;
+  margin-top: 1.05em;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -1149,19 +1419,19 @@
 .folhear-fluxo .livro-verbete-nome {
   color: var(--cor);
   font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.22em;
+  font-size: 1.3em;
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .folhear-fluxo .livro-verbete-meta {
   display: block;
-  margin: 0.15em 0 0;
+  margin: 0.2em 0 0;
   color: var(--tinta-suave);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 0.64em;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
@@ -1169,12 +1439,12 @@
   margin-top: 0.3em;
 }
 
-/* O encantamento: uma citação à margem, não um cartão. */
+/* O encantamento: a voz de quem conjura, à margem. */
 .folhear-fluxo .livro-verbete blockquote {
-  margin-top: 0.45em;
-  padding: 0.1em 0 0.1em 0.8em;
+  margin-top: 0.5em;
+  padding: 0.1em 0 0.1em 0.85em;
   border: 0;
-  border-left: 2px solid color-mix(in srgb, var(--cor) 55%, transparent);
+  border-left: 2px solid var(--cor);
   border-radius: 0;
   background: none;
   box-shadow: none;
@@ -1219,51 +1489,56 @@
 
 .folhear-fluxo .folhear-guarda-legenda {
   color: #ffffff;
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.3em;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-shadow: 0 1px 8px rgb(0 0 0 / 0.55);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.5em;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.6);
+  text-transform: uppercase;
 }
 
-/* ── A folha de rosto: o título no branco ─────────────────────────────── */
+/* ── A folha de rosto ─────────────────────────────────────────────────── */
 .folhear-fluxo > .folhear-rosto {
   display: flex;
   height: calc(var(--altura) - var(--topo) - var(--pe));
   column-count: auto;
   flex-direction: column;
   justify-content: center;
-  padding: 0 6%;
+  padding: 0 4%;
   text-align: left;
 }
 
 .folhear-fluxo .folhear-rosto-selo {
-  color: var(--cor);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 0.85em;
+  color: var(--cor-cap0);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.1em;
   font-weight: 700;
-  letter-spacing: 0.45em;
+  letter-spacing: 0.5em;
   text-transform: uppercase;
 }
 
 .folhear-fluxo .folhear-rosto-titulo {
-  margin-top: 0.3em;
+  margin-top: 0.15em;
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 4.6em;
-  font-weight: 800;
-  line-height: 1;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 7.4em;
+  font-weight: 900;
+  line-height: 0.82;
+  text-transform: uppercase;
 }
 
 .folhear-fluxo .folhear-rosto-titulo span {
-  color: var(--cor);
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 3px var(--cor-cap0);
 }
 
 .folhear-fluxo .folhear-rosto-sub {
-  margin-top: 0.4em;
+  margin-top: 0.5em;
   color: var(--tinta-suave);
-  font-size: 1.5em;
-  font-style: italic;
+  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-size: 1.7em;
+  font-weight: 700;
 }
 
 .folhear-fluxo .folhear-rosto-nota {
@@ -1276,9 +1551,10 @@
 .folhear-fluxo .folhear-rosto-edicao {
   margin-top: 0.4em;
   color: var(--tinta-suave);
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
-  font-size: 0.8em;
-  letter-spacing: 0.2em;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.95em;
+  font-weight: 600;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
 }
 
@@ -1290,27 +1566,23 @@
 
 .folhear-sumario-selo {
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-weight: 800;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .folhear-fluxo .folhear-sumario-selo {
-  font-size: 3em;
-  line-height: 1;
-}
-
-.folhear-fluxo .folhear-sumario-selo::after {
-  content: "";
-  display: block;
-  width: 48px;
-  height: 3px;
-  margin-top: 0.3em;
-  border-radius: 2px;
-  background: var(--cor);
+  font-size: 4.6em;
+  line-height: 0.9;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--cor-cap0) 55%, transparent);
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: 0.28em;
+  text-underline-offset: -0.12em;
 }
 
 .folhear-fluxo .folhear-sumario-capitulos > li + li {
-  margin-top: 0.9em;
+  margin-top: 1em;
 }
 
 .folhear-entrada {
@@ -1324,11 +1596,11 @@
 }
 
 .folhear-entrada[data-nivel="secao"] {
-  padding-left: 1.4em;
+  padding-left: 1.6em;
 }
 
 .folhear-entrada[data-nivel="sub"] {
-  padding-left: 2.4em;
+  padding-left: 2.6em;
   font-size: 0.92em;
   font-style: italic;
 }
@@ -1348,8 +1620,9 @@
 
 .folhear-entrada-pagina {
   min-width: 1.4em;
-  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
+  font-weight: 700;
   text-align: right;
 }
 
@@ -1360,20 +1633,26 @@
 }
 
 .folhear-fluxo .folhear-entrada {
+  color: var(--tinta);
   text-decoration: none;
 }
 
 .folhear-fluxo .folhear-entrada[data-nivel="capitulo"] {
-  color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.3em;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.65em;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .folhear-entrada[data-nivel="capitulo"] .folhear-entrada-pagina {
+  color: var(--cor);
 }
 
 .folhear-fluxo .folhear-entrada[data-nivel="secao"] {
   margin-top: 0.15em;
 }
 
-/* O frontispício do sumário: a arte nítida, fechando a página. */
+/* O frontispício do sumário: a arte, torta, fechando a página. */
 .folhear-sumario-arte {
   display: none;
 }
@@ -1381,10 +1660,11 @@
 .folhear-fluxo .folhear-sumario-arte {
   display: block;
   column-span: all;
-  margin-top: 1.6em;
+  margin: 1.8em 10px 0 0;
   overflow: hidden;
-  border-radius: 6px;
+  box-shadow: 8px 8px 0 var(--cor-cap0);
   aspect-ratio: 16 / 9;
+  transform: rotate(-0.8deg);
 }
 
 .folhear-fluxo .folhear-sumario-arte img {
@@ -1412,9 +1692,10 @@
 
 .folhear-colofao-selo {
   color: var(--tinta);
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.6em;
-  font-weight: 800;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 2.2em;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .folhear-fluxo .folhear-colofao-fim {
@@ -1516,14 +1797,12 @@
   line-height: 1.5;
 }
 
-.dark .folhear-indice {
-  background: #1b1c21;
-  color: #e4e0d8;
-}
-
 .folhear-indice .folhear-entrada[data-nivel="capitulo"] {
-  font-family: var(--font-livro-titulo), Georgia, serif;
-  font-size: 1.08em;
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.25em;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .folhear-indice .folhear-sumario-capitulos > li + li {
@@ -1762,7 +2041,7 @@
   background: repeating-linear-gradient(
     to bottom,
     transparent 0 calc(var(--fonte) * 0.6),
-    rgb(35 37 44 / 0.16) calc(var(--fonte) * 0.6) calc(var(--fonte) * 0.9),
+    color-mix(in srgb, var(--tinta) 16%, transparent) calc(var(--fonte) * 0.6) calc(var(--fonte) * 0.9),
     transparent calc(var(--fonte) * 0.9) calc(var(--fonte) * 1.5)
   );
   -webkit-mask-image:
@@ -1833,4 +2112,178 @@
   .folhear .folhear-livro::after {
     display: none !important;
   }
+}
+
+/* ═══ O cabeçalho de cada árvore, por família ════════════════════════════
+ * Três famílias, três jeitos de falar — o autor pediu que cada árvore
+ * tivesse um estilo de escrita diferente, e a família é o que decide:
+ *
+ * - MAGIA: estudo formal. Mincho elegante, e um círculo mágico gravado no
+ *   fundo do cabeçalho.
+ * - CORPO: técnica de combate. Condensada, itálica, em caixa alta, com o
+ *   bloco cortado na diagonal como um golpe.
+ * - UTILIDADE: ofício. Gótico prático, numa etiqueta tracejada, como uma
+ *   ficha de trabalho.
+ *
+ * Em todas: o nome em japonês na vertical e o selo (hanko) carimbado na
+ * borda de baixo, torto como carimbo de verdade.
+ * ═════════════════════════════════════════════════════════════════════════ */
+.folhear-fluxo .livro-arvore-cabeca {
+  position: relative;
+  min-height: 7em;
+  margin-bottom: 1.2em;
+  padding-right: 3.4em;
+  padding-bottom: 1.3em;
+}
+
+/* O nome em japonês, na vertical, no canto direito. */
+.folhear-fluxo .livro-arvore-cabeca::after {
+  content: var(--jp, "");
+  position: absolute;
+  top: 0.55em;
+  right: 0.55em;
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-size: 1.25em;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  writing-mode: vertical-rl;
+}
+
+/* O selo: o kanji da árvore num quadrado carimbado na borda de baixo. */
+.folhear-fluxo .livro-arvore-cabeca::before {
+  content: var(--selo, "");
+  position: absolute;
+  right: 2.6em;
+  bottom: -0.95em;
+  display: grid;
+  width: 1.75em;
+  height: 1.75em;
+  place-items: center;
+  border: 2.5px solid var(--cor);
+  border-radius: 3px;
+  background: var(--papel);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 0.25);
+  color: var(--cor);
+  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-size: 1.5em;
+  font-weight: 800;
+  line-height: 1;
+  transform: rotate(-7deg);
+}
+
+/* MAGIA — círculo mágico gravado, nome em mincho. */
+.folhear-fluxo .livro-arvore[data-categoria="magia"] > .livro-arvore-cabeca {
+  background:
+    radial-gradient(circle at 72% 50%, transparent 0 40px, rgb(255 255 255 / 0.22) 41px 42px, transparent 43px 52px,
+      rgb(255 255 255 / 0.16) 53px 54.5px, transparent 55.5px 70px, rgb(255 255 255 / 0.1) 71px 72px, transparent 73px),
+    conic-gradient(from 0deg at 72% 50%, transparent 0 28deg, rgb(255 255 255 / 0.07) 28deg 32deg, transparent 32deg 88deg,
+      rgb(255 255 255 / 0.07) 88deg 92deg, transparent 92deg 148deg, rgb(255 255 255 / 0.07) 148deg 152deg, transparent 152deg 208deg,
+      rgb(255 255 255 / 0.07) 208deg 212deg, transparent 212deg 268deg, rgb(255 255 255 / 0.07) 268deg 272deg, transparent 272deg 328deg,
+      rgb(255 255 255 / 0.07) 328deg 332deg, transparent 332deg),
+    var(--cor);
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="magia"] > .livro-arvore-cabeca > span > span:first-child {
+  font-family: var(--font-livro-titulo), Georgia, serif;
+  font-size: 2.1em;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* CORPO — bloco cortado na diagonal, nome itálico condensado. */
+.folhear-fluxo .livro-arvore[data-categoria="corpo"] > .livro-arvore-cabeca {
+  background:
+    repeating-linear-gradient(-60deg, transparent 0 22px, rgb(0 0 0 / 0.08) 22px 24px),
+    var(--cor);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 5% 100%, 0 80%);
+}
+
+/* O corte diagonal come o selo; no Corpo ele vai pra dentro do bloco. */
+.folhear-fluxo .livro-arvore[data-categoria="corpo"] > .livro-arvore-cabeca::before {
+  right: 0.4em;
+  bottom: 0.5em;
+  border-color: var(--sobre-cor);
+  background: transparent;
+  box-shadow: none;
+  color: var(--sobre-cor);
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="corpo"] > .livro-arvore-cabeca > span > span:first-child {
+  font-style: italic;
+  letter-spacing: -0.005em;
+}
+
+/* UTILIDADE — etiqueta tracejada de ofício, nome em gótico. */
+.folhear-fluxo .livro-arvore[data-categoria="utilidade"] > .livro-arvore-cabeca {
+  outline: 2px dashed var(--cor);
+  outline-offset: -7px;
+  background: var(--papel-2);
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="utilidade"] > .livro-arvore-cabeca::after {
+  color: var(--cor);
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="utilidade"] > .livro-arvore-cabeca > span > span:first-child {
+  color: var(--cor);
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 1.95em;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="utilidade"] > .livro-arvore-cabeca > span > span:nth-child(2),
+.folhear-fluxo .livro-arvore[data-categoria="utilidade"] > .livro-arvore-cabeca > span > span:nth-child(3) {
+  color: var(--tinta-suave);
+}
+
+/* O nome de cada habilidade fala a língua da família. */
+.folhear-fluxo .livro-arvore[data-categoria="corpo"] .livro-verbete-nome {
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.45em;
+  font-style: italic;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="utilidade"] .livro-verbete-nome {
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+  font-size: 1.18em;
+  font-weight: 700;
+}
+
+/* Na Magia, o encantamento é recitado: ganha o selo da escola à margem. */
+.folhear-fluxo .livro-arvore[data-categoria="magia"] .livro-verbete blockquote {
+  position: relative;
+  padding-left: 1.6em;
+  border-left: 0;
+}
+
+.folhear-fluxo .livro-arvore[data-categoria="magia"] .livro-verbete blockquote::before {
+  content: var(--selo, "");
+  position: absolute;
+  top: 0.1em;
+  left: 0;
+  color: var(--cor);
+  font-family: var(--font-livro-titulo), "Yu Mincho", serif;
+  font-size: 1.1em;
+  font-style: normal;
+  font-weight: 800;
+}
+
+/* Nas páginas do catálogo, a marca d'água é o kanji da árvore — e maior. */
+.folhear-folha[data-arvore] .folhear-marca-dagua {
+  font-size: 520px;
+  opacity: 0.07;
+}
+
+/* O calço que empurra um bloco pra próxima página (ver segurarTitulos). */
+.folhear-calco {
+  display: block;
+  margin: 0;
 }
