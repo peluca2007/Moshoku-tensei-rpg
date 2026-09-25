@@ -63,7 +63,7 @@ export const COMBINED_SPELLS: CombinedSpell[] = [
     id: "barreira-incandescente",
     name: "Barreira Incandescente",
     requires: [
-      { treeId: "barreira", rank: "Avançado" },
+      { treeId: "teorica", rank: "Avançado" },
       { treeId: "fogo", rank: "Intermediário" },
     ],
     paCost: 3,

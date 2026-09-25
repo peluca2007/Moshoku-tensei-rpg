@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { migrarRoster } from "./useCharacterStore";
 import { CharacterData } from "@/lib/types";
+import { getPaSpent, getTreeGrantedSkills } from "./selectors";
 
 /**
  * A migração do roster nunca teve teste, e é o código mais perigoso do projeto.
@@ -206,5 +207,38 @@ describe("robustez diante do inesperado", () => {
     const doFuturo = { ...fichaSalvaV13(), campoQueAindaNaoExiste: "guarde-me" } as unknown as CharacterData;
     const m = migrarRoster(roster(doFuturo), 13).characters["char_real"] as unknown as Record<string, unknown>;
     expect(m.campoQueAindaNaoExiste).toBe("guarde-me");
+  });
+});
+
+describe("Barreira e Proteção se torna Magia Teórica", () => {
+  it("mantém patamares e árvore inicial, arquiva compras com o custo real e devolve seus PA", () => {
+    const antiga = {
+      ...fichaSalvaV13(),
+      startingTreeId: "barreira",
+      unlockedRanks: [{ treeId: "barreira", rank: "Principiante" }, { treeId: "barreira", rank: "Intermediário" }],
+      purchasedAbilities: [
+        { treeId: "barreira", rank: "Principiante", kind: "ability", id: "circulo-menor" },
+        { treeId: "barreira", rank: "Principiante", kind: "talent", id: "mao-de-giz" },
+      ],
+    } as unknown as CharacterData;
+    const convertida = migrarRoster(roster(antiga), 16).characters[antiga.id];
+    expect(convertida.startingTreeId).toBe("teorica");
+    expect(convertida.unlockedRanks.map((u) => u.treeId)).toEqual(["teorica", "teorica"]);
+    expect(convertida.purchasedAbilities).toEqual([]);
+    expect(convertida.legacyBarreira?.purchases.map((p) => p.name)).toEqual(["Círculo Menor", "Mão de Giz"]);
+    expect(convertida.legacyBarreira?.refundedPa).toBe(3);
+    expect(getPaSpent(convertida)).toBe(getPaSpent({ ...convertida, legacyBarreira: undefined }));
+    expect(migrarRoster(roster(convertida), 17).characters[antiga.id]).toEqual(convertida);
+  });
+
+  it("avisa também quem só tinha o rank e preserva a escolha de Religião da árvore inicial", () => {
+    const antiga = {
+      ...fichaSalvaV13(), startingTreeId: "barreira",
+      unlockedRanks: [{ treeId: "barreira", rank: "Principiante" }],
+      purchasedAbilities: [], treeSkillChoices: ["Religião"],
+    } as unknown as CharacterData;
+    const convertida = migrarRoster(roster(antiga), 16).characters[antiga.id];
+    expect(convertida.legacyBarreira).toEqual({ purchases: [], refundedPa: 0 });
+    expect(getTreeGrantedSkills(convertida)).toContain("Religião");
   });
 });

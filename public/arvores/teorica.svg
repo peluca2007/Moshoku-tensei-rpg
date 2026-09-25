@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Glifo da Magia Teórica">
+  <defs>
+    <radialGradient id="bg"><stop stop-color="#234d55"/><stop offset="1" stop-color="#10252d"/></radialGradient>
+    <linearGradient id="ink" x2="1" y2="1"><stop stop-color="#f1d7a1"/><stop offset=".5" stop-color="#9de4d8"/><stop offset="1" stop-color="#d5b9ea"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <circle cx="128" cy="128" r="123" fill="url(#bg)" stroke="#a8b9ad" stroke-width="2"/>
+  <g fill="none" stroke="url(#ink)" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="128" cy="128" r="98" stroke-width="1.5" opacity=".6"/>
+    <circle cx="128" cy="128" r="82" stroke-width="3"/>
+    <path d="M128 35 208 174 48 174Z" stroke-width="2" opacity=".7"/>
+    <path d="M128 55 194 169 62 169Z" stroke-width="1" opacity=".5"/>
+    <path d="M128 82 159 128 128 175 97 128Z" stroke-width="5"/>
+    <path d="M75 128h94m-22-18 22 18-22 18" stroke-width="7"/>
+    <path d="M111 128h34M128 99v58" stroke-width="2"/>
+    <circle cx="128" cy="128" r="8" fill="#d9f8e9" stroke-width="2"/>
+    <path d="M128 25v20m0 166v20M25 128h20m166 0h20" stroke-width="2"/>
+  </g>
+  <g fill="#edd8ab"><circle cx="128" cy="25" r="3"/><circle cx="231" cy="128" r="3"/><circle cx="128" cy="231" r="3"/><circle cx="25" cy="128" r="3"/></g>
+</svg>

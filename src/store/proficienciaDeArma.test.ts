@@ -260,7 +260,7 @@ describe("As árvores", () => {
   });
 
   it("as oito escolas de magia não concedem grupo nenhum", () => {
-    for (const id of ["fogo", "agua", "cura", "barreira"]) {
+    for (const id of ["fogo", "agua", "cura", "teorica"]) {
       const tree = TREES.find((t) => t.id === id);
       expect(tree?.proficiencies?.gruposDeArma, id).toEqual([]);
     }
