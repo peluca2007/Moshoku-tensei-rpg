@@ -74,13 +74,13 @@ const RANK_DEUS: Record<string, RankDeusEntry> = {
       "Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É o fim de uma campanha inteira, e o mundo deve mudar por causa disso.",
     ],
   },
-  barreira: {
-    title: "O Silêncio Permanente",
+  teorica: {
+    title: "A Fórmula do Mundo",
     body: [
-      "Mundo Fechado, a marca do Imperador, cancela toda magia numa esfera por uma hora. O patamar Divino remove o limite de tempo — e o de espaço.",
-      "Existem regiões no Mundo de Seis Faces, do tamanho de um vale ou de um pequeno reino, onde magia simplesmente não funciona, para ninguém, há gerações. Nenhum mago vivo hoje sabe desfazer essas zonas; a única coisa que se sabe é que alguém, um dia, as fez — e escolheu não voltar para desfazê-las.",
-      "Barreira Viva, o talento do Imperador, já avisa que as barreiras deste mago sobrevivem à própria morte dele. No patamar Divino, elas sobrevivem à própria escola: selar magia deixa de ser um efeito e passa a ser uma regra do lugar.",
-      "Se um personagem seu chegar a este patamar, isso não é uma compra de ficha. É uma cicatriz permanente no mapa, e o mundo deve mudar por causa disso.",
+      "O teórico Imperador escreve circuitos que articulam várias células, suportes e alimentadores. O patamar Divino seria compreender a fórmula que mantém um lugar inteiro.",
+      "Uma região onde a mana segue uma regra nova por gerações não é só uma barreira maior: é uma inscrição sustentada pelo mundo, com origem e consequências que uma campanha inteira precisaria descobrir.",
+      "Nenhuma ficha compra essa capacidade. A mesa decidiria quais símbolos, fontes e limites tornariam a obra possível, e como outros personagens poderiam ler ou romper suas ligações.",
+      "Se um personagem seu chegar a este patamar, isso é uma mudança permanente no cenário, sujeita à história e ao Mestre.",
     ],
   },
   invocacao: {

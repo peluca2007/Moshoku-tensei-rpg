@@ -604,9 +604,9 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     alt: "Uma figura cercada por uma corrente de ar que para tudo a um palmo do corpo.",
   },
 
-  // --- Magia de Barreira ---------------------------------------------------
-  "barreira/maestria": {
-    src: "/arte/barreira/maestria.gif",
+  // --- Ramo defensivo da Magia Teórica -----------------------------------
+  "teorica/selo-de-rejeicao": {
+    src: "/arte/teorica/selo-de-rejeicao.gif",
     alt: "Um círculo de luz se fechando no ar e barrando a magia que vinha de fora.",
   },
 

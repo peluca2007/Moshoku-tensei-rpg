@@ -2,7 +2,9 @@ import { INCANTATION_LENGTH, RANKS } from "@/lib/types";
 import { MAGIC_ACTIONS } from "@/data/trees/shared";
 import { COMBINED_SPELLS } from "@/data/combinedSpells";
 import { getTreeById, TREES } from "@/data/trees";
+import { LIMITES_TEORICOS, RANKS_TEORICOS } from "@/lib/magiaTeorica";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import FormulaWorkshop from "./FormulaWorkshop";
 
 function tex(s: string): string {
   return s
@@ -54,7 +56,7 @@ export default function Chapter2() {
               onde mora a maior quantidade de feitiços do livro.
             </span>,
             <span key="su">
-              <b>Magia de Suporte (4 escolas):</b> Cura, Desintoxicação, Barreira e Invocação. Invocação é a
+              <b>Magia de Suporte (4 escolas):</b> Cura, Desintoxicação, Magia Teórica e Invocação. Invocação é a
               menor lista de feitiços do livro, e a única cujo efeito principal age sozinho depois de
               conjurado.
             </span>,
@@ -253,7 +255,7 @@ export default function Chapter2() {
           <P>
             Até a versão 0.0.3 o bônus era automático: bastava a magia ter um cântico escrito. Uma auditoria
             das 149 magias do livro encontrou <b>55 com cântico abaixo do piso do próprio rank</b> —
-            Barreira, Cura, Desintoxicação, Invocação e Bardo estavam quase inteiras fora da escada.{" "}
+            a antiga Barreira, Cura, Desintoxicação, Invocação e Bardo estavam quase inteiras fora da escada.{" "}
             <i>&ldquo;Não caias. Ainda não. Prontidão!&rdquo;</i> tem 35 caracteres e pagava exatamente o
             mesmo que um cântico de 380 do rank Rei.
           </P>
@@ -350,7 +352,7 @@ export default function Chapter2() {
           <P>
             Cada Magia Combinada exige <b>duas árvores em ranks específicos</b> — e os dois ranks são
             diferentes entre si na maioria delas. O Meteoro quer <b>Fogo no Rei</b> e <b>Terra no
-              Avançado</b>; a Barreira Incandescente se contenta com <b>Barreira no Avançado</b> e{" "}
+              Avançado</b>; a Barreira Incandescente se contenta com <b>Magia Teórica no Avançado</b> e{" "}
             <b>Fogo no Intermediário</b>. Não existe um &ldquo;Avançado nas duas&rdquo; genérico que abra a
             tabela inteira de uma vez.
           </P>
@@ -409,7 +411,7 @@ export default function Chapter2() {
                 escada do §3.
               </span>,
               <span key="rank">
-                <b>Rank:</b> para Concentração, Selado e tudo que pergunte o rank da magia, ela conta como o
+                <b>Rank:</b> para Concentração, Rejeitar e tudo que pergunte o rank da magia, ela conta como o
                 rank da porta mais alta.
               </span>,
               <span key="cura">
@@ -448,7 +450,7 @@ export default function Chapter2() {
             ["Navegação e Liderança + Magia de Terra", "Chão Preparado", "Antes de um combate previsto, gaste 1 PP pra declarar que já preparou o chão. Se a luta acontecer lá, sua próxima magia de Terra no combate tem +50% de área."],
             ["Furtividade e Armadilhas + Espíritos e Feras", "Familiar Furtivo", "Sua próxima invocação nasce com o seu Bônus de Rank de Furtividade e Armadilhas em Furtividade, e reporta o que viu sem gastar sua Ação pra perguntar."],
             ["Bardo e Interação + Magia de Cura", "Canção que Cura", "Enquanto sustentar uma Canção, cada magia de Cura que você conjurar recupera +1d8 extra em todos os alvos afetados."],
-            ["Cavalaria e Escudos + Barreira e Proteção", "Broquel de Mana", "Uma vez por combate, com um escudo em mãos, gaste 1 PM: você ganha PV temporários iguais a 3 × seu Bônus de Rank de Barreira e Proteção, gastos antes dos seus PV."],
+            ["Cavalaria e Escudos + Magia Teórica", "Broquel de Mana", "Uma vez por combate, com um escudo em mãos, gaste 1 PM: você ganha PV temporários iguais a 3 × seu Bônus de Rank de Magia Teórica, gastos antes dos seus PV."],
           ]}
         />
         <Aside title="Quando a combinação vira uma árvore própria">
@@ -557,28 +559,19 @@ export default function Chapter2() {
               "Remove o ar em volta da cabeça: o alvo não recita nada por 1 turno. Interrompe sem teste, e é a forma mais barata do livro.",
             ],
             [
-              "Selado (Barreira)",
-              "Barreira e Proteção",
-              "Não interrompe — impede, pela Régua do Selo. Magia de rank igual ou inferior ao da barreira gasta as Ações e o PM e falha sozinha, sem chegar a existir; um rank acima acontece pela metade; dois ou mais acima atravessa inteira.",
+              "Conter (Magia Teórica)",
+              "Magia Teórica",
+              "Ergue uma fronteira física com PV. Interrompe um trajeto ou uma linha de efeito enquanto estiver de pé; não anula magia automaticamente.",
             ],
             [
-              "Recusa / Placa / Muralha (Barreira)",
-              "Barreira e Proteção",
-              "A mesma Régua, em tamanho menor e por Reação. Nenhuma delas alcança acima do rank de quem as ergueu — a escola sela até onde chegou, e nada além.",
+              "Rejeitar (Magia Teórica)",
+              "Magia Teórica",
+              "Barra magia que cruze a fronteira, comparando o rank da magia com a potência inscrita no selo. Exige aprender Rejeitar e pagar todos os componentes da fórmula.",
             ],
             [
-              "Lei Local (Barreira, Imperador)",
-              "Barreira e Proteção",
-              "A única coisa no livro que quebra a Régua do Selo: no topo da escola, o Selado perde o teto e vale contra todo rank, inclusive Deus. É o que o patamar mais caro do livro compra.",
-            ],
-            [
-              "Anulação (Barreira, Rei)",
-              "Barreira e Proteção",
-              "1 Reação e 4 PM anulam qualquer magia de rank REI ou inferior no instante em que é conjurada, a até 45m, sem teste. Um número de vezes por combate igual ao seu Espírito. O conjurador perde PM e Ações. Contra Imperador não anula: a magia vem pela metade.",
-            ],
-            [
-              "Anulação (Barreira, Rei)",
-              "Barreira e Proteção",
+              "Selo de Rejeição (Intermediário)",
+              "Magia Teórica",
+              "Modelo pronto de Conter + Rejeitar. Pode ser preparado antes do combate; não é uma anulação por Reação de qualquer magia no mapa.",
             ],
             [
               "Corte de Braço (Deus da Espada, Principiante)",
@@ -634,7 +627,7 @@ export default function Chapter2() {
             ],
             [
               "Quantas magias posso sustentar?",
-              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Barreira do Intermediário sustenta duas; Cura do Santo, duas). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
+              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Cura do Santo sustenta duas). Circuitos da Magia Teórica têm limites próprios de células e carga registrados no desenho. Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
             ],
             [
               "E se eu ficar sem PM no meio?",
@@ -650,6 +643,92 @@ export default function Chapter2() {
             ],
           ]}
         />
+      </Section>
+
+      <Section>
+        <SectionTitle id="cap2-8">8. Magia Teórica — Oficina de Fórmulas</SectionTitle>
+        <Aside title="Proposta em teste, sujeita a mudanças">
+          Magia Teórica substitui a antiga árvore de Barreira e Proteção. Defesa agora é o ramo de Conter e Rejeitar.
+          Os custos e contratos das fórmulas ainda estão em teste e sujeitos a mudanças de equilíbrio.
+        </Aside>
+        <Aside title="Criar fórmulas é uma capacidade da árvore Magia Teórica">
+          Para construir ou alterar uma fórmula, você precisa ter Magia Teórica no rank usado e conhecer
+          todos os símbolos que inscreve. Outra árvore pode ensinar uma essência, como Fogo ou Som;
+          aprender essa essência não concede a capacidade de compor fórmulas. Aqui no livro, qualquer
+          leitor pode experimentar as combinações para estudar as regras.
+        </Aside>
+        <SubTitle>Comece com três peças</SubTitle>
+        <P>
+          Na entrada da árvore, você aprende Mana, Projetar, Expressar, Conter, Círculo,
+          Quadrado e Linha. Rejeitar pode ser estudado por 1 PA. O núcleo diz <b>o que</b>{" "}
+          existe, a inscrição sobre ele diz <b>o que acontece</b> e o contorno diz{" "}
+          <b>como</b> o efeito se organiza.
+        </P>
+        <BookTable
+          headers={["Primeira frase", "Resultado com mana no ar"]}
+          rows={[
+            ["Mana + Projetar + Círculo", "3 PM, 2 Ações: ataque a 9 m, 1d6 arcano."],
+            ["Mana + Expressar + Círculo", "3 PM, 2 Ações: sinal sensorial de 1 turno, sem dano."],
+            ["Mana + Conter + Quadrado", "4 PM, 2 Ações: parede física de até 3 m e 30 PV por 1 minuto."],
+          ]}
+        />
+        <P>
+          Tente trocar uma peça: Linha no Dardo Arcano aumenta o alcance para 13,5 m
+          e o custo para 4 PM. Círculo no lugar de Quadrado deixa a parede com 20 PV,
+          por 3 PM, e estende sua duração a 15 turnos. Um desenho novo com símbolos
+          conhecidos não custa PA a cada uso.
+        </P>
+        <P>
+          Uma fórmula é uma frase escrita em mana. O <b>núcleo</b> diz o que existe; os <b>operadores</b>{" "}
+          são símbolos inscritos sobre esse núcleo. A flecha de <b>Projetar</b> atravessa o símbolo de
+          Fogo: os dois traços formam um <b>glifo composto</b>. Pequenos números junto às inscrições
+          indicam sua ordem. A <b>forma externa</b> modifica a saída, e o <b>meio</b> determina como o
+          desenho é preparado.
+        </P>
+        <P>
+          Nesta árvore, Barreira é o ramo de <b>Conter e Rejeitar</b>. <b>Mana → Conter</b> levanta uma fronteira física, enquanto{" "}
+          <b>Mana → Rejeitar</b> barra magia. Quem conhece o símbolo de Fogo, Som ou Vida pode usá-lo em{" "}
+          outra fórmula sem ganhar as magias prontas da árvore de origem. Um símbolo pode ser aprendido{" "}
+          abrindo essa árvore ou comprado avulso por 1 PA.
+        </P>
+        <Aside title="Ler, construir e alimentar são coisas diferentes">
+          Um teórico entende e desenha o circuito; qualquer criatura capaz de fornecer o PM necessário
+          pode alimentar um desenho pronto, mesmo sem saber o que ele fará. PM extra não amplia o efeito:
+          a capacidade já foi definida pela fórmula.
+        </Aside>
+        <SubTitle>O custo da frase</SubTitle>
+        <P>
+          Some o PM da essência, dos operadores e da forma. A primeira ação sobre o núcleo não cobra
+          ligação extra; cada componente acrescentado depois custa +1 PM pela sobreposição, além de seu próprio custo;
+          um gatilho custa +2 PM. O rank de <b>construção</b> limita o tamanho e o custo total;
+          a <b>potência</b> define os números do efeito e não pode superar a construção.
+          O alimentador pode ser outra pessoa, mas não pode ultrapassar o
+          circuito que foi desenhado.
+        </P>
+        <P>
+          Um glifo de Fogo com Projetar conta como <b>dois componentes</b>, mesmo formando um único desenho.
+          O <b>Círculo</b> é o contorno básico, sem custo adicional: aceita uma projeção instantânea e,
+          quando existe um efeito sustentado, multiplica sua duração por 1,5 dentro do limite do material.
+        </P>
+        <BookTable
+          headers={["Construção", "Componentes", "PM máximo", "Cobertura se potência igual ao rank"]}
+          rows={RANKS_TEORICOS.map((rank) => [rank, String(LIMITES_TEORICOS[rank].simbolos), String(LIMITES_TEORICOS[rank].pm), `${LIMITES_TEORICOS[rank].area} m`])}
+        />
+        <P>
+          A ordem também é regra: <b>Expandir → Projetar</b> abre um cone na origem e reduz o alcance à metade;{" "}
+          <b>Projetar → Expandir</b> conserva o alcance e abre a área no destino. As setas são uma legenda de leitura;
+          no desenho, as ações ficam sobrepostas ao núcleo e recebem a numeração correspondente.
+        </P>
+        <P>
+          Experimente abaixo. Comece com um dos três exemplos e mude uma peça por vez. O laboratório{" "}
+          mostra o custo e explica por que uma combinação funciona ou ultrapassa o limite do rank.
+        </P>
+        <FormulaWorkshop />
+        <P className="text-sm">
+          Esta oficina apresenta as regras em teste da Magia Teórica. O editor
+          calcula uma célula por vez; fórmulas com várias células, talentos e armazenamento de PM ainda
+          estão no documento de proposta e não são resolvidos aqui.
+        </P>
       </Section>
 
       <FimDoCapitulo id="cap2" />
