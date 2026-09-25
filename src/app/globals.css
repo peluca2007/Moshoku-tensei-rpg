@@ -2949,13 +2949,15 @@ input[type="number"],
 }
 
 /* ── O catálogo das árvores: cada árvore é uma "classe" do livro ──────── */
+/* Sem quebra forçada antes de cada árvore: quando a anterior acabava no alto
+   da coluna, o resto dela ficava em branco (a medição achou páginas com 2%
+   de uma coluna ocupada). A árvore flui, e o cabeçalho dela nunca fica no pé. */
 .folhear-fluxo .livro-arvore {
   margin-top: 1.4em;
   border: 0;
   border-radius: 0;
   background: none;
   box-shadow: none;
-  break-before: column;
 }
 
 .folhear-fluxo .livro-arvore::before {
@@ -3178,4 +3180,382 @@ input[type="number"],
   margin-top: 0.8em;
   color: var(--livro-filete);
   font-size: 1.4em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * IDENTIDADE "RANOA" — o grimório da Universidade de Magia (em avaliação)
+ *
+ * A estrutura do livro impresso fica (duas colunas, caixas, tabelas); a
+ * linguagem visual é nossa. Três ideias:
+ *
+ * 1. O HEXÁGONO do Mundo de Seis Faces — seis faces, seis lados — como marca:
+ *    medalhão da abertura, capitular, número da página, marcador de seção,
+ *    marca d'água no canto da folha, treliça da guarda.
+ * 2. O AZUL DA MANA no lugar do vermelho de D&D: índigo nos títulos, azul-
+ *    petróleo nos detalhes, ouro velho nos filetes. Capa de tecido índigo com
+ *    douração, e não couro marrom.
+ * 3. COR COM FUNÇÃO: cada capítulo tem uma cor (a da aba na borda do livro),
+ *    e no catálogo cada árvore veste a cor da sua categoria — índigo pra
+ *    Magia, vinho pro Corpo, oliva pra Utilidade. A mesa acha a árvore pela
+ *    cor antes de ler o nome.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+
+.folhear[data-identidade="ranoa"] {
+  --livro-tinta: #1c1a18;
+  --livro-titulo: #22305c;
+  --livro-filete: #b8963f;
+  --livro-mana: #2c7f8c;
+  --livro-fita: #7a1f2b;
+  --livro-nota: rgb(221 230 238 / 0.8);
+  --livro-listra: rgb(34 48 92 / 0.06);
+  --livro-aviso: rgb(255 249 234 / 0.72);
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #2e3548 0%, #1a1e2b 55%, #0e1017 100%);
+}
+
+.dark .folhear[data-identidade="ranoa"] {
+  --folhear-mesa: radial-gradient(ellipse 120% 90% at 50% 35%, #171b27 0%, #0b0d14 60%, #050609 100%);
+}
+
+/* A capa: tecido índigo, com a trama aparecendo. */
+.folhear[data-identidade="ranoa"][data-modo="livro"] .folhear-livro {
+  background:
+    repeating-linear-gradient(45deg, rgb(255 255 255 / 0.03) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.06) 0 2px, transparent 2px 4px),
+    radial-gradient(ellipse at 30% 20%, rgb(255 255 255 / 0.1), transparent 60%),
+    linear-gradient(135deg, #2d3c72 0%, #1f2b55 50%, #141b37 100%);
+}
+
+.folhear[data-identidade="ranoa"][data-modo="livro"] .folhear-janela {
+  box-shadow:
+    -2px 0 0 #efe6d2,
+    -4px 0 0 #cfc2a4,
+    -6px 0 0 #e9dfc8,
+    2px 0 0 #efe6d2,
+    4px 0 0 #cfc2a4,
+    6px 0 0 #e9dfc8;
+}
+
+/* O papel: marfim de livro novo, não pergaminho de masmorra. */
+.folhear[data-identidade="ranoa"] .folhear-folha {
+  background: #f4ecda;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-folha::before {
+  filter: sepia(0.2) saturate(0.65) brightness(1.1) contrast(0.9);
+  opacity: 0.8;
+}
+
+/* A marca d'água do hexágono, no canto de fora de cada página. */
+.folhear[data-identidade="ranoa"] .folhear-folha[data-lado="dir"]::after {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,3 91,26 91,74 50,97 9,74 9,26' fill='none' stroke='%2322305c' stroke-width='1.1' opacity='.13'/%3E%3Cpolygon points='50,16 80,33 80,67 50,84 20,67 20,33' fill='none' stroke='%2322305c' stroke-width='.7' opacity='.1'/%3E%3C/svg%3E")
+      no-repeat right -90px bottom -80px / 300px,
+    linear-gradient(to right, rgb(40 45 70 / 0.18), transparent 7%),
+    linear-gradient(to left, rgb(40 45 70 / 0.07), transparent 3%);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-folha[data-lado="esq"]::after {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,3 91,26 91,74 50,97 9,74 9,26' fill='none' stroke='%2322305c' stroke-width='1.1' opacity='.13'/%3E%3Cpolygon points='50,16 80,33 80,67 50,84 20,67 20,33' fill='none' stroke='%2322305c' stroke-width='.7' opacity='.1'/%3E%3C/svg%3E")
+      no-repeat left -90px bottom -80px / 300px,
+    linear-gradient(to left, rgb(40 45 70 / 0.18), transparent 7%),
+    linear-gradient(to right, rgb(40 45 70 / 0.07), transparent 3%);
+}
+
+/* A guarda: índigo com treliça de hexágonos dourados. */
+.folhear[data-identidade="ranoa"] .folhear-folha[data-pagina="0"] {
+  background: #1b2548;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-folha[data-pagina="0"]::before {
+  filter: none;
+  opacity: 1;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='60' viewBox='0 0 52 60'%3E%3Cpolygon points='26,2 50,16 50,44 26,58 2,44 2,16' fill='none' stroke='%23c9ad6a' stroke-width='1' opacity='.28'/%3E%3C/svg%3E")
+      repeat,
+    radial-gradient(ellipse at 45% 40%, #2f3f78 0%, #1f2a55 50%, #121935 100%);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-exlibris {
+  border-color: var(--livro-titulo);
+  color: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-exlibris-rotulo {
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 2.2em;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+/* O rodapé: o número dentro de um hexágono índigo. */
+.folhear[data-identidade="ranoa"] .folhear-rodape {
+  align-items: center;
+  color: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-rodape-numero {
+  display: grid;
+  width: 34px;
+  height: 38px;
+  place-items: center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 38'%3E%3Cpolygon points='17,1 33,10 33,28 17,37 1,28 1,10' fill='%2322305c'/%3E%3Cpolygon points='17,4 30,11.5 30,26.5 17,34 4,26.5 4,11.5' fill='none' stroke='%23c9ad6a' stroke-width='.8'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  color: #ead49a;
+  font-size: 13px;
+}
+
+/* ── Títulos ──────────────────────────────────────────────────────────── */
+.folhear[data-identidade="ranoa"] .folhear-fluxo h3 {
+  border-bottom: 1.5px solid var(--livro-filete);
+}
+
+/* O marcador de seção: um hexágono cor de mana antes do título. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo h3::before {
+  content: "";
+  position: static;
+  display: inline-block;
+  width: 0.6em;
+  height: 0.68em;
+  margin-right: 0.35em;
+  border-radius: 0;
+  background: var(--livro-mana);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  vertical-align: -0.02em;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-secao-titulo::before {
+  display: inline-block;
+}
+
+/* A abertura: medalhão hexagonal com o numeral do capítulo. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura {
+  position: relative;
+  border-bottom: 1.5px solid var(--livro-filete);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura > :not(.livro-abertura-arte) {
+  margin-left: 104px;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura::before {
+  content: attr(data-numeral);
+  position: absolute;
+  top: 2px;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  width: 88px;
+  height: 100px;
+  place-items: center;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 100'%3E%3Cpolygon points='44,2 86,26 86,74 44,98 2,74 2,26' fill='%231f2b55' stroke='%23c9ad6a' stroke-width='3'/%3E%3Cpolygon points='44,10 79,30 79,70 44,90 9,70 9,30' fill='none' stroke='%23c9ad6a' stroke-width='1' opacity='.6'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  color: #ead49a;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 32px;
+  font-weight: 800;
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.35));
+}
+
+/* Com arte, o medalhão se apoia na borda de baixo dela. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura:has(.livro-abertura-arte)::before {
+  top: calc(330px - var(--topo) - 50px);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-abertura > p:first-of-type {
+  color: var(--livro-mana);
+}
+
+/* A capitular: a letra dentro de um hexágono dourado, não gótica. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .dropcap::first-letter {
+  margin-right: 0.14em;
+  padding: 0.1em 0.2em 0.04em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 88 100' preserveAspectRatio='none'%3E%3Cpolygon points='44,2 86,26 86,74 44,98 2,74 2,26' fill='none' stroke='%23b8963f' stroke-width='3'/%3E%3C/svg%3E")
+    center / 100% 100% no-repeat;
+  color: var(--livro-titulo);
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-weight: 800;
+}
+
+/* ── Caixas ───────────────────────────────────────────────────────────── */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-caixa {
+  border-top: 3px solid var(--livro-titulo);
+  box-shadow:
+    0 1px 0 rgb(34 48 92 / 0.2),
+    0 5px 12px -5px rgb(20 25 45 / 0.4);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-caixa > p:first-child {
+  color: var(--livro-titulo);
+}
+
+/* O aviso ("o que a regra NÃO faz"): fita vinho na lateral, como marcador de página. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-aviso {
+  border-block: 0;
+  border-top: 0;
+  border-left: 5px solid var(--livro-fita);
+  background: var(--livro-aviso);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-aviso > p:first-child {
+  color: var(--livro-fita);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-maestria {
+  border: 1px solid rgb(184 150 63 / 0.7);
+  border-left: 5px solid var(--livro-filete);
+  background: rgb(255 249 234 / 0.65);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-maestria > p:first-child {
+  color: var(--livro-titulo);
+}
+
+/* A Mecânica Central abre com uma faixa da cor da categoria. */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica > div:first-child {
+  margin: 0 -0.75em 0.45em;
+  padding: 0.3em 0.75em;
+  background: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica > div:first-child p {
+  color: #f4ecda;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-mecanica .bg-wine-600 {
+  background: var(--livro-filete);
+  color: #1c1a18;
+}
+
+/* ── Tabelas: cabeçalho índigo, linhas finas ──────────────────────────── */
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela table {
+  border-bottom: 2px solid var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela thead tr,
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tr.folhear-cabecalho-repetido {
+  background: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela th {
+  padding: 0.32em 0.5em;
+  color: #f4ecda;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 1.04em;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tbody tr {
+  border-bottom: 1px solid rgb(34 48 92 / 0.14);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tbody tr:nth-child(odd) {
+  background: transparent;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela tbody tr:nth-child(even) {
+  background: var(--livro-listra);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela td {
+  padding: 0.28em 0.5em;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-tabela td:first-child {
+  color: var(--livro-titulo);
+  font-weight: 700;
+}
+
+/* ── O catálogo: cada árvore veste a cor da sua categoria ─────────────── */
+.folhear[data-identidade="ranoa"] .livro-arvore[data-categoria="magia"] {
+  --livro-titulo: #22305c;
+}
+
+.folhear[data-identidade="ranoa"] .livro-arvore[data-categoria="corpo"] {
+  --livro-titulo: #7a1f2b;
+}
+
+.folhear[data-identidade="ranoa"] .livro-arvore[data-categoria="utilidade"] {
+  --livro-titulo: #4a5724;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca {
+  padding: 0.5em 0.65em;
+  border-bottom: 0;
+  background: var(--livro-titulo);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca > span > span:first-child {
+  color: #f4ecda;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(2) {
+  color: #e2c883;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca > span > span:nth-child(3) {
+  color: rgb(244 236 218 / 0.85);
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-arvore-cabeca img {
+  border-radius: 4px;
+  background: #f4ecda;
+  mix-blend-mode: normal;
+}
+
+.folhear[data-identidade="ranoa"] .folhear-fluxo .livro-verbete-meta {
+  color: var(--livro-mana);
+}
+
+/* ── As abas de capítulo na borda do livro ────────────────────────────── */
+.folhear-abas {
+  position: absolute;
+  top: 110px;
+  right: -34px;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.folhear-aba {
+  display: flex;
+  width: 46px;
+  height: 104px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 9px;
+  border-radius: 0 9px 9px 0;
+  background:
+    linear-gradient(to right, rgb(0 0 0 / 0.25), transparent 40%),
+    var(--cor-aba);
+  box-shadow: 2px 3px 6px rgb(0 0 0 / 0.4);
+  color: #f4ecda;
+  cursor: pointer;
+  font-family: var(--font-livro-sc), Georgia, serif;
+  font-size: 17px;
+  font-weight: 800;
+  transform: translateX(-14px);
+  transition: transform 0.18s;
+}
+
+.folhear-aba span {
+  writing-mode: vertical-rl;
+}
+
+.folhear-aba:hover {
+  transform: translateX(-6px);
+}
+
+.folhear-aba[data-atual] {
+  transform: translateX(0);
+}
+
+.folhear-aba:focus-visible {
+  outline: 2px solid #ead49a;
+  outline-offset: 2px;
 }

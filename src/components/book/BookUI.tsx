@@ -33,8 +33,11 @@ export function ChapterTitle({
   children: ReactNode;
 }) {
   const arte = ARTE_DAS_ABERTURAS[id];
+  // O numeral do capítulo (IV), pro medalhão da abertura no livro folheado.
+  const n = numero?.match(/\d+/)?.[0];
+  const numeral = n ? (["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"][Number(n) - 1] ?? n) : "◆";
   return (
-    <header className="livro-abertura scroll-mt-24 text-center">
+    <header className="livro-abertura scroll-mt-24 text-center" data-numeral={numeral}>
       {/* A arte da abertura só aparece no livro folheado (ver globals.css). */}
       {arte && (
         <figure aria-hidden className="livro-abertura-arte">
