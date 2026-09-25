@@ -410,6 +410,57 @@ export default function Folhear({
     setDupla(destino);
   }, [porDupla, versao, toc]);
 
+  /*
+   * SÓ A DUPLA ABERTA SE MEXE (2026-09-25).
+   *
+   * O livro inteiro está no DOM: 245 páginas, com dezenas de diagramas
+   * animados (alguns em laço infinito) e os vídeos das habilidades em
+   * autoplay. Tudo isso rodava o tempo todo, fora da vista, e cada quadro de
+   * animação obrigava o navegador a repintar a caixa de colunas gigante:
+   * medido, ~1 s de trabalho a cada folha virada e a tela redesenhando sem
+   * parar mesmo com o livro parado — as "travadinhas" que o autor sentiu.
+   *
+   * Agora um IntersectionObserver com a janela do livro como raiz marca o que
+   * está na dupla aberta: diagrama fora dela fica sem animação (e, de brinde,
+   * anima de novo quando a página abre), vídeo fora dela fica pausado.
+   */
+  useEffect(() => {
+    const j = janela.current;
+    const f = fluxo.current;
+    if (modo !== "livro" || !j || !f || !paginacao) return;
+    const alvos = Array.from(f.querySelectorAll<HTMLElement>(".diagrama, video"));
+    alvos.forEach((el) => {
+      if (el instanceof HTMLVideoElement) {
+        el.autoplay = false;
+        el.pause();
+      }
+    });
+    const io = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          const el = e.target as HTMLElement;
+          el.classList.toggle("folhear-visivel", e.isIntersecting);
+          if (el instanceof HTMLVideoElement) {
+            if (e.isIntersecting) void el.play().catch(() => {});
+            else el.pause();
+          }
+        }
+      },
+      { root: j }
+    );
+    alvos.forEach((el) => io.observe(el));
+    return () => {
+      io.disconnect();
+      alvos.forEach((el) => {
+        el.classList.remove("folhear-visivel");
+        if (el instanceof HTMLVideoElement) {
+          el.autoplay = true;
+          void el.play().catch(() => {});
+        }
+      });
+    };
+  }, [modo, paginacao]);
+
   // Guarda a página a cada virada (a primeira da dupla aberta).
   useEffect(() => {
     if (modo !== "livro" || !paginacao || !porDupla) return;

@@ -2860,3 +2860,15 @@ html.livro-imersivo .folhear[data-modo="livro"] {
     padding: 0 0.45rem;
   }
 }
+
+/* Diagrama fora da dupla aberta não anima (ver "Só a dupla aberta se mexe"
+   no Folhear.tsx). Quando a página abre, ele ganha .folhear-visivel e a
+   animação começa do zero — o diagrama se monta na frente de quem lê. */
+.folhear[data-modo="livro"] .folhear-fluxo .diagrama:not(.folhear-visivel),
+.folhear[data-modo="livro"] .folhear-fluxo .diagrama:not(.folhear-visivel) *,
+.folhear[data-modo="livro"] .folhear-fluxo .diagrama:not(.folhear-visivel) *::before,
+.folhear[data-modo="livro"] .folhear-fluxo .diagrama:not(.folhear-visivel) *::after,
+.folhear[data-modo="livro"] .folhear-fluxo .diagrama:not(.folhear-visivel)::before,
+.folhear[data-modo="livro"] .folhear-fluxo .diagrama:not(.folhear-visivel)::after {
+  animation: none !important;
+}
