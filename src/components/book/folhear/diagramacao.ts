@@ -245,11 +245,25 @@ export function ajustarTabelasLargas(fluxo: Element, g: Geometria, r: Regua): vo
  */
 export function ajustarFigurasLargas(fluxo: Element): void {
   fluxo.querySelectorAll(".folhear-larga").forEach((el) => el.classList.remove("folhear-larga"));
-  const largas = Array.from(fluxo.querySelectorAll<HTMLElement>("figure.diagrama")).filter((fig) => {
-    if (!visivel(fig)) return false;
-    return Array.from(fig.querySelectorAll<HTMLElement>("*")).some((el) => el.scrollWidth > el.clientWidth + 2 && el.clientWidth > 0);
-  });
+  const diagramas = Array.from(fluxo.querySelectorAll<HTMLElement>("figure.diagrama")).filter(visivel);
+  diagramas.forEach((fig) => (fig.style.zoom = ""));
+  /** Quanto o conteúdo mais largo do diagrama passa da largura que ele tem. */
+  const sobra = (fig: HTMLElement) => {
+    let pior = 1;
+    fig.querySelectorAll<HTMLElement>("*").forEach((el) => {
+      if (el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 2) pior = Math.max(pior, el.scrollWidth / el.clientWidth);
+    });
+    return pior;
+  };
+  const largas = diagramas.filter((fig) => sobra(fig) > 1);
   largas.forEach((fig) => fig.classList.add("folhear-larga"));
+  // Mesmo de margem a margem, alguns diagramas têm largura mínima maior que a
+  // página (a Ordem do Dano, o Tiro Perfeito). Esses encolhem por inteiro,
+  // proporcionais, em vez de cortar o último quadro fora da página.
+  largas.forEach((fig) => {
+    const s = sobra(fig);
+    if (s > 1) fig.style.zoom = String(Math.max(0.6, Math.floor((1 / s) * 100) / 100));
+  });
 }
 
 /**

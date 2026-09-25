@@ -2872,3 +2872,16 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 .folhear[data-modo="livro"] .folhear-fluxo .diagrama:not(.folhear-visivel)::after {
   animation: none !important;
 }
+
+/*
+ * O livro tem página de tamanho FIXO e zoom próprio; a letra do site (o
+ * botão Aa, que muda o font-size da <html>) não pode entrar nele. Com ela em
+ * "Maior", tudo que os componentes do livro medem em rem — espaçamentos,
+ * larguras mínimas dos diagramas, tamanhos de título — crescia dentro da
+ * mesma página e escapava pela borda. No modo Livro a raiz volta a 16 px
+ * (o !important vence o estilo inline que o botão escreve na <html>); o zoom
+ * do livro é quem amplia.
+ */
+html.livro-imersivo {
+  font-size: 16px !important;
+}
