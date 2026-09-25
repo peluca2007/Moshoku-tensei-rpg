@@ -2822,3 +2822,41 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   background-color: #ffd43b;
   color: #111114;
 }
+
+/* ── A barra no telefone ──────────────────────────────────────────────────
+ * Sete botões e o título não cabem em 390px: o título ficava por cima dos
+ * ícones. No telefone a barra mostra só o essencial (índice, busca, a página
+ * e o modo); o resto fica pro tablet e o desktop. */
+@media (max-width: 639px) {
+  .folhear-barra {
+    gap: 0.25rem;
+    padding: 0 0.4rem;
+  }
+
+  .folhear-barra-lado {
+    flex: 0 0 auto;
+  }
+
+  .folhear-posicao {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .folhear-posicao-titulo {
+    font-size: 0.85rem;
+  }
+
+  .folhear[data-modo="livro"] .folhear-barra a[href="/"],
+  .folhear[data-modo="livro"] .folhear-barra [aria-label="Afastar"] {
+    display: none;
+  }
+
+  .folhear-botao {
+    min-width: 2rem;
+    padding: 0 0.35rem;
+  }
+
+  .folhear-alternador button {
+    padding: 0 0.45rem;
+  }
+}
