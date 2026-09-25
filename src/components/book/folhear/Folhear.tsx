@@ -684,7 +684,9 @@ export default function Folhear({
       ref={raiz}
       className={`folhear livro-shell ${FONTES_DO_LIVRO}`}
       data-modo={modo ?? undefined}
-      data-papel={papel}
+      // O papel só vale no modo Livro; no contínuo manda o tema do site (senão o
+      // escuro do papel vazaria pro texto do contínuo, que é claro no tema claro).
+      data-papel={modo === "livro" ? papel : undefined}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
       style={variaveis}
