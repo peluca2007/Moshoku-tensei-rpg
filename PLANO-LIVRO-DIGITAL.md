@@ -39,6 +39,17 @@ em `src/data/` e `src/components/book/`; esta frente mexe em **como** o livro é
   e a página assume os três. A ilustração **estica**: fica com o que os traços deixarem, então página
   nenhuma sobra ou transborda. Antes delas, o quadro comparativo das doze e a **vitrine** (os doze
   brasões, que levam à página de cada uma).
+- **O caos controlado** (pedido do autor: "um caos diferente em cada capítulo — o Deus do Norte com armas
+  jogadas"): cada capítulo e cada árvore tem motivos nas bordas da página — dados no Comece Aqui, círculos
+  rúnicos na Magia, garras e sangue no Combate, armas jogadas no Deus do Norte, brasas no Fogo, a frase de
+  glifos compostos na Teórica. Um motivo herói por página, sangrando pra fora da borda, e coadjuvantes na
+  margem; o que cruza a mancha de texto vem apagado no próprio desenho. Três variantes por tema (páginas
+  vizinhas nunca repetem), espelhadas na página da esquerda. Gerado por `scripts/gerar-caos.mjs`, usado
+  como máscara pintada na cor da página; árvore sem tema próprio herda o da família.
+- **As artes do autor** entram pelo nome do arquivo (`public/livro/<racas|antecedentes|arvores|olhos>/<id>`):
+  raças em página inteira, antecedentes em fichas com retrato, retrato no alto do catálogo da árvore.
+- **Ferramenta interativa no livro:** a Oficina de Fórmulas (Magia Teórica) é de tela inteira; no livro a
+  página mostra a chamada e o laboratório abre por cima, num painel.
 - **Nada do livro antigo:** as paletas do site (pergaminho, vinho, dourado) são redefinidas dentro do
   livro — o pergaminho vira a escala neutra do papel, o vinho e o dourado viram a cor do capítulo, da
   árvore ou da raça. Todo componente que vem do site adota a identidade sem ser reescrito.
@@ -89,11 +100,11 @@ O CSS do livro mora em `src/app/livro/folhear/folhear.css`, importado só pela r
 
 ## O que foi medido (2026-09-25)
 
-- **Livro inteiro:** 250 páginas (as raças ganharam 12). **0** títulos separados do texto, **0** blocos
-  passando da coluna ou da página, 3 páginas com 19–22% de mancha vazia (todas antes de uma tabela de
-  página inteira).
-- **Desempenho (build de produção, Chrome headless sem GPU):** livro pronto em ~3,1 s (3,8–4,5 s numa
-  segunda medição com a máquina mais carregada, igual à versão anterior medida junto); virar a folha, 0 ms
+- **Livro inteiro:** 254 páginas. **0** títulos separados do texto, **0** blocos passando da coluna ou da
+  página, 4 páginas com 20–30% de mancha vazia (todas antes de uma tabela de página inteira).
+- **Desempenho (build de produção, Chrome headless sem GPU):** livro pronto em ~3,1 s na primeira medição;
+  4,3–4,7 s em 2026-09-25 com o livro maior (254 páginas, fichas com retrato, a Teórica), contra 3,8–4,5 s
+  da versão anterior medida na mesma máquina; virar a folha segue sem quadro acima de 17 ms com o caos; virar a folha, 0 ms
   de tarefa longa; nenhuma animação infinita rodando. Três coisas pesavam e foram resolvidas: o
   `perspective` no livro (4–8 s por repintura), os diagramas/vídeos/pílulas animando fora da vista (~1 s
   por folha virada) e as fontes japonesas (366 arquivos de fonte baixados).

@@ -614,6 +614,8 @@ export default function Folhear({
     if (modo !== "livro") return;
     const aoTeclar = (e: KeyboardEvent) => {
       if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "k") return;
+      // Com um painel aberto por cima do livro (o Laboratório de Fórmulas), o atalho é dele.
+      if (document.querySelector("dialog[open]")) return;
       e.preventDefault();
       e.stopPropagation();
       setIndiceAberto(false);
@@ -629,7 +631,7 @@ export default function Folhear({
     const aoTeclar = (e: KeyboardEvent) => {
       if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
       const t = e.target as HTMLElement | null;
-      if (t?.closest("input, textarea, select, [contenteditable='true']")) return;
+      if (t?.closest("input, textarea, select, [contenteditable='true'], dialog")) return;
       const acao: Record<string, () => void> = {
         ArrowRight: () => irPara(alvo.current + 1, true),
         PageDown: () => irPara(alvo.current + 1, true),
@@ -1083,6 +1085,7 @@ function Folhas({
             data-pagina={k}
             data-capitulo={r?.capituloId}
             data-arvore={r?.arvoreId}
+            data-familia={r?.arvoreFamilia}
             data-raca={r?.racaId}
             style={{
               left: k * geo.pagina,
@@ -1091,6 +1094,9 @@ function Folhas({
               backgroundImage: k === 0 ? `url(${ARTE_DA_FOLHA_DE_ROSTO.src})` : undefined,
             }}
           >
+            {/* O caos controlado: os motivos do capítulo (ou da árvore) nas
+                bordas. Vem do CSS (--caos), como a cor e o selo. */}
+            {k >= 2 && indice >= 0 && !r?.abertura && <span className="folhear-caos" />}
             {k >= 2 && indice >= 0 && (
               <>
                 <span className="folhear-marca" style={{ "--aba-i": indice } as CSSProperties} />
