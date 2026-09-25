@@ -3,10 +3,10 @@
 /* Ativa a variante `dark:` por classe (`.dark` na <html>, controlada pelo
    ThemeProvider/next-themes) em vez de só seguir prefers-color-scheme — é o
    que permite o botão de tema sobrepor a preferência do sistema. */
-/* ...exceto dentro de `.sem-escuro`: a página do livro folheado é PAPEL nos
-   dois temas (o tema muda a mesa em volta), e o texto dela precisa das cores
-   de papel claro mesmo com a <html> no escuro. */
-@custom-variant dark (&:where(.dark, .dark *):not(:where(.sem-escuro, .sem-escuro *)));
+/* O livro folheado tem o PAPEL dele, escolhido à parte do tema do site
+   (`data-papel`, ver Folhear.tsx): papel "noite" liga o escuro lá dentro
+   mesmo com o site claro, e papel "dia" desliga mesmo com o site escuro. */
+@custom-variant dark (&:where(.dark, .dark *, [data-papel="noite"], [data-papel="noite"] *):not(:where([data-papel="dia"], [data-papel="dia"] *)));
 
 :root {
   --background: #fdf6e3;

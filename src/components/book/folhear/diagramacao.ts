@@ -99,6 +99,9 @@ export interface Rotulo {
   capitulo?: string;
   /** O id do capítulo (cap4) — a cor da página sai dele. */
   capituloId?: string;
+  /** A árvore do catálogo que ocupa a página (fogo, deus-da-espada…): a cor e o kanji dela. */
+  arvoreId?: string;
+  arvoreNome?: string;
   secao?: string;
   /** Página de abertura (sumário, folha de rosto de capítulo): sem rótulo no rodapé. */
   abertura: boolean;
@@ -276,6 +279,146 @@ export function espalharTabelasEspremidas(fluxo: Element, g: Geometria, r: Regua
   espremidas.forEach((caixa) => caixa.classList.add("folhear-larga"));
 }
 
+/**
+ * TÍTULO NUNCA FICA SEPARADO DO TEXTO DELE.
+ *
+ * O CSS pede `break-after: avoid` em todo título, mas o Chrome só obedece
+ * quando acha outro lugar pra quebrar — e desiste calado quando o que vem
+ * depois é uma tabela, uma arte ou uma caixa que não cabem no resto da
+ * coluna. Aí sobrava "3. Economia de Ações" sozinho no pé da página e o texto
+ * na seguinte: o defeito que o autor apontou como obrigatório.
+ *
+ * Então, depois da diagramação, cada título é conferido: se o começo do que
+ * vem depois dele caiu numa coluna mais à direita, o título vai junto
+ * (`break-before: column`). Título que abre uma caixa, um verbete, uma tabela
+ * ou uma árvore leva o bloco INTEIRO — empurrar só o título partiria a caixa.
+ * Um empurrão pode criar outro caso mais adiante, por isso a conferência
+ * repete até zerar (ver Folhear.tsx).
+ *
+ * @returns quantos blocos foram empurrados nesta passada
+ */
+const SELETOR_TITULOS = [
+  "h3",
+  "h4",
+  ".livro-arvore-cabeca",
+  ".livro-verbete > div:first-child",
+  ":is(.livro-caixa, .livro-maestria, .livro-proficiencias) > p:first-child",
+  ".livro-mecanica > div:first-child",
+  ".livro-tabela thead",
+].join(", ");
+
+const BLOCOS_COM_TITULO =
+  ".livro-caixa, .livro-maestria, .livro-proficiencias, .livro-mecanica, .livro-verbete, .livro-tabela, .livro-arvore";
+
+/** `t` abre `bloco`? (cada passo do caminho é o primeiro filho) */
+function abre(bloco: Element, t: Element): boolean {
+  for (let n: Element | null = t; n && n !== bloco; n = n.parentElement) {
+    if (n.parentElement?.firstElementChild !== n) return false;
+  }
+  return true;
+}
+
+/** O que vem depois de `t` na ordem de leitura, pulando o que não aparece. */
+function seguinte(t: Element, fluxo: Element): Element | null {
+  let n: Element | null = t;
+  while (n && n !== fluxo) {
+    let irmao = n.nextElementSibling;
+    while (irmao && !Array.from(irmao.getClientRects()).some((r) => r.height > 1)) irmao = irmao.nextElementSibling;
+    if (irmao) return irmao;
+    n = n.parentElement;
+  }
+  return null;
+}
+
+export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
+  // Em que coluna (contando as duas de cada página) um retângulo está. Não
+  // dá pra comparar só o `left`: o carimbo das caixas é torto e deslocado,
+  // e sai uns pixels à esquerda do texto da mesma coluna.
+  const coluna = (q: DOMRect) => {
+    const x = (q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40);
+    const pagina = Math.floor(x / g.pagina);
+    return pagina * 2 + (x - pagina * g.pagina > g.pagina / 2 ? 1 : 0);
+  };
+  const empurrar = new Set<Element>();
+  fluxo.querySelectorAll(SELETOR_TITULOS).forEach((t) => {
+    if (!visivel(t) || t.closest(".livro-abertura, .folhear-sumario, .folhear-rosto, .folhear-colofao")) return;
+    const rt = t.getClientRects();
+    if (rt.length === 0) return;
+    const titulo = rt[rt.length - 1];
+    const depois = seguinte(t, fluxo);
+    if (!depois) return;
+    const comeco = Array.from(depois.getClientRects()).find((r) => r.height > 1);
+    if (!comeco || coluna(comeco) <= coluna(titulo)) return;
+    // Antes de uma tabela ou figura que atravessa a página, empurrar o título
+    // pra próxima COLUNA não adianta (a tabela está na próxima PÁGINA): o
+    // título passa a atravessar a página também, e anda junto com ela. Se
+    // ainda assim ficar pra trás, a próxima passada empurra — e empurrar algo
+    // que atravessa a página é mandá-lo pra página seguinte.
+    if (t.matches("h3, h4") && depois.matches(".folhear-larga") && !t.classList.contains("folhear-larga")) {
+      t.classList.add("folhear-larga");
+      empurrar.add(t);
+      return;
+    }
+    const bloco = t.closest(BLOCOS_COM_TITULO);
+    empurrar.add(bloco && abre(bloco, t) ? bloco : t);
+  });
+  // Cada caso sobe um degrau por passada, e só conta como mudança se subiu:
+  // 1) título antes de algo que atravessa a página passa a atravessar também;
+  // 2) o bloco vai pra próxima coluna;
+  // 3) se nem assim (a faixa curta abaixo de uma tabela de página inteira,
+  //    onde a próxima coluna ainda é a mesma página), o bloco fica inteiro e
+  //    anda junto pra próxima página.
+  const alturaDaColuna = g.altura - g.topo - g.pe;
+  const cabeNumaColuna = (el: Element) => {
+    let altura = 0;
+    for (const q of el.getClientRects()) altura += q.height / r.k;
+    return altura < alturaDaColuna * 0.9;
+  };
+  /*
+   * O último degrau: um CALÇO. Quando o bloco começa numa faixa curta logo
+   * abaixo de algo que atravessa a página (a tabela de Vigor, por exemplo),
+   * nenhuma quebra forçada funciona — o Chrome ignora quebra no começo de
+   * uma faixa. Então entra um bloco vazio que ocupa o resto das duas colunas
+   * da faixa, e o bloco começa inteiro na página seguinte. É o que o
+   * diagramador faria à mão: deixar o pé da página em branco.
+   */
+  const topoDoFluxo = fluxo.getBoundingClientRect().top;
+  const calcar = (el: Element) => {
+    const q = el.getClientRects()[0];
+    if (!q) return;
+    const margem = parseFloat(getComputedStyle(el).marginTop) || 0;
+    const inicioDaFaixa = (q.top - topoDoFluxo) / r.k - margem;
+    const resto = alturaDaColuna - inicioDaFaixa;
+    if (resto <= 0 || resto > alturaDaColuna * 0.5) return;
+    const calco = document.createElement("div");
+    calco.className = "folhear-calco";
+    calco.setAttribute("aria-hidden", "true");
+    calco.style.height = `${Math.ceil(resto * 2 + 2)}px`;
+    el.before(calco);
+    el.classList.add("folhear-calcado");
+  };
+  let mudou = 0;
+  empurrar.forEach((el) => {
+    const c = el.classList;
+    if (c.contains("folhear-larga") && !c.contains("folhear-titulo-largo")) c.add("folhear-titulo-largo");
+    else if (!c.contains("folhear-empurra")) c.add("folhear-empurra");
+    else if (!c.contains("folhear-inteira") && cabeNumaColuna(el)) c.add("folhear-inteira", "folhear-segura");
+    else if (!c.contains("folhear-calcado")) calcar(el);
+    else return;
+    mudou++;
+  });
+  return mudou;
+}
+
+/** Tira os empurrões antes de uma nova diagramação (outra geometria, outro texto). */
+export function soltarTitulos(fluxo: Element): void {
+  fluxo.querySelectorAll(".folhear-empurra").forEach((el) => el.classList.remove("folhear-empurra"));
+  fluxo.querySelectorAll(".folhear-titulo-largo").forEach((el) => el.classList.remove("folhear-titulo-largo", "folhear-larga"));
+  fluxo.querySelectorAll(".folhear-segura").forEach((el) => el.classList.remove("folhear-segura", "folhear-inteira"));
+  fluxo.querySelectorAll(".folhear-calcado").forEach((el) => el.classList.remove("folhear-calcado"));
+  fluxo.querySelectorAll(".folhear-calco").forEach((el) => el.remove());
+}
+
 const CLASSE_CABECALHO = "folhear-cabecalho-repetido";
 
 /**
@@ -351,7 +494,14 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   const total = pagina(fim) + 1;
 
   const paginaDe: Record<string, number> = {};
-  const eventos: { pagina: number; capitulo?: string; capituloId?: string; secao?: string }[] = [];
+  const eventos: {
+    pagina: number;
+    capitulo?: string;
+    capituloId?: string;
+    secao?: string;
+    arvoreId?: string;
+    arvoreNome?: string;
+  }[] = [];
   for (const cap of toc) {
     const el = document.getElementById(cap.id);
     if (!el || !fluxo.contains(el)) continue;
@@ -365,6 +515,13 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
     }
   }
 
+  // As árvores do catálogo: cada uma "toma" as páginas dela até a próxima.
+  fluxo.querySelectorAll<HTMLElement>(".livro-arvore[data-arvore]").forEach((el) => {
+    if (!visivel(el)) return;
+    const nome = el.querySelector(".livro-arvore-cabeca > span > span:first-child")?.textContent ?? undefined;
+    eventos.push({ pagina: pagina(el), arvoreId: el.dataset.arvore, arvoreNome: nome });
+  });
+
   const aberturas = new Set<number>();
   fluxo.querySelectorAll(".folhear-guarda, .folhear-rosto, .folhear-sumario, .livro-abertura, .folhear-colofao").forEach((el) => aberturas.add(pagina(el)));
 
@@ -375,6 +532,8 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   let capitulo: string | undefined;
   let capituloId: string | undefined;
   let secao: string | undefined;
+  let arvoreId: string | undefined;
+  let arvoreNome: string | undefined;
   let i = 0;
   for (let p = 0; p < total; p++) {
     while (i < eventos.length && eventos[i].pagina <= p) {
@@ -383,11 +542,15 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
         capitulo = e.capitulo;
         capituloId = e.capituloId;
         secao = undefined;
+        arvoreId = arvoreNome = undefined;
+      } else if (e.arvoreId) {
+        arvoreId = e.arvoreId;
+        arvoreNome = e.arvoreNome;
       } else {
         secao = e.secao;
       }
     }
-    rotulos.push({ capitulo, capituloId, secao, abertura: aberturas.has(p) });
+    rotulos.push({ capitulo, capituloId, arvoreId, arvoreNome, secao, abertura: aberturas.has(p) });
   }
 
   return { total, rotulos, paginaDe };

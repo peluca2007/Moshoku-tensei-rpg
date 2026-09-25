@@ -1,4 +1,4 @@
-import { Shippori_Mincho, Zen_Kaku_Gothic_New } from "next/font/google";
+import { Barlow_Condensed, Shippori_Mincho, Zen_Kaku_Gothic_New } from "next/font/google";
 
 /**
  * As letras do livro — a voz de um volume de light novel.
@@ -27,5 +27,19 @@ const rotulos = Zen_Kaku_Gothic_New({
   display: "swap",
 });
 
-/** As variáveis das duas, pra entrar no `className` da raiz do livro. */
-export const FONTES_DO_LIVRO = [titulos, rotulos].map((f) => f.variable).join(" ");
+/*
+ * A voz GRITADA: números de capítulo, títulos de seção, carimbos, cabeçalho
+ * de tabela. Condensada e pesada, em caixa alta — a coragem gráfica dos
+ * livros de Vampiro e Mörk Borg, que o autor pôs como referência de livro
+ * com identidade.
+ */
+const grito = Barlow_Condensed({
+  subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-livro-grito",
+  display: "swap",
+});
+
+/** As variáveis das três, pra entrar no `className` da raiz do livro. */
+export const FONTES_DO_LIVRO = [titulos, rotulos, grito].map((f) => f.variable).join(" ");
