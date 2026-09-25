@@ -1,45 +1,46 @@
-import { Alegreya, Alegreya_SC, Alegreya_Sans, UnifrakturMaguntia } from "next/font/google";
+import { Barlow, Barlow_Condensed } from "next/font/google";
 
 /**
- * As letras do livro impresso.
+ * As letras do livro.
  *
- * O Livro do Jogador usa três vozes: uma serifada de livro no corpo, versalete
- * nos títulos e uma sem serifa nas caixas laterais e tabelas. A família
- * Alegreya tem as três desenhadas juntas (serifada, SC e Sans), com um traço
- * de pena que combina com fantasia sem virar fonte "de fantasia". A gótica
- * fica só na capitular.
+ * ## Por que não mais fontes japonesas (2026-09-25)
  *
- * Carregadas aqui, e não no layout, pra que só o livro folheado pague por
- * elas. O next/font hospeda os arquivos com o site, então funcionam offline.
+ * Os títulos eram Shippori Mincho e os rótulos Zen Kaku Gothic. As duas são
+ * fontes japonesas, e o Google as serve fatiadas em centenas de pedaços por
+ * faixa de caractere: o livro chegava a baixar 366 arquivos de fonte (medido)
+ * só pra desenhar travessões, aspas e meia dúzia de kanji — segundos de
+ * carregamento antes da primeira página aparecer.
+ *
+ * Agora:
+ * - a voz GRITADA (números, títulos de seção, carimbos, tabelas) é a Barlow
+ *   Condensed, e os rótulos miúdos a Barlow, da mesma família;
+ * - a voz ELEGANTE (subtítulos, nomes de habilidade) é a Fraunces, que o
+ *   site já carrega (--font-fraunces, no layout) — custo zero;
+ * - o corpo continua em Literata, também já carregada pelo site;
+ * - os kanji (selos, capítulos na vertical, marcas d'água) usam a fonte
+ *   japonesa do próprio sistema (Yu Mincho no Windows, Hiragino no iPhone,
+ *   Noto no Android), ver --font-livro-kanji no folhear.css.
  */
-const corpo = Alegreya({
-  subsets: ["latin"],
+const rotulos = Barlow({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-livro-rotulo",
+  display: "swap",
+});
+
+/*
+ * A voz GRITADA: números de capítulo, títulos de seção, carimbos, cabeçalho
+ * de tabela. Condensada e pesada, em caixa alta — a coragem gráfica dos
+ * livros de Vampiro e Mörk Borg, que o autor pôs como referência de livro
+ * com identidade.
+ */
+const grito = Barlow_Condensed({
+  subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
-  variable: "--font-livro",
+  variable: "--font-livro-grito",
   display: "swap",
 });
 
-const versalete = Alegreya_SC({
-  subsets: ["latin"],
-  weight: ["500", "700", "800"],
-  variable: "--font-livro-sc",
-  display: "swap",
-});
-
-const semSerifa = Alegreya_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-livro-sans",
-  display: "swap",
-});
-
-const gotica = UnifrakturMaguntia({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-livro-gotica",
-  display: "swap",
-});
-
-/** As variáveis das quatro, pra entrar no `className` da raiz do livro. */
-export const FONTES_DO_LIVRO = [corpo, versalete, semSerifa, gotica].map((f) => f.variable).join(" ");
+/** As variáveis das fontes do livro, pra entrar no `className` da raiz. */
+export const FONTES_DO_LIVRO = [rotulos, grito].map((f) => f.variable).join(" ");

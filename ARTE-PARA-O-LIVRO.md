@@ -1,7 +1,8 @@
 # Arte para o livro — lista de pedidos
 
-O livro folheado (`/livro/folhear`) já tem a cara de livro impresso, mas ainda roda com as artes que o
-projeto tinha. Esta é a lista do que falta pra ele ficar no nível do Livro do Jogador. **Você pega, eu
+O livro folheado (`/livro/folhear`) tem a cara de um **artbook de light novel**: papel claro, arte
+colorida e nítida, uma cor por capítulo. Ele ainda roda com as artes que o projeto tinha — e numa
+identidade assim, **a arte é o que mais pesa**. Esta é a lista do que falta pra ele ficar no nível do Livro do Jogador. **Você pega, eu
 organizo e ligo no livro.**
 
 ## Como mandar
@@ -20,9 +21,8 @@ imagem boa do que três médias.
 
 | Arquivo | Pasta | O que é | Tamanho mínimo | Onde procurar | O que buscar | Fonte |
 | --- | --- | --- | --- | --- | --- | --- |
-| `pergaminho-1.jpg`, `pergaminho-2.jpg`, `pergaminho-3.jpg` | `public/livro/papel/` | O papel das páginas. Três folhas diferentes, **em pé**, manchadas e envelhecidas, sem texto, sem dobra forte, sem borda queimada. Hoje o livro estica uma textura pequena e deitada. | 1700 × 2200 | ambientCG e Poly Haven (grátis, CC0); Unsplash; rawpixel (filtro "public domain"); textures.com | `old parchment paper texture`, `aged paper texture high resolution`, `papel envelhecido textura` | |
-| `couro.jpg` | `public/livro/capa/` | O couro marrom da capa, que aparece em volta das páginas. | 2000 × 1400 | ambientCG ("Leather"), Poly Haven, textures.com | `brown leather texture`, `old book leather cover texture` | |
-| `abertura-cap0.jpg` … `abertura-cap5.jpg`, `abertura-apendices.jpg` | `public/livro/capitulos/` | A arte do alto da página de abertura de cada capítulo, de margem a margem (como a arte do Meio-Orc no Livro do Jogador). Uma cena por capítulo; sugestões abaixo. | 1600 × 900 (deitada) | Capturas do anime (Crunchyroll, em pausa, na maior resolução); Wallhaven; Zerochan; Pixiv; ArtStation; Safebooru | `mushoku tensei scenery`, `mushoku tensei wallpaper 4k`, o nome da cena | |
+| `abertura-cap0.jpg` … `abertura-cap5.jpg`, `abertura-apendices.jpg` | `public/livro/capitulos/` | A arte do alto da página de abertura de cada capítulo, de margem a margem, com o número grande e o kanji do capítulo por cima. **Arte de anime, colorida, sem texto e sem legenda**; o canto de cima à direita precisa ser mais calmo (é onde entra o kanji). Uma cena por capítulo; sugestões abaixo. | 1600 × 900 (deitada) | Capturas do anime (Crunchyroll, em pausa, na maior resolução); Wallhaven; Zerochan; Pixiv; ArtStation; Safebooru | `mushoku tensei scenery`, `mushoku tensei wallpaper 4k`, o nome da cena | |
+| `guarda.jpg` | `public/livro/capa/` | A prancha colorida de página inteira que abre o livro (hoje é a paisagem do vale). Arte **em pé**, bonita sozinha, de preferência com os personagens. | 1700 × 2200 (em pé) | Pixiv, Zerochan (arte oficial de volume ou de "key visual"), Wallhaven | `mushoku tensei key visual`, `mushoku tensei light novel illustration` | |
 | `capa.jpg` | `public/livro/capa/` | A capa do livro, a primeira página. Arte em pé, com espaço vazio em cima pro título. | 1700 × 2200 (em pé) | Wallhaven, Pixiv, Zerochan (arte oficial de volume da light novel funciona muito bem) | `mushoku tensei key visual`, `mushoku tensei light novel cover` | |
 
 **Cenas sugeridas para as aberturas** (troque à vontade, desde que combine com o capítulo):

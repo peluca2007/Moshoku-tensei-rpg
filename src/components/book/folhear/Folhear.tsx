@@ -31,13 +31,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
+import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } from "./buscaNoLivro";
 import { ARTE_DA_FOLHA_DE_ROSTO } from "../arteDasAberturas";
 import {
   type Geometria,
   type Paginacao,
+  type Rotulo,
   CAPA,
   ZOOMS,
   ajustarFigurasLargas,
@@ -53,6 +54,9 @@ import {
   repetirCabecalhos,
   rotuloDoCapitulo,
   segurarCaixasCurtas,
+  segurarTitulos,
+  soltarTitulos,
+  limparCalcosInuteis,
 } from "./diagramacao";
 
 /**
@@ -125,6 +129,36 @@ function gravarModo(m: Modo) {
   ouvintes.forEach((o) => o());
 }
 
+/*
+ * O PAPEL do livro — noite (padrão) ou dia —, escolhido à parte do tema do
+ * site: o livro é um objeto, e um livro de capa preta não fica branco porque
+ * o site está claro. Mesmo esquema de loja externa do modo.
+ */
+type Papel = "noite" | "dia";
+const CHAVE_PAPEL = "livro-folhear-papel";
+const memoriaDoPapel: { papel?: Papel } = {};
+
+function lerPapel(): Papel {
+  if (memoriaDoPapel.papel) return memoriaDoPapel.papel;
+  try {
+    const salvo = localStorage.getItem(CHAVE_PAPEL);
+    if (salvo === "noite" || salvo === "dia") return salvo;
+  } catch {
+    /* sem armazenamento: vale o padrão */
+  }
+  return "noite";
+}
+
+function gravarPapel(p: Papel) {
+  memoriaDoPapel.papel = p;
+  try {
+    localStorage.setItem(CHAVE_PAPEL, p);
+  } catch {
+    /* fica só na memória desta aba */
+  }
+  ouvintes.forEach((o) => o());
+}
+
 const DURACAO_VIRADA_MS = 460;
 
 /*
@@ -146,14 +180,11 @@ function lerPaginaGuardada(): number | null {
 export default function Folhear({
   toc,
   edicao,
-  identidade = "classica",
   children,
 }: {
   toc: TocEntry[];
   /** A versão do livro, pra folha de rosto ("Edição 0.1.96"). */
   edicao?: string;
-  /** A identidade visual (em avaliação): a clássica, de livro de RPG, ou a de Ranoa. */
-  identidade?: string;
   children: ReactNode;
 }) {
   const raiz = useRef<HTMLDivElement>(null);
@@ -166,14 +197,23 @@ export default function Folhear({
   const router = useRouter();
 
   const modo = useSyncExternalStore<Modo | null>(assinar, lerModo, () => null);
+  const papel = useSyncExternalStore<Papel>(assinar, lerPapel, () => "noite");
 
   const [tamanho, setTamanho] = useState<{ w: number; h: number } | null>(null);
   const [zoom, setZoom] = useState(0);
   const [versao, setVersao] = useState(0);
+  /*
+   * As fontes do livro chegam depois do HTML. Diagramar antes delas é
+   * trabalho jogado fora — cada diagramação do livro inteiro custa ~1 s — e a
+   * página fica escondida até ficar pronta de qualquer jeito. Então a
+   * primeira diagramação espera as fontes.
+   */
+  const [fontesProntas, setFontesProntas] = useState(false);
   const [paginacao, setPaginacao] = useState<Paginacao | null>(null);
   const [dupla, setDupla] = useState(0);
   const [virada, setVirada] = useState<{ dir: "prox" | "ant"; chave: number } | null>(null);
   const [indiceAberto, setIndiceAberto] = useState(false);
+  const [buscaAberta, setBuscaAberta] = useState(false);
   const [telaCheia, setTelaCheia] = useState(false);
 
   const geo = useMemo<Geometria | null>(
@@ -217,10 +257,26 @@ export default function Folhear({
   }, []);
 
   // ── Tamanho do palco ────────────────────────────────────────────────────
+  /*
+   * Primeiro palpite SEM medir: no modo Livro o palco é a janela inteira menos
+   * a barra e a régua (3rem cada, com a raiz presa em 16 px). Medir o palco
+   * obrigaria o navegador a diagramar o livro inteiro sem a geometria — uma
+   * diagramação jogada fora (~0,6 s). Com o palpite, a troca pro modo Livro e a
+   * geometria entram no mesmo quadro. O ResizeObserver abaixo corrige se o
+   * palpite errar (e acompanha a janela mudando de tamanho).
+   */
+  useLayoutEffect(() => {
+    if (modo !== "livro") return;
+    // A renderização extra é o ponto: ela entra no MESMO quadro da troca de
+    // modo, antes da pintura, em vez de esperar o ResizeObserver medir.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTamanho((t) => t ?? { w: window.innerWidth, h: Math.max(0, window.innerHeight - 96) });
+  }, [modo]);
+
   useEffect(() => {
     const el = palco.current;
     if (modo !== "livro" || !el) return;
-    let ultimo = "";
+    let ultimo = `${window.innerWidth}x${Math.max(0, window.innerHeight - 96)}`;
     const ro = new ResizeObserver(() => {
       const chave = `${el.clientWidth}x${el.clientHeight}`;
       if (chave === ultimo) return;
@@ -235,11 +291,15 @@ export default function Folhear({
   useEffect(() => {
     if (modo !== "livro") return;
     let vivo = true;
-    document.fonts?.ready.then(() => {
+    performance.mark("folhear:montado");
+    const aoCarregar = () => {
+      performance.mark("folhear:fontes");
       if (!vivo) return;
       guardarAncora();
-      setVersao((v) => v + 1);
-    });
+      setFontesProntas(true);
+    };
+    if (document.fonts) void document.fonts.ready.then(aoCarregar);
+    else aoCarregar();
     const f = fluxo.current;
     // Vários <details> mudando juntos viram UMA recomposição, não uma por
     // details — e os que o próprio livro abriu (logo abaixo) não contam.
@@ -271,6 +331,22 @@ export default function Folhear({
    * livro completo), e volta a fechar no contínuo.
    */
   const togglesDoLivro = useRef(0);
+
+  // Cada capítulo no fluxo ganha o id dele (a cor e o selo saem daí, no CSS).
+  useLayoutEffect(() => {
+    fluxo.current?.querySelectorAll(":scope > *").forEach((el) => {
+      const id = el.querySelector(":scope > .livro-abertura h2[id]")?.id;
+      if (id) (el as HTMLElement).dataset.capitulo = id;
+    });
+  }, []);
+
+  // O leitor imersivo: no modo Livro, o menu e o rodapé do site somem.
+  useEffect(() => {
+    if (modo !== "livro") return;
+    const html = document.documentElement;
+    html.classList.add("livro-imersivo");
+    return () => html.classList.remove("livro-imersivo");
+  }, [modo]);
   useLayoutEffect(() => {
     const f = fluxo.current;
     if (!f) return;
@@ -306,15 +382,34 @@ export default function Folhear({
     const fx = faixa.current;
     const j = janela.current;
     const g = estado.current.geo;
-    if (!porDupla || !g || !f || !fx || !j || !fim.current) return;
+    if (!fontesProntas || !porDupla || !g || !f || !fx || !j || !fim.current) return;
 
-    ajustarFigurasLargas(f);
-    espalharTabelasEspremidas(f, g, regua(fx));
-    segurarCaixasCurtas(f, g, regua(fx));
-    ajustarTabelasLargas(f, g, regua(fx));
-    repetirCabecalhos(f);
+    // Cada passo mede o próprio tempo (performance.measure "folhear:…"), pra
+    // quem for otimizar a diagramação saber onde o tempo vai.
+    const medir = <T,>(nome: string, passo: () => T): T => {
+      const t0 = performance.now();
+      const v = passo();
+      performance.measure(`folhear:${nome}`, { start: t0, end: performance.now() });
+      return v;
+    };
+    medir("soltar", () => soltarTitulos(f));
+    medir("figuras", () => ajustarFigurasLargas(f));
+    medir("tabelas-largas", () => espalharTabelasEspremidas(f, g, regua(fx)));
+    medir("caixas", () => segurarCaixasCurtas(f, g, regua(fx)));
+    medir("tabelas-apertar", () => ajustarTabelasLargas(f, g, regua(fx)));
+    // Por último, porque tudo acima mexe em onde as coisas caem. Cada
+    // empurrão pode criar outro caso adiante: repete até zerar.
+    medir("titulos", () => {
+      for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+      // Calço que ficou fora do lugar sai, e a conferência roda de novo.
+      for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx)) > 0; rodada++) {
+        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+      }
+    });
+    esquecerIndice(f);
+    medir("cabecalhos", () => repetirCabecalhos(f));
     const r = regua(fx);
-    const p = medirPaginas(f, fim.current, r, g, toc);
+    const p = medir("medir", () => medirPaginas(f, fim.current!, r, g, toc));
     const total = Math.ceil(p.total / porDupla);
     // A faixa cresce aqui mesmo, antes do React pintar: o scroll logo abaixo
     // precisa de largura pra chegar na dupla certa.
@@ -350,7 +445,58 @@ export default function Folhear({
     // do useLayoutEffect: sem isso o rodapé piscaria errado por um quadro.
     setPaginacao(p);
     setDupla(destino);
-  }, [porDupla, versao, toc]);
+  }, [porDupla, versao, toc, fontesProntas]);
+
+  /*
+   * SÓ A DUPLA ABERTA SE MEXE (2026-09-25).
+   *
+   * O livro inteiro está no DOM: 245 páginas, com dezenas de diagramas
+   * animados (alguns em laço infinito) e os vídeos das habilidades em
+   * autoplay. Tudo isso rodava o tempo todo, fora da vista, e cada quadro de
+   * animação obrigava o navegador a repintar a caixa de colunas gigante:
+   * medido, ~1 s de trabalho a cada folha virada e a tela redesenhando sem
+   * parar mesmo com o livro parado — as "travadinhas" que o autor sentiu.
+   *
+   * Agora um IntersectionObserver com a janela do livro como raiz marca o que
+   * está na dupla aberta: diagrama fora dela fica sem animação (e, de brinde,
+   * anima de novo quando a página abre), vídeo fora dela fica pausado.
+   */
+  useEffect(() => {
+    const j = janela.current;
+    const f = fluxo.current;
+    if (modo !== "livro" || !j || !f || !paginacao) return;
+    const alvos = Array.from(f.querySelectorAll<HTMLElement>(".diagrama, video"));
+    alvos.forEach((el) => {
+      if (el instanceof HTMLVideoElement) {
+        el.autoplay = false;
+        el.pause();
+      }
+    });
+    const io = new IntersectionObserver(
+      (entradas) => {
+        for (const e of entradas) {
+          const el = e.target as HTMLElement;
+          el.classList.toggle("folhear-visivel", e.isIntersecting);
+          if (el instanceof HTMLVideoElement) {
+            if (e.isIntersecting) void el.play().catch(() => {});
+            else el.pause();
+          }
+        }
+      },
+      { root: j }
+    );
+    alvos.forEach((el) => io.observe(el));
+    return () => {
+      io.disconnect();
+      alvos.forEach((el) => {
+        el.classList.remove("folhear-visivel");
+        if (el instanceof HTMLVideoElement) {
+          el.autoplay = true;
+          void el.play().catch(() => {});
+        }
+      });
+    };
+  }, [modo, paginacao]);
 
   // Guarda a página a cada virada (a primeira da dupla aberta).
   useEffect(() => {
@@ -460,20 +606,20 @@ export default function Folhear({
     };
   }, [modo]);
 
-  // Ctrl+K no modo Livro: o modal da busca rápida mora dentro do menu do site,
-  // que está escondido — abriria invisível e ainda engoliria as setas. Aqui o
-  // atalho leva à página de busca, que é o mesmo índice.
+  // Ctrl+K no modo Livro abre a busca DENTRO do livro. O modal da busca do
+  // site mora no menu, que está escondido — e ele mandaria pra fora do livro.
   useEffect(() => {
     if (modo !== "livro") return;
     const aoTeclar = (e: KeyboardEvent) => {
       if (!(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== "k") return;
       e.preventDefault();
       e.stopPropagation();
-      router.push("/busca");
+      setIndiceAberto(false);
+      setBuscaAberta(true);
     };
     window.addEventListener("keydown", aoTeclar, true);
     return () => window.removeEventListener("keydown", aoTeclar, true);
-  }, [modo, router]);
+  }, [modo]);
 
   // Teclado: setas e PageUp/PageDown viram; Home/End vão às pontas; +/- dão zoom.
   useEffect(() => {
@@ -584,6 +730,11 @@ export default function Folhear({
     irParaElemento(el);
   };
 
+  const fecharBusca = useCallback(() => {
+    limparRealce();
+    setBuscaAberta(false);
+  }, []);
+
   const trocarModo = (m: Modo) => {
     if (m === modo) return;
     guardarAncora();
@@ -621,7 +772,9 @@ export default function Folhear({
       ref={raiz}
       className={`folhear livro-shell ${FONTES_DO_LIVRO}`}
       data-modo={modo ?? undefined}
-      data-identidade={identidade}
+      // O papel só vale no modo Livro; no contínuo manda o tema do site (senão o
+      // escuro do papel vazaria pro texto do contínuo, que é claro no tema claro).
+      data-papel={modo === "livro" ? papel : undefined}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
       style={variaveis}
@@ -639,9 +792,20 @@ export default function Folhear({
               <Link href="/" className="folhear-botao inline-flex" aria-label="Voltar ao site" title="Voltar ao site">
                 <House className="h-4 w-4" aria-hidden />
               </Link>
-              <Link href="/busca" className="folhear-botao inline-flex" aria-label="Buscar (Ctrl+K)" title="Buscar — Ctrl+K">
+              <button
+                type="button"
+                className="folhear-botao inline-flex"
+                aria-label="Buscar no livro (Ctrl+K)"
+                title="Buscar no livro — Ctrl+K"
+                aria-expanded={buscaAberta}
+                aria-controls="folhear-busca"
+                onClick={() => {
+                  setIndiceAberto(false);
+                  setBuscaAberta((v) => !v);
+                }}
+              >
                 <Search className="h-4 w-4" aria-hidden />
-              </Link>
+              </button>
             </>
           )}
           <button
@@ -698,7 +862,7 @@ export default function Folhear({
               >
                 <ZoomIn className="h-4 w-4" aria-hidden />
               </button>
-              <BotaoTema />
+              <BotaoPapel papel={papel} />
             </>
           )}
           <div className="folhear-alternador" role="group" aria-label="Modo de leitura">
@@ -724,6 +888,17 @@ export default function Folhear({
           )}
         </div>
       </div>
+
+      {/* ── A busca dentro do livro ─────────────────────────────────────── */}
+      {livro && buscaAberta && geo && paginacao && (
+        <PainelDeBusca
+          fluxo={fluxo}
+          paginaDe={(el) => (faixa.current ? paginaDoElemento(el, regua(faixa.current), geo) : 0)}
+          rotulos={paginacao.rotulos}
+          aoIr={(el) => irParaElemento(el)}
+          aoFechar={fecharBusca}
+        />
+      )}
 
       {/* ── O índice, com a página de cada seção ──────────────────────── */}
       {indiceAberto && (
@@ -785,11 +960,11 @@ export default function Folhear({
                 onPointerCancel={() => (toque.current = null)}
               >
                 <div ref={faixa} className="folhear-faixa">
-                  {livro && geo && paginacao && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} />}
+                  {livro && geo && paginacao && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} toc={toc} />}
 
                   <div
                     ref={fluxo}
-                    className={livro ? "folhear-fluxo sem-escuro" : "folhear-continuo livro-pagina surface"}
+                    className={livro ? "folhear-fluxo" : "folhear-continuo livro-pagina surface"}
                   >
                     <Guarda />
                     <FolhaDeRosto edicao={edicao} />
@@ -801,7 +976,7 @@ export default function Folhear({
                 </div>
               </div>
 
-              {livro && identidade === "ranoa" && paginacao && geo && (
+              {livro && paginacao && geo && (
                 <Abas
                   toc={toc}
                   paginaDe={paginacao.paginaDe}
@@ -870,29 +1045,56 @@ export default function Folhear({
 }
 
 /**
- * As folhas: o papel de cada página e o rodapé — número e o nome da parte,
- * como no livro impresso.
+ * As folhas: o papel de cada página, o rodapé (número e capítulo) e a marca
+ * de aba impressa na borda de fora — como o índice de dedo de um livro de
+ * consulta, que se vê de lado com o livro fechado.
  *
  * Elas moram na mesma faixa do texto e rolam junto: o número da página 12
  * está sempre embaixo do texto da página 12.
  */
-function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginacao; duplas: number }) {
+function Folhas({
+  geo,
+  paginacao,
+  duplas,
+  toc,
+}: {
+  geo: Geometria;
+  paginacao: Paginacao;
+  duplas: number;
+  toc: TocEntry[];
+}) {
   const total = duplas * geo.porDupla;
   return (
     <div aria-hidden className="folhear-folhas">
       {Array.from({ length: total }, (_, k) => {
         const r = paginacao.rotulos[k];
         const lado = geo.porDupla === 1 ? (k % 2 === 0 ? "dir" : "esq") : k % 2 === 0 ? "esq" : "dir";
-        const parte = !r || r.abertura ? "" : (r.capitulo ?? "").replace(" · ", " | ");
+        const capitulo = (r?.capitulo ?? "").split(" · ")[0];
+        const parte = !r || r.abertura ? "" : r.arvoreNome ? `${capitulo} — ${r.arvoreNome}` : (r.capitulo ?? "").replace(" · ", " — ");
+        const indice = r?.capituloId ? toc.findIndex((c) => c.id === r.capituloId) : -1;
         return (
           <div
             key={k}
             className="folhear-folha"
             data-lado={lado}
-            data-variante={k % 4}
             data-pagina={k}
-            style={{ left: k * geo.pagina }}
+            data-capitulo={r?.capituloId}
+            data-arvore={r?.arvoreId}
+            style={{
+              left: k * geo.pagina,
+              // A guarda é a prancha colorida: pintada na folha, que vai de
+              // borda a borda — dentro das colunas, a arte não passaria da mancha.
+              backgroundImage: k === 0 ? `url(${ARTE_DA_FOLHA_DE_ROSTO.src})` : undefined,
+            }}
           >
+            {k >= 2 && indice >= 0 && (
+              <>
+                <span className="folhear-marca" style={{ "--aba-i": indice } as CSSProperties} />
+                {/* O kanji do capítulo (ou da árvore), enorme e quase apagado no
+                    canto de fora. Vem do CSS (--selo), junto com a cor. */}
+                <span className="folhear-marca-dagua" />
+              </>
+            )}
             {/* A guarda e a folha de rosto não levam número, como no impresso. */}
             {k >= 2 && k < paginacao.total && (
               <span className="folhear-rodape">
@@ -908,15 +1110,13 @@ function Folhas({ geo, paginacao, duplas }: { geo: Geometria; paginacao: Paginac
 }
 
 /**
- * AS ABAS — o índice de dedo de um livro de consulta, na borda das folhas.
+ * AS ABAS — o índice de dedo, saindo da borda das folhas.
  *
- * Cada capítulo tem uma aba da cor dele saindo por baixo das páginas; a do
- * capítulo aberto sai mais. Clicar leva ao capítulo. É o jeito mais rápido de
- * pular do Combate pro Bestiário no meio da sessão — e a cor da aba é a cor
- * que o capítulo usa por dentro.
+ * Cada capítulo tem uma aba da cor dele; a do capítulo aberto sai mais.
+ * Clicar leva ao capítulo — o jeito mais rápido de pular do Combate pro
+ * Bestiário no meio da sessão. A cor da aba é a cor que o capítulo usa por
+ * dentro (definida uma vez só, no folhear.css, por id de capítulo).
  */
-const CORES_DAS_ABAS = ["#a8843a", "#2c7f8c", "#22305c", "#4d5a26", "#7a1f2b", "#8a4f1c", "#4a4f5c"];
-
 function Abas({
   toc,
   paginaDe,
@@ -942,8 +1142,8 @@ function Abas({
             key={c.id}
             type="button"
             className="folhear-aba"
+            data-capitulo={c.id}
             data-atual={i === atual ? "" : undefined}
-            style={{ "--cor-aba": CORES_DAS_ABAS[i % CORES_DAS_ABAS.length] } as CSSProperties}
             onClick={() => aoEscolher(c.id)}
             aria-label={c.label}
             aria-current={i === atual ? "true" : undefined}
@@ -958,34 +1158,30 @@ function Abas({
 }
 
 /**
- * A GUARDA — o verso da capa, a primeira página que se vê ao abrir o livro.
- *
- * O papel dela é pintado pela folha (`[data-pagina="0"]` no CSS); aqui fica só
- * o ex-líbris, o selo de "este livro pertence a". Só existe no modo Livro.
+ * A GUARDA — uma ilustração colorida de página inteira, como as pranchas que
+ * abrem um volume de light novel. A arte é pintada na folha da página 1 (ver
+ * Folhas); aqui fica a página no fluxo, com a legenda no pé. Só no modo Livro.
  */
 function Guarda() {
   return (
-    <section aria-hidden className="folhear-guarda">
-      <div className="folhear-exlibris">
-        <p className="folhear-exlibris-rotulo">Ex Libris</p>
-        <p className="folhear-exlibris-nome">Mushoku Tensei RPG</p>
-        <p className="folhear-exlibris-lema">O Mundo de Seis Faces</p>
-      </div>
+    <section className="folhear-guarda" aria-label={ARTE_DA_FOLHA_DE_ROSTO.alt}>
+      <p className="folhear-guarda-legenda">O Mundo de Seis Faces</p>
     </section>
   );
 }
 
-/** A FOLHA DE ROSTO: título, subtítulo, arte e edição. Só no modo Livro. */
+/** A FOLHA DE ROSTO: título, subtítulo e edição, no branco. Só no modo Livro. */
 function FolhaDeRosto({ edicao }: { edicao?: string }) {
   return (
     <section className="folhear-rosto" aria-label="Folha de rosto">
       <p className="folhear-rosto-selo">Livro de Regras</p>
-      <h1 className="folhear-rosto-titulo">Mushoku Tensei RPG</h1>
+      <h1 className="folhear-rosto-titulo">
+        Mushoku Tensei <span>RPG</span>
+      </h1>
       <p className="folhear-rosto-sub">O Mundo de Seis Faces</p>
-      <figure className="folhear-rosto-arte">
-        {/* eslint-disable-next-line @next/next/no-img-element -- arte impressa no papel, sem otimização de tamanho. */}
-        <img src={ARTE_DA_FOLHA_DE_ROSTO.src} alt={ARTE_DA_FOLHA_DE_ROSTO.alt} width={1920} height={1080} />
-      </figure>
+      <p className="folhear-rosto-nota">
+        Um sistema de RPG de mesa para jogar no mundo de <i>Mushoku Tensei</i>.
+      </p>
       {edicao && <p className="folhear-rosto-edicao">Edição {edicao}</p>}
     </section>
   );
@@ -1006,7 +1202,7 @@ function Colofao({ edicao }: { edicao?: string }) {
         {edicao && <>, edição {edicao}</>}.
       </p>
       <p>
-        Composto em Alegreya, Alegreya SC e Alegreya Sans, com capitulares em UnifrakturMaguntia. Diagramado
+        Composto em Literata, Fraunces, Barlow e Barlow Condensed; os kanji, na fonte japonesa do seu aparelho. Diagramado
         pelo próprio navegador, página a página, a partir do mesmo texto do site: o que está impresso aqui é
         o que está na ficha.
       </p>
@@ -1055,7 +1251,7 @@ function Sumario({
       )}
       <ol className="folhear-sumario-capitulos">
         {toc.map((cap, i) => (
-          <li key={cap.id}>
+          <li key={cap.id} data-capitulo={cap.id}>
             <a ref={i === 0 ? primeiro : undefined} href={`#${cap.id}`} className="folhear-entrada" data-nivel="capitulo">
               <span className="folhear-entrada-numero">{numeralDoCapitulo(cap.label)}</span>
               <span className="folhear-entrada-titulo">{rotuloDoCapitulo(cap.label, false)}</span>
@@ -1091,30 +1287,159 @@ function Sumario({
   );
 }
 
-/**
- * O tema, dentro da barra do livro — no modo Livro o menu do site some, e com
- * ele o botão de tema. O papel do livro é sempre papel; o tema muda a mesa.
- */
-function BotaoTema() {
-  const { resolvedTheme, setTheme } = useTheme();
-  const montado = useSyncExternalStore(assinarNada, () => true, () => false);
-  if (!montado) return <span className="inline-block h-9 w-9" />;
-  const escuro = resolvedTheme === "dark";
+/** Papel noite ou dia — o do livro, não o do site. */
+function BotaoPapel({ papel }: { papel: Papel }) {
+  const noite = papel === "noite";
   return (
     <button
       type="button"
       className="folhear-botao hidden sm:inline-flex"
-      onClick={() => setTheme(escuro ? "light" : "dark")}
-      aria-label={escuro ? "Mesa clara" : "Mesa escura"}
-      title={escuro ? "Mesa clara" : "Mesa escura"}
+      onClick={() => gravarPapel(noite ? "dia" : "noite")}
+      aria-label={noite ? "Livro claro" : "Livro escuro"}
+      title={noite ? "Livro claro" : "Livro escuro"}
     >
-      {escuro ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
+      {noite ? <Sun className="h-4 w-4" aria-hidden /> : <Moon className="h-4 w-4" aria-hidden />}
     </button>
   );
 }
 
-function assinarNada() {
-  return () => {};
+/** O último termo buscado, pra reabrir o painel onde ele estava. */
+let ultimoTermo = "";
+
+/**
+ * O PAINEL DE BUSCA do livro: procura no texto diagramado e mostra a página
+ * de cada achado. Clicar vira o livro até lá e pinta o termo na página.
+ *
+ * Fica aberto enquanto se clica nos resultados (é assim que se percorre
+ * "todas as vezes que o livro fala em Molhado"), sem escurecer o livro atrás.
+ */
+function PainelDeBusca({
+  fluxo,
+  paginaDe,
+  rotulos,
+  aoIr,
+  aoFechar,
+}: {
+  fluxo: React.RefObject<HTMLDivElement | null>;
+  paginaDe: (el: Element) => number;
+  rotulos: Rotulo[];
+  aoIr: (el: Element) => void;
+  aoFechar: () => void;
+}) {
+  const [termo, setTermo] = useState(() => ultimoTermo);
+  const [resultado, setResultado] = useState<{ achados: Achado[]; total: number }>(() =>
+    ultimoTermo && fluxo.current ? buscarNoLivro(fluxo.current, ultimoTermo, paginaDe) : { achados: [], total: 0 }
+  );
+  const [escolhido, setEscolhido] = useState<Element | null>(null);
+  const espera = useRef(0);
+  const campo = useRef<HTMLInputElement>(null);
+
+  const procurar = (t: string) => {
+    const f = fluxo.current;
+    if (!f) return;
+    ultimoTermo = t;
+    setResultado(buscarNoLivro(f, t, paginaDe));
+    setEscolhido(null);
+    realcar(f, t);
+  };
+
+  // Ao abrir: foco no campo, e o realce da última busca de volta.
+  useEffect(() => {
+    campo.current?.focus();
+    campo.current?.select();
+    if (ultimoTermo && fluxo.current) realcar(fluxo.current, ultimoTermo);
+    return () => clearTimeout(espera.current);
+  }, [fluxo]);
+
+  useEffect(() => {
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (e.key === "Escape") aoFechar();
+    };
+    window.addEventListener("keydown", aoTeclar);
+    return () => window.removeEventListener("keydown", aoTeclar);
+  }, [aoFechar]);
+
+  const ir = (a: Achado) => {
+    setEscolhido(a.el);
+    if (fluxo.current) realcar(fluxo.current, termo, a.el);
+    aoIr(a.el);
+  };
+
+  const onde = (p: number) => {
+    const r = rotulos[p];
+    return r?.arvoreNome ?? r?.secao ?? r?.capitulo ?? "";
+  };
+
+  let aviso: string;
+  if (termo.trim().length < 2) {
+    aviso = "Digite ao menos duas letras. A busca procura no texto inteiro do livro, catálogo das árvores incluso.";
+  } else if (resultado.total === 0) {
+    aviso = "Nada no livro com esse termo.";
+  } else {
+    const mais = resultado.total > resultado.achados.length ? ` — mostrando ${resultado.achados.length}` : "";
+    aviso = `${resultado.total} trecho${resultado.total > 1 ? "s" : ""}${mais}`;
+  }
+
+  return (
+    <aside id="folhear-busca" className="folhear-busca print-hide" role="search" aria-label="Buscar no livro">
+      <div className="folhear-busca-topo">
+        <Search className="h-4 w-4 shrink-0 opacity-60" aria-hidden />
+        <input
+          ref={campo}
+          type="search"
+          value={termo}
+          placeholder="Buscar no livro…"
+          aria-label="Termo da busca"
+          onChange={(e) => {
+            const t = e.target.value;
+            setTermo(t);
+            clearTimeout(espera.current);
+            espera.current = window.setTimeout(() => procurar(t), 140);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && resultado.achados[0]) ir(resultado.achados[0]);
+          }}
+        />
+        <button type="button" className="folhear-botao inline-flex" aria-label="Fechar a busca" onClick={aoFechar}>
+          <X className="h-4 w-4" aria-hidden />
+        </button>
+      </div>
+
+      <p className="folhear-busca-conta" aria-live="polite">
+        {aviso}
+      </p>
+
+      <ol className="folhear-busca-lista">
+        {resultado.achados.map((a, i) => (
+          <li key={i}>
+            <button
+              type="button"
+              className="folhear-busca-item"
+              data-titulo={a.titulo ? "" : undefined}
+              data-escolhido={escolhido === a.el ? "" : undefined}
+              onClick={() => ir(a)}
+            >
+              <span className="folhear-busca-pagina">{a.pagina + 1}</span>
+              <span className="min-w-0">
+                <span className="folhear-busca-onde">{onde(a.pagina)}</span>
+                <span className="folhear-busca-trecho">
+                  {a.antes}
+                  <mark>{a.casou}</mark>
+                  {a.depois}
+                </span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ol>
+
+      {termo.trim().length >= 2 && (
+        <Link href={`/busca?q=${encodeURIComponent(termo.trim())}`} className="folhear-busca-site">
+          Buscar no site inteiro →
+        </Link>
+      )}
+    </aside>
+  );
 }
 
 /** A altura do que cobre o topo da janela no modo contínuo: o nav e a barra. */
