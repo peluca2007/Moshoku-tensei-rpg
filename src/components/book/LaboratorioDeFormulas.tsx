@@ -58,7 +58,7 @@ export default function LaboratorioDeFormulas() {
           <dialog
             ref={dialogo}
             aria-label="Laboratório de Fórmulas"
-            className={`livro-laboratorio-dialogo ${FONTES_DO_LIVRO} m-auto max-h-[94vh] w-[min(1120px,95vw)] overflow-auto bg-transparent p-0 backdrop:bg-black/80`}
+            className={`livro-laboratorio-dialogo ${FONTES_DO_LIVRO} m-auto max-h-[94vh] w-[min(1200px,96vw)] overflow-auto bg-transparent p-0 backdrop:bg-black/80`}
             // Clicar fora do laboratório (no fundo escuro) fecha.
             onClick={(e) => {
               if (e.target === e.currentTarget) dialogo.current?.close();
