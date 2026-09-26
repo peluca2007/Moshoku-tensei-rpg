@@ -105,9 +105,8 @@ export const COLUNAS_CORPO: ColunaDano[] = [
   /*
    * As duas híbridas. A régua dizia medir "toda árvore" e deixava de
    * fora justamente o Punho do Fogo, a árvore mexida por último. A linha é o
-   * patamar NA HÍBRIDA, e não o do personagem: quem abre o 1º do Vendaval já é
-   * Avançado no Norte e no Vento, e quem abre o 1º do Punho já é Intermediário
-   * no Lutador e no Fogo — por isso as duas começam acima das árvores-mãe.
+   * patamar NA HÍBRIDA, e não o do personagem: quem abre o 1º de qualquer uma já é
+   * Intermediário nas duas árvores-mãe (o Vendaval exigia Avançado até 2026-09-26) — por isso as duas começam acima das árvores-mãe.
    * São estimativas a partir das colunas do Norte e do Lutador, não medições.
    */
   { treeId: "vendaval", label: "Vendaval" },

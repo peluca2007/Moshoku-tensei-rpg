@@ -235,7 +235,7 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "Termodinâmica Aplicada",
         description:
-          "Você troca livremente o dano de frio das suas magias por contundente (água pressurizada) ou ígneo (vapor), sem alterar os dados. [Congelado] O pagamento da escola, agora como regra geral: QUALQUER magia de frio sua (magia de frio e magia de gelo são a mesma coisa: toda magia que cause dano de frio) que force teste de resistência deixa Congelado quem já estava Molhado e falhou no teste. Molhado é o preparo; Congelado é a cobrança. Desbloqueia o direito de aprender e executar Magias Combinadas (Cap. 2).",
+          "Mira na área (Cap. 2, §7): escolha até INTELECTO criaturas para excluir de cada área sua. Você troca livremente o dano de frio das suas magias por contundente (água pressurizada) ou ígneo (vapor), sem alterar os dados. [Congelado] O pagamento da escola, agora como regra geral: QUALQUER magia de frio sua (magia de frio e magia de gelo são a mesma coisa: toda magia que cause dano de frio) que force teste de resistência deixa Congelado quem já estava Molhado e falhou no teste. Molhado é o preparo; Congelado é a cobrança. Desbloqueia o direito de aprender e executar Magias Combinadas (Cap. 2).",
       },
       talents: [
         { id: "zero-perfurante", name: "Zero Perfurante", paCost: RANK_PA_COST.talent.Avançado, description: "Seu gelo ignora Resistência a dano de frio." },
@@ -243,7 +243,7 @@ export const AGUA_TREE: Tree = {
           id: "mestre-da-adaptacao",
           name: "Mestre da Adaptação",
           paCost: RANK_PA_COST.talent.Avançado,
-          description: "Suas magias Encurtadas de Água não perdem mais dados de dano, apenas a redução de área.",
+          description: "Suas magias Encurtadas de Água não perdem mais dano, apenas a redução de área.",
         },
         {
           id: "nucleo-gelido",
@@ -459,7 +459,7 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "O Silêncio Primordial",
         description:
-          "Seu dano de frio ignora completamente Resistência e Imunidade. Criaturas reduzidas a 0 PV pelas suas magias de gelo cristalizam em pó de diamante — não podem ser ressuscitadas por nada abaixo de rank Deus. Uma vez por turno, conjure uma magia de Água de rank Avançado ou inferior em Conjuração Silenciosa sem gastar Ação.",
+          "Seu dano de frio ignora Resistência; com Zero Perfurante, ignora também Imunidade. Criaturas reduzidas a 0 PV pelas suas magias de gelo cristalizam em pó de diamante — não podem ser ressuscitadas por nada abaixo de rank Deus. Uma vez por turno, conjure uma magia de Água de rank Avançado ou inferior em Conjuração Silenciosa sem gastar Ação.",
       },
       talents: [
         {
