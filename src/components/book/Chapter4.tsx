@@ -210,7 +210,7 @@ export default function Chapter4() {
             se perde, e você recomeça do zero.
           </P>
           <P>
-            <b>Interrupção:</b> se sofrer dano enquanto conjura, faça um teste de Espírito contra{" "}
+            <b>Teste de Concentração:</b> se sofrer dano enquanto conjura, faça um teste de Espírito contra{" "}
             <b>CD 10 + o Bônus de Rank de quem te acertou</b> (CD 11 contra um Principiante, CD 16 contra um
             Imperador; use 12 se não houver um responsável claro). O Bônus de Rank de uma criatura é o
             patamar dela, de +1 a +6. Falhar significa perder o cântico, as Ações já gastas e{" "}
