@@ -128,7 +128,7 @@ export default function MedidorDeEncontro({
       <p className="mt-1 text-3xs leading-relaxed text-parchment-500 dark:text-parchment-400">
         Este encontro pesa <b>{resultado.peso.toFixed(2).replace(".", ",")}</b> contra um orçamento de{" "}
         <b>{resultado.orcamento}</b> — uma criatura de {rotuloPatamar(patamarDoGrupo)} por jogador
-        (Apêndice G). Uma acima vale duas; uma abaixo, meia; um Chefe vale três; Imunidade conta como um
+        (Apêndice G). Uma acima vale duas; uma abaixo, meia; um Chefe vale cinco; Imunidade conta como um
         patamar acima. Pactos preparados entram como lacaios nesta régua aproximada; a simulação usa os PV, ataques e PM reais deles. A conta não enxerga terreno nem quem age primeiro — pra isso, rode a simulação.
       </p>
     </div>
