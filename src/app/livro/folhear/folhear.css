@@ -1349,7 +1349,9 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   display: block;
   height: auto;
   margin: 1.1em 8px 1.2em 0;
-  overflow: visible;
+  /* hidden: o fundo desfocado da arte não pode vazar do quadro (a sombra
+     deslocada é box-shadow e continua aparecendo). */
+  overflow: hidden;
   border: 0;
   border-radius: 0;
   background: #0c0c0e;
@@ -4296,4 +4298,14 @@ html.livro-imersivo {
 /* A prancha de coluna, torta pra dentro: não passa da margem. */
 .folhear-fluxo figure.livro-prancha:is(.livro-prancha-coluna, .folhear-prancha-coluna) {
   margin-left: 5px;
+}
+
+/* Vitrine sem espaço pra tudo: primeiro somem os nomes; se nem assim couber,
+   ela some (esticarVitrines). */
+.folhear-fluxo .livro-vitrine.folhear-vitrine-compacta :is(.livro-vitrine-nome, .livro-vitrine-raridade) {
+  display: none;
+}
+
+.folhear-fluxo .livro-vitrine.folhear-vitrine-some {
+  display: none !important;
 }

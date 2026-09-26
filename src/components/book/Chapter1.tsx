@@ -1,4 +1,5 @@
 import { RACES } from "@/data/races";
+import Prancha from "./Prancha";
 import FichaDeRaca, { QuadroDasRacas, VitrineDasRacas } from "./FichaDeRaca";
 import AntecedentesIlustrados, { OlhosEmMovimento } from "./FichaDeAntecedente";
 import { BACKGROUNDS, LAPLACE_TABLE, MIKO_TABLE, OLHO_TABLE } from "@/data/backgrounds";
@@ -593,6 +594,7 @@ export default function Chapter1() {
 
       <Section>
         <SectionTitle id="cap1-5">5. Raças do Mundo de Seis Faces</SectionTitle>
+        <Prancha id="cap1-5" />
         <P>
           O mundo é habitado por diversas raças com fisiologias e culturas vastamente diferentes. A sua
           linhagem determina traços genéticos e mecânicos — os detalhes de cada uma também aparecem direto na
@@ -666,6 +668,7 @@ export default function Chapter1() {
 
       <Section>
         <SectionTitle id="cap1-6">6. O Destino e a Infância (Antecedentes)</SectionTitle>
+        <Prancha id="cap1-6" />
         <P>
           O que você fez nos seus primeiros 10 anos de vida define a fundação do seu corpo, sua mana e seu
           lugar no mundo. Durante a criação da ficha, role 1d100 (ou escolha em conjunto com o Mestre) pra

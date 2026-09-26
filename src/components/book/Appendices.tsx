@@ -1,3 +1,4 @@
+import Prancha from "./Prancha";
 import {
   COLUNAS_CORPO,
   COLUNAS_MAGIA,
@@ -342,6 +343,7 @@ export default function Appendices() {
 
       <Section>
         <SectionTitle id="apendice-g">G. Bestiário — Criaturas por Patamar</SectionTitle>
+        <Prancha id="apendice-g" />
         <P>
           Em vez de um manual de monstros exaustivo, um molde por patamar calibrado com a curva que já existe
           no livro, mais seis criaturas prontas pra reskinar e um jeito de pôr na mesa o rival que tem ficha.

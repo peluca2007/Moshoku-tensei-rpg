@@ -24,6 +24,16 @@ const LEGENDAS: Record<string, string> = {
   teorica: "Um círculo mágico enorme, de anéis e glifos, aceso no chão.",
   "cap2-8": "Um estudante diante de folhas cobertas de diagramas de círculos e quadrados.",
   "cap3-triangulo": "Uma espadachim de cabelo azul sorrindo junto à janela.",
+  "deus-da-espada": "Eris adulta de espada em punho e Rudeus de cajado, cercados de raios, com Orsted ao fundo.",
+  "cap4-6": "O Labirinto de Begaritt em chamas: Roxy, Rudeus, Paul e Elinalise na luta mais cara da história.",
+  "cap1-5": "Rudeus, Eris e Ruijerd no Continente Demônio, entre homens-lagarto e homens-cavalo.",
+  "cap5-2": "O salão da Guilda de Aventureiros, com o grupo Counter Arrow e Rudeus.",
+  "cap1-6": "Rudeus e Sylphie crianças de mãos dadas, cercados da família e dos mestres.",
+  "cap5-5": "Ghislaine de armadura sentada no chão de madeira, e Eris emburrada atrás: a mestra e a discípula.",
+  "apendice-g": "Atofe, uma alada de máscara, um velho no trono: as criaturas e os chefes do mundo.",
+  "bardo-e-interacao": "Geese e Badigadi numa disputa de caneca entre barris.",
+  "navegacao-e-lideranca": "Rudeus, Eris apontando o caminho, Ruijerd e Kishirika, com um navio ao fundo.",
+  cura: "Rudeus erguendo a relíquia sagrada contra o céu.",
 };
 
 export default function Prancha({ id, arvore }: { id: string; arvore?: string }) {
