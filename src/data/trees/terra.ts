@@ -78,7 +78,7 @@ export const TERRA_TREE: Tree = {
           paCost: RANK_PA_COST.common.Principiante,
           pmCost: 2,
           range: "9 metros",
-          actions: { normal: 3, encurtada: 2, silenciosa: 1 },
+          actions: { normal: 3 },
           ritual: true,
           costNote:
             "3 Ações em vez de 2, e Ritual: erguer 6 metros de parede sólida com 40 PV não é o mesmo gesto que atirar uma pedra. Toda outra magia Principiante deste livro é reação de combate; esta é engenharia, e engenharia leva tempo mesmo nas mãos de um mago.",

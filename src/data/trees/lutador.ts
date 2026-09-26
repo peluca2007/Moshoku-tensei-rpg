@@ -307,7 +307,7 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 5,
           range: "Corpo a corpo",
           actions: { normal: 2 },
-          damage: { normal: "Dado de arma rolado cinco vezes + 1d12 por acúmulo de Quebrantado do alvo, até o seu Bônus de Rank em acúmulos" },
+          damage: { normal: "Dado de arma rolado cinco vezes + 1d12 por acúmulo de Quebrantado do alvo, até o dobro do seu Bônus de Rank em acúmulos" },
           effect: "Uma vez por combate. Acerta automaticamente e ignora CA, Cobertura, escudo e Manto de Touki.",
         },
         {
