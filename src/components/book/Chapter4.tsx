@@ -543,8 +543,9 @@ export default function Chapter4() {
 
         <Aside title="Ferida Fresca">
           <P>
-            Ferida Fresca é o dano sofrido <b>desde o início do último turno do próprio alvo</b> — a janela
-            em que a carne ainda não começou a fechar sozinha. Contra ela, a Magia de Cura <b>dobra os DADOS
+            Ferida Fresca é o dano que o alvo sofreu <b>desde o fim do seu último turno</b> — do seu, de quem
+            cura: você só olha a própria vez, e não precisa lembrar quando cada aliado agiu. É a janela em
+            que a carne ainda não começou a fechar sozinha. Contra ela, a Magia de Cura <b>dobra os DADOS
             da cura</b>; o BC soma uma vez só. Não se mede quanto dano foi: se o alvo sofreu qualquer dano
             nessa janela, mesmo que PV Temporários tenham absorvido tudo, a magia inteira rola os dados em
             dobro.
@@ -561,7 +562,7 @@ export default function Chapter4() {
           <P>
             A luz também fere — é a <i>Luz de Dois Gumes</i>, Maestria de 1º patamar da Magia de Cura —, mas o dobro
             da Ferida Fresca é só da cura. A exceção chega no Rei, com a <i>Culpa Fresca</i>, que usa a mesma
-            janela: quem feriu um aliado seu desde o início do último turno desse aliado sofre a luz com o dobro dos dados (o BC soma uma vez só).
+            janela: quem feriu um aliado seu desde o fim do seu último turno sofre a luz com o dobro dos dados (o BC soma uma vez só).
           </P>
         </Aside>
 

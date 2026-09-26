@@ -4,6 +4,10 @@ Pedido do autor: "dá uma geral na Teórica de novo, ela é a mais complexa, dei
 Mestre e pro player; olha a Cura; a Desintoxicação é muito chatinha; dá uma geral nas três Utilidades.
 O foco é o conteúdo do livro, depois a gente vai pro estilo."
 
+**Decisões do autor (2026-09-26):** as quatro recomendadas (★) — Teórica em três palavras e uma conta;
+Cura sem contabilidade; Desintoxicação com Dose e Inversão; Utilidades com menu de Preparações e canções.
+Andamento: Cura ✅ · Desintoxicação ⏳ · Teórica ⏳ · Utilidades ⏳.
+
 **Ordem:** fase 1 é conteúdo (as seis árvores), fase 2 é estilo (temas e animações). Toda mudança de
 regra vai junto no livro folheado (`/livro/folhear`), nos dados das árvores (`src/data/trees/*`), na
 ficha automática (seletores, `CharacterSheet`, PDF da ficha) e nos testes — nada existe fora do livro.

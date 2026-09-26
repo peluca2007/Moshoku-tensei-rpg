@@ -12,9 +12,10 @@ export const CURA_TREE: Tree = {
     hook:
       "Não é quanto você cura — é quando. A mesma magia rola o dobro de dados se chegar a tempo.",
     loop: [
-      "Chegue a tempo. Contra Ferida Fresca, toda magia de Cura rola o DOBRO dos dados; o BC soma uma vez só. Ferida Fresca é o dano sofrido desde o início do último turno do próprio alvo. Não se mede quanto: qualquer dano nessa janela conta, mesmo o que PV Temporários absorveram. Poção não é magia e não dobra.",
+      "Chegue a tempo. Contra Ferida Fresca, toda magia de Cura rola o DOBRO dos dados; o BC soma uma vez só. Ferida Fresca é o dano que o alvo sofreu desde o fim do SEU último turno — você só olha a sua própria vez. Não se mede quanto: qualquer dano nessa janela conta, mesmo o que PV Temporários absorveram. Poção não é magia e não dobra.",
       "Ou segure a ferida aberta. Selar a Ferida faz o alvo contar como tendo Ferida Fresca por 1 hora inteira, muito depois de a janela fechar.",
       "Ou não espere o turno. Prontidão é 1 Reação, disparada quando o aliado sofre o golpe — então é sempre Ferida Fresca, por definição.",
+      "Escolha o seu caminho. Os talentos da escola seguem três: o Cirurgião (curar mais e melhor), o Guardião (segurar o golpe antes de ele matar) e o Juiz (a luz que fere). Não é classe: compre dos três, na ordem que quiser.",
       "Ou vire a luz. Toda magia de Cura pode ferir um inimigo em vez de curar: ele sofre como dano radiante o valor normal da magia, sem o dobro da Ferida Fresca (só a Culpa Fresca, no Rei, dobra os dados da luz). Morto-vivo, construto e corrompido não escapam — a luz acerta sempre e não permite teste.",
     ],
     cost:
@@ -44,13 +45,13 @@ export const CURA_TREE: Tree = {
           "[Ferida Fresca] Encostando ou observando por 10 segundos, você sabe PV atual/máximo, condições ativas e a categoria do problema (ferimento, veneno, doença, maldição, exaustão ou fome). Encostando num aliado a 0 PV, ele fica Estabilizado na hora, sem PM, Ação nem rolagem. Luz de Dois Gumes: toda magia de Cura sua pode, em vez de curar, mirar uma criatura hostil no alcance dela — a de alvo único vira um ataque mágico, a de área pede teste de Vigor (CD 8 + BC) pra metade. O alvo sofre como dano radiante o valor que a magia curaria, sem o dobro da Ferida Fresca. Contra morto-vivo, construto ou criatura de mana corrompida, a luz acerta sempre e não permite teste.",
       },
       talents: [
-        { id: "maos-firmes-cura", name: "Mãos Firmes", paCost: RANK_PA_COST.talent.Principiante, description: "Você tem Vantagem no Teste de Concentração enquanto conjura magia de Cura." },
+        { id: "maos-firmes-cura", name: "Luz Afiada", paCost: RANK_PA_COST.talent.Principiante, description: "Caminho do Juiz. Quem for atingido pela sua Luz de Dois Gumes tem Desvantagem no próximo ataque que fizer até o fim do próximo turno dele." },
         { id: "reserva-do-curandeiro", name: "Reserva do Curandeiro", paCost: RANK_PA_COST.talent.Principiante, description: "+2 PM e +2 PV por patamar seu em Cura. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { mpPerRank: 2, hpPerRank: 2 } },
         {
           id: "juramento",
           name: "Juramento",
           paCost: RANK_PA_COST.talent.Principiante,
-          description: "Enquanto jurar nunca usar magia para ferir — nem a Luz de Dois Gumes —, suas magias de Cura custam 1 PM a menos (mínimo 1). Quebrar o juramento desliga o talento por uma semana.",
+          description: "Caminho do Cirurgião. Enquanto jurar nunca usar magia para ferir — nem a Luz de Dois Gumes —, suas magias de Cura custam 1 PM a menos (mínimo 1). Quebrar o juramento desliga o talento por uma semana.",
         },
       ],
       abilities: [
@@ -59,7 +60,7 @@ export const CURA_TREE: Tree = {
           name: "Cura",
           signature: true,
           paCost: RANK_PA_COST.signature.Principiante,
-          pmCost: 3,
+          pmCost: 2,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
           damage: { normal: "1d8 + BC de PV (2d8 + BC se Ferida Fresca)" },
@@ -82,10 +83,10 @@ export const CURA_TREE: Tree = {
           id: "selar-a-ferida",
           name: "Selar a Ferida",
           paCost: RANK_PA_COST.talent.Principiante,
-          pmCost: 2,
+          pmCost: 3,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
-          effect: "Custa 2 PM por Bônus de Rank seu em Cura (2 no Principiante, 12 no Imperador — o Preço do Espírito, Cap. 1, §1). O alvo conta como tendo Ferida Fresca por 1 hora, mesmo depois de a janela normal fechar — qualquer magia de Cura conjurada nele nessa 1 hora ainda rola o dobro dos dados.",
+          effect: "O alvo conta como tendo Ferida Fresca por 1 hora, mesmo depois de a janela normal fechar — qualquer magia de Cura conjurada nele nessa 1 hora ainda rola o dobro dos dados.",
           incantation:
             "Ferida, eu te marco e te guardo aberta um pouco mais, só o suficiente pra ser bem curada.\nSelar a Ferida!",
         },
@@ -123,9 +124,9 @@ export const CURA_TREE: Tree = {
           "Suas magias de Cura passam a alcançar 9 metros. Uma conjuração de rank Principiante pode alcançar duas criaturas ao mesmo tempo, cada uma recebendo o valor inteiro, pagando +1 PM.",
       },
       talents: [
-        { id: "diagnostico-profundo", name: "Diagnóstico Profundo", paCost: RANK_PA_COST.talent.Intermediário, description: "Seu Diagnóstico revela também a causa: quem envenenou, que criatura infectou, há quanto tempo, e se é mágico ou natural." },
-        { id: "toque-duplo", name: "Toque Duplo", paCost: RANK_PA_COST.talent.Intermediário, description: "Ao usar Prontidão, você pode curar dois aliados que sofreram dano do mesmo efeito, cada um recebendo o valor inteiro, pagando +2 PM." },
-        { id: "curandeiro-de-guerra", name: "Curandeiro de Guerra", paCost: RANK_PA_COST.talent.Intermediário, description: "Você trata quatro pessoas por hora fora de combate, e nunca erra um diagnóstico sob pressão." },
+        { id: "diagnostico-profundo", name: "Diagnóstico Profundo", paCost: RANK_PA_COST.talent.Intermediário, description: "Caminho do Cirurgião. Seu Diagnóstico revela também a causa: quem envenenou, que criatura infectou, há quanto tempo, e se é mágico ou natural." },
+        { id: "toque-duplo", name: "Toque Duplo", paCost: RANK_PA_COST.talent.Intermediário, description: "Caminho do Guardião. Ao usar Prontidão, você pode curar dois aliados que sofreram dano do mesmo efeito, cada um recebendo o valor inteiro, pagando +2 PM." },
+        { id: "curandeiro-de-guerra", name: "Sentença", paCost: RANK_PA_COST.talent.Intermediário, description: "Caminho do Juiz. Quando a sua Luz de Dois Gumes derrubar uma criatura hostil a 0 PV, um aliado a até 9 metros recupera PV iguais ao seu BC." },
       ],
       abilities: [
         {
@@ -173,7 +174,7 @@ export const CURA_TREE: Tree = {
           pmCost: 4,
           range: "Toque",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "Até BC pontos do dano de um aliado adjacente passam para você, ignorando sua Resistência. O dano transferido conta como Ferida Fresca em você.",
+          effect: "Até o dobro do seu BC em pontos do dano de um aliado adjacente passam para você, ignorando sua Resistência. O dano transferido conta como Ferida Fresca em você.",
           incantation:
             "Dá-me a tua dor. Não toda ela, porque toda ela te definiria e eu não tenho esse direito sobre ti — só o suficiente pra que consigas ficar de pé mais um turno, e mais um depois desse. Transferência!",
         },
@@ -202,9 +203,9 @@ export const CURA_TREE: Tree = {
           "Você cura ferimentos potencialmente fatais: pode levar um aliado de 0 PV direto para PV positivos numa única conjuração, sem que ele receba Exaustão ao acordar. E o tempo para de correr contra quem já caiu: um aliado a 0 PV conta SEMPRE como Ferida Fresca pra você, não importa há quantos turnos esteja lá — a janela da escola nunca fecha sobre um moribundo. Ao levantar com uma magia sua, ele pode gastar a Reação dele na hora, pra se mover ou atacar. Não reimplanta membros decepados. Desbloqueia Magia Combinada.",
       },
       talents: [
-        { id: "mao-silenciosa", name: "Mão Silenciosa", paCost: RANK_PA_COST.talent.Avançado, description: "Você conjura magias de Cura de rank Principiante e Intermediário em Conjuração Silenciosa, sem penalidade alguma." },
-        { id: "sangue-trocado-cura", name: "Dor Dividida", paCost: RANK_PA_COST.talent.Avançado, description: "Transferência passa a mover o dobro do dano e alcança 9 metros." },
-        { id: "maos-repartidas", name: "Mãos Repartidas", paCost: RANK_PA_COST.talent.Avançado, description: "Ao conjurar Cura Suprema, você pode alcançar duas criaturas ao seu alcance, cada uma recebendo o valor inteiro, pagando +3 PM. Cada uma rola o dobro dos dados se estiver com Ferida Fresca." },
+        { id: "mao-silenciosa", name: "Mão Silenciosa", paCost: RANK_PA_COST.talent.Avançado, description: "Caminho do Cirurgião. Você conjura magias de Cura de rank Principiante e Intermediário em Conjuração Silenciosa, sem penalidade alguma." },
+        { id: "sangue-trocado-cura", name: "Dor Dividida", paCost: RANK_PA_COST.talent.Avançado, description: "Caminho do Guardião. Transferência passa a mover o dobro do dano e alcança 9 metros." },
+        { id: "maos-repartidas", name: "Mãos Repartidas", paCost: RANK_PA_COST.talent.Avançado, description: "Caminho do Cirurgião. Ao conjurar Cura Suprema, você pode alcançar duas criaturas ao seu alcance, cada uma recebendo o valor inteiro, pagando +3 PM. Cada uma rola o dobro dos dados se estiver com Ferida Fresca." },
       ],
       abilities: [
         {
@@ -254,7 +255,7 @@ export const CURA_TREE: Tree = {
           pmCost: 6,
           range: "Toque",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "10 minutos sem dor: ignora penalidades de ferimento/Exaustão, mas o Mestre para de informar os PV do alvo ao jogador.",
+          effect: "10 minutos sem dor: o alvo ignora as penalidades de Exaustão e de Trauma, e tem Vantagem nos Testes de Concentração e no Teste do Fio da Vida.",
           incantation:
             "Dor, eu não te removo, porque tu és honesta e o corpo dele ainda precisa de ti pra saber quando parar. Eu só te peço licença pra ficares em silêncio um instante — o tempo exato pra que ele continue de pé sem saber o preço que está pagando por isso. Anestesia!",
         },
@@ -269,7 +270,7 @@ export const CURA_TREE: Tree = {
           "Você reimplanta membros recém-decepados (menos de 1h, ou a qualquer momento se a ferida estiver Selada). Não recria o que não existe mais. Magias de rank Avançado ou inferior em Conjuração Silenciosa sem penalidade; com Mão Silenciosa, as de rank Santo também. Mantém duas magias sustentadas.",
       },
       talents: [
-        { id: "vigilia", name: "Vigília", paCost: RANK_PA_COST.talent.Santo, description: "Uma vez por combate, sua Prontidão não gasta Reação." },
+        { id: "vigilia", name: "Vigília", paCost: RANK_PA_COST.talent.Santo, description: "Caminho do Guardião. Uma vez por combate, sua Prontidão não gasta Reação." },
       ],
       abilities: [
         {
@@ -317,10 +318,10 @@ export const CURA_TREE: Tree = {
       mastery: {
         name: "Culpa Fresca",
         description:
-          "[Ferida Fresca] O espelho da regra da escola: quem feriu um aliado seu desde o início do último turno desse aliado — quem abriu uma Ferida Fresca — carrega Culpa Fresca, e a sua Luz de Dois Gumes rola o DOBRO dos dados contra ele (o BC soma uma vez só). A mesma janela que dobra a cura de quem apanhou dobra a luz sobre quem bateu. Você também regenera membros perdidos desde que os ossos estejam disponíveis, não importa há quanto tempo.",
+          "[Ferida Fresca] O espelho da regra da escola: quem feriu um aliado seu desde o fim do seu último turno — quem abriu uma Ferida Fresca — carrega Culpa Fresca, e a sua Luz de Dois Gumes rola o DOBRO dos dados contra ele (o BC soma uma vez só). A mesma janela que dobra a cura de quem apanhou dobra a luz sobre quem bateu. Você também regenera membros perdidos desde que os ossos estejam disponíveis, não importa há quanto tempo.",
       },
       talents: [
-        { id: "sopro-do-julgamento", name: "Sopro do Julgamento", paCost: RANK_PA_COST.talent.Rei, description: "Quem derrubar um aliado seu a 0 PV carrega Culpa Fresca até o fim do combate, não só pela janela da Ferida Fresca." },
+        { id: "sopro-do-julgamento", name: "Sopro do Julgamento", paCost: RANK_PA_COST.talent.Rei, description: "Caminho do Juiz. Quem derrubar um aliado seu a 0 PV carrega Culpa Fresca até o fim do combate, não só pela janela da Ferida Fresca." },
       ],
       abilities: [
         {
