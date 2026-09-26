@@ -384,7 +384,7 @@ export function getPvDeReferencia(treeId: string, patamares: number, vigor = 0):
  * patamar a fórmula antiga entra inteira — é o que calibrou o teto do
  * Imperador.
  *
- * Implementação: o cap é "no máximo `4 × MB + 8` PM sobre a base da
+ * Implementação: o cap é "no máximo `máx(Espírito, 4) × MB + 8` PM sobre a base da
  * fórmula original" — ou seja, corta o `bonusMp` (PA avulso) e o `maxMp`
  * fixo de antecedente/sub-tabela, mas deixa passar o talento `mpPerRank`
  * (que é o investimento consciente da árvore, do Cap. 1 "Padrão das
@@ -426,11 +426,12 @@ export function getMaxMp(state: StoreState): number {
   const talentoMp = getTalentReserve(state, "mpPerRank");
   const baseComRacialETalentos = baseSemCap + escalarDeMana + talentoMp;
   // Extras avulsos (PA, antecedentes, sub-tabela) são capados nos 2 primeiros
-  // ranks. Cap = `4 × MB + 8 + talentoMp + escalarRacial` — talento entra
-  // (não é cortado), racial entra (escala com MB, não é "compra avulsa"),
-  // mas PA/antecedente/sub-tabela são capados em zero. Acima do 2º, sem cap.
+  // ranks. Desde 2026-09-26 o teto usa o Espírito (`máx(Espírito, 4) × MB + 8`,
+  // + talento + escalar): antes era `4 × MB + 8`, e o Espírito acima de 4 não
+  // rendia PM nenhum até o Avançado — o "reator" do Cap. 1 não existia nos
+  // patamares mais jogados. Só PA avulso e PM fixo de antecedente são cortados.
   if (maiorBonusMagia <= 2) {
-    const capTotal = 4 * maiorBonusMagia + 8 + talentoMp + escalarDeMana;
+    const capTotal = baseComRacialETalentos;
     const extras = getFlatBonusSum(state, "maxMp") + state.bonusMp;
     return state.overrides.maxMp ?? Math.min(baseComRacialETalentos + extras, capTotal);
   }

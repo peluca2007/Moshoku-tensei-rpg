@@ -91,15 +91,21 @@ export default function Chapter2() {
         />
         <Warning title="Penalidade do Encantamento Encurtado">
           <P>
-            Ao encurtar, role <b>metade dos dados de dano, arredondado pra cima</b>, e a área de efeito é
-            reduzida em um terço. O BC continua sendo somado integralmente — a maestria não some, só a
-            estrutura do feitiço fica instável.
+            Ao encurtar, role a magia normalmente e <b>o dano total (dados + BC) cai pela metade</b>,
+            arredondado pra baixo; a área de efeito é reduzida em um terço.
           </P>
           <P>
-            <b>Pra cima, e não pra baixo</b>, por um motivo curto: arredondando pra baixo, toda magia de UM
-            dado encurtava para zero dados. A Bola de Fogo (1d8 + BC) virava só BC — o Encurtado apagava a
-            magia inteira em vez de enfraquecê-la, e isso valia justamente nas magias que um Principiante tem.
+            <b>Por quê:</b> a Encurtada custa metade das Ações e entrega metade do dano — por Ação, empata com a
+            Padrão. O que ela cobra é <b>mana</b>: o mesmo PM rende metade. Pressa custa caro, e a Conjuração
+            Padrão continua sendo a jogada de quem tem tempo (e ainda ganha a Recitação Perfeita).
           </P>
+          <BookTable
+            headers={["Bola de Fogo (1d8 + BC 3), Principiante", "Ações", "Dano médio", "Dano por PM"]}
+            rows={[
+              ["Padrão", "2", "7,5", "7,5"],
+              ["Encurtada", "1", "3", "3"],
+            ]}
+          />
           <P>
             <b>E a magia que não tem dados nem área?</b> Vácuo Localizado, Prisão de Ar e outras magias de
             controle puro têm <b>a duração reduzida à metade</b> ao encurtar. Se a magia também não tem
@@ -122,8 +128,8 @@ export default function Chapter2() {
                 Silenciosa é o único jeito de encurtar.
               </span>,
               <span key="2">
-                <b>Dano:</b> metade dos dados, arredondado <b>pra cima</b> — o mesmo valor do Encantamento
-                Encurtado, nunca mais que isso por padrão. Magia sem dados nem área perde metade da duração,
+                <b>Dano:</b> o dano total (dados + BC) cai pela metade, arredondado pra baixo — o mesmo
+                valor do Encantamento Encurtado, nunca mais que isso por padrão. Magia sem dados nem área perde metade da duração,
                 também como no Encurtado.
               </span>,
               <span key="3">
@@ -192,7 +198,7 @@ export default function Chapter2() {
           </P>
           <P>
             A cortesia do Principiante existe porque, sem ela, conjurar em silêncio num rank baixo custaria
-            uma Ação inteira pra entregar metade dos dados e dois terços da área — ninguém usaria nunca, e o
+            uma Ação inteira pra entregar metade do dano e dois terços da área — ninguém usaria nunca, e o
             método mais característico do mundo de Mushoku Tensei morreria na ficha.
           </P>
           <P>
@@ -211,7 +217,7 @@ export default function Chapter2() {
         <List
           items={[
             <span key="atk"><b>Ataque Mágico (com rolagem de acerto):</b> ganha <b>Vantagem</b> no teste de acerto contra a CA do alvo.</span>,
-            <span key="save"><b>Feitiço que impõe Teste de Resistência:</b> concede <b>+2 na CD</b> para os alvos resistirem.</span>,
+            <span key="save"><b>Feitiço que impõe Teste de Resistência:</b> os alvos resistem com <b>Desvantagem</b> — o espelho da Vantagem do ataque, pra magia de controle valer a recitação tanto quanto a de dano.</span>,
             <span key="rit"><b>Ritual ou Feitiço sem rolagem (suporte, barreira, cura):</b> a magia <b>custa PM a menos igual ao seu Bônus de Rank</b> na respectiva escola, mas nunca menos de 1 PM.</span>,
           ]}
         />

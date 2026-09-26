@@ -189,7 +189,7 @@ export default function Chapter1() {
             ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente). No 1º patamar são só +4 PV: comprar atributo rende mais cedo, e esta compra é pra quem já tem patamar alto."],
             ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente). NÃO RENDE NADA enquanto o seu maior patamar de magia for Principiante ou Intermediário — o teto de PM (Cap. 4, §1) corta todo extra avulso. Libera no Avançado; a ficha bloqueia a compra até lá."],
             ["1 / 1 / 2 / 2 / 3 / 3… PA", "+1 ponto de Atributo Base permanente (teto 8). PROGRESSIVO: as duas primeiras compras custam 1 PA cada, as duas seguintes 2 PA cada, e assim por diante. Medido pela soma dos cinco atributos, então desfazer um defeito custa o mesmo que qualquer outro aumento."],
-            ["2 / 3 / 4 / 4 / 4 PA", "Vantagem permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha — uma vez por atributo, no máximo 5 compras (17 PA pelas cinco). PROGRESSIVO: cada compra custa 1 PA a mais que a anterior, com teto em 4. Marcada na ficha e no PDF."],
+            ["2 / 3 / 4 / 4 / 4 PA", "+2 permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha (Resistência Treinada) — uma vez por atributo, no máximo 5 compras (17 PA pelas cinco). Soma com Vantagem de outras fontes. PROGRESSIVO: cada compra custa 1 PA a mais que a anterior, com teto em 4. Marcada na ficha e no PDF."],
             ["Variável", "Magias, Técnicas e Talentos de Árvore — o custo escala com o Rank (tabela na seção 3)."],
           ]}
         />
@@ -675,7 +675,7 @@ export default function Chapter1() {
         <Aside title="Laplace e Gênio não são a mesma coisa">
           <P>
             Os dois nascem conjurando em silêncio, e é aí que a semelhança termina. O <b>Fator Laplace</b>{" "}
-            sofre as penalidades normais do método (metade dos dados, área reduzida em um terço) — ele apenas
+            sofre as penalidades normais do método (metade do dano, área reduzida em um terço) — ele apenas
             nunca precisou aprender. O <b>Gênio</b> não sofre nenhuma das duas, em escola nenhuma, desde a
             criação. Talentos e Maestrias tiram a penalidade de uma escola só, e custam PA.
           </P>
