@@ -1,5 +1,7 @@
 # Magia Teórica — seu primeiro grimório
 
+> **Números de 2026-09-26** (recalibragem: Mana 0 PM, ações 1 PM, d8 + BC). As regras completas estão no livro, Cap. 2 §8; se este guia e o livro divergirem, vale o livro.
+>
 > **PROPOSTA EM TESTE — SUJEITA A MUDANÇAS.** Este é um guia de uma árvore em
 > desenvolvimento. **Magia Teórica já substitui Barreira e Proteção** no catálogo
 > e nas fichas. As receitas e os custos seguem em teste; o site ainda calcula
@@ -60,8 +62,8 @@ Cada receita defensiva exige conhecer o operador indicado.
 
 **Mana + Projetar, dentro de um Círculo.** Disponível na entrada da árvore.
 
-- **Conta:** Mana 1 + Projetar 2 + Círculo 0 = **3 PM**.
-- **Efeito:** ataque a até **9 m**, causando **1d6 de dano arcano** se acertar.
+- **Conta:** Mana 0 + Projetar 1 + Círculo 0 = **1 PM**.
+- **Efeito:** ataque a até **9 m**, causando **1d8 + BC de dano arcano** se acertar.
 - **Teste:** `1d20 + BC` contra a CA do alvo; o BC é Intelecto + 1 nesta receita.
 - **Duração:** instantânea. O Círculo não transforma o disparo em efeito contínuo.
 
@@ -72,7 +74,7 @@ somado ao dano genérico desta proposta.
 
 **Mana + Expressar, dentro de um Círculo.** Disponível na entrada da árvore.
 
-- **Conta:** Mana 1 + Expressar 2 + Círculo 0 = **3 PM**.
+- **Conta:** Mana 0 + Expressar 1 + Círculo 0 = **1 PM**.
 - **Efeito:** pequeno sinal visível no ponto do desenho por **1 turno**.
 - **Limite:** não causa dano, condição ou iluminação útil. A forma básica de
   Mana não imita voz nem dá ordens.
@@ -85,7 +87,7 @@ símbolo não lê pensamentos.
 
 **Mana + Conter, dentro de um Quadrado.** Conter já vem da maestria Principiante.
 
-- **Conta:** Mana 1 + Conter 2 + Quadrado 1 = **4 PM**.
+- **Conta:** Mana 0 + Conter 1 + Quadrado 1 = **2 PM**.
 - **Efeito:** parede física de **30 PV**, com até **3 m** na maior dimensão.
 - **Posição:** origem ao toque, espaço livre e orientação declarada.
 - **Duração:** até **1 minuto**, enquanto sustentada e íntegra.
@@ -98,7 +100,7 @@ atravessando alguém. Uma parede plana protege os lados que você desenhou.
 
 **Mana + Rejeitar, dentro de um Círculo.** Exige comprar Rejeitar por 1 PA.
 
-- **Conta:** Mana 1 + Rejeitar 2 + Círculo 0 = **3 PM**.
+- **Conta:** Mana 0 + Rejeitar 1 + Círculo 0 = **1 PM**.
 - **Efeito:** contorno de até **3 m de diâmetro**, com origem ao toque.
 - **Duração:** até **15 turnos**: os 10 turnos básicos recebem o bônus do Círculo.
 - **Defesa:** barra magia Principiante que cruze a fronteira. Não tem PV físicos.
@@ -114,10 +116,10 @@ que mude essa regra. Nestas duas defesas, o mantenedor fica a até 9 m do circui
 ## 4. Aprenda mudando uma peça
 
 Use o Dardo Arcano como exercício: troque apenas **Círculo por Linha**.
-O custo sobe para **4 PM** e o alcance para **13,5 m**; o dano continua 1d6.
+O custo sobe para **2 PM** e o alcance para **13,5 m**; o dano continua 1d8 + BC.
 As duas formas já são conhecidas pelo iniciante.
 
-Depois, experimente a Parede com Círculo no lugar de Quadrado: **3 PM, 20 PV,
+Depois, experimente a Parede com Círculo no lugar de Quadrado: **1 PM, 20 PV,
 até 15 turnos**. Ela perde o reforço de PV e ganha duração; um contorno fechado
 pode ter até 3 m de diâmetro. Você escolhe o que precisa para a cena.
 
@@ -130,7 +132,7 @@ Fogo Principiante concede o símbolo de Fogo; Bardo Principiante concede Som.
 Você também pode estudar um símbolo comum por **1 PA**, sem abrir a escola.
 Isso não entrega as magias, talentos ou maestrias dessa escola.
 
-Se aprender Fogo, trocar Mana por Fogo no Dardo resulta em **4 PM e 1d6 ígneo**.
+Se aprender Fogo, trocar Mana por Fogo no Dardo resulta em **2 PM e 1d8 + BC ígneo**.
 O alvo não recebe Em Chamas automaticamente. Um símbolo tem os efeitos
 escritos em sua regra, não todos os efeitos que conseguimos imaginar para ele.
 
@@ -148,14 +150,14 @@ Escolha compras normais da árvore conforme o estilo que quiser desenvolver.
 - **Escriba de viagem:** prepara desenhos antes de explorar; pode se interessar
   por Mão de Giz e, no Intermediário, pela cópia fiel de moldes.
 - **Pesquisador das escolas:** coleciona essências e compara resultados; no
-  Avançado, pode estudar Encapsular para preparar magias que realmente conhece.
+  Avançado, liga células com gatilhos (livro, Cap. 2 §8).
 
 ## 7. Três desafios rápidos
 
 <details>
 <summary><strong>1. O alvo está a 12 m. Como adaptar o Dardo com uma troca?</strong></summary>
 
-Troque Círculo por Linha: o alcance vira 13,5 m, por 4 PM. Dano: 1d6 arcano.
+Troque Círculo por Linha: o alcance vira 13,5 m, por 2 PM. Dano: 1d8 + BC arcano.
 
 </details>
 
@@ -163,16 +165,16 @@ Troque Círculo por Linha: o alcance vira 13,5 m, por 4 PM. Dano: 1d6 arcano.
 <summary><strong>2. Comprei Rejeitar. Posso trocar Conter por ele e manter o Quadrado?</strong></summary>
 
 Essa receita fica inválida: Quadrado reforça uma estrutura com PV, e Rejeitar
-não cria PV. Para a Fronteira de Rejeição, use o Círculo: 3 PM. Conhecer todas
+não cria PV. Para a Fronteira de Rejeição, use o Círculo: 1 PM. Conhecer todas
 as peças não significa que qualquer combinação entre elas funcione.
 
 </details>
 
 <details>
-<summary><strong>3. Meu aliado tem 20 PM. Ele pode fortalecer meu Dardo pronto de 3 PM?</strong></summary>
+<summary><strong>3. Meu aliado tem 20 PM. Ele pode fortalecer meu Dardo pronto de 1 PM?</strong></summary>
 
-Ele pode alimentar o desenho pagando 3 PM, mesmo sem entender os símbolos.
-O resultado continua 1d6: os valores foram definidos na preparação e o circuito
+Ele pode alimentar o desenho pagando 1 PM, mesmo sem entender os símbolos.
+O resultado continua 1d8 + BC: os valores foram definidos na preparação e o circuito
 recusa excedentes. Um Dardo mais forte exige outra fórmula válida.
 
 </details>

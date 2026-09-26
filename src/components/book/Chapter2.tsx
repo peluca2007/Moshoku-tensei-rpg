@@ -2,10 +2,11 @@ import { INCANTATION_LENGTH, RANKS } from "@/lib/types";
 import { MAGIC_ACTIONS } from "@/data/trees/shared";
 import { COMBINED_SPELLS } from "@/data/combinedSpells";
 import { getTreeById, TREES } from "@/data/trees";
-import { LIMITES_TEORICOS, RANKS_TEORICOS } from "@/lib/magiaTeorica";
+
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import LaboratorioDeFormulas from "./LaboratorioDeFormulas";
 import Prancha from "./Prancha";
+import { TabelaDaPotencia, TabelasDasPecas, TabelaDasPrimeirasFrases, TabelaDosContatos, TabelaDosMeios } from "./RegrasDaTeorica";
 
 function tex(s: string): string {
   return s
@@ -562,7 +563,7 @@ export default function Chapter2() {
             [
               "Rejeitar (Magia Teórica)",
               "Magia Teórica",
-              "Rejeitar não interrompe: a magia é conjurada e barrada ao cruzar a fronteira (§8).",
+              "Não interrompe: a magia é conjurada e barrada ao cruzar a fronteira do selo (§8). Conter também não — ergue uma parede física, e magia atravessa.",
             ],
             [
               "Corte de Braço (Deus da Espada, Principiante)",
@@ -618,7 +619,7 @@ export default function Chapter2() {
             ],
             [
               "Quantas magias posso sustentar?",
-              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Cura do Santo sustenta duas). Um circuito ligado conta como uma sustentação. Circuitos da Magia Teórica têm limites próprios de células e carga registrados no desenho. Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
+              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Cura do Santo sustenta duas). Um circuito da Magia Teórica, com todas as células ligadas, conta como uma sustentação só (§8). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
             ],
             [
               "E se eu ficar sem PM no meio?",
@@ -639,88 +640,124 @@ export default function Chapter2() {
       <Section>
         <SectionTitle id="cap2-8">8. Magia Teórica — Oficina de Fórmulas</SectionTitle>
         <Prancha id="cap2-8" />
-        <Aside title="Proposta em teste, sujeita a mudanças">
-          Magia Teórica substitui a antiga árvore de Barreira e Proteção. Defesa agora é o ramo de Conter e Rejeitar.
-          Os custos e contratos das fórmulas ainda estão em teste e sujeitos a mudanças de equilíbrio.
-        </Aside>
-        <Aside title="Criar fórmulas é uma capacidade da árvore Magia Teórica">
-          Para construir ou alterar uma fórmula, você precisa ter Magia Teórica no rank usado e conhecer
-          todos os símbolos que inscreve. Outra árvore pode ensinar uma essência, como Fogo ou Som;
-          aprender essa essência não concede a capacidade de compor fórmulas. Aqui no livro, qualquer
-          leitor pode experimentar as combinações para estudar as regras.
-        </Aside>
-        <SubTitle>Comece com três peças</SubTitle>
         <P>
-          Na entrada da árvore, você aprende Mana, Projetar, Expressar, Conter, Círculo,
-          Quadrado e Linha. Rejeitar pode ser estudado por 1 PA. O núcleo diz <b>o que</b>{" "}
-          existe, a inscrição sobre ele diz <b>o que acontece</b> e o contorno diz{" "}
-          <b>como</b> o efeito se organiza.
+          A Magia Teórica não tem uma lista de magias: tem uma <b>gramática</b>. Você escreve uma frase em mana
+          — um núcleo, uma ação sobre ele, um contorno —, paga o PM da frase e ela acontece. É a herdeira da
+          antiga árvore de Barreira: a defesa agora é o ramo de <b>Conter</b> (deter corpos) e{" "}
+          <b>Rejeitar</b> (deter magia) da mesma gramática.
+        </P>
+        <Aside title="Criar fórmulas é uma capacidade da árvore">
+          Para construir ou alterar uma fórmula, você precisa ter Magia Teórica no rank usado e conhecer
+          todos os símbolos que inscreve. Outra árvore pode ensinar uma essência, como Fogo ou Som; aprender
+          a essência não dá a capacidade de compor fórmulas. Qualquer criatura capaz de pagar o PM pode{" "}
+          <b>alimentar</b> um desenho pronto, mesmo sem entendê-lo — PM a mais não amplia o efeito.
+        </Aside>
+
+        <SubTitle id="cap2-8-frase">A frase: núcleo, ação e forma</SubTitle>
+        <P>
+          O <b>núcleo</b> (a essência) diz o que existe; a <b>ação</b> (o operador) é um símbolo inscrito
+          sobre ele e diz o que acontece; a <b>forma</b> fecha o contorno e diz como o efeito se organiza.
+          A flecha de Projetar atravessa o símbolo de Mana: os dois traços formam um <b>glifo composto</b>.
+          Com mais de uma ação, pequenos números junto às inscrições dão a ordem. Na entrada da árvore você
+          já conhece Mana, Projetar, Expressar, Conter, Círculo, Quadrado e Linha.
+        </P>
+        <TabelaDasPrimeirasFrases />
+        <P>
+          Troque uma peça e veja o que muda: Linha no lugar de Círculo leva o Dardo mais longe; Círculo no
+          lugar de Quadrado deixa a parede com menos PV e mais duração. Um desenho novo com símbolos que você
+          já conhece <b>não custa PA</b> — PA aprende a peça; PM alimenta cada uso.
+        </P>
+
+        <SubTitle id="cap2-8-pecas">As peças</SubTitle>
+        <TabelasDasPecas />
+
+        <SubTitle id="cap2-8-custo">A conta: PM, potência e construção</SubTitle>
+        <P>
+          <b>Some o PM da essência, das ações e da forma.</b> O núcleo e a primeira ação são dois símbolos
+          e não pagam nada a mais; cada símbolo seguinte (outra ação, ou o gatilho) custa <b>+1 PM</b> pela
+          sobreposição, além do seu próprio custo. Um gatilho custa +2 PM e conta como símbolo. Some por fim
+          o acréscimo da <b>potência</b>.
+        </P>
+        <P>
+          <b>Construção</b> é o seu rank na Teórica: limita quantos símbolos e quanto PM cabem numa célula.{" "}
+          <b>Potência</b> é o patamar dos números do efeito — dados, PV, alcance, área —, escolhida ao
+          desenhar e nunca acima da construção. Um Rei pode desenhar um alarme de potência Principiante, e
+          ele custa como um.
+        </P>
+        <TabelaDaPotencia />
+        <P>
+          <b>Dano e cura.</b> Uma projeção de dano rola os dados da potência em <b>d8 + BC</b> (1d20 + BC
+          contra a CA pra acertar). Com Expandir, a área divide os dados pela metade e o alvo testa
+          Agilidade contra CD 8 + BC, metade no sucesso. Vida projetada <b>cura</b> os dados da potência em
+          d8, sem o BC. <b>Uma projeção ofensiva por turno</b>: você pode desenhar outras fórmulas no mesmo
+          turno, mas só uma delas causa dano.
+        </P>
+        <P>
+          <b>Alcance.</b> Sem Projetar, a fórmula nasce ao toque (estrutura) ou no ponto do desenho (sinal).
+          Projetar leva o efeito até o alcance da potência. A ordem é regra: <b>Expandir → Projetar</b> abre um
+          cone na origem com metade do alcance; <b>Projetar → Expandir</b> conserva o alcance e abre a área no
+          destino.
+        </P>
+
+        <SubTitle id="cap2-8-defesa">Deter corpos e deter magia</SubTitle>
+        <P>
+          <b>Conter</b> ergue uma fronteira física com os PV da potência (Quadrado +50%; Terra +50%; os dois
+          somam, não multiplicam). Ela bloqueia criaturas e projéteis até perder os PV; magia atravessa.{" "}
+          <b>Rejeitar</b> não tem PV: barra magia pela <b>Régua do Selo</b> — magia de rank igual ou inferior
+          à potência do selo não atravessa; um rank acima atravessa com dados, área e duração pela metade;
+          dois ou mais acima atravessa inteira. Corpos, armas e Touki atravessam. Rejeitar não interrompe
+          uma conjuração: a magia acontece e é barrada ao cruzar a fronteira.
+        </P>
+        <TabelaDosContatos />
+
+        <SubTitle id="cap2-8-meios">Onde se desenha, e quanto dura</SubTitle>
+        <TabelaDosMeios />
+        <P>
+          Conter e Rejeitar duram <b>10 turnos</b> (Círculo ×1,5; Repetir ×2), limitados pelo meio. No ar e
+          por gestos a fronteira não passa de 12 m; em suporte preparado, cresce com a área da potência.{" "}
+          <b>Sustentação:</b> uma fronteira ativa é a sua única sustentação (a mesma regra de qualquer magia,
+          §7), e um circuito ligado conta como uma só. Quem mantém precisa ficar dentro do alcance da
+          potência.
+        </P>
+
+        <SubTitle id="cap2-8-circuitos">Circuitos: células, ligações, gatilhos</SubTitle>
+        <P>
+          Do Avançado em diante, você liga <b>células</b> — fórmulas completas, cada uma com seu núcleo,
+          ações, forma e potência. Cada célula paga o próprio PM e respeita o próprio teto; cada{" "}
+          <b>ligação</b> entre duas células custa <b>+1 PM</b>. Romper uma célula encerra a saída dela e as
+          que dependem dela; romper a entrada principal encerra o circuito todo.
+        </P>
+        <P>
+          Um <b>gatilho</b> (Avançado, só em giz, pergaminho ou pedra) guarda uma carga completa e dispara{" "}
+          <b>uma vez</b> quando a condição declarada acontece: uma criatura entrar na área, alguém tocar o
+          desenho, ou — com duas células — a outra célula cair. A <b>Espiral</b> (Santo) guarda 2 PM por
+          rank da potência pra completar o pagamento depois; esse PM fica <b>empenhado</b>: enquanto estiver
+          no desenho, o seu máximo de PM cai no mesmo tanto, e descansar não o devolve.
         </P>
         <BookTable
-          headers={["Primeira frase", "Resultado com mana no ar"]}
+          headers={["Exemplo jogado: Alarme de Quebra (Avançado, em giz)", "Conta"]}
           rows={[
-            ["Mana + Projetar + Círculo", "3 PM, 2 Ações: ataque a 9 m, 1d6 arcano."],
-            ["Mana + Expressar + Círculo", "3 PM, 2 Ações: sinal sensorial de 1 turno, sem dano."],
-            ["Mana + Conter + Quadrado", "4 PM, 2 Ações: parede física de até 3 m e 30 PV por 1 minuto."],
+            ["Célula 1 — Mana + Conter + Quadrado, potência Intermediária", "0 + 1 + 1 + 1 (potência) = 3 PM: parede de 60 PV"],
+            ["Célula 2 — Mana + Expressar + Círculo + gatilho, potência Principiante", "0 + 1 + 0 + 1 (sobreposição) + 2 (gatilho) = 4 PM"],
+            ["Ligação: a queda da parede é o gatilho do sinal", "+1 PM"],
+            ["Total", "8 PM, 1 minuto de giz pra traçar; quando a parede cai, o sinal soa até 18 m"],
           ]}
         />
+
+        <SubTitle id="cap2-8-cartas">As cartas são fórmulas decoradas</SubTitle>
         <P>
-          Tente trocar uma peça: Linha no Dardo Arcano aumenta o alcance para 13,5 m
-          e o custo para 4 PM. Círculo no lugar de Quadrado deixa a parede com 20 PV,
-          por 3 PM, e estende sua duração a 15 turnos. Um desenho novo com símbolos
-          conhecidos não custa PA a cada uso.
+          As cartas da árvore (Cap. 3) são fórmulas dessa mesma gramática, com os mesmos números — o livro e
+          a Oficina calculam as duas do mesmo jeito. O que a carta vende é o que o desenho não tem: ela
+          conjura <b>pela forma normal de magia, com cântico</b>, e por isso ganha Recitação Perfeita,
+          Encantamento Encurtado e Conjuração Silenciosa (§2), que a fórmula desenhada nunca recebe. E
+          algumas ensinam uma <b>exceção</b> escrita na própria carta — durar mais, ou nascer como Reação,
+          como a Parede de Emergência.
         </P>
         <P>
-          Uma fórmula é uma frase escrita em mana. O <b>núcleo</b> diz o que existe; os <b>operadores</b>{" "}
-          são símbolos inscritos sobre esse núcleo. A flecha de <b>Projetar</b> atravessa o símbolo de
-          Fogo: os dois traços formam um <b>glifo composto</b>. Pequenos números junto às inscrições
-          indicam sua ordem. A <b>forma externa</b> modifica a saída, e o <b>meio</b> determina como o
-          desenho é preparado.
-        </P>
-        <P>
-          Nesta árvore, Barreira é o ramo de <b>Conter e Rejeitar</b>. <b>Mana → Conter</b> levanta uma fronteira física, enquanto{" "}
-          <b>Mana → Rejeitar</b> barra magia. Os seis símbolos de essência são <b>Fogo, Água, Vento, Terra, Som e Vida</b>. Quem conhece um deles pode usá-lo em{" "}
-          outra fórmula sem ganhar as magias prontas da árvore de origem. Um símbolo pode ser aprendido{" "}
-          abrindo essa árvore ou comprado avulso por 1 PA.
-        </P>
-        <Aside title="Ler, construir e alimentar são coisas diferentes">
-          Um teórico entende e desenha o circuito; qualquer criatura capaz de fornecer o PM necessário
-          pode alimentar um desenho pronto, mesmo sem saber o que ele fará. PM extra não amplia o efeito:
-          a capacidade já foi definida pela fórmula.
-        </Aside>
-        <SubTitle>O custo da frase</SubTitle>
-        <P>
-          Some o PM da essência, dos operadores e da forma. A primeira ação sobre o núcleo não cobra
-          ligação extra; cada componente acrescentado depois custa +1 PM pela sobreposição, além de seu próprio custo;
-          um gatilho conta como componente: custa +2 PM e paga +1 PM de sobreposição. O rank de <b>construção</b> limita o tamanho e o custo total;
-          a <b>potência</b> define os números do efeito e não pode superar a construção.
-          O alimentador pode ser outra pessoa, mas não pode ultrapassar o
-          circuito que foi desenhado.
-        </P>
-        <P>
-          Um glifo de Fogo com Projetar conta como <b>dois componentes</b>, mesmo formando um único desenho.
-          O <b>Círculo</b> é o contorno básico, sem custo adicional: aceita uma projeção instantânea e,
-          quando existe um efeito sustentado, multiplica sua duração por 1,5 dentro do limite do material.
-        </P>
-        <BookTable
-          headers={["Construção", "Componentes", "PM máximo", "Cobertura se potência igual ao rank"]}
-          rows={RANKS_TEORICOS.map((rank) => [rank, String(LIMITES_TEORICOS[rank].simbolos), String(LIMITES_TEORICOS[rank].pm), `${LIMITES_TEORICOS[rank].area} m`])}
-        />
-        <P>
-          A ordem também é regra: <b>Expandir → Projetar</b> abre um cone na origem e reduz o alcance à metade;{" "}
-          <b>Projetar → Expandir</b> conserva o alcance e abre a área no destino. As setas são uma legenda de leitura;
-          no desenho, as ações ficam sobrepostas ao núcleo e recebem a numeração correspondente.
-        </P>
-        <P>
-          Experimente abaixo. Comece com um dos três exemplos e mude uma peça por vez. O laboratório{" "}
-          mostra o custo e explica por que uma combinação funciona ou ultrapassa o limite do rank.
+          Experimente abaixo. Comece por um dos exemplos e mude uma peça por vez: o laboratório calcula o
+          custo, os números e por que uma combinação ultrapassa o limite do rank.
         </P>
         <LaboratorioDeFormulas />
-        <P className="text-sm">
-          Esta oficina apresenta as regras em teste da Magia Teórica. O editor
-          calcula uma célula por vez; fórmulas com várias células, talentos e armazenamento de PM ainda
-          estão no documento de proposta e não são resolvidos aqui.
-        </P>
       </Section>
 
       <FimDoCapitulo id="cap2" />

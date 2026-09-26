@@ -1,3 +1,12 @@
+/*
+ * RECALIBRAGEM 2026-09-26 (decisão do autor, a partir da revisão de design):
+ * a gramática custava ~3× o PM de uma escola elemental pelo mesmo efeito — o
+ * Dardo fazia 1d6 por 3 PM contra 1d8+BC por 1 PM da Bola de Fogo, e a
+ * potência alta era opção morta. Agora: Mana 0 PM, as ações centrais 1 PM, a
+ * potência sobe +0/+1/+2/+4/+6/+8, o dado é d8 e o BC entra no dano. A meta é
+ * ~75% da escola especialista por PM; o que a Teórica tem de único é montar o
+ * efeito que quiser. E uma projeção ofensiva por turno (§8).
+ */
 export const RANKS_TEORICOS = [
   "Principiante",
   "Intermediário",
@@ -10,24 +19,24 @@ export const RANKS_TEORICOS = [
 export type RankTeorico = (typeof RANKS_TEORICOS)[number];
 
 export const ESSENCIAS = {
-  mana: { nome: "Mana", custo: 1, origem: "Magia Teórica", tipo: "arcano", cor: "#78d5d0", glifo: "◇" },
-  fogo: { nome: "Fogo", custo: 2, origem: "Fogo Principiante ou 1 PA", tipo: "ígneo", cor: "#f9a56c", glifo: "△" },
-  agua: { nome: "Água", custo: 2, origem: "Água Principiante ou 1 PA", tipo: "contundente", cor: "#80bdea", glifo: "≋" },
-  vento: { nome: "Vento", custo: 2, origem: "Vento Principiante ou 1 PA", tipo: "cortante", cor: "#a7d9c2", glifo: "⌁" },
-  terra: { nome: "Terra", custo: 2, origem: "Terra Principiante ou 1 PA", tipo: "contundente", cor: "#d8b986", glifo: "▱" },
-  som: { nome: "Som", custo: 2, origem: "Bardo Principiante ou 1 PA", tipo: "trovejante", cor: "#d3acf5", glifo: "♫" },
-  vida: { nome: "Vida", custo: 2, origem: "Cura Principiante ou 1 PA", tipo: "cura", cor: "#c6df98", glifo: "✧" },
+  mana: { nome: "Mana", custo: 0, origem: "Magia Teórica", tipo: "arcano", cor: "#78d5d0", glifo: "◇" },
+  fogo: { nome: "Fogo", custo: 1, origem: "Fogo Principiante ou 1 PA", tipo: "ígneo", cor: "#f9a56c", glifo: "△" },
+  agua: { nome: "Água", custo: 1, origem: "Água Principiante ou 1 PA", tipo: "contundente", cor: "#80bdea", glifo: "≋" },
+  vento: { nome: "Vento", custo: 1, origem: "Vento Principiante ou 1 PA", tipo: "cortante", cor: "#a7d9c2", glifo: "⌁" },
+  terra: { nome: "Terra", custo: 1, origem: "Terra Principiante ou 1 PA", tipo: "contundente", cor: "#d8b986", glifo: "▱" },
+  som: { nome: "Som", custo: 1, origem: "Bardo Principiante ou 1 PA", tipo: "trovejante", cor: "#d3acf5", glifo: "♫" },
+  vida: { nome: "Vida", custo: 1, origem: "Cura Principiante ou 1 PA", tipo: "cura", cor: "#c6df98", glifo: "✧" },
 } as const;
 
 export type EssenciaId = keyof typeof ESSENCIAS;
 
 export const OPERADORES = {
-  projetar: { nome: "Projetar", custo: 2, papel: "Envia o efeito a um alvo ou ponto.", glifo: "➶" },
-  expressar: { nome: "Expressar", custo: 2, papel: "Emite um sinal sensorial sem dano ou condição.", glifo: ")))" },
-  conter: { nome: "Conter", custo: 2, papel: "Forma uma fronteira física com PV.", glifo: "⊏⊐" },
-  rejeitar: { nome: "Rejeitar", custo: 2, papel: "Barra magia que cruza a fronteira.", glifo: "⟩⟨" },
-  expandir: { nome: "Expandir", custo: 3, papel: "Abre a saída em uma área maior.", glifo: "✣" },
-  repetir: { nome: "Repetir", custo: 3, papel: "Produz uma segunda saída enfraquecida.", glifo: "↻" },
+  projetar: { nome: "Projetar", custo: 1, papel: "Envia o efeito a um alvo ou ponto.", glifo: "➶" },
+  expressar: { nome: "Expressar", custo: 1, papel: "Emite um sinal sensorial sem dano ou condição.", glifo: ")))" },
+  conter: { nome: "Conter", custo: 1, papel: "Forma uma fronteira física com PV.", glifo: "⊏⊐" },
+  rejeitar: { nome: "Rejeitar", custo: 1, papel: "Barra magia que cruza a fronteira.", glifo: "⟩⟨" },
+  expandir: { nome: "Expandir", custo: 2, papel: "Abre a saída em uma área maior.", glifo: "✣" },
+  repetir: { nome: "Repetir", custo: 2, papel: "Produz uma segunda saída enfraquecida.", glifo: "↻" },
 } as const;
 
 export type OperadorId = keyof typeof OPERADORES;
@@ -63,11 +72,11 @@ export type MeioId = keyof typeof MEIOS;
 
 const PERFIL = {
   Principiante: { simbolos: 2, pm: 6, area: 3, alcance: 9, dados: 1, pv: 20, potencia: 0 },
-  Intermediário: { simbolos: 4, pm: 10, area: 6, alcance: 18, dados: 2, pv: 40, potencia: 2 },
-  Avançado: { simbolos: 6, pm: 16, area: 12, alcance: 27, dados: 3, pv: 60, potencia: 4 },
-  Santo: { simbolos: 9, pm: 24, area: 30, alcance: 45, dados: 4, pv: 80, potencia: 7 },
-  Rei: { simbolos: 13, pm: 40, area: 150, alcance: 90, dados: 5, pv: 100, potencia: 11 },
-  Imperador: { simbolos: 18, pm: 60, area: 750, alcance: 150, dados: 6, pv: 120, potencia: 16 },
+  Intermediário: { simbolos: 4, pm: 10, area: 6, alcance: 18, dados: 2, pv: 40, potencia: 1 },
+  Avançado: { simbolos: 6, pm: 16, area: 12, alcance: 27, dados: 3, pv: 60, potencia: 2 },
+  Santo: { simbolos: 9, pm: 24, area: 30, alcance: 45, dados: 4, pv: 80, potencia: 4 },
+  Rei: { simbolos: 13, pm: 40, area: 150, alcance: 90, dados: 5, pv: 100, potencia: 6 },
+  Imperador: { simbolos: 18, pm: 60, area: 750, alcance: 150, dados: 6, pv: 120, potencia: 8 },
 } as const;
 
 export const LIMITES_TEORICOS = PERFIL;
@@ -197,7 +206,7 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
   const ofensiva = temProjetar && !estrutura;
   const projecaoEmArea = ofensiva && temExpandir;
   const alcanceNumero = medir(perfilPotencia.alcance * (escolha.forma === "linha" ? 1.5 : 1) * (expandirAntesDeProjetar ? 0.5 : 1));
-  const alcance = `${alcanceNumero} m`;
+  const alcance = temProjetar ? `${alcanceNumero} m` : temExpressar ? "no ponto do desenho" : "toque";
   const coberturaFinal = Math.min(cobertura * (temExpandir ? 2 : 1), escolha.meio === "gesto" || escolha.meio === "ar" ? 12 : Number.POSITIVE_INFINITY);
   const area = estrutura
     ? escolha.forma === "linha"
@@ -215,8 +224,9 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
   const dadosPrimeiraSaida = projecaoEmArea && raioEfetivo > 0 ? Math.ceil(dadosDirigidos / 2) : dadosDirigidos;
   const dadosEco = temRepetir && ofensiva && escolha.essencia !== "vida" ? Math.min(Math.ceil(dadosPrimeiraSaida / 2), Math.max(0, 2 * perfilPotencia.dados - dadosPrimeiraSaida)) : 0;
   if (temRepetir && ofensiva && escolha.essencia !== "vida" && dadosEco === 0) erros.push("A repetição ultrapassaria o orçamento de dados desta potência.");
-  const dadoPrincipal = `${dadosPrimeiraSaida}d6`;
-  const dano = ofensiva ? `${dadoPrincipal}${dadosEco ? ` + ${dadosEco}d6 no turno seguinte` : ""}${escolha.forma === "estrela" ? " total, dividido entre até 3 alvos" : ""}` : null;
+  const dadoPrincipal = `${dadosPrimeiraSaida}d8`;
+  const cura = escolha.essencia === "vida";
+  const dano = ofensiva ? `${dadoPrincipal}${cura ? "" : " + BC"}${dadosEco ? ` + ${dadosEco}d8 no turno seguinte` : ""}${escolha.forma === "estrela" ? " total, dividido entre até 3 alvos" : ""}` : null;
   const tipo = ofensiva ? essencia.tipo : null;
   const turnos = estrutura ? Math.ceil(10 * (temRepetir ? 2 : 1) * (escolha.forma === "circulo" ? 1.5 : 1)) : temExpressar ? 1 : 0;
   const turnosAtivos = Math.min(turnos, DURACOES_MATERIAL[escolha.meio]);
@@ -231,6 +241,7 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
       ? `Área: Agilidade contra CD 8 + BC; metade do dano no sucesso. Dados dirigidos: ${dadosDirigidos}d6; orçamento de área: ${dadoPrincipal}.`
       : `Alvo único: 1d20 + BC contra CA${escolha.forma === "estrela" ? "; distribua os dados inteiros entre até três alvos antes de rolar" : ""}.`
     : null;
+  const umaPorTurno = ofensiva && !cura ? " Uma projeção ofensiva por turno (§8)." : "";
   if (projecaoEmArea && escolha.forma === "triangulo" && raioEfetivo === 0) erros.push("Triângulo reduziria esta área a um alvo; remova Expandir ou aumente a potência.");
   const magiaBarrada = escolha.essencia === "mana" ? "magia" : `magia de ${essencia.nome}`;
   const regraDoSelo = `${magiaBarrada} de rank ${potencia} ou inferior; um rank acima atravessa com dados, área e duração pela metade; dois ou mais ranks acima atravessam integralmente`;
@@ -296,7 +307,7 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
     potencia,
     preparo: meio.preparo,
     ativacao,
-    resolucao,
+    resolucao: resolucao ? resolucao + umaPorTurno : null,
     duracao,
     alcance,
     area,
