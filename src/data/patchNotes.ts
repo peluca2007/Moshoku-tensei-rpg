@@ -16,6 +16,47 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.97",
+    date: "2026-09-26",
+    title: "A revisão do livro inteiro",
+    sections: [
+      {
+        heading: "Magia Teórica recalibrada",
+        items: [
+          "A gramática custava cerca de três vezes o PM de uma escola elemental. Agora Mana custa 0 PM, as ações 1 PM, a potência sobe +0/+1/+2/+4/+6/+8 e o dano é d8 + BC (a cura, d8). Uma projeção ofensiva por turno.",
+          "Cada carta é a fórmula do laboratório decorada, com os mesmos números, e ganha o cântico (Recitação, Encurtada, Silenciosa). Carta nova: Parede de Emergência, uma Reação. As regras de circuitos, gatilho e reserva estão no Cap. 2 §8, com tabelas geradas do motor.",
+        ],
+      },
+      {
+        heading: "Conjuração e criação",
+        items: [
+          "Tabela d100 de raças no livro; o site rola a mesma.",
+          "Encurtada e Silenciosa: o dano total (dados + BC) cai pela metade. A Padrão volta a valer a pena.",
+          "Teto de PM dos dois primeiros patamares: máx(Espírito, 4) × Bônus + 8. O Espírito rende desde a criação.",
+          "Recitação Perfeita em magia com teste: o alvo resiste com Desvantagem.",
+          "A compra de resistência vira +2 permanente (Resistência Treinada). Intimidação passa a ser de Força.",
+        ],
+      },
+      {
+        heading: "Árvores",
+        items: [
+          "Segunda Bala +1 Ação; Colapso Solar 10d10 + BC em 30 m; Cabeçada tira 1 Ação, uma vez por combate por alvo; Vazio com teste de Vigor por turno e 3 turnos; Urso das Cavernas 2d10.",
+          "Toda escola elemental exclui aliados da área na Maestria do Avançado. Flashover e Sol Menor em 3 Ações. Vendaval exige Intermediário nas duas árvores-mãe. Flecha de Touki no Santo.",
+          "Maestrias que repetiam talento agora melhoram o talento (Mão Silenciosa, Zero Perfurante, Convocação Aprimorada, Coração de Brasa).",
+        ],
+      },
+      {
+        heading: "Combate e mesa",
+        items: [
+          "Chefe: PV dobrado, mesmo dano, uma rodada a cada dois personagens, e pesa 5 no orçamento. Quatro temperaturas de encontro.",
+          "Exaustão: Desvantagem em ataque e resistência e a queda do Manto só no nível 3. Trauma só por ver um aliado morrer, e só nas perícias sociais.",
+          "Esquivar vale contra todos os ataques de uma criatura; Defender reduz todos os golpes; Bloquear com Escudo reduz 2 × o Bônus de Rank.",
+          "Todo personagem começa Rank F na Guilda. A Marca do Mestre reabre o dojo uma vez só.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.96",
     date: "2026-09-24",
     title: "Chefes que lutam como a própria ficha",
