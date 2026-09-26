@@ -30,3 +30,16 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 | `vol05-ilustracao.webp` | Eris, Ruijerd, Paul e outros num grupo armado. | Prancha do Cap. 4 ou do Apêndice F (cerco). |
 | `vol08-capa.webp` | Capa do volume 8: grupo andando pela cidade de Ranoa. | Página inteira entre capítulos. |
 | `vol11-capa.webp` | Capa do volume 11: a família num corredor iluminado. | Página inteira entre capítulos, ou o Cap. 5 (tempo livre). |
+| `talhand-retrato.recorte.webp` | Talhand de corpo inteiro, sem fundo (era a Raça Anã até o quarto lote). | Vinheta da Raça Anã, ou a árvore de Terra. |
+| `elinalise-retrato.recorte.webp` | Elinalise de corpo inteiro, sem fundo (era a Raça Élfica). | Antecedente de aventureira, ou vinheta da Raça Élfica. |
+| `rudeus-adulto.recorte.webp` | Rudeus adulto, sem fundo (era a Raça Humana). | Vinheta do Comece Aqui. |
+| `atofe-capa-manga.webp` e `atofe-capa-manga-larga.webp` | Atofe em arte de capa de mangá, com texto em japonês. | Segunda arte do Demônio Imortal. |
+| `migurds-grupo.webp` | Um grupo de Migurds (era a Raça Migurd). | Vinheta da Raça Migurd. |
+| `ogro-pequeno.webp` | Um ogro, em arte pequena (era a Raça Ogro). | Só miniatura. |
+| `guerreira-celestial.recorte.webp` | Uma guerreira alada, sem fundo (era a Raça Celestial). | Bestiário, ou vinheta da Raça Celestial. |
+| `tritao-guerreiro.recorte.webp` | Um tritão guerreiro, sem fundo (era a Raça do Oceano). | Bestiário (criatura do mar). |
+| `ruijerd-retrato.webp` | Ruijerd em pé, retrato (era a Raça Superd). | Vinheta da Raça Superd. |
+| `ghislaine-recorte.recorte.webp` | Ghislaine sem fundo (era o retrato do Deus da Espada). | Raça Fera. |
+| `deus-da-agua-sorrindo.webp` | Uma espadachim de cabelo azul sorrindo junto à janela (era a prancha do Triângulo). | Árvore do Deus da Água, ou antecedente. |
+| `auber-deus-do-norte.webp` | O Deus do Norte de poncho listrado, outra cena (640 px). | Vinheta do Deus do Norte. |
+| `hobbits-folha-de-modelo.webp` | Quatro hobbits lado a lado, folha de modelo (250 px: bem pequena). | Só miniatura. |

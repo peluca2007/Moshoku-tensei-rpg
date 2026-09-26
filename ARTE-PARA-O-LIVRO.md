@@ -57,6 +57,14 @@ Aqui, §4), Reputação com Facções e Crafting (Cap. 5, §3 e §4) e Viagem en
 que cada uma mostra e onde pode entrar. As imagens soltas na raiz de `public/` do checkout principal já
 têm cópia no livro ou no acervo e podem ser apagadas.
 
+### Quarto lote (2026-09-26)
+
+Oito raças trocaram de arte por cenas largas, que enchem o quadro da página da raça: Anã, Demônio
+Imortal (Atofe), Élfica, Humana (Rudeus e Eris na floresta), Migurd (Roxy), Ogro, Celestial e Superd
+(Ruijerd). A prancha do Deus da Água voltou em resolução dupla; os três deuses da espada lado a lado viraram
+a prancha do Triângulo dos Estilos; a Ghislaine em pé é o retrato do Deus da Espada. As artes trocadas e as
+que ainda não têm lugar (Auber, os hobbits pequenos, a Atofe de mangá) foram pro .
+
 ## Prioridade 1 — o que ainda falta nas raças e nas árvores
 
 - Todas as raças e árvores já têm arte. Falta só resolução: `capitulos/abertura-cap1` (592 px).
