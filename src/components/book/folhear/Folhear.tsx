@@ -978,7 +978,7 @@ export default function Folhear({
 
                   <div
                     ref={fluxo}
-                    className={livro ? "folhear-fluxo" : "folhear-continuo livro-pagina surface"}
+                    className={livro ? `folhear-fluxo${fontesProntas ? "" : " folhear-esperando"}` : "folhear-continuo livro-pagina surface"}
                   >
                     {/* O LIVRO FECHADO (2026-09-25, pedido do autor: "pense igual um
                         livro"). A primeira dupla é uma página fantasma à esquerda

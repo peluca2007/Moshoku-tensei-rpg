@@ -345,12 +345,20 @@
   margin-top: 0;
 }
 
-/* O palco espera a diagramação escondido; sem JavaScript, o <noscript> da
-   página devolve a visibilidade. */
+/* O palco espera o modo fora da diagramação: `display: none`, e não só
+   invisível, porque invisível o navegador ainda diagrama o livro inteiro em
+   modo contínuo (~1,4 s medidos) só pra jogar fora quando o modo Livro chega.
+   Sem JavaScript, o <noscript> da página devolve o palco. */
 @media (min-width: 768px) {
   .folhear:not([data-modo]) .folhear-palco {
-    visibility: hidden;
+    display: none;
   }
+}
+
+/* O fluxo do livro espera as fontes: diagramá-lo com a fonte de reserva é
+   uma diagramação inteira jogada fora quando a fonte certa chega (~0,5 s). */
+.folhear-fluxo.folhear-esperando {
+  display: none;
 }
 
 .folhear[data-modo="livro"]:not([data-pronto]) .folhear-palco {

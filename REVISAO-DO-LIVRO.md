@@ -99,7 +99,6 @@ na data da revisão (as linhas podem ter andado; procure pelo trecho).
   lugar da Praga. ~177: maior preço é **2.000 PO**. ~134-140: acrescentar os itens travados por Rank que
   faltam (Vigor Passageiro D, Régia B, Regeneração A, Imperial e Égide Lendária S).
 - ~~`Chapter4.tsx` teto de PM~~ — já reescrito junto com a decisão 2 (B).
-  com Migurd" (é 15; 17 só com Nascente de Mana).
 - `Chapter4.tsx` ~626/638: "qualquer magia de Cura de rank Avançado ou superior, fora de combate".
 - `Chapter4.tsx` ~137-141: "+1 no Principiante e Intermediário, +2 no Avançado e Santo, +3 no Rei e
   Imperador". ~619: "testes de Vigor". ~627: "Encantamento Encurtado". ~230: "Teste de Concentração".
