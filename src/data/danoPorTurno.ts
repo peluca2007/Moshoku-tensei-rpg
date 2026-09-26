@@ -115,18 +115,18 @@ export const COLUNAS_CORPO: ColunaDano[] = [
 ];
 
 export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = [
-  { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "~10", desintoxicacao: "~12", teorica: "1d6", invocacao: "~13" } },
-  { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "~12", desintoxicacao: "~13", teorica: "fórmula", invocacao: "~24" } },
+  { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "~10", desintoxicacao: "~12", teorica: "~10", invocacao: "~13" } },
+  { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "~12", desintoxicacao: "~13", teorica: "~21", invocacao: "~24" } },
   // Água no 3º subiu de ~30 para ~44 em 0.1.87: a Quebra de Gelo passou a
   // cobrar pelo Congelado (+3d8 e acerto automático contra alvo congelado), que
   // era o pagamento que a escola prometia e nunca entregava. O número alto só
   // acontece com o combo inteiro montado — molhar, congelar, estilhaçar —, e é
   // exatamente isso que a régua deve mostrar: a Água paga em turnos e recebe de
   // uma vez.
-  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~16", teorica: "fórmula", invocacao: "~38" } },
-  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~17", teorica: "fórmula", invocacao: "~55" } },
-  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~34", teorica: "fórmula", invocacao: "~80" } },
-  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~36", teorica: "fórmula", invocacao: "~110" } },
+  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~16", teorica: "~28", invocacao: "~38" } },
+  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~17", teorica: "~31", invocacao: "~55" } },
+  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~34", teorica: "~31", invocacao: "~80" } },
+  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~36", teorica: "~31", invocacao: "~110" } },
 ];
 
 export const DANO_POR_TURNO_CORPO: DanoPorTurnoLinha[] = [

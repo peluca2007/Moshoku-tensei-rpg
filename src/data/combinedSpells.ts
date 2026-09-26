@@ -17,7 +17,7 @@ import { RankName } from "@/lib/types";
  *    `rankRequired` genérico por cima que não correspondia a nada verificável.
  *
  * 2. **Os requisitos ficaram DESIGUAIS de propósito.** Barreira Incandescente
- *    pede Barreira Avançado + Fogo Intermediário e é acessível cedo; Meteoro
+ *    pede Magia Teórica Avançado + Fogo Intermediário e é acessível cedo; Meteoro
  *    pede Fogo Rei + Terra Avançado e é o topo. Uma tabela em que tudo custa o
  *    mesmo não é uma tabela de escolhas — é uma lista.
  *
