@@ -67,7 +67,6 @@ outros ficam aqui, pra abrir árvores de página inteira (a ideia da próxima ro
 | `punho-de-fogo-ruiva.webp` | Lutadora ruiva com leão de fogo. | Punho do Fogo. |
 | `punho-de-fogo-bombeiro.webp` | Bombeiro de pés em chamas (pequena). | Punho do Fogo, arte de habilidade. |
 | `espadachim-lamina-vermelha-larga.webp` | Espadachim de lâmina vermelha com água, larga (1920 px). | Deus do Norte. |
-| `espadachim-da-agua-em-pe.webp` | Espadachim de haori xadrez com água em volta. | Deus da Água. |
 | `arqueira-na-floresta.webp` | Arqueira de arco puxado na mata (pequena). | Arquearia. |
 | `espadachim-com-espirito.webp` | Espadachim com um espírito enorme atrás (pequena). | Espíritos e Feras. |
 | `lutador-chute.webp` | Lutador de faixa no meio de um chute (pequena). | Lutador. |
