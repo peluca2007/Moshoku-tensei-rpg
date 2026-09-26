@@ -409,6 +409,7 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
   });
   // TABELA QUE ABRE NO PÉ DA COLUNA com o cabeçalho e uma ou duas linhas: é o
   // título órfão das tabelas. Ela desce inteira, pelos mesmos degraus.
+  const topoDasTabelas = fluxo.getBoundingClientRect().top;
   fluxo.querySelectorAll(".livro-tabela").forEach((caixa) => {
     if (!visivel(caixa)) return;
     const linhas = Array.from(caixa.querySelectorAll("tbody tr:not(.folhear-cabecalho-repetido)"));
@@ -424,7 +425,12 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
       if (!q || coluna(q) !== c0) break;
       juntas++;
     }
-    if (juntas < Math.min(3, linhas.length - 1)) empurrar.add(caixa);
+    // Só desce a tabela que abre no último terço da coluna: mais acima, descer
+    // deixa um buraco maior que o defeito (a das Magias Combinadas abria no
+    // meio da página com duas linhas altas, e descer deixava 44% em branco).
+    const colunaAlta = g.altura - g.topo - g.pe;
+    const sobra = colunaAlta - (primeira.top - topoDasTabelas) / r.k;
+    if (juntas < Math.min(3, linhas.length - 1) && sobra < colunaAlta * 0.3) empurrar.add(caixa);
   });
 
   // Título empurrado leva o bloco seguinte junto: uma quebra própria do bloco
@@ -556,7 +562,7 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   const vitrines = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-vitrine"));
   if (vitrines.length === 0) return;
   vitrines.forEach((el) => {
-    el.classList.remove("folhear-vitrine-cheia", "folhear-vitrine-compacta", "folhear-vitrine-some");
+    el.classList.remove("folhear-vitrine-cheia", "folhear-vitrine-compacta", "folhear-vitrine-some", "folhear-vitrine-faixa");
     el.style.removeProperty("--altura-vitrine");
   });
   const topo = fluxo.getBoundingClientRect().top;
@@ -564,6 +570,13 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   const medidas = vitrines.map((el) => alturaDaColuna - (el.getBoundingClientRect().top - topo) / r.k);
   vitrines.forEach((el, i) => {
     const resto = Math.floor(medidas[i]) - 2;
+    // A vitrine de coluna existe pra encher o buraco AO LADO de alguma coisa.
+    // Se ela abre a coluna, não enche nada — cria o buraco: vira uma faixa
+    // baixa de margem a margem, e o que vem depois sobe.
+    if (el.classList.contains("livro-vitrine-arvores") && resto >= alturaDaColuna - 10) {
+      el.classList.add("folhear-vitrine-faixa");
+      return;
+    }
     // A vitrine de coluna (a das árvores) já nasce visível, com altura mínima: só cresce.
     // O fecho é uma ilustração: faixa baixa demais só mostraria um recorte.
     if (resto < (el.classList.contains("livro-fecho") ? 340 : 150)) return;
@@ -573,7 +586,9 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   // O espaço mudou com o resto do livro (uma prancha nova antes, um texto
   // maior): se o conteúdo não coube, somem os nomes; se nem assim, a vitrine.
   const transborda = (el: HTMLElement) => el.scrollHeight > el.clientHeight + 2;
-  const visiveis = vitrines.filter((el) => !el.classList.contains("livro-fecho") && (el.classList.contains("folhear-vitrine-cheia") || el.classList.contains("livro-vitrine-arvores")));
+  const visiveis = vitrines.filter(
+    (el) => !el.classList.contains("livro-fecho") && !el.classList.contains("folhear-vitrine-faixa") && (el.classList.contains("folhear-vitrine-cheia") || el.classList.contains("livro-vitrine-arvores")),
+  );
   const cheias = visiveis.filter(transborda);
   if (cheias.length === 0) return;
   cheias.forEach((el) => el.classList.add("folhear-vitrine-compacta"));
@@ -591,20 +606,27 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
  *
  * @returns quantos calços saíram
  */
-export function limparCalcosInuteis(fluxo: Element, r: Regua): number {
+export function limparCalcosInuteis(fluxo: Element, r: Regua, g: Pick<Geometria, "pagina">): number {
   const topo = fluxo.getBoundingClientRect().top;
-  let saiu = 0;
-  fluxo.querySelectorAll(".folhear-calco").forEach((calco) => {
-    // Vazar uns pixels pra página seguinte é o esperado (é o que empurra o
-    // bloco); inútil é o calço que já começa no topo de uma coluna.
+  const pagina = (q: DOMRect) => Math.floor((q.left - r.origem) / r.k / g.pagina);
+  // Tudo lido antes de tirar qualquer calço (tirar um rediagrama o livro).
+  const inuteis = Array.from(fluxo.querySelectorAll(".folhear-calco")).filter((calco) => {
     const primeiro = calco.getClientRects()[0];
-    if (!primeiro || (primeiro.top - topo) / r.k >= 8) return;
-    const seguinte = calco.nextElementSibling;
-    seguinte?.classList.remove("folhear-calcado", "folhear-inteira", "folhear-segura", "folhear-empurra");
-    calco.remove();
-    saiu++;
+    if (!primeiro) return false;
+    // Vazar uns pixels pra página seguinte é o esperado (é o que empurra o
+    // bloco); inútil é o calço que já começa no topo de uma coluna…
+    if ((primeiro.top - topo) / r.k < 8) return true;
+    // …ou o que não empurrou nada: o bloco dele ficou na MESMA página, ao
+    // lado de uma coluna que o calço deixou em branco (a tabela das etapas do
+    // Tiro Perfeito, com meia página vazia do lado).
+    const depois = calco.nextElementSibling?.getClientRects()[0];
+    return !!depois && pagina(depois) === pagina(primeiro);
   });
-  return saiu;
+  inuteis.forEach((calco) => {
+    calco.nextElementSibling?.classList.remove("folhear-calcado", "folhear-inteira", "folhear-segura", "folhear-empurra");
+    calco.remove();
+  });
+  return inuteis.length;
 }
 
 /**

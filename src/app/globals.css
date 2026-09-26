@@ -362,6 +362,23 @@ h3 {
 .livro-anatomia .livro-cantico::after { content: "5"; }
 
 /*
+ * Árvore ou habilidade citada no texto (citacoes.tsx). Na leitura contínua é
+ * um link discreto de pergaminho; no livro folheado ganha a cor e o selo da
+ * árvore (folhear.css).
+ */
+.livro-shell a.livro-citacao {
+  color: var(--color-wine-700);
+  font-weight: 600;
+  text-decoration: underline dotted;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-underline-offset: 0.18em;
+}
+
+.dark .livro-shell a.livro-citacao {
+  color: var(--color-wine-300);
+}
+
+/*
  * A PÁGINA — a folha em que o livro é impresso (2026-09-23).
  *
  * Até aqui o livro inteiro morava num cartão: `rounded-2xl`, borda nos quatro

@@ -276,7 +276,7 @@
 
 .folhear[data-modo="livro"] .folhear-fluxo,
 .folhear[data-modo="livro"] .folhear-fluxo [data-capitulo],
-.folhear[data-modo="livro"] .folhear-fluxo [data-arvore],
+.folhear[data-modo="livro"] .folhear-fluxo [data-arvore]:not(.livro-citacao),
 .folhear[data-modo="livro"] .folhear-fluxo [data-raca] {
   --color-wine-50: color-mix(in oklab, var(--cor) 9%, #fff);
   --color-wine-100: color-mix(in oklab, var(--cor) 18%, #fff);
@@ -4484,4 +4484,182 @@ html.livro-imersivo {
   font-weight: 800;
   line-height: 1;
   transform: rotate(-5deg);
+}
+
+/* ── As árvores citadas no texto (citacoes.tsx) ───────────────────────────
+ * Toda árvore e toda habilidade citada no texto corrido fala na cor da
+ * árvore, com o selo dela antes do nome, e leva ao catálogo. O selo cheio é
+ * a árvore; o selo vazado, uma habilidade dela. A cor vem de `--cor`, que o
+ * `[data-arvore]` de cada citação já troca pela da árvore (e escurece no
+ * papel dia). */
+.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao {
+  color: var(--cor);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao::before {
+  content: var(--selo, "");
+  display: inline-grid;
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 0.22em;
+  place-items: center;
+  border: 1px solid var(--cor);
+  background: var(--cor);
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-kanji);
+  font-size: 0.66em;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
+  text-decoration: none;
+  vertical-align: 0.14em;
+}
+
+.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao[data-tipo="habilidade"] {
+  font-style: italic;
+}
+
+.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao[data-tipo="habilidade"]::before {
+  background: transparent;
+  color: var(--cor);
+}
+
+/* No título da tabela ou da caixa, a cor da página manda: a citação só fica
+   na cor dela, sem selo. */
+.folhear[data-modo="livro"] .folhear-fluxo :is(th, .livro-caixa > p:first-child) a.livro-citacao::before {
+  display: none;
+}
+
+/* Dentro do catálogo da própria árvore o selo seria repetição: a página já
+   é dela. Fica só a cor. */
+.folhear-fluxo .livro-arvore[data-arvore="fogo"] a.livro-citacao[data-arvore="fogo"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="agua"] a.livro-citacao[data-arvore="agua"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="vento"] a.livro-citacao[data-arvore="vento"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="terra"] a.livro-citacao[data-arvore="terra"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="cura"] a.livro-citacao[data-arvore="cura"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="desintoxicacao"] a.livro-citacao[data-arvore="desintoxicacao"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="teorica"] a.livro-citacao[data-arvore="teorica"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="invocacao"] a.livro-citacao[data-arvore="invocacao"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="deus-da-espada"] a.livro-citacao[data-arvore="deus-da-espada"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="deus-da-agua-corpo"] a.livro-citacao[data-arvore="deus-da-agua-corpo"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="deus-do-norte"] a.livro-citacao[data-arvore="deus-do-norte"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="armas-pesadas"] a.livro-citacao[data-arvore="armas-pesadas"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="cavalaria-e-escudos"] a.livro-citacao[data-arvore="cavalaria-e-escudos"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="vendaval"] a.livro-citacao[data-arvore="vendaval"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="punho-de-fogo"] a.livro-citacao[data-arvore="punho-de-fogo"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="arquearia"] a.livro-citacao[data-arvore="arquearia"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="furtividade-e-armadilhas"] a.livro-citacao[data-arvore="furtividade-e-armadilhas"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="bardo-e-interacao"] a.livro-citacao[data-arvore="bardo-e-interacao"]::before,
+.folhear-fluxo .livro-arvore[data-arvore="navegacao-e-lideranca"] a.livro-citacao[data-arvore="navegacao-e-lideranca"]::before {
+  display: none;
+}
+
+/*
+ * A vitrine das dezenove árvores, no livro, são os SELOS (2026-09-26). Os
+ * brasões em imagem encolhiam com o espaço até virar pontinho ("onde tá os
+ * símbolos das árvores?"). O selo é o mesmo quadrado carimbado que marca a
+ * árvore no catálogo, nas cartas e nas citações: kanji na cor da árvore, o
+ * nome embaixo. Cabe em qualquer altura, e as linhas se espalham pelo que
+ * sobrar da coluna.
+ */
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-retrato,
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-raridade {
+  display: none;
+}
+
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-lista {
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: space-evenly;
+  gap: 0.3em 0.4em;
+}
+
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-item {
+  gap: 0.28em;
+  padding: 0.25em 0.1em;
+}
+
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-item::before {
+  content: var(--selo, "");
+  display: grid;
+  width: 2.3em;
+  height: 2.3em;
+  place-items: center;
+  background: var(--cor);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--cor) 35%, transparent);
+  color: var(--sobre-cor);
+  font-family: var(--font-livro-kanji);
+  font-size: 1.05em;
+  font-weight: 800;
+  line-height: 1;
+  transform: rotate(-3deg);
+}
+
+.folhear-fluxo .livro-vitrine-arvores li:nth-child(even) .livro-vitrine-item::before {
+  transform: rotate(2.5deg);
+}
+
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-nome,
+.folhear-fluxo .livro-vitrine.folhear-vitrine-compacta.livro-vitrine-arvores .livro-vitrine-nome {
+  display: block;
+  color: var(--cor);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.74em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+/* A vitrine das árvores que abriria uma coluna sozinha vira faixa baixa de
+   margem a margem: os dezenove selos em duas fileiras (esticarVitrines). */
+.folhear-fluxo .livro-vitrine.livro-vitrine-arvores.folhear-vitrine-faixa {
+  height: auto;
+  margin-bottom: 1.2em;
+  column-span: all;
+  container-type: normal;
+}
+
+.folhear-fluxo .livro-vitrine-arvores.folhear-vitrine-faixa .livro-vitrine-lista {
+  flex: none;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+/* O fecho com a arte inteira: o quadro leva a sombra e a torção; dentro
+   dele, a cópia desfocada enche o fundo e a arte entra sem recorte. */
+.folhear-fluxo .livro-fecho-quadro {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0c0c0e;
+  box-shadow: 10px 10px 0 var(--cor);
+  transform: rotate(-0.6deg);
+}
+
+.folhear-fluxo figure.livro-fecho .livro-fecho-quadro > img {
+  box-shadow: none;
+  transform: none;
+}
+
+.folhear-fluxo figure.livro-fecho .livro-fecho-quadro > img.livro-fecho-fundo {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  filter: blur(18px) brightness(0.45) saturate(1.2);
+  transform: scale(1.15);
+}
+
+.folhear-fluxo figure.livro-fecho .livro-fecho-quadro > img.livro-fecho-frente {
+  position: relative;
+  object-fit: contain;
 }

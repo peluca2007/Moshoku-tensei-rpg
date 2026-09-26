@@ -73,7 +73,7 @@ const MEDIR = `(async () => {
   const anotar = (pag, tipo, texto) => problemas.push({ pagina: pag + 1, tipo, texto });
   const oculto = (el) => el.closest("details:not([open])");
   // Fundo desfocado de uma arte (a própria arte, ampliada e borrada atrás dela): é decoração.
-  const decoracao = (el) => el.matches(".livro-imagem-fundo, img.blur-2xl, .folhear-capa-fundo");
+  const decoracao = (el) => el.matches(".livro-imagem-fundo, img.blur-2xl, .folhear-capa-fundo, .livro-fecho-fundo");
 
   // As imagens fora da vista estão em loading=lazy: pra medir, carrega todas.
   const imgs = [...document.querySelectorAll(".folhear-livro img")];
@@ -185,7 +185,8 @@ const MEDIR = `(async () => {
     const ajuste = getComputedStyle(i).objectFit;
     const escala = ajuste === "cover" ? Math.max(w / i.naturalWidth, h / i.naturalHeight) : Math.min(w / i.naturalWidth, h / i.naturalHeight);
     if (escala > 1.6) anotar(pag, "arte-borrada", nome + " ampliada " + escala.toFixed(1) + "× (" + i.naturalWidth + "px num quadro de " + Math.round(w) + "px)");
-    if (ajuste === "cover") {
+    // Com o foco marcado à mão (object-position no próprio elemento), o recorte é escolha, não acidente.
+    if (ajuste === "cover" && !i.style.objectPosition) {
       const quadro = w / h, arte = i.naturalWidth / i.naturalHeight;
       const visivel = Math.min(quadro, arte) / Math.max(quadro, arte);
       if (visivel < 0.45) anotar(pag, "recorte-forte", nome + " mostra só " + Math.round(visivel * 100) + "% da imagem");
