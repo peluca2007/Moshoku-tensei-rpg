@@ -213,13 +213,22 @@ const resultado = await comNavegador(async ({ abrir }) => {
   });
   await enviar("Emulation.setDeviceMetricsOverride", { width: LARGURA, height: ALTURA, deviceScaleFactor: Number(process.env.ESCALA ?? 1), mobile: false });
   await enviar("Page.navigate", { url: `${BASE}/livro/folhear` });
+  let pronto = false;
   for (let i = 0; i < 240; i++) {
-    if (await avaliar("!!document.querySelector('.folhear[data-pronto]')")) break;
+    if (await avaliar("!!document.querySelector('.folhear[data-pronto]')")) {
+      pronto = true;
+      break;
+    }
     await dormir(250);
   }
+  if (!pronto) throw new Error(`o livro não ficou pronto em ${BASE}/livro/folhear`);
   await dormir(1500);
-  const medida = (await enviar("Runtime.evaluate", { expression: MEDIR, awaitPromise: true, returnByValue: true })).result?.result?.value;
-  if (!medida) throw new Error("não consegui medir o livro (ele abriu?)");
+  const resposta = await enviar("Runtime.evaluate", { expression: MEDIR, awaitPromise: true, returnByValue: true });
+  const medida = resposta.result?.result?.value;
+  if (!Array.isArray(medida?.problemas)) {
+    const detalhe = resposta.result?.exceptionDetails?.exception?.description ?? resposta.result?.result?.description ?? JSON.stringify(resposta.result);
+    throw new Error(`não consegui medir o livro: ${detalhe}`);
+  }
 
   const fotos = [];
   if (!semFotos) {
