@@ -17,6 +17,7 @@ import {
   BookOpenText,
   ChevronLeft,
   ChevronRight,
+  FileDown,
   House,
   Maximize2,
   Minimize2,
@@ -220,6 +221,7 @@ export default function Folhear({
   const [indiceAberto, setIndiceAberto] = useState(false);
   const [buscaAberta, setBuscaAberta] = useState(false);
   const [telaCheia, setTelaCheia] = useState(false);
+  const [imprimindo, setImprimindo] = useState(false);
 
   const geo = useMemo<Geometria | null>(
     () => (modo === "livro" && tamanho ? calcularGeometria(tamanho.w, tamanho.h) : null),
@@ -712,6 +714,64 @@ export default function Folhear({
     if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) irPara(alvo.current + (dx < 0 ? 1 : -1), true);
   };
 
+  /**
+   * Baixar PDF: a impressão do navegador com a MESMA página do livro (ver
+   * "O LIVRO EM PDF" em folhear.css). Antes de imprimir, carrega as artes que
+   * ainda estão em espera (fora da vista, em lazy) e troca pro papel dia, que
+   * é o que se imprime; depois da impressão, volta o papel da tela.
+   */
+  const baixarPdf = async () => {
+    const el = raiz.current;
+    if (!el || imprimindo) return;
+    setImprimindo(true);
+    const imagens = Array.from(el.querySelectorAll<HTMLImageElement>(".folhear-fluxo img"));
+    // O PDF não conhece WebP: cada arte entraria recodificada, enorme (o livro
+    // passaria de 300 MB). As cópias JPEG de public/impressao/ (npm run
+    // gerar:impressao) entram no PDF do jeito que estão.
+    const trocadas: [HTMLImageElement, string, string | null][] = [];
+    imagens.forEach((i) => {
+      i.loading = "eager";
+      const src = i.getAttribute("src") ?? "";
+      // A arte que passa pelo otimizador do Next traz o endereço original no `url`.
+      const original = src.startsWith("/_next/image") ? new URLSearchParams(src.split("?")[1]).get("url") ?? "" : src;
+      const m = original.match(/^\/(livro|arte)\/(.+)\.(webp|png|gif|avif)$/i);
+      if (!m) return;
+      trocadas.push([i, src, i.getAttribute("srcset")]);
+      i.removeAttribute("srcset");
+      i.setAttribute("src", `/impressao/${m[1]}/${m[2]}.jpg`);
+    });
+    await Promise.race([
+      Promise.all(
+        imagens.map((i) =>
+          i.complete
+            ? null
+            : new Promise((pronto) => {
+                i.addEventListener("load", pronto, { once: true });
+                i.addEventListener("error", pronto, { once: true });
+              }),
+        ),
+      ),
+      new Promise((pronto) => setTimeout(pronto, 15000)),
+    ]);
+    const papelDaTela = el.dataset.papel;
+    el.dataset.papel = "dia";
+    // O livro fechado na capa desliza meia página pro lado: no papel, não.
+    const fechado = el.hasAttribute("data-fechado");
+    el.removeAttribute("data-fechado");
+    const voltar = () => {
+      window.removeEventListener("afterprint", voltar);
+      if (papelDaTela) el.dataset.papel = papelDaTela;
+      if (fechado) el.setAttribute("data-fechado", "");
+      trocadas.forEach(([i, src, srcset]) => {
+        if (srcset) i.setAttribute("srcset", srcset);
+        i.setAttribute("src", src);
+      });
+      setImprimindo(false);
+    };
+    window.addEventListener("afterprint", voltar);
+    window.print();
+  };
+
   // Tela cheia
   useEffect(() => {
     const aoMudar = () => setTelaCheia(document.fullscreenElement === raiz.current);
@@ -905,6 +965,19 @@ export default function Folhear({
               <span className="hidden lg:inline">Contínuo</span>
             </button>
           </div>
+          {livro && (
+            <button
+              type="button"
+              className="folhear-botao hidden sm:inline-flex"
+              onClick={baixarPdf}
+              disabled={imprimindo}
+              aria-label="Baixar o livro em PDF"
+              title="Baixar o livro em PDF — na janela de impressão, escolha Salvar como PDF"
+            >
+              <FileDown className="h-4 w-4" aria-hidden />
+              <span className="hidden xl:inline">{imprimindo ? "Preparando…" : "PDF"}</span>
+            </button>
+          )}
           {livro && (
             <button
               type="button"
