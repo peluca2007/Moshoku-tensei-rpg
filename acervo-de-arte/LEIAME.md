@@ -43,3 +43,6 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 | `deus-da-agua-sorrindo.webp` | Uma espadachim de cabelo azul sorrindo junto à janela (era a prancha do Triângulo). | Árvore do Deus da Água, ou antecedente. |
 | `auber-deus-do-norte.webp` | O Deus do Norte de poncho listrado, outra cena (640 px). | Vinheta do Deus do Norte. |
 | `hobbits-folha-de-modelo.webp` | Quatro hobbits lado a lado, folha de modelo (250 px: bem pequena). | Só miniatura. |
+| `cavaleiro-meme-animado.webp` | Um cavaleiro de chapéu, animado, pequeno (era a arte da Cavalgada). | Meme da Cavalaria, se couber em algum canto. |
+| `fim-da-cancao-meme-animado.webp` | Cena animada de palco, pequena (era O Fim da Canção). | Meme do Bardo. |
+| `onda-azul-animada.webp` | Uma onda azul animada, pequena (era o Terremoto Pessoal). | Arte da Magia de Água. |

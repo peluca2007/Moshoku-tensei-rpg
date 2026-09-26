@@ -74,3 +74,6 @@ livro em txt.txt
 # recortar de novo sem procurar a imagem outra vez.
 /assets-fonte/originais/
 .telas/
+
+# Originais das artes em alta resolução (organizados por pasta, ver o LEIAME de lá)
+/_originais-das-artes/

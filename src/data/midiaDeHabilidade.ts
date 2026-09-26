@@ -299,7 +299,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   },
   "cavalaria-e-escudos/cavalgada": {
     src: "/arte/cavalaria-e-escudos/cavalgada.webp",
-    alt: "A carga a cavalo, lança baixada, ganhando velocidade sobre o terreno aberto.",
+    alt: "Três cavaleiros num só cavalo, agarrados um ao outro na disparada pelo desfiladeiro.",
   },
 
   // --- Armas Pesadas -------------------------------------------------------
@@ -435,7 +435,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   },
   "bardo-e-interacao/o-fim-da-cancao": {
     src: "/arte/bardo-e-interacao/o-fim-da-cancao.webp",
-    alt: "A última nota da música, e o silêncio pesado que vem logo atrás.",
+    alt: "Um bardo no meio da taverna, alaúde na mão, com os fregueses erguendo as canecas pra última música.",
   },
 
   // --- Navegação e Liderança -----------------------------------------------
@@ -697,7 +697,7 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   },
   "armas-pesadas/terremoto-pessoal": {
     src: "/arte/armas-pesadas/terremoto-pessoal.webp",
-    alt: "Uma onda percorrendo o chão a partir do ponto onde o golpe caiu.",
+    alt: "Uma cidade inteira desabando no mar, torres em chamas e barcos arrastados pela onda do tremor.",
   },
   "armas-pesadas/maos-grandes": {
     src: "/arte/armas-pesadas/maos-grandes.webp",
