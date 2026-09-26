@@ -4663,3 +4663,72 @@ html.livro-imersivo {
   position: relative;
   object-fit: contain;
 }
+
+/* ── A Aula da Roxy (Cap. 2, §8; AulaDaTeorica.tsx) ───────────────────────
+ * A conta feita na LOUSA: quadro verde-escuro com moldura de madeira, em
+ * qualquer papel — é o objeto de sala de aula, não uma caixa do livro. */
+.folhear-fluxo .livro-lousa {
+  margin: 1em 3px 1.1em;
+  padding: 0.85em 1em 0.9em;
+  border: 0;
+  border-radius: 2px;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgb(255 255 255 / 0.05), transparent 60%),
+    #1d2a24;
+  box-shadow: 0 0 0 5px #5b4630, 0 0 0 6px #2c2117, 4px 6px 0 6px rgb(0 0 0 / 0.35);
+  color: #e6eee8;
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-lousa :is(p, td) {
+  color: #e6eee8;
+}
+
+.folhear-fluxo .livro-lousa > p:first-child {
+  color: #f3d98b;
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+}
+
+.folhear-fluxo .livro-lousa-frase {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.15em;
+  font-style: italic;
+}
+
+.folhear-fluxo .livro-lousa-conta {
+  border-collapse: collapse;
+  font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+}
+
+.folhear-fluxo .livro-lousa-conta td {
+  padding: 0.12em 0.3em;
+  border: 0;
+  background: none;
+}
+
+.folhear-fluxo .livro-lousa-conta td:first-child {
+  color: #e6eee8;
+  font-weight: 500;
+}
+
+.folhear-fluxo .livro-lousa-conta tr:nth-child(even) {
+  background: none;
+}
+
+.folhear-fluxo .livro-lousa-total td {
+  border-top: 1.5px dashed rgb(230 238 232 / 0.55);
+  font-size: 1.1em;
+}
+
+/* A fala da Roxy: a caixa do livro, em itálico, com a aspa grande. */
+.folhear-fluxo .livro-roxy > p:last-child {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-size: 1.02em;
+  font-style: italic;
+}
+
+/* As respostas, de cabeça pra baixo. */
+.folhear-fluxo .livro-respostas {
+  border-color: var(--fio);
+  break-inside: avoid;
+}
