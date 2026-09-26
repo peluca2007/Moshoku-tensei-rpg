@@ -214,7 +214,7 @@ export default function FormulaWorkshop() {
               {escolha.operadores.map((id, indice) => <span key={id}>{indice + 1}. {OPERADORES[id].nome}</span>)}
               {!escolha.operadores.length && <em>→ escolha uma ação</em>}
             </div>
-            {guiado && <p className={styles.source}>Projetar e Expressar vêm com a árvore. Na entrada, escolha Conter <em>ou</em> Rejeitar; o outro pode ser comprado por 1 PA.</p>}
+            {guiado && <p className={styles.source}>Projetar, Expressar e Conter vêm com a árvore; Rejeitar custa 1 PA.</p>}
           </div>}
 
           {(!guiado || passo === 2) && <div className={styles.step}>
