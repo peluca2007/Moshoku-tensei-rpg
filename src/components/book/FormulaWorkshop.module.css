@@ -584,3 +584,163 @@
     transform: none;
   }
 }
+
+/* ── Sem rolar (2026-09-26) ──────────────────────────────────────────────
+ * Pedido do autor: "não acho legal ter que scrollar". No computador o
+ * grimório inteiro cabe na tela: as peças viram fileiras de fichas
+ * pequenas, e o círculo fica AO LADO da lousa. Numa tela baixa demais, cada
+ * página rola sozinha, e as duas continuam à vista. No celular as páginas
+ * empilham, como antes. */
+.bancada {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.desenho {
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .grimorio {
+    max-height: calc(100dvh - 5.5rem);
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .pagina {
+    overflow-y: auto;
+    padding: 1.1rem 1.3rem 1.2rem;
+    scrollbar-width: thin;
+  }
+
+  .cabeca h4 {
+    margin: 0.35rem 0 0;
+    font-size: 1.55rem;
+  }
+
+  .fita {
+    margin: 0.7rem 0 0.2rem;
+    gap: 0.28rem;
+  }
+
+  .fita button {
+    padding: 0.18rem 0.45rem;
+    font-size: 0.72rem;
+  }
+
+  .bloco {
+    margin-top: 0.75rem;
+  }
+
+  .bloco legend {
+    margin-bottom: 0.35rem;
+    font-size: 0.9rem;
+  }
+
+  .bloco legend span {
+    width: 1.3rem;
+    height: 1.3rem;
+    font-size: 0.8rem;
+  }
+
+  .cartas {
+    grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+    gap: 0.3rem;
+  }
+
+  .carta {
+    min-height: 0;
+    gap: 0.05rem;
+    padding: 0.35rem 0.15rem 0.3rem;
+  }
+
+  .carta svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .glifoDaForma {
+    height: 24px;
+    font-size: 1.2rem;
+  }
+
+  .carta strong {
+    font-size: 0.74rem;
+  }
+
+  .carta small {
+    font-size: 0.56rem;
+    letter-spacing: 0.03em;
+  }
+
+  .ordem {
+    width: 1.1rem;
+    height: 1.1rem;
+    font-size: 0.7rem;
+  }
+
+  .origem {
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .campos {
+    grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+    gap: 0.4rem 0.6rem;
+  }
+
+  .campos select {
+    padding: 0.25rem 0.35rem;
+    font-size: 0.8rem;
+  }
+
+  .bancada {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  }
+
+  .circulo {
+    width: min(100%, 250px);
+    margin: 0.5rem auto 0.3rem;
+  }
+
+  .camadas button,
+  .circuloTopo button {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.7rem;
+  }
+
+  .lousa {
+    margin: 0.4rem 6px 0;
+    padding: 0.6rem 0.75rem 0.55rem;
+  }
+
+  .lousa table {
+    font-size: 0.78rem;
+  }
+
+  .cartaPronta,
+  .naoSai {
+    margin-top: 1rem;
+    padding: 0.7rem 0.9rem 0.65rem;
+  }
+
+  .cartaNome {
+    font-size: 1.25rem;
+  }
+
+  .cartaEfeito {
+    font-size: 0.86rem;
+  }
+
+  .cartaLinha,
+  .cartaLeitura {
+    font-size: 0.76rem;
+  }
+
+  .ficha {
+    margin-top: 0.6rem;
+    font-size: 0.72rem;
+  }
+}

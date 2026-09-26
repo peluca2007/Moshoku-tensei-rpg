@@ -187,9 +187,6 @@ export default function FormulaWorkshop() {
         <header className={styles.cabeca}>
           <p className={styles.selo}>Laboratório de Fórmulas</p>
           <h4>Escreva uma frase em magia</h4>
-          <p className={styles.nota}>
-            As lições estão no Cap. 2, §8. Aqui você monta: toque nas peças e veja a carta nascer na página do desenho.
-          </p>
         </header>
 
         <div className={styles.fita} aria-label="Exemplos e desafios">
@@ -326,6 +323,8 @@ export default function FormulaWorkshop() {
 
       {/* ── A página do desenho ──────────────────────────────────────── */}
       <section className={`${styles.pagina} ${styles.paginaDireita}`} aria-label="O desenho e a carta">
+        <div className={styles.bancada}>
+        <div className={styles.desenho}>
         <div className={styles.circuloTopo}>
           <p className={styles.selo}>O desenho</p>
           <button type="button" aria-pressed={tracando} onClick={() => { setTracando(!tracando); terminarTraco(); }}>
@@ -368,6 +367,7 @@ export default function FormulaWorkshop() {
           ))}
           {tracos.length > 0 && <button type="button" onClick={() => setTracos([])}>Apagar traços</button>}
         </div>
+        </div>
 
         <div className={styles.lousa}>
           <p className={styles.lousaTitulo}>A conta</p>
@@ -392,6 +392,7 @@ export default function FormulaWorkshop() {
             <span className={r.pm > r.limitePm ? styles.estourou : undefined}>teto de {r.limitePm} PM</span>
             <span>preparo: {r.preparo}</span>
           </p>
+        </div>
         </div>
 
         {r.valida ? (
