@@ -9,7 +9,7 @@ import RaceCrest from "./RaceCrest";
 import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById } from "@/data/trees";
 import { getStartingKit } from "@/data/startingKits";
-import { ATTRIBUTES, ATTRIBUTE_CREATION_MAX, ATTRIBUTE_FLOOR, AttributeKey, getVigorFactor } from "@/lib/types";
+import { ATTRIBUTES, ATTRIBUTE_CREATION_MAX, ATTRIBUTE_FLOOR, AttributeKey, CUSTO_DE_ESCOLHA, getVigorFactor, NOME_DO_TIER } from "@/lib/types";
 import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import TreePicker from "./TreePicker";
@@ -160,6 +160,11 @@ export default function CreationWizard() {
                         }`}
                       >
                         {r.name}
+                      </span>
+                      {/* O tier e o preço de escolher (Cap. 1, §5, 2026-09-26). */}
+                      <span className="text-3xs uppercase tracking-wider text-parchment-500 dark:text-parchment-400">
+                        {NOME_DO_TIER[r.tier]} ·{" "}
+                        {CUSTO_DE_ESCOLHA[r.tier] === null ? "presente do Mestre" : `escolher: ${CUSTO_DE_ESCOLHA[r.tier]} PA`}
                       </span>
                     </button>
                   );

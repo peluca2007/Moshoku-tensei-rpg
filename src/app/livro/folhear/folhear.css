@@ -2758,6 +2758,45 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 /* A página. */
+/* A página inteira de arte da raça mítica (FichaDeRaca) e a página de texto
+   dela sem a faixa de arte, que só repetiria a imagem apertada. */
+.folhear-fluxo .livro-racas > .livro-raca-pagina-arte {
+  display: block;
+  position: relative;
+  width: calc(var(--pagina) - var(--margem) * 2 - 16px);
+  height: calc(var(--altura) - var(--topo) - var(--pe) - 12px);
+  margin: 0 12px 0 4px;
+  overflow: hidden;
+  background: #0c0c0e;
+  box-shadow: 10px 10px 0 var(--cor);
+  column-span: all;
+  break-before: column;
+  break-inside: avoid;
+  transform: rotate(-0.5deg);
+}
+
+.folhear-fluxo .livro-racas > .livro-raca-pagina-arte img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.folhear-fluxo .livro-racas > .livro-raca-pagina-arte .livro-fecho-legenda {
+  position: absolute;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-arte {
+  flex: none;
+  height: 3.4em;
+  aspect-ratio: auto;
+  background: none;
+  box-shadow: none;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-arte :is(img, .livro-imagem-inteira) {
+  display: none;
+}
+
 .folhear-fluxo .livro-racas > .livro-raca {
   display: flex;
   flex-direction: column;
@@ -4604,6 +4643,34 @@ html.livro-imersivo {
   justify-content: center;
 }
 
+/* A MARCA DE FIM da árvore sem prancha: o símbolo dela, médio, centrado no
+   resto da página, com o "Fim · nome". Sem sombra nem moldura de arte. */
+.folhear-fluxo figure.livro-fecho-marca.folhear-vitrine-cheia {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.9em;
+  padding: 0;
+}
+
+.folhear-fluxo figure.livro-fecho-marca > img {
+  width: min(120px, 40%);
+  height: auto;
+  max-height: 55%;
+  object-fit: contain;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.85;
+}
+
+.folhear-fluxo figure.livro-fecho-marca .livro-fecho-legenda {
+  position: static;
+}
+
+.folhear-fluxo figure.livro-fecho-marca::after {
+  content: none;
+}
+
 /* O fecho na coluna (fecharArvores, 2ª tentativa): do fim do texto até o pé. */
 .folhear-fluxo .livro-vitrine.livro-fecho-arvore.folhear-fecho-coluna {
   column-span: none;
@@ -4646,9 +4713,13 @@ html.livro-imersivo {
   z-index: 1;
 }
 
-.folhear-pes .folhear-selo-pe {
+.folhear-pes .folhear-vinheta.folhear-selo-pe {
   position: absolute;
   font-size: var(--fonte);
+  /* Discreto: é um ornamento no pé da coluna, não um carimbo (o autor achou
+     o de 150px "um símbolo enorme"). */
+  --lado: min(72px, calc(var(--alto, 120px) * 0.45));
+  opacity: 0.55;
 }
 
 @media print {
@@ -4664,7 +4735,7 @@ html.livro-imersivo {
  * tamanho do vão: o selo do capítulo ou da árvore, carimbado e torto, entre
  * dois fios da cor dela. */
 :is(.folhear-fluxo, .folhear-pes) .folhear-vinheta {
-  --lado: min(150px, calc(var(--alto, 120px) * 0.6));
+  --lado: min(96px, calc(var(--alto, 120px) * 0.5));
   --fio-vinheta: color-mix(in srgb, var(--cor) 40%, transparent);
   display: grid;
   margin: 0;

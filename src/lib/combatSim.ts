@@ -11,6 +11,7 @@
  * imprime na tela em vez de escondê-las.
  */
 import { getTreeById } from "@/data/trees/index";
+import { getRaceById } from "@/data/races";
 import { aproximar, alcanceEmMetros, distanciaEntre } from "./combatScenario";
 import {
   getArmorClass,
@@ -1179,6 +1180,14 @@ export function resistenciasDe(c: CharacterData): { resistencias: string[]; imun
       rd?.abilities.find((x) => x.id === compra.id) ?? rd?.talents.find((x) => x.id === compra.id);
     if (!item) continue;
     textos.push("effect" in item ? (item.effect ?? "") : (item.description ?? ""));
+  }
+  // A raça e os despertares comprados (2026-09-26): o Corpo das Profundezas
+  // do Oceano, a Martelo e Bigorna do Anão. Despertar de uso limitado ("Uma
+  // vez por…", por 1 minuto) não é resistência permanente e fica de fora.
+  const raca = getRaceById(c.raceId);
+  textos.push(...(raca?.traits ?? []));
+  for (const u of raca?.upgrades ?? []) {
+    if ((c.racialUpgrades ?? []).includes(u.id) && !/uma vez por/i.test(u.description)) textos.push(u.description);
   }
   const resistencias = new Set<string>();
   const imunidades = new Set<string>();

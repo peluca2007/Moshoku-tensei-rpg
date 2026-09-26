@@ -24,11 +24,25 @@ import { Race } from "@/lib/types";
  * `src/lib/randomCharacter.ts`) tem que subir junto com o poder medido no
  * Imperador, e **nenhuma raça comum pode ser lixo**. Toda raça precisa de pelo
  * menos um traço que NÃO decaia com o Rank (atributo, perícia ou Vantagem).
+ *
+ * ## Rework de 2026-09-26 (decisão do autor): tiers, preço de escolha e despertares
+ *
+ * O buraco não era a tabela, era a porta da escolha: escolher custava 1 PA
+ * qualquer que fosse a raça, então o Dragão (~9 PC) e o Demônio Imortal
+ * custavam o mesmo que um Humano. Agora cada raça tem um TIER, que decide a
+ * faixa no d100 e o preço de escolher (CUSTO_DE_ESCOLHA): Comum e Incomum 1 PA,
+ * Rara 2, Lendária 3; a Mítica (Dragão) não se escolhe.
+ *
+ * E cada raça ganhou DOIS DESPERTARES comprados com PA (como a Sombra Absoluta
+ * do Povo Pequeno, que era a única): o 1º a partir do Intermediário, o 2º a
+ * partir do Santo. As comuns despertam mais forte — é assim que a raça que o
+ * dado deu barata alcança a rara no fim da campanha.
  */
 export const RACES: Race[] = [
   {
     id: "humano",
-    rollRange: [1, 14],
+    tier: "comum",
+    rollRange: [1, 16],
     name: "Humano (Jinzoku)",
     icon: "/racas/humano.png",
     description:
@@ -45,6 +59,24 @@ export const RACES: Race[] = [
     bonuses: {},
     attributeChoices: 1,
     bonusSkillChoices: 2,
+    upgrades: [
+      {
+        id: "humano-determinacao-dobrada",
+        name: "Determinação Dobrada",
+        paCost: 2,
+        patamarMinimo: "Intermediário",
+        description:
+          "A Determinação Humana passa a valer duas vezes por sessão, e também em testes de resistência — a espécie que vive menos aprendeu a não aceitar o primeiro não.",
+      },
+      {
+        id: "humano-o-mundo-e-dos-humanos",
+        name: "O Mundo É dos Humanos",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "Quando um aliado a até 9 metros que possa te ouvir falhar num teste de resistência, você pode gastar a sua Reação pra ele repetir o teste e usar o novo resultado. Uma vez por rodada. Nenhuma raça governa o mundo por ser a mais forte: governa porque não deixa os seus caírem.",
+      },
+    ],
     traits: [
       "Adaptabilidade: 2 Perícias extras à escolha e +1 em UM atributo à sua escolha, permanente — nenhuma outra raça deixa você decidir onde o sangue pesa.",
       "Determinação Humana: uma vez por sessão, repita um teste de Atributo (não de Perícia, não de dano) que tenha acabado de falhar e use o novo resultado — humanos vivem menos que qualquer raça deste livro e aprenderam a não desperdiçar a única tentativa que têm.",
@@ -53,7 +85,8 @@ export const RACES: Race[] = [
   },
   {
     id: "elfo",
-    rollRange: [42, 49],
+    tier: "incomum",
+    rollRange: [47, 55],
     name: "Elfo (Erufu)",
     icon: "/racas/elfo.png",
     description:
@@ -66,6 +99,25 @@ export const RACES: Race[] = [
     // E vale 0 pra um elfo que nunca abriu escola de magia — correto: é mana,
     // não vida.
     bonuses: { attributes: { agilidade: 1 }, mpPerMagicRank: 2 },
+    upgrades: [
+      {
+        id: "elfo-olhos-da-floresta",
+        name: "Olhos da Grande Floresta",
+        paCost: 2,
+        patamarMinimo: "Intermediário",
+        description:
+          "Seus ataques à distância (arco, arremesso ou magia) ignoram Cobertura parcial, e a Vantagem do Sentido da Floresta passa a valer em toda Percepção, não só a auditiva.",
+      },
+      {
+        id: "elfo-mana-ancestral",
+        name: "Mana Ancestral",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        grants: { mpPerMagicRank: 2 },
+        description:
+          "O bônus racial de PM passa de 2× para 4× o seu Maior Bônus de Rank de magia (aplicado sozinho na ficha). Uma vez por Descanso Longo, gastando 1 Ação, recupere PM iguais a 2× esse bônus.",
+      },
+    ],
     traits: [
       "Sentido da Floresta: Vantagem em Percepção auditiva e em Sobrevivência para navegação.",
       "+1 em Agilidade, permanente, e PM Máximos iguais ao DOBRO do seu Maior Bônus de Rank de magia (+2 no Principiante, +12 no Imperador) — séculos de convivência com a mana da Grande Floresta. Sem nenhuma escola de magia aberta, este bônus é 0.",
@@ -75,7 +127,8 @@ export const RACES: Race[] = [
   },
   {
     id: "anao",
-    rollRange: [50, 57],
+    tier: "incomum",
+    rollRange: [56, 64],
     name: "Anão (Dowaafu)",
     icon: "/racas/anao.png",
     description:
@@ -100,6 +153,24 @@ export const RACES: Race[] = [
     // sempre. Agora ele cresce com metade do Bônus de Rank da escola (1 a 3).
     bonuses: { attributes: { vigor: 1 }, maxHp: 10 },
     fixedSkills: ["Ofícios (Forja)"],
+    upgrades: [
+      {
+        id: "anao-martelo-e-bigorna",
+        name: "Martelo e Bigorna",
+        paCost: 2,
+        patamarMinimo: "Intermediário",
+        description:
+          "Resistência a dano ígneo — quem cresce na boca da forja não se queima fácil. E armas e armaduras que você fabrica (Cap. 5, §4) ficam prontas na metade do tempo.",
+      },
+      {
+        id: "anao-montanha-viva",
+        name: "Montanha Viva",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "Resistência a dano contundente, e nada te derruba contra a sua vontade: você não pode ser empurrado, ficar Caído nem Desequilibrado se não quiser.",
+      },
+    ],
     traits: [
       "Sangue da Forja: magias de Terra e de Fogo custam menos PM, num desconto igual à metade do seu Bônus de Rank naquela escola, arredondado pra cima (1 no Principiante e no Intermediário, 2 no Avançado e no Santo, 3 no Rei e no Imperador; o custo nunca cai abaixo de 1). Não soma com outros descontos de PM: vale o maior. A Sobrecarga e as técnicas do Punho do Fogo não são magia de Fogo e não recebem o desconto. Não pode aprender magias de Água ou Vento.",
       "+1 em Vigor e +10 PV Máximos, permanentes — o corpo mais denso do livro.",
@@ -109,7 +180,8 @@ export const RACES: Race[] = [
   },
   {
     id: "hobbit",
-    rollRange: [15, 28],
+    tier: "comum",
+    rollRange: [17, 31],
     name: "Povo Pequeno / Hobbit (Hobitto)",
     icon: "/racas/hobbit.png",
     description:
@@ -126,15 +198,23 @@ export const RACES: Race[] = [
         id: "hobbit-sombra-absoluta",
         name: "Sombra Absoluta",
         paCost: 3,
+        patamarMinimo: "Intermediário",
         description:
           "A Vantagem racial em Enganação e Furtividade vira Vantagem Absoluta (3d20, escolha o maior). Só afeta essas duas perícias — não é Vantagem Absoluta em mais nada.",
+      },
+      {
+        id: "hobbit-sorte-grande",
+        name: "Sorte Grande",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "A Sorte do Povo Pequeno passa a duas vezes por Descanso Longo, e também serve pra se defender: transforme um Acerto Crítico contra você num acerto normal.",
       },
     ],
     traits: [
       "Deslocamento base reduzido: 7,5m.",
       "Aparência Enganosa: Vantagem em Enganação e Furtividade.",
       "Pequeno Demais pra Atrapalhar: você pode ocupar o mesmo espaço de outra criatura, desde que ela permita — passar por baixo, subir no ombro, se enfiar atrás das pernas dela. Não concede Cobertura automática nem impede que você seja alvo; só deixa vocês dois no mesmo quadrado.",
-      "Sombra Absoluta (opcional, 3 PA): transforme a Vantagem racial acima em Vantagem Absoluta (Cap. 1, §4). É uma compra, não um bônus grátis — e é a única melhoria racial comprável do livro.",
       "+1 em Agilidade, permanente.",
       "Sorte do Povo Pequeno: uma vez por Descanso Longo, transforme uma Falha Crítica (1 Natural) sua em um resultado normal — o dado ainda rola, mas o desastre automático não acontece.",
       "Línguas: Língua Humana (Comum) e Língua Bestial, a da Grande Floresta.",
@@ -142,12 +222,34 @@ export const RACES: Race[] = [
   },
   {
     id: "raca-fera",
-    rollRange: [29, 41],
+    tier: "comum",
+    rollRange: [32, 46],
     name: "Raça Fera (Juuzoku)",
     icon: "/racas/raca-fera.jpg",
     description:
       "Habitantes da Grande Floresta com traços de mamíferos. Fisicamente superiores aos humanos, vida similar.",
     bonuses: { attributes: { forca: 1 } },
+    // 2026-09-26: a Fera era a comum mais forte do livro (~3,3 PC) — um cone que
+    // atordoa todo mundo no 1º patamar. O atordoar virou o 1º despertar; de
+    // graça, o uivo desequilibra.
+    upgrades: [
+      {
+        id: "fera-uivo-que-paralisa",
+        name: "Uivo que Paralisa",
+        paCost: 3,
+        patamarMinimo: "Intermediário",
+        description:
+          "Quem falha no teste do Grito de Guerra fica Atordoado até o fim do próximo turno dele, em vez de Desequilibrado.",
+      },
+      {
+        id: "fera-furia-da-matilha",
+        name: "Fúria da Matilha",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "Uma vez por Descanso Longo, gastando 1 Ação: por 1 minuto você tem Resistência a dano cortante, perfurante e contundente, e Vantagem nos ataques corpo a corpo contra criaturas Amedrontadas, Desequilibradas ou Atordoadas.",
+      },
+    ],
     traits: [
       "Sentidos Selvagens: Vantagem para rastrear pelo olfato; Desvantagem em resistência a fumaça/odores fortes.",
       // Cap. 4 §3: "Não existe ação bônus neste sistema — tudo é medido em Ações".
@@ -159,7 +261,7 @@ export const RACES: Race[] = [
       // porque Atordoado em área por 2 PM no 1º patamar seria, disparado, o
       // melhor efeito por PM do livro inteiro.
       "Magia Inerente — HOWLING (2 PM, 1 Ação): você nasce sabendo, sem gastar PA e sem precisar de escola aberta. Ao conjurar, escolha UM dos dois modos.",
-      "Howling · Grito de Guerra (ataque sônico): cone de 9 metros. Cada criatura na área faz teste de resistência de Vigor contra CD 8 + Espírito + seu Maior Bônus de Rank. Falha: sofre 1d6 de dano sônico por ponto do seu Maior Bônus de Rank (1d6 no Principiante, 6d6 no Imperador) e fica Atordoada até o fim do próximo turno dela. Sucesso: metade do dano e nada mais. Uma vez por combate — depois do primeiro uivo, ninguém mais é pego de surpresa.",
+      "Howling · Grito de Guerra (ataque sônico): cone de 9 metros. Cada criatura na área faz teste de resistência de Vigor contra CD 8 + Espírito + seu Maior Bônus de Rank. Falha: sofre 1d6 de dano sônico por ponto do seu Maior Bônus de Rank (1d6 no Principiante, 6d6 no Imperador) e fica Desequilibrada até o fim do próximo turno dela (Atordoada, com o despertar Uivo que Paralisa). Sucesso: metade do dano e nada mais. Uma vez por combate — depois do primeiro uivo, ninguém mais é pego de surpresa.",
       "Howling · Eco de Caça (ecolocalização): o uivo volta e desenha o que tocou. Por 1 minuto você sabe a posição exata de toda criatura a até 30 metros, mesmo no escuro total, mesmo sob invisibilidade mágica, mesmo através de porta, mato ou parede fina. Você sabe ONDE, nunca O QUÊ: tamanho aproximado e posição, não identidade nem intenção. Pedra maciça, chumbo e qualquer barreira mágica bloqueiam o eco. Sem limite de usos.",
       "+1 em Força, permanente.",
       "Instinto de Caçada: Vantagem em Iniciativa contra qualquer criatura que você tenha farejado, rastreado ou observado antes do combate começar.",
@@ -168,11 +270,29 @@ export const RACES: Race[] = [
   },
   {
     id: "celestial",
-    rollRange: [94, 99],
+    tier: "rara",
+    rollRange: [93, 97],
     name: "Raça Celestial (Tenzoku)",
     icon: "/racas/celestial.jpg",
     description: "Habitantes do Continente Divino. Vivem centenas de anos e possuem asas.",
     bonuses: { attributes: { espirito: 1 } },
+    upgrades: [
+      {
+        id: "celestial-asas-de-guerra",
+        name: "Asas de Guerra",
+        paCost: 3,
+        patamarMinimo: "Intermediário",
+        description: "Você voa também de armadura média (a pesada continua pesando demais pras asas).",
+      },
+      {
+        id: "celestial-luz-do-continente-divino",
+        name: "Luz do Continente Divino",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "Uma vez por Descanso Longo, gastando 1 Ação: por 1 minuto, aliados a até 9 metros de você somam o seu Espírito nos testes de resistência de Espírito e são imunes a Amedrontado.",
+      },
+    ],
     traits: [
       // Voo irrestrito desde a criação é o traço racial mais forte do livro
       // (anula terreno difícil, alcance corpo a corpo e boa parte das armadilhas
@@ -193,7 +313,8 @@ export const RACES: Race[] = [
   },
   {
     id: "oceano",
-    rollRange: [58, 65],
+    tier: "incomum",
+    rollRange: [65, 73],
     name: "Raça do Oceano (Kaizoku)",
     icon: "/racas/oceano.jpg",
     description: "Governantes do Mar de Ringus.",
@@ -206,17 +327,40 @@ export const RACES: Race[] = [
     // funciona em qualquer campanha; "governantes do Mar de Ringus" que mergulham
     // sob pressão a vida inteira é o corpo mais óbvio pra pendurar isso.
     bonuses: { attributes: { vigor: 1 } },
+    // 2026-09-26: era a raça mais fraca do livro (~1,4 PC), com quase tudo
+    // pendurado no mar. Ganhou um traço que funciona em qualquer campanha: o
+    // corpo feito pro frio das profundezas (e a Magia de Água é a escola do frio).
+    upgrades: [
+      {
+        id: "oceano-chamado-das-mares",
+        name: "Chamado das Marés",
+        paCost: 2,
+        patamarMinimo: "Intermediário",
+        description:
+          "Uma vez por Descanso Curto, gastando 1 Ação: uma onda sai de você num cone de 6 metros, mesmo longe do mar. Cada criatura na área faz teste de Força contra CD 8 + Vigor + seu Maior Bônus de Rank; na falha, é empurrada 3 metros e fica Molhada.",
+      },
+      {
+        id: "oceano-pressao-abissal",
+        name: "Pressão Abissal",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "Uma vez por turno, um ataque ou magia seu contra uma criatura Molhada causa dano extra igual a 2 × seu Maior Bônus de Rank.",
+      },
+    ],
     traits: [
       "Respira debaixo d'água.",
+      "Corpo das Profundezas: Resistência a dano de frio, e você nada com o dobro do seu Deslocamento.",
       "Ignora penalidades de terreno difícil aquático.",
       "+1 em Vigor, permanente.",
-      "Pressão das Profundezas: Resistência a dano contundente vindo de água em movimento (correnteza, magia de Água que usa força bruta, tsunami de cerco).",
+      "Pressão das Profundezas: a correnteza, a magia de Água que usa força bruta e o tsunami de cerco te causam metade do dano contundente.",
       "Línguas: Língua Humana (Comum) e Língua do Oceano.",
     ],
   },
   {
     id: "migurd",
-    rollRange: [66, 73],
+    tier: "incomum",
+    rollRange: [74, 82],
     name: "Migurd",
     icon: "/racas/migurd.jpg",
     description:
@@ -235,6 +379,24 @@ export const RACES: Race[] = [
     // entrega 3 PM no 1º patamar e 18 no 6º, sem o pico de criação e sem o
     // desabamento no fim que este comentário descrevia em 2026-08-28.
     bonuses: { attributes: { intelecto: 1 }, mpPerMagicRank: 3 },
+    upgrades: [
+      {
+        id: "migurd-rede-telepatica",
+        name: "Rede Telepática",
+        paCost: 2,
+        patamarMinimo: "Intermediário",
+        description:
+          "A telepatia passa a funcionar com qualquer criatura voluntária a até 30 metros, não só Migurds: o grupo inteiro conversa em silêncio, e isso conta como falar pra tudo que pede voz de comando.",
+      },
+      {
+        id: "migurd-mente-espelho",
+        name: "Mente-Espelho",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "Você é imune a Amedrontado e a efeitos de controle mental. Uma vez por Descanso Longo, quando resistir a um efeito que leia ou controle a mente, ele volta contra quem o lançou, com a mesma CD.",
+      },
+    ],
     traits: [
       "+1 em Intelecto, permanente, e PM Máximos iguais ao TRIPLO do seu Maior Bônus de Rank de magia (+3 no Principiante, +18 no Imperador) — a maior reserva racial do livro, e a única que não decai. Sem nenhuma escola de magia aberta, este bônus é 0.",
       "Telepatia curta com outros Migurds ou seres com telepatia.",
@@ -244,7 +406,8 @@ export const RACES: Race[] = [
   },
   {
     id: "superd",
-    rollRange: [82, 87],
+    tier: "rara",
+    rollRange: [83, 87],
     name: "Superd",
     icon: "/racas/superd.jpg",
     description: "Pele pálida, cabelos verdes, cauda bifurcada que vira lança tridente.",
@@ -255,6 +418,24 @@ export const RACES: Race[] = [
     // A Previsão de Movimento entrega o mesmo fantasy (o Superd lê mana e sabe o
     // que vem) num eixo que só afeta combate, que é onde o Ruijerd usa.
     bonuses: {},
+    upgrades: [
+      {
+        id: "superd-leitura-em-grupo",
+        name: "Leitura em Grupo",
+        paCost: 3,
+        patamarMinimo: "Intermediário",
+        description:
+          "A Previsão de Movimento também protege um aliado adjacente a você: os ataques da criatura lida contra ele têm Desvantagem. Se o aliado se afastar, a proteção passa pra outro adjacente na hora.",
+      },
+      {
+        id: "superd-tridente-ancestral",
+        name: "Tridente Ancestral",
+        paCost: 4,
+        patamarMinimo: "Santo",
+        description:
+          "Uma vez por turno, quando atacar com uma arma, você ataca também com a Cauda-lança sem gastar Ação — o Ruijerd nunca lutou com uma arma só.",
+      },
+    ],
     traits: [
       "Previsão de Movimento (1 Ação): escolha uma criatura a até 18m que você possa ver e leia o fluxo de mana dela por 1 minuto — você enxerga o golpe antes de ele sair. Enquanto durar: os ataques dela contra você têm Desvantagem, você tem Vantagem nos testes de resistência contra as habilidades dela, e ela nunca te pega Surpreso.",
       "Previsão de Movimento — limites: uma leitura por vez (trocar de alvo custa outra Ação), e não funciona contra o que não move mana: construto inerte, armadilha mecânica, uma pedra caindo. Ler o fluxo não é ver o futuro; é ver a intenção antes de ela virar movimento.",
@@ -265,7 +446,8 @@ export const RACES: Race[] = [
   },
   {
     id: "ogro",
-    rollRange: [88, 93],
+    tier: "rara",
+    rollRange: [88, 92],
     name: "Ogro (Onizoku)",
     icon: "/racas/ogro.png",
     description: "Extremamente altos e musculosos, machos chegam a 3 metros de altura.",
@@ -275,6 +457,24 @@ export const RACES: Race[] = [
     // a mais direta de jogar. Sem os PV fixos ele continua sendo o pacote mais
     // forte do tier raro, só que por uma via só.
     bonuses: { attributes: { forca: 2 } },
+    upgrades: [
+      {
+        id: "ogro-arremesso-de-gigante",
+        name: "Arremesso de Gigante",
+        paCost: 2,
+        patamarMinimo: "Intermediário",
+        description:
+          "Gastando 1 Ação, arremesse uma criatura que você esteja Agarrando (do seu tamanho ou menor) até 6 metros: ela sofre 1d6 de dano contundente por ponto do seu Maior Bônus de Rank e fica Caída. Se acertar outra criatura no caminho, as duas sofrem o dano.",
+      },
+      {
+        id: "ogro-colosso",
+        name: "Colosso",
+        paCost: 5,
+        patamarMinimo: "Santo",
+        description:
+          "Você passa a contar como criatura Grande: seu alcance corpo a corpo aumenta em 1,5 metro, e as armas de duas mãos que você empunha sobem um degrau a mais na Escada de Dados.",
+      },
+    ],
     traits: [
       "Brutamontes: Vantagem em testes de Força e de Atletismo para quebrar, erguer ou empurrar.",
       "Limite de carga dobrado: 30 kg × (Força + 5), contra os 15 kg × (Força + 5) de todo mundo.",
@@ -284,11 +484,31 @@ export const RACES: Race[] = [
   },
   {
     id: "demonio-imortal",
-    rollRange: [74, 81],
+    // 2026-09-26: de 8% (o mesmo do Elfo) para 2%, tier Lendário — o autor
+    // apontou que "uma das melhores raças não era difícil de pegar".
+    tier: "lendaria",
+    rollRange: [98, 99],
     name: "Demônio Imortal",
     icon: "/racas/demonio-imortal.webp",
     description: "Descendentes do Primeiro Deus Demônio. Pele negra azeviche, seis braços (machos).",
     bonuses: { maxHp: 8 },
+    upgrades: [
+      {
+        id: "demonio-carne-que-volta",
+        name: "Carne que Volta",
+        paCost: 3,
+        patamarMinimo: "Intermediário",
+        description:
+          "Membros perdidos voltam em 1 hora. E uma vez por Descanso Longo, a Regeneração Profunda funciona mesmo a 0 PV: no início do seu turno você volta com PV iguais ao seu Maior Bônus de Rank e deixa de rolar o Fio da Vida.",
+      },
+      {
+        id: "demonio-imortal-de-fato",
+        name: "Imortal de Fato",
+        paCost: 5,
+        patamarMinimo: "Santo",
+        description: "A Regeneração Profunda passa a devolver o DOBRO do seu Maior Bônus de Rank por turno.",
+      },
+    ],
     traits: [
       // Regenerar 3 PV fixos era +8,8% da vida de um Principiante (34 PV) e +1,5%
       // da de um Imperador (193 PV): a habilidade de assinatura da raça sumia
@@ -310,6 +530,7 @@ export const RACES: Race[] = [
   },
   {
     id: "dragao",
+    tier: "mitica",
     rollRange: [100, 100],
     name: "Raça Dragão (Ryuzoku)",
     icon: "/racas/dragao.webp",
@@ -332,14 +553,31 @@ export const RACES: Race[] = [
     //    e que a raça não tinha. Escala com o Maior Bônus de Rank e é limitado
     //    por Descanso Curto, então não vira o recurso principal de ninguém.
     bonuses: { attributes: { forca: 2, vigor: 1 }, armorClass: 3 },
+    upgrades: [
+      {
+        id: "dragao-sopro-desperto",
+        name: "Sopro Desperto",
+        paCost: 3,
+        patamarMinimo: "Intermediário",
+        description: "O Sopro Dracônico passa a duas vezes por Descanso Curto, e o cone cresce para 18 metros.",
+      },
+      {
+        id: "dragao-forma-do-dragao",
+        name: "Forma do Dragão",
+        paCost: 5,
+        patamarMinimo: "Santo",
+        description:
+          "Uma vez por Descanso Longo, gastando 2 Ações, você assume a forma do dragão por 1 minuto: fica Grande (alcance corpo a corpo +1,5 metro), ganha PV Temporários iguais a 10 × seu Maior Bônus de Rank, as Garras e Presas sobem um degrau na Escada de Dados, e o Sopro recarrega no início de cada turno seu. Ao voltar, você ganha 1 nível de Exaustão — o corpo de gente não foi feito pra caber um deus.",
+      },
+    ],
     traits: [
       "Escamas Dracônicas: +3 na CA (permanente, empilha com armadura) e Resistência a dano cortante e perfurante mundano.",
-      "Garras e Presas: seus ataques desarmados usam Dado Base d10, contam como arma marcial mágica e sobem na Escada de Dados (Cap. 3) junto com o seu maior patamar do Corpo — um Dragão desarmado nunca está desarmado.",
-      "Sopro Dracônico (1 Ação, 1 vez por Descanso Curto): cone de 12 metros do elemento que você escolheu ao criar o personagem. Dano igual a 1d10 por ponto do seu Maior Bônus de Rank (1d10 no Principiante, 6d10 no Imperador). Teste de resistência de Agilidade contra CD 8 + Vigor + Maior Bônus de Rank para metade do dano.",
-      "Asas: Deslocamento de Voo igual ao dobro do seu Deslocamento de caminhada, sem restrição de armadura ou carga — as asas de um Ryuzoku erguem aço sem esforço. Voar é Andar pelo ar, pelo mesmo custo. Quem está no chão te alcança corpo a corpo se você estiver até 1,5 m acima do alcance normal dele. Se ficar Atordoado, Paralisado, Incapacitado ou a 0 PV no ar, você cai: 1d6 de dano de queda por 3 m de altura, até 20d6, e fica Caído.",
+      "Garras e Presas: ataques desarmados com Dado Base d10, que contam como arma marcial mágica e sobem na Escada de Dados (Cap. 3) com o seu maior patamar do Corpo.",
+      "Sopro Dracônico (1 Ação, 1 vez por Descanso Curto): cone de 12 metros do seu elemento, 1d10 por ponto do seu Maior Bônus de Rank (6d10 no Imperador). Agilidade contra CD 8 + Vigor + Maior Bônus de Rank para metade.",
+      "Asas: Deslocamento de Voo igual ao dobro do de caminhada, sem restrição de armadura ou carga — as asas de um Ryuzoku erguem aço. Voo e queda seguem a regra geral (Cap. 4, §3).",
       "+2 em Força e +1 em Vigor, permanentes, e IMUNIDADE (não Resistência) a um tipo de dano à escolha: ígneo, frio ou elétrico. É o mesmo elemento do seu Sopro.",
       "Cem Mil Anos: você não envelhece de forma perceptível, é imune a doença comum, e tem Vantagem em testes de resistência de Espírito contra qualquer efeito de Medo ou de controle mental.",
-      "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão e Lábia — nada que já foi um deus finge ser gente comum de verdade. É o único preço que a raça cobra, e ele é permanente.",
+      "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão e Lábia, pra sempre — nada que já foi um deus finge ser gente comum.",
       "Línguas: Língua Humana (Comum) e Língua Dragônica.",
     ],
   },

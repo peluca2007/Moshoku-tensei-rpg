@@ -662,7 +662,12 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
     if (el.classList.contains("livro-fecho-arvore")) return;
     // A vitrine de coluna (a das árvores) já nasce visível, com altura mínima: só cresce.
     // O fecho é uma ilustração: faixa baixa demais só mostraria um recorte.
-    if (resto < (el.classList.contains("livro-fecho") ? 340 : 150)) return;
+    if (resto < (el.classList.contains("livro-fecho") ? 340 : 150)) {
+      // Sem espaço, a vitrine sai de vez: com altura zero ela ficava lá,
+      // invisível, com os brasões transbordando pro pé da página.
+      if (!el.classList.contains("livro-fecho") && !el.classList.contains("livro-vitrine-arvores")) el.classList.add("folhear-vitrine-some");
+      return;
+    }
     el.style.setProperty("--altura-vitrine", `${resto}px`);
     el.classList.add("folhear-vitrine-cheia");
   });
@@ -699,7 +704,7 @@ export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
   const colunaAlta = g.altura - g.topo - g.pe;
   const FOLGA = 28;
   fechos.forEach((el) => {
-    el.classList.remove("folhear-vitrine-cheia", "folhear-fecho-coluna", "folhear-fecho-inteiro");
+    el.classList.remove("folhear-vitrine-cheia", "folhear-fecho-coluna", "folhear-fecho-inteiro", "folhear-vitrine-some");
     el.style.removeProperty("--altura-vitrine");
   });
   const topo = fluxo.getBoundingClientRect().top;
@@ -744,8 +749,14 @@ export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
     return !ok;
   });
 
-  // 3. Página inteira.
-  inteiras.forEach((el, i) => {
+  // 3. Página inteira — só pra arte. A marca de fim (árvore sem prancha) que
+  // não coube some: uma página em branco com um símbolo não é finale.
+  inteiras.filter((el) => el.classList.contains("livro-fecho-marca")).forEach((el) => {
+    el.classList.remove("folhear-fecho-coluna", "folhear-vitrine-cheia");
+    el.classList.add("folhear-vitrine-some");
+    alturaFinal.delete(el);
+  });
+  inteiras.filter((el) => !el.classList.contains("livro-fecho-marca")).forEach((el, i) => {
     el.classList.remove("folhear-fecho-coluna");
     pr(el, colunaAlta - 4);
     alturaFinal.set(el, { altura: colunaAlta - 4, largura: faixa[fechos.indexOf(el)]?.largura ?? g.pagina - g.margem * 2 });
@@ -1060,6 +1071,28 @@ export function preencherPes(fluxo: Element, g: Geometria, r: Regua): number {
     return false;
   };
 
+  /*
+   * O mapa do que já ocupa cada coluna: o selo só entra onde não há NADA
+   * (medido em 2026-09-26: um selo caiu em cima do diagrama dos Sete
+   * Patamares, que atravessava a página logo abaixo). Peça larga ocupa as
+   * duas colunas da página.
+   */
+  const ocupado = new Map<number, [number, number][]>();
+  fluxo.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete, .livro-tabela, .diagrama, dl, blockquote, .livro-vitrine:not(.hidden)").forEach((el) => {
+    for (const q of Array.from(el.getClientRects())) {
+      if (q.height <= 1) continue;
+      const c = coluna(q);
+      const cols = q.width / r.k > meiaPagina ? [c - (c % 2), c - (c % 2) + 1] : [c];
+      for (const k of cols) {
+        const lista = ocupado.get(k) ?? [];
+        lista.push([y(q), base(q)]);
+        ocupado.set(k, lista);
+      }
+    }
+  });
+  // Folga de 16 px: a arte torta da carta, com sombra, passa uns pixels do fim dela.
+  const livre = (c: number, de: number, ate: number) => !(ocupado.get(c) ?? []).some(([a, b]) => a < ate && b > de + 16);
+
   const selos: { left: number; top: number; width: number; height: number; selo: string; cor: string }[] = [];
   const vistos = new Set<Element>();
   fluxo.querySelectorAll(".livro-verbete, .livro-caixa, .livro-tabela, h3, h4").forEach((bloco) => {
@@ -1071,7 +1104,7 @@ export function preencherPes(fluxo: Element, g: Geometria, r: Regua): number {
     const fim = pedacos[pedacos.length - 1];
     if (!fim || fim.width / r.k > meiaPagina || coluna(fim) !== coluna(q) - 1) return;
     const vao = colunaAlta - base(fim);
-    if (vao < 130 || !colunaCheia(bloco, coluna(q))) return;
+    if (vao < 130 || !colunaCheia(bloco, coluna(q)) || !livre(coluna(fim), base(fim), colunaAlta)) return;
     vistos.add(antes);
     const estilo = getComputedStyle(antes);
     selos.push({

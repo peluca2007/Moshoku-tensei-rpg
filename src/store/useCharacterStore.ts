@@ -3,7 +3,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AttributeKey, CharacterData, CondicaoAtiva, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
 import { TETO_DE_ACUMULOS } from "@/data/condicoes";
-import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank } from "./selectors";
+import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank, podeComprarDespertar } from "./selectors";
+import { getRaceById } from "@/data/races";
 import { comImagensSaneadas } from "@/lib/imagemDaFicha";
 import { getCondicaoPorId } from "@/data/condicoes";
 import { CURTOS_POR_DIA } from "@/lib/descanso";
@@ -411,6 +412,10 @@ export const useCharacterStore = create<RosterState>()(
       toggleRacialUpgrade: (upgradeId) =>
         updateActive(get, set, (c) => {
           const atuais = c.racialUpgrades ?? [];
+          // O despertar tem patamar mínimo (2026-09-26): comprar abaixo dele
+          // não entra; desmarcar sempre pode.
+          const upgrade = getRaceById(c.raceId)?.upgrades?.find((u) => u.id === upgradeId);
+          if (!atuais.includes(upgradeId) && upgrade && !podeComprarDespertar(c, upgrade).ok) return c;
           return {
             ...c,
             racialUpgrades: atuais.includes(upgradeId)

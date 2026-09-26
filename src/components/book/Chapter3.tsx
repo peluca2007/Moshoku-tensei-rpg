@@ -7,7 +7,7 @@ import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diag
 import TreeCatalog from "./TreeCatalog";
 import EntryCard from "./EntryCard";
 import RetratoDaArvore from "./RetratoDaArvore";
-import Prancha, { FimDaArvore, temPrancha } from "./Prancha";
+import Prancha, { FimDaArvore } from "./Prancha";
 import VitrineDasArvores from "./VitrineDasArvores";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
@@ -783,8 +783,11 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         TREES.filter((t) => t.category === category).map((tree, i) => (
           <div key={tree.id} className="livro-arvore-folhas space-y-3" data-capitulo="cap3">
             {i === 0 && <TituloDaCategoria category={category} />}
-            <CatalogoDaArvore tree={tree} category={category} abertas comRetrato={temPrancha(tree.id)} />
-            <FimDaArvore id={tree.id} nome={tree.name} />
+            {/* O retrato fica no começo da árvore, onde o autor o pensou. O
+                fecho é a prancha; quem não tem prancha fecha com a marca de fim
+                (o símbolo) até chegar arte nova — ARTE-PARA-O-LIVRO.md. */}
+            <CatalogoDaArvore tree={tree} category={category} abertas comRetrato />
+            <FimDaArvore id={tree.id} nome={tree.name} icone={tree.icon} />
           </div>
         )),
       )}
