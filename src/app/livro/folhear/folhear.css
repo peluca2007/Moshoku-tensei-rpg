@@ -428,6 +428,21 @@
   opacity: 0.35;
 }
 
+.folhear-botao-zoom {
+  border: 1px solid color-mix(in srgb, currentColor 32%, transparent);
+  background: var(--folhear-barra-fundo);
+}
+
+.folhear-zoom-rotulo {
+  display: none;
+}
+
+@media (min-width: 1200px) {
+  .folhear-zoom-rotulo {
+    display: inline;
+  }
+}
+
 .folhear-alternador {
   display: inline-flex;
   padding: 2px;
@@ -3674,8 +3689,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
     font-size: 0.85rem;
   }
 
-  .folhear[data-modo="livro"] .folhear-barra a[href="/"],
-  .folhear[data-modo="livro"] .folhear-barra [aria-label="Afastar"] {
+  .folhear[data-modo="livro"] .folhear-barra a[href="/"] {
     display: none;
   }
 

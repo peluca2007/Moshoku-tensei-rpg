@@ -1,6 +1,6 @@
 # Plano de experiência para o livro folheado
 
-> Estado: execução por etapas autorizada pelo autor em 2026-09-26. Cada entrega concluída é registrada no diário abaixo para o Cláudio acompanhar.
+> Estado: execução por etapas autorizada pelo autor em 2026-09-26. A frente 1 está em andamento. Cada entrega concluída é registrada no diário abaixo para o Cláudio acompanhar.
 
 ## Objetivo
 
@@ -158,4 +158,14 @@ Este é o plano da **próxima camada de experiência**. `PLANO-LIVRO-DIGITAL.md`
 - **Feito:** cada aba colorida mostra o nome completo do capítulo junto à borda do livro ao receber foco de teclado ou ponteiro. O rótulo usa as cores do papel noite/dia; o botão conserva seu nome acessível e deixou de depender do tooltip nativo.
 - **Onde:** `src/components/book/folhear/Folhear.tsx` e `src/app/livro/folhear/folhear.css`. Não houve mudança em texto de regras, dados ou diagramação das folhas.
 - **Conferido:** no navegador, foco por Tab mostrou “Cap. 5 — Entre Aventuras” nos papéis noite e dia. No modo livro a 390 px de largura, o rótulo da aba longa “Cap. 4 — Combate e Sobrevivência” permaneceu dentro da tela. O contador permaneceu em **265 páginas**; `npx tsc --noEmit`, ESLint do componente e `git diff --check` passaram.
-- **Limite:** a revisão `npm run revisar:livro` ainda falha antes de abrir o livro por causa do Chrome headless local. Este incremento não será enviado enquanto o portão exigido em `AGENTS.md` não puder ser cumprido. A próxima frente deve restaurar a revisão ou usar um ambiente em que ela rode; só depois alterar tamanho, quebra ou posição de conteúdo nas páginas.
+- **Limite naquela entrega:** a revisão `npm run revisar:livro` falhava antes de abrir o livro por causa do Chrome headless local. O impedimento foi resolvido no incremento seguinte, descrito abaixo.
+
+### 2026-09-26 — Segundo incremento concluído: leitura de perto
+
+- **Revisão restaurada:** a checagem completa funciona com `BASE=http://localhost:3020` e o Chrome fora das restrições do sandbox local. O revisor agora informa claramente se o livro não ficou pronto ou se a medição falhou, em vez de quebrar depois com um erro indefinido. A mudança está em `scripts/revisar-livro.mjs`.
+- **Feito:** o botão de aproximar ganhou destaque visual e, em tela larga, o texto “Ler de perto”. Depois de ampliar, o rótulo passa a “Mais zoom”. No celular, o botão de afastar permanece disponível quando necessário; antes, a barra o escondia em qualquer nível de zoom. Não houve alteração da diagramação das páginas.
+- **Onde:** `src/components/book/folhear/Folhear.tsx` e `src/app/livro/folhear/folhear.css`. O zoom continua usando o mecanismo existente, que preserva o ponto de leitura.
+- **Conferido no navegador:** leitura ampliada e retorno à página inteira mantiveram a página 225; a barra coube em 390, 784 e 1280 px, sem rolagem horizontal da interface. O controle ficou distinguível nos papéis noite e dia.
+- **Revisão do livro:** `npm run revisar:livro` com fotos no papel noite e a medição no papel dia passaram. O Chrome headless contou **267 páginas** e 1.361 títulos nas duas versões; o navegador incorporado mostrou **265 páginas** na mesma leitura, sinal de diferença de composição entre ambientes a acompanhar por título/âncora. Nenhum título separado, estouro, arte quebrada, borrada ou excessivamente cortada, nem linha de tabela solta. O relatório apontou páginas com mancha vazia em 8, 72, 212 e 223; são amostras editoriais para avaliar, não erros corrigidos nesta entrega.
+- **Leitura das fotos:** a p. 8 termina a introdução de combate do “Comece Aqui”; as pp. 212 e 223 terminam tabelas/seções do capítulo 4. A p. 72, fim da explicação da Árvore de Utilidade, deixa mais de meia folha vazia e é a primeira candidata a uma composição editorial melhor. As fotos e 34 folhas de contato estão em `.telas/revisao/` no checkout principal.
+- **Verificações de código:** TypeScript, ESLint dos arquivos alterados e `git diff --check` passaram. A frente 1 continua aberta para o trabalho nas páginas piloto e na mídia.
