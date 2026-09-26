@@ -38,7 +38,7 @@ export default function Chapter4() {
                 mundo nasce.
               </span>,
               <span key="v">
-              <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonde
+                <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonde
                 pra baixo. <b>Cada ponto positivo de Vigor soma 20% à sua vida inteira.</b>
               </span>,
             ]}
@@ -385,9 +385,9 @@ export default function Chapter4() {
           rows={[
             ["Ataque de Oportunidade", "1 Reação", "Disparado quando uma criatura hostil sai do seu alcance corpo a corpo sem usar a ação de Desengajar. Você realiza um ataque corpo a corpo comum."],
             ["Desengajar", "1 Ação", "Seu movimento neste turno não provoca Ataques de Oportunidade."],
-            ["Esquivar", "1 Ação", "Até o início do seu próximo turno, você tem Vantagem em testes de resistência e o PRIMEIRO ataque contra você na rodada sofre Desvantagem. Demais ataques ocorrem normalmente."],
-            ["Defender / Absorver", "1 Ação", "Você foca em absorver o impacto. Até o início do seu próximo turno, o PRIMEIRO ataque que te acertar tem o dano reduzido em (Vigor × 2) + o maior Bônus de Rank entre as suas árvores do Corpo (0 se não tiver nenhuma; a redução nunca fica negativa). O atacante não ganha nada por isso. Os ataques seguintes causam dano integral. A redução entra antes de Resistência e Vulnerabilidade (§6)."],
-            ["Bloquear com Escudo", "1 Reação", "Ao ser atingido por um ataque físico que você veja, gasta sua Reação e ganha +5 de CA adicional (+2 sem proficiência em Escudos) contra aquele único ataque — o escudo já está na sua CA, e a Reação o crava no caminho do golpe. Se isso fizer o ataque errar, o dano é anulado; se ainda assim acertar, o dano daquele ataque cai pela metade. O bloqueio sempre faz alguma coisa."],
+            ["Esquivar", "1 Ação", "Escolha uma criatura que você veja. Até o início do seu próximo turno, TODOS os ataques dela contra você sofrem Desvantagem, e você tem Vantagem em testes de resistência contra os efeitos dela."],
+            ["Defender / Absorver", "1 Ação", "Você foca em absorver o impacto. Até o início do seu próximo turno, TODO ataque que te acertar tem o dano reduzido em Vigor + metade do maior Bônus de Rank entre as suas árvores do Corpo (arredondado pra cima; 0 se não tiver nenhuma; a redução nunca fica negativa). O atacante não ganha nada por isso. A redução entra antes de Resistência e Vulnerabilidade (§6)."],
+            ["Bloquear com Escudo", "1 Reação", "Ao ser atingido por um ataque físico que você veja, gasta sua Reação e ganha +5 de CA adicional (+2 sem proficiência em Escudos) contra aquele único ataque — o escudo já está na sua CA, e a Reação o crava no caminho do golpe. Se isso fizer o ataque errar, o dano é anulado; se ainda assim acertar, o dano daquele ataque é reduzido em 2 × o seu maior Bônus de Rank — a mesma régua do Touki Endurecido. O bloqueio sempre faz alguma coisa."],
             ["Ajudar", "1 Ação", "Concede Vantagem no próximo teste de perícia ou de ataque de um aliado adjacente até o início do seu próximo turno. Se ele JÁ tem Vantagem, a ajuda vira +2 no teste (Vantagem não empilha — Cap. 1, §4). O +2 conta no Teto de Auxílio +6."],
           ]}
         />
@@ -580,7 +580,7 @@ export default function Chapter4() {
               ["4", "Zumbido Constante: Um tinido persistente atrapalha sua audição. Desvantagem em testes de Percepção que dependam puramente de som."],
               ["5", "Visão Desfocada: Dificuldade em focar os olhos após picos de adrenalina. Você sofre -2 de penalidade em todos os testes de Iniciativa."],
               ["6", "Nervo Pinçado: Suas mãos tremem de forma involuntária. Desvantagem em testes de Ladinagem e Ofícios que exijam coordenação motora fina."],
-              ["7", "Trauma Noturno: O corpo recusa o relaxamento profundo. Ao fazer um Descanso Longo, role 1d20; com 5 ou menos, você recupera apenas metade dos seus Pontos de Magia e recursos diários."],
+              ["7", "Costela Mal Colada: o tronco não aguenta outro impacto limpo. Sempre que você sofrer um acerto crítico, fica Desequilibrado até o fim do seu próximo turno."],
               ["8", "A Sombra Não Sai: Nenhuma penalidade física, mas Desvantagem em testes de resistência de Espírito contra Medo — o corpo lembra da morte, mesmo que a mente negue."],
               ["9", "Voz Quebrada: As cordas vocais foram gravemente danificadas. Você não consegue mais usar Encantamento Encurtado e tem Desvantagem em Atuação e Persuasão."],
               ["10", "Perna Manca: Os ossos não colaram direito e a musculatura atrofiou. Seu Deslocamento base sofre uma penalidade permanente de −3m."],
@@ -654,9 +654,9 @@ export default function Chapter4() {
         <SubTitle id="cap4-trauma">Trauma de Combate</SubTitle>
         <Aside title="Quando o Corpo Sobrevive mas a Mente Cobra a Conta">
           <P>
-            Sobreviver não é sair ileso. Sempre que você chegar a <b>0 PV</b>, testemunhar a morte de um
-            aliado a até 9 metros, ou matar alguém que implorava por clemência, ganhe <b>1 ponto de Trauma</b>{" "}
-            — a critério do Mestre, sem precisar contar cada goblin da estrada.
+            Sobreviver não é sair ileso — mas cair já cobra pela Exaustão (§7). O Trauma é o que a mente
+            leva: sempre que você <b>testemunhar a morte de um aliado</b> a até 9 metros, ou <b>matar alguém
+            que implorava por clemência</b>, ganhe <b>1 ponto de Trauma</b>.
           </P>
           <P>
             <b>Efeito, pelo total de Trauma acumulado</b> (Vantagem é binária, então a escala tem degraus, e
@@ -664,7 +664,7 @@ export default function Chapter4() {
           </P>
           <List
             items={[
-              <span key="t1"><b>1 ou 2 pontos:</b> Desvantagem em testes de Espírito feitos <b>fora de combate</b> (persuasão calma, negociação, criar confiança, dormir sem pesadelo).</span>,
+              <span key="t1"><b>1 ou 2 pontos:</b> Desvantagem nas perícias sociais — Persuasão, Lábia, Atuação e Enganação — feitas <b>fora de combate</b>. Percepção, Intuição e Sobrevivência não são afetadas: o batedor traumatizado ainda enxerga.</span>,
               <span key="t3"><b>3 pontos ou mais:</b> isso, e o sono também cobra: ao fazer um Descanso Longo, role 1d20; com 5 ou menos, você recupera só metade dos seus PM e PP.</span>,
             ]}
           />
@@ -814,9 +814,9 @@ export default function Chapter4() {
           <BookTable
             headers={["Nível", "Penalidade"]}
             rows={[
-              ["1", "Desvantagem em testes de atributo e em rolagens de ataque."],
+              ["1", "Desvantagem em testes de atributo e de perícia."],
               ["2", "Deslocamento reduzido à metade."],
-              ["3", "Desvantagem em testes de resistência."],
+              ["3", "Desvantagem em rolagens de ataque e em testes de resistência. A partir daqui você está Exausto: o Manto de Touki cai e tudo que diz \"enquanto não Exausto\" para de funcionar."],
               ["4", "PV Máximos reduzidos à metade."],
               ["5", "Deslocamento reduzido a 0."],
               ["6", "Morte — mas nunca sem uma última rolagem: ver abaixo. (A menos que a fonte diga o contrário; Fome Vermelha, seção 8 deste capítulo, transforma em vez de matar.)"],
@@ -829,8 +829,9 @@ export default function Chapter4() {
             da Vida dá três chances, e a Exaustão dá esta.
           </P>
           <P>
-            Os efeitos <b>somam</b>: no Nível 3, você já soma a Desvantagem de atributo e de ataque do Nível
-            1 com a de resistência deste nível, além de andar na metade da velocidade.
+            Os efeitos <b>somam</b>: no Nível 3, você já tem Desvantagem em atributo, perícia, ataque e
+            resistência, e anda na metade da velocidade. Os dois primeiros níveis doem sem derrubar: quem
+            acorda do Fio da Vida com 1 nível volta a lutar de Manto, só não confia nos próprios testes.
           </P>
           <P>
             <b>Removendo Exaustão:</b> um Descanso Longo remove 1 nível, desde que a causa não esteja mais

@@ -966,27 +966,19 @@ export function getPaSpent(state: StoreState): number {
   );
 }
 
-/** Cap. 5, §2 (Guilda de Aventureiros): faixas de PA usadas como referência pro Rank de Aventureiro — não é regra travada, só o chute inicial que o livro dá ao Mestre. */
-const GUILD_RANK_THRESHOLDS: { rank: GuildRank; min: number }[] = [
-  { rank: "S", min: 110 },
-  { rank: "A", min: 75 },
-  { rank: "B", min: 50 },
-  { rank: "C", min: 30 },
-  { rank: "D", min: 15 },
-  { rank: "E", min: 6 },
-  { rank: "F", min: 0 },
-];
-
-/** Retorna o Rank fixado pelo Mestre (overrides.guildRank) se existir; senão, uma estimativa por PA gasto (Cap. 5, §2: só um chute inicial, nunca a regra real). */
+/**
+ * Cap. 5, §2: todo personagem começa Rank F, recém-registrado na Guilda, e só
+ * sobe quando o Mestre registra (overrides.guildRank). Até 2026-09-26 a ficha
+ * estimava um Rank pelo PA gasto — e a Loja travava item por esse palpite,
+ * uma regra que o livro dizia não existir.
+ */
 export function getGuildRank(state: StoreState): GuildRank {
-  if (state.overrides.guildRank) return state.overrides.guildRank;
-  const paSpent = getPaSpent(state);
-  return GUILD_RANK_THRESHOLDS.find((t) => paSpent >= t.min)?.rank ?? "F";
+  return state.overrides.guildRank ?? "F";
 }
 
-/** true quando o Rank exibido é só a estimativa por PA — não uma decisão do Mestre já registrada. */
-export function isGuildRankEstimated(state: StoreState): boolean {
-  return !state.overrides.guildRank;
+/** Sempre false: o Rank F inicial é a regra, não uma estimativa. Mantida pra quem já a chama. */
+export function isGuildRankEstimated(_state: StoreState): boolean {
+  return false;
 }
 
 /**

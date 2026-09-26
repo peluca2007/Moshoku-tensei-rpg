@@ -17,8 +17,7 @@ na data da revisão (as linhas podem ter andado; procure pelo trecho).
   "1d8 + 5 vira **2d8 + 5**, passe ele no teste ou não" (`agua.ts` ~98).
 - `Chapter0.tsx` (~89) e `Chapter2.tsx` (~300-318): as Grandes Obras são **seis** (falta O Chamado que Não
   se Recusa, `invocacao.ts` ~240).
-- `Chapter2.tsx` (~607): só o **Fogo** exclui criaturas da área na Maestria do Avançado. Reescrita: "A
-  exceção se compra: a Maestria de Avançado do Fogo exclui até INTELECTO criaturas de cada área sua."
+- ~~`Chapter2.tsx` (~607): só o Fogo exclui criaturas da área~~ — **NÃO APLICAR**: a decisão 10 (B) deu a exclusão às quatro elementais, e o texto do Cap. 2 já está certo.
 - `Chapter0.tsx` (~93-98) e `Chapter2.tsx` (~169-204): a "lista fechada" do "não existe ação bônus" não
   bate com as cartas (Mãos Limpas, O Grande Círculo, Sem Peso, Encadeamento; Terra e Desintoxicação também
   têm Maestria de Imperador). Reescrita do aside do Cap. 0: "**Não existe ação bônus.** Existem efeitos
@@ -99,7 +98,7 @@ na data da revisão (as linhas podem ter andado; procure pelo trecho).
 - `Chapter5.tsx` ~469: título "Por que o travado nunca passa do dobro do livre". ~334: "Sombra Líquida" no
   lugar da Praga. ~177: maior preço é **2.000 PO**. ~134-140: acrescentar os itens travados por Rank que
   faltam (Vigor Passageiro D, Régia B, Regeneração A, Imperial e Égide Lendária S).
-- `Chapter4.tsx` ~107-121 (teto de PM): tirar o bastidor ("redação canônica", `mpPerRank`) e corrigir "17
+- ~~`Chapter4.tsx` teto de PM~~ — já reescrito junto com a decisão 2 (B).
   com Migurd" (é 15; 17 só com Nascente de Mana).
 - `Chapter4.tsx` ~626/638: "qualquer magia de Cura de rank Avançado ou superior, fora de combate".
 - `Chapter4.tsx` ~137-141: "+1 no Principiante e Intermediário, +2 no Avançado e Santo, +3 no Rei e
@@ -117,7 +116,9 @@ Reduzir a um "por quê" de uma frase, sem datas nem "antes era": `Chapter1.tsx` 
 ~317, ~769, ~860; `Chapter5.tsx` ~68, ~143-146, ~286-299; `Appendices.tsx` ~116-121, ~495-511, ~382, ~544,
 ~594, ~695-697 (documentação do simulador vai pra ajuda da tela de Encontros).
 
-## B. Decisões de mecânica (esperam o autor)
+## B. Decisões de mecânica — APLICADAS em 2026-09-26 (todas as ★)
+
+O autor aprovou as recomendações; estão na `main` (commits de 2026-09-26). Não reverter.
 
 Cada uma com a opção recomendada (★). O detalhe e os números estão na conversa de 2026-09-26.
 
