@@ -560,19 +560,9 @@ export default function Chapter2() {
               "Remove o ar em volta da cabeça: o alvo não recita nada por 1 turno. Interrompe sem teste, e é a forma mais barata do livro.",
             ],
             [
-              "Conter (Magia Teórica)",
-              "Magia Teórica",
-              "Ergue uma fronteira física com PV. Interrompe um trajeto ou uma linha de efeito enquanto estiver de pé; não anula magia automaticamente.",
-            ],
-            [
               "Rejeitar (Magia Teórica)",
               "Magia Teórica",
-              "Barra magia que cruze a fronteira, comparando o rank da magia com a potência inscrita no selo. Exige aprender Rejeitar e pagar todos os componentes da fórmula.",
-            ],
-            [
-              "Selo de Rejeição (Intermediário)",
-              "Magia Teórica",
-              "Modelo pronto de Conter + Rejeitar. Pode ser preparado antes do combate; não é uma anulação por Reação de qualquer magia no mapa.",
+              "Rejeitar não interrompe: a magia é conjurada e barrada ao cruzar a fronteira (§8).",
             ],
             [
               "Corte de Braço (Deus da Espada, Principiante)",
@@ -628,7 +618,7 @@ export default function Chapter2() {
             ],
             [
               "Quantas magias posso sustentar?",
-              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Cura do Santo sustenta duas). Circuitos da Magia Teórica têm limites próprios de células e carga registrados no desenho. Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
+              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Cura do Santo sustenta duas). Um circuito ligado conta como uma sustentação. Circuitos da Magia Teórica têm limites próprios de células e carga registrados no desenho. Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
             ],
             [
               "E se eu ficar sem PM no meio?",
@@ -689,7 +679,7 @@ export default function Chapter2() {
         </P>
         <P>
           Nesta árvore, Barreira é o ramo de <b>Conter e Rejeitar</b>. <b>Mana → Conter</b> levanta uma fronteira física, enquanto{" "}
-          <b>Mana → Rejeitar</b> barra magia. Quem conhece o símbolo de Fogo, Som ou Vida pode usá-lo em{" "}
+          <b>Mana → Rejeitar</b> barra magia. Os seis símbolos de essência são <b>Fogo, Água, Vento, Terra, Som e Vida</b>. Quem conhece um deles pode usá-lo em{" "}
           outra fórmula sem ganhar as magias prontas da árvore de origem. Um símbolo pode ser aprendido{" "}
           abrindo essa árvore ou comprado avulso por 1 PA.
         </P>
@@ -702,7 +692,7 @@ export default function Chapter2() {
         <P>
           Some o PM da essência, dos operadores e da forma. A primeira ação sobre o núcleo não cobra
           ligação extra; cada componente acrescentado depois custa +1 PM pela sobreposição, além de seu próprio custo;
-          um gatilho custa +2 PM. O rank de <b>construção</b> limita o tamanho e o custo total;
+          um gatilho conta como componente: custa +2 PM e paga +1 PM de sobreposição. O rank de <b>construção</b> limita o tamanho e o custo total;
           a <b>potência</b> define os números do efeito e não pode superar a construção.
           O alimentador pode ser outra pessoa, mas não pode ultrapassar o
           circuito que foi desenhado.
