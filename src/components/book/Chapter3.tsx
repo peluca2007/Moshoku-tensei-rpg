@@ -753,6 +753,9 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           Magias, talentos, técnicas e Maestrias de cada uma das 19 sub-árvores, rank por rank. Clique no
           nome de uma árvore pra abrir o catálogo dela.
         </P>
+        {/* A Universidade de Magia fecha a introdução (2026-09-26): a coluna que
+            sobrava vazia antes da primeira árvore, que sempre abre página nova. */}
+        <Prancha id="cap3-todas" />
         {!arvoresAbertas &&
           CATEGORIAS.map((category) => (
             <div key={category} className="space-y-3">

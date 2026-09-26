@@ -23,6 +23,7 @@ const LEGENDAS: Record<string, string> = {
   invocacao: "Um jovem deitado sobre uma criatura enorme de pelo ruivo.",
   teorica: "Uma maga de cabeça pra baixo entre flores, como quem lê o mundo do avesso.",
   "cap2-8": "Um estudante diante de folhas cobertas de diagramas de círculos e quadrados.",
+  "cap3-todas": "Sylphie de óculos escuros, Rudeus e duas colegas saindo da Universidade de Magia de Ranoa.",
   "cap3-triangulo": "Três mestres de espada lado a lado, um em cada painel: os três estilos, cada um com a sua aura.",
   "deus-da-espada": "Eris adulta de espada em punho e Rudeus de cajado, cercados de raios, com Orsted ao fundo.",
   "cap4-6": "O Labirinto de Begaritt em chamas: Roxy, Rudeus, Paul e Elinalise na luta mais cara da história.",
