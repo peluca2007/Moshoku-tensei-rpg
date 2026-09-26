@@ -963,13 +963,14 @@ export default function Folhear({
               </button>
               <button
                 type="button"
-                className="folhear-botao inline-flex"
+                className="folhear-botao folhear-botao-zoom inline-flex"
                 onClick={() => mudarZoom(zoom + 1)}
                 disabled={zoom === ZOOMS.length - 1}
-                aria-label="Aproximar"
-                title="Aproximar (+) — ou duplo clique na página"
+                aria-label={zoom === 0 ? "Ler esta página de perto" : "Aproximar mais"}
+                title={zoom === 0 ? "Ler de perto (+) — ou duplo clique na página" : "Aproximar mais (+)"}
               >
                 <ZoomIn className="h-4 w-4" aria-hidden />
+                <span className="folhear-zoom-rotulo" aria-hidden>{zoom === 0 ? "Ler de perto" : "Mais zoom"}</span>
               </button>
               <BotaoPapel papel={papel} />
             </>
