@@ -63,7 +63,7 @@ Oito raças trocaram de arte por cenas largas, que enchem o quadro da página da
 Imortal (Atofe), Élfica, Humana (Rudeus e Eris na floresta), Migurd (Roxy), Ogro, Celestial e Superd
 (Ruijerd). A prancha do Deus da Água voltou em resolução dupla; os três deuses da espada lado a lado viraram
 a prancha do Triângulo dos Estilos; a Ghislaine em pé é o retrato do Deus da Espada. As artes trocadas e as
-que ainda não têm lugar (Auber, os hobbits pequenos, a Atofe de mangá) foram pro .
+que ainda não têm lugar (Auber, os hobbits pequenos, a Atofe de mangá) foram pro `acervo-de-arte/`.
 
 ## Prioridade 1 — o que ainda falta nas raças e nas árvores
 
