@@ -235,6 +235,11 @@ export function QuadroDasRacas() {
  * até o pé da página (esticarVitrines, em diagramacao.ts) e reorganiza os
  * brasões conforme o espaço; se o espaço for pequeno demais, some.
  */
+/** Onde está o rosto, nas artes largas: a miniatura redonda da vitrine corta pelo centro. */
+const ROSTO_NA_MINIATURA: Record<string, string> = {
+  dragao: "26% 42%",
+};
+
 export function VitrineDasRacas() {
   return (
     <nav aria-label="As doze raças" className="livro-vitrine livro-racas-vitrine mt-4">
@@ -262,6 +267,7 @@ export function VitrineDasRacas() {
                       decoding="async"
                       data-recorte={arte.recorte ? "" : undefined}
                       className={`h-14 w-14 rounded-full object-cover ${arte.recorte ? "object-[center_8%]" : ""}`}
+                      style={ROSTO_NA_MINIATURA[race.id] ? { objectPosition: ROSTO_NA_MINIATURA[race.id] } : undefined}
                     />
                   ) : (
                     <RaceCrest race={race} size={56} rounded="rounded-full" />

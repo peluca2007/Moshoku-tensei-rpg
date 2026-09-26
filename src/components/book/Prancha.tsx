@@ -34,6 +34,10 @@ const LEGENDAS: Record<string, string> = {
   "bardo-e-interacao": "Geese e Badigadi numa disputa de caneca entre barris.",
   "navegacao-e-lideranca": "Rudeus, Eris apontando o caminho, Ruijerd e Kishirika, com um navio ao fundo.",
   cura: "Rudeus erguendo a relíquia sagrada contra o céu.",
+  "cap0-4": "Um grupo de aventureiros atravessando a cidade: uma maga de chapéu pontudo, Rudeus, Eris e os companheiros.",
+  "cap5-3": "Um salão cheio de gente na Universidade de Magia: uma elfa de cabelo branco e óculos escuros no centro, um gigante de pele cinza atrás.",
+  "cap5-4": "Ghislaine e Eris de óculos escuros, sentadas atrás de pilhas de moedas de ouro.",
+  "apendice-e": "O grupo na estrada: Eris e Rudeus conferindo um mapa, com os companheiros de viagem em volta.",
 };
 
 export default function Prancha({ id, arvore }: { id: string; arvore?: string }) {

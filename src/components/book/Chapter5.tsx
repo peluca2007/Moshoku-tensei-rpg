@@ -221,6 +221,7 @@ export default function Chapter5() {
 
       <Section>
         <SectionTitle id="cap5-3">3. Reputação com Facções</SectionTitle>
+        <Prancha id="cap5-3" />
         <P>
           Nem toda consequência de uma campanha cabe em PA ou em Rank de Aventureiro (seção 2 deste
           capítulo) — às vezes o que muda é quem abre a porta pra você. Reputação é uma escala narrativa de
@@ -266,6 +267,7 @@ export default function Chapter5() {
 
       <Section>
         <SectionTitle id="cap5-4">4. Crafting e Alquimia</SectionTitle>
+        <Prancha id="cap5-4" />
         <SubTitle>Como Funciona o Crafting</SubTitle>
         <P>
           Quatro perguntas resolvem qualquer fabricação desta seção: quem pode fazer, quanto tempo leva,

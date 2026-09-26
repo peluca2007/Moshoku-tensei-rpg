@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import Prancha from "./Prancha";
 
 /**
  * "Comece Aqui" — a porta de entrada do livro (2026-09-03).
@@ -143,6 +144,7 @@ export default function Chapter0() {
 
       <Section>
         <SectionTitle id="cap0-4">4. Criando um personagem em seis passos</SectionTitle>
+        <Prancha id="cap0-4" />
         <P>
           A versão curta. O Capítulo 1 tem cada passo por inteiro, e o site faz tudo isto pra você em{" "}
           <Link href="/criar" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">

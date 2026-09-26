@@ -239,6 +239,7 @@ export default function Appendices() {
 
       <Section>
         <SectionTitle id="apendice-e">E. Viagem entre Continentes</SectionTitle>
+        <Prancha id="apendice-e" />
         <P>
           O Mundo de Seis Faces tem seis continentes, e cruzar de um pro outro nunca é rápido nem barato —
           cada um desenvolveu magia, política e bestas diferentes. Este apêndice dá ao Mestre uma régua

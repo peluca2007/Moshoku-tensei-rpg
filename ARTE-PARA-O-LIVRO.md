@@ -45,10 +45,21 @@ esticada até borrar. Prancha larga e grande atravessa a página; prancha em pé
 Mesmo assim, **resolução ajuda**: a abertura do Cap. 1 (Eris e Rudeus) tem 592 px e é mostrada com 816 —
 a mesma cena, ou outra, com 1600 px ou mais, fica muito melhor.
 
+### Terceiro lote (2026-09-26)
+
+As ilustrações e capas dos volumes viraram aberturas de capítulo, fechos de capítulo e pranchas. A Raça
+Dragão ganhou a arte nova (`racas/dragao.webp`, o Orsted de casaco branco, recortado numa faixa larga
+pro quadro da raça). Quatro artes que sobravam entraram como pranchas: a criação de personagem (Comece
+Aqui, §4), Reputação com Facções e Crafting (Cap. 5, §3 e §4) e Viagem entre Continentes (Apêndice E).
+
+**Tudo que chegou foi aproveitado ou guardado.** As 21 que ainda não têm lugar estão em
+`acervo-de-arte/` (fora de `public/`, pra não irem pro ar), convertidas e com um `LEIAME.md` que diz o
+que cada uma mostra e onde pode entrar. As imagens soltas na raiz de `public/` do checkout principal já
+têm cópia no livro ou no acervo e podem ser apagadas.
+
 ## Prioridade 1 — o que ainda falta nas raças e nas árvores
 
 - Todas as raças e árvores já têm arte. Falta só resolução: `capitulos/abertura-cap1` (592 px).
-- `public/livro/arvores/fogo.webp` — a Magia de Fogo é a única árvore sem retrato.
 
 ## As doze raças (entram sozinhas)
 
