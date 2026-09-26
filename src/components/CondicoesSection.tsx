@@ -82,7 +82,7 @@ export default function CondicoesSection() {
              * a ficha está quebrada.
              */
             const teto = condicao.mecanica?.acumulavel
-              ? (bonusDeRankDaFonte ?? TETO_DE_ACUMULOS)
+              ? (condicao.mecanica.tetoFixo ?? bonusDeRankDaFonte ?? TETO_DE_ACUMULOS)
               : Infinity;
             const noTeto = acumulos >= teto;
             return (

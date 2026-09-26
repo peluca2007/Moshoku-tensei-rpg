@@ -1240,18 +1240,23 @@ export function getEfeitosDeCondicoes(state: StoreState): EfeitosDeCondicoes {
     penalidadeQuebrantado: getPenalidadeQuebrantado(state),
   };
 
-  for (const { condicao } of ativas) {
-    const m = condicao.mecanica;
-    if (!m) continue;
-    if (m.desvantagemEmAtaques) efeitos.desvantagemEmAtaques.push(condicao.nome);
-    if (m.desvantagemEmTestes) efeitos.desvantagemEmTestes.push(condicao.nome);
-    if (m.vantagemParaQuemAtaca || m.vantagemCorpoACorpo) efeitos.vantagemParaQuemAtaca.push(condicao.nome);
-    if (m.semAcoes) efeitos.semAcoes.push(condicao.nome);
-    if (m.danoPorTurno) efeitos.danoPorTurno.push({ nome: condicao.nome, formula: m.danoPorTurno });
+  for (const { condicao, acumulos } of ativas) {
+    const base = condicao.mecanica;
+    if (!base) continue;
+    // Os efeitos que só valem a partir de N acúmulos (a Dose vira Envenenado na
+    // 2ª) entram com o próprio rótulo, pra ficha dizer POR QUE há Desvantagem.
+    const degraus = (base.aPartirDe ?? []).filter((d) => acumulos >= d.acumulos);
+    for (const [nome, m] of [[condicao.nome, base] as const, ...degraus.map((d) => [d.rotulo, d.mecanica] as const)]) {
+    if (m.desvantagemEmAtaques) efeitos.desvantagemEmAtaques.push(nome);
+    if (m.desvantagemEmTestes) efeitos.desvantagemEmTestes.push(nome);
+    if (m.vantagemParaQuemAtaca || m.vantagemCorpoACorpo) efeitos.vantagemParaQuemAtaca.push(nome);
+    if (m.semAcoes) efeitos.semAcoes.push(nome);
+    if (m.danoPorTurno) efeitos.danoPorTurno.push({ nome, formula: m.danoPorTurno });
     // Zero vence metade: duas condições que reduzem o Deslocamento não se somam,
     // a pior manda — é como o livro trata empilhamento (Cap. 4, §5).
     if (m.deslocamento === "zero") efeitos.deslocamento = "zero";
     else if (m.deslocamento === "metade" && efeitos.deslocamento !== "zero") efeitos.deslocamento = "metade";
+    }
   }
 
   return efeitos;

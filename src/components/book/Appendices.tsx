@@ -141,7 +141,7 @@ export default function Appendices() {
               "O Tático é a coluna que decide quem executa. A Ordem de Tiro soma no primeiro ataque que acertar o alvo Apontado — de um aliado ou dele mesmo — e é só contra esse alvo que ele soma o Bônus de Rank no próprio golpe. Sem grupo, ele aponta e atira sozinho: perde a escolha de quem bate, não o número.",
               "O Bardo é a menor das três, e a única cujo dano é em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
               "O Vendaval e o Punho do Fogo são híbridas, e a linha é o patamar dentro delas: quem abre o 1º já chega Intermediário nas duas árvores-mãe, e por isso as duas começam acima das árvores-mãe. O número do Vendaval depende de quantos metros ele andou antes de golpear; o do Punho não conta o Quebrantado que empilha, que faz com ele o mesmo que faz com o Lutador.",
-              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. A Desintoxicação continua fora desta régua: se você a escolher esperando causar dano, escolheu errado. A Magia Teórica entra com o dano da fórmula que desenhar (Cap. 2, §8) — 1d6 no Principiante, sem o BC no dano.",
+              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. A Desintoxicação entra com o ciclo da Dose: dois venenos que pegam e uma Inversão que cobra os dois — o número só aparece se o alvo respira e se as Doses pegaram. A Magia Teórica entra com o dano da fórmula que desenhar (Cap. 2, §8) — 1d6 no Principiante, sem o BC no dano.",
             ]}
           />
         </Aside>
@@ -184,6 +184,8 @@ export default function Appendices() {
         <SubTitle>Sobre Cura, Aflições e Descanso</SubTitle>
         <QA q="Magia de Cura cura veneno?" a="Não. Nunca, em patamar nenhum. Isso é Desintoxicação, e a separação é absoluta." />
         <QA q="Desintoxicação cura PV?" a="Não. Ela remove a causa; a carne continua aberta. Sangria até causa dano de propósito." />
+        <QA q="Posso Inverter a Dose de um aliado?" a="Não precisa: num aliado, Purgar tira as Doses sem dano, como qualquer aflição. Inverter é escolha de quem conjura, e só faz sentido num inimigo." />
+        <QA q="Com 2 Doses no alvo, inverto ou espero a 3ª?" a="É a decisão da escola. Inverter agora cobra o dano garantido; a 3ª Dose tira o turno inteiro do alvo (Colapso), mas zera as Doses — e o veneno precisa pegar no Vigor pra chegar lá." />
         <QA q="Ferida Selada conta como Ferida Fresca para dobrar os dados da cura?" a="Conta. É exatamente pra isso que Selar a Ferida existe." />
 
         <SubTitle>Sobre Condições</SubTitle>

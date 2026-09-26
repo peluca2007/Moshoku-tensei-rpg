@@ -45,8 +45,26 @@ export interface MecanicaDeCondicao {
   danoPorTurno?: string;
   /** Perde Ações e Reação. */
   semAcoes?: boolean;
-  /** A condição empilha, e cada acúmulo conta (hoje só Quebrantado). */
+  /** A condição empilha, e cada acúmulo conta (Quebrantado e Dose). */
   acumulavel?: boolean;
+  /**
+   * Teto fixo de acúmulos, quando ele não depende de quem aplicou. A Dose para
+   * em 3 seja quem for o envenenador; o Quebrantado não tem este campo porque o
+   * teto dele é o Bônus de Rank da fonte.
+   */
+  tetoFixo?: number;
+  /**
+   * O que a condição vira ao chegar no teto. A 3ª Dose não fica na ficha: ela
+   * sai inteira e deixa o alvo Atordoado (o Colapso). Guardar isso aqui é o que
+   * deixa a ficha fazer a troca sozinha, em vez de mostrar "3×" e esperar a mesa
+   * lembrar.
+   */
+  noTetoVira?: string;
+  /**
+   * Efeitos que só valem a partir de certo número de acúmulos. Com 2 Doses o
+   * alvo está Envenenado; com 1, ainda não.
+   */
+  aPartirDe?: { acumulos: number; rotulo: string; mecanica: Omit<MecanicaDeCondicao, "aPartirDe"> }[];
 }
 
 export interface Condicao {
@@ -65,7 +83,7 @@ export interface Condicao {
   sinonimos?: string[];
 }
 
-/** As 25 do Cap. 4, §2, em ordem alfabética — a mesma ordem em que a tabela sempre saiu impressa. */
+/** As 26 do Cap. 4, §2, em ordem alfabética — a mesma ordem em que a tabela sempre saiu impressa. */
 export const CONDICOES: Condicao[] = [
   {
     id: "agarrado",
@@ -97,6 +115,25 @@ export const CONDICOES: Condicao[] = [
       "Deslocamento reduzido à metade. Dura até o fim do seu próximo turno, ou antes, se você gastar 1 Ação e passar num teste de Força (CD 8 + BC de quem te atolou). Não afeta ataques nem testes.",
     mecanica: { deslocamento: "metade" },
     duracaoPadrao: "Até o fim do próximo turno",
+  },
+  {
+    /*
+     * Rework da Desintoxicação, 2026-09-26 ("Dose e Inversão"). É a condição
+     * que dá à escola uma jogada em combate: os venenos dela empilham Dose, e os
+     * feitiços de purgar cobram a Dose de uma vez (Inverter, Cap. 2).
+     */
+    id: "dose",
+    nome: "Dose",
+    efeito:
+      "Acumulável até 3, e só os venenos da Magia de Desintoxicação a aplicam. Com 1 Dose, nada ainda: o veneno está se instalando. Com 2 Doses, o alvo está Envenenado. A 3ª Dose é o Colapso: as Doses saem todas e o alvo fica Atordoado até o fim do próximo turno dele. Dura até o fim do combate (1 minuto fora dele), ou até ser purgada ou Invertida (Cap. 2, Desintoxicação). Construtos, mortos-vivos e quem não respira não recebem Dose.",
+    mecanica: {
+      acumulavel: true,
+      tetoFixo: 3,
+      noTetoVira: "atordoado",
+      aPartirDe: [{ acumulos: 2, rotulo: "Dose ×2 (Envenenado)", mecanica: { desvantagemEmAtaques: true, desvantagemEmTestes: true } }],
+    },
+    duracaoPadrao: "Até o fim do combate",
+    sinonimos: ["Doses"],
   },
   {
     id: "atordoado",
