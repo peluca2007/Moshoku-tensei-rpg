@@ -95,13 +95,9 @@ export default function Chapter5() {
           acima são só uma régua de bolso pro Mestre calibrar o tamanho do que já rolou, não uma lista pra
           marcar.
         </Aside>
-        <Warning title="O palpite que a ficha mostra não é esta regra">
-          A ficha digital exibe um Rank de Aventureiro estimado a partir do PA já gasto, porque uma ficha em
-          branco precisa mostrar <i>alguma coisa</i> naquele campo. <b>Esse número não é regra</b> — ele
-          contradiz tudo o que esta seção diz, e existe só como palpite inicial pra mesa que ainda não
-          decidiu. Assim que o Mestre fixar o Rank, ele passa a valer e a estimativa some. Se a sua mesa
-          quiser, ignore o campo inteiro: nada no livro lê o Rank de Aventureiro pra calcular coisa alguma.
-        </Warning>
+        <Aside title="Todo personagem começa Rank F">
+          Recém-registrado na Guilda, sem história nenhuma. A ficha mostra F até o Mestre registrar outro Rank.
+        </Aside>
         <SubTitle>Subindo de Rank e Obrigações</SubTitle>
         <P>
           A promoção nunca é automática, mesmo depois do Mestre decidir que o feito foi grande o bastante:

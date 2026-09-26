@@ -76,7 +76,7 @@ export default function EncounterExplanation() {
 
           <section aria-labelledby="guia-regua">
             <Titulo id="guia-regua" numero="02">Leia a régua de orçamento</Titulo>
-            <p className="mt-2">A barra muda enquanto você monta a cena. Ela compara o peso das criaturas com o tamanho e o patamar do grupo: uma criatura do mesmo patamar por jogador é a referência; cada patamar acima dobra o peso, cada patamar abaixo o reduz à metade, e um Chefe vale três criaturas do seu patamar. Imunidade eleva o patamar efetivo nessa conta.</p>
+            <p className="mt-2">A barra muda enquanto você monta a cena. Ela compara o peso das criaturas com o tamanho e o patamar do grupo: uma criatura do mesmo patamar por jogador é a referência; cada patamar acima dobra o peso, cada patamar abaixo o reduz à metade, e um Chefe vale cinco criaturas do seu patamar. Imunidade eleva o patamar efetivo nessa conta.</p>
             <p className="mt-2">Pactos preparados contam como lacaios. Se um invocador puder usar Chamado de Emergência, a tela mostra uma segunda estimativa com reforços que cabem nas vagas e nos PM iniciais. Essa régua é uma aproximação rápida: não conhece rolagens, iniciativa, terreno ou a ordem em que os Pactos caem e voltam.</p>
           </section>
 

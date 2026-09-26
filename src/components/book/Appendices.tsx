@@ -511,10 +511,10 @@ export default function Appendices() {
             items={[
               "Grupo de criaturas fracas: use metade do PV e do dano do patamar, mas multiplique o número de criaturas.",
               <span key="chefe">
-                <b>Chefe único:</b> dobre o PV da linha do patamar dele, multiplique o dano pela tabela
-                abaixo — e dê a ele <b>uma rodada inteira a cada dois personagens</b> do grupo,
-                arredondado pra baixo, mínimo 1. Um grupo de cinco enfrenta um chefe que age duas vezes
-                por rodada.
+                <b>Chefe único:</b> dobre o PV da linha do patamar dele, mantenha o dano — e dê a ele{" "}
+                <b>uma rodada inteira a cada dois personagens</b> do grupo, arredondado pra baixo (grupos de
+                três ou menos não ganham rodada extra). Um grupo de cinco enfrenta um chefe que age duas
+                vezes por rodada.
               </span>,
               "Fera sem inteligência: role só o Atributo puro em testes sociais (sem Perícia).",
             ]}
@@ -575,8 +575,7 @@ export default function Appendices() {
           <P>
             <b>Trocar patamar por número</b>, para montar o resto: uma criatura <b>um patamar acima</b> vale
             duas do patamar do grupo; uma <b>um patamar abaixo</b> vale meia; <b>dois patamares abaixo</b>,
-            um quarto. Um <b>Chefe</b> (com o multiplicador desta seção) vale <b>três</b> criaturas do mesmo
-            patamar dele.
+            um quarto. Um <b>Chefe</b> vale <b>cinco</b> criaturas do mesmo patamar dele — um grupo inteiro.
           </P>
           <P>
             <b>Faixas de dificuldade:</b> <i>Fácil</i> até 0,75 do orçamento; <i>Equilibrado</i> acima de 0,75
@@ -590,42 +589,18 @@ export default function Appendices() {
           </P>
         </Warning>
 
-        <SubTitle id="apendice-g-chefe">O multiplicador de dano do Chefe</SubTitle>
+        <SubTitle id="apendice-g-chefe">Por que o Chefe pesa cinco</SubTitle>
         <P>
-          Ele é <b>por patamar</b>, e não um número só, porque as duas curvas que ele tenta casar não
-          crescem juntas: o PV somado de um grupo sobe cerca de 28% por patamar, e o dano por turno das
-          linhas deste apêndice sobe cerca de 50%. O dano corre <b>1,7× mais rápido</b> — então o mesmo
-          multiplicador que deixa o 3º patamar fácil deixa o 5º impossível.
+          O chefe não bate mais forte que uma criatura do patamar dele: ele aguenta o dobro e age mais vezes.
+          É a economia de ação, e não o dano por golpe, que o torna perigoso — o chefe que age duas vezes por
+          rodada espalha o estrago pelo grupo em vez de apagar um personagem por vez. Medido em batalha, isso
+          vale <b>um grupo inteiro</b>: cinco criaturas do patamar dele. Um chefe sozinho contra quatro
+          jogadores do mesmo patamar já é um encontro difícil; contra cinco, equilibrado.
         </P>
-        <BookTable
-          headers={["Patamar do chefe", "PV", "Dano por turno", "Chance de dizimar o grupo"]}
-          rows={[
-            ["3º — Ameaça", "×2", "×2,65", "32%"],
-            ["4º — Elite", "×2", "×1,9", "25%"],
-            ["5º — Terror", "×2", "×1,29", "25%"],
-          ]}
-        />
         <P>
-          A última coluna é medida, não estimada: 2000 batalhas por linha contra um grupo de cinco
-          montado no patamar do chefe — linha de frente, corpo a corpo, distância, mago e curandeiro.
+          Pra um chefe mais duro, dê a ele companhia (lacaios, meia criatura cada) ou um patamar acima —
+          nunca mais dano por golpe. Dano concentrado é o que faz a luta desabar inteira de uma vez.
         </P>
-        <Warning title="Um chefe de 25% não entrega 25% toda noite">
-          <P>
-            A medição encontrou um penhasco: no 5º patamar, <b>×1,28 dizima 20% das vezes e ×1,29 dizima
-            25%</b>; ×1,31 salta pra 53%. Trinta pontos separados por dois por cento de multiplicador.
-          </P>
-          <P>
-            A causa é realimentação positiva, e ela é do combate, não da tabela: quem cai para de causar
-            dano, a luta se alonga, e quem estava de pé cai também. <b>Ou o grupo aguenta o suficiente
-            pra virar, ou desaba inteiro</b> — quase não há meio-termo.
-          </P>
-          <P>
-            O que isso significa na sua mesa: os 25% são uma média de noites tranquilas e noites de
-            desastre, não a temperatura de cada sessão. Se você quiser tensão distribuída em vez de
-            concentrada, o caminho não é subir o multiplicador — é dar ao chefe <b>mais ações e menos
-            dano por golpe</b>, pra espalhar o estrago pelo grupo em vez de apagar um personagem por vez.
-          </P>
-        </Warning>
         {/*
           As seis criaturas prontas, com a ficha COMPLETA de cada uma
           (2026-09-25): atributos, CA, PV, ataque, CD, sentidos, resistências e
