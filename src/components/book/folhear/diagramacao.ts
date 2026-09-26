@@ -659,11 +659,68 @@ export function soltarEmpurroesVelhos(fluxo: Element, g: Geometria, r: Regua): n
     if (!q || !antes) return false;
     const pedacos = antes.getClientRects();
     const fim = pedacos[pedacos.length - 1];
+    // Uma coluna inteira (ou uma página) em branco entre o texto e o bloco:
+    // o empurrão pulou demais (peça larga empurrada logo depois de uma página
+    // que acabou cheia deixava a página seguinte vazia).
+    if (coluna(fim) < coluna(q) - 1) return true;
     if (coluna(fim) !== coluna(q) - 1) return false;
     return alturaDaColuna - (fim.bottom - topo) / r.k > alturaDaColuna * 0.3;
   });
   velhos.forEach((el) => el.classList.remove("folhear-empurra"));
   return velhos.length;
+}
+
+/**
+ * Tabela larga que abriria um buraco volta pra coluna — 2026-09-26.
+ *
+ * A tabela que atravessa a página (espalharTabelasEspremidas) só começa
+ * depois do que as DUAS colunas já têm. Quando isso não cabe, ela desce
+ * inteira pra página seguinte e deixa a anterior com meia coluna em branco
+ * (as Três Facções deixavam 68% de uma coluna vazia). Apertada numa coluna
+ * ela fica mais alta, mas começa onde o texto parou: melhor que o buraco.
+ * O título que atravessava junto com ela volta pra coluna também.
+ *
+ * @returns quantas tabelas voltaram pra coluna
+ */
+export function estreitarTabelasQueAbremBuraco(fluxo: Element, g: Geometria, r: Regua): number {
+  const topo = fluxo.getBoundingClientRect().top;
+  const colunaAlta = g.altura - g.topo - g.pe;
+  const pagina = (q: DOMRect) => Math.floor((q.left - r.origem) / r.k / g.pagina);
+  // Calço é vão de propósito: não conta como conteúdo, e sai junto.
+  const visto = (el: Element | null) => !!el && !el.classList.contains("folhear-calco") && Array.from(el.getClientRects()).some((a) => a.height > 1);
+  const voltar: Element[] = [];
+  const calcos: Element[] = [];
+  const calcosAntes = (el: Element) => {
+    for (let c = el.previousElementSibling; c && !visto(c); c = c.previousElementSibling) if (c.classList.contains("folhear-calco")) calcos.push(c);
+  };
+  fluxo.querySelectorAll(".livro-tabela.folhear-larga, .livro-caixa.folhear-larga").forEach((larga) => {
+    if (!visivel(larga)) return;
+    let antes = larga.previousElementSibling;
+    while (antes && !visto(antes)) antes = antes.previousElementSibling;
+    // O título que desceu atravessando junto: o buraco fica antes dele, e é
+    // ele que abre a página.
+    const titulo = antes?.matches("h3.folhear-larga, h4.folhear-larga") ? antes : null;
+    const q = Array.from((titulo ?? larga).getClientRects()).find((a) => a.height > 1);
+    if (!q || (q.top - topo) / r.k > 30) return; // abre a página (a margem do título conta)
+    if (titulo) {
+      antes = titulo.previousElementSibling;
+      while (antes && !visto(antes)) antes = antes.previousElementSibling;
+    }
+    if (!antes) return;
+    const pedacos = antes.getClientRects();
+    const fim = pedacos[pedacos.length - 1];
+    if (!fim || pagina(fim) !== pagina(q) - 1) return;
+    if (colunaAlta - (fim.bottom - topo) / r.k <= colunaAlta * 0.3) return;
+    voltar.push(larga);
+    calcosAntes(larga);
+    if (titulo) {
+      voltar.push(titulo);
+      calcosAntes(titulo);
+    }
+  });
+  voltar.forEach((el) => el.classList.remove("folhear-larga", "folhear-titulo-largo", "folhear-empurra", "folhear-segura", "folhear-inteira", "folhear-calcado"));
+  calcos.forEach((c) => c.remove());
+  return voltar.length;
 }
 
 const CLASSE_VINHETA = "folhear-vinheta";

@@ -60,6 +60,7 @@ import {
   soltarTitulos,
   limparCalcosInuteis,
   soltarEmpurroesVelhos,
+  estreitarTabelasQueAbremBuraco,
   preencherBuracos,
 } from "./diagramacao";
 
@@ -411,6 +412,14 @@ export default function Folhear({
         for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
       }
       // E o empurrão que ficou velho (o bloco já cabia onde estava) sai.
+      if (soltarEmpurroesVelhos(f, g, regua(fx)) > 0) {
+        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+      }
+      // Tabela larga que desceu de página deixando buraco volta pra coluna.
+      if (estreitarTabelasQueAbremBuraco(f, g, regua(fx)) > 0) {
+        ajustarTabelasLargas(f, g, regua(fx));
+        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+      }
       if (soltarEmpurroesVelhos(f, g, regua(fx)) > 0) {
         for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
       }
