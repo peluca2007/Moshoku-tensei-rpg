@@ -46,3 +46,5 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 | `cavaleiro-meme-animado.webp` | Um cavaleiro de chapéu, animado, pequeno (era a arte da Cavalgada). | Meme da Cavalaria, se couber em algum canto. |
 | `fim-da-cancao-meme-animado.webp` | Cena animada de palco, pequena (era O Fim da Canção). | Meme do Bardo. |
 | `onda-azul-animada.webp` | Uma onda azul animada, pequena (era o Terremoto Pessoal). | Arte da Magia de Água. |
+| `povo-do-mar-lanceira.webp` | Uma guerreira de pele azul com lança e água em volta, fundo branco. | Segunda arte da Raça do Oceano (recorte), ou antecedente. |
+| `povo-do-mar-sentada.webp` | Uma mulher do mar sentada, de capa, fundo branco. | Raça do Oceano, ou NPC. |
