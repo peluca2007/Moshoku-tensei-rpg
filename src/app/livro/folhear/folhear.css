@@ -1961,6 +1961,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 .folhear-aba {
+  position: relative;
   display: flex;
   width: 46px;
   height: 104px;
@@ -1981,6 +1982,41 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 
 .folhear-aba span {
   writing-mode: vertical-rl;
+}
+
+/* O título da aba aparece dentro do livro quando a pessoa procura um
+   capítulo. O nome já está no aria-label do botão; aqui ele ganha forma
+   visual sem depender da demora e da posição do tooltip do navegador. */
+.folhear-abas:is(:hover, :focus-within) {
+  z-index: 5;
+}
+
+.folhear-aba::before {
+  content: attr(data-label);
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 8px);
+  width: max-content;
+  max-width: 360px;
+  padding: 8px 12px;
+  border: 1px solid var(--cor-aba);
+  border-radius: 4px;
+  background: var(--papel-2);
+  box-shadow: 4px 5px 14px rgb(0 0 0 / 0.35);
+  color: var(--tinta);
+  font-size: 16px;
+  line-height: 1.2;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  visibility: hidden;
+}
+
+.folhear-aba:is(:hover, :focus-visible)::before {
+  opacity: 1;
+  visibility: visible;
 }
 
 .folhear-aba:hover {

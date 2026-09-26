@@ -1288,11 +1288,11 @@ function Abas({
             type="button"
             className="folhear-aba"
             data-capitulo={c.id}
+            data-label={c.label}
             data-atual={i === atual ? "" : undefined}
             onClick={() => aoEscolher(c.id)}
             aria-label={c.label}
             aria-current={i === atual ? "true" : undefined}
-            title={c.label}
           >
             <span>{numeral}</span>
           </button>
