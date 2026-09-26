@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { prefetchDe } from "@/lib/prefetch";
 import { useSearchParams } from "next/navigation";
 import { BookOpen, ChevronDown, Search, X } from "lucide-react";
 import EntryCard from "@/components/book/EntryCard";
@@ -341,6 +342,7 @@ function LinhaResultado({
           <Conteudo conteudo={d.conteudo} termos={termos} />
           <Link
             href={d.href}
+            prefetch={prefetchDe(d.href)}
             className="mt-2 inline-flex min-h-[24px] items-center gap-1.5 text-xs font-semibold text-wine-700 underline-offset-2 hover:underline dark:text-wine-300"
           >
             <BookOpen className="h-3.5 w-3.5" aria-hidden />

@@ -165,7 +165,7 @@ export default function Shop() {
           Comprar aqui debita o PO e manda o item direto pro inventário de{" "}
           <b className="text-parchment-800 dark:text-parchment-200">{character.name || "Sem nome"}</b>. Preço
           completo e o que cada Rank libera também estão no{" "}
-          <Link href="/livro#cap5-2" className="text-wine-700 underline hover:text-wine-500 dark:text-wine-200">
+          <Link href="/livro#cap5-2" prefetch={false} className="text-wine-700 underline hover:text-wine-500 dark:text-wine-200">
             Livro de Regras
           </Link>
           .

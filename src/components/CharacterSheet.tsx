@@ -1500,6 +1500,7 @@ export default function CharacterSheet() {
           </h2>
           <Link
             href="/livro"
+            prefetch={false}
             /* `py-1`: este link é um cabeçalho de seção, não link dentro de frase —
                a isenção do WCAG 2.5.8 não vale pra ele, e a caixa dele tinha 16px. */
             className="-my-1 flex items-center gap-1 py-1 text-xs font-medium text-wine-300 hover:text-wine-200"

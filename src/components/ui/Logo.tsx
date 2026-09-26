@@ -33,10 +33,17 @@ import Image from "next/image";
 export default function Logo({
   className = "",
   priority = false,
+  sizes = "120px",
 }: {
   /** Controle o tamanho por aqui (`h-*`). */
   className?: string;
   priority?: boolean;
+  /**
+   * A largura em que o logo APARECE (0.1.99). Sem isto o Next servia a versão
+   * de 1920px (~400 KB) pra desenhar um logo de 96px na barra, em toda página.
+   * O padrão cobre a barra (h-16) e o rodapé (h-20); a capa passa o dela.
+   */
+  sizes?: string;
 }) {
   return (
     <Image
@@ -45,6 +52,7 @@ export default function Logo({
       width={1535}
       height={1024}
       priority={priority}
+      sizes={sizes}
       className={`w-auto [filter:brightness(0.3)_sepia(0.5)_saturate(2)] dark:[filter:none] ${className}`}
     />
   );

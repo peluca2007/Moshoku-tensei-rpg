@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { prefetchDe } from "@/lib/prefetch";
 import { ArrowRight, Dices, ListChecks, ScrollText, Sparkles } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import Surface from "@/components/ui/Surface";
@@ -41,7 +42,7 @@ export default function CriarPage() {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {OPTIONS.map(({ href, icon: Icon, title, description }) => (
-          <Link key={href} href={href} className="group block focus-visible:outline-none">
+          <Link key={href} href={href} prefetch={prefetchDe(href)} className="group block focus-visible:outline-none">
             <Surface level="raised" interactive className="flex h-full flex-col p-5">
               <span className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-wine-600/10 text-wine-600 ring-1 ring-wine-500/25 transition-colors group-hover:bg-wine-600 group-hover:text-parchment-50 dark:bg-wine-500/15 dark:text-wine-300">
                 <Icon className="h-5 w-5" />

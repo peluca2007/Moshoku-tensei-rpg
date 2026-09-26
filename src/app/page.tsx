@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { prefetchDe } from "@/lib/prefetch";
 import { BookOpen, Dices, ScrollText, Skull, Sparkles, Store, Swords, TreePine, UserPlus, Users } from "lucide-react";
 import PatchNotes from "@/components/PatchNotes";
 import Surface from "@/components/ui/Surface";
@@ -156,7 +157,7 @@ export default function LandingPage() {
             letreiro novo. Ver ui/Logo.tsx.
           */}
           <h1 className="sr-only">Mushoku Tensei RPG</h1>
-          <Logo className="mx-auto mt-1 h-48 sm:h-72" priority />
+          <Logo className="mx-auto mt-1 h-48 sm:h-72" priority sizes="(min-width: 640px) 432px, 288px" />
           <p className="mx-auto mt-6 max-w-xl text-base text-parchment-700 dark:text-parchment-300 sm:text-lg">
             Um sistema de RPG de mesa completo, homebrew e feito por fãs, ambientado no mundo de{" "}
             <i>Mushoku Tensei: Jobless Reincarnation</i>. Crie seu personagem, evolua pelas árvores de magia,
@@ -183,7 +184,7 @@ export default function LandingPage() {
       <div className="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {VITRINE.map(({ href, arte, icon: Icon, kicker, title, description }) => (
-            <Link key={href} href={href} className="group block focus-visible:outline-none">
+            <Link key={href} href={href} prefetch={prefetchDe(href)} className="group block focus-visible:outline-none">
               <Surface
                 level="raised"
                 interactive
@@ -363,7 +364,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <PatchNotes />
+      <PatchNotes limite={5} />
     </div>
   );
 }

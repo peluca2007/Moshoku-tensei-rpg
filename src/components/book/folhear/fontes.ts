@@ -25,6 +25,10 @@ const rotulos = Barlow({
   subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-livro-rotulo",
+  // Sem pré-carga (0.1.99): com ela, cada página baixava todos os pesos e
+  // estilos antes de pintar (~300 KB). Sem, o navegador baixa só as faces que
+  // a página desenha de fato.
+  preload: false,
   display: "swap",
 });
 
@@ -39,6 +43,7 @@ const grito = Barlow_Condensed({
   weight: ["500", "600", "700", "800", "900"],
   style: ["normal", "italic"],
   variable: "--font-livro-grito",
+  preload: false,
   display: "swap",
 });
 
