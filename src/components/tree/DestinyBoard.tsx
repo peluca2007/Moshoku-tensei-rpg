@@ -13,6 +13,7 @@ import { layoutRadialTree, RadialInputNode, PositionedNode, RadialEdge } from "@
 import { describeGrantedSkills } from "@/lib/treeSkills";
 import TreeCrest from "@/components/TreeCrest";
 import AbilityListItem from "./AbilityListItem";
+import { rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
 
 type NodeMeta =
   | { kind: "root"; label: string }
@@ -114,7 +115,7 @@ function buildRankChain(tree: Tree, index: number, character: CharacterData): Ra
   const next = buildRankChain(tree, index + 1, character);
   return {
     id: `${tree.id}::${rank}`,
-    meta: { kind: "rank", tree, rank, label: tree.rankLabels?.[rank] ?? rank },
+    meta: { kind: "rank", tree, rank, label: rotuloDoPatamar(tree, rank) },
     children: next ? [next] : [],
   };
 }
@@ -271,7 +272,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
         const id = `${hybrid.id}::${rank}`;
         nodes.push({
           id,
-          meta: { kind: "rank", tree: hybrid, rank, label: hybrid.rankLabels?.[rank] ?? rank },
+          meta: { kind: "rank", tree: hybrid, rank, label: rotuloDoPatamar(hybrid, rank) },
           x: round2(radius * Math.cos(bisector)),
           y: round2(radius * Math.sin(bisector)),
           depth,

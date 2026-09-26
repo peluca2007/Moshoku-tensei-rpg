@@ -25,6 +25,7 @@ import { montarFicha } from "@/lib/combatSim";
 import { diceAverage } from "@/lib/dice";
 import { getTreeById } from "@/data/trees";
 import { CharacterData, RANK_BONUS } from "@/lib/types";
+import { rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
 
 /**
  * As três ferramentas de Mestre, na porta delas (0.1.36).
@@ -151,7 +152,7 @@ function patamarDe(c: CharacterData): string {
     const bonus = RANK_BONUS[rank];
     if (bonus > melhorBonus) {
       melhorBonus = bonus;
-      melhor = `${tree.rankLabels?.[rank] ?? rank} · ${tree.name}`;
+      melhor = `${rotuloDoPatamar(tree, rank)} · ${tree.name}`;
     }
   }
   return melhor || "Sem patamar aberto";

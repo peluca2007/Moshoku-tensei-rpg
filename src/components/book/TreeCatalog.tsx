@@ -5,6 +5,7 @@ import EntryCard from "./EntryCard";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { midiaDaMaestria } from "@/data/midiaDeHabilidade";
 import { BookTable, SubTitle } from "./BookUI";
+import { nomeTematico, rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
 
 /** Tabela de progressão por Rank — PV, e (conforme a árvore) PT/Escada de Arma ou PP, direto de TreeRankDef (nunca diverge da ficha). */
 function ProgressionTable({ tree }: { tree: Tree }) {
@@ -12,7 +13,7 @@ function ProgressionTable({ tree }: { tree: Tree }) {
   const isUtilidade = tree.category === "utilidade";
   const headers = ["Rank", "Bônus", "PV Ganhos", ...(isCorpo ? ["PT Ganhos", "Escada de Arma"] : []), ...(isUtilidade ? ["PP Ganhos"] : [])];
   const rows = tree.ranks.map((rankDef) => {
-    const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;
+    const label = rotuloDoPatamar(tree, rankDef.rank);
     const base = [label, `+${RANK_BONUS[rankDef.rank]}`, rankDef.hpDiceFormula];
     // Mesmo fallback de getPtPool (selectors.ts): campo ausente = +1 PT, desde o 1º patamar.
     if (isCorpo) base.push(`+${rankDef.ptGained ?? 1}`, rankDef.weaponDieSteps ? `+${rankDef.weaponDieSteps} degrau(s)` : "—");
@@ -158,11 +159,13 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
       <ProficiencyCard tree={tree} />
       <ProgressionTable tree={tree} />
       {nonEmptyRanks.map((rankDef, i) => {
-        const label = tree.rankLabels?.[rankDef.rank] ?? rankDef.rank;
+        const tematico = nomeTematico(tree, rankDef.rank);
         return (
           <div key={rankDef.rank} className="space-y-2">
             <SubTitle id={`${tree.id}-${rankDef.rank}`}>
-              {label} <span className="font-normal text-parchment-600 dark:text-parchment-400">(Bônus +{RANK_BONUS[rankDef.rank]})</span>
+              {rankDef.rank}
+              {tematico && <span className="font-normal italic text-parchment-600 dark:text-parchment-400"> · {tematico}</span>}{" "}
+              <span className="font-normal text-parchment-600 dark:text-parchment-400">(Bônus +{RANK_BONUS[rankDef.rank]})</span>
             </SubTitle>
             {rankDef.mastery && (
               <div className="livro-maestria print-avoid-break rounded-lg border border-gold-300 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30">

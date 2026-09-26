@@ -23,6 +23,7 @@ import { criaturaDoMolde } from "@/lib/encounterSim";
 import { BATALHAS_COMPARADOR as BATALHAS, SEMENTE_COMPARADOR as SEMENTE, type RespostaComparacao, type ResultadoComparacao } from "@/lib/buildComparison";
 import { getTreeById } from "@/data/trees";
 import { CharacterData, RANKS } from "@/lib/types";
+import { rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
 
 /**
  * Comparador de builds — 0.1.30.
@@ -80,7 +81,7 @@ function resumoDe(c: CharacterData) {
     const idx = RANKS.indexOf(rank);
     if (idx > maiorRank) {
       maiorRank = idx;
-      patamar = `${tree.rankLabels?.[rank] ?? rank} · ${tree.name}`;
+      patamar = `${rotuloDoPatamar(tree, rank)} · ${tree.name}`;
     }
   }
 

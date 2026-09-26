@@ -36,6 +36,7 @@ import {
   RankName,
   Tree,
 } from "@/lib/types";
+import { rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
 
 export type { GuildRank };
 
@@ -693,7 +694,7 @@ export function getWeaponDamage(
     treeId: tree.id,
     treeName: tree.name,
     rank,
-    rankLabel: tree.rankLabels?.[rank] ?? rank,
+    rankLabel: rotuloDoPatamar(tree, rank),
     rankBonus,
     steps,
     baseDie,

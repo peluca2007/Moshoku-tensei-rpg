@@ -174,7 +174,7 @@ porquê continua no código e num **apêndice de design** ("Por que os números 
 4. **Página de cânticos por escola**, diagramada como pergaminho, no fim de cada árvore.
 5. **Outro.**
 
-**3c. Nomes de patamar.** Hoje três árvores têm escadas próprias ("Atirador, Caçador…", "Iniciante,
+**3c. Nomes de patamar. ✅ feito (2026-09-26): "Intermediário · Caçador" em todo lugar (`rotuloDoPatamar`).** Hoje três árvores têm escadas próprias ("Atirador, Caçador…", "Iniciante,
 Aspirante…"), além de Rank, patamar e tier.
 
 **Opções para os nomes**

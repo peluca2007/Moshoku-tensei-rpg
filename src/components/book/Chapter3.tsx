@@ -175,15 +175,17 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             <b>Escolas Formais</b>: têm mestres vivos, sedes, hierarquia e títulos reconhecidos no mundo
             inteiro — usam os nomes canônicos de rank (Principiante → Imperador) e conferem status social.
             As outras sete são <b>Ofícios</b> aprendidos na estrada, sem diploma: mecanicamente idênticos
-            (mesmo Bônus de Rank, mesmos custos de PA, mesma contagem de conhecimentos), mas os nomes dos
-            patamares mudam — e a tabela abaixo é a tradução entre eles.
+            (mesmo Bônus de Rank, mesmos custos de PA, mesma contagem de conhecimentos). Cada patamar de
+            Ofício tem um <b>título</b> — o Arqueiro Intermediário é chamado de Caçador na estrada —, mas o
+            livro e a ficha usam sempre o nome do rank, com o título depois: <i>Intermediário · Caçador</i>.
+            Uma escada só pra decorar; a tabela abaixo mostra os títulos.
           </P>
         </Aside>
         <VitrineDasArvores />
         <BookTable
           headers={["Patamar", "Bônus", ...rankLabelTrees.map((t) => t.name)]}
           rows={RANKS.map((rank, i) => [
-            String(i + 1),
+            `${i + 1}º · ${rank}`,
             `+${RANK_BONUS[rank]}`,
             // Ofício não tem 7º patamar: onde a árvore não define rótulo pro Deus,
             // a célula sai como "—" em vez de repetir o nome canônico do rank.
