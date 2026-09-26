@@ -84,9 +84,6 @@ export const VENDAVAL_TREE: Tree = {
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
     nota: "Árvore híbrida do Corpo — exige Intermediário em Deus do Norte E em Magia de Vento.",
   },
-  grantedSkills: {
-    fixed: ["Acrobacia", "Percepção"],
-  },
   ranks: [
     {
       rank: "Principiante",

@@ -85,13 +85,11 @@ export default function Chapter1() {
         <Aside title="Distribuindo seus Pontos Iniciais">
           <P>
             Ao criar o personagem, você recebe <b>2 Pontos</b> para distribuir livremente entre os 5
-            atributos base. O valor máximo por atributo na criação é 4.
+            atributos base. O valor máximo por atributo na criação é 4 antes dos bônus de Raça e Antecedente.
           </P>
           <P>
-            <b>Bônus de Raça e Antecedente não entram neste orçamento.</b> Eles são empilhados por fora —
-            você os recebe em cima do que distribuiu, não competem com seus 2 pontos. Um Ogro (+2 de
-            Força) sai do ponto-buy com os mesmos 2 pontos que todo mundo, e termina o personagem com a
-            Força que a Raça deu mais o que ele botou.
+            <b>Bônus de Raça e Antecedente não entram neste orçamento.</b> Eles são somados depois da
+            distribuição dos 2 pontos; um Ogro com +2 de Força ainda distribui os mesmos 2 pontos.
           </P>
           <P>
             <b>Sistema de Defeitos:</b> você pode reduzir atributos pra ganhar pontos extras. As regras são
@@ -157,7 +155,7 @@ export default function Chapter1() {
             escada progressiva.
           </P>
           <P>
-            O livro <b>não corrige isso proibindo</b>. Corrige cobrando: as magias das quatro escolas de
+            As magias das três escolas de
             Espírito são <b>as mais caras em PM do livro inteiro</b>, patamar por patamar. A conta já vem feita
             nas cartas — você não soma nada na mesa —, e ela é <b>+1 PM por patamar da escola</b> sobre o que
             uma magia equivalente custaria numa escola elemental: +1 no Principiante, +6 no Imperador.
@@ -235,27 +233,17 @@ export default function Chapter1() {
         <P>
           O mundo é dividido em 7 Ranks de Maestria (Principiante, Intermediário, Avançado, Santo, Rei,
           Imperador e Deus). Você só recebe permissão pra comprar o desbloqueio de um Rank quando já possuir
-          o número mínimo de conhecimentos (magias e talentos comprados) daquela mesma árvore.
+          o número mínimo de conhecimentos (magias, técnicas e talentos comprados) daquela mesma árvore.
         </P>
         <BookTable
           headers={["Rank", "Custo de Desbloqueio", "Conhecimentos Exigidos", "Magia Comum", "Magia Assinatura ◆", "Talento"]}
           rows={RANKS.map((rank) =>
-            // O Divino nunca é comprado (Cap. 1, §3): ele aparece na tabela para
-            // fechar a escada, mas com "Narrativa" no lugar de todo custo. Até
-            // 2026-09-03 esta tabela imprimia DUAS linhas "Deus" — a do map, com
-            // o custo de RANK_REQUIREMENTS, e uma segunda escrita à mão dizendo
-            // "Narrativa" — que se contradiziam uma à outra, no meio da seção
-            // que existe justamente para explicar quanto cada rank custa.
+            // O Divino aparece na escada, mas depende da narrativa, sem custo de PA.
             rank === "Deus"
               ? [rank, "Narrativa", "—", "—", "—", "—"]
               : [
                   rank,
-                  // O Principiante nunca custa o valor da tabela: ele é a abertura
-                  // da árvore, e a abertura tem preço próprio pela ORDEM (§8) — a 1ª
-                  // é grátis, a 2ª 1 PA, e assim por diante. Até 2026-09-17 esta
-                  // célula imprimia "1 PA" e contradizia o §8, o passo 5 do Comece
-                  // Aqui e o próprio código: o jogador novo fechava a ficha com 2 ou
-                  // com 3 PA livres dependendo da página que tivesse aberto.
+                  // O custo do Principiante segue a ordem de abertura das árvores (§8).
                   rank === "Principiante" ? "Custo de Abertura (§8)" : `${RANK_REQUIREMENTS[rank].paCost} PA`,
                   String(RANK_REQUIREMENTS[rank].knowledgeRequired || "—"),
                   `${RANK_PA_COST.common[rank]} PA`,
@@ -267,7 +255,7 @@ export default function Chapter1() {
         <P className="text-sm">
           Esta é a tabela padrão, usada por Magia e pelo Corpo. Duas famílias fogem dela, e as duas fogem pra
           baixo: <b>Árvores de Utilidade</b> (tabela própria no Cap. 3, &ldquo;Sistemas Compartilhados&rdquo;)
-          e a <b>Magia de Desintoxicação</b> (Cap. 2, &ldquo;A Escola Barata&rdquo;).
+          e a <b>Magia de Desintoxicação</b> (logo abaixo, &ldquo;A Escola Barata&rdquo;).
         </P>
         <SubTitle>A Escola Barata — Desintoxicação</SubTitle>
         <P>
@@ -287,13 +275,13 @@ export default function Chapter1() {
           ])}
         />
         <Aside title="Magia Assinatura ◆">
-          Dentro de cada Rank existe uma magia que define aquele patamar — a que os magos daquele nível são
-          reconhecidos por saber, marcada com o símbolo ◆ nas listas. Ela custa +1 PA a mais que uma magia
-          comum do mesmo rank.
+          Dentro de cada Rank existe uma magia que define aquele patamar (na Desintoxicação, só do Avançado
+          em diante), marcada com o símbolo ◆ nas listas. Ela custa +1 PA a mais que uma magia comum do
+          mesmo rank.
         </Aside>
         <Aside title="Maestrias não contam">
           Maestrias (as passivas automáticas ganhas de graça ao desbloquear um Rank) não contam como
-          conhecimento. Apenas magias e talentos efetivamente comprados com PA contam pra tabela acima.
+          conhecimento. Apenas magias, técnicas e talentos efetivamente comprados com PA contam pra tabela acima.
         </Aside>
         <Warning title="E o Rank Deus">
           O patamar Divino não possui custo mecânico de PA. Como habilidades divinas beiram a onipotência e
@@ -323,19 +311,14 @@ export default function Chapter1() {
           <b>A CD mede a tarefa, não o patamar do grupo.</b> A mesma muralha tem a mesma CD pro Principiante e
           pro Imperador — quem cresce é você, não a parede.
         </P>
-        <P>
-          <b>20 e 1 naturais fora do ataque.</b> Em teste de perícia, de atributo e de resistência, um{" "}
-          <b>20 natural</b> é sucesso automático (se a tarefa for possível), e um <b>1 natural</b> é falha
-          com uma complicação — a corda arrebenta, o guarda chama o sargento, a ferramenta quebra. A
-          complicação nunca é dano extra nem morte; só uma regra que diga isso por escrito (como o Fio da
-          Vida, Cap. 4) cobra mais que isso. Numa <b>Disputa</b> (Cap. 4, &ldquo;Testes Resistidos&rdquo;),
-          cada lado soma o que somaria no teste normal — Vantagem por perícia, Bônus de Rank de Utilidade —,
-          e não o atributo puro: numa queda de braço, quem tem Atletismo rola com Vantagem. Numa Disputa de
-          corpo contra corpo (empurrar, derrubar, desarmar, se soltar), cada lado soma também metade do seu
-          maior Bônus de Rank, arredondado pra cima. Na Disputa, o 20 e o 1 naturais não têm efeito
-          especial: vale o total. Se esconder não é Disputa: tem CD fixa, 10 + Espírito de cada inimigo que
-          possa te procurar (Cap. 4).
-        </P>
+        <List
+          items={[
+            <span key="naturais"><b>20 e 1 naturais fora do ataque:</b> em testes de perícia, atributo e resistência, 20 é sucesso automático se a tarefa for possível; 1 é falha com uma complicação. Só uma regra escrita, como o Fio da Vida (Cap. 4), pode cobrar dano extra ou morte.</span>,
+            <span key="disputa"><b>Disputa:</b> cada lado soma tudo que usaria no teste normal, incluindo Vantagem por perícia e Bônus de Rank de Utilidade. O 20 e o 1 naturais não têm efeito especial: vale o total.</span>,
+            <span key="corpo"><b>Disputa corpo a corpo:</b> para empurrar, derrubar, desarmar ou se soltar, cada lado soma também metade do maior Bônus de Rank, arredondada pra cima.</span>,
+            <span key="esconder"><b>Esconder-se:</b> não é Disputa; usa CD fixa de 10 + Espírito de cada inimigo que possa procurar você (Cap. 4).</span>,
+          ]}
+        />
         <List
           items={[
             <span key="a">
@@ -373,7 +356,8 @@ export default function Chapter1() {
             conjurar; ele não vira estudioso de Arcanismo por isso.
           </P>
           <P>
-            Quanto cada pilar ensina: <b>Magia, 1 perícia fixa + 1 à sua escolha entre 3</b>.{" "}
+            Quanto cada pilar ensina: <b>Magia, 1 perícia fixa + 1 à sua escolha entre 3</b>{" "}
+            (na Magia Teórica, entre 4).{" "}
             <b>Corpo, 2 fixas</b>. <b>Utilidade, 2 fixas + 1 à sua escolha</b>, de uma lista curta — porque o
             Bônus de Rank delas cobre quatro ou cinco perícias, e ninguém fica treinado em todas (ver Cap. 3,
             &ldquo;A Árvore de Utilidade&rdquo;).
@@ -521,7 +505,7 @@ export default function Chapter1() {
         </Warning>
         <Warning title="Improvisado trava em d6 — e só o Deus do Norte escapa">
           <P>
-            A arma improvisada <b>não sobe na Escada de Dados</b>. Um Imperador quebra a mesma cadeira que
+            A arma improvisada <b>não sobe na Escada de Dados</b> (Cap. 3, &ldquo;O Dado de Arma&rdquo;). Um Imperador quebra a mesma cadeira que
             um Principiante quebra, e ela faz o mesmo estrago. Sem essa trava, o grupo gratuito seria a
             melhor arma do jogo no rank alto: qualquer um pegaria um banco de taverna e rolaria 3d10 sem
             ter estudado nada, contra o espadachim que pagou por cada degrau.
@@ -558,7 +542,7 @@ export default function Chapter1() {
         <Warning title="Penalidade de Não-Proficiência">
           <List
             items={[
-              "Arma sem proficiência: Desvantagem no teste de acerto. O dano continua normal — a Escada de Dados nunca reduz.",
+              "Arma sem proficiência: Desvantagem no teste de acerto. O dano continua normal — a Escada de Dados (Cap. 3, \"O Dado de Arma\") nunca reduz.",
               "Escudo sem proficiência: +1 de CA em vez de +2. Erguer uma tábua na frente do corpo ajuda um pouco mesmo sem treino; só não é defender.",
               "Armadura sem proficiência: Desvantagem em todo teste de ataque (com arma ou com magia) e de Concentração, Desvantagem em Furtividade e Acrobacia, e Deslocamento -3m enquanto vestida.",
             ]}
@@ -672,7 +656,8 @@ export default function Chapter1() {
         <P>
           O que você fez nos seus primeiros 10 anos de vida define a fundação do seu corpo, sua mana e seu
           lugar no mundo. Durante a criação da ficha, role 1d100 (ou escolha em conjunto com o Mestre) pra
-          descobrir sua origem e seu dinheiro inicial em Peças de Ouro (PO).
+          descobrir sua origem e seu dinheiro inicial em Peças de Ouro (PO). Escolher em vez de rolar custa
+          1 PA (seção 5).
         </P>
         <AntecedentesIlustrados />
 
@@ -691,14 +676,12 @@ export default function Chapter1() {
           <P>
             Os dois nascem conjurando em silêncio, e é aí que a semelhança termina. O <b>Fator Laplace</b>{" "}
             sofre as penalidades normais do método (metade do dano, área reduzida em um terço) — ele apenas
-            nunca precisou aprender. O <b>Gênio</b> não sofre nenhuma das duas, e é o único personagem do
-            livro que conjura em silêncio com o feitiço inteiro.
+            nunca precisou aprender. O <b>Gênio</b> não sofre nenhuma das duas, em escola nenhuma, desde a
+            criação. Talentos e Maestrias tiram a penalidade de uma escola só, e custam PA.
           </P>
           <P>
-            É de propósito que o mais raro seja o mais forte: Gênio sai em {chanceNoD100("genio")} de 100
-            rolagens, Fator Laplace em {chanceNoD100("fator-laplace")}. Até 2026-08-29 estava invertido — o
-            Laplace carregava +2 de Espírito, +8 PM e +6 PV fixos e era, com folga, o melhor resultado da
-            tabela apesar de ser mais comum.
+            Gênio sai em {chanceNoD100("genio")} de 100 rolagens, Fator Laplace em{" "}
+            {chanceNoD100("fator-laplace")}; o resultado mais raro traz a conjuração silenciosa mais forte.
           </P>
         </Aside>
 
@@ -759,9 +742,9 @@ export default function Chapter1() {
         <SubTitle>As Fórmulas Marciais</SubTitle>
         <P>
           Guerreiros usam a mesma lógica, trocando o atributo pelo <b>atributo-chave da árvore</b> — impresso
-          no topo dela, e sempre Força, Agilidade ou Vigor. O padrão do ataque com arma é <b>Força; ou
+          no topo dela, e quase sempre Força, Agilidade ou Vigor. O padrão do ataque com arma é <b>Força; ou
           Agilidade com os grupos Lâminas Curtas, Arcos e Bestas, Arremesso e Flexíveis</b>. Duas árvores
-          fogem disso e dizem por quê. <b>Escudos e Fortificação</b> usa <b>Vigor</b>: ela vende aguentar, não
+          fogem disso e dizem por quê. <b>Cavalaria e Escudos</b> usa <b>Vigor</b>: ela vende aguentar, não
           acertar. O <b>Deus da Água (Suishin-ryū)</b> usa <b>Agilidade</b> mesmo empunhando espada — um grupo
           de Força —, porque o estilo inteiro é ler o golpe e chegar meio segundo antes dele; aparar, postura
           e contragolpe são timing, e timing é Agilidade.
@@ -805,7 +788,7 @@ export default function Chapter1() {
           Você nunca tem duas reservas do mesmo tipo.
         </Aside>
         <Aside title="4. Custo de Abertura">
-          <P>Abrir uma árvore nova fica mais caro a cada árvore que você já tem:</P>
+          <P>Abrir uma árvore nova fica mais caro a cada árvore que você já tem: é grátis na primeira e custa +1 PA a cada árvore seguinte.</P>
           <BookTable
             headers={["Árvore", "1ª", "2ª", "3ª", "4ª", "5ª"]}
             rows={[["Custo de abertura", "grátis", "1 PA", "2 PA", "3 PA", "4 PA"]]}
@@ -816,9 +799,8 @@ export default function Chapter1() {
             mesma coisa.
           </P>
           <P>
-            Cada 1º patamar entrega uma Maestria gratuita — sem o Custo de Abertura, a jogada ótima seria
-            abrir cinco árvores por 4 PA e colecionar cinco Maestrias sem nunca subir nenhuma. Agora isso
-            custa <b>10 PA</b>, e continua sendo uma opção legítima — só não é mais de graça.
+            Cada 1º patamar entrega uma Maestria gratuita; o Custo de Abertura faz cinco árvores custarem
+            <b>10 PA</b> e mantém a escolha entre variedade e profundidade.
           </P>
         </Aside>
         <Aside title="5. Largura ou profundidade?">
@@ -852,8 +834,8 @@ export default function Chapter1() {
           Algumas combinações de Rank Intermediário ou superior revelam uma <b>árvore híbrida</b> que não existe
           pra ninguém que não cumpriu os dois pré-requisitos — hoje são duas, ambas no catálogo da Árvore do Corpo: o
           <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Intermediário) e o <b>Punho do Fogo</b>
-          (Lutador + Magia de Fogo, ambas no Intermediário). Nenhuma das duas aparece na escolha da Árvore Inicial, e o desbloqueio dela não é travado por código nenhum — o
-          Mestre decide, do mesmo jeito que já decide a Raça Dragão e o Rank Deus.
+          (Lutador + Magia de Fogo, ambas no Intermediário). Cumpridos os dois pré-requisitos, a híbrida
+          pode ser aberta pelo Custo de Abertura normal; nenhuma pode ser a Árvore Inicial.
         </Aside>
       </Section>
 

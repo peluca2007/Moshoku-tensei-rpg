@@ -18,10 +18,8 @@ describe("reconhecer condição na prosa", () => {
     expect(condicoesCitadas("Envenenado, e continua Envenenado.")).toEqual(["envenenado"]);
   });
 
-  it("prefere o nome mais longo — Fluxo Interrompido não vira dois pedaços", () => {
-    const p = separarCondicoes("A barreira aplica Fluxo Interrompido na área.");
-    const achado = p.find((x) => "condicao" in x);
-    expect(achado && "condicao" in achado && achado.condicao.id).toBe("fluxo-interrompido");
+  it("não transforma nomes da antiga Barreira em condições atuais", () => {
+    expect(condicoesCitadas("Estagnação, Fonte, Fluxo Interrompido e Selado.")).toEqual([]);
   });
 
   /*
@@ -76,9 +74,7 @@ describe("o glossário e o livro", () => {
   /*
    * Verbete morto é verbete que ninguém lê: se nenhuma habilidade do livro
    * aplica a condição, ou ela foi esquecida na prosa, ou ela não deveria estar
-   * no glossário. As exceções abaixo são condições que existem como REGRA de
-   * capítulo ou foram preservadas para fichas da antiga Barreira. Estagnação,
-   * Fonte e Fluxo Interrompido não são concedidos pela nova Magia Teórica.
+   * no glossário. As exceções são condições definidas como regra de capítulo.
    */
   it("toda condição do glossário é aplicada por alguma habilidade", () => {
     const citadas = new Set(
@@ -90,8 +86,7 @@ describe("o glossário e o livro", () => {
         ])
       )
     );
-    const legadas = new Set(["estagnacao", "fonte", "fluxo-interrompido"]);
-    const orfas = CONDICOES.filter((c) => !citadas.has(c.id) && !legadas.has(c.id)).map((c) => c.id);
+    const orfas = CONDICOES.filter((c) => !citadas.has(c.id)).map((c) => c.id);
     expect(orfas).toEqual([]);
   });
 });

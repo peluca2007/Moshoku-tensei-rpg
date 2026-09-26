@@ -356,7 +356,7 @@ export const AGUA_TREE: Tree = {
           paCost: RANK_PA_COST.signature.Santo,
           pmCost: 10,
           range: "Raio de 1,5 km",
-          actions: MAGIC_ACTIONS.Santo,
+          actions: { normal: 3 },
           effect:
             "A nuvem paira por 1 minuto. Todos na área ficam Molhados incondicionalmente. Enquanto ativa, gastando 1 Ação e 2 PM você castiga um alvo visível com um relâmpago: teste de Agilidade (CD 8 + BC) ou 4d10 de dano elétrico (metade se passar).",
           incantation:
@@ -482,7 +482,7 @@ export const AGUA_TREE: Tree = {
           actions: MAGIC_ACTIONS.Imperador,
           damage: { normal: "12d12 de frio (24d12 contra alvo Molhado)" },
           effect:
-            "Teste de Resistência de Vigor com Desvantagem Absoluta. Aliados são isolados magicamente e não sofrem efeito algum. Criaturas reduzidas a 0 PV são eternamente petrificadas — sem ressurreição, sem cura, sem corpo.",
+            "Os 24d12 contra um alvo Molhado já incluem a dobra do dano. Teste de Resistência de Vigor com Desvantagem Absoluta. Aliados são isolados magicamente e não sofrem efeito algum. Criaturas reduzidas a 0 PV são eternamente petrificadas — sem ressurreição, sem cura, sem corpo.",
           incantation:
             "Antes da primeira estrela decidir arder, havia isto:\nnenhum movimento, nenhum atrito, nenhuma pressa em coisa alguma.\nSilêncio primordial, anterior ao fogo e à palavra que o nomeou,\neu não te invoco como quem chama um servo. Eu te lembro.\nQue o vento pare no meio do sopro e fique ali, de pé, sem cair.\nQue a água esqueça como se corre e o sangue esqueça para onde ia.\nEu não peço frio — frio ainda é uma quantidade de calor,\ne eu vim tirar a última.\nQue o conceito de calor deixe de existir dentro deste círculo,\ne que o que restar seja pó de diamante, intacto e incapaz de voltar.\nZero Absoluto!",
         },
