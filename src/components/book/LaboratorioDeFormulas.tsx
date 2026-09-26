@@ -65,13 +65,15 @@ export default function LaboratorioDeFormulas() {
             }}
           >
             <div className="relative">
-              <button
-                type="button"
-                onClick={() => dialogo.current?.close()}
-                className="livro-laboratorio-fechar absolute right-4 top-4 z-10 border-2 border-[#78d5d0] bg-[#141418] px-3 py-1 text-white hover:bg-[#78d5d0] hover:text-[#141418]"
-              >
-                Fechar
-              </button>
+              <div className="mb-3 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => dialogo.current?.close()}
+                  className="livro-laboratorio-fechar border-2 border-[#78d5d0] bg-[#141418] px-3 py-1 text-white hover:bg-[#78d5d0] hover:text-[#141418]"
+                >
+                  Fechar
+                </button>
+              </div>
               <FormulaWorkshop />
             </div>
           </dialog>,
