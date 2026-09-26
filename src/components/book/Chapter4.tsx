@@ -38,7 +38,7 @@ export default function Chapter4() {
                 mundo nasce.
               </span>,
               <span key="v">
-                <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonte
+                <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonde
                 pra baixo. <b>Cada ponto positivo de Vigor soma 20% à sua vida inteira.</b>
               </span>,
             ]}
@@ -66,20 +66,11 @@ export default function Chapter4() {
             v.vigor >= 0 ? `+${v.vigor}` : String(v.vigor),
             v.label,
             `×${v.factor.toFixed(2).replace(".", ",")}`,
-            // A coluna existe porque o §7 (Fio da Vida) atribuía estas duas
-            // penalidades "à Escala do Vigor", e a Escala só tinha o fator de
-            // PV. Ou a frase estava errada, ou faltava a coluna — o Cap. 1 já
-            // generaliza ("largar Vigor custa o personagem"), então falta a
-            // coluna. Vale pra TODO teste de Vigor: veneno, clima, Exaustão e
-            // Fio da Vida.
             v.vigor === -1
               ? "Desvantagem."
               : v.vigor <= -2
                 ? "Desvantagem, sem a metade do Bônus de Rank, e 1 ou 2 contam como 1 natural."
                 : "—",
-            // Gerado do fator, e não escrito à mão: a linha −2 imprimiu "60%" ao
-            // lado de ×0,40 por várias versões, justo na troca que esta tabela
-            // existe pra deixar visível.
             v.vigor < 0
               ? `${Math.round(v.factor * 100)}% da vida de um corpo comum.`
               : v.vigor === 0
@@ -114,22 +105,21 @@ export default function Chapter4() {
           </P>
           <P>
             Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6+8 = <b>44 PM</b> — o suficiente
-            pra bancar a assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, com troco pra
-            mais nada.
+            pra bancar a assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, e sobram 4 PM.
           </P>
         </Aside>
         <List
           items={[
             <span key="ca"><b>Classe de Armadura (CA):</b> Base 10 + Agilidade. Cresce com armaduras, talentos e habilidades defensivas.</span>,
-            <span key="ini"><b>Iniciativa:</b> 1d20 + Agilidade.</span>,
+            <span key="ini"><b>Iniciativa:</b> 1d20 + Agilidade. Em empate, age antes quem tem maior Agilidade; persistindo, o jogador age antes do Mestre e, entre jogadores, eles combinam.</span>,
             <span key="res"><b>Teste de Resistência:</b> 1d20 + Atributo + <b>metade do seu maior Bônus de Rank</b> (arredondado pra cima), de qualquer árvore.</span>,
             <span key="desl"><b>Deslocamento:</b> 9 metros, exceto onde a raça indicar outro valor.</span>,
           ]}
         />
         <Aside title="O Rank conta no teste de resistência">
           <P>
-            Metade do Bônus de Rank, arredondada pra cima: <b>+1</b> no Principiante, <b>+2</b> do Avançado
-            ao Santo, <b>+3</b> no Imperador. É o mesmo valor que o Manto de Touki usa, de propósito — não
+            Metade do Bônus de Rank, arredondada pra cima: <b>+1</b> no Principiante e Intermediário, <b>+2</b> no Avançado
+            e Santo, <b>+3</b> no Rei e Imperador. É o mesmo valor que o Manto de Touki usa, de propósito — não
             existe uma terceira escala pra decorar.
           </P>
           <P>
@@ -146,13 +136,7 @@ export default function Chapter4() {
             antes de o segundo personagem agir. O multiplicador existe pra que a luta dure de duas a três
             rodadas em qualquer patamar: tempo pro curandeiro agir e pro Escudos se interpor.
           </P>
-          <P>
-            O valor foi <b>2,0</b> até 2026-08-30, e a constante de base foi <b>20</b>. Os dois desceram
-            juntos, a pedido da mesa — &ldquo;com 5 PA peguei 80 de vida&rdquo; —, e desceram pelo mesmo
-            motivo: <b>rank baixo é pra ser arriscado, não confortável</b>. Os 14 somam antes do Fator de
-            Vigor e afetam todo mundo por igual, então o piso caiu uns 10 PV sem distorcer a curva entre
-            classes; o 1,67 segura o topo sem achatar o meio.
-          </P>
+          <P>Os 14 pontos de base e o fator 1,67 mantêm o início arriscado e dão tempo de reação nos patamares altos.</P>
         </Aside>
       </Section>
 
@@ -219,7 +203,7 @@ export default function Chapter4() {
             se perde, e você recomeça do zero.
           </P>
           <P>
-            <b>Interrupção:</b> se sofrer dano enquanto conjura, faça um teste de Espírito contra{" "}
+            <b>Teste de Concentração:</b> se sofrer dano enquanto conjura, faça um teste de Espírito contra{" "}
             <b>CD 10 + o Bônus de Rank de quem te acertou</b> (CD 11 contra um Principiante, CD 16 contra um
             Imperador; use 12 se não houver um responsável claro). O Bônus de Rank de uma criatura é o
             patamar dela, de +1 a +6. Falhar significa perder o cântico, as Ações já gastas e{" "}
@@ -232,20 +216,8 @@ export default function Chapter4() {
             as formas deliberadas de derrubar o cântico de outra pessoa.
           </P>
         </Aside>
-        <Aside title="Por que a CD não é metade do dano">
-          <P>
-            Até 2026-08-29 a regra acima era &ldquo;CD 10 ou metade do dano sofrido, o que for maior&rdquo;.
-            Ela não sobrevive à própria progressão do livro: o dano cresce sem teto (uma criatura de patamar
-            Imperador bate perto de 120 por turno, Apêndice G), enquanto o teste cresce até um limite duro —
-            Espírito no teto (8) mais metade do Bônus de Rank (3) dá +11, num d20. Qualquer golpe acima de 62
-            de dano exigia 20 natural; acima de 82, nada bastava.
-          </P>
-          <P>
-            O resultado era que magia de 3 e 4 Ações — que este capítulo passa uma seção inteira ensinando
-            a dividir entre turnos — ficava impossível de conjurar exatamente nos patamares em que ela existe.
-            Amarrar a CD ao <i>Rank</i> de quem acertou mantém a tensão (você precisa mesmo de alguém segurando
-            a linha) sem transformar o Imperador de magia numa classe que não pode agir.
-          </P>
+        <Aside title="Por que a CD usa o Rank de quem acerta">
+          Amarrar a CD ao Rank de quem acerta mantém a conjuração sob pressão sem tornar impossíveis os cânticos de várias Ações.
         </Aside>
         <Aside title="Testes Resistidos (Disputas)">
           Nem todo conflito envolve uma CD estática. Empurrar um inimigo de um penhasco, disputar uma queda
@@ -305,10 +277,7 @@ export default function Chapter4() {
         />
 
         <SubTitle id="cap4-cobertura">Cobertura e Linha de Visão</SubTitle>
-        <P>
-          Três capítulos citam Cobertura e nenhum dizia quanto ela vale. Vale isto, e só isto — o que está
-          entre você e quem atira decide, não o quanto do seu corpo aparece:
-        </P>
+        <P>O que está entre você e quem atira determina sua Cobertura:</P>
         <BookTable
           headers={["Cobertura", "O que é", "O que dá"]}
           rows={[
@@ -327,10 +296,6 @@ export default function Chapter4() {
             ]}
           />
         </Aside>
-        <P className="text-sm">
-          <b>Empate de Iniciativa:</b> age antes quem tem a maior Agilidade. Persistindo o empate, o jogador
-          age antes do Mestre — e, entre dois jogadores, eles combinam.
-        </P>
 
         <SubTitle id="cap4-duas-armas">Duas armas, uma em cada mão</SubTitle>
         <P>
@@ -534,11 +499,11 @@ export default function Chapter4() {
         </P>
         <SubTitle>O Teste do Fio da Vida</SubTitle>
         <P>
-          No início de cada um dos seus turnos a 0 PV, role 1d20 + Vigor contra{" "}
+          No início de cada um dos seus turnos a 0 PV, role 1d20 + Vigor + metade do seu maior Bônus de Rank (arredondada pra cima) contra{" "}
           <b>CD 8 + o Bônus de Rank de quem te derrubou</b> (CD 9 contra um Principiante, CD 14 contra
           um Imperador; use 10 se não houver um responsável claro, como uma queda ou um desabamento). É um
           teste de resistência de Vigor como qualquer outro, então <b>A Escala do Vigor</b> (seção 1) vale
-          aqui: Constituição Frágil rola com Desvantagem, e Corpo Quebrado rola com Desvantagem, sem o Bônus
+          aqui: Constituição Frágil rola com Desvantagem, e Corpo Quebrado rola com Desvantagem, sem a metade do Bônus
           de Rank, e sofre a Falha Crítica em 1 ou 2.
         </P>
         <List
@@ -609,7 +574,7 @@ export default function Chapter4() {
           <BookTable
             headers={["d12", "Cicatriz"]}
             rows={[
-              ["1", "Ferimento Reaberto: A ferida arde sob esforço extremo. Desvantagem em testes de Constituição (Vigor) para evitar Exaustão ou fadiga."],
+              ["1", "Ferimento Reaberto: A ferida arde sob esforço extremo. Desvantagem em testes de Vigor para evitar Exaustão ou fadiga."],
               ["2", "Articulação Rígida: Movimentos bruscos causam fisgadas de dor. Desvantagem em testes de Acrobacia e Furtividade."],
               ["3", "Fôlego Curto: Seus pulmões perderam capacidade. Desvantagem em testes de Atletismo focados em natação, apneia ou corrida prolongada."],
               ["4", "Zumbido Constante: Um tinido persistente atrapalha sua audição. Desvantagem em testes de Percepção que dependam puramente de som."],
@@ -617,7 +582,7 @@ export default function Chapter4() {
               ["6", "Nervo Pinçado: Suas mãos tremem de forma involuntária. Desvantagem em testes de Ladinagem e Ofícios que exijam coordenação motora fina."],
               ["7", "Costela Mal Colada: o tronco não aguenta outro impacto limpo. Sempre que você sofrer um acerto crítico, fica Desequilibrado até o fim do seu próximo turno."],
               ["8", "A Sombra Não Sai: Nenhuma penalidade física, mas Desvantagem em testes de resistência de Espírito contra Medo — o corpo lembra da morte, mesmo que a mente negue."],
-              ["9", "Voz Quebrada: As cordas vocais foram gravemente danificadas. Você não consegue mais usar Conjuração encurtada e tem Desvantagem em Atuação e Persuasão."],
+              ["9", "Voz Quebrada: As cordas vocais foram gravemente danificadas. Você não consegue mais usar Encantamento Encurtado e tem Desvantagem em Atuação e Persuasão."],
               ["10", "Perna Manca: Os ossos não colaram direito e a musculatura atrofiou. Seu Deslocamento base sofre uma penalidade permanente de −3m."],
               ["11", "Olho Perdido: A visão periférica e de profundidade se foram. Desvantagem em Percepção visual e em qualquer ataque à distância além do alcance curto."],
               ["12", "Membro Perdido (Braço/Mão): Desvantagem em testes de Força e Atletismo. Você não consegue usar armas de duas mãos, nem empunhar arma e escudo ao mesmo tempo."],
@@ -628,7 +593,7 @@ export default function Chapter4() {
             A gravidade da sequela dita o limite do seu tratamento:
           </P>
           <ul>
-            <li><b>Cicatrizes Menores (1 a 7):</b> Causam incômodos mecânicos e narrativos, mas o corpo ainda pode se recuperar. Elas são totalmente apagadas caso o personagem receba uma magia de <b>Cura de Rank Avançado</b>.</li>
+            <li><b>Cicatrizes Menores (1 a 7):</b> Causam incômodos mecânicos e narrativos, mas o corpo ainda pode se recuperar. Elas são totalmente apagadas por <b>qualquer magia de Cura de rank Avançado ou superior, fora de combate</b>.</li>
             <li><b>Ferimentos Críticos (8 a 12):</b> Deixam marcas irreversíveis na estrutura do aventureiro. A única salvação conhecida é <i>Corpo Íntegro</i> (Cura, Rank Imperador) — capaz de reler o alvo por inteiro, apagando a Cicatriz e recriando membros perdidos. Sem esse milagre, nenhuma poção, descanso ou magia inferior resolverá o problema: poção tem efeito fixo e nunca copia magia, e nenhuma delas apaga Ferimento Crítico. É o preço da sobrevivência, e ele pesará na sua ficha pelo resto da campanha.</li>
           </ul>
         </Warning>
@@ -736,13 +701,7 @@ export default function Chapter4() {
           de Sapo-Lodo passa em 1 hora), ela acaba. Fora isso, aflição nenhuma some sozinha, e não existe
           número escondido subindo por trás da tabela. A urgência está escrita na própria linha.
         </P>
-        <Aside title="O que mudou (2026-09-03)">
-          Até esta versão, cada aflição carregava uma <i>Profundidade</i> de 1 a 5 que subia sozinha com o
-          relógio, e cada magia da escola empurrava esse número pra cima ou pra baixo em incrementos diferentes.
-          A mesa precisava manter um segundo relógio por personagem afetado, e o jogador de Desintoxicação
-          passava o turno fazendo conta em vez de jogar. O número foi apagado. O que ele media — &quot;dá pra
-          curar isto?&quot; — agora se responde olhando o rank, e a resposta leva um segundo.
-        </Aside>
+        <Aside title="Por que a aflição usa Rank">O Rank da aflição mostra de imediato qual tratamento pode removê-la.</Aside>
 
         <SubTitle>Venenos</SubTitle>
         <BookTable
@@ -753,14 +712,13 @@ export default function Chapter4() {
             ["Peçonha de Serpente-do-Pântano", "Intermediário", "Serpentes grandes", "2d6 por hora e Desvantagem em Vigor. Mata um camponês em cinco horas."],
             ["Toxina de Aranha Gigante", "Intermediário", "Cavernas, ruínas", "Paralisia progressiva: -3m de Deslocamento por hora, cumulativo até 0."],
             ["Fel de Wyvern", "Avançado", "Feras voadoras do Continente Demônio", "4d8 por dia. Cega em 48 horas."],
-            ["Sombra Líquida", "Santo", "Assassinos profissionais", "Sem sintoma por três dias. No quarto, o coração para."],
+            ["Sombra Líquida", "Santo", "Assassinos profissionais", "Sem sintoma por três dias. No quarto dia, teste de Vigor CD 16; na falha, o coração para."],
           ]}
         />
 
         <SubTitle>Aplicando um Veneno em Combate ou em Segredo</SubTitle>
         <P>
-          A tabela acima diz o que um veneno faz depois de estar ativo. Esta seção diz como ele entra no
-          corpo de alguém — porque isso é o que a mesa realmente precisa resolver, e o que faltava aqui.
+          A tabela acima diz o que um veneno faz depois de estar ativo; esta seção diz como ele entra no corpo.
         </P>
         <BookTable
           headers={["Via de aplicação", "Custo", "Como funciona"]}
@@ -799,7 +757,7 @@ export default function Chapter4() {
           Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Intermediária) e acerta um golpe surpresa.
           A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, entra Envenenada — 2d6 por hora e Desvantagem
           em Vigor — e isso não para até alguém com <b>Purga Profunda</b> (Intermediário) ou superior tratar,
-          ou até um Antídoto (Cap. 5, §4) ser bebido.
+          ou até uma Poção de Antídoto Forte (Cap. 5, §4) ser bebida.
         </Aside>
 
         <SubTitle>Doenças</SubTitle>
@@ -850,8 +808,7 @@ export default function Chapter4() {
       <Section>
         <SectionTitle id="cap4-8">9. Exaustão, Fome, Sede e Clima Extremo</SectionTitle>
         <P>
-          O sistema já usa a condição Exaustão em dezenas de talentos, doenças e maldições sem nunca fechar
-          o que ela faz de fato. Esta seção fecha essa conta.
+          A Exaustão causada por talentos, doenças e maldições segue os efeitos abaixo.
         </P>
         <Warning title="Exaustão Tem 6 Níveis, e Eles Empilham">
           <BookTable
@@ -890,7 +847,7 @@ export default function Chapter4() {
           items={[
             "Fome: ficar um dia inteiro sem nenhuma refeição dá 1 nível de Exaustão ao anoitecer. Comer qualquer refeição, por menor que seja, zera essa contagem — mas não remove a Exaustão que já acumulou.",
             "Sede: mais urgente. Ficar sem beber água por mais de algumas horas em clima ameno, ou desde o início em calor extremo, dá 1 nível de Exaustão a cada 4 horas depois da primeira falta.",
-            "Ração de aventureiro (item comum, poucas moedas de cobre por dia) resolve as duas ao mesmo tempo — é por isso que toda caravana carrega mais ração do que ouro.",
+            "Ração de Viagem (5 PO por semana) resolve a fome; um Cantil cheio resolve a sede.",
           ]}
         />
 

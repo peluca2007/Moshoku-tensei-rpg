@@ -97,7 +97,7 @@ export const CURA_TREE: Tree = {
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
           damage: { normal: "2d8 + BC de PV Temporários" },
-          effect: "Duram 10 minutos, gastos antes dos PV reais, não acumulam com outra fonte. É a proteção PREPARADA: você a põe antes da porta abrir. A Casca (Barreira) é a reativa — metade dos dados, mas sai no meio do golpe.",
+          effect: "Duram 10 minutos, gastos antes dos PV reais, não acumulam com outra fonte. É uma proteção preparada antes do combate.",
           incantation:
             "Força que eu ainda tenho de sobra, empresto um pouco a ti — não é meu pra sempre, mas é teu agora.\nVigor Emprestado!",
         },
@@ -183,7 +183,7 @@ export const CURA_TREE: Tree = {
           paCost: RANK_PA_COST.talent.Intermediário,
           pmCost: 5,
           range: "Toque",
-          actions: { normal: 3, encurtada: 2, silenciosa: 1 },
+          actions: { normal: 3 },
           ritual: true,
           costNote:
             "3 Ações em vez de 2, e Ritual: induzir sono profundo o suficiente pra valer como Descanso Curto não é um toque instantâneo — é embalar alguém até ele apagar de verdade, e isso leva um minuto real de mesa, não meio segundo.",
@@ -346,7 +346,7 @@ export const CURA_TREE: Tree = {
           paCost: RANK_PA_COST.signature.Rei,
           pmCost: 20,
           range: "Toque",
-          actions: MAGIC_ACTIONS.Rei,
+          actions: { normal: 4 },
           effect: "Ritual de 10 minutos. Regenera completamente um membro/olho/orelha/órgão perdido, desde que você tenha os ossos correspondentes. Não funciona contra perdas por magia Imperador ou superior.",
           incantation:
             "Osso que falta no lugar onde antes havia osso: eu sei exatamente onde tu estavas, e o corpo que te perdeu também sabe — ele só não consegue mais dizer em voz alta. Então digo eu, por ele, e digo devagar. Aqui. Era aqui. Volta pra este ponto, e traz contigo a lembrança de como a carne crescia à tua volta, de como o sangue te encontrava sem se perder, e de como a mão que dependia de ti se fechava sem precisar pensar antes. Restauração!",

@@ -157,7 +157,7 @@ export const ESCUDOS_TREE: Tree = {
       abilities: [
         {
           id: "muralha-de-um",
-          name: "Muralha de Um",
+          name: "Muralha da Companhia",
           signature: true,
           paCost: 2,
           ptCost: 1,

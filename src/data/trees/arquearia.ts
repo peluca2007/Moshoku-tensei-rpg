@@ -104,7 +104,7 @@ export const ARQUEARIA_TREE: Tree = {
           "Você pode Marcar sem atacar (1 Ação de observação). A condição Marcado que você aplica passa a durar até o seu próximo Descanso Longo, em vez de acabar com o combate, e você tem +1 no acerto contra criaturas Marcadas por você.",
       },
       talents: [
-        { id: "etapa-encurtada", name: "Etapa Encurtada", paCost: 2, description: "A Corda e A Leitura — as duas primeiras etapas — passam a caber numa Ação só: dois testes, uma Ação. O Tiro Perfeito inteiro cai de 4 Ações para 3, e passa a caber num único turno." },
+        { id: "etapa-encurtada", name: "Etapa Encurtada", paCost: 2, description: "Custa 2 PA porque condensa duas etapas em uma Ação. A Corda e A Leitura — as duas primeiras etapas — passam a caber numa Ação só: dois testes, uma Ação. O Tiro Perfeito inteiro cai de 4 Ações para 3, e passa a caber num único turno." },
         { id: "leitura-de-presa", name: "Leitura de Presa", paCost: 1, description: "Vantagem em Sobrevivência e Percepção para rastrear e emboscar. (Se você já tem isto pelo Tático ou pelo Norte, escolha outro talento — o mesmo bônus não empilha.)" },
         { id: "corda-rapida", name: "Corda Rápida", paCost: 1, description: "Recarregar besta deixa de custar Ação." },
         { id: "distancia-e-seguranca", name: "Distância É Segurança", paCost: 1, description: "Contra criaturas a mais de 18 metros, você recebe +2 na CA." },

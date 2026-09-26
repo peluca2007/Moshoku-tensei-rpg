@@ -258,7 +258,7 @@ export const VENTO_TREE: Tree = {
           signature: true,
           paCost: RANK_PA_COST.signature.Santo,
           pmCost: 11,
-          range: "Esfera de 30m de raio",
+          range: "Esfera de 15m de raio",
           actions: MAGIC_ACTIONS.Santo,
           damage: { normal: "3d8 + BC de dano cortante por turno (metade se passar)" },
           effect: "Sustentada, e ocupa a sua sustentação (Cap. 2, §7): até 1 minuto. Esfera de 15m de raio que se move 9m por turno para onde você quiser. No início de cada turno SEU, quem estiver dentro faz teste de Agilidade (CD 8 + BC): quem falha sofre o dano e fica Desequilibrado; quem passa sofre metade e nada mais. É a magia mais longa da escola, e o preço é você não conjurar mais nada enquanto ela gira.",

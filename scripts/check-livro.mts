@@ -204,11 +204,8 @@ for (const tree of TREES) {
  * A média do maior golpe único do patamar, JÁ AMORTIZADA pelas Ações que ele
  * custa — que é a unidade em que o Apêndice C mede.
  *
- * O próprio livro avisa: "Magia não está amortizada pelas Ações. Uma magia de
- * Imperador custa 6 Ações — dois turnos inteiros." Um turno tem 3 Ações, então
- * uma magia de 6 Ações entrega metade do total por turno. Sem essa divisão o
- * check acusaria o Sol Menor (221 de média, 6 Ações) contra uma coluna de 130,
- * quando 130 é exatamente o número certo pra ele.
+ * A carta pode listar o dano normal e uma alternativa entre parênteses.
+ * O caso Molhado ou Em Chamas substitui o dado base; não soma os dois valores.
  */
 function danoPorTurnoDaArvore(treeId: string, rankIndex: number): number {
   const tree = TREES.find((t) => t.id === treeId);
@@ -221,6 +218,15 @@ function danoPorTurnoDaArvore(treeId: string, rankIndex: number): number {
     if (!formula) continue;
     let total = 0;
     for (const m of formula.matchAll(/(\d+)d(\d+)/g)) total += diceAverage(`${m[1]}d${m[2]}`);
+    const dadoBase = formula.match(/(\d+)d(\d+)/);
+    for (const alternativa of formula.matchAll(/\((\d+d\d+)(?:\s*\+\s*BC)?\s+(?:contra|se|para)\b[^)]*\)/gi)) {
+      const mediaAlternativa = diceAverage(alternativa[1]);
+      total -= mediaAlternativa;
+      if (dadoBase) {
+        const mediaBase = diceAverage(`${dadoBase[1]}d${dadoBase[2]}`);
+        total += Math.max(0, mediaAlternativa - mediaBase);
+      }
+    }
     const acoes = a.reaction ? 1 : Math.max(1, a.actions.normal);
     const turnos = Math.max(1, Math.ceil(acoes / 3));
     const porTurno = total / turnos;

@@ -131,7 +131,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
           effect: "Teste de Vigor (CD 8 + BC). Falha: o alvo cai Inconsciente por 1 minuto (10 rodadas); sofrer dano o acorda. Fora de combate, o sono dura 8 horas. Sucesso: nenhum efeito — o veneno é sutil, não violento. Não afeta construtos, mortos-vivos nem quem não respira.",
-          incantation: "Rosa cultivada nos jardins fechados de Asura, onde o espinho vale mais do que a flor: finca o teu ferro neste sangue e faz a consciência dele desabar como quem apaga uma vela entre os dedos — sem barulho, sem aviso e sem que ninguém na sala perceba antes de ele cair. Rosa-Preta!",
+          incantation: "Rosa dos jardins de Asura, entra neste sangue sem aviso e apaga-lhe a consciência como uma vela entre os dedos. Rosa-Preta!",
         },
         {
           id: "sangria",
@@ -328,7 +328,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           paCost: DESINTOX_PA_COST.signature.Santo,
           pmCost: 15,
           range: "Esfera de 30m",
-          actions: MAGIC_ACTIONS.Santo,
+          actions: { normal: 3 },
           effect: "Toda criatura, água, solo, alimento e estrutura na área é purgada de aflições de rank Santo ou inferior.",
           incantation: "Que a terra esqueça o que foi despejado nela, no ano em que foi e pelas mãos que já morreram. Que a água esqueça por onde correu. Que a carne esqueça o que entrou nela sem bater na porta. Eu não estou curando ninguém aqui: estou apagando um capítulo inteiro deste lugar, e vou apagá-lo tão fundo que nem os que sobreviverem vão lembrar de contá-lo. Purificação!",
         },
@@ -350,6 +350,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 13,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Santo,
+          costNote: "O cântico breve condensa o preparo do veneno de Wyvern; as demais regras da conjuração permanecem.",
           damage: { normal: "4d8 de dano de veneno" },
           effect: "Teste de Vigor (CD 8 + BC). Falha: dano e Cego até o fim do próximo turno. Sucesso: metade do dano e nenhuma condição. O veneno de Wyvern não é o mais forte do catálogo — é o mais cruel: mata devagar, e arranca a visão antes da vida. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
@@ -440,6 +441,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 24,
           range: "Toque",
           actions: MAGIC_ACTIONS.Imperador,
+          costNote: "O cântico breve acompanha a aplicação discreta do veneno; as demais regras da conjuração permanecem.",
           effect: "Teste de Vigor (CD 8 + BC) com Desvantagem. Falha: sem efeito imediato algum — nenhum sintoma, nenhuma dor, nenhum sinal. Três turnos depois (ou três dias, fora de combate), o veneno detona: 8d10 de dano de veneno irredutível. Só uma Purificação de rank Santo ou superior aplicada ANTES da detonação a impede — e só se o curandeiro souber que está lá. Sucesso: o corpo recusa o veneno, e ele sabe que alguém tentou. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
             "O Líquido Sombrio não anuncia que chegou — essa é a lição que os envenenadores de Asura ensinam primeiro e que os aprendizes entendem por último. Ele entra pelo toque, se instala sem levantar febre, sem alterar o pulso e sem dar ao alvo o direito de sentir que algo mudou. Quando os três dias passarem — ou os três turnos, se a paciência não for o luxo de hoje —, o corpo descobre tudo de uma vez, e descobre tarde demais. Sombra no Sangue!",

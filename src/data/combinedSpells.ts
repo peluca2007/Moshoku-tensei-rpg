@@ -228,7 +228,7 @@ export const COMBINED_SPELLS: CombinedSpell[] = [
     actions: 6,
     damage: "14d10 ígneo + 7d10 contundente",
     costNote:
-      "GRANDE OBRA — 6 Ações e Ritual (Cap. 2, §3), a única entre as Combinadas. Um meteoro não é uma magia que se lança: é uma coisa que alguém vê chegando. Vale aqui tudo que vale nas outras quatro Grandes Obras, inclusive o Ponto de Não Retorno — a partir da segunda Ação o céu muda de cor sobre a área inteira, e todo mundo tem um turno pra decidir se sai de baixo. Interrompido, perde os 25 PM inteiros.",
+      "GRANDE OBRA — 6 Ações e Ritual (Cap. 2, §3), a única entre as Combinadas. Um meteoro não é uma magia que se lança: é uma coisa que alguém vê chegando. Vale aqui tudo que vale nas outras cinco Grandes Obras, inclusive o Ponto de Não Retorno — a partir da segunda Ação o céu muda de cor sobre a área inteira, e todo mundo tem um turno pra decidir se sai de baixo. Interrompido, perde os 25 PM inteiros.",
     effect:
       "Você chama uma rocha flamejante do céu. Teste de Agilidade (CD 8 + BC) pra metade, em área de 9m. O epicentro vira cratera: terreno difícil permanente. Não pode ser Encurtado nem Silenciado.",
   },

@@ -16,16 +16,14 @@ export default function Chapter5() {
         Entre Aventuras
       </ChapterTitle>
       <P className="dropcap">
-        Nem toda sessão é masmorra. Este capítulo reúne os cinco sistemas que rodam entre combates — tempo
-        livre, fama na Guilda, reputação com o mundo, o que dá pra fabricar com as próprias mãos, e os
-        Dojos, que são a única progressão do livro que não se compra — porque eles se usam com a mesma
-        frequência que qualquer regra do Capítulo 4, mesmo fora da luta.
+        Nem toda sessão é masmorra. Entre aventuras, o grupo usa o tempo livre, a Guilda, a reputação, a
+        fabricação de itens e os Dojos para se preparar para o que vem.
       </P>
 
       <Section>
         <SectionTitle id="cap5-1">1. Tempo Livre e Downtime</SectionTitle>
         <P>
-          Esta seção existe pra que esse tempo produza algo na ficha, sem virar burocracia.
+          Cada semana livre pode produzir um resultado concreto na ficha.
         </P>
         <SubTitle>O Bloco de Tempo</SubTitle>
         <P>
@@ -58,7 +56,7 @@ export default function Chapter5() {
         <P>
           Se uma aflição (Cap. 4, §8) estiver ativa em alguém do grupo, ela continua cobrando o efeito dela
           normalmente durante o downtime — um bloco de &ldquo;Recuperar-se&rdquo; trata ferimento, não trata
-          veneno nem doença. Só um feitiço de Desintoxicação do rank certo, ou uma poção, encerram isso.
+          veneno nem doença. Só um feitiço de Desintoxicação do rank certo, ou uma poção adequada, encerram isso.
         </P>
       </Section>
 
@@ -67,8 +65,7 @@ export default function Chapter5() {
         <Prancha id="cap5-2" />
         <P>
           Toda cidade com mais de um poço tem uma sede da Guilda, e é lá que a maioria dos personagens deste
-          livro começa. Esta seção formaliza o que até aqui era só referência narrativa: como funciona o
-          Rank de Aventureiro, e o que ele realmente muda na mesa.
+          livro começa. O Rank de Aventureiro determina quais contratos e itens a Guilda oferece.
         </P>
         <SubTitle>O Rank Não É o Patamar</SubTitle>
         <P>
@@ -131,17 +128,15 @@ export default function Chapter5() {
           rows={[
             ["F", "Poção Menor de Cura, equipamento mundano comum."],
             ["E", "Poção de Antídoto e Elixir de Foco; veneno de rank Principiante."],
-            ["D", "Encomenda de Encantamento nível Avançado (+1 degrau na Escada de Dados da arma, ou +1 na CA da armadura)."],
+            ["D", "Poção de Vigor Passageiro; encomenda de Encantamento nível Avançado (+1 degrau na Escada de Dados da arma, ou +1 na CA da armadura)."],
             ["C", "Poção Maior de Cura e Poção de Antídoto Forte; veneno de rank Intermediário, com licença registrada."],
-            ["B", "Encomenda de Encantamento nível Santo (dano elemental extra)."],
-            ["A", "Encomenda de Encantamento nível Rei (ignora Resistência); veneno de rank Avançado, sob vigilância da sede."],
-            ["S", "Antídoto Universal; encomenda de Encantamento nível Imperador; a sede intermedia contato com um encantador de rank Deus pra um Item Mágico Único (seção 4 deste capítulo) — abre a porta, não garante o resultado."],
+            ["B", "Poção Régia de Cura; encomenda de Encantamento nível Santo (dano elemental extra)."],
+            ["A", "Elixir de Regeneração; encomenda de Encantamento nível Rei (ignora Resistência); veneno de rank Avançado, sob vigilância da sede."],
+            ["S", "Poção Imperial de Cura e Égide Lendária; Antídoto Universal; encomenda de Encantamento nível Imperador; a sede intermedia contato com um encantador de rank Deus pra um Item Mágico Único (seção 4 deste capítulo) — abre a porta, não garante o resultado."],
           ]}
         />
         <Aside title="Por que isso importa">
-          Antes, um personagem rico conseguia qualquer item de Crafting cedo demais, só juntando PO. Agora o
-          Rank de Aventureiro é o segundo portão — o dinheiro compra o item, mas só depois que a Guilda
-          confia em você o bastante pra deixar você chegar perto dele.
+          A Guilda exige reputação além de PO para liberar os itens mais raros.
         </Aside>
 
         <SubTitle id="cap5-2-fora-da-guilda">O que a Guilda não vende</SubTitle>
@@ -154,7 +149,7 @@ export default function Chapter5() {
           rows={[
             [
               "Guilda F–S",
-              "À venda na sede, respeitando o Rank mínimo da tabela acima. É o que a loja do site vende.",
+              "À venda na sede, respeitando o Rank mínimo da tabela acima.",
               "O da tabela.",
             ],
             [
@@ -172,7 +167,7 @@ export default function Chapter5() {
         <Aside title="Por que relíquia não tem preço">
           Porque um preço serve pra duas coisas, e as duas quebram. Se ela pode ser comprada, basta juntar
           PO — e um item que fecha a campanha vira questão de paciência. Se ela pode ser vendida, o grupo que
-          achar UMA nunca mais precisa de dinheiro: o maior preço do resto do livro é 1.500 PO, e trabalhar
+          achar UMA nunca mais precisa de dinheiro: o maior preço do resto do livro é 2.000 PO, e trabalhar
           uma semana inteira no Downtime rende 2d6 × Bônus de Rank. A relíquia fica fora da conta justamente
           pra que a conta continue existindo.
         </Aside>
@@ -283,19 +278,8 @@ export default function Chapter5() {
             "Teste (Poções e Venenos; Encantamento não tem teste): role Ofícios contra a CD da tabela ao fim do bloco. Sucesso: o item fica pronto. Falha: metade dos materiais é recuperável, mas o bloco de Downtime já foi gasto — tente de novo no próximo. Falha crítica (os dois d20 mostram 1): perdem-se todos os materiais, e se era veneno você se expõe à dose (teste de resistência de Vigor, Cap. 4, §8).",
           ]}
         />
-        <Aside title="Por que existe um portão de Rank, e não só uma CD alta">
-          <P>
-            Sem ele, a CD era o único obstáculo — e a Perícia de Ofícios dá Vantagem (2d20). Um alquimista de
-            1º patamar com Intelecto 4 batia a CD 20 da Poção Imperial de Cura em pouco mais da metade das
-            tentativas, e um grupo com uma semana livre por arco engarrafava a poção mais forte do livro antes
-            de conhecer um mago de rank Avançado. O portão da Guilda (seção 2) cobria só a <i>compra</i>; a
-            fabricação passava por baixo dele.
-          </P>
-          <P>
-            É a mesma lógica que o Encantamento já usava — lá o portão sempre foi o Rank do encantador, nunca
-            uma rolagem. Agora as duas metades da seção 4 cobram a mesma coisa: você fabrica o que você
-            entende, e paga em PO o que você não entende.
-          </P>
+        <Aside title="Por que a receita exige Rank">
+          O Rank limita a fabricação aos itens que o personagem já entende, mesmo quando ele tem PO e perícia.
         </Aside>
         <SubTitle>Poções</SubTitle>
         <P>
@@ -331,7 +315,7 @@ export default function Chapter5() {
             ["Principiante", "Baba de Sapo-Lodo", "10", "5 PO / 3 PO"],
             ["Intermediário", "Peçonha de Serpente-do-Pântano", "12", "20 PO / 10 PO"],
             ["Avançado", "Fel de Wyvern", "14", "80 PO / 40 PO"],
-            ["Santo+", "Praga do Continente Demônio", "16+", "Não está à venda — só se rouba, caça ou herda."],
+            ["Santo+", "Sombra Líquida", "16+", "Não está à venda — só se rouba, caça ou herda."],
           ]}
         />
         <Warning title="A lei e o veneno">
@@ -342,7 +326,7 @@ export default function Chapter5() {
         <P>
           Encantar não é uma Perícia de Ofícios — é um serviço prestado por um mago que já alcançou o Rank
           exigido numa árvore compatível com o efeito (dano elemental pede a Magia daquele elemento;
-          resistência e CA pedem Magia Teórica, a herdeira da antiga Barreira; qualquer efeito genérico aceita Invocação). Um personagem só
+          resistência e CA pedem Magia Teórica; qualquer efeito genérico aceita Invocação). Um personagem só
           encanta os próprios itens se tiver esse Rank; caso contrário, é preciso pagar um NPC encantador. A
           Guilda intermedeia o encantador a partir do Rank D (seção 2 deste capítulo); fora dela, achar um é
           gancho de campanha.
@@ -364,7 +348,7 @@ export default function Chapter5() {
             "Não existe teste de falha aqui: se o encantador tem o Rank exigido, tempo e PO cobrem o serviço inteiro. O único jeito de um encantamento falhar é o Mestre decidir que os materiais raros da campanha ainda não foram conseguidos — nesse caso, PO sozinho não compra o item.",
           ]}
         />
-        <SubTitle>Itens Mágicos Únicos — O Anel de Teleporte como Prova de Conceito</SubTitle>
+        <SubTitle>Itens Mágicos Únicos — o Anel de Teleporte</SubTitle>
         <P>
           Nem todo item mágico cabe numa tabela de preço. Alguns são artefatos: peças únicas cuja fabricação
           é evento de campanha, não compra de ficha — exatamente como o Rank Deus.
@@ -467,18 +451,8 @@ export default function Chapter5() {
             </span>,
           ]}
         />
-        <Warning title="Por que a razão é 2:1, e não 3:1">
-          <P>
-            Duas quantidades da mesma moeda não fazem um dilema, fazem uma conta. A três por um, os PA
-            travados equivalem a <b>um patamar e meio</b> da árvore nova (abrir o Intermediário custa 1,
-            o Avançado custa 2) — qualquer um que pretenda usar a árvore pega sem pensar, e a porta do PA
-            livre nunca é aberta. A dois por um o PA livre volta a competir.
-          </P>
-          <P>
-            E a recompensa <b>escala com o patamar</b> porque um personagem de 3º tem cerca de 12 PA no
-            total e um de 5º tem cerca de 24: um valor fixo seria 25% do patrimônio do primeiro e 12% do
-            segundo — a mesma provação valendo o dobro pra quem menos precisa dela.
-          </P>
+        <Warning title="Por que o travado nunca passa do dobro do livre">
+          O limite de dois para um mantém a escolha entre PA travado e livre relevante em qualquer patamar.
         </Warning>
 
         <SubTitle id="cap5-5-limites">Os limites</SubTitle>

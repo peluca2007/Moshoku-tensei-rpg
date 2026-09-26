@@ -59,14 +59,14 @@ export default function Chapter2() {
               onde mora a maior quantidade de feitiços do livro.
             </span>,
             <span key="su">
-              <b>Magia de Suporte (4 escolas):</b> Cura, Desintoxicação, Magia Teórica e Invocação. Invocação é a
+              <b>Magia de Suporte (4 escolas):</b> Cura, Desintoxicação, Magia Teórica e Espíritos e Feras. Espíritos e Feras é a
               menor lista de feitiços do livro, e a única cujo efeito principal age sozinho depois de
               conjurado.
             </span>,
           ]}
         />
         <P className="text-sm">
-          Os dois grupos usam exatamente as mesmas regras: o mesmo PM Máximo (Cap. 4, §1), o mesmo tempo de
+          Os dois grupos usam as mesmas regras de conjuração: o mesmo PM Máximo (Cap. 4, §1), o mesmo tempo de
           conjuração (§3), o mesmo Bônus de Rank. A divisão é de assunto, não de mecânica.
         </P>
         <Aside title="Quão raro é um mago">
@@ -108,9 +108,8 @@ export default function Chapter2() {
             ]}
           />
           <P>
-            <b>E a magia que não tem dados nem área?</b> Amarra, Vácuo Localizado, Prisão de Ar e as outras de
-            controle puro saíam pela metade das Ações sem perder absolutamente nada — encurtar era jogada
-            grátis. Para elas vale uma regra só: <b>a duração cai pela metade</b>. Se a magia também não tem
+            <b>E a magia que não tem dados nem área?</b> Vácuo Localizado, Prisão de Ar e outras magias de
+            controle puro têm <b>a duração reduzida à metade</b> ao encurtar. Se a magia também não tem
             duração, ela simplesmente não pode ser Encurtada.
           </P>
         </Warning>
@@ -169,12 +168,12 @@ export default function Chapter2() {
           <P>
             <b>De onde vem a Silenciosa:</b> de um Antecedente, de uma raça, de uma Maestria ou de um talento
             que diga isso com todas as letras. A <b>Silenciosa sem penalidade</b> segue a mesma régua: só
-            existe onde o texto disser explicitamente. Os dois talentos que fazem isso — <b>Sem Cântico</b>{" "}
-            (Vento, Santo) e <b>Mão Silenciosa</b> (Cura, Avançado) — ensinam a Silenciosa daquela escola, nos ranks que
-            nomeiam, até a quem ainda não a tinha; quem já a tinha passa a conjurar ali sem a penalidade de dano e de área.
+            existe onde o texto disser explicitamente. <b>Sem Cântico</b> (Vento, Santo),{" "}
+            <b>Mão Silenciosa</b> (Cura, Avançado) e a <b>Maestria de Santo da Cura</b> concedem esse benefício
+            nas escolas e ranks que nomeiam.
           </P>
         </Aside>
-        <Warning title="Silenciosa sem gastar Ação — a lista fechada">
+        <Warning title="Conjurar sem gastar Ação">
           <P>
             O Capítulo 4 §3 diz que tudo neste sistema é medido em Ações e que <b>não existe ação bônus</b>.
             Entre as conjurações, as exceções são estas, e todas têm nome:
@@ -183,22 +182,20 @@ export default function Chapter2() {
             items={[
               <span key="p">
                 <b>A primeira Silenciosa de rank Principiante de cada turno</b>, para todo conjurador que
-                conjura em silêncio.
-              </span>,
-              <span key="g">
-                <b>Prodígio</b> (Antecedente Gênio): a mesma cortesia vale até o rank Avançado.
+                conjura em silêncio. <b>Prodígio</b> (Antecedente Gênio) estende essa cortesia até o Avançado.
               </span>,
               <span key="i">
                 <b>As Maestrias de Imperador</b> de Água, Fogo, Terra, Vento, Cura e Desintoxicação: uma vez
                 por turno, uma magia daquela escola de rank Avançado ou inferior, em Silenciosa, sem gastar
                 Ação.
               </span>,
+              <span key="ml"><b>Mãos Limpas</b> (Desintoxicação, Santo): uma magia de Desintoxicação sem gastar Ação, uma vez por Descanso Longo.</span>,
+              <span key="gc"><b>O Grande Círculo</b> (Espíritos e Feras, Imperador): um invocado por turno sem gastar Ação.</span>,
             ]}
           />
           <P>
-            Fora das conjurações, a outra família são as <b>manobras de Touki marcadas &ldquo;Sem
-              Ação&rdquo;</b> (Cap. 3). Se você encontrar qualquer outra coisa que se comporte como ação
-            bônus e não esteja nesta lista, é erro de texto, não regra.
+            Fora das conjurações, cartas como <b>Sem Peso</b> e <b>Encadeamento</b> também dizem quando um
+            efeito não gasta Ação; siga o limite escrito em cada uma (Cap. 3).
           </P>
           <P>
             A cortesia do Principiante existe porque, sem ela, conjurar em silêncio num rank baixo custaria
@@ -230,7 +227,8 @@ export default function Chapter2() {
           duas não há cântico inteiro pra recitar, e por isso elas nunca recebem esta recompensa.
         </P>
         <P className="text-xs text-parchment-600 dark:text-parchment-400 italic">
-          Esta mesma regra se aplica às <b>Canções de Bardo</b> (Árvore de Utilidade): cantar os versos da canção com maestria concede o mesmo benefício correspondente.
+          Nas <b>Canções de Bardo</b> (Árvore de Utilidade), a recitação dá Vantagem na rolagem ou +2 na CD;
+          se não houver rolagem, a Canção custa 1 PP a menos (mínimo 1).
         </P>
 
         <SubTitle id="cap2-2-cantico-curto">Cântico Curto — a magia que não paga bônus</SubTitle>
@@ -253,28 +251,15 @@ export default function Chapter2() {
           </P>
         </Warning>
         <BookTable
-          headers={["Rank da Magia", "Piso do cântico (concede bônus a partir daqui)", "Teto de estilo"]}
+          headers={["Rank da Magia", "Piso do cântico (concede bônus a partir daqui)", "Teto de caracteres do cântico"]}
           rows={RANKS.map((rank) => [
             rank,
             `${INCANTATION_LENGTH[rank].min} caracteres`,
             `${INCANTATION_LENGTH[rank].max} caracteres`,
           ])}
         />
-        <Aside title="Por que este piso existe">
-          <P>
-            Até a versão 0.0.3 o bônus era automático: bastava a magia ter um cântico escrito. Uma auditoria
-            das 149 magias do livro encontrou <b>55 com cântico abaixo do piso do próprio rank</b> —
-            a antiga Barreira, Cura, Desintoxicação, Invocação e Bardo estavam quase inteiras fora da escada.{" "}
-            <i>&ldquo;Não caias. Ainda não. Prontidão!&rdquo;</i> tem 35 caracteres e pagava exatamente o
-            mesmo que um cântico de 380 do rank Rei.
-          </P>
-          <P>
-            O efeito colateral era pior que o desequilíbrio: o sistema estava <b>premiando quem escrevesse
-              cânticos curtos</b>, que é o oposto exato do que este capítulo promete quando diz que o tamanho
-            é proporcional ao poder. Com o piso, a escada volta a significar alguma coisa — e escrever um
-            cântico curto passou a ser uma <i>escolha de design</i> declarada, com uma consequência visível
-            na carta, em vez de um atalho invisível.
-          </P>
+        <Aside title="Por que existe um piso">
+          O piso reserva o Bônus de Recitação para cânticos longos o bastante para exigir tempo real de mesa.
         </Aside>
       </Section>
 
@@ -299,13 +284,11 @@ export default function Chapter2() {
         <P>
           Como o Capítulo 4 permite dividir o cântico entre turnos, magias de 4 Ações são perfeitamente
           jogáveis — elas só exigem que alguém segure a linha de frente enquanto o apocalipse é preparado.
-          O teto da <b>tabela</b> é 4 de propósito: a escada antiga subia até 6 em toda magia de topo, e uma
-          magia que custava dois turnos inteiros rendia menos por Ação que uma de dois ranks abaixo. O Rei e o
-          Imperador continuam precisando de dois turnos; a diferença é que agora a espera paga.
+          O teto da <b>tabela</b> é 4 Ações para manter as magias de topo utilizáveis entre turnos.
         </P>
         <Warning title="Grande Obra — as magias de 5 e 6 Ações">
           <P>
-            Cinco magias do livro passam do teto de propósito, e elas são uma categoria, não exceções soltas.
+            Seis magias do livro passam do teto de propósito, e elas são uma categoria, não exceções soltas.
             Uma <b>Grande Obra</b> custa <b>5 ou 6 Ações</b> — quase dois turnos, ou dois inteiros — e é sempre
             um <b>Ritual</b>: não encurta, não silencia, não se retoma. Interrompida em qualquer ponto, some
             junto com todo o PM (§6).
@@ -318,12 +301,10 @@ export default function Chapter2() {
             todo mundo, então a cena inteira ganha um turno pra reagir a ela.
           </P>
           <P>
-            <b>Por que elas valem a espera.</b> Nenhuma Grande Obra é &ldquo;mais dano por Ação&rdquo; — foi
-            exatamente isso que fez a escada antiga de 6 Ações não funcionar. Elas fazem o que magia curta
-            nenhuma faz: mudam <b>a cena</b>, e não o alvo. As cinco são a Maré que Lembra o Vale (Água, Rei),
-            A Noite de Uma Hora (Cura, Rei), O Nome Que Não Se Grita (Espíritos e Feras, Rei), O Vale que Eu
-            Desenho (Terra, Santo) e o <b>Meteoro</b> (§4), que é Magia Combinada e a única Grande Obra que
-            exige duas escolas abertas.
+            <b>Por que elas valem a espera.</b> Grandes Obras mudam <b>a cena</b>, não apenas um alvo.
+            As seis são a Maré que Lembra o Vale (Água, Rei), A Noite de Uma Hora (Cura, Rei),
+            O Nome Que Não Se Grita e O Chamado que Não se Recusa (Espíritos e Feras, Rei e Imperador),
+            O Vale que Eu Desenho (Terra, Santo) e o <b>Meteoro</b> (§4), a única Grande Obra de Magia Combinada.
           </P>
         </Warning>
 
@@ -376,25 +357,12 @@ export default function Chapter2() {
           </P>
         </Warning>
         <P>
-          <b>Onde comprar:</b> no{" "}
-          <a href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">
-            mapa de Árvores
-          </a>
-          . O painel de Magias Combinadas mostra todas o tempo inteiro — as que você já comprou, as que
-          estão abertas agora, e as trancadas <i>com as portas que faltam e o quanto falta em cada uma</i>.
-          Uma Combinada aparece como disponível no instante em que a segunda porta abre.
+          <b>Onde consultar:</b> o catálogo do Cap. 3 lista as Magias Combinadas, seus custos e os ranks
+          exigidos nas duas árvores.
         </P>
-        <Aside title="Por que a Maestria do Avançado não basta mais">
-          <P>
-            Até a versão 0.0.9 a regra era &ldquo;rank Avançado nas duas escolas&rdquo;, e a Maestria do
-            Avançado dizia que destravava Magia Combinada. Na prática isso significava que chegar ao
-            Avançado em duas escolas quaisquer abria as nove de uma vez — e como nada no motor cobrava o
-            PA que o texto prometia, elas eram, na prática, gratuitas.
-          </P>
-          <P>
-            A Maestria continua sendo o que te dá o <i>direito</i> de aprender Magia Combinada. O que ela
-            deixou de ser é a única condição: cada magia tem a porta dela.
-          </P>
+        <Aside title="Maestria e pré-requisitos">
+          A Maestria dá o <i>direito</i> de aprender Magia Combinada; cada magia exige ainda as duas árvores
+          e os ranks escritos na própria entrada.
         </Aside>
         <BookTable
           headers={["Magia Combinada", "As duas portas", "Custo", "Ações", "Alcance", "Dano", "Efeito"]}
@@ -446,8 +414,8 @@ export default function Chapter2() {
         <SubTitle>Combinações Além da Magia</SubTitle>
         <P>
           A mesma lógica funciona entre <i>qualquer</i> duas árvores em Rank Avançado ou superior, mesmo
-          cruzando pilares diferentes (Magia + Corpo, Magia + Utilidade, Corpo + Utilidade) — o livro só não
-          documentava isso antes. <b>Requisito:</b> Avançado ou superior nas duas árvores envolvidas.{" "}
+          cruzando pilares diferentes (Magia + Corpo, Magia + Utilidade, Corpo + Utilidade).{" "}
+          <b>Requisito:</b> Avançado ou superior nas duas árvores envolvidas.{" "}
           <b>Custo:</b> diferente das Magias Combinadas, estas <b>não custam PA</b> e não entram na ficha —
           quem cumpre o requisito já sabe fazer, e paga só o custo de cada lado inteiro (Ação, PM, PT ou PP, o
           que for de cada árvore). O efeito nunca é permanente, a menos que a tabela diga o contrário.
@@ -455,7 +423,7 @@ export default function Chapter2() {
         <BookTable
           headers={["Combinação", "Resultado", "Efeito"]}
           rows={[
-            ["Estilo Deus da Espada + Magia de Fogo", "Lâmina em Chamas", "Gaste a Ação e o PM de uma magia de Fogo de rank Avançado ou inferior, mais 1 PT: por 1 minuto, seu Dado de Arma causa +1d8 de dano ígneo extra."],
+            ["Estilo Deus da Espada + Magia de Fogo", "Lâmina em Chamas", "Gaste as Ações e o PM de uma magia de Fogo de rank Avançado ou inferior, mais 1 PT: por 1 minuto, seu Dado de Arma causa +1d8 de dano ígneo extra."],
             ["Navegação e Liderança + Magia de Terra", "Chão Preparado", "Antes de um combate previsto, gaste 1 PP pra declarar que já preparou o chão. Se a luta acontecer lá, sua próxima magia de Terra no combate tem +50% de área."],
             ["Furtividade e Armadilhas + Espíritos e Feras", "Familiar Furtivo", "Sua próxima invocação nasce com o seu Bônus de Rank de Furtividade e Armadilhas em Furtividade, e reporta o que viu sem gastar sua Ação pra perguntar."],
             ["Bardo e Interação + Magia de Cura", "Canção que Cura", "Enquanto sustentar uma Canção, cada magia de Cura que você conjurar recupera +1d8 extra em todos os alvos afetados."],
@@ -477,17 +445,11 @@ export default function Chapter2() {
           correspondente. Ela não custa PA, não conta como conhecimento, e não pode ser recusada.
         </P>
         <P>
-          A lógica é simples: subir de rank não é decorar mais um feitiço — é compreender o elemento de um
-          jeito novo. Roxy não comprou a habilidade de encurtar cânticos; ela entendeu água fundo o
-          suficiente pra que encurtar virasse natural.
+          Subir de rank é compreender o elemento de um jeito novo. Roxy não comprou o Congelado; ela
+          entendeu água fundo o bastante pra que o gelo pegasse sozinho em quem já estava molhado.
         </P>
         <P>
-          As Maestrias são listadas dentro de cada árvore, em cada Rank, marcadas com o símbolo ◈ — confira
-          na{" "}
-          <a href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">
-            página de Árvores
-          </a>
-          .
+          As Maestrias são listadas dentro de cada árvore no catálogo do Cap. 3, marcadas com o símbolo ◈.
         </P>
       </Section>
       <Section>
@@ -495,8 +457,7 @@ export default function Chapter2() {
         <P>
           Uma magia de rank Rei ou Imperador custa 4 Ações, mais que um turno. Como o Capítulo 4 permite dividir o
           cântico entre turnos, o conjurador passa rodadas inteiras <b>vulnerável e visível</b> antes de o
-          feitiço sair. Esta seção diz o que acontece nesse intervalo — e até esta versão o livro não dizia,
-          o que deixava a mesa inventando uma regra diferente por combate.
+          feitiço sair. Por isso, interrupções nesse intervalo seguem as regras abaixo.
         </P>
 
         <SubTitle>Quando você está Conjurando</SubTitle>
@@ -515,8 +476,8 @@ export default function Chapter2() {
         <SubTitle>O Teste de Concentração</SubTitle>
         <Warning title="A regra (a mesma do Cap. 4, §3)">
           <P>
-            Sempre que você <b>sofrer dano</b> enquanto estiver Conjurando, faça um{" "}
-            <b>teste de resistência de Espírito</b> contra{" "}
+            Sempre que você <b>sofrer dano</b> enquanto estiver Conjurando, role{" "}
+            <b>1d20 + Espírito + metade do seu maior Bônus de Rank (arredondada pra cima)</b> contra{" "}
             <b>CD 10 + o Bônus de Rank de quem te acertou</b> — CD 11 contra um Principiante, CD 16 contra um
             Imperador. Use <b>12</b> quando não houver um responsável claro (uma queda, um desabamento, uma
             armadilha sem dono). Contra uma criatura, o <b>Bônus de Rank dela é o patamar dela</b> (+1 no
@@ -531,7 +492,7 @@ export default function Chapter2() {
           />
           <P>
             <b>Quem te acertou decide, não o quanto ele rolou.</b> É a mesma lógica do Fio da Vida (Cap. 4,
-            §7). O Cap. 4, §3 explica por que a CD NÃO é metade do dano: o dano cresce sem teto neste livro
+            §6). O Cap. 4, §3 explica por que a CD NÃO é metade do dano: o dano cresce sem teto neste livro
             (uma criatura Imperador bate perto de 120 por turno) e o teste cresce até +11 num d20 — amarrada
             ao dano, a regra tornaria magia de 3 e 4 Ações impossível de conjurar exatamente nos patamares em
             que ela existe.
@@ -547,7 +508,7 @@ export default function Chapter2() {
             items={[
               "Dano em área conta como UM acerto, e a CD vem do Rank de quem conjurou a área — não um teste por criatura atingida junto.",
               "Dano contínuo (Em Chamas, veneno, magma) força o teste no início do turno, quando cobra, com a CD do Rank de quem aplicou a condição.",
-              "Ficar Atordoado, Paralisado, Incapacitado, Surdo ou Soterrado interrompe SEM teste — o cântico exige voz e postura. Congelado e Atolado não interrompem: você continua falando.",
+              "Ficar Atordoado, Paralisado, Incapacitado, Surdo ou Soterrado interrompe SEM teste — o cântico exige voz e postura. Surdo não derruba Conjuração Silenciosa. Congelado e Atolado não interrompem: você continua falando.",
               "Ser empurrado, derrubado ou movido contra a vontade interrompe sem teste se você sair do alcance ou perder a linha de visão do alvo declarado.",
             ]}
           />
@@ -560,12 +521,12 @@ export default function Chapter2() {
             [
               "Bater forte",
               "Qualquer um",
-              "Não existe manobra especial: cause dano e deixe a CD trabalhar. E repare na conta, porque ela é o contrário da intuição: como a CD é fixa pelo RANK e não pelo dano, CADA acerto é um teste novo. Contra um conjurador, três golpes fracos derrubam o cântico muito mais que um forte — um Avançado com Espírito 2 falha 40% num teste, e 78% em três.",
+              "Cada acerto pede um teste novo, com CD pelo rank de quem acertou. Um conjurador Avançado com Espírito 2 tem +4 no teste; contra CD 13, falha 40% em um teste e cerca de 78% em três.",
             ],
             [
               "Vácuo Localizado (Vento, Principiante)",
               "Magia de Vento",
-              "Remove o ar em volta da cabeça: o alvo não recita nada por 1 turno. Interrompe sem teste, e é a forma mais barata do livro.",
+              "Remove o ar em volta da cabeça por 1 turno. Sem teste contra rank igual ou inferior ao seu em Vento; contra superior, teste de Vigor. Não para Conjuração Silenciosa.",
             ],
             [
               "Rejeitar (Magia Teórica)",
@@ -602,7 +563,7 @@ export default function Chapter2() {
             ],
             [
               "Área poupa meus aliados?",
-              "NÃO. Toda área atinge todo mundo dentro dela, inclusive você e o grupo — é o preço de jogar magia grande, e é o que faz o posicionamento importar. A exceção se compra: quem tem a Maestria do Avançado de uma escola ofensiva pode excluir até INTELECTO criaturas de cada área daquela escola. Antes do Avançado, mire melhor.",
+              "NÃO. Toda área atinge todo mundo dentro dela, inclusive você e o grupo — é o preço de jogar magia grande, e é o que faz o posicionamento importar. A exceção se compra: a Maestria de Avançado do Fogo exclui até INTELECTO criaturas de cada área sua.",
             ],
             [
               "A magia tem teste e a carta só descreve a falha. E se passar?",
@@ -626,7 +587,7 @@ export default function Chapter2() {
             ],
             [
               "Quantas magias posso sustentar?",
-              "Uma. Erguer uma segunda derruba a primeira, salvo Maestria que diga o contrário (Cura do Santo sustenta duas). Um circuito da Magia Teórica, com todas as células ligadas, conta como uma sustentação só (§8). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
+              "Uma. Erguer uma segunda derruba a primeira, salvo carta que diga o contrário (ex.: Maestria de Santo da Cura, Vento Constante). Um circuito da Magia Teórica, com todas as células ligadas, conta como uma sustentação só (§8). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
             ],
             [
               "E se eu ficar sem PM no meio?",
