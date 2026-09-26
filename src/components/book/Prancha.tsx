@@ -48,12 +48,24 @@ const LEGENDAS: Record<string, string> = {
  * Cada árvore começa em página nova, então a última página dela sempre sobra
  * pela metade. O fecho é a arte da árvore ocupando esse resto até o pé da
  * página (esticarVitrines); se sobrar pouco, ele vira uma página inteira. A
- * arte é a prancha da árvore; quem não tem prancha fecha com o retrato dela
- * (que então sai do alto do catálogo, pra não aparecer duas vezes).
+ * arte é a prancha da árvore. Quem não tem prancha ainda não tem fecho: o
+ * retrato fica no alto do catálogo, que é onde o autor o pensou (2026-09-26).
  */
-export function FimDaArvore({ id, nome }: { id: string; nome: string }) {
-  const arte = arteDoLivro("pranchas", id) ?? arteDoLivro("arvores", id);
-  if (!arte) return null;
+export function FimDaArvore({ id, nome, icone }: { id: string; nome: string; icone?: string }) {
+  const arte = arteDoLivro("pranchas", id);
+  if (!arte) {
+    // Sem prancha, a árvore fecha com a MARCA DE FIM: o símbolo dela, de tamanho
+    // médio, e o "Fim · nome" — a página não termina em branco, e o retrato
+    // continua no começo. Nunca vira página inteira (fecharArvores).
+    if (!icone) return null;
+    return (
+      <figure aria-hidden className="livro-vitrine livro-fecho livro-fecho-arvore livro-fecho-marca hidden" data-fecho-arvore={id} data-arvore={id}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- símbolo da árvore, vetor. */}
+        <img src={icone} alt="" loading="lazy" decoding="async" />
+        <figcaption className="livro-fecho-legenda">Fim · {nome}</figcaption>
+      </figure>
+    );
+  }
   return (
     <figure
       aria-hidden

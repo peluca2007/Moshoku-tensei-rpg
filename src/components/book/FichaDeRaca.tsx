@@ -1,5 +1,5 @@
 import type { Race } from "@/lib/types";
-import { ATTRIBUTES } from "@/lib/types";
+import { ATTRIBUTES, CUSTO_DE_ESCOLHA, NOME_DO_TIER } from "@/lib/types";
 import { getRaceProbabilities } from "@/lib/randomCharacter";
 import { RACES } from "@/data/races";
 import RaceCrest from "../RaceCrest";
@@ -33,13 +33,19 @@ const ROTULO_DO_ATRIBUTO = Object.fromEntries(ATTRIBUTES.map((a) => [a.key, a.sh
 /** A chance de cada raça no sorteio, a mesma tabela que a roleta usa. */
 const CHANCE = new Map(getRaceProbabilities().map((p) => [p.id, p.probability]));
 
-/** Quanto mais forte, mais rara: a largura da faixa na tabela d100, em palavra. */
+/**
+ * O tier da raça (2026-09-26) e o preço de escolhê-la em vez de rolar. Antes a
+ * palavra saía da largura da faixa; agora o tier é dado da raça, e é ele que
+ * decide a faixa E o preço — as duas portas contam a mesma raridade.
+ */
 function raridade(id: string): string {
-  const chance = CHANCE.get(id) ?? 0;
-  if (chance >= 0.12) return "Comum";
-  if (chance >= 0.07) return "Incomum";
-  if (chance >= 0.03) return "Rara";
-  return "Mítica";
+  const race = RACES.find((r) => r.id === id);
+  return race ? NOME_DO_TIER[race.tier] : "";
+}
+
+function precoDeEscolha(race: Race): string {
+  const custo = CUSTO_DE_ESCOLHA[race.tier];
+  return custo === null ? "não se escolhe" : `escolher: ${custo} PA`;
 }
 
 /** A faixa da raça no d100: "01–14", ou "100". */
@@ -112,9 +118,11 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
   const ordemTexto = `${String(ordem).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
 
   return (
+    <>
     <article
       id={`raca-${race.id}`}
       data-raca={race.id}
+      data-tier={race.tier}
       className="livro-raca print-avoid-break overflow-hidden rounded-xl pb-4 border border-parchment-300 bg-parchment-100/60 text-sm dark:border-parchment-800 dark:bg-parchment-900/40"
     >
       <header className="livro-raca-cabeca flex items-end justify-between gap-3 px-4 pt-4">
@@ -153,7 +161,7 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
         {chance !== undefined && (
           <span className="livro-raca-carimbo absolute right-2 top-2 rounded bg-parchment-50/90 px-2 py-1 text-right text-2xs font-bold uppercase tracking-wider text-wine-700 dark:bg-parchment-950/80 dark:text-wine-300">
             {raridade(race.id)}
-            <small className="block font-medium normal-case tracking-normal">{faixaD100(race)} no d100</small>
+            <small className="block font-medium normal-case tracking-normal">{faixaD100(race)} no d100 · {precoDeEscolha(race)}</small>
           </span>
         )}
       </figure>
@@ -182,12 +190,46 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
         })}
       </ul>
 
+      {(race.upgrades?.length ?? 0) > 0 && (
+        <div className="livro-raca-despertares mx-4 mt-3 border-t border-parchment-300 pt-2 dark:border-parchment-800">
+          <p className="text-3xs font-bold uppercase tracking-[0.2em] text-gold-700 dark:text-gold-400">Despertares · comprados com PA</p>
+          <ul className="mt-1 space-y-1 text-xs text-parchment-700 dark:text-parchment-300">
+            {race.upgrades!.map((u) => (
+              <li key={u.id}>
+                <b className="text-parchment-900 dark:text-parchment-50">{u.name}</b>{" "}
+                <span className="text-parchment-600 dark:text-parchment-400">
+                  ({u.paCost} PA{u.patamarMinimo ? `, a partir do ${u.patamarMinimo}` : ""}).
+                </span>{" "}
+                {u.description}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {linguas && (
         <p className="livro-raca-linguas mx-4 mt-3 border-t border-parchment-300 pt-2 text-xs text-parchment-600 dark:border-parchment-800 dark:text-parchment-400">
           <b className="uppercase tracking-wider">Línguas</b> {linguas}
         </p>
       )}
     </article>
+    {/*
+      A RAÇA MÍTICA GANHA UMA PÁGINA INTEIRA DE ARTE no livro folheado
+      (2026-09-26, "a foto da raça dragão não está aparecendo muito bem"). O
+      texto do Dragão é o maior das doze e espremia a arte numa faixa; aqui ela
+      fecha a seção das raças de página inteira, e a página de texto fica sem a
+      faixa (folhear.css). No contínuo, a arte da página de raça basta.
+    */}
+    {race.tier === "mitica" && arte && (
+      <figure className="livro-raca-pagina-arte hidden" data-raca={race.id}>
+        {/* Página em pé, arte deitada: recorta no rosto (o mesmo ponto da miniatura da vitrine). */}
+        <ImagemDoLivro arte={arte} alt={`Ilustração: ${nome}.`} modo="cheia" posicao={ROSTO_NA_MINIATURA[race.id]} className="h-full w-full object-cover" />
+        <figcaption className="livro-fecho-legenda">
+          {nome} · {NOME_DO_TIER[race.tier]}
+        </figcaption>
+      </figure>
+    )}
+    </>
   );
 }
 

@@ -585,8 +585,9 @@ export default function Chapter1() {
           ficha ao selecioná-la.
         </P>
         <P>
-          <b>Role 1d100 na tabela abaixo.</b> Quanto mais forte a raça, mais estreita a faixa: as comuns ficam
-          com 13 ou 14 números, as incomuns com 8, as raras com 6, e a Raça Dragão, mítica, só sai no 100.
+          <b>Role 1d100 na tabela abaixo.</b> Quanto mais forte a raça, mais estreita a faixa. Toda raça tem um{" "}
+          <b>tier</b>: as <b>comuns</b> ficam com 15 ou 16 números, as <b>incomuns</b> com 9, as <b>raras</b>{" "}
+          com 5, o Demônio Imortal, <b>lendário</b>, com 2 (98–99), e a Raça Dragão, <b>mítica</b>, só sai no 100.
         </P>
         <QuadroDasRacas />
         <Warning title="Sorteio ou escolha: as duas portas, e o preço de cada uma">
@@ -597,14 +598,17 @@ export default function Chapter1() {
             tabela: quanto mais forte, menos provável.
           </P>
           <P>
-            <b>Escolher é permitido, e custa.</b> Se você quiser escolher a raça, o Antecedente, ou os dois,
-            você começa com <b>2 PA em vez de 3</b>. É o preço de trocar a sorte por controle, e é o mesmo
-            preço para escolher um ou os dois — o que se compra aqui é a decisão, não a quantidade.
+            <b>Escolher é permitido, e custa pelo tier.</b> Escolher a raça em vez de rolar tira PA dos 3
+            iniciais: <b>1 PA</b> por uma raça comum ou incomum, <b>2 PA</b> por uma rara, <b>3 PA</b> pelo
+            Demônio Imortal (lendário). A Raça Dragão <b>não se escolhe</b>: sai no 100 ou é um presente do
+            Mestre, dado pela história. Escolher também o Antecedente não custa nada a mais; escolher só o
+            Antecedente custa 1 PA. Até 2026-09-26 escolher qualquer raça custava 1 PA — e o Dragão saía
+            pelo mesmo preço de um Humano.
           </P>
           <P>
             <b>A mesa decide uma vez, para todo mundo.</b> Um grupo em que metade sorteou e metade escolheu é
             um grupo em que metade pagou por algo que a outra metade levou de graça. Combine antes da primeira
-            ficha: ou todo mundo rola, ou todo mundo pode escolher pagando 1 PA.
+            ficha: ou todo mundo rola, ou todo mundo pode escolher pagando o preço do tier.
           </P>
         </Warning>
         <Aside title="Três formas de bônus racial, e por que elas são diferentes">
@@ -634,11 +638,16 @@ export default function Chapter1() {
             ]}
           />
           <P>
-            Duas raças fogem do padrão de propósito. O <b>Humano</b> não recebe número nenhum fixo: recebe{" "}
+            O <b>Humano</b> foge do padrão de propósito: não recebe número nenhum fixo, recebe{" "}
             <b>+1 num atributo à escolha do jogador</b> — é a única raça do livro cujo bônus muda de ficha
-            pra ficha, e é literalmente o que &ldquo;adaptabilidade&rdquo; significa. O <b>Povo Pequeno</b> é
-            a única com uma <b>melhoria comprável</b> (Sombra Absoluta, 3 PA): não vem de graça, o jogador
-            decide se investe.
+            pra ficha, e é literalmente o que &ldquo;adaptabilidade&rdquo; significa.
+          </P>
+          <P>
+            <b>Despertares.</b> Toda raça tem dois traços a mais que não vêm de graça: o jogador compra com
+            PA, se quiser, quando o personagem chegar lá. O <b>primeiro</b> pede o patamar{" "}
+            <b>Intermediário</b> em alguma árvore; o <b>segundo</b>, o <b>Santo</b>. Os das raças comuns
+            são os mais fortes, de propósito — é assim que a raça que o dado deu barata alcança a rara no fim
+            da campanha. Cada página de raça lista os dois dela, e a ficha só deixa comprar no patamar certo.
           </P>
         </Aside>
         <VitrineDasRacas />

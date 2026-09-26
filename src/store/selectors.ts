@@ -418,8 +418,14 @@ export function getMaxMp(state: StoreState): number {
   // aparecia no Avançado. Convertidos para múltiplo do MB, os quatro passam pelo
   // teto como o bônus racial sempre passou, e valem ZERO pra quem não abriu
   // escola nenhuma, que é o certo para um bônus de mana.
+  // O despertar Mana Ancestral (Elfo, 2026-09-26) soma no mesmo escalar.
+  const race = getRaceById(state.raceId);
+  const despertarMana = (race?.upgrades ?? [])
+    .filter((u) => (state.racialUpgrades ?? []).includes(u.id))
+    .reduce((s, u) => s + (u.grants?.mpPerMagicRank ?? 0), 0);
   const escalarDeMana =
-    ((getRaceById(state.raceId)?.bonuses.mpPerMagicRank ?? 0) +
+    ((race?.bonuses.mpPerMagicRank ?? 0) +
+      despertarMana +
       (background?.bonuses.mpPerMagicRank ?? 0) +
       (subtable?.bonuses?.mpPerMagicRank ?? 0)) *
     maiorBonusMagia;
@@ -821,6 +827,22 @@ function getRacialUpgradePaCost(state: StoreState): number {
     (sum, id) => sum + (upgrades.find((u) => u.id === id)?.paCost ?? 0),
     0
   );
+}
+
+/** O maior Bônus de Rank do personagem, em qualquer árvore (0 sem nenhum patamar). */
+export function getMaiorBonusDeRank(state: StoreState): number {
+  return getHighestRankBonus(state);
+}
+
+/**
+ * Pode comprar este despertar racial? (2026-09-26) O 1º de cada raça pede o
+ * patamar Intermediário em alguma árvore; o 2º, o Santo. Devolve o motivo
+ * quando não pode, pra a ficha dizer.
+ */
+export function podeComprarDespertar(state: StoreState, upgrade: { patamarMinimo?: RankName }): { ok: boolean; motivo?: string } {
+  if (!upgrade.patamarMinimo) return { ok: true };
+  if (getHighestRankBonus(state) >= RANK_BONUS[upgrade.patamarMinimo]) return { ok: true };
+  return { ok: false, motivo: `Pede o patamar ${upgrade.patamarMinimo} em alguma árvore.` };
 }
 
 /** true se a ficha já comprou aquela melhoria racial. */

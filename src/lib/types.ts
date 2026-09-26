@@ -325,10 +325,43 @@ export interface RacialUpgrade {
   name: string;
   paCost: number;
   description: string;
+  /**
+   * O despertar só pode ser comprado a partir deste patamar, em qualquer
+   * árvore (o maior Bônus de Rank do personagem). 2026-09-26: o 1º despertar
+   * de cada raça pede Intermediário, o 2º pede Santo.
+   */
+  patamarMinimo?: RankName;
+  /** O que o despertar soma na ficha sozinho (hoje: o PM escalar do Elfo). */
+  grants?: { mpPerMagicRank?: number };
 }
+
+/**
+ * O tier de uma raça (2026-09-26): decide a largura da faixa no d100 e o
+ * preço de ESCOLHER a raça em vez de rolar (CUSTO_DE_ESCOLHA).
+ */
+export type TierDeRaca = "comum" | "incomum" | "rara" | "lendaria" | "mitica";
+
+/** PA que custa escolher a raça em vez de rolar; `null` = não se escolhe. */
+export const CUSTO_DE_ESCOLHA: Record<TierDeRaca, number | null> = {
+  comum: 1,
+  incomum: 1,
+  rara: 2,
+  lendaria: 3,
+  mitica: null,
+};
+
+export const NOME_DO_TIER: Record<TierDeRaca, string> = {
+  comum: "Comum",
+  incomum: "Incomum",
+  rara: "Rara",
+  lendaria: "Lendária",
+  mitica: "Mítica",
+};
 
 export interface Race {
   id: string;
+  /** Comum, Incomum, Rara, Lendária ou Mítica — ver TierDeRaca. */
+  tier: TierDeRaca;
   /**
    * A faixa da raça na tabela d100 do Cap. 1 §5 (2026-09-26). O livro imprime
    * a tabela e o site rola a mesma: a raridade é a largura da faixa.

@@ -2,7 +2,7 @@
 
 import { Check, Sparkle } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
-import { getPendingRaceAttributeChoices, hasRacialUpgrade } from "@/store/selectors";
+import { getPendingRaceAttributeChoices, hasRacialUpgrade, podeComprarDespertar } from "@/store/selectors";
 import { ATTRIBUTES, AttributeKey, Background, Race, SubtableEntry } from "@/lib/types";
 import RaceCrest from "./RaceCrest";
 
@@ -116,19 +116,25 @@ function RaceChoices({ race }: { race: Race }) {
       {upgrades.length > 0 && (
         <div>
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
-            Melhoria racial (custa PA)
+            Despertares da raça (custam PA)
           </p>
           {upgrades.map((u) => {
             const comprado = hasRacialUpgrade(character, u.id);
+            const trava = podeComprarDespertar(character, u);
+            const travado = !comprado && !trava.ok;
             return (
               <button
                 key={u.id}
                 type="button"
                 onClick={() => toggleUpgrade(u.id)}
-                className={`flex w-full items-start gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition-colors ${
+                disabled={travado}
+                title={travado ? trava.motivo : undefined}
+                className={`mb-1.5 flex w-full items-start gap-2 rounded-lg border px-2.5 py-2 text-left text-xs transition-colors ${
                   comprado
                     ? "border-wine-500 bg-wine-500/10 text-parchment-800 dark:text-parchment-100"
-                    : "border-parchment-300 text-parchment-600 hover:border-wine-400 dark:border-parchment-700 dark:text-parchment-400"
+                    : travado
+                      ? "cursor-not-allowed border-parchment-300 text-parchment-500 opacity-60 dark:border-parchment-800"
+                      : "border-parchment-300 text-parchment-600 hover:border-wine-400 dark:border-parchment-700 dark:text-parchment-400"
                 }`}
               >
                 <span
@@ -139,7 +145,7 @@ function RaceChoices({ race }: { race: Race }) {
                   {comprado && <Check className="h-3 w-3" />}
                 </span>
                 <span>
-                  <b>{u.name}</b> <span className="text-gold-600 dark:text-gold-400">({u.paCost} PA)</span> —{" "}
+                  <b>{u.name}</b> <span className="text-gold-600 dark:text-gold-400">({u.paCost} PA{u.patamarMinimo ? ` · a partir do ${u.patamarMinimo}` : ""})</span> —{" "}
                   {u.description}
                 </span>
               </button>

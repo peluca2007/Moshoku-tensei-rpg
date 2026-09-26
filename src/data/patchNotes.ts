@@ -21,6 +21,17 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Cura sem contabilidade, Desintoxicação com jogada, site mais leve",
     sections: [
       {
+        heading: "Raças: tiers, preço de escolha e despertares",
+        items: [
+          "Toda raça tem um tier, que decide a faixa no d100: comuns 15–16 números, incomuns 9, raras 5, o Demônio Imortal (lendário) 2 — era 8, o mesmo do Elfo — e o Dragão (mítico) só no 100.",
+          "Escolher a raça em vez de rolar custa pelo tier: 1 PA comum ou incomum, 2 rara, 3 lendária; o Dragão não se escolhe (sorte ou presente do Mestre). Antes, qualquer raça custava 1 PA.",
+          "Dois despertares por raça, comprados com PA: o 1º a partir do Intermediário, o 2º a partir do Santo (a Forma do Dragão, a Regeneração dobrada do Demônio Imortal, a Sombra Absoluta do Povo Pequeno…). A ficha só deixa comprar no patamar certo, e a Mana Ancestral do Elfo entra sozinha no PM.",
+          "Raça Fera: o uivo desequilibra; atordoar virou o despertar Uivo que Paralisa. Raça do Oceano: ganhou Resistência a frio e nado dobrado, que valem fora do mar.",
+          "O simulador de combate passou a ler as resistências da raça e dos despertares comprados.",
+          "No folheado, a Raça Dragão ganha uma página inteira de arte.",
+        ],
+      },
+      {
         heading: "Livro folheado: a diagramação que o autor pediu",
         items: [
           "Toda carta inteira: nome, texto, regra e cântico de uma habilidade nunca se separam. Só a arte/GIF pode ir sozinha pra coluna seguinte.",

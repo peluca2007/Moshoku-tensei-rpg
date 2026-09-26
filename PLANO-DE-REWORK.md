@@ -127,7 +127,7 @@ Cada decisão abaixo traz quatro caminhos e o que eu faria (★). O autor escolh
    quadro comum (terreno, rota, pessoas); a luta começa com aquilo em jogo. Faz a Utilidade brilhar na
    mesa, mas é mais uma regra pra aprender.
 
-### 4b. Raças (pedido do autor, 2026-09-26 — anotado, ainda sem decisão)
+### 4b. Raças (pedido do autor, 2026-09-26 — FEITO: tiers com preço, dois despertares, extremos)
 
 - **Balanceamento geral**: ver quais raças estão mais fortes. O autor acha que o Demônio Imortal, uma
   das melhores, não é difícil de pegar.

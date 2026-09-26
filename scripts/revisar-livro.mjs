@@ -211,7 +211,7 @@ const resultado = await comNavegador(async ({ abrir }) => {
   await enviar("Page.addScriptToEvaluateOnNewDocument", {
     source: `try { localStorage.setItem("theme", "dark"); localStorage.setItem("livro-folhear-modo", "livro"); localStorage.setItem("livro-folhear-papel", ${JSON.stringify(papel)}); } catch {}`,
   });
-  await enviar("Emulation.setDeviceMetricsOverride", { width: LARGURA, height: ALTURA, deviceScaleFactor: 1, mobile: false });
+  await enviar("Emulation.setDeviceMetricsOverride", { width: LARGURA, height: ALTURA, deviceScaleFactor: Number(process.env.ESCALA ?? 1), mobile: false });
   await enviar("Page.navigate", { url: `${BASE}/livro/folhear` });
   for (let i = 0; i < 240; i++) {
     if (await avaliar("!!document.querySelector('.folhear[data-pronto]')")) break;
