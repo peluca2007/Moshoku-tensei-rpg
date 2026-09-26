@@ -16,6 +16,37 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.100",
+    date: "2026-09-26",
+    title: "O caminho mínimo, o kit de mesa e a ficha igual ao livro",
+    sections: [
+      {
+        heading: "Comece Aqui: o caminho mínimo",
+        items: [
+          "Nova seção 6 no Cap. 0: o que a primeira sessão precisa (as seções 2 e 3, a carta das suas habilidades e o Glossário de Condições) e uma tabela do que pode esperar — Recitação Perfeita, conjuração em mais de um turno, Magias Combinadas, os Tetos, Aflições, Crafting, Viagem e Cerco —, com o patamar em que cada coisa começa a importar.",
+        ],
+      },
+      {
+        heading: "A ficha diz o que o livro diz",
+        items: [
+          "O resumo de regras da ficha ainda mostrava o Teto de Ações antigo ('máximo 5 Ações por turno, 2 externas') e o Teto de Auxílio de +5. Agora: 4 Ações próprias + 2 concedidas, e +6 — como no Cap. 4, §5.",
+        ],
+      },
+      {
+        heading: "Sumário",
+        items: [
+          "As cinco Lições da Magia Teórica, 'Onde se desenha', 'As cartas são fórmulas', 'Três exercícios' e 'A carta de uma habilidade' existiam no livro e não estavam no índice. Entraram.",
+        ],
+      },
+      {
+        heading: "Para o Mestre: o kit do teste de mesa",
+        items: [
+          "Quatro personagens de 2º patamar prontos pra importar por link (Fogo, Deus do Norte, Tático e Cura, 9 PA cada), um encontro com as criaturas do Apêndice G e uma folha de observação. Está em KIT-DE-MESA.md; é a sessão de referência do próximo ciclo de balanço.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.99",
     date: "2026-09-26",
     title: "Cura sem contabilidade, Desintoxicação com jogada, site mais leve",

@@ -188,7 +188,7 @@ Aspirante…"), além de Rank, patamar e tier.
 os que não mudam decisão nenhuma, e padronizar o resto em três relógios só (combate, Descanso Curto,
 Descanso Longo).
 
-**3e. O caminho mínimo.** Uma página no Cap. 0: **o que ignorar até o 3º patamar** (Recitação Perfeita,
+**3e. O caminho mínimo. ✅ feito (2026-09-26, Cap. 0, §6).** Uma página no Cap. 0: **o que ignorar até o 3º patamar** (Recitação Perfeita,
 Interrupção, empilhamento, Conjuração Dividida…) e o que a primeira sessão precisa.
 
 **Pronto quando:** efeitos "uma vez por…" **108 → ~75**; um nome de patamar só no livro; a página do

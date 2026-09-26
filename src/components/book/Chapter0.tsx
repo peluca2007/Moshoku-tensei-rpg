@@ -177,6 +177,45 @@ export default function Chapter0() {
         </Aside>
       </Section>
 
+      {/*
+        O CAMINHO MÍNIMO (Etapa 3e do PLANO-DO-DESIGNER, 2026-09-26). O livro tem
+        regra pra seis patamares, e a mesa nova lia tudo como se fosse pra hoje.
+        Esta página separa o que a primeira sessão usa do que só aparece mais
+        tarde — com o patamar em que cada coisa começa a importar, pra ninguém
+        achar que "pode esperar" quer dizer "é opcional".
+      */}
+      <Section>
+        <SectionTitle id="cap0-6">6. O caminho mínimo</SectionTitle>
+        <P>
+          O livro tem regra pra seis patamares, e quase nada disso aparece na primeira sessão. Pra jogar
+          hoje, bastam as seções 2 e 3 deste capítulo, a <b>carta das suas habilidades</b> (Cap. 3) e o{" "}
+          <b>Glossário de Condições</b> (Cap. 4, §2) aberto na mesa. O resto chega quando a ficha chegar nele:
+        </P>
+        <BookTable
+          headers={["Pode esperar", "Começa a importar", "Onde"]}
+          rows={[
+            ["Recitação Perfeita", "Quando um jogador quiser decorar um cântico — é bônus, não obrigação", "Cap. 2, §2"],
+            ["Conjuração em mais de um turno e Interrupção", "3º patamar (Avançado): a magia de 3 Ações não cabe mais junto com andar", "Cap. 2, §3 e §6"],
+            ["Magias Combinadas", "Quando alguém tiver duas escolas abertas nos ranks que a combinação pede", "Cap. 2, §4"],
+            ["Magia Teórica", "Só se alguém escolher a Teórica", "Cap. 2, §8"],
+            ["Empilhamento e os quatro Tetos", "Grupos com Tático, Bardo ou muita cura — raro antes do 3º patamar", "Cap. 4, §5"],
+            ["Aflições (doenças e venenos que ficam depois da luta)", "Na primeira criatura que as causar — o Mestre avisa", "Cap. 4, §8"],
+            ["Reputação, Crafting e Alquimia", "Entre aventuras, a partir da segunda ou terceira sessão", "Cap. 5, §3 e §4"],
+            ["Viagem entre continentes e Cerco", "Quando a campanha sair do continente ou for à guerra", "Apêndices E e F"],
+          ]}
+        />
+        <Aside title="O que a primeira sessão não pode pular">
+          <List
+            items={[
+              "Um turno tem 3 Ações e 1 Reação, e conjurar custa Ações (seção 3 acima).",
+              "A 0 PV você não morre: você começa a morrer (Cap. 4, §7). Todo jogador precisa saber disso antes da primeira luta.",
+              "O Bônus de Rank é por árvore (seção 2). É o erro nº 1 de quem vem de outro sistema.",
+              "A mecânica central da sua árvore, escrita no topo do catálogo dela (Cap. 3). É ela que diz o que você faz de diferente dos outros.",
+            ]}
+          />
+        </Aside>
+      </Section>
+
       <FimDoCapitulo id="cap0" />
     </div>
   );
