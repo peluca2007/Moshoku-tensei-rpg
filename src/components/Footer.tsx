@@ -70,6 +70,7 @@ const COLUNAS = [
     titulo: "Referência",
     links: [
       { href: "/livro", label: "Livro de regras" },
+      { href: "/livro/folhear", label: "Folhear o livro" },
       { href: "/livro#apendices", label: "Apêndices" },
       { href: "/#patch-notes", label: "Notas de versão" },
     ],
