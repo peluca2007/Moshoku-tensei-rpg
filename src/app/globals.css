@@ -1647,3 +1647,116 @@ input[type="number"],
 .livro-abertura-arte {
   display: none;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * O SITE NO ESTILO DO LIVRO (branch de comparação, 2026-09-26)
+ *
+ * Pedido do autor: "amei as cores do livro/folhear, cria uma branch com o site
+ * inteiro nesse estilo, e eu comparo com a versão antiga". As três paletas do
+ * site já são variáveis (o @theme sem `inline` lá em cima), então o site todo
+ * troca de identidade aqui, sem mexer em componente:
+ * - o PERGAMINHO vira a escala neutra do livro (papel dia no claro, papel
+ *   noite no escuro);
+ * - o VINHO vira a cor da seção, e o DOURADO a mesma cor apagada — como os
+ *   capítulos do livro: Ficha azul (Cap. 1), Árvores verde (Cap. 3),
+ *   Personagens laranja (Comece Aqui), Mestre vermelho (Cap. 4), Loja
+ *   amarelo (Cap. 5), Livro roxo (Cap. 2);
+ * - as letras do livro: rótulos em Barlow, títulos gritados em Barlow
+ *   Condensed, nomes em Fraunces;
+ * - cantos retos e a mesa do livro no fundo, no lugar do pergaminho.
+ * ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --cor-dia: #6546b8;
+  --cor-noite: #b197fc;
+  --cor: var(--cor-dia);
+  --background: #f1ede5;
+  --foreground: #1d1e24;
+
+  --radius-xs: 1px;
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 3px;
+  --radius-xl: 3px;
+  --radius-2xl: 4px;
+  --radius-3xl: 5px;
+}
+
+.dark {
+  --cor: var(--cor-noite);
+  --background: #141418;
+  --foreground: #e8e3d9;
+}
+
+:root[data-secao="ficha"] { --cor-dia: #2f6fb3; --cor-noite: #5eb1ff; }
+:root[data-secao="arvores"] { --cor-dia: #22805a; --cor-noite: #38d9a9; }
+:root[data-secao="personagens"] { --cor-dia: #c9742a; --cor-noite: #ffa94d; }
+:root[data-secao="mestre"] { --cor-dia: #c43c3c; --cor-noite: #ff6b6b; }
+:root[data-secao="loja"] { --cor-dia: #a8740f; --cor-noite: #ffd43b; }
+:root[data-secao="livro"] { --cor-dia: #6546b8; --cor-noite: #b197fc; }
+:root[data-secao="inicio"] { --cor-dia: #6546b8; --cor-noite: #b197fc; }
+
+:root,
+.dark {
+  --color-parchment-50: #f7f3ea;
+  --color-parchment-100: #ece6da;
+  --color-parchment-200: #dcd6ca;
+  --color-parchment-300: #c6c1b7;
+  --color-parchment-400: #a19c92;
+  --color-parchment-500: #807c76;
+  --color-parchment-600: #5d616e;
+  --color-parchment-700: #454852;
+  --color-parchment-800: #2e2f37;
+  --color-parchment-900: #1e1e24;
+  --color-parchment-950: #141418;
+
+  --color-wine-50: color-mix(in oklab, var(--cor) 9%, #fff);
+  --color-wine-100: color-mix(in oklab, var(--cor) 18%, #fff);
+  --color-wine-200: color-mix(in oklab, var(--cor) 36%, #fff);
+  --color-wine-300: color-mix(in oklab, var(--cor) 58%, #fff);
+  --color-wine-400: color-mix(in oklab, var(--cor) 80%, #fff);
+  --color-wine-500: var(--cor);
+  --color-wine-600: color-mix(in oklab, var(--cor) 78%, #0b0b0e);
+  --color-wine-700: color-mix(in oklab, var(--cor) 62%, #0b0b0e);
+  --color-wine-800: color-mix(in oklab, var(--cor) 44%, #0b0b0e);
+  --color-wine-900: color-mix(in oklab, var(--cor) 28%, #0b0b0e);
+  --color-wine-950: color-mix(in oklab, var(--cor) 16%, #0b0b0e);
+
+  --tinta-da-cor: color-mix(in oklab, var(--cor) 55%, #aaa59c);
+  --color-gold-50: color-mix(in oklab, var(--tinta-da-cor) 10%, #fff);
+  --color-gold-100: color-mix(in oklab, var(--tinta-da-cor) 20%, #fff);
+  --color-gold-200: color-mix(in oklab, var(--tinta-da-cor) 40%, #fff);
+  --color-gold-300: color-mix(in oklab, var(--tinta-da-cor) 62%, #fff);
+  --color-gold-400: color-mix(in oklab, var(--tinta-da-cor) 82%, #fff);
+  --color-gold-500: var(--tinta-da-cor);
+  --color-gold-600: color-mix(in oklab, var(--tinta-da-cor) 76%, #0b0b0e);
+  --color-gold-700: color-mix(in oklab, var(--tinta-da-cor) 60%, #0b0b0e);
+  --color-gold-800: color-mix(in oklab, var(--tinta-da-cor) 44%, #0b0b0e);
+  --color-gold-900: color-mix(in oklab, var(--tinta-da-cor) 28%, #0b0b0e);
+  --color-gold-950: color-mix(in oklab, var(--tinta-da-cor) 16%, #0b0b0e);
+}
+
+/* A mesa do livro no fundo: caderno quadriculado sobre o papel. */
+body,
+.dark body {
+  background:
+    linear-gradient(rgb(0 0 0 / 0.035) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgb(0 0 0 / 0.035) 1px, transparent 1px) 0 0 / 16px 16px,
+    var(--background);
+  font-family: var(--font-livro-rotulo), var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.dark body {
+  background:
+    linear-gradient(rgb(255 255 255 / 0.022) 1px, transparent 1px) 0 0 / 16px 16px,
+    linear-gradient(90deg, rgb(255 255 255 / 0.022) 1px, transparent 1px) 0 0 / 16px 16px,
+    radial-gradient(ellipse 120% 90% at 50% 0%, #1e1e23 0%, #141418 55%, #0d0d10 100%) fixed,
+    var(--background);
+}
+
+/* A voz gritada do livro nos títulos de página e de seção. */
+:where(main) :where(h1, h2) {
+  font-family: var(--font-livro-grito), "Arial Narrow", system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
