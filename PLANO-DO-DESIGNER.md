@@ -41,7 +41,7 @@ As três prioridades de sempre decidem os empates: **diversão**, depois **balan
 | Páginas do folheado | **284** | Cap. 3 inteiro = 165 (58% do livro) |
 | Páginas por árvore | Magia **≈10** (79 nas 8) · Corpo **≈6,5** (52 nas 8) · Utilidade **≈5,7** (17 nas 3) | A diferença da magia é o cântico |
 | Texto das cartas de magia | **cântico 41,7 mil** caracteres × **regra 37,6 mil** | Há mais cântico que regra; no Fogo, 1,6× |
-| Justificativa de design impressa | **36 cartas**, 11,2 mil caracteres | "1 Ação onde o rank pede 2, porque…" |
+| Justificativa de design (`costNote`) | 36 cartas, 11,2 mil caracteres — **só nos dados, não é impressa** | corrigido em 2026-09-26: a v2 dizia que era impressa |
 | Efeitos "uma vez por…" | **108** | Descanso Longo, Curto, combate, rodada |
 | Arte de habilidade | 127 peças; **47 abaixo de 300 px** e 35 entre 300 e 400 px | A coluna tem ~335 px: aparecem esticadas |
 | Revisão automática (125%) | 0 título solto · 0 estouro · 0 arte borrada/cortada · 6 págs. com ~20% em branco | Só o folheado foi revisado nesta fase |
@@ -138,6 +138,24 @@ decidida (★ do `PLANO-DE-REWORK.md`, §1).
 
 ### Etapa 3 — Enxugar o texto de mesa · M · ★ portão
 
+> **Medido em 2026-09-26, e muda esta etapa.** Testei a opção ★ dos cânticos (primeira linha + grito na
+> carta, cântico inteiro num Apêndice H): o Cap. 3 caiu **1 página** e o apêndice ocupou **5** — o livro
+> ficou **4 páginas maior**. Desfeito. A composição das 148 páginas das 19 árvores explica:
+>
+> | Parte | Páginas | Fatia |
+> | --- | --- | --- |
+> | Cartas (regra + cântico + arte) | 85 | 57% |
+> | Espaço vazio (carta inteira na página + arredondamento de cada árvore) | 24 | 16% |
+> | Maestrias | 17 | 12% |
+> | Aberturas (mecânica, proficiências, progressão) | 12 | 8% |
+> | Artes de fim de árvore | 8 | 5% |
+>
+> O cântico é ~1 página por escola de magia. Como cada árvore começa em página nova e fecha com arte, uma
+> economia menor que uma página por árvore **some no arredondamento**. Conclusão: **a meta de ~250 páginas
+> sai do plano** — o livro é comprido porque tem muita regra e porque a diagramação escolhe carta inteira e
+> fecho com arte, e as duas coisas são pedidos do autor. A Etapa 3 fica com o que mexe no JOGO (3c, 3d,
+> 3e); 3a não existe (o `costNote` não é impresso) e 3b fica como está, com o cântico inteiro na carta.
+
 **Por que:** resolve três problemas de uma vez — aparência (páginas densas), peso (menos páginas, livro
 mais rápido) e entrada no jogo (menos texto antes de jogar). Pode andar junto com a Etapa 2.
 
@@ -173,8 +191,8 @@ Descanso Longo).
 **3e. O caminho mínimo.** Uma página no Cap. 0: **o que ignorar até o 3º patamar** (Recitação Perfeita,
 Interrupção, empilhamento, Conjuração Dividida…) e o que a primeira sessão precisa.
 
-**Pronto quando:** livro de **284 → ~250 páginas** sem perder regra; nenhuma carta com texto dirigido ao
-designer; efeitos "uma vez por…" **108 → ~75**; a página do caminho mínimo existe e foi lida pelo autor.
+**Pronto quando:** efeitos "uma vez por…" **108 → ~75**; um nome de patamar só no livro; a página do
+caminho mínimo existe e foi lida pelo autor. (A meta de páginas saiu: ver o quadro no começo desta etapa.)
 **Portão:** o autor lê três árvores enxutas antes de o corte se espalhar pelas outras.
 
 ### Etapa 4 — Auditoria de balanço · M/G · ★ portão
@@ -313,7 +331,7 @@ pelo Cap. 5 do livro antes da loja e do `/encontros`.
 | Etapa | Decisão | ★ Minha escolha |
 | --- | --- | --- |
 | 1 | Quando e com quem jogar a sessão de referência | O quanto antes, com a mesa de sempre |
-| 3b | Cânticos | O grito na carta, o cântico inteiro no apêndice |
+| 3b | Cânticos | ~~O grito na carta~~ — medido: aumenta o livro. **Ficam inteiros na carta** |
 | 3c | Nomes de patamar | Um nome só; o temático como subtítulo |
 | 4 | Espada de Luz Verdadeira | Decidir com o autor depois da sessão |
 | 4 | Começo do mago | Truque de escola de 0 PM |

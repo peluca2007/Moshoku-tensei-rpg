@@ -67,6 +67,14 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "cap2-6", label: "6. Interromper uma Conjuração" },
       { id: "cap2-7", label: "7. Regras Gerais de Conjuração" },
       { id: "cap2-8", label: "8. Magia Teórica — Oficina de Fórmulas" },
+      { id: "cap2-8-frase", label: "— Lição 1: a frase" },
+      { id: "cap2-8-pecas", label: "— Lição 2: as peças" },
+      { id: "cap2-8-custo", label: "— Lição 3: a conta" },
+      { id: "cap2-8-defesa", label: "— Lição 4: deter corpos e magia" },
+      { id: "cap2-8-meios", label: "— Onde se desenha" },
+      { id: "cap2-8-circuitos", label: "— Lição 5: circuitos" },
+      { id: "cap2-8-cartas", label: "— As cartas são fórmulas" },
+      { id: "cap2-8-exercicios", label: "— Três exercícios" },
     ],
   },
   {
@@ -74,6 +82,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
     label: "Cap. 3 — Árvores de Progressão",
     children: [
       { id: "cap3-como-ler", label: "Como Ler uma Árvore" },
+      { id: "cap3-carta", label: "— A carta de uma habilidade" },
       { id: "cap3-mecanicas", label: "— As 19 Mecânicas" },
       { id: "cap3-mapa", label: "O Mapa Completo" },
       { id: "cap3-magia", label: "Árvore da Magia" },
