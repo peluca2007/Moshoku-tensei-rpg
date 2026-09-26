@@ -27,7 +27,8 @@
     "tela": "node scripts/tela.mjs",
     "revisar:livro": "node scripts/revisar-livro.mjs",
     "gerar:caos": "node scripts/gerar-caos.mjs",
-    "gerar:impressao": "node scripts/gerar-impressao.mjs"
+    "gerar:impressao": "node scripts/gerar-impressao.mjs",
+    "kit:mesa": "tsx scripts/kit-de-mesa.mts"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",
