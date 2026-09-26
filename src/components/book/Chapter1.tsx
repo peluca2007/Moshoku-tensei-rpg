@@ -598,6 +598,10 @@ export default function Chapter1() {
           linhagem determina traços genéticos e mecânicos — os detalhes de cada uma também aparecem direto na
           ficha ao selecioná-la.
         </P>
+        <P>
+          <b>Role 1d100 na tabela abaixo.</b> Quanto mais forte a raça, mais estreita a faixa: as comuns ficam
+          com 13 ou 14 números, as incomuns com 8, as raras com 6, e a Raça Dragão, mítica, só sai no 100.
+        </P>
         <QuadroDasRacas />
         <Warning title="Sorteio ou escolha: as duas portas, e o preço de cada uma">
           <P>

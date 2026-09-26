@@ -3,96 +3,56 @@ import { RACES } from "@/data/races";
 import { BACKGROUNDS, SUBTABLES } from "@/data/backgrounds";
 
 /**
- * Peso de sorteio por raça — quanto mais forte mecanicamente, mais raro sortear (Via 2/3).
- * Raças míticas (peso 0) nunca saem no sorteio: só dá pra pegá-las na Via 1 (Manual), com
- * aprovação do Mestre, exatamente como o próprio texto da Raça Dragão já exige.
+ * A TABELA d100 DE RAÇAS (Cap. 1 §5) — 2026-09-26.
  *
- * Os pesos foram reordenados na auditoria de balanceamento de 2026-08-28 pra bater com o
- * poder MEDIDO no rank Imperador (a régua e a conta de cada raça estão no cabeçalho de
- * `src/data/races.ts`). Antes eles seguiam a intuição de raridade da obra, não a mecânica, e
- * o resultado estava invertido em quatro pontos: o Celestial (voo — o traço mais forte fora
- * da raça mítica, 3,20 pontos de criação) era mais comum que o Superd; a Raça do Oceano era
- * do tier comum sendo o pacote mais fraco do livro em campanha terrestre; e Migurd e Demônio
- * Imortal ocupavam o tier raro com 2,2, abaixo de raças do tier médio. Três faixas limpas:
- *   5 = comum (~13,9%)  · humano 1,50 · hobbit 1,85 · raça fera 1,85
- *   3 = incomum (~8,3%) · anão 1,75 · demônio imortal 2,23 · migurd 2,25 · elfo 2,32 · oceano 2,35
- *   2 = raro (~5,6%)    · superd 2,70 · ogro 2,80 · celestial 3,20
- */
-export const RACE_WEIGHT: Record<string, number> = {
-  humano: 5,
-  hobbit: 5,
-  "raca-fera": 5,
-  elfo: 3,
-  anao: 3,
-  oceano: 3,
-  migurd: 3,
-  "demonio-imortal": 3,
-  celestial: 2,
-  superd: 2,
-  ogro: 2,
-  dragao: 0,
-};
-
-/**
- * Cap. 1, §5: a Raça Dragão entra no sorteio (2026-08-29) com chance FIXA de 1%,
- * fora da tabela de pesos.
+ * Antes o site sorteava por pesos (5/3/2 e o Dragão com 1% por fora) e o livro
+ * dizia "a raça sai do d100" sem ter tabela nenhuma: quem jogava sem o site não
+ * tinha como rolar. Agora a faixa de cada raça mora em `src/data/races.ts`
+ * (`rollRange`), o livro imprime a tabela e o site rola 1d100 nela.
  *
- * É tratada separadamente de propósito. Encaixá-la em RACE_WEIGHT exigiria um
- * peso fracionário (0,36 no total de 36) ou multiplicar todos os outros pesos
- * por 11 pra a conta fechar em 400 — nos dois casos o número "1%" ficaria
- * escondido numa divisão, e a primeira mudança de peso de qualquer outra raça o
- * quebraria em silêncio. Aqui ele é literal e não depende de mais nada.
+ * As faixas seguem as três raridades da auditoria de 2026-08-28 (quanto mais
+ * forte, mais rara): comum 13–14 (Humano, Povo Pequeno, Raça Fera), incomum 8
+ * (Elfo, Anão, Oceano, Migurd, Demônio Imortal), rara 6 (Superd, Ogro,
+ * Celestial) e o 100 da Raça Dragão, mítica.
+ *
+ * `RACE_WEIGHT` continua existindo pra loteria da Entrevista do Destino: é a
+ * largura da faixa (o Dragão fica de fora e tem o 1% rolado por fora).
  */
-export const DRAGON_CHANCE = 0.01;
 const DRAGON_ID = "dragao";
+const faixa = (id: string) => RACES.find((r) => r.id === id)?.rollRange;
+const largura = (r: [number, number] | undefined) => (r ? r[1] - r[0] + 1 : 0);
 
-/** As raças da tabela de pesos — o Dragão fica de fora, ver DRAGON_CHANCE. */
-function weightedRacePool() {
-  return RACES.filter((r) => r.id !== DRAGON_ID && (RACE_WEIGHT[r.id] ?? 1) > 0);
-}
+export const RACE_WEIGHT: Record<string, number> = Object.fromEntries(
+  RACES.map((r) => [r.id, r.id === DRAGON_ID ? 0 : largura(r.rollRange)])
+);
 
-/** Sorteia um resultado de raça pra Via 2/3 — pesado por raridade (ver RACE_WEIGHT), nunca uniforme. */
+/** A chance da Raça Dragão: a largura da faixa dela na tabela (o 100). */
+export const DRAGON_CHANCE = largura(faixa(DRAGON_ID)) / 100;
+
+/** Rola 1d100 na tabela de raças do Cap. 1 §5. */
 export function rollRandomRace(): string {
-  if (Math.random() < DRAGON_CHANCE) return DRAGON_ID;
-  const pool = weightedRacePool();
-  const totalWeight = pool.reduce((sum, r) => sum + (RACE_WEIGHT[r.id] ?? 1), 0);
-  let roll = Math.random() * totalWeight;
-  for (const race of pool) {
-    roll -= RACE_WEIGHT[race.id] ?? 1;
-    if (roll <= 0) return race.id;
-  }
-  return pool[pool.length - 1].id;
+  const roll = 1 + Math.floor(Math.random() * 100);
+  const raca = RACES.find((r) => r.rollRange && roll >= r.rollRange[0] && roll <= r.rollRange[1]);
+  return raca?.id ?? RACES[0].id;
 }
 
 /**
- * Aplica a chance fixa de 1% da Raça Dragão sobre um resultado que já veio de
- * outra via de sorteio. Existe pra Entrevista do Destino (Via 3), que tem
- * loteria própria — enviesada pelas respostas — e por isso não pode simplesmente
- * chamar `rollRandomRace`. Rolar o 1% por fora garante que ele seja exatamente
- * 1% em qualquer combinação de respostas, em vez de variar com o viés.
+ * Aplica a chance da Raça Dragão sobre um resultado que já veio de outra via
+ * de sorteio (a Entrevista do Destino, Via 3, que tem loteria própria enviesada
+ * pelas respostas). Rolar por fora garante a mesma chance da tabela.
  */
 export function applyDragonChance(raceId: string): string {
   return Math.random() < DRAGON_CHANCE ? DRAGON_ID : raceId;
 }
 
-/** IDs das raças que podem realmente sair no sorteio — usado pra desenhar a Roleta do Destino sem duplicar a tabela de pesos. */
+/** IDs das raças que podem sair no sorteio, na ordem da tabela — pra desenhar a Roleta. */
 export function getRollableRaceIds(): string[] {
-  return [...weightedRacePool().map((r) => r.id), DRAGON_ID];
+  return RACES.filter((r) => r.rollRange).sort((a, b) => a.rollRange![0] - b.rollRange![0]).map((r) => r.id);
 }
 
-/** Chance real (0–1) de cada raça sortável sair na Roleta — mesma tabela usada em rollRandomRace, só que exposta pra UI mostrar a probabilidade em vez de escondê-la. */
+/** Chance real (0–1) de cada raça: a largura da faixa dela na tabela d100. */
 export function getRaceProbabilities(): { id: string; probability: number }[] {
-  const pool = weightedRacePool();
-  const totalWeight = pool.reduce((sum, r) => sum + (RACE_WEIGHT[r.id] ?? 1), 0);
-  // O Dragão come 1% fechado; as demais dividem os 99% restantes na proporção
-  // dos pesos, então a soma da lista continua sendo exatamente 1.
-  return [
-    ...pool.map((r) => ({
-      id: r.id,
-      probability: ((RACE_WEIGHT[r.id] ?? 1) / totalWeight) * (1 - DRAGON_CHANCE),
-    })),
-    { id: DRAGON_ID, probability: DRAGON_CHANCE },
-  ];
+  return getRollableRaceIds().map((id) => ({ id, probability: largura(faixa(id)) / 100 }));
 }
 
 /** Rola 1d100 na tabela de Antecedentes do Cap. 1 (mesmo rollRange já usado no livro) — respeita o peso canônico de cada resultado. */
