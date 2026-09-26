@@ -7,7 +7,7 @@ import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diag
 import TreeCatalog from "./TreeCatalog";
 import EntryCard from "./EntryCard";
 import RetratoDaArvore from "./RetratoDaArvore";
-import Prancha from "./Prancha";
+import Prancha, { FimDaArvore, temPrancha } from "./Prancha";
 import VitrineDasArvores from "./VitrineDasArvores";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
@@ -30,6 +30,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
   const rankLabelTrees = TREES.filter((t) => t.rankLabels);
 
   return (
+    <>
     <div className="space-y-8">
       <ChapterTitle
         id="cap3"
@@ -750,38 +751,84 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           Magias, talentos, técnicas e Maestrias de cada uma das 19 sub-árvores, rank por rank. Clique no
           nome de uma árvore pra abrir o catálogo dela.
         </P>
-        {(["magia", "corpo", "utilidade"] as const).map((category) => (
-          <div key={category} className="space-y-3">
-            <h3 className="scroll-mt-24 text-base font-bold text-wine-700 dark:text-wine-300" id={`cap3-todas-${category}`}>
-              {CATEGORY_LABELS[category]}
-            </h3>
-            {TREES.filter((t) => t.category === category).map((tree) => (
-              <Fragment key={tree.id}>
-              <details open={arvoresAbertas} data-folhear-aberto={arvoresAbertas ? "" : undefined} data-categoria={category} data-arvore={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
-                <summary className="livro-arvore-cabeca flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
-                  <TreeCrest tree={tree} size={44} />
-                  <span className="min-w-0">
-                    <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
-                    <span className="ml-2 text-xs text-parchment-600 dark:text-parchment-400">{tree.subgroup}</span>
-                    {tree.tagline && (
-                      <span className="mt-0.5 block text-xs italic text-parchment-600 dark:text-parchment-400">{tree.tagline}</span>
-                    )}
-                  </span>
-                </summary>
-                <div className="livro-arvore-corpo border-t border-parchment-300 p-3 dark:border-parchment-800">
-                  <RetratoDaArvore id={tree.id} nome={tree.name} />
-                  <TreeCatalog tree={tree} />
-                </div>
-              </details>
-              {/* A prancha da árvore, se houver: fecha o catálogo quebrando as duas colunas. */}
-              <Prancha id={tree.id} arvore={tree.id} />
-              </Fragment>
-            ))}
-          </div>
-        ))}
+        {!arvoresAbertas &&
+          CATEGORIAS.map((category) => (
+            <div key={category} className="space-y-3">
+              <TituloDaCategoria category={category} />
+              {TREES.filter((t) => t.category === category).map((tree) => (
+                <Fragment key={tree.id}>
+                  <CatalogoDaArvore tree={tree} category={category} abertas={false} comRetrato />
+                  {/* A prancha da árvore, se houver: fecha o catálogo quebrando as duas colunas. */}
+                  <Prancha id={tree.id} arvore={tree.id} />
+                </Fragment>
+              ))}
+            </div>
+          ))}
       </Section>
 
-      <FimDoCapitulo id="cap3" />
+      {!arvoresAbertas && <FimDoCapitulo id="cap3" />}
     </div>
+    {/*
+      NO LIVRO FOLHEADO, CADA ÁRVORE É UM CAPÍTULO DE PÁGINAS (2026-09-26,
+      pedido do autor: "não juntar o fim do Arqueiro com o começo do Ladino na
+      mesma página; apesar do nome sub-árvore, é a maioria do livro").
+
+      Cada árvore é um bloco próprio no fluxo — e todo bloco do fluxo começa em
+      página nova (folhear.css). A última página dela fecha com a arte da
+      árvore esticada até o pé (FimDaArvore). O fecho do capítulo sai: quem
+      encerra o Cap. 3 é o fecho da última árvore.
+    */}
+    {arvoresAbertas &&
+      CATEGORIAS.flatMap((category) =>
+        TREES.filter((t) => t.category === category).map((tree, i) => (
+          <div key={tree.id} className="livro-arvore-folhas space-y-3" data-capitulo="cap3">
+            {i === 0 && <TituloDaCategoria category={category} />}
+            <CatalogoDaArvore tree={tree} category={category} abertas comRetrato={temPrancha(tree.id)} />
+            <FimDaArvore id={tree.id} nome={tree.name} />
+          </div>
+        )),
+      )}
+    </>
+  );
+}
+
+const CATEGORIAS = ["magia", "corpo", "utilidade"] as const;
+
+function TituloDaCategoria({ category }: { category: (typeof CATEGORIAS)[number] }) {
+  return (
+    <h3 className="scroll-mt-24 text-base font-bold text-wine-700 dark:text-wine-300" id={`cap3-todas-${category}`}>
+      {CATEGORY_LABELS[category]}
+    </h3>
+  );
+}
+
+function CatalogoDaArvore({
+  tree,
+  category,
+  abertas,
+  comRetrato,
+}: {
+  tree: (typeof TREES)[number];
+  category: (typeof CATEGORIAS)[number];
+  abertas: boolean;
+  comRetrato: boolean;
+}) {
+  return (
+    <details open={abertas} data-folhear-aberto={abertas ? "" : undefined} data-categoria={category} data-arvore={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
+      <summary className="livro-arvore-cabeca flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
+        <TreeCrest tree={tree} size={44} />
+        <span className="min-w-0">
+          <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
+          <span className="ml-2 text-xs text-parchment-600 dark:text-parchment-400">{tree.subgroup}</span>
+          {tree.tagline && (
+            <span className="mt-0.5 block text-xs italic text-parchment-600 dark:text-parchment-400">{tree.tagline}</span>
+          )}
+        </span>
+      </summary>
+      <div className="livro-arvore-corpo border-t border-parchment-300 p-3 dark:border-parchment-800">
+        {comRetrato && <RetratoDaArvore id={tree.id} nome={tree.name} />}
+        <TreeCatalog tree={tree} />
+      </div>
+    </details>
   );
 }

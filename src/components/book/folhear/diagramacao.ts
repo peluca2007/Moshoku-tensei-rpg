@@ -200,7 +200,9 @@ export function primeiroBloco(fluxo: Element, passou: (el: Element) => boolean):
  */
 export function segurarCaixasCurtas(fluxo: Element, g: Geometria, r: Regua): void {
   fluxo.querySelectorAll(".folhear-inteira").forEach((el) => el.classList.remove("folhear-inteira"));
-  const limite = (g.altura - g.topo - g.pe) * 0.4;
+  // 60% desde 2026-09-26: o autor não quer caixa partida; até ~meia coluna
+  // ela desce inteira, e o vão que fica é trabalho do preencherPes.
+  const limite = (g.altura - g.topo - g.pe) * 0.6;
   const partidas: Element[] = [];
   fluxo.querySelectorAll(".livro-caixa").forEach((el) => {
     if (!visivel(el)) return;
@@ -238,6 +240,35 @@ export function ajustarTabelasLargas(fluxo: Element, g: Geometria, r: Regua): vo
     if (largas.length === 0) return;
     largas.forEach((t) => t.classList.add(degrau));
   }
+}
+
+/**
+ * A TABELA QUE QUASE CABE NÃO SE PARTE — 2026-09-26.
+ *
+ * O autor não quer tabela partida ("a tabela não está inteira na página"). A
+ * que é maior que a página parte, e tem que partir; a que passa um pouco — os
+ * Olhos Místicos deixavam duas linhas das dez na página seguinte — cabe se a
+ * letra e o respiro das linhas encolherem um pouco. Aqui a tabela partida cujo
+ * rabo é até ~30% dela ganha `folhear-tabela-compacta`.
+ *
+ * @returns quantas tabelas compactaram
+ */
+export function apertarTabelasPartidas(fluxo: Element, g: Geometria, r: Regua): number {
+  fluxo.querySelectorAll(".folhear-tabela-compacta").forEach((el) => el.classList.remove("folhear-tabela-compacta"));
+  const pagina = (q: DOMRect) => Math.floor((q.left - r.origem) / r.k / g.pagina);
+  const compactar: Element[] = [];
+  fluxo.querySelectorAll(".livro-tabela").forEach((caixa) => {
+    if (!visivel(caixa)) return;
+    const rs = Array.from(caixa.getClientRects()).filter((a) => a.height > 1);
+    if (rs.length < 2) return;
+    const total = rs.reduce((s, a) => s + a.height, 0);
+    const ultimaPagina = pagina(rs[rs.length - 1]);
+    if (ultimaPagina === pagina(rs[0])) return;
+    const rabo = rs.filter((a) => pagina(a) === ultimaPagina).reduce((s, a) => s + a.height, 0);
+    if (rabo / total <= 0.3 && total / r.k < (g.altura - g.topo - g.pe) * 1.2) compactar.push(caixa);
+  });
+  compactar.forEach((el) => el.classList.add("folhear-tabela-compacta"));
+  return compactar.length;
 }
 
 /**
@@ -558,11 +589,14 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
 export function acomodarPranchas(fluxo: Element, g: Geometria, r: Regua): number {
   const pranchas = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-prancha:not(.livro-prancha-coluna)")).filter(visivel);
   if (pranchas.length === 0) return 0;
-  pranchas.forEach((el) => el.classList.remove("folhear-prancha-coluna"));
+  pranchas.forEach((el) => {
+    el.classList.remove("folhear-prancha-coluna", "folhear-prancha-encaixada");
+    el.style.removeProperty("height");
+  });
   const alturaDaColuna = g.altura - g.topo - g.pe;
   const topo = fluxo.getBoundingClientRect().top;
   const pagina = (x: number) => Math.floor((x - r.origem) / r.k / g.pagina);
-  const voltam: HTMLElement[] = [];
+  const voltam: [HTMLElement, number][] = [];
   for (const el of pranchas) {
     const q = el.getBoundingClientRect();
     if ((q.top - topo) / r.k > 24) continue;
@@ -573,9 +607,19 @@ export function acomodarPranchas(fluxo: Element, g: Geometria, r: Regua): number
     const ultimo = rs[rs.length - 1];
     if (!ultimo || pagina(ultimo.left) !== pagina(q.left) - 1) continue;
     const buraco = alturaDaColuna - (ultimo.bottom - topo) / r.k;
-    if (buraco > alturaDaColuna * 0.2) voltam.push(el);
+    if (buraco > alturaDaColuna * 0.28) voltam.push([el, Math.floor(buraco - 60)]);
   }
-  voltam.forEach((el) => el.classList.add("folhear-prancha-coluna"));
+  /*
+   * A PRANCHA NÃO ENCOLHE PRA COLUNA (2026-09-26). Ela voltava pra coluna,
+   * pequena — o Triângulo dos Estilos virava um selo — e o autor não gostou.
+   * Agora ela continua de margem a margem e ganha a altura do buraco que
+   * deixaria: sobe pra página anterior, recortada em faixa mais baixa. Buraco
+   * pequeno (menos de ~28% da coluna) fica: é um pé de página, não um vão.
+   */
+  voltam.forEach(([el, altura]) => {
+    el.classList.add("folhear-prancha-encaixada");
+    el.style.height = `${altura}px`;
+  });
   return voltam.length;
 }
 
@@ -614,6 +658,8 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
       el.classList.add("folhear-vitrine-faixa");
       return;
     }
+    // O fecho da árvore tem regra própria (fecharArvores).
+    if (el.classList.contains("livro-fecho-arvore")) return;
     // A vitrine de coluna (a das árvores) já nasce visível, com altura mínima: só cresce.
     // O fecho é uma ilustração: faixa baixa demais só mostraria um recorte.
     if (resto < (el.classList.contains("livro-fecho") ? 340 : 150)) return;
@@ -630,6 +676,95 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   if (cheias.length === 0) return;
   cheias.forEach((el) => el.classList.add("folhear-vitrine-compacta"));
   cheias.filter(transborda).forEach((el) => el.classList.add("folhear-vitrine-some"));
+}
+
+/**
+ * O GRAND FINALE DA ÁRVORE — 2026-09-26.
+ *
+ * Toda árvore começa em página nova, então a última página dela sobra. O fecho
+ * (FimDaArvore) ocupa esse resto, em três tentativas, cada uma MEDIDA:
+ *
+ * 1. de margem a margem, no pé da página, com a altura que sobrou;
+ * 2. se não coube (ou sobrou pouco), na coluna, do fim do texto até o pé —
+ *    é o caso da última página com a primeira coluna cheia e a segunda curta;
+ * 3. se nem assim, uma página inteira de arte depois da árvore.
+ *
+ * Cada tentativa confere que o fecho ficou na mesma página que o fim da árvore
+ * (uma margem a mais o mandava pra página seguinte e deixava a página meio
+ * vazia). Por último decide se a arte entra recortada ou inteira.
+ */
+export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
+  const fechos = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-fecho-arvore"));
+  if (fechos.length === 0) return;
+  const colunaAlta = g.altura - g.topo - g.pe;
+  const FOLGA = 28;
+  fechos.forEach((el) => {
+    el.classList.remove("folhear-vitrine-cheia", "folhear-fecho-coluna", "folhear-fecho-inteiro");
+    el.style.removeProperty("--altura-vitrine");
+  });
+  const topo = fluxo.getBoundingClientRect().top;
+  const pagina = (q: DOMRect) => Math.floor((q.left - r.origem) / r.k / g.pagina);
+  const medir = (el: HTMLElement) => {
+    const q = el.getBoundingClientRect();
+    return { resto: colunaAlta - (q.top - topo) / r.k, largura: q.width / r.k, pagina: pagina(q) };
+  };
+  const fimDaArvore = (el: HTMLElement) => {
+    const antes = el.previousElementSibling;
+    const rs = antes ? Array.from(antes.getClientRects()).filter((a) => a.height > 1) : [];
+    return rs.length ? pagina(rs[rs.length - 1]) : -1;
+  };
+  const alturaFinal = new Map<HTMLElement, { altura: number; largura: number }>();
+  const pr = (el: HTMLElement, altura: number) => {
+    el.style.setProperty("--altura-vitrine", `${Math.floor(altura)}px`);
+    el.classList.add("folhear-vitrine-cheia");
+  };
+
+  // 1. De margem a margem.
+  const faixa = fechos.map(medir);
+  fechos.forEach((el, i) => faixa[i].resto >= 320 && pr(el, faixa[i].resto - FOLGA));
+  const pularam = fechos.filter((el, i) => {
+    if (faixa[i].resto < 320) return true;
+    const ok = medir(el).pagina === fimDaArvore(el);
+    if (ok) alturaFinal.set(el, { altura: faixa[i].resto - FOLGA, largura: faixa[i].largura });
+    return !ok;
+  });
+
+  // 2. Na coluna.
+  pularam.forEach((el) => {
+    el.style.removeProperty("--altura-vitrine");
+    el.classList.remove("folhear-vitrine-cheia");
+    el.classList.add("folhear-fecho-coluna");
+  });
+  const coluna = pularam.map(medir);
+  pularam.forEach((el, i) => coluna[i].resto >= 280 && pr(el, coluna[i].resto - FOLGA));
+  const inteiras = pularam.filter((el, i) => {
+    if (coluna[i].resto < 280) return true;
+    const ok = medir(el).pagina === fimDaArvore(el);
+    if (ok) alturaFinal.set(el, { altura: coluna[i].resto - FOLGA, largura: coluna[i].largura });
+    return !ok;
+  });
+
+  // 3. Página inteira.
+  inteiras.forEach((el, i) => {
+    el.classList.remove("folhear-fecho-coluna");
+    pr(el, colunaAlta - 4);
+    alturaFinal.set(el, { altura: colunaAlta - 4, largura: faixa[fechos.indexOf(el)]?.largura ?? g.pagina - g.margem * 2 });
+    void i;
+  });
+
+  // Recortar (cover) só se a cena sobrevive: mostrando ao menos 55% da arte e
+  // sem ampliar mais de 1,5×. Senão, a arte inteira sobre a cópia desfocada. O
+  // retrato recortado (sem fundo) vai sempre inteiro.
+  fechos.forEach((el) => {
+    const final = alturaFinal.get(el);
+    if (!final) return;
+    const w = Number(el.dataset.largura) || 0;
+    const h = Number(el.dataset.altura) || 0;
+    const quadroH = final.altura * 0.9;
+    const escala = w && h ? Math.max(final.largura / w, quadroH / h) : 1;
+    const mostra = w && h ? (final.largura * quadroH) / (w * h * escala * escala) : 1;
+    el.classList.toggle("folhear-fecho-inteiro", el.classList.contains("livro-fecho-recorte") || escala > 1.5 || mostra < 0.55);
+  });
 }
 
 /**
@@ -874,8 +1009,101 @@ export function preencherBuracos(fluxo: Element, g: Geometria, r: Regua): number
   return andaram.filter((a) => !a).length;
 }
 
+/**
+ * O PÉ DA COLUNA NÃO FICA VAZIO — 2026-09-26.
+ *
+ * Com a regra da carta inteira (nome, texto e regra nunca se separam), a carta
+ * que não cabe no pé da coluna pula pra seguinte e deixa um vão. O diagramador
+ * de livro não deixa o vão cru: põe ali o SELO do capítulo ou da árvore, do
+ * tamanho do vão.
+ *
+ * O selo NÃO entra no texto. A primeira versão o inseria no fluxo, e medido:
+ * qualquer peça a mais no fluxo muda onde o navegador decide quebrar, e o
+ * capítulo inteiro dali pra frente andava. Aqui ele mora numa camada por cima
+ * das páginas (`.folhear-pes`, dentro da faixa), posicionado no vão — não
+ * empurra nada, e não precisa de conferência.
+ *
+ * Só em coluna de altura cheia: numa faixa equilibrada em cima de uma peça
+ * larga, o pé da coluna não é o pé da página, e o selo cobriria a peça.
+ *
+ * @returns quantos pés ganharam selo
+ */
+export function preencherPes(fluxo: Element, g: Geometria, r: Regua): number {
+  const faixa = fluxo.parentElement;
+  if (!faixa) return 0;
+  faixa.querySelector(":scope > .folhear-pes")?.remove();
+  const topo = fluxo.getBoundingClientRect().top;
+  const caixa = faixa.getBoundingClientRect();
+  const colunaAlta = g.altura - g.topo - g.pe;
+  const meiaPagina = g.pagina / 2;
+  const y = (q: DOMRect) => (q.top - topo) / r.k;
+  const base = (q: DOMRect) => (q.bottom - topo) / r.k;
+  const coluna = (q: DOMRect) => Math.floor(((q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40)) / meiaPagina);
+  const visto = (el: Element) =>
+    !el.classList.contains("folhear-calco") && !el.classList.contains(CLASSE_VINHETA) && Array.from(el.getClientRects()).some((a) => a.height > 1);
+  const anterior = (el: Element): Element | null => {
+    for (let n: Element | null = el; n && n !== fluxo; n = n.parentElement) {
+      for (let a = n.previousElementSibling; a; a = a.previousElementSibling) if (visto(a)) return a;
+    }
+    return null;
+  };
+  /** A coluna `x` (a do bloco) desce até o pé da página, sem peça larga no meio? */
+  const colunaCheia = (bloco: Element, x: number): boolean => {
+    let n: Element | null = bloco;
+    for (let i = 0; i < 80 && n; i++) {
+      const rs = Array.from(n.getClientRects()).filter((a) => a.height > 1);
+      if (rs.some((a) => a.width / r.k > meiaPagina && coluna(a) >= x - 1)) return false;
+      if (rs.some((a) => coluna(a) > x)) return true;
+      if (rs.some((a) => coluna(a) === x && base(a) > colunaAlta - 60)) return true;
+      n = seguinte(n, fluxo);
+    }
+    return false;
+  };
+
+  const selos: { left: number; top: number; width: number; height: number; selo: string; cor: string }[] = [];
+  const vistos = new Set<Element>();
+  fluxo.querySelectorAll(".livro-verbete, .livro-caixa, .livro-tabela, h3, h4").forEach((bloco) => {
+    const q = Array.from(bloco.getClientRects()).find((a) => a.height > 1);
+    if (!q || y(q) > 30 || q.width / r.k > meiaPagina) return;
+    const antes = anterior(bloco);
+    if (!antes || vistos.has(antes)) return;
+    const pedacos = Array.from(antes.getClientRects()).filter((a) => a.height > 1);
+    const fim = pedacos[pedacos.length - 1];
+    if (!fim || fim.width / r.k > meiaPagina || coluna(fim) !== coluna(q) - 1) return;
+    const vao = colunaAlta - base(fim);
+    if (vao < 130 || !colunaCheia(bloco, coluna(q))) return;
+    vistos.add(antes);
+    const estilo = getComputedStyle(antes);
+    selos.push({
+      left: (fim.left - caixa.left) / r.k,
+      top: (fim.bottom - caixa.top) / r.k + 18,
+      width: fim.width / r.k,
+      height: Math.floor(vao - 30),
+      selo: estilo.getPropertyValue("--selo"),
+      cor: estilo.getPropertyValue("--cor"),
+    });
+  });
+  if (selos.length === 0) return 0;
+
+  const camada = document.createElement("div");
+  camada.className = "folhear-pes";
+  camada.setAttribute("aria-hidden", "true");
+  for (const s of selos) {
+    const v = document.createElement("div");
+    v.className = `${CLASSE_VINHETA} folhear-selo-pe`;
+    v.style.cssText = `left:${s.left}px;top:${s.top}px;width:${s.width}px;height:${s.height}px;--alto:${s.height}px`;
+    if (s.selo) v.style.setProperty("--selo", s.selo);
+    if (s.cor) v.style.setProperty("--cor", s.cor);
+    camada.append(v);
+  }
+  faixa.append(camada);
+  return selos.length;
+}
+
 /** Tira os empurrões antes de uma nova diagramação (outra geometria, outro texto). */
 export function soltarTitulos(fluxo: Element): void {
+  // Os selos do pé (preencherPes) são da diagramação passada.
+  fluxo.parentElement?.querySelector(":scope > .folhear-pes")?.remove();
   fluxo.querySelectorAll(".folhear-empurra").forEach((el) => el.classList.remove("folhear-empurra"));
   fluxo.querySelectorAll(".folhear-titulo-largo").forEach((el) => el.classList.remove("folhear-titulo-largo", "folhear-larga"));
   fluxo.querySelectorAll(".folhear-segura").forEach((el) => el.classList.remove("folhear-segura", "folhear-inteira"));

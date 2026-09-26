@@ -127,6 +127,33 @@ Cada decisão abaixo traz quatro caminhos e o que eu faria (★). O autor escolh
    quadro comum (terreno, rota, pessoas); a luta começa com aquilo em jogo. Faz a Utilidade brilhar na
    mesa, mas é mais uma regra pra aprender.
 
+### 4b. Raças (pedido do autor, 2026-09-26 — anotado, ainda sem decisão)
+
+- **Balanceamento geral**: ver quais raças estão mais fortes. O autor acha que o Demônio Imortal, uma
+  das melhores, não é difícil de pegar.
+- **Chance de cada raça**: repensar a rolagem de raça (a raridade tem que acompanhar o poder).
+- **Evolução racial por PA**: como o Povo Pequeno, que gasta PA pra ter a Sombra Absoluta, toda raça
+  poderia comprar com PA um traço racial a mais, até certo ponto. Principalmente o Dragão.
+- Eu (designer) trago o diagnóstico com números e as opções antes de mexer.
+
+### 4c. Diagramação do livro folheado (pedido do autor, 2026-09-26)
+
+Regras novas, valendo pro livro inteiro:
+- **Toda carta inteira na página**: nome, texto e regra de uma habilidade nunca se separam. Se algo
+  tiver que ir pra outra página, é a arte/GIF.
+- **Cada árvore abre página nova e fecha com um grand finale** (uma arte), nunca dividindo página com
+  a árvore seguinte (a pág. 193 tinha o fim do Arqueiro e o começo do Ladino).
+- **Tabelas**: nada saindo da página, nada partido, e nenhuma página com uma tabela sozinha e o resto
+  vazio. Páginas citadas: 10, 38, 39, 49, 50, 53, 54, 63–66, 72 (Triângulo pequeno), 81, 85, 102.
+
+**Feito (2026-09-26):** carta inteira (só a arte pode ir sozinha); cada árvore é um bloco de páginas
+próprio e fecha com a arte dela (no pé da página, na coluna ou em página inteira — medido); prancha
+não encolhe mais pra coluna, encaixa no resto da página; vão no pé da coluna ganha o selo (numa camada
+por cima, sem mexer no texto); tabela que passa pouco da página compacta; caixa até 60% da coluna não
+parte. Revisão: 0 título solto, 0 estouro, 3 páginas com ~20% em branco (eram 22). Pendente: a tabela
+dos Olhos Místicos (duas linhas na página seguinte) e dois defeitos só no PDF (carimbo de caixa solto
+no pé; sem selo no vão).
+
 ---
 
 ## Fase 2 — Estilo (depois do conteúdo)

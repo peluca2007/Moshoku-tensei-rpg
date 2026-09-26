@@ -159,6 +159,14 @@ const MEDIR = `(async () => {
       for (const c of larga ? [0, 1] : [col]) fundo.set(p * 2 + c, Math.max(fundo.get(p * 2 + c) ?? 0, b));
     }
   });
+  // O selo do pé da coluna (preencherPes) mora numa camada fora do fluxo, e
+  // preenche de propósito: conta como mancha ocupada.
+  document.querySelectorAll(".folhear-pes .folhear-selo-pe").forEach((el) => {
+    const q = el.getBoundingClientRect();
+    if (!q.height) return;
+    const { p, col } = onde(q.left + 2);
+    fundo.set(p * 2 + col, Math.max(fundo.get(p * 2 + col) ?? 0, (q.bottom - fr.top) / k));
+  });
   const abertura = new Set();
   f.querySelectorAll(".livro-abertura, .folhear-colofao").forEach((el) => abertura.add(onde(el.getBoundingClientRect().left + 2).p));
   const semTexto = new Set();

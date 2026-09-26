@@ -40,6 +40,55 @@ const LEGENDAS: Record<string, string> = {
   "apendice-e": "O grupo na estrada: Eris e Rudeus conferindo um mapa, com os companheiros de viagem em volta.",
 };
 
+/**
+ * O GRAND FINALE DA ÁRVORE no livro folheado (2026-09-26, pedido do autor: "a
+ * última página daquela árvore tem que acabar com um grand finale, uma arte
+ * legal").
+ *
+ * Cada árvore começa em página nova, então a última página dela sempre sobra
+ * pela metade. O fecho é a arte da árvore ocupando esse resto até o pé da
+ * página (esticarVitrines); se sobrar pouco, ele vira uma página inteira. A
+ * arte é a prancha da árvore; quem não tem prancha fecha com o retrato dela
+ * (que então sai do alto do catálogo, pra não aparecer duas vezes).
+ */
+export function FimDaArvore({ id, nome }: { id: string; nome: string }) {
+  const arte = arteDoLivro("pranchas", id) ?? arteDoLivro("arvores", id);
+  if (!arte) return null;
+  return (
+    <figure
+      aria-hidden
+      className={`livro-vitrine livro-fecho livro-fecho-arvore hidden ${arte.recorte ? "livro-fecho-recorte" : ""}`}
+      data-fecho-arvore={id}
+      data-arvore={id}
+      // As medidas da arte vão junto: é com elas que a diagramação decide se o
+      // quadro recorta a arte (cover) ou a mostra inteira sobre uma cópia
+      // desfocada, quando recortar perderia a cena ou ampliar a borraria.
+      data-largura={arte.largura ?? undefined}
+      data-altura={arte.altura ?? undefined}
+    >
+      <span className="livro-fecho-quadro">
+        {/* eslint-disable-next-line @next/next/no-img-element -- fundo desfocado do fecho. */}
+        <img className="livro-fecho-fundo" src={arte.src} alt="" loading="lazy" decoding="async" />
+        {/* eslint-disable-next-line @next/next/no-img-element -- arte de página, impressa no papel. */}
+        <img
+          className="livro-fecho-frente"
+          src={arte.src}
+          alt={LEGENDAS[id] ?? ""}
+          loading="lazy"
+          decoding="async"
+          style={arte.largura && arte.altura ? { maxWidth: arte.largura * 1.35, maxHeight: arte.altura * 1.35 } : undefined}
+        />
+      </span>
+      <figcaption className="livro-fecho-legenda">Fim · {nome}</figcaption>
+    </figure>
+  );
+}
+
+/** A árvore tem prancha própria? (Sem prancha, o retrato vira o fecho.) */
+export function temPrancha(id: string): boolean {
+  return arteDoLivro("pranchas", id) !== null;
+}
+
 export default function Prancha({ id, arvore }: { id: string; arvore?: string }) {
   const arte = arteDoLivro("pranchas", id);
   if (!arte) return null;
