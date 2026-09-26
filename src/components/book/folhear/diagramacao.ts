@@ -204,7 +204,9 @@ export function segurarCaixasCurtas(fluxo: Element, g: Geometria, r: Regua): voi
   // ela desce inteira, e o vão que fica é trabalho do preencherPes.
   const limite = (g.altura - g.topo - g.pe) * 0.6;
   const partidas: Element[] = [];
-  fluxo.querySelectorAll(".livro-caixa").forEach((el) => {
+  // A Maestria e o Rank Deus das árvores (`.livro-maestria`) também: o Rank
+  // Deus partia e deixava quatro linhas sozinhas na última página da árvore.
+  fluxo.querySelectorAll(".livro-caixa, .livro-maestria").forEach((el) => {
     if (!visivel(el)) return;
     const pedacos = el.getClientRects();
     if (pedacos.length < 2) return;
@@ -687,95 +689,120 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
  * O GRAND FINALE DA ÁRVORE — 2026-09-26.
  *
  * Toda árvore começa em página nova, então a última página dela sobra. O fecho
- * (FimDaArvore) ocupa esse resto, em três tentativas, cada uma MEDIDA:
+ * (FimDaArvore) ocupa esse resto, e o lugar dele depende do FORMATO da arte —
+ * cada opção é medida, e ganha a que mostra mais da arte:
  *
- * 1. de margem a margem, no pé da página, com a altura que sobrou;
- * 2. se não coube (ou sobrou pouco), na coluna, do fim do texto até o pé —
- *    é o caso da última página com a primeira coluna cheia e a segunda curta;
- * 3. se nem assim, uma página inteira de arte depois da árvore.
+ * - faixa: de margem a margem, no pé da página (arte deitada);
+ * - coluna: do fim do texto até o pé, na coluna onde o texto acabou;
+ * - ao lado: a coluna da direita inteira, quando o texto acabou na da
+ *   esquerda (arte em pé);
+ * - página: uma página inteira depois da árvore (quando nada mais serve).
  *
- * Cada tentativa confere que o fecho ficou na mesma página que o fim da árvore
- * (uma margem a mais o mandava pra página seguinte e deixava a página meio
- * vazia). Por último decide se a arte entra recortada ou inteira.
+ * NUNCA borrado (o autor: "não gosto desse borrado, acho feio"): a arte sempre
+ * enche o quadro (cover) e a escolha do quadro é que evita cortar demais.
+ * Arte ampliada mais de 1,6× perde ponto — borraria de outro jeito.
+ *
+ * A árvore sem prancha fecha com a marca de fim (o símbolo): só faixa ou
+ * coluna, e some se não couber.
  */
 export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
   const fechos = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-fecho-arvore"));
   if (fechos.length === 0) return;
   const colunaAlta = g.altura - g.topo - g.pe;
   const FOLGA = 28;
-  fechos.forEach((el) => {
-    el.classList.remove("folhear-vitrine-cheia", "folhear-fecho-coluna", "folhear-fecho-inteiro", "folhear-vitrine-some");
+  const CLASSES = ["folhear-vitrine-cheia", "folhear-fecho-coluna", "folhear-fecho-lado", "folhear-fecho-inteiro", "folhear-vitrine-some"];
+  const limpar = (el: HTMLElement) => {
+    el.classList.remove(...CLASSES);
     el.style.removeProperty("--altura-vitrine");
-  });
+  };
+  fechos.forEach(limpar);
   const topo = fluxo.getBoundingClientRect().top;
+  const meiaPagina = g.pagina / 2;
   const pagina = (q: DOMRect) => Math.floor((q.left - r.origem) / r.k / g.pagina);
+  const coluna = (q: DOMRect) => Math.floor(((q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40)) / meiaPagina);
+  /*
+   * Mede o fecho E a página onde a árvore acaba, na mesma leitura: um fecho
+   * que vira página inteira empurra todas as árvores seguintes uma página, e
+   * comparar com a página de antes fazia as seguintes "pularem" em cadeia.
+   */
   const medir = (el: HTMLElement) => {
     const q = el.getBoundingClientRect();
-    return { resto: colunaAlta - (q.top - topo) / r.k, largura: q.width / r.k, pagina: pagina(q) };
-  };
-  const fimDaArvore = (el: HTMLElement) => {
     const antes = el.previousElementSibling;
     const rs = antes ? Array.from(antes.getClientRects()).filter((a) => a.height > 1) : [];
-    return rs.length ? pagina(rs[rs.length - 1]) : -1;
-  };
-  const alturaFinal = new Map<HTMLElement, { altura: number; largura: number }>();
-  const pr = (el: HTMLElement, altura: number) => {
-    el.style.setProperty("--altura-vitrine", `${Math.floor(altura)}px`);
-    el.classList.add("folhear-vitrine-cheia");
+    const fim = rs.length ? pagina(rs[rs.length - 1]) : -1;
+    return { resto: colunaAlta - (q.top - topo) / r.k, topo: (q.top - topo) / r.k, largura: q.width / r.k, pagina: pagina(q), coluna: coluna(q), mesma: pagina(q) === fim };
   };
 
-  // 1. De margem a margem.
+  // As três medidas, cada uma numa rodada (escreve tudo, lê tudo).
   const faixa = fechos.map(medir);
-  fechos.forEach((el, i) => faixa[i].resto >= 320 && pr(el, faixa[i].resto - FOLGA));
-  const pularam = fechos.filter((el, i) => {
-    if (faixa[i].resto < 320) return true;
-    const ok = medir(el).pagina === fimDaArvore(el);
-    if (ok) alturaFinal.set(el, { altura: faixa[i].resto - FOLGA, largura: faixa[i].largura });
-    return !ok;
-  });
+  fechos.forEach((el) => el.classList.add("folhear-fecho-coluna"));
+  const col = fechos.map(medir);
+  fechos.forEach((el) => el.classList.add("folhear-fecho-lado"));
+  const lado = fechos.map(medir);
+  fechos.forEach(limpar);
 
-  // 2. Na coluna.
-  pularam.forEach((el) => {
-    el.style.removeProperty("--altura-vitrine");
-    el.classList.remove("folhear-vitrine-cheia");
-    el.classList.add("folhear-fecho-coluna");
-  });
-  const coluna = pularam.map(medir);
-  pularam.forEach((el, i) => coluna[i].resto >= 280 && pr(el, coluna[i].resto - FOLGA));
-  const inteiras = pularam.filter((el, i) => {
-    if (coluna[i].resto < 280) return true;
-    const ok = medir(el).pagina === fimDaArvore(el);
-    if (ok) alturaFinal.set(el, { altura: coluna[i].resto - FOLGA, largura: coluna[i].largura });
-    return !ok;
-  });
-
-  // 3. Página inteira — só pra arte. A marca de fim (árvore sem prancha) que
-  // não coube some: uma página em branco com um símbolo não é finale.
-  inteiras.filter((el) => el.classList.contains("livro-fecho-marca")).forEach((el) => {
-    el.classList.remove("folhear-fecho-coluna", "folhear-vitrine-cheia");
-    el.classList.add("folhear-vitrine-some");
-    alturaFinal.delete(el);
-  });
-  inteiras.filter((el) => !el.classList.contains("livro-fecho-marca")).forEach((el, i) => {
-    el.classList.remove("folhear-fecho-coluna");
-    pr(el, colunaAlta - 4);
-    alturaFinal.set(el, { altura: colunaAlta - 4, largura: faixa[fechos.indexOf(el)]?.largura ?? g.pagina - g.margem * 2 });
-    void i;
-  });
-
-  // Recortar (cover) só se a cena sobrevive: mostrando ao menos 55% da arte e
-  // sem ampliar mais de 1,5×. Senão, a arte inteira sobre a cópia desfocada. O
-  // retrato recortado (sem fundo) vai sempre inteiro.
-  fechos.forEach((el) => {
-    const final = alturaFinal.get(el);
-    if (!final) return;
+  type Opcao = { nome: "faixa" | "coluna" | "lado" | "pagina"; w: number; h: number };
+  const larguraCheia = g.pagina - g.margem * 2;
+  const escolhas = fechos.map((el, i): Opcao | null => {
+    const opcoes: Opcao[] = [];
+    if (faixa[i].mesma && faixa[i].resto >= 260) opcoes.push({ nome: "faixa", w: faixa[i].largura || larguraCheia, h: faixa[i].resto - FOLGA });
+    // Na coluna só se for a da DIREITA: na da esquerda, a arte embaixo do
+    // texto deixava a coluna da direita inteira vazia (Desintoxicação).
+    if (col[i].mesma && col[i].coluna % 2 === 1 && col[i].resto >= 280) opcoes.push({ nome: "coluna", w: col[i].largura, h: col[i].resto - FOLGA });
+    // "Ao lado" só vale se a quebra levou o fecho pro alto da coluna da
+    // DIREITA da mesma página (o texto acabou na da esquerda).
+    if (lado[i].mesma && lado[i].coluna % 2 === 1 && lado[i].topo < 30) opcoes.push({ nome: "lado", w: lado[i].largura, h: colunaAlta - 4 - FOLGA });
+    const marca = el.classList.contains("livro-fecho-marca");
+    // A marca prefere a coluna ao lado (a da direita inteira, símbolo no meio)
+    // a uma faixa baixa embaixo do texto.
+    if (marca) return opcoes.find((o) => o.nome === "lado") ?? opcoes.find((o) => o.nome === "faixa") ?? opcoes.find((o) => o.nome === "coluna") ?? null;
+    opcoes.push({ nome: "pagina", w: larguraCheia, h: colunaAlta - 4 });
     const w = Number(el.dataset.largura) || 0;
     const h = Number(el.dataset.altura) || 0;
-    const quadroH = final.altura * 0.9;
-    const escala = w && h ? Math.max(final.largura / w, quadroH / h) : 1;
-    const mostra = w && h ? (final.largura * quadroH) / (w * h * escala * escala) : 1;
-    el.classList.toggle("folhear-fecho-inteiro", el.classList.contains("livro-fecho-recorte") || escala > 1.5 || mostra < 0.55);
+    if (!w || !h) return opcoes[0];
+    const nota = (o: Opcao) => {
+      const escala = Math.max(o.w / w, o.h / h);
+      const mostra = (o.w * o.h) / (w * h * escala * escala);
+      const area = (o.w * o.h) / (larguraCheia * colunaAlta);
+      return mostra * (escala > 1.6 ? 0.6 : 1) * Math.pow(area, 0.15) * (o.nome === "pagina" ? 0.4 : 1);
+    };
+    return opcoes.reduce((a, b) => (nota(b) > nota(a) ? b : a));
   });
+
+  const aplicar = (el: HTMLElement, o: Opcao | null) => {
+    limpar(el);
+    if (!o) {
+      el.classList.add("folhear-vitrine-some");
+      return;
+    }
+    if (o.nome === "coluna") el.classList.add("folhear-fecho-coluna");
+    if (o.nome === "lado") el.classList.add("folhear-fecho-coluna", "folhear-fecho-lado");
+    el.style.setProperty("--altura-vitrine", `${Math.floor(o.h)}px`);
+    el.classList.add("folhear-vitrine-cheia");
+  };
+  fechos.forEach((el, i) => aplicar(el, escolhas[i]));
+  // Quando nem o melhor quadro serve (cortaria mais da metade da arte, ou a
+  // ampliaria demais), a arte entra INTEIRA sobre fundo escuro — uma foto na
+  // moldura, sem borrão.
+  fechos.forEach((el, i) => {
+    const o = escolhas[i];
+    const w = Number(el.dataset.largura) || 0;
+    const h = Number(el.dataset.altura) || 0;
+    if (!o || !w || !h) return;
+    const escala = Math.max(o.w / w, o.h / h);
+    const mostra = (o.w * o.h) / (w * h * escala * escala);
+    el.classList.toggle("folhear-fecho-inteiro", mostra < 0.45 || escala > 1.6);
+  });
+
+  // A conferência: o fecho ficou na página onde a árvore acaba? Se pulou, vira
+  // página inteira (a marca de fim some).
+  const pularam = fechos.filter((el, i) => {
+    const o = escolhas[i];
+    return o && o.nome !== "pagina" && !medir(el).mesma;
+  });
+  pularam.forEach((el) =>
+    aplicar(el, el.classList.contains("livro-fecho-marca") ? null : { nome: "pagina", w: larguraCheia, h: colunaAlta - 4 }),
+  );
 }
 
 /**

@@ -1515,6 +1515,14 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   display: none;
 }
 
+/* O título do patamar, a linha curta embaixo dele ("Narrativo. Não se compra.")
+   e a Maestria andam juntos: com a Maestria inteira, o título ficava no pé da
+   coluna e o quadro abria a seguinte. */
+.folhear-fluxo .livro-catalogo h4 + p {
+  break-before: avoid;
+  break-after: avoid;
+}
+
 .folhear-fluxo .livro-catalogo h4 span {
   color: var(--tinta-suave);
   font-weight: 600;
@@ -1553,6 +1561,13 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 .folhear-fluxo .livro-verbete > :has(+ .livro-verbete-arte) {
+  break-after: auto;
+}
+
+/* O "não quebre depois" é DENTRO da carta. No último pedaço dela ele vazava
+   pra fora e amarrava a carta à seguinte: um talento curto pulava de coluna
+   junto com a carta grande que vinha depois e deixava meia coluna vazia. */
+.folhear-fluxo .livro-verbete > :last-child {
   break-after: auto;
 }
 
@@ -4671,9 +4686,39 @@ html.livro-imersivo {
   content: none;
 }
 
-/* O fecho na coluna (fecharArvores, 2ª tentativa): do fim do texto até o pé. */
+/* O fecho na coluna (fecharArvores): do fim do texto até o pé, ou a coluna da
+   direita inteira ("ao lado", quando o texto acabou na da esquerda). */
 .folhear-fluxo .livro-vitrine.livro-fecho-arvore.folhear-fecho-coluna {
   column-span: none;
+}
+
+.folhear-fluxo .livro-vitrine.livro-fecho-arvore.folhear-fecho-lado {
+  break-before: column;
+}
+
+/* SEM BORRADO (2026-09-26, pedido do autor: "não gosto desse borrado, acho
+   feio"). A cópia desfocada que enchia as sobras sai de todo fecho — de
+   capítulo e de árvore —, e a arte sempre enche o quadro. Quem evita cortar
+   demais é a escolha do quadro (fecharArvores), não o borrão. */
+.folhear .folhear-fluxo figure.livro-fecho .livro-fecho-quadro > img.livro-fecho-fundo {
+  display: none;
+}
+
+.folhear .folhear-fluxo figure.livro-fecho:not(.folhear-fecho-inteiro) .livro-fecho-quadro > img.livro-fecho-frente {
+  width: 100%;
+  height: 100%;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
+/* Arte que não serve o quadro: inteira, centrada, sobre o fundo escuro do
+   quadro (o tamanho máximo, 1,35× o da arte, vem no style). */
+.folhear .folhear-fluxo figure.livro-fecho.folhear-fecho-inteiro .livro-fecho-quadro > img.livro-fecho-frente {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .folhear-fluxo .livro-fecho-arvore:not(.folhear-fecho-inteiro) .livro-fecho-fundo {
