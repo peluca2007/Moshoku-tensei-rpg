@@ -329,6 +329,11 @@ export interface RacialUpgrade {
 
 export interface Race {
   id: string;
+  /**
+   * A faixa da raça na tabela d100 do Cap. 1 §5 (2026-09-26). O livro imprime
+   * a tabela e o site rola a mesma: a raridade é a largura da faixa.
+   */
+  rollRange?: [number, number];
   name: string;
   description: string;
   /**

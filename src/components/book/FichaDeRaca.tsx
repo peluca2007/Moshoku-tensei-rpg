@@ -1,6 +1,6 @@
 import type { Race } from "@/lib/types";
 import { ATTRIBUTES } from "@/lib/types";
-import { getRaceProbabilities, RACE_WEIGHT } from "@/lib/randomCharacter";
+import { getRaceProbabilities } from "@/lib/randomCharacter";
 import { RACES } from "@/data/races";
 import RaceCrest from "../RaceCrest";
 import { BookTable } from "./BookUI";
@@ -33,13 +33,21 @@ const ROTULO_DO_ATRIBUTO = Object.fromEntries(ATTRIBUTES.map((a) => [a.key, a.sh
 /** A chance de cada raça no sorteio, a mesma tabela que a roleta usa. */
 const CHANCE = new Map(getRaceProbabilities().map((p) => [p.id, p.probability]));
 
-/** Quanto mais forte, mais rara: as faixas de peso do sorteio, em palavra. */
+/** Quanto mais forte, mais rara: a largura da faixa na tabela d100, em palavra. */
 function raridade(id: string): string {
-  const peso = RACE_WEIGHT[id] ?? 0;
-  if (peso >= 5) return "Comum";
-  if (peso >= 3) return "Incomum";
-  if (peso >= 2) return "Rara";
+  const chance = CHANCE.get(id) ?? 0;
+  if (chance >= 0.12) return "Comum";
+  if (chance >= 0.07) return "Incomum";
+  if (chance >= 0.03) return "Rara";
   return "Mítica";
+}
+
+/** A faixa da raça no d100: "01–14", ou "100". */
+function faixaD100(race: Race): string | null {
+  const r = race.rollRange;
+  if (!r) return null;
+  const dois = (n: number) => (n === 100 ? "100" : String(n).padStart(2, "0"));
+  return r[0] === r[1] ? dois(r[0]) : `${dois(r[0])}–${dois(r[1])}`;
 }
 
 /** 0,0825 → "8,3" (o épsilon segura o 8,25 que o ponto flutuante guarda como 8,2499…). */
@@ -145,7 +153,7 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
         {chance !== undefined && (
           <span className="livro-raca-carimbo absolute right-2 top-2 rounded bg-parchment-50/90 px-2 py-1 text-right text-2xs font-bold uppercase tracking-wider text-wine-700 dark:bg-parchment-950/80 dark:text-wine-300">
             {raridade(race.id)}
-            <small className="block font-medium normal-case tracking-normal">{porcento(chance)}% no sorteio</small>
+            <small className="block font-medium normal-case tracking-normal">{faixaD100(race)} no d100</small>
           </span>
         )}
       </figure>
@@ -198,15 +206,14 @@ function resumo(c: Celula): string {
 export function QuadroDasRacas() {
   return (
     <BookTable
-      headers={["Raça", "Sorteio", "Atributo", "PV", "PM", "CA", "Perícias"]}
-      rows={RACES.map((race) => {
-        const chance = CHANCE.get(race.id);
+      headers={["d100", "Raça", "Atributo", "PV", "PM", "CA", "Perícias"]}
+      rows={[...RACES].sort((a, b) => (a.rollRange?.[0] ?? 999) - (b.rollRange?.[0] ?? 999)).map((race) => {
         const [atributo, pv, pm, ca, pericias] = numeros(race).map(resumo);
         return [
+          faixaD100(race) ?? "—",
           <a key="nome" href={`#raca-${race.id}`} className="livro-raca-link hover:underline">
             {partirNome(race.name).nome}
           </a>,
-          chance === undefined ? raridade(race.id) : `${raridade(race.id)} · ${porcento(chance)}%`,
           atributo,
           pv,
           pm,

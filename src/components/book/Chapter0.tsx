@@ -153,7 +153,7 @@ export default function Chapter0() {
         <BookTable
           headers={["#", "Passo", "Detalhe"]}
           rows={[
-            ["1", "Escolha a Raça", "Humano, Elfo, Anão, Migurd, Ogro, Povo Pequeno, Raça Fera… Cada uma dá bônus por fora do seu orçamento de pontos."],
+            ["1", "Role a Raça (1d100)", "Humano, Elfo, Anão, Migurd, Ogro, Povo Pequeno, Raça Fera… Quanto mais forte, mais rara. Cada uma dá bônus por fora do seu orçamento de pontos; escolher em vez de rolar custa 1 PA (Cap. 1, §5)."],
             ["2", "Role o Antecedente (1d100)", "Sua infância. Decide perícias, traços e quanto ouro você começa com."],
             ["3", "Distribua 2 pontos de atributo", "Só dois. Você pode baixar um atributo a -1 e outro a -2 pra ganhar mais três — mas leia o aviso sobre o Vigor antes."],
             ["4", "Escolha a Árvore Inicial", "A mais importante das seis decisões: ela dá o seu kit grátis, as suas perícias iniciais, e define o que você faz numa luta."],

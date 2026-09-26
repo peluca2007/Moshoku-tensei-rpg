@@ -28,6 +28,7 @@ import { Race } from "@/lib/types";
 export const RACES: Race[] = [
   {
     id: "humano",
+    rollRange: [1, 14],
     name: "Humano (Jinzoku)",
     icon: "/racas/humano.png",
     description:
@@ -52,6 +53,7 @@ export const RACES: Race[] = [
   },
   {
     id: "elfo",
+    rollRange: [42, 49],
     name: "Elfo (Erufu)",
     icon: "/racas/elfo.png",
     description:
@@ -73,6 +75,7 @@ export const RACES: Race[] = [
   },
   {
     id: "anao",
+    rollRange: [50, 57],
     name: "Anão (Dowaafu)",
     icon: "/racas/anao.png",
     description:
@@ -106,6 +109,7 @@ export const RACES: Race[] = [
   },
   {
     id: "hobbit",
+    rollRange: [15, 28],
     name: "Povo Pequeno / Hobbit (Hobitto)",
     icon: "/racas/hobbit.png",
     description:
@@ -138,6 +142,7 @@ export const RACES: Race[] = [
   },
   {
     id: "raca-fera",
+    rollRange: [29, 41],
     name: "Raça Fera (Juuzoku)",
     icon: "/racas/raca-fera.jpg",
     description:
@@ -163,6 +168,7 @@ export const RACES: Race[] = [
   },
   {
     id: "celestial",
+    rollRange: [94, 99],
     name: "Raça Celestial (Tenzoku)",
     icon: "/racas/celestial.jpg",
     description: "Habitantes do Continente Divino. Vivem centenas de anos e possuem asas.",
@@ -187,6 +193,7 @@ export const RACES: Race[] = [
   },
   {
     id: "oceano",
+    rollRange: [58, 65],
     name: "Raça do Oceano (Kaizoku)",
     icon: "/racas/oceano.jpg",
     description: "Governantes do Mar de Ringus.",
@@ -209,6 +216,7 @@ export const RACES: Race[] = [
   },
   {
     id: "migurd",
+    rollRange: [66, 73],
     name: "Migurd",
     icon: "/racas/migurd.jpg",
     description:
@@ -236,6 +244,7 @@ export const RACES: Race[] = [
   },
   {
     id: "superd",
+    rollRange: [82, 87],
     name: "Superd",
     icon: "/racas/superd.jpg",
     description: "Pele pálida, cabelos verdes, cauda bifurcada que vira lança tridente.",
@@ -256,6 +265,7 @@ export const RACES: Race[] = [
   },
   {
     id: "ogro",
+    rollRange: [88, 93],
     name: "Ogro (Onizoku)",
     icon: "/racas/ogro.png",
     description: "Extremamente altos e musculosos, machos chegam a 3 metros de altura.",
@@ -274,6 +284,7 @@ export const RACES: Race[] = [
   },
   {
     id: "demonio-imortal",
+    rollRange: [74, 81],
     name: "Demônio Imortal",
     icon: "/racas/demonio-imortal.webp",
     description: "Descendentes do Primeiro Deus Demônio. Pele negra azeviche, seis braços (machos).",
@@ -299,6 +310,7 @@ export const RACES: Race[] = [
   },
   {
     id: "dragao",
+    rollRange: [100, 100],
     name: "Raça Dragão (Ryuzoku)",
     icon: "/racas/dragao.webp",
     description:
