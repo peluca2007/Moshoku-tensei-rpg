@@ -29,6 +29,7 @@ import {
 } from "@/lib/types";
 import { rotuloDeAcoes } from "./rotuloDeAcoes";
 import { weaponGroupName } from "@/data/weaponGroups";
+import { rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
 
 function actionLabel(ability: AbilityDef): string {
   if (ability.reaction) return "1 Reação";
@@ -103,7 +104,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
     title,
     rows: TREES.filter((t) => t.category === pillar).map((t) => {
       const rank = highestRankByTree.get(t.id);
-      return { label: t.name, rank: rank ? (t.rankLabels?.[rank] ?? rank) : "" };
+      return { label: t.name, rank: rank ? rotuloDoPatamar(t, rank) : "" };
     }),
   }));
 

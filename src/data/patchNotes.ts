@@ -27,6 +27,12 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        heading: "Um nome de patamar só",
+        items: [
+          "As sete árvores com escada própria (Arquearia, Armas Pesadas, Escudos, Punho de Fogo, Ladino, Bardo e Tático) passam a mostrar o nome do Rank primeiro e o título do ofício depois: 'Intermediário · Caçador', em vez de só 'Caçador'. Vale no livro, na ficha, no mapa de árvores, no Painel do Mestre e no comparador. Uma escada só pra decorar; o título continua lá.",
+        ],
+      },
+      {
         heading: "A ficha diz o que o livro diz",
         items: [
           "O resumo de regras da ficha ainda mostrava o Teto de Ações antigo ('máximo 5 Ações por turno, 2 externas') e o Teto de Auxílio de +5. Agora: 4 Ações próprias + 2 concedidas, e +6 — como no Cap. 4, §5.",
