@@ -21,7 +21,7 @@ const LEGENDAS: Record<string, string> = {
   arquearia: "Uma arqueira ajoelhada na neve, de arco puxado.",
   "cavalaria-e-escudos": "Um cavaleiro de armadura dourada, com o escudo erguido.",
   invocacao: "Um jovem deitado sobre uma criatura enorme de pelo ruivo.",
-  teorica: "Um círculo mágico enorme, de anéis e glifos, aceso no chão.",
+  teorica: "Uma maga de cabeça pra baixo entre flores, como quem lê o mundo do avesso.",
   "cap2-8": "Um estudante diante de folhas cobertas de diagramas de círculos e quadrados.",
   "cap3-triangulo": "Três mestres de espada lado a lado, um em cada painel: os três estilos, cada um com a sua aura.",
   "deus-da-espada": "Eris adulta de espada em punho e Rudeus de cajado, cercados de raios, com Orsted ao fundo.",
