@@ -1359,6 +1359,13 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   break-before: avoid;
 }
 
+/* E a primeira não fica sozinha no pé da coluna, embaixo do cabeçalho: vai
+   junto com a segunda (o Triângulo dos Estilos deixava "Espada vence Norte"
+   sozinho no pé e o resto na página seguinte). */
+.folhear-fluxo .livro-tabela tbody tr:first-child:not(:last-child) {
+  break-after: avoid;
+}
+
 /* Tabela que não cabe na coluna: primeiro a letra diminui, depois a palavra
    pode quebrar na borda da célula. Nunca invade a coluna vizinha. */
 .folhear-fluxo table.folhear-tabela-justa {

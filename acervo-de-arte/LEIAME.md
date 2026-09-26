@@ -28,7 +28,6 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 | `guerreiro-de-armadura-dourada.webp` | Um guerreiro sorridente de armadura dourada (239 px: bem pequena). | Só como miniatura. |
 | `vol02-ilustracao.webp` | A família Boreas e o grupo de Rudeus, cena colorida de volume. | Prancha do Cap. 1 ou de antecedentes nobres. |
 | `vol05-ilustracao.webp` | Eris, Ruijerd, Paul e outros num grupo armado. | Prancha do Cap. 4 ou do Apêndice F (cerco). |
-| `vol08-capa.webp` | Capa do volume 8: grupo andando pela cidade de Ranoa. | Página inteira entre capítulos. |
 | `vol11-capa.webp` | Capa do volume 11: a família num corredor iluminado. | Página inteira entre capítulos, ou o Cap. 5 (tempo livre). |
 | `talhand-retrato.recorte.webp` | Talhand de corpo inteiro, sem fundo (era a Raça Anã até o quarto lote). | Vinheta da Raça Anã, ou a árvore de Terra. |
 | `elinalise-retrato.recorte.webp` | Elinalise de corpo inteiro, sem fundo (era a Raça Élfica). | Antecedente de aventureira, ou vinheta da Raça Élfica. |
