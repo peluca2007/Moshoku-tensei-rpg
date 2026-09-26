@@ -8,6 +8,8 @@ import Nav from "@/components/Nav";
 import DiceRoller from "@/components/DiceRoller";
 import Footer from "@/components/Footer";
 import { OrnamentDefs } from "@/components/ui/Ornament";
+import SecaoDoSite from "@/components/SecaoDoSite";
+import { FONTES_DO_LIVRO } from "@/components/book/folhear/fontes";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -106,7 +108,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${literata.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${literata.variable} ${FONTES_DO_LIVRO} h-full antialiased`}
     >
       <head>
         {/*
@@ -121,6 +123,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <StoreHydration />
+          <SecaoDoSite />
           {/*
             As definições de filtro SVG do ornamento vivem no layout, e não no
             componente: um `<filter id>` é global por documento, e repetir o
