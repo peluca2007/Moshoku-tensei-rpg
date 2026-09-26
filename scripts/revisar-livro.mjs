@@ -157,7 +157,7 @@ const MEDIR = `(async () => {
   for (const i of imgs) {
     if (oculto(i) || decoracao(i)) continue;
     const q = i.getBoundingClientRect();
-    if (q.width < 8) continue;
+    if (q.width < 8 || q.height < 8) continue;
     const pag = pagina(q.left + 2);
     const nome = (i.getAttribute("src") || "").split("/").slice(-2).join("/");
     if (!i.naturalWidth) { anotar(pag, "arte-quebrada", nome); continue; }

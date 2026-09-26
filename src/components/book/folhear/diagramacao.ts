@@ -545,14 +545,15 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   vitrines.forEach((el, i) => {
     const resto = Math.floor(medidas[i]) - 2;
     // A vitrine de coluna (a das árvores) já nasce visível, com altura mínima: só cresce.
-    if (resto < 150) return;
+    // O fecho é uma ilustração: faixa baixa demais só mostraria um recorte.
+    if (resto < (el.classList.contains("livro-fecho") ? 340 : 150)) return;
     el.style.setProperty("--altura-vitrine", `${resto}px`);
     el.classList.add("folhear-vitrine-cheia");
   });
   // O espaço mudou com o resto do livro (uma prancha nova antes, um texto
   // maior): se o conteúdo não coube, somem os nomes; se nem assim, a vitrine.
   const transborda = (el: HTMLElement) => el.scrollHeight > el.clientHeight + 2;
-  const visiveis = vitrines.filter((el) => el.classList.contains("folhear-vitrine-cheia") || el.classList.contains("livro-vitrine-arvores"));
+  const visiveis = vitrines.filter((el) => !el.classList.contains("livro-fecho") && (el.classList.contains("folhear-vitrine-cheia") || el.classList.contains("livro-vitrine-arvores")));
   visiveis.filter(transborda).forEach((el) => el.classList.add("folhear-vitrine-compacta"));
   visiveis.filter((el) => el.classList.contains("folhear-vitrine-compacta") && transborda(el)).forEach((el) => el.classList.add("folhear-vitrine-some"));
 }
