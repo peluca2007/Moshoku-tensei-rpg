@@ -86,7 +86,7 @@ export const INVOCACAO_TREE: Tree = {
         { id: "evolucao-sentidos-agucados",
           requires: ["pacto-filhote"], name: "Evolução: Sentidos Aguçados", paCost: RANK_PA_COST.talent.Intermediário, description: "Requer Pacto: Filhote Evolutivo. Seu filhote ganha visão no escuro 18m, faro aguçado (Vantagem em Percepção) e transmite alertas telepáticos pra você." },
         { id: "vinculo-concentrado", name: "Vínculo Concentrado", paCost: RANK_PA_COST.talent.Intermediário, description: "Você foca a mana de vários Pactos num só. Ao invocar um Pacto, pague o PM de invocá-lo uma vez por vaga de Pacto ativo do seu limite (no Intermediário, duas vezes): ele ocupa todas essas vagas e ganha +2 dados do próprio dado de dano, +10 PV por Bônus de Rank e Resistência a dano vindo de magia." },
-        { id: "pacto-urso-das-cavernas", name: "Pacto: Urso das Cavernas", paCost: RANK_PA_COST.talent.Intermediário, description: "4d10 garra, Grande, empurra 3m a cada acerto. 1 Reação: sofre no seu lugar um ataque contra você ou contra um aliado adjacente a ele." },
+        { id: "pacto-urso-das-cavernas", name: "Pacto: Urso das Cavernas", paCost: RANK_PA_COST.talent.Intermediário, description: "2d10 garra, Grande, empurra 3m a cada acerto. 1 Reação: sofre no seu lugar um ataque contra você ou contra um aliado adjacente a ele." },
         { id: "pacto-serpente-de-nevoa", name: "Pacto: Serpente de Névoa", paCost: RANK_PA_COST.talent.Intermediário, description: "Mordida 2d6 de veneno; o alvo faz teste de Vigor (CD 8 + BC) ou fica Envenenado até o fim do próximo turno dele. Move-se por qualquer fresta; invisível em terreno enevoado." },
         { id: "pacto-espirito-do-vento", name: "Pacto: Espírito do Vento", paCost: RANK_PA_COST.talent.Intermediário, description: "Não ataca. Concede Voo (18m) a um aliado que ele toque, enquanto durar a invocação." },
         { id: "pacto-grifo", name: "Pacto: Grifo", paCost: RANK_PA_COST.talent.Intermediário, description: "Voa 24m, 3d10 garra, e carrega uma pessoa." },
@@ -229,7 +229,7 @@ export const INVOCACAO_TREE: Tree = {
       mastery: {
         name: "O Grande Círculo",
         description:
-          "6 Pactos ativos, todos podem estar em campo ao mesmo tempo. Invocar deixa de custar Ação: você chama um invocado por turno de graça. Seus invocados usam os seus PV como reserva de emergência — ao chegar a 0, você pode transferir dano para si mesmo e mantê-lo de pé.",
+          "6 Pactos ativos, todos podem estar em campo ao mesmo tempo. Invocar deixa de custar Ação: você chama um invocado por turno de graça — dois, se tiver Convocação Aprimorada. Seus invocados usam os seus PV como reserva de emergência — ao chegar a 0, você pode transferir dano para si mesmo e mantê-lo de pé.",
       },
       talents: [
         { id: "ninguem-chega-sozinho", name: "Ninguém Chega Sozinho", paCost: RANK_PA_COST.talent.Imperador, description: "Todos os seus invocados em campo recebem +2 na CA, +2 no acerto e imunidade a efeitos de dissipação de patamar Rei ou inferior." },

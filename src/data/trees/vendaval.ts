@@ -77,12 +77,12 @@ export const VENDAVAL_TREE: Tree = {
   tagline: "O que sobra quando a sobrevivência do Norte para de precisar de distância — nascido de quem já domina o aço e o vento ao mesmo tempo.",
   hiddenFromCreation: true,
   prerequisiteNote:
-    "Pré-requisito: Rank Avançado em Estilo Deus do Norte e em Magia de Vento. Não se escolhe na criação — surge da fusão das duas.",
+    "Pré-requisito: Rank Intermediário em Estilo Deus do Norte e em Magia de Vento. Não se escolhe na criação — surge da fusão das duas.",
   proficiencies: {
     armas: "Grupos Espadas e Hastes. Armadura leve apenas — o estilo inteiro depende de deslocamento.",
     gruposDeArma: ["espadas", "hastes"],
     pericias: "O Bônus de Rank desta árvore NÃO soma em perícia nenhuma — somar em perícia é exclusivo das três árvores de Utilidade (Cap. 3).",
-    nota: "Árvore híbrida do Corpo — exige Avançado em Deus do Norte E em Magia de Vento.",
+    nota: "Árvore híbrida do Corpo — exige Intermediário em Deus do Norte E em Magia de Vento.",
   },
   ranks: [
     {

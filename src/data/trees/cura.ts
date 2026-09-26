@@ -266,7 +266,7 @@ export const CURA_TREE: Tree = {
       mastery: {
         name: "A Luz que Reconecta",
         description:
-          "Você reimplanta membros recém-decepados (menos de 1h, ou a qualquer momento se a ferida estiver Selada). Não recria o que não existe mais. Magias de rank Avançado ou inferior em Conjuração Silenciosa sem penalidade. Mantém duas magias sustentadas.",
+          "Você reimplanta membros recém-decepados (menos de 1h, ou a qualquer momento se a ferida estiver Selada). Não recria o que não existe mais. Magias de rank Avançado ou inferior em Conjuração Silenciosa sem penalidade; com Mão Silenciosa, as de rank Santo também. Mantém duas magias sustentadas.",
       },
       talents: [
         { id: "vigilia", name: "Vigília", paCost: RANK_PA_COST.talent.Santo, description: "Uma vez por combate, sua Prontidão não gasta Reação." },

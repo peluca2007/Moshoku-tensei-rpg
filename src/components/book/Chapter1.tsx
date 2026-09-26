@@ -833,7 +833,7 @@ export default function Chapter1() {
         <Aside title="7. E se eu for fundo em duas árvores ao mesmo tempo?">
           Algumas combinações de Rank Intermediário ou superior revelam uma <b>árvore híbrida</b> que não existe
           pra ninguém que não cumpriu os dois pré-requisitos — hoje são duas, ambas no catálogo da Árvore do Corpo: o
-          <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Avançado) e o <b>Punho do Fogo</b>
+          <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Intermediário) e o <b>Punho do Fogo</b>
           (Lutador + Magia de Fogo, ambas no Intermediário). Cumpridos os dois pré-requisitos, a híbrida
           pode ser aberta pelo Custo de Abertura normal; nenhuma pode ser a Árvore Inicial.
         </Aside>
