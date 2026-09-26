@@ -34,6 +34,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "cap0-exemplo", label: "— Uma rodada jogada" },
       { id: "cap0-4", label: "4. Criando um personagem" },
       { id: "cap0-5", label: "5. Onde está cada coisa" },
+      { id: "cap0-6", label: "6. O caminho mínimo" },
     ],
   },
   {
