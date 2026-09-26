@@ -809,7 +809,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
-        nota: "Quem for mordido pega Baba de Sapo-Lodo (Cap. 4, §8 — aflição de Rank 1).",
+        nota: "Quem for mordido faz teste de Vigor CD 10; na falha, pega Baba de Sapo-Lodo (Cap. 4, §8 — aflição de Rank 1).",
       },
       {
         nome: "Língua Pegajosa",
@@ -844,7 +844,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         area: false,
         tipo: "ataque",
         aplicaVeneno: true,
-        nota: "Se acertar, o alvo fica Envenenado até o fim do combate e contrai Peçonha de Serpente-do-Pântano (Cap. 4, §8 — aflição de Rank 2), que continua cobrando depois da luta. Nada disso acumula: a segunda picada não piora o que a primeira já fez.",
+        nota: "Se acertar, o alvo fica Envenenado até o fim do combate e faz teste de Vigor CD 12; na falha, contrai Peçonha de Serpente-do-Pântano (Cap. 4, §8 — aflição de Rank 2), que continua cobrando depois da luta. Nada disso acumula: a segunda picada não piora o que a primeira já fez.",
       },
       {
         nome: "Bote e Recuo",
@@ -877,7 +877,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
-        nota: "Na primeira rodada, se veio de emboscada, rola com Vantagem. Se acertar, o alvo faz teste de Vigor (CD 13) ou perde 3 m de Deslocamento até o fim do combate (cumulativo, até 0), e contrai Toxina de Aranha Gigante (Cap. 4, §8).",
+        nota: "Na primeira rodada, se veio de emboscada, rola com Vantagem. Se acertar, o alvo faz teste de Vigor CD 13 ou perde 3 m de Deslocamento até o fim do combate (cumulativo, até 0); faz outro teste de Vigor CD 12 e, na falha, contrai Toxina de Aranha Gigante (Cap. 4, §8).",
       },
       {
         nome: "Teia",
@@ -921,7 +921,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         area: false,
         tipo: "ataque",
         aplicaVeneno: true,
-        nota: "Alvo atingido faz teste de Vigor (CD 15) ou fica Envenenado até o fim do próximo turno dele e contrai Fel de Wyvern (Cap. 4, §8 — aflição de Rank 3).",
+        nota: "Alvo atingido faz teste de Vigor CD 15 ou fica Envenenado até o fim do próximo turno dele; faz outro teste de Vigor CD 14 e, na falha, contrai Fel de Wyvern (Cap. 4, §8 — aflição de Rank 3).",
       },
     ],
   },

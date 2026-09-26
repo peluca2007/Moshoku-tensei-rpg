@@ -61,11 +61,7 @@ export interface Condicao {
    * caber no seletor de duração da ficha.
    */
   duracaoPadrao?: string;
-  /**
-   * Outras formas com que a prosa das habilidades cita esta condição. Existe
-   * porque as três faces do Fluxo Interrompido se citam entre si pelo nome
-   * curto, e o reconhecedor precisa achar as duas escritas.
-   */
+  /** Outras formas com que a prosa das habilidades cita esta condição. */
   sinonimos?: string[];
 }
 
@@ -158,33 +154,6 @@ export const CONDICOES: Condicao[] = [
     duracaoPadrao: "Até o fim do próximo turno",
   },
   {
-    id: "estagnacao",
-    nome: "Estagnação (Fluxo Interrompido)",
-    efeito:
-      "Regra legada da antiga Barreira e Proteção; fórmulas novas não a recebem automaticamente. Na campanha antiga, dentro da barreira toda magia custa +1 PM por Bônus de Rank de quem a ergueu, e ninguém recupera PM.",
-    sinonimos: ["Estagnação"],
-  },
-  {
-    id: "fonte",
-    nome: "Fonte (Fluxo Interrompido)",
-    efeito:
-      "Regra legada da antiga Barreira e Proteção; fórmulas novas não a recebem automaticamente. Na campanha antiga, você e aliados dentro da barreira recuperam 1 PM no início de cada turno, até a soma alcançar o PM pago na barreira.",
-    // "Fonte" sozinha entra como sinônimo, contra o meu palpite inicial.
-    //
-    // Eu tinha deixado de fora com medo de "a fonte do medo" virar link. A
-    // medição desmentiu: varrendo a prosa das dezenove árvores, "Fonte" com F
-    // maiúsculo aparece SETE vezes, e as sete são esta condição ("Você escolhe
-    // Estagnação ou Fonte"). O uso comum da palavra é sempre minúsculo, e a
-    // regra de maiúscula do reconhecedor já o exclui sozinha.
-    sinonimos: ["Fonte"],
-  },
-  {
-    id: "fluxo-interrompido",
-    nome: "Fluxo Interrompido",
-    efeito:
-      "Regra legada da antiga Barreira e Proteção. Estagnação e Fonte eram duas faces exclusivas da mesma barreira. A nova Magia Teórica exige símbolos e custos explícitos para alterar fluxo de mana; Conter e Rejeitar não concedem nenhuma das duas faces.",
-  },
-  {
     id: "incapacitado",
     nome: "Incapacitado",
     efeito:
@@ -228,12 +197,6 @@ export const CONDICOES: Condicao[] = [
       "A segunda metade da identidade da Terra, e o pagamento de Atolado: só pode ser aplicada a um alvo que já esteja Atolado, Preso ou Caído. Deslocamento 0, Preso, não enxerga nem conjura com gesto, e sofre 2d10 de sufocamento no início de cada turno se precisar respirar. Sai gastando 1 Ação num teste de Força (CD 8 + BC de quem soterrou), ou quando 30 de dano forem causados à terra que o cobre.",
     mecanica: { deslocamento: "zero", danoPorTurno: "2d10" },
     duracaoPadrao: "Até sair",
-  },
-  {
-    id: "selado",
-    nome: "Selado",
-    efeito:
-      "Condição legada da antiga Barreira e Proteção, preservada em fichas anteriores à Magia Teórica. Em campanhas que ainda a usam, aplica-se a Régua do Selo da carta original. Nas novas fórmulas, use Rejeitar: a potência inscrita compara o rank da magia que cruza a fronteira, sem aplicar Selado automaticamente a criaturas na área.",
   },
   {
     id: "preso",
