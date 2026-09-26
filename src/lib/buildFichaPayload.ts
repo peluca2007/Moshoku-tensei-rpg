@@ -198,7 +198,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
       a.ritual
         ? "Encurtada impossível (ritual)"
         : a.actions.encurtada !== undefined
-          ? `Encurtada ${rotuloDeAcoes(a.actions.encurtada)} (metade dos dados, área -1/3)`
+          ? `Encurtada ${rotuloDeAcoes(a.actions.encurtada)} (metade do dano, área -1/3)`
           : "Encurtada impossível (rank Imperador)"
     );
     if (a.actions.silenciosa !== undefined) {

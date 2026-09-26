@@ -203,7 +203,7 @@ export function attributePaCostTotal(count: number): number {
 }
 
 /**
- * Cap. 1, §2: Vantagem permanente em TODOS os Testes de Resistência de um
+ * Cap. 1, §2: +2 permanente (Resistência Treinada; era Vantagem até 2026-09-26) em TODOS os Testes de Resistência de um
  * atributo à sua escolha. Uma vez por atributo, então o teto é 5 compras.
  *
  * Baixou de 3 pra 2 PA em 2026-08-29. Ela também deixou de ser só uma linha da

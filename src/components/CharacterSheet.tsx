@@ -1045,7 +1045,7 @@ export default function CharacterSheet() {
                 compra do livro que se aplica a um atributo específico. */}
             <div className="mt-3 border-t border-parchment-300 pt-2 dark:border-parchment-800">
               <p className="mb-1.5 text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
-                Vantagem em Resistência
+                Resistência Treinada (+2)
                 <span className="ml-1 font-normal normal-case">
                   (a próxima custa {saveAdvantagePaCostForPurchase((saveAdvantages ?? []).length + 1)} PA — 2, 3, 4, 4, 4)
                 </span>
@@ -1057,7 +1057,7 @@ export default function CharacterSheet() {
                     <button
                       key={key}
                       type="button"
-                      title={`Vantagem permanente em todos os Testes de Resistência de ${label} — ${ativo ? "já comprada" : `${saveAdvantagePaCostForPurchase((saveAdvantages ?? []).length + 1)} PA`}`}
+                      title={`+2 permanente em todos os Testes de Resistência de ${label} — ${ativo ? "já comprada" : `${saveAdvantagePaCostForPurchase((saveAdvantages ?? []).length + 1)} PA`}`}
                       aria-pressed={ativo}
                       onClick={() => useCharacterStore.getState().toggleSaveAdvantage(key)}
                       className={`rounded-lg px-2 py-1 text-2xs font-bold transition-colors ${
@@ -1073,8 +1073,8 @@ export default function CharacterSheet() {
               </div>
               {(saveAdvantages ?? []).length > 0 && (
                 <p className="mt-1 text-2xs text-gold-600 dark:text-gold-400">
-                  {saveAdvantagePaCostTotal((saveAdvantages ?? []).length)} PA · rola 2d20 e escolhe o maior
-                  nesses testes.
+                  {saveAdvantagePaCostTotal((saveAdvantages ?? []).length)} PA · +2 nesses testes
+                  (soma com Vantagem de outras fontes).
                 </p>
               )}
             </div>

@@ -32,7 +32,7 @@ export const SKILLS: SkillDef[] = [
 
   { name: "Atuação", attribute: "espirito", description: "Performance, música, oratória de palco." },
   { name: "Enganação", attribute: "espirito", description: "Mentir e disfarçar intenção." },
-  { name: "Intimidação", attribute: "espirito", description: "Impor medo." },
+  { name: "Intimidação", attribute: "forca", description: "Impor medo pela presença física. (Força desde 2026-09-26: o Espírito governava 8 das 20 perícias e a Força só 1.)" },
   { name: "Intuição", attribute: "espirito", description: "Perceber mentira e prever intenção." },
   { name: "Lábia", attribute: "espirito", description: "Convencer rápido, pechinchar, tagarelar." },
   { name: "Lidar com Animais", attribute: "espirito", description: "Acalmar e comandar animais." },

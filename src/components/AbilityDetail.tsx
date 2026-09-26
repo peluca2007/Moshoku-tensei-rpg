@@ -9,7 +9,7 @@ const actionText = rotuloDeAcoes;
  * paga nada.
  *
  * O gate de tamanho (2026-09-03) é a mudança que importa. Antes bastava a magia
- * ter um cântico escrito pra conceder Vantagem no acerto ou +2 na CD, e uma
+ * ter um cântico escrito pra conceder Vantagem no acerto ou Desvantagem na resistência, e uma
  * auditoria das 149 magias do livro achou **55 com cântico abaixo do piso do
  * próprio rank**: "Não caias. Ainda não. Prontidão!" tem 35 caracteres e pagava
  * exatamente o mesmo que um cântico de 380 caracteres do rank Rei. O sistema
@@ -37,7 +37,7 @@ function perfectRecitationBonus(
     case "ataque":
       return { ok: true, text: "Vantagem no teste de acerto" };
     case "resistencia":
-      return { ok: true, text: "+2 na CD para resistir" };
+      return { ok: true, text: "o alvo resiste com Desvantagem" };
     default:
       // O desconto é o Bônus de Rank do CONJURADOR na escola, não o rank da
       // magia: `rank` aqui é o da carta, e um Rei conjurando Cura (Principiante)
@@ -93,7 +93,7 @@ export function CastingBreakdown({ ability }: { ability: AbilityDef }) {
           {ability.ritual
             ? "Ritual — impossível"
             : actions.encurtada !== undefined
-              ? `${actionText(actions.encurtada)} · metade dos dados, área -1/3`
+              ? `${actionText(actions.encurtada)} · metade do dano, área -1/3`
               : "Impossível (rank Imperador)"}
         </dd>
       </div>
