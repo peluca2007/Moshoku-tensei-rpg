@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { prefetchDe } from "@/lib/prefetch";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import Logo from "./ui/Logo";
@@ -48,6 +49,7 @@ const LINKS = [
   { href: "/loja", label: "Loja" },
   // "Livro" e não "Livro de Regras": o rótulo longo era o que empurrava a barra
   // pra fora da tela em telas de ~900px quando ela tinha dez destinos.
+  // Não é pré-baixada: ver lib/prefetch.ts.
   { href: "/livro", label: "Livro" },
   /*
    * A "Busca" saiu daqui em 0.1.66. Ela virou a lupa do canto direito, que abre
@@ -91,7 +93,7 @@ export default function Nav() {
           traz a palavra dentro do letreiro. Ver ui/Logo.tsx pro porquê do
           cartucho escuro e do `mix-blend-screen`.
         */}
-        <Link href="/" className="flex shrink-0 items-center transition-transform hover:scale-[1.03]">
+        <Link href="/" prefetch={false} className="flex shrink-0 items-center transition-transform hover:scale-[1.03]">
           <Logo className="h-16" priority />
         </Link>
 
@@ -116,6 +118,7 @@ export default function Nav() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={prefetchDe(link.href)}
               aria-current={pathname === link.href ? "page" : undefined}
               /*
                * A rota atual era só negrito + vinho — a mesma diferença que
@@ -154,6 +157,7 @@ export default function Nav() {
             <Link
               key={link.href}
               href={link.href}
+              prefetch={prefetchDe(link.href)}
               onClick={() => setOpen(false)}
               className={`rounded-lg px-3 py-2.5 ${
                 pathname === link.href

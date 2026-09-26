@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { prefetchDe } from "@/lib/prefetch";
 import { MessageCircle } from "lucide-react";
 import { PATCH_NOTES } from "@/data/patchNotes";
 import Ornament from "./ui/Ornament";
@@ -72,7 +73,7 @@ const COLUNAS = [
       { href: "/livro", label: "Livro de regras" },
       { href: "/livro/folhear", label: "Folhear o livro" },
       { href: "/livro#apendices", label: "Apêndices" },
-      { href: "/#patch-notes", label: "Notas de versão" },
+      { href: "/novidades", label: "Notas de versão" },
     ],
   },
 ];
@@ -87,7 +88,7 @@ export default function Footer() {
 
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
-            <Link href="/" className="inline-flex">
+            <Link href="/" prefetch={false} className="inline-flex">
               <Logo className="h-20" />
             </Link>
             <p className="mt-3 text-xs leading-relaxed text-parchment-600 dark:text-parchment-400">
@@ -118,6 +119,7 @@ export default function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
+                      prefetch={prefetchDe(link.href)}
                       /* `py-1` não é estética: sem ele o link tem 18px de altura, abaixo
                          dos 24px do WCAG 2.5.8, e são DEZ links assim no rodapé de
                          todas as rotas — a maior parte dos alvos pequenos que o

@@ -18,8 +18,18 @@ export const PATCH_NOTES: PatchNote[] = [
   {
     version: "0.1.99",
     date: "2026-09-26",
-    title: "Cura sem contabilidade, Desintoxicação com jogada",
+    title: "Cura sem contabilidade, Desintoxicação com jogada, site mais leve",
     sections: [
+      {
+        heading: "Site mais leve",
+        items: [
+          "As páginas fora do livro baixam cerca de 2,3 MB em vez de 6,7 a 10 MB: o menu e o rodapé não pré-baixam mais o livro inteiro, o logo vem no tamanho em que aparece, e o histórico de versões e as árvores deixaram de ir junto em toda página.",
+          "A capa mostra a versão atual e as cinco anteriores; o histórico inteiro mora em Notas de versão (/novidades).",
+          "As letras do livro só baixam os pesos que a página desenha.",
+          "O livro folheado fica pronto mais rápido: a passada que segura os títulos rediagramava o livro uma vez por título, e agora mede tudo antes de mexer (2,3 s → 0,9 s no computador).",
+          "O livro folheado passou a abrir sem internet, como o resto do site.",
+        ],
+      },
       {
         heading: "Magia de Cura",
         items: [

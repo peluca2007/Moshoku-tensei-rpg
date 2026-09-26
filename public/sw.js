@@ -89,11 +89,13 @@ const ROTAS = [
   "/encontros/importar",
   "/loja",
   "/livro",
+  "/livro/folhear",
   "/busca",
   "/criar",
   "/criar/entrevista",
   "/criar/manual",
   "/criar/roleta",
+  "/novidades",
   "/offline",
 ];
 

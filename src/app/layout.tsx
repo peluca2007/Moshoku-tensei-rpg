@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Geist, Geist_Mono, Literata } from "next/font/google";
-import StoreHydration from "@/components/StoreHydration";
+import { HidratacaoTardia, RoladorTardio } from "@/components/CamadaTardia";
+import { PATCH_NOTES } from "@/data/patchNotes";
 import SuporteOffline from "@/components/SuporteOffline";
 import ThemeProvider from "@/components/ThemeProvider";
 import { SCRIPT_TAMANHO_INICIAL } from "@/components/FontSizeToggle";
 import Nav from "@/components/Nav";
-import DiceRoller from "@/components/DiceRoller";
 import Footer from "@/components/Footer";
 import { OrnamentDefs } from "@/components/ui/Ornament";
 import SecaoDoSite from "@/components/SecaoDoSite";
@@ -122,7 +122,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <StoreHydration />
+          <HidratacaoTardia />
           <SecaoDoSite />
           {/*
             As definições de filtro SVG do ornamento vivem no layout, e não no
@@ -134,7 +134,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Nav />
           {/* Abaixo do menu, no fluxo: a faixa empurra a página em vez de cobrir
               os botões flutuantes. Ver SuporteOffline.tsx. */}
-          <SuporteOffline />
+          {/* A versão vem daqui, do servidor: importar o PATCH_NOTES no
+              componente mandava o histórico inteiro (~300 KB) pro navegador
+              só pra ler um número. */}
+          <SuporteOffline versao={PATCH_NOTES[0]?.version ?? "0"} />
           {/* `flex-1` é o que gruda o rodapé no fim da janela em página curta.
               Antes daqui cada rota carregava um `min-h-screen` próprio pra
               simular isso — e com um rodapé de verdade no fim, esse
@@ -158,7 +161,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             não há nenhuma ativa, então nenhuma rota precisa de contexto de
             personagem pra montá-lo).
           */}
-          <DiceRoller />
+          <RoladorTardio />
         </ThemeProvider>
       </body>
     </html>

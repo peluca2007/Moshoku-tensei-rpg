@@ -72,6 +72,7 @@ export default function BookCover() {
           que a mesa chega lá sem digitar o endereço. */}
       <Link
         href="/livro/folhear"
+        prefetch={false}
         className="mt-8 inline-flex items-center gap-2 rounded-full border border-gold-600/60 bg-parchment-50/70 px-5 py-2.5 text-sm font-semibold text-gold-800 shadow-sm transition hover:border-gold-500 hover:bg-gold-500/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 dark:bg-parchment-950/60 dark:text-gold-300"
       >
         <BookOpen className="h-4 w-4" aria-hidden />

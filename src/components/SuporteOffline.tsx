@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { CloudOff, RefreshCw } from "lucide-react";
-import { PATCH_NOTES } from "@/data/patchNotes";
 import { useRedeOffline } from "@/lib/useRedeOffline";
 
 /**
@@ -18,15 +17,14 @@ import { useRedeOffline } from "@/lib/useRedeOffline";
  *
  * ## A versão vai na URL do worker
  *
- * `?v=0.1.15` sai daqui, do `PATCH_NOTES`, e não de uma constante própria — uma
+ * `?v=0.1.15` sai do `PATCH_NOTES` (o layout passa a versão como prop, pra o
+ * histórico não vir junto pro navegador), e não de uma constante própria — uma
  * segunda fonte de verdade pra versão seria uma que alguém esquece de subir, e
  * o sintoma disso é o pior possível: o site servindo a versão passada, do
  * cache, sem nada indicando que é a passada. Ver o cabeçalho de `public/sw.js`
  * pro que essa URL faz lá dentro.
  */
-const VERSAO = PATCH_NOTES[0]?.version ?? "0";
-
-export default function SuporteOffline() {
+export default function SuporteOffline({ versao }: { versao: string }) {
   /*
    * O estado da rede mora em `lib/useRedeOffline` desde a 0.1.18, quando o
    * `error.tsx` passou a precisar da mesma resposta pra dizer se o que
@@ -60,7 +58,7 @@ export default function SuporteOffline() {
     let cancelado = false;
 
     navigator.serviceWorker
-      .register(`/sw.js?v=${VERSAO}`, { scope: "/", updateViaCache: "none" })
+      .register(`/sw.js?v=${versao}`, { scope: "/", updateViaCache: "none" })
       .then((registro) => {
         if (cancelado) return;
 
@@ -93,7 +91,7 @@ export default function SuporteOffline() {
     return () => {
       cancelado = true;
     };
-  }, []);
+  }, [versao]);
 
   /**
    * Manda o worker que está esperando assumir, e recarrega quando ele assumir.

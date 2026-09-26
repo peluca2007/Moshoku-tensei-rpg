@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ScrollText } from "lucide-react";
 import { PATCH_NOTES, type PatchNote } from "@/data/patchNotes";
 
@@ -33,12 +34,19 @@ function itemCount(note: PatchNote): number {
   return note.sections.reduce((n, s) => n + s.items.length, 0);
 }
 
-export default function PatchNotes() {
-  const [latest, ...older] = PATCH_NOTES;
+/**
+ * `limite`: quantas versões anteriores mostrar (0.1.99). A capa mostra só as
+ * últimas: com o histórico inteiro, ~300 KB de texto iam duas vezes na página
+ * (no HTML e nos dados do React) — a capa era a segunda página mais pesada do
+ * site. O histórico completo mora em /novidades.
+ */
+export default function PatchNotes({ limite }: { limite?: number } = {}) {
+  const [latest, ...todas] = PATCH_NOTES;
   if (!latest) return null;
+  const older = limite === undefined ? todas : todas.slice(0, limite);
 
   return (
-    <section className="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
+    <section id="patch-notes" className="mx-auto max-w-5xl px-4 pb-20 sm:px-6">
       <h2 className="mb-1 flex items-center gap-2 text-2xl font-black tracking-tight text-parchment-900 dark:text-parchment-50">
         <ScrollText className="h-6 w-6 text-wine-500" /> Patch Notes
       </h2>
@@ -87,6 +95,15 @@ export default function PatchNotes() {
               </div>
             </details>
           ))}
+          {older.length < todas.length && (
+            <Link
+              href="/novidades"
+              prefetch={false}
+              className="inline-block pt-1 text-sm font-bold text-wine-600 hover:underline dark:text-wine-300"
+            >
+              Ver todas as {todas.length + 1} versões →
+            </Link>
+          )}
         </div>
       )}
     </section>

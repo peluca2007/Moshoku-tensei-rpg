@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { prefetchDe } from "@/lib/prefetch";
 import { CloudOff, WifiOff } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import EmptyState from "@/components/ui/EmptyState";
@@ -58,6 +59,7 @@ export default function OfflinePage() {
           <Link
             key={rota.href}
             href={rota.href}
+            prefetch={prefetchDe(rota.href)}
             className="lift rounded-full border border-parchment-300 bg-parchment-50/70 px-4 py-2 text-sm font-semibold text-parchment-700 hover:border-wine-400 hover:text-wine-600 dark:border-parchment-700 dark:bg-parchment-900/60 dark:text-parchment-200 dark:hover:border-wine-600 dark:hover:text-wine-300"
           >
             {rota.label}

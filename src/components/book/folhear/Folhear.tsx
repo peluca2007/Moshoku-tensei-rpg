@@ -305,8 +305,21 @@ export default function Folhear({
       guardarAncora();
       setFontesProntas(true);
     };
-    if (document.fonts) void document.fonts.ready.then(aoCarregar);
-    else aoCarregar();
+    /*
+     * As letras do livro (Barlow) não são pré-carregadas no site desde a 0.1.99
+     * — só o livro as usa inteiras. Então o `fonts.ready` resolveria ANTES de
+     * elas chegarem (nada foi pedido ainda), a diagramação mediria o texto na
+     * fonte reserva, e a troca depois deixaria tabela partida e buraco. Aqui o
+     * livro pede as faces latinas dele e espera todas.
+     */
+    if (document.fonts) {
+      const faces = Array.from(document.fonts).filter(
+        (face) => /barlow/i.test(face.family) && face.status === "unloaded" && /U\+0+-0*FF\b/i.test(face.unicodeRange)
+      );
+      void Promise.all(faces.map((face) => face.load().catch(() => null)))
+        .then(() => document.fonts.ready)
+        .then(aoCarregar);
+    } else aoCarregar();
     const f = fluxo.current;
     // Vários <details> mudando juntos viram UMA recomposição, não uma por
     // details — e os que o próprio livro abriu (logo abaixo) não contam.
@@ -875,7 +888,7 @@ export default function Folhear({
         <div className="folhear-barra-lado">
           {livro && (
             <>
-              <Link href="/" className="folhear-botao inline-flex" aria-label="Voltar ao site" title="Voltar ao site">
+              <Link href="/" prefetch={false} className="folhear-botao inline-flex" aria-label="Voltar ao site" title="Voltar ao site">
                 <House className="h-4 w-4" aria-hidden />
               </Link>
               <button

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { prefetchDe } from "@/lib/prefetch";
 import { useMemo, useState } from "react";
 import { ArrowRight, Eye, Heart, ListOrdered, Scale, Shield, Sparkles, Swords, Zap } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
@@ -68,6 +69,7 @@ function FerramentasDoMestre() {
         <Link
           key={href}
           href={href}
+          prefetch={prefetchDe(href)}
           className="surface group flex flex-col rounded-2xl border border-parchment-300 bg-parchment-100/70 p-3 transition-colors hover:border-wine-400 hover:bg-wine-50/50 dark:border-parchment-800 dark:bg-parchment-900/60 dark:hover:border-wine-700 dark:hover:bg-wine-950/25"
         >
           <span className="flex items-center gap-2">
