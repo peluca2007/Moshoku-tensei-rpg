@@ -39,7 +39,7 @@ export default function Appendices() {
         <List
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
-            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × soma dos dados de PV dos 12 ranks dela, nas 4 árvores ≈ 14 + 93 = 107) × Fator de Vigor 2 (×1,40) = 149 PV",
+            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × 53 de média dos dados de PV dos 12 ranks dela, nas 4 árvores = 102,51) × Fator de Vigor 2 (×1,40), arredondado pra baixo = 143 PV",
             "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os PM do Migurd (3 × MB = 12) = 40 PM (acima do cap de Santo, então vale inteiro)",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
@@ -50,7 +50,7 @@ export default function Appendices() {
         />
         <P>
           Leitura da ficha: ela acerta praticamente qualquer coisa, tem uma reserva de mana que sustenta um
-          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 149 PV é bastante
+          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 143 PV é bastante
           numa conta isolada, mas fica baixo perto de um personagem do Corpo com a mesma quantidade de Ranks
           investidos, cujos dados de PV por patamar são bem maiores. É exatamente isso que ela é na história —
           uma professora genial dentro de um corpo frágil, que sobrevive porque nunca deixa ninguém chegar
@@ -59,7 +59,7 @@ export default function Appendices() {
         </P>
         <P>
           Repare no que o Fator de Vigor faz aqui: com Vigor 2 ela multiplica por 1,40. Se tivesse largado
-          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 107 viraria 42 PV —
+          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 102,51 viraria 41 PV —
           e um único golpe de espadachim Santo resolveria a luta. É o tipo de troca que a Escala do Vigor
           (Cap. 4, §1) existe pra tornar visível antes de a ficha ser fechada.
         </P>
@@ -114,8 +114,7 @@ export default function Appendices() {
             dele, não o teto dele — e ele continua sendo a menor coluna do livro de propósito.
           </P>
           <P>
-            <b>A Utilidade tem três colunas, e não uma.</b> Até 0.1.12 as três dividiam uma coluna só,
-            porque duas delas não tinham dano nenhum pra medir. Agora cada uma tem o próprio golpe que
+            <b>A Utilidade tem três colunas.</b> Cada árvore tem um golpe próprio que
             escala por patamar — Dano Furtivo, Ordem de Tiro, Dissonância —, todos na Maestria de 1º
             patamar e todos uma vez por turno. Nenhuma das três recebe degraus de Dado de Arma (Cap. 3),
             então o dado delas nunca cresce: é essa a razão de ficarem para trás sem precisar de nenhuma
@@ -156,7 +155,7 @@ export default function Appendices() {
         <SubTitle>Sobre Ranks e Múltiplas Árvores</SubTitle>
         <QA
           q="Tenho Norte Santo e Espada Principiante. Faço um ataque comum com a espada. Quantos degraus de Dado de Arma?"
-          a="Um ataque comum usa os degraus do seu maior patamar entre as árvores do Corpo — os quatro do Norte. Uma técnica usa sempre os degraus da árvore que a concedeu: a Espada de Luz do seu Principiante rola com um degrau só, e é por isso que ela é ruim na sua mão."
+           a="Um ataque comum usa os degraus do seu maior patamar entre as árvores do Corpo — os quatro do Norte. Uma técnica usa sempre os degraus da árvore que a concedeu: o Corte de Braço do seu Principiante rola com um degrau só, e é por isso que ele é ruim na sua mão."
         />
         <QA
           q="Um talento diz 'seu Bônus de Rank' e eu tenho cinco árvores. Qual uso?"
@@ -219,7 +218,7 @@ export default function Appendices() {
         />
         <QA
           q="Duas árvores de Utilidade me dão duas reservas de PP?"
-          a="Uma reserva só. Use o maior atributo-chave entre elas e some +1 por patamar de 3º ou superior em qualquer uma."
+           a="Uma reserva só: PP = Intelecto + o maior atributo-chave entre elas, +1 por patamar do 3º em diante."
         />
         <QA
           q="Posso preparar algo no meio de um combate?"
@@ -321,11 +320,11 @@ export default function Appendices() {
             "Abertura — Antes do primeiro golpe, o Ladino do grupo já havia sabotado o comboio de suprimentos inimigo durante o Downtime (Cap. 5, §1). O Mestre zera o Suprimento invasor: Suprimento 0.",
             "Abertura, efeito automático de fase — com Suprimento 0, o invasor perde 1 de Força automaticamente. Invasores: Força 7, Moral 5, Suprimento 0.",
             "Embate — o mago de Fogo do grupo conjura uma magia de área Imperador contra a linha de frente inimiga: -3 de Força. Invasores: Força 4.",
-            "Embate — o Bardo do grupo canta pros defensores na muralha: +2 de Moral própria. Defensores: Moral 8 (o Mestre trava o teto narrativo em 8, já que a escala nasceu de 6).",
+            "Embate — o Bardo do grupo canta pros defensores na muralha: +2 de Moral própria. Defensores: Moral 8.",
             "Embate, resposta do Mestre — o comandante invasor manda um grupo de elite escalar a muralha à noite pra forçar um combate pessoal contra o grupo, tentando virar o jogo antes do Desfecho.",
             "Esse combate de elite é resolvido com as regras normais do Capítulo 4, não com os três números do exército — é exatamente o caso que o aviso abaixo cobre. O grupo vence o duelo.",
-            "Desfecho — vencer o duelo em público custa -3 de Moral ao invasor: Moral 2. Suprimento continua 0, então o invasor perde mais 1 de Força: Força 3.",
-            "Resultado final — Defensores: Força 6, Moral 8, Suprimento 3. Invasores: Força 3, Moral 2, Suprimento 0. Nenhum lado chegou a 0, mas a diferença (14 contra 5) é grande o bastante pro Mestre narrar a retirada invasora sem precisar de mais uma fase.",
+            "Desfecho — vencer o duelo em público custa -3 de Moral ao invasor: Moral 2. Suprimento continua 0, então o invasor perde mais 1 de Força: Força 2.",
+            "Resultado final — Defensores: Força 6, Moral 8, Suprimento 3. Invasores: Força 2, Moral 2, Suprimento 0. Nenhum lado chegou a 0, mas a diferença (14 contra 4) é grande o bastante pro Mestre narrar a retirada invasora sem precisar de mais uma fase.",
           ]}
         />
         <Aside title="O que esse exemplo mostra">
@@ -381,10 +380,7 @@ export default function Appendices() {
           ]}
         />
         <P>
-          Escolhidas as três, o bloco básico está pronto. Sem arquétipo ou sub-arquétipo, o site ainda aceita
-          uma criatura genérica para não quebrar encontros antigos; a recompensa também fica genérica. O que
-          vier depois — um sentido especial, uma perícia a mais — é <b>ajuste consciente</b>, e cada ajuste diz
-          o que custa.
+          Escolhidas as três, o bloco básico está pronto; sentido especial ou perícia extra são ajustes que o Mestre decide conscientemente.
         </P>
 
         <SubTitle id="apendice-g-atributos">Os cinco atributos de uma criatura</SubTitle>
@@ -432,7 +428,7 @@ export default function Appendices() {
           de onze palavras.
         </P>
         <BookTable
-          headers={["Sub-arquétipo", "O corpo deixa", "Moeda", "De graça", "Exemplo"]}
+          headers={["Sub-arquétipo", "O corpo deixa", "Moeda", "De graça", "Ações típicas", "Exemplo"]}
           rows={SUBARQUETIPOS_CRIATURA.map((s) => [
             s.nome,
             s.espolios.map((id) => SHOP_ITEMS.find((i) => i.id === id)?.name ?? id).join(", "),
@@ -443,6 +439,7 @@ export default function Appendices() {
             ]
               .filter(Boolean)
               .join("; ") || "—",
+            s.acoesSugeridas.join("; "),
             s.exemplo,
           ])}
         />
@@ -459,10 +456,8 @@ export default function Appendices() {
           </P>
         </Aside>
         <P>
-          As <b>Ações típicas</b> de cada sub-arquétipo estão na tela de Encontros, ao escolher um: elas são
-          sugestão pra montar um monstro sem inventar do zero, nunca obrigação. Resistência e Imunidade da
-          tabela também entram como sugestão — e a Imunidade continua custando um patamar no Orçamento de
-          Encontro, como manda a regra abaixo.
+          As <b>Ações típicas</b> são sugestões para montar um monstro. Resistência e Imunidade também são
+          sugestões — e a Imunidade continua custando um patamar no Orçamento de Encontro.
         </P>
         <P>
           Na recompensa de um encontro, o orçamento em PO é um <b>teto</b>, não uma quantia garantida. Uma
@@ -477,7 +472,7 @@ export default function Appendices() {
             items={[
               <span key="ataque"><b>Acerto:</b> o Bônus de Ataque da tabela já É o atributo Principal mais o patamar. Um ataque que a ficção manda sair de outro atributo (a cabeçada do bruto ágil) soma esse outro no lugar.</span>,
               <span key="cd"><b>CD do que ela impõe:</b> a da tabela, e ponto. Se a habilidade sai de um atributo que não é o Principal dela, <b>−2 na CD</b> — é a única conta do bloco, e ela existe pra que o arquétipo importe também no que a criatura faz, não só no que ela aguenta.</span>,
-              <span key="resist"><b>Resistir:</b> soma o Bônus de Resistência da tabela em TODO teste, e rola com <b>Vantagem</b> nos testes do atributo Principal dela. É por isso que agarrar o bruto e enganar o íncubo dão errado pelo mesmo motivo.</span>,
+              <span key="resist"><b>Resistir:</b> 1d20 + Bônus de Resistência da tabela, sem somar atributo; rola com <b>Vantagem</b> nos testes do atributo Principal dela.</span>,
               <span key="pericia"><b>Perícias:</b> ela tem Vantagem num número de campos igual a <b>metade do patamar, arredondado pra cima</b> (1 no 1º e 2º, 2 no 3º e 4º, 3 no 5º e 6º). Funciona igual à do personagem: perícia é Vantagem, nunca um número (Cap. 1, §4).</span>,
               <span key="percepcao"><b>Percepção passiva = 10 + o Espírito dela</b>, exatamente como a regra de ficar Escondido (Cap. 4, §3). Um bruto de Espírito −1 é fácil de enganar mesmo sendo uma Lenda; um íncubo, não. Se o arquétipo tem sentido especial, ele fura o Escondido dentro do alcance dito — e é isso que faz o cão de caça ser assustador.</span>,
             ]}
@@ -494,22 +489,8 @@ export default function Appendices() {
           />
         </Aside>
 
-        <Aside title="As duas colunas que mudaram, e por quê">
-          <P>
-            <b>CA</b> subia +1 por patamar, e o bônus de ataque de um personagem sobe +1 de Rank <i>mais</i>{" "}
-            o crescimento do atributo. O resultado era uma chance de acerto congelada: 70% com atributo 4,
-            90% com atributo 8 — a mesma coisa no 1º e no 6º patamar. A CA da criatura simplesmente não
-            importava. Agora ela sobe +2 por patamar, e o personagem maximizado sai de 90% pra 70% ao longo
-            da campanha: o teto de atributo continua valendo o PA que custou, sem apagar a defesa do monstro.
-          </P>
-          <P>
-            <b>Bônus de Resistência</b> não existia. A tabela dizia tudo de que a criatura precisava pra{" "}
-            <i>atacar</i>, e nada pra quando ela <i>resiste</i> — mas metade das habilidades deste livro
-            pede um teste do alvo, e o Mestre não tinha número nenhum pra rolar. Ele improvisava, e o efeito
-            comprado pelo jogador virava aposta. O valor é metade do Bônus de Ataque, arredondado pra cima;
-            contra a CD de um personagem do mesmo patamar isso põe a criatura resistindo perto de 40% das
-            vezes.
-          </P>
+        <Aside title="Por que CA e resistência crescem">
+          A CA acompanha o acerto dos personagens, e o Bônus de Resistência dá às criaturas uma defesa calculável contra efeitos.
         </Aside>
         <Aside title="Por que o chefe age mais de uma vez">
           <P>
@@ -540,17 +521,8 @@ export default function Appendices() {
             ]}
           />
         </Aside>
-        <SubTitle id="apendice-g-rank">O Bônus de Rank de uma criatura</SubTitle>
-        <P>
-          Meia dúzia de regras do livro pedem <b>o Bônus de Rank de quem te acertou</b> — o Teste de
-          Concentração (Cap. 2, §6), o Fio da Vida (Cap. 4, §7), o teto do Quebrantado, a CD de escapar de
-          Atolado. Um monstro não tem árvore, então a pergunta aparecia em toda mesa e não tinha resposta.
-        </P>
-        <Warning title="O patamar DA criatura é o Bônus de Rank dela">
-          Patamar 1 dá +1, patamar 6 dá +6 — a mesma escada de sempre, sem tabela nova. Um lobo de 1º patamar
-          te derruba num Fio da Vida CD 9; o Dragão de 6º, num CD 14. É por isso que a coluna &ldquo;Patamar&rdquo;
-          desta seção não é enfeite de organização: ela é um número que a mesa usa.
-        </Warning>
+        <SubTitle id="apendice-g-rank">CD dos efeitos da criatura</SubTitle>
+        <P>Quando uma criatura aplica condição de CD 8 + BC, use a CD de resistência da tabela dela.</P>
 
         <SubTitle id="apendice-g-acoes">Como escrever as Ações de uma criatura</SubTitle>
         <P>
@@ -593,15 +565,13 @@ export default function Appendices() {
 
         <SubTitle id="apendice-g-orcamento">Orçamento de Encontro</SubTitle>
         <P>
-          Quantas criaturas, e de qual patamar? O livro nunca disse, e essa é a primeira pergunta de todo
-          Mestre montando a primeira sessão. A conta é uma só, e cabe numa linha:
+          Quantas criaturas, e de qual patamar? Use a conta abaixo para montar o encontro:
         </P>
         <Warning title="Uma criatura do patamar do grupo por jogador">
           <P>
             <b>Encontro equilibrado = um número de criaturas do mesmo patamar do grupo igual ao número de
             jogadores.</b> Quatro jogadores no 3º patamar encaram quatro criaturas de 3º. É o encontro que
-            custa recursos e não mata ninguém — e um grupo aguenta de três a quatro deles entre Descansos
-            Longos.
+            custa recursos e não mata ninguém — e um grupo com curandeiro aguenta de três a quatro deles por dia de aventura.
           </P>
           <P>
             <b>Trocar patamar por número</b>, para montar o resto: uma criatura <b>um patamar acima</b> vale
@@ -610,10 +580,9 @@ export default function Appendices() {
             patamar dele.
           </P>
           <P>
-            <b>As três temperaturas.</b> Metade do orçamento é um encontro <i>fácil</i>, de gastar munição e
-            mostrar o bicho. O orçamento cheio é <i>equilibrado</i>. <b>Uma vez e meia</b> é <i>mortal</i>:
-            alguém vai ao Fio da Vida, e é assim que deve ser — reserve para o fim do arco, e avise a mesa,
-            porque o Perigo do contrato (seção da Guilda, Cap. 5) existe exatamente para isso.
+            <b>Faixas de dificuldade:</b> <i>Fácil</i> até 0,75 do orçamento; <i>Equilibrado</i> acima de 0,75
+            até 1,25; <i>Difícil</i> acima de 1,25 até 1,5; <i>Mortal</i> acima de 1,5. Avise a mesa quando
+            o Perigo do contrato (Cap. 5, §2) apontar para um encontro mortal.
           </P>
           <P>
             <b>O que a conta não enxerga:</b> terreno, distância e quem age primeiro. Três arqueiros a 90
@@ -692,13 +661,11 @@ export default function Appendices() {
         <List
           items={[
             "O patamar dele é o maior patamar da ficha, e o Bônus de Rank também: é esse número que entra na Concentração, no Fio da Vida e no Quebrantado.",
-            "Os números vão sair diferentes do molde, e essa é a graça. Uma Espada de 3º patamar com Vigor 0 tem bem menos que os 90 PV da Ameaça e bate bem mais forte: o rival joga com as mesmas regras e as mesmas fraquezas do grupo, e o grupo pode estudá-lo.",
+            "O rival usa as mesmas regras e fraquezas do grupo, por isso seus números podem diferir dos moldes de criatura.",
             "O rival conserva atributos, perícias, deslocamento, resistências, imunidades, iniciativa e reservas de PM, PT e PP da ficha. Uma técnica usa o bônus e a CD da sua própria árvore, mesmo se o rival estudou várias árvores.",
-            "No site, Encontros converte a ficha em Padrão ou Chefe único. A simulação usa ataques, técnicas de dano e magias de cura e proteção de até quatro Ações, descontando PM, PT e PP. Técnicas de quatro Ações exigem cântico; sofrer dano pede Concentração. Molhado, Em Chamas, frio contra Molhado e Quebrantado alteram o combate; Aparar pode transformar um acerto corpo a corpo em erro, e o Fluxo do Deus da Água contra-ataca após esse erro.",
-            "O invocador pode levar Pactos de combate preparados para o encontro: escolha os Pactos no perfil, respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, o invocador pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha; os talentos Círculo Improvisado, Convocação Aprimorada, Pacto Firmado e Duas Vidas também valem. O orçamento conta Pactos como lacaios por aproximação e mostra uma estimativa de reforços; a simulação usa seus valores próprios.",
-            "Pactos de apoio, efeitos especiais que pedem decisão e reações específicas além de Aparar e Fluxo continuam descritos no perfil para o Mestre conduzir na mesa. Uma ficha com tais efeitos exige essa condução além da simulação.",
+            "O invocador pode levar Pactos de combate preparados: respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha; Círculo Improvisado, Convocação Aprimorada, Pacto Firmado e Duas Vidas também valem.",
+            "Pactos de apoio e efeitos especiais pedem a condução do Mestre durante o encontro.",
             "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 120 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
-            "A conversão é uma cópia: mexer no rival não muda a ficha, e subir a ficha de patamar não muda o rival que já foi pra mesa.",
           ]}
         />
       </Section>
