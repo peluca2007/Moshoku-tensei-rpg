@@ -121,10 +121,9 @@ export default function Appendices() {
             regra que as puna.
           </P>
           <P>
-            <b>Magia não está amortizada pelas Ações.</b> Uma magia de Imperador custa 4 Ações — mais
-            que um turno inteiro. O Sol Menor aparece como ~130 contra alvo Em Chamas, mas rende ~97 a
-            cada 3 Ações. Compare marcial com marcial e magia com magia; cruzar as duas metades desta
-            tabela engana.
+            <b>Magia não está amortizada pelas Ações.</b> Muitas magias de Imperador custam 4 Ações — mais
+            que um turno inteiro. O Sol Menor é uma exceção: entrega ~130 contra alvo Em Chamas em 3 Ações.
+            Compare marcial com marcial e magia com magia; cruzar as duas metades desta tabela engana.
           </P>
         </Warning>
         <Aside title="Como ler esta tabela">
