@@ -179,7 +179,7 @@ export const VENTO_TREE: Tree = {
       mastery: {
         name: "Voo",
         description:
-          "Você recebe Deslocamento de Voo permanente igual ao seu Deslocamento normal, sem custo de PM, enquanto consciente e não Exausto. Desbloqueia o direito de combinar escolas (Magia Combinada, Cap. 2).",
+          "Mira na área (Cap. 2, §7): escolha até INTELECTO criaturas para excluir de cada área sua. Você recebe Deslocamento de Voo permanente igual ao seu Deslocamento normal, sem custo de PM, enquanto consciente e não Exausto. Desbloqueia o direito de combinar escolas (Magia Combinada, Cap. 2).",
       },
       talents: [
         { id: "vento-constante", name: "Vento Constante", paCost: RANK_PA_COST.talent.Avançado, description: "Você mantém duas magias de Vento sustentadas simultaneamente sem concentração." },
@@ -310,8 +310,8 @@ export const VENTO_TREE: Tree = {
           pmCost: 12,
           range: "Esfera de 18m de raio",
           actions: MAGIC_ACTIONS.Rei,
-          damage: { normal: "7d10 de sufocamento por turno, sem teste" },
-          effect: "Remove todo o ar da área por 1 minuto. Impossível recitar, gritar ou fazer fogo ali dentro. Som não existe — nem o seu.",
+          damage: { normal: "7d10 de sufocamento por turno (Vigor para metade)" },
+          effect: "Remove todo o ar da área por 3 turnos. No início do turno de cada criatura lá dentro: teste de Vigor (CD 8 + BC), dano cheio na falha e metade no sucesso. Impossível recitar, gritar ou fazer fogo ali dentro. Som não existe — nem o seu.",
           incantation:
             "Eu não crio nada aqui. Eu apenas retiro tudo — o ar que respiram, o som que fariam, a possibilidade de gritar por socorro pra alguém do lado de fora que talvez ouvisse.\nQue esta esfera inteira se torne o lugar mais silencioso que qualquer um de vocês jamais visitou em toda a vida,\ne que ninguém aqui dentro consiga sequer dizer o próprio nome em voz alta, nem pra si mesmo.\nVazio!",
         },

@@ -17,7 +17,7 @@ export const ARQUEARIA_TREE: Tree = {
       "Repita. Nada aqui gasta PM, e o PT só paga as técnicas nomeadas — o disparo comum sai de graça, e o seu dano base é o mesmo no primeiro e no décimo turno do combate.",
     ],
     cost:
-      "O Manto de Touki. Contra quem veste o Manto de Touki (Avançado em diante), cada tiro perde o DOBRO do Bônus de Rank do alvo, e a árvore só fura isso no Rei, por duas formas igualmente caras: 3 PT na Flecha de Touki, ou um Tiro Perfeito com todas as etapas certas.",
+      "O Manto de Touki. Contra quem veste o Manto de Touki (Avançado em diante), cada tiro perde o DOBRO do Bônus de Rank do alvo, e a árvore fura isso no Santo (3 PT na Flecha de Touki) e no Rei (um Tiro Perfeito com todas as etapas certas).",
   },
   keyAttributeLabel: "Agilidade",
   resourceLabel: "PT",
@@ -205,7 +205,7 @@ export const ARQUEARIA_TREE: Tree = {
       mastery: {
         name: "A Distância Não Existe",
         description:
-          "Você acerta qualquer alvo que consiga ver, sem limite de alcance. Enxerga com precisão perfeita a até 1 km, atravessando neblina, escuridão e chuva. Contra alvos Marcados, seus disparos ignoram Cobertura Total, desde que exista qualquer trajetória física.",
+          "Flecha de Touki: gastando 3 PT, um disparo ignora completamente o Manto de Touki do alvo e toda redução de dano contra projéteis. Além disso, você acerta qualquer alvo que consiga ver, sem limite de alcance. Enxerga com precisão perfeita a até 1 km, atravessando neblina, escuridão e chuva. Contra alvos Marcados, seus disparos ignoram Cobertura Total, desde que exista qualquer trajetória física.",
       },
       talents: [
         {
@@ -275,7 +275,7 @@ export const ARQUEARIA_TREE: Tree = {
       mastery: {
         name: "A Flecha que Fura",
         description:
-          "O patamar que o arqueiro esperou a campanha inteira: gastando 3 PT (Flecha de Touki), um único disparo ignora completamente o Manto de Touki do alvo e toda redução de dano contra projéteis. É caro de propósito. A única outra forma é a Preparação Perfeita, deste mesmo patamar — e ela não é mais barata: em vez de 3 PT, cobra que Corda, Leitura, Dedos e O Ponto passem, e que a Solta acerte.",
+          "A segunda forma de furar o Manto, sem PT: a Preparação Perfeita, deste patamar, cobra que Corda, Leitura, Dedos e O Ponto passem e que a Solta acerte. E a Flecha de Touki que acerta deixa o alvo sem Manto de Touki até o fim do próximo turno dele — o grupo inteiro aproveita a brecha.",
       },
       talents: [
         { id: "aljava-divina", name: "Aljava Divina", paCost: RANK_PA_COST.talent.Rei, description: "A Flecha de Touki passa a custar 2 PT em vez de 3." },

@@ -180,10 +180,10 @@ export const TERRA_TREE: Tree = {
       mastery: {
         name: "Domínio Mineral",
         description:
-          "Você manipula metal além de pedra: travar armadura, entortar lâmina, arrancar arma da mão a 9m (disputa de Força). Suas estruturas passam a ter o dobro dos PV e não podem ser derrubadas por dano de área. Desbloqueia Magia Combinada.",
+          "Mira na área (Cap. 2, §7): escolha até INTELECTO criaturas para excluir de cada área sua. Você manipula metal além de pedra: travar armadura, entortar lâmina, arrancar arma da mão a 9m (disputa de Força). Suas estruturas passam a ter o dobro dos PV e não podem ser derrubadas por dano de área. Desbloqueia Magia Combinada.",
       },
       talents: [
-        { id: "segunda-bala", name: "Segunda Bala", paCost: RANK_PA_COST.talent.Avançado, description: "Uma vez por turno, ao conjurar Canhão de Pedra, você dispara duas pelo custo de uma. Alvos podem ser diferentes." },
+        { id: "segunda-bala", name: "Segunda Bala", paCost: RANK_PA_COST.talent.Avançado, description: "Uma vez por turno, ao conjurar Canhão de Pedra, você pode disparar um segundo Canhão pelo mesmo PM, gastando +1 Ação. Alvos podem ser diferentes." },
         { id: "nucleo-de-ferro", name: "Núcleo de Ferro", paCost: RANK_PA_COST.talent.Avançado, description: "Você recebe Resistência a dano físico mundano enquanto estiver com os pés no chão." },
         { id: "arquiteto-de-guerra", name: "Arquiteto de Guerra", paCost: RANK_PA_COST.talent.Avançado, description: "Suas construções ficam permanentes se você gastar uma hora consolidando." },
       ],

@@ -141,7 +141,7 @@ export const FOGO_TREE: Tree = {
           id: "calor-dirigido",
           name: "Calor Dirigido",
           paCost: RANK_PA_COST.talent.Intermediário,
-          description: "Você escolhe até Intelecto criaturas na área das suas magias de Fogo. Elas não são afetadas.",
+          description: "Antecipa a mira: já no Intermediário, exclua até metade do seu Intelecto (mínimo 1) criaturas da área das suas magias de Fogo. Do Avançado em diante, quando a Maestria dá a exclusão a todas as escolas, as criaturas que você excluir ainda sofrem só metade do dano ígneo que as atingir até o fim do próximo turno delas.",
         },
         {
           id: "combustao-lenta",
@@ -213,7 +213,7 @@ export const FOGO_TREE: Tree = {
       mastery: {
         name: "Termodinâmica Inversa",
         description:
-          "Você controla a temperatura dentro das suas áreas. É aqui que o Fogo compra a exceção do Cap. 2, §7: escolha até INTELECTO criaturas para excluir de cada área sua, e faça o fogo queimar só um material escolhido. Antes deste patamar, área atinge todo mundo — inclusive o seu grupo. Desbloqueia o direito de combinar escolas (Magia Combinada, Cap. 2).",
+          "Você controla a temperatura dentro das suas áreas. É aqui que o Fogo compra a exceção do Cap. 2, §7: escolha até INTELECTO criaturas para excluir de cada área sua (toda escola elemental ganha isso no Avançado), e faça o fogo queimar só um material escolhido. Antes deste patamar, área atinge todo mundo — inclusive o seu grupo. Desbloqueia o direito de combinar escolas (Magia Combinada, Cap. 2).",
       },
       talents: [
         { id: "coracao-de-brasa", name: "Coração de Brasa", paCost: RANK_PA_COST.talent.Avançado, description: "Você é imune a todo dano ígneo, mágico ou não, e à condição Em Chamas." },
@@ -366,7 +366,8 @@ export const FOGO_TREE: Tree = {
           paCost: RANK_PA_COST.signature.Rei,
           pmCost: 14,
           range: "Raio de 90m",
-          actions: MAGIC_ACTIONS.Rei,
+          actions: { normal: 3 },
+          costNote: "3 Ações em vez das 4 do Rei: o Fogo é a escola do dano bruto, e a magia assinatura dela precisa caber num turno pra fazer jus a isso.",
           damage: { normal: "12d10 + BC (ígneo, d12 contra alvo já Em Chamas)" },
           effect: "Teste de Vigor com Desvantagem (exceto submersos/barreira/clima chuvoso). Falha: dano cheio e Em Chamas incombatível. Sucesso: metade.",
           incantation:
@@ -413,7 +414,8 @@ export const FOGO_TREE: Tree = {
           paCost: RANK_PA_COST.signature.Imperador,
           pmCost: 22,
           range: "Esfera de 30m de raio",
-          actions: MAGIC_ACTIONS.Imperador,
+          actions: { normal: 3 },
+          costNote: "3 Ações em vez das 4 do Imperador: o maior dano da escola do dano precisa caber num turno.",
           damage: { normal: "14d12 de plasma (20d12 contra alvos Em Chamas)" },
           effect:
             "Teste de Vigor com Desvantagem Absoluta. Construções, terreno e cadáveres na área deixam de existir; a cratera é permanente.",

@@ -91,8 +91,8 @@ const sacoDePancada = () => novoAlvo({ nome: "saco", pv: 100_000, ca: 10 });
 
 describe("as magias que não cabem num turno", () => {
   it("existem, e são as maiores do livro", () => {
-    const longas = acoesDe(comArvoreInteira("fogo")).filter((a) => a.acoes > 3);
-    expect(longas.length, "Fogo tem magia de Santo pra cima").toBeGreaterThan(0);
+    const longas = acoesDe(comArvoreInteira("terra")).filter((a) => a.acoes > 3);
+    expect(longas.length, "Terra tem magia de Rei pra cima (o Fogo trocou as dele por 3 Ações em 2026-09-26)").toBeGreaterThan(0);
   });
 
   it("são vinte, no livro inteiro — e nenhuma delas era simulável", () => {
