@@ -412,9 +412,11 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
   // Título empurrado leva o bloco seguinte junto: uma quebra própria do bloco
   // (a tabela que "descia inteira" do pé da coluna) separaria os dois de novo
   // — o subtítulo "As peças" da Teórica ficava sozinho por isso.
-  empurrar.forEach((el) => {
-    if (!el.matches("h3, h4")) return;
-    const prox = seguinte(el, fluxo);
+  // Lê tudo antes de escrever: `seguinte` mede retângulos, e medir depois de
+  // tirar uma classe obrigava o navegador a rediagramar o livro inteiro a
+  // cada título (a passada foi de ~160 ms pra 1,2 s).
+  const junto = [...empurrar].filter((el) => el.matches("h3, h4")).map((el) => seguinte(el, fluxo));
+  junto.forEach((prox) => {
     if (!prox) return;
     empurrar.delete(prox);
     prox.classList.remove("folhear-empurra");
@@ -554,8 +556,10 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   // maior): se o conteúdo não coube, somem os nomes; se nem assim, a vitrine.
   const transborda = (el: HTMLElement) => el.scrollHeight > el.clientHeight + 2;
   const visiveis = vitrines.filter((el) => !el.classList.contains("livro-fecho") && (el.classList.contains("folhear-vitrine-cheia") || el.classList.contains("livro-vitrine-arvores")));
-  visiveis.filter(transborda).forEach((el) => el.classList.add("folhear-vitrine-compacta"));
-  visiveis.filter((el) => el.classList.contains("folhear-vitrine-compacta") && transborda(el)).forEach((el) => el.classList.add("folhear-vitrine-some"));
+  const cheias = visiveis.filter(transborda);
+  if (cheias.length === 0) return;
+  cheias.forEach((el) => el.classList.add("folhear-vitrine-compacta"));
+  cheias.filter(transborda).forEach((el) => el.classList.add("folhear-vitrine-some"));
 }
 
 /**

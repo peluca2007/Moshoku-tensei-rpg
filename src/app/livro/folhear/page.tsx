@@ -29,7 +29,7 @@ export default function FolhearPage() {
       {/* Sem JavaScript, o palco não pode ficar escondido esperando a
           diagramação: vira leitura contínua e pronto. */}
       <noscript>
-        <style>{`.folhear .folhear-palco{visibility:visible!important}`}</style>
+        <style>{`.folhear .folhear-palco{visibility:visible!important;display:block!important}`}</style>
       </noscript>
       <Folhear toc={SUMARIO_DO_LIVRO} edicao={PATCH_NOTES[0]?.version}>
         <Chapter0 />
