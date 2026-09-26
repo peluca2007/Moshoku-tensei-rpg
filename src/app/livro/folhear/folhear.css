@@ -2269,40 +2269,154 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   }
 }
 
-/* No papel, o livro folheado vira o fluxo contínuo de sempre. */
+/*
+ * O LIVRO EM PDF — impresso com a MESMA página (2026-09-26).
+ *
+ * Escolha do autor: "impressão com a mesma página". A folha do livro já é
+ * uma folha Carta (816 × 1056 a 96 dpi) com margens fixas; na impressão, a
+ * faixa de páginas lado a lado some e o fluxo passa a correr em folhas de
+ * papel do mesmo tamanho, com as mesmas margens. Como a mancha tem a mesma
+ * largura e a mesma altura, as colunas quebram onde quebravam na tela, e
+ * tudo que a diagramação decidiu (empurrões, calços, peças largas) continua
+ * valendo. O que não vai pro papel é o que mora nas folhas: o caos, a marca
+ * d'água, as abas. No lugar, o rodapé de cada capítulo e o número da página.
+ * O botão "Baixar PDF" (Folhear.tsx) carrega as artes e troca pro papel dia
+ * antes de chamar a impressão; o modo contínuo imprime como sempre.
+ */
+@page {
+  size: 816px 1056px;
+  margin: 62px 60px 84px;
+  background: #f7f3ea;
+}
+
 @media print {
-  .folhear[data-modo] {
+  .folhear[data-modo="livro"] {
     background: none !important;
   }
 
-  .folhear .folhear-mesa,
-  .folhear .folhear-palco,
-  .folhear .folhear-dimensao,
-  .folhear .folhear-livro,
-  .folhear .folhear-janela,
-  .folhear .folhear-faixa,
-  .folhear .folhear-fluxo,
-  .folhear .folhear-fluxo > * {
+  html,
+  html body {
+    background: #f7f3ea !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  html:has(.folhear[data-papel="dia"]),
+  html:has(.folhear[data-papel="dia"]) body {
+    background: #f7f3ea !important;
+  }
+
+  .folhear[data-modo="livro"] :is(.folhear-mesa, .folhear-palco, .folhear-dimensao, .folhear-livro, .folhear-janela, .folhear-faixa) {
     position: static !important;
     display: block !important;
     width: auto !important;
     height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
     overflow: visible !important;
     visibility: visible !important;
     transform: none !important;
+    translate: none !important;
+    scale: none !important;
+    /* O livro fechado na capa desliza (translate, com transição) e corta a
+       metade esquerda (clip-path): no papel, nada disso. */
+    clip-path: none !important;
+    transition: none !important;
+    border: 0 !important;
     box-shadow: none !important;
     background: none !important;
+  }
+
+  .folhear[data-modo="livro"] :is(.folhear-barra, .folhear-folhas, .folhear-abas, .folhear-seta, .folhear-regua, .folhear-indice, .folhear-indice-fundo, .folhear-busca),
+  .folhear[data-modo="livro"] .folhear-livro::before,
+  .folhear[data-modo="livro"] .folhear-livro::after {
+    display: none !important;
+  }
+
+  /* O fluxo sem as colunas de fora (quem vira a página é o papel); cada
+     capítulo com as duas colunas dele, em página nova. Em mídia paginada o "balance"
+     enche coluna por coluna e só equilibra a última página: com "auto"
+     e sem altura, a primeira coluna nunca fechava. */
+  .folhear[data-modo="livro"] .folhear-fluxo {
+    position: static !important;
+    width: 696px !important;
+    height: auto !important;
+    column-count: auto !important;
     columns: auto !important;
   }
 
-  .folhear .folhear-folhas,
-  .folhear .folhear-abas,
-  .folhear .folhear-sumario,
-  .folhear .folhear-guarda,
-  .folhear .folhear-livro::after {
+  .folhear[data-modo="livro"] .folhear-fluxo > :not(.folhear-fim) {
+    break-before: page;
+    column-fill: balance !important;
+  }
+
+  .folhear[data-modo="livro"] .folhear-fluxo > .folhear-fantasma {
     display: none !important;
   }
+
+  /* A folha de rosto: a altura da mancha, e o que passar dela cresce. */
+  .folhear[data-modo="livro"] .folhear-fluxo > .folhear-rosto {
+    height: auto !important;
+    min-height: 900px;
+    column-count: auto !important;
+  }
+
+  /* A abertura do capítulo sangra pra cima na tela; no papel, começa na página dela. */
+  .folhear[data-modo="livro"] .folhear-fluxo .livro-abertura {
+    margin-top: 0 !important;
+  }
+
+  /* A cópia desfocada por trás das artes é decoração de tela, e cada uma vira
+     uma imagem enorme dentro do PDF: no papel, sai. */
+  .folhear[data-modo="livro"] :is(.livro-imagem-fundo, .livro-fecho-fundo, img.blur-2xl, .folhear-capa-fundo) {
+    display: none !important;
+  }
+
+  .folhear[data-modo="livro"] :is(.livro-fecho-quadro, .livro-imagem-inteira) {
+    background: none !important;
+  }
+
+  /* Capa e guarda: a arte dentro da mancha, inteira. */
+  .folhear[data-modo="livro"] .folhear-fluxo > :is(.folhear-capa, .folhear-guarda) {
+    display: block !important;
+    height: 905px !important;
+    background: center / contain no-repeat;
+  }
+
+  .folhear[data-modo="livro"] .folhear-fluxo > .folhear-capa {
+    background-image: url("/impressao/livro/capa/capa.jpg");
+  }
+
+  .folhear[data-modo="livro"] .folhear-fluxo > .folhear-guarda {
+    background-image: url("/impressao/livro/capa/guarda.jpg");
+  }
+
+  /* O rodapé de cada capítulo: a página nomeada leva o nome dele. */
+  .folhear-fluxo > [data-capitulo="cap0"] { page: cap0; }
+  .folhear-fluxo > [data-capitulo="cap1"] { page: cap1; }
+  .folhear-fluxo > [data-capitulo="cap2"] { page: cap2; }
+  .folhear-fluxo > [data-capitulo="cap3"] { page: cap3; }
+  .folhear-fluxo > [data-capitulo="cap4"] { page: cap4; }
+  .folhear-fluxo > [data-capitulo="cap5"] { page: cap5; }
+  .folhear-fluxo > [data-capitulo="apendices"] { page: apendices; }
 }
+
+@page {
+  @bottom-right {
+    content: counter(page);
+    color: #5d616e;
+    font: 700 11px "Barlow Condensed", "Arial Narrow", sans-serif;
+    letter-spacing: 0.1em;
+  }
+}
+
+@page cap0 { @bottom-left { content: "COMECE AQUI"; color: #c9742a; font: 700 9px "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.25em; } }
+@page cap1 { @bottom-left { content: "CAPÍTULO 1 — O NÚCLEO DO SISTEMA"; color: #2f6fb3; font: 700 9px "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.25em; } }
+@page cap2 { @bottom-left { content: "CAPÍTULO 2 — AS LEIS DA MAGIA"; color: #6546b8; font: 700 9px "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.25em; } }
+@page cap3 { @bottom-left { content: "CAPÍTULO 3 — ÁRVORES DE PROGRESSÃO"; color: #22805a; font: 700 9px "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.25em; } }
+@page cap4 { @bottom-left { content: "CAPÍTULO 4 — COMBATE E SOBREVIVÊNCIA"; color: #c43c3c; font: 700 9px "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.25em; } }
+@page cap5 { @bottom-left { content: "CAPÍTULO 5 — ENTRE AVENTURAS"; color: #a8740f; font: 700 9px "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.25em; } }
+@page apendices { @bottom-left { content: "APÊNDICES"; color: #4e6377; font: 700 9px "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.25em; } }
 
 /* ═══ O cabeçalho de cada árvore, por família ════════════════════════════
  * Três famílias, três jeitos de falar — o autor pediu que cada árvore

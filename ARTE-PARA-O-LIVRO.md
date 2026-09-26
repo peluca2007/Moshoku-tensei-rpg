@@ -142,6 +142,9 @@ o que serve é um **laço curto**:
 
 ## O que eu faço com cada coisa
 
+- **Toda arte nova:** `npm run gerar:impressao` faz a cópia JPEG dela em `public/impressao/`, que é a que entra no
+  PDF do livro (o PDF não conhece WebP, e sem a cópia cada arte entraria enorme).
+
 - **Raças:** entram sozinhas pelo nome do arquivo (ver Prioridade 1). Eu só confiro o recorte.
 - **Aberturas e capa:** arte sangrando de margem a margem no alto da página, com o número vazado e o kanji
   do capítulo por cima, e a sombra da cor do capítulo fora de registro.

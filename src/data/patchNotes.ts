@@ -27,6 +27,8 @@ export const PATCH_NOTES: PatchNote[] = [
           "Toda árvore e toda habilidade citada no texto aparece na cor da árvore, com o selo dela, e leva ao catálogo.",
           "Página sem buraco: selo carimbado no vão antes de uma tabela larga, empurrões e calços velhos desfeitos, tabela larga que abriria buraco volta pra coluna, última linha de tabela nunca sozinha.",
           "A vitrine das dezenove árvores são os selos, e o fecho de capítulo mostra a arte inteira.",
+          "Baixar PDF: o botão na barra do livro imprime com a mesma página (Carta, duas colunas, o rodapé de cada capítulo), no papel dia e com texto selecionável — cerca de 280 páginas em ~23 MB.",
+          "O Laboratório de Fórmulas cabe na tela, sem rolar.",
         ],
       },
       {

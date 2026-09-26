@@ -104,7 +104,7 @@ export function CastingBreakdown({ ability, compacta = false }: { ability: Abili
     }
     return (
       <dl
-        className={`livro-formas print-hide mt-2 grid ${formas.length === 3 ? "grid-cols-3" : "grid-cols-2"} divide-x divide-parchment-300 border-y border-parchment-300 text-center dark:divide-parchment-800 dark:border-parchment-800`}
+        className={`livro-formas mt-2 grid ${formas.length === 3 ? "grid-cols-3" : "grid-cols-2"} divide-x divide-parchment-300 border-y border-parchment-300 text-center dark:divide-parchment-800 dark:border-parchment-800`}
       >
         {formas.map(([nome, valor, nota]) => (
           <div key={nome} title={nota} className="px-1 py-1">

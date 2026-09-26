@@ -26,7 +26,8 @@
     "casar:midia": "tsx scripts/casar-midia.mts",
     "tela": "node scripts/tela.mjs",
     "revisar:livro": "node scripts/revisar-livro.mjs",
-    "gerar:caos": "node scripts/gerar-caos.mjs"
+    "gerar:caos": "node scripts/gerar-caos.mjs",
+    "gerar:impressao": "node scripts/gerar-impressao.mjs"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",
