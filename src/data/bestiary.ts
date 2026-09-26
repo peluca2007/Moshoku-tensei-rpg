@@ -921,7 +921,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         area: false,
         tipo: "ataque",
         aplicaVeneno: true,
-        nota: "Alvo atingido faz teste de Vigor CD 15 ou fica Envenenado até o fim do próximo turno dele; faz outro teste de Vigor CD 14 e, na falha, contrai Fel de Wyvern (Cap. 4, §8 — aflição de Rank 3).",
+        nota: "Ao acertar: Vigor CD 15 ou Envenenado até o fim do próximo turno; Vigor CD 14 ou contrai Fel de Wyvern (Cap. 4, §8).",
       },
     ],
   },
