@@ -1,22 +1,7 @@
 import Link from "next/link";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 
-/**
- * "Comece Aqui" — a porta de entrada do livro (2026-09-03).
- *
- * Até esta data o livro abria no Capítulo 1, §1, "Criação de Personagem e
- * Atributos", com a frase "o sistema utiliza 5 atributos principais". Quem
- * nunca jogou isto abria a primeira página e a primeira coisa que via era uma
- * decisão de ficha — antes de saber o que é um turno, o que é uma Ação, ou o
- * que o jogo pede que ele faça.
- *
- * O resto do livro é denso de propósito: ele é referência de mesa, e referência
- * de mesa é feita pra ser consultada no meio de uma sessão, não lida em ordem.
- * Este capítulo é o oposto disso: ele é feito pra ser lido uma vez, do começo ao
- * fim, em cinco minutos, e nunca mais. Tudo que está aqui está repetido com
- * precisão em algum outro lugar — aqui está a versão curta e errada nos
- * detalhes; lá está a certa.
- */
+/** Introdução curta às regras; os capítulos seguintes trazem os detalhes. */
 export default function Chapter0() {
   return (
     <div className="space-y-8">
@@ -86,16 +71,13 @@ export default function Chapter0() {
           items={[
             <span key="a"><b>Andar</b> — 1 Ação, até 9 metros.</span>,
             <span key="b"><b>Atacar</b> — 1 Ação. Rola 1d20 + atributo + o maior Bônus de Rank entre suas árvores do Corpo (+0 se não tiver nenhuma) contra a CA do alvo. Técnica nomeada usa o Rank da árvore que a ensinou.</span>,
-            <span key="c"><b>Conjurar</b> — de 2 a 6 Ações conforme o rank da magia: Principiante e Intermediário 2, Avançado e Santo 3, Rei e Imperador 4, e as quatro Grandes Obras 5 ou 6 (Encurtada e Silenciosa custam menos, Cap. 2). Pode ser dividido entre turnos: do Avançado em diante, já passa de um turno se você também se mover.</span>,
+            <span key="c"><b>Conjurar</b> — de 2 a 6 Ações conforme o rank da magia: Principiante e Intermediário 2, Avançado e Santo 3, Rei e Imperador 4, e as seis Grandes Obras 5 ou 6 (Encurtada e Silenciosa custam menos, Cap. 2). Pode ser dividido entre turnos: do Avançado em diante, já passa de um turno se você também se mover.</span>,
             <span key="d"><b>Usar item, ajudar, se esconder, esquivar</b> — 1 Ação cada.</span>,
           ]}
         />
         <Aside title="Não existe ação bônus">
-          As exceções são poucas, todas nomeadas, e todas moram na mesma lista fechada: o quadro{" "}
-          <b>&ldquo;Silenciosa sem gastar Ação&rdquo;</b> do Cap. 2, §2 — a primeira Conjuração Silenciosa de
-          rank Principiante de cada turno (todo mundo), o Prodígio do Gênio e as Maestrias de Imperador de
-          Água, Fogo, Vento e Cura. Se uma habilidade parece dar ação bônus e não está naquele quadro, é erro
-          de texto.
+          Existem efeitos que a própria carta marca <b>&ldquo;sem gastar Ação&rdquo;</b>, sempre com um limite escrito.
+          <b> Conjurar</b> sem gastar Ação só acontece nas fontes do quadro do Cap. 2, §2.
         </Aside>
 
         <SubTitle id="cap0-exemplo">Uma rodada, jogada de verdade</SubTitle>
@@ -114,7 +96,7 @@ export default function Chapter0() {
             [
               "Borg (Deus do Norte, Principiante)",
               "Chuta areia no segundo lobo e ataca com o machado.",
-              "O chute é o Improviso da Maestria dele — 1 Ação, rola com Vantagem, o lobo fica Cego até o fim do turno. Ataca com Vantagem (alvo Cego): 1d10 + Força 3 + Rank 1.",
+              "O chute é o Improviso da Maestria (1 Ação, uma vez por combate): o lobo testa Agilidade com Desvantagem contra CD 8 + Força 3 + Rank 1 = 12, falha e fica Cego até o fim do próximo turno dele. Borg ataca com Vantagem (alvo Cego): 1d10 + 3 + 1.",
             ],
             [
               "Lobo (turno dele)",
@@ -124,7 +106,7 @@ export default function Chapter0() {
             [
               "Rodada 2 — Elina",
               "Impacto de Gelo no lobo Molhado.",
-              "O dano de frio DOBRA contra Molhado. 1d4 contundente + 1d6 de frio vira 1d4 + 2d6, e o lobo cai.",
+              "O frio dobra contra Molhado: 1d8 + 5 vira 2d8 + 5, passe ele no teste ou não, e o lobo cai.",
             ],
           ]}
         />
@@ -157,7 +139,7 @@ export default function Chapter0() {
             ["2", "Role o Antecedente (1d100)", "Sua infância. Decide perícias, traços e quanto ouro você começa com."],
             ["3", "Distribua 2 pontos de atributo", "Só dois. Você pode baixar um atributo a -1 e outro a -2 pra ganhar mais três — mas leia o aviso sobre o Vigor antes."],
             ["4", "Escolha a Árvore Inicial", "A mais importante das seis decisões: ela dá o seu kit grátis, as suas perícias iniciais, e define o que você faz numa luta."],
-            ["5", "Gaste os 3 PA iniciais", "A Árvore Inicial abre de graça — ela é a sua 1ª árvore, e o Custo de Abertura da 1ª é zero (Cap. 1, §8). Os 3 PA compram magias, técnicas, talentos, perícias ou atributos."],
+            ["5", "Gaste os PA iniciais", "Gaste os PA iniciais — 3, ou 2 se a mesa escolheu em vez de sortear. A Árvore Inicial abre de graça (Cap. 1, §8); os PA compram magias, técnicas, talentos, perícias ou atributos."],
             ["6", "Anote PV, PM, CA", "Ou deixe o site calcular. As fórmulas estão no Cap. 4, §1."],
           ]}
         />
