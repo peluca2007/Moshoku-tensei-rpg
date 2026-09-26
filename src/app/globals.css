@@ -328,6 +328,40 @@ h3 {
 }
 
 /*
+ * A carta anotada do Cap. 3 ("A carta de uma habilidade"): cada parte da carta
+ * ganha o número do item da legenda logo abaixo, na margem esquerda. A carta é
+ * a de verdade (EntryCard); os números moram só aqui.
+ */
+.livro-anatomia .livro-verbete {
+  position: relative;
+  padding-left: 2.1em;
+}
+
+.livro-anatomia :is(.livro-verbete > div:first-child, .livro-verbete-alcance, .livro-verbete-efeito, .livro-formas, .livro-cantico) {
+  position: relative;
+}
+
+.livro-anatomia :is(.livro-verbete > div:first-child, .livro-verbete-alcance, .livro-verbete-efeito, .livro-formas, .livro-cantico)::after {
+  position: absolute;
+  top: 0.15em;
+  left: -2.3em;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 9999px;
+  background: var(--cor, var(--color-gold-500));
+  color: var(--sobre-cor, #111114);
+  font: 800 calc(var(--fonte, 14px) * 0.7) / 1.5em var(--font-livro-grito, var(--font-geist-sans)), system-ui, sans-serif;
+  text-align: center;
+  text-indent: 0;
+}
+
+.livro-anatomia .livro-verbete > div:first-child::after { content: "1"; }
+.livro-anatomia .livro-verbete-alcance::after { content: "2"; }
+.livro-anatomia .livro-verbete-efeito::after { content: "3"; }
+.livro-anatomia .livro-formas::after { content: "4"; }
+.livro-anatomia .livro-cantico::after { content: "5"; }
+
+/*
  * A PÁGINA — a folha em que o livro é impresso (2026-09-23).
  *
  * Até aqui o livro inteiro morava num cartão: `rounded-2xl`, borda nos quatro

@@ -59,6 +59,8 @@ import {
   segurarTitulos,
   soltarTitulos,
   limparCalcosInuteis,
+  soltarEmpurroesVelhos,
+  preencherBuracos,
 } from "./diagramacao";
 
 /**
@@ -408,10 +410,15 @@ export default function Folhear({
       for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx)) > 0; rodada++) {
         for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
       }
+      // E o empurrão que ficou velho (o bloco já cabia onde estava) sai.
+      if (soltarEmpurroesVelhos(f, g, regua(fx)) > 0) {
+        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+      }
     });
     esquecerIndice(f);
     medir("cabecalhos", () => repetirCabecalhos(f));
     medir("vitrines", () => esticarVitrines(f, g, regua(fx)));
+    medir("vinhetas", () => preencherBuracos(f, g, regua(fx)));
     const r = regua(fx);
     const p = medir("medir", () => medirPaginas(f, fim.current!, r, g, toc));
     const total = Math.ceil(p.total / porDupla);

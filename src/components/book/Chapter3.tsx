@@ -5,6 +5,7 @@ import { RANK_BONUS, RANKS } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diagramas";
 import TreeCatalog from "./TreeCatalog";
+import EntryCard from "./EntryCard";
 import RetratoDaArvore from "./RetratoDaArvore";
 import Prancha from "./Prancha";
 import VitrineDasArvores from "./VitrineDasArvores";
@@ -18,6 +19,13 @@ import TreeCrest from "../TreeCrest";
  *   de montar custava uma diagramação a mais do livro todo (~0,6 s). As
  *   árvores saem marcadas, e o modo contínuo do folhear as fecha de novo.
  */
+/** O exemplo da legenda "A carta de uma habilidade". Se a Bola de Fogo sair do Fogo, o livro não abre sem exemplo: quebra aqui. */
+const BOLA_DE_FOGO = (() => {
+  const bola = TREES.find((t) => t.id === "fogo")?.ranks.flatMap((r) => r.abilities).find((a) => a.id === "bola-de-fogo");
+  if (!bola) throw new Error("Cap. 3: a legenda da carta usa a Bola de Fogo, que sumiu da árvore do Fogo.");
+  return bola;
+})();
+
 export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: boolean } = {}) {
   const rankLabelTrees = TREES.filter((t) => t.rankLabels);
 
@@ -103,6 +111,39 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             />
           </div>
         ))}
+
+        <SubTitle id="cap3-carta">A carta de uma habilidade</SubTitle>
+        <P>
+          Todo talento, técnica e magia do catálogo vem no mesmo molde, e a mesa lê a carta no meio do turno.
+          Esta é a <b>Bola de Fogo</b>, a magia assinatura do Fogo Principiante, de cima pra baixo:
+        </P>
+        <figure className="diagrama livro-anatomia my-5 rounded-2xl border border-gold-500/25 bg-gradient-to-br from-parchment-100/80 to-parchment-200/40 p-4 shadow-sm dark:border-gold-600/20 dark:from-parchment-900/70 dark:to-parchment-950/60">
+          <EntryCard kind="ability" def={BOLA_DE_FOGO} rank="Principiante" />
+        </figure>
+        <ol className="livro-anatomia-legenda list-decimal space-y-1 pl-5 text-parchment-700 dark:text-parchment-300">
+          <li>
+            <b>Nome e preço.</b> O ◆ marca a assinatura do rank (Cap. 1, §3). Depois do travessão vem o tipo,
+            o custo em PA pra aprender e o que ela gasta a cada uso: PM, PT ou PP.
+          </li>
+          <li>
+            <b>Alcance</b>, quando ela tem um.
+          </li>
+          <li>
+            <b>Efeito e dano.</b> O texto é a regra. Toda condição citada (Em Chamas, Molhado, Atolado…) está
+            no Glossário de Condições (Cap. 4, §2).
+          </li>
+          <li>
+            <b>As três formas</b> e quantas Ações cada uma custa. <b>Padrão</b>: o efeito inteiro.{" "}
+            <b>Encurtada</b>: metade do dano (ou da duração) e área um terço menor. <b>Silenciosa</b>: o mesmo
+            corte da Encurtada e mais um bônus de forma de graça — dobrar o alcance, mudar o formato da área ou
+            segurar o disparo por até 1 turno. Um <b>—</b> diz que a forma não existe nesta magia: Ritual não
+            encurta, e no Imperador não há Encurtada. A regra inteira está no Cap. 2, §2 e §3.
+          </li>
+          <li>
+            <b>O cântico</b>, recitado inteiro na forma Padrão. O selo logo abaixo diz o que a Recitação
+            Perfeita paga nesta magia (Cap. 2, §2).
+          </li>
+        </ol>
       </Section>
 
       <Section>

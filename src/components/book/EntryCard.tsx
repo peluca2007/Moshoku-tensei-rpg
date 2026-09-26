@@ -61,7 +61,7 @@ export default function EntryCard({
         </p>
         {ability && <RitualBadge ability={ability} />}
       </div>
-      {ability?.range && <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">Alcance: {ability.range}</p>}
+      {ability?.range && <p className="livro-verbete-alcance mt-1 text-xs text-parchment-600 dark:text-parchment-400">Alcance: {ability.range}</p>}
       {/*
         O efeito passa pelo reconhecedor de condições (0.1.23): "o alvo fica
         Envenenado" vira um verbete que abre ali mesmo, em vez de mandar a mesa
@@ -77,10 +77,10 @@ export default function EntryCard({
       {condicoesCitadas(description).length > 0 ? (
         <ProsaComCondicoes
           texto={description}
-          className="mt-1 block leading-relaxed text-parchment-700 dark:text-parchment-300"
+          className="livro-verbete-efeito mt-1 block leading-relaxed text-parchment-700 dark:text-parchment-300"
         />
       ) : (
-        <p className="mt-1 leading-relaxed text-parchment-700 dark:text-parchment-300">{description}</p>
+        <p className="livro-verbete-efeito mt-1 leading-relaxed text-parchment-700 dark:text-parchment-300">{description}</p>
       )}
       {ability?.damage && (
         <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">
@@ -88,7 +88,7 @@ export default function EntryCard({
           {ability.damage.encurtada && <> · Encurtada: {ability.damage.encurtada}</>}
         </p>
       )}
-      {ability && <CastingBreakdown ability={ability} />}
+      {ability && <CastingBreakdown ability={ability} compacta />}
       {ability && <IncantationBlock ability={ability} rank={rank} />}
       {/* Talento também pode ter arte desde a 0.1.69 — a chave é `treeId/id`,
           e um teste garante que talento e habilidade nunca disputam um id. */}

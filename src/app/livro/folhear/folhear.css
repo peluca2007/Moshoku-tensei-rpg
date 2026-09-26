@@ -1338,6 +1338,12 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   break-after: avoid;
 }
 
+/* A última linha nunca vai sozinha pra página seguinte: com o cabeçalho
+   repetido, era uma tabela inteira de uma linha só ("Deus · Narrativa"). */
+.folhear-fluxo .livro-tabela tbody tr:last-child {
+  break-before: avoid;
+}
+
 /* Tabela que não cabe na coluna: primeiro a letra diminui, depois a palavra
    pode quebrar na borda da célula. Nunca invade a coluna vizinha. */
 .folhear-fluxo table.folhear-tabela-justa {
@@ -1514,7 +1520,15 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   line-height: 1.5;
 }
 
+/* O cabeçalho (nome + tipo e custo) nunca parte no meio, e nem ele nem o
+   alcance ficam no pé da coluna longe do texto: o nome era a linha que sobrava
+   sozinha no fim da página, com o "— Talento · 4 PA" abrindo a seguinte. */
 .folhear-fluxo .livro-verbete > div:first-child {
+  break-inside: avoid;
+  break-after: avoid;
+}
+
+.folhear-fluxo .livro-verbete-alcance {
   break-after: avoid;
 }
 
@@ -1561,6 +1575,53 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   padding-top: 0.3em;
   border-top: 1px dashed var(--fio);
   font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+}
+
+/* A carta anotada do Cap. 3: a margem da carta guarda os números da legenda
+   (globals.css). */
+.folhear-fluxo figure.livro-anatomia {
+  padding: 0.85em 1em 0.95em 0.6em;
+}
+
+.folhear-fluxo .livro-anatomia .livro-verbete {
+  margin-top: 0;
+  padding-left: 2.1em;
+}
+
+/* As três formas de conjurar: um quadrinho de ficha, três casas, só o custo
+   em Ações. O que cada forma faz está no Cap. 2 e na legenda do Cap. 3. */
+.folhear-fluxo .livro-verbete .livro-formas {
+  display: grid;
+  margin-top: 0.6em;
+  padding: 0;
+  border: 0;
+  border-block: 1px solid color-mix(in srgb, var(--cor) 38%, transparent);
+  break-inside: avoid;
+}
+
+.folhear-fluxo .livro-formas > div {
+  padding: 0.28em 0.3em 0.32em;
+  border: 0;
+}
+
+.folhear-fluxo .livro-formas > div + div {
+  border-left: 1px solid var(--fio);
+}
+
+.folhear-fluxo .livro-formas dt {
+  color: var(--tinta-suave);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 0.6em;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+}
+
+.folhear-fluxo .livro-formas dd {
+  color: var(--tinta);
+  font-size: 0.84em;
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 /* ── A guarda: uma prancha colorida de página inteira ─────────────────── */
@@ -4387,4 +4448,40 @@ html.livro-imersivo {
   height: 100%;
   object-fit: cover;
   object-position: center 30%;
+}
+
+/* ── A vinheta: o selo no buraco antes de uma peça larga ──────────────────
+ * Quando o que vem antes de uma tabela ou arte que atravessa a página não
+ * parte (uma caixa, um diagrama), a segunda coluna ficava com um buraco em
+ * cima da peça. A diagramação (preencherBuracos) põe ali esta vinheta, do
+ * tamanho do vão: o selo do capítulo ou da árvore, carimbado e torto, entre
+ * dois fios da cor dela. */
+.folhear-fluxo .folhear-vinheta {
+  --lado: min(150px, calc(var(--alto, 120px) * 0.6));
+  --fio-vinheta: color-mix(in srgb, var(--cor) 40%, transparent);
+  display: grid;
+  margin: 0;
+  place-items: center;
+  background:
+    linear-gradient(var(--fio-vinheta), var(--fio-vinheta)) left center / calc(50% - var(--lado) / 2 - 18px) 1px no-repeat,
+    linear-gradient(var(--fio-vinheta), var(--fio-vinheta)) right center / calc(50% - var(--lado) / 2 - 18px) 1px no-repeat;
+  break-inside: avoid;
+  pointer-events: none;
+}
+
+.folhear-fluxo .folhear-vinheta::before {
+  content: var(--selo, "✦");
+  display: grid;
+  width: var(--lado);
+  height: var(--lado);
+  place-items: center;
+  border: 2px solid color-mix(in srgb, var(--cor) 80%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--cor) 35%, transparent);
+  outline-offset: 5px;
+  color: color-mix(in srgb, var(--cor) 85%, transparent);
+  font-family: var(--font-livro-kanji);
+  font-size: calc(var(--lado) * 0.56);
+  font-weight: 800;
+  line-height: 1;
+  transform: rotate(-5deg);
 }
