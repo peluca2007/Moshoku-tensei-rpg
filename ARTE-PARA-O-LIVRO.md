@@ -32,13 +32,23 @@ Ficaram de fora, por enquanto: `AstofeCooll.jpeg`, `Badigadi.jpg`, `Orsted.webp`
 **Personagem de fundo transparente:** salve como `<id>.recorte.webp` (ou `.png`). Ele entra inteiro, de pé
 sobre a trama da cor, com a sombra deslocada; sem o `.recorte`, a imagem é uma cena e preenche o quadro.
 
+### Segundo lote (2026-09-25, noite)
+
+A capa (`capa/capa.webp`), a Raça do Oceano, os retratos de 13 árvores (as 19 agora têm), as pranchas que
+quebram o padrão da página (`pranchas/<id>`: Deus do Norte, Deus da Água, Punho do Fogo, Arquearia,
+Cavalaria, Espíritos e Feras, Teórica, a Oficina de Fórmulas e o Triângulo dos Estilos) e 12 artes de
+habilidade (Cura, Teórica e Invocação, em `public/arte/`).
+
+**O livro escolhe o enquadramento sozinho:** arte em pé num quadro deitado, ou pequena demais pro quadro,
+entra inteira com uma cópia desfocada dela preenchendo as laterais — nada de cabeça cortada nem imagem
+esticada até borrar. Prancha larga e grande atravessa a página; prancha em pé ou pequena fica na coluna.
+Mesmo assim, **resolução ajuda**: a abertura do Cap. 1 (Eris e Rudeus) tem 592 px e é mostrada com 816 —
+a mesma cena, ou outra, com 1600 px ou mais, fica muito melhor.
+
 ## Prioridade 1 — o que ainda falta nas raças e nas árvores
 
-- `public/livro/racas/oceano.webp` — a Raça do Oceano é a única raça sem arte.
-- `public/livro/arvores/<id>.webp` — as outras 13 árvores ainda abrem sem retrato: `fogo`, `vento`,
-  `desintoxicacao`, `teorica`, `invocacao`, `deus-da-agua-corpo`, `armas-pesadas`, `cavalaria-e-escudos`,
-  `vendaval`, `punho-de-fogo`, `arquearia`, `bardo-e-interacao`, `navegacao-e-lideranca`. Quem encarna a
-  escola: um personagem de pé (de preferência de fundo branco ou transparente), ou uma cena.
+- Todas as raças e árvores já têm arte. Falta só resolução: `capitulos/abertura-cap1` (592 px).
+- `public/livro/arvores/fogo.webp` — a Magia de Fogo é a única árvore sem retrato.
 
 ## As doze raças (entram sozinhas)
 

@@ -456,7 +456,38 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
     alt: "Um time inteiro caindo de uma vez num cerco que já estava montado antes de ele chegar.",
   },
 
+  // --- Magia de Cura (2026-09-25, segundo lote do autor) -------------------
+  "cura/cura": {
+    src: "/arte/cura/cura.webp",
+    alt: "Uma luz verde acendendo entre duas pessoas no escuro da floresta.",
+  },
+  "cura/mao-que-acalma": {
+    src: "/arte/cura/mao-que-acalma.webp",
+    alt: "Uma mãe de olhos fechados cercada de luz verde, curando o bebê no colo.",
+  },
+  "cura/restauracao": {
+    src: "/arte/cura/restauracao.webp",
+    alt: "Uma maga de trança põe a mão num tronco cortado, e a árvore volta a crescer no pomar.",
+  },
+  "cura/luz-absoluta": {
+    src: "/arte/cura/luz-absoluta.webp",
+    alt: "Um jovem erguendo o cajado num corredor escuro, e a luz azul varrendo a casa inteira.",
+  },
+
   // --- Invocação -----------------------------------------------------------
+  // 2026-09-25: as três cenas do segundo lote do autor, olhadas quadro a quadro.
+  "invocacao/pacto-fogo-fatuo": {
+    src: "/arte/invocacao/pacto-fogo-fatuo.webp",
+    alt: "Uma luz invocada acendendo no escuro de uma caverna e clareando o caminho do grupo.",
+  },
+  "invocacao/troca-de-lugares": {
+    src: "/arte/invocacao/troca-de-lugares.webp",
+    alt: "Um portal roxo se abrindo num clarão, e alguém atravessando de um ponto a outro num instante.",
+  },
+  "invocacao/pacto-fera-ancestral": {
+    src: "/arte/invocacao/pacto-fera-ancestral.webp",
+    alt: "Um jovem de boné diante de um dragão branco gigantesco, desenhado em traço vermelho por trás dele.",
+  },
   "invocacao/maestria": {
     src: "/arte/invocacao/maestria.gif",
     alt: "Um círculo mágico se desenhando no chão e acendendo por inteiro.",
@@ -605,6 +636,28 @@ export const MIDIA_DE_HABILIDADE: Record<string, MidiaDeHabilidade> = {
   },
 
   // --- Ramo defensivo da Magia Teórica -----------------------------------
+  // 2026-09-25: as antigas cenas de barreira do autor, casadas com as cartas da
+  // Teórica que elas mostram (olhadas quadro a quadro, não pelo nome).
+  "teorica/anteparo-teorico": {
+    src: "/arte/teorica/anteparo-teorico.webp",
+    alt: "Uma fera se chocando contra um círculo que acende no ar e a para no meio do salto.",
+  },
+  "teorica/recinto-teorico": {
+    src: "/arte/teorica/recinto-teorico.webp",
+    alt: "Um círculo roxo se fechando em volta de alguém e prendendo-o no meio do desenho.",
+  },
+  "teorica/leitura-de-trama-teorica": {
+    src: "/arte/teorica/leitura-de-trama-teorica.webp",
+    alt: "Uma mão tocando uma névoa na floresta; os anéis do encanto aparecem e revelam as ruínas escondidas atrás dele.",
+  },
+  "teorica/memoria-de-runa": {
+    src: "/arte/teorica/memoria-de-runa.webp",
+    alt: "Folhas de papel cobertas de diagramas de círculos e selos, espalhadas sobre a mesa.",
+  },
+  "teorica/cidade-de-glifos": {
+    src: "/arte/teorica/cidade-de-glifos.webp",
+    alt: "Um diagrama enorme de círculos e glifos ligados entre si, desenhado sobre várias folhas.",
+  },
   "teorica/selo-de-rejeicao": {
     src: "/arte/teorica/selo-de-rejeicao.gif",
     alt: "Um círculo de luz se fechando no ar e barrando a magia que vinha de fora.",

@@ -50,6 +50,18 @@ em `src/data/` e `src/components/book/`; esta frente mexe em **como** o livro é
   raças em página inteira, antecedentes em fichas com retrato, retrato no alto do catálogo da árvore.
 - **Ferramenta interativa no livro:** a Oficina de Fórmulas (Magia Teórica) é de tela inteira; no livro a
   página mostra a chamada e o laboratório abre por cima, num painel.
+- **O livro fechado:** a primeira dupla mostra só a capa, centrada na mesa (a metade esquerda é uma
+  página fantasma); ao virar, o livro desliza pro centro e abre na guarda (a paisagem) de frente pra folha
+  de rosto. No celular, uma página por vez, a primeira é a capa.
+- **Pranchas:** a arte que quebra o padrão da página (`public/livro/pranchas/<id>`), no fim do catálogo de
+  cada árvore e em algumas seções. Faixa de margem a margem quando a arte é larga e grande; coluna, no
+  formato da própria arte, quando não é. Se a faixa deixaria buraco, volta pra coluna (`acomodarPranchas`).
+- **Enquadramento automático:** o livro lê o tamanho de cada arte e, se cortar arrancaria a cabeça ou
+  ampliar borraria, mostra a arte inteira com uma cópia desfocada preenchendo o quadro. A arte das
+  habilidades segue a mesma regra (antes o livro cortava a cena pra preencher).
+- **Vitrines que preenchem buraco:** a das doze raças (antes das páginas de raça) e a das dezenove
+  árvores (no fim do Mapa Completo) esticam até o pé da página ou da coluna.
+- **Sem fecho de capítulo no livro:** o kanji e o botão "próximo capítulo" servem ao site, que rola.
 - **Nada do livro antigo:** as paletas do site (pergaminho, vinho, dourado) são redefinidas dentro do
   livro — o pergaminho vira a escala neutra do papel, o vinho e o dourado viram a cor do capítulo, da
   árvore ou da raça. Todo componente que vem do site adota a identidade sem ser reescrito.
@@ -109,6 +121,20 @@ O CSS do livro mora em `src/app/livro/folhear/folhear.css`, importado só pela r
   `perspective` no livro (4–8 s por repintura), os diagramas/vídeos/pílulas animando fora da vista (~1 s
   por folha virada) e as fontes japonesas (366 arquivos de fonte baixados).
 - **Navegadores:** Chrome e Firefox. **Safari (iPhone/iPad) não verificado.**
+
+## Revisão página a página: `npm run revisar:livro`
+
+Abre o livro num Chrome sem janela, mede o livro inteiro e fotografa todas as duplas em `.telas/revisao/`
+(fotos, folhas de contato de quatro duplas e um `index.html` com os problemas de cada página). Confere:
+título separado do texto, bloco passando da coluna ou da página, página com mais de 18% da mancha vazia,
+arte que não carregou, arte ampliada mais de 1,6× e arte cortada mostrando menos de 45% dela. Sai com
+erro se houver título separado, estouro ou arte quebrada — rodar antes de subir qualquer mudança no
+livro. `BASE=http://localhost:3010 npm run revisar:livro` pra olhar o servidor da porta 3010;
+`-- --papel dia` pro papel claro; `-- --sem-fotos` só pras medições.
+
+O caos das páginas é gerado por `npm run gerar:caos` (`scripts/gerar-caos.mjs`): mudou um motivo, gera de
+novo. As peças não se sobrepõem (cada uma tem um raio e o sorteio procura lugar livre) e ficam puxadas pra
+dentro da página.
 
 ## Próximas etapas
 

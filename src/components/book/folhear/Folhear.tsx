@@ -34,7 +34,7 @@ import { useRouter } from "next/navigation";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
 import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } from "./buscaNoLivro";
-import { ARTE_DA_FOLHA_DE_ROSTO } from "../arteDasAberturas";
+import { ARTE_DA_FOLHA_DE_ROSTO, CAPA as ARTE_DA_CAPA } from "../arteDasAberturas";
 import {
   type Geometria,
   type Paginacao,
@@ -44,6 +44,7 @@ import {
   ajustarFigurasLargas,
   ajustarTabelasLargas,
   calcularGeometria,
+  acomodarPranchas,
   espalharTabelasEspremidas,
   esticarVitrines,
   limparCabecalhosRepetidos,
@@ -398,6 +399,7 @@ export default function Folhear({
     medir("tabelas-largas", () => espalharTabelasEspremidas(f, g, regua(fx)));
     medir("caixas", () => segurarCaixasCurtas(f, g, regua(fx)));
     medir("tabelas-apertar", () => ajustarTabelasLargas(f, g, regua(fx)));
+    medir("pranchas", () => acomodarPranchas(f, g, regua(fx)));
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
     medir("titulos", () => {
@@ -440,6 +442,7 @@ export default function Folhear({
       if (onde !== null) destino = Math.min(Math.floor(onde / porDupla), total - 1);
     }
     primeiraVez.current = false;
+    if (porDupla === 1 && destino < PAGINA_DA_CAPA) destino = PAGINA_DA_CAPA;
     alvo.current = destino;
     j.scrollTo({ left: destino * porDupla * g.pagina, behavior: "instant" });
 
@@ -558,7 +561,8 @@ export default function Folhear({
     const j = janela.current;
     if (!g || !j) return;
     const ultimo = pg ? Math.ceil(pg.total / g.porDupla) - 1 : 0;
-    const destino = Math.max(0, Math.min(ultimo, d));
+    // Com uma página por vez não há livro fechado: a primeira é a capa.
+    const destino = Math.max(g.porDupla === 1 ? 1 : 0, Math.min(ultimo, d));
     const de = alvo.current;
     if (destino === de) return;
     alvo.current = destino;
@@ -768,6 +772,7 @@ export default function Folhear({
         "--fonte": `${geo.fonte}px`,
         "--por-dupla": geo.porDupla,
         "--capa": `${CAPA}px`,
+        "--escala": geo.escala,
       } as CSSProperties)
     : undefined;
 
@@ -781,6 +786,7 @@ export default function Folhear({
       data-papel={modo === "livro" ? papel : undefined}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
+      data-fechado={livro && geo?.porDupla === 2 && dupla === 0 ? "" : undefined}
       style={variaveis}
       onClick={aoClicar}
     >
@@ -829,9 +835,13 @@ export default function Folhear({
           {livro && paginacao && geo ? (
             <>
               <span className="folhear-posicao-titulo">
-                {rotuloAtual?.secao ?? rotuloAtual?.capitulo ?? "Sumário"}
+                {geo.porDupla === 2 && dupla === 0
+                  ? "Capa"
+                  : geo.porDupla === 2 && dupla === 1
+                    ? "Folha de rosto"
+                    : (rotuloAtual?.secao ?? rotuloAtual?.capitulo ?? "Sumário")}
               </span>
-              <span className="folhear-posicao-paginas">
+              <span className="folhear-posicao-paginas" hidden={geo.porDupla === 2 && dupla === 0}>
                 {geo.porDupla === 2 && paginaInicial + 1 < paginacao.total
                   ? `páginas ${paginaInicial + 1}–${paginaInicial + 2}`
                   : `página ${paginaInicial + 1}`}{" "}
@@ -970,6 +980,13 @@ export default function Folhear({
                     ref={fluxo}
                     className={livro ? "folhear-fluxo" : "folhear-continuo livro-pagina surface"}
                   >
+                    {/* O LIVRO FECHADO (2026-09-25, pedido do autor: "pense igual um
+                        livro"). A primeira dupla é uma página fantasma à esquerda
+                        e a capa à direita, e ela aparece sozinha, centrada na mesa.
+                        Ao abrir, a guarda (a paisagem, por dentro da capa) fica
+                        de frente pra folha de rosto, como num livro impresso. */}
+                    <section className="folhear-fantasma" aria-hidden />
+                    <section className="folhear-capa" aria-label={ARTE_DA_CAPA.alt} />
                     <Guarda />
                     <FolhaDeRosto edicao={edicao} />
                     <Sumario toc={toc} paginaDe={paginacao?.paginaDe} abertura />
@@ -1089,15 +1106,25 @@ function Folhas({
             data-raca={r?.racaId}
             style={{
               left: k * geo.pagina,
-              // A guarda é a prancha colorida: pintada na folha, que vai de
-              // borda a borda — dentro das colunas, a arte não passaria da mancha.
-              backgroundImage: k === 0 ? `url(${ARTE_DA_FOLHA_DE_ROSTO.src})` : undefined,
+              // A guarda (por dentro da capa) é a paisagem, de borda a borda.
+              backgroundImage: k === PAGINA_DA_GUARDA ? `url(${ARTE_DA_FOLHA_DE_ROSTO.src})` : undefined,
             }}
           >
+            {/* A capa é pintada na folha, que vai de borda a borda — dentro
+                das colunas, a arte não passaria da mancha. Inteira por cima,
+                desfocada por baixo preenchendo as laterais. */}
+            {k === PAGINA_DA_CAPA && (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element -- a capa impressa na folha. */}
+                <img className="folhear-capa-fundo" src={ARTE_DA_CAPA.src} alt="" />
+                {/* eslint-disable-next-line @next/next/no-img-element -- a capa impressa na folha. */}
+                <img className="folhear-capa-arte" src={ARTE_DA_CAPA.src} alt="" />
+              </>
+            )}
             {/* O caos controlado: os motivos do capítulo (ou da árvore) nas
                 bordas. Vem do CSS (--caos), como a cor e o selo. */}
-            {k >= 2 && indice >= 0 && !r?.abertura && <span className="folhear-caos" />}
-            {k >= 2 && indice >= 0 && (
+            {k >= PRIMEIRA_PAGINA_DE_TEXTO && indice >= 0 && !r?.abertura && <span className="folhear-caos" />}
+            {k >= PRIMEIRA_PAGINA_DE_TEXTO && indice >= 0 && (
               <>
                 <span className="folhear-marca" style={{ "--aba-i": indice } as CSSProperties} />
                 {/* O kanji do capítulo (ou da árvore), enorme e quase apagado no
@@ -1106,7 +1133,7 @@ function Folhas({
               </>
             )}
             {/* A guarda e a folha de rosto não levam número, como no impresso. */}
-            {k >= 2 && k < paginacao.total && (
+            {k >= PRIMEIRA_PAGINA_DE_TEXTO && k < paginacao.total && (
               <span className="folhear-rodape">
                 <span className="folhear-rodape-numero">{k + 1}</span>
                 {parte && <span className="folhear-rodape-parte">{parte}</span>}
@@ -1172,11 +1199,18 @@ function Abas({
  * abrem um volume de light novel. A arte é pintada na folha da página 1 (ver
  * Folhas); aqui fica a página no fluxo, com a legenda no pé. Só no modo Livro.
  */
+/*
+ * As páginas do começo do livro: 0 é a fantasma (a esquerda do livro
+ * fechado), 1 a capa, 2 a guarda, 3 a folha de rosto; o texto (com número,
+ * aba e caos) começa no sumário.
+ */
+const PAGINA_DA_CAPA = 1;
+const PAGINA_DA_GUARDA = 2;
+const PRIMEIRA_PAGINA_DE_TEXTO = 4;
+
 function Guarda() {
   return (
-    <section className="folhear-guarda" aria-label={ARTE_DA_FOLHA_DE_ROSTO.alt}>
-      <p className="folhear-guarda-legenda">O Mundo de Seis Faces</p>
-    </section>
+    <section className="folhear-guarda" aria-label={ARTE_DA_FOLHA_DE_ROSTO.alt} />
   );
 }
 

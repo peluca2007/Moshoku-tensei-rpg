@@ -35,6 +35,16 @@ export const ARTE_DAS_ABERTURAS: Record<string, { src: string; alt: string }> = 
   },
 };
 
+/**
+ * A CAPA (2026-09-25, trazida pelo autor): a primeira página do livro. A arte
+ * é mais estreita que a página, então entra inteira (a moldura dourada não
+ * pode ser cortada), com uma cópia desfocada dela preenchendo as laterais.
+ */
+export const CAPA = {
+  src: "/livro/capa/capa.webp",
+  alt: "A capa: o título Mushoku Tensei RPG numa moldura dourada, e o grupo correndo num trigal ao pôr do sol.",
+};
+
 /** A arte da folha de rosto do livro. */
 export const ARTE_DA_FOLHA_DE_ROSTO = {
   src: "/paisagem.jpg",

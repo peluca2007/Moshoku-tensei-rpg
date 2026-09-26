@@ -229,20 +229,60 @@ P.cipo = (comprimento = 600) => {
 P.aparar = () =>
   `<path d="M0 0 C70 -110 220 -130 320 -40" fill="none" stroke="#000" stroke-width="8" stroke-linecap="round"/><path d="M40 10 C100 -70 210 -86 290 -20" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>`;
 
+/*
+ * O TAMANHO de cada primitiva (raio aproximado, em escala 1): é o que impede
+ * uma coisa de cair em cima da outra. Primitiva sem raio (fios, arcos de
+ * compasso, cipó) não disputa espaço.
+ */
+const RAIO = new Map([
+  [P.adaga, 45], [P.espada, 100], [P.espadaQuebrada, 90], [P.lanca, 120], [P.martelo, 70], [P.machado, 70],
+  [P.escudo, 45], [P.flecha, 55], [P.arco, 85], [P.corrente, 60], [P.chama, 42], [P.brasa, 8], [P.faisca, 14],
+  [P.gota, 22], [P.onda, 120], [P.rajada, 120], [P.rajadaCurta, 70], [P.rocha, 32], [P.rachadura, 80],
+  [P.corte, 140], [P.garras, 120], [P.respingo, 45], [P.circuloMagico, 112], [P.runa, 14], [P.hexagono, 26],
+  [P.folha, 28], [P.cruz, 18], [P.bolha, 12], [P.frasco, 42], [P.nota, 28], [P.pauta, 180], [P.rosaDosVentos, 88],
+  [P.rota, 160], [P.moeda, 18], [P.anelDeCaneca, 48], [P.d20, 40], [P.d6, 32], [P.risquinhos, 26], [P.pegada, 16],
+  [P.pata, 24], [P.fumaca, 45], [P.impacto, 80], [P.estrepe, 14], [P.galho, 140], [P.glifo, 80], [P.aparar, 150],
+]);
+
 function compor(nome, receita) {
   const variantes = [0, 1, 2].map((v) => {
     const r = semente(`${nome}-${v}`);
     const rnd = (a, b) => a + r() * (b - a);
     const itens = [];
-    /** Põe uma primitiva num ponto da página da direita, girada e em escala. */
-    const por = (prim, [x, y], { rot = rnd(0, 360), esc = 1, forte = 0.95, arg } = {}) => {
+    const ocupado = [];
+    const livre = (x, y, raio) => ocupado.every((o) => Math.hypot(o.x - x, o.y - y) > (o.raio + raio) * 0.82);
+    /*
+     * Põe uma primitiva na página da direita, girada e em escala.
+     * `onde` é um ponto fixo (o motivo herói) ou um sorteador (os
+     * coadjuvantes da margem): o sorteador tenta até achar um lugar livre, e
+     * se não achar, a peça fica de fora — melhor uma a menos do que uma em
+     * cima da outra (o autor achou o caos amontoado, 2026-09-25).
+     *
+     * Ponto fixo muito na borda de fora é puxado pra dentro, pra se ver mais
+     * da peça do que da sangria.
+     */
+    const por = (prim, onde, { rot = rnd(0, 360), esc = 1, forte = 0.95, arg } = {}) => {
+      const raio = (RAIO.get(prim) ?? 0) * esc;
+      let x, y;
+      if (typeof onde === "function") {
+        let achou = false;
+        for (let t = 0; t < 18 && !achou; t++) {
+          [x, y] = onde();
+          achou = livre(x, y, raio);
+        }
+        if (!achou) return;
+      } else {
+        [x, y] = onde;
+        if (x > 780) x = 780 + (x - 780) * 0.45;
+      }
+      if (raio) ocupado.push({ x, y, raio });
       const conteudo = typeof prim === "function" ? prim(arg ?? r) : prim;
       itens.push(
         `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(1)}) scale(${esc.toFixed(2)})" fill-opacity="${forte}" stroke-opacity="${forte}">${conteudo}</g>`
       );
     };
-    /** Um ponto qualquer da margem de fora (e da sangria), entre duas alturas. */
-    const naMargem = (y0 = 140, y1 = 900) => [rnd(772, 842), rnd(y0, y1)];
+    /** Um sorteador de pontos na margem de fora, entre duas alturas. */
+    const naMargem = (y0 = 140, y1 = 900) => () => [rnd(766, 800), rnd(y0, y1)];
     receita({ v, r, rnd, por, naMargem });
     return `<g clip-path="url(#pagina)" transform="translate(${v * W} 0)"><g mask="url(#mancha)">${itens.join("")}</g></g>`;
   });
@@ -295,14 +335,14 @@ const TEMAS = {
   cap2: ({ v, rnd, por, naMargem }) => {
     const [x, y, esc] = v === 0 ? [830, 70, 2.7] : v === 1 ? [790, 1060, 2.9] : [836, 560, 1.9];
     por(P.circuloMagico, [x, y], { rot: rnd(0, 60), esc, forte: 0.85 });
-    for (let i = 0; i < (v === 2 ? 4 : 7); i++) por(P.runa, naMargem(), { esc: rnd(1.3, 2) });
+    for (let i = 0; i < (v === 2 ? 4 : 5); i++) por(P.runa, naMargem(), { esc: rnd(1.3, 2) });
     for (let i = 0; i < 5; i++) por(P.faisca, naMargem(), { esc: rnd(0.8, 1.6) });
   },
   cap3: ({ v, rnd, por, naMargem }) => {
     if (v === 0) por(P.galho, [826, 560], { rot: -58, esc: 2.3, forte: 0.85 });
     else if (v === 1) por(P.galho, [690, 1086], { rot: 4, esc: 2.5, forte: 0.85 });
     else por(P.galho, [826, 220], { rot: -80, esc: 1.8, forte: 0.85 });
-    for (let i = 0; i < (v === 2 ? 3 : 6); i++) por(P.folha, naMargem(), { esc: rnd(0.9, 1.5) });
+    for (let i = 0; i < (v === 2 ? 3 : 4); i++) por(P.folha, naMargem(), { esc: rnd(0.9, 1.5) });
   },
   cap4: ({ v, rnd, por, naMargem }) => {
     if (v === 0) {
@@ -322,11 +362,11 @@ const TEMAS = {
   cap5: ({ v, rnd, por, naMargem }) => {
     if (v === 0) {
       por(P.anelDeCaneca, [760, 96], { esc: 2.6, forte: 0.8 });
-      for (let i = 0; i < 7; i++) por(P.moeda, [rnd(740, 850), rnd(200, 330)], { esc: rnd(1.1, 1.5) });
+      for (let i = 0; i < 5; i++) por(P.moeda, () => [rnd(740, 850), rnd(200, 330)], { esc: rnd(1.1, 1.5) });
       por(P.rota, [70, 1048], { rot: -3, esc: 1.6 });
     } else if (v === 1) {
       por(P.anelDeCaneca, [300, 1060], { esc: 2.4, forte: 0.8 });
-      for (let i = 0; i < 6; i++) por(P.moeda, [rnd(700, 850), rnd(960, 1080)], { esc: rnd(1.1, 1.6) });
+      for (let i = 0; i < 4; i++) por(P.moeda, () => [rnd(700, 850), rnd(960, 1080)], { esc: rnd(1.1, 1.6) });
       por(P.rota, [800, 150], { rot: 92, esc: 1.4 });
     } else {
       por(P.anelDeCaneca, [812, 600], { esc: 1.7, forte: 0.8 });
@@ -335,7 +375,7 @@ const TEMAS = {
   },
   apendices: ({ v, rnd, por }) => {
     if (v === 1) {
-      for (let i = 0; i < 6; i++) por(P.pata, [120 + i * 110, i % 2 ? 1040 : 1076], { rot: 90 + rnd(-8, 8), esc: 1.6 });
+      for (let i = 0; i < 4; i++) por(P.pata, [120 + i * 110, i % 2 ? 1040 : 1076], { rot: 90 + rnd(-8, 8), esc: 1.6 });
       por(P.garras, [806, 500], { rot: 100, esc: 2 });
     } else {
       const n = v === 2 ? 3 : 6;
@@ -347,7 +387,7 @@ const TEMAS = {
   // Famílias: a árvore sem tema próprio (uma nova, ou uma renomeada) cai aqui.
   "familia-magia": ({ v, rnd, por, naMargem }) => {
     por(P.circuloMagico, v === 1 ? [800, 1050] : [830, 70], { rot: rnd(0, 60), esc: 2.3, forte: 0.8 });
-    for (let i = 0; i < 6; i++) por(i % 2 ? P.faisca : P.runa, naMargem(), { esc: rnd(1, 1.7) });
+    for (let i = 0; i < 4; i++) por(i % 2 ? P.faisca : P.runa, naMargem(), { esc: rnd(1, 1.7) });
   },
   "familia-corpo": ({ v, rnd, por, naMargem }) => {
     por(P.corte, v === 1 ? [150, 1060] : [300, 56], { rot: v === 1 ? -12 : 12, esc: 2.5 });
@@ -366,23 +406,23 @@ const TEMAS = {
       [[380, 1.6], [470, 2.1], [560, 1.8], [650, 2.6], [740, 3.1], [830, 2.4]].forEach(([x, esc]) =>
         por(P.chama, [x + rnd(-12, 12), 1070], { rot: rnd(-8, 8), esc })
       );
-      for (let i = 0; i < 18; i++) por(P.brasa, [rnd(740, 850), rnd(260, 980)], { esc: rnd(1.2, 2.3) });
+      for (let i = 0; i < 12; i++) por(P.brasa, () => [rnd(740, 850), rnd(260, 980)], { esc: rnd(1.2, 2.3) });
     } else if (v === 1) {
       [260, 420, 580, 740, 880].forEach((y) => por(P.chama, [836, y + rnd(-20, 20)], { rot: -90 + rnd(-10, 10), esc: rnd(1.7, 2.5) }));
-      for (let i = 0; i < 12; i++) por(P.brasa, [rnd(700, 800), rnd(200, 1000)], { esc: rnd(1.2, 2) });
+      for (let i = 0; i < 8; i++) por(P.brasa, () => [rnd(700, 800), rnd(200, 1000)], { esc: rnd(1.2, 2) });
     } else {
       [[700, 2.2], [800, 2.8]].forEach(([x, esc]) => por(P.chama, [x, 1070], { rot: rnd(-8, 8), esc }));
-      for (let i = 0; i < 8; i++) por(P.brasa, [rnd(740, 850), rnd(500, 980)], { esc: rnd(1.1, 2) });
+      for (let i = 0; i < 5; i++) por(P.brasa, () => [rnd(740, 850), rnd(500, 980)], { esc: rnd(1.1, 2) });
     }
   },
   agua: ({ v, rnd, por, naMargem }) => {
     if (v === 0) {
       [[1008, 0.9], [1040, 0.7], [1072, 0.5]].forEach(([y, forte], i) => por(P.onda, [40 + i * 26, y], { rot: 0, esc: 1.3, forte, arg: 7 }));
-      for (let i = 0; i < 8; i++) por(P.gota, naMargem(), { rot: rnd(-10, 10), esc: rnd(1.2, 2) });
+      for (let i = 0; i < 5; i++) por(P.gota, naMargem(), { rot: rnd(-10, 10), esc: rnd(1.2, 2) });
     } else if (v === 1) {
       [[18, 0.8], [46, 0.55]].forEach(([y, forte], i) => por(P.onda, [60 + i * 40, y], { rot: 0, esc: 1.3, forte, arg: 7 }));
       por(P.gota, [806, 620], { rot: 0, esc: 3.4 });
-      for (let i = 0; i < 6; i++) por(P.gota, naMargem(700, 1000), { rot: rnd(-10, 10), esc: rnd(1, 1.6) });
+      for (let i = 0; i < 4; i++) por(P.gota, naMargem(700, 1000), { rot: rnd(-10, 10), esc: rnd(1, 1.6) });
     } else {
       por(P.onda, [400, 1046], { rot: 0, esc: 1.1, arg: 4 });
       for (let i = 0; i < 4; i++) por(P.gota, naMargem(), { rot: 0, esc: rnd(1, 1.6) });
@@ -391,25 +431,25 @@ const TEMAS = {
   vento: ({ v, rnd, por, naMargem }) => {
     if (v === 0) {
       por(P.rajada, [236, 30], { rot: -3, esc: 2.4 });
-      for (let i = 0; i < 3; i++) por(P.rajadaCurta, [rnd(560, 760), rnd(70, 140)], { rot: rnd(-8, 8), esc: 1.5 });
+      for (let i = 0; i < 3; i++) por(P.rajadaCurta, () => [rnd(560, 760), rnd(70, 140)], { rot: rnd(-8, 8), esc: 1.5 });
     } else if (v === 1) {
       por(P.rajada, [120, 1046], { rot: 2, esc: 2.4 });
-      for (let i = 0; i < 3; i++) por(P.rajadaCurta, [rnd(360, 640), rnd(995, 1080)], { rot: rnd(-6, 6), esc: 1.4 });
+      for (let i = 0; i < 3; i++) por(P.rajadaCurta, () => [rnd(360, 640), rnd(995, 1080)], { rot: rnd(-6, 6), esc: 1.4 });
     } else {
       por(P.rajada, [440, 24], { rot: -2, esc: 1.6 });
     }
-    for (let i = 0; i < (v === 2 ? 3 : 6); i++) por(P.folha, naMargem(), { esc: rnd(1, 1.5) });
+    for (let i = 0; i < (v === 2 ? 3 : 4); i++) por(P.folha, naMargem(), { esc: rnd(1, 1.5) });
   },
   terra: ({ v, rnd, por }) => {
     if (v === 0) {
-      for (let i = 0; i < 11; i++) por(P.rocha, [rnd(560, 860), rnd(1000, 1096)], { esc: rnd(1.3, 2.5) });
+      for (let i = 0; i < 7; i++) por(P.rocha, () => [rnd(560, 860), rnd(1000, 1096)], { esc: rnd(1.3, 2.5) });
       por(P.rachadura, [806, 1000], { rot: -8, esc: 2.6 });
       por(P.rachadura, [520, 1070], { rot: 22, esc: 1.5 });
     } else if (v === 1) {
-      for (let i = 0; i < 9; i++) por(P.rocha, [rnd(60, 520), rnd(1010, 1096)], { esc: rnd(1.2, 2.2) });
+      for (let i = 0; i < 6; i++) por(P.rocha, () => [rnd(60, 520), rnd(1010, 1096)], { esc: rnd(1.2, 2.2) });
       por(P.rachadura, [806, -10], { rot: 180, esc: 2.4 });
     } else {
-      for (let i = 0; i < 5; i++) por(P.rocha, [rnd(700, 860), rnd(1010, 1096)], { esc: rnd(1.2, 2) });
+      for (let i = 0; i < 5; i++) por(P.rocha, () => [rnd(700, 860), rnd(1010, 1096)], { esc: rnd(1.2, 2) });
       por(P.rachadura, [812, 900], { rot: -4, esc: 1.9 });
     }
   },
@@ -422,7 +462,7 @@ const TEMAS = {
   desintoxicacao: ({ v, rnd, por, naMargem }) => {
     if (v === 0) por(P.frasco, [790, 116], { rot: 18, esc: 2.8 });
     else if (v === 1) por(P.frasco, [720, 1030], { rot: -12, esc: 2.6 });
-    for (let i = 0; i < (v === 2 ? 10 : 16); i++) por(P.bolha, naMargem(v === 0 ? 260 : 120, 980), { esc: rnd(1.2, 2) });
+    for (let i = 0; i < (v === 2 ? 10 : 11); i++) por(P.bolha, naMargem(v === 0 ? 260 : 120, 980), { esc: rnd(1.2, 2) });
   },
   // A Magia Teórica (que substituiu a Barreira em 2026-09-25): uma FRASE de
   // glifos compostos escrita na borda, ligada por um fio com nós, e os arcos
@@ -482,7 +522,7 @@ const TEMAS = {
       por(P.corrente, [806, 520], { rot: -12, esc: 1.5, arg: 16 });
       por(P.martelo, [760, 1030], { rot: -40, esc: 1.7 });
       for (let i = 0; i < 3; i++) por(P.adaga, naMargem(640, 940), { rot: rnd(0, 360), esc: 1.5 });
-      for (let i = 0; i < 3; i++) por(P.estrepe, [rnd(90, 420), rnd(1010, 1080)], { esc: 1.5 });
+      for (let i = 0; i < 3; i++) por(P.estrepe, () => [rnd(90, 420), rnd(1010, 1080)], { esc: 1.5 });
     } else if (v === 1) {
       por(P.machado, [786, 116], { rot: 145, esc: 2.3 });
       por(P.lanca, [250, 1072], { rot: -82, esc: 2.2 });
@@ -544,7 +584,7 @@ const TEMAS = {
     } else {
       por(P.impacto, [812, 560], { rot: 0, esc: 2 });
     }
-    for (let i = 0; i < 10; i++) por(P.brasa, naMargem(), { esc: rnd(1.1, 2) });
+    for (let i = 0; i < 7; i++) por(P.brasa, naMargem(), { esc: rnd(1.1, 2) });
   },
   arquearia: ({ v, rnd, por }) => {
     // Saraivada: as flechas cravadas na borda na mesma inclinação.
@@ -564,20 +604,20 @@ const TEMAS = {
       }
       por(P.fumaca, [790, 70], { rot: 0, esc: 2.4, forte: 0.6 });
     } else if (v === 1) {
-      for (let i = 0; i < 8; i++) por(P.pegada, [i % 2 ? 790 : 822, 960 - i * 100], { rot: rnd(-8, 8), esc: 1.5 });
+      for (let i = 0; i < 5; i++) por(P.pegada, [i % 2 ? 790 : 822, 960 - i * 100], { rot: rnd(-8, 8), esc: 1.5 });
       por(P.fumaca, [740, 1040], { rot: 0, esc: 2.6, forte: 0.6 });
     } else {
       for (let i = 0; i < 5; i++) por(P.pegada, [i % 2 ? 792 : 822, 800 - i * 110], { rot: rnd(-8, 8), esc: 1.4 });
     }
-    for (let i = 0; i < (v === 2 ? 2 : 4); i++) por(P.estrepe, [rnd(80, 420), rnd(1010, 1086)], { esc: 1.5 });
+    for (let i = 0; i < (v === 2 ? 2 : 4); i++) por(P.estrepe, () => [rnd(80, 420), rnd(1010, 1086)], { esc: 1.5 });
   },
   "bardo-e-interacao": ({ v, rnd, por, naMargem }) => {
     if (v === 0) {
       por(P.pauta, [200, 24], { rot: -3, esc: 2, forte: 0.7 });
-      for (let i = 0; i < 5; i++) por(P.nota, [rnd(260, 800), rnd(0, 60)], { rot: rnd(-15, 15), esc: rnd(1.4, 2) });
+      for (let i = 0; i < 5; i++) por(P.nota, () => [rnd(260, 800), rnd(0, 60)], { rot: rnd(-15, 15), esc: rnd(1.4, 2) });
     } else if (v === 1) {
       por(P.pauta, [60, 1036], { rot: -2, esc: 2, forte: 0.7 });
-      for (let i = 0; i < 5; i++) por(P.nota, [rnd(80, 600), rnd(1000, 1070)], { rot: rnd(-15, 15), esc: rnd(1.4, 2) });
+      for (let i = 0; i < 5; i++) por(P.nota, () => [rnd(80, 600), rnd(1000, 1070)], { rot: rnd(-15, 15), esc: rnd(1.4, 2) });
     }
     for (let i = 0; i < 4; i++) por(P.nota, naMargem(), { rot: rnd(-20, 20), esc: rnd(1.5, 2.2) });
   },

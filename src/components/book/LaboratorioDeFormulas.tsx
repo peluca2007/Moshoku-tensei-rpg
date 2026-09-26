@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import FormulaWorkshop from "./FormulaWorkshop";
+import { FONTES_DO_LIVRO } from "./folhear/fontes";
 
 /**
  * A Oficina de Fórmulas da Magia Teórica, no livro e no site (2026-09-25).
@@ -57,7 +58,7 @@ export default function LaboratorioDeFormulas() {
           <dialog
             ref={dialogo}
             aria-label="Laboratório de Fórmulas"
-            className="livro-laboratorio-dialogo m-auto max-h-[94vh] w-[min(1120px,95vw)] overflow-auto rounded-3xl bg-transparent p-0 backdrop:bg-black/75"
+            className={`livro-laboratorio-dialogo ${FONTES_DO_LIVRO} m-auto max-h-[94vh] w-[min(1120px,95vw)] overflow-auto bg-transparent p-0 backdrop:bg-black/80`}
             // Clicar fora do laboratório (no fundo escuro) fecha.
             onClick={(e) => {
               if (e.target === e.currentTarget) dialogo.current?.close();
@@ -67,7 +68,7 @@ export default function LaboratorioDeFormulas() {
               <button
                 type="button"
                 onClick={() => dialogo.current?.close()}
-                className="absolute right-3 top-3 z-10 rounded-full bg-black/60 px-3 py-1.5 text-sm font-semibold text-white hover:bg-black/80"
+                className="livro-laboratorio-fechar absolute right-4 top-4 z-10 border-2 border-[#78d5d0] bg-[#141418] px-3 py-1 text-white hover:bg-[#78d5d0] hover:text-[#141418]"
               >
                 Fechar
               </button>

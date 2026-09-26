@@ -121,8 +121,8 @@ export default function Chapter1() {
           <P>
             <b>Intelecto</b> — a Precisão: define o quanto sua magia acerta e o quanto machuca.{" "}
             <b>Espírito</b> — a Reserva: define quanto de mana o corpo consegue armazenar. Isso vale para as
-            <b> quatro escolas elementais</b> (Fogo, Água, Vento e Terra), que conjuram com Intelecto. As
-            outras quatro — Cura, Barreira, Desintoxicação e Espíritos e Feras — conjuram com Espírito, e nelas
+            <b> quatro escolas elementais</b> (Fogo, Água, Vento e Terra) e para a <b>Magia Teórica</b>, que
+            conjuram com Intelecto. As outras três — Cura, Desintoxicação e Espíritos e Feras — conjuram com Espírito, e nelas
             um atributo só faz as duas coisas (veja o quadro abaixo).
           </P>
           <P>
@@ -150,7 +150,7 @@ export default function Chapter1() {
         </Aside>
         <Warning title="O Preço do Espírito">
           <P>
-            Cura, Barreira, Desintoxicação e Espíritos e Feras conjuram com <b>Espírito</b> — o mesmo atributo
+            Cura, Desintoxicação e Espíritos e Feras conjuram com <b>Espírito</b> — o mesmo atributo
             que enche a reserva. Quem estuda uma delas sobe um número só e recebe duas coisas: mira e mana. O
             elementalista precisa de dois atributos altos pra chegar no mesmo lugar, e isso custa PA no alto da
             escada progressiva.
@@ -734,8 +734,8 @@ export default function Chapter1() {
         <P>
           O número mais importante da ficha de um mago, e ele unifica as três fórmulas do sistema num único
           valor. <b>BC = atributo-chave da escola + Bônus do Rank naquela escola.</b> O atributo-chave vem
-          impresso no topo de cada árvore (Cap. 3): <b>Intelecto</b> em Fogo, Água, Vento e Terra;{" "}
-          <b>Espírito</b> em Cura, Barreira, Desintoxicação e Espíritos e Feras.
+          impresso no topo de cada árvore (Cap. 3): <b>Intelecto</b> em Fogo, Água, Vento, Terra e Magia
+          Teórica; <b>Espírito</b> em Cura, Desintoxicação e Espíritos e Feras.
         </P>
         <List
           items={[

@@ -8,15 +8,14 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Fluxo de trabalho: branch, PR e aprovação do autor
+# Fluxo de trabalho: direto na main
 
-Desde 2026-09-24, nenhuma mudança entra direto na `main`.
+De 2026-09-24 a 2026-09-25 tudo passou por branch e PR aprovado pelo autor. Em 2026-09-25 o autor
+decidiu voltar a trabalhar **direto na `main`**: commits pequenos, um assunto por commit, com a
+mensagem dizendo o que mudou e por quê. Branch e PR continuam valendo quando o autor pedir, ou para um
+experimento grande que ainda não deve chegar à `main`.
 
-1. Cada assunto ganha a sua branch: `feat/…`, `fix/…`, `chore/…` ou `docs/…`. Branches criadas
-   pelo app do Claude podem manter o prefixo `claude/…`.
-2. O trabalho termina num pull request para a `main`, com o que mudou, por quê e como foi testado.
-3. **Quem aprova e faz o merge é o autor.** Agente nenhum faz merge do próprio PR.
-4. Um PR trata de um assunto só e deve ser pequeno o bastante para ser revisado de uma vez.
+Antes de subir qualquer mudança no livro, rode `npm run revisar:livro` (ver `PLANO-LIVRO-DIGITAL.md`).
 
 ## Portas do servidor de desenvolvimento
 

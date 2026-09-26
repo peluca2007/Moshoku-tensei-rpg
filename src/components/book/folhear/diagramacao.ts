@@ -383,7 +383,7 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     // título passa a atravessar a página também, e anda junto com ela. Se
     // ainda assim ficar pra trás, a próxima passada empurra — e empurrar algo
     // que atravessa a página é mandá-lo pra página seguinte.
-    if (t.matches("h3, h4") && depois.matches(".folhear-larga") && !t.classList.contains("folhear-larga")) {
+    if (t.matches("h3, h4") && depois.matches(".folhear-larga, .livro-prancha:not(.livro-prancha-coluna, .folhear-prancha-coluna)") && !t.classList.contains("folhear-larga")) {
       t.classList.add("folhear-larga");
       empurrar.add(t);
       return;
@@ -450,7 +450,15 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
   empurrar.forEach((el) => {
     const c = el.classList;
     if (el.matches("h3, h4") && c.contains("folhear-larga") && !c.contains("folhear-titulo-largo")) c.add("folhear-titulo-largo");
-    else if (!c.contains("folhear-empurra")) c.add("folhear-empurra");
+    else if (!c.contains("folhear-empurra")) {
+      c.add("folhear-empurra");
+      // Um empurrão de uma passada anterior DENTRO do bloco (o quadro da
+      // mecânica de uma árvore, por exemplo) ficou velho: o bloco inteiro
+      // mudou de lugar, e a quebra antiga separaria o título do resto (o
+      // cabeçalho do Bardo ficava sozinho numa coluna vazia). Sai, e a
+      // próxima passada confere de novo.
+      el.querySelectorAll(".folhear-empurra").forEach((d) => d.classList.remove("folhear-empurra"));
+    }
     else if (!c.contains("folhear-inteira") && cabeNumaColuna(el)) c.add("folhear-inteira", "folhear-segura");
     else if (!c.contains("folhear-calcado") && !c.contains("folhear-tentou-calco")) {
       c.add("folhear-tentou-calco");
@@ -460,6 +468,41 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     mudou++;
   });
   return mudou;
+}
+
+/**
+ * A PRANCHA NÃO DEIXA BURACO.
+ *
+ * A prancha (a arte que atravessa a página) não se parte: se não couber no
+ * resto da página, vai inteira pra seguinte — e o que vinha antes dela fica
+ * sozinho no alto da página anterior, com um buraco embaixo. Quando isso
+ * acontece (buraco maior que um quinto da página), ela volta pra coluna,
+ * menor, e o texto preenche o lugar.
+ *
+ * @returns quantas pranchas voltaram pra coluna
+ */
+export function acomodarPranchas(fluxo: Element, g: Geometria, r: Regua): number {
+  const pranchas = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-prancha:not(.livro-prancha-coluna)")).filter(visivel);
+  if (pranchas.length === 0) return 0;
+  pranchas.forEach((el) => el.classList.remove("folhear-prancha-coluna"));
+  const alturaDaColuna = g.altura - g.topo - g.pe;
+  const topo = fluxo.getBoundingClientRect().top;
+  const pagina = (x: number) => Math.floor((x - r.origem) / r.k / g.pagina);
+  const voltam: HTMLElement[] = [];
+  for (const el of pranchas) {
+    const q = el.getBoundingClientRect();
+    if ((q.top - topo) / r.k > 24) continue;
+    // O que vem antes dela, na ordem de leitura.
+    let antes: Element | null = el.previousElementSibling;
+    for (let n: Element | null = el; !antes && n && n !== fluxo; n = n.parentElement) antes = n.parentElement?.previousElementSibling ?? null;
+    const rs = antes ? Array.from(antes.getClientRects()).filter((x) => x.height > 1) : [];
+    const ultimo = rs[rs.length - 1];
+    if (!ultimo || pagina(ultimo.left) !== pagina(q.left) - 1) continue;
+    const buraco = alturaDaColuna - (ultimo.bottom - topo) / r.k;
+    if (buraco > alturaDaColuna * 0.2) voltam.push(el);
+  }
+  voltam.forEach((el) => el.classList.add("folhear-prancha-coluna"));
+  return voltam.length;
 }
 
 /**
@@ -490,6 +533,7 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   const medidas = vitrines.map((el) => alturaDaColuna - (el.getBoundingClientRect().top - topo) / r.k);
   vitrines.forEach((el, i) => {
     const resto = Math.floor(medidas[i]) - 2;
+    // A vitrine de coluna (a das árvores) já nasce visível, com altura mínima: só cresce.
     if (resto < 150) return;
     el.style.setProperty("--altura-vitrine", `${resto}px`);
     el.classList.add("folhear-vitrine-cheia");
@@ -644,7 +688,7 @@ export function medirPaginas(fluxo: Element, fim: Element, r: Regua, g: Geometri
   });
 
   const aberturas = new Set<number>();
-  fluxo.querySelectorAll(".folhear-guarda, .folhear-rosto, .folhear-sumario, .livro-abertura, .folhear-colofao").forEach((el) => aberturas.add(pagina(el)));
+  fluxo.querySelectorAll(".folhear-fantasma, .folhear-capa, .folhear-guarda, .folhear-rosto, .folhear-sumario, .livro-abertura, .folhear-colofao").forEach((el) => aberturas.add(pagina(el)));
 
   // `sort` é estável: capítulo e primeira seção na mesma página mantêm a
   // ordem do sumário, e o capítulo zera a seção antes de ela entrar.
