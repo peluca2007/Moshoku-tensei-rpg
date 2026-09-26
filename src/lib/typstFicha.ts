@@ -257,7 +257,7 @@ function attributesBlock(rows: FichaAttributeRow[]): string {
   const legenda = comVantagem.length
     ? `
     #v(3pt)
-    #text(size: 7pt)[◆ Vantagem permanente em Testes de Resistência: ${comVantagem
+    #text(size: 7pt)[◆ +2 permanente em Testes de Resistência: ${comVantagem
         .map((r) => r.label)
         .join(", ")}]`
     : "";
