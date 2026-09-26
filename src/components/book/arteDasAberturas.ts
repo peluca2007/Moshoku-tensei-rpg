@@ -14,24 +14,31 @@ export const ARTE_DAS_ABERTURAS: Record<string, { src: string; alt: string }> = 
     src: "/livro/capitulos/abertura-cap0.webp",
     alt: "O grupo de Mushoku Tensei avançando junto num campo aberto, armas e magias em punho.",
   },
+  // 2026-09-26: as ilustrações de volume da light novel que o autor trouxe
+  // (catalogadas e recortadas uma a uma; ver ARTE-PARA-O-LIVRO.md).
   cap1: {
     src: "/livro/capitulos/abertura-cap1.webp",
-    alt: "Eris avançando de espada contra Rudeus num salão da mansão.",
+    alt: "Paul, Norn pequena, Rudeus e Eris diante da catedral de Millis.",
   },
-  // Era a foto de uma pena desenhando um círculo mágico em pergaminho — o
-  // visual do livro antigo, que o autor não quer mais (2026-09-25). O livro
-  // mágico aberto, com as runas roxas acesas, é da cor do capítulo.
   cap2: {
-    src: "/faixas/livro.jpg",
-    alt: "Um livro de magia aberto entre velas, com runas roxas acesas nas páginas.",
+    src: "/livro/capitulos/abertura-cap2.webp",
+    alt: "Na Universidade de Ranoa, Rudeus modela uma estatueta por magia enquanto os colegas olham.",
+  },
+  cap3: {
+    src: "/livro/capitulos/abertura-cap3.webp",
+    alt: "Os Presas do Lobo Negro reunidos, cada um com o seu estilo: Roxy, Talhand, Geese, Paul, Elinalise, Lilia e Rudeus.",
   },
   cap4: {
-    src: "/faixas/iniciativa.jpg",
-    alt: "Cavaleiros em combate numa floresta de inverno.",
+    src: "/livro/capitulos/abertura-cap4.webp",
+    alt: "O grupo inteiro em combate sobre um círculo mágico azul, Paul gritando de espada em punho.",
   },
   cap5: {
-    src: "/faixas/personagens.jpg",
-    alt: "O salão de uma taverna à luz de velas, com barris e mesas.",
+    src: "/livro/capitulos/abertura-cap5.webp",
+    alt: "Rudeus e Sylphie na feira da cidade, com Nanahoshi, Cliff e Elinalise ao fundo.",
+  },
+  apendices: {
+    src: "/livro/capitulos/abertura-apendices.webp",
+    alt: "Um jantar em família à luz de velas na casa dos Greyrat.",
   },
 };
 
@@ -47,6 +54,6 @@ export const CAPA = {
 
 /** A arte da folha de rosto do livro. */
 export const ARTE_DA_FOLHA_DE_ROSTO = {
-  src: "/paisagem.jpg",
+  src: "/livro/capa/guarda.webp",
   alt: "Um vale com um lago e uma vila, cercado de montanhas nevadas.",
 };

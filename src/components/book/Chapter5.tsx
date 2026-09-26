@@ -1,4 +1,5 @@
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
+import Prancha from "./Prancha";
 import ShopCatalog from "./ShopCatalog";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_DO_DOJO } from "@/data/midiaDeHabilidade";
@@ -63,6 +64,7 @@ export default function Chapter5() {
 
       <Section>
         <SectionTitle id="cap5-2">2. A Guilda de Aventureiros</SectionTitle>
+        <Prancha id="cap5-2" />
         <P>
           Toda cidade com mais de um poço tem uma sede da Guilda, e é lá que a maioria dos personagens deste
           livro começa. Esta seção formaliza o que até aqui era só referência narrativa: como funciona o
@@ -384,6 +386,7 @@ export default function Chapter5() {
 
       <Section>
         <SectionTitle id="cap5-5">5. Dojos e Mestres — a progressão que não se compra</SectionTitle>
+        <Prancha id="cap5-5" />
         <P>
           Todo o resto deste livro se compra com PA. Isso funciona, e tem um preço que só aparece depois de
           umas vinte sessões: <b>o mundo deixa de importar para a ficha</b>. Dá pra jogar a campanha inteira

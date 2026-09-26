@@ -1,4 +1,5 @@
 import { VIGOR_FACTOR_TABLE } from "@/lib/types";
+import Prancha from "./Prancha";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { AnatomiaDoTurno, Cobertura, FioDaVida, OrdemDoDano, QuebrantadoEmpilha } from "./Diagramas";
 import ArteDaHabilidade from "./ArteDaHabilidade";
@@ -534,6 +535,7 @@ export default function Chapter4() {
 
       <Section>
         <SectionTitle id="cap4-6">7. Sangrando e Morrendo</SectionTitle>
+        <Prancha id="cap4-6" />
         <P>
           Magia de cura pode fechar feridas, mas ressurreição beira o mito divino. Se seus Pontos de Vida
           chegarem a 0, você cai <b>Inconsciente</b> e entra em estado de Morte: Incapacitado e Caído, e

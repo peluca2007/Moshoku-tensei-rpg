@@ -536,7 +536,7 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   const vitrines = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-vitrine"));
   if (vitrines.length === 0) return;
   vitrines.forEach((el) => {
-    el.classList.remove("folhear-vitrine-cheia");
+    el.classList.remove("folhear-vitrine-cheia", "folhear-vitrine-compacta", "folhear-vitrine-some");
     el.style.removeProperty("--altura-vitrine");
   });
   const topo = fluxo.getBoundingClientRect().top;
@@ -549,6 +549,12 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
     el.style.setProperty("--altura-vitrine", `${resto}px`);
     el.classList.add("folhear-vitrine-cheia");
   });
+  // O espaço mudou com o resto do livro (uma prancha nova antes, um texto
+  // maior): se o conteúdo não coube, somem os nomes; se nem assim, a vitrine.
+  const transborda = (el: HTMLElement) => el.scrollHeight > el.clientHeight + 2;
+  const visiveis = vitrines.filter((el) => el.classList.contains("folhear-vitrine-cheia") || el.classList.contains("livro-vitrine-arvores"));
+  visiveis.filter(transborda).forEach((el) => el.classList.add("folhear-vitrine-compacta"));
+  visiveis.filter((el) => el.classList.contains("folhear-vitrine-compacta") && transborda(el)).forEach((el) => el.classList.add("folhear-vitrine-some"));
 }
 
 /**
