@@ -70,7 +70,7 @@ export const TEORICA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante", hpDiceFormula: "1d6+1",
-      mastery: { name: "Alfabeto Arcano", description: "[Glifo composto] Você aprende Mana, Projetar, Expressar, Conter, Círculo, Quadrado e Linha. Pode construir uma célula com até 2 símbolos centrais e até 6 PM, com potência Principiante. Desenhe no ar (2 Ações) ou por gestos (1 Ação, efeito instantâneo ou de 1 turno). A forma fecha o circuito e não conta como símbolo central. Qualquer pessoa capaz de pagar o PM pode alimentar seu circuito pronto; você fixa o BC e a potência ao construí-lo. A Oficina do Cap. 2 §8 traz a conta e os glifos." },
+      mastery: { name: "Alfabeto Arcano", description: "[Glifo composto] Você aprende Mana, Projetar, Expressar, Conter, Círculo, Quadrado e Linha. Pode construir uma célula com até 2 símbolos: o núcleo e uma ação. O limite é 6 PM, com potência Principiante. Desenhe no ar (2 Ações) ou por gestos (1 Ação, efeito instantâneo ou de 1 turno). A forma fecha o circuito e não conta como símbolo central. Qualquer pessoa capaz de pagar o PM pode alimentar seu circuito pronto; você fixa o BC e a potência ao construí-lo. A Oficina do Cap. 2 §8 traz a conta e os glifos." },
       talents: [
         talento("Principiante", "simbolo-rejeitar", "Símbolo: Rejeitar", "Aprende Rejeitar: fronteira que barra magia pela potência da célula. Conter já foi concedido pela Maestria; Rejeitar é a outra metade da defesa."),
         talento("Principiante", "simbolo-fogo", "Símbolo: Fogo", "Aprende a essência Fogo para fórmulas. Fogo Principiante também a concede de graça; não compra nem copia as magias ou a maestria de Fogo."),
@@ -83,8 +83,8 @@ export const TEORICA_TREE: Tree = {
       ],
       abilities: [
         modelo("Principiante", "dardo-arcano", "Dardo Arcano", 3, "9 metros", "Modelo de Mana + Projetar + Círculo: ataque mágico, 1d6 arcano. Não recebe condição de outra escola.", { signature: true, damage: { normal: "1d6 arcano" } }),
-        modelo("Principiante", "anteparo-teorico", "Anteparo", 4, "Até 9 metros", "Modelo de Mana + Conter + Quadrado: parede física de até 3 m, 30 PV, 1 minuto. Não barra magia por si só."),
-        modelo("Principiante", "sinal-arcano", "Sinal Arcano", 3, "9 metros", "Modelo de Mana + Expressar + Círculo: um sinal visível ou audível por 1 turno, sem dano nem condição."),
+        modelo("Principiante", "anteparo-teorico", "Anteparo", 4, "Toque", "Modelo de Mana + Conter + Quadrado: parede física de até 3 m, 30 PV, 1 minuto. Não barra magia por si só."),
+        modelo("Principiante", "sinal-arcano", "Sinal Arcano", 3, "Toque (no ponto do desenho)", "Modelo de Mana + Expressar + Círculo: um sinal visível ou audível por 1 turno, sem dano nem condição."),
       ],
     },
     {
@@ -96,9 +96,9 @@ export const TEORICA_TREE: Tree = {
         talento("Intermediário", "circulo-portatil-teorico", "Círculo Portátil", "Pode preparar sobre o corpo um circuito sustentado que se move com você; o suporte ainda pode ser atingido ou rompido."),
       ],
       abilities: [
-        modelo("Intermediário", "selo-de-rejeicao", "Selo de Rejeição", 8, "9 metros", "Modelo de Mana + Conter + Rejeitar + Círculo: fronteira de 40 PV; magia que a cruza segue a Régua de Rejeição da potência Intermediária. Dura 1 minuto. Requer conhecer Rejeitar.", { signature: true, requires: ["simbolo-rejeitar"] }),
+        modelo("Intermediário", "selo-de-rejeicao", "Selo de Rejeição", 8, "Toque", "Modelo de Mana + Conter + Rejeitar + Círculo: fronteira de 40 PV; magia Intermediária ou menos é barrada; Avançada atravessa com dados, área e duração pela metade; Santo ou acima atravessa inteira. Dura 15 turnos. Requer conhecer Rejeitar.", { signature: true, requires: ["simbolo-rejeitar"] }),
         modelo("Intermediário", "leitura-de-trama-teorica", "Leitura de Trama", 4, "18 metros", "Lê núcleo, operadores, forma, meio, potência e carga restante de um circuito visível. Uma ligação oculta ainda exige teste de Intelecto contra a CD do construtor."),
-        modelo("Intermediário", "muralha-de-mana", "Muralha de Mana", 7, "18 metros", "Fronteira de Mana + Conter, até 6 m de comprimento e 3 m de altura, 40 PV por 1 minuto. Bloqueia passagem física enquanto conserva PV; não anula magia automaticamente."),
+        modelo("Intermediário", "muralha-de-mana", "Muralha de Mana", 8, "18 metros", "Modelo de Mana + Projetar + Conter + Círculo: fronteira de até 6 m de comprimento e 3 m de altura, 40 PV por 15 turnos. Bloqueia passagem física enquanto conserva PV; não anula magia automaticamente."),
       ],
     },
     {
@@ -153,7 +153,7 @@ export const TEORICA_TREE: Tree = {
       ],
       abilities: [
         modelo("Imperador", "cidade-de-glifos", "Cidade de Glifos", 48, "Esfera de 750 m", "Ritual de pedra: rede de até 6 células com saídas declaradas na preparação. Cada fronteira física tem até 120 PV e cada selo mágico usa sua própria potência. Dura 1 dia ou até esgotar a carga registrada.", { signature: true }),
-        modelo("Imperador", "fronteira-soberana", "Fronteira Soberana", 42, "Esfera de 45 m", "Conter e Rejeitar em células distintas: fronteira física de 120 PV e selo mágico de potência Imperador por 10 minutos. Quebrar a célula de Conter não transforma Rejeitar em parede física."),
+        modelo("Imperador", "fronteira-soberana", "Fronteira Soberana", 42, "Esfera de 45 m", "Conter e Rejeitar em células distintas: fronteira física de 120 PV e selo mágico de potência Imperador por 10 minutos. Quebrar a célula de Conter não transforma Rejeitar em parede física.", { requires: ["simbolo-rejeitar"] }),
         modelo("Imperador", "atlas-vivo", "Atlas Vivo", 38, "150 metros", "Mostra ao grupo um mapa sensorial das células, cargas e suportes ativos numa área, durante 1 minuto. Não revela fórmulas além da área nem concede seus símbolos."),
       ],
     },
