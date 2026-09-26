@@ -30,7 +30,9 @@
  * `regua: false` marca as colunas que o próprio livro diz NÃO serem uma
  * medida de dano, e que por isso o check não verifica:
  *
- * - Desintoxicação e Barreira — continuam fora da régua (Apêndice C).
+ * - Barreira — continua fora da régua (Apêndice C). A Desintoxicação saiu
+ *   desta lista no rework de 2026-09-26: com a Dose e a Inversão ela tem golpe
+ *   de verdade, e a coluna passou a ser verificada como as outras.
  * - Cura — desde a Luz de Dois Gumes (Maestria de 1º patamar) a coluna TEM
  *   número: é o dano radiante que cada magia de cura causaria virada contra um
  *   hostil (Cura ~10, Prontidão ~12, Cura Suprema ~22, Cura Radiante ~32,
@@ -67,7 +69,7 @@ export const COLUNAS_MAGIA: ColunaDano[] = [
   { treeId: "vento", label: "Vento" },
   { treeId: "terra", label: "Terra" },
   { treeId: "cura", label: "Cura", regua: false },
-  { treeId: "desintoxicacao", label: "Desintox", regua: false },
+  { treeId: "desintoxicacao", label: "Desintox" },
   { treeId: "teorica", label: "Teórica", regua: false },
   { treeId: "invocacao", label: "Invocação" },
 ];
@@ -114,18 +116,18 @@ export const COLUNAS_CORPO: ColunaDano[] = [
 ];
 
 export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = [
-  { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "~10", desintoxicacao: "~12", teorica: "~10", invocacao: "~13" } },
-  { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "~12", desintoxicacao: "~13", teorica: "~20", invocacao: "~24" } },
+  { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "~10", desintoxicacao: "~14", teorica: "~10", invocacao: "~13" } },
+  { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "~12", desintoxicacao: "~22", teorica: "~20", invocacao: "~24" } },
   // Água no 3º subiu de ~30 para ~44 em 0.1.87: a Quebra de Gelo passou a
   // cobrar pelo Congelado (+3d8 e acerto automático contra alvo congelado), que
   // era o pagamento que a escola prometia e nunca entregava. O número alto só
   // acontece com o combo inteiro montado — molhar, congelar, estilhaçar —, e é
   // exatamente isso que a régua deve mostrar: a Água paga em turnos e recebe de
   // uma vez.
-  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~16", teorica: "~25", invocacao: "~38" } },
-  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~17", teorica: "~30", invocacao: "~55" } },
-  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~34", teorica: "~36", invocacao: "~80" } },
-  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~36", teorica: "~42", invocacao: "~110" } },
+  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~28", teorica: "~25", invocacao: "~38" } },
+  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~34", teorica: "~30", invocacao: "~55" } },
+  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~45", teorica: "~36", invocacao: "~80" } },
+  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~60", teorica: "~42", invocacao: "~110" } },
 ];
 
 export const DANO_POR_TURNO_CORPO: DanoPorTurnoLinha[] = [

@@ -259,10 +259,10 @@ export default function Chapter1() {
         </P>
         <SubTitle>A Escola Barata — Desintoxicação</SubTitle>
         <P>
-          A Desintoxicação é a única escola do livro cujo trabalho principal acontece fora do combate e cujo
-          alvo é sempre um problema que o Mestre criou. Ninguém compra Purgar esperando ganhar uma luta —
-          compra pra que a campanha não pare quando alguém pisa no pântano errado. Cobrar dela o preço de uma
-          escola de dano era fazer o jogador pagar Fogo por um seguro contra o roteiro.
+          A Desintoxicação é a única escola do livro cujo trabalho principal acontece fora do combate: é ela
+          que impede a campanha de parar quando alguém pisa no pântano errado. Na luta ela tem jogada (a Dose
+          e a Inversão, no Cap. 2), mas bate menos que uma escola de dano, e cobrar dela o preço do Fogo era
+          fazer o jogador pagar caro por um seguro contra o roteiro.
         </P>
         <BookTable
           headers={["Rank", "Magia Comum", "Magia Assinatura ◆", "Talento", "(tabela padrão, pra comparar)"]}

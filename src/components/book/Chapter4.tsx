@@ -761,6 +761,30 @@ export default function Chapter4() {
           ou até uma Poção de Antídoto Forte (Cap. 5, §4) ser bebida.
         </Aside>
 
+        <SubTitle>Dose — o veneno de quem sabe envenenar</SubTitle>
+        <P>
+          As aflições desta tabela entram no corpo e ficam. Os venenos da <b>Magia de Desintoxicação</b> funcionam
+          diferente em combate: cada um que pega deixa <b>1 Dose</b> (condição do Glossário, §2), e as Doses se
+          somam até três. Quem conjura olha o número e escolhe quando cobrar.
+        </P>
+        <BookTable
+          headers={["Doses", "O que acontece"]}
+          rows={[
+            ["1", "Nada ainda. O veneno está se instalando — e já pode ser Invertido."],
+            ["2", "Envenenado: Desvantagem em ataques e em testes de atributo."],
+            ["3", "Colapso: as Doses saem todas, e o alvo fica Atordoado até o fim do próximo turno dele."],
+            ["Inverter", "Purgar, Purga Profunda ou Anular num alvo com Dose: tira todas e cada uma vira dano de veneno, sem teste (2d6, 4d6 ou 5d8 por Dose)."],
+          ]}
+        />
+        <Aside title="Exemplo jogado — a decisão das 2 Doses">
+          Íris, purificadora Intermediária, abre a luta contra um capitão bandido com a <b>Peçonha</b>: ele falha
+          no Vigor, sofre 2d6 e fica com 1 Dose. Na mesma rodada, o <b>Sangue de Serpente</b> pega de novo — 2
+          Doses, Envenenado, e Desvantagem em Vigor. No turno seguinte ela tem duas saídas. <b>Inverter</b> com a
+          Purga Profunda: 8d6 de uma vez, sem teste, e o capitão deixa de estar Envenenado. Ou arriscar mais uma{" "}
+          <b>Peçonha</b>: se pegar, é o Colapso — o capitão perde o turno inteiro, mas as Doses somem e o
+          veneno recomeça do zero. Íris olha o guerreiro do grupo, que ainda não atacou, e escolhe o Colapso.
+        </Aside>
+
         <SubTitle>Doenças</SubTitle>
         <BookTable
           headers={["Aflição", "Rank", "Contágio", "Efeito"]}

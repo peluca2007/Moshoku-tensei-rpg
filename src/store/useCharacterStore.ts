@@ -1,7 +1,7 @@
 import { WeaponGroupId } from "@/data/weaponGroups";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AttributeKey, CharacterData, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
+import { AttributeKey, CharacterData, CondicaoAtiva, GuildRank, InventoryItem, meetsGuildRank, PurchasedAbility, RankName } from "@/lib/types";
 import { TETO_DE_ACUMULOS } from "@/data/condicoes";
 import { canPurchaseAbility, canPurchaseCombinedSpell, canUnlockRank, getGuildRank } from "./selectors";
 import { comImagensSaneadas } from "@/lib/imagemDaFicha";
@@ -509,10 +509,7 @@ export const useCharacterStore = create<RosterState>()(
             // duas vezes não é nada no Cap. 4.
             const condicao = getCondicaoPorId(id);
             if (!condicao?.mecanica?.acumulavel) return c;
-            return {
-              ...c,
-              condicoes: atuais.map((x) => (x.id === id ? { ...x, acumulos: (x.acumulos ?? 1) + 1 } : x)),
-            };
+            return { ...c, condicoes: acumularAte(atuais, id, (existente.acumulos ?? 1) + 1) };
           }
           return { ...c, condicoes: [...atuais, { id }] };
         }),
@@ -533,10 +530,10 @@ export const useCharacterStore = create<RosterState>()(
            * aplica como −6. Um número visível que o cálculo desobedece é pior
            * que um botão que para.
            */
-          const teto = alvo.bonusDeRankDaFonte ?? TETO_DE_ACUMULOS;
+          const teto = getCondicaoPorId(id)?.mecanica?.tetoFixo ?? alvo.bonusDeRankDaFonte ?? TETO_DE_ACUMULOS;
           const novo = Math.min((alvo.acumulos ?? 1) + delta, teto);
           if (novo <= 0) return { ...c, condicoes: atuais.filter((x) => x.id !== id) };
-          return { ...c, condicoes: atuais.map((x) => (x.id === id ? { ...x, acumulos: novo } : x)) };
+          return { ...c, condicoes: acumularAte(atuais, id, novo) };
         }),
       anotarCondicao: (id, nota) =>
         updateActive(get, set, (c) => ({
@@ -696,4 +693,19 @@ export function useActiveCharacter(): CharacterData {
   const activeId = useCharacterStore((s) => s.activeId);
   const character = useCharacterStore((s) => (activeId ? s.characters[activeId] : undefined));
   return character ?? blankCharacter("__none__", "");
+}
+
+/**
+ * Põe `novo` acúmulos numa condição e, se ela tiver teto fixo com troca (a
+ * Dose), faz a troca: ao chegar no teto a condição sai inteira e deixa a outra
+ * no lugar. A 3ª Dose vira Atordoado, que é o Colapso do Cap. 4 — a ficha faz
+ * sozinha o que a mesa esqueceria.
+ */
+function acumularAte(atuais: CondicaoAtiva[], id: string, novo: number): CondicaoAtiva[] {
+  const m = getCondicaoPorId(id)?.mecanica;
+  if (m?.tetoFixo && m.noTetoVira && novo >= m.tetoFixo) {
+    const sem = atuais.filter((x) => x.id !== id);
+    return sem.some((x) => x.id === m.noTetoVira) ? sem : [...sem, { id: m.noTetoVira }];
+  }
+  return atuais.map((x) => (x.id === id ? { ...x, acumulos: novo } : x));
 }

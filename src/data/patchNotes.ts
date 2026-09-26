@@ -16,6 +16,32 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.99",
+    date: "2026-09-26",
+    title: "Cura sem contabilidade, Desintoxicação com jogada",
+    sections: [
+      {
+        heading: "Magia de Cura",
+        items: [
+          "Ferida Fresca agora é o dano que o alvo sofreu desde o fim do SEU último turno — quem cura só olha a própria vez. A Culpa Fresca usa a mesma janela.",
+          "Cura cai de 3 pra 2 PM. Selar a Ferida custa 3 PM fixos, em vez de 2 por Bônus de Rank.",
+          "Três caminhos por patamar: Cirurgião (cura mais), Guardião (Prontidão e proteção) e Juiz (a Luz de Dois Gumes). Mãos Firmes virou Luz Afiada, e Curandeiro de Guerra virou Sentença.",
+          "Transferência move até o dobro do BC. Anestesia não esconde mais os PV: ignora Exaustão e Trauma e dá Vantagem na Concentração e no Fio da Vida.",
+        ],
+      },
+      {
+        heading: "Magia de Desintoxicação — Dose e Inversão",
+        items: [
+          "Condição nova, Dose (Cap. 4): os venenos da escola deixam 1 Dose na falha do Vigor, até 3. Com 2 o alvo está Envenenado; a 3ª é o Colapso — as Doses saem e ele fica Atordoado até o fim do próximo turno.",
+          "Inverter: Purgar, Purga Profunda e Anular, lançados num alvo com Dose, tiram todas e as viram dano de veneno, sem teste (2d6, 4d6 e 5d8 por Dose). A Maestria de Santo Inverte com a Reação (3d8 por Dose).",
+          "Purgar passa a alcançar 9 metros, e a Purga Profunda 18. O Antídoto protege até três criaturas e impede Dose: é o feitiço de antes da luta.",
+          "Mão que Não Contamina virou Dose Certa (falhou por 5 ou mais, +1 Dose). Torpor dá 2 Doses; o Sopro Podre, 2 na falha e 1 no sucesso.",
+          "A ficha conta as Doses sozinha: na 2ª aplica a Desvantagem do Envenenado, e na 3ª troca as Doses por Atordoado. A Desintoxicação entrou na régua de dano do Apêndice C.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.98",
     date: "2026-09-26",
     title: "O livro mais bonito, e mais leve",

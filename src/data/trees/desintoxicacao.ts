@@ -25,7 +25,22 @@ import { MAGIC_ACTIONS, DESINTOX_PA_COST } from "./shared";
  * A árvore também foi NERFADA de propósito (dano, remoção universal de condição
  * e imunidades de área) e, em troca, passou a usar DESINTOX_PA_COST — a tabela
  * mais barata do livro. Ver a nota dela em shared.ts.
+ *
+ * Rework de 2026-09-26 — Dose e Inversão (decisão do autor: "a Desintoxicação é
+ * muito chatinha"). O Rank contra Rank ficou, mas a escola deixou de esperar o
+ * Mestre criar um problema: os venenos dela empilham DOSE no inimigo (condição do
+ * Cap. 4, até 3; 2 = Envenenado; a 3ª é o Colapso), e os feitiços de purgar
+ * podem INVERTER as Doses em dano de uma vez. A decisão de mesa é a de 2 Doses:
+ * cobrar agora ou arriscar a 3ª e derrubar o turno do alvo.
  */
+
+/** Inverter (Cap. 2): o mesmo texto nas três cartas que cobram a Dose. */
+const inverter = (dados: string) =>
+  ` Inverter: numa criatura com Dose, em vez de purgar, você tira todas as Doses dela e cada uma vira ${dados} de dano de veneno, sem teste — o veneno já está dentro.`;
+const INV_PURGAR = inverter("2d6");
+const INV_PROFUNDA = inverter("4d6");
+const INV_ANULAR = inverter("5d8");
+
 export const DESINTOXICACAO_TREE: Tree = {
   id: "desintoxicacao",
   name: "Magia de Desintoxicação",
@@ -33,21 +48,21 @@ export const DESINTOXICACAO_TREE: Tree = {
   category: "magia",
   subgroup: "Cura e Suporte",
   mechanic: {
-    tag: "Rank contra Rank",
+    tag: "Dose e Inversão",
     hook:
-      "A escola de uma regra só, e a mais barata do livro em PA.",
+      "Envenena aos poucos e cobra tudo de uma vez — e continua sendo a única que cura o que ninguém mais cura.",
     loop: [
-      "Identifique. Paladar, a Maestria de 1º patamar, diz o nome e o RANK exato da aflição só de tocar, cheirar ou provar.",
-      "Compare. Um feitiço de rank X remove uma aflição de rank X ou inferior. Acabou — não existe número pra somar nem relógio pra acompanhar.",
-      "Se não alcançar, escolha o preço: Sangria purga um rank acima do seu, ao custo de 3d6 irredutíveis; Selar a Maldição deixa a aflição dormente por um ano sem removê-la.",
+      "Dose. Todo veneno da escola, na falha do Vigor, deixa 1 Dose no alvo (até 3, dura o combate). Com 2 Doses ele está Envenenado. A 3ª é o Colapso: as Doses saem e ele fica Atordoado até o fim do próximo turno dele.",
+      "Inverter. Purgar, Purga Profunda e Anular, lançados numa criatura com Dose, tiram todas as Doses e as viram dano de veneno de uma vez, sem teste: 2d6, 4d6 e 5d8 por Dose. Com 2 Doses no alvo, a escolha é sua — cobrar agora, ou arriscar a 3ª e tirar o turno dele.",
+      "Purificar. Num aliado, os mesmos feitiços fazem o que sempre fizeram: rank contra rank — um feitiço de rank X remove uma aflição de rank X ou inferior. Paladar diz o rank; Sangria e Selar a Maldição são o preço quando o seu não alcança.",
     ],
     cost:
-      "Não fecha um único ponto de ferimento e não ganha luta nenhuma: o que ela cospe numa luta é um veneno pequeno, e todo o resto do catálogo só responde a problema que o Mestre já criou. É barata porque o que ela compra não é vitória: é a campanha não parar quando alguém pisa no pântano errado.",
+      "Não fecha um único ponto de ferimento, e a Dose pede paciência: são dois venenos que pegam antes da primeira cobrança. Construtos, mortos-vivos e quem não respira não recebem Dose — contra eles, a escola volta a ser só purificação.",
   },
   keyAttributeLabel: "Espírito",
   resourceLabel: "PM",
   tagline:
-    "Trata veneno, doença, maldição e petrificação. Uma regra só: um feitiço de rank X remove uma aflição de rank X ou inferior. É a escola mais barata do livro em PA — não te faz vencer uma luta, te impede de perder a campanha.",
+    "Trata veneno, doença, maldição e petrificação — um feitiço de rank X remove uma aflição de rank X ou inferior. Na luta, empilha Dose no inimigo e a cobra de uma vez. É a escola mais barata do livro em PA.",
   proficiencies: {
     armas: "Não concede grupo de arma nenhum: quem abre esta escola fica só com o piso que todo personagem tem, e quem quiser mais paga 2 PA por família. Armadura leve apenas.",
     gruposDeArma: [],
@@ -70,7 +85,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       talents: [
         { id: "reserva-do-purificador", name: "Reserva do Purificador", paCost: DESINTOX_PA_COST.talent.Principiante, description: "+2 PM e +2 PV por patamar seu em Desintoxicação. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { mpPerRank: 2, hpPerRank: 2 } },
         { id: "herborista", name: "Herborista", paCost: DESINTOX_PA_COST.talent.Principiante, description: "Fora de combate, com uma hora e material colhido, você purga uma aflição do seu rank ou inferior sem gastar PM nenhum. Uma vez por Descanso Longo." },
-        { id: "mao-que-nao-contamina", name: "Mão que Não Contamina", paCost: DESINTOX_PA_COST.talent.Principiante, description: "Você não pode ser envenenado, infectado ou amaldiçoado por contato ao manusear aquilo que está tratando ou extraindo." },
+        { id: "mao-que-nao-contamina", name: "Dose Certa", paCost: DESINTOX_PA_COST.talent.Principiante, description: "Quando uma criatura falhar por 5 ou mais no teste de Vigor contra um veneno seu, recebe 1 Dose a mais." },
       ],
       abilities: [
         {
@@ -79,11 +94,12 @@ export const DESINTOXICACAO_TREE: Tree = {
           signature: true,
           paCost: DESINTOX_PA_COST.signature.Principiante,
           pmCost: 3,
-          range: "Toque",
+          range: "9 metros",
           actions: { normal: 1 },
           costNote:
-            "1 Ação onde o rank pede 2. Purgar é a magia que justifica a escola inteira existir, e ela cobrava dois terços de um turno pra desfazer o que o Mestre fez ontem: o purificador chegava, tratava um aliado, e o turno dele tinha acabado. O desconto é o que torna a escola jogável no meio de uma luta, e ela continua sem causar dano nenhum ao fazer isso.",
-          effect: "Remove do alvo uma aflição de rank Principiante — veneno, doença, maldição ou petrificação incipiente, mágica ou não.",
+            "1 Ação onde o rank pede 2. Purgar é a magia que justifica a escola inteira existir, e ela cobrava dois terços de um turno pra desfazer o que o Mestre fez ontem: o purificador chegava, tratava um aliado, e o turno dele tinha acabado. O desconto é o que torna a escola jogável no meio de uma luta — e, desde a Dose, é também o golpe que cobra o veneno.",
+          damage: { normal: "2d6 de dano de veneno por Dose invertida" },
+          effect: "Remove do alvo uma aflição de rank Principiante — veneno, doença, maldição ou petrificação incipiente, mágica ou não." + INV_PURGAR,
           incantation: "O que entrou aqui sem ser convidado e se instalou como se a casa fosse sua: sai. Sai como quiseres, mas sai agora. Purgar!",
         },
         {
@@ -93,7 +109,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 2,
           range: "Toque",
           actions: MAGIC_ACTIONS.Principiante,
-          effect: "Por 1 hora, o alvo tem Vantagem em testes de resistência contra veneno e doença. Se falhar mesmo assim, a aflição o pega um rank abaixo do normal (mínimo Principiante).",
+          effect: "Até três criaturas que você tocar: por 1 hora, cada uma tem Vantagem em testes de resistência contra veneno e doença, e não recebe Dose. Se falhar mesmo assim, a aflição a pega um rank abaixo do normal (mínimo Principiante). É o feitiço de antes da luta: imunizar o grupo inteiro antes de entrar no pântano.",
           incantation:
             "Que a pureza da minha mana proteja este sangue contra qualquer veneno ou peçonha que tente cruzar a sua pele. Antídoto!",
         },
@@ -116,10 +132,10 @@ export const DESINTOXICACAO_TREE: Tree = {
           range: "18 metros",
           actions: { normal: 1 },
           costNote:
-            "1 Ação onde o rank pede 2. É o único golpe da escola nos três primeiros patamares — a Corrosão só chega no Avançado —, e a 2 Ações ninguém o usaria: o purificador voltaria a passar a luta inteira esperando que alguém fosse envenenado pra ter o que fazer. Quem entende de veneno sabe fazer veneno — a Maestria de Rei só admite em voz alta o que este feitiço já faz pequeno.",
+            "1 Ação onde o rank pede 2. É o veneno que abre a Dose no 1º patamar, e a 2 Ações ninguém o usaria: o purificador voltaria a passar a luta inteira esperando que alguém fosse envenenado pra ter o que fazer. Quem entende de veneno sabe fazer veneno — a Maestria de Rei só admite em voz alta o que este feitiço já faz pequeno.",
           damage: { normal: "2d6 de dano de veneno" },
           effect:
-            "Teste de Vigor (CD 8 + BC). Falha: dano e Envenenado até o fim do próximo turno (Desvantagem em ataques e testes de atributo). Sucesso: metade do dano e nenhuma condição. Não afeta construtos, mortos-vivos nem quem não respira.",
+            "Teste de Vigor (CD 8 + BC). Falha: dano e 1 Dose. Sucesso: metade do dano e nenhuma Dose. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
             "Peçonha que dorme em toda raiz amarga deste mundo e só espera uma mão que saiba pedir: sobe por este braço e acha o sangue dele. Peçonha!",
         },
@@ -169,7 +185,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       },
       talents: [
         { id: "frasco-estavel", name: "Frasco Estável", paCost: DESINTOX_PA_COST.talent.Intermediário, description: "Suas extrações duram um ano em vez de um mês, e você carrega o dobro de frascos." },
-        { id: "purga-coletiva", name: "Purga Coletiva", paCost: DESINTOX_PA_COST.talent.Intermediário, description: "Purgar passa a atingir até três criaturas adjacentes com uma conjuração." },
+        { id: "purga-coletiva", name: "Purga Coletiva", paCost: DESINTOX_PA_COST.talent.Intermediário, description: "Purgar passa a atingir até três criaturas a até 3 metros umas das outras com uma conjuração — purgando os aliados e Invertendo os inimigos, na mesma Ação." },
         { id: "leitura-de-sintoma", name: "Leitura de Sintoma", paCost: DESINTOX_PA_COST.talent.Intermediário, description: "Você sabe se alguém está afetado por algo antes dos sintomas aparecerem, incluindo maldições dormentes e venenos de efeito retardado." },
       ],
       abilities: [
@@ -179,9 +195,10 @@ export const DESINTOXICACAO_TREE: Tree = {
           signature: true,
           paCost: DESINTOX_PA_COST.signature.Intermediário,
           pmCost: 6,
-          range: "9 metros",
+          range: "18 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "Remove uma aflição de rank Intermediário ou inferior, à distância.",
+          damage: { normal: "4d6 de dano de veneno por Dose invertida" },
+          effect: "Remove uma aflição de rank Intermediário ou inferior, à distância." + INV_PROFUNDA,
           incantation:
             "Veneno que corres silencioso pelas veias mais fundas, onde a mão do curandeiro comum nunca chega: eu te ordeno a parar, a retroceder e a abandonar esta carne para sempre. Purga Profunda!",
         },
@@ -203,7 +220,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 5,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "Teste de Vigor (CD 8 + BC) ou o alvo fica Envenenado por 1 minuto (Desvantagem em ataques e testes de atributo). Sem dano.",
+          effect: "Teste de Vigor (CD 8 + BC). Falha: 2 Doses de uma vez — o alvo já fica Envenenado. Sucesso: 1 Dose. Sem dano.",
           incantation:
             "Sombra que adormece os sentidos sem pedir licença a nenhum deles, penetra devagar nas juntas e faz com que cada movimento dele custe o dobro do que custava. Torpor!",
         },
@@ -228,7 +245,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           costNote:
             "1 Ação onde o rank pede 2. É a segunda arma ofensiva da escola, e sem ela o purificador passa o 2º patamar inteiro com a Peçonha do 1º como único golpe — duas Ações de conjuração num veneno que é a mesma coisa que ele já fazia, só mais forte, não é jogo: é burocracia.",
           damage: { normal: "3d6 de dano de veneno" },
-          effect: "Teste de Vigor (CD 8 + BC). Falha: dano e Desvantagem em testes de Vigor por 1 minuto. Sucesso: metade do dano e nenhuma condição. Não afeta construtos, mortos-vivos nem quem não respira.",
+          effect: "Teste de Vigor (CD 8 + BC). Falha: dano, 1 Dose e Desvantagem em testes de Vigor por 1 minuto — a próxima Dose entra mais fácil. Sucesso: metade do dano e nenhuma Dose. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
             "Sangue de serpente que rasteja no fundo dos pântanos onde ninguém volta a pescar: envenena as entranhas dele e faz com que o corpo inteiro esqueça como resistir ao que vier depois. Sangue de Serpente!",
         },
@@ -257,7 +274,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           range: "9 metros",
           actions: MAGIC_ACTIONS.Avançado,
           effect:
-            "Remove do alvo uma condição da lista da escola: Envenenado, Paralisado, Petrificado, Cego ou Surdo — e só quando a origem dela for veneno, doença, maldição ou petrificação, e a aflição que a causou for de rank Avançado ou inferior. Também remove aflições de rank Avançado ou inferior. Condições vindas de golpe, magia elementar ou medo (Atordoado, Amedrontado, Congelado, Em Chamas, Atolado, Soterrado, Desequilibrado, Marcado) NÃO são desta escola: isso é Milagre Menor, na Cura.",
+            "Remove do alvo uma condição da lista da escola: Envenenado, Paralisado, Petrificado, Cego ou Surdo — e só quando a origem dela for veneno, doença, maldição ou petrificação, e a aflição que a causou for de rank Avançado ou inferior. Também remove aflições de rank Avançado ou inferior. Condições vindas de golpe, magia elementar ou medo (Atordoado, Amedrontado, Congelado, Em Chamas, Atolado, Soterrado, Desequilibrado, Marcado) NÃO são desta escola: isso é Milagre Menor, na Cura." + INV_ANULAR,
           incantation:
             "Tudo aquilo que paralisa, cega, ensurdece ou petrifica a carne por um caminho que não seja o do aço honesto: desfaz-te agora, diante da minha autoridade, e leva contigo todo o tormento que trouxeste — inclusive aquele que ainda nem tinha começado a doer nele. Anular!",
         },
@@ -280,7 +297,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           range: "18 metros",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "5d6 de dano ácido (dobrado contra construtos e armaduras pesadas)" },
-          effect: "Teste de Vigor (CD 8 + BC). Falha: dano e Envenenado por 1 minuto. Metal não-mágico exposto perde 2 de CA até uma hora de conserto com ferramentas.",
+          effect: "Teste de Vigor (CD 8 + BC). Falha: dano e 1 Dose (construtos sofrem o ácido, mas não recebem Dose). Metal não-mágico exposto perde 2 de CA até uma hora de conserto com ferramentas.",
           incantation:
             "Ácido voraz que devoras aço, pedra e carne sem te dares ao trabalho de distinguir qual delas é qual, dissolve a carcaça do meu inimigo justamente por onde ela for mais orgulhosa, e não deixes nenhuma armadura inteira o bastante pra contar a história depois. Corrosão!",
         },
@@ -302,7 +319,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 8,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "Teste de Vigor (CD 8 + BC). Falha: Deslocamento 0 por 1 turno. Falha por 5 ou mais: Paralisado por 1 turno. Sucesso: Deslocamento reduzido à metade por 1 turno. Não causa dano — o veneno de aranha não mata, ele PRENDE. Não afeta construtos, mortos-vivos nem quem não respira.",
+          effect: "Teste de Vigor (CD 8 + BC). Falha: Deslocamento 0 por 1 turno e 1 Dose. Falha por 5 ou mais: Paralisado por 1 turno. Sucesso: Deslocamento reduzido à metade por 1 turno. Não causa dano — o veneno de aranha não mata, ele PRENDE. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
             "Veneno de aranha que não mata e nunca matou — que entra pelas veias e tranca cada junta, cada músculo, cada tendão, até que o corpo inteiro vire uma estátua que ainda respira e ainda sente, mas não se mexe. Paralisia de Aranha!",
         },
@@ -314,7 +331,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       mastery: {
         name: "Estado Anulado",
         description:
-          "Toda criatura que você purgar fica imune àquela aflição específica por 24 horas. Uma vez por rodada, gastando sua Reação, você anula com um toque qualquer condição da lista de Anular numa criatura adjacente, sem gastar PM, desde que a aflição que a causou seja de rank Santo ou inferior.",
+          "Toda criatura que você purgar fica imune àquela aflição específica por 24 horas. Uma vez por rodada, gastando sua Reação, você anula com um toque qualquer condição da lista de Anular numa criatura adjacente, sem gastar PM, desde que a aflição que a causou seja de rank Santo ou inferior — ou, com o mesmo toque, Inverte as Doses de um inimigo adjacente (3d8 de dano de veneno por Dose).",
       },
       talents: [
         { id: "maos-limpas", name: "Mãos Limpas", paCost: DESINTOX_PA_COST.talent.Santo, description: "Uma vez por Descanso Longo, conjure uma magia de Desintoxicação sem gastar Ação nenhuma." },
@@ -352,7 +369,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Santo,
           costNote: "O cântico breve condensa o preparo do veneno de Wyvern; as demais regras da conjuração permanecem.",
           damage: { normal: "4d8 de dano de veneno" },
-          effect: "Teste de Vigor (CD 8 + BC). Falha: dano e Cego até o fim do próximo turno. Sucesso: metade do dano e nenhuma condição. O veneno de Wyvern não é o mais forte do catálogo — é o mais cruel: mata devagar, e arranca a visão antes da vida. Não afeta construtos, mortos-vivos nem quem não respira.",
+          effect: "Teste de Vigor (CD 8 + BC). Falha: dano, 1 Dose e Cego até o fim do próximo turno. Sucesso: metade do dano e nenhuma condição. O veneno de Wyvern não é o mais forte do catálogo — é o mais cruel: mata devagar, e arranca a visão antes da vida. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
             "Bile de Wyvern destilada no Continente Demoníaco, onde até o ar tem gosto de cinza e os bichos aprenderam a cegar antes de matar: queima os olhos dele primeiro, depois o resto — na ordem que o monstro ensinou. Fel Alado!",
         },
@@ -380,7 +397,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           actions: MAGIC_ACTIONS.Rei,
           damage: { normal: "8d8 de dano de veneno" },
           effect:
-            "Teste de Vigor (CD 8 + BC). Falha: dano, Envenenado por 10 minutos e uma aflição de rank Avançado à sua escolha. Sucesso: metade e nenhuma aflição. Não funciona em construtos, mortos-vivos ou quem não respira.",
+            "Teste de Vigor (CD 8 + BC). Falha: dano, 2 Doses (o alvo fica Envenenado) e uma aflição de rank Avançado à sua escolha. Sucesso: metade do dano e 1 Dose. Não funciona em construtos, mortos-vivos ou quem não respira.",
           incantation:
             "Vento carregado com o miasma das covas mais antigas e mais esquecidas deste continente, daquelas que ninguém abriu porque ninguém lembrava mais onde ficavam: avança em cone sobre os meus inimigos, entra pela boca que eles não vão conseguir fechar a tempo, queima os pulmões deles por dentro, e faz apodrecer tudo aquilo que a tua brisa imunda encostar pelo caminho, sem exceção nenhuma. Sopro Podre!",
         },

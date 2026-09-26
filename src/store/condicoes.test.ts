@@ -211,6 +211,39 @@ describe("resumo dos efeitos", () => {
  * Cura, e o grupo volta inteiro descansando duas horas a mais. A store recusa o
  * terceiro em vez de deixar a tela sozinha vigiando.
  */
+/*
+ * Rework da Desintoxicação (2026-09-26): a Dose é a condição que a escola
+ * empilha. 1 Dose não faz nada, 2 é Envenenado, e a 3ª é o Colapso — as Doses
+ * saem e o alvo fica Atordoado. A ficha faz a troca sozinha.
+ */
+describe("Dose (Desintoxicação)", () => {
+  it("com 1 Dose, nada ainda; com 2, Envenenado", () => {
+    useCharacterStore.getState().aplicarCondicao("dose");
+    expect(getEfeitosDeCondicoes(ficha()).desvantagemEmAtaques).toEqual([]);
+    useCharacterStore.getState().aplicarCondicao("dose");
+    const e = getEfeitosDeCondicoes(ficha());
+    expect(e.desvantagemEmAtaques).toEqual(["Dose ×2 (Envenenado)"]);
+    expect(e.desvantagemEmTestes).toEqual(["Dose ×2 (Envenenado)"]);
+  });
+
+  it("a 3ª Dose é o Colapso: as Doses saem e fica Atordoado", () => {
+    for (let i = 0; i < 3; i++) useCharacterStore.getState().aplicarCondicao("dose");
+    expect(getCondicoesAtivas(ficha()).map((c) => c.condicao.id)).toEqual(["atordoado"]);
+  });
+
+  it("o + do contador também dispara o Colapso", () => {
+    useCharacterStore.getState().aplicarCondicao("dose");
+    useCharacterStore.getState().ajustarAcumulos("dose", 5);
+    expect(getCondicoesAtivas(ficha()).map((c) => c.condicao.id)).toEqual(["atordoado"]);
+  });
+
+  it("quem já estava Atordoado não ganha um segundo Atordoado", () => {
+    useCharacterStore.getState().aplicarCondicao("atordoado");
+    for (let i = 0; i < 3; i++) useCharacterStore.getState().aplicarCondicao("dose");
+    expect(ficha().condicoes).toEqual([{ id: "atordoado" }]);
+  });
+});
+
 describe("teto de Descansos Curtos", () => {
   const nada = { pv: 0, pm: 0, pt: 0, pp: 0 };
   const maximos = { pv: 40, pm: 16, pt: 10, pp: 6 };
