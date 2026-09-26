@@ -69,9 +69,9 @@ que ainda não têm lugar (Auber, os hobbits pequenos, a Atofe de mangá) foram 
 
 - Todas as raças e árvores já têm arte. Falta só resolução: `capitulos/abertura-cap1` (592 px).
 - **Grand finale das árvores (2026-09-26).** Cada árvore fecha com uma arte grande na última página.
-  Onze já têm prancha própria. Estas oito fecham com o retrato da árvore, e ganhariam muito com uma
-  cena larga (paisagem, 16:9 ou mais, 1600 px+): **Água, Fogo, Vento, Terra, Desintoxicação, Armas
-  Pesadas, Furtividade e Armadilhas (Ladino) e Vendaval**. Vai em `public/livro/pranchas/<id-da-árvore>.webp`.
+  Com o quinto lote (2026-09-26), dezoito têm arte de fecho. **Falta só a Magia de Água** (fecha
+  com a marca de fim, o símbolo). Vai em `public/livro/pranchas/agua.webp`. As sobras do lote estão
+  catalogadas no `acervo-de-arte/` pra abrir árvores de página inteira.
 
 ## As doze raças (entram sozinhas)
 

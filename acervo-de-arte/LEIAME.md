@@ -48,3 +48,34 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 | `onda-azul-animada.webp` | Uma onda azul animada, pequena (era o Terremoto Pessoal). | Arte da Magia de Água. |
 | `povo-do-mar-lanceira.webp` | Uma guerreira de pele azul com lança e água em volta, fundo branco. | Segunda arte da Raça do Oceano (recorte), ou antecedente. |
 | `povo-do-mar-sentada.webp` | Uma mulher do mar sentada, de capa, fundo branco. | Raça do Oceano, ou NPC. |
+
+## Quinto lote (2026-09-26) — o que ficou de fora das árvores
+
+Sete deste lote viraram o grand finale de árvores que não tinham prancha (Fogo, Terra, Vento,
+Desintoxicação, Lutador, Ladino, Vendaval), e o homem-peixe no bar virou a arte da Raça do Oceano. Os
+outros ficam aqui, pra abrir árvores de página inteira (a ideia da próxima rodada):
+
+| Arquivo | O que mostra | Onde pode entrar |
+| --- | --- | --- |
+| `nami-navegadora.webp` | Navegadora ruiva de biquíni, em pé (alta resolução). | Página inteira de abertura de Navegação e Liderança. |
+| `estrategista-de-capa.webp` | Estrategista de cabelo escuro e capa, céu de nuvens. | Navegação e Liderança (o Tático). |
+| `esqueleto-musico-bardo.webp` | Esqueleto músico de cartola em fogo verde. | Página inteira do Bardo. |
+| `curandeira-no-campo-de-flores.webp` | Moça loira de vestido branco num campo de flores. | Magia de Cura. |
+| `mago-de-fogo-em-pe.webp` | Rapaz com chamas em espiral (alta resolução, em pé). | Magia de Fogo (abertura). |
+| `lutador-de-fogo-larga.webp` | Lutador entre chamas, larga (1920 px). | Punho do Fogo (troca da prancha, se o autor quiser). |
+| `punho-de-fogo-velho-larga.webp` | Velho musculoso de braço em chamas, larga. | Punho do Fogo. |
+| `punho-de-fogo-ruiva.webp` | Lutadora ruiva com leão de fogo. | Punho do Fogo. |
+| `punho-de-fogo-bombeiro.webp` | Bombeiro de pés em chamas (pequena). | Punho do Fogo, arte de habilidade. |
+| `espadachim-lamina-vermelha-larga.webp` | Espadachim de lâmina vermelha com água, larga (1920 px). | Deus do Norte. |
+| `espadachim-da-agua-em-pe.webp` | Espadachim de haori xadrez com água em volta. | Deus da Água. |
+| `arqueira-na-floresta.webp` | Arqueira de arco puxado na mata (pequena). | Arquearia. |
+| `espadachim-com-espirito.webp` | Espadachim com um espírito enorme atrás (pequena). | Espíritos e Feras. |
+| `lutador-chute.webp` | Lutador de faixa no meio de um chute (pequena). | Lutador. |
+| `guerreiro-do-mar-larga.webp` | Homem-peixe lutador entre respingos, larga. | Raça do Oceano (segunda arte) ou Magia de Água. |
+| `maga-de-cabeca-pra-baixo-flores.webp` | Maga de cabeça pra baixo entre flores, em pé. | Magia Teórica. |
+| `estudante-de-oculos.webp` | Estudante ruiva de óculos, espantada. | Magia Teórica (a aluna da Aula da Roxy). |
+| `espadachim-do-vento-larga.webp` | Espadachim em vento verde, larga (739 px). | Magia de Vento ou Vendaval. |
+| `medico-rena-chorando.webp` | Médico-rena chorando, rosa (pequena). | Desintoxicação ou Cura (meme). |
+| `envenenadora-sentada.webp` | Envenenadora de haori de borboleta, sentada. | Desintoxicação. |
+| `vendaval-pequena.webp` | Espadachim de cabelo branco na chuva verde (236 px: miniatura). | Vendaval. |
+| `oceano-antiga-raca.webp` | A arte anterior da Raça do Oceano. | Segunda arte da raça. |
