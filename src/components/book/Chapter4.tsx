@@ -105,21 +105,12 @@ export default function Chapter4() {
             <b>Espírito × Bônus + 8</b>.
           </P>
           <P>
-            <b>Cap nos 2 primeiros ranks — esta é a redação canônica; o Cap. 1, §1 só aponta pra cá.</b>{" "}
-            Enquanto o Maior Bônus de Rank de magia for 1 ou 2
-            (Principiante/Intermediário), a reserva TOTAL não pode passar de{" "}
-            <b>4 × MB + 8 + talento + racial</b> — o que dá 12 PM sem nada, 14 com Nascente de Mana, 17
-            com Migurd. É o equivalente numérico do &ldquo;no máximo 4 casts&rdquo; da assinatura do
-            rank (1 PM no Principiante, 3 PM no Intermediário). Repare no <b>4 fixo</b>: nos dois primeiros
-            ranks, <b>Espírito acima de 4 não aumenta PM nenhum</b>. Um mago de Espírito 6 no Intermediário
-            calcula 20 e leva 16, igual ao de Espírito 4. É de propósito, e é o preço de a regra ser uma
-            linha só — o <b>reator</b> que o Cap. 1 promete (Espírito alto, bombardeia o dia inteiro) só
-            começa a aparecer no Avançado, quando o teto some e cada ponto de Espírito passa a valer o Bônus
-            de Rank inteiro. Fora o atributo, o cap corta o que entra por fora da árvore: PA avulso da seção
-            2, antecedente e sub-tabela. Talento de árvore
-            (mpPerRank) e bônus racial ESCALAR (Elfo ×2, Migurd ×3) entram normalmente. A partir do 3º
-            rank (Avançado, MB=3) o cap some e a fórmula antiga entra inteira — o teto do Imperador
-            (32 PM com Espírito 4) não muda.
+            <b>O que não passa nos 2 primeiros patamares.</b> Enquanto o seu maior Bônus de Rank de magia
+            for 1 ou 2 (Principiante e Intermediário), PM comprado com PA avulso e PM fixo de antecedente{" "}
+            <b>não entram</b> na reserva: ela fica exatamente na fórmula acima, mais o talento de reserva da
+            árvore e o bônus escalar de raça (Elfo ×2, Migurd ×3). O Espírito entra inteiro desde o começo —
+            um mago de Espírito 6 no Principiante tem 14 PM, e o de Espírito 4 tem 12. Do Avançado em diante,
+            o PA avulso e o antecedente também passam a contar.
           </P>
           <P>
             Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6+8 = <b>44 PM</b> — o suficiente

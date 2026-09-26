@@ -205,7 +205,7 @@ export const BACKGROUNDS: Background[] = [
     startingGold: "1d4",
     traits: [
       "Role 1d4 na Tabela do Fator Laplace: a linhagem acordou de um jeito, e não é o mesmo em dois portadores. A mutação sorteada é permanente.",
-      "Conjuração Silenciosa desde o nascimento (Cap. 2, seção 2): você manipula mana sem palavra alguma — ninguém te ensinou, você nunca soube fazer diferente. Sofre as penalidades normais do método (metade dos dados, área reduzida em um terço); o único antecedente que nasce sem elas, em qualquer escola, é o Gênio.",
+      "Conjuração Silenciosa desde o nascimento (Cap. 2, seção 2): você manipula mana sem palavra alguma — ninguém te ensinou, você nunca soube fazer diferente. Sofre as penalidades normais do método (metade do dano, área reduzida em um terço); o único antecedente que nasce sem elas, em qualquer escola, é o Gênio.",
       "Vantagem em testes de resistência de Espírito contra Medo, Amedrontado e qualquer efeito que tente controlar sua mente: o que quer que exista na sua linhagem, não se deixa comandar.",
       "Desvantagem em Persuasão com desconhecidos — pessoas comuns sentem, mesmo sem saber o porquê, que algo em você quer distância.",
     ],
@@ -245,7 +245,7 @@ export const BACKGROUNDS: Background[] = [
     // escola desde a criação (talentos e Maestrias que tiram a penalidade valem
     // só pra própria escola e custam PA). Pela regra do
     // Cap. 2 §2, a Conjuração Silenciosa custa menos Ações que a Padrão E dá um
-    // Bônus de Forma grátis — o preço disso são metade dos dados e um terço da
+    // Bônus de Forma grátis — o preço disso são metade do dano e um terço da
     // área. O Gênio simplesmente não paga esse preço. Na prática ele conjura a
     // versão completa de qualquer magia pelo custo de Ação da versão reduzida,
     // com um bônus de forma de brinde, a campanha inteira.
@@ -311,7 +311,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     bonuses: {},
     traits: [
       "Abençoada: lê pensamentos superficiais e fala telepaticamente num raio de 18m.",
-      "Maldição: fisicamente muda; Desvantagem em Iniciativa. Muda não é impedida de conjurar: toda magia sua sai obrigatoriamente em Conjuração Silenciosa (Cap. 2, §2), pagando a penalidade dela — metade dos dados, arredondado pra cima, e um terço menos de área. Você nunca ganha o Bônus de Recitação Perfeita, porque não há voz pra recitar. É o preço, e é caro; sem esta linha, o resultado mais raro da tabela proibia magia sem dizer isso.",
+      "Maldição: fisicamente muda; Desvantagem em Iniciativa. Muda não é impedida de conjurar: toda magia sua sai obrigatoriamente em Conjuração Silenciosa (Cap. 2, §2), pagando a penalidade dela — metade do dano e um terço menos de área. Você nunca ganha o Bônus de Recitação Perfeita, porque não há voz pra recitar. É o preço, e é caro; sem esta linha, o resultado mais raro da tabela proibia magia sem dizer isso.",
     ],
   },
   {
