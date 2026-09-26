@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import { BookOpen } from "lucide-react";
 import { PATCH_NOTES } from "@/data/patchNotes";
 
 /**
@@ -64,6 +66,17 @@ export default function BookCover() {
       <p className="mt-5 font-display text-lg italic text-parchment-700 sm:text-xl dark:text-parchment-300">
         O Mundo de Seis Faces
       </p>
+
+      {/* A porta pro livro folheado (/livro/folhear): páginas de tamanho fixo,
+          duas colunas, virar página. Até ele substituir este /livro, é daqui
+          que a mesa chega lá sem digitar o endereço. */}
+      <Link
+        href="/livro/folhear"
+        className="mt-8 inline-flex items-center gap-2 rounded-full border border-gold-600/60 bg-parchment-50/70 px-5 py-2.5 text-sm font-semibold text-gold-800 shadow-sm transition hover:border-gold-500 hover:bg-gold-500/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-500 dark:bg-parchment-950/60 dark:text-gold-300"
+      >
+        <BookOpen className="h-4 w-4" aria-hidden />
+        Folhear como livro
+      </Link>
 
       {edicao && (
         <p className="mt-8 text-2xs uppercase tracking-[0.25em] text-parchment-600 dark:text-parchment-400">
