@@ -97,14 +97,14 @@ export const RECOMPENSA_POR_PATAMAR: {
 export const MARCA_DO_MESTRE = {
   nome: "A Marca do Mestre",
   texto:
-    "Nenhum PA. Em vez disso você recebe o sinal daquele mestre — uma cicatriz, uma tatuagem, uma corda trançada, um nome — e com ele a Maestria pessoal dele (um passivo pequeno, escrito pelo Mestre da mesa), mais o direito de voltar ao dojo: uma vez por arco de campanha, você pode pedir uma segunda provação, e ela concede a recompensa cheia do seu patamar atual. Quem escolhe a Marca está trocando poder agora por uma porta que continua aberta.",
+    "Nenhum PA. Em vez disso você recebe o sinal daquele mestre — uma cicatriz, uma tatuagem, uma corda trançada, um nome — e com ele a Maestria pessoal dele (um passivo pequeno, escrito pelo Mestre da mesa), mais o direito de voltar ao dojo UMA vez na vida do personagem, para uma segunda provação que só oferece a porta do PA livre do seu patamar de então. É a única exceção ao limite de uma provação por árvore, e ela não se repete. Quem escolhe a Marca está trocando poder agora por uma porta que continua aberta — uma vez.",
 };
 
 /**
  * As travas do sistema. Sem elas o Dojo vira farm.
  */
 export const LIMITES = [
-  "Uma provação por árvore, uma vez na vida do personagem. Concluir o dojo do Deus do Arco abre a Arquearia para sempre — e nunca mais dá PA.",
+  "Uma provação por árvore, uma vez na vida do personagem (a Marca do Mestre é a única exceção, e vale uma vez só). Concluir o dojo do Deus do Arco abre a Arquearia para sempre — e nunca mais dá PA.",
   "Um mestre não ensina o que ele não é. O Deus do Arco não abre Magia de Fogo, por mais que goste de você.",
   "A provação é do GRUPO, mas a escolha do Dilema é de cada jogador, em segredo se a mesa preferir. Dois personagens podem sair do mesmo dojo com recompensas diferentes.",
   "PA travado nunca destrava. Se o personagem abandonar a árvore, aquele PA morre com ela — é o preço de ter escolhido o número maior.",

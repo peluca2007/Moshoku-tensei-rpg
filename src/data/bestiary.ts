@@ -465,8 +465,8 @@ export type Temperatura = (typeof TEMPERATURAS)[number]["id"];
  *
  * O papel entra porque o Apêndice G já transforma os números por papel: o
  * lacaio tem metade do PV e do dano (logo, meia criatura), e o chefe tem PV
- * dobrado MAIS uma rodada inteira a cada dois personagens — o que na prática
- * vale três, e não duas.
+ * dobrado MAIS uma rodada inteira a cada dois personagens — o que, medido em
+ * batalha, vale cinco criaturas.
  *
  * A imunidade é o preço declarado dela: apagar a jogada de alguém da mesa faz
  * a criatura contar como um patamar acima.
@@ -482,7 +482,9 @@ export function pesoNoOrcamento(
   // Dobra a cada patamar acima, cai pela metade a cada patamar abaixo, e nunca
   // chega a zero: mil ratos ainda são um problema, só que um problema pequeno.
   const porPatamar = Math.pow(2, diferenca);
-  const porPapel = papel === "chefe" ? 3 : papel === "lacaio" ? 0.5 : 1;
+  // O chefe pesa 5 desde 2026-09-26: com 3, um chefe "fácil" dizimava o grupo
+  // em 25–32% das batalhas medidas.
+  const porPapel = papel === "chefe" ? 5 : papel === "lacaio" ? 0.5 : 1;
   return porPatamar * porPapel;
 }
 
