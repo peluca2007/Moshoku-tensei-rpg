@@ -111,6 +111,19 @@ export function FimDoCapitulo({ id }: { id: string }) {
   const folio = proximo ? atual.label.split(" — ")[0] : "Fim do Livro";
 
   return (
+    <>
+    {/*
+      O FECHO DO CAPÍTULO no livro folheado (2026-09-26): o capítulo seguinte
+      sempre começa em página nova, e sobrava meia página vazia no fim de cada
+      um. O fecho é uma ilustração que ocupa esse resto até o pé da página
+      (esticarVitrines, em folhear/diagramacao.ts); com pouco espaço, some.
+      No site, que rola, não aparece.
+    */}
+    <figure aria-hidden className="livro-vitrine livro-fecho hidden" data-fecho={id}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- ilustração de fecho, impressa no papel. */}
+      <img src={`/livro/fechos/${id}.webp`} alt="" loading="lazy" decoding="async" />
+      <figcaption className="livro-fecho-legenda">{proximo ? `Fim · ${folio}` : "Fim do Livro"}</figcaption>
+    </figure>
     <footer className="livro-fim print-hide pt-4 text-center">
       <p
         aria-hidden
@@ -131,6 +144,7 @@ export function FimDoCapitulo({ id }: { id: string }) {
         </a>
       )}
     </footer>
+    </>
   );
 }
 
