@@ -407,7 +407,7 @@ export default function Folhear({
     medir("titulos", () => {
       for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
       // Calço que ficou fora do lugar sai, e a conferência roda de novo.
-      for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx)) > 0; rodada++) {
+      for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx), g) > 0; rodada++) {
         for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
       }
       // E o empurrão que ficou velho (o bloco já cabia onde estava) sai.

@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import Ornament from "@/components/ui/Ornament";
 import { SUMARIO_DO_LIVRO } from "@/data/sumarioDoLivro";
 import { ARTE_DAS_ABERTURAS } from "./arteDasAberturas";
+import { citar } from "./citacoes";
 
 /**
  * A FOLHA DE ROSTO DE CAPÍTULO (2026-09-23).
@@ -120,8 +121,15 @@ export function FimDoCapitulo({ id }: { id: string }) {
       No site, que rola, não aparece.
     */}
     <figure aria-hidden className="livro-vitrine livro-fecho hidden" data-fecho={id}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- ilustração de fecho, impressa no papel. */}
-      <img src={`/livro/fechos/${id}.webp`} alt="" loading="lazy" decoding="async" />
+      {/* A arte entra INTEIRA, com uma cópia desfocada dela enchendo o quadro: a
+          altura do fecho é a que sobrou na página, e uma capa em pé num quadro
+          baixo perdia mais da metade da cena no recorte. */}
+      <span className="livro-fecho-quadro">
+        {/* eslint-disable-next-line @next/next/no-img-element -- fundo desfocado da ilustração de fecho. */}
+        <img className="livro-fecho-fundo" src={`/livro/fechos/${id}.webp`} alt="" loading="lazy" decoding="async" />
+        {/* eslint-disable-next-line @next/next/no-img-element -- ilustração de fecho, impressa no papel. */}
+        <img className="livro-fecho-frente" src={`/livro/fechos/${id}.webp`} alt="" loading="lazy" decoding="async" />
+      </span>
       <figcaption className="livro-fecho-legenda">{proximo ? `Fim · ${folio}` : "Fim do Livro"}</figcaption>
     </figure>
     <footer className="livro-fim print-hide pt-4 text-center">
@@ -192,7 +200,7 @@ export function SubTitle({ id, children }: { id?: string; children: ReactNode })
 }
 
 export function P({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <p className={`leading-relaxed text-parchment-700 dark:text-parchment-300 ${className}`}>{children}</p>;
+  return <p className={`leading-relaxed text-parchment-700 dark:text-parchment-300 ${className}`}>{citar(children)}</p>;
 }
 
 /** Caixa de regra/nota — equivalente às caixas indentadas (`#####`) do livro original. */
@@ -214,7 +222,7 @@ export function Aside({ title, children }: { title?: string; children: ReactNode
           consultada, não lida em fluxo), mas o TEXTO dentro dela continua sendo
           texto — sem medida, uma nota de regra longa atravessa 760px numa linha
           só, que é pior de ler do que o corpo do livro que ela comenta. */}
-      <div className="max-w-[74ch] space-y-1.5 text-wine-950/80 dark:text-wine-100/80">{children}</div>
+      <div className="max-w-[74ch] space-y-1.5 text-wine-950/80 dark:text-wine-100/80">{citar(children)}</div>
     </div>
   );
 }
@@ -231,7 +239,7 @@ export function Warning({ title, children }: { title?: string; children: ReactNo
     // fundo da página. O `gold-100` tem pigmento suficiente pra a caixa existir.
     <div className="livro-caixa livro-aviso rounded-xl border border-l-[3px] border-gold-400/50 border-l-gold-500 bg-gradient-to-br from-gold-100/80 to-gold-100/40 p-3.5 text-sm shadow-sm transition-shadow hover:shadow-md dark:border-gold-800 dark:border-l-gold-500 dark:from-gold-950/45 dark:to-gold-950/15">
       {title && <p className="mb-1 font-semibold text-gold-800 dark:text-gold-200">{title}</p>}
-      <div className="max-w-[74ch] space-y-1.5 text-parchment-800 dark:text-gold-100/85">{children}</div>
+      <div className="max-w-[74ch] space-y-1.5 text-parchment-800 dark:text-gold-100/85">{citar(children)}</div>
     </div>
   );
 }
@@ -300,7 +308,7 @@ export function BookTable({ headers, rows }: { headers: string[]; rows: (string 
                       : "text-parchment-700 dark:text-parchment-300"
                   }`}
                 >
-                  {cell}
+                  {citar(cell)}
                 </td>
               ))}
             </tr>
@@ -315,7 +323,7 @@ export function List({ items }: { items: ReactNode[] }) {
   return (
     <ul className="list-disc space-y-1 pl-5 text-parchment-700 dark:text-parchment-300">
       {items.map((item, i) => (
-        <li key={i}>{item}</li>
+        <li key={i}>{citar(item)}</li>
       ))}
     </ul>
   );

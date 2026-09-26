@@ -153,25 +153,16 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           se escolhem — elas só se revelam pra quem já cumpriu os pré-requisitos das duas árvores de origem
           (ver a nota no catálogo de cada uma, mais abaixo). Nenhuma delas é uma
           classe: você compra Ranks em quantas quiser, na ordem que quiser, e seu personagem é simplesmente
-          a soma do que ele estudou. Clique no nome de qualquer sub-árvore na tabela abaixo pra abrir ela
-          direto no mapa.
+          a soma do que ele estudou. Cada nome na tabela abaixo leva ao catálogo
+          da árvore, mais adiante neste capítulo.
         </P>
         <BookTable
           headers={["Pilar", "Sub-árvore", "Atributo-chave", "Recurso", "Identidade em uma linha"]}
           rows={TREES.map((t) => [
             t.category === "magia" ? "Magia" : t.category === "corpo" ? "Corpo" : "Utilidade",
-            <Link
-              key={t.id}
-              href={`/arvores?arvore=${t.id}`}
-              // `inline-block py-1` leva o alvo de 20px para 28px de altura, acima do
-              // mínimo de 24 do WCAG 2.5.8. Diferente dos links em prosa — que o
-              // critério isenta em letra, porque aumentá-los quebraria a linha do
-              // texto — este é alvo de NAVEGAÇÃO numa célula de tabela, e o dedo
-              // precisa acertá-lo.
-              className="inline-block py-1 text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300"
-            >
-              {t.name}
-            </Link>,
+            // O nome vira citação (citacoes.tsx): a cor e o selo da árvore, e o link
+            // leva ao catálogo dela, mais adiante neste capítulo.
+            t.name,
             t.keyAttributeLabel ?? "—",
             t.resourceLabel ?? "—",
             t.tagline ?? "",
