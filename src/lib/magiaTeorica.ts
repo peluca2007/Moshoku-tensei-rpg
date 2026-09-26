@@ -164,6 +164,10 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
   if (pm > perfil.pm) erros.push(`O circuito custa ${pm} PM, acima do teto de ${perfil.pm} PM de ${escolha.rank}.`);
   if (centrais.length > 1 && indiceRank === 0) erros.push("Duas ações centrais exigem Magia Teórica Intermediária.");
   if ((temExpandir || temRepetir) && indiceRank === 0) erros.push("Expandir e Repetir exigem Magia Teórica Intermediária.");
+  if (escolha.forma === "triangulo" && indiceRank < 1) erros.push("Triângulo exige Teórica Intermediária.");
+  if (escolha.forma === "estrela" && indiceRank < 2) erros.push("Estrela exige Teórica Avançada.");
+  if (escolha.forma === "espiral" && indiceRank < 3) erros.push("Espiral exige Teórica Santa.");
+  if (escolha.meio === "pedra" && indiceRank < 3) erros.push("Pedra gravada exige Teórica Santa.");
   if (escolha.gatilho && indiceRank < 2) erros.push("Gatilhos exigem Magia Teórica Avançada.");
   if (escolha.gatilho && (escolha.meio === "gesto" || escolha.meio === "ar")) erros.push("Um gatilho precisa de giz, pergaminho ou pedra gravada.");
   if (escolha.gatilho && escolha.condicao === "quebra") erros.push("O alarme de quebra precisa de outra célula que sobreviva à parede. Esta oficina ainda aceita uma célula por desenho.");

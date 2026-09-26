@@ -67,6 +67,20 @@ describe("oficina de Magia Teórica", () => {
     expect(giz.pm).toBe(11);
   });
 
+  it.each([
+    { nome: "Triângulo", escolha: { operadores: ["projetar"], forma: "triangulo" }, antes: "Principiante", liberado: "Intermediário", erro: "Triângulo exige Teórica Intermediária." },
+    { nome: "Estrela", escolha: { operadores: ["projetar"], forma: "estrela" }, antes: "Intermediário", liberado: "Avançado", erro: "Estrela exige Teórica Avançada." },
+    { nome: "Espiral", escolha: { forma: "espiral" }, antes: "Avançado", liberado: "Santo", erro: "Espiral exige Teórica Santa." },
+    { nome: "Pedra gravada", escolha: { meio: "pedra" }, antes: "Avançado", liberado: "Santo", erro: "Pedra gravada exige Teórica Santa." },
+  ] satisfies { nome: string; escolha: Partial<FormulaEscolha>; antes: FormulaEscolha["rank"]; liberado: FormulaEscolha["rank"]; erro: string }[])("só libera $nome no rank correto", ({ escolha, antes, liberado, erro }) => {
+    const bloqueada = criarFormula({ ...base, ...escolha, rank: antes });
+    const permitida = criarFormula({ ...base, ...escolha, rank: liberado });
+    expect(bloqueada.valida).toBe(false);
+    expect(bloqueada.erros).toContain(erro);
+    expect(permitida.valida).toBe(true);
+    expect(permitida.erros).not.toContain(erro);
+  });
+
   it("permite Círculo como forma neutra e exige estrutura para Quadrado", () => {
     const circuloInstantaneo = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "circulo" });
     const quadradoSemEstrutura = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "quadrado" });
