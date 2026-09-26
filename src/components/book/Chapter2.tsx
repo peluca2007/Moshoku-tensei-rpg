@@ -7,6 +7,7 @@ import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, Sectio
 import LaboratorioDeFormulas from "./LaboratorioDeFormulas";
 import Prancha from "./Prancha";
 import { TabelaDaPotencia, TabelasDasPecas, TabelaDasPrimeirasFrases, TabelaDosContatos, TabelaDosMeios } from "./RegrasDaTeorica";
+import { DesenhoAnotado, ExerciciosDaTeorica, FalaDaRoxy, LousaDaConta, RespostasDaTeorica } from "./AulaDaTeorica";
 
 function tex(s: string): string {
   return s
@@ -652,37 +653,69 @@ export default function Chapter2() {
           antiga árvore de Barreira: a defesa agora é o ramo de <b>Conter</b> (deter corpos) e{" "}
           <b>Rejeitar</b> (deter magia) da mesma gramática.
         </P>
-        <Aside title="Criar fórmulas é uma capacidade da árvore">
+        <P>
+          Esta seção é uma <b>aula em cinco lições</b>, e cada lição acrescenta uma peça só. Leia na ordem; no
+          fim há três exercícios com resposta, e o Laboratório pra você montar as suas.
+        </P>
+        <Aside title="Quem pode desenhar">
           Para construir ou alterar uma fórmula, você precisa ter Magia Teórica no rank usado e conhecer
           todos os símbolos que inscreve. Outra árvore pode ensinar uma essência, como Fogo ou Som; aprender
           a essência não dá a capacidade de compor fórmulas. Qualquer criatura capaz de pagar o PM pode{" "}
           <b>alimentar</b> um desenho pronto, mesmo sem entendê-lo — PM a mais não amplia o efeito.
         </Aside>
 
-        <SubTitle id="cap2-8-frase">A frase: núcleo, ação e forma</SubTitle>
+        <SubTitle id="cap2-8-frase">Lição 1 — A frase: núcleo, ação e forma</SubTitle>
+        <P>Toda fórmula é uma frase de três partes, e elas são desenhadas nesta ordem:</P>
+        <List
+          items={[
+            <span key="n">
+              <b>O núcleo</b> (a essência) diz <i>o que existe</i>: mana pura, fogo, água, vida…
+            </span>,
+            <span key="a">
+              <b>A ação</b> (o operador) diz <i>o que acontece</i> com ele, e é traçada <b>por cima</b> do
+              núcleo, não ao lado: os dois traços viram um glifo só.
+            </span>,
+            <span key="f">
+              <b>A forma</b> fecha o contorno em volta e diz <i>como o efeito se organiza</i>: mais longe, mais
+              forte, mais largo.
+            </span>,
+          ]}
+        />
+        <DesenhoAnotado titulo="A primeira fórmula: o Dardo Arcano" escolha={{}} />
+        <FalaDaRoxy>
+          Primeiro o que existe, depois o que acontece, por último o contorno. Frase sem ação é mana parada:
+          não acontece nada, e o PM também não sai.
+        </FalaDaRoxy>
         <P>
-          O <b>núcleo</b> (a essência) diz o que existe; a <b>ação</b> (o operador) é um símbolo inscrito
-          sobre ele e diz o que acontece; a <b>forma</b> fecha o contorno e diz como o efeito se organiza.
-          A flecha de Projetar atravessa o símbolo de Mana: os dois traços formam um <b>glifo composto</b>.
-          Com mais de uma ação, pequenos números junto às inscrições dão a ordem. Na entrada da árvore você
-          já conhece Mana, Projetar, Expressar, Conter, Círculo, Quadrado e Linha.
+          Na entrada da árvore você já conhece <b>Mana</b>, as ações <b>Projetar</b>, <b>Expressar</b> e{" "}
+          <b>Conter</b>, e as formas <b>Círculo</b>, <b>Quadrado</b> e <b>Linha</b>. Só com isso já saem
+          cinco magias diferentes:
         </P>
         <TabelaDasPrimeirasFrases />
         <P>
-          Troque uma peça e veja o que muda: Linha no lugar de Círculo leva o Dardo mais longe; Círculo no
-          lugar de Quadrado deixa a parede com menos PV e mais duração. Um desenho novo com símbolos que você
-          já conhece <b>não custa PA</b> — PA aprende a peça; PM alimenta cada uso.
+          Troque <b>uma peça</b> e veja o que muda: Linha no lugar de Círculo leva o Dardo mais longe; Círculo
+          no lugar de Quadrado deixa a parede com menos PV e mais duração. Um desenho novo com símbolos que
+          você já conhece <b>não custa PA</b> — PA aprende a peça; PM alimenta cada uso.
         </P>
 
-        <SubTitle id="cap2-8-pecas">As peças</SubTitle>
-        <TabelasDasPecas />
-
-        <SubTitle id="cap2-8-custo">A conta: PM, potência e construção</SubTitle>
+        <SubTitle id="cap2-8-pecas">Lição 2 — O alfabeto: as peças</SubTitle>
         <P>
-          <b>Some o PM da essência, das ações e da forma.</b> O núcleo e a primeira ação são dois símbolos
-          e não pagam nada a mais; cada símbolo seguinte (outra ação, ou o gatilho) custa <b>+1 PM</b> pela
-          sobreposição, além do seu próprio custo. Um gatilho custa +2 PM e conta como símbolo. Some por fim
-          o acréscimo da <b>potência</b>.
+          As peças são as letras. As <b>essências</b> são os substantivos, as <b>ações</b> são os verbos e as{" "}
+          <b>formas</b> são a moldura. Cada uma tem seu custo em PM e um jeito de ser aprendida:
+        </P>
+        <TabelasDasPecas />
+        <FalaDaRoxy>
+          Você não decora feitiços, decora letras, e escreve o que a situação pedir. É por isso que um mago
+          de Teórica parece saber tudo: ele só sabe o alfabeto muito bem.
+        </FalaDaRoxy>
+
+        <SubTitle id="cap2-8-custo">Lição 3 — A conta: PM, potência e construção</SubTitle>
+        <P>
+          <b>Some o PM da essência, das ações e da forma.</b> O núcleo e a primeira ação são dois símbolos e
+          não pagam nada a mais. Cada símbolo seguinte (outra ação, ou o gatilho) custa <b>+1 PM</b> pela
+          sobreposição, além do seu próprio custo: é o traço cruzando o traço. Com mais de uma ação, pequenos
+          números junto às inscrições dão a ordem. Um gatilho custa +2 PM e conta como símbolo. Some por fim o
+          acréscimo da <b>potência</b>.
         </P>
         <P>
           <b>Construção</b> é o seu rank na Teórica: limita quantos símbolos e quanto PM cabem numa célula.{" "}
@@ -691,6 +724,10 @@ export default function Chapter2() {
           ele custa como um.
         </P>
         <TabelaDaPotencia />
+        <LousaDaConta
+          titulo="Conta na lousa: uma onda de fogo"
+          escolha={{ rank: "Intermediário", potencia: "Intermediário", essencia: "fogo", operadores: ["projetar", "expandir"] }}
+        />
         <P>
           <b>Dano e cura.</b> Uma projeção de dano rola os dados da potência em <b>d8 + BC</b> (1d20 + BC
           contra a CA pra acertar). Com Expandir, a área divide os dados pela metade e o alvo testa
@@ -700,12 +737,16 @@ export default function Chapter2() {
         </P>
         <P>
           <b>Alcance.</b> Sem Projetar, a fórmula nasce ao toque (estrutura) ou no ponto do desenho (sinal).
-          Projetar leva o efeito até o alcance da potência. A ordem é regra: <b>Expandir → Projetar</b> abre um
-          cone na origem com metade do alcance; <b>Projetar → Expandir</b> conserva o alcance e abre a área no
-          destino.
+          Projetar leva o efeito até o alcance da potência. A <b>ordem</b> das ações é regra:{" "}
+          <b>Projetar → Expandir</b> (a onda da lousa) conserva o alcance e abre a área no destino;{" "}
+          <b>Expandir → Projetar</b> abre um cone na origem com metade do alcance.
         </P>
+        <FalaDaRoxy>
+          Some da esquerda pra direita, e leia a ordem das ações como se lê uma frase: &ldquo;lança e depois
+          espalha&rdquo; não é o mesmo que &ldquo;espalha e depois lança&rdquo;.
+        </FalaDaRoxy>
 
-        <SubTitle id="cap2-8-defesa">Deter corpos e deter magia</SubTitle>
+        <SubTitle id="cap2-8-defesa">Lição 4 — Deter corpos e deter magia</SubTitle>
         <P>
           <b>Conter</b> ergue uma fronteira física com os PV da potência (Quadrado +50%; Terra +50%; os dois
           somam, não multiplicam). Ela bloqueia criaturas e projéteis até perder os PV; magia atravessa.{" "}
@@ -714,6 +755,12 @@ export default function Chapter2() {
           dois ou mais acima atravessa inteira. Corpos, armas e Touki atravessam. Rejeitar não interrompe
           uma conjuração: a magia acontece e é barrada ao cruzar a fronteira.
         </P>
+        <DesenhoAnotado titulo="Uma parede: Mana, Conter e Quadrado" escolha={{ operadores: ["conter"], forma: "quadrado" }} />
+        <FalaDaRoxy>
+          Conter segura corpo. Rejeitar segura magia. Troque os dois e o ogro atravessa a sua barreira de
+          mana rindo, ou a Bola de Fogo atravessa a sua parede de pedra.
+        </FalaDaRoxy>
+        <P>Com uma essência no núcleo, a fronteira também faz alguma coisa a quem encosta nela:</P>
         <TabelaDosContatos />
 
         <SubTitle id="cap2-8-meios">Onde se desenha, e quanto dura</SubTitle>
@@ -726,7 +773,7 @@ export default function Chapter2() {
           potência.
         </P>
 
-        <SubTitle id="cap2-8-circuitos">Circuitos: células, ligações, gatilhos</SubTitle>
+        <SubTitle id="cap2-8-circuitos">Lição 5 — Circuitos: células, ligações, gatilhos</SubTitle>
         <P>
           Do Avançado em diante, você liga <b>células</b> — fórmulas completas, cada uma com seu núcleo,
           ações, forma e potência. Cada célula paga o próprio PM e respeita o próprio teto; cada{" "}
@@ -749,6 +796,10 @@ export default function Chapter2() {
             ["Total", "8 PM, 1 minuto de giz pra traçar; quando a parede cai, o sinal soa até 18 m"],
           ]}
         />
+        <FalaDaRoxy>
+          Um circuito é uma frase que espera a hora certa. Desenhe com calma, antes da luta: na hora, ele
+          dispara sozinho.
+        </FalaDaRoxy>
 
         <SubTitle id="cap2-8-cartas">As cartas são fórmulas decoradas</SubTitle>
         <P>
@@ -759,9 +810,14 @@ export default function Chapter2() {
           algumas ensinam uma <b>exceção</b> escrita na própria carta — durar mais, ou nascer como Reação,
           como a Parede de Emergência.
         </P>
+
+        <SubTitle id="cap2-8-exercicios">Três exercícios</SubTitle>
+        <P>Resolva com o que as cinco lições ensinaram. As respostas vêm logo abaixo, de cabeça pra baixo.</P>
+        <ExerciciosDaTeorica />
+        <RespostasDaTeorica />
         <P>
-          Experimente abaixo. Comece por um dos exemplos e mude uma peça por vez: o laboratório calcula o
-          custo, os números e por que uma combinação ultrapassa o limite do rank.
+          Agora é com você. Abra o Laboratório, comece por um dos exemplos e mude uma peça por vez: ele faz a
+          conta, mostra os números e diz por que uma combinação passa do limite do rank.
         </P>
         <LaboratorioDeFormulas />
       </Section>

@@ -238,7 +238,7 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
   const resolucao = ofensiva ? escolha.essencia === "vida"
     ? `Cura ${dadoPrincipal} de PV em alvo voluntário${projecaoEmArea ? "; em área, divida os dados entre os beneficiários" : ""}.`
     : projecaoEmArea && raioEfetivo > 0
-      ? `Área: Agilidade contra CD 8 + BC; metade do dano no sucesso. Dados dirigidos: ${dadosDirigidos}d6; orçamento de área: ${dadoPrincipal}.`
+      ? `Área: Agilidade contra CD 8 + BC; metade do dano no sucesso. Dados dirigidos: ${dadosDirigidos}d8; orçamento de área: ${dadoPrincipal}.`
       : `Alvo único: 1d20 + BC contra CA${escolha.forma === "estrela" ? "; distribua os dados inteiros entre até três alvos antes de rolar" : ""}.`
     : null;
   const umaPorTurno = ofensiva && !cura ? " Uma projeção ofensiva por turno (§8)." : "";
