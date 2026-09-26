@@ -1519,7 +1519,7 @@ export default function CharacterSheet() {
           </p>
           <p>
             <span className="font-semibold text-wine-300">Empilhamento</span> = bônus do mesmo tipo não somam
-            (use o maior); teto de +5 vindo de aliados; máximo 5 Ações por turno (2 externas).
+            (use o maior); teto de +6 vindo de aliados; no máximo 4 Ações próprias + 2 concedidas por turno.
           </p>
           <p>
             <span className="font-semibold text-wine-300">Vantagem</span> = 2d20, escolha o maior (3d20 se

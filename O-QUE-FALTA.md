@@ -33,7 +33,7 @@ Só o que **ainda não foi feito**. O que já foi feito sai daqui e fica registr
    - **Dissonância** do Bardo: resolveu o turno vazio?
 
 5. **Jogar Suishin, Escudos, Ladino e Tático.** As quatro são coerentes e invisíveis pro simulador:
-   - **Tático:** o teto de Ações do Cap. 4 ("5 por turno, no máximo 2 externas") segura na mesa? E o
+   - **Tático:** o teto de Ações do Cap. 4 ("4 próprias + 2 concedidas") segura na mesa? E o
      acúmulo da Ordem de Tiro virou a jogada óbvia (apontar, esperar, apontar de novo)?
    - **Suishin:** o jogador sente a árvore funcionando, ou vira "eu espero apanhar"?
 
