@@ -16,6 +16,38 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.98",
+    date: "2026-09-26",
+    title: "O livro mais bonito, e mais leve",
+    sections: [
+      {
+        heading: "Livro folheado",
+        items: [
+          "Abre em metade do tempo, e agora tem porta: o botão Folhear como livro, na capa do /livro e no rodapé.",
+          "Toda árvore e toda habilidade citada no texto aparece na cor da árvore, com o selo dela, e leva ao catálogo.",
+          "Página sem buraco: selo carimbado no vão antes de uma tabela larga, empurrões e calços velhos desfeitos, tabela larga que abriria buraco volta pra coluna, última linha de tabela nunca sozinha.",
+          "A vitrine das dezenove árvores são os selos, e o fecho de capítulo mostra a arte inteira.",
+        ],
+      },
+      {
+        heading: "Cartas e Magia Teórica",
+        items: [
+          "A carta de habilidade mostra as três formas de conjurar num quadrinho com as Ações; o Cap. 3 ensina a ler a carta com a Bola de Fogo anotada.",
+          "A §8 do Cap. 2 virou a Aula da Roxy: cinco lições, desenho anotado, a conta na lousa e três exercícios com resposta.",
+          "O Laboratório de Fórmulas virou um grimório de duas páginas: as peças à esquerda, o desenho, a conta e a carta pronta à direita.",
+          "Correção: a resolução de área da Teórica rola d8, não d6.",
+        ],
+      },
+      {
+        heading: "Arte e revisão",
+        items: [
+          "Arte nova da Raça Dragão, quatro pranchas novas e o acervo de arte guardado pro futuro.",
+          "Revisão de fatos, contas, nomes e referências dos capítulos 0 a 5, das cartas, do glossário, do bestiário e dos apêndices.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.97",
     date: "2026-09-26",
     title: "A revisão do livro inteiro",
