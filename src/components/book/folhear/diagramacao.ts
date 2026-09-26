@@ -265,8 +265,11 @@ export function ajustarFigurasLargas(fluxo: Element): void {
   // Mesmo de margem a margem, alguns diagramas têm largura mínima maior que a
   // página (a Ordem do Dano, o Tiro Perfeito). Esses encolhem por inteiro,
   // proporcionais, em vez de cortar o último quadro fora da página.
-  largas.forEach((fig) => {
-    const s = sobra(fig);
+  // Mede todas antes de encolher qualquer uma: cada zoom escrito entre duas
+  // medidas rediagramava o livro inteiro.
+  const sobras = largas.map(sobra);
+  largas.forEach((fig, i) => {
+    const s = sobras[i];
     if (s > 1) fig.style.zoom = String(Math.max(0.6, Math.floor((1 / s) * 100) / 100));
   });
 }
@@ -366,6 +369,14 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     return pagina * 2 + (x - pagina * g.pagina > g.pagina / 2 ? 1 : 0);
   };
   const empurrar = new Set<Element>();
+  /*
+   * LER TUDO, DEPOIS ESCREVER (0.1.99). Cada classe posta no meio da leitura
+   * obrigava o navegador a rediagramar o livro inteiro (~50 ms no desktop,
+   * ~200 ms num celular) antes da medida seguinte: a passada dos títulos
+   * pagava ~46 rediagramações e levava 2,3 s. As decisões são as mesmas —
+   * todas medidas no mesmo estado, que é o que uma passada quer dizer.
+   */
+  const alargar: Element[] = [];
   fluxo.querySelectorAll(SELETOR_TITULOS).forEach((t) => {
     // A página de raça é uma página inteira de altura fixa: o título dela não
     // tem como ficar longe do texto, e a leitura japonesa à direita do nome
@@ -389,7 +400,7 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
       depois.matches(".folhear-larga, .livro-prancha:not(.livro-prancha-coluna, .folhear-prancha-coluna)") &&
       Math.floor(coluna(comeco) / 2) === Math.floor(coluna(titulo) / 2)
     ) {
-      t.classList.add("folhear-larga");
+      alargar.push(t);
       empurrar.add(t);
       return;
     }
@@ -400,13 +411,21 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     // ainda assim ficar pra trás, a próxima passada empurra — e empurrar algo
     // que atravessa a página é mandá-lo pra página seguinte.
     if (t.matches("h3, h4") && depois.matches(".folhear-larga, .livro-prancha:not(.livro-prancha-coluna, .folhear-prancha-coluna)") && !t.classList.contains("folhear-larga")) {
-      t.classList.add("folhear-larga");
+      alargar.push(t);
       empurrar.add(t);
       return;
     }
     const bloco = t.closest(BLOCOS_COM_TITULO);
     empurrar.add(bloco && abre(bloco, t) ? bloco : t);
   });
+  // Título que passou a atravessar a página muda a posição de tudo que vem
+  // depois dele: o resto desta passada mediria um livro que não existe mais.
+  // Escreve só isso e deixa a próxima passada medir de novo.
+  if (alargar.length > 0) {
+    alargar.forEach((t) => t.classList.add("folhear-larga", "folhear-titulo-largo"));
+    return alargar.length;
+  }
+
   // TABELA QUE ABRE NO PÉ DA COLUNA com o cabeçalho e uma ou duas linhas: é o
   // título órfão das tabelas. Ela desce inteira, pelos mesmos degraus.
   const topoDasTabelas = fluxo.getBoundingClientRect().top;
@@ -440,11 +459,6 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
   // tirar uma classe obrigava o navegador a rediagramar o livro inteiro a
   // cada título (a passada foi de ~160 ms pra 1,2 s).
   const junto = [...empurrar].filter((el) => el.matches("h3, h4")).map((el) => seguinte(el, fluxo));
-  junto.forEach((prox) => {
-    if (!prox) return;
-    empurrar.delete(prox);
-    prox.classList.remove("folhear-empurra");
-  });
 
   // Cada caso sobe um degrau por passada, e só conta como mudança se subiu:
   // 1) título antes de algo que atravessa a página passa a atravessar também;
@@ -467,13 +481,16 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
    * diagramador faria à mão: deixar o pé da página em branco.
    */
   const topoDoFluxo = fluxo.getBoundingClientRect().top;
-  const calcar = (el: Element) => {
+  const restoDaFaixa = (el: Element): number | null => {
     const q = el.getClientRects()[0];
-    if (!q) return;
+    if (!q) return null;
     const margem = parseFloat(getComputedStyle(el).marginTop) || 0;
     const inicioDaFaixa = (q.top - topoDoFluxo) / r.k - margem;
     const resto = alturaDaColuna - inicioDaFaixa;
-    if (resto <= 0 || resto > alturaDaColuna * 0.5) return;
+    return resto <= 0 || resto > alturaDaColuna * 0.5 ? null : resto;
+  };
+  const calcar = (el: Element, resto: number | null) => {
+    if (resto === null) return;
     const calco = document.createElement("div");
     calco.className = "folhear-calco";
     calco.setAttribute("aria-hidden", "true");
@@ -483,6 +500,26 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     el.classList.remove("folhear-empurra");
     el.classList.add("folhear-calcado");
   };
+  // As medidas que os degraus 3 e 4 pedem, tiradas antes da primeira escrita.
+  const cabe = new Map<Element, boolean>();
+  const resto = new Map<Element, number | null>();
+  const vaiAlargar = new Set(alargar);
+  empurrar.forEach((el) => {
+    const c = el.classList;
+    const larga = c.contains("folhear-larga") || vaiAlargar.has(el);
+    if (el.matches("h3, h4") && larga && !c.contains("folhear-titulo-largo")) return;
+    if (!c.contains("folhear-empurra")) return;
+    if (!c.contains("folhear-inteira")) cabe.set(el, cabeNumaColuna(el));
+    if (!c.contains("folhear-calcado") && !c.contains("folhear-tentou-calco")) resto.set(el, restoDaFaixa(el));
+  });
+
+  // Daqui pra baixo, só escrita.
+  alargar.forEach((t) => t.classList.add("folhear-larga"));
+  junto.forEach((prox) => {
+    if (!prox) return;
+    empurrar.delete(prox);
+    prox.classList.remove("folhear-empurra");
+  });
   let mudou = 0;
   empurrar.forEach((el) => {
     const c = el.classList;
@@ -496,10 +533,10 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
       // próxima passada confere de novo.
       el.querySelectorAll(".folhear-empurra").forEach((d) => d.classList.remove("folhear-empurra"));
     }
-    else if (!c.contains("folhear-inteira") && cabeNumaColuna(el)) c.add("folhear-inteira", "folhear-segura");
+    else if (!c.contains("folhear-inteira") && cabe.get(el)) c.add("folhear-inteira", "folhear-segura");
     else if (!c.contains("folhear-calcado") && !c.contains("folhear-tentou-calco")) {
       c.add("folhear-tentou-calco");
-      calcar(el);
+      calcar(el, resto.get(el) ?? null);
     }
     else return;
     mudou++;
