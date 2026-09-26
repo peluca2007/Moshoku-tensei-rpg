@@ -6,7 +6,7 @@ import { d20Ajustado } from "./combatSim";
  *
  * A regra estava implementada no motor desde sempre e **nunca teve teste**. Ela
  * apareceu na auditoria linha a linha das quatro árvores que faltavam: o livro
- * tem quatro tetos escritos no Cap. 4 (Auxílio +6, Ações 5/2 externas, Duas
+ * tem quatro tetos escritos no Cap. 4 (Auxílio +6, Ações 4 próprias + 2 concedidas, Duas
  * Salvações por combate, e este), e ao conferir quais o motor honra, este era o
  * único — e o único sem nada travando.
  *

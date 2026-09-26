@@ -332,13 +332,11 @@ pelo Cap. 5 do livro antes da loja e do `/encontros`.
 
 ---
 
-## 8. Incongruências achadas ao escrever este plano
+## 8. Incongruências achadas ao escrever este plano — ✅ resolvidas (2026-09-26)
 
-Pequenas, mas quebram a regra "nada existe fora do livro" — entram no primeiro commit da Etapa 3:
-
-- **A ficha mostra o Teto de Ações antigo.** `CharacterSheet.tsx` ainda diz "máximo 5 Ações por turno
-  (2 externas)"; o livro (Cap. 4, §5) diz "4 próprias + 2 concedidas".
-- **O `O-QUE-FALTA.md` cita o mesmo teto antigo** (item 5).
+- A ficha mostrava o Teto de Ações antigo ("máximo 5 Ações por turno, 2 externas") e o Teto de Auxílio
+  errado (+5); agora diz o que o livro diz (Cap. 4, §5): **4 próprias + 2 concedidas** e **+6**.
+- O `O-QUE-FALTA.md` (item 5) e o comentário de `vantagem.test.ts` citavam o mesmo teto antigo; corrigidos.
 
 ## 9. Pendências de diagramação conhecidas
 
