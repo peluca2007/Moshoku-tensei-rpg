@@ -88,7 +88,7 @@ export const LUTADOR_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "Metade do dado (você sofre 1d4)" },
-          effect: "Uma vez por turno. Teste de Vigor (CD 8 + Força + Rank) ou o alvo fica Atordoado até o fim do próximo turno dele. Quem sai desse Atordoado fica imune à sua Cabeçada até o fim do turno seguinte dele.",
+          effect: "Uma vez por combate contra cada alvo. Teste de Vigor (CD 8 + Força + Rank) ou o alvo perde 1 Ação no próximo turno dele — tonto, não fora de combate. Travar alguém de verdade é o Imperador desta árvore, não o 1º patamar.",
         },
         {
           id: "quebrar-equipamento",

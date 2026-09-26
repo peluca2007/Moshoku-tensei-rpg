@@ -226,7 +226,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       mastery: {
         name: "Chama Eterna",
         description:
-          "Você é imune a dano ígneo e à condição Em Chamas. Uma vez por turno, quando um soco seu aplicar Quebrantado num alvo Em Chamas, você recupera 1 PT.",
+          "Você é imune a dano ígneo e à condição Em Chamas; se já era imune (Coração de Brasa, na Magia de Fogo), o fogo te alimenta: o dano ígneo que te atingiria vira PV Temporários, até o seu Bônus de Rank × 2 por turno. Uma vez por turno, quando um soco seu aplicar Quebrantado num alvo Em Chamas, você recupera 1 PT.",
       },
       talents: [
         { id: "chama-eterna", name: "Brasa Funda", paCost: RANK_PA_COST.talent.Santo, description: "O Em Chamas que você aplica queima 1d10 em vez de 1d8." },
@@ -356,9 +356,9 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Colapso Solar",
           paCost: RANK_PA_COST.common.Imperador,
           ptCost: 5,
-          range: "Esfera de 45m",
+          range: "Esfera de 30m",
           actions: { normal: 2 },
-          damage: { normal: "14d12 + BC (plasma)" },
+          damage: { normal: "10d10 + BC (plasma)" },
           effect: "Uma vez por combate. Um núcleo de plasma puxa todo inimigo na área 9m em direção ao centro (teste de Força, CD 8 + BC, evita o puxão) e implode: todos sofrem o dano (teste de Vigor para metade), e magias de rank inferior ao seu na área se desfazem. Sobrecarga: quem falhar no Vigor fica Em Chamas e recebe acúmulos de Quebrantado iguais ao seu Bônus de Rank.",
         },
       ],
