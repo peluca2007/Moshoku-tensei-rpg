@@ -214,8 +214,8 @@ das condições. Essas cinco se julgam na mesa.
 - Talentos só de texto (Mapa Vivo, Contrabandista, Colecionador de Histórias…) viram Preparações ou saem.
 - **Bardo:** a Dissonância automática vira **canções** — uma ativa por vez, trocar custa 1 Ação (Marcha,
   Guerra, Réquiem, Dissonância).
-- **Tático:** o teto do Cap. 4 ("5 Ações por turno, no máximo 2 externas") **já existe**; a etapa confere
-  na mesa se ele segura, em vez de inventar outro.
+- **Tático:** o teto do Cap. 4, §5 ("4 Ações próprias + 2 concedidas") **já existe**; a etapa confere na
+  mesa se ele segura, em vez de inventar outro.
 - A regra compartilhada de PP no Cap. 3 é reescrita junto, com exemplo jogado.
 
 **Pronto quando:** todo talento de Utilidade se compara pelo número com um talento de combate; a mesa joga
@@ -332,7 +332,15 @@ pelo Cap. 5 do livro antes da loja e do `/encontros`.
 
 ---
 
-## 8. Pendências de diagramação conhecidas
+## 8. Incongruências achadas ao escrever este plano
+
+Pequenas, mas quebram a regra "nada existe fora do livro" — entram no primeiro commit da Etapa 3:
+
+- **A ficha mostra o Teto de Ações antigo.** `CharacterSheet.tsx` ainda diz "máximo 5 Ações por turno
+  (2 externas)"; o livro (Cap. 4, §5) diz "4 próprias + 2 concedidas".
+- **O `O-QUE-FALTA.md` cita o mesmo teto antigo** (item 5).
+
+## 9. Pendências de diagramação conhecidas
 
 Entram quando uma etapa tocar a página — a Etapa 3 deve resolver parte delas sozinha, ao encurtar o texto.
 
