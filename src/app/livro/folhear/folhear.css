@@ -337,7 +337,7 @@
   margin-top: 4rem;
 }
 
-.folhear-continuo > :is(.folhear-sumario, .folhear-guarda, .folhear-rosto, .folhear-colofao) {
+.folhear-continuo > :is(.folhear-sumario, .folhear-fantasma, .folhear-capa, .folhear-guarda, .folhear-rosto, .folhear-colofao) {
   display: none;
 }
 
@@ -1364,14 +1364,38 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   transform: rotate(0.8deg);
 }
 
+/*
+ * A arte das habilidades entra INTEIRA, com a própria arte desfocada por
+ * trás (2026-09-25). Com `cover` o livro cortava a cena e ampliava os GIFs
+ * pequenos até borrar — o mesmo erro que o site já tinha corrigido na 0.1.68.
+ */
 .folhear-fluxo figure:not(.diagrama, .livro-abertura-arte, .folhear-sumario-arte) img.blur-2xl {
-  display: none;
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  opacity: 1;
+  filter: blur(18px) brightness(0.5) saturate(1.2);
+  transform: scale(1.15);
 }
 
 .folhear-fluxo figure:not(.diagrama, .livro-abertura-arte, .folhear-sumario-arte) :is(img, video) {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+}
+
+/* As artes do livro que preenchem o quadro de propósito. */
+.folhear-fluxo figure.livro-olhos img,
+.folhear-fluxo figure.livro-kishirika img {
   object-fit: cover;
+}
+
+.folhear-fluxo figure .livro-imagem-inteira > img.livro-imagem-fundo {
+  object-fit: cover;
+}
+
+.folhear-fluxo figure .livro-imagem-inteira > img.livro-imagem-frente {
+  object-fit: contain;
 }
 
 .folhear-fluxo figure.diagrama {
@@ -1530,10 +1554,19 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 /* ── A guarda: uma prancha colorida de página inteira ─────────────────── */
+.folhear-fantasma,
+.folhear-capa,
 .folhear-guarda,
 .folhear-rosto,
 .folhear-colofao {
   display: none;
+}
+
+/* A fantasma e a capa só reservam a página no fluxo; a arte está na folha. */
+.folhear-fluxo > :is(.folhear-fantasma, .folhear-capa) {
+  display: block;
+  height: calc(var(--altura) - var(--topo) - var(--pe));
+  column-count: auto;
 }
 
 /* A página no fluxo só segura a legenda no pé; a arte está na folha. */
@@ -1546,12 +1579,25 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   align-items: flex-end;
 }
 
-.folhear-folha[data-pagina="0"] {
+/* A guarda: a paisagem de borda a borda, por dentro da capa. */
+.folhear-folha[data-pagina="2"] {
   background-position: center;
   background-size: cover;
 }
 
-.folhear-folha[data-pagina="0"]::before {
+.folhear-folha[data-pagina="1"]::before,
+.folhear-folha[data-pagina="2"]::before {
+  display: none;
+}
+
+/* A página fantasma: a esquerda do livro fechado não existe. */
+.folhear-folha[data-pagina="0"] {
+  background: transparent;
+  box-shadow: none;
+}
+
+.folhear-folha[data-pagina="0"]::before,
+.folhear-folha[data-pagina="0"]::after {
   display: none;
 }
 
@@ -4053,4 +4099,201 @@ html.livro-imersivo {
 
 .folhear[data-modo="livro"] .livro-laboratorio-abrir:hover {
   background: color-mix(in srgb, var(--cor) 22%, transparent);
+}
+
+/* ── A capa (a primeira página) ───────────────────────────────────────── */
+.folhear-capa-fundo,
+.folhear-capa-arte {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.folhear-capa-fundo {
+  object-fit: cover;
+  filter: blur(22px) brightness(0.55) saturate(1.15);
+  transform: scale(1.12);
+}
+
+.folhear-capa-arte {
+  object-fit: contain;
+  filter: drop-shadow(0 0 24px rgb(0 0 0 / 0.55));
+}
+
+/* ── O livro fechado: a capa sozinha, centrada na mesa ────────────────────
+   Na primeira dupla só existe a metade direita (a capa). O livro esconde a
+   metade esquerda e anda meia largura pra ficar no centro; ao abrir, volta
+   deslizando enquanto a capa vira. */
+.folhear[data-modo="livro"] .folhear-livro {
+  transition:
+    translate 480ms cubic-bezier(0.3, 0.7, 0.2, 1),
+    clip-path 480ms cubic-bezier(0.3, 0.7, 0.2, 1);
+  clip-path: inset(-120px -120px -120px -120px);
+}
+
+.folhear[data-modo="livro"][data-fechado] .folhear-livro {
+  translate: calc((var(--pagina) + var(--capa)) * var(--escala) * -0.5) 0;
+  clip-path: inset(-120px -120px -120px calc(50% - 4px));
+}
+
+.folhear[data-modo="livro"][data-fechado] .folhear-livro::after,
+.folhear[data-modo="livro"][data-fechado] .folhear-abas {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folhear[data-modo="livro"] .folhear-livro {
+    transition: none;
+  }
+}
+
+/* ── O fecho de capítulo não existe no livro impresso ─────────────────────
+   O kanji, o "Cap. 2" e o botão pro próximo capítulo servem ao site, que
+   rola; no livro o capítulo seguinte começa virando a folha. */
+.folhear[data-modo="livro"] .folhear-fluxo .livro-fim {
+  display: none;
+}
+
+.livro-laboratorio-fechar {
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── As pranchas: a arte que quebra o padrão da página ────────────────────
+   Atravessa as duas colunas, torta, com a sombra da cor (do capítulo ou da
+   árvore) fora de registro. A que não coube e deixaria buraco volta pra
+   coluna (acomodarPranchas); a de imagem pequena já nasce na coluna. */
+.folhear-fluxo figure.livro-prancha {
+  display: block;
+  height: auto;
+  margin: 1.3em 12px 1.6em 4px;
+  overflow: hidden;
+  aspect-ratio: 21 / 8;
+  border: 0;
+  border-radius: 0;
+  background: #0c0c0e;
+  box-shadow: 10px 10px 0 var(--cor);
+  column-span: all;
+  transform: rotate(-0.5deg);
+  break-inside: avoid;
+}
+
+.folhear-fluxo figure.livro-prancha img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: cover;
+  object-position: center 28%;
+}
+
+.folhear-fluxo figure.livro-prancha:is(.livro-prancha-coluna, .folhear-prancha-coluna) {
+  margin: 0.9em 8px 1.2em 0;
+  aspect-ratio: 4 / 3;
+  box-shadow: 7px 7px 0 var(--cor);
+  column-span: none;
+  transform: rotate(0.8deg);
+}
+
+.folhear-fluxo figure.livro-prancha.livro-prancha-coluna {
+  aspect-ratio: 4 / 5;
+}
+
+/* ── Arte inteira: a própria arte desfocada por trás preenche as sobras ─── */
+.livro-imagem-inteira {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.livro-imagem-inteira > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.livro-imagem-inteira > .livro-imagem-fundo {
+  object-fit: cover;
+  filter: blur(18px) brightness(0.5) saturate(1.2);
+  transform: scale(1.15);
+}
+
+.livro-imagem-inteira > .livro-imagem-frente {
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgb(0 0 0 / 0.5));
+}
+
+/* Nos retratos (em pé), a moldura inteira fica com a proporção do quadro. */
+.livro-antecedente-retrato > .livro-imagem-inteira,
+.livro-arvore-retrato > .livro-imagem-inteira {
+  aspect-ratio: 4 / 5;
+  height: auto;
+}
+
+/* A prancha de coluna usa a proporção da própria arte (vem no style). */
+.folhear-fluxo figure.livro-prancha.livro-prancha-coluna {
+  aspect-ratio: auto;
+}
+
+/*
+ * A vitrine das dezenove árvores mora NA COLUNA (não atravessa a página): o
+ * buraco que ela preenche é a segunda coluna vazia ao lado da caixa das
+ * Escolas Formais. Nasce com 320 px — o bastante pra não caber no pé da
+ * primeira coluna e começar no alto da segunda — e estica até o pé dela.
+ */
+.folhear-fluxo .livro-vitrine.livro-vitrine-arvores {
+  height: var(--altura-vitrine, 320px);
+  visibility: visible;
+  column-span: none;
+  display: flex;
+  flex-direction: column;
+  container-type: size;
+}
+
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-lista {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45em;
+  --lado: min(calc(14.2cqh - 4.8em), calc(33cqw - 2.4em));
+}
+
+@container (max-height: 520px) {
+  .folhear-fluxo .livro-vitrine-arvores .livro-vitrine-lista {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.3em;
+    --lado: min(calc(25cqh - 5.3em), calc(20cqw - 1.4em));
+  }
+
+  .folhear-fluxo .livro-vitrine-arvores .livro-vitrine-raridade {
+    display: none;
+  }
+
+  .folhear-fluxo .livro-vitrine-arvores .livro-vitrine-item {
+    gap: 0.2em;
+    padding: 0.3em 0.15em;
+  }
+
+  .folhear-fluxo .livro-vitrine-arvores .livro-vitrine-nome {
+    font-size: 0.74em;
+    line-height: 1.02;
+  }
+}
+
+.folhear[data-papel="noite"] .folhear-fluxo .livro-vitrine-arvores .livro-vitrine-retrato span img {
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+.folhear-fluxo .livro-vitrine-arvores .livro-vitrine-nome {
+  font-size: 0.92em;
+}
+
+/* A prancha de coluna, torta pra dentro: não passa da margem. */
+.folhear-fluxo figure.livro-prancha:is(.livro-prancha-coluna, .folhear-prancha-coluna) {
+  margin-left: 5px;
 }

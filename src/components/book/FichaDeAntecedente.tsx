@@ -1,5 +1,6 @@
 import { BACKGROUNDS, OLHO_TABLE } from "@/data/backgrounds";
-import { arteDoLivro } from "./arteDasRacas";
+import { arteDoLivro, enquadrar } from "./arteDasRacas";
+import ImagemDoLivro from "./ImagemDoLivro";
 
 /**
  * OS ANTECEDENTES, COM RETRATO (2026-09-25).
@@ -46,12 +47,10 @@ export default function AntecedentesIlustrados() {
                 className="livro-antecedente-retrato float-right mb-1 ml-3 w-28 overflow-hidden rounded-lg"
                 data-recorte={arte.recorte ? "" : undefined}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element -- retrato pequeno, impresso no papel. */}
-                <img
-                  src={arte.src}
+                <ImagemDoLivro
+                  arte={arte}
                   alt=""
-                  loading="lazy"
-                  decoding="async"
+                  modo={enquadrar(arte, 0.8, 120)}
                   className={`aspect-[4/5] w-full ${arte.recorte ? "object-cover object-top" : "object-cover"}`}
                 />
               </figure>

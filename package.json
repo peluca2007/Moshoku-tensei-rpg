@@ -24,7 +24,9 @@
     "check:sumario": "node scripts/check-sumario.mjs",
     "check:midia": "tsx scripts/check-midia.mts",
     "casar:midia": "tsx scripts/casar-midia.mts",
-    "tela": "node scripts/tela.mjs"
+    "tela": "node scripts/tela.mjs",
+    "revisar:livro": "node scripts/revisar-livro.mjs",
+    "gerar:caos": "node scripts/gerar-caos.mjs"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

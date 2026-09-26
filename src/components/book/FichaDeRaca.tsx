@@ -4,7 +4,8 @@ import { getRaceProbabilities, RACE_WEIGHT } from "@/lib/randomCharacter";
 import { RACES } from "@/data/races";
 import RaceCrest from "../RaceCrest";
 import { BookTable } from "./BookUI";
-import { arteDaRaca, PASTA_DA_ARTE_DAS_RACAS } from "./arteDasRacas";
+import { arteDaRaca, enquadrar, PASTA_DA_ARTE_DAS_RACAS } from "./arteDasRacas";
+import ImagemDoLivro from "./ImagemDoLivro";
 
 /**
  * A PÁGINA DE UMA RAÇA (2026-09-25).
@@ -126,12 +127,10 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
         data-recorte={arte?.recorte ? "" : undefined}
       >
         {arte ? (
-          // eslint-disable-next-line @next/next/no-img-element -- ilustração de página inteira; o tamanho vem do quadro, não do otimizador.
-          <img
-            src={arte.src}
+          <ImagemDoLivro
+            arte={arte}
             alt={`Ilustração: ${nome}.`}
-            loading="lazy"
-            decoding="async"
+            modo={enquadrar(arte, 2.1, 696)}
             className={`h-full w-full ${arte.recorte ? "object-contain object-bottom" : "object-cover"}`}
           />
         ) : (

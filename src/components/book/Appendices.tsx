@@ -76,7 +76,7 @@ export default function Appendices() {
             "Uma Magia Assinatura ◆ por rank, custando +1 PA.",
             "Uma magia de utilidade pura que não causa dano nenhum, mas define a identidade da escola fora de combate (Água: Afinidade Aquática e Névoa Densa. Terra: erguer abrigo. Vento: comunicação a distância. Fogo: forjar e iluminar).",
             "De 6 a 8 conhecimentos por rank baixo, 3 a 4 por rank alto — o suficiente pra tabela de desbloqueio fechar sem obrigar o jogador a comprar magia velha só pra bater a contagem.",
-            "Declare qual atributo alimenta o BC da escola — Fogo, Água, Vento e Terra usam Intelecto; Cura, Barreira, Desintoxicação e Invocação usam Espírito. Isso divide a Árvore da Magia em duas metades que não competem pelos mesmos pontos de atributo.",
+            "Declare qual atributo alimenta o BC da escola — Fogo, Água, Vento, Terra e Magia Teórica usam Intelecto; Cura, Desintoxicação e Invocação usam Espírito. Isso divide a Árvore da Magia em duas metades que não competem pelos mesmos pontos de atributo.",
           ]}
         />
       </Section>
@@ -142,7 +142,7 @@ export default function Appendices() {
               "O Tático é a coluna que decide quem executa. A Ordem de Tiro soma no primeiro ataque que acertar o alvo Apontado — de um aliado ou dele mesmo — e é só contra esse alvo que ele soma o Bônus de Rank no próprio golpe. Sem grupo, ele aponta e atira sozinho: perde a escolha de quem bate, não o número.",
               "O Bardo é a menor das três, e a única cujo dano é em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
               "O Vendaval e o Punho do Fogo são híbridas, e a linha é o patamar dentro delas: quem abre o 1º já chega Avançado no Norte e no Vento, ou Intermediário no Lutador e no Fogo, e por isso as duas começam acima das árvores-mãe. O número do Vendaval depende de quantos metros ele andou antes de golpear; o do Punho não conta o Quebrantado que empilha, que faz com ele o mesmo que faz com o Lutador.",
-              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. Desintoxicação e Barreira continuam fora desta régua: se você escolher uma delas esperando causar dano, escolheu errado.",
+              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. A Desintoxicação continua fora desta régua: se você a escolher esperando causar dano, escolheu errado. A Magia Teórica entra com o dano da fórmula que desenhar (Cap. 2, §8) — 1d6 no Principiante, sem o BC no dano.",
             ]}
           />
         </Aside>

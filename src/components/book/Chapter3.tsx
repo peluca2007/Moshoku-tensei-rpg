@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Link from "next/link";
 import { TREES, CATEGORY_LABELS } from "@/data/trees";
 import { RANK_BONUS, RANKS } from "@/lib/types";
@@ -5,6 +6,8 @@ import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Quote, Section,
 import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diagramas";
 import TreeCatalog from "./TreeCatalog";
 import RetratoDaArvore from "./RetratoDaArvore";
+import Prancha from "./Prancha";
+import VitrineDasArvores from "./VitrineDasArvores";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
 import TreeCrest from "../TreeCrest";
@@ -143,6 +146,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             patamares mudam — e a tabela abaixo é a tradução entre eles.
           </P>
         </Aside>
+        <VitrineDasArvores />
         <BookTable
           headers={["Patamar", "Bônus", ...rankLabelTrees.map((t) => t.name)]}
           rows={RANKS.map((rank, i) => [
@@ -187,7 +191,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           Os sistemas que valem para <b>todas</b> as escolas de magia não moram aqui: eles são o{" "}
           <b>Capítulo 2</b> inteiro. Cânticos e a escada de encantamento, tempo de conjuração por rank,
           Conjuração Silenciosa, o que acontece quando alguém te interrompe no meio, Magia Combinada e as
-          Maestrias — tudo isso é compartilhado entre Água, Fogo, Terra, Vento, Cura, Barreira,
+          Maestrias — tudo isso é compartilhado entre Água, Fogo, Terra, Vento, Cura, Magia Teórica,
           Desintoxicação e Invocação, e por isso tem capítulo próprio em vez de uma seção aqui.
         </P>
         <P>
@@ -457,6 +461,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         </Aside>
 
         <SubTitle id="cap3-triangulo">4. O Triângulo dos Estilos</SubTitle>
+        <Prancha id="cap3-triangulo" />
         <TrianguloDosEstilos />
         <Quote attribution="Lema do Estilo Deus da Espada">A vitória é de quem se move primeiro.</Quote>
         <Aside title="Regra da Vantagem de Estilo">
@@ -719,7 +724,8 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
               {CATEGORY_LABELS[category]}
             </h3>
             {TREES.filter((t) => t.category === category).map((tree) => (
-              <details key={tree.id} open={arvoresAbertas} data-folhear-aberto={arvoresAbertas ? "" : undefined} data-categoria={category} data-arvore={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
+              <Fragment key={tree.id}>
+              <details open={arvoresAbertas} data-folhear-aberto={arvoresAbertas ? "" : undefined} data-categoria={category} data-arvore={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
                 <summary className="livro-arvore-cabeca flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
                   <TreeCrest tree={tree} size={44} />
                   <span className="min-w-0">
@@ -735,6 +741,9 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
                   <TreeCatalog tree={tree} />
                 </div>
               </details>
+              {/* A prancha da árvore, se houver: fecha o catálogo quebrando as duas colunas. */}
+              <Prancha id={tree.id} arvore={tree.id} />
+              </Fragment>
             ))}
           </div>
         ))}

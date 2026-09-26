@@ -5,6 +5,7 @@ import { getTreeById, TREES } from "@/data/trees";
 import { LIMITES_TEORICOS, RANKS_TEORICOS } from "@/lib/magiaTeorica";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import LaboratorioDeFormulas from "./LaboratorioDeFormulas";
+import Prancha from "./Prancha";
 
 function tex(s: string): string {
   return s
@@ -647,6 +648,7 @@ export default function Chapter2() {
 
       <Section>
         <SectionTitle id="cap2-8">8. Magia Teórica — Oficina de Fórmulas</SectionTitle>
+        <Prancha id="cap2-8" />
         <Aside title="Proposta em teste, sujeita a mudanças">
           Magia Teórica substitui a antiga árvore de Barreira e Proteção. Defesa agora é o ramo de Conter e Rejeitar.
           Os custos e contratos das fórmulas ainda estão em teste e sujeitos a mudanças de equilíbrio.

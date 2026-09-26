@@ -1,4 +1,5 @@
-import { arteDoLivro } from "./arteDasRacas";
+import { arteDoLivro, enquadrar } from "./arteDasRacas";
+import ImagemDoLivro from "./ImagemDoLivro";
 
 /**
  * O RETRATO DA ÁRVORE (2026-09-25): quem encarna a escola — a Roxy na Magia
@@ -15,12 +16,10 @@ export default function RetratoDaArvore({ id, nome }: { id: string; nome: string
       className={`livro-arvore-retrato float-right mb-2 ml-3 w-2/5 max-w-48 overflow-hidden rounded-lg ${arte.recorte ? "" : "border border-parchment-300 dark:border-parchment-800"}`}
       data-recorte={arte.recorte ? "" : undefined}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element -- retrato impresso no papel. */}
-      <img
-        src={arte.src}
+      <ImagemDoLivro
+        arte={arte}
         alt={`Quem encarna ${nome}.`}
-        loading="lazy"
-        decoding="async"
+        modo={enquadrar(arte, 0.8, 150)}
         className={`w-full ${arte.recorte ? "object-contain" : "aspect-[4/5] object-cover object-top"}`}
       />
     </figure>

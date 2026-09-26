@@ -342,7 +342,7 @@ export default function Chapter5() {
         <P>
           Encantar não é uma Perícia de Ofícios — é um serviço prestado por um mago que já alcançou o Rank
           exigido numa árvore compatível com o efeito (dano elemental pede a Magia daquele elemento;
-          resistência e CA pedem Barreira; qualquer efeito genérico aceita Invocação). Um personagem só
+          resistência e CA pedem Magia Teórica, a herdeira da antiga Barreira; qualquer efeito genérico aceita Invocação). Um personagem só
           encanta os próprios itens se tiver esse Rank; caso contrário, é preciso pagar um NPC encantador. A
           Guilda intermedeia o encantador a partir do Rank D (seção 2 deste capítulo); fora dela, achar um é
           gancho de campanha.
