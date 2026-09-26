@@ -101,6 +101,10 @@ perguntas de sim/não:
 - As perguntas do `O-QUE-FALTA.md`: o Vendaval apanha? Escudos lidera dano? O Tiro Perfeito sobrevive a
   quem leva dano? O teto de Ações do Tático segura?
 
+**Kit pronto (2026-09-26): `KIT-DE-MESA.md`** — Ignis (Fogo), Borrasca (Deus do Norte), Capitã Vela
+(Tático) e Irmã Sella (Cura), 9 PA cada, com link de importação; o encontro é Aranha das Cavernas +
+3 Sapos-Lodo (Equilibrado no simulador). `npm run kit:mesa` refaz tudo depois de uma mudança de regra.
+
 **Pronto quando:** a sessão aconteceu e a folha voltou preenchida. **Portão:** as respostas reordenam as
 etapas seguintes se for preciso (por exemplo: se o mago do 2º patamar se divertiu, a Etapa 4 cai de
 prioridade no começo de jogo).
@@ -188,6 +192,7 @@ checks já existem (`check:progressao`, `check:sobrevivencia`, `check:arvores`, 
 | **Desintoxicação** | Com Dose e Inversão, ainda merece a tabela de PA barata? | Ensinar a Dose ao simulador (hoje ele não conta a Inversão) e decidir: tabela comum ou Inversão mais fraca. |
 | **Despertares das raças** | Algum desequilibra? | Tridente Ancestral, Colosso e Forma do Dragão abaixo de um talento de Santo da árvore média. |
 | **Sobrevivência no fim do jogo** | Mago de Vigor 0 cai em menos de 1 turno no 6º patamar (0,53–0,71) | O autor decide se é intenção ("o mago depende do grupo") e o livro diz isso — ou o molde de Terror/Lenda cresce menos. |
+| **Orçamento de Encontro** | O Apêndice G diz que "uma criatura do patamar por jogador" é Equilibrado. O simulador, com as fichas do kit, dá **Letal** pra 4 de 2º patamar (44% de vitória, 2,5 quedas); 3 já é Perigoso (82%). | Medir nos seis patamares e decidir com o autor: a regra do livro muda (ex.: "três pra quatro jogadores") ou os moldes ficam mais fracos. A mesa da Etapa 1 desempata. |
 | **Perguntas de mesa** | Vendaval, Escudos, Tático, Tiro Perfeito (do `O-QUE-FALTA.md`) | Respondidas pela Etapa 1; aqui viram número. |
 
 **Opções para o começo do mago**
@@ -337,6 +342,17 @@ pelo Cap. 5 do livro antes da loja e do `/encontros`.
 - A ficha mostrava o Teto de Ações antigo ("máximo 5 Ações por turno, 2 externas") e o Teto de Auxílio
   errado (+5); agora diz o que o livro diz (Cap. 4, §5): **4 próprias + 2 concedidas** e **+6**.
 - O `O-QUE-FALTA.md` (item 5) e o comentário de `vantagem.test.ts` citavam o mesmo teto antigo; corrigidos.
+
+### Achadas ao montar o kit de mesa (2026-09-26) — abertas
+
+- **O bestiário do `/encontros` não está no livro.** As 26 criaturas de `preMadeMonsters.ts` (Urso de
+  Presas Vermelhas, Guerreiro Superd, Troll de Caverna…) só existem no site; o livro tem as 6 fichas
+  prontas do Apêndice G. Quebra "nada fora do livro". Opções: levar as 26 pro Apêndice G como tabela
+  (nome, patamar, papel, arquétipo, traços), ou tirá-las do site. O kit já usa só as do livro.
+- **Criaturas do mesmo patamar e papel são iguais no simulador.** Urso, Troll e Superd dão o mesmo
+  resultado número por número: sem ações próprias, a diferença é só o nome e as resistências. Entra na
+  Etapa 4 junto com o orçamento.
+- **O orçamento de encontro do Apêndice G contradiz o simulador** (ver a tabela da Etapa 4).
 
 ## 9. Pendências de diagramação conhecidas
 
