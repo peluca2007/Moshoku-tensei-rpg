@@ -47,7 +47,7 @@ export default function ArteDaHabilidade({
      * dimensão. Uma altura só, com `object-contain` centralizado, reserva certo
      * pra todos e ainda alinha as artes entre si.
      */
-    <figure className="relative mt-2 flex h-64 items-center justify-center overflow-hidden rounded-lg border border-gold-500/25 bg-parchment-950">
+    <figure className="livro-verbete-arte relative mt-2 flex h-64 items-center justify-center overflow-hidden rounded-lg border border-gold-500/25 bg-parchment-950">
       {ehVideo(midia.src) ? (
         <video
           src={midia.src}

@@ -21,6 +21,15 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Cura sem contabilidade, Desintoxicação com jogada, site mais leve",
     sections: [
       {
+        heading: "Livro folheado: a diagramação que o autor pediu",
+        items: [
+          "Toda carta inteira: nome, texto, regra e cântico de uma habilidade nunca se separam. Só a arte/GIF pode ir sozinha pra coluna seguinte.",
+          "Cada árvore começa em página nova e fecha com um grand finale: a arte dela ocupando o resto da última página (ou a coluna que sobrou, ou uma página inteira).",
+          "A arte larga (o Triângulo dos Estilos e as outras pranchas) não encolhe mais pra coluna: encaixa no espaço que sobrou na página.",
+          "Vão no pé da coluna ganha o selo do capítulo ou da árvore; tabela que passaria um pouco da página compacta pra caber inteira; caixa de até meia coluna não parte.",
+        ],
+      },
+      {
         heading: "Site mais leve",
         items: [
           "As páginas fora do livro baixam cerca de 2,3 MB em vez de 6,7 a 10 MB: o menu e o rodapé não pré-baixam mais o livro inteiro, o logo vem no tamanho em que aparece, e o histórico de versões e as árvores deixaram de ir junto em toda página.",

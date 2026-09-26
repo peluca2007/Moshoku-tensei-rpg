@@ -44,10 +44,12 @@ import {
   ZOOMS,
   ajustarFigurasLargas,
   ajustarTabelasLargas,
+  apertarTabelasPartidas,
   calcularGeometria,
   acomodarPranchas,
   espalharTabelasEspremidas,
   esticarVitrines,
+  fecharArvores,
   limparCabecalhosRepetidos,
   medirPaginas,
   numeralDoCapitulo,
@@ -63,6 +65,7 @@ import {
   soltarEmpurroesVelhos,
   estreitarTabelasQueAbremBuraco,
   preencherBuracos,
+  preencherPes,
 } from "./diagramacao";
 
 /**
@@ -418,6 +421,7 @@ export default function Folhear({
     medir("caixas", () => segurarCaixasCurtas(f, g, regua(fx)));
     medir("tabelas-apertar", () => ajustarTabelasLargas(f, g, regua(fx)));
     medir("pranchas", () => acomodarPranchas(f, g, regua(fx)));
+    medir("tabelas-partidas", () => apertarTabelasPartidas(f, g, regua(fx)));
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
     medir("titulos", () => {
@@ -442,7 +446,9 @@ export default function Folhear({
     esquecerIndice(f);
     medir("cabecalhos", () => repetirCabecalhos(f));
     medir("vitrines", () => esticarVitrines(f, g, regua(fx)));
+    medir("fechos", () => fecharArvores(f, g, regua(fx)));
     medir("vinhetas", () => preencherBuracos(f, g, regua(fx)));
+    medir("pes", () => preencherPes(f, g, regua(fx)));
     const r = regua(fx);
     const p = medir("medir", () => medirPaginas(f, fim.current!, r, g, toc));
     const total = Math.ceil(p.total / porDupla);
