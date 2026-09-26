@@ -112,14 +112,23 @@ const PADRAO = new RegExp(
 /** Onde não se cita: dentro de link (link dentro de link), código e títulos. */
 const PULAR = new Set(["a", "code", "pre", "h1", "h2", "h3", "h4", "h5", "h6", "svg", "summary"]);
 
+/**
+ * Nomes de aflição (Cap. 4, §8) que contêm o nome de uma habilidade: a Peçonha
+ * de Serpente-do-Pântano é um veneno do mundo, não a magia Peçonha. Dentro
+ * deles não se cita nada.
+ */
+const NAO_E_HABILIDADE = /Peçonha de Serpente-do-Pântano|Espinho da Rosa-Preta/gu;
+
 function citarTexto(texto: string): ReactNode {
   PADRAO.lastIndex = 0;
   if (!PADRAO.test(texto)) return texto;
   PADRAO.lastIndex = 0;
+  const fora = [...texto.matchAll(NAO_E_HABILIDADE)].map((m) => [m.index ?? 0, (m.index ?? 0) + m[0].length]);
   const partes: ReactNode[] = [];
   let desde = 0;
   for (const m of texto.matchAll(PADRAO)) {
     const i = m.index ?? 0;
+    if (fora.some(([a, b]) => i >= a && i < b)) continue;
     if (i > desde) partes.push(texto.slice(desde, i));
     const c = CITAVEIS.get(m[0])!;
     partes.push(

@@ -695,6 +695,32 @@ export function estreitarTabelasQueAbremBuraco(fluxo: Element, g: Geometria, r: 
   };
   fluxo.querySelectorAll(".livro-tabela.folhear-larga, .livro-caixa.folhear-larga").forEach((larga) => {
     if (!visivel(larga)) return;
+    /*
+     * O buraco DEPOIS da peça larga (2026-09-26): a tabela das Três Facções
+     * fechava a pág. 244 no meio, e o que vinha depois (duas caixas curtas e a
+     * seção seguinte) pulava inteiro pra próxima página, deixando metade da
+     * mancha em branco. Voltando pra coluna, a tabela divide a página com o
+     * texto em vez de encerrá-la.
+     */
+    const ql = Array.from(larga.getClientRects()).filter((a) => a.height > 1).pop();
+    let depois: Element | null = larga.nextElementSibling;
+    for (let pai = larga.parentElement; !depois && pai && pai !== fluxo; pai = pai.parentElement) depois = pai.nextElementSibling;
+    while (depois && !visto(depois)) depois = depois.nextElementSibling;
+    const qd = depois && Array.from(depois.getClientRects()).find((a) => a.height > 1);
+    // Só quando o que pulou é coluna comum: se o seguinte também é largo, ou
+    // outro capítulo, o salto é dele e não da tabela.
+    const comum = !!depois && !depois.matches(".folhear-larga, .folhear-capitulo, [data-capitulo]") && !depois.querySelector(":scope > .folhear-larga:first-child");
+    if (comum && ql && qd && pagina(qd) === pagina(ql) + 1 && (qd.top - topo) / r.k < 40 && colunaAlta - (ql.bottom - topo) / r.k > colunaAlta * 0.3) {
+      voltar.push(larga);
+      calcosAntes(larga);
+      let t = larga.previousElementSibling;
+      while (t && !visto(t)) t = t.previousElementSibling;
+      if (t?.matches("h3.folhear-larga, h4.folhear-larga")) {
+        voltar.push(t);
+        calcosAntes(t);
+      }
+      return;
+    }
     let antes = larga.previousElementSibling;
     while (antes && !visto(antes)) antes = antes.previousElementSibling;
     // O título que desceu atravessando junto: o buraco fica antes dele, e é
