@@ -71,7 +71,7 @@ outros ficam aqui, pra abrir árvores de página inteira (a ideia da próxima ro
 | `espadachim-com-espirito.webp` | Espadachim com um espírito enorme atrás (pequena). | Espíritos e Feras. |
 | `lutador-chute.webp` | Lutador de faixa no meio de um chute (pequena). | Lutador. |
 | `guerreiro-do-mar-larga.webp` | Homem-peixe lutador entre respingos, larga. | Raça do Oceano (segunda arte) ou Magia de Água. |
-| `maga-de-cabeca-pra-baixo-flores.webp` | Maga de cabeça pra baixo entre flores, em pé. | Magia Teórica. |
+| `circulo-magico-rosa.webp` | Um círculo mágico rosa aceso no chão (era o fecho da Teórica; resolução baixa). | Arte pequena de habilidade da Teórica. |
 | `estudante-de-oculos.webp` | Estudante ruiva de óculos, espantada. | Magia Teórica (a aluna da Aula da Roxy). |
 | `espadachim-do-vento-larga.webp` | Espadachim em vento verde, larga (739 px). | Magia de Vento ou Vendaval. |
 | `medico-rena-chorando.webp` | Médico-rena chorando, rosa (pequena). | Desintoxicação ou Cura (meme). |
