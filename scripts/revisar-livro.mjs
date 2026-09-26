@@ -18,6 +18,7 @@
  * - PÁGINA VAZIA: mais de 18% da mancha em branco.
  * - ARTE QUEBRADA: imagem que não carregou.
  * - ARTE BORRADA: imagem ampliada mais de 1,6× do tamanho que o arquivo tem.
+ * - LINHA SOLTA: tabela partida com uma linha só de um lado da quebra.
  * - RECORTE FORTE: imagem cortada pra caber no quadro mostrando menos de 45%
  *   dela (o rosto do Orsted cortado era isso).
  *
@@ -101,10 +102,29 @@ const MEDIR = `(async () => {
     const rt = t.getClientRects();
     if (!rt.length) return;
     titulos++;
-    const r = rt[rt.length - 1];
+    // A primeira linha: título partido entre colunas também é título solto.
+    const r = rt[0];
     const d = seguinte(t);
     const c = d && [...d.getClientRects()].find((q) => q.height > 1);
     if (c && coluna(c) > coluna(r)) anotar(pagina(r.left), "titulo", (t.textContent || "").trim().slice(0, 60));
+  });
+
+  // 1b. Tabela partida com UMA linha de um lado: no pé da coluna (o título
+  // órfão das tabelas) ou sozinha no alto da seguinte, com o cabeçalho repetido.
+  f.querySelectorAll(".livro-tabela").forEach((tab) => {
+    if (oculto(tab)) return;
+    const grupos = [];
+    tab.querySelectorAll("tbody tr:not(.folhear-cabecalho-repetido)").forEach((tr) => {
+      const q = tr.getClientRects()[0];
+      if (!q || q.height < 2) return;
+      const c = coluna(q);
+      if (grupos.length && grupos[grupos.length - 1].c === c) grupos[grupos.length - 1].n++;
+      else grupos.push({ c, n: 1, left: q.left, texto: (tr.textContent || "").trim().slice(0, 40) });
+    });
+    if (grupos.length < 2) return;
+    const ultimo = grupos[grupos.length - 1];
+    if (ultimo.n === 1) anotar(pagina(ultimo.left), "linha-solta", "última linha sozinha: " + ultimo.texto);
+    if (grupos[0].n === 1) anotar(pagina(grupos[0].left), "linha-solta", "primeira linha sozinha no pé: " + grupos[0].texto);
   });
 
   // 2. Estouro: bloco passando da coluna ou da página.
@@ -248,6 +268,7 @@ const NOMES = {
   "arte-quebrada": "Arte que não carregou",
   "arte-borrada": "Arte ampliada demais (pode ficar borrada)",
   "recorte-forte": "Arte cortada demais pra caber no quadro",
+  "linha-solta": "Tabela partida com uma linha só de um lado",
 };
 const porTipo = Object.fromEntries(Object.keys(NOMES).map((t) => [t, medida.problemas.filter((p) => p.tipo === t)]));
 const linhas = [

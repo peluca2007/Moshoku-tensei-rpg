@@ -373,11 +373,27 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     if (!visivel(t) || t.closest(".livro-abertura, .folhear-sumario, .folhear-rosto, .folhear-colofao, .livro-raca")) return;
     const rt = t.getClientRects();
     if (rt.length === 0) return;
-    const titulo = rt[rt.length - 1];
+    // A PRIMEIRA linha do título: se ele partiu entre duas colunas, a última
+    // linha está junto do texto e esconderia o nome sozinho no pé da anterior.
+    const titulo = rt[0];
     const depois = seguinte(t, fluxo);
     if (!depois) return;
     const comeco = Array.from(depois.getClientRects()).find((r) => r.height > 1);
-    if (!comeco || coluna(comeco) <= coluna(titulo)) return;
+    if (!comeco) return;
+    // Título colado numa peça larga NA MESMA PÁGINA também atravessa, logo em
+    // cima dela. Na coluna ele ficava sozinho na faixa de cima: do lado de um
+    // buraco, ou com o buraco (e depois o selo da vinheta) entre ele e a peça.
+    if (
+      t.matches("h3, h4") &&
+      !t.classList.contains("folhear-larga") &&
+      depois.matches(".folhear-larga, .livro-prancha:not(.livro-prancha-coluna, .folhear-prancha-coluna)") &&
+      Math.floor(coluna(comeco) / 2) === Math.floor(coluna(titulo) / 2)
+    ) {
+      t.classList.add("folhear-larga");
+      empurrar.add(t);
+      return;
+    }
+    if (coluna(comeco) <= coluna(titulo)) return;
     // Antes de uma tabela ou figura que atravessa a página, empurrar o título
     // pra próxima COLUNA não adianta (a tabela está na próxima PÁGINA): o
     // título passa a atravessar a página também, e anda junto com ela. Se
@@ -394,9 +410,11 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
   // TABELA QUE ABRE NO PÉ DA COLUNA com o cabeçalho e uma ou duas linhas: é o
   // título órfão das tabelas. Ela desce inteira, pelos mesmos degraus.
   fluxo.querySelectorAll(".livro-tabela").forEach((caixa) => {
-    if (!visivel(caixa) || caixa.closest(".livro-catalogo-itens")) return;
+    if (!visivel(caixa)) return;
     const linhas = Array.from(caixa.querySelectorAll("tbody tr:not(.folhear-cabecalho-repetido)"));
-    if (linhas.length < 4) return;
+    // Com a última linha presa à penúltima (folhear.css), uma tabela de três
+    // linhas só parte deixando a primeira sozinha no pé: também desce.
+    if (linhas.length < 3) return;
     const primeira = linhas[0].getClientRects()[0];
     if (!primeira) return;
     const c0 = coluna(primeira);
@@ -406,7 +424,7 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
       if (!q || coluna(q) !== c0) break;
       juntas++;
     }
-    if (juntas < 3) empurrar.add(caixa);
+    if (juntas < Math.min(3, linhas.length - 1)) empurrar.add(caixa);
   });
 
   // Título empurrado leva o bloco seguinte junto: uma quebra própria do bloco
@@ -589,6 +607,131 @@ export function limparCalcosInuteis(fluxo: Element, r: Regua): number {
   return saiu;
 }
 
+/**
+ * Tira os empurrões que ficaram velhos.
+ *
+ * Um empurrão é decidido na passada em que o bloco estava no pé da coluna.
+ * Os empurrões seguintes mudam o que vem antes dele, e às vezes o bloco passa
+ * a caber com folga onde estava — mas continua mandado pra próxima coluna,
+ * deixando a anterior quase vazia (a tabela de ranks do Lutador deixava 79%
+ * de uma coluna em branco). Aqui sai todo empurrão que abre uma coluna depois
+ * de um vão de mais de 30% na anterior; a conferência de títulos roda de novo
+ * e empurra de volta o que ainda precisar.
+ *
+ * @returns quantos empurrões saíram
+ */
+export function soltarEmpurroesVelhos(fluxo: Element, g: Geometria, r: Regua): number {
+  const topo = fluxo.getBoundingClientRect().top;
+  const alturaDaColuna = g.altura - g.topo - g.pe;
+  const meiaPagina = g.pagina / 2;
+  const coluna = (q: DOMRect) => {
+    const x = (q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40);
+    return Math.floor(x / meiaPagina);
+  };
+  // Tudo lido antes de mexer em qualquer classe: uma escrita no meio das
+  // leituras obrigaria o navegador a diagramar o livro de novo a cada volta.
+  const velhos = Array.from(fluxo.querySelectorAll(".folhear-empurra")).filter((el) => {
+    const q = el.getClientRects()[0];
+    let antes = el.previousElementSibling;
+    while (antes && !Array.from(antes.getClientRects()).some((a) => a.height > 1)) antes = antes.previousElementSibling;
+    if (!q || !antes) return false;
+    const pedacos = antes.getClientRects();
+    const fim = pedacos[pedacos.length - 1];
+    if (coluna(fim) !== coluna(q) - 1) return false;
+    return alturaDaColuna - (fim.bottom - topo) / r.k > alturaDaColuna * 0.3;
+  });
+  velhos.forEach((el) => el.classList.remove("folhear-empurra"));
+  return velhos.length;
+}
+
+const CLASSE_VINHETA = "folhear-vinheta";
+
+/**
+ * O selo no buraco antes de uma peça larga — 2026-09-26.
+ *
+ * Antes de uma tabela, arte ou fecho que atravessa a página, o navegador
+ * equilibra o que vem antes em duas colunas. Quando o que vem antes é um
+ * bloco que não parte (uma caixa curta, um diagrama, uma arte), uma coluna
+ * fica cheia e a outra fica com um buraco até a peça larga — o Glossário de
+ * Condições abria com meia coluna em branco em cima da tabela. O diagramador
+ * de livro não deixa buraco: põe uma vinheta. Aqui ela é o selo do capítulo
+ * (ou da árvore), carimbado, do tamanho do vão.
+ *
+ * Só entra onde cabe sem mexer em nada: a peça larga tem que continuar no
+ * mesmo lugar depois. Se alguma andou, a vinheta dela sai.
+ *
+ * @returns quantas vinhetas ficaram
+ */
+export function preencherBuracos(fluxo: Element, g: Geometria, r: Regua): number {
+  const topo = fluxo.getBoundingClientRect().top;
+  const meiaPagina = g.pagina / 2;
+  const y = (q: DOMRect) => (q.top - topo) / r.k;
+  const base = (q: DOMRect) => (q.bottom - topo) / r.k;
+  const coluna = (q: DOMRect) => Math.floor(((q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40)) / meiaPagina);
+  const MINIMO = 90;
+
+  const largas = Array.from(fluxo.querySelectorAll(".folhear-larga, .livro-vitrine:not(.hidden), figure.livro-prancha")).filter(
+    (el) => visivel(el) && getComputedStyle(el).columnSpan === "all",
+  );
+  const planos: { antes: Element; altura: number; topo: number }[] = [];
+  largas.forEach((larga) => {
+    const q = Array.from(larga.getClientRects()).find((a) => a.height > 1);
+    if (!q) return;
+    const esquerda = coluna(q) - (coluna(q) % 2);
+    const inicio = y(q);
+    // O que vem antes da peça, nesta página: até onde cada coluna desce, e
+    // onde a faixa começa (no topo, ou embaixo de outra peça larga).
+    const fundo = [0, 0];
+    let comeco = 0;
+    let achou = false;
+    let n: Element | null = larga;
+    fora: while (n && n !== fluxo) {
+      for (let irmao = n.previousElementSibling; irmao; irmao = irmao.previousElementSibling) {
+        if (irmao.classList.contains(CLASSE_VINHETA)) continue;
+        let paginaAnterior = false;
+        for (const a of Array.from(irmao.getClientRects())) {
+          if (a.height <= 1) continue;
+          const c = coluna(a);
+          if (c < esquerda) paginaAnterior = true;
+          if (c < esquerda || c > esquerda + 1 || y(a) >= inicio) continue;
+          if (a.width / r.k > meiaPagina) {
+            comeco = Math.max(comeco, base(a));
+            paginaAnterior = true;
+            continue;
+          }
+          fundo[c - esquerda] = Math.max(fundo[c - esquerda], base(a));
+          achou = true;
+        }
+        if (paginaAnterior) break fora;
+      }
+      n = n.parentElement;
+    }
+    // Só o buraco na SEGUNDA coluna se preenche sem mexer no resto: a vinheta
+    // entra no fim do que vem antes, e o equilíbrio a põe lá.
+    const vao = fundo[0] - Math.max(fundo[1], comeco);
+    if (!achou || vao < MINIMO) return;
+    planos.push({ antes: larga, altura: Math.floor(vao - 28), topo: inicio });
+  });
+  if (planos.length === 0) return 0;
+
+  const postas = planos.map((p) => {
+    const v = document.createElement("div");
+    v.className = CLASSE_VINHETA;
+    v.setAttribute("aria-hidden", "true");
+    v.style.height = `${p.altura}px`;
+    v.style.setProperty("--alto", `${p.altura}px`);
+    p.antes.before(v);
+    return v;
+  });
+  // A conferência: a peça larga não pode ter saído do lugar.
+  const andaram = planos.map((p) => {
+    const q = Array.from(p.antes.getClientRects()).find((a) => a.height > 1);
+    return !q || Math.abs(y(q) - p.topo) > 2;
+  });
+  postas.forEach((v, i) => andaram[i] && v.remove());
+  return andaram.filter((a) => !a).length;
+}
+
 /** Tira os empurrões antes de uma nova diagramação (outra geometria, outro texto). */
 export function soltarTitulos(fluxo: Element): void {
   fluxo.querySelectorAll(".folhear-empurra").forEach((el) => el.classList.remove("folhear-empurra"));
@@ -596,6 +739,7 @@ export function soltarTitulos(fluxo: Element): void {
   fluxo.querySelectorAll(".folhear-segura").forEach((el) => el.classList.remove("folhear-segura", "folhear-inteira"));
   fluxo.querySelectorAll(".folhear-calcado, .folhear-tentou-calco").forEach((el) => el.classList.remove("folhear-calcado", "folhear-tentou-calco"));
   fluxo.querySelectorAll(".folhear-calco").forEach((el) => el.remove());
+  fluxo.querySelectorAll(`.${CLASSE_VINHETA}`).forEach((el) => el.remove());
 }
 
 const CLASSE_CABECALHO = "folhear-cabecalho-repetido";

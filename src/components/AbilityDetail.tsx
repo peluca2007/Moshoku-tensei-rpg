@@ -76,10 +76,45 @@ function tipoDeRecitacao(ability: AbilityDef): "ataque" | "resistencia" | "supor
  * se aplica a magias (actions.encurtada/silenciosa vêm de MAGIC_ACTIONS) —
  * técnicas marciais e de Utilidade só têm a coluna "Padrão".
  */
-export function CastingBreakdown({ ability }: { ability: AbilityDef }) {
+export function CastingBreakdown({ ability, compacta = false }: { ability: AbilityDef; compacta?: boolean }) {
   const { actions } = ability;
   const hasCasting = actions.encurtada !== undefined || actions.silenciosa !== undefined;
   if (ability.reaction || !hasCasting) return null;
+
+  // No livro, a regra das três formas está escrita UMA vez (Cap. 2, §2) e a
+  // carta ensina a se ler (Cap. 3, "A carta de uma habilidade"). Repetir
+  // "dano da Encurtada + 1 benefício (...)" nas 149 magias era a linha mais
+  // longa de cada carta, em letra de rodapé. Aqui só vai o que muda de uma
+  // magia pra outra: quantas Ações cada forma custa.
+  if (compacta) {
+    const formas: [string, string, string][] = [
+      ["Padrão", actionText(actions.normal), "dano cheio"],
+      [
+        "Encurtada",
+        ability.ritual || actions.encurtada === undefined ? "—" : actionText(actions.encurtada),
+        ability.ritual ? "Ritual: não se encurta" : actions.encurtada === undefined ? "não existe no rank Imperador" : "metade do dano, área −1/3",
+      ],
+    ];
+    if (actions.silenciosa !== undefined) {
+      formas.push([
+        "Silenciosa",
+        typeof actions.silenciosa === "number" ? actionText(actions.silenciosa) : "1 Reação",
+        "dano da Encurtada + 1 benefício de forma",
+      ]);
+    }
+    return (
+      <dl
+        className={`livro-formas print-hide mt-2 grid ${formas.length === 3 ? "grid-cols-3" : "grid-cols-2"} divide-x divide-parchment-300 border-y border-parchment-300 text-center dark:divide-parchment-800 dark:border-parchment-800`}
+      >
+        {formas.map(([nome, valor, nota]) => (
+          <div key={nome} title={nota} className="px-1 py-1">
+            <dt className="text-3xs font-semibold uppercase tracking-wider text-parchment-500 dark:text-parchment-400">{nome}</dt>
+            <dd className="text-xs font-bold text-parchment-800 dark:text-parchment-100">{valor}</dd>
+          </div>
+        ))}
+      </dl>
+    );
+  }
 
   return (
     <dl className="print-hide mt-1.5 grid grid-cols-1 gap-x-3 gap-y-0.5 border-t border-dashed border-parchment-300 pt-1.5 text-2xs text-parchment-600 dark:border-parchment-800 dark:text-parchment-400 sm:grid-cols-3">
@@ -125,7 +160,7 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
   const verses = ability.incantation.split("\\n").filter((v) => v.trim().length > 0);
 
   return (
-    <div className="relative mt-2">
+    <div className="livro-cantico relative mt-2">
       <div className="absolute -top-3 left-2 -z-10 h-10 w-10 rounded-full bg-gold-500/20 ring-2 ring-gold-400/50 dark:bg-gold-500/10" />
       <blockquote className="relative rounded-lg border border-wine-300/30 bg-parchment-50/50 p-3 pl-6 ring-1 ring-inset ring-wine-300/10 dark:border-wine-800/30 dark:bg-parchment-900/50 dark:ring-wine-800/10">
         <div className="flex items-start gap-1.5">
