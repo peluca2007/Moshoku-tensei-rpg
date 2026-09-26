@@ -233,7 +233,7 @@ export const SUISHIN_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           effect:
-            "1 Reação, no gatilho que você escolher. Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica uma condição — Caído, Preso, Desarmado ou Atordoado; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso). Limite de 'anula o efeito': nunca anula efeito de rank acima do seu nesta árvore, nem efeito que pega várias criaturas, a menos que 'atinge todos a 3m' também esteja entre as opções escolhidas.",
+            "1 Reação, no gatilho que você escolher. Um dos Cinco Segredos — criado com o Mestre. Escolha um gatilho (inimigo ataca você/aliado, conjura, se move, foge) e duas opções de orçamento (anula o efeito; devolve o dano; aplica Caído, Preso ou Atordoado, ou faz o alvo largar a arma; atinge todos a 3m; +5 CA a você e aliado), mais uma Amarra (condição de uso). Limite de 'anula o efeito': nunca anula efeito de rank acima do seu nesta árvore, nem efeito que pega várias criaturas, a menos que 'atinge todos a 3m' também esteja entre as opções escolhidas.",
         },
         {
           id: "espelho-suishin",

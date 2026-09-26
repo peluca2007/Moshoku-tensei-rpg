@@ -136,7 +136,7 @@ export const NORTE_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "Arma secundária: um degrau abaixo do normal" },
-          effect: "O Golpe Duplo (Cap. 4, §3) é livre pra qualquer um, e nele a mão de apoio causa SÓ o dado, um degrau abaixo. Este talento tira a parte fraca: a mão de apoio passa a somar Força e Bônus de Rank, como um ataque de verdade. Enquanto as duas estiverem empunhadas, +1 na CA, e a arma de apoio vale em Reação defensiva. Continua uma vez por turno, e continua um degrau abaixo até você comprar Mão Trocada.",
+          effect: "O Golpe Duplo (Cap. 4, §3) é livre pra qualquer um, e nele a mão de apoio causa SÓ o dado, um degrau abaixo. Esta habilidade tira a parte fraca: a mão de apoio passa a somar Força e Bônus de Rank, como um ataque de verdade. Enquanto as duas estiverem empunhadas, +1 na CA, e a arma de apoio vale em Reação defensiva. Continua uma vez por turno, e continua um degrau abaixo até você comprar Mão Trocada.",
         },
         {
           id: "desarme",

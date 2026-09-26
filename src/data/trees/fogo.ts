@@ -322,7 +322,7 @@ export const FOGO_TREE: Tree = {
           paCost: RANK_PA_COST.signature.Santo,
           pmCost: 12,
           range: "Raio de 60m",
-          actions: MAGIC_ACTIONS.Santo,
+          actions: { normal: 3 },
           damage: { normal: "12d8 + BC (ígneo)", porTurno: "2d6 (ígneo) a quem começar o turno na área em chamas" },
           effect: "Teste de Agilidade (CD 8 + BC) com Desvantagem. Falha: dano cheio e Em Chamas. Sucesso: metade. A área continua em chamas por 10 minutos: quem começar o turno dentro sofre 2d6 de dano ígneo.",
           incantation:
@@ -365,7 +365,7 @@ export const FOGO_TREE: Tree = {
           signature: true,
           paCost: RANK_PA_COST.signature.Rei,
           pmCost: 14,
-          range: "Raio de 90m",
+          range: "Esfera de 12m a até 90m",
           actions: MAGIC_ACTIONS.Rei,
           damage: { normal: "12d10 + BC (ígneo, d12 contra alvo já Em Chamas)" },
           effect: "Teste de Vigor com Desvantagem (exceto submersos/barreira/clima chuvoso). Falha: dano cheio e Em Chamas incombatível. Sucesso: metade.",
