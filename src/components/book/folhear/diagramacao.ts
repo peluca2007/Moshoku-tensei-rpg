@@ -409,6 +409,17 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     if (juntas < 3) empurrar.add(caixa);
   });
 
+  // Título empurrado leva o bloco seguinte junto: uma quebra própria do bloco
+  // (a tabela que "descia inteira" do pé da coluna) separaria os dois de novo
+  // — o subtítulo "As peças" da Teórica ficava sozinho por isso.
+  empurrar.forEach((el) => {
+    if (!el.matches("h3, h4")) return;
+    const prox = seguinte(el, fluxo);
+    if (!prox) return;
+    empurrar.delete(prox);
+    prox.classList.remove("folhear-empurra");
+  });
+
   // Cada caso sobe um degrau por passada, e só conta como mudança se subiu:
   // 1) título antes de algo que atravessa a página passa a atravessar também;
   // 2) o bloco vai pra próxima coluna;

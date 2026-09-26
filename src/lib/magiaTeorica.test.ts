@@ -15,7 +15,7 @@ describe("oficina de Magia Teórica", () => {
   it("transforma Mana, Conter e Quadrado numa barreira física calculável", () => {
     const formula = criarFormula(base);
     expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(4);
+    expect(formula.pm).toBe(2);
     expect(formula.nome).toBe("Muralha de Mana");
     expect(formula.pv).toBe(30);
     expect(formula.dano).toBeNull();
@@ -25,8 +25,8 @@ describe("oficina de Magia Teórica", () => {
   it("projeta Fogo com dano ígneo e o alcance alterado pela Linha", () => {
     const formula = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "linha" });
     expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(5);
-    expect(formula.dano).toBe("1d6");
+    expect(formula.pm).toBe(3);
+    expect(formula.dano).toBe("1d8 + BC");
     expect(formula.tipo).toBe("ígneo");
     expect(formula.alcance).toBe("13.5 m");
   });
@@ -34,7 +34,7 @@ describe("oficina de Magia Teórica", () => {
   it("cobra mais PM e símbolos para juntar contenção e rejeição", () => {
     const formula = criarFormula({ ...base, rank: "Intermediário", operadores: ["conter", "rejeitar"], forma: "circulo" });
     expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(8);
+    expect(formula.pm).toBe(4);
     expect(formula.pv).toBe(40);
     expect(formula.bloqueio).toContain("criaturas e projéteis");
     expect(formula.bloqueio).toContain("magia de rank Intermediário");
@@ -48,8 +48,8 @@ describe("oficina de Magia Teórica", () => {
     const depois = criarFormula({ ...base, rank: "Avançado", essencia: "fogo", operadores: ["projetar", "expandir"], forma: "linha" });
     expect(antes.valida).toBe(true);
     expect(depois.valida).toBe(true);
-    expect(antes.pm).toBe(13);
-    expect(depois.pm).toBe(13);
+    expect(antes.pm).toBe(8);
+    expect(depois.pm).toBe(8);
     expect(antes.leitura).toContain("cone na origem");
     expect(depois.leitura).toContain("área no destino");
     expect(antes.alcance).toBe("19.5 m");
@@ -64,7 +64,7 @@ describe("oficina de Magia Teórica", () => {
     expect(ar.valida).toBe(false);
     expect(ar.erros).toContain("Um gatilho precisa de giz, pergaminho ou pedra gravada.");
     expect(giz.valida).toBe(true);
-    expect(giz.pm).toBe(11);
+    expect(giz.pm).toBe(7);
   });
 
   it.each([
@@ -85,9 +85,9 @@ describe("oficina de Magia Teórica", () => {
     const circuloInstantaneo = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "circulo" });
     const quadradoSemEstrutura = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "quadrado" });
     expect(circuloInstantaneo.valida).toBe(true);
-    expect(circuloInstantaneo.pm).toBe(4);
+    expect(circuloInstantaneo.pm).toBe(2);
     expect(circuloInstantaneo.duracao).toBe("instantânea");
-    expect(circuloInstantaneo.dano).toBe("1d6");
+    expect(circuloInstantaneo.dano).toBe("1d8 + BC");
     expect(quadradoSemEstrutura.valida).toBe(false);
     expect(quadradoSemEstrutura.erros[0]).toContain("não tem PV");
   });
@@ -120,7 +120,7 @@ describe("oficina de Magia Teórica", () => {
   it("separa construção e potência: circuitos avançados podem conter uma saída fraca", () => {
     const formula = criarFormula({ ...base, rank: "Avançado", potencia: "Principiante", operadores: ["conter", "rejeitar"], forma: "circulo" });
     expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(6);
+    expect(formula.pm).toBe(3);
     expect(formula.pv).toBe(20);
     expect(formula.bloqueio).toContain("rank Principiante");
     expect(formula.ativacao).toContain("2 Ações");
@@ -133,7 +133,7 @@ describe("oficina de Magia Teórica", () => {
   it("permite sinal sensorial como opção inicial sem conceder dano nem Surdo", () => {
     const sinal = criarFormula({ ...base, operadores: ["expressar"], forma: "circulo" });
     expect(sinal.valida).toBe(true);
-    expect(sinal.pm).toBe(3);
+    expect(sinal.pm).toBe(1);
     expect(sinal.dano).toBeNull();
     expect(sinal.duracao).toBe("1 turno");
     const paredeSom = criarFormula({ ...base, essencia: "som" });
@@ -144,7 +144,7 @@ describe("oficina de Magia Teórica", () => {
     const onda = criarFormula({ ...base, rank: "Intermediário", potencia: "Intermediário", essencia: "fogo", operadores: ["projetar", "expandir"], forma: "circulo" });
     expect(onda.valida).toBe(true);
     expect(onda.area).toContain("raio de 3 m");
-    expect(onda.dano).toBe("1d6");
+    expect(onda.dano).toBe("1d8 + BC");
     expect(onda.resolucao).toContain("Agilidade");
     const parede = criarFormula({ ...base, rank: "Avançado", potencia: "Avançado", essencia: "terra" });
     expect(parede.pv).toBe(120);
@@ -157,6 +157,22 @@ describe("oficina de Magia Teórica", () => {
     const quebra = criarFormula({ ...base, rank: "Avançado", meio: "giz", gatilho: true, condicao: "quebra" });
     expect(quebra.valida).toBe(false);
     expect(quebra.erros.some((erro) => erro.includes("outra célula"))).toBe(true);
+  });
+
+  it("recalibragem 2026-09-26: Dardo por 1 PM, d8 + BC, e formas travadas por rank", () => {
+    const dardo = criarFormula({ ...base, operadores: ["projetar"], forma: "circulo" });
+    expect(dardo.pm).toBe(1);
+    expect(dardo.dano).toBe("1d8 + BC");
+    expect(dardo.resolucao).toContain("Uma projeção ofensiva por turno");
+    const anteparo = criarFormula(base);
+    expect(anteparo.alcance).toBe("toque");
+    const cura = criarFormula({ ...base, essencia: "vida", operadores: ["projetar"], forma: "circulo" });
+    expect(cura.dano).toBe("1d8");
+    const triangulo = criarFormula({ ...base, operadores: ["projetar"], forma: "triangulo" });
+    expect(triangulo.erros).toContain("Triângulo exige Teórica Intermediária.");
+    const imperador = criarFormula({ ...base, rank: "Imperador", potencia: "Imperador", operadores: ["projetar"], forma: "circulo" });
+    expect(imperador.pm).toBe(9);
+    expect(imperador.dano).toBe("6d8 + BC");
   });
 
   it("reserva fronteiras enormes para instalações preparadas", () => {
