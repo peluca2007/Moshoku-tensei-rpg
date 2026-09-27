@@ -122,7 +122,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "cap5-2-fora-da-guilda", label: "— O que a Guilda não vende" },
       { id: "cap5-2-vender", label: "— Vender o que caiu" },
       { id: "cap5-3", label: "3. Reputação com Facções" },
-      { id: "cap5-4", label: "4. Crafting e Alquimia" },
+      { id: "cap5-4", label: "4. Fabricação e Alquimia" },
       { id: "cap5-5", label: "5. Dojos e Mestres" },
       { id: "cap5-5-quem", label: "— Quem pode ensinar" },
       { id: "cap5-5-provacao", label: "— A provação" },
@@ -137,7 +137,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
     children: [
       { id: "apendice-a", label: "A. Ficha de Exemplo" },
       { id: "apendice-b", label: "B. Molde p/ Novas Escolas" },
-      { id: "apendice-c", label: "C. Dano por Turno" },
+      { id: "apendice-c", label: "C. Dano por Turno — Comparando Árvores" },
       { id: "apendice-d", label: "D. Ambiguidades Resolvidas" },
       { id: "apendice-e", label: "E. Viagem entre Continentes" },
       { id: "apendice-f", label: "F. Cerco e Batalha em Exército" },

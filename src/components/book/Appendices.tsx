@@ -83,50 +83,13 @@ export default function Appendices() {
       </Section>
 
       <Section>
-        <SectionTitle id="apendice-c">C. Tabela Comparativa de Dano por Turno</SectionTitle>
+        <SectionTitle id="apendice-c">C. Dano por Turno — Comparando Árvores</SectionTitle>
         <P>
           Quanto cada árvore causa num turno típico, patamar a patamar — pra comparar builds e pra o Mestre
           saber quantos turnos uma criatura do Apêndice G aguenta. Valores médios, alvo de CA razoável,
           atributo principal progredindo de 4 até 8.
         </P>
-        <BookTable
-          headers={["Patamar", ...COLUNAS_MAGIA.map((c) => c.label)]}
-          rows={DANO_POR_TURNO_MAGIA.map((l) => [
-            l.patamar,
-            ...COLUNAS_MAGIA.map((c) => l.porArvore[c.treeId] ?? "—"),
-          ])}
-        />
-        <BookTable
-          headers={["Patamar", ...COLUNAS_CORPO.map((c) => c.label)]}
-          rows={DANO_POR_TURNO_CORPO.map((l) => [
-            l.patamar,
-            ...COLUNAS_CORPO.map((c) => l.porArvore[c.treeId] ?? "—"),
-          ])}
-        />
-        <Warning title="Quatro coisas que a tabela não diz sozinha">
-          <P>
-            <b>A Espada conta 4 Ações do Avançado em diante.</b> A Maestria &ldquo;Velocidade
-            Encarnada&rdquo; dá uma Ação extra a quem não se move no turno, e os números dela já assumem
-            isso. Ela é a única coluna com uma 4ª Ação antes do Imperador.
-          </P>
-          <P>
-            <b>Escudos pressupõe todas as Ações gastas defendendo.</b> Um Defensor Imperador que{" "}
-            <i>escolha</i> atacar faz perto de 84 por turno, não 27. A coluna mede o que ele faz no papel
-            dele, não o teto dele — e ele continua sendo a menor coluna do livro de propósito.
-          </P>
-          <P>
-            <b>A Utilidade tem três colunas.</b> Cada árvore tem um golpe próprio que
-            escala por patamar — Dano Furtivo, Ordem de Tiro, Dissonância —, todos na Maestria de 1º
-            patamar e todos uma vez por turno. Nenhuma das três recebe degraus de Dado de Arma (Cap. 3),
-            então o dado delas nunca cresce.
-          </P>
-          <P>
-            <b>Magia não está amortizada pelas Ações.</b> Muitas magias de Imperador custam 4 Ações — mais
-            que um turno inteiro. O Sol Menor é uma exceção: entrega ~130 contra alvo Em Chamas em 3 Ações.
-            Compare marcial com marcial e magia com magia; cruzar as duas metades desta tabela engana.
-          </P>
-        </Warning>
-        <Aside title="Como ler esta tabela">
+        <Aside title="Como ler as colunas">
           <P>Número alto não significa personagem melhor. Significa personagem mais estreito.</P>
           <List
             items={[
@@ -145,6 +108,30 @@ export default function Appendices() {
             ]}
           />
         </Aside>
+        <BookTable
+          headers={["Patamar", ...COLUNAS_MAGIA.map((c) => c.label)]}
+          rows={DANO_POR_TURNO_MAGIA.map((l) => [
+            l.patamar,
+            ...COLUNAS_MAGIA.map((c) => l.porArvore[c.treeId] ?? "—"),
+          ])}
+        />
+        <BookTable
+          headers={["Patamar", ...COLUNAS_CORPO.map((c) => c.label)]}
+          rows={DANO_POR_TURNO_CORPO.map((l) => [
+            l.patamar,
+            ...COLUNAS_CORPO.map((c) => l.porArvore[c.treeId] ?? "—"),
+          ])}
+        />
+        <Warning title="Quatro ressalvas">
+          <List
+            items={[
+              <span key="e"><b>A Espada conta 4 Ações do Avançado em diante:</b> a Velocidade Encarnada dá uma Ação extra a quem não se move.</span>,
+              <span key="s"><b>Escudos mede o turno gasto defendendo.</b> Um Defensor Imperador que escolha atacar faz perto de 84.</span>,
+              <span key="u"><b>A Utilidade não ganha degraus de Dado de Arma</b> (Cap. 3): o dado das três colunas nunca cresce.</span>,
+              <span key="m"><b>Magia não está dividida pelas Ações:</b> muita magia de Imperador custa 4. Compare marcial com marcial e magia com magia.</span>,
+            ]}
+          />
+        </Warning>
       </Section>
 
       <Section>

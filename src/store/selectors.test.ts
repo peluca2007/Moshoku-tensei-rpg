@@ -137,7 +137,7 @@ describe("PM Máximos (Cap. 4, §1)", () => {
     expect(getMaxMp(espirito2)).toBe(getMaxMp(espirito4));
   });
 
-  it("PA avulso é cortado pelo cap nos dois primeiros patamares", () => {
+  it("a compra de PM com PA não rende antes do Avançado de magia", () => {
     const semPa = ficha({
       attributeBase: { ...ZERO_ATTRS, espirito: 4 },
       unlockedRanks: [{ treeId: "agua", rank: "Principiante" }],

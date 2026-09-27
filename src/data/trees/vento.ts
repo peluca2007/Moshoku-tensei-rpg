@@ -261,7 +261,7 @@ export const VENTO_TREE: Tree = {
           range: "Esfera de 15m de raio",
           actions: MAGIC_ACTIONS.Santo,
           damage: { normal: "3d8 + BC de dano cortante por turno (metade se passar)" },
-          effect: "Sustentada, e ocupa a sua sustentação (Cap. 2, §7): até 1 minuto. Esfera de 15m de raio que se move 9m por turno para onde você quiser. No início de cada turno SEU, quem estiver dentro faz teste de Agilidade (CD 8 + BC): quem falha sofre o dano e fica Desequilibrado; quem passa sofre metade e nada mais. É a magia mais longa da escola, e o preço é você não conjurar mais nada enquanto ela gira.",
+          effect: "Sustentada, e ocupa a sua sustentação (Cap. 2, §7): até 1 minuto. Esfera de 15m de raio que se move 9m por turno para onde você quiser. No início de cada turno SEU, quem estiver dentro faz teste de Agilidade (CD 8 + BC): quem falha sofre o dano e fica Desequilibrado; quem passa sofre metade e nada mais. É a magia mais longa da escola; o preço é ocupar a sua sustentação enquanto ela gira.",
           incantation:
             "Que o ar se lembre de que já foi lâmina afiada, muito antes de aprender a ser apenas respiração calma e mansa demais.\nQue ele lembre mil vezes por segundo, sem parar nenhum instante sequer, sem descansar nunca, sem jamais esquecer de novo o que sempre foi de verdade.\nTempestade Cortante!",
         },

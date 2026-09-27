@@ -296,7 +296,7 @@ export const NORTE_TREE: Tree = {
           ptCost: 2,
           range: "3 metros",
           actions: { normal: 1 },
-          effect: "Ataque cada criatura à sua escolha dentro de 3m, com rolagem separada para cada, sem Desvantagem por aliados na área.",
+          effect: "Ataque cada criatura à sua escolha dentro de 3m, com rolagem separada para cada, sem Desvantagem por aliados na área. Cada acerto aplica um efeito do Improviso à sua escolha, sem gastar o seu uso do combate: o alvo testa (CD 8 + Força + Rank, com Desvantagem) e, se falhar, fica Caído, fica Cego até o fim do próximo turno dele, é empurrado 3m, ou o seu próximo ataque contra ele neste turno tem Vantagem.",
         },
         {
           id: "aura-cortante",

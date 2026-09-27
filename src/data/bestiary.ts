@@ -838,7 +838,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
     pericias: ["Furtividade"],
     resistencias: ["veneno"],
     movimentoEspecial: "Nada 12 m; escala 6 m.",
-    perigo: "A picada envenena quem falha no Vigor, e a Peçonha de Serpente-do-Pântano (Cap. 4, §8) continua trabalhando depois da luta.",
+    perigo: "A picada envenena quem falha no Vigor, e a Veneno de Serpente-do-Pântano (Cap. 4, §8) continua trabalhando depois da luta.",
     acoes: [
       {
         nome: "Picada Peçonhenta",
@@ -849,7 +849,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         tipo: "ataque",
         aplicaVeneno: true,
         cdVeneno: 12,
-        nota: "Se acertar, o alvo faz um teste de Vigor CD 12. Na falha, fica Envenenado até o fim do próximo turno dele e contrai Peçonha de Serpente-do-Pântano (Cap. 4, §8 — aflição de rank Intermediário), que continua cobrando depois da luta. A aflição não acumula: a segunda picada não piora o que a primeira já fez.",
+        nota: "Se acertar, o alvo faz um teste de Vigor CD 12. Na falha, fica Envenenado até o fim do próximo turno dele e contrai Veneno de Serpente-do-Pântano (Cap. 4, §8 — aflição de rank Intermediário), que continua cobrando depois da luta. A aflição não acumula: a segunda picada não piora o que a primeira já fez.",
       },
       {
         nome: "Bote e Recuo",
@@ -882,7 +882,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
-        nota: "Na primeira rodada, se veio de emboscada, rola com Vantagem. Se acertar, o alvo faz teste de Vigor CD 13 ou perde 3 m de Deslocamento até o fim do combate (cumulativo, até 0); faz outro teste de Vigor CD 12 e, na falha, contrai Toxina de Aranha Gigante (Cap. 4, §8).",
+        nota: "Na primeira rodada, se veio de emboscada, rola com Vantagem. Se acertar, o alvo faz um teste de Vigor CD 13. Na falha, perde 3 m de Deslocamento até o fim do combate (cumulativo, até 0); se falhar por 5 ou mais, também contrai Toxina de Aranha Gigante (Cap. 4, §8).",
       },
       {
         nome: "Teia",
@@ -927,7 +927,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
         tipo: "ataque",
         aplicaVeneno: true,
         cdVeneno: 15,
-        nota: "Ao acertar: Vigor CD 15 ou Envenenado até o fim do próximo turno; Vigor CD 14 ou contrai Fel de Wyvern (Cap. 4, §8).",
+        nota: "Ao acertar: Vigor CD 15 ou Envenenado até o fim do próximo turno; falhando por 5 ou mais, também contrai Fel de Wyvern (Cap. 4, §8).",
       },
     ],
   },

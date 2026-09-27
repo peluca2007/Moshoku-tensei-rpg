@@ -132,12 +132,6 @@ export default function Chapter1() {
             pro cirurgião do parágrafo abaixo (Cap. 4, §1).
           </P>
           <P>
-            <b>Existe um teto nos dois primeiros patamares</b>, pra que bônus de fora da árvore não
-            empurrem um conjurador iniciante além do que a assinatura do próprio rank permite pagar. A
-            regra completa — quem entra no teto, quem não entra, e por que ele some no Avançado — está no{" "}
-            <b>Cap. 4, §1</b>, junto da fórmula. Aqui basta saber que ela existe.
-          </P>
-          <P>
             Abrir oito escolas no 1º patamar não te dá mana nenhuma a mais. Subir <b>uma</b> escola até o
             Imperador multiplica tudo. É por isso que o mago que vai fundo conjura e o que espalha assiste.
           </P>
@@ -186,7 +180,7 @@ export default function Chapter1() {
             ["1 PA", "2 Perícias à sua escolha."],
             ["1 PA", "3 Proficiências ou Línguas à sua escolha — qualquer personagem, de qualquer árvore."],
             ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente). No 1º patamar são só +4 PV: comprar atributo rende mais cedo, e esta compra é pra quem já tem patamar alto."],
-            ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente). NÃO RENDE NADA enquanto o seu maior patamar de magia for Principiante ou Intermediário — o teto de PM (Cap. 4, §1) corta todo extra avulso. Libera no Avançado; a ficha bloqueia a compra até lá."],
+            ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente). Só se compra do Avançado de magia em diante."],
             ["1 / 1 / 2 / 2 / 3 / 3… PA", "+1 ponto de Atributo Base permanente (teto 8). PROGRESSIVO: as duas primeiras compras custam 1 PA cada, as duas seguintes 2 PA cada, e assim por diante. Medido pela soma dos cinco atributos, então desfazer um defeito custa o mesmo que qualquer outro aumento."],
             ["2 / 3 / 4 / 4 / 4 PA", "+2 permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha (Resistência Treinada) — uma vez por atributo, no máximo 5 compras (17 PA pelas cinco). Soma com Vantagem de outras fontes. PROGRESSIVO: cada compra custa 1 PA a mais que a anterior, com teto em 4."],
             ["Variável", "Magias, Técnicas e Talentos de Árvore — o custo escala com o Rank (tabela na seção 3)."],
@@ -518,7 +512,7 @@ export default function Chapter1() {
               </span>,
               <span key="d">
                 <b>Armadura média e pesada:</b> exigem proficiência específica de uma árvore (ex: Peso Não
-                Atrapalha, do Suishin-ryū) ou 1 PA.
+                Atrapalha, do Suishin-ryū) ou 1 PA por categoria, fora do pacote de três proficiências.
               </span>,
               <span key="peso">
                 <b>O que o peso cobra, mesmo com proficiência.</b> <b>Leve:</b> soma toda a sua Agilidade na

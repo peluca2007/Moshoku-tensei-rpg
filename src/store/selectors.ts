@@ -432,20 +432,14 @@ export function getMaxMp(state: StoreState): number {
     maiorBonusMagia;
   const talentoMp = getTalentReserve(state, "mpPerRank");
   const baseComRacialETalentos = baseSemCap + escalarDeMana + talentoMp;
-  // Extras avulsos (PA, antecedentes, sub-tabela) são capados nos 2 primeiros
-  // ranks. Desde 2026-09-26 o teto usa o Espírito (`máx(Espírito, 4) × MB + 8`,
-  // + talento + escalar): antes era `4 × MB + 8`, e o Espírito acima de 4 não
-  // rendia PM nenhum até o Avançado — o "reator" do Cap. 1 não existia nos
-  // patamares mais jogados. Só PA avulso e PM fixo de antecedente são cortados.
-  if (maiorBonusMagia <= 2) {
-    const capTotal = baseComRacialETalentos;
-    const extras = getFlatBonusSum(state, "maxMp") + state.bonusMp;
-    return state.overrides.maxMp ?? Math.min(baseComRacialETalentos + extras, capTotal);
-  }
+  // O teto dos dois primeiros patamares saiu em 2026-09-27: desde que os
+  // antecedentes deram PM escalar, ele só cortava o "+PM por 2 PA", e essa
+  // compra já só existe do Avançado de magia em diante (Cap. 1, §2) — e é só
+  // isso que fica: o PA avulso de PM não rende antes do Avançado.
   const computed =
     baseComRacialETalentos +
     getFlatBonusSum(state, "maxMp") +
-    state.bonusMp;
+    (maiorBonusMagia >= 3 ? state.bonusMp : 0);
   return state.overrides.maxMp ?? computed;
 }
 

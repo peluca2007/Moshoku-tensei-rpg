@@ -263,7 +263,10 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
     ? Math.ceil(p.pv * (1 + (escolha.essencia === "terra" ? 0.5 : 0) + (escolha.forma === "quadrado" ? 0.5 : 0)))
     : null;
 
-  const regraDoSelo = `Contra ${escolha.essencia === "mana" ? "magia" : `magia de ${essencia.nome}`}: rank ${potencia} ou abaixo não atravessa; um rank acima atravessa com dados, área e duração pela metade; dois ou mais acima atravessam inteiras.`;
+  // O selo com essência de escola só barra magia daquela escola — e, por ser
+  // estreito, barra um rank a mais (2026-09-27).
+  const tetoDoSelo = escolha.essencia === "mana" ? potencia : (RANKS_TEORICOS[RANKS_TEORICOS.indexOf(potencia) + 1] ?? "Deus");
+  const regraDoSelo = `Contra ${escolha.essencia === "mana" ? "magia" : `magia de ${essencia.nome} (a essência barra um rank a mais)`}: rank ${tetoDoSelo} ou abaixo não atravessa; um rank acima atravessa com dados, área e duração pela metade; dois ou mais acima atravessam inteiras.`;
   const bloqueio = tem("erguer") && tem("selar")
     ? `Segura corpos e projéteis até perder os PV. ${regraDoSelo}`
     : tem("erguer")
