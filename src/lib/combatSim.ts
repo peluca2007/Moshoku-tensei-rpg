@@ -752,7 +752,12 @@ export function acoesDe(c: CharacterData): Acao[] {
       alcance: a.range,
       reacao: !!a.reaction,
       nome: a.name,
-      acoes: a.reaction ? 1 : Math.max(1, a.actions.normal),
+      // "Requer alvo Agarrado" e "Requer 6m de corrida" (2026-09-27): o motor
+      // não modela o agarrão nem a corrida, e sem isto o Lutador usava o
+      // Arremesso e a Investida três vezes por turno. A Ação do agarrão (ou do
+      // Andar, Cap. 4, §3) entra no custo — o motor ainda supõe que o agarrão
+      // pega, então fica otimista, e isso está escrito aqui.
+      acoes: a.reaction ? 1 : Math.max(1, a.actions.normal) + (/^requer (alvo agarrado|6 ?m de corrida)/i.test(a.effect.trim()) ? 1 : 0),
       pm: a.pmCost ?? 0,
       pt: a.ptCost ?? 0,
       tipo,

@@ -34,6 +34,13 @@ export const PATCH_NOTES: PatchNote[] = [
           "A Desintoxicação fica com a tabela de PA barata: empata com as outras escolas no 1º patamar e fica bem atrás do 3º em diante, gastando muito PM e precisando de dois turnos de preparo.",
         ],
       },
+      {
+        heading: "O simulador conta o agarrão e a corrida",
+        items: [
+          "Técnica que 'Requer alvo Agarrado' ou 'Requer 6m de corrida' custa, no simulador, a Ação do agarrão ou do Andar (Cap. 4, §3). Antes o Lutador usava o Arremesso e a Investida três vezes por turno sem nunca ter agarrado nem corrido — no 2º patamar ele saía com o dobro do dano de qualquer um.",
+          "Com o custo real contado, a Prensa (Lutador, Rei) volta a subir: 10d10 + Força + Bônus de Rank, automático (era 5d10). O corte pra 5d10 tinha sido feito medindo-a como se custasse 1 Ação só.",
+        ],
+      },
     ],
   },
   {
