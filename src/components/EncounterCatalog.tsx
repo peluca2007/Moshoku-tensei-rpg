@@ -9,7 +9,7 @@ export default function EncounterCatalog({ pastaId }: { pastaId: string | null }
   const importar = useBestiaryStore((s) => s.importarCriatura);
   const encontrados = BESTIARIO.filter((m) => (!patamar || m.patamar === patamar) && `${m.nome} ${m.categoria}`.toLocaleLowerCase("pt-BR").includes(busca.toLocaleLowerCase("pt-BR")));
   return <details className="mb-3 rounded-xl border border-parchment-300 p-3 dark:border-parchment-800">
-    <summary className="cursor-pointer text-sm font-semibold">Catálogo extra · {BESTIARIO.length} modelos editáveis</summary>
+    <summary className="cursor-pointer text-sm font-semibold">Catálogo do Apêndice G · {BESTIARIO.length} criaturas editáveis</summary>
     <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">Adaptações para a mesa, com números e ações do molde do Apêndice G. As descrições sugerem a cena; não concedem poderes além do bloco. Revise especialmente os personagens lendários antes de usá-los.</p>
     <div className="my-3 flex flex-wrap gap-2">
       <input aria-label="Buscar no catálogo extra" placeholder="Nome ou categoria" value={busca} onChange={(e) => setBusca(e.target.value)} className="min-w-0 flex-1 rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 text-sm dark:border-parchment-700 dark:bg-parchment-950" />

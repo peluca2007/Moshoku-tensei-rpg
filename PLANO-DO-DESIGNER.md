@@ -369,7 +369,7 @@ pelo Cap. 5 do livro antes da loja e do `/encontros`.
 
 ### Achadas ao montar o kit de mesa (2026-09-26) — abertas
 
-- **O bestiário do `/encontros` não está no livro.** As 26 criaturas de `preMadeMonsters.ts` (Urso de
+- ✅ (0.1.106: o catálogo entrou no Apêndice G) ~~**O bestiário do `/encontros` não está no livro.**~~ As 26 criaturas de `preMadeMonsters.ts` (Urso de
   Presas Vermelhas, Guerreiro Superd, Troll de Caverna…) só existem no site; o livro tem as 6 fichas
   prontas do Apêndice G. Quebra "nada fora do livro". Opções: levar as 26 pro Apêndice G como tabela
   (nome, patamar, papel, arquétipo, traços), ou tirá-las do site. O kit já usa só as do livro.

@@ -16,6 +16,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.106",
+    date: "2026-09-27",
+    title: "O catálogo de criaturas entra no livro",
+    sections: [
+      {
+        heading: "Nada fora do livro",
+        items: [
+          "As 28 criaturas do catálogo do /encontros existiam só no site. Agora o Apêndice G tem 'O catálogo': cada uma com o jeito de montar (patamar, papel e arquétipo do Bloco do Monstro) e os traços que o molde não traz. O livro e o site leem a mesma lista.",
+          "Pra caber no livro, o catálogo passou a falar a língua do Cap. 4: 'fogo' virou ígneo, 'eletricidade' elétrico, 'concussão' contundente, 'magia' arcano (que entrou também no simulador), e o 'necrótico', que não existe, saiu.",
+          "Orsted, Hitogami e Laplace saíram do catálogo: com 'resistência a todas' e 'imune a danos mortais', eram personagens da história, não encontros. O 6º patamar ganhou a Hidra de Manatita, o Dragão Vermelho Ancião e o Rei Demônio Imortal. O 'General Laplace' virou General Demônio.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.105",
     date: "2026-09-27",
     title: "O orçamento de encontro diz a verdade",
