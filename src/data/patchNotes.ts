@@ -24,13 +24,19 @@ export const PATCH_NOTES: PatchNote[] = [
         heading: "A Raça Dragão",
         items: [
           "Sem asas: na obra, a Raça Dragão (Orsted, Laplace, Perugius) tem corpo de gente. Quem voa são os Dragões Vermelhos, que são monstro do bestiário, não raça.",
-          "A arte da raça volta a ser o Orsted de corpo inteiro na aura, em pé na página inteira da raça mítica. O esboço deitado, que o autor achou fraco, foi pro acervo.",
+          "A arte da raça volta a ser o Orsted de corpo inteiro na aura, agora ao lado das regras na mesma página da raça mítica. O esboço deitado, que o autor achou fraco, foi pro acervo.",
         ],
       },
       {
         heading: "Ícones das raças",
         items: [
-          "Os ícones do Dragão, do Demônio Imortal e do Celestial tinham marca d'água de banco de imagem. Limpos.",
+          "Os doze ícones agora são recortes das próprias ilustrações das raças; saíram as silhuetas de banco de imagem que destoavam do livro.",
+        ],
+      },
+      {
+        heading: "Arte das árvores e do Bestiário",
+        items: [
+          "Magia de Fogo, Magia de Cura, Deus do Norte, Bardo e Navegação ganham aberturas ilustradas; o Bestiário ganha Orsted na explicação de chefes, o Punho do Fogo fecha com uma nova arte vertical, e a Aura de Comando deixa de borrar.",
         ],
       },
     ],
