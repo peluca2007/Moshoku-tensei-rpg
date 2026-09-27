@@ -302,6 +302,7 @@ export function BookTable({ headers, rows }: { headers: string[]; rows: (string 
               {row.map((cell, j) => (
                 <td
                   key={j}
+                  data-label={headers[j] ?? ""}
                   className={`px-3 py-2 align-top ${
                     j === 0
                       ? "font-semibold text-parchment-900 dark:text-parchment-100"

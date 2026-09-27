@@ -130,14 +130,14 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar seção…"
           aria-label="Buscar seção no livro"
-          className="w-full bg-transparent py-1.5 pl-6 pr-6 text-xs text-parchment-800 outline-none placeholder:text-parchment-600 dark:text-parchment-100 dark:placeholder:text-parchment-400"
+          className="min-h-10 w-full bg-transparent py-2 pl-7 pr-10 text-sm text-parchment-800 outline-none placeholder:text-parchment-600 dark:text-parchment-100 dark:placeholder:text-parchment-400"
         />
         {query && (
           <button
             type="button"
             onClick={() => setQuery("")}
             aria-label="Limpar busca"
-            className="absolute right-0 top-1/2 -translate-y-1/2 rounded p-0.5 text-parchment-600 hover:text-wine-600 dark:text-parchment-400 dark:hover:text-wine-300"
+            className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded text-parchment-600 hover:text-wine-600 dark:text-parchment-400 dark:hover:text-wine-300"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -184,7 +184,7 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
                 data-toc-id={chapter.id}
                 onClick={onNavigate}
                 aria-current={aceso ? "location" : undefined}
-                className={`grid grid-cols-[1.5rem_1fr] items-baseline gap-2 rounded py-0.5 font-display font-bold leading-snug transition-colors hover:text-wine-600 dark:hover:text-wine-300 ${
+                className={`grid min-h-10 grid-cols-[1.5rem_1fr] items-center gap-2 rounded py-1 font-display font-bold leading-snug transition-colors hover:text-wine-600 dark:hover:text-wine-300 ${
                   aceso ? "text-wine-700 dark:text-wine-300" : "text-parchment-800 dark:text-parchment-200"
                 }`}
               >
@@ -211,7 +211,7 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
                           data-toc-id={c.id}
                           onClick={onNavigate}
                           aria-current={secAcesa ? "location" : undefined}
-                          className={`grid grid-cols-[1.5rem_1fr] items-baseline gap-2 rounded py-1 leading-snug transition-colors hover:text-wine-600 dark:hover:text-wine-300 ${
+                          className={`grid min-h-10 grid-cols-[1.5rem_1fr] items-center gap-2 rounded py-1.5 leading-snug transition-colors hover:text-wine-600 dark:hover:text-wine-300 ${
                             secAcesa
                               ? "font-semibold text-wine-700 dark:text-wine-300"
                               : "text-parchment-600 dark:text-parchment-400"
@@ -225,7 +225,7 @@ export default function BookToc({ toc, onNavigate }: { toc: TocEntry[]; onNaviga
                           >
                             {sec.numero}
                           </span>
-                          <span className={sec.recuada ? "pl-3 text-xs" : undefined}>{sec.titulo}</span>
+                          <span className={sec.recuada ? "pl-3" : undefined}>{sec.titulo}</span>
                         </a>
                       </li>
                     );

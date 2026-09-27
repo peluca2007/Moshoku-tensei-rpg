@@ -1760,3 +1760,137 @@ body,
   letter-spacing: 0.01em;
   text-transform: uppercase;
 }
+
+/* ============================================================================
+ * O LIVRO CONTÍNUO NO CELULAR (2026-09-26)
+ *
+ * Tudo fica sob `.livro-pagina` e abaixo de 640 px. O folheado compartilha
+ * componentes e a classe `.livro-shell`, mas não essa folha contínua; assim a
+ * diagramação fixa de 816×1056 permanece intacta até numa viewport estreita.
+ * ========================================================================== */
+@media (max-width: 639px) {
+  .livro-shell .livro-pagina {
+    padding: 1.5rem 1rem 2rem;
+  }
+
+  .livro-shell .livro-pagina .livro-abertura {
+    padding-top: 1.5rem;
+  }
+
+  /* BookTable vira uma lista de registros. A pessoa lê a linha inteira sem
+     arrastar a tela e sem perder o cabeçalho fora da viewport. */
+  .livro-shell .livro-pagina .livro-tabela {
+    overflow-x: visible;
+    border-radius: 0.5rem;
+  }
+
+  .livro-shell .livro-pagina .livro-tabela table,
+  .livro-shell .livro-pagina .livro-tabela tbody,
+  .livro-shell .livro-pagina .livro-tabela tr,
+  .livro-shell .livro-pagina .livro-tabela td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .livro-shell .livro-pagina .livro-tabela thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .livro-shell .livro-pagina .livro-tabela tbody tr {
+    padding: 0.35rem 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-parchment-400) 45%, transparent);
+  }
+
+  .livro-shell .livro-pagina .livro-tabela tbody tr:first-child {
+    border-top: 0;
+  }
+
+  .livro-shell .livro-pagina .livro-tabela td {
+    display: grid;
+    grid-template-columns: minmax(5.75rem, 0.8fr) minmax(0, 1.4fr);
+    gap: 0.65rem;
+    padding: 0.4rem 0.75rem;
+    overflow-wrap: anywhere;
+    font-size: 0.875rem;
+  }
+
+  .livro-shell .livro-pagina .livro-tabela td::before {
+    content: attr(data-label);
+    color: var(--color-gold-700);
+    font-family: var(--font-livro-rotulo), system-ui, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .dark .livro-shell .livro-pagina .livro-tabela td::before {
+    color: var(--color-gold-300);
+  }
+
+  /* Cartas são material de consulta durante a sessão; custo, alcance, cântico
+     e observações deixam de usar os 10–12 px herdados da versão compacta. */
+  .livro-shell .livro-pagina .livro-verbete :is(.text-3xs, .text-2xs, .text-xs),
+  .livro-shell .livro-pagina .livro-verbete-meta,
+  .livro-shell .livro-pagina .livro-verbete-alcance {
+    font-size: 0.875rem;
+  }
+
+  .livro-shell .livro-pagina :is(.text-3xs, .text-2xs, .text-xs) {
+    font-size: 0.875rem;
+  }
+
+  .livro-shell .livro-pagina .livro-verbete {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Diagramas de sequência ainda rolam quando a relação espacial é a própria
+     informação. A sombra interna e a barra visível avisam que há mais à direita. */
+  .livro-shell .livro-pagina .diagrama .overflow-x-auto {
+    margin-inline: -0.25rem;
+    padding-inline: 0.25rem;
+    overscroll-behavior-inline: contain;
+    scrollbar-color: var(--color-gold-500) color-mix(in srgb, var(--color-parchment-500) 18%, transparent);
+    scrollbar-width: auto;
+    box-shadow: inset -14px 0 12px -16px var(--color-gold-500);
+  }
+
+  .livro-shell .livro-pagina .diagrama :is(.text-3xs, .text-2xs, .text-xs, [class~="text-[10px]"]) {
+    font-size: 0.875rem;
+  }
+
+  .livro-shell .livro-pagina .diagrama :is([class~="text-[8px]"], [class~="text-[9px]"]) {
+    font-size: 0.75rem;
+  }
+
+  .livro-shell .livro-pagina .diagrama [class~="w-[4.8rem]"] {
+    width: 7rem;
+  }
+
+  .livro-shell .livro-pagina :is(img, video, svg, canvas) {
+    max-width: 100%;
+  }
+
+  .livro-shell .livro-pagina :is(.livro-antecedente-nome, .livro-vitrine-nome) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .livro-shell .livro-pagina :is(.livro-raca-link, .livro-fim a) {
+    min-height: 40px;
+    align-items: center;
+  }
+
+  .livro-shell .livro-pagina .livro-raca-link {
+    display: inline-flex;
+  }
+}
