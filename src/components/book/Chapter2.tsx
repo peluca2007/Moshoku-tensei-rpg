@@ -104,7 +104,7 @@ export default function Chapter2() {
             headers={["Bola de Fogo (1d8 + BC 3), Principiante", "Ações", "Dano médio", "Dano por PM"]}
             rows={[
               ["Padrão", "2", "7,5", "7,5"],
-              ["Encurtada", "1", "3", "3"],
+              ["Encurtada", "1", "3,5", "3,5"],
             ]}
           />
           <P>
@@ -190,7 +190,7 @@ export default function Chapter2() {
                 Ação.
               </span>,
               <span key="ml"><b>Mãos Limpas</b> (Desintoxicação, Santo): uma magia de Desintoxicação sem gastar Ação, uma vez por Descanso Longo.</span>,
-              <span key="gc"><b>O Grande Círculo</b> (Espíritos e Feras, Imperador): um invocado por turno sem gastar Ação.</span>,
+              <span key="gc"><b>O Grande Círculo</b> (Espíritos e Feras, Imperador): um invocado por turno sem gastar Ação — dois, com Convocação Aprimorada.</span>,
             ]}
           />
           <P>
@@ -198,14 +198,9 @@ export default function Chapter2() {
             efeito não gasta Ação; siga o limite escrito em cada uma (Cap. 3).
           </P>
           <P>
-            A cortesia do Principiante existe porque, sem ela, conjurar em silêncio num rank baixo custaria
-            uma Ação inteira pra entregar metade do dano e dois terços da área — ninguém usaria nunca, e o
-            método mais característico do mundo de Mushoku Tensei morreria na ficha.
-          </P>
-          <P>
             <b>Nenhuma delas conta no Teto de Ações</b> (Cap. 4, §5: 4 próprias + 2 concedidas).
             Elas não gastam Ação, então não há Ação pra contar — e também não são uma das 2 concedidas. Cada
-            fonte dá uma por turno.
+            fonte vale o que a carta dela diz, e nada além.
           </P>
         </Warning>
 
@@ -218,7 +213,7 @@ export default function Chapter2() {
         <List
           items={[
             <span key="atk"><b>Ataque Mágico (com rolagem de acerto):</b> ganha <b>Vantagem</b> no teste de acerto contra a CA do alvo.</span>,
-            <span key="save"><b>Feitiço que impõe Teste de Resistência:</b> os alvos resistem com <b>Desvantagem</b> — o espelho da Vantagem do ataque, pra magia de controle valer a recitação tanto quanto a de dano.</span>,
+            <span key="save"><b>Feitiço que impõe Teste de Resistência:</b> os alvos resistem com <b>Desvantagem</b>.</span>,
             <span key="rit"><b>Ritual ou Feitiço sem rolagem (suporte, barreira, cura):</b> a magia <b>custa PM a menos igual ao seu Bônus de Rank</b> na respectiva escola, mas nunca menos de 1 PM.</span>,
           ]}
         />
@@ -244,7 +239,7 @@ export default function Chapter2() {
             com todas as letras, <b>&ldquo;Sem bônus&rdquo;</b>.
           </P>
           <P>
-            Isso não é punição, e não é erro de escrita: são as <b>magias rápidas de propósito</b>. Prontidão
+            Isso não é punição: são as <b>magias rápidas de propósito</b>. Prontidão
             é uma Reação — um cântico de 140 caracteres a tornaria impossível de usar. Rejeitar a Morte
             dispara no instante em que o aliado cairia. Luz Absoluta sai em 3 Ações onde o rank Imperador
             pede 4. Nessas magias <b>a velocidade já É o benefício</b>, e o livro não paga as duas coisas.
@@ -258,9 +253,6 @@ export default function Chapter2() {
             `${INCANTATION_LENGTH[rank].max} caracteres`,
           ])}
         />
-        <Aside title="Por que existe um piso">
-          O piso reserva o Bônus de Recitação para cânticos longos o bastante para exigir tempo real de mesa.
-        </Aside>
       </Section>
 
       <Section>
@@ -268,7 +260,7 @@ export default function Chapter2() {
         <P>
           A tabela abaixo governa o tempo padrão de Ações por rank da magia. No entanto, <b>nem toda magia segue rigidamente esta tabela</b>:
           um ritual de rank baixo pode pedir mais Ações, e uma magia de emergência pode pedir menos. Quem foge da
-          tabela diz isso na própria carta, com o motivo.
+          tabela diz isso na própria carta.
         </P>
         <BookTable
           headers={["Rank da Magia", "Padrão", "Encurtada", "Silenciosa"]}
@@ -284,7 +276,6 @@ export default function Chapter2() {
         <P>
           Como o Capítulo 4 permite dividir o cântico entre turnos, magias de 4 Ações são perfeitamente
           jogáveis — elas só exigem que alguém segure a linha de frente enquanto o apocalipse é preparado.
-          O teto da <b>tabela</b> é 4 Ações para manter as magias de topo utilizáveis entre turnos.
         </P>
         <Warning title="Grande Obra — as magias de 5 e 6 Ações">
           <P>
@@ -297,8 +288,8 @@ export default function Chapter2() {
             <b>Ponto de Não Retorno.</b> A partir da segunda Ação gasta, a Grande Obra fica visível pra cena
             inteira: a maré começa a subir, o chão racha, o nome começa a ser dito. <b>Todo mundo sabe o que
             vem</b> — e tem um turno pra decidir o que fazer a respeito: correr até você, sair da área, ou
-            aceitar. Esse aviso não é um defeito do desenho, é o desenho: uma Grande Obra transforma a cena de
-            todo mundo, então a cena inteira ganha um turno pra reagir a ela.
+            aceitar. Uma Grande Obra transforma a cena de todo mundo, então a cena inteira ganha um turno pra
+            reagir a ela.
           </P>
           <P>
             <b>Por que elas valem a espera.</b> Grandes Obras mudam <b>a cena</b>, não apenas um alvo.
@@ -431,7 +422,7 @@ export default function Chapter2() {
           ]}
         />
         <Aside title="Quando a combinação vira uma árvore própria">
-          Às vezes duas árvores em Rank Avançado se encaixam bem demais pra caber numa única habilidade — o
+          Às vezes duas árvores se encaixam bem demais pra caber numa única habilidade — o
           Estilo Deus do Norte com a Magia de Vento, por exemplo, virou o <b>Estilo Vendaval</b>, uma
           sub-árvore inteira que só se revela pra quem cumpriu os dois pré-requisitos (Cap. 1,
           §8, pergunta 7; catálogo completo no Cap. 3). Isso não é a regra — é o teto dela.
@@ -492,10 +483,7 @@ export default function Chapter2() {
           />
           <P>
             <b>Quem te acertou decide, não o quanto ele rolou.</b> É a mesma lógica do Fio da Vida (Cap. 4,
-            §6). O Cap. 4, §3 explica por que a CD NÃO é metade do dano: o dano cresce sem teto neste livro
-            (uma criatura Imperador bate perto de 120 por turno) e o teste cresce até +11 num d20 — amarrada
-            ao dano, a regra tornaria magia de 3 e 4 Ações impossível de conjurar exatamente nos patamares em
-            que ela existe.
+            §7): um golpe enorme de um goblin continua sendo um goblin.
           </P>
         </Warning>
         <P>
@@ -551,8 +539,7 @@ export default function Chapter2() {
       <Section>
         <SectionTitle id="cap2-7">7. Regras Gerais de Conjuração</SectionTitle>
         <P>
-          As perguntas que toda mesa faz na primeira sessão, respondidas de uma vez. Nada aqui é novo em
-          espírito — é o que o livro já pressupunha, escrito onde dá pra achar.
+          As perguntas que toda mesa faz na primeira sessão, respondidas de uma vez.
         </P>
         <BookTable
           headers={["Pergunta", "Resposta"]}
@@ -563,7 +550,7 @@ export default function Chapter2() {
             ],
             [
               "Área poupa meus aliados?",
-              "NÃO. Toda área atinge todo mundo dentro dela, inclusive você e o grupo — é o preço de jogar magia grande, e é o que faz o posicionamento importar. A exceção se compra: a Maestria de Avançado do Fogo exclui até INTELECTO criaturas de cada área sua.",
+              "NÃO. Toda área atinge todo mundo dentro dela, inclusive você e o grupo — é o preço de jogar magia grande, e é o que faz o posicionamento importar. A exceção se compra: a Maestria de Avançado das quatro escolas elementais (Fogo, Água, Vento e Terra) exclui até INTELECTO criaturas de cada área sua.",
             ],
             [
               "A magia tem teste e a carta só descreve a falha. E se passar?",
@@ -575,7 +562,7 @@ export default function Chapter2() {
             ],
             [
               "Posso conjurar em corpo a corpo?",
-              "Pode, e sem penalidade — este livro não copia a regra de ataque de oportunidade por conjurar. O risco já está no Teste de Concentração: quem está adjacente é quem mais facilmente te faz falhar nele.",
+              "Pode, e sem penalidade — conjurar não provoca ataque de oportunidade. O risco já está no Teste de Concentração: quem está adjacente é quem mais facilmente te faz falhar nele.",
             ],
             [
               "Preciso das mãos livres?",
@@ -682,8 +669,8 @@ export default function Chapter2() {
         <TabelaDosMeios />
         <P>
           No ar, a fórmula sai na hora e custa as Ações de uma magia do rank da potência (§3). Em{" "}
-          <b>giz ou pergaminho</b> você prepara 1 minuto antes e ativa com 1 Ação — só Lançar que fere não se
-          prepara: um tiro se desenha na hora. No ar, uma parede ou um selo tem até 12 m. <b>Sustentação:</b>{" "}
+          <b>giz ou pergaminho</b> você prepara 1 minuto antes e ativa com 1 Ação — só Lançar sozinho (o que fere ou
+          cura) não se prepara: um tiro se desenha na hora. No ar, uma parede ou um selo tem até 12 m. <b>Sustentação:</b>{" "}
           uma parede ou um selo ativo é a sua sustentação (§7).
         </P>
         <P>

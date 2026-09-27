@@ -196,7 +196,7 @@ export const VENTO_TREE: Tree = {
           range: "Esfera de 12m de raio",
           actions: MAGIC_ACTIONS.Avançado,
           damage: { normal: "6d8 de frio (já contando a duplicação por Molhado)" },
-          effect: "Requer 1 patamar em Água (ou aliado mago de Água conjurando junto). Todos na área ficam Molhados e fazem teste de Vigor (CD 8 + BC): quem falha fica Congelado. Deixou de ser a assinatura do patamar — o Avançado do Vento é a Guilhotina de Vácuo, que é vento puro; esta continua aqui como a ponte para a Água, e paga preço de magia comum.",
+          effect: "Requer 1 patamar em Água (ou aliado mago de Água conjurando junto). Todos na área ficam Molhados e fazem teste de Vigor (CD 8 + BC): quem falha fica Congelado. É a ponte do Vento para a Água.",
           incantation:
             "Umidade que viaja comigo desde a última chuva que caiu, pare no meio do caminho e escolhe,\nagora, sem hesitar nenhum instante, ser vidro em vez de ser água que apenas corre e some no chão.\nNova Congelante!",
         },

@@ -84,7 +84,7 @@ export const AGUA_TREE: Tree = {
           range: "27 metros",
           actions: MAGIC_ACTIONS.Principiante,
           damage: { normal: "1d8 + BC (perfurante)" },
-          effect: "Ataque mágico à distância. Se acertar, o alvo fica Molhado. A magia comum que define um mago de Água.",
+          effect: "Ataque mágico à distância. Se acertar, o alvo fica Molhado. A magia que define um mago de Água.",
           incantation:
             "Água que flui sem nunca escolher caminho, escolhe um agora:\na linha reta entre mim e ele. Toma a forma da caçada.\nFlecha de Água!",
         },

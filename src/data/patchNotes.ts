@@ -16,6 +16,36 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.102",
+    date: "2026-09-27",
+    title: "Revisão geral: menos vão, menos bastidor",
+    sections: [
+      {
+        heading: "O vão no pé da coluna",
+        items: [
+          "A carta não se parte, e a que não cabia no pé da coluna pulava e deixava um buraco. Agora o livro enche esse vão, nesta ordem: uma carta menor do mesmo patamar sobe pro lugar; a arte da carta de cima cresce até o pé; a arte da carta de baixo sobe pro vão; e, se nada couber, as cartas da coluna se espalham. Medido: o branco das colunas com vão caiu cerca de um terço, e o livro ficou com 276 páginas (eram 280).",
+        ],
+      },
+      {
+        heading: "Bastidor fora do livro",
+        items: [
+          "Cerca de 70 frases que falavam com quem projeta o jogo, e não com quem joga, saíram ou foram reescritas: histórico ('até a versão tal…'), contas de simulador e de dano por Ação, e justificativas de balanceamento. Os quadros 'Por que 1,67', 'Por que existe um piso', 'Por que a CD usa o Rank de quem acerta', 'Por que CA e resistência crescem' e 'Por que o travado nunca passa do dobro' saíram inteiros.",
+        ],
+      },
+      {
+        heading: "Texto que não batia com a regra",
+        items: [
+          "PV: a média é da fórmula de cada patamar, arredondada pra cima (1d8+3 conta 8, 3d6 conta 11), como a ficha sempre fez. A Roxy do Apêndice A tem 157 PV, e não 143.",
+          "O exemplo do Defender reduz 2 (metade do Bônus de Rank, pra cima), não 3. A Égide Lendária conta como uma das duas Salvações do combate.",
+          "A exclusão de aliados da área é das quatro escolas elementais, não só do Fogo (Cap. 2, §7). O Fio da Vida mora no Cap. 4, §7, e o Soterrado no §2.",
+          "Cobertura Leve e Meia-Cobertura, que não existiam, viraram Cobertura Parcial. O 'Medo' de raças e itens virou a condição Amedrontado.",
+          "O Teste de Concentração do Tiro Perfeito agora está completo (+ metade do maior Bônus de Rank), e a lista do 'não existe ação bônus' do Cap. 4 bate com a do Cap. 0 e do Cap. 2.",
+          "O chefe sozinho contra quatro jogadores fica no teto do Equilibrado (1,25), pela própria regra do Apêndice G.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.101",
     date: "2026-09-26",
     title: "Magia Teórica: três palavras e uma conta",

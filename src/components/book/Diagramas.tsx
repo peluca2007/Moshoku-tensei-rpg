@@ -423,7 +423,7 @@ export function FioDaVida() {
   return (
     <Quadro
       titulo="O Fio da Vida"
-      nota="A 0 PV você cai, não morre. Cada turno rola 1d20 + Vigor contra CD 8 + o Bônus de Rank de quem te derrubou. Falha crítica (1 natural) conta DUAS marcas. Duas marcas deixam Cicatriz permanente."
+      nota="A 0 PV você cai, não morre. Cada turno rola 1d20 + Vigor + metade do seu maior Bônus de Rank contra CD 8 + o Bônus de Rank de quem te derrubou. Falha crítica (1 natural) conta DUAS marcas. Chegar a duas marcas deixa uma Cicatriz."
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="flex flex-1 items-center gap-3">

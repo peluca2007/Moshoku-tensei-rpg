@@ -178,8 +178,7 @@ export default function Chapter1() {
         <P>
           <b>O ritmo:</b> <b>1 PA por sessão jogada</b>, igual para o grupo inteiro, e <b>+1 PA por marco</b> —
           fim de arco, missão importante, subida de Rank na Guilda —, mais ou menos um marco a cada três
-          sessões. É o ritmo em que as tabelas do livro foram calibradas: cerca de 12 PA no 3º patamar e 24 no
-          5º (Cap. 5, Dojos).
+          sessões. Nesse ritmo, um personagem de 3º patamar soma cerca de 12 PA, e um de 5º, cerca de 24.
         </P>
         <BookTable
           headers={["Custo", "O que você recebe"]}
@@ -189,7 +188,7 @@ export default function Chapter1() {
             ["2 PA", "+PV iguais a quatro vezes o seu maior Bônus de Rank (melhoria física permanente). No 1º patamar são só +4 PV: comprar atributo rende mais cedo, e esta compra é pra quem já tem patamar alto."],
             ["2 PA", "+PM iguais ao dobro do seu maior Bônus de Rank de magia (melhoria mágica permanente). NÃO RENDE NADA enquanto o seu maior patamar de magia for Principiante ou Intermediário — o teto de PM (Cap. 4, §1) corta todo extra avulso. Libera no Avançado; a ficha bloqueia a compra até lá."],
             ["1 / 1 / 2 / 2 / 3 / 3… PA", "+1 ponto de Atributo Base permanente (teto 8). PROGRESSIVO: as duas primeiras compras custam 1 PA cada, as duas seguintes 2 PA cada, e assim por diante. Medido pela soma dos cinco atributos, então desfazer um defeito custa o mesmo que qualquer outro aumento."],
-            ["2 / 3 / 4 / 4 / 4 PA", "+2 permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha (Resistência Treinada) — uma vez por atributo, no máximo 5 compras (17 PA pelas cinco). Soma com Vantagem de outras fontes. PROGRESSIVO: cada compra custa 1 PA a mais que a anterior, com teto em 4. Marcada na ficha e no PDF."],
+            ["2 / 3 / 4 / 4 / 4 PA", "+2 permanente em TODOS os Testes de Resistência de 1 Atributo à sua escolha (Resistência Treinada) — uma vez por atributo, no máximo 5 compras (17 PA pelas cinco). Soma com Vantagem de outras fontes. PROGRESSIVO: cada compra custa 1 PA a mais que a anterior, com teto em 4."],
             ["Variável", "Magias, Técnicas e Talentos de Árvore — o custo escala com o Rank (tabela na seção 3)."],
           ]}
         />
@@ -197,8 +196,8 @@ export default function Chapter1() {
           <P>
             +PV e +PM da tabela acima não são um número fixo — eles crescem junto com o seu maior Bônus de
             Rank (Principiante +1, até Imperador +6). Um Principiante gastando 2 PA ganha pouco; um Imperador
-            gastando os mesmos 2 PA ganha seis vezes mais. Isso evita que a compra vire golpe de sorte na
-            criação e lixo de ficha no topo — ela sempre pesa a mesma fração do que você já é.
+            gastando os mesmos 2 PA ganha seis vezes mais: a compra pesa sempre a mesma fração do que você
+            já é.
           </P>
           <P>
             Comparando com o talento de reserva que quase toda árvore de Magia e do Corpo vende (Braço de
@@ -215,10 +214,6 @@ export default function Chapter1() {
             por +4 PV, na Pele de Pedra); no Corpo, <b>+4 PV por patamar</b> ou <b>+1 PT por patamar</b>. No
             1º patamar isso é pouco; no 6º é +12 PM e +12 PV, ou +24 PV, ou +6 PT, e a mesma compra de lá
             de trás passa a valer tudo isso sem você gastar mais nada.
-          </P>
-          <P>
-            Isso existe pra que nenhuma escola dê mais vida de graça — escolas se diferenciam pela curva de
-            progressão e pelas Maestrias, nunca por um talento genérico valer mais numa do que na outra.
           </P>
         </Aside>
         <Warning title="Atenção: magia não tem preço fixo">
@@ -261,8 +256,7 @@ export default function Chapter1() {
         <P>
           A Desintoxicação é a única escola do livro cujo trabalho principal acontece fora do combate: é ela
           que impede a campanha de parar quando alguém pisa no pântano errado. Na luta ela tem jogada (a Dose
-          e a Inversão, no Cap. 2), mas bate menos que uma escola de dano, e cobrar dela o preço do Fogo era
-          fazer o jogador pagar caro por um seguro contra o roteiro.
+          e a Inversão, no Cap. 3), mas bate menos que uma escola de dano — por isso custa menos.
         </P>
         <BookTable
           headers={["Rank", "Magia Comum", "Magia Assinatura ◆", "Talento", "(tabela padrão, pra comparar)"]}
@@ -550,8 +544,7 @@ export default function Chapter1() {
         </Warning>
         <Aside title="Arma que o livro não previu">
           O catálogo não conhece todo loot de campanha, e não deveria mesmo. Uma arma que não está em grupo
-          nenhum é <b>sempre proficiente</b> até o Mestre dizer de que grupo ela é — um sistema que dá
-          Desvantagem em silêncio porque não reconheceu um nome é pior que um que não dá nada.
+          nenhum é <b>sempre proficiente</b> até o Mestre dizer de que grupo ela é.
         </Aside>
 
         <SubTitle id="cap1-4-kit">Equipamento Inicial e a Árvore Inicial</SubTitle>
@@ -602,8 +595,7 @@ export default function Chapter1() {
             iniciais: <b>1 PA</b> por uma raça comum ou incomum, <b>2 PA</b> por uma rara, <b>3 PA</b> pelo
             Demônio Imortal (lendário). A Raça Dragão <b>não se escolhe</b>: sai no 100 ou é um presente do
             Mestre, dado pela história. Escolher também o Antecedente não custa nada a mais; escolher só o
-            Antecedente custa 1 PA. Até 2026-09-26 escolher qualquer raça custava 1 PA — e o Dragão saía
-            pelo mesmo preço de um Humano.
+            Antecedente custa 1 PA.
           </P>
           <P>
             <b>A mesa decide uma vez, para todo mundo.</b> Um grupo em que metade sorteou e metade escolheu é
@@ -666,7 +658,7 @@ export default function Chapter1() {
           O que você fez nos seus primeiros 10 anos de vida define a fundação do seu corpo, sua mana e seu
           lugar no mundo. Durante a criação da ficha, role 1d100 (ou escolha em conjunto com o Mestre) pra
           descobrir sua origem e seu dinheiro inicial em Peças de Ouro (PO). Escolher em vez de rolar custa
-          1 PA (seção 5).
+          1 PA, ou nada a mais se você já pagou pra escolher a raça (seção 5).
         </P>
         <AntecedentesIlustrados />
 
@@ -771,8 +763,8 @@ export default function Chapter1() {
       <Section>
         <SectionTitle id="cap1-8">8. Misturando Árvores (Multiclasse)</SectionTitle>
         <P>
-          Este sistema não tem classes — nada impede você de ser Trovador de Bardo, Rastreador do Tático,
-          Intermediário de Fogo e Principiante do Norte ao mesmo tempo. É intencional e é o coração do jogo.
+          Este sistema não tem classes — nada impede você de ser Avançado · Trovador no Bardo, Intermediário ·
+          Rastreador no Tático, Intermediário de Fogo e Principiante do Norte ao mesmo tempo. É intencional e é o coração do jogo.
           Sete perguntas, sete respostas:
         </P>
         <Aside title="1. Qual Bônus de Rank eu uso?">
@@ -808,8 +800,8 @@ export default function Chapter1() {
             mesma coisa.
           </P>
           <P>
-            Cada 1º patamar entrega uma Maestria gratuita; o Custo de Abertura faz cinco árvores custarem
-            <b>10 PA</b> e mantém a escolha entre variedade e profundidade.
+            Cada 1º patamar entrega uma Maestria gratuita. Somado, o Custo de Abertura de cinco árvores dá{" "}
+            <b>10 PA</b> (pergunta 5).
           </P>
         </Aside>
         <Aside title="5. Largura ou profundidade?">
@@ -841,8 +833,8 @@ export default function Chapter1() {
         </Aside>
         <Aside title="7. E se eu for fundo em duas árvores ao mesmo tempo?">
           Algumas combinações de Rank Intermediário ou superior revelam uma <b>árvore híbrida</b> que não existe
-          pra ninguém que não cumpriu os dois pré-requisitos — hoje são duas, ambas no catálogo da Árvore do Corpo: o
-          <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Intermediário) e o <b>Punho do Fogo</b>
+          pra ninguém que não cumpriu os dois pré-requisitos. São duas, ambas no catálogo da Árvore do Corpo: o{" "}
+          <b>Estilo Vendaval</b> (Deus do Norte + Magia de Vento, ambas no Intermediário) e o <b>Punho do Fogo</b>{" "}
           (Lutador + Magia de Fogo, ambas no Intermediário). Cumpridos os dois pré-requisitos, a híbrida
           pode ser aberta pelo Custo de Abertura normal; nenhuma pode ser a Árvore Inicial.
         </Aside>

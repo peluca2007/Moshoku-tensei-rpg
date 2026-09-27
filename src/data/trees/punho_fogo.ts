@@ -78,7 +78,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
         name: "Soco Aceso",
         description:
           "[Soco Aceso] Esta árvore junta as duas que você já tem, e não inventa recurso nenhum. " +
-          "O ATRIBUTO: nesta árvore, BC = o maior entre Força e Intelecto + o seu Bônus de Rank no Punho do Fogo — nunca o Rank da Magia de Fogo. É o que faz dela uma árvore do Corpo que escala por BC sem virar escola de magia: o punho do lutador bruto e o do estudioso chegam no mesmo lugar por caminhos diferentes. " +
+          "O ATRIBUTO: nesta árvore, BC = o maior entre Força e Intelecto + o seu Bônus de Rank no Punho do Fogo — nunca o Rank da Magia de Fogo. O punho do lutador bruto e o do estudioso chegam no mesmo lugar por caminhos diferentes. " +
           "ACENDA — todo ataque desarmado seu que acerta deixa o alvo Em Chamas. " +
           "QUEBRE — se o alvo JÁ estava Em Chamas, o soco também aplica 1 acúmulo de Quebrantado. O teto de Quebrantado dos seus socos é o maior Bônus de Rank entre Punho do Fogo e Lutador (o dobro do Bônus de Rank do Lutador, se você tiver o Avançado dele). Um soco que acerta alvo Em Chamas conta como tendo aplicado Quebrantado, mesmo com o alvo no teto. " +
           "SOBRECARREGUE — toda técnica desta árvore custa PT e tem uma Sobrecarga: pague 2 PM a mais ao usá-la e ela sai com o efeito extra. " +
@@ -138,7 +138,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
       abilities: [
         {
           id: "sopro-do-forja",
-          name: "Sopro do Forja",
+          name: "Sopro da Forja",
           signature: true,
           paCost: RANK_PA_COST.signature.Intermediário,
           ptCost: 2,

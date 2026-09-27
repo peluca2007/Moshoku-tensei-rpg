@@ -45,7 +45,7 @@ export default function LaboratorioDeFormulas() {
         <img src="/arvores/teorica.svg" alt="" className="livro-laboratorio-glifo" />
         <p className="livro-laboratorio-selo">Laboratório de Fórmulas</p>
         <p className="livro-laboratorio-texto">
-          Monte uma frase de símbolos — essência, ações e forma — e veja o custo em PM, o alcance e o efeito
+          Monte uma frase de três palavras — essência, verbo e forma — e veja o custo em PM, o alcance e o efeito
           calculados na hora, com os limites de cada rank.
         </p>
         <button type="button" className="livro-laboratorio-abrir" onClick={() => setAberto(true)}>

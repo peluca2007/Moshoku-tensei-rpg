@@ -141,7 +141,7 @@ export default function Chapter0() {
             ["2", "Role o Antecedente (1d100)", "Sua infância. Decide perícias, traços e quanto ouro você começa com."],
             ["3", "Distribua 2 pontos de atributo", "Só dois. Você pode baixar um atributo a -1 e outro a -2 pra ganhar mais três — mas leia o aviso sobre o Vigor antes."],
             ["4", "Escolha a Árvore Inicial", "A mais importante das seis decisões: ela dá o seu kit grátis, as suas perícias iniciais, e define o que você faz numa luta."],
-            ["5", "Gaste os PA iniciais", "Gaste os PA iniciais — 3, ou 2 se a mesa escolheu em vez de sortear. A Árvore Inicial abre de graça (Cap. 1, §8); os PA compram magias, técnicas, talentos, perícias ou atributos."],
+            ["5", "Gaste os PA iniciais", "Gaste os PA iniciais — 3, menos o que custou escolher a raça ou o Antecedente em vez de sortear (passo 1). A Árvore Inicial abre de graça (Cap. 1, §8); os PA compram magias, técnicas, talentos, perícias ou atributos."],
             ["6", "Anote PV, PM, CA", "Ou deixe o site calcular. As fórmulas estão no Cap. 4, §1."],
           ]}
         />
@@ -161,8 +161,8 @@ export default function Chapter0() {
             ["Criar ou evoluir um personagem", "Cap. 1 — atributos, PA, ranks, perícias, raças, antecedentes"],
             ["Entender como magia funciona", "Cap. 2 — cânticos, tempo de conjuração, interrupção, combinações"],
             ["Escolher ou ler uma árvore", "Cap. 3 — as 19 mecânicas, Touki, PP, e o catálogo completo"],
-            ["Resolver uma dúvida no meio de uma luta", "Cap. 4 — condições, ações, críticos, morte, exaustão"],
-            ["Saber o que fazer entre aventuras", "Cap. 5 — descanso, guilda, reputação, fabricação, loja"],
+            ["Resolver uma dúvida no meio de uma luta", "Cap. 4 — condições, ações, críticos, morte, descanso, exaustão"],
+            ["Saber o que fazer entre aventuras", "Cap. 5 — tempo livre, guilda, loja, reputação, fabricação, dojos"],
             ["Uma resposta rápida para uma discussão de mesa", "Apêndice D — Ambiguidades Resolvidas"],
           ]}
         />
@@ -171,7 +171,7 @@ export default function Chapter0() {
             items={[
               "O glossário de condições (Cap. 4, §2) é a página mais consultada do livro. Se uma habilidade diz 'fica Atolado', o que isso significa está lá, e só lá.",
               "Toda árvore declara, no topo do catálogo dela, o que ela concede de arma e armadura. É a primeira pergunta que a mesa faz e a mais chata de procurar.",
-              "O Apêndice C tem quanto dano cada árvore deveria causar em cada patamar. Se o seu número está muito longe da coluna, alguma conta está errada.",
+              "O Apêndice C compara o dano por turno de cada árvore em cada patamar. Serve pra escolher a árvore e pra conferir a sua conta: se o seu número está muito longe da coluna, revise a ficha.",
             ]}
           />
         </Aside>

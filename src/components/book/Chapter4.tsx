@@ -33,7 +33,8 @@ export default function Chapter4() {
             items={[
               <span key="c">
                 <b>1. O corpo treinado.</b> Some os Dados de PV de <b>todos</b> os patamares que você
-                desbloqueou, em todas as árvores (use a média de cada dado, ou role, se a mesa preferir),
+                desbloqueou, em todas as árvores (use a média da fórmula de cada patamar, arredondada pra
+                cima — 1d8+3 conta 8, 3d6 conta 11 —, ou role, se a mesa preferir),
                 <b> multiplique por 1,67</b> e some <b>14</b>. Esses 14 são o corpo com que todo
                 mundo nasce.
               </span>,
@@ -46,9 +47,8 @@ export default function Chapter4() {
           <P>
             É só isso. Não existe piso, e nenhum patamar novo muda a forma da conta — desbloquear um Rank só
             acrescenta mais um Dado de PV ao passo 1. Os talentos de reserva (&ldquo;+N PV por
-            patamar&rdquo;) entram somados DEPOIS do Fator de Vigor: se multiplicassem, uma compra de 1 PA
-            valeria 2,6× mais numa ficha de Vigor 8 — exatamente a armadilha que o Cap. 1 desenha contra ao
-            padronizar reservas. Tabela de referência com Vigor 0 (acumulado até o
+            patamar&rdquo;) e os PV fixos de raça ou antecedente entram somados DEPOIS do Fator de Vigor, sem
+            multiplicar. Tabela de referência com Vigor 0 (acumulado até o
             patamar): Escudeiro 27/44/64 PV (P→A); Lutador 29/44/62; Espada 27/42/59; Magia de Água
             19/25/34; Terra 22/32/44.
           </P>
@@ -123,20 +123,9 @@ export default function Chapter4() {
             existe uma terceira escala pra decorar.
           </P>
           <P>
-            Ele entra porque as CDs do mundo crescem mais rápido que os seus atributos: as criaturas do
-            Apêndice G sobem <b>+10</b> de CD entre o 1º e o 6º patamar, e um atributo vai de 4 a 8 no mesmo
-            período. Sem o Rank na conta, um veterano resistiria pior que um novato — e um personagem que
-            tenha largado aquele atributo no Sistema de Defeitos falharia em quase tudo no fim da campanha.
+            Ele entra porque as CDs do mundo crescem mais rápido que os seus atributos: sem o Rank na conta,
+            um veterano resistiria pior que um novato.
           </P>
-        </Aside>
-        <Aside title="Por que 1,67, e por que 14">
-          <P>
-            Somar os dados crus não funciona: um Norte de Vigor 5 chegaria ao Imperador com pouco mais de 70
-            PV, contra um Imperador da Espada causando perto de 130 de dano por turno — o combate acabaria
-            antes de o segundo personagem agir. O multiplicador existe pra que a luta dure de duas a três
-            rodadas em qualquer patamar: tempo pro curandeiro agir e pro Escudos se interpor.
-          </P>
-          <P>Os 14 pontos de base e o fator 1,67 mantêm o início arriscado e dão tempo de reação nos patamares altos.</P>
         </Aside>
       </Section>
 
@@ -176,9 +165,10 @@ export default function Chapter4() {
         <SectionTitle id="cap4-3-acoes">3. A Economia de Ações (As 3 Ações)</SectionTitle>
         <P>
           No seu turno você possui 3 Ações, além de 1 Reação (usada fora do seu turno, em situações
-          específicas). Não existe ação bônus neste sistema — tudo é medido em Ações. As exceções são
-          nomeadas, e são só estas: a primeira Conjuração Silenciosa de rank Principiante em cada turno
-          (Cap. 2, §2) e as manobras de Touki marcadas &ldquo;Sem Ação&rdquo; (Cap. 3).
+          específicas). Não existe ação bônus neste sistema — tudo é medido em Ações. Existem efeitos que a
+          própria carta marca &ldquo;sem gastar Ação&rdquo; (como as manobras de Touki marcadas &ldquo;Sem
+          Ação&rdquo;, Cap. 3), sempre com um limite escrito; <b>conjurar</b> sem gastar Ação só acontece
+          nas fontes do quadro do Cap. 2, §2.
         </P>
         <List
           items={[
@@ -215,9 +205,6 @@ export default function Chapter4() {
             fazer, quais condições interrompem sem teste nenhum, o que acontece com um Ritual interrompido, e
             as formas deliberadas de derrubar o cântico de outra pessoa.
           </P>
-        </Aside>
-        <Aside title="Por que a CD usa o Rank de quem acerta">
-          Amarrar a CD ao Rank de quem acerta mantém a conjuração sob pressão sem tornar impossíveis os cânticos de várias Ações.
         </Aside>
         <Aside title="Testes Resistidos (Disputas)">
           Nem todo conflito envolve uma CD estática. Empurrar um inimigo de um penhasco, disputar uma queda
@@ -416,8 +403,7 @@ export default function Chapter4() {
         <Aside title="Teto de Ações: 4 próprias + 2 concedidas">
           Nenhum personagem realiza mais de 6 Ações num turno: no máximo 4 próprias (as 3 do turno mais
           qualquer Ação extra vinda de Maestria ou passiva, como a Velocidade Encarnada do Deus da Espada) e
-          no máximo 2 concedidas por aliados (Avante, Antecipação, Comando). Sem esta regra, um Norte
-          Imperador com um Tático Comandante na mesa chega a 7 Ações por turno, e o combate deixa de existir.
+          no máximo 2 concedidas por aliados (Avante, Antecipação, Comando).
         </Aside>
         <Aside title="Duas Salvações por Combate">
           <b>Qualquer efeito que deixe uma criatura com 1 PV ou mais em vez de 0, ou que a impeça de morrer, é uma Salvação</b> —Aguentar (Touki), Rejeitar a Morte (Cura), Sem Baixas (Tático), Custe o Que Custar e a versão Soberana (Escudos), a Égide Lendária (item de Rank S, Cap. 5), o Santuário Menor e o Santuário (Cura, as duas em área), e o que mais vier com essa forma. Nas magias de área, cada criatura que ela salva gasta uma Salvação daquela criatura.
@@ -434,7 +420,7 @@ export default function Chapter4() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap4-5">6. Críticos, Touki e o Fio da Vida</SectionTitle>
+        <SectionTitle id="cap4-5">6. Críticos e Touki</SectionTitle>
         <List
           items={[
             <span key="20"><b>20 Natural (Crítico):</b> num ataque, acerta automaticamente, independente da CA do inimigo. Role os dados de dano duas vezes e some os bônus fixos uma vez só. O crítico <b>não fura Resistência a dano</b> (§6): quem quiser furar precisa de uma habilidade que diga isso, como O Ponto, do Suishin-ryū. Em teste de perícia ou de resistência, o 20 natural é sucesso automático.</span>,
@@ -482,8 +468,9 @@ export default function Chapter4() {
           </P>
           <P className="text-sm">
             Exemplo: um golpe de espada mundana de 17 cortante contra um Escudeiro Avançado que usou Defender
-            (Vigor 0 e Bônus de Rank +3: redução de 3) e tem o Casco (Resistência a dano físico de arma mundana).
-            Primeiro a redução fixa: 17 − 3 = 14. Depois a Resistência: 7.
+            (Vigor 0 e metade do Bônus de Rank +3, arredondada pra cima: redução de 2) e tem o Casco
+            (Resistência a dano físico de arma mundana). Primeiro a redução fixa: 17 − 2 = 15. Depois a
+            Resistência: 7.
           </P>
         </Aside>
         <OrdemDoDano />
@@ -582,7 +569,7 @@ export default function Chapter4() {
               ["5", "Visão Desfocada: Dificuldade em focar os olhos após picos de adrenalina. Você sofre -2 de penalidade em todos os testes de Iniciativa."],
               ["6", "Nervo Pinçado: Suas mãos tremem de forma involuntária. Desvantagem em testes de Ladinagem e Ofícios que exijam coordenação motora fina."],
               ["7", "Costela Mal Colada: o tronco não aguenta outro impacto limpo. Sempre que você sofrer um acerto crítico, fica Desequilibrado até o fim do seu próximo turno."],
-              ["8", "A Sombra Não Sai: Nenhuma penalidade física, mas Desvantagem em testes de resistência de Espírito contra Medo — o corpo lembra da morte, mesmo que a mente negue."],
+              ["8", "A Sombra Não Sai: Nenhuma penalidade física, mas Desvantagem em testes de resistência de Espírito contra ficar Amedrontado — o corpo lembra da morte, mesmo que a mente negue."],
               ["9", "Voz Quebrada: As cordas vocais foram gravemente danificadas. Você não consegue mais usar Encantamento Encurtado e tem Desvantagem em Atuação e Persuasão."],
               ["10", "Perna Manca: Os ossos não colaram direito e a musculatura atrofiou. Seu Deslocamento base sofre uma penalidade permanente de −3m."],
               ["11", "Olho Perdido: A visão periférica e de profundidade se foram. Desvantagem em Percepção visual e em qualquer ataque à distância além do alcance curto."],
@@ -614,17 +601,10 @@ export default function Chapter4() {
         />
         <Warning title="Dois Curtos por dia, e nem um a mais">
           <P>
-            Sem esse teto, o Descanso Curto quebra o livro inteiro, porque a Magia de Cura converte PM em
-            PV. Um curandeiro de 1º patamar com <i>Juramento</i> cura cerca de 10 PV por 1 PM contra Ferida
-            Fresca: a reserva cheia de 12 PM vale 120 PV, e cada Curto devolve 3 PM — mais 30 PV,
-            indefinidamente. Um grupo de quatro personagens de 1º patamar tem cerca de 144 PV somados: sem
-            teto, bastava sentar de hora em hora e a mesa voltava inteira todas as vezes.
-          </P>
-          <P>
-            Com dois Curtos por dia, o curandeiro fecha o dia em 180 PV de cura — uma vez e meia a reserva
-            cheia dele, e não um poço sem fundo. A noite devolve a reserva inteira, e o dia seguinte começa
-            do mesmo lugar. PV volta a ser finito, e o Aviso abaixo — a promessa de que um grupo sem
-            curandeiro sangra na segunda luta — continua verdade.
+            Cada personagem faz no máximo <b>dois Descansos Curtos</b> entre um Descanso Longo e o seguinte.
+            O teto existe porque a Magia de Cura converte PM em PV: sem ele, bastava sentar de hora em hora
+            pra o grupo voltar inteiro depois de cada luta. Com ele, o curandeiro rende uma vez e meia a
+            reserva por dia — muito, mas não um poço sem fundo.
           </P>
           <P>
             <b>PT são a exceção</b>, e voltam inteiros em qualquer Descanso Curto — é por isso que a tabela
@@ -756,8 +736,8 @@ export default function Chapter4() {
         </P>
         <Aside title="Exemplo rápido">
           Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Intermediária) e acerta um golpe surpresa.
-          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, entra Envenenada — 2d6 por hora e Desvantagem
-          em Vigor — e isso não para até alguém com <b>Purga Profunda</b> (Intermediário) ou superior tratar,
+          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, a Peçonha se instala — 2d6 por hora e
+          Desvantagem em Vigor — e isso não para até alguém com <b>Purga Profunda</b> (Intermediário) ou superior tratar,
           ou até uma Poção de Antídoto Forte (Cap. 5, §4) ser bebida.
         </Aside>
 
