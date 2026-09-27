@@ -16,6 +16,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.105",
+    date: "2026-09-27",
+    title: "O orçamento de encontro diz a verdade",
+    sections: [
+      {
+        heading: "O que estava errado",
+        items: [
+          "O Apêndice G ensina que uma criatura do patamar do grupo por jogador é um encontro Equilibrado. O simulador do /encontros discordava, e cada vez mais a cada patamar: com o grupo do kit de mesa, no 2º patamar quatro criaturas davam Mortal; no 6º, DUAS já davam Mortal. Os moldes de criatura cresciam bem mais rápido que os personagens — uma Lenda batia 120 por turno e derrubava um personagem de 6º por rodada.",
+        ],
+      },
+      {
+        heading: "Os moldes novos",
+        items: [
+          "PV 25 / 38 / 58 / 80 / 105 / 130 e dano por turno 12 / 16 / 22 / 30 / 38 / 48, do 1º ao 6º (eram 20/45/90/150/220/320 e 10/20/35/55/80/120). CA, ataque e CD não mudam. Medido nos seis patamares: quatro criaturas contra quatro jogadores dão Equilibrado em todos (91–97% de vitória, menos de 1 personagem caído).",
+          "As seis criaturas prontas do Apêndice G tiveram os dados das ações ajustados na mesma proporção, e as ações sugeridas do Bloco do Monstro nunca arredondam o dano pra cima.",
+          "O chefe tem o triplo do PV do molde e uma vez e meia o dano (era o dobro do PV e o mesmo dano, e ficava Trivial sozinho). Ele vale quatro criaturas no orçamento (eram cinco): um chefe contra quatro jogadores é Equilibrado. O rival montado como ficha entra como chefe com o triplo dos PV.",
+          "As faixas ficaram onde o simulador as mede: Fácil até 0,75 (abaixo de 0,5, Trivial), Equilibrado até 1, Difícil até 1,25, Mortal acima. O site passou a usar os nomes do livro (Difícil e Mortal, em vez de Perigoso e Letal).",
+          "Quem quiser refazer a conta: npm run medir:orcamento.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.104",
     date: "2026-09-27",
     title: "O resto da revisão geral",

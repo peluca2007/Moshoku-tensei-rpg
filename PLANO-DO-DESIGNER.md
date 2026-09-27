@@ -216,7 +216,7 @@ checks já existem (`check:progressao`, `check:sobrevivencia`, `check:arvores`, 
 | **Desintoxicação** | Com Dose e Inversão, ainda merece a tabela de PA barata? | Ensinar a Dose ao simulador (hoje ele não conta a Inversão) e decidir: tabela comum ou Inversão mais fraca. |
 | **Despertares das raças** | Algum desequilibra? | Tridente Ancestral, Colosso e Forma do Dragão abaixo de um talento de Santo da árvore média. |
 | **Sobrevivência no fim do jogo** | Mago de Vigor 0 cai em menos de 1 turno no 6º patamar (0,53–0,71) | O autor decide se é intenção ("o mago depende do grupo") e o livro diz isso — ou o molde de Terror/Lenda cresce menos. |
-| **Orçamento de Encontro** | O Apêndice G diz que "uma criatura do patamar por jogador" é Equilibrado. O simulador, com as fichas do kit, dá **Letal** pra 4 de 2º patamar (44% de vitória, 2,5 quedas); 3 já é Perigoso (82%). | Medir nos seis patamares e decidir com o autor: a regra do livro muda (ex.: "três pra quatro jogadores") ou os moldes ficam mais fracos. A mesa da Etapa 1 desempata. |
+| ✅ **Orçamento de Encontro** (0.1.105: moldes reescalados, chefe ×3 PV e ×1,5 dano, peso 4, faixas pelo simulador; `npm run medir:orcamento`) | O Apêndice G diz que "uma criatura do patamar por jogador" é Equilibrado. O simulador, com as fichas do kit, dá **Letal** pra 4 de 2º patamar (44% de vitória, 2,5 quedas); 3 já é Perigoso (82%). | Medir nos seis patamares e decidir com o autor: a regra do livro muda (ex.: "três pra quatro jogadores") ou os moldes ficam mais fracos. A mesa da Etapa 1 desempata. |
 | **Perguntas de mesa** | Vendaval, Escudos, Tático, Tiro Perfeito (do `O-QUE-FALTA.md`) | Respondidas pela Etapa 1; aqui viram número. |
 
 **Opções para o começo do mago**
@@ -376,7 +376,7 @@ pelo Cap. 5 do livro antes da loja e do `/encontros`.
 - **Criaturas do mesmo patamar e papel são iguais no simulador.** Urso, Troll e Superd dão o mesmo
   resultado número por número: sem ações próprias, a diferença é só o nome e as resistências. Entra na
   Etapa 4 junto com o orçamento.
-- **O orçamento de encontro do Apêndice G contradiz o simulador** (ver a tabela da Etapa 4).
+- ✅ ~~**O orçamento de encontro do Apêndice G contradiz o simulador**~~ — resolvido na 0.1.105.
 
 ## 9. Pendências de diagramação conhecidas
 

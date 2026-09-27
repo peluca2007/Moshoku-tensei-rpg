@@ -40,12 +40,12 @@ export interface MoldeCriatura {
  * convidar as duas a divergirem. Ver `bonusResistencia()` abaixo.
  */
 export const MOLDES_CRIATURA: MoldeCriatura[] = [
-  { patamar: 1, titulo: "Comum", pv: 20, ca: 12, bonusAtaque: 3, danoPorTurno: 10, cdResistencia: 11 },
-  { patamar: 2, titulo: "Perigosa", pv: 45, ca: 14, bonusAtaque: 4, danoPorTurno: 20, cdResistencia: 13 },
-  { patamar: 3, titulo: "Ameaça", pv: 90, ca: 16, bonusAtaque: 6, danoPorTurno: 35, cdResistencia: 15 },
-  { patamar: 4, titulo: "Elite", pv: 150, ca: 18, bonusAtaque: 8, danoPorTurno: 55, cdResistencia: 17 },
-  { patamar: 5, titulo: "Terror", pv: 220, ca: 20, bonusAtaque: 10, danoPorTurno: 80, cdResistencia: 19 },
-  { patamar: 6, titulo: "Lenda", pv: 320, ca: 22, bonusAtaque: 12, danoPorTurno: 120, cdResistencia: 21 },
+  { patamar: 1, titulo: "Comum", pv: 25, ca: 12, bonusAtaque: 3, danoPorTurno: 12, cdResistencia: 11 },
+  { patamar: 2, titulo: "Perigosa", pv: 38, ca: 14, bonusAtaque: 4, danoPorTurno: 16, cdResistencia: 13 },
+  { patamar: 3, titulo: "Ameaça", pv: 58, ca: 16, bonusAtaque: 6, danoPorTurno: 22, cdResistencia: 15 },
+  { patamar: 4, titulo: "Elite", pv: 80, ca: 18, bonusAtaque: 8, danoPorTurno: 30, cdResistencia: 17 },
+  { patamar: 5, titulo: "Terror", pv: 105, ca: 20, bonusAtaque: 10, danoPorTurno: 38, cdResistencia: 19 },
+  { patamar: 6, titulo: "Lenda", pv: 130, ca: 22, bonusAtaque: 12, danoPorTurno: 48, cdResistencia: 21 },
 ];
 
 /**
@@ -404,8 +404,12 @@ export function aplicarPapel(patamar: number, papel: PapelCriatura): {
   if (papel === "lacaio") {
     return { pv: Math.round(molde.pv / 2), danoPorTurno: Math.round(molde.danoPorTurno / 2) };
   }
+  // O chefe: o triplo do PV e uma vez e meia o dano do molde (2026-09-27).
+  // Medido no simulador contra o grupo do kit nos seis patamares: com o dobro
+  // do PV e o mesmo dano ele era Trivial em todos; com isto, fica Equilibrado
+  // em todos (92–94% de vitória, ~1 queda) — o peso de quatro criaturas.
   if (papel === "chefe") {
-    return { pv: molde.pv * 2, danoPorTurno: molde.danoPorTurno };
+    return { pv: molde.pv * 3, danoPorTurno: Math.round(molde.danoPorTurno * 1.5) };
   }
   return { pv: molde.pv, danoPorTurno: molde.danoPorTurno };
 }
@@ -441,13 +445,13 @@ export const TEMPERATURAS = [
   {
     id: "equilibrado",
     nome: "Equilibrado",
-    ate: 1.25,
+    ate: 1,
     descricao: "Custa recursos e não mata. É o encontro padrão: três ou quatro por Descanso Longo.",
   },
   {
     id: "dificil",
     nome: "Difícil",
-    ate: 1.5,
+    ate: 1.25,
     descricao: "Alguém vai acabar com pouca vida. Bom pra fechar um dia de aventura.",
   },
   {
@@ -465,8 +469,8 @@ export type Temperatura = (typeof TEMPERATURAS)[number]["id"];
  *
  * O papel entra porque o Apêndice G já transforma os números por papel: o
  * lacaio tem metade do PV e do dano (logo, meia criatura), e o chefe tem PV
- * dobrado MAIS uma rodada inteira a cada dois personagens — o que, medido em
- * batalha, vale cinco criaturas.
+ * triplo e dano uma vez e meia MAIS uma rodada inteira a cada dois
+ * personagens — o que, medido em batalha, vale quatro criaturas.
  *
  * A imunidade é o preço declarado dela: apagar a jogada de alguém da mesa faz
  * a criatura contar como um patamar acima.
@@ -482,9 +486,10 @@ export function pesoNoOrcamento(
   // Dobra a cada patamar acima, cai pela metade a cada patamar abaixo, e nunca
   // chega a zero: mil ratos ainda são um problema, só que um problema pequeno.
   const porPatamar = Math.pow(2, diferenca);
-  // O chefe pesa 5 desde 2026-09-26: com 3, um chefe "fácil" dizimava o grupo
-  // em 25–32% das batalhas medidas.
-  const porPapel = papel === "chefe" ? 5 : papel === "lacaio" ? 0.5 : 1;
+  // O chefe pesa 4 desde 2026-09-27 (era 5, e 3 antes disso): medido no
+  // simulador, um chefe sozinho contra quatro jogadores é tão Equilibrado
+  // quanto quatro criaturas do patamar.
+  const porPapel = papel === "chefe" ? 4 : papel === "lacaio" ? 0.5 : 1;
   return porPatamar * porPapel;
 }
 
@@ -605,7 +610,9 @@ function formulaPara(alvo: number, faces: number): string {
   }
   const mediaDoDado = (usadas + 1) / 2;
   const n = Math.max(1, Math.round(alvo / mediaDoDado));
-  const fixo = Math.round(alvo - n * mediaDoDado);
+  // Pra baixo, nunca pra cima: errar pra cima mata personagem (ver o teste
+  // dos 110% em acoesSugeridas.test.ts).
+  const fixo = Math.floor(alvo - n * mediaDoDado);
   if (fixo > 0) return n + "d" + usadas + "+" + fixo;
   if (fixo < 0 && n > 1) return n + "d" + usadas + fixo;
   return n + "d" + usadas;
@@ -624,7 +631,7 @@ export function acoesSugeridas(
   /*
    * O PISO DO DADO — o lacaio de 1º patamar.
    *
-   * O menor dado do livro é o d4, que rende 2,5. Um lacaio de 1º tem 5 de
+   * O menor dado do livro é o d4, que rende 2,5. Um lacaio de 1º tem 6 de
    * orçamento por turno inteiro: três ataques do menor dado que existe já dão
    * 7,5, e a criatura mais fraca do livro sairia 50% acima da régua. Não há
    * fórmula de dado que resolva — o problema é granularidade, não conta.
@@ -640,7 +647,7 @@ export function acoesSugeridas(
       {
         nome: "Avançar e Golpear",
         acoes: 2,
-        dano: formulaPara(danoPorTurno * 0.7, 6),
+        dano: formulaPara(danoPorTurno * 0.8, 6),
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -809,7 +816,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Mordida Babosa",
         acoes: 1,
-        dano: "1d6",
+        dano: "1d6+1",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -843,7 +850,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Picada Peçonhenta",
         acoes: 1,
-        dano: "1d8+2",
+        dano: "1d6+1",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -854,7 +861,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Bote e Recuo",
         acoes: 2,
-        dano: "2d8+4",
+        dano: "2d6+3",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -878,7 +885,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Presas",
         acoes: 1,
-        dano: "2d6",
+        dano: "1d8+1",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -912,7 +919,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Mordida em Mergulho",
         acoes: 1,
-        dano: "2d8+3",
+        dano: "1d8+3",
         alcance: "Corpo a corpo, em voo",
         area: false,
         tipo: "ataque",
@@ -921,7 +928,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Ferrão da Cauda",
         acoes: 1,
-        dano: "1d10+2",
+        dano: "1d6+2",
         alcance: "3 m",
         area: false,
         tipo: "ataque",
@@ -945,16 +952,16 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Maça de Duas Mãos",
         acoes: 1,
-        dano: "4d8",
+        dano: "2d8+1",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
-        nota: "Contra alvo Caído, +2d8 de dano, e o golpe é crítico com 19 ou 20 no dado.",
+        nota: "Contra alvo Caído, +1d8 de dano, e o golpe é crítico com 19 ou 20 no dado.",
       },
       {
         nome: "Pisão",
         acoes: 2,
-        dano: "3d10+5",
+        dano: "2d8+3",
         alcance: "Esfera de 3 m ao redor dela",
         area: true,
         tipo: "resistencia",
@@ -977,7 +984,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Lança Demoníaca",
         acoes: 1,
-        dano: "5d8+4",
+        dano: "2d8+4",
         alcance: "3 m",
         area: false,
         tipo: "ataque",
@@ -986,7 +993,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Maré Demoníaca",
         acoes: 2,
-        dano: "8d8+6",
+        dano: "4d8+6",
         alcance: "Linha de 18 m",
         area: true,
         tipo: "resistencia",

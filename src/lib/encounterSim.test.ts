@@ -154,11 +154,11 @@ describe("Apêndice G — os papéis", () => {
     });
   });
 
-  it("chefe dobra o PV e MANTÉM o dano", () => {
+  it("chefe tem o triplo do PV e uma vez e meia o dano", () => {
     const molde = MOLDES_CRIATURA[3]; // 4º — Elite
     expect(aplicarPapel(4, "chefe")).toEqual({
-      pv: molde.pv * 2,
-      danoPorTurno: molde.danoPorTurno,
+      pv: molde.pv * 3,
+      danoPorTurno: Math.round(molde.danoPorTurno * 1.5),
     });
   });
 

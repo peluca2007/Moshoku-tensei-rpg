@@ -19,7 +19,7 @@ function acao(patch: Partial<AcaoCriatura> = {}): AcaoCriatura {
     id: "golpe",
     nome: "Golpe",
     acoes: 1,
-    dano: "2d8+3",
+    dano: "1d8+3",
     alcance: "Corpo a corpo",
     area: false,
     tipo: "ataque",
@@ -68,22 +68,22 @@ describe("avisarSobreCriatura — o que ele fala e quando cala", () => {
   });
 
   it("aponta o dano fraco contra o molde e sugere uma escala que fecha a conta", () => {
-    // 1d4 (2,5) × 3 Ações = 7,5 contra os 35 que o 3º patamar pede.
+    // 1d4 (2,5) × 3 Ações = 7,5 contra os 22 que o 3º patamar pede.
     const c = criatura({ acoes: [acao({ dano: "1d4" })] });
     const aviso = pegar(avisarSobreCriatura(c, GRUPO), "orcamento");
     expect(aviso).toBeDefined();
-    expect(aviso!.texto).toContain("35");
-    const corrigida = 4.667;
+    expect(aviso!.texto).toContain("22");
+    const corrigida = 2.933;
     expect(aviso!.correcao).toEqual(
       expect.objectContaining({ alvo: "acao", acaoId: "golpe", campo: "escalaDano", valor: corrigida })
     );
     // A correção sugerida leva o turno pra perto do molde — que é o único
     // motivo de ela existir.
-    expect(mediaFormula("1d4") * corrigida * 3).toBeGreaterThan(35 * 0.8);
+    expect(mediaFormula("1d4") * corrigida * 3).toBeGreaterThan(22 * 0.8);
   });
 
   it("não reclama de quem está dentro da faixa do molde", () => {
-    // 2d8+3 (12) × 3 = 36, contra 35 do molde.
+    // 1d8+3 (7,5) × 3 = 22,5, contra 22 do molde.
     const c = criatura({ acoes: [acao()] });
     expect(pegar(avisarSobreCriatura(c, GRUPO), "orcamento")).toBeUndefined();
   });

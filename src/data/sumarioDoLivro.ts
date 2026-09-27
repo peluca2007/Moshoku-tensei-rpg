@@ -148,7 +148,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "apendice-g-rank", label: "— CD dos efeitos da criatura" },
       { id: "apendice-g-acoes", label: "— Como escrever as Ações dela" },
       { id: "apendice-g-orcamento", label: "— Orçamento de Encontro" },
-      { id: "apendice-g-chefe", label: "— Por que o Chefe pesa cinco" },
+      { id: "apendice-g-chefe", label: "— Por que o Chefe pesa quatro" },
       { id: "apendice-g-fichas", label: "— As fichas das criaturas prontas" },
       { id: "apendice-g-rivais", label: "— Rivais com ficha" },
     ],
