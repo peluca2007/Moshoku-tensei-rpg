@@ -142,7 +142,10 @@ interface RosterState {
    */
   setPortrait: (dataUrl: string | null) => void;
   setCover: (dataUrl: string | null) => void;
-  setRace: (raceId: string | null) => void;
+  /** `escolhida` = a raça foi escolhida (paga o tier em PA), não sorteada. Padrão: escolhida. */
+  setRace: (raceId: string | null, escolhida?: boolean) => void;
+  /** Marca a raça como escolhida (paga o tier) ou sorteada no d100 (não paga). */
+  setRacaEscolhida: (escolhida: boolean) => void;
   /** Define o bônus livre de atributo da raça (Humano). Índice = qual dos pontos concedidos. */
   setRaceAttributeChoice: (index: number, key: AttributeKey | null) => void;
   /** Escolha do `grantedSkills.choose` da Árvore Inicial (Cap. 1, §4). */
@@ -376,8 +379,9 @@ export const useCharacterStore = create<RosterState>()(
       setCover: (dataUrl) => updateActive(get, set, (c) => ({ ...c, cover: dataUrl ?? undefined })),
       // Trocar de raça zera as escolhas dependentes dela: o +1 livre e as compras
       // raciais pertencem à raça anterior e não fazem sentido na nova.
-      setRace: (raceId) =>
-        updateActive(get, set, (c) => ({ ...c, raceId, raceAttributeChoices: [], racialUpgrades: [] })),
+      setRace: (raceId, escolhida = true) =>
+        updateActive(get, set, (c) => ({ ...c, raceId, racaEscolhida: raceId ? escolhida : false, raceAttributeChoices: [], racialUpgrades: [] })),
+      setRacaEscolhida: (escolhida) => updateActive(get, set, (c) => ({ ...c, racaEscolhida: escolhida })),
       setRaceAttributeChoice: (index, key) =>
         updateActive(get, set, (c) => {
           const next = [...(c.raceAttributeChoices ?? [])];

@@ -54,6 +54,7 @@ const FICHAS: Molde[] = [
     arvore: "fogo",
     atributos: { intelecto: 2 },
     compras: [
+      ["Principiante", "ability", "brasa"],
       ["Principiante", "ability", "bola-de-fogo"],
       ["Principiante", "ability", "toque-escaldante"],
       ["Principiante", "ability", "clarao"],

@@ -291,7 +291,7 @@ export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
     espolios: ["tralha_gema_magica_opaca", "tralha_pano_amaldicoado", "tralha_po_asa_mariposa_ilusoria"],
     moeda: "pouca",
     resistencias: ["psíquico"],
-    acoesSugeridas: ["Palavra que impõe Amedrontado", "Olho demoníaco (uma vez por cena)", "Trocar de lugar com um aliado"],
+    acoesSugeridas: ["Palavra que impõe Amedrontado", "Olho demoníaco (uma vez por combate)", "Trocar de lugar com um aliado"],
     exemplo: "Íncubo, imperatriz demônio menor, espírito do Continente Demônio.",
   },
 ];

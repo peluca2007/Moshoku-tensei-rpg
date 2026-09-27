@@ -10,7 +10,7 @@ import { useDiceRollerStore } from "@/store/useDiceRollerStore";
 import { useInitiativeStore } from "@/store/useInitiativeStore";
 import { useSessionLog } from "@/store/useSessionLog";
 import { getGuildRank, getPaSpent, getReserveBuyRates, isGuildRankEstimated, type GuildRank } from "@/store/selectors";
-import { GUILD_RANK_ORDER } from "@/lib/types";
+import { CUSTO_DE_ESCOLHA, GUILD_RANK_ORDER } from "@/lib/types";
 import { RACES, getRaceById } from "@/data/races";
 import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
 import { getTreeById, getTreeGroups } from "@/data/trees";
@@ -365,6 +365,7 @@ export default function CharacterSheet() {
     portrait,
     cover,
     raceId,
+    racaEscolhida,
     backgroundId,
     subtableEntryId,
     gold,
@@ -907,6 +908,24 @@ export default function CharacterSheet() {
               </option>
             ))}
           </select>
+          {raceId && (
+            <label
+              className="inline-flex items-center gap-1.5 text-xs text-parchment-600 dark:text-parchment-400"
+              title="Cap. 1, §5: escolher a raça em vez de rolar no d100 custa PA pelo tier dela."
+            >
+              <input
+                type="checkbox"
+                checked={!racaEscolhida}
+                onChange={(e) => useCharacterStore.getState().setRacaEscolhida(!e.target.checked)}
+              />
+              Sorteei no d100
+              {racaEscolhida && (() => {
+                const tier = RACES.find((r) => r.id === raceId)?.tier;
+                const custo = tier ? CUSTO_DE_ESCOLHA[tier] : 0;
+                return custo ? <span>· escolhida: {custo} PA</span> : null;
+              })()}
+            </label>
+          )}
 
           <select
             value={backgroundId ?? ""}

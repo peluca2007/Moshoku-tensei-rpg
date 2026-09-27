@@ -94,12 +94,12 @@ export const LADINO_TREE: Tree = {
       mastery: {
         name: "Duas Saídas",
         description:
-          "Escopo: um edifício inteiro, uma rotina de trabalho, um pequeno grupo. Você identifica automaticamente todas as saídas de qualquer ambiente, incluindo improvisadas. Uma vez por cena, gastando 1 PP, declare que existe uma saída onde o Mestre não tinha planejado.",
+          "Escopo: um edifício inteiro, uma rotina de trabalho, um pequeno grupo. Você identifica automaticamente todas as saídas de qualquer ambiente, incluindo improvisadas. Uma vez por Descanso Curto, gastando 1 PP, declare que existe uma saída onde o Mestre não tinha planejado.",
       },
       talents: [
         { id: "mapa-dos-ratos", name: "Mapa dos Ratos", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Em cidade onde já passou um dia, conhece a geografia oculta: esgotos, becos, telhados, casas seguras — sem teste." },
         { id: "leitura-de-cena", name: "Leitura de Cena", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você reconstrói o que aconteceu num ambiente fechado só olhando: móveis arrastados, o que foi levado, quantas pessoas estiveram." },
-        { id: "contrabandista", name: "Contrabandista", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você vende qualquer item incriminador e compra itens que não estão à venda — por preço alto e favores." },
+        { id: "contrabandista", name: "Contrabandista", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você vende qualquer item incriminador sem perguntas, e compra os itens marcados Fora da Guilda na loja (Cap. 5) pelo dobro do preço." },
         { id: "dedos-de-mana", name: "Dedos de Mana", paCost: UTILITY_PA_COST.talent.Intermediário, requiresRank: { categoria: "magia", rank: "Principiante" }, description: "Requer 1 patamar em escola de magia. Conjure magias de rank Principiante sem cântico nem gesto visível, ao custo da versão Encurtada." },
         { id: "sombra-longa", name: "Sombra Longa", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você pode ficar Escondido mesmo observado: qualquer distração ou obstáculo parcial serve no lugar da Cobertura. Escuridão total dá Vantagem Absoluta em Furtividade." },
         { id: "passo-de-gato", name: "Passo de Gato", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você se move em velocidade normal sem ruído algum, e escalar custa deslocamento normal." },

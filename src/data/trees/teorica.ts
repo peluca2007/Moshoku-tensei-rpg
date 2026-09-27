@@ -167,7 +167,7 @@ export const TEORICA_TREE: Tree = {
         essencia("terra", "Terra", "Lançar causa dano contundente, e a parede tem +50% de PV."),
         essencia("som", "o Bardo", "Lançar causa dano sônico, e a parede soa quando alguém encosta."),
         essencia("vida", "Cura", "Lançar cura em vez de ferir, e a parede dá PV temporários a um aliado."),
-        talento("Principiante", "traco-firme", "Traço Firme", "Uma vez por cena, refaça um Teste de Concentração que tenha perdido enquanto desenhava uma fórmula (Cap. 2, §6)."),
+        talento("Principiante", "traco-firme", "Traço Firme", "Uma vez por combate, refaça um Teste de Concentração que tenha perdido enquanto desenhava uma fórmula (Cap. 2, §6)."),
       ],
       abilities: [
         modelo(P, "dardo-arcano", "Dardo Arcano", frase(P, "mana", ["lancar"], "circulo"), "", { signature: true }),

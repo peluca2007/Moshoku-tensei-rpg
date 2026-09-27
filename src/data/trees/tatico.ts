@@ -52,7 +52,7 @@ export const TATICO_TREE: Tree = {
           "[Domínio: tempo e logística] Escopo: a próxima hora, o trecho de estrada à frente. Enquanto liderar a marcha, o grupo nunca se perde e ignora terreno difícil natural. Ninguém do grupo fica Surpreso — emboscadas ainda acontecem, mas vocês agem normalmente no primeiro turno. Sempre encontram água, abrigo e um lugar defensável. [Ordem de Tiro] Uma vez por turno, sem gastar Ação, aponte um alvo que você enxergue: ele fica Apontado até o seu próximo turno. O primeiro ataque que acertar um alvo Apontado — SEU ou de um aliado — causa +1d6 de dano por patamar que você possua nesta árvore. Contra o alvo Apontado, os seus próprios ataques com armas dos grupos Hastes ou Arcos e Bestas somam o seu Bônus de Rank no acerto e no dano: o Tático só bate como quem treinou pra isso quando é ele mesmo executando a ordem que deu. E a ordem não se perde — se ninguém acertar o alvo até o seu próximo turno, aponte o mesmo alvo de novo e o bônus sobe outro 1d6, acumulando até o dobro do seu patamar.",
       },
       talents: [
-        { id: "mapa-vivo", name: "Mapa Vivo", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você desenha e lê mapas; regiões que já atravessou ficam registradas e podem ser vendidas." },
+        { id: "mapa-vivo", name: "Mapa Vivo", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você desenha e lê mapas; regiões que já atravessou ficam registradas. Vender o mapa de uma região rende 2d6 × seu Bônus de Rank PO, uma vez por região." },
         { id: "suprimento", name: "Suprimento", paCost: UTILITY_PA_COST.talent.Principiante, description: "O grupo consome metade de ração/água/forragem, e você sempre sabe quantos dias faltam para o problema começar." },
         { id: "sinais", name: "Sinais", paCost: UTILITY_PA_COST.talent.Principiante, description: "Código de gestos e assobios com o grupo: comunicação a 200m sem falar." },
         { id: "conhecimento-de-bestas", name: "Conhecimento de Bestas", paCost: UTILITY_PA_COST.talent.Principiante, description: "Sobre qualquer monstro visto, identifica espécie, comportamento de caça e uma fraqueza real." },
@@ -67,7 +67,7 @@ export const TATICO_TREE: Tree = {
           paCost: UTILITY_PA_COST.signature.Principiante,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Uma vez por combate: se o grupo entrar em combate vindo de uma marcha conduzida por você, todos os aliados somam seu Bônus de Rank na Iniciativa, e você escolhe quem age primeiro.",
+          effect: "Se o grupo entrar em combate vindo de uma marcha conduzida por você, todos os aliados somam seu Bônus de Rank na Iniciativa, e você escolhe quem age primeiro.",
         },
       ],
     },

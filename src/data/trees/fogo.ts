@@ -64,6 +64,20 @@ export const FOGO_TREE: Tree = {
       ],
       abilities: [
         {
+          id: "brasa",
+          name: "Brasa",
+          paCost: 0,
+          pmCost: 0,
+          range: "9 metros",
+          actions: { normal: 1 },
+          costNote:
+            "O truque da escola (Cap. 2, §1, 2026-09-27): 0 PA, 0 PM, 1 Ação, uma vez por turno. É o que o mago faz quando a mana acaba — e o que ele faz com a Ação que sobra da magia de 2.",
+          damage: { normal: "1d6 + BC (ígneo)" },
+          effect: "Uma vez por turno. Truque da escola: vem com o Principiante, sem PA, e não gasta PM. Ataque mágico à distância.",
+          incantation:
+            "Brasa que dorme no fundo da lareira, acorda só um instante,\nsalta da minha mão e lembra ao mundo que ainda és fogo.\nBrasa!",
+        },
+        {
           id: "bola-de-fogo",
           name: "Bola de Fogo",
           signature: true,

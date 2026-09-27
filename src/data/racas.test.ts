@@ -29,9 +29,17 @@ describe("a tabela d100 das raças", () => {
     for (let i = 1; i < ordem.length; i++) expect(maiorDoTier(ordem[i])).toBeLessThan(menorDoTier(ordem[i - 1]));
   });
 
-  it("o Demônio Imortal é lendário e o Dragão não se escolhe", () => {
+  it("o Demônio Imortal é lendário, e o Dragão se escolhe pelo preço dele (desde o nerf de 2026-09-27)", () => {
     expect(RACES.find((r) => r.id === "demonio-imortal")!.tier).toBe("lendaria");
-    expect(CUSTO_DE_ESCOLHA[RACES.find((r) => r.id === "dragao")!.tier]).toBeNull();
+    expect(CUSTO_DE_ESCOLHA[RACES.find((r) => r.id === "dragao")!.tier]).toBe(3);
+  });
+
+  it("o Dragão não passa do pacote de uma lendária: nada de imunidade, voo livre ou CA +3", () => {
+    const dragao = RACES.find((r) => r.id === "dragao")!;
+    expect(dragao.bonuses.armorClass ?? 0).toBeLessThanOrEqual(1);
+    const soma = Object.values(dragao.bonuses.attributes ?? {}).reduce((a, b) => a + (b ?? 0), 0);
+    expect(soma).toBeLessThanOrEqual(2);
+    expect(dragao.traits.join(" ")).not.toMatch(/IMUNIDADE|dobro do de caminhada/);
   });
 });
 
