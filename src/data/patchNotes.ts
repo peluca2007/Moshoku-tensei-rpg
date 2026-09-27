@@ -16,6 +16,27 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.112",
+    date: "2026-09-27",
+    title: "A ficha cobra o Antecedente, e a régua do Apêndice C conferida",
+    sections: [
+      {
+        heading: "Escolher o Antecedente",
+        items: [
+          "Como a raça: escolher só o Antecedente custa 1 PA na ficha, e sai de graça se a raça também foi escolhida (Cap. 1, §5). A roleta e a entrevista contam como sorteio, e há a caixa 'Sorteei no d100' ao lado do seletor. Fichas antigas não pagam.",
+        ],
+      },
+      {
+        heading: "A régua do Apêndice C",
+        items: [
+          "O 1º patamar das quatro escolas elementais subiu (Água ~16, Fogo ~18, Vento ~15, Terra ~16): é o truque de escola da 0.1.107.",
+          "A régua continua escrita à mão, e o motivo foi medido: o número depende da janela (em 3 turnos a magia de 4 Ações sai uma vez; em 6, o PM acaba), do alvo único e do que o simulador não vê. O script `npm run medir:regua` confere a régua contra o simulador e aponta onde os dois se afastam.",
+          "A Desintoxicação fica com a tabela de PA barata: empata com as outras escolas no 1º patamar e fica bem atrás do 3º em diante, gastando muito PM e precisando de dois turnos de preparo.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.111",
     date: "2026-09-27",
     title: "O Dragão sem asas, e o Orsted de volta",
