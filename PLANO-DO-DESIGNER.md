@@ -209,13 +209,13 @@ checks já existem (`check:progressao`, `check:sobrevivencia`, `check:arvores`, 
 
 | Frente | Pergunta | Meta ou decisão |
 | --- | --- | --- |
-| **Espada de Luz Verdadeira** | O 66/Ação do Deus da Espada é o pico declarado ou um número que escapou? Sozinho ele faz o 2,0×. | O autor decide: pico declarado (o livro diz que a árvore é vidro — ~8% de sobrevivência no playtest) ou corte pra perto de 50. |
-| **Magia no começo** | O mago do 1º–2º patamar contribui? (1º: Corpo ~19–25 × Magia ~9–13) | Magia a no máximo ~30% abaixo do Corpo no dano por turno do 1º patamar, contando área. |
-| **11 capstones** | Rank alto rendendo menos que o de baixo | Separar os de ÁREA (ficam: o check mede alvo único) dos que escaparam — os suspeitos são Corrosão (−56%), Sopro do Forja (−31%), Arremesso (−29%) e Golpe do Desespero (passa o Rei e o Imperador do Norte). |
-| **Cura** | Curar + ferir + Culpa Fresca virou a melhor escola? | Luz de Dois Gumes abaixo da Água no mesmo patamar. |
-| **Desintoxicação** | Com Dose e Inversão, ainda merece a tabela de PA barata? | Ensinar a Dose ao simulador (hoje ele não conta a Inversão) e decidir: tabela comum ou Inversão mais fraca. |
-| **Despertares das raças** | Algum desequilibra? | Tridente Ancestral, Colosso e Forma do Dragão abaixo de um talento de Santo da árvore média. |
-| **Sobrevivência no fim do jogo** | Mago de Vigor 0 cai em menos de 1 turno no 6º patamar (0,53–0,71) | O autor decide se é intenção ("o mago depende do grupo") e o livro diz isso — ou o molde de Terror/Lenda cresce menos. |
+| ✅ **Espada de Luz Verdadeira** (0.1.107: pico declarado; o simulador a usa uma vez por combate) | O 66/Ação do Deus da Espada é o pico declarado ou um número que escapou? Sozinho ele faz o 2,0×. | O autor decide: pico declarado (o livro diz que a árvore é vidro — ~8% de sobrevivência no playtest) ou corte pra perto de 50. |
+| ✅ **Magia no começo** (0.1.107: truque de escola nas quatro elementais) | O mago do 1º–2º patamar contribui? (1º: Corpo ~19–25 × Magia ~9–13) | Magia a no máximo ~30% abaixo do Corpo no dano por turno do 1º patamar, contando área. |
+| ✅ **11 capstones** (0.1.107: 6 de área ficam; 4 consertados; check por pilar, 10% de empate → zero) | Rank alto rendendo menos que o de baixo | Separar os de ÁREA (ficam: o check mede alvo único) dos que escaparam — os suspeitos são Corrosão (−56%), Sopro do Forja (−31%), Arremesso (−29%) e Golpe do Desespero (passa o Rei e o Imperador do Norte). |
+| ✅ **Cura** (0.1.107: Luz Absoluta 12d8, abaixo do Zero Absoluto) | Curar + ferir + Culpa Fresca virou a melhor escola? | Luz de Dois Gumes abaixo da Água no mesmo patamar. |
+| ⏳ **Desintoxicação** (0.1.107: fica a tabela barata; sai da conta de capstone até o simulador contar a Dose) | Com Dose e Inversão, ainda merece a tabela de PA barata? | Ensinar a Dose ao simulador (hoje ele não conta a Inversão) e decidir: tabela comum ou Inversão mais fraca. |
+| ✅ **Despertares das raças** (0.1.107: Tridente Ancestral vira golpe de mão de apoio; Colosso e Forma do Dragão ficam) | Algum desequilibra? | Tridente Ancestral, Colosso e Forma do Dragão abaixo de um talento de Santo da árvore média. |
+| ✅ **Sobrevivência no fim do jogo** (resolvida pelos moldes da 0.1.105: 1,6 turno no 6º) | Mago de Vigor 0 cai em menos de 1 turno no 6º patamar (0,53–0,71) | O autor decide se é intenção ("o mago depende do grupo") e o livro diz isso — ou o molde de Terror/Lenda cresce menos. |
 | ✅ **Orçamento de Encontro** (0.1.105: moldes reescalados, chefe ×3 PV e ×1,5 dano, peso 4, faixas pelo simulador; `npm run medir:orcamento`) | O Apêndice G diz que "uma criatura do patamar por jogador" é Equilibrado. O simulador, com as fichas do kit, dá **Letal** pra 4 de 2º patamar (44% de vitória, 2,5 quedas); 3 já é Perigoso (82%). | Medir nos seis patamares e decidir com o autor: a regra do livro muda (ex.: "três pra quatro jogadores") ou os moldes ficam mais fracos. A mesa da Etapa 1 desempata. |
 | **Perguntas de mesa** | Vendaval, Escudos, Tático, Tiro Perfeito (do `O-QUE-FALTA.md`) | Respondidas pela Etapa 1; aqui viram número. |
 

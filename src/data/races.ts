@@ -433,7 +433,7 @@ export const RACES: Race[] = [
         paCost: 4,
         patamarMinimo: "Santo",
         description:
-          "Uma vez por turno, quando atacar com uma arma, você ataca também com a Cauda-lança sem gastar Ação — o Ruijerd nunca lutou com uma arma só.",
+          "Uma vez por turno, quando atacar com uma arma, você ataca também com a Cauda-lança sem gastar Ação — o Ruijerd nunca lutou com uma arma só. Esse golpe é o da mão de apoio do Golpe Duplo (Cap. 4, §3): só o dado da Cauda-lança, um degrau abaixo, sem somar atributo nem Bônus de Rank.",
       },
     ],
     traits: [

@@ -20,9 +20,9 @@ a foto e o nome à vontade, mas **não as compras** (são elas que a sessão med
 
 Humano (Jinzoku) · Estudioso Precoce (Expansão) · Magia de Fogo (Intermediário)  
 **PV 24 · PM 20 · PT 0 · PP 0 · CA 10**  
-Compras: Bola de Fogo, Toque Escaldante, Clarão, Explosão, Lança de Fogo, Calor Dirigido
+Compras: Brasa (o truque da escola, 0 PA), Bola de Fogo, Toque Escaldante, Clarão, Explosão, Lança de Fogo, Calor Dirigido
 
-[Importar a ficha de Ignis](https://mushoku-tensei-rpg.vercel.app/ficha/importar#g:H4sIAAAAAAAACq1TS24bMQy9C9cyEHQ5O9coWi-CBk26KrzgSPSYGJmcUJJbw_BheoCeIhcrNP4kMODUi-7Ip8dHUnrageCaoIF5J5zAQVSrKTgw9DQP0MCqrFEUHLTo-860SBhxSrkE1qSTwcirJ3CQSpuxjfRJsm0rS0qMDjBn47Zk-oiJoNnBUs0jNHcOsOPIAQON2YY7tTFiyRTJZ4XmgwNKAxvX5G5_GG16kpytlD0laH68qVmMJMb4fegMw3i8cJBwQ9OwQcnYnbGMllm6J6PDvkvt6rZFovqewjeUvlJ3kC8YhtJDAw_G4nlglEywd1d5c8lkawr88ttYYb9wMBTzK0wUpi1Hzky3N3LQs1QOjqVbcMA1bTXiJNBkLH1nmpvEsj4XmlDyGMO_1rtJ0Ec0fHeui1u6JkS_hqjpv0hFFH_TlV3TyxhJ8nlFjGqTwMYdh4tnnum6ZaHwOFCMR_91GsPR8RuSrLY9-rLnM6cO9FjzN2b_unz541lT9fpgumTPJJ5Ptv5JOKh8Ni3Da9HCQatS0pdh7DjG94fYFzOSXE8Of_YI3F8CD_kSeGWoBPZ6ahWqcSRpmhXLmsY2uiEzHj_kbr__C5rL9Ox_BAAA)
+[Importar a ficha de Ignis](https://mushoku-tensei-rpg.vercel.app/ficha/importar#g:H4sIAAAAAAAACq1TS4obQQy9i9ZlGLLsnWNC4sWQIZOsghfqKrktuix1VFVOjPFhcoCcYi4Wqv2ZweAZQ7LT5-npg94OBNcEDcw74QQOolp1wYGhp3mABlZljaLgoEXfd6ZFwhinlEtgTToZjLx6AgeptBnbSB8k27aipMToAHM2bkum95gImh0s1TxCc-cAO44cMNDobbhTGy2WTJF8VmjeOaA0sHF17vaH0aYnytlK2VOC5vuLmsUIYozfhs4wjOmFg4QbmoYNSsbuHMtomaX7anTYd6ld3bZIVN9T-ILSV-gO8gXCUHpo4MFYPA-Mkgn27ipuLplsTYGffhsr7BcOhmJ-hYnCtOXImen2Rg56lorBsXQLDri6rWHC18a4jUUjTgJNxtJ_Jcv6o9CEkscY3jrSTYQ-ouGrc13c-hoR_Rqipv9CFVH8TSe7xpcxkuTzihjVJoGNOw4XzzLTdctC4XGgGI9f3GkMR91sSLLa9vjdPZ8xdaDH6r-QzOfl0x_PmqpiBtMleybxfBLHT8JB5aNpGZ6LFg5alZI-DWPH0b4_2L6YkeSaOSj_GLi_DDzky8AzQiWw11OrUB9HkqZZsaxpbKMbMuNR1rv9_i9IR756xQQAAA)
 
 ### Borrasca — Corpo
 
