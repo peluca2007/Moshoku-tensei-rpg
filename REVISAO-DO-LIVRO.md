@@ -159,3 +159,84 @@ Cada uma com a opção recomendada (★). O detalhe e os números estão na conv
     personagem começa Rank F.
 22. A Marca do Mestre (dojos) contradiz o limite de uma provação por árvore. ★ revisita uma vez só, só com
     a porta do PA livre.
+
+---
+
+# Segunda revisão — 2026-09-27
+
+O autor pediu uma geral no livro: espaço vazio, notas de design que não servem ao jogador, incongruências
+e tabela saindo da página. Três revisores (Cap. 0–2; Cap. 3 e árvores; Cap. 4–5 e apêndices) e o Codex
+(o contínuo no celular) trabalharam em paralelo. Os relatórios completos ficaram fora do repositório; o
+que importa está aqui.
+
+## A. Aplicado (commits `30ee268`, `24270b5`, `9f648f4`; nota 0.1.102)
+
+- **Vão no pé da coluna** (`encaixarCartas`): carta menor sobe, a arte cresce ou sobe, a coluna se
+  espalha. Colunas com ≥22% em branco: 85 → 57; branco total −33%; 280 → 277 páginas. O `revisar:livro`
+  media o vão pela caixa da carta e sub-contava; agora conta o conteúdo.
+- **~70 notas de design** cortadas ou reescritas; **~70 consertos de texto** que só alinham o livro com os
+  dados (lista na nota 0.1.102).
+- **Correções de regra que já estavam decididas ou eram defeito de escrita:** Ações das técnicas na carta;
+  o Eco da Teórica sem o BC dobrado; CA sem teto de Agilidade (o Cap. 0 contradizia o Cap. 4 e a ficha);
+  Trauma só por ver aliado morrer (decisão 18).
+
+## B. Decisões pendentes (do mais grave pro menos) — ★ = o que o designer escolheria
+
+**Contradições e opções mortas**
+1. **Os sete Ofícios imprimem "◈ Rank Deus"**, e o Cap. 3 diz que Ofício termina no 6º patamar. ★ Tirar o
+   bloco dos Ofícios (o texto é bom; vira lore).
+2. **Mestre da Adaptação (Água, Avançado)** tira o corte de dano da Encurtada e desfaz a decisão 1: a
+   Padrão da Água morre. ★ Só pra magias de rank Intermediário ou abaixo.
+3. **Treinar e Vigiar as Costas (downtime)** valem zero: Vantagem não empilha com a perícia que você já
+   tem. ★ Usar a regra do Ajudar: com Vantagem já, vira +2; e dizer o efeito de Vigiar em cada atividade.
+4. **Dança de Aço (Norte, Rei, 4 PA)** é cópia do Redemoinho de Aço (Vendaval, Intermediário). ★ Dar algo
+   de Rei: cada acerto aplica um Improviso sem gastar o uso.
+5. **Grifo (Invocação, Intermediário) bate mais que o Urso** desde a decisão 12. ★ Grifo 2d8 (é transporte).
+6. **Domínio Climático (Água, Santo)** repete a exclusão que a Maestria do Avançado já dá. ★ Magias de clima
+   custam 1 Ação a menos.
+7. **Teórica, talentos sem efeito ou caros:** Âncora de Trama (nenhuma regra desliga fórmula por
+   distância), Fórmula de Bolso, Memória de Runa, Fronteira Seletiva, Olho do Diagrama. ★ Reescrever com
+   efeito de patamar (ex.: Memória de Runa prepara em giz com 1 Ação). "Eco Condicional" não usa o Eco:
+   ★ renomear "Sinal Armado".
+8. **Vantagem de Estilo:** a aresta Norte vence Água não ganha nada além da regra geral. ★ Tirar o
+   "Reações falham" da regra geral e deixar só na aresta do Norte.
+9. **Teto de PM dos dois primeiros patamares** hoje só corta uma compra que a ficha já bloqueia. ★ Apagar o
+   teto; escrever "+PM: só do Avançado em diante" na linha da tabela.
+
+**Controle sem rolagem (o mesmo problema que as decisões 8 e 9 consertaram)**
+10. **Maestria de Imperador da Terra:** Soterrado sem teste, todo turno, a 9 m. ★ Teste de Força (CD 8 + BC)
+    por turno.
+11. **Era Glacial (Água, Rei) e Rio de Magma (Terra, Rei):** dano por turno sem teste. ★ Molde do Vazio:
+    teste por turno pra metade, duração de combate.
+12. **Serpente-do-Pântano (Ap. G, 2º patamar):** Envenenado a luta inteira, sem teste; a Wyvern, um patamar
+    acima, pede teste. ★ Igual à Wyvern: Vigor CD 13 ou Envenenado até o fim do próximo turno.
+
+**Regra ambígua**
+13. **Tempestade Cortante (Vento, Santo):** "você não conjura mais nada enquanto ela gira" contradiz a regra
+    de sustentação. ★ "Ela ocupa a sua sustentação."
+14. **Restauração e Corpo Íntegro (Cura):** a carta diz Ritual de 10 min / 1 hora; o dado diz 4 Ações. ★
+    Decidir qual vale.
+15. **Selo com essência (Teórica):** agora escrito que só barra magia daquela escola, mas paga +1 PM por
+    menos. ★ Dar algo em troca: barra um rank a mais.
+16. **"Peçonha"** é aflição e magia com efeitos diferentes no mesmo §8 do Cap. 4. ★ Renomear a aflição
+    ("Veneno de Serpente-do-Pântano").
+
+**Números e itens**
+17. **Poção Imperial** cura 2 PV a mais que a Régia por 3,3× o preço. ★ 8d8+6.
+18. **Itens sem mecânica:** Amuleto de Resistência ao Fogo (★ dispensa o teste de Clima Extremo por calor);
+    Bússola Encantada (★ Vantagem em Sobrevivência pra se orientar).
+19. **Apêndice C** é régua de designer com um quadro útil ao jogador. ★ Manter as tabelas, pôr o "Como ler"
+    no topo, enxugar o resto e renomear "Dano por Turno — Comparando Árvores".
+
+**Diagramação**
+20. **Vão que sobra** (57 colunas): a carta maior que meia coluna, sem nada que caiba antes dela. ★ Deixar a
+    carta partir **só entre o efeito e o cântico** quando o vão passar de 1/3 da coluna (a regra, o custo e
+    o dano continuam juntos). Hoje a regra "carta inteira" do autor proíbe.
+
+**Menores** (baixa prioridade): Cicatriz 9 perde a Encurtada mas mantém o cântico inteiro; Aranha e Wyvern
+pedem dois testes de Vigor por acerto; Segunda Guarda diz "+1 Reação por turno" (a regra é por rodada);
+colchetes [Peso]/[Impacto] no nome das cartas do Lutador; talento Cavalaria (Tático) ≈ Montaria
+(Escudos); termos soltos ("incombatível", "adamantinos", "magias de barreira", "invisível", "Amarra");
+Determinação Humana ("teste de Atributo, não de Perícia"); armadura média "ou 1 PA" (por categoria?);
+magia de 1 turno encurtada (duração mínima?); "Crafting" → "Fabricação"; o aviso de Touki repetido três
+vezes no Cap. 3.
