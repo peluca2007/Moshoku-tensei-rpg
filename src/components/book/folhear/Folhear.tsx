@@ -416,6 +416,11 @@ export default function Folhear({
       performance.measure(`folhear:${nome}`, { start: t0, end: performance.now() });
       return v;
     };
+    const repetir = (nome: string, limite: number, passo: () => number) => {
+      for (let passada = 0; passada < limite; passada++) {
+        if (medir(`${nome}-passada`, passo) <= 0) break;
+      }
+    };
     medir("soltar", () => soltarTitulos(f));
     medir("figuras", () => ajustarFigurasLargas(f));
     medir("tabelas-largas", () => espalharTabelasEspremidas(f, g, regua(fx)));
@@ -425,27 +430,30 @@ export default function Folhear({
     medir("tabelas-partidas", () => apertarTabelasPartidas(f, g, regua(fx)));
     // A carta menor sobe pro vão que a carta grande deixou no pé da coluna.
     medir("cartas", () => {
-      for (let passada = 0; passada < 8 && encaixarCartas(f, g, regua(fx)) > 0; passada++);
+      repetir("cartas", 8, () => encaixarCartas(f, g, regua(fx)));
     });
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
     medir("titulos", () => {
-      for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+      // A assinatura completa prova que duas passadas resolvem a cascata
+      // inicial; depois de cada limpeza, uma reconferência basta. As antigas
+      // 8 × 3 repetiam árvores que já começavam em página nova e não mudavam.
+      repetir("titulos", 2, () => segurarTitulos(f, g, regua(fx)));
       // Calço que ficou fora do lugar sai, e a conferência roda de novo.
       for (let rodada = 0; rodada < 3 && limparCalcosInuteis(f, regua(fx), g) > 0; rodada++) {
-        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
       }
       // E o empurrão que ficou velho (o bloco já cabia onde estava) sai.
       if (soltarEmpurroesVelhos(f, g, regua(fx)) > 0) {
-        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
       }
       // Tabela larga que desceu de página deixando buraco volta pra coluna.
       if (estreitarTabelasQueAbremBuraco(f, g, regua(fx)) > 0) {
         ajustarTabelasLargas(f, g, regua(fx));
-        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
       }
       if (soltarEmpurroesVelhos(f, g, regua(fx)) > 0) {
-        for (let passada = 0; passada < 8 && segurarTitulos(f, g, regua(fx)) > 0; passada++);
+        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
       }
     });
     esquecerIndice(f);

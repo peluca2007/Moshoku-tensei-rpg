@@ -285,13 +285,13 @@ export function ajustarFigurasLargas(fluxo: Element): void {
   fluxo.querySelectorAll(".folhear-larga").forEach((el) => el.classList.remove("folhear-larga"));
   const diagramas = Array.from(fluxo.querySelectorAll<HTMLElement>("figure.diagrama")).filter(visivel);
   diagramas.forEach((fig) => (fig.style.zoom = ""));
-  /** Quanto o conteúdo mais largo do diagrama passa da largura que ele tem. */
   const sobra = (fig: HTMLElement) => {
-    let pior = 1;
-    fig.querySelectorAll<HTMLElement>("*").forEach((el) => {
-      if (el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 2) pior = Math.max(pior, el.scrollWidth / el.clientWidth);
-    });
-    return pior;
+    // Diagramas.tsx põe todo o desenho dentro do único `div` direto da
+    // figura. O scrollWidth desse contêiner já acumula qualquer min-width de
+    // netos; medir cada descendente repetia centenas de leituras de layout.
+    const conteudo = fig.querySelector<HTMLElement>(":scope > div");
+    if (!conteudo || conteudo.clientWidth <= 0 || conteudo.scrollWidth <= conteudo.clientWidth + 2) return 1;
+    return conteudo.scrollWidth / conteudo.clientWidth;
   };
   const largas = diagramas.filter((fig) => sobra(fig) > 1);
   largas.forEach((fig) => fig.classList.add("folhear-larga"));
@@ -372,6 +372,18 @@ const SELETOR_TITULOS = [
 const BLOCOS_COM_TITULO =
   ".livro-caixa, .livro-maestria, .livro-proficiencias, .livro-mecanica, .livro-verbete, .livro-tabela, .livro-arvore";
 
+/*
+ * Árvores que mudaram na passada anterior. Cada árvore começa em página nova,
+ * então um empurrão dentro de Fogo não muda a posição relativa de nenhuma
+ * peça de Água. Depois da primeira varredura, reler títulos das outras dezoito
+ * árvores era trabalho puro: centenas de getClientRects que sempre davam a
+ * mesma resposta. Títulos fora de árvore continuam sendo conferidos em todas
+ * as passadas, porque ali uma mudança pode correr pelo capítulo seguinte.
+ */
+let arvoresDeTitulosPendentes: Set<Element> | null = null;
+let titulosDoFluxo: Element[] | null = null;
+let tabelasDoFluxo: Element[] | null = null;
+
 /** `t` abre `bloco`? (cada passo do caminho é o primeiro filho) */
 function abre(bloco: Element, t: Element): boolean {
   for (let n: Element | null = t; n && n !== bloco; n = n.parentElement) {
@@ -393,6 +405,8 @@ function seguinte(t: Element, fluxo: Element): Element | null {
 }
 
 export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
+  titulosDoFluxo ??= Array.from(fluxo.querySelectorAll(SELETOR_TITULOS));
+  tabelasDoFluxo ??= Array.from(fluxo.querySelectorAll(".livro-tabela"));
   // Em que coluna (contando as duas de cada página) um retângulo está. Não
   // dá pra comparar só o `left`: o carimbo das caixas é torto e deslocado,
   // e sai uns pixels à esquerda do texto da mesma coluna.
@@ -410,7 +424,12 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
    * todas medidas no mesmo estado, que é o que uma passada quer dizer.
    */
   const alargar: Element[] = [];
-  fluxo.querySelectorAll(SELETOR_TITULOS).forEach((t) => {
+  const naConferencia = (el: Element) => {
+    if (arvoresDeTitulosPendentes === null) return true;
+    const arvore = el.closest(".livro-arvore");
+    return !arvore || arvoresDeTitulosPendentes.has(arvore);
+  };
+  titulosDoFluxo.filter(naConferencia).forEach((t) => {
     // A página de raça é uma página inteira de altura fixa: o título dela não
     // tem como ficar longe do texto, e a leitura japonesa à direita do nome
     // enganaria a conferência (ela mora na metade direita da página).
@@ -456,13 +475,14 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
   // Escreve só isso e deixa a próxima passada medir de novo.
   if (alargar.length > 0) {
     alargar.forEach((t) => t.classList.add("folhear-larga", "folhear-titulo-largo"));
+    arvoresDeTitulosPendentes = new Set(alargar.map((t) => t.closest(".livro-arvore")).filter((a): a is Element => !!a));
     return alargar.length;
   }
 
   // TABELA QUE ABRE NO PÉ DA COLUNA com o cabeçalho e uma ou duas linhas: é o
   // título órfão das tabelas. Ela desce inteira, pelos mesmos degraus.
   const topoDasTabelas = fluxo.getBoundingClientRect().top;
-  fluxo.querySelectorAll(".livro-tabela").forEach((caixa) => {
+  tabelasDoFluxo.filter(naConferencia).forEach((caixa) => {
     if (!visivel(caixa)) return;
     const linhas = Array.from(caixa.querySelectorAll("tbody tr:not(.folhear-cabecalho-repetido)"));
     // Com a última linha presa à penúltima (folhear.css), uma tabela de três
@@ -554,6 +574,7 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     prox.classList.remove("folhear-empurra");
   });
   let mudou = 0;
+  const mudaram: Element[] = [];
   empurrar.forEach((el) => {
     const c = el.classList;
     if (el.matches("h3, h4") && c.contains("folhear-larga") && !c.contains("folhear-titulo-largo")) c.add("folhear-titulo-largo");
@@ -573,7 +594,9 @@ export function segurarTitulos(fluxo: Element, g: Geometria, r: Regua): number {
     }
     else return;
     mudou++;
+    mudaram.push(el);
   });
+  arvoresDeTitulosPendentes = new Set(mudaram.map((el) => el.closest(".livro-arvore")).filter((a): a is Element => !!a));
   return mudou;
 }
 
@@ -868,6 +891,7 @@ export function limparCalcosInuteis(fluxo: Element, r: Regua, g: Pick<Geometria,
     calco.nextElementSibling?.classList.remove("folhear-calcado", "folhear-inteira", "folhear-segura", "folhear-empurra");
     calco.remove();
   });
+  if (inuteis.length) arvoresDeTitulosPendentes = null;
   return inuteis.length;
 }
 
@@ -909,6 +933,7 @@ export function soltarEmpurroesVelhos(fluxo: Element, g: Geometria, r: Regua): n
     return alturaDaColuna - (fim.bottom - topo) / r.k > alturaDaColuna * 0.3;
   });
   velhos.forEach((el) => el.classList.remove("folhear-empurra"));
+  if (velhos.length) arvoresDeTitulosPendentes = null;
   return velhos.length;
 }
 
@@ -988,6 +1013,7 @@ export function estreitarTabelasQueAbremBuraco(fluxo: Element, g: Geometria, r: 
   });
   voltar.forEach((el) => el.classList.remove("folhear-larga", "folhear-titulo-largo", "folhear-empurra", "folhear-segura", "folhear-inteira", "folhear-calcado"));
   calcos.forEach((c) => c.remove());
+  if (voltar.length || calcos.length) arvoresDeTitulosPendentes = null;
   return voltar.length;
 }
 
@@ -1207,6 +1233,9 @@ const ARTE_MAXIMA = 320;
 const ESPALHAR_MAXIMO = 56;
 /** Colunas já espalhadas nesta diagramação (pelo bloco que fecha a coluna). */
 let espalhadas = new WeakSet<Element>();
+/** Só as árvores cuja ordem/coluna mudou na passada anterior. */
+let arvoresParaEncaixar: Element[] | null = null;
+let ocupantesDasArvores = new WeakMap<Element, Element[]>();
 
 /**
  * O VÃO NO PÉ DA COLUNA SE ENCHE COM CARTA OU COM ARTE — 2026-09-26.
@@ -1238,7 +1267,16 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
   const y = (q: DOMRect) => (q.top - topo) / r.k;
   const base = (q: DOMRect) => (q.bottom - topo) / r.k;
   const coluna = (q: DOMRect) => Math.floor(((q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40)) / meiaPagina);
-  const pedacos = (el: Element) => Array.from(el.getClientRects()).filter((a) => a.height > 1);
+  const retangulos = new Map<Element, DOMRect[]>();
+  const pedacosAtuais = (el: Element) => Array.from(el.getClientRects()).filter((a) => a.height > 1);
+  const pedacos = (el: Element) => {
+    let medidos = retangulos.get(el);
+    if (!medidos) {
+      medidos = pedacosAtuais(el);
+      retangulos.set(el, medidos);
+    }
+    return medidos;
+  };
   const ESPACO = 14; // o respiro entre duas cartas, com folga
   const arteDe = (carta: Element | null) =>
     carta?.classList.contains("livro-verbete") ? (carta.querySelector(":scope > .livro-verbete-arte") as HTMLElement | null) : null;
@@ -1248,7 +1286,19 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
   const fundoDaColuna = new Map<number, number>();
   // A carta que pulou de coluna deixa a CAIXA dela no vão (um pedaço vazio que
   // desce até o pé): conta o que está dentro da carta, não a carta.
-  fluxo.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete > *, .livro-tabela, .diagrama").forEach((el) => {
+  const arvoresAtivas = arvoresParaEncaixar ?? Array.from(fluxo.querySelectorAll(".livro-arvore"));
+  if (arvoresAtivas.length === 0) return 0;
+  const ocupantes = arvoresAtivas.flatMap((arvore) => {
+    let encontrados = ocupantesDasArvores.get(arvore);
+    if (!encontrados) {
+      encontrados = Array.from(
+        arvore.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete > *, .livro-tabela, .diagrama"),
+      );
+      ocupantesDasArvores.set(arvore, encontrados);
+    }
+    return encontrados;
+  });
+  ocupantes.forEach((el) => {
     for (const q of pedacos(el)) {
       const c = coluna(q);
       const cols = q.width / r.k > meiaPagina ? [c - (c % 2), c - (c % 2) + 1] : [c];
@@ -1257,11 +1307,13 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
   });
 
   const mexidas = new Set<Element>();
+  const tocadas = new Set<Element>();
   const consertos: (() => void)[] = [];
+  const margensPlanejadas = new Map<HTMLElement, { inline: string; valor: number }>();
   // A arte que sobe tem que ficar no vão: se não coube, ela volta pro fim da carta.
   const conferir: (() => boolean)[] = [];
   const desfazerDaArte: (() => void)[] = [];
-  const abridores = Array.from(fluxo.querySelectorAll(".livro-arvore .livro-verbete, .livro-arvore h4"));
+  const abridores = arvoresAtivas.flatMap((arvore) => Array.from(arvore.querySelectorAll(".livro-verbete, h4")));
   for (const bloco of abridores) {
     const arvore = bloco.closest(".livro-arvore");
     if (!arvore || mexidas.has(arvore)) continue;
@@ -1302,6 +1354,7 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
         const pai = bloco.parentElement!;
         const lugar = sobe.nextElementSibling;
         consertos.push(() => bloco.before(sobe));
+        tocadas.add(arvore);
         desfazerEncaixe.push(() => sobe.isConnected && pai.insertBefore(sobe, lugar && lugar.parentElement === pai ? lugar : null));
         mexidas.add(arvore);
         continue;
@@ -1318,8 +1371,9 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
       if (alturaDeCima <= vao) {
         const colunaDoVao = coluna(fim);
         consertos.push(() => bloco.classList.add(CLASSE_PARTIDA));
+        tocadas.add(arvore);
         conferir.push(() => {
-          const a = pedacos(antesDoCantico[0])[0];
+          const a = pedacosAtuais(antesDoCantico[0])[0];
           return !!a && coluna(a) === colunaDoVao;
         });
         const volta = () => bloco.classList.remove(CLASSE_PARTIDA);
@@ -1342,6 +1396,7 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
       const nova = Math.min(ARTE_MAXIMA, tetoDaArte(arteDeCima), atual + vao);
       if (nova - atual >= 40) {
         consertos.push(() => alturaDaArte(arteDeCima, nova));
+        tocadas.add(arvore);
         desfazerEncaixe.push(() => alturaDaArte(arteDeCima, null));
         continue; // local: nada muda de coluna, a árvore segue nesta passada
       }
@@ -1353,7 +1408,7 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
       const alto = Math.min(ARTE_MAXIMA, tetoDaArte(arteDeBaixo), Math.floor(vao - 12));
       const colunaDoVao = coluna(fim);
       conferir.push(() => {
-        const qa = pedacos(arteDeBaixo)[0];
+        const qa = pedacosAtuais(arteDeBaixo)[0];
         return !!qa && coluna(qa) === colunaDoVao;
       });
       consertos.push(() => {
@@ -1361,6 +1416,7 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
         alturaDaArte(arteDeBaixo, alto);
         bloco.prepend(arteDeBaixo);
       });
+      tocadas.add(arvore);
       const volta = () => {
         arteDeBaixo.classList.remove("folhear-arte-antes");
         alturaDaArte(arteDeBaixo, null);
@@ -1391,10 +1447,21 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
       const extra = Math.min(ESPALHAR_MAXIMO, Math.floor((vao - 8) / juncoes.length));
       if (extra >= 6) {
         espalhadas.add(antes);
+        tocadas.add(arvore);
+        // Lê todas as margens ainda no estado medido desta passada. Fazer
+        // getComputedStyle dentro do conserto intercalava leitura com as
+        // escritas anteriores e rediagramava as 275 páginas repetidas vezes.
+        const margens = juncoes.map((el) => {
+          const planejada = margensPlanejadas.get(el);
+          const antiga = planejada?.inline ?? el.style.marginTop;
+          const valor = (planejada?.valor ?? parseFloat(getComputedStyle(el).marginTop)) + extra;
+          const nova = `${valor}px`;
+          margensPlanejadas.set(el, { inline: nova, valor });
+          return { el, antiga, nova };
+        });
         consertos.push(() =>
-          juncoes.forEach((el) => {
-            const antiga = el.style.marginTop;
-            el.style.marginTop = `${parseFloat(getComputedStyle(el).marginTop) + extra}px`;
+          margens.forEach(({ el, antiga, nova }) => {
+            el.style.marginTop = nova;
             el.dataset.espalhada = "1";
             desfazerEncaixe.push(() => {
               el.style.marginTop = antiga;
@@ -1409,6 +1476,7 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
   consertos.forEach((c) => c());
   const falhas = conferir.map((ok) => !ok());
   desfazerDaArte.forEach((volta, i) => falhas[i] && volta());
+  arvoresParaEncaixar = [...tocadas];
   return consertos.length - falhas.filter(Boolean).length;
 }
 
@@ -1442,11 +1510,16 @@ function desencaixarCartas(): void {
   artesQueNaoCouberam = new WeakSet();
   espalhadas = new WeakSet();
   cartasQueNaoPartem = new WeakSet();
+  arvoresParaEncaixar = null;
+  ocupantesDasArvores = new WeakMap();
 }
 
 /** Tira os empurrões antes de uma nova diagramação (outra geometria, outro texto). */
 export function soltarTitulos(fluxo: Element): void {
   desencaixarCartas();
+  arvoresDeTitulosPendentes = null;
+  titulosDoFluxo = null;
+  tabelasDoFluxo = null;
   // Os selos do pé (preencherPes) são da diagramação passada.
   fluxo.parentElement?.querySelector(":scope > .folhear-pes")?.remove();
   fluxo.querySelectorAll(".folhear-empurra").forEach((el) => el.classList.remove("folhear-empurra"));
