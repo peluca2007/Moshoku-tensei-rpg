@@ -80,7 +80,7 @@ export default function CreationInterview() {
 
       // No modo "antecedente" a raça já foi escolhida na fase "raca" e result.raceId é null.
       // A raça sorteada passa pela chance de 1% do Dragão antes de entrar na ficha.
-      if (result.raceId) store.setRace(applyDragonChance(result.raceId));
+      if (result.raceId) store.setRace(applyDragonChance(result.raceId), false);
       store.setBackground(result.backgroundId);
 
       const resultBackground = BACKGROUNDS.find((b) => b.id === result.backgroundId);

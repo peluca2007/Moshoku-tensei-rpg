@@ -347,7 +347,9 @@ export const CUSTO_DE_ESCOLHA: Record<TierDeRaca, number | null> = {
   incomum: 1,
   rara: 2,
   lendaria: 3,
-  mitica: null,
+  // O Dragão passou a se escolher em 2026-09-27, depois do nerf que o pôs no
+  // nível de uma lendária: pelo mesmo preço.
+  mitica: 3,
 };
 
 export const NOME_DO_TIER: Record<TierDeRaca, string> = {
@@ -894,6 +896,12 @@ export interface CharacterData {
   /** Texto livre — história de fundo e anotações de mesa. A Entrevista (Via 3) pré-preenche com um rascunho a partir das respostas; o jogador edita à vontade em /ficha. Também sai no PDF exportado. */
   lore: string;
   raceId: string | null;
+  /**
+   * A raça foi ESCOLHIDA (e não sorteada no d100)? Escolher custa o preço do
+   * tier dos 3 PA iniciais (Cap. 1, §5; CUSTO_DE_ESCOLHA) — 2026-09-27. Ausente
+   * = sorteada: ficha antiga não passa a pagar por algo que já estava decidido.
+   */
+  racaEscolhida?: boolean;
   backgroundId: string | null;
   subtableEntryId: string | null;
   attributeBase: Record<AttributeKey, number>;

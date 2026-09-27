@@ -17,6 +17,7 @@ import { escalateWeaponDie } from "@/lib/weaponDie";
 import { Condicao, getCondicaoPorId, TETO_DE_ACUMULOS } from "@/data/condicoes";
 import { getSkillByName } from "@/data/skills";
 import {
+  CUSTO_DE_ESCOLHA,
   ATTRIBUTE_CREATION_POINTS,
   attributePaCostTotal,
   PROFICIENCIES_PER_PA,
@@ -815,7 +816,18 @@ function getProficiencyPaCost(state: StoreState): number {
   return Math.ceil((state.proficiencies ?? []).length / PROFICIENCIES_PER_PA);
 }
 
-/** Melhorias raciais compradas (Cap. 1, §5) — hoje só a do Povo Pequeno, a 3 PA. */
+/**
+ * Escolher a raça em vez de sorteá-la custa o preço do tier (Cap. 1, §5) —
+ * 2026-09-27. Até aqui o livro cobrava e a ficha não: qualquer um escolhia a
+ * Raça Dragão de graça no seletor.
+ */
+export function getCustoDaEscolhaDeRaca(state: StoreState): number {
+  if (!state.racaEscolhida) return 0;
+  const tier = getRaceById(state.raceId)?.tier;
+  return tier ? (CUSTO_DE_ESCOLHA[tier] ?? 0) : 0;
+}
+
+/** Despertares raciais comprados (Cap. 1, §5). */
 function getRacialUpgradePaCost(state: StoreState): number {
   const upgrades = getRaceById(state.raceId)?.upgrades ?? [];
   return (state.racialUpgrades ?? []).reduce(
@@ -975,6 +987,7 @@ export function getPaSpent(state: StoreState): number {
     getAttributePaCost(state) +
     getHpMpPaCost(state) +
     getRacialUpgradePaCost(state) +
+    getCustoDaEscolhaDeRaca(state) +
     getSaveAdvantagePaCost(state) +
     getSkillPaCost(state) +
     getProficiencyPaCost(state) +

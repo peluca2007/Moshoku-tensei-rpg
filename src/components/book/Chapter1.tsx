@@ -587,8 +587,7 @@ export default function Chapter1() {
           <P>
             <b>Escolher é permitido, e custa pelo tier.</b> Escolher a raça em vez de rolar tira PA dos 3
             iniciais: <b>1 PA</b> por uma raça comum ou incomum, <b>2 PA</b> por uma rara, <b>3 PA</b> pelo
-            Demônio Imortal (lendário). A Raça Dragão <b>não se escolhe</b>: sai no 100 ou é um presente do
-            Mestre, dado pela história. Escolher também o Antecedente não custa nada a mais; escolher só o
+            Demônio Imortal (lendário) ou pela Raça Dragão (mítica). Escolher também o Antecedente não custa nada a mais; escolher só o
             Antecedente custa 1 PA.
           </P>
           <P>

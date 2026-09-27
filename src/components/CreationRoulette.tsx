@@ -148,7 +148,7 @@ export default function CreationRoulette() {
 
   useEffect(() => {
     if (!raceWheel.result) return;
-    useCharacterStore.getState().setRace(raceWheel.result);
+    useCharacterStore.getState().setRace(raceWheel.result, false);
   }, [raceWheel.result]);
 
   useEffect(() => {
