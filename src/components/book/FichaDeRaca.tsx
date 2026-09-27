@@ -118,7 +118,6 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
   const ordemTexto = `${String(ordem).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
 
   return (
-    <>
     <article
       id={`raca-${race.id}`}
       data-raca={race.id}
@@ -213,23 +212,6 @@ export default function FichaDeRaca({ race, ordem, total }: { race: Race; ordem:
         </p>
       )}
     </article>
-    {/*
-      A RAÇA MÍTICA GANHA UMA PÁGINA INTEIRA DE ARTE no livro folheado
-      (2026-09-26, "a foto da raça dragão não está aparecendo muito bem"). O
-      texto do Dragão é o maior das doze e espremia a arte numa faixa; aqui ela
-      fecha a seção das raças de página inteira, e a página de texto fica sem a
-      faixa (folhear.css). No contínuo, a arte da página de raça basta.
-    */}
-    {race.tier === "mitica" && arte && (
-      <figure className="livro-raca-pagina-arte hidden" data-raca={race.id}>
-        {/* Página em pé, arte deitada: recorta no rosto (o mesmo ponto da miniatura da vitrine). */}
-        <ImagemDoLivro arte={arte} alt={`Ilustração: ${nome}.`} modo="cheia" posicao={ROSTO_NA_MINIATURA[race.id]} className="h-full w-full object-cover" />
-        <figcaption className="livro-fecho-legenda">
-          {nome} · {NOME_DO_TIER[race.tier]}
-        </figcaption>
-      </figure>
-    )}
-    </>
   );
 }
 
