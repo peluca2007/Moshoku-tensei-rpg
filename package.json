@@ -20,6 +20,7 @@
     "check:offline": "node scripts/check-offline.mjs",
     "check:texto": "tsx scripts/check-texto.mts",
     "check:termos": "tsx scripts/check-termos.mts",
+    "check:remissoes": "tsx scripts/check-remissoes.mts",
     "check:progressao": "tsx scripts/check-progressao.mts",
     "check:sobrevivencia": "tsx scripts/check-sobrevivencia.mts",
     "check:sumario": "node scripts/check-sumario.mjs",
