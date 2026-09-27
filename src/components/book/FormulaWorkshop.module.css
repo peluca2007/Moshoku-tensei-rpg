@@ -622,7 +622,7 @@
   :global(.livro-pagina) .lousaTitulo,
   :global(.livro-pagina) .lousaTetos,
   :global(.livro-pagina) .cartaFormas small {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
   }
 
   :global(.livro-pagina) .cartaMeta,
