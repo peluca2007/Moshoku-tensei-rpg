@@ -331,7 +331,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       mastery: {
         name: "Estado Anulado",
         description:
-          "Toda criatura que você purgar fica imune àquela aflição específica por 24 horas. Uma vez por rodada, gastando sua Reação, você anula com um toque qualquer condição da lista de Anular numa criatura adjacente, sem gastar PM, desde que a aflição que a causou seja de rank Santo ou inferior — ou, com o mesmo toque, Inverte as Doses de um inimigo adjacente (3d8 de dano de veneno por Dose).",
+          "Toda criatura que você purgar fica imune àquela aflição específica por 24 horas. Gastando sua Reação, você anula com um toque qualquer condição da lista de Anular numa criatura adjacente, sem gastar PM, desde que a aflição que a causou seja de rank Santo ou inferior — ou, com o mesmo toque, Inverte as Doses de um inimigo adjacente (3d8 de dano de veneno por Dose).",
       },
       talents: [
         { id: "maos-limpas", name: "Mãos Limpas", paCost: DESINTOX_PA_COST.talent.Santo, description: "Uma vez por Descanso Longo, conjure uma magia de Desintoxicação sem gastar Ação nenhuma." },

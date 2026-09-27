@@ -16,6 +16,124 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.110",
+    date: "2026-09-27",
+    title: "Raças: o Dragão vira filhote, e escolher passa a custar na ficha",
+    sections: [
+      {
+        heading: "A Raça Dragão",
+        items: [
+          "Nerf grande, pedido do autor. O pacote valia mais de quinze vezes o de um Humano: +2 Força +1 Vigor, +3 de CA, resistência a corte e perfuração, imunidade a um elemento, voo livre de armadura, garras d10 e um Sopro de 1d10 por Bônus de Rank. Agora é um filhote de dragão: +1 Força +1 Vigor, +1 de CA, Resistência ao elemento do Sopro, garras d8, Sopro de 1d6 por Bônus de Rank num cone de 9 m, e asas com as mesmas restrições das celestiais. O Preço do Sangue (Desvantagem Absoluta em Persuasão) fica.",
+          "Os despertares também encolheram: o Sopro Desperto só dobra os usos, e a Forma do Dragão dá 5 × Bônus de Rank de PV temporários, Resistência a corte e perfuração enquanto dura e um Sopro a mais (antes, o Sopro recarregava todo turno).",
+          "Com o pacote de uma raça lendária, o Dragão passa a se ESCOLHER pelo preço dela: 3 PA. No d100 continua saindo só no 100.",
+        ],
+      },
+      {
+        heading: "As outras raças",
+        items: [
+          "Raça Fera, despertar Uivo que Paralisa: só quem falha por 5 ou mais fica Atordoado; o resto fica Desequilibrado. Atordoar o cone inteiro todo turno, por 2 PM, travava a luta.",
+          "Revisadas as doze: as outras cabem no tier que têm.",
+        ],
+      },
+      {
+        heading: "Escolher a raça custa na ficha",
+        items: [
+          "O livro sempre cobrou (1 PA comum ou incomum, 2 rara, 3 lendária ou mítica) e a ficha não: dava pra escolher qualquer raça de graça no seletor. Agora a raça escolhida desconta o preço dos PA, e a sorteada (roleta, entrevista, ou a caixa 'Sorteei no d100' ao lado do seletor) não. Fichas antigas continuam como estavam.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.109",
+    date: "2026-09-27",
+    title: "As Utilidades ganham um menu, e o Bardo, canções",
+    sections: [
+      {
+        heading: "O menu de Preparações",
+        items: [
+          "O Ladino, o Bardo e o Tático ganham sete Preparações cada, com custo em PP e efeito escritos: Fechadura Limada, Esconderijo Pronto, Armadilha Deixada, Chave Copiada; Rosto Conhecido, Carta de Apresentação, Rumor à Frente, Palco Montado; Suprimento Escondido, Terreno Visto Antes, Rota Mais Curta, Hora Certa — e outras. Gasta-se sem negociar.",
+          "O fato livre continua, pra tudo que o menu não cobre, com as mesmas quatro travas. As Preparações do menu não contam no limite de fatos livres por sessão: o PP já as limita. O Cap. 3 traz um exemplo jogado com as duas.",
+          "Dois talentos que eram só texto ganharam número: Mapa Vivo (o mapa de uma região rende 2d6 × Bônus de Rank PO) e Contrabandista (compra os itens Fora da Guilda pelo dobro).",
+        ],
+      },
+      {
+        heading: "Canções",
+        items: [
+          "A Dissonância deixa de disparar 'quando você usa uma habilidade da árvore' (difícil de explicar na mesa) e vira uma canção. O Bardo tem uma canção ativa de cada vez — Dissonância, Marcha (Cantiga de Marcha), Guerra (Canção de Guerra) ou Réquiem (Réquiem) — e começar ou trocar custa 1 Ação. A Dissonância bate no começo de cada turno seu.",
+          "A Canção de Guerra dava +2 no acerto, imunidade a Amedrontado e ignorava Exaustão, de graça e somada a tudo. Agora é a canção Guerra (+2 no acerto e a Exaustão): a imunidade ao medo é do Réquiem, e escolher uma é abrir mão da outra. A Canção Não Para (Avançado) deixa manter duas ao mesmo tempo por 1 Ação por turno.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.108",
+    date: "2026-09-27",
+    title: "A contabilidade: cada limite num relógio do livro",
+    sections: [
+      {
+        heading: "Os 111 'uma vez por…', lidos um a um",
+        items: [
+          "Sete limites não mudavam nada e saíram: 'uma vez por interceptação' no Aguentar o Baque e no Aguentar Soberano (cada interceptação já é uma), 'uma vez por rodada' no Estado Anulado e 'uma vez por turno' no Passo Entre Rajadas (a Reação já é uma por rodada), o do Primeiro a Ver (só acontece ao entrar no combate) e o do Círculo de Convocação (os 16 PM já seguram). A Leitura de Abertura troca o 'uma vez por combate' por 1 PT.",
+          "'Cena' não é relógio do livro: A Corte na Palma e Duas Saídas passam a ser uma vez por Descanso Curto; o Traço Firme, uma vez por combate.",
+          "O resto fica: quase todo 'uma vez por turno' trava um efeito que não gasta Ação, e quase todo 'uma vez por combate' trava um acerto automático, uma recuperação de PT ou uma nova rolagem.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.107",
+    date: "2026-09-27",
+    title: "Auditoria de balanço",
+    sections: [
+      {
+        heading: "O truque da escola",
+        items: [
+          "As quatro escolas elementais ganham, no Principiante, um truque: Brasa (Fogo), Respingo (Água, deixa Molhado), Rajada Curta (Vento) e Pedrisco (Terra). Vem com o Principiante, sem PA, sem PM: 1 Ação, 1d6 + BC a 9 m, uma vez por turno. O mago de 1º patamar, que gastava 2 Ações pra 1d8 + BC e ficava parado quando o PM acabava, sai de ~6 pra ~12 de dano por turno.",
+        ],
+      },
+      {
+        heading: "Técnicas de topo que rendiam menos que as de baixo",
+        items: [
+          "Golpe do Fim da Linha (Norte, Imperador): + 9d12 (era 4d12) — rendia menos por Ação que o Golpe do Desespero do Santo.",
+          "Arremesso (Lutador, Intermediário): 6d8 (era 4d8) — pede o alvo já agarrado, e rendia menos que a Investida do Principiante.",
+          "Lótus Carmesim (Punho do Fogo, Avançado): dois socos (eram três), e o Punho da Condenação (Santo) sobe pra 8d8 — o Avançado passava o Santo e o Imperador da própria árvore.",
+          "Coroa Solar (Punho do Fogo, Rei) é um halo de 9 m que reage: o dano dela é condicional, não um golpe.",
+          "Das onze técnicas que o check apontava, seis são de área (linha, cone, esfera) e ficam: elas compram alvos, e o check mede um alvo só. Agora ele mede o Corpo por alvo único e a Magia pela melhor carta, e trata menos de 10% como empate. Resultado: nenhuma técnica de topo rende menos que a de baixo.",
+        ],
+      },
+      {
+        heading: "Outros números",
+        items: [
+          "Luz Absoluta (Cura, Imperador): 12d8 radiante (era 20d8). Com 3 Ações, 30 m, e ainda curando os aliados, ela batia mais que o Zero Absoluto da Água, a escola de área. Agora fica abaixo dele.",
+          "Tridente Ancestral (despertar do Superd): o golpe da Cauda-lança é o da mão de apoio — só o dado, um degrau abaixo. Era um ataque inteiro de graça por turno, acima de qualquer talento de Santo.",
+          "A Espada de Luz Verdadeira fica com o maior número do livro: é o pico declarado da árvore de vidro, e agora o simulador a usa uma vez por combate, como a carta manda.",
+        ],
+      },
+      {
+        heading: "O simulador",
+        items: [
+          "Ele passou a respeitar 'Uma vez por turno' e 'Uma vez por combate' escritos no começo da carta. Antes usava a Espada de Luz Verdadeira e o Golpe do Fim da Linha em todo turno. O orçamento de encontro da 0.1.105 continua Equilibrado nos seis patamares depois disso.",
+          "Os moldes da 0.1.105 resolveram a sobrevivência do fim de jogo: o mago de Vigor 0 aguenta 1,6 turno de uma criatura do patamar dele no 6º (antes, meio turno).",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.106",
+    date: "2026-09-27",
+    title: "O catálogo de criaturas entra no livro",
+    sections: [
+      {
+        heading: "Nada fora do livro",
+        items: [
+          "As 28 criaturas do catálogo do /encontros existiam só no site. Agora o Apêndice G tem 'O catálogo': cada uma com o jeito de montar (patamar, papel e arquétipo do Bloco do Monstro) e os traços que o molde não traz. O livro e o site leem a mesma lista.",
+          "Pra caber no livro, o catálogo passou a falar a língua do Cap. 4: 'fogo' virou ígneo, 'eletricidade' elétrico, 'concussão' contundente, 'magia' arcano (que entrou também no simulador), e o 'necrótico', que não existe, saiu.",
+          "Orsted, Hitogami e Laplace saíram do catálogo: com 'resistência a todas' e 'imune a danos mortais', eram personagens da história, não encontros. O 6º patamar ganhou a Hidra de Manatita, o Dragão Vermelho Ancião e o Rei Demônio Imortal. O 'General Laplace' virou General Demônio.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.105",
     date: "2026-09-27",
     title: "O orçamento de encontro diz a verdade",

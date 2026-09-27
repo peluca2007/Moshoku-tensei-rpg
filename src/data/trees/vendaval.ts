@@ -181,7 +181,7 @@ export const VENDAVAL_TREE: Tree = {
           ptCost: 1,
           range: "9 metros",
           actions: { normal: 1 },
-          effect: "1 Reação, quando um inimigo errar um ataque contra você: desloque-se até 9m antes que ele perceba. Uma vez por turno.",
+          effect: "1 Reação, quando um inimigo errar um ataque contra você: desloque-se até 9m antes que ele perceba.",
         },
       ],
     },

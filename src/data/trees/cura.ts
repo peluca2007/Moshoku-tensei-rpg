@@ -430,7 +430,7 @@ export const CURA_TREE: Tree = {
           actions: { normal: 3, silenciosa: 2 },
           costNote:
             "3 Ações em vez das 4 do rank Imperador, e 31 PM em vez dos 26 do Santuário. É cura de emergência + dano apocalíptico na mesma magia: se um aliado está caindo e a horda de mortos-vivos rodeia, a Luz Absoluta não pode esperar dois turnos. A velocidade custa 5 PM extras, e o cântico encolhe junto — não há tempo pra poema quando o que pede a luz é a sobrevivência imediata.",
-          damage: { normal: "20d8 de dano radiante em cada criatura hostil (Vigor para metade)" },
+          damage: { normal: "12d8 de dano radiante em cada criatura hostil (Vigor para metade)" },
           healing: { normal: "5d8 + BC" },
           effect: "Criaturas hostis na área sofrem o dano. Mortos-vivos, construtos e corrompidos não testam, e os mortos-vivos e construtos que tiverem menos da metade dos PV máximos são destruídos. Todo aliado vivo na área recupera 5d8 + BC de PV (dados dobrados com Ferida Fresca).",
           incantation:
