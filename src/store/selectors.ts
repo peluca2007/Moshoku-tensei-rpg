@@ -575,7 +575,11 @@ export function getArmorClass(state: StoreState): number {
   // quem digitou uma CA à mão está declarando o corpo do personagem, e a
   // condição é algo que acontece com esse corpo depois.
   const quebrantado = getPenalidadeQuebrantado(state);
-  const computed = 10 + getFinalAttribute(state, "agilidade") + getFlatBonusSum(state, "armorClass") + equippedBonus;
+  // Doutrina do Estilo Deus da Espada (Cap. 3): CA base −2 pra quem segue a
+  // árvore. O livro sempre cobrou; a ficha esquecia (achado em 2026-09-27).
+  const doutrina = state.unlockedRanks.some((r) => r.treeId === "deus-da-espada") ? 2 : 0;
+  const computed =
+    10 + getFinalAttribute(state, "agilidade") + getFlatBonusSum(state, "armorClass") + equippedBonus - doutrina;
   return (state.overrides.armorClass ?? computed) - quebrantado;
 }
 
