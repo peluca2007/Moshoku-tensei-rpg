@@ -348,8 +348,8 @@ export default function Chapter2() {
           </P>
         </Warning>
         <P>
-          <b>Onde consultar:</b> o catálogo do Cap. 3 lista as Magias Combinadas, seus custos e os ranks
-          exigidos nas duas árvores.
+          <b>Onde consultar:</b> a tabela abaixo lista as Magias Combinadas, seus custos e os ranks exigidos
+          nas duas árvores.
         </P>
         <Aside title="Maestria e pré-requisitos">
           A Maestria dá o <i>direito</i> de aprender Magia Combinada; cada magia exige ainda as duas árvores
@@ -658,7 +658,7 @@ export default function Chapter2() {
           Ela segura corpos e projéteis até perder os PV; magia atravessa. Selar não tem PV e barra magia pela{" "}
           <b>Régua do Selo</b>: magia de rank igual ou abaixo da potência não atravessa; um rank acima atravessa
           com dados, área e duração pela metade; dois ou mais acima atravessam inteiras. Corpos, armas e Touki
-          atravessam o selo.
+          atravessam o selo. Um selo com essência de escola (Selar + Fogo) só barra magia daquela escola.
         </P>
         <FalaDaRoxy>
           Erguer segura corpo. Selar segura magia. Troque os dois e o ogro atravessa o seu selo rindo, ou a Bola
@@ -689,8 +689,14 @@ export default function Chapter2() {
           As cartas da árvore (Cap. 3) são fórmulas dessa mesma frase, com os mesmos números. O que a carta vende
           é o que o desenho não tem: ela conjura <b>como magia comum, com cântico</b> — Recitação Perfeita,
           Encantamento Encurtado e Conjuração Silenciosa (§2) — e fica fora da regra de uma fórmula que fere por
-          turno. Algumas ensinam uma <b>exceção</b> escrita na própria carta: nascer como Reação, cobrir uma vila
+          turno. Carta com duração de giz ou de pedra <b>não pede o preparo</b>: sai com o cântico e dura o que
+          diz. Algumas ensinam uma <b>exceção</b> escrita na própria carta: nascer como Reação, cobrir uma vila
           inteira.
+        </P>
+        <P>
+          A fórmula desenhada, sem carta, também é <b>Conjurar</b>: vale o Teste de Concentração e a Perda de Foco
+          (§6). Mas ela não se encurta, não se silencia e não ganha a Recitação Perfeita — isso é o que a carta
+          vende.
         </P>
 
         <SubTitle id="cap2-8-exercicios">Três exercícios</SubTitle>

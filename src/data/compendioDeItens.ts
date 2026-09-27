@@ -229,7 +229,7 @@ export const COMPENDIO_ITENS: ShopItem[] = [
     category: "armadura",
     type: "armadura",
     description:
-      "Placas de aço imaculado incrustadas de orações. Armadura média: limita o bônus de Agilidade a +2 (Cap. 4, §1). Quem conjura Cura vestindo isto soma +1 aos PV curados por conjuração.",
+      "Placas de aço imaculado incrustadas de orações. Armadura média (Cap. 1, §4). Quem conjura Cura vestindo isto soma +1 aos PV curados por conjuração.",
     price: 450,
     guildRankRequired: "C",
     acBonus: 4,

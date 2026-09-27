@@ -459,7 +459,7 @@ export default function Chapter4() {
         <Aside title="Os tipos de dano do livro">
           <P>
             <b>Cortante, perfurante e contundente</b> — os três formam o &ldquo;físico&rdquo;. Depois:{" "}
-            <b>ígneo, frio, elétrico, radiante, sônico, veneno, ácido, psíquico, plasma, magma, queda e
+            <b>ígneo, frio, elétrico, radiante, sônico, arcano, veneno, ácido, psíquico, plasma, magma, queda e
             sufocamento</b>.
           </P>
           <P>
@@ -636,8 +636,7 @@ export default function Chapter4() {
         <Aside title="Quando o Corpo Sobrevive mas a Mente Cobra a Conta">
           <P>
             Sobreviver não é sair ileso — mas cair já cobra pela Exaustão (§7). O Trauma é o que a mente
-            leva: sempre que você <b>testemunhar a morte de um aliado</b> a até 9 metros, ou <b>matar alguém
-            que implorava por clemência</b>, ganhe <b>1 ponto de Trauma</b>.
+            leva: sempre que você <b>testemunhar a morte de um aliado</b> a até 9 metros, ganhe <b>1 ponto de Trauma</b>.
           </P>
           <P>
             <b>Efeito, pelo total de Trauma acumulado</b> (Vantagem é binária, então a escala tem degraus, e

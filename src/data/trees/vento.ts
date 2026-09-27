@@ -182,7 +182,7 @@ export const VENTO_TREE: Tree = {
           "Mira na área (Cap. 2, §7): escolha até INTELECTO criaturas para excluir de cada área sua. Você recebe Deslocamento de Voo permanente igual ao seu Deslocamento normal, sem custo de PM, enquanto consciente e não Exausto. Desbloqueia o direito de combinar escolas (Magia Combinada, Cap. 2).",
       },
       talents: [
-        { id: "vento-constante", name: "Vento Constante", paCost: RANK_PA_COST.talent.Avançado, description: "Você mantém duas magias de Vento sustentadas simultaneamente sem concentração." },
+        { id: "vento-constante", name: "Vento Constante", paCost: RANK_PA_COST.talent.Avançado, description: "Você sustenta duas magias de Vento ao mesmo tempo (a regra geral é uma, Cap. 2, §7)." },
         { id: "redirecionar", name: "Redirecionar", paCost: RANK_PA_COST.talent.Avançado, description: "1 Reação e 2 PM: um ataque à distância mundano ou projétil mágico dirigido a você é desviado para outra criatura a até 9m." },
         { id: "corpo-de-corrente", name: "Corpo de Corrente", paCost: RANK_PA_COST.talent.Avançado, description: "Além de Caído e Atolado, você é imune a Preso e Agarrado, e atravessa qualquer fresta por onde caiba ar." },
       ],

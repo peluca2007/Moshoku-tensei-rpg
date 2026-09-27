@@ -275,7 +275,7 @@ export const NORTE_TREE: Tree = {
       mastery: {
         name: "Leitura de Batalha",
         description:
-          "Ao final do primeiro turno de combate, identifique estilo, rank aproximado e maior fraqueza de um inimigo — contra ele, +2 em acertos e testes de resistência pelo resto do combate. Vantagem de Estilo contra o Deus da Água não é mais anulada por diferença de rank. O Improviso pode ser usado três vezes por combate.",
+          "Abrir o Rei do Norte custa 2 PA, e não 3. Ao final do primeiro turno de combate, identifique estilo, rank aproximado e maior fraqueza de um inimigo — contra ele, +2 em acertos e testes de resistência pelo resto do combate. Vantagem de Estilo contra o Deus da Água não é mais anulada por diferença de rank. O Improviso pode ser usado três vezes por combate.",
       },
       talents: [],
       abilities: [

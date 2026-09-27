@@ -337,7 +337,7 @@ export const AGUA_TREE: Tree = {
       mastery: {
         name: "Domínio Climático",
         description:
-          "Você é imune aos danos e efeitos colaterais das suas próprias magias de área e de clima, e pode poupar um número de aliados igual ao seu Intelecto. Enxerga perfeitamente através de chuva, névoa e nevasca, e mantém uma magia de clima ativa sem gastar concentração nem Ações. As magias de clima da escola são quatro: Tempestade, Cumulonimbus, Era Glacial e Dilúvio.",
+          "Você é imune aos danos e efeitos colaterais das suas próprias magias de área e de clima, e pode poupar um número de aliados igual ao seu Intelecto. Enxerga perfeitamente através de chuva, névoa e nevasca, e mantém uma magia de clima ativa sem gastar Ações e sem ocupar a sua sustentação (Cap. 2, §7). As magias de clima da escola são quatro: Tempestade, Cumulonimbus, Era Glacial e Dilúvio.",
       },
       talents: [
         {

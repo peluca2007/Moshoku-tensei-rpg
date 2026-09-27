@@ -13,7 +13,7 @@ export const BARDO_TREE: Tree = {
       "A pergunta dele é \"quem eu convenço?\". Faixa exclusiva: só o Bardo altera o que um inimigo SENTE.",
     loop: [
       "Toque. Enquanto estiver cantando, tocando ou falando, aliados que te ouvem somam o seu Bônus de Rank num teste de perícia por cena.",
-      "Sustente. Do Avançado em diante a canção não para: você mantém um efeito indefinidamente, sem Ação e sem concentração.",
+      "Sustente. Do Avançado em diante a canção não para: você mantém um efeito indefinidamente, sem Ação e sem ocupar a sua sustentação.",
       "Cresça o Escopo. Uma pessoa, uma taverna, um vilarejo, uma cidade, um reino, um continente — a cada patamar a sua reputação alcança mais longe, e vira verdade aceita.",
     ],
     cost:
@@ -96,7 +96,7 @@ export const BARDO_TREE: Tree = {
           range: "Voz",
           actions: { normal: 1 },
           effect:
-            "Teste de Espírito contra Espírito do alvo. Se vencer, por 3 turnos ele só consegue pensar em você: Desvantagem em ataques que não sejam contra você, e não pode usar habilidades que exijam concentração ou cálculo. O risco: ele vai te atacar.",
+            "Teste de Espírito contra Espírito do alvo. Se vencer, por 3 turnos ele só consegue pensar em você: Desvantagem em ataques que não sejam contra você, e não pode sustentar magia nem conjurar Ritual. O risco: ele vai te atacar.",
           incantation:
             "Palavras afiadas como punhal, fiquem gravadas na mente do insolente e retirem dele a paz e o foco para lutar com precisão. Insulto que Fica!",
         },
@@ -109,7 +109,7 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A Canção Não Para",
         description:
-          "Escopo: um vilarejo, uma companhia mercenária, uma corte pequena. Você sustenta um efeito de Bardo indefinidamente sem gastar Ação nem concentração. Segurar dois ao mesmo tempo exige 1 Ação por turno.",
+          "Escopo: um vilarejo, uma companhia mercenária, uma corte pequena. Você sustenta um efeito de Bardo indefinidamente sem gastar Ação e sem ocupar a sua sustentação. Segurar dois ao mesmo tempo exige 1 Ação por turno.",
       },
       talents: [
         { id: "requiem", name: "Réquiem", paCost: UTILITY_PA_COST.talent.Avançado, description: "Aliados que te ouvem ficam imunes a Amedrontado e têm Vantagem contra efeitos que manipulem emoção ou mente." },

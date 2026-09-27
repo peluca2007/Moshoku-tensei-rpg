@@ -145,7 +145,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "apendice-g-bloco", label: "— O Bloco do Monstro" },
       { id: "apendice-g-atributos", label: "— Os atributos de uma criatura" },
       { id: "apendice-g-subarquetipo", label: "— O sub-arquétipo" },
-      { id: "apendice-g-rank", label: "— O Bônus de Rank de uma criatura" },
+      { id: "apendice-g-rank", label: "— CD dos efeitos da criatura" },
       { id: "apendice-g-acoes", label: "— Como escrever as Ações dela" },
       { id: "apendice-g-orcamento", label: "— Orçamento de Encontro" },
       { id: "apendice-g-chefe", label: "— Por que o Chefe pesa cinco" },

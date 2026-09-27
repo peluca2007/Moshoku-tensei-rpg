@@ -544,7 +544,7 @@ export default function Appendices() {
           <b>O arquétipo também diz o formato.</b> O Bruto dá um golpe grande e uma investida lenta; o Ágil,
           dois golpes rápidos; a Fortaleza troca metade do dano dela por não sair do lugar; o Conjurador e a
           Mente trocam precisão por área — e área sempre pede <i>teste de resistência</i> contra a CD dela, e
-          nunca rolagem de ataque (Cap. 2, §7).
+          nunca rolagem de ataque.
         </P>
         <Aside title="O piso do dado, e o lacaio de 1º patamar">
           <P>

@@ -1278,7 +1278,7 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
     const qa = arteDeCima ? pedacos(arteDeCima).at(-1) : undefined;
     if (arteDeCima && qa && Math.abs(base(qa) - base(fim)) < 12) {
       const atual = qa.height / r.k;
-      const nova = Math.min(ARTE_MAXIMA, atual + vao);
+      const nova = Math.min(ARTE_MAXIMA, tetoDaArte(arteDeCima), atual + vao);
       if (nova - atual >= 40) {
         consertos.push(() => alturaDaArte(arteDeCima, nova));
         desfazerEncaixe.push(() => alturaDaArte(arteDeCima, null));
@@ -1289,7 +1289,7 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
     // 3. A arte da carta de baixo sobe pro vão.
     const arteDeBaixo = arteDe(bloco);
     if (arteDeBaixo && vao >= ARTE_MINIMA && !artesQueNaoCouberam.has(arteDeBaixo)) {
-      const alto = Math.min(ARTE_MAXIMA, Math.floor(vao - 12));
+      const alto = Math.min(ARTE_MAXIMA, tetoDaArte(arteDeBaixo), Math.floor(vao - 12));
       const colunaDoVao = coluna(fim);
       conferir.push(() => {
         const qa = pedacos(arteDeBaixo)[0];
@@ -1349,6 +1349,15 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
   const falhas = conferir.map((ok) => !ok());
   desfazerDaArte.forEach((volta, i) => falhas[i] && volta());
   return consertos.length - falhas.filter(Boolean).length;
+}
+
+/**
+ * Até onde a arte pode crescer sem ampliar o arquivo mais de 1,5× (borra). Sem
+ * o arquivo carregado ainda, não se sabe: vale o teto geral.
+ */
+function tetoDaArte(arte: HTMLElement): number {
+  const img = arte.querySelector("img:not(.blur-2xl)") as HTMLImageElement | null;
+  return img?.naturalHeight ? img.naturalHeight * 1.5 : ARTE_MAXIMA;
 }
 
 /**
