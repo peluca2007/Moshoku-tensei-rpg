@@ -5,8 +5,8 @@ import { canPurchaseAbility, getPaSpent } from "@/store/selectors";
 import { FormulaEscolha } from "./magiaTeorica";
 
 const formula: FormulaEscolha = {
-  rank: "Principiante", potencia: "Principiante", essencia: "fogo",
-  operadores: ["projetar"], forma: "circulo", meio: "ar", gatilho: false, condicao: "entrada",
+  rank: "Principiante", essencia: "fogo",
+  verbos: ["lancar"], forma: "circulo", meio: "ar", armada: false, gatilho: "entrada",
 };
 const ficha = {
   id: "teste", startingTreeId: "teorica",
@@ -33,9 +33,9 @@ describe("vocabulário da Magia Teórica", () => {
     expect(getPaSpent(comFogo)).toBe(1); // a segunda árvore custa 1 PA; o símbolo passa a ser gratuito
   });
 
-  it("Rejeitar é uma compra própria mesmo para quem já conhece outra essência", () => {
-    const comFogo = { ...ficha, unlockedRanks: [...ficha.unlockedRanks, { treeId: "fogo", rank: "Principiante" as const }] };
-    expect(avaliarFormulaNaFicha(comFogo, { ...formula, operadores: ["rejeitar"] })).toContain("Aprenda Rejeitar por 1 PA.");
+  it("os quatro verbos vêm com a Maestria; o que trava é o rank", () => {
+    expect(avaliarFormulaNaFicha(ficha, { ...formula, essencia: "mana", verbos: ["selar"] })).toEqual([]);
+    expect(avaliarFormulaNaFicha(ficha, { ...formula, essencia: "mana", verbos: ["erguer", "selar"] }).join(" ")).toContain("Avançado");
   });
 
   it("Bardo ensina Som sem exigir a compra avulsa", () => {

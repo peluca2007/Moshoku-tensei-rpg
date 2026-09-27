@@ -1,13 +1,14 @@
 import type { ReactNode } from "react";
-import { criarFormula, ESSENCIAS, FORMAS, OPERADORES, type FormaId, type FormulaEscolha } from "@/lib/magiaTeorica";
+import { criarFormula, ESSENCIAS, FORMAS, VERBOS, type FormaId, type FormulaEscolha } from "@/lib/magiaTeorica";
 import { GlifoComposto } from "./FormulaGlyph";
 
 /**
  * A AULA DA ROXY — a Magia Teórica ensinada em lições (2026-09-26).
  *
  * Pedido do autor: "na parte da Magia Teórica, tenta ser o melhor professor
- * possível". A §8 do Cap. 2 virou uma aula em cinco lições, uma peça nova por
- * vez, e cada lição paga um desenho ou uma conta feita na lousa. Nada aqui é
+ * possível". Desde "três palavras e uma conta" (2026-09-26) a aula tem TRÊS
+ * lições — a frase, a conta, preparar e armar —, e cada uma paga um desenho ou
+ * uma conta feita na lousa. Nada aqui é
  * número escrito à mão: o desenho, a conta e as respostas dos exercícios saem
  * do mesmo motor que as cartas e o laboratório usam (src/lib/magiaTeorica.ts).
  * Mudou uma constante, a aula muda junto.
@@ -15,13 +16,12 @@ import { GlifoComposto } from "./FormulaGlyph";
 
 const BASE: FormulaEscolha = {
   rank: "Principiante",
-  potencia: "Principiante",
   essencia: "mana",
-  operadores: ["projetar"],
+  verbos: ["lancar"],
   forma: "circulo",
   meio: "ar",
-  gatilho: false,
-  condicao: "entrada",
+  armada: false,
+  gatilho: "entrada",
 };
 
 const formula = (e: Partial<FormulaEscolha>): FormulaEscolha => ({ ...BASE, ...e });
@@ -58,11 +58,11 @@ export function DesenhoAnotado({ escolha, titulo }: { escolha: Partial<FormulaEs
   const e = formula(escolha);
   const r = criarFormula(e);
   const essencia = ESSENCIAS[e.essencia];
-  const acao = OPERADORES[e.operadores[0]];
+  const acao = VERBOS[e.verbos[0]];
   const forma = FORMAS[e.forma];
   const rotulos: [number, string, string][] = [
     [-58, "1 · núcleo", `${essencia.nome}: o que existe`],
-    [4, "2 · ação", `${acao.nome}, traçada por cima`],
+    [4, "2 · verbo", `${acao.nome}, traçado por cima`],
     [66, "3 · forma", `${forma.nome}: o contorno`],
   ];
   return (
@@ -73,7 +73,7 @@ export function DesenhoAnotado({ escolha, titulo }: { escolha: Partial<FormulaEs
           <Contorno forma={e.forma} />
         </g>
         <g className="text-parchment-800 dark:text-parchment-100">
-          <GlifoComposto essencia={e.essencia} operadores={e.operadores} />
+          <GlifoComposto essencia={e.essencia} verbos={e.verbos} />
         </g>
         {rotulos.map(([y, rotulo, texto], i) => (
           <g key={rotulo}>
@@ -116,13 +116,13 @@ export function LousaDaConta({ escolha, titulo }: { escolha: Partial<FormulaEsco
     valor: valores[i],
     total: valores.slice(0, i + 1).reduce((a, b) => a + b, 0),
   }));
-  const frase = [ESSENCIAS[e.essencia].nome, ...e.operadores.map((id) => OPERADORES[id].nome), FORMAS[e.forma].nome].join(" + ");
+  const frase = [ESSENCIAS[e.essencia].nome, ...e.verbos.map((id) => VERBOS[id].nome), FORMAS[e.forma].nome].join(" + ");
   return (
     <div className="livro-lousa my-4 rounded-xl border border-parchment-300 bg-parchment-900/90 p-3.5 text-sm text-parchment-100 dark:border-parchment-700">
       <p className="text-2xs font-bold uppercase tracking-[0.22em] text-gold-300">{titulo}</p>
       <p className="livro-lousa-frase mt-1 font-semibold">{frase}</p>
       <p className="text-xs text-parchment-300">
-        Construção {e.rank} · potência {r.potencia} · {e.meio === "ar" ? "mana no ar" : e.meio}
+        Potência {r.potencia} · {e.meio === "ar" ? "desenhada no ar" : e.meio === "giz" ? "em giz" : "em pedra"}
       </p>
       <table className="livro-lousa-conta mt-2 w-full text-xs">
         <tbody>
@@ -149,21 +149,21 @@ export function LousaDaConta({ escolha, titulo }: { escolha: Partial<FormulaEsco
 const EXERCICIOS: { pergunta: string; escolha: Partial<FormulaEscolha>; resposta: (r: ReturnType<typeof criarFormula>) => string }[] = [
   {
     pergunta:
-      "Você tem Teórica Intermediária e conhece o símbolo do Fogo. Monte um projétil de Fogo, potência Intermediária, que chegue o mais longe possível. Que forma você fecha, quanto custa e até onde vai?",
-    escolha: { rank: "Intermediário", potencia: "Intermediário", essencia: "fogo", operadores: ["projetar"], forma: "linha" },
-    resposta: (r) => `Fogo + Projetar + Linha: ${r.pm} PM (${r.conta.join(" + ")}). Vai a ${r.alcance} e causa ${r.dano} de dano ${r.tipo}. A Linha é a forma que estica o alcance em 50%.`,
+      "Você tem Teórica Intermediária e conhece a essência Fogo. Monte um tiro de Fogo que chegue o mais longe possível. Que forma você fecha, quanto custa e até onde vai?",
+    escolha: { rank: "Intermediário", essencia: "fogo", verbos: ["lancar"], forma: "linha" },
+    resposta: (r) => `Fogo + Lançar + Linha: ${r.pm} PM (${r.conta.join(" + ")}). Vai a ${r.alcance} e causa ${r.dano} de dano ${r.tipo}. A Linha é a forma que estica o alcance em 50%.`,
   },
   {
     pergunta:
-      "A mesma construção Intermediária, agora pra segurar a porta: uma parede de Terra em Quadrado, potência Intermediária, desenhada em giz. Quantos PV ela tem e quanto PM custa?",
-    escolha: { rank: "Intermediário", potencia: "Intermediário", essencia: "terra", operadores: ["conter"], forma: "quadrado", meio: "giz" },
-    resposta: (r) => `${r.pv} PV por ${r.pm} PM: os PV da potência, +50% da Terra e +50% do Quadrado, somados (não multiplicados). Dura ${r.duracao}.`,
+      "A mesma Teórica Intermediária, agora pra segurar a porta: uma parede de Terra em Quadrado, desenhada em giz. Quantos PV ela tem, quanto PM custa e quanto dura?",
+    escolha: { rank: "Intermediário", essencia: "terra", verbos: ["erguer"], forma: "quadrado", meio: "giz" },
+    resposta: (r) => `${r.pv} PV por ${r.pm} PM: os PV da potência, +50% da Terra e +50% do Quadrado, somados (não multiplicados). Em giz, dura ${r.duracao}, e ativar custa 1 Ação.`,
   },
   {
     pergunta:
-      "Um colega de Teórica Intermediária escreveu Mana + Expressar + Projetar + Círculo, querendo mandar um sinal de luz até o outro lado do vale. Por que o desenho não sai do papel?",
-    escolha: { rank: "Intermediário", potencia: "Principiante", operadores: ["expressar", "projetar"] },
-    resposta: (r) => `${r.erros[0]} O sinal nasce no ponto do desenho: pra avisar longe, desenhe o sinal lá (em giz, no caminho) ou use outra célula.`,
+      "Um colega de Teórica Intermediária quer uma parede que também barre magia: Mana + Erguer + Selar + Círculo. Por que o desenho não sai do papel, e o que ele pode fazer hoje?",
+    escolha: { rank: "Intermediário", verbos: ["erguer", "selar"] },
+    resposta: (r) => `${r.erros[0]} Hoje, ele desenha duas fórmulas — uma parede e um selo, uma em cada turno ou uma delas preparada em giz.`,
   },
 ];
 

@@ -6,7 +6,7 @@ import { getTreeById, TREES } from "@/data/trees";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import LaboratorioDeFormulas from "./LaboratorioDeFormulas";
 import Prancha from "./Prancha";
-import { TabelaDaPotencia, TabelasDasPecas, TabelaDasPrimeirasFrases, TabelaDosContatos, TabelaDosMeios } from "./RegrasDaTeorica";
+import { TabelaDaPotencia, TabelaDasEssencias, TabelaDasPalavras, TabelaDasPrimeirasFrases, TabelaDosMeios } from "./RegrasDaTeorica";
 import { DesenhoAnotado, ExerciciosDaTeorica, FalaDaRoxy, LousaDaConta, RespostasDaTeorica } from "./AulaDaTeorica";
 
 function tex(s: string): string {
@@ -529,9 +529,9 @@ export default function Chapter2() {
               "Remove o ar em volta da cabeça por 1 turno. Sem teste contra rank igual ou inferior ao seu em Vento; contra superior, teste de Vigor. Não para Conjuração Silenciosa.",
             ],
             [
-              "Rejeitar (Magia Teórica)",
+              "Selar (Magia Teórica)",
               "Magia Teórica",
-              "Não interrompe: a magia é conjurada e barrada ao cruzar a fronteira do selo (§8). Conter também não — ergue uma parede física, e magia atravessa.",
+              "Não interrompe: a magia é conjurada e barrada ao cruzar a fronteira do selo (§8). Erguer também não — levanta uma parede física, e magia atravessa.",
             ],
             [
               "Corte de Braço (Deus da Espada, Principiante)",
@@ -587,7 +587,7 @@ export default function Chapter2() {
             ],
             [
               "Quantas magias posso sustentar?",
-              "Uma. Erguer uma segunda derruba a primeira, salvo carta que diga o contrário (ex.: Maestria de Santo da Cura, Vento Constante). Um circuito da Magia Teórica, com todas as células ligadas, conta como uma sustentação só (§8). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
+              "Uma. Erguer uma segunda derruba a primeira, salvo carta que diga o contrário (ex.: Maestria de Santo da Cura, Vento Constante). Uma parede ou um selo da Magia Teórica conta como a sua sustentação; fórmulas armadas não (§8). Sustentar não gasta Ação, mas cai se você for Incapacitado ou cair a 0 PV.",
             ],
             [
               "E se eu ficar sem PM no meio?",
@@ -606,179 +606,113 @@ export default function Chapter2() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap2-8">8. Magia Teórica — Oficina de Fórmulas</SectionTitle>
+        <SectionTitle id="cap2-8">8. Magia Teórica — Três Palavras e uma Conta</SectionTitle>
         <Prancha id="cap2-8" />
         <P>
-          A Magia Teórica não tem uma lista de magias: tem uma <b>gramática</b>. Você escreve uma frase em mana
-          — um núcleo, uma ação sobre ele, um contorno —, paga o PM da frase e ela acontece. É a herdeira da
-          antiga árvore de Barreira: a defesa agora é o ramo de <b>Conter</b> (deter corpos) e{" "}
-          <b>Rejeitar</b> (deter magia) da mesma gramática.
+          A Magia Teórica não tem uma lista de magias: tem uma <b>frase</b>. Você escreve três palavras em mana
+          — uma essência, um verbo, uma forma —, paga o PM e ela acontece. Ataque, parede, selo contra magia e
+          armadilha saem da mesma frase: a defesa não é outra árvore, é o verbo <b>Erguer</b> (segura corpo) e o
+          verbo <b>Selar</b> (segura magia).
         </P>
         <P>
-          Esta seção é uma <b>aula em cinco lições</b>, e cada lição acrescenta uma peça só. Leia na ordem; no
-          fim há três exercícios com resposta, e o Laboratório pra você montar as suas.
+          Esta seção é uma <b>aula em três lições</b>: a frase, a conta, e preparar e armar. No fim há três
+          exercícios com resposta, e o Laboratório pra você montar as suas.
         </P>
         <Aside title="Quem pode desenhar">
-          Para construir ou alterar uma fórmula, você precisa ter Magia Teórica no rank usado e conhecer
-          todos os símbolos que inscreve. Outra árvore pode ensinar uma essência, como Fogo ou Som; aprender
-          a essência não dá a capacidade de compor fórmulas. Qualquer criatura capaz de pagar o PM pode{" "}
-          <b>alimentar</b> um desenho pronto, mesmo sem entendê-lo — PM a mais não amplia o efeito.
+          Pra desenhar uma fórmula você precisa ter Magia Teórica e conhecer as palavras dela; a essência de
+          outra escola vem de graça com o Principiante daquela escola, ou por 1 PA na Teórica. Qualquer
+          criatura que pague o PM pode <b>alimentar</b> uma fórmula já pronta, mesmo sem entendê-la.
         </Aside>
 
-        <SubTitle id="cap2-8-frase">Lição 1 — A frase: núcleo, ação e forma</SubTitle>
-        <P>Toda fórmula é uma frase de três partes, e elas são desenhadas nesta ordem:</P>
-        <List
-          items={[
-            <span key="n">
-              <b>O núcleo</b> (a essência) diz <i>o que existe</i>: mana pura, fogo, água, vida…
-            </span>,
-            <span key="a">
-              <b>A ação</b> (o operador) diz <i>o que acontece</i> com ele, e é traçada <b>por cima</b> do
-              núcleo, não ao lado: os dois traços viram um glifo só.
-            </span>,
-            <span key="f">
-              <b>A forma</b> fecha o contorno em volta e diz <i>como o efeito se organiza</i>: mais longe, mais
-              forte, mais largo.
-            </span>,
-          ]}
-        />
-        <DesenhoAnotado titulo="A primeira fórmula: o Dardo Arcano" escolha={{}} />
-        <FalaDaRoxy>
-          Primeiro o que existe, depois o que acontece, por último o contorno. Frase sem ação é mana parada:
-          não acontece nada, e o PM também não sai.
-        </FalaDaRoxy>
+        <SubTitle id="cap2-8-frase">Lição 1 — A frase: essência, verbo e forma</SubTitle>
         <P>
-          Na entrada da árvore você já conhece <b>Mana</b>, as ações <b>Projetar</b>, <b>Expressar</b> e{" "}
-          <b>Conter</b>, e as formas <b>Círculo</b>, <b>Quadrado</b> e <b>Linha</b>. Só com isso já saem
-          cinco magias diferentes:
+          Toda fórmula tem três palavras, uma de cada: a <b>essência</b> diz <i>o que existe</i> (mana, fogo,
+          vida…), o <b>verbo</b> diz <i>o que acontece</i> e é traçado por cima dela, e a <b>forma</b> fecha o
+          contorno e diz <i>como o efeito se organiza</i>. A ordem em que você as desenha não muda nada.
+        </P>
+        <DesenhoAnotado titulo="A primeira fórmula: o Dardo Arcano" escolha={{}} />
+        <P>
+          Na entrada da árvore você já conhece a essência <b>Mana</b>, os quatro verbos e as formas{" "}
+          <b>Círculo</b>, <b>Linha</b> e <b>Quadrado</b>. Só com isso já saem cinco magias:
         </P>
         <TabelaDasPrimeirasFrases />
+        <TabelaDasPalavras />
         <P>
-          Troque <b>uma peça</b> e veja o que muda: Linha no lugar de Círculo leva o Dardo mais longe; Círculo
-          no lugar de Quadrado deixa a parede com menos PV e mais duração. Um desenho novo com símbolos que
-          você já conhece <b>não custa PA</b> — PA aprende a peça; PM alimenta cada uso.
+          Uma forma que não diz nada sobre o seu verbo não muda nada — e custa assim mesmo. Nenhuma combinação
+          é proibida: Quadrado num Lançar só é PM jogado fora. Do <b>Avançado</b> em diante cabe um{" "}
+          <b>segundo verbo</b> na mesma fórmula: Erguer + Selar é a parede que também barra magia. Quando Lançar
+          anda com outro verbo, ele só leva o efeito longe — não fere.
         </P>
-
-        <SubTitle id="cap2-8-pecas">Lição 2 — O alfabeto: as peças</SubTitle>
-        <P>
-          As peças são as letras. As <b>essências</b> são os substantivos, as <b>ações</b> são os verbos e as{" "}
-          <b>formas</b> são a moldura. Cada uma tem seu custo em PM e um jeito de ser aprendida:
-        </P>
-        <TabelasDasPecas />
+        <TabelaDasEssencias />
         <FalaDaRoxy>
-          Você não decora feitiços, decora letras, e escreve o que a situação pedir. É por isso que um mago
-          de Teórica parece saber tudo: ele só sabe o alfabeto muito bem.
+          Você não decora feitiços, decora palavras, e escreve o que a situação pedir. Primeiro o que existe,
+          depois o que acontece, por último o contorno.
         </FalaDaRoxy>
 
-        <SubTitle id="cap2-8-custo">Lição 3 — A conta: PM, potência e construção</SubTitle>
-        <P>
-          <b>Some o PM da essência, das ações e da forma.</b> O núcleo e a primeira ação são dois símbolos e
-          não pagam nada a mais. Cada símbolo seguinte (outra ação, ou o gatilho) custa <b>+1 PM</b> pela
-          sobreposição, além do seu próprio custo: é o traço cruzando o traço. Com mais de uma ação, pequenos
-          números junto às inscrições dão a ordem. Um gatilho custa +2 PM e conta como símbolo. Some por fim o
-          acréscimo da <b>potência</b>.
-        </P>
-        <P>
-          <b>Construção</b> é o seu rank na Teórica: limita quantos símbolos e quanto PM cabem numa célula.{" "}
-          <b>Potência</b> é o patamar dos números do efeito — dados, PV, alcance, área —, escolhida ao
-          desenhar e nunca acima da construção. Um Rei pode desenhar um alarme de potência Principiante, e
-          ele custa como um.
-        </P>
+        <SubTitle id="cap2-8-custo">Lição 2 — A conta: a potência, mais 1 por palavra</SubTitle>
+        <Warning title="A conta inteira">
+          <b>PM = o custo da potência + 1 por palavra fora do básico.</b> O básico é Mana, o primeiro verbo e o
+          Círculo. Outra essência, outra forma e o segundo verbo custam +1 cada; armar custa +2. A{" "}
+          <b>potência</b> é o seu rank na Teórica — ou menos, se você quiser uma fórmula mais barata.
+        </Warning>
         <TabelaDaPotencia />
         <LousaDaConta
           titulo="Conta na lousa: uma onda de fogo"
-          escolha={{ rank: "Intermediário", potencia: "Intermediário", essencia: "fogo", operadores: ["projetar", "expandir"] }}
+          escolha={{ rank: "Intermediário", essencia: "fogo", verbos: ["lancar"], forma: "onda" }}
         />
         <P>
-          <b>Dano e cura.</b> Uma projeção de dano rola os dados da potência em <b>d8 + BC</b> (1d20 + BC
-          contra a CA pra acertar). Com Expandir, a área divide os dados pela metade e o alvo testa
-          Agilidade contra CD 8 + BC, metade no sucesso. Vida projetada <b>cura</b> os dados da potência em
-          d8, sem o BC. <b>Uma projeção ofensiva por turno</b>: você pode desenhar outras fórmulas no mesmo
-          turno, mas só uma delas causa dano.
+          <b>Ferir e curar.</b> Lançar rola tantos d8 quanto o PM da potência, + BC, com 1d20 + BC contra a CA.
+          Na Onda, cada um na área testa Agilidade contra CD 8 + BC, metade no sucesso. Vida cura os dados, sem
+          o BC. <b>Uma fórmula desenhada que fere por turno</b>: você pode desenhar outras no mesmo turno, mas
+          só uma delas causa dano. (As cartas da árvore são magia comum e não entram nessa conta.)
         </P>
         <P>
-          <b>Alcance.</b> Sem Projetar, a fórmula nasce ao toque (estrutura) ou no ponto do desenho (sinal).
-          Projetar leva o efeito até o alcance da potência. A <b>ordem</b> das ações é regra:{" "}
-          <b>Projetar → Expandir</b> (a onda da lousa) conserva o alcance e abre a área no destino;{" "}
-          <b>Expandir → Projetar</b> abre um cone na origem com metade do alcance.
+          <b>Segurar.</b> Erguer levanta uma parede com os PV da potência (Quadrado +50%, Terra +50%, somados).
+          Ela segura corpos e projéteis até perder os PV; magia atravessa. Selar não tem PV e barra magia pela{" "}
+          <b>Régua do Selo</b>: magia de rank igual ou abaixo da potência não atravessa; um rank acima atravessa
+          com dados, área e duração pela metade; dois ou mais acima atravessam inteiras. Corpos, armas e Touki
+          atravessam o selo.
         </P>
         <FalaDaRoxy>
-          Some da esquerda pra direita, e leia a ordem das ações como se lê uma frase: &ldquo;lança e depois
-          espalha&rdquo; não é o mesmo que &ldquo;espalha e depois lança&rdquo;.
+          Erguer segura corpo. Selar segura magia. Troque os dois e o ogro atravessa o seu selo rindo, ou a Bola
+          de Fogo atravessa a sua parede.
         </FalaDaRoxy>
 
-        <SubTitle id="cap2-8-defesa">Lição 4 — Deter corpos e deter magia</SubTitle>
-        <P>
-          <b>Conter</b> ergue uma fronteira física com os PV da potência (Quadrado +50%; Terra +50%; os dois
-          somam, não multiplicam). Ela bloqueia criaturas e projéteis até perder os PV; magia atravessa.{" "}
-          <b>Rejeitar</b> não tem PV: barra magia pela <b>Régua do Selo</b> — magia de rank igual ou inferior
-          à potência do selo não atravessa; um rank acima atravessa com dados, área e duração pela metade;
-          dois ou mais acima atravessa inteira. Corpos, armas e Touki atravessam. Rejeitar não interrompe
-          uma conjuração: a magia acontece e é barrada ao cruzar a fronteira.
-        </P>
-        <DesenhoAnotado titulo="Uma parede: Mana, Conter e Quadrado" escolha={{ operadores: ["conter"], forma: "quadrado" }} />
-        <FalaDaRoxy>
-          Conter segura corpo. Rejeitar segura magia. Troque os dois e o ogro atravessa a sua barreira de
-          mana rindo, ou a Bola de Fogo atravessa a sua parede de pedra.
-        </FalaDaRoxy>
-        <P>Com uma essência no núcleo, a fronteira também faz alguma coisa a quem encosta nela:</P>
-        <TabelaDosContatos />
-
-        <SubTitle id="cap2-8-meios">Onde se desenha, e quanto dura</SubTitle>
+        <SubTitle id="cap2-8-armar">Lição 3 — Preparar e armar</SubTitle>
         <TabelaDosMeios />
         <P>
-          Conter e Rejeitar duram <b>10 turnos</b> (Círculo ×1,5; Repetir ×2), limitados pelo meio. No ar e
-          por gestos a fronteira não passa de 12 m; em suporte preparado, cresce com a área da potência.{" "}
-          <b>Sustentação:</b> uma fronteira ativa é a sua única sustentação (a mesma regra de qualquer magia,
-          §7), e um circuito ligado conta como uma só. Quem mantém precisa ficar dentro do alcance da
-          potência.
-        </P>
-
-        <SubTitle id="cap2-8-circuitos">Lição 5 — Circuitos: células, ligações, gatilhos</SubTitle>
-        <P>
-          Do Avançado em diante, você liga <b>células</b> — fórmulas completas, cada uma com seu núcleo,
-          ações, forma e potência. Cada célula paga o próprio PM e respeita o próprio teto; cada{" "}
-          <b>ligação</b> entre duas células custa <b>+1 PM</b>. Romper uma célula encerra a saída dela e as
-          que dependem dela; romper a entrada principal encerra o circuito todo.
+          No ar, a fórmula sai na hora e custa as Ações de uma magia do rank da potência (§3). Em{" "}
+          <b>giz ou pergaminho</b> você prepara 1 minuto antes e ativa com 1 Ação — só Lançar que fere não se
+          prepara: um tiro se desenha na hora. No ar, uma parede ou um selo tem até 12 m. <b>Sustentação:</b>{" "}
+          uma parede ou um selo ativo é a sua sustentação (§7).
         </P>
         <P>
-          Um <b>gatilho</b> (Avançado, só em giz, pergaminho ou pedra) guarda uma carga completa e dispara{" "}
-          <b>uma vez</b> quando a condição declarada acontece: uma criatura entrar na área, alguém tocar o
-          desenho, ou — com duas células — a outra célula cair. A <b>Espiral</b> (Santo) guarda 2 PM por
-          rank da potência pra completar o pagamento depois; esse PM fica <b>empenhado</b>: enquanto estiver
-          no desenho, o seu máximo de PM cai no mesmo tanto, e descansar não o devolve.
+          Do <b>Santo</b> em diante você grava em pedra e <b>arma</b>: a fórmula preparada (+2 PM) dispara
+          sozinha, uma vez, quando alguém entrar na área, alguém tocar o desenho ou outra fórmula sua cair.
+          Lançar armado é a mina arcana. Uma armada por vez no Santo, duas no Rei, três no Imperador — e a
+          fórmula armada não é sustentação: o limite dela é esse.
         </P>
-        <BookTable
-          headers={["Exemplo jogado: Alarme de Quebra (Avançado, em giz)", "Conta"]}
-          rows={[
-            ["Célula 1 — Mana + Conter + Quadrado, potência Intermediária", "0 + 1 + 1 + 1 (potência) = 3 PM: parede de 60 PV"],
-            ["Célula 2 — Mana + Expressar + Círculo + gatilho, potência Principiante", "0 + 1 + 0 + 1 (sobreposição) + 2 (gatilho) = 4 PM"],
-            ["Ligação: a queda da parede é o gatilho do sinal", "+1 PM"],
-            ["Total", "8 PM, 1 minuto de giz pra traçar; quando a parede cai, o sinal soa até 18 m"],
-          ]}
+        <LousaDaConta
+          titulo="Conta na lousa: uma mina de fogo (Santo, em giz)"
+          escolha={{ rank: "Santo", essencia: "fogo", verbos: ["lancar"], forma: "onda", meio: "giz", armada: true }}
         />
-        <FalaDaRoxy>
-          Um circuito é uma frase que espera a hora certa. Desenhe com calma, antes da luta: na hora, ele
-          dispara sozinho.
-        </FalaDaRoxy>
 
         <SubTitle id="cap2-8-cartas">As cartas são fórmulas decoradas</SubTitle>
         <P>
-          As cartas da árvore (Cap. 3) são fórmulas dessa mesma gramática, com os mesmos números — o livro e
-          a Oficina calculam as duas do mesmo jeito. O que a carta vende é o que o desenho não tem: ela
-          conjura <b>pela forma normal de magia, com cântico</b>, e por isso ganha Recitação Perfeita,
-          Encantamento Encurtado e Conjuração Silenciosa (§2), que a fórmula desenhada nunca recebe. E
-          algumas ensinam uma <b>exceção</b> escrita na própria carta — durar mais, ou nascer como Reação,
-          como a Parede de Emergência.
+          As cartas da árvore (Cap. 3) são fórmulas dessa mesma frase, com os mesmos números. O que a carta vende
+          é o que o desenho não tem: ela conjura <b>como magia comum, com cântico</b> — Recitação Perfeita,
+          Encantamento Encurtado e Conjuração Silenciosa (§2) — e fica fora da regra de uma fórmula que fere por
+          turno. Algumas ensinam uma <b>exceção</b> escrita na própria carta: nascer como Reação, cobrir uma vila
+          inteira.
         </P>
 
         <SubTitle id="cap2-8-exercicios">Três exercícios</SubTitle>
-        <P>Resolva com o que as cinco lições ensinaram. As respostas vêm logo abaixo, de cabeça pra baixo.</P>
+        <P>Resolva com o que as três lições ensinaram. As respostas vêm logo abaixo, de cabeça pra baixo.</P>
         <ExerciciosDaTeorica />
         <RespostasDaTeorica />
         <P>
-          Agora é com você. Abra o Laboratório, comece por um dos exemplos e mude uma peça por vez: ele faz a
-          conta, mostra os números e diz por que uma combinação passa do limite do rank.
+          Agora é com você. Abra o Laboratório, comece por um dos exemplos e troque uma palavra por vez: ele faz a
+          conta, mostra os números e diz por que uma frase não sai do papel.
         </P>
         <LaboratorioDeFormulas />
       </Section>

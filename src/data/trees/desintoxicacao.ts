@@ -80,7 +80,7 @@ export const DESINTOXICACAO_TREE: Tree = {
       mastery: {
         name: "Paladar",
         description:
-          "[Rank contra Rank] Tocando, cheirando ou provando qualquer substância, você sabe exatamente o que ela é, e identifica o nome e o RANK de qualquer aflição que veja, inclusive em cadáveres. Você é imune a veneno mundano, e todo aliado a até 3 metros de você soma o seu Bônus de Rank em testes de resistência contra veneno, doença e maldição: perto de você, o que devia pegar o grupo inteiro pega um.",
+          "[Dose e Inversão] Tocando, cheirando ou provando qualquer substância, você sabe exatamente o que ela é, e identifica o nome e o RANK de qualquer aflição que veja, inclusive em cadáveres. Você é imune a veneno mundano, e todo aliado a até 3 metros de você soma o seu Bônus de Rank em testes de resistência contra veneno, doença e maldição: perto de você, o que devia pegar o grupo inteiro pega um.",
       },
       talents: [
         { id: "reserva-do-purificador", name: "Reserva do Purificador", paCost: DESINTOX_PA_COST.talent.Principiante, description: "+2 PM e +2 PV por patamar seu em Desintoxicação. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { mpPerRank: 2, hpPerRank: 2 } },

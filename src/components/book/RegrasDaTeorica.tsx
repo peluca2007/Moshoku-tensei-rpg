@@ -2,147 +2,116 @@ import {
   criarFormula,
   ESSENCIAS,
   FORMAS,
-  LIMITES_TEORICOS,
   MEIOS,
-  OPERADORES,
+  POTENCIA,
   RANKS_TEORICOS,
+  VERBOS,
   type EssenciaId,
+  type FormaId,
   type FormulaEscolha,
+  type VerboId,
 } from "@/lib/magiaTeorica";
+import { MAGIC_ACTIONS } from "@/data/trees/shared";
 import { BookTable } from "./BookUI";
 
 /**
  * AS TABELAS DA MAGIA TEÓRICA, GERADAS DO MOTOR (2026-09-26).
  *
- * Decisão do autor a partir da revisão de design: o livro imprime as MESMAS
- * constantes que a Oficina e as cartas usam (src/lib/magiaTeorica.ts). Antes o
- * livro trazia três números e o resto morava no motor e numa proposta fora do
- * livro — a mesa não conseguia jogar a árvore sem o site. Mudou uma constante,
- * o livro, a Oficina e as cartas mudam juntos.
+ * O livro imprime as MESMAS constantes que o Laboratório e as cartas usam
+ * (src/lib/magiaTeorica.ts). Mudou uma constante, o livro, o Laboratório e as
+ * cartas mudam juntos. Desde "três palavras e uma conta" são três tabelas: as
+ * palavras, a potência e onde se desenha.
  */
-
-const RANK_DA_FORMA: Record<keyof typeof FORMAS, string> = {
-  circulo: "Principiante",
-  quadrado: "Principiante",
-  linha: "Principiante",
-  triangulo: "Intermediário",
-  estrela: "Avançado",
-  espiral: "Santo",
-};
-
-const COMO_SE_APRENDE: Record<keyof typeof OPERADORES, string> = {
-  projetar: "Maestria Principiante",
-  expressar: "Maestria Principiante",
-  conter: "Maestria Principiante",
-  rejeitar: "Talento, 1 PA (Principiante)",
-  expandir: "Maestria Intermediária",
-  repetir: "Talento, 1 PA (Intermediário)",
-};
-
-const RANK_DO_MEIO: Record<keyof typeof MEIOS, string> = {
-  gesto: "Principiante",
-  ar: "Principiante",
-  giz: "Principiante",
-  pergaminho: "Principiante",
-  pedra: "Santo",
-};
 
 const base: FormulaEscolha = {
   rank: "Principiante",
-  potencia: "Principiante",
   essencia: "mana",
-  operadores: ["projetar"],
+  verbos: ["lancar"],
   forma: "circulo",
   meio: "ar",
-  gatilho: false,
-  condicao: "entrada",
+  armada: false,
+  gatilho: "entrada",
 };
 
-/** As peças: essências, ações e formas, com custo, efeito e onde se aprende. */
-export function TabelasDasPecas() {
+/** Os verbos e as formas — o que cada palavra faz e desde quando. */
+export function TabelaDasPalavras() {
   return (
     <>
       <BookTable
-        headers={["Essência (núcleo)", "Tipo de dano", "Como se aprende"]}
-        rows={Object.values(ESSENCIAS).map((e) => [`${e.nome} · ${e.custo} PM`, e.tipo, e.origem])}
+        headers={["Verbo", "O que acontece"]}
+        rows={(Object.keys(VERBOS) as VerboId[]).map((id) => [VERBOS[id].nome, VERBOS[id].papel])}
       />
       <BookTable
-        headers={["Ação (operador)", "O que faz", "Como se aprende"]}
-        rows={(Object.keys(OPERADORES) as (keyof typeof OPERADORES)[]).map((id) => [
-          `${OPERADORES[id].nome} · ${OPERADORES[id].custo} PM`,
-          OPERADORES[id].papel,
-          COMO_SE_APRENDE[id],
-        ])}
-      />
-      <BookTable
-        headers={["Forma (contorno)", "Efeito", "A partir de"]}
-        rows={(Object.keys(FORMAS) as (keyof typeof FORMAS)[]).map((id) => [
-          `${FORMAS[id].nome} · ${FORMAS[id].custo} PM`,
+        headers={["Forma", "Desde", "O que muda"]}
+        rows={(Object.keys(FORMAS) as FormaId[]).map((id) => [
+          `${FORMAS[id].nome}${id === "circulo" ? " · 0" : " · +1"}`,
+          FORMAS[id].desde,
           FORMAS[id].efeito,
-          RANK_DA_FORMA[id],
         ])}
       />
     </>
   );
 }
 
-/** Os meios: onde a fórmula é desenhada, quanto leva e quanto dura. */
-export function TabelaDosMeios() {
+/** As essências: de onde vêm, o tipo do dano e o que fazem na parede. */
+export function TabelaDasEssencias() {
   return (
     <BookTable
-      headers={["Meio", "Preparo · símbolos", "Dura no máximo"]}
-      rows={(Object.keys(MEIOS) as (keyof typeof MEIOS)[]).map((id) => [
-        `${MEIOS[id].nome}${RANK_DO_MEIO[id] !== "Principiante" ? ` (${RANK_DO_MEIO[id]})` : ""}`,
-        `${MEIOS[id].preparo} · até ${MEIOS[id].maxSimbolos}`,
-        MEIOS[id].duracaoMaxima,
+      headers={["Essência", "Lançar fere com", "Na parede de Erguer, quem encosta…"]}
+      rows={(Object.keys(ESSENCIAS) as EssenciaId[]).map((e) => [
+        `${ESSENCIAS[e].nome}${e === "mana" ? " · 0" : " · +1"}`,
+        e === "vida" ? "cura, sem BC" : ESSENCIAS[e].tipo,
+        e === "mana" ? "—" : (criarFormula({ ...base, essencia: e, verbos: ["erguer"] }).efeitoDaEssencia ?? "—"),
       ])}
     />
   );
 }
 
-/** A potência: o que cada patamar entrega e quanto a mais custa. */
+/** A potência: a tabela de uma linha (por rank). O PM é também o número de d8. */
 export function TabelaDaPotencia() {
   return (
     <BookTable
-      headers={["Rank / potência", "+ PM", "Dados", "PV da estrutura", "Alcance", "Área", "Símbolos / PM por célula"]}
+      headers={["Potência", "PM = dados", "Parede", "Alcance", "Tamanho", "Ações no ar"]}
       rows={RANKS_TEORICOS.map((rank) => {
-        const l = LIMITES_TEORICOS[rank];
-        return [rank, `+${l.potencia}`, `${l.dados}d8`, String(l.pv), `${l.alcance} m`, `${l.area} m`, `${l.simbolos} / ${l.pm}`];
+        const p = POTENCIA[rank];
+        return [rank, `${p.pm} · ${p.dados}d8`, `${p.pv} PV`, `${p.alcance} m`, `${p.tamanho} m`, String(MAGIC_ACTIONS[rank].normal)];
       })}
     />
   );
 }
 
-/** O que cada essência acrescenta a uma fronteira de Conter (os dados sobem com a potência). */
-export function TabelaDosContatos() {
+/** Onde se desenha: no ar, em giz ou em pedra. */
+export function TabelaDosMeios() {
   return (
     <BookTable
-      headers={["Essência na fronteira", "Efeito ao contato (potência Principiante)"]}
-      rows={(Object.keys(ESSENCIAS) as EssenciaId[])
-        .filter((e) => e !== "mana")
-        .map((e) => [
-          ESSENCIAS[e].nome,
-          criarFormula({ ...base, essencia: e, operadores: ["conter"] }).efeitoDaEssencia ?? "—",
-        ])}
+      headers={["Onde", "Desde", "Preparo", "Ativar", "Dura"]}
+      rows={(Object.keys(MEIOS) as (keyof typeof MEIOS)[]).map((id) => [
+        MEIOS[id].nome,
+        MEIOS[id].desde,
+        MEIOS[id].preparo,
+        MEIOS[id].ativacao,
+        MEIOS[id].duracao,
+      ])}
     />
   );
 }
 
 /** As primeiras frases, com os números calculados pelo motor. */
 export function TabelaDasPrimeirasFrases() {
-  const frases: [string, Partial<FormulaEscolha>][] = [
-    ["Mana + Projetar + Círculo", {}],
-    ["Mana + Projetar + Linha", { forma: "linha" }],
-    ["Mana + Expressar + Círculo", { operadores: ["expressar"] }],
-    ["Mana + Conter + Quadrado", { operadores: ["conter"], forma: "quadrado" }],
-    ["Mana + Conter + Círculo", { operadores: ["conter"] }],
+  const frases: Partial<FormulaEscolha>[] = [
+    {},
+    { forma: "linha" },
+    { verbos: ["sinalizar"] },
+    { verbos: ["erguer"], forma: "quadrado" },
+    { verbos: ["selar"] },
   ];
   return (
     <BookTable
-      headers={["Frase (Principiante, no ar)", "PM", "Resultado"]}
-      rows={frases.map(([nome, e]) => {
-        const r = criarFormula({ ...base, ...e });
-        return [nome, String(r.pm), `${r.resumo} ${r.duracao === "instantânea" ? "Instantânea." : `Dura ${r.duracao}.`}`];
+      headers={["Frase (Principiante)", "PM", "O que acontece"]}
+      rows={frases.map((e) => {
+        const f = { ...base, ...e };
+        const r = criarFormula(f);
+        return [r.leitura, String(r.pm), r.resumo];
       })}
     />
   );
