@@ -16,21 +16,15 @@ O check cruzou as condições e estados de `src/data/condicoes.ts` com os termos
 ### `npm run check:remissoes`
 
 - Fontes lidas: 33
-- Remissões lidas: 418
+- Remissões lidas: 415
 - FALHAs: 0
-- AVISOs: 2
+- AVISOs: 0
 
 ## Prováveis defeitos reais
 
-Os dois avisos abaixo apontam **Soterrado** para o Cap. 4, §6, cujo título real no sumário é “Críticos e Touki”. A definição de Soterrado está no Glossário de Condições, Cap. 4, §2. O Codex não alterou o dado porque `src/data/**` está reservado aos revisores.
+Nenhum na execução final.
 
-1. `src/data/trees/terra.ts:160`
-
-   > O primeiro degrau de Soterrado da escola: o chão se fecha em torno de um alvo que já esteja Atolado, Preso ou Caído e o engole até o pescoço. O alvo fica Soterrado (Cap. 4, §6). Contra um alvo que não esteja em nenhuma dessas condições, a magia só o deixa Atolado.
-
-2. `src/data/trees/terra.ts:211`
-
-   > Teste de Força (CD 8 + BC), com Desvantagem se o alvo já estiver Atolado, Preso ou Caído quando a magia sair. Falha: um bloco maciço encapsula o alvo, que fica Soterrado (Cap. 4, §6) e, além disso, Surdo e incapaz de conjurar por qualquer via enquanto estiver dentro. O bloco tem 60 PV. A saída normal do Soterrado (1 Ação e teste de Força, ou 30 de dano na terra) não vale aqui: o alvo repete o teste de Força no fim de cada turno dele, sem a Desvantagem, e sai se passar ou quando o bloco cair. Sucesso: fica só Atolado. É a exceção do Avançado: não exige que o alvo já esteja Atolado, mas quem já estava quase nunca escapa.
+Durante a implementação, o check chegou a encontrar duas ocorrências de **Soterrado (Cap. 4, §6)** em `src/data/trees/terra.ts:160` e `src/data/trees/terra.ts:211`. A revisão paralela integrada da `main` corrigiu ambas para o Glossário de Condições, **Cap. 4, §2**, antes da execução final. O check passou depois da integração.
 
 ## Falsos positivos restantes
 
@@ -45,4 +39,4 @@ Nenhum na execução final.
 
 ## Pendências pro Claude
 
-- Conferir e, se confirmado, trocar `Cap. 4, §6` por `Cap. 4, §2` nas duas ocorrências de Soterrado em `src/data/trees/terra.ts:160` e `src/data/trees/terra.ts:211`.
+(vazio)
