@@ -25,6 +25,9 @@
  * 2. **Alvo de toque abaixo de 24px** (WCAG 2.2, critério 2.5.8, nível AA).
  *    Não reprova: uma parte legítima disso é link dentro de frase, que o
  *    próprio critério isenta. Sai como contagem, pra vigiar.
+ * 3. **Livro contínuo.** Além do transbordo da página, nenhuma tabela pode
+ *    depender de rolagem lateral e nenhum controle estrutural pode ter menos
+ *    de 40px. Alvos dentro do texto corrido continuam com a exceção do WCAG.
  *
  * As duas falhas que ele achou na primeira execução: a linha de "nova perícia"
  * da ficha empurrava 39px em 320px, e o importador da iniciativa empurrava 41px
@@ -42,6 +45,7 @@ const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encon
 /** 320 = o iPhone SE mais estreito ainda em uso; 360 = a moda dos Androids; 414 = iPhone grande. */
 const LARGURAS = [320, 360, 414];
 const TELAS_DO_LIVRO = [
+  { largura: 320, altura: 800 },
   { largura: 360, altura: 800 },
   { largura: 375, altura: 812 },
   { largura: 390, altura: 844 },
@@ -125,6 +129,9 @@ const MEDICAO = String.raw`(() => {
 })()`;
 
 const MEDICAO_LIVRO = String.raw`(() => {
+  const sumario = document.querySelector('.livro-cabecalho-corrente');
+  if (sumario instanceof HTMLDetailsElement) sumario.open = true;
+
   const caixas = [...document.querySelectorAll('.livro-tabela')]
     .filter((el) => el.scrollWidth > el.clientWidth + 1)
     .map((el) => ({
@@ -133,7 +140,53 @@ const MEDICAO_LIVRO = String.raw`(() => {
       scroll: el.scrollWidth,
       texto: (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 55),
     }));
-  return JSON.stringify({ caixas: caixas.slice(0, 8), total: caixas.length });
+
+  const pagina = document.querySelector('.livro-pagina');
+  const raizes = [pagina, sumario].filter(Boolean);
+  const controles = [...new Set(raizes.flatMap((raiz) =>
+    [...raiz.querySelectorAll("button,a[href],input,select,summary")]
+      .map((el) => el.closest('label') || el)
+  ))];
+  const alvos = [];
+  for (const el of controles) {
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) continue;
+
+    const meu = (el.textContent || '').trim().length;
+    const doPai = ((el.parentElement && el.parentElement.textContent) || '').trim().length;
+    const ehInline = getComputedStyle(el).display.startsWith('inline');
+    // Citações de árvore/habilidade são palavras transformadas em link por
+    // citacoes.tsx. Mesmo quando ocupam sozinhas uma célula ou legenda, ainda
+    // são texto corrido — não um controle de navegação independente.
+    if (el.matches('.livro-citacao') || (ehInline && doPai > meu + 20)) continue;
+
+    let x0 = r.left, y0 = r.top, x1 = r.right, y1 = r.bottom;
+    for (const filho of el.children) {
+      const c = filho.getBoundingClientRect();
+      if (c.width === 0 || c.height === 0) continue;
+      if (c.left < x0) x0 = c.left;
+      if (c.top < y0) y0 = c.top;
+      if (c.right > x1) x1 = c.right;
+      if (c.bottom > y1) y1 = c.bottom;
+    }
+    const largura = x1 - x0;
+    const altura = y1 - y0;
+    if (largura >= 40 && altura >= 40) continue;
+    alvos.push({
+      tag: el.tagName.toLowerCase(),
+      largura: Math.round(largura),
+      altura: Math.round(altura),
+      texto: (el.textContent || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ').slice(0, 45),
+      classe: String(el.className.baseVal ?? el.className ?? '').slice(0, 70),
+    });
+  }
+
+  return JSON.stringify({
+    caixas: caixas.slice(0, 8),
+    total: caixas.length,
+    alvos: alvos.slice(0, 8),
+    alvosTotal: alvos.length,
+  });
 })()`;
 
 if (!(await servidorNoAr())) {
@@ -199,14 +252,18 @@ await comNavegador(
         const livro = JSON.parse((await aba.avaliar(MEDICAO_LIVRO)) ?? "{}");
         await aba.fechar();
 
-        const quebrou = (geral.transbordo ?? 0) > 1 || livro.total > 0;
+        const quebrou = (geral.transbordo ?? 0) > 1 || livro.total > 0 || livro.alvosTotal > 0;
         if (quebrou) quebradas++;
         console.log(
           `${quebrou ? "!!" : "ok"} ${largura}×${altura} ${tema.padEnd(5)} ` +
-          `página=${geral.transbordo ?? 0}px tabelas-roláveis=${livro.total ?? 0}`
+          `página=${geral.transbordo ?? 0}px tabelas-roláveis=${livro.total ?? 0} alvos<40px=${livro.alvosTotal ?? 0}`
         );
         for (const caixa of livro.caixas ?? []) {
           console.log(`     ↳ ${caixa.id}: ${caixa.client}px → ${caixa.scroll}px "${caixa.texto}"`);
+        }
+        for (const alvo of livro.alvos ?? []) {
+          console.log(`     ↳ <${alvo.tag}> ${alvo.largura}×${alvo.altura}px "${alvo.texto}"`);
+          console.log(`       .${alvo.classe}`);
         }
       }
     }
@@ -216,7 +273,7 @@ await comNavegador(
 
 console.log("========================================");
 if (quebradas > 0) {
-  console.error(`\n❌ ${quebradas} página(s) rolam de lado numa tela de celular.`);
+  console.error(`\n❌ ${quebradas} verificação(ões) móveis falharam.`);
   process.exit(1);
 }
-console.log(`\n✅ Nenhuma das ${ROTAS.length} rotas transborda entre ${LARGURAS[0]}px e ${LARGURAS.at(-1)}px; /livro também cabe nas 6 combinações pedidas.`);
+console.log(`\n✅ Nenhuma das ${ROTAS.length} rotas transborda entre ${LARGURAS[0]}px e ${LARGURAS.at(-1)}px; /livro também cabe nas 8 combinações verificadas.`);
