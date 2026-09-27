@@ -9,7 +9,7 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 
 | Arquivo | O que mostra | Onde pode entrar |
 | --- | --- | --- |
-| `orsted-aura.webp` | Orsted de corpo inteiro, envolto na aura (era a arte da Raça Dragão até 2026-09-26). | Prancha do Apêndice G (chefes), ou a Raça Dragão em página de coluna. |
+| `orsted-esboco-deitado.webp` | Esboço de fã do Orsted, meio corpo, em faixa deitada (foi a arte da Raça Dragão de 2026-09-26 a 2026-09-27; o autor achou fraca). | Só se nada melhor aparecer. |
 | `orsted-de-pe.webp` | Orsted em pé, de casaco branco, em faixa estreita e alta. | Vinheta vertical do Apêndice G. |
 | `orsted-e-nanahoshi.webp` | Orsted e Nanahoshi lado a lado. | Magia Teórica (a Nanahoshi é quem estuda os círculos). |
 | `hitogami.webp` | Uma figura branca de rosto em mosaico, com um véu de cores atrás: o Deus Humano. | O Rank Deus, ou uma página sobre o Mestre e o destino. |
