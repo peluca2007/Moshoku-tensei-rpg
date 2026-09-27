@@ -277,9 +277,9 @@ export function QuadroDasRacas() {
  * até o pé da página (esticarVitrines, em diagramacao.ts) e reorganiza os
  * brasões conforme o espaço; se o espaço for pequeno demais, some.
  */
-/** Onde está o rosto, nas artes largas: a miniatura redonda da vitrine corta pelo centro. */
+/** Onde está o rosto quando a arte é recortada (a miniatura redonda da vitrine, a página inteira da mítica). */
 const ROSTO_NA_MINIATURA: Record<string, string> = {
-  dragao: "26% 42%",
+  dragao: "58% 16%",
 };
 
 export function VitrineDasRacas() {
