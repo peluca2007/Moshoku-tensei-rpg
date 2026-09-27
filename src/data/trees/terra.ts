@@ -157,7 +157,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 3,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Intermediário,
-          effect: "O primeiro degrau de Soterrado da escola: o chão se fecha em torno de um alvo que já esteja Atolado, Preso ou Caído e o engole até o pescoço. O alvo fica Soterrado (Cap. 4, §6). Contra um alvo que não esteja em nenhuma dessas condições, a magia só o deixa Atolado.",
+          effect: "O primeiro degrau de Soterrado da escola: o chão se fecha em torno de um alvo que já esteja Atolado, Preso ou Caído e o engole até o pescoço. O alvo fica Soterrado (Cap. 4, §2). Contra um alvo que não esteja em nenhuma dessas condições, a magia só o deixa Atolado.",
           incantation:
             "Terra que já engoliu tanta coisa e nunca devolveu nenhuma delas, fecha-te agora em volta do pescoço dele, sobe devagar até o queixo, e não te apresses a devolver o que engoliste. Cárcere!",
         },
@@ -208,7 +208,7 @@ export const TERRA_TREE: Tree = {
           pmCost: 6,
           range: "27 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          effect: "Teste de Força (CD 8 + BC), com Desvantagem se o alvo já estiver Atolado, Preso ou Caído quando a magia sair. Falha: um bloco maciço encapsula o alvo, que fica Soterrado (Cap. 4, §6) e, além disso, Surdo e incapaz de conjurar por qualquer via enquanto estiver dentro. O bloco tem 60 PV. A saída normal do Soterrado (1 Ação e teste de Força, ou 30 de dano na terra) não vale aqui: o alvo repete o teste de Força no fim de cada turno dele, sem a Desvantagem, e sai se passar ou quando o bloco cair. Sucesso: fica só Atolado. É a exceção do Avançado: não exige que o alvo já esteja Atolado, mas quem já estava quase nunca escapa.",
+          effect: "Teste de Força (CD 8 + BC), com Desvantagem se o alvo já estiver Atolado, Preso ou Caído quando a magia sair. Falha: um bloco maciço encapsula o alvo, que fica Soterrado (Cap. 4, §2) e, além disso, Surdo e incapaz de conjurar por qualquer via enquanto estiver dentro. O bloco tem 60 PV. A saída normal do Soterrado (1 Ação e teste de Força, ou 30 de dano na terra) não vale aqui: o alvo repete o teste de Força no fim de cada turno dele, sem a Desvantagem, e sai se passar ou quando o bloco cair. Sucesso: fica só Atolado. É a exceção do Avançado: não exige que o alvo já esteja Atolado, mas quem já estava quase nunca escapa.",
           incantation:
             "Bloco que eu arranco do coração da montanha ainda quente do próprio peso, ainda pesado do que carregava:\nfecha-te em volta dele, apaga a luz, apaga o som, apaga o ar que ele respira sem merecer,\ncomo se ele nunca tivesse existido fora de ti.\nPrisão de Pedra!",
         },

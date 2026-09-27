@@ -16,6 +16,61 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.102",
+    date: "2026-09-27",
+    title: "Revisão geral: menos vão, menos bastidor",
+    sections: [
+      {
+        heading: "O vão no pé da coluna",
+        items: [
+          "A carta não se parte, e a que não cabia no pé da coluna pulava e deixava um buraco. Agora o livro enche esse vão, nesta ordem: uma carta menor do mesmo patamar sobe pro lugar; a arte da carta de cima cresce até o pé; a arte da carta de baixo sobe pro vão; e, se nada couber, as cartas da coluna se espalham. Medido: o branco das colunas com vão caiu cerca de um terço, e o livro ficou com 276 páginas (eram 280).",
+        ],
+      },
+      {
+        heading: "Bastidor fora do livro",
+        items: [
+          "Cerca de 70 frases que falavam com quem projeta o jogo, e não com quem joga, saíram ou foram reescritas: histórico ('até a versão tal…'), contas de simulador e de dano por Ação, e justificativas de balanceamento. Os quadros 'Por que 1,67', 'Por que existe um piso', 'Por que a CD usa o Rank de quem acerta', 'Por que CA e resistência crescem' e 'Por que o travado nunca passa do dobro' saíram inteiros.",
+        ],
+      },
+      {
+        heading: "Texto que não batia com a regra",
+        items: [
+          "PV: a média é da fórmula de cada patamar, arredondada pra cima (1d8+3 conta 8, 3d6 conta 11), como a ficha sempre fez. A Roxy do Apêndice A tem 157 PV, e não 143.",
+          "O exemplo do Defender reduz 2 (metade do Bônus de Rank, pra cima), não 3. A Égide Lendária conta como uma das duas Salvações do combate.",
+          "A exclusão de aliados da área é das quatro escolas elementais, não só do Fogo (Cap. 2, §7). O Fio da Vida mora no Cap. 4, §7, e o Soterrado no §2.",
+          "Cobertura Leve e Meia-Cobertura, que não existiam, viraram Cobertura Parcial. O 'Medo' de raças e itens virou a condição Amedrontado.",
+          "O Teste de Concentração do Tiro Perfeito agora está completo (+ metade do maior Bônus de Rank), e a lista do 'não existe ação bônus' do Cap. 4 bate com a do Cap. 0 e do Cap. 2.",
+          "O chefe sozinho contra quatro jogadores fica no teto do Equilibrado (1,25), pela própria regra do Apêndice G.",
+          "A CA é 10 + Agilidade + o bônus da armadura, sem teto de Agilidade na armadura média — o Cap. 0 e a Armadura Sagrada diziam o contrário do Cap. 4 e da ficha.",
+        ],
+      },
+      {
+        heading: "A carta diz quantas Ações custa",
+        items: [
+          "Técnica de 2 ou mais Ações sem as três formas de conjurar (Espada de Luz Verdadeira, Tiro do Céu, O Muro Final e mais 35) mostra as Ações na linha do custo, e toda Reação diz 'Reação'. Antes a carta lida parecia custar 1 Ação.",
+          "O Rei do Norte diz na própria Maestria que abrir o patamar custa 2 PA (a ficha já cobrava 2; o livro só dizia isso no bloco do Rank Deus).",
+        ],
+      },
+      {
+        heading: "Magia Teórica",
+        items: [
+          "O Eco repete o Lançar com metade dos dados SEM o BC, e o eco é a fórmula que fere daquele turno. Com o BC em dobro ele batia mais que o Triângulo em todo patamar, e as cartas de dano da árvore viravam opção morta.",
+          "Estrela: o BC soma uma vez, num alvo só.",
+          "Carta de giz ou de pedra não pede o preparo: sai com o cântico e dura o que o meio dá. A fórmula desenhada sem carta é Conjurar (Concentração e Perda de Foco valem), mas não se encurta, não se silencia e não ganha Recitação. Um selo com essência de escola só barra magia daquela escola.",
+          "Som causa dano sônico (era 'trovejante'), e o dano arcano da Mana entrou na lista de tipos de dano do Cap. 4.",
+        ],
+      },
+      {
+        heading: "Termos",
+        items: [
+          "'Concentração' (que não existe mais como regra) virou 'sem ocupar a sua sustentação' nas cartas de Água, Bardo, Cura e Vento.",
+          "Conjurando e Exausto entraram no Glossário de Condições.",
+          "O Trauma vem só de ver um aliado morrer, como a decisão 18 já tinha mandado; o gatilho de 'matar quem implorava' saiu.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.101",
     date: "2026-09-26",
     title: "Magia Teórica: três palavras e uma conta",

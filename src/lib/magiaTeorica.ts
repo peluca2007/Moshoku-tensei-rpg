@@ -50,7 +50,7 @@ export const ESSENCIAS = {
   agua: { nome: "Água", origem: "Água Principiante ou 1 PA", tipo: "contundente", cor: "#80bdea", glifo: "≋" },
   vento: { nome: "Vento", origem: "Vento Principiante ou 1 PA", tipo: "cortante", cor: "#a7d9c2", glifo: "⌁" },
   terra: { nome: "Terra", origem: "Terra Principiante ou 1 PA", tipo: "contundente", cor: "#d8b986", glifo: "▱" },
-  som: { nome: "Som", origem: "Bardo Principiante ou 1 PA", tipo: "trovejante", cor: "#d3acf5", glifo: "♫" },
+  som: { nome: "Som", origem: "Bardo Principiante ou 1 PA", tipo: "sônico", cor: "#d3acf5", glifo: "♫" },
   vida: { nome: "Vida", origem: "Cura Principiante ou 1 PA", tipo: "cura", cor: "#c6df98", glifo: "✧" },
 } as const;
 
@@ -76,8 +76,8 @@ export const FORMAS = {
   quadrado: { nome: "Quadrado", desde: "Principiante", efeito: "A parede de Erguer ganha +50% de PV.", glifo: "□" },
   triangulo: { nome: "Triângulo", desde: "Intermediário", efeito: "Lançar concentra: +1 dado.", glifo: "△" },
   onda: { nome: "Onda", desde: "Intermediário", efeito: "Lançar vira área (raio = tamanho), com metade dos dados e Agilidade pra metade; parede, selo e sinal dobram de tamanho.", glifo: "≈" },
-  eco: { nome: "Eco", desde: "Intermediário", efeito: "Lançar se repete no começo do seu próximo turno com metade dos dados; parede, selo e sinal duram o dobro.", glifo: "◎" },
-  estrela: { nome: "Estrela", desde: "Avançado", efeito: "Lançar divide os dados entre até 3 alvos, um ataque por alvo.", glifo: "✦" },
+  eco: { nome: "Eco", desde: "Intermediário", efeito: "Lançar se repete no começo do seu próximo turno com metade dos dados, sem o BC — e o eco é a fórmula que fere daquele turno; parede, selo e sinal duram o dobro.", glifo: "◎" },
+  estrela: { nome: "Estrela", desde: "Avançado", efeito: "Lançar divide os dados entre até 3 alvos, um ataque por alvo; o BC soma uma vez, num alvo só.", glifo: "✦" },
 } as const;
 
 export type FormaId = keyof typeof FORMAS;
@@ -255,7 +255,7 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
   const dadosSaida = emArea ? Math.ceil(dadosBase / 2) : dadosBase;
   const dadosEco = fere && escolha.forma === "eco" ? Math.ceil(dadosBase / 2) : 0;
   const dano = fere
-    ? `${dadosSaida}d8${cura ? "" : " + BC"}${dadosEco ? ` e, no começo do seu próximo turno, ${dadosEco}d8${cura ? "" : " + BC"}` : ""}${escolha.forma === "estrela" ? ", divididos entre até 3 alvos" : ""}`
+    ? `${dadosSaida}d8${cura ? "" : " + BC"}${dadosEco ? ` e, no começo do seu próximo turno, ${dadosEco}d8` : ""}${escolha.forma === "estrela" ? ", divididos entre até 3 alvos (o BC num alvo só)" : ""}`
     : null;
   const tipo = fere ? essencia.tipo : null;
 
@@ -307,7 +307,7 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
       ? `Cura ${dadosSaida}d8 PV de um alvo voluntário${emArea ? " — em área, cada um na área recebe os dados" : ""}.`
       : emArea
         ? `Área: cada um testa Agilidade contra CD 8 + BC; metade do dano no sucesso.`
-        : `1d20 + BC contra a CA${escolha.forma === "estrela" ? " de cada alvo; distribua os dados antes de rolar" : ""}.`
+        : `1d20 + BC contra a CA${escolha.forma === "estrela" ? " de cada alvo; distribua os dados e diga onde vai o BC antes de rolar" : ""}.`
     : null;
 
   // ── O nome e o texto ────────────────────────────────────────────────────

@@ -149,7 +149,9 @@ const MEDIR = `(async () => {
   // 3. Página vazia (a mancha que sobrou em branco).
   const fundo = new Map();
   const onde = (x) => { const xp = (x - o) / k; const p = Math.floor(xp / P); const dentro = xp - p * P - M; return { p, col: dentro > colW + C / 2 ? 1 : 0 }; };
-  f.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete, dl, blockquote, header, nav, section, article").forEach((el) => {
+  // A carta (e a seção) que pula de coluna deixa a CAIXA dela no vão: um pedaço
+  // vazio que desce até o pé. Conta o que está dentro, não a caixa.
+  f.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete > *, dl, blockquote, header, nav").forEach((el) => {
     if (oculto(el)) return;
     for (const q of el.getClientRects()) {
       if (!q.height) continue;

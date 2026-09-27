@@ -39,8 +39,8 @@ export default function Appendices() {
         <List
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
-            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × 53 de média dos dados de PV dos 12 ranks dela, nas 4 árvores = 102,51) × Fator de Vigor 2 (×1,40), arredondado pra baixo = 143 PV",
-            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os PM do Migurd (3 × MB = 12) = 40 PM (acima do cap de Santo, então vale inteiro)",
+            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × 59, a soma das médias arredondadas dos dados de PV dos 12 ranks dela, nas 4 árvores = 112,53) × Fator de Vigor 2 (×1,40), arredondado pra baixo = 157 PV",
+            "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os PM do Migurd (3 × MB = 12) = 40 PM",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
             "Maestrias de Água: Afinidade Aquática, Cântico Fluido, Termodinâmica Aplicada, Domínio Climático",
@@ -50,7 +50,7 @@ export default function Appendices() {
         />
         <P>
           Leitura da ficha: ela acerta praticamente qualquer coisa, tem uma reserva de mana que sustenta um
-          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 143 PV é bastante
+          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 157 PV é bastante
           numa conta isolada, mas fica baixo perto de um personagem do Corpo com a mesma quantidade de Ranks
           investidos, cujos dados de PV por patamar são bem maiores. É exatamente isso que ela é na história —
           uma professora genial dentro de um corpo frágil, que sobrevive porque nunca deixa ninguém chegar
@@ -59,7 +59,7 @@ export default function Appendices() {
         </P>
         <P>
           Repare no que o Fator de Vigor faz aqui: com Vigor 2 ela multiplica por 1,40. Se tivesse largado
-          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 102,51 viraria 41 PV —
+          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 112,53 viraria 45 PV —
           e um único golpe de espadachim Santo resolveria a luta. É o tipo de troca que a Escala do Vigor
           (Cap. 4, §1) existe pra tornar visível antes de a ficha ser fechada.
         </P>
@@ -75,7 +75,7 @@ export default function Appendices() {
             "Uma curva de Dados de PV própria que diferencie a escola. PM não tem curva de escola: a reserva sai do Cap. 4, §1, e a escola só mexe nela por talento comprado (como as Reservas, +2 PM e +2 PV por patamar) ou pelo custo das próprias magias. Exemplos: Fogo, dano alto e corpo frágil; Terra, o corpo mais duro entre as magias; Vento, meio-termo com bônus de deslocamento.",
             "Seis Maestrias automáticas, uma por rank — a do Avançado sempre destranca Magia Combinada, a do Rei sempre destranca um elemento secundário (Água → Eletricidade, Fogo → Explosão/Plasma, Vento → Som/Vácuo, Terra → Metal/Magma).",
             "Uma Magia Assinatura ◆ por rank, custando +1 PA.",
-            "Uma magia de utilidade pura que não causa dano nenhum, mas define a identidade da escola fora de combate (Água: Afinidade Aquática e Névoa Densa. Terra: erguer abrigo. Vento: comunicação a distância. Fogo: forjar e iluminar).",
+            "Uma magia de utilidade pura que não causa dano nenhum, mas define a identidade da escola fora de combate (Água: Névoa Densa. Terra: erguer abrigo. Vento: comunicação a distância. Fogo: forjar e iluminar).",
             "De 6 a 8 conhecimentos por rank baixo, 3 a 4 por rank alto — o suficiente pra tabela de desbloqueio fechar sem obrigar o jogador a comprar magia velha só pra bater a contagem.",
             "Declare qual atributo alimenta o BC da escola — Fogo, Água, Vento, Terra e Magia Teórica usam Intelecto; Cura, Desintoxicação e Invocação usam Espírito. Isso divide a Árvore da Magia em duas metades que não competem pelos mesmos pontos de atributo.",
           ]}
@@ -85,8 +85,9 @@ export default function Appendices() {
       <Section>
         <SectionTitle id="apendice-c">C. Tabela Comparativa de Dano por Turno</SectionTitle>
         <P>
-          A régua com que toda árvore futura deve ser medida. Valores médios, alvo de CA razoável, atributo
-          principal progredindo de 4 até 8.
+          Quanto cada árvore causa num turno típico, patamar a patamar — pra comparar builds e pra o Mestre
+          saber quantos turnos uma criatura do Apêndice G aguenta. Valores médios, alvo de CA razoável,
+          atributo principal progredindo de 4 até 8.
         </P>
         <BookTable
           headers={["Patamar", ...COLUNAS_MAGIA.map((c) => c.label)]}
@@ -117,8 +118,7 @@ export default function Appendices() {
             <b>A Utilidade tem três colunas.</b> Cada árvore tem um golpe próprio que
             escala por patamar — Dano Furtivo, Ordem de Tiro, Dissonância —, todos na Maestria de 1º
             patamar e todos uma vez por turno. Nenhuma das três recebe degraus de Dado de Arma (Cap. 3),
-            então o dado delas nunca cresce: é essa a razão de ficarem para trás sem precisar de nenhuma
-            regra que as puna.
+            então o dado delas nunca cresce.
           </P>
           <P>
             <b>Magia não está amortizada pelas Ações.</b> Muitas magias de Imperador custam 4 Ações — mais
@@ -133,7 +133,7 @@ export default function Appendices() {
               "O Fogo tem o maior número e o menor corpo: 64 PV no Imperador, com Vigor 0. Mata tudo, morre de qualquer coisa, e queima o saque no processo.",
               "A Água tem o menor número entre as ofensivas e vence campanhas — o valor dela é em área, a 45 metros, com aliados poupados e sem chance de errar.",
               "A Terra é a única que constrói. Metade do valor dela nunca aparece aqui: pontes, fortalezas, masmorras vedadas, um grupo que nunca mais dorme exposto.",
-              "O Arco só é real contra quem não veste o Manto de Touki. Contra um guerreiro do Corpo Avançado ou superior, subtraia o dobro do Bônus de Rank do alvo de cada disparo mundano.",
+              "O Arco só é real contra quem não veste o Manto de Touki. Contra um guerreiro do Corpo Avançado ou superior, subtraia o dobro do Bônus de Rank do alvo de cada disparo, até a Flecha de Touki (Santo) furar o Manto.",
               "O Suishin-ryū não tem número. Contra quatro inimigos agressivos ele bate mais que qualquer coisa deste livro. Contra um inimigo parado, causa zero, pra sempre.",
               "O Lutador tem o número errado na tabela — o que ele realmente faz é acumular Quebrantado. No quarto turno, o inimigo já perdeu 6 de CA e 6 de dano e a luta já acabou sem a tabela registrar.",
               "Escudos é a menor coluna do livro e o personagem mais difícil de substituir. Ele bate, mas bater não é o trabalho dele: é decidir quem sobrevive.",
@@ -141,7 +141,7 @@ export default function Appendices() {
               "O Tático é a coluna que decide quem executa. A Ordem de Tiro soma no primeiro ataque que acertar o alvo Apontado — de um aliado ou dele mesmo — e é só contra esse alvo que ele soma o Bônus de Rank no próprio golpe. Sem grupo, ele aponta e atira sozinho: perde a escolha de quem bate, não o número.",
               "O Bardo é a menor das três, e a única cujo dano é em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
               "O Vendaval e o Punho do Fogo são híbridas, e a linha é o patamar dentro delas: quem abre o 1º já chega Intermediário nas duas árvores-mãe, e por isso as duas começam acima das árvores-mãe. O número do Vendaval depende de quantos metros ele andou antes de golpear; o do Punho não conta o Quebrantado que empilha, que faz com ele o mesmo que faz com o Lutador.",
-              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. A Desintoxicação entra com o ciclo da Dose: dois venenos que pegam e uma Inversão que cobra os dois — o número só aparece se o alvo respira e se as Doses pegaram. A Magia Teórica entra com o dano da fórmula que desenhar (Cap. 2, §8) — 1d6 no Principiante, sem o BC no dano.",
+              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. A Desintoxicação entra com o ciclo da Dose: dois venenos que pegam e uma Inversão que cobra os dois — o número só aparece se o alvo respira e se as Doses pegaram. A Magia Teórica entra com o dano da fórmula que desenhar (Cap. 2, §8) — o Dardo de Mana do Principiante faz 1d8 + BC.",
             ]}
           />
         </Aside>
@@ -201,7 +201,7 @@ export default function Appendices() {
         />
 
         <SubTitle>Sobre Ações e Reações</SubTitle>
-        <QA q="Quantas Reações eu tenho?" a="Uma por rodada, sempre — a menos que um efeito diga o contrário (Postura de Água, Segunda Guarda, Maestria de Muralha)." />
+        <QA q="Quantas Reações eu tenho?" a="Uma por rodada, sempre — a menos que um efeito diga o contrário (Postura de Água, Segunda Guarda, Ninguém Passa — a Maestria de Rei do Escudos)." />
         <QA q="Posso usar a Reação no meu próprio turno?" a="Pode, desde que o gatilho aconteça." />
         <QA
           q="Conjurar uma magia de 4 Ações me deixa sem Reação?"
@@ -279,7 +279,7 @@ export default function Appendices() {
       <Section>
         <SectionTitle id="apendice-f">F. Cerco e Batalha em Escala de Exército</SectionTitle>
         <P>
-          O patamar Senhor da Guerra (Tático) já aponta pra isso: guerra em escala de reino não se resolve
+          O Tático no Imperador — o Senhor da Guerra — já aponta pra isso: guerra em escala de reino não se resolve
           rolando Iniciativa pra cada soldado. Este apêndice dá ao Mestre uma forma rápida de rodar um cerco
           ou uma batalha de exércitos usando três números por lado, não uma ficha por soldado.
         </P>
@@ -321,12 +321,12 @@ export default function Appendices() {
           items={[
             "Abertura — Antes do primeiro golpe, o Ladino do grupo já havia sabotado o comboio de suprimentos inimigo durante o Downtime (Cap. 5, §1). O Mestre zera o Suprimento invasor: Suprimento 0.",
             "Abertura, efeito automático de fase — com Suprimento 0, o invasor perde 1 de Força automaticamente. Invasores: Força 7, Moral 5, Suprimento 0.",
-            "Embate — o mago de Fogo do grupo conjura uma magia de área Imperador contra a linha de frente inimiga: -3 de Força. Invasores: Força 4.",
+            "Embate — o mago de Fogo do grupo conjura uma magia de área Imperador contra a linha de frente inimiga: -3 de Força, e o Suprimento zerado cobra mais 1 nesta fase. Invasores: Força 3.",
             "Embate — o Bardo do grupo canta pros defensores na muralha: +2 de Moral própria. Defensores: Moral 8.",
             "Embate, resposta do Mestre — o comandante invasor manda um grupo de elite escalar a muralha à noite pra forçar um combate pessoal contra o grupo, tentando virar o jogo antes do Desfecho.",
             "Esse combate de elite é resolvido com as regras normais do Capítulo 4, não com os três números do exército — é exatamente o caso que o aviso abaixo cobre. O grupo vence o duelo.",
             "Desfecho — vencer o duelo em público custa -3 de Moral ao invasor: Moral 2. Suprimento continua 0, então o invasor perde mais 1 de Força: Força 2.",
-            "Resultado final — Defensores: Força 6, Moral 8, Suprimento 3. Invasores: Força 2, Moral 2, Suprimento 0. Nenhum lado chegou a 0, mas a diferença (14 contra 4) é grande o bastante pro Mestre narrar a retirada invasora sem precisar de mais uma fase.",
+            "Resultado final — Defensores: Força 6, Moral 8, Suprimento 3. Invasores: Força 2, Moral 2, Suprimento 0. Nenhum lado chegou a 0, então vence a maior soma de Força + Moral: 14 contra 4. Os defensores vencem, e o Mestre narra a retirada invasora.",
           ]}
         />
         <Aside title="O que esse exemplo mostra">
@@ -452,9 +452,8 @@ export default function Appendices() {
             moeda, mas o equipamento dele revende <b>pela metade</b>.
           </P>
           <P>
-            É essa diferença que faz caçar valer mais que saquear — e ela só existe porque a tabela acima
-            sabe quem estava do outro lado. Sem sub-arquétipo, o espólio volta a ser um sorteio dentro do
-            catálogo inteiro, e um bando de lobos larga poção de mana.
+            É essa diferença que faz caçar valer mais que saquear: um bando de lobos larga presa e chifre,
+            nunca poção de mana.
           </P>
         </Aside>
         <P>
@@ -491,16 +490,12 @@ export default function Appendices() {
           />
         </Aside>
 
-        <Aside title="Por que CA e resistência crescem">
-          A CA acompanha o acerto dos personagens, e o Bônus de Resistência dá às criaturas uma defesa calculável contra efeitos.
-        </Aside>
         <Aside title="Por que o chefe age mais de uma vez">
           <P>
             Dobrar o PV resolve a vida do chefe e não resolve o problema real, que é{" "}
-            <b>economia de ação</b>. Cinco personagens de 3º patamar agem quinze vezes por rodada; um chefe
-            age três. Com o PV dobrado ele continua morrendo antes de agir duas vezes — numa simulação de
-            2.000 combates, um grupo de cinco derrubou o chefe de <i>Elite</i> (um patamar acima deles) em
-            2,4 rodadas, perdendo 0,7 personagem. Isso não é um chefe: é um saco de pancada com bastante PV.
+            <b>economia de ação</b>. Cinco personagens agem quinze vezes por rodada; um chefe age três. Só
+            com o PV dobrado, ele morre antes de agir duas vezes — é um saco de pancada com bastante PV, não
+            um chefe.
           </P>
           <P>
             A rodada extra corrige a assimetria do lado certo. O chefe não fica mais difícil de matar — ele
@@ -512,7 +507,7 @@ export default function Appendices() {
         <Aside title="Ajustando pra cima ou pra baixo">
           <List
             items={[
-              "Grupo de criaturas fracas: use metade do PV e do dano do patamar, mas multiplique o número de criaturas.",
+              "Lacaio: metade do PV e do dano do patamar, e vale meia criatura no Orçamento de Encontro (abaixo). Use em bando.",
               <span key="chefe">
                 <b>Chefe único:</b> dobre o PV da linha do patamar dele, mantenha o dano — e dê a ele{" "}
                 <b>uma rodada inteira a cada dois personagens</b> do grupo, arredondado pra baixo (grupos de
@@ -549,7 +544,7 @@ export default function Appendices() {
           <b>O arquétipo também diz o formato.</b> O Bruto dá um golpe grande e uma investida lenta; o Ágil,
           dois golpes rápidos; a Fortaleza troca metade do dano dela por não sair do lugar; o Conjurador e a
           Mente trocam precisão por área — e área sempre pede <i>teste de resistência</i> contra a CD dela, e
-          nunca rolagem de ataque (Cap. 2, §7).
+          nunca rolagem de ataque.
         </P>
         <Aside title="O piso do dado, e o lacaio de 1º patamar">
           <P>
@@ -596,9 +591,9 @@ export default function Appendices() {
         <P>
           O chefe não bate mais forte que uma criatura do patamar dele: ele aguenta o dobro e age mais vezes.
           É a economia de ação, e não o dano por golpe, que o torna perigoso — o chefe que age duas vezes por
-          rodada espalha o estrago pelo grupo em vez de apagar um personagem por vez. Medido em batalha, isso
-          vale <b>um grupo inteiro</b>: cinco criaturas do patamar dele. Um chefe sozinho contra quatro
-          jogadores do mesmo patamar já é um encontro difícil; contra cinco, equilibrado.
+          rodada espalha o estrago pelo grupo em vez de apagar um personagem por vez. Isso vale{" "}
+          <b>um grupo inteiro</b>: cinco criaturas do patamar dele. Um chefe sozinho contra quatro jogadores
+          do mesmo patamar fica no teto do Equilibrado (5 contra 4 = 1,25); contra cinco, no meio dele.
         </P>
         <P>
           Pra um chefe mais duro, dê a ele companhia (lacaios, meia criatura cada) ou um patamar acima —
@@ -615,7 +610,7 @@ export default function Appendices() {
         */}
         <SubTitle id="apendice-g-fichas">As fichas das criaturas prontas</SubTitle>
         <P>
-          As seis fichas abaixo são o Bloco do Monstro funcionando: nenhum número foi digitado nelas. O
+          As seis fichas abaixo são o Bloco do Monstro funcionando: todo número sai das três escolhas. O
           patamar dá CA, PV, ataque e CD; o arquétipo distribui os atributos (o Principal vem marcado), a
           Percepção sai do Espírito que ele deu, e o Deslocamento é o dele. O que cada criatura declara à mão
           é só o que a ficção exige: o tamanho, o que ela sabe fazer, e o que a torna perigosa.
@@ -640,8 +635,7 @@ export default function Appendices() {
             "O patamar dele é o maior patamar da ficha, e o Bônus de Rank também: é esse número que entra na Concentração, no Fio da Vida e no Quebrantado.",
             "O rival usa as mesmas regras e fraquezas do grupo, por isso seus números podem diferir dos moldes de criatura.",
             "O rival conserva atributos, perícias, deslocamento, resistências, imunidades, iniciativa e reservas de PM, PT e PP da ficha. Uma técnica usa o bônus e a CD da sua própria árvore, mesmo se o rival estudou várias árvores.",
-            "O invocador pode levar Pactos de combate preparados: respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha; Círculo Improvisado, Convocação Aprimorada, Pacto Firmado e Duas Vidas também valem.",
-            "Pactos de apoio e efeitos especiais pedem a condução do Mestre durante o encontro.",
+            "O invocador pode levar Pactos de combate preparados: respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha.",
             "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 120 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
           ]}
         />

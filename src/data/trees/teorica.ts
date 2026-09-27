@@ -33,8 +33,14 @@ function frase(
 const receita = (f: FormulaEscolha) =>
   [ESSENCIAS[f.essencia].nome, ...f.verbos.map((v) => VERBOS[v].nome), FORMAS[f.forma].nome].join(" + ") +
   (f.potencia && f.potencia !== f.rank ? `, potência ${f.potencia}` : "") +
-  (f.meio === "giz" ? ", em giz" : f.meio === "pedra" ? ", em pedra" : "") +
   (f.armada ? ", armada" : "");
+
+// A carta de giz ou de pedra NÃO pede o preparo do meio: ela conjura como magia
+// comum, com cântico, e o que herda do meio é só a duração (e poder armar).
+const semPreparo = (f: FormulaEscolha) =>
+  f.meio === "ar"
+    ? ""
+    : `Sem preparo: a carta sai com o cântico, nas Ações do rank, e dura como a fórmula ${f.meio === "giz" ? "de giz" : "gravada em pedra"}.`;
 
 /**
  * A CARTA É A FÓRMULA DECORADA.
@@ -66,6 +72,7 @@ function modelo(
     r.resumo,
     r.bloqueio ?? "",
     r.efeitoDaEssencia ?? "",
+    semPreparo(f),
     r.duracao === "instantânea" ? "" : r.duracao === "dispara uma vez" ? "" : `Dura ${r.duracao}.`,
     excecao,
   ];
@@ -132,7 +139,7 @@ export const TEORICA_TREE: Tree = {
       "Desenhe no ar (as Ações de uma magia do rank da potência) ou prepare em giz antes e ative com 1 Ação.",
       "Erguer segura corpo; Selar segura magia. A defesa é a mesma gramática do ataque.",
     ],
-    cost: "Uma fórmula desenhada que fere por turno (as cartas são magia comum e não entram nessa conta). A fórmula não herda Maestria nem condição da escola da essência.",
+    cost: "Só uma fórmula desenhada fere por turno (as cartas são magia comum e ficam fora desse limite). A fórmula não herda Maestria nem condição da escola da essência.",
   },
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PM",
@@ -150,7 +157,7 @@ export const TEORICA_TREE: Tree = {
       mastery: {
         name: "Alfabeto Arcano",
         description:
-          "[Três palavras] Você conhece a essência Mana, os quatro verbos — Lançar, Erguer, Selar e Sinalizar — e as formas Círculo, Linha e Quadrado. Toda fórmula é uma essência + um verbo + uma forma, e custa o PM da potência + 1 por palavra fora do básico (Mana, o primeiro verbo e o Círculo são o básico). A potência é o seu rank na Teórica, ou menos. No ar, desenhar custa as Ações de uma magia do rank da potência; em giz ou pergaminho, você prepara em 1 minuto e ativa com 1 Ação — só Lançar que fere não se prepara. Qualquer pessoa que pague o PM alimenta uma fórmula sua já pronta. Tabelas e exemplos no Cap. 2, §8.",
+          "[Três palavras] Você conhece a essência Mana, os quatro verbos — Lançar, Erguer, Selar e Sinalizar — e as formas Círculo, Linha e Quadrado. Toda fórmula é uma essência + um verbo + uma forma, e custa o PM da potência + 1 por palavra fora do básico (Mana, o primeiro verbo e o Círculo são o básico). A potência é o seu rank na Teórica, ou menos. No ar, desenhar custa as Ações de uma magia do rank da potência; em giz ou pergaminho, você prepara em 1 minuto e ativa com 1 Ação — só Lançar sozinho (o que fere ou cura) não se prepara. Qualquer pessoa que pague o PM alimenta uma fórmula sua já pronta. Tabelas e exemplos no Cap. 2, §8.",
       },
       talents: [
         talento("Principiante", "simbolo-rejeitar", "Fórmula de Bolso", "Você carrega uma fórmula de Erguer, Selar ou Sinalizar preparada em pergaminho, dobrada no bolso. Ela não ocupa a sua sustentação até ser ativada (1 Ação). Refazer o pergaminho leva 1 minuto."),
@@ -158,7 +165,7 @@ export const TEORICA_TREE: Tree = {
         essencia("agua", "Água", "Lançar causa dano contundente, e a parede deixa quem encosta Molhado."),
         essencia("vento", "Vento", "Lançar causa dano cortante, e a parede empurra quem encosta."),
         essencia("terra", "Terra", "Lançar causa dano contundente, e a parede tem +50% de PV."),
-        essencia("som", "o Bardo", "Lançar causa dano trovejante, e a parede soa quando alguém encosta."),
+        essencia("som", "o Bardo", "Lançar causa dano sônico, e a parede soa quando alguém encosta."),
         essencia("vida", "Cura", "Lançar cura em vez de ferir, e a parede dá PV temporários a um aliado."),
         talento("Principiante", "traco-firme", "Traço Firme", "Uma vez por cena, refaça um Teste de Concentração que tenha perdido enquanto desenhava uma fórmula (Cap. 2, §6)."),
       ],

@@ -150,7 +150,7 @@ export const ESCUDOS_TREE: Tree = {
         // empunhar arma de dano — só escudo na mão. Cajado/Foco Arcano é
         // exceção (é conjuração, não dano), mas o jogador perde o ataque do
         // Cajado (1d6 contundente) enquanto segurar escudo.
-        { id: "puro-escudo", name: "Puro Escudo", paCost: 1, description: "Você escolhe a defesa total: enquanto tiver este talento, NÃO pode empunhar arma de dano (só escudo ou escudo grande). Em troca, todas as habilidades de Cavalaria e Escudos com versão 'Soberana' ficam disponíveis, e os aliados ADJACENTES a você contam como Sob Sua Guarda, além do seu limite normal — é assim que os seus efeitos os alcançam, sem precisar de uma segunda lista de quais passam e quais não. É a identidade do Defensor: ele não devolve nada, ele absorve tudo." },
+        { id: "puro-escudo", name: "Puro Escudo", paCost: 1, description: "Você escolhe a defesa total: enquanto tiver este talento, NÃO pode empunhar arma de dano (só escudo ou escudo grande). Em troca, todas as habilidades de Cavalaria e Escudos com versão 'Soberana' ficam disponíveis, e os aliados ADJACENTES a você contam como Sob Sua Guarda, além do seu limite normal. É a identidade do Defensor: ele não devolve nada, ele absorve tudo." },
         { id: "montaria", name: "Montaria", paCost: 1, description: "Você monta, treina e acalma qualquer besta de carga. Sobre ela, você não cai por efeito que permita teste, e sua montaria também está Sob Sua Guarda." },
         { id: "sono-de-ferro", name: "Sono de Ferro", paCost: 1, description: "Você dorme de armadura completa sem penalidade e acorda pronto. Vantagem contra Exaustão por marcha ou vigília." },
       ],
@@ -234,7 +234,7 @@ export const ESCUDOS_TREE: Tree = {
         { id: "folego-de-sentinela", name: "Fôlego de Sentinela", paCost: 1, description: "+1 PT por patamar seu em Cavalaria e Escudos. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela.", grants: { ptPerRank: 1 } },
         { id: "a-porta-sou-eu", name: "A Porta Sou Eu", paCost: 1, description: "Enquanto bloquear uma passagem de até 3m, criaturas Médias ou menores não atravessam sem antes te derrubar." },
         { id: "escudo-de-corpo-inteiro",
-          requires: ["puro-escudo"], name: "Escudo de Corpo Inteiro", paCost: 1, description: "Requer Puro Escudo. Você recebe +2 adicional na CA enquanto empunhar apenas escudo(s). Aliados adjacentes a você recebem Meia-Cobertura (+2 CA) passivamente." },
+          requires: ["puro-escudo"], name: "Escudo de Corpo Inteiro", paCost: 1, description: "Requer Puro Escudo. Você recebe +2 adicional na CA enquanto empunhar apenas escudo(s). Aliados adjacentes a você recebem Cobertura Parcial (+2 CA) passivamente." },
       ],
       abilities: [
         {
@@ -300,7 +300,7 @@ export const ESCUDOS_TREE: Tree = {
       talents: [
         { id: "casco-escudos", name: "Casco", paCost: 2, description: "Você tem Resistência a dano físico de armas mundanas enquanto empunhar escudo." },
         { id: "guarda-ampla", name: "Guarda Ampla", paCost: 2, description: "O número de aliados Sob Sua Guarda passa a ser o dobro do seu Bônus de Rank." },
-        { id: "aco-paciente", name: "Aço Paciente", paCost: 2, description: "Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank em Cavalaria e Escudos. Você gasta PT mais rápido que qualquer outra árvore do livro — este talento existe pra que a segunda metade da luta ainda tenha um Escudeiro nela." },
+        { id: "aco-paciente", name: "Aço Paciente", paCost: 2, description: "Uma vez por combate, sem gastar Ação, recupere PT iguais ao seu Bônus de Rank em Cavalaria e Escudos. Você gasta PT mais rápido que qualquer outra árvore do livro." },
       ],
       abilities: [
         {
