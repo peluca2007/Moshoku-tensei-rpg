@@ -153,7 +153,7 @@ export default function CreationRoulette() {
 
   useEffect(() => {
     if (!backgroundWheel.result) return;
-    useCharacterStore.getState().setBackground(backgroundWheel.result);
+    useCharacterStore.getState().setBackground(backgroundWheel.result, false);
     const bg = getBackgroundById(backgroundWheel.result);
     if (bg?.requiresSubtable) {
       useCharacterStore.getState().setSubtableEntry(rollRandomSubtableEntry(bg.requiresSubtable));

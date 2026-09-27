@@ -158,7 +158,9 @@ interface RosterState {
   toggleRacialUpgrade: (upgradeId: string) => void;
   /** Cap. 1, §2: liga/desliga a Vantagem permanente nos saves de um atributo (2 PA). */
   toggleSaveAdvantage: (key: AttributeKey) => void;
-  setBackground: (backgroundId: string | null) => void;
+  /** `escolhido` = o Antecedente foi escolhido (paga 1 PA se a raça foi sorteada). Padrão: escolhido. */
+  setBackground: (backgroundId: string | null, escolhido?: boolean) => void;
+  setAntecedenteEscolhido: (escolhido: boolean) => void;
   setSubtableEntry: (entryId: string | null) => void;
   setAttribute: (key: AttributeKey, value: number) => void;
   setStartingTree: (treeId: string | null) => void;
@@ -441,8 +443,9 @@ export const useCharacterStore = create<RosterState>()(
               : [...atuais, upgradeId],
           };
         }),
-      setBackground: (backgroundId) =>
-        updateActive(get, set, (c) => ({ ...c, backgroundId, subtableEntryId: null })),
+      setBackground: (backgroundId, escolhido = true) =>
+        updateActive(get, set, (c) => ({ ...c, backgroundId, antecedenteEscolhido: backgroundId ? escolhido : false, subtableEntryId: null })),
+      setAntecedenteEscolhido: (escolhido) => updateActive(get, set, (c) => ({ ...c, antecedenteEscolhido: escolhido })),
       setSubtableEntry: (subtableEntryId) => updateActive(get, set, (c) => ({ ...c, subtableEntryId })),
       setAttribute: (key, value) =>
         updateActive(get, set, (c) => ({ ...c, attributeBase: { ...c.attributeBase, [key]: value } })),
