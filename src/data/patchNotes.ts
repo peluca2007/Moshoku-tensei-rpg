@@ -16,6 +16,40 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.103",
+    date: "2026-09-27",
+    title: "Quatro decisões da revisão geral",
+    sections: [
+      {
+        heading: "Ofício não tem Rank Deus",
+        items: [
+          "Os sete Ofícios (Lutador, Cavalaria e Escudos, Arquearia, Punho do Fogo, Ladino, Bardo e Tático) imprimiam um quadro de Rank Deus, e o próprio Cap. 3 diz que Ofício termina no 6º patamar. Os quadros saíram do livro, junto com o rótulo 'Deus do Fogo Marcial'. O texto, que é bom, ficou guardado como lore pra um futuro capítulo do mundo.",
+        ],
+      },
+      {
+        heading: "Controle com rolagem",
+        items: [
+          "Maestria de Imperador da Terra: quem começa o turno a até 9 m testa Força (CD 8 + BC) antes de ficar Soterrado. Sem teste, ela tirava qualquer chefe corpo a corpo da luta.",
+          "Era Glacial (Água, Rei): 3d10 de frio por turno, por 3 turnos, com Vigor pra metade; depois, o terreno congelado de 24 horas. Era dano sem teste o dia inteiro.",
+          "Rio de Magma (Terra, Rei): o magma queima por 3 turnos, com Agilidade pra metade a cada turno (Atolados não testam); depois esfria em terreno difícil. Eram 6d10 por turno, por 10 minutos.",
+          "Serpente-do-Pântano: a picada pede Vigor CD 12; na falha, Envenenado até o fim do próximo turno e a Peçonha. Antes, Envenenado a luta inteira sem teste — pior que a Wyvern, um patamar acima. O simulador de encontros agora rola esse teste (e o da Wyvern).",
+        ],
+      },
+      {
+        heading: "Mestre da Adaptação",
+        items: [
+          "O talento da Água (Avançado) tira o corte de dano da Encurtada só nas magias de rank Intermediário ou abaixo — o Cântico Fluido, um rank acima. Em todas, ele desfazia a decisão de a Encurtada custar metade do dano, e a Padrão da Água morria no Avançado.",
+        ],
+      },
+      {
+        heading: "A carta pode se partir no cântico",
+        items: [
+          "Quando o vão no pé da coluna passa de 1/3 dela, a carta se parte ENTRE o efeito e o cântico: nome, custo, regra, dano e formas ficam juntos no vão, e o cântico, inteiro, abre a coluna seguinte. O fim de cada árvore também passou a pesar o branco que a arte de fecho deixa na página. Somado à 0.1.102: o branco das colunas com vão caiu quase pela metade, e o livro tem 274 páginas (eram 280).",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.102",
     date: "2026-09-27",
     title: "Revisão geral: menos vão, menos bastidor",

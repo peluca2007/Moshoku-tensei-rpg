@@ -118,7 +118,13 @@ for (const tree of TREES) {
         `Divino não tem custo em PA. Mova o conteúdo para o quadro narrativo em src/data/rankDeus.ts`
     );
   }
-  if (!getRankDeusForTree(tree.id)) {
+  // Ofício termina no 6º patamar (Cap. 3): não tem Rank Deus, e o livro não
+  // pode imprimir um (até 2026-09-27 imprimia, contradizendo a regra).
+  const oficio = tree.proficiencies?.nota.startsWith("Ofício") ?? false;
+  if (oficio && getRankDeusForTree(tree.id)) {
+    falha(`árvore "${tree.name}" (${tree.id}) é Ofício e imprime um quadro de Rank Deus — Ofício termina no 6º patamar (Cap. 3)`);
+  }
+  if (!oficio && !getRankDeusForTree(tree.id)) {
     falha(`árvore "${tree.name}" (${tree.id}) não tem quadro de Rank Deus nem caminho de ascensão`);
   }
 }

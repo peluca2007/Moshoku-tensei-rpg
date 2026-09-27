@@ -316,8 +316,8 @@ export const TERRA_TREE: Tree = {
           pmCost: 14,
           range: "Linha de 45m × 9m",
           actions: MAGIC_ACTIONS.Rei,
-          damage: { normal: "12d8 + BC de dano de magma no impacto, depois 6d10 por turno" },
-          effect: "A área permanece coberta de magma por 10 minutos. Teste de Agilidade para metade — criaturas Atoladas não podem testar.",
+          damage: { normal: "12d8 + BC de dano de magma no impacto, depois 6d10 por turno, por 3 turnos (Agilidade para metade)" },
+          effect: "No impacto, teste de Agilidade (CD 8 + BC) para metade — criaturas Atoladas não podem testar. O magma queima por 3 turnos: no início do turno de cada criatura dentro da área, novo teste de Agilidade, 6d10 na falha e metade no sucesso (Atoladas, de novo, não testam). Depois, o magma esfria em rocha e a área fica terreno difícil por 10 minutos.",
           incantation:
             "Rio que corre bem lá embaixo, onde nem a raiz mais funda da árvore mais velha jamais ousou descer,\nonde a luz nunca chegou e o silêncio nunca foi quebrado por um único passo humano:\nsobe agora, encontra a superfície pela primeira vez em toda a tua longa existência subterrânea,\ne não te apresses a esfriar — fica quente o tempo suficiente pra que ninguém aqui jamais esqueça o teu nome.\nRio de Magma!",
         },
@@ -340,7 +340,7 @@ export const TERRA_TREE: Tree = {
       mastery: {
         name: "O Continente é Seu",
         description:
-          "Você molda terra, pedra, metal e magma num raio de 10 km, permanentemente. Criaturas hostis em contato com o solo a até 30m estão permanentemente Atoladas, sem teste — e qualquer uma delas que comece o turno a até 9m de você fica Soterrada. Uma vez por turno, conjure magia de Terra Avançado ou inferior em Silenciosa sem gastar Ação.",
+          "Você molda terra, pedra, metal e magma num raio de 10 km, permanentemente. Criaturas hostis em contato com o solo a até 30m estão permanentemente Atoladas, sem teste — e qualquer uma delas que comece o turno a até 9m de você faz um teste de Força (CD 8 + BC) ou fica Soterrada. Uma vez por turno, conjure magia de Terra Avançado ou inferior em Silenciosa sem gastar Ação.",
       },
       talents: [
         { id: "aquele-que-move-montanhas", name: "Aquele que Move Montanhas", paCost: RANK_PA_COST.talent.Imperador, description: "Uma vez por Descanso Longo, conjure qualquer magia de Terra pagando metade do PM, arredondado para baixo." },

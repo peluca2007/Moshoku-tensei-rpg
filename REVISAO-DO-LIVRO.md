@@ -180,12 +180,14 @@ que importa está aqui.
   o Eco da Teórica sem o BC dobrado; CA sem teto de Agilidade (o Cap. 0 contradizia o Cap. 4 e a ficha);
   Trauma só por ver aliado morrer (decisão 18).
 
-## B. Decisões pendentes (do mais grave pro menos) — ★ = o que o designer escolheria
+## B. Decisões (do mais grave pro menos) — ★ = o que o designer escolheria
+
+O autor escolheu ★ nas quatro que foram levadas a ele (1, 10–12, 2 e 20); as outras seguem pendentes.
 
 **Contradições e opções mortas**
-1. **Os sete Ofícios imprimem "◈ Rank Deus"**, e o Cap. 3 diz que Ofício termina no 6º patamar. ★ Tirar o
+1. ✅ **Aplicada (★, 0.1.103).** **Os sete Ofícios imprimem "◈ Rank Deus"**, e o Cap. 3 diz que Ofício termina no 6º patamar. ★ Tirar o
    bloco dos Ofícios (o texto é bom; vira lore).
-2. **Mestre da Adaptação (Água, Avançado)** tira o corte de dano da Encurtada e desfaz a decisão 1: a
+2. ✅ **Aplicada (★, 0.1.103).** **Mestre da Adaptação (Água, Avançado)** tira o corte de dano da Encurtada e desfaz a decisão 1: a
    Padrão da Água morre. ★ Só pra magias de rank Intermediário ou abaixo.
 3. **Treinar e Vigiar as Costas (downtime)** valem zero: Vantagem não empilha com a perícia que você já
    tem. ★ Usar a regra do Ajudar: com Vantagem já, vira +2; e dizer o efeito de Vigiar em cada atividade.
@@ -204,11 +206,11 @@ que importa está aqui.
    teto; escrever "+PM: só do Avançado em diante" na linha da tabela.
 
 **Controle sem rolagem (o mesmo problema que as decisões 8 e 9 consertaram)**
-10. **Maestria de Imperador da Terra:** Soterrado sem teste, todo turno, a 9 m. ★ Teste de Força (CD 8 + BC)
+10. ✅ **Aplicada (★, 0.1.103).** **Maestria de Imperador da Terra:** Soterrado sem teste, todo turno, a 9 m. ★ Teste de Força (CD 8 + BC)
     por turno.
-11. **Era Glacial (Água, Rei) e Rio de Magma (Terra, Rei):** dano por turno sem teste. ★ Molde do Vazio:
+11. ✅ **Aplicada (★, 0.1.103).** **Era Glacial (Água, Rei) e Rio de Magma (Terra, Rei):** dano por turno sem teste. ★ Molde do Vazio:
     teste por turno pra metade, duração de combate.
-12. **Serpente-do-Pântano (Ap. G, 2º patamar):** Envenenado a luta inteira, sem teste; a Wyvern, um patamar
+12. ✅ **Aplicada (★, 0.1.103).** **Serpente-do-Pântano (Ap. G, 2º patamar):** Envenenado a luta inteira, sem teste; a Wyvern, um patamar
     acima, pede teste. ★ Igual à Wyvern: Vigor CD 13 ou Envenenado até o fim do próximo turno.
 
 **Regra ambígua**
@@ -229,7 +231,7 @@ que importa está aqui.
     no topo, enxugar o resto e renomear "Dano por Turno — Comparando Árvores".
 
 **Diagramação**
-20. **Vão que sobra** (57 colunas): a carta maior que meia coluna, sem nada que caiba antes dela. ★ Deixar a
+20. ✅ **Aplicada (★, 0.1.103).** **Vão que sobra** (57 colunas): a carta maior que meia coluna, sem nada que caiba antes dela. ★ Deixar a
     carta partir **só entre o efeito e o cântico** quando o vão passar de 1/3 da coluna (a regra, o custo e
     o dano continuam juntos). Hoje a regra "carta inteira" do autor proíbe.
 

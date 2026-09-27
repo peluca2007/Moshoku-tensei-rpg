@@ -243,7 +243,7 @@ export const AGUA_TREE: Tree = {
           id: "mestre-da-adaptacao",
           name: "Mestre da Adaptação",
           paCost: RANK_PA_COST.talent.Avançado,
-          description: "Suas magias Encurtadas de Água não perdem mais dano, apenas a redução de área.",
+          description: "Suas magias de Água de rank Intermediário ou inferior não perdem mais dano na versão Encurtada, só área — o Cântico Fluido, um rank acima. A Silenciosa dessas magias herda o dano cheio.",
         },
         {
           id: "nucleo-gelido",
@@ -445,9 +445,9 @@ export const AGUA_TREE: Tree = {
           pmCost: 11,
           range: "Esfera de 30m de raio",
           actions: MAGIC_ACTIONS.Rei,
-          damage: { normal: "3d10 de frio (sem teste, a quem começar o turno dentro)" },
+          damage: { normal: "3d10 de frio por turno, por 3 turnos (Vigor para metade)" },
           effect:
-            "A área vira terreno congelado por 24 horas; deslocamento reduzido à metade dentro dela. Corpos d'água congelam sólidos e viram terreno transitável.",
+            "O frio morde por 3 turnos: no início do turno de cada criatura dentro da área, teste de Vigor (CD 8 + BC), 3d10 de frio na falha e metade no sucesso. Depois, a área fica terreno congelado por 24 horas; deslocamento reduzido à metade dentro dela. Corpos d'água congelam sólidos e viram terreno transitável.",
           incantation:
             "Estação que não pede permissão a lavrador nenhum,\ntu que chegas quando queres e ficas quanto entendes:\nnão te peço um inverno. Peço o primeiro deles,\naquele que veio antes de haver casa, celeiro ou colheita para perder.\nDesce sobre esta terra com a lentidão de quem tem todo o tempo,\nendurece o rio no meio da corrente, sela o lago por cima,\ne cobre sem pressa o que os homens construíram,\naté que a paisagem esqueça que alguém morou aqui.\nEra Glacial!",
         },

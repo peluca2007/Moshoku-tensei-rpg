@@ -19,13 +19,26 @@ import { getRankDeusForTree } from "./rankDeus";
  * leitura atenta.
  */
 describe("todo patamar Divino está escrito em algum lugar", () => {
-  it("as dezenove árvores têm quadro de Rank Deus ou caminho de ascensão", () => {
-    const semNada = TREES.filter((t) => !getRankDeusForTree(t.id)).map((t) => t.id);
+  // Os sete Ofícios terminam no 6º patamar (Cap. 3): não têm Rank Deus, e o
+  // livro não pode imprimir um (até 2026-09-27 imprimia, contradizendo a regra).
+  const OFICIOS = ["arquearia", "cavalaria-e-escudos", "armas-pesadas", "punho-de-fogo", "furtividade-e-armadilhas", "bardo-e-interacao", "navegacao-e-lideranca"];
+  const comDeus = TREES.filter((t) => !OFICIOS.includes(t.id));
+
+  it("toda Escola Formal e híbrida tem quadro de Rank Deus ou caminho de ascensão", () => {
+    const semNada = comDeus.filter((t) => !getRankDeusForTree(t.id)).map((t) => t.id);
     expect(semNada).toEqual([]);
   });
 
+  it("nenhum Ofício tem Rank Deus", () => {
+    for (const id of OFICIOS) {
+      expect(TREES.some((t) => t.id === id), `${id} não existe mais`).toBe(true);
+      expect(getRankDeusForTree(id), id).toBeUndefined();
+      expect(TREES.find((t) => t.id === id)!.rankLabels?.Deus, id).toBeUndefined();
+    }
+  });
+
   it("cada um tem título e corpo de verdade, não uma casca", () => {
-    for (const t of TREES) {
+    for (const t of comDeus) {
       const entrada = getRankDeusForTree(t.id)!;
       expect(entrada.title.trim().length, t.id).toBeGreaterThan(3);
       expect(entrada.body.length, t.id).toBeGreaterThan(0);

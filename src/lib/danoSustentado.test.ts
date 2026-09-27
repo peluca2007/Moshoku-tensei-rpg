@@ -168,7 +168,7 @@ describe("O que o livro realmente tem", () => {
    * backlog dizia "três", e eram sete — a diferença é que só três apareciam
    * como capstone quebrado, e ninguém tinha contado o resto.
    */
-  it("sete habilidades de dano do livro são sustentadas", () => {
+  it("oito habilidades de dano do livro são sustentadas", () => {
     const achadas: string[] = [];
     for (const t of TREES) {
       for (const r of t.ranks) {
@@ -184,6 +184,7 @@ describe("O que o livro realmente tem", () => {
     }
     expect(achadas.sort()).toEqual(
       [
+        "agua/Era Glacial",
         "armas-pesadas/Estrangular [Impacto]",
         "punho-de-fogo/Prisão de Purgatório",
         "punho-de-fogo/Trono de Chamas",
