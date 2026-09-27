@@ -41,6 +41,11 @@ import { BASE, comNavegador, dormir, exigirSemeador, servidorNoAr, urlSemeada } 
 const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/comparar", "/sessao", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
 /** 320 = o iPhone SE mais estreito ainda em uso; 360 = a moda dos Androids; 414 = iPhone grande. */
 const LARGURAS = [320, 360, 414];
+const TELAS_DO_LIVRO = [
+  { largura: 360, altura: 800 },
+  { largura: 375, altura: 812 },
+  { largura: 390, altura: 844 },
+];
 
 const MEDICAO = String.raw`(() => {
   const janela = document.documentElement.clientWidth;
@@ -119,6 +124,18 @@ const MEDICAO = String.raw`(() => {
   return JSON.stringify({ transbordo, culpados: culpados.slice(0, 6), pequenos, inline });
 })()`;
 
+const MEDICAO_LIVRO = String.raw`(() => {
+  const caixas = [...document.querySelectorAll('.livro-tabela')]
+    .filter((el) => el.scrollWidth > el.clientWidth + 1)
+    .map((el) => ({
+      id: el.closest('section')?.querySelector(':scope > [id]')?.id || '(sem seção)',
+      client: el.clientWidth,
+      scroll: el.scrollWidth,
+      texto: (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 55),
+    }));
+  return JSON.stringify({ caixas: caixas.slice(0, 8), total: caixas.length });
+})()`;
+
 if (!(await servidorNoAr())) {
   console.error(`❌ ${BASE} não respondeu. Rode \`npm run dev\` antes.`);
   process.exit(1);
@@ -164,9 +181,42 @@ await comNavegador(
   { porta: Number(process.env.PORTA_CDP ?? 9334) }
 );
 
+await comNavegador(
+  async ({ abrir }) => {
+    console.log("\n--- /livro: aparelhos e temas pedidos ---");
+    for (const { largura, altura } of TELAS_DO_LIVRO) {
+      for (const tema of ["dark", "light"]) {
+        const aba = await abrir("about:blank");
+        await aba.enviar("Emulation.setDeviceMetricsOverride", {
+          width: largura,
+          height: altura,
+          deviceScaleFactor: 2,
+          mobile: true,
+        });
+        await aba.enviar("Page.navigate", { url: urlSemeada("/livro", tema) });
+        await dormir(Number(process.env.ESPERA_MS ?? 5000));
+        const geral = JSON.parse((await aba.avaliar(MEDICAO)) ?? "{}");
+        const livro = JSON.parse((await aba.avaliar(MEDICAO_LIVRO)) ?? "{}");
+        await aba.fechar();
+
+        const quebrou = (geral.transbordo ?? 0) > 1 || livro.total > 0;
+        if (quebrou) quebradas++;
+        console.log(
+          `${quebrou ? "!!" : "ok"} ${largura}×${altura} ${tema.padEnd(5)} ` +
+          `página=${geral.transbordo ?? 0}px tabelas-roláveis=${livro.total ?? 0}`
+        );
+        for (const caixa of livro.caixas ?? []) {
+          console.log(`     ↳ ${caixa.id}: ${caixa.client}px → ${caixa.scroll}px "${caixa.texto}"`);
+        }
+      }
+    }
+  },
+  { porta: Number(process.env.PORTA_CDP_LIVRO ?? 9335) }
+);
+
 console.log("========================================");
 if (quebradas > 0) {
   console.error(`\n❌ ${quebradas} página(s) rolam de lado numa tela de celular.`);
   process.exit(1);
 }
-console.log(`\n✅ Nenhuma das ${ROTAS.length} rotas transborda entre ${LARGURAS[0]}px e ${LARGURAS.at(-1)}px.`);
+console.log(`\n✅ Nenhuma das ${ROTAS.length} rotas transborda entre ${LARGURAS[0]}px e ${LARGURAS.at(-1)}px; /livro também cabe nas 6 combinações pedidas.`);
