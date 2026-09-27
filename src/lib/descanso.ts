@@ -110,18 +110,19 @@ export interface AtividadeDeDowntime {
   aplica?: "ouro" | "pvCheio";
 }
 
+/** A tabela do Cap. 5, §1 — o livro a imprime daqui, então site e livro não divergem. */
 export const DOWNTIME: AtividadeDeDowntime[] = [
   {
     id: "treinar",
     nome: "Treinar",
     efeito:
-      "Ganhe Vantagem no próximo teste de uma Perícia à escolha, ligada à sua Árvore Inicial ou a uma Perícia que você já tenha — dura até ser usado ou até 1 mês passar. Não concede PA.",
+      "Ganhe Vantagem no próximo teste de uma Perícia à escolha, ligada à sua Árvore Inicial ou a uma Perícia que você já tenha. Se você já teria Vantagem nesse teste (a perícia já dá), o treino vira +2, como o Ajudar (Cap. 4, §4). Dura até ser usado ou até 1 mês passar. Não concede PA.",
   },
   {
     id: "recuperar",
     nome: "Recuperar-se",
     efeito:
-      "Convalescença (Cap. 4): todos os PV são restaurados, e mais 1 nível de Exaustão é removido além do normal.",
+      "Convalescença (Cap. 4): todos os PV são restaurados. Se a semana foi passada acompanhado de alguém de confiança, remove 1 ponto de Trauma (Cap. 4) — 2 pontos se alguém gastar a própria semana em Vigiar as Costas por você.",
     aplica: "pvCheio",
   },
   {
@@ -146,7 +147,7 @@ export const DOWNTIME: AtividadeDeDowntime[] = [
   {
     id: "vigiar",
     nome: "Vigiar as Costas do Grupo",
-    efeito: "Sem efeito próprio, mas concede a outro personagem Vantagem na atividade dele nesta semana.",
+    efeito: "Sem efeito próprio: melhora a semana de outro personagem. Trabalhar: ele rola os 2d6 duas vezes e fica com o maior. Estudar: +2 no teste de Ofícios. Treinar: o bônus dele vale em dois testes, não em um. Cultivar um Contato: o contato resolve dois pedidos. Recuperar-se: remove 1 ponto de Trauma a mais.",
   },
 ];
 

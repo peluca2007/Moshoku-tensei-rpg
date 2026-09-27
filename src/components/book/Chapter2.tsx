@@ -109,8 +109,8 @@ export default function Chapter2() {
           />
           <P>
             <b>E a magia que não tem dados nem área?</b> Vácuo Localizado, Prisão de Ar e outras magias de
-            controle puro têm <b>a duração reduzida à metade</b> ao encurtar. Se a magia também não tem
-            duração, ela simplesmente não pode ser Encurtada.
+            controle puro têm <b>a duração reduzida à metade</b> ao encurtar, nunca abaixo de 1 turno. Se a
+            magia também não tem duração, ela simplesmente não pode ser Encurtada.
           </P>
         </Warning>
         <Aside title="Conjuração Silenciosa — regra completa, sem exceção escondida">
@@ -658,7 +658,7 @@ export default function Chapter2() {
           Ela segura corpos e projéteis até perder os PV; magia atravessa. Selar não tem PV e barra magia pela{" "}
           <b>Régua do Selo</b>: magia de rank igual ou abaixo da potência não atravessa; um rank acima atravessa
           com dados, área e duração pela metade; dois ou mais acima atravessam inteiras. Corpos, armas e Touki
-          atravessam o selo. Um selo com essência de escola (Selar + Fogo) só barra magia daquela escola.
+          atravessam o selo. Um selo com essência de escola (Selar + Fogo) só barra magia daquela escola — e, por ser estreito, barra um rank a mais.
         </P>
         <FalaDaRoxy>
           Erguer segura corpo. Selar segura magia. Troque os dois e o ogro atravessa o seu selo rindo, ou a Bola
@@ -670,7 +670,8 @@ export default function Chapter2() {
         <P>
           No ar, a fórmula sai na hora e custa as Ações de uma magia do rank da potência (§3). Em{" "}
           <b>giz ou pergaminho</b> você prepara 1 minuto antes e ativa com 1 Ação — só Lançar sozinho (o que fere ou
-          cura) não se prepara: um tiro se desenha na hora. No ar, uma parede ou um selo tem até 12 m. <b>Sustentação:</b>{" "}
+          cura) não se prepara: um tiro se desenha na hora. O desenho preparado e ainda não ativado se apaga no
+          Descanso Longo. No ar, uma parede ou um selo tem até 12 m. <b>Sustentação:</b>{" "}
           uma parede ou um selo ativo é a sua sustentação (§7).
         </P>
         <P>

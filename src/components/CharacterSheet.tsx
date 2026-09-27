@@ -1123,7 +1123,7 @@ export default function CharacterSheet() {
                   rate={reserveRates.mpRate}
                   bloqueado={
                     reserveRates.mpBloqueado
-                      ? "Não rende nada enquanto o seu maior patamar de magia for Principiante ou Intermediário: o teto de PM do Cap. 4, §1 corta todo extra avulso. Libera no Avançado."
+                      ? "A compra de PM só existe do Avançado de magia em diante (Cap. 1, §2)."
                       : undefined
                   }
                   onChange={(v) => useCharacterStore.getState().setBonusMp(v)}

@@ -96,14 +96,6 @@ export default function Chapter4() {
             <b>Espírito × Bônus + 8</b>.
           </P>
           <P>
-            <b>O que não passa nos 2 primeiros patamares.</b> Enquanto o seu maior Bônus de Rank de magia
-            for 1 ou 2 (Principiante e Intermediário), PM comprado com PA avulso e PM fixo de antecedente{" "}
-            <b>não entram</b> na reserva: ela fica exatamente na fórmula acima, mais o talento de reserva da
-            árvore e o bônus escalar de raça (Elfo ×2, Migurd ×3). O Espírito entra inteiro desde o começo —
-            um mago de Espírito 6 no Principiante tem 14 PM, e o de Espírito 4 tem 12. Do Avançado em diante,
-            o PA avulso e o antecedente também passam a contar.
-          </P>
-          <P>
             Exemplo: uma Água Imperador (Bônus +6) com Espírito 6 tem 6×6+8 = <b>44 PM</b> — o suficiente
             pra bancar a assinatura de Imperador de Água (Zero Absoluto, 20 PM) duas vezes, e sobram 4 PM.
           </P>
@@ -570,7 +562,7 @@ export default function Chapter4() {
               ["6", "Nervo Pinçado: Suas mãos tremem de forma involuntária. Desvantagem em testes de Ladinagem e Ofícios que exijam coordenação motora fina."],
               ["7", "Costela Mal Colada: o tronco não aguenta outro impacto limpo. Sempre que você sofrer um acerto crítico, fica Desequilibrado até o fim do seu próximo turno."],
               ["8", "A Sombra Não Sai: Nenhuma penalidade física, mas Desvantagem em testes de resistência de Espírito contra ficar Amedrontado — o corpo lembra da morte, mesmo que a mente negue."],
-              ["9", "Voz Quebrada: As cordas vocais foram gravemente danificadas. Você não consegue mais usar Encantamento Encurtado e tem Desvantagem em Atuação e Persuasão."],
+              ["9", "Voz Quebrada: As cordas vocais foram gravemente danificadas. Você não consegue mais recitar: perde a Conjuração Padrão e o Encantamento Encurtado (sobra a Conjuração Silenciosa, se você a tiver), e tem Desvantagem em Atuação e Persuasão."],
               ["10", "Perna Manca: Os ossos não colaram direito e a musculatura atrofiou. Seu Deslocamento base sofre uma penalidade permanente de −3m."],
               ["11", "Olho Perdido: A visão periférica e de profundidade se foram. Desvantagem em Percepção visual e em qualquer ataque à distância além do alcance curto."],
               ["12", "Membro Perdido (Braço/Mão): Desvantagem em testes de Força e Atletismo. Você não consegue usar armas de duas mãos, nem empunhar arma e escudo ao mesmo tempo."],
@@ -689,7 +681,7 @@ export default function Chapter4() {
           rows={[
             ["Baba de Sapo-Lodo", "Principiante", "Pântanos do Continente Central", "Envenenado por 1 hora. A primeira coisa que um aventureiro novato pega."],
             ["Espinho da Rosa-Preta", "Principiante", "Planta cultivada em Asura", "Em 10 minutos, Inconsciente por 8 horas; sofrer dano acorda. Não causa dano."],
-            ["Peçonha de Serpente-do-Pântano", "Intermediário", "Serpentes grandes", "2d6 por hora e Desvantagem em Vigor. Mata um camponês em cinco horas."],
+            ["Veneno de Serpente-do-Pântano", "Intermediário", "Serpentes grandes", "2d6 por hora e Desvantagem em Vigor. Mata um camponês em cinco horas."],
             ["Toxina de Aranha Gigante", "Intermediário", "Cavernas, ruínas", "Paralisia progressiva: -3m de Deslocamento por hora, cumulativo até 0."],
             ["Fel de Wyvern", "Avançado", "Feras voadoras do Continente Demônio", "4d8 por dia. Cega em 48 horas."],
             ["Sombra Líquida", "Santo", "Assassinos profissionais", "Sem sintoma por três dias. No quarto dia, teste de Vigor CD 16; na falha, o coração para."],
@@ -734,8 +726,8 @@ export default function Chapter4() {
           extraiu de outra vítima ou da presa de uma criatura. Quem aplica não muda o veneno.
         </P>
         <Aside title="Exemplo rápido">
-          Um Ladino unta a adaga com Peçonha de Serpente-do-Pântano (Intermediária) e acerta um golpe surpresa.
-          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, a Peçonha se instala — 2d6 por hora e
+          Um Ladino unta a adaga com Veneno de Serpente-do-Pântano (Intermediário) e acerta um golpe surpresa.
+          A vítima faz Vigor contra CD 12 (8 + 2×2). Se falhar, o veneno se instala — 2d6 por hora e
           Desvantagem em Vigor — e isso não para até alguém com <b>Purga Profunda</b> (Intermediário) ou superior tratar,
           ou até uma Poção de Antídoto Forte (Cap. 5, §4) ser bebida.
         </Aside>
