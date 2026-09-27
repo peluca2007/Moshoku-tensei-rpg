@@ -479,9 +479,9 @@ export default function Appendices() {
 
         <Aside title="Por que o chefe age mais de uma vez">
           <P>
-            Dobrar o PV resolve a vida do chefe e não resolve o problema real, que é{" "}
+            Mais PV resolve a vida do chefe e não resolve o problema real, que é{" "}
             <b>economia de ação</b>. Cinco personagens agem quinze vezes por rodada; um chefe age três. Só
-            com o PV dobrado, ele morre antes de agir duas vezes — é um saco de pancada com bastante PV, não
+            com PV a mais, ele morre antes de agir duas vezes — é um saco de pancada com bastante PV, não
             um chefe.
           </P>
           <P>
@@ -496,7 +496,7 @@ export default function Appendices() {
             items={[
               "Lacaio: metade do PV e do dano do patamar, e vale meia criatura no Orçamento de Encontro (abaixo). Use em bando.",
               <span key="chefe">
-                <b>Chefe único:</b> dobre o PV da linha do patamar dele, mantenha o dano — e dê a ele{" "}
+                <b>Chefe único:</b> o triplo do PV da linha do patamar dele e uma vez e meia o dano — e dê a ele{" "}
                 <b>uma rodada inteira a cada dois personagens</b> do grupo, arredondado pra baixo (grupos de
                 três ou menos não ganham rodada extra). Um grupo de cinco enfrenta um chefe que age duas
                 vezes por rodada.
@@ -535,7 +535,7 @@ export default function Appendices() {
         </P>
         <Aside title="O piso do dado, e o lacaio de 1º patamar">
           <P>
-            Um lacaio de 1º patamar tem <b>5</b> de orçamento no turno inteiro. O menor dado do livro é o d4,
+            Um lacaio de 1º patamar tem <b>6</b> de orçamento no turno inteiro. O menor dado do livro é o d4,
             que rende 2,5 — três ataques do menor dado que existe já dão 7,5, e a criatura mais fraca do livro
             sairia 50% acima da própria régua. Não existe fórmula que resolva isso: o problema é a
             granularidade do dado, não a conta.
@@ -560,11 +560,12 @@ export default function Appendices() {
           <P>
             <b>Trocar patamar por número</b>, para montar o resto: uma criatura <b>um patamar acima</b> vale
             duas do patamar do grupo; uma <b>um patamar abaixo</b> vale meia; <b>dois patamares abaixo</b>,
-            um quarto. Um <b>Chefe</b> vale <b>cinco</b> criaturas do mesmo patamar dele — um grupo inteiro.
+            um quarto. Um <b>Chefe</b> vale <b>quatro</b> criaturas do mesmo patamar dele — um grupo inteiro.
           </P>
           <P>
-            <b>Faixas de dificuldade:</b> <i>Fácil</i> até 0,75 do orçamento; <i>Equilibrado</i> acima de 0,75
-            até 1,25; <i>Difícil</i> acima de 1,25 até 1,5; <i>Mortal</i> acima de 1,5. Avise a mesa quando
+            <b>Faixas de dificuldade:</b> <i>Fácil</i> até 0,75 do orçamento (abaixo de 0,5 é <i>Trivial</i>:
+            narre em vez de rolar Iniciativa); <i>Equilibrado</i> acima de 0,75 até 1; <i>Difícil</i> acima
+            de 1 até 1,25; <i>Mortal</i> acima de 1,25. Avise a mesa quando
             o Perigo do contrato (Cap. 5, §2) apontar para um encontro mortal.
           </P>
           <P>
@@ -574,13 +575,13 @@ export default function Appendices() {
           </P>
         </Warning>
 
-        <SubTitle id="apendice-g-chefe">Por que o Chefe pesa cinco</SubTitle>
+        <SubTitle id="apendice-g-chefe">Por que o Chefe pesa quatro</SubTitle>
         <P>
-          O chefe não bate mais forte que uma criatura do patamar dele: ele aguenta o dobro e age mais vezes.
+          O chefe bate só uma vez e meia o que uma criatura do patamar dele bate: ele aguenta o triplo e age mais vezes.
           É a economia de ação, e não o dano por golpe, que o torna perigoso — o chefe que age duas vezes por
           rodada espalha o estrago pelo grupo em vez de apagar um personagem por vez. Isso vale{" "}
-          <b>um grupo inteiro</b>: cinco criaturas do patamar dele. Um chefe sozinho contra quatro jogadores
-          do mesmo patamar fica no teto do Equilibrado (5 contra 4 = 1,25); contra cinco, no meio dele.
+          <b>um grupo inteiro</b>: quatro criaturas do patamar dele. Um chefe sozinho contra quatro jogadores
+          do mesmo patamar é um encontro Equilibrado (4 contra 4 = 1).
         </P>
         <P>
           Pra um chefe mais duro, dê a ele companhia (lacaios, meia criatura cada) ou um patamar acima —
@@ -614,7 +615,7 @@ export default function Appendices() {
           renegada da Água, o colega de dojo que virou inimigo. Nenhum deles é um molde. Monte o rival como
           um personagem, gastando o PA de um personagem do patamar que você quer. Como rival <b>Padrão</b>,
           ele usa os PV, a CA, o ataque, as reservas e as técnicas da ficha. Como <b>Chefe único</b>,
-          começa com o dobro dos PV da ficha e recebe os turnos adicionais da regra de chefe acima;
+          começa com o triplo dos PV da ficha e recebe os turnos adicionais da regra de chefe acima;
           o dano de cada técnica permanece o mesmo.
         </P>
         <List
@@ -623,7 +624,7 @@ export default function Appendices() {
             "O rival usa as mesmas regras e fraquezas do grupo, por isso seus números podem diferir dos moldes de criatura.",
             "O rival conserva atributos, perícias, deslocamento, resistências, imunidades, iniciativa e reservas de PM, PT e PP da ficha. Uma técnica usa o bônus e a CD da sua própria árvore, mesmo se o rival estudou várias árvores.",
             "O invocador pode levar Pactos de combate preparados: respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha.",
-            "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 120 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
+            "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 180 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
           ]}
         />
       </Section>

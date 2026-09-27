@@ -26,7 +26,7 @@
  *
  * A régua do C mede o que um PERSONAGEM entrega no turno, e usá-la aqui seria
  * medir sobrevivência contra um duelo entre jogadores — que não é o que a mesa
- * joga. O molde do Apêndice G (10/20/35/55/80/120) é o inimigo que o Mestre
+ * joga. O molde do Apêndice G (12/16/22/30/38/48 desde 2026-09-27) é o inimigo que o Mestre
  * monta, e é o dano que realmente chega na ficha.
  *
  * ## O que ele NÃO mede
