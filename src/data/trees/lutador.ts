@@ -296,7 +296,7 @@ export const LUTADOR_TREE: Tree = {
           "Você recebe 1 Ação adicional por turno, usável só para atacar ou agarrar. Toda criatura que começar o turno adjacente a você ganha 1 acúmulo de Quebrantado. Uma criatura que chegar ao máximo de acúmulos (o dobro do seu Bônus de Rank, por Nada Segura) faz teste de Vigor (CD 8 + Força + Rank) ou fica Atordoada até o fim do próximo turno dela — uma vez por combate por criatura.",
       },
       talents: [
-        { id: "sem-arma-nenhuma", name: "Sem Arma Nenhuma", paCost: 4, description: "Seus ataques desarmados sobem para o Dado de Arma de um montante (d10 base) e contam como mágicos, de cerco e adamantinos." },
+        { id: "sem-arma-nenhuma", name: "Sem Arma Nenhuma", paCost: 4, description: "Seus ataques desarmados sobem para o Dado de Arma de um montante (d10 base) e contam como mágicos (atravessam a Resistência a dano físico de arma mundana) e como armas de cerco contra estruturas." },
       ],
       abilities: [
         {

@@ -126,7 +126,7 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Interpor",
         description:
-          "[Sob Minha Guarda] Você desbloqueia 'Sob Minha Guarda': designe 1 aliado como protegido; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim pelas técnicas desta árvore). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo. Usar escudo concede +1 na CA (não empilha com magias de barreira).",
+          "[Sob Minha Guarda] Você desbloqueia 'Sob Minha Guarda': designe 1 aliado como protegido; a até 3m, gaste 1 Reação para que todo o dano de um ataque contra ele venha para você (não reduzível por Resistência, mas sim pelas técnicas desta árvore). Se ele sofrer dano que você não interceptou, recupere 1 PT. Você é proficiente com toda armadura e escudo. Usar escudo concede +1 na CA (não empilha com paredes mágicas).",
       },
       talents: [
         // 2026-08-30: buff — era +2 PV por patamar, virou +4 PV por patamar e

@@ -182,27 +182,27 @@ que importa está aqui.
 
 ## B. Decisões (do mais grave pro menos) — ★ = o que o designer escolheria
 
-O autor escolheu ★ nas quatro que foram levadas a ele (1, 10–12, 2 e 20); as outras seguem pendentes.
+O autor escolheu ★ nas quatro que foram levadas a ele (1, 10–12, 2 e 20) e depois delegou o resto ("confio em suas decisões"). Todas aplicadas; onde o designer mudou de ideia, está anotado.
 
 **Contradições e opções mortas**
 1. ✅ **Aplicada (★, 0.1.103).** **Os sete Ofícios imprimem "◈ Rank Deus"**, e o Cap. 3 diz que Ofício termina no 6º patamar. ★ Tirar o
    bloco dos Ofícios (o texto é bom; vira lore).
 2. ✅ **Aplicada (★, 0.1.103).** **Mestre da Adaptação (Água, Avançado)** tira o corte de dano da Encurtada e desfaz a decisão 1: a
    Padrão da Água morre. ★ Só pra magias de rank Intermediário ou abaixo.
-3. **Treinar e Vigiar as Costas (downtime)** valem zero: Vantagem não empilha com a perícia que você já
+3. ✅ **Aplicada (0.1.104).** **Treinar e Vigiar as Costas (downtime)** valem zero: Vantagem não empilha com a perícia que você já
    tem. ★ Usar a regra do Ajudar: com Vantagem já, vira +2; e dizer o efeito de Vigiar em cada atividade.
-4. **Dança de Aço (Norte, Rei, 4 PA)** é cópia do Redemoinho de Aço (Vendaval, Intermediário). ★ Dar algo
+4. ✅ **Aplicada (0.1.104).** **Dança de Aço (Norte, Rei, 4 PA)** é cópia do Redemoinho de Aço (Vendaval, Intermediário). ★ Dar algo
    de Rei: cada acerto aplica um Improviso sem gastar o uso.
-5. **Grifo (Invocação, Intermediário) bate mais que o Urso** desde a decisão 12. ★ Grifo 2d8 (é transporte).
-6. **Domínio Climático (Água, Santo)** repete a exclusão que a Maestria do Avançado já dá. ★ Magias de clima
+5. ✅ **Aplicada (0.1.104).** **Grifo (Invocação, Intermediário) bate mais que o Urso** desde a decisão 12. ★ Grifo 2d8 (é transporte).
+6. ✅ **Aplicada (0.1.104).** **Domínio Climático (Água, Santo)** repete a exclusão que a Maestria do Avançado já dá. ★ Magias de clima
    custam 1 Ação a menos.
-7. **Teórica, talentos sem efeito ou caros:** Âncora de Trama (nenhuma regra desliga fórmula por
+7. ✅ **Aplicada (0.1.104).** **Teórica, talentos sem efeito ou caros:** Âncora de Trama (nenhuma regra desliga fórmula por
    distância), Fórmula de Bolso, Memória de Runa, Fronteira Seletiva, Olho do Diagrama. ★ Reescrever com
    efeito de patamar (ex.: Memória de Runa prepara em giz com 1 Ação). "Eco Condicional" não usa o Eco:
    ★ renomear "Sinal Armado".
-8. **Vantagem de Estilo:** a aresta Norte vence Água não ganha nada além da regra geral. ★ Tirar o
+8. ✅ **Aplicada (0.1.104).** **Vantagem de Estilo:** a aresta Norte vence Água não ganha nada além da regra geral. ★ Tirar o
    "Reações falham" da regra geral e deixar só na aresta do Norte.
-9. **Teto de PM dos dois primeiros patamares** hoje só corta uma compra que a ficha já bloqueia. ★ Apagar o
+9. ✅ **Aplicada (0.1.104).** **Teto de PM dos dois primeiros patamares** hoje só corta uma compra que a ficha já bloqueia. ★ Apagar o
    teto; escrever "+PM: só do Avançado em diante" na linha da tabela.
 
 **Controle sem rolagem (o mesmo problema que as decisões 8 e 9 consertaram)**
@@ -214,20 +214,20 @@ O autor escolheu ★ nas quatro que foram levadas a ele (1, 10–12, 2 e 20); as
     acima, pede teste. ★ Igual à Wyvern: Vigor CD 13 ou Envenenado até o fim do próximo turno.
 
 **Regra ambígua**
-13. **Tempestade Cortante (Vento, Santo):** "você não conjura mais nada enquanto ela gira" contradiz a regra
+13. ✅ **Aplicada (0.1.104).** **Tempestade Cortante (Vento, Santo):** "você não conjura mais nada enquanto ela gira" contradiz a regra
     de sustentação. ★ "Ela ocupa a sua sustentação."
-14. **Restauração e Corpo Íntegro (Cura):** a carta diz Ritual de 10 min / 1 hora; o dado diz 4 Ações. ★
+14. ✅ **Aplicada (0.1.104).** **Restauração e Corpo Íntegro (Cura):** a carta diz Ritual de 10 min / 1 hora; o dado diz 4 Ações. ★
     Decidir qual vale.
-15. **Selo com essência (Teórica):** agora escrito que só barra magia daquela escola, mas paga +1 PM por
+15. ✅ **Aplicada (0.1.104).** **Selo com essência (Teórica):** agora escrito que só barra magia daquela escola, mas paga +1 PM por
     menos. ★ Dar algo em troca: barra um rank a mais.
-16. **"Peçonha"** é aflição e magia com efeitos diferentes no mesmo §8 do Cap. 4. ★ Renomear a aflição
+16. ✅ **Aplicada (0.1.104).** **"Peçonha"** é aflição e magia com efeitos diferentes no mesmo §8 do Cap. 4. ★ Renomear a aflição
     ("Veneno de Serpente-do-Pântano").
 
 **Números e itens**
-17. **Poção Imperial** cura 2 PV a mais que a Régia por 3,3× o preço. ★ 8d8+6.
-18. **Itens sem mecânica:** Amuleto de Resistência ao Fogo (★ dispensa o teste de Clima Extremo por calor);
+17. ✅ **Aplicada (0.1.104).** **Poção Imperial** cura 2 PV a mais que a Régia por 3,3× o preço. ★ 8d8+6.
+18. ✅ **Aplicada (0.1.104).** **Itens sem mecânica:** Amuleto de Resistência ao Fogo (★ dispensa o teste de Clima Extremo por calor);
     Bússola Encantada (★ Vantagem em Sobrevivência pra se orientar).
-19. **Apêndice C** é régua de designer com um quadro útil ao jogador. ★ Manter as tabelas, pôr o "Como ler"
+19. ✅ **Aplicada (0.1.104).** **Apêndice C** é régua de designer com um quadro útil ao jogador. ★ Manter as tabelas, pôr o "Como ler"
     no topo, enxugar o resto e renomear "Dano por Turno — Comparando Árvores".
 
 **Diagramação**
@@ -235,7 +235,7 @@ O autor escolheu ★ nas quatro que foram levadas a ele (1, 10–12, 2 e 20); as
     carta partir **só entre o efeito e o cântico** quando o vão passar de 1/3 da coluna (a regra, o custo e
     o dano continuam juntos). Hoje a regra "carta inteira" do autor proíbe.
 
-**Menores** (baixa prioridade): Cicatriz 9 perde a Encurtada mas mantém o cântico inteiro; Aranha e Wyvern
+**Menores** — ✅ aplicados na 0.1.104, menos os colchetes [Peso]/[Impacto] (ficam: são rótulos definidos na Maestria do Lutador e agrupam as técnicas) e o "Aguentar o Baque" (a carta já se lê diferente da manobra): Cicatriz 9 perde a Encurtada mas mantém o cântico inteiro; Aranha e Wyvern
 pedem dois testes de Vigor por acerto; Segunda Guarda diz "+1 Reação por turno" (a regra é por rodada);
 colchetes [Peso]/[Impacto] no nome das cartas do Lutador; talento Cavalaria (Tático) ≈ Montaria
 (Escudos); termos soltos ("incombatível", "adamantinos", "magias de barreira", "invisível", "Amarra");

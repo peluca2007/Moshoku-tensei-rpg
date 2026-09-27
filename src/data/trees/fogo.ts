@@ -369,7 +369,7 @@ export const FOGO_TREE: Tree = {
           actions: { normal: 3 },
           costNote: "3 Ações em vez das 4 do Rei: o Fogo é a escola do dano bruto, e a magia assinatura dela precisa caber num turno pra fazer jus a isso.",
           damage: { normal: "12d10 + BC (ígneo, d12 contra alvo já Em Chamas)" },
-          effect: "Teste de Vigor com Desvantagem (exceto submersos/barreira/clima chuvoso). Falha: dano cheio e Em Chamas incombatível. Sucesso: metade.",
+          effect: "Teste de Vigor com Desvantagem (exceto submersos/barreira/clima chuvoso). Falha: dano cheio e Em Chamas que não se apaga gastando Ação. Sucesso: metade.",
           incantation:
             "Eu não peço chama. Chama é fraca demais pro que eu quero de você.\nPeço o instante exato em que tudo o que respira, em toda esta região ao meu redor,\ndescobre, tarde demais, que já estava queimando por dentro há vários segundos —\nque o fogo não chegou agora, chegou antes, entrou em silêncio, e só agora se anuncia.\nNão há aviso, porque não sobrou tempo pra aviso nenhum a ninguém.\nFlashover!",
         },

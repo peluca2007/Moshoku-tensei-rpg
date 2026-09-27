@@ -175,7 +175,7 @@ export const SUISHIN_TREE: Tree = {
       },
       talents: [
         { id: "postura-movel", name: "Postura Móvel", paCost: 2, description: "Em Postura, você pode se mover até 3 metros por turno sem sair dela." },
-        { id: "segunda-guarda", name: "Segunda Guarda", paCost: 2, description: "+1 Reação por turno, mesmo fora da Postura." },
+        { id: "segunda-guarda", name: "Segunda Guarda", paCost: 2, description: "+1 Reação por rodada, mesmo fora da Postura." },
         { id: "escudo-vivo", name: "Escudo Vivo", paCost: 2, description: "Guarda do Corpo passa a alcançar 3 metros e pode ser usada uma vez por turno sem gastar Reação." },
       ],
       abilities: [

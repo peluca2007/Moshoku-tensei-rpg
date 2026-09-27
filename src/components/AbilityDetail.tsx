@@ -78,6 +78,13 @@ function tipoDeRecitacao(ability: AbilityDef): "ataque" | "resistencia" | "supor
  */
 export function CastingBreakdown({ ability, compacta = false }: { ability: AbilityDef; compacta?: boolean }) {
   const { actions } = ability;
+  if (ability.tempoDeRitual) {
+    return (
+      <p className="livro-formas mt-2 border-y border-parchment-300 py-1 text-center text-xs font-bold text-parchment-800 dark:border-parchment-800 dark:text-parchment-100">
+        Ritual de {ability.tempoDeRitual}, fora de combate
+      </p>
+    );
+  }
   const hasCasting = actions.encurtada !== undefined || actions.silenciosa !== undefined;
   if (ability.reaction || !hasCasting) return null;
 

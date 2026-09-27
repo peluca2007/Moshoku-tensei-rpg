@@ -196,14 +196,6 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           O sétimo degrau existe só nas Escolas Formais, e mesmo lá é narrativo. Um Ofício termina no sexto
           patamar.
         </Aside>
-        <Aside title="Quem tem Touki">
-          A reserva de PT existe desde o 1º patamar de qualquer árvore do Corpo — inclusive Arquearia,
-          inclusive Escudos. No Avançado (3º patamar) você veste o Manto de Touki e destrava as manobras de
-          gasto. A única exceção é o Estilo Deus da Espada, que destrava Touki Concentrado e Lâmina de Touki
-          já no 2º patamar (a doutrina inteira dele é velocidade); o Manto e as outras manobras vêm no 3º,
-          como pra todo mundo. As árvores de Magia e de Utilidade nunca recebem Touki nem Pontos de Touki,
-          por mais alto que seja o rank.
-        </Aside>
       </Section>
 
       {/*
@@ -504,8 +496,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           <P>
             <b>Espada vence Norte, Norte vence Água, Água vence Espada.</b> Quando você luta contra um
             praticante do estilo que o seu contra-ataca, e ambos possuem Rank naqueles estilos: você rola com
-            Vantagem em todas as Disputas contra ele, e as Reações defensivas dele falham automaticamente
-            contra sua primeira Ação de cada turno. Se o Rank dele for dois ou mais acima do seu, a vantagem
+            Vantagem em todas as Disputas contra ele. Se o Rank dele for dois ou mais acima do seu, a vantagem
             se anula — treino bruto supera a tabela de tipos.
           </P>
           <P>
@@ -513,10 +504,10 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             lugar:
           </P>
           <BookTable
-            headers={["Aresta", "O que você ganha, além do acima"]}
+            headers={["Aresta", "O que você ganha, além da Vantagem nas Disputas"]}
             rows={[
               ["Espada vence Norte", "O Improviso do Norte não funciona contra a sua primeira Ação do turno. Você é rápido demais pra ele improvisar em cima."],
-              ["Norte vence Água", "As Reações defensivas dele falham contra a sua primeira Ação de cada turno (a regra acima). O Norte luta sujo: ataca o que a postura não cobre."],
+              ["Norte vence Água", "As Reações defensivas dele falham contra a sua primeira Ação de cada turno. O Norte luta sujo: ataca o que a postura não cobre."],
               ["Água vence Espada", "O primeiro ataque dele contra você a cada turno tem Desvantagem. A Água não bloqueia a Espada — ela faz a Espada errar."],
             ]}
           />

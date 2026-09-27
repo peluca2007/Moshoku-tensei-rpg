@@ -525,6 +525,12 @@ export interface AbilityDef {
   /** Ritual: não pode ser encurtado, geralmente custa mais Ações. */
   ritual?: boolean;
   /**
+   * Ritual que se mede em tempo de relógio, fora de combate ("10 minutos",
+   * "1 hora") — 2026-09-27. A carta mostra este tempo no lugar das Ações, que
+   * ficam só como dado.
+   */
+  tempoDeRitual?: string;
+  /**
    * Por que ESTA magia foge da tabela do rank (Cap. 2, "Nem toda magia obedece
    * à tabela") — 2026-09-02.
    *

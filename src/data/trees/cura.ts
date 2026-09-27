@@ -342,6 +342,7 @@ export const CURA_TREE: Tree = {
         {
           id: "restauracao",
           name: "Restauração",
+          tempoDeRitual: "10 minutos",
           signature: true,
           ritual: true,
           paCost: RANK_PA_COST.signature.Rei,
@@ -393,6 +394,7 @@ export const CURA_TREE: Tree = {
         {
           id: "corpo-integro",
           name: "Corpo Íntegro",
+          tempoDeRitual: "1 hora",
           signature: true,
           ritual: true,
           paCost: RANK_PA_COST.signature.Imperador,

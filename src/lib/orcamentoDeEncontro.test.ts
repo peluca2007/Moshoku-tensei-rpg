@@ -56,12 +56,12 @@ describe("O câmbio dobra a cada patamar — e é de propósito", () => {
     expect(pesoNoOrcamento(1, "lacaio", 6)).toBeGreaterThan(0);
   });
 
-  it("o lacaio vale meia criatura, e o chefe vale cinco", () => {
+  it("o lacaio vale meia criatura, e o chefe vale quatro", () => {
     expect(pesoNoOrcamento(3, "lacaio", 3)).toBe(0.5);
     expect(pesoNoOrcamento(3, "padrao", 3)).toBe(1);
-    // Cinco (desde 2026-09-26; eram três): o chefe tem PV dobrado MAIS uma rodada inteira a cada
-    // dois personagens (Apêndice G), e com três ele dizimava o grupo em 1 de 4 batalhas "fáceis".
-    expect(pesoNoOrcamento(3, "chefe", 3)).toBe(5);
+    // Quatro (desde 2026-09-27): medido no simulador, um chefe sozinho contra
+    // quatro jogadores é tão Equilibrado quanto quatro criaturas do patamar.
+    expect(pesoNoOrcamento(3, "chefe", 3)).toBe(4);
   });
 
   it("oito lacaios do patamar do grupo pesam o mesmo que quatro padrões", () => {

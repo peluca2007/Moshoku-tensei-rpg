@@ -1,5 +1,6 @@
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import Prancha from "./Prancha";
+import { DOWNTIME } from "@/lib/descanso";
 import ShopCatalog from "./ShopCatalog";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_DO_DOJO } from "@/data/midiaDeHabilidade";
@@ -38,14 +39,7 @@ export default function Chapter5() {
         </P>
         <BookTable
           headers={["Atividade", "Efeito"]}
-          rows={[
-            ["Treinar", "Ganhe Vantagem no próximo teste de uma Perícia à escolha, ligada à sua Árvore Inicial ou a uma Perícia que você já tenha — dura até ser usado ou até 1 mês passar. Não concede PA."],
-            ["Recuperar-se", "Convalescença (Cap. 4): todos os PV são restaurados. Se a semana foi passada acompanhado de alguém de confiança, remove 1 ponto de Trauma (Cap. 4) — 2 pontos se alguém gastar a própria semana em Vigiar as Costas por você."],
-            ["Trabalhar", "Ganhe PO igual a 2d6 × seu maior Bônus de Rank (mínimo 2d6), pelo seu Ofício, sua fama ou um trabalho comum da cidade."],
-            ["Cultivar um Contato", "Anote um NPC nomeado e uma cidade ou facção. Da próxima vez que precisar de uma informação ou um favor pequeno, o Mestre pode deixar esse contato resolver — sem PP, sem teste."],
-            ["Estudar um Ofício ou Ritual", "Com a Perícia de Ofícios ligada ao que quer fazer, produza um item mundano ou prepare os materiais de um ritual que já pode conjurar. O Mestre define o custo em PO — normalmente metade do preço de mercado."],
-            ["Vigiar as Costas do Grupo", "Sem efeito próprio, mas concede a outro personagem Vantagem na atividade dele nesta semana."],
-          ]}
+          rows={DOWNTIME.map((a) => [a.nome, a.efeito])}
         />
         <Warning title="Downtime Não Compra Progressão">
           Nenhuma atividade acima concede PA, magia, talento ou Rank — isso só vem de jogar a campanha (Cap.
@@ -260,9 +254,9 @@ export default function Chapter5() {
       </Section>
 
       <Section>
-        <SectionTitle id="cap5-4">4. Crafting e Alquimia</SectionTitle>
+        <SectionTitle id="cap5-4">4. Fabricação e Alquimia</SectionTitle>
         <Prancha id="cap5-4" />
-        <SubTitle>Como Funciona o Crafting</SubTitle>
+        <SubTitle>Como Funciona a Fabricação</SubTitle>
         <P>
           Quatro perguntas resolvem qualquer fabricação desta seção: quem pode fazer, quanto tempo leva,
           quanto custa em materiais e o que acontece se o teste falhar. As respostas são sempre as mesmas
@@ -298,7 +292,7 @@ export default function Chapter5() {
             ["Poção Régia de Cura", "17 · Cura Rei", "120 PO / 60 PO", "Cura 5d8 + 4 PV."],
             ["Elixir de Regeneração", "18 · —", "200 PO / 100 PO", "Remove 2 níveis de Exaustão de quem bebe (Cap. 4, §9) — não cura PV nem PM, só o cansaço acumulado. Não remove Exaustão cuja causa ainda esteja ativa: quem não comeu continua com fome."],
             ["Antídoto Universal", "19 · Desintoxicação Santo", "800 PO / 400 PO", "Remove um veneno ou uma doença de rank Santo ou inferior (Cap. 4, §8). Nunca toca maldição nem transformação: essas continuam exigindo alguém que conjure Desintoxicação."],
-            ["Poção Imperial de Cura", "20 · Cura Imperador", "400 PO / 200 PO", "Cura 5d8 + 6 PV e remove toda a Exaustão de origem física (ferimento, trauma, ter acordado do Fio da Vida) — nunca a de fome, sede, frio ou marcha forçada."],
+            ["Poção Imperial de Cura", "20 · Cura Imperador", "400 PO / 200 PO", "Cura 8d8 + 6 PV e remove toda a Exaustão de origem física (ferimento, trauma, ter acordado do Fio da Vida) — nunca a de fome, sede, frio ou marcha forçada."],
           ]}
         />
         <SubTitle>Venenos</SubTitle>
@@ -312,7 +306,7 @@ export default function Chapter5() {
           headers={["Rank", "Exemplo", "CD de Ofícios", "Custo (venda / fabricação)"]}
           rows={[
             ["Principiante", "Baba de Sapo-Lodo", "10", "5 PO / 3 PO"],
-            ["Intermediário", "Peçonha de Serpente-do-Pântano", "12", "20 PO / 10 PO"],
+            ["Intermediário", "Veneno de Serpente-do-Pântano", "12", "20 PO / 10 PO"],
             ["Avançado", "Fel de Wyvern", "14", "80 PO / 40 PO"],
             ["Santo+", "Sombra Líquida", "16+", "Não está à venda — só se rouba, caça ou herda."],
           ]}

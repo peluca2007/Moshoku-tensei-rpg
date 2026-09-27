@@ -56,8 +56,8 @@ O grupo escolta um carregamento de ervas por uma trilha de tábuas sobre o pânt
 caminho, uma boca de caverna na margem — e as tábuas somem debaixo de uma teia.
 
 **Encontro principal — Aranha Gigante das Cavernas + 3 Sapos-Lodo Gigantes** (Apêndice G, "As fichas
-das criaturas prontas"). O simulador do `/encontros` mede: **Equilibrado**, 98% de vitória, ~4
-rodadas, ~0,3 personagem caído por luta.
+das criaturas prontas"). O simulador do `/encontros` mede: **Equilibrado**, 94% de vitória, ~4
+rodadas, ~0,5 personagem caído por luta (moldes de 2026-09-27).
 
 - A aranha arma a **Teia** antes do combate (Preso, Agilidade CD 13) e ataca de emboscada.
 - Os sapos saem da água: a **Língua Pegajosa** puxa e prende; a **Mordida Babosa** traz a Baba de
@@ -65,8 +65,8 @@ rodadas, ~0,3 personagem caído por luta.
 - O terreno é metade tábua, metade lama (terreno difícil). **Terreno Conhecido** e **Primeiro a
   Ver** da Capitã Vela têm onde brilhar; a **Explosão** do Ignis tem três sapos pra pegar juntos.
 
-**Se sobrar fôlego — Serpente-do-Pântano + Aranha + 2 Sapos.** Perigoso: 82% de vitória, ~1
-personagem caído por luta. É o teste de "a Cura segura o grupo?".
+**Se sobrar fôlego — Serpente-do-Pântano + Aranha + 2 Sapos.** Equilibrado no limite: 88% de
+vitória, ~0,8 personagem caído por luta. É o teste de "a Cura segura o grupo?".
 
 ---
 
