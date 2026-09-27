@@ -141,3 +141,80 @@ ficou de fora.
 ### Pendências pro Claude
 
 (vazio)
+
+---
+
+## Tarefa 4 — a estética do livro: a arte no lugar certo, e a arte parada entrando (2026-09-27)
+
+**Comece quando fechar a Tarefa 3** (os arquivos de diagramação continuam seus; o Claude segue fora
+deles).
+
+O autor, com as palavras dele: *"a coisa que eu mais prezo no momento é a estética do livro, porque tem
+muita coisa que podia ser melhor — tipo a imagem do Orsted está em outra página, ele poderia estar na
+página junto com a raça. Temos várias imagens que podiam ser usadas, mas não estão."*
+
+Leia antes: `CLAUDE.md`, `PLANO-LIVRO-DIGITAL.md`, `ARTE-PARA-O-LIVRO.md` e `acervo-de-arte/LEIAME.md`
+(o catálogo das ~60 imagens paradas, com o que cada uma mostra e onde pode entrar).
+
+### O que fazer
+
+1. **A Raça Dragão numa página só.** Hoje a raça mítica tem a página de texto (p. 34, com ~30% em
+   branco no pé, porque o texto encurtou no nerf) e uma página inteira só com a arte do Orsted
+   (`public/livro/racas/dragao.webp`, em pé, 640×1137). Ponha o Orsted **na mesma página** do texto —
+   por exemplo, a arte ocupando uma coluna inteira em altura e o texto na outra — e a página extra
+   some. O código: `FichaDeRaca.tsx` (o bloco `race.tier === "mitica"`) e o `folhear.css`. Vale pro
+   contínuo também.
+2. **A arte parada entra.** Percorra o `acervo-de-arte/` e ponha no livro o que melhora a página, em
+   ordem de impacto:
+   - **as árvores de página inteira**: o LEIAME tem uma lista de artes separadas pra abrir árvores
+     (Navegação e Liderança, Bardo, Cura, Fogo, Punho do Fogo, Deus do Norte, Arquearia…);
+   - **segunda arte / vinheta das raças** (Superd, Migurd, Oceano, Anã, Élfica, Demônio Imortal…);
+   - **bestiário** (Apêndice G) e pranchas de capítulo que ainda não têm arte;
+   - **os vãos**: página com muito branco no pé (o `revisar:livro` lista) é lugar de arte, não de selo.
+3. **Olhe o livro inteiro como leitor**, dupla por dupla (`npm run revisar:livro` gera as fotos e as
+   folhas de contato em `.telas/revisao/`), e conserte o que estiver feio: arte cortada no rosto,
+   arte borrada, duas artes brigando na mesma dupla, página sem nenhuma arte num trecho longo, legenda
+   que não bate com a cena (`LEGENDAS` em `Prancha.tsx`).
+4. Os **ícones das raças** (`public/racas/*`, o brasão da `RaceCrest`) são silhuetas de banco de
+   imagem, num estilo diferente do resto do livro. Proponha (e, se ficar melhor, aplique) um brasão
+   tirado da própria arte de cada raça — a vitrine das raças já recorta o rosto de cada uma.
+
+### Regras de arte da casa
+
+- **Nunca deduza o que uma imagem mostra pelo nome do arquivo.** Abra e olhe (o `300.webp` era uma
+  lâmina de água, não a falange). `node scripts/folha-de-contato.mjs` faz folhas de contato.
+- Meme no livro é de propósito (o autor pediu "põe tudo"); fanart e arte oficial também. O que não
+  entra: arte com marca d'água de banco de imagem, e arte que borra (ampliada mais de 1,6×).
+- Arte que sai do acervo e entra no livro: mova (não copie) pra pasta certa de `public/livro/`, tire a
+  linha do `acervo-de-arte/LEIAME.md`, anote em `ARTE-PARA-O-LIVRO.md`, e rode `npm run
+  gerar:impressao` (e `touch` no arquivo se ele manteve a data antiga) e `npm run check:midia`.
+
+### Arquivos
+
+Pode mexer: `public/livro/**`, `public/racas/**`, `acervo-de-arte/**`, os `.md` de arte,
+`src/components/book/{Prancha,FichaDeRaca,ImagemDoLivro,RetratoDaArvore,VitrineDasArvores,
+ArteDaHabilidade}.tsx`, `src/components/book/arteDas*.ts`, `src/components/RaceCrest.tsx`,
+`src/data/midiaDeHabilidade.ts`, `src/app/livro/folhear/folhear.css`, `src/components/book/folhear/**`,
+e o CSS do livro em `src/app/globals.css`. Nos `Chapter*.tsx` e em `Appendices.tsx`, **só pode inserir
+componentes de arte** (`<Prancha id="…" />` e parecidos) — nada de mudar texto de regra. Não mexa em
+`src/data/` fora da `midiaDeHabilidade.ts`.
+
+### Como conferir e subir
+
+- `BASE=http://localhost:3020 npm run revisar:livro`: zero estouro, zero título separado, e o número de
+  páginas **não pode subir** sem motivo (arte nova enche vão; página nova só se valer a pena, e diga
+  qual no commit).
+- `npx tsc --noEmit -p .`, `npx vitest run`, `npx eslint src scripts`, `npm run check:midia`.
+- Commits pequenos, um assunto por commit, direto na `main`, em português, dizendo o que mudou na
+  página. Subir: `git fetch -q; git merge -q --no-edit origin/main; git push -q origin HEAD:main`.
+- Nota curta em `src/data/patchNotes.ts` (a versão mais nova, ou uma nova se ninguém abriu).
+
+### Entrega
+
+Escreva `RELATORIO-CODEX-ESTETICA.md`: cada mudança com a dupla antes e depois (os nomes das fotos de
+`.telas/revisao/`), as artes do acervo que entraram e onde, e as que você olhou e deixou de fora (e por
+quê). O autor decide pelo olho, então mostre.
+
+### Pendências pro Claude
+
+(vazio)
