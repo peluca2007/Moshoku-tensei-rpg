@@ -7,7 +7,13 @@ toque de 40 px, e o `check:mobile` vigiando tabelas).
 
 ---
 
-## Tarefa 2 — dois checks que acham incongruência sozinhos (2026-09-27)
+## ✅ Tarefa 2 — dois checks que acham incongruência sozinhos (2026-09-27)
+
+Feita: `npm run check:termos` (108 termos, 0 FALHA, 0 AVISO) e `npm run check:remissoes` (415
+remissões, 0 FALHA, 0 AVISO). Relatório em `RELATORIO-CODEX-TERMOS.md`.
+
+<details><summary>O pedido original</summary>
+
 
 O autor pediu uma revisão geral do livro. O Claude e três revisores estão lendo o texto agora, capítulo
 por capítulo, e o Claude está mexendo na diagramação do modo folhear. A leitura humana pega intenção;
@@ -65,6 +71,72 @@ O livro remete muito: "(Cap. 2, §3)", "ver o Cap. 4, §7", "Apêndice C", "(§2
 
 Escreva aqui embaixo, em poucas linhas: os dois comandos, quantas FALHAs e AVISOs cada um achou, e o
 que ficou de fora.
+
+### Pendências pro Claude
+
+(vazio)
+
+</details>
+
+---
+
+## Tarefa 3 — o folhear abre mais rápido, com o MESMO livro (2026-09-27)
+
+O modo folhear (`/livro/folhear`) diagrama o livro inteiro no navegador depois de montar: uma série de
+passadas mede onde cada bloco caiu e corrige (título separado do texto, tabela partida, vão no pé da
+coluna, fecho de árvore…). Cada passada mede o próprio tempo com `performance.measure("folhear:<nome>")`.
+Medido hoje num desktop, com 1600×1000: `figuras` ~1,1–1,4 s, `cartas` ~1,9–2,3 s (a passada nova,
+`encaixarCartas`, que enche o vão no pé da coluna), `titulos` ~1,2–1,8 s, `fechos` ~0,4 s. No celular é
+bem pior, e a mesa joga no celular.
+
+**Objetivo: cortar o tempo total da diagramação pela metade, sem mudar UMA página do livro.**
+
+### Passo 1 — a régua antes de mexer
+
+Ensine o `scripts/revisar-livro.mjs` a gravar uma **assinatura** da diagramação (ex.:
+`--assinatura saida.json`): pra cada título (`h2, h3, h4`), cada carta (`.livro-verbete`), cada tabela e
+cada figura, a página e a coluna onde o primeiro pedaço dele caiu, mais o total de páginas. Grave a
+assinatura da `main` de hoje ANTES de qualquer otimização. Toda mudança depois tem que produzir a mesma
+assinatura, byte a byte. Se uma otimização muda a assinatura, ela está errada — mesmo que "pareça
+igual".
+
+Grave também o tempo de cada passada (os `performance.measure`) no mesmo relatório, pra comparar.
+
+### Passo 2 — otimizar
+
+Onde procurar (leia os comentários: cada passada explica por que existe):
+- **Leitura e escrita intercaladas** forçam o navegador a rediagramar o livro inteiro a cada
+  `getClientRects`. O padrão do arquivo já é "escreve tudo, lê tudo" em várias passadas; procure as que
+  não seguem.
+- **`encaixarCartas`** (em `diagramacao.ts`) roda até 8 passadas, cada uma medindo TODAS as cartas.
+  Cada árvore começa em página nova: uma troca numa árvore não muda a diagramação das outras. Dá pra
+  medir só as árvores que mudaram na passada anterior.
+- **`segurarTitulos`** e as rodadas de conferência em `Folhear.tsx` (até 8 × 3 repetições).
+- `querySelectorAll` repetido do livro inteiro em cada passada: dá pra coletar uma vez e reaproveitar.
+
+### Regras
+
+- Arquivos que você pode mexer: `src/components/book/folhear/diagramacao.ts`,
+  `src/components/book/folhear/Folhear.tsx`, `src/components/book/folhear/diagramacao.test.ts`,
+  `scripts/revisar-livro.mjs` e o que criar em `scripts/`. O Claude não vai mexer nesses arquivos
+  enquanto esta tarefa estiver aberta.
+- NÃO mexa em CSS (`folhear.css`), no texto do livro nem em `src/data/`: qualquer um deles muda a
+  diagramação e invalida a assinatura.
+- Nada de trocar o comportamento: se uma passada parece inútil, meça (a assinatura sem ela muda?) e
+  anote aqui em vez de remover por conta própria.
+- Antes de cada push: assinatura idêntica à da `main` de hoje; `BASE=http://localhost:3020 npm run
+  revisar:livro` sem estouro nem título separado; `npx tsc --noEmit -p .`, `npx vitest run`,
+  `npx eslint src scripts`.
+- Commits pequenos direto na `main`, em português, dizendo quanto cada um economizou. Subir:
+  `git fetch -q; git merge -q --no-edit origin/main; git push -q origin HEAD:main`. Nunca rebase.
+- **Se a `main` mudar o livro enquanto você trabalha** (texto, dados ou CSS), a assinatura muda por
+  outro motivo: grave uma assinatura nova a partir da `main` atualizada, SEM as suas otimizações, e
+  compare com ela.
+
+### Entrega
+
+Aqui embaixo: o tempo de cada passada antes e depois (desktop; e em 390×844 se conseguir), e o que
+ficou de fora.
 
 ### Pendências pro Claude
 
