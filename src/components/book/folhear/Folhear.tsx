@@ -45,6 +45,7 @@ import {
   ajustarFigurasLargas,
   ajustarTabelasLargas,
   apertarTabelasPartidas,
+  encaixarCartas,
   calcularGeometria,
   acomodarPranchas,
   espalharTabelasEspremidas,
@@ -422,6 +423,10 @@ export default function Folhear({
     medir("tabelas-apertar", () => ajustarTabelasLargas(f, g, regua(fx)));
     medir("pranchas", () => acomodarPranchas(f, g, regua(fx)));
     medir("tabelas-partidas", () => apertarTabelasPartidas(f, g, regua(fx)));
+    // A carta menor sobe pro vão que a carta grande deixou no pé da coluna.
+    medir("cartas", () => {
+      for (let passada = 0; passada < 8 && encaixarCartas(f, g, regua(fx)) > 0; passada++);
+    });
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
     medir("titulos", () => {

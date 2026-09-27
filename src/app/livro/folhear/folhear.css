@@ -5112,3 +5112,10 @@ html.livro-imersivo {
   border-color: var(--fio);
   break-inside: avoid;
 }
+
+/* A arte que subiu pro vão no pé da coluna (encaixarCartas): ela abre a carta,
+   com o texto começando na coluna seguinte. */
+.folhear-fluxo .livro-verbete > .folhear-arte-antes {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+}
