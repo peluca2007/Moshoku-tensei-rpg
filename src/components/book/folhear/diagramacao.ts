@@ -730,7 +730,15 @@ export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
     const antes = el.previousElementSibling;
     const rs = antes ? Array.from(antes.getClientRects()).filter((a) => a.height > 1) : [];
     const fim = rs.length ? pagina(rs[rs.length - 1]) : -1;
-    return { resto: colunaAlta - (q.top - topo) / r.k, topo: (q.top - topo) / r.k, largura: q.width / r.k, pagina: pagina(q), coluna: coluna(q), mesma: pagina(q) === fim };
+    // Até onde o texto desce em cada coluna da página do fecho, acima dele.
+    const fundos = [0, 0];
+    for (const a of rs) {
+      if (pagina(a) !== pagina(q) || a.top >= q.top) continue;
+      const c = coluna(a) % 2;
+      const cols = a.width / r.k > meiaPagina ? [0, 1] : [c];
+      for (const k of cols) fundos[k] = Math.max(fundos[k], (a.bottom - topo) / r.k);
+    }
+    return { resto: colunaAlta - (q.top - topo) / r.k, topo: (q.top - topo) / r.k, largura: q.width / r.k, pagina: pagina(q), coluna: coluna(q), mesma: pagina(q) === fim, fundos };
   };
 
   // As três medidas, cada uma numa rodada (escreve tudo, lê tudo).
@@ -760,11 +768,35 @@ export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
     const w = Number(el.dataset.largura) || 0;
     const h = Number(el.dataset.altura) || 0;
     if (!w || !h) return opcoes[0];
+    /*
+     * O branco que cada opção deixa na página onde o texto acaba (2026-09-27).
+     * "Ao lado" deixa vazio o que sobrou embaixo do texto na coluna da
+     * esquerda (o fim da Teórica ficou com 77% dela em branco); "página" deixa
+     * isso E a coluna da direita. A faixa e a coluna enchem o resto.
+     */
+    // Medido com o fecho na largura da coluna, logo depois do texto: o topo
+    // dele é onde o texto acaba (a faixa larga equilibraria as colunas).
+    const sobraNoTexto = col[i].mesma ? Math.max(0, col[i].resto) / colunaAlta : 0;
+    const textoNaEsquerda = col[i].coluna % 2 === 0;
+    // A faixa atravessa a página: o que ficar acima dela sem texto (um bloco
+    // que não parte não se equilibra nas duas colunas) também é branco.
+    const vazioDaFaixa = faixa[i].fundos.reduce((soma, f) => soma + Math.max(0, faixa[i].topo - f), 0) / (2 * colunaAlta);
+    const vazio = (o: Opcao) =>
+      o.nome === "lado"
+        ? sobraNoTexto
+        : o.nome === "pagina"
+          ? textoNaEsquerda ? (sobraNoTexto + 1) / 2 : sobraNoTexto / 2
+          : o.nome === "faixa"
+            ? vazioDaFaixa
+            : 0;
     const nota = (o: Opcao) => {
       const escala = Math.max(o.w / w, o.h / h);
       const mostra = (o.w * o.h) / (w * h * escala * escala);
       const area = (o.w * o.h) / (larguraCheia * colunaAlta);
-      return mostra * (escala > 1.6 ? 0.6 : 1) * Math.pow(area, 0.15) * (o.nome === "pagina" ? 0.4 : 1);
+      // Abaixo de 45% visível a arte entra inteira, com tarja escura dos lados
+      // (folhear-fecho-inteiro) — pior que um quadro cheio.
+      const tarja = mostra < 0.45 ? 0.8 : 1;
+      return mostra * tarja * (escala > 1.6 ? 0.6 : 1) * Math.pow(area, 0.15) * (o.nome === "pagina" ? 0.4 : 1) * (1 - 0.8 * vazio(o));
     };
     return opcoes.reduce((a, b) => (nota(b) > nota(a) ? b : a));
   });
@@ -1164,6 +1196,10 @@ export function preencherPes(fluxo: Element, g: Geometria, r: Regua): number {
 const desfazerEncaixe: (() => void)[] = [];
 
 const ARTE_MINIMA = 150;
+/** A carta que pode se partir entre o efeito e o cântico. */
+const CLASSE_PARTIDA = "folhear-carta-partida";
+/** Carta que tentou se partir e não coube: não tenta de novo nesta diagramação. */
+let cartasQueNaoPartem = new WeakSet<Element>();
 /** Arte que já tentou subir e não coube: não tenta de novo nesta diagramação. */
 let artesQueNaoCouberam = new WeakSet<Element>();
 const ARTE_MAXIMA = 320;
@@ -1267,6 +1303,31 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
         const lugar = sobe.nextElementSibling;
         consertos.push(() => bloco.before(sobe));
         desfazerEncaixe.push(() => sobe.isConnected && pai.insertBefore(sobe, lugar && lugar.parentElement === pai ? lugar : null));
+        mexidas.add(arvore);
+        continue;
+      }
+    }
+
+    // 1b. Vão grande (mais de 1/3 da coluna): a carta se parte ENTRE o efeito e
+    //     o cântico (decisão do autor, 2026-09-27). Nome, custo, regra, dano e
+    //     formas ficam juntos no vão; o cântico abre a coluna seguinte.
+    const cantico = bloco.classList.contains("livro-verbete") ? bloco.querySelector(":scope > .livro-cantico") : null;
+    if (cantico && vao > colunaAlta / 3 && !cartasQueNaoPartem.has(bloco)) {
+      const antesDoCantico = Array.from(bloco.children).slice(0, Array.from(bloco.children).indexOf(cantico));
+      const alturaDeCima = antesDoCantico.reduce((soma, el) => soma + pedacos(el).reduce((h, a) => h + a.height / r.k, 0), 0) + 24;
+      if (alturaDeCima <= vao) {
+        const colunaDoVao = coluna(fim);
+        consertos.push(() => bloco.classList.add(CLASSE_PARTIDA));
+        conferir.push(() => {
+          const a = pedacos(antesDoCantico[0])[0];
+          return !!a && coluna(a) === colunaDoVao;
+        });
+        const volta = () => bloco.classList.remove(CLASSE_PARTIDA);
+        desfazerEncaixe.push(volta);
+        desfazerDaArte.push(() => {
+          volta();
+          cartasQueNaoPartem.add(bloco);
+        });
         mexidas.add(arvore);
         continue;
       }
@@ -1380,6 +1441,7 @@ function desencaixarCartas(): void {
   while (desfazerEncaixe.length) desfazerEncaixe.pop()!();
   artesQueNaoCouberam = new WeakSet();
   espalhadas = new WeakSet();
+  cartasQueNaoPartem = new WeakSet();
 }
 
 /** Tira os empurrões antes de uma nova diagramação (outra geometria, outro texto). */

@@ -60,7 +60,6 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
     Santo: "Mestre das Chamas",
     Rei: "Rei do Fogo",
     Imperador: "Imperador Magmático",
-    Deus: "Deus do Fogo Marcial",
   },
   proficiencies: {
     armas: "Grupo Desarmado e Improvisado (Dado Base d6 no punho). Armadura leve; proíbe armadura pesada (desliga a árvore).",

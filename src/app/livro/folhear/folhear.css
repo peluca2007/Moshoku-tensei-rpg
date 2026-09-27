@@ -5119,3 +5119,11 @@ html.livro-imersivo {
   margin-top: 0;
   margin-bottom: 0.5em;
 }
+
+/* A carta que se parte entre o efeito e o cântico (encaixarCartas, decisão do
+   autor de 2026-09-27): só quando o vão no pé da coluna passa de 1/3 dela.
+   Nome, custo, regra, dano e formas continuam juntos; o cântico, inteiro, abre
+   a coluna seguinte. */
+.folhear-fluxo .livro-verbete.folhear-carta-partida > :has(+ .livro-cantico) {
+  break-after: auto;
+}
