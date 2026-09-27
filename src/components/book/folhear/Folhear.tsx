@@ -435,24 +435,22 @@ export default function Folhear({
     // Por último, porque tudo acima mexe em onde as coisas caem. Cada
     // empurrão pode criar outro caso adiante: repete até zerar.
     medir("titulos", () => {
-      // Medido contra a assinatura completa: duas passadas resolvem a cascata
-      // inicial e, depois de cada limpeza, uma reconferência basta.
-      repetir("titulos", 2, () => segurarTitulos(f, g, regua(fx)));
+      repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
       // Calço que ficou fora do lugar sai, e a conferência roda de novo.
       for (let rodada = 0; rodada < 3 && medir("titulos-calcos", () => limparCalcosInuteis(f, regua(fx), g)) > 0; rodada++) {
-        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
+        repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
       }
       // E o empurrão que ficou velho (o bloco já cabia onde estava) sai.
       if (medir("titulos-velhos", () => soltarEmpurroesVelhos(f, g, regua(fx))) > 0) {
-        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
+        repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
       }
       // Tabela larga que desceu de página deixando buraco volta pra coluna.
       if (medir("titulos-tabelas", () => estreitarTabelasQueAbremBuraco(f, g, regua(fx))) > 0) {
         ajustarTabelasLargas(f, g, regua(fx));
-        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
+        repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
       }
       if (medir("titulos-velhos", () => soltarEmpurroesVelhos(f, g, regua(fx))) > 0) {
-        repetir("titulos", 1, () => segurarTitulos(f, g, regua(fx)));
+        repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
       }
     });
     esquecerIndice(f);
