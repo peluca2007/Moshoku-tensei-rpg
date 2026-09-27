@@ -39,7 +39,7 @@
  * pra usar antes de abrir um PR.
  */
 
-import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { BASE, comNavegador, dormir } from "./lib/navegador.mjs";
@@ -51,8 +51,10 @@ const opcao = (nome, padrao) => {
 };
 const papel = opcao("papel", "noite");
 const semFotos = args.includes("--sem-fotos");
-const LARGURA = 1440;
-const ALTURA = 900;
+const arquivoDaAssinatura = opcao("assinatura", null);
+const compararCom = opcao("comparar-assinatura", null);
+const LARGURA = Number(opcao("largura", "1440"));
+const ALTURA = Number(opcao("altura", "900"));
 const SAIDA = path.join(process.cwd(), ".telas", "revisao");
 
 /** Roda dentro da página: mede o livro inteiro e devolve os problemas por página. */
@@ -202,7 +204,45 @@ const MEDIR = `(async () => {
       if (visivel < 0.45) anotar(pag, "recorte-forte", nome + " mostra só " + Math.round(visivel * 100) + "% da imagem");
     }
   }
-  return { paginas: total, titulos, problemas };
+  // 5. A ASSINATURA DA DIAGRAMAÇÃO. Texto pode ser reescrito e arte pode ser
+  // trocada, mas uma otimização deste algoritmo não pode mover uma peça. Para
+  // cada peça que define a leitura, guarda a página e a coluna do primeiro
+  // fragmento. A ordem desambigua cartas/tabelas sem id e também denuncia
+  // qualquer mudança acidental na quantidade delas.
+  const elementos = [];
+  [...f.querySelectorAll("h2, h3, h4, .livro-verbete, table, figure")].forEach((el, ordem) => {
+    if (oculto(el)) return;
+    const q = [...el.getClientRects()].find((r) => r.width > 1 && r.height > 1);
+    if (!q) return;
+    const xp = (q.left - o) / k;
+    const pag = Math.max(0, Math.floor(xp / P));
+    const tipo = el.matches("h2, h3, h4") ? "titulo" : el.matches(".livro-verbete") ? "carta" : el.matches("table") ? "tabela" : "figura";
+    const texto = (el.getAttribute("aria-label") || el.querySelector("figcaption")?.textContent || el.textContent || "").trim().replace(/\\s+/g, " ").slice(0, 100);
+    elementos.push({
+      tipo,
+      ordem,
+      id: el.id || null,
+      texto,
+      pagina: pag + 1,
+      coluna: xp - pag * P < P / 2 ? 1 : 2,
+    });
+  });
+
+  // PerformanceEntry não é determinística e, por isso, fica FORA da parte
+  // comparada byte a byte. Mantemos todas as execuções: uma recomposição
+  // inesperada também aparece no relatório, em vez de se esconder na média.
+  const grupos = new Map();
+  performance.getEntriesByType("measure").filter((e) => e.name.startsWith("folhear:")).forEach((e) => {
+    const nome = e.name.slice("folhear:".length);
+    const lista = grupos.get(nome) || [];
+    lista.push(Math.round(e.duration * 100) / 100);
+    grupos.set(nome, lista);
+  });
+  const tempos = Object.fromEntries([...grupos].map(([nome, execucoes]) => [nome, {
+    execucoes,
+    totalMs: Math.round(execucoes.reduce((s, n) => s + n, 0) * 100) / 100,
+  }]));
+  return { paginas: total, titulos, problemas, assinatura: { versao: 1, paginas: total, elementos }, tempos };
 })()`;
 
 mkdirSync(SAIDA, { recursive: true });
@@ -253,6 +293,32 @@ const resultado = await comNavegador(async ({ abrir }) => {
 
 // ── As folhas de contato: quatro duplas por folha ───────────────────────
 const { medida, fotos } = resultado;
+const relatorioDaAssinatura = {
+  viewport: { largura: LARGURA, altura: ALTURA },
+  papel,
+  assinatura: medida.assinatura,
+  tempos: medida.tempos,
+};
+if (arquivoDaAssinatura) {
+  const destino = path.resolve(arquivoDaAssinatura);
+  mkdirSync(path.dirname(destino), { recursive: true });
+  writeFileSync(destino, `${JSON.stringify(relatorioDaAssinatura, null, 2)}\n`);
+}
+let assinaturaDivergiu = false;
+if (compararCom) {
+  const esperado = JSON.parse(readFileSync(path.resolve(compararCom), "utf8"));
+  const antes = JSON.stringify(esperado.assinatura);
+  const agora = JSON.stringify(medida.assinatura);
+  assinaturaDivergiu = antes !== agora;
+  if (assinaturaDivergiu) {
+    const a = esperado.assinatura?.elementos ?? [];
+    const b = medida.assinatura?.elementos ?? [];
+    const i = Math.max(0, Array.from({ length: Math.max(a.length, b.length) }, (_, n) => n).find((n) => JSON.stringify(a[n]) !== JSON.stringify(b[n])) ?? 0);
+    console.error(`\n❌ Assinatura diferente de ${compararCom}.`);
+    console.error(`   esperado: ${JSON.stringify(a[i] ?? { paginas: esperado.assinatura?.paginas })}`);
+    console.error(`   recebido: ${JSON.stringify(b[i] ?? { paginas: medida.assinatura?.paginas })}`);
+  }
+}
 const CEL_W = 720;
 const CEL_H = 450;
 const ROTULO = 28;
@@ -301,6 +367,10 @@ const linhas = [
   ...Object.entries(NOMES).flatMap(([t, n]) =>
     porTipo[t].length ? [`## ${n}`, "", ...porTipo[t].map((p) => `- pág. ${p.pagina}: ${p.texto}`), ""] : []
   ),
+  "## Tempos das passadas",
+  "",
+  ...Object.entries(medida.tempos).map(([nome, tempo]) => `- **${nome}:** ${tempo.totalMs.toFixed(2)} ms (${tempo.execucoes.map((n) => n.toFixed(2)).join(" + ")})`),
+  "",
   folhas.length ? `## Folhas de contato\n\n${folhas.map((f) => `- ${f}`).join("\n")}` : "",
 ];
 writeFileSync(path.join(SAIDA, "relatorio.md"), linhas.join("\n"));
@@ -326,6 +396,10 @@ console.log(`\n📖 ${medida.paginas} páginas · ${medida.titulos} títulos con
 for (const [t, n] of Object.entries(NOMES)) console.log(`${porTipo[t].length ? "⚠️ " : "✅"} ${n}: ${porTipo[t].length}`);
 for (const p of medida.problemas.slice(0, 40)) console.log(`   pág. ${p.pagina} · ${NOMES[p.tipo]} · ${p.texto}`);
 if (medida.problemas.length > 40) console.log(`   … e mais ${medida.problemas.length - 40} (ver relatorio.md)`);
+console.log("\n⏱️  Passadas da diagramação");
+for (const [nome, tempo] of Object.entries(medida.tempos)) console.log(`   ${nome.padEnd(18)} ${tempo.totalMs.toFixed(2).padStart(9)} ms  [${tempo.execucoes.map((n) => n.toFixed(2)).join(" + ")}]`);
+if (arquivoDaAssinatura) console.log(`\n🔏 Assinatura: ${path.relative(process.cwd(), path.resolve(arquivoDaAssinatura))}`);
+if (compararCom && !assinaturaDivergiu) console.log(`✅ Assinatura idêntica a ${compararCom}`);
 console.log(`\n📁 ${path.relative(process.cwd(), SAIDA)}/ — index.html, relatorio.md, ${folhas.length} folhas de contato`);
 const graves = porTipo.titulo.length + porTipo.estouro.length + porTipo["arte-quebrada"].length;
-process.exit(graves ? 1 : 0);
+process.exit(graves || assinaturaDivergiu ? 1 : 0);
