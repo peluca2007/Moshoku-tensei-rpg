@@ -16,6 +16,44 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.107",
+    date: "2026-09-27",
+    title: "Auditoria de balanço",
+    sections: [
+      {
+        heading: "O truque da escola",
+        items: [
+          "As quatro escolas elementais ganham, no Principiante, um truque: Brasa (Fogo), Respingo (Água, deixa Molhado), Rajada Curta (Vento) e Pedrisco (Terra). Vem com o Principiante, sem PA, sem PM: 1 Ação, 1d6 + BC a 9 m, uma vez por turno. O mago de 1º patamar, que gastava 2 Ações pra 1d8 + BC e ficava parado quando o PM acabava, sai de ~6 pra ~12 de dano por turno.",
+        ],
+      },
+      {
+        heading: "Técnicas de topo que rendiam menos que as de baixo",
+        items: [
+          "Golpe do Fim da Linha (Norte, Imperador): + 9d12 (era 4d12) — rendia menos por Ação que o Golpe do Desespero do Santo.",
+          "Arremesso (Lutador, Intermediário): 6d8 (era 4d8) — pede o alvo já agarrado, e rendia menos que a Investida do Principiante.",
+          "Lótus Carmesim (Punho do Fogo, Avançado): dois socos (eram três), e o Punho da Condenação (Santo) sobe pra 8d8 — o Avançado passava o Santo e o Imperador da própria árvore.",
+          "Coroa Solar (Punho do Fogo, Rei) é um halo de 9 m que reage: o dano dela é condicional, não um golpe.",
+          "Das onze técnicas que o check apontava, seis são de área (linha, cone, esfera) e ficam: elas compram alvos, e o check mede um alvo só. Agora ele mede o Corpo por alvo único e a Magia pela melhor carta, e trata menos de 10% como empate. Resultado: nenhuma técnica de topo rende menos que a de baixo.",
+        ],
+      },
+      {
+        heading: "Outros números",
+        items: [
+          "Luz Absoluta (Cura, Imperador): 12d8 radiante (era 20d8). Com 3 Ações, 30 m, e ainda curando os aliados, ela batia mais que o Zero Absoluto da Água, a escola de área. Agora fica abaixo dele.",
+          "Tridente Ancestral (despertar do Superd): o golpe da Cauda-lança é o da mão de apoio — só o dado, um degrau abaixo. Era um ataque inteiro de graça por turno, acima de qualquer talento de Santo.",
+          "A Espada de Luz Verdadeira fica com o maior número do livro: é o pico declarado da árvore de vidro, e agora o simulador a usa uma vez por combate, como a carta manda.",
+        ],
+      },
+      {
+        heading: "O simulador",
+        items: [
+          "Ele passou a respeitar 'Uma vez por turno' e 'Uma vez por combate' escritos no começo da carta. Antes usava a Espada de Luz Verdadeira e o Golpe do Fim da Linha em todo turno. O orçamento de encontro da 0.1.105 continua Equilibrado nos seis patamares depois disso.",
+          "Os moldes da 0.1.105 resolveram a sobrevivência do fim de jogo: o mago de Vigor 0 aguenta 1,6 turno de uma criatura do patamar dele no 6º (antes, meio turno).",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.106",
     date: "2026-09-27",
     title: "O catálogo de criaturas entra no livro",

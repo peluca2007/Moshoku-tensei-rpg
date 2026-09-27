@@ -191,8 +191,8 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           ptCost: 2,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "Dado de arma rolado três vezes (três socos)", condicional: "+3d6 ígneo ao Sobrecarregar" },
-          effect: "Três socos rápidos contra o mesmo alvo, com rolagens separadas — o primeiro que acerta acende, os seguintes quebram. Se o 3º acertar, teste de Vigor (CD 8 + BC) ou o alvo fica Atordoado até o fim do próximo turno dele. Sobrecarga: o 3º soco apaga o Em Chamas do alvo numa explosão de +3d6 ígneo.",
+          damage: { normal: "Dado de arma rolado duas vezes (dois socos)", condicional: "+3d6 ígneo ao Sobrecarregar" },
+          effect: "Dois socos rápidos contra o mesmo alvo, com rolagens separadas — o primeiro que acerta acende, o segundo quebra. Se o 2º acertar, teste de Vigor (CD 8 + BC) ou o alvo fica Atordoado até o fim do próximo turno dele. Sobrecarga: o 2º soco apaga o Em Chamas do alvo numa explosão de +3d6 ígneo.",
         },
         {
           id: "impacto-meteorico",
@@ -248,7 +248,7 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "6d8 + BC (ígneo)" },
+          damage: { normal: "8d8 + BC (ígneo)" },
           effect: "Golpe que injeta calor no sangue. Teste de Vigor (CD 8 + BC): falha sofre o dano e fica Paralisado até o fim do próximo turno dele; sucesso, metade do dano. Se o alvo já estava Em Chamas e falhar, ele também recebe acúmulos de Quebrantado iguais ao seu Bônus de Rank. Sobrecarga: o teste tem Desvantagem.",
         },
         {
@@ -294,9 +294,9 @@ export const PUNHO_DE_FOGO_TREE: Tree = {
           name: "Coroa Solar",
           paCost: RANK_PA_COST.common.Rei,
           ptCost: 3,
-          range: "Pessoal",
+          range: "Pessoal (esfera de 9 m)",
           actions: { normal: 1 },
-          damage: { normal: "3d10 (ígneo)" },
+          damage: { normal: "Nenhum direto: o halo reage", condicional: "3d10 ígneo cada vez que o halo dispara (uma vez por turno)" },
           effect: "Um halo de fogo por 3 turnos. Uma vez por turno, sem gastar a sua Reação, quando um inimigo a até 9m fugir de você ou atacar um aliado seu, o halo dispara nele: o dano, ignorando Cobertura, e Em Chamas. Sobrecarga: o halo dura 1 minuto.",
         },
         {

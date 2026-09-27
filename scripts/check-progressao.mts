@@ -103,6 +103,8 @@ interface Medida {
   arvore: string;
   pilar: "Magia" | "Corpo" | "Utilidade";
   porRank: Map<string, { nome: string; acoes: number; valor: number }>;
+  /** Só alvo único: a régua dos capstones (a de área compra alvos, e este motor mede um só). */
+  porRankUnico: Map<string, { nome: string; acoes: number; valor: number }>;
   teto: { nome: string; rank: string; acoes: number; valor: number } | null;
 }
 
@@ -125,6 +127,7 @@ function medir(treeId: string): Medida {
   const e = novoEstado(montarFicha(c));
   const alvo = BONECO();
   const porRank = new Map<string, { nome: string; acoes: number; valor: number }>();
+  const porRankUnico = new Map<string, { nome: string; acoes: number; valor: number }>();
   let teto: Medida["teto"] = null;
 
   for (const a of acoesDe(c)) {
@@ -134,9 +137,11 @@ function medir(treeId: string): Medida {
     const valor = danoEsperado(e, a, alvo) / a.acoes;
     const atual = porRank.get(rank);
     if (!atual || valor > atual.valor) porRank.set(rank, { nome: a.nome, acoes: a.acoes, valor });
+    const unico = porRankUnico.get(rank);
+    if (!a.area && (!unico || valor > unico.valor)) porRankUnico.set(rank, { nome: a.nome, acoes: a.acoes, valor });
     if (!teto || valor > teto.valor) teto = { nome: a.nome, rank, acoes: a.acoes, valor };
   }
-  return { arvore: treeId, pilar: PILAR[treeId] ?? "Corpo", porRank, teto };
+  return { arvore: treeId, pilar: PILAR[treeId] ?? "Corpo", porRank, porRankUnico, teto };
 }
 
 /*
@@ -152,9 +157,13 @@ function medir(treeId: string): Medida {
  * apareceu com uma "queda de 47%" que é, na verdade, a escola sendo o que ela é.
  * A régua do livro já tinha a resposta; faltava o check perguntar.
  */
-const NAO_SAO_REGUA_DE_DANO = new Set(
-  [...COLUNAS_MAGIA, ...COLUNAS_CORPO].filter((c) => c.regua === false).map((c) => c.treeId)
-);
+const NAO_SAO_REGUA_DE_DANO = new Set([
+  ...[...COLUNAS_MAGIA, ...COLUNAS_CORPO].filter((c) => c.regua === false).map((c) => c.treeId),
+  // A Desintoxicação fere com a Dose e a Inversão (2026-09-27): dois venenos
+  // que pegam e uma Inversão que cobra os dois. Este motor não conta Dose, então
+  // a carta avulsa dela sai mais fraca que a do rank de baixo sem estar.
+  "desintoxicacao",
+]);
 
 const medidas = TREES.map((t) => medir(t.id)).filter((m) => m.teto !== null);
 
@@ -175,8 +184,8 @@ for (const m of medidas) {
 console.log("\n" + "-".repeat(78));
 console.log("  1. CAPSTONES QUE NÃO COMPENSAM");
 console.log("-".repeat(78));
-console.log("  A melhor técnica de um rank alto que rende MENOS por Ação que a de");
-console.log("  um rank abaixo, na mesma árvore. Quem chega lá destrava e não usa.");
+console.log("  A melhor técnica de ALVO ÚNICO de um rank alto que rende MENOS por Ação");
+console.log("  que a de um rank abaixo, na mesma árvore. Quem chega lá destrava e não usa.");
 console.log(
   `  (Fora da conta: ${[...NAO_SAO_REGUA_DE_DANO].join(", ")} — o Apêndice C as marca como\n` +
     "   não sendo medida de dano, e cobrar progressão de dano delas é cobrar\n" +
@@ -186,11 +195,18 @@ console.log(
 let capstones = 0;
 for (const m of medidas) {
   if (NAO_SAO_REGUA_DE_DANO.has(m.arvore)) continue;
-  const presentes = RANKS.filter((r) => m.porRank.has(r));
+  // Cada pilar pela régua do seu jeito de ferir (2026-09-27). No Corpo e na
+  // Utilidade, alvo único contra alvo único: a técnica de área em linha, cone
+  // ou esfera compra alvos, e contra um boneco só ela sempre parece fraca. Na
+  // Magia a área É a identidade, então vale a melhor carta de qualquer tipo.
+  const regua = m.pilar === "Magia" ? m.porRank : m.porRankUnico;
+  const presentes = RANKS.filter((r) => regua.has(r));
   for (let i = 1; i < presentes.length; i++) {
-    const atual = m.porRank.get(presentes[i])!;
-    const anterior = m.porRank.get(presentes[i - 1])!;
-    if (atual.valor >= anterior.valor) continue;
+    const atual = regua.get(presentes[i])!;
+    const anterior = regua.get(presentes[i - 1])!;
+    // Menos de 10% abaixo é empate (2026-09-27): a medida é contra um boneco
+    // de CA 15, sem as condições que cada técnica pede ou aplica.
+    if (atual.valor >= anterior.valor * 0.9) continue;
     capstones++;
     const queda = ((1 - atual.valor / anterior.valor) * 100).toFixed(0);
     console.log(

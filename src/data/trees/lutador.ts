@@ -122,7 +122,7 @@ export const LUTADOR_TREE: Tree = {
           paCost: 2,
           range: "9 metros",
           actions: { normal: 1 },
-          damage: { normal: "4d8 + Força + Bônus de Rank (contundente)" },
+          damage: { normal: "6d8 + Força + Bônus de Rank (contundente)" },
           effect: "Requer alvo Agarrado, de até duas categorias de tamanho acima da sua. Arremesse até 9m: fica Caído, e quem estiver no ponto de queda faz teste de Agilidade ou também sofre metade e cai.",
         },
         {

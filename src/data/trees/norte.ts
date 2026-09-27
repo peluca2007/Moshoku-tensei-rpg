@@ -333,7 +333,7 @@ export const NORTE_TREE: Tree = {
           // e uma capstone de "uma vez por combate" que não compensa não é
           // capstone.
           actions: { normal: 2 },
-          damage: { normal: "Dado de arma rolado quatro vezes + 4d12" },
+          damage: { normal: "Dado de arma rolado quatro vezes + 9d12" },
           effect: "Uma vez por combate. Acerta automaticamente, ignora Touki, Cobertura e armadura. Se o alvo estiver com metade ou menos dos PV, dano dobrado.",
         },
         {

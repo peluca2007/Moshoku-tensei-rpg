@@ -69,6 +69,12 @@ export default function Chapter2() {
           Os dois grupos usam as mesmas regras de conjuração: o mesmo PM Máximo (Cap. 4, §1), o mesmo tempo de
           conjuração (§3), o mesmo Bônus de Rank. A divisão é de assunto, não de mecânica.
         </P>
+        <P>
+          <b>O truque da escola.</b> As quatro escolas elementais têm, no Principiante, um truque: Brasa
+          (Fogo), Respingo (Água), Rajada Curta (Vento) e Pedrisco (Terra). Vem com o Principiante, sem PA,
+          não gasta PM e custa 1 Ação: <b>1d6 + BC</b>, ataque mágico a 9 m, <b>uma vez por turno</b>. É o
+          que o mago faz com a Ação que sobra da magia de 2 — e quando a mana acaba.
+        </P>
         <Aside title="Quão raro é um mago">
           Apenas 1 em cada 20 pessoas nasce com capacidade de manipular mana. Dessas, apenas 1 em cada 20
           consegue treinar o suficiente pra virar mago de verdade — cerca de 1 pessoa em 400. De cada cem

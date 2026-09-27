@@ -202,6 +202,12 @@ export interface Acao {
   sempreFresca: boolean;
   dadosDeArma: number;
   area: boolean;
+  /**
+   * "Uma vez por turno" / "uma vez por combate" no COMEÇO do efeito da carta —
+   * 2026-09-27. Sem isto o motor usava a Espada de Luz Verdadeira (uma vez por
+   * combate) em todo turno, e o truque de escola três vezes por turno.
+   */
+  limite?: "turno" | "combate";
   /** true = rola contra a CA; false = o alvo faz um teste de resistência. */
   ataque: boolean;
   frio: boolean;
@@ -600,6 +606,12 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
   };
 }
 
+/** O limite escrito no começo do efeito: "Uma vez por turno." / "Uma vez por combate:". */
+export function limiteDeUso(efeito: string): Acao["limite"] {
+  const m = efeito.trim().match(/^uma vez por (turno|combate)[.:,]/i);
+  return m ? (m[1].toLowerCase() as "turno" | "combate") : undefined;
+}
+
 /** Uma `Acao` completa a partir do que a distingue. Mesmo motivo do `novoAlvo`. */
 export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
   return {
@@ -617,6 +629,7 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     sempreFresca: p.sempreFresca ?? false,
     dadosDeArma: p.dadosDeArma ?? 0,
     area: p.area ?? false,
+    limite: p.limite,
     ataque: p.ataque ?? false,
     frio: p.frio ?? false,
     fogo: p.fogo ?? false,
@@ -629,6 +642,9 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
 /** O que muda numa batalha, do lado do personagem. */
 export interface EstadoPersonagem extends Alvo {
   usouFurtivo: boolean;
+  /** Ações com limite de uso já gastas neste turno e neste combate (ver `Acao.limite`). */
+  usadasNoTurno: Set<string>;
+  usadasNoCombate: Set<string>;
   usouPassoVazio: boolean;
   podeEsconderEmCombate: boolean;
   alcanceArma?: number;
@@ -732,6 +748,7 @@ export function acoesDe(c: CharacterData): Acao[] {
         : "cura";
     out.push({
       regra: a.id === "primeiro-golpe" ? "primeiro-golpe" : undefined,
+      limite: a.id === "primeiro-golpe" ? undefined : limiteDeUso(a.effect),
       alcance: a.range,
       reacao: !!a.reaction,
       nome: a.name,
@@ -1227,6 +1244,8 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     reacoesExtra: 0,
     usouPrimeiroGolpe: false,
     usouFurtivo: false,
+    usadasNoTurno: new Set(),
+    usadasNoCombate: new Set(),
     usouPassoVazio: false,
     podeEsconderEmCombate: ficha.temSombraLonga,
     reacoesNesteTurno: new Set(),
@@ -1403,6 +1422,8 @@ export function escolherAcao(
   const viaveis = e.ficha.acoes.filter(
     (a) =>
       a.tipo === "dano" && !a.reacao && a.acoes > 0 &&
+      !(a.limite === "turno" && e.usadasNoTurno?.has(a.nome)) &&
+      !(a.limite === "combate" && e.usadasNoCombate?.has(a.nome)) &&
       a.pm <= e.pm &&
       a.pt <= e.pt &&
       (permitirCantico || a.acoes <= acoesRestantes) &&
@@ -1968,6 +1989,7 @@ export function turnoPersonagem(
 ): void {
   e.jaAgiu = true;
   e.usouFurtivo = false;
+  e.usadasNoTurno.clear();
   try { executarTurnoPersonagem(e, inimigos, rng, aliados, logger); }
   finally { e.surpreso = false; }
 }
@@ -2130,6 +2152,8 @@ function executarTurnoPersonagem(
     }
     e.pm -= a.pm;
     e.pt -= a.pt;
+    if (a.limite === "turno") e.usadasNoTurno.add(a.nome);
+    if (a.limite === "combate") e.usadasNoCombate.add(a.nome);
 
     /*
      * A magia que não cabe no turno vira cântico: o PM é investido AGORA (é o
