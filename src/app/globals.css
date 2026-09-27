@@ -23,6 +23,19 @@
   color-scheme: light;
 }
 
+/* As aberturas verticais das árvores continuam sendo pranchas grandes no
+   livro contínuo, mas não viram uma imagem de largura infinita no desktop. */
+.livro-shell .livro-prancha-abertura {
+  position: relative;
+  width: min(100%, 34rem);
+  margin-inline: auto;
+}
+
+.livro-shell .livro-prancha-abertura > :is(img, .livro-imagem-inteira) {
+  width: 100%;
+  height: 100%;
+}
+
 .dark {
   --background: #1a1210;
   --foreground: #ede3d0;
