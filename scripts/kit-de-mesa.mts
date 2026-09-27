@@ -24,7 +24,7 @@ import { criaturaDoMolde, simularEncontro, type CriaturaEncontro } from "@/lib/e
 import { avaliar } from "@/lib/encounterBalance";
 import type { AttributeKey, CharacterData, RankName } from "@/lib/types";
 
-const BASE = process.env.BASE ?? "https://mushoku-tensei-rpg.vercel.app";
+const BASE = process.env.BASE ?? "https://moshoku-tensei-rpg.vercel.app";
 
 /** 3 PA iniciais + 6 sessões (1 PA por sessão, Cap. 1): o personagem que acabou de chegar ao Intermediário. */
 const ORCAMENTO = 9;

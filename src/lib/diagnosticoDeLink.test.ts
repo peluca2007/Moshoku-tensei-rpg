@@ -94,7 +94,7 @@ describe("ida e volta", () => {
  * que a pessoa colou errado. Melhor descobrir aqui.
  */
 describe("tamanho do link", () => {
-  const PREFIXO = "https://mushoku-tensei-rpg.vercel.app/ficha/importar#".length;
+  const PREFIXO = "https://moshoku-tensei-rpg.vercel.app/ficha/importar#".length;
 
   it("uma ficha de duas árvores cabe numa mensagem do Discord", async () => {
     const url = (await codificarFicha(fichaCom(2))).length + PREFIXO;
