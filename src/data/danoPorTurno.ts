@@ -116,7 +116,7 @@ export const COLUNAS_CORPO: ColunaDano[] = [
 ];
 
 export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = [
-  { patamar: "1º", porArvore: { agua: "~10", fogo: "~12", vento: "~9", terra: "~11", cura: "~10", desintoxicacao: "~14", teorica: "~10", invocacao: "~13" } },
+  { patamar: "1º", porArvore: { agua: "~16", fogo: "~18", vento: "~15", terra: "~16", cura: "~10", desintoxicacao: "~14", teorica: "~10", invocacao: "~13" } },
   { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "~12", desintoxicacao: "~22", teorica: "~20", invocacao: "~24" } },
   // Água no 3º subiu de ~30 para ~44 em 0.1.87: a Quebra de Gelo passou a
   // cobrar pelo Congelado (+3d8 e acerto automático contra alvo congelado), que
