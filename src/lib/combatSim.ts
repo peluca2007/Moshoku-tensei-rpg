@@ -1067,6 +1067,7 @@ export const TIPOS_DE_DANO_CONHECIDOS = [
   "veneno",
   "ácido",
   "psíquico",
+  "arcano",
   "físico",
 ] as const;
 

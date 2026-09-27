@@ -17,7 +17,23 @@ import {
 } from "@/data/bestiary";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import FichaDeCriatura from "./FichaDeCriatura";
+import { BESTIARIO } from "@/data/preMadeMonsters";
+import { getArquetipo } from "@/data/bestiary";
 import { SHOP_ITEMS } from "@/data/shopItems";
+
+const NOME_DO_PAPEL = { padrao: "Padrão", lacaio: "Lacaio", chefe: "Chefe" } as const;
+
+/** Uma linha do catálogo: os traços que a ficha do molde não traz sozinha. */
+function tracosDoCatalogo(m: (typeof BESTIARIO)[number]): string {
+  const partes = [
+    m.tamanho,
+    m.sentido,
+    m.movimentoEspecial,
+    m.resistencias?.length ? `Resistência: ${m.resistencias.join(", ")}` : "",
+    m.imunidades?.length ? `Imunidade: ${m.imunidades.join(", ")}` : "",
+  ].filter(Boolean);
+  return `${partes.join(" · ")}. ${m.perigo ?? ""}`.trim();
+}
 
 export default function Appendices() {
   return (
@@ -608,6 +624,22 @@ export default function Appendices() {
             <FichaDeCriatura key={c.id} c={c} />
           ))}
         </div>
+
+        <SubTitle id="apendice-g-catalogo">O catálogo — mais {BESTIARIO.length} criaturas prontas</SubTitle>
+        <P>
+          Sem ficha escrita: cada uma é o Bloco do Monstro montado com as três escolhas da tabela (patamar,
+          papel e arquétipo), mais os traços da última coluna. As Ações saem da seção &ldquo;Como escrever as
+          Ações&rdquo;; a Imunidade conta um patamar acima no orçamento. O <code>/encontros</code> monta
+          qualquer uma com um clique.
+        </P>
+        <BookTable
+          headers={["Criatura", "Monte assim", "Traços e perigo"]}
+          rows={BESTIARIO.map((m) => [
+            m.nome,
+            `${m.patamar}º · ${NOME_DO_PAPEL[m.papel]} · ${getArquetipo(m.arquetipo)?.nome ?? m.arquetipo}`,
+            tracosDoCatalogo(m),
+          ])}
+        />
 
         <SubTitle id="apendice-g-rivais">Rivais com ficha</SubTitle>
         <P>
