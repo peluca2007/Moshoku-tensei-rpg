@@ -280,7 +280,7 @@ export const LUTADOR_TREE: Tree = {
           ptCost: 3,
           range: "Corpo a corpo",
           actions: { normal: 1 },
-          damage: { normal: "5d10 + Força + Bônus de Rank (contundente, automático)" },
+          damage: { normal: "10d10 + Força + Bônus de Rank (contundente, automático)" },
           effect: "Requer alvo Agarrado. O alvo faz teste de Vigor (CD 8 + Força + Rank): se falhar, vai ao máximo de acúmulos de Quebrantado instantaneamente; se passar, ganha acúmulos de Quebrantado iguais ao seu Bônus de Rank. Se isso o reduzir a 0 PV, não pode ser estabilizado por meios mundanos.",
         },
       ],
