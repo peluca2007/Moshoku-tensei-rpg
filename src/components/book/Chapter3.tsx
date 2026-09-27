@@ -822,6 +822,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
       CATEGORIAS.flatMap((category) =>
         TREES.filter((t) => t.category === category).map((tree, i) => (
           <div key={tree.id} className="livro-arvore-folhas space-y-3" data-capitulo="cap3">
+            <Prancha id={`${tree.id}-abertura`} arvore={tree.id} abertura titulo={tree.name} />
             {i === 0 && <TituloDaCategoria category={category} />}
             {/* O retrato fica no começo da árvore, onde o autor o pensou. O
                 fecho é a prancha; quem não tem prancha fecha com a marca de fim
