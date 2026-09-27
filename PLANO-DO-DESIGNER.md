@@ -190,14 +190,19 @@ Aspirante…"), além de Rank, patamar e tier.
 3. Tirar os temáticos.
 4. **Outro.**
 
-**3d. A contabilidade.** Revisar os **108** efeitos "uma vez por…": cortar ou trocar por custo (PM, PT, Ação)
-os que não mudam decisão nenhuma, e padronizar o resto em três relógios só (combate, Descanso Curto,
-Descanso Longo).
+**3d. A contabilidade. ✅ feito (2026-09-27, 0.1.108) — e a meta mudou com a medida.** Contados: **111**
+("uma vez por turno" 41, combate 36, Descanso Longo 17, e 17 em nove relógios avulsos). Lidos um a um: quase
+todos os de turno travam efeitos GRÁTIS ("sem gastar Ação") e os de combate travam acerto automático,
+recuperação de PT e rolar de novo — tirá-los não enxuga, quebra. O que era contabilidade de verdade: 7 limites
+redundantes (cortados: interceptação ×2, Reação que já é uma por rodada ×2, Primeiro a Ver, Círculo de
+Convocação; Leitura de Abertura troca o limite por 1 PT) e "cena", que o livro não define (virou Descanso Curto
+ou combate). **111 → 104**, todos em relógios do livro (turno, combate, Descansos; "sessão" fica nas cartas
+narrativas, porque é o relógio dos PA e dos fatos da Utilidade). A meta de ~75 era um palpite e sai.
 
 **3e. O caminho mínimo. ✅ feito (2026-09-26, Cap. 0, §6).** Uma página no Cap. 0: **o que ignorar até o 3º patamar** (Recitação Perfeita,
 Interrupção, empilhamento, Conjuração Dividida…) e o que a primeira sessão precisa.
 
-**Pronto quando:** efeitos "uma vez por…" **108 → ~75**; um nome de patamar só no livro; a página do
+**Pronto quando:** ~~efeitos "uma vez por…" 108 → ~75~~ (ver 3d); um nome de patamar só no livro; a página do
 caminho mínimo existe e foi lida pelo autor. (A meta de páginas saiu: ver o quadro no começo desta etapa.)
 **Portão:** o autor lê três árvores enxutas antes de o corte se espalhar pelas outras.
 

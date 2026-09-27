@@ -94,7 +94,7 @@ export const LADINO_TREE: Tree = {
       mastery: {
         name: "Duas Saídas",
         description:
-          "Escopo: um edifício inteiro, uma rotina de trabalho, um pequeno grupo. Você identifica automaticamente todas as saídas de qualquer ambiente, incluindo improvisadas. Uma vez por cena, gastando 1 PP, declare que existe uma saída onde o Mestre não tinha planejado.",
+          "Escopo: um edifício inteiro, uma rotina de trabalho, um pequeno grupo. Você identifica automaticamente todas as saídas de qualquer ambiente, incluindo improvisadas. Uma vez por Descanso Curto, gastando 1 PP, declare que existe uma saída onde o Mestre não tinha planejado.",
       },
       talents: [
         { id: "mapa-dos-ratos", name: "Mapa dos Ratos", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Em cidade onde já passou um dia, conhece a geografia oculta: esgotos, becos, telhados, casas seguras — sem teste." },

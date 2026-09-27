@@ -246,7 +246,7 @@ export const ESCUDOS_TREE: Tree = {
           range: "Pessoal",
           actions: { normal: 0 },
           damage: { normal: "Reduz 1d10 + Vigor + Bônus de Rank" },
-          effect: "Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 1d10 + Vigor + Bônus de Rank antes de aplicá-lo em você. Uma vez por interceptação.",
+          effect: "Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 1d10 + Vigor + Bônus de Rank antes de aplicá-lo em você.",
         },
         {
           id: "aguentar-soberano",
@@ -258,7 +258,7 @@ export const ESCUDOS_TREE: Tree = {
           range: "Pessoal",
           actions: { normal: 0 },
           damage: { normal: "Reduz 2d10 + Vigor + Bônus de Rank" },
-          effect: "Requer Puro Escudo. Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 2d10 + Vigor + Bônus de Rank antes de aplicá-lo em você. Uma vez por interceptação. Se a redução zerar o dano, você recupera 1 PT imediatamente.",
+          effect: "Requer Puro Escudo. Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 2d10 + Vigor + Bônus de Rank antes de aplicá-lo em você. Se a redução zerar o dano, você recupera 1 PT imediatamente.",
         },
         {
           id: "escudo-erguido",

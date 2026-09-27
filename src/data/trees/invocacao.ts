@@ -172,7 +172,7 @@ export const INVOCACAO_TREE: Tree = {
           pmCost: 16,
           range: "Círculo de 12m",
           actions: { normal: 4 },
-          effect: "Invoca todos os seus Pactos de uma vez, no mesmo turno. Uma vez por Descanso Longo.",
+          effect: "Invoca todos os seus Pactos de uma vez, no mesmo turno.",
           incantation:
             "Este círculo não é uma jaula, e nunca foi — é uma porta que eu desenho com a minha própria mana pra que tu não precises abrir caminho sozinho do outro lado. Eu marco o chão, marco a hora combinada, marco o preço que já foi pago entre nós dois, e agora só me resta ficar de pé aqui e esperar o som dos teus passos chegando de um lugar que não tem chão. Círculo de Convocação!",
         },

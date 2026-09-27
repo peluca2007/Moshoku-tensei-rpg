@@ -16,6 +16,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.108",
+    date: "2026-09-27",
+    title: "A contabilidade: cada limite num relógio do livro",
+    sections: [
+      {
+        heading: "Os 111 'uma vez por…', lidos um a um",
+        items: [
+          "Sete limites não mudavam nada e saíram: 'uma vez por interceptação' no Aguentar o Baque e no Aguentar Soberano (cada interceptação já é uma), 'uma vez por rodada' no Estado Anulado e 'uma vez por turno' no Passo Entre Rajadas (a Reação já é uma por rodada), o do Primeiro a Ver (só acontece ao entrar no combate) e o do Círculo de Convocação (os 16 PM já seguram). A Leitura de Abertura troca o 'uma vez por combate' por 1 PT.",
+          "'Cena' não é relógio do livro: A Corte na Palma e Duas Saídas passam a ser uma vez por Descanso Curto; o Traço Firme, uma vez por combate.",
+          "O resto fica: quase todo 'uma vez por turno' trava um efeito que não gasta Ação, e quase todo 'uma vez por combate' trava um acerto automático, uma recuperação de PT ou uma nova rolagem.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.107",
     date: "2026-09-27",
     title: "Auditoria de balanço",
