@@ -40,6 +40,8 @@ describe("a tabela d100 das raças", () => {
     const soma = Object.values(dragao.bonuses.attributes ?? {}).reduce((a, b) => a + (b ?? 0), 0);
     expect(soma).toBeLessThanOrEqual(2);
     expect(dragao.traits.join(" ")).not.toMatch(/IMUNIDADE|dobro do de caminhada/);
+    // Na obra a Raça Dragão tem corpo de gente: sem asas.
+    expect(dragao.traits.join(" ")).not.toMatch(/Asas|Voo/);
   });
 });
 

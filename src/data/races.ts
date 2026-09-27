@@ -561,6 +561,9 @@ export const RACES: Race[] = [
     // de uma raça lendária (~6 PC, par do Demônio Imortal), e por isso passou a
     // poder ser ESCOLHIDO pelo preço da lendária (3 PA). O dragão adulto é o
     // despertar do Santo, uma vez por dia.
+    // Sem asas (2026-09-27, o autor: "em Mushoku eles não têm asas"): a Raça
+    // Dragão da obra — Orsted, Laplace, Perugius — tem corpo de gente. Quem
+    // voa são os Dragões Vermelhos, que são monstro, não raça.
     bonuses: { attributes: { forca: 1, vigor: 1 }, armorClass: 1 },
     upgrades: [
       {
@@ -583,7 +586,6 @@ export const RACES: Race[] = [
       "Escamas Dracônicas: +1 na CA (permanente, empilha com armadura).",
       "Garras e Presas: ataques desarmados com Dado Base d8, que sobem na Escada de Dados (Cap. 3) com o seu maior patamar do Corpo.",
       "Sopro Dracônico (1 Ação, 1 vez por Descanso Curto): cone de 9 metros do seu elemento, 1d6 por ponto do seu Maior Bônus de Rank (6d6 no Imperador). Agilidade contra CD 8 + Vigor + Maior Bônus de Rank para metade.",
-      "Asas: Deslocamento de Voo igual ao de caminhada, com as mesmas restrições das asas celestiais — sem armadura média ou pesada e sem carregar mais da metade do seu limite de carga. Voo e queda seguem a regra geral (Cap. 4, §3).",
       "+1 em Força e +1 em Vigor, permanentes, e Resistência a um tipo de dano à escolha: ígneo, frio ou elétrico. É o mesmo elemento do seu Sopro.",
       "Cem Mil Anos: você não envelhece de forma perceptível e é imune a doença comum.",
       "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão e Lábia, pra sempre — nada que já foi um deus finge ser gente comum.",

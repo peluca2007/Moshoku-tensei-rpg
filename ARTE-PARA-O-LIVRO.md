@@ -49,7 +49,8 @@ a mesma cena, ou outra, com 1600 px ou mais, fica muito melhor.
 
 As ilustrações e capas dos volumes viraram aberturas de capítulo, fechos de capítulo e pranchas. A Raça
 Dragão ganhou a arte nova (`racas/dragao.webp`, o Orsted de casaco branco, recortado numa faixa larga
-pro quadro da raça). Quatro artes que sobravam entraram como pranchas: a criação de personagem (Comece
+pro quadro da raça — em 2026-09-27 o autor achou fraca, e voltou o Orsted de corpo inteiro na aura,
+que cabe em pé na página inteira da raça mítica; o esboço foi pro acervo). Quatro artes que sobravam entraram como pranchas: a criação de personagem (Comece
 Aqui, §4), Reputação com Facções e Crafting (Cap. 5, §3 e §4) e Viagem entre Continentes (Apêndice E).
 
 **Tudo que chegou foi aproveitado ou guardado.** As 21 que ainda não têm lugar estão em
