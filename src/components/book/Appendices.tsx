@@ -592,6 +592,7 @@ export default function Appendices() {
         </Warning>
 
         <SubTitle id="apendice-g-chefe">Por que o Chefe pesa quatro</SubTitle>
+        <Prancha id="apendice-g-orsted" />
         <P>
           O chefe bate só uma vez e meia o que uma criatura do patamar dele bate: ele aguenta o triplo e age mais vezes.
           É a economia de ação, e não o dano por golpe, que o torna perigoso — o chefe que age duas vezes por

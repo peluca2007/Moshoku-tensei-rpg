@@ -1,4 +1,5 @@
-import { arteDoLivro } from "./arteDasRacas";
+import { arteDoLivro, enquadrar } from "./arteDasRacas";
+import ImagemDoLivro from "./ImagemDoLivro";
 
 /**
  * A PRANCHA: a arte que quebra o padrão da página (2026-09-25).
@@ -39,6 +40,12 @@ const LEGENDAS: Record<string, string> = {
   "cap5-3": "Um salão cheio de gente na Universidade de Magia: uma elfa de cabelo branco e óculos escuros no centro, um gigante de pele cinza atrás.",
   "cap5-4": "Ghislaine e Eris de óculos escuros, sentadas atrás de pilhas de moedas de ouro.",
   "apendice-e": "O grupo na estrada: Eris e Rudeus conferindo um mapa, com os companheiros de viagem em volta.",
+  "fogo-abertura": "Um mago envolto por espirais de fogo, abrindo a escola de Magia de Fogo.",
+  "cura-abertura": "Uma curandeira de vestido branco sentada num campo de flores ao pôr do sol.",
+  "deus-do-norte-abertura": "Um espadachim empunha duas lâminas vermelhas entre ondas azuis.",
+  "bardo-e-interacao-abertura": "Um esqueleto músico toca entre labaredas verdes.",
+  "navegacao-e-lideranca-abertura": "Uma navegadora ruiva diante do azul do mar.",
+  "apendice-g-orsted": "Orsted sentado, de casaco branco: um chefe que muda a luta só por estar presente.",
 };
 
 /**
@@ -102,9 +109,37 @@ export function temPrancha(id: string): boolean {
   return arteDoLivro("pranchas", id) !== null;
 }
 
-export default function Prancha({ id, arvore }: { id: string; arvore?: string }) {
+export default function Prancha({
+  id,
+  arvore,
+  abertura = false,
+  titulo,
+}: {
+  id: string;
+  arvore?: string;
+  abertura?: boolean;
+  titulo?: string;
+}) {
   const arte = arteDoLivro("pranchas", id);
   if (!arte) return null;
+  if (abertura) {
+    return (
+      <figure
+        className="livro-prancha-abertura my-4 overflow-hidden rounded-xl border border-parchment-300 dark:border-parchment-800"
+        data-prancha={id}
+        data-arvore={arvore}
+        style={{ aspectRatio: "0.78" }}
+      >
+        <ImagemDoLivro
+          arte={arte}
+          alt={LEGENDAS[id] ?? ""}
+          modo={enquadrar(arte, 0.78, 696)}
+          className="h-full w-full object-cover"
+        />
+        {titulo && <figcaption className="livro-fecho-legenda">Abertura · {titulo}</figcaption>}
+      </figure>
+    );
+  }
   // Faixa de margem a margem (~700 px, 21:8) só pra arte larga e com
   // resolução pra isso; arte em pé ou pequena entra na coluna, inteira, no
   // formato dela — senão a faixa cortaria cabeças ou borraria a imagem.

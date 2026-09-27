@@ -2831,45 +2831,6 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 /* A página. */
-/* A página inteira de arte da raça mítica (FichaDeRaca) e a página de texto
-   dela sem a faixa de arte, que só repetiria a imagem apertada. */
-.folhear-fluxo .livro-racas > .livro-raca-pagina-arte {
-  display: block;
-  position: relative;
-  width: calc(var(--pagina) - var(--margem) * 2 - 16px);
-  height: calc(var(--altura) - var(--topo) - var(--pe) - 12px);
-  margin: 0 12px 0 4px;
-  overflow: hidden;
-  background: #0c0c0e;
-  box-shadow: 10px 10px 0 var(--cor);
-  column-span: all;
-  break-before: column;
-  break-inside: avoid;
-  transform: rotate(-0.5deg);
-}
-
-.folhear-fluxo .livro-racas > .livro-raca-pagina-arte img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.folhear-fluxo .livro-racas > .livro-raca-pagina-arte .livro-fecho-legenda {
-  position: absolute;
-}
-
-.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-arte {
-  flex: none;
-  height: 3.4em;
-  aspect-ratio: auto;
-  background: none;
-  box-shadow: none;
-}
-
-.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-arte :is(img, .livro-imagem-inteira) {
-  display: none;
-}
-
 .folhear-fluxo .livro-racas > .livro-raca {
   display: flex;
   flex-direction: column;
@@ -2885,6 +2846,59 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   column-span: all;
   break-before: column;
   break-inside: avoid;
+}
+
+/* O Dragão tem a ficha mais longa e uma arte realmente vertical. Em vez de
+   repetir o Orsted numa segunda página, a página mítica vira uma abertura em
+   duas metades: personagem inteiro à esquerda, regras à direita. */
+.folhear-fluxo .livro-raca[data-tier="mitica"] {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  grid-template-rows: auto auto auto 1fr auto auto;
+  column-gap: 1.35em;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] > :not(.livro-raca-arte) {
+  grid-column: 2;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-arte {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  min-height: 0;
+  margin: 0 7px 7px 6px;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-arte :is(img, .livro-imagem-inteira) {
+  width: 100%;
+  height: 100%;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-arte img {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-nome {
+  font-size: 3.45em;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-numeros {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-numeros dd {
+  font-size: 1.42em;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-tracos {
+  columns: 1;
+  font-size: 0.91em;
+  line-height: 1.32;
+}
+
+.folhear-fluxo .livro-raca[data-tier="mitica"] .livro-raca-tracos > li {
+  margin-bottom: 0.36em;
 }
 
 /* O cabeçalho: a ordem e a leitura japonesa num fio, o nome embaixo. */
@@ -4520,6 +4534,32 @@ html.livro-imersivo {
 
 .folhear-fluxo figure.livro-prancha.livro-prancha-coluna {
   aspect-ratio: 4 / 5;
+}
+
+/* Algumas árvores ganham uma abertura de página inteira. A arte vem antes
+   do cabeçalho e consome exatamente uma folha; o catálogo continua na folha
+   seguinte, sem disputar atenção com a ilustração. */
+.folhear-fluxo figure.livro-prancha-abertura {
+  position: relative;
+  width: calc(var(--pagina) - var(--margem) * 2 - 16px);
+  height: calc(var(--altura) - var(--topo) - var(--pe) - 12px);
+  margin: 0 12px 0 4px;
+  aspect-ratio: auto !important;
+  box-shadow: 10px 10px 0 var(--cor);
+  column-span: all;
+  transform: rotate(-0.35deg);
+  break-before: column;
+  break-after: column;
+  break-inside: avoid;
+}
+
+.folhear-fluxo figure.livro-prancha-abertura > :is(img, .livro-imagem-inteira) {
+  width: 100%;
+  height: 100%;
+}
+
+.folhear-fluxo figure.livro-prancha-abertura .livro-fecho-legenda {
+  position: absolute;
 }
 
 /* A prancha encaixada no resto da página (acomodarPranchas): a altura vem da

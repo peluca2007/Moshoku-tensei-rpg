@@ -66,6 +66,14 @@ Imortal (Atofe), Élfica, Humana (Rudeus e Eris na floresta), Migurd (Roxy), Ogr
 a prancha do Triângulo dos Estilos; a Ghislaine em pé é o retrato do Deus da Espada. As artes trocadas e as
 que ainda não têm lugar (Auber, os hobbits pequenos, a Atofe de mangá) foram pro `acervo-de-arte/`.
 
+### Sexto lote (2026-09-27)
+
+Cinco artes verticais que estavam no acervo agora abrem árvores em página inteira: Magia de Fogo,
+Magia de Cura, Deus do Norte, Bardo e Interação e Navegação e Liderança. O Orsted sentado virou uma
+vinheta vertical na explicação de chefes do Bestiário. O fecho letterboxed do Punho do Fogo foi trocado
+pela lutadora ruiva com o leão de fogo; a captura antiga voltou ao acervo. A Aura de Comando do Deus do
+Norte também trocou a captura borrada de 192 px por Auber em resolução suficiente pro quadro.
+
 ## Prioridade 1 — o que ainda falta nas raças e nas árvores
 
 - Todas as raças e árvores já têm arte. Falta só resolução: `capitulos/abertura-cap1` (592 px).
