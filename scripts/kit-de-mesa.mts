@@ -119,8 +119,11 @@ const FICHAS: Molde[] = [
 function montar(m: Molde): CharacterData {
   const s = useCharacterStore.getState();
   s.createCharacter(m.nome);
-  s.setRace(m.raca);
-  s.setBackground(m.antecedente);
+  // Ficha pronta é entregue pelo Mestre, não escolhida pelo jogador: conta como
+  // sorteio e não paga o PA da escolha (Cap. 1, §5). Sem isso, cada ficha
+  // gastava 1 PA a mais que o orçamento do kit desde a 0.1.108.
+  s.setRace(m.raca, false);
+  s.setBackground(m.antecedente, false);
   const antecedente = getBackgroundById(m.antecedente);
   const primeiraLinha = (antecedente as { subtable?: { entries?: { id: string }[] } } | undefined)?.subtable?.entries?.[0]?.id;
   if (primeiraLinha) s.setSubtableEntry(primeiraLinha);
