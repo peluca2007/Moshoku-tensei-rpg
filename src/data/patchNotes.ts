@@ -16,6 +16,26 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.114",
+    date: "2026-09-27",
+    title: "Revisão da ficha antes da sessão",
+    sections: [
+      {
+        heading: "Criar personagem não apaga mais as outras fichas",
+        items: [
+          "Abrir a criação (guia, roleta ou entrevista) direto pelo endereço — link, F5, atalho do celular — criava a ficha nova antes de o navegador carregar as salvas, e gravava por cima delas: todas as fichas anteriores sumiam. Pelo menu não acontecia. Agora a criação espera as fichas carregarem.",
+          "Na criação guiada, o nome 'Novo Personagem' já vem selecionado: digitar troca o nome, em vez de colar no fim dele.",
+        ],
+      },
+      {
+        heading: "A CA do Deus da Espada",
+        items: [
+          "A doutrina do Estilo Deus da Espada (CA base −2, Cap. 3) estava no livro e não na ficha: quem seguia a árvore via a CA 2 pontos acima do certo. A ficha, o simulador e o Painel do Mestre agora cobram.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.113",
     date: "2026-09-27",
     title: "O Dragão não se transforma",
