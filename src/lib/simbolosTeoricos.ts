@@ -1,5 +1,5 @@
 import { CharacterData } from "@/lib/types";
-import { FormulaEscolha, RANKS_TEORICOS } from "@/lib/magiaTeorica";
+import { FORMAS, FormulaEscolha, RANKS_TEORICOS, type RankTeorico } from "@/lib/magiaTeorica";
 
 const ORIGENS: Record<string, string> = {
   "simbolo-fogo": "fogo",
@@ -23,25 +23,23 @@ export function conheceSimboloTeorico(c: CharacterData, id: string): boolean {
     || c.purchasedAbilities.some((a) => a.treeId === "teorica" && a.id === id);
 }
 
-/** A oficina é livre para aprender; esta verificação diz se a ficha pode usar o desenho em jogo. */
+/**
+ * A oficina é livre pra aprender; esta verificação diz se a FICHA pode usar o
+ * desenho em jogo: o rank na Teórica e a essência. Verbos e formas vêm com as
+ * Maestrias (Cap. 2, §8), então basta o rank.
+ */
 export function avaliarFormulaNaFicha(c: CharacterData, escolha: FormulaEscolha): string[] {
   const problemas: string[] = [];
   const rank = c.unlockedRanks.filter((u) => u.treeId === "teorica")
-    .reduce((maior, u) => Math.max(maior, RANKS_TEORICOS.indexOf(u.rank as typeof RANKS_TEORICOS[number])), -1);
-  if (rank < 0) return ["Abra Magia Teórica para construir fórmulas. Qualquer personagem com PM ainda pode alimentar um circuito pronto."];
-  if (rank < RANKS_TEORICOS.indexOf(escolha.rank)) problemas.push(`Sua Magia Teórica ainda não alcançou ${escolha.rank}.`);
+    .reduce((maior, u) => Math.max(maior, RANKS_TEORICOS.indexOf(u.rank as RankTeorico)), -1);
+  if (rank < 0) return ["Abra a Magia Teórica pra desenhar fórmulas. Qualquer personagem com PM ainda pode alimentar uma fórmula pronta."];
+  if (rank < RANKS_TEORICOS.indexOf(escolha.rank)) problemas.push(`Sua Magia Teórica ainda não chegou ao ${escolha.rank}.`);
   if (escolha.essencia !== "mana" && !conheceSimboloTeorico(c, `simbolo-${escolha.essencia}`)) {
-    problemas.push(`Aprenda o símbolo de ${escolha.essencia} na árvore de origem ou por 1 PA na Teórica.`);
+    problemas.push(`A essência ${escolha.essencia} vem com o Principiante da escola dela, ou por 1 PA na Teórica.`);
   }
-  for (const operador of escolha.operadores) {
-    if (operador === "rejeitar" && !conheceSimboloTeorico(c, "simbolo-rejeitar")) problemas.push("Aprenda Rejeitar por 1 PA.");
-    if (operador === "repetir" && !conheceSimboloTeorico(c, "simbolo-repetir")) problemas.push("Aprenda Repetir no Intermediário.");
-    if (operador === "expandir" && rank < 1) problemas.push("Expandir exige Teórica Intermediária.");
-  }
-  if (escolha.forma === "triangulo" && rank < 1) problemas.push("Triângulo exige Teórica Intermediária.");
-  if (escolha.forma === "estrela" && rank < 2) problemas.push("Estrela exige Teórica Avançada.");
-  if (escolha.forma === "espiral" && rank < 3) problemas.push("Espiral exige Teórica Santa.");
-  if (escolha.gatilho && rank < 2) problemas.push("Gatilho exige Teórica Avançada.");
-  if (escolha.meio === "pedra" && rank < 3) problemas.push("Pedra gravada exige Teórica Santa.");
+  const forma = FORMAS[escolha.forma];
+  if (rank < RANKS_TEORICOS.indexOf(forma.desde as RankTeorico)) problemas.push(`${forma.nome} se aprende no ${forma.desde}.`);
+  if (escolha.verbos.length > 1 && rank < 2) problemas.push("Dois verbos só a partir do Avançado.");
+  if ((escolha.armada || escolha.meio === "pedra") && rank < 3) problemas.push("Pedra e armar se aprendem no Santo.");
   return problemas;
 }

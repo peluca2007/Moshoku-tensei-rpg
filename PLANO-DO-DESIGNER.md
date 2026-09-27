@@ -111,6 +111,12 @@ prioridade no começo de jogo).
 
 ### Etapa 2 — Magia Teórica: "três palavras e uma conta" · G
 
+> **✅ Feita (2026-09-26, 0.1.101).** Medido: regras que recusam fórmula **33 → 7**; Aula da Roxy
+> **5 → 3 lições**; árvore **12 → 10 páginas** (a meta era ~8: as cartas de parede ainda têm texto
+> comprido); teto de dano **6,2 → 13,9/Ação** (Água 17,8 — abaixo da faixa ~17–33 que eu tinha
+> escrito, de propósito: a Teórica é a escola de criação, não de dano); nenhum capstone novo que não
+> compense. Falta: o Mestre arbitrar uma fórmula sem o site, testado com o autor.
+
 **Por que agora:** é a regra mais difícil do livro e tem o **menor teto de dano (6,2/Ação)**. Já está
 decidida (★ do `PLANO-DE-REWORK.md`, §1).
 

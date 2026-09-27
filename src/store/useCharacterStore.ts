@@ -84,6 +84,14 @@ const PUNHO_DE_FOGO_DEUS_IDS = [
   "julgamento-de-prometeu",
 ];
 
+/** v18: as cartas da Teórica que saíram → a carta de dano do mesmo patamar e preço. */
+const TEORICA_RENOMEADAS: Record<string, string> = {
+  "barreira-incandescente-modelo": "lanca-arcana",
+  "lacrar-passagem": "traco-perfurante",
+  "vigia-de-espiral": "palavra-que-fere",
+  "atlas-vivo": "frase-final",
+};
+
 /** Guarda um recibo legível das compras antigas e devolve seus PA ao retirá-las do catálogo ativo. */
 function converterBarreira(c: CharacterData): CharacterData {
   const antigas = (c.purchasedAbilities ?? []).filter((a) => a.treeId === "barreira");
@@ -269,6 +277,12 @@ export function migrarRoster(
               a.treeId === "desintoxicacao" && a.id === "a-mao-que-nao-erra"
                 ? { ...a, id: "maos-limpas" }
                 : a
+            )
+            // v18 (0.1.101): a Teórica em "três palavras e uma conta". Quatro
+            // cartas saíram, e quem as tinha recebe a carta de dano do mesmo
+            // patamar e do mesmo preço — o PA gasto e o conhecimento continuam.
+            .map((a) =>
+              a.treeId === "teorica" && TEORICA_RENOMEADAS[a.id] ? { ...a, id: TEORICA_RENOMEADAS[a.id] } : a
             )
             .filter(
               (a) =>
@@ -684,7 +698,7 @@ export const useCharacterStore = create<RosterState>()(
       // v16 (2026-09-18): Tiro Perfeito mudou de habilidade para Maestria.
       // v17: Barreira e Proteção vira Magia Teórica; patamares são mantidos,
       // compras antigas recebem recibo e devolução automática de PA.
-      version: 17,
+      version: 18,
       migrate: migrarRoster,
       // history é só uma conveniência de sessão pro botão "Desfazer" — não faz sentido inchar o
       // localStorage guardando fichas inteiras duplicadas, e não precisa sobreviver a um recarregamento.

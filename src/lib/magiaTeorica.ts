@@ -1,11 +1,29 @@
 /*
- * RECALIBRAGEM 2026-09-26 (decisão do autor, a partir da revisão de design):
- * a gramática custava ~3× o PM de uma escola elemental pelo mesmo efeito — o
- * Dardo fazia 1d6 por 3 PM contra 1d8+BC por 1 PM da Bola de Fogo, e a
- * potência alta era opção morta. Agora: Mana 0 PM, as ações centrais 1 PM, a
- * potência sobe +0/+1/+2/+4/+6/+8, o dado é d8 e o BC entra no dano. A meta é
- * ~75% da escola especialista por PM; o que a Teórica tem de único é montar o
- * efeito que quiser. E uma projeção ofensiva por turno (§8).
+ * MAGIA TEÓRICA — "TRÊS PALAVRAS E UMA CONTA" (2026-09-26, decisão do autor:
+ * ★ do PLANO-DE-REWORK.md, §1; Etapa 2 do PLANO-DO-DESIGNER.md).
+ *
+ * A gramática anterior tinha sete dimensões (essência, seis operadores, seis
+ * formas, cinco meios, construção E potência, gatilho, células com ligações e
+ * Espiral), uma conta de seis parcelas e 33 regras que recusavam uma fórmula —
+ * metade delas de ORDEM ("Projetar antes de Conter", "Repetir por último"). O
+ * Mestre não arbitrava sem o site.
+ *
+ * Agora toda fórmula é uma frase de três palavras:
+ *
+ *   ESSÊNCIA (o que existe) + VERBO (o que acontece) + FORMA (como se organiza)
+ *
+ * e a conta é uma linha só:
+ *
+ *   PM = o custo da POTÊNCIA + 1 por palavra fora do básico
+ *
+ * O básico é Mana, o primeiro verbo e o Círculo. Essência de outra escola,
+ * forma que não é o Círculo e o segundo verbo (a partir do Avançado) custam +1
+ * cada; armar uma fórmula custa +2. A potência é o seu rank na Teórica, ou
+ * menos se você quiser uma fórmula mais barata — um número só, não dois.
+ *
+ * A ordem das palavras deixou de ser regra: Expandir e Repetir viraram as
+ * FORMAS Onda e Eco, e o verbo Lançar, quando anda com outro, só leva o efeito
+ * até o alcance. Sobraram 7 regras que recusam uma fórmula (ver `criarFormula`).
  */
 export const RANKS_TEORICOS = [
   "Principiante",
@@ -18,78 +36,111 @@ export const RANKS_TEORICOS = [
 
 export type RankTeorico = (typeof RANKS_TEORICOS)[number];
 
+const indice = (rank: RankTeorico) => RANKS_TEORICOS.indexOf(rank);
+
+/**
+ * As essências. Mana é a da própria escola; as outras vêm DE GRAÇA com o
+ * Principiante da escola dona (Fogo, Água, Vento, Terra, Bardo, Cura), ou por
+ * 1 PA num talento da Teórica. Cada uma muda o tipo do dano e o que a parede
+ * faz a quem encosta nela.
+ */
 export const ESSENCIAS = {
-  mana: { nome: "Mana", custo: 0, origem: "Magia Teórica", tipo: "arcano", cor: "#78d5d0", glifo: "◇" },
-  fogo: { nome: "Fogo", custo: 1, origem: "Fogo Principiante ou 1 PA", tipo: "ígneo", cor: "#f9a56c", glifo: "△" },
-  agua: { nome: "Água", custo: 1, origem: "Água Principiante ou 1 PA", tipo: "contundente", cor: "#80bdea", glifo: "≋" },
-  vento: { nome: "Vento", custo: 1, origem: "Vento Principiante ou 1 PA", tipo: "cortante", cor: "#a7d9c2", glifo: "⌁" },
-  terra: { nome: "Terra", custo: 1, origem: "Terra Principiante ou 1 PA", tipo: "contundente", cor: "#d8b986", glifo: "▱" },
-  som: { nome: "Som", custo: 1, origem: "Bardo Principiante ou 1 PA", tipo: "trovejante", cor: "#d3acf5", glifo: "♫" },
-  vida: { nome: "Vida", custo: 1, origem: "Cura Principiante ou 1 PA", tipo: "cura", cor: "#c6df98", glifo: "✧" },
+  mana: { nome: "Mana", origem: "Magia Teórica", tipo: "arcano", cor: "#78d5d0", glifo: "◇" },
+  fogo: { nome: "Fogo", origem: "Fogo Principiante ou 1 PA", tipo: "ígneo", cor: "#f9a56c", glifo: "△" },
+  agua: { nome: "Água", origem: "Água Principiante ou 1 PA", tipo: "contundente", cor: "#80bdea", glifo: "≋" },
+  vento: { nome: "Vento", origem: "Vento Principiante ou 1 PA", tipo: "cortante", cor: "#a7d9c2", glifo: "⌁" },
+  terra: { nome: "Terra", origem: "Terra Principiante ou 1 PA", tipo: "contundente", cor: "#d8b986", glifo: "▱" },
+  som: { nome: "Som", origem: "Bardo Principiante ou 1 PA", tipo: "trovejante", cor: "#d3acf5", glifo: "♫" },
+  vida: { nome: "Vida", origem: "Cura Principiante ou 1 PA", tipo: "cura", cor: "#c6df98", glifo: "✧" },
 } as const;
 
 export type EssenciaId = keyof typeof ESSENCIAS;
 
-export const OPERADORES = {
-  projetar: { nome: "Projetar", custo: 1, papel: "Envia o efeito a um alvo ou ponto.", glifo: "➶" },
-  expressar: { nome: "Expressar", custo: 1, papel: "Emite um sinal sensorial sem dano ou condição.", glifo: ")))" },
-  conter: { nome: "Conter", custo: 1, papel: "Forma uma fronteira física com PV.", glifo: "⊏⊐" },
-  rejeitar: { nome: "Rejeitar", custo: 1, papel: "Barra magia que cruza a fronteira.", glifo: "⟩⟨" },
-  expandir: { nome: "Expandir", custo: 2, papel: "Abre a saída em uma área maior.", glifo: "✣" },
-  repetir: { nome: "Repetir", custo: 2, papel: "Produz uma segunda saída enfraquecida.", glifo: "↻" },
+/** Os quatro verbos, todos aprendidos no Principiante. */
+export const VERBOS = {
+  lancar: { nome: "Lançar", papel: "Leva o efeito a um alvo ou ponto ao alcance. Sozinho, fere (ou cura, com Vida).", glifo: "➶" },
+  erguer: { nome: "Erguer", papel: "Levanta uma parede com PV: segura corpos e projéteis; magia atravessa.", glifo: "⊏⊐" },
+  selar: { nome: "Selar", papel: "Fecha uma fronteira sem PV que barra magia pela Régua do Selo; corpos atravessam.", glifo: "⟩⟨" },
+  sinalizar: { nome: "Sinalizar", papel: "Um sinal de luz, som ou cheiro, sem dano nem condição.", glifo: ")))" },
 } as const;
 
-export type OperadorId = keyof typeof OPERADORES;
+export type VerboId = keyof typeof VERBOS;
 
+/**
+ * As formas. Cada uma diz o que faz com cada verbo; onde não diz nada, não
+ * muda nada (e custa assim mesmo) — não existe forma "proibida".
+ */
 export const FORMAS = {
-  circulo: { nome: "Círculo", custo: 0, efeito: "Forma neutra; duração × 1,5 se sustentada.", glifo: "◯" },
-  triangulo: { nome: "Triângulo", custo: 2, efeito: "+1 dado; área cai um passo.", glifo: "△" },
-  quadrado: { nome: "Quadrado", custo: 1, efeito: "+50% PV da estrutura.", glifo: "□" },
-  linha: { nome: "Linha", custo: 1, efeito: "+50% alcance; largura de 1,5 m.", glifo: "⟷" },
-  espiral: { nome: "Espiral", custo: 2, efeito: "Reserva 2 PM por rank.", glifo: "◉" },
-  estrela: { nome: "Estrela", custo: 2, efeito: "Divide a saída entre até 3 alvos.", glifo: "✦" },
+  circulo: { nome: "Círculo", desde: "Principiante", efeito: "Forma básica: não muda nada e não custa nada.", glifo: "◯" },
+  linha: { nome: "Linha", desde: "Principiante", efeito: "Lançar vai 50% mais longe; a parede vira um muro comprido (tamanho × 1,5).", glifo: "⟷" },
+  quadrado: { nome: "Quadrado", desde: "Principiante", efeito: "A parede de Erguer ganha +50% de PV.", glifo: "□" },
+  triangulo: { nome: "Triângulo", desde: "Intermediário", efeito: "Lançar concentra: +1 dado.", glifo: "△" },
+  onda: { nome: "Onda", desde: "Intermediário", efeito: "Lançar vira área (raio = tamanho), com metade dos dados e Agilidade pra metade; parede, selo e sinal dobram de tamanho.", glifo: "≈" },
+  eco: { nome: "Eco", desde: "Intermediário", efeito: "Lançar se repete no começo do seu próximo turno com metade dos dados; parede, selo e sinal duram o dobro.", glifo: "◎" },
+  estrela: { nome: "Estrela", desde: "Avançado", efeito: "Lançar divide os dados entre até 3 alvos, um ataque por alvo.", glifo: "✦" },
 } as const;
 
 export type FormaId = keyof typeof FORMAS;
 
-export const GATILHOS = {
-  entrada: "uma criatura entrar na área",
-  toque: "alguém tocar o desenho",
-  quebra: "a barreira chegar a 0 PV",
-} as const;
-
-export type GatilhoId = keyof typeof GATILHOS;
-
+/** Onde a fórmula é desenhada. Lançar que fere só se desenha no ar (ou armado). */
 export const MEIOS = {
-  gesto: { nome: "Gestos", preparo: "1 Ação", maxSimbolos: 2, duracaoMaxima: "instantânea ou 1 turno" },
-  ar: { nome: "Mana no ar", preparo: "2 Ações", maxSimbolos: 4, duracaoMaxima: "3 minutos" },
-  giz: { nome: "Giz", preparo: "1 minuto", maxSimbolos: 18, duracaoMaxima: "10 minutos" },
-  pergaminho: { nome: "Pergaminho", preparo: "10 minutos antes", maxSimbolos: 18, duracaoMaxima: "uso único" },
-  pedra: { nome: "Pedra gravada", preparo: "1 hora", maxSimbolos: 18, duracaoMaxima: "1 dia" },
+  ar: { nome: "No ar", desde: "Principiante", preparo: "na hora", ativacao: "as Ações de uma magia do rank da potência", duracao: "1 minuto" },
+  giz: { nome: "Giz ou pergaminho", desde: "Principiante", preparo: "1 minuto antes", ativacao: "1 Ação", duracao: "10 minutos" },
+  pedra: { nome: "Gravada em pedra", desde: "Santo", preparo: "1 hora antes", ativacao: "1 Ação", duracao: "1 dia" },
 } as const;
 
 export type MeioId = keyof typeof MEIOS;
 
-const PERFIL = {
-  Principiante: { simbolos: 2, pm: 6, area: 3, alcance: 9, dados: 1, pv: 20, potencia: 0 },
-  Intermediário: { simbolos: 4, pm: 10, area: 6, alcance: 18, dados: 2, pv: 40, potencia: 1 },
-  Avançado: { simbolos: 6, pm: 16, area: 12, alcance: 27, dados: 3, pv: 60, potencia: 2 },
-  Santo: { simbolos: 9, pm: 24, area: 30, alcance: 45, dados: 4, pv: 80, potencia: 4 },
-  Rei: { simbolos: 13, pm: 40, area: 150, alcance: 90, dados: 5, pv: 100, potencia: 6 },
-  Imperador: { simbolos: 18, pm: 60, area: 750, alcance: 150, dados: 6, pv: 120, potencia: 8 },
+/** O que dispara uma fórmula armada (Santo em diante). */
+export const GATILHOS = {
+  entrada: "uma criatura entrar na área",
+  toque: "alguém tocar o desenho",
+  queda: "outra fórmula sua cair",
 } as const;
 
-export const LIMITES_TEORICOS = PERFIL;
+export type GatilhoId = keyof typeof GATILHOS;
+
+/**
+ * A POTÊNCIA — a tabela de uma linha. O custo em PM é também o número de dados
+ * d8 que Lançar rola: "a potência custa 1 PM por dado".
+ *
+ * Os degraus (1, 2, 5, 6, 10, 12) seguem as Ações da tabela do Cap. 2, §3: onde
+ * a magia passa a custar uma Ação a mais (Avançado, Rei), a potência dá o salto
+ * maior — senão a carta de dano do patamar renderia MENOS por Ação que a de
+ * baixo (check:progressao, 2026-09-26).
+ */
+export const POTENCIA: Record<RankTeorico, { pm: number; dados: number; pv: number; alcance: number; tamanho: number; armadas: number }> = {
+  Principiante: { pm: 1, dados: 1, pv: 20, alcance: 9, tamanho: 3, armadas: 0 },
+  Intermediário: { pm: 2, dados: 2, pv: 40, alcance: 18, tamanho: 6, armadas: 0 },
+  Avançado: { pm: 5, dados: 5, pv: 60, alcance: 27, tamanho: 9, armadas: 0 },
+  Santo: { pm: 6, dados: 6, pv: 80, alcance: 45, tamanho: 12, armadas: 1 },
+  Rei: { pm: 10, dados: 10, pv: 100, alcance: 90, tamanho: 18, armadas: 2 },
+  Imperador: { pm: 12, dados: 12, pv: 120, alcance: 150, tamanho: 30, armadas: 3 },
+};
+
+/** As Ações de uma magia desenhada no ar: as mesmas da tabela do Cap. 2, §3. */
+const ACOES_NO_AR: Record<RankTeorico, number> = {
+  Principiante: 2,
+  Intermediário: 2,
+  Avançado: 3,
+  Santo: 3,
+  Rei: 4,
+  Imperador: 4,
+};
 
 export interface FormulaEscolha {
+  /** O seu rank na Teórica. */
   rank: RankTeorico;
+  /** A potência, até o seu rank (padrão: o seu rank). */
   potencia?: RankTeorico;
   essencia: EssenciaId;
-  operadores: OperadorId[];
+  /** Um verbo; dois a partir do Avançado. A ordem não importa. */
+  verbos: VerboId[];
   forma: FormaId;
   meio: MeioId;
-  gatilho: boolean;
-  condicao: GatilhoId;
+  /** Armada (Santo em diante): dispara sozinha uma vez. */
+  armada: boolean;
+  gatilho: GatilhoId;
 }
 
 export interface FormulaResultado {
@@ -97,9 +148,6 @@ export interface FormulaResultado {
   valida: boolean;
   erros: string[];
   pm: number;
-  limitePm: number;
-  simbolos: number;
-  limiteSimbolos: number;
   potencia: RankTeorico;
   preparo: string;
   ativacao: string;
@@ -112,202 +160,192 @@ export interface FormulaResultado {
   pv: number | null;
   bloqueio: string | null;
   efeitoDaEssencia: string | null;
-  reservaPm: number | null;
   resumo: string;
+  /** A frase, lida: "Fogo · Lançar · Linha". */
   leitura: string;
+  /** As parcelas do PM, pra lousa: ["Potência Intermediária 2", "Fogo +1", …]. */
   conta: string[];
 }
 
-const acoesCentrais = new Set<OperadorId>(["projetar", "expressar", "conter", "rejeitar"]);
+const medir = (m: number) => Math.max(1.5, Math.floor(m / 1.5) * 1.5);
+const fmt = (m: number) => String(m).replace(".", ",");
 
-const AREAS_DIRETAS = [3, 3, 6, 9, 12, 18] as const;
-const DURACOES_MATERIAL: Record<MeioId, number> = {
-  gesto: 1, ar: 30, giz: 100, pergaminho: 100, pedra: 14400,
-};
-const medir = (valor: number) => Math.max(1.5, Math.floor(valor / 1.5) * 1.5);
+/** O que cada essência faz a quem encosta numa parede de Erguer. */
+function contato(essencia: EssenciaId, dados: number, duracaoTurnos: number): string | null {
+  switch (essencia) {
+    case "mana":
+      return null;
+    case "fogo":
+      return `Quem encosta sofre ${Math.ceil(dados / 2)}d6 de dano ígneo (Agilidade contra CD 8 + BC pra metade), uma vez por rodada. Golpe de arma não transmite o calor.`;
+    case "agua":
+      return "Quem encosta fica Molhado até o fim do próximo turno dele (Agilidade contra CD 8 + BC evita).";
+    case "vento":
+      return "Quem encosta testa Força contra CD 8 + BC ou é empurrado 1,5 m pra fora, uma vez por rodada.";
+    case "terra":
+      return "A parede de Terra tem +50% de PV (soma com o Quadrado).";
+    case "som":
+      return "Encostar na parede faz um som audível a até 18 m.";
+    case "vida":
+      return `Ao erguê-la, um aliado ao toque recebe ${dados * 5} PV temporários por até ${Math.min(duracaoTurnos, 10)} turnos.`;
+  }
+}
 
+/**
+ * Monta a fórmula e devolve os números, o texto e — se não sair do papel — o
+ * porquê. São SETE as regras que recusam uma fórmula, e todas cabem numa frase:
+ *
+ * 1. um verbo; dois só a partir do Avançado;
+ * 2. a potência não passa do seu rank;
+ * 3. a forma tem que estar ao seu alcance (Intermediário, Avançado);
+ * 4. Lançar que fere só se desenha no ar, ou armado;
+ * 5. pedra a partir do Santo;
+ * 6. armar a partir do Santo;
+ * 7. armar precisa de giz, pergaminho ou pedra.
+ */
 export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
+  const potencia = escolha.potencia ?? escolha.rank;
+  const p = POTENCIA[potencia];
   const essencia = ESSENCIAS[escolha.essencia];
   const forma = FORMAS[escolha.forma];
   const meio = MEIOS[escolha.meio];
-  const perfil = PERFIL[escolha.rank];
-  const potencia = escolha.potencia ?? escolha.rank;
-  const perfilPotencia = PERFIL[potencia];
-  const indiceRank = RANKS_TEORICOS.indexOf(escolha.rank);
-  const indicePotencia = RANKS_TEORICOS.indexOf(potencia);
-  const operadores = escolha.operadores;
-  const centrais = operadores.filter((id) => acoesCentrais.has(id));
-  const temProjetar = operadores.includes("projetar");
-  const temExpressar = operadores.includes("expressar");
-  const temConter = operadores.includes("conter");
-  const temRejeitar = operadores.includes("rejeitar");
-  const temExpandir = operadores.includes("expandir");
-  const temRepetir = operadores.includes("repetir");
-  const estrutura = temConter || temRejeitar;
-  const expandirAntesDeProjetar = temExpandir && temProjetar && !estrutura
-    && operadores.indexOf("expandir") < operadores.indexOf("projetar");
-  const simbolos = 1 + operadores.length + Number(escolha.gatilho);
-  const conexoesExtras = Math.max(0, simbolos - 2);
-  const custoOperadores = operadores.reduce((total, id) => total + OPERADORES[id].custo, 0);
-  const custoGatilho = escolha.gatilho ? 2 : 0;
-  const pm = essencia.custo + custoOperadores + forma.custo + conexoesExtras + perfilPotencia.potencia + custoGatilho;
-  const conta = [
-    `${essencia.nome} ${essencia.custo}`,
-    ...operadores.map((id) => `${OPERADORES[id].nome} ${OPERADORES[id].custo}`),
-    `${forma.nome} ${forma.custo}`,
-    ...(conexoesExtras ? [`Sobreposições extras ${conexoesExtras}`] : []),
-    ...(perfilPotencia.potencia ? [`Potência ${potencia} ${perfilPotencia.potencia}`] : []),
-    ...(escolha.gatilho ? ["Gatilho 2"] : []),
-  ];
+  const verbos = [...new Set(escolha.verbos)];
+  const tem = (v: VerboId) => verbos.includes(v);
+  const lancar = tem("lancar");
+  const estrutura = tem("erguer") || tem("selar") || tem("sinalizar");
+  /** Lançar sozinho fere (ou cura); com outro verbo, só leva o efeito longe. */
+  const fere = lancar && !estrutura;
+  const cura = fere && escolha.essencia === "vida";
+  const noAr = escolha.meio === "ar";
 
+  // ── A conta ─────────────────────────────────────────────────────────────
+  const extras: [string, number][] = [];
+  if (escolha.essencia !== "mana") extras.push([essencia.nome, 1]);
+  if (escolha.forma !== "circulo") extras.push([forma.nome, 1]);
+  if (verbos.length > 1) extras.push([`2º verbo (${VERBOS[verbos[1]].nome})`, 1]);
+  if (escolha.armada) extras.push(["Armada", 2]);
+  const pm = p.pm + extras.reduce((t, [, v]) => t + v, 0);
+  const conta = [`Potência ${potencia} ${p.pm}`, ...extras.map(([n, v]) => `${n} ${v}`)];
+
+  // ── As sete regras ──────────────────────────────────────────────────────
   const erros: string[] = [];
-  if (!centrais.length) erros.push("Adicione Projetar, Expressar, Conter ou Rejeitar para dar uma saída ao circuito.");
-  if (indicePotencia > indiceRank) erros.push("A potência não pode superar o rank de construção da Magia Teórica.");
-  if (temExpressar && centrais.length > 1) erros.push("Expressar é uma saída sensorial própria: use outra célula para combiná-la com uma barreira ou projétil.");
-  if (temExpressar && (temExpandir || temRepetir)) erros.push("Esta versão de Expressar ainda não admite Expandir ou Repetir.");
-  if (temRepetir && temProjetar && escolha.essencia === "vida" && !estrutura) erros.push("Repetir não renova nem repete cura; use outra fórmula para uma segunda restauração.");
-  if (centrais.length > 2) erros.push("Use no máximo duas ações centrais no mesmo circuito.");
-  if (new Set(operadores).size !== operadores.length) erros.push("Cada operador aparece uma vez; Repetir é o símbolo para duplicar uma saída.");
-  if (simbolos > perfil.simbolos) erros.push(`${escolha.rank} aceita até ${perfil.simbolos} símbolos; este desenho usa ${simbolos}.`);
-  if (simbolos > meio.maxSimbolos) erros.push(`${meio.nome} aceita até ${meio.maxSimbolos} símbolos; escolha outro material.`);
-  if (pm > perfil.pm) erros.push(`O circuito custa ${pm} PM, acima do teto de ${perfil.pm} PM de ${escolha.rank}.`);
-  if (centrais.length > 1 && indiceRank === 0) erros.push("Duas ações centrais exigem Magia Teórica Intermediária.");
-  if ((temExpandir || temRepetir) && indiceRank === 0) erros.push("Expandir e Repetir exigem Magia Teórica Intermediária.");
-  if (escolha.forma === "triangulo" && indiceRank < 1) erros.push("Triângulo exige Teórica Intermediária.");
-  if (escolha.forma === "estrela" && indiceRank < 2) erros.push("Estrela exige Teórica Avançada.");
-  if (escolha.forma === "espiral" && indiceRank < 3) erros.push("Espiral exige Teórica Santa.");
-  if (escolha.meio === "pedra" && indiceRank < 3) erros.push("Pedra gravada exige Teórica Santa.");
-  if (escolha.gatilho && indiceRank < 2) erros.push("Gatilhos exigem Magia Teórica Avançada.");
-  if (escolha.gatilho && (escolha.meio === "gesto" || escolha.meio === "ar")) erros.push("Um gatilho precisa de giz, pergaminho ou pedra gravada.");
-  if (escolha.gatilho && escolha.condicao === "quebra") erros.push("O alarme de quebra precisa de outra célula que sobreviva à parede. Esta oficina ainda aceita uma célula por desenho.");
-  if (escolha.forma === "triangulo" && !temProjetar) erros.push("Triângulo aumenta dados de uma projeção; esta fórmula não rola dados.");
-  if (escolha.forma === "triangulo" && estrutura) erros.push("Triângulo concentra uma projeção; use outra forma para uma barreira.");
-  if (escolha.forma === "quadrado" && !temConter) erros.push("Quadrado fortalece estruturas; esta fórmula não tem PV.");
-  if (escolha.forma === "linha" && !temProjetar && !estrutura) erros.push("Linha exige uma projeção ou fronteira com dimensão ou alcance.");
-  if (escolha.forma === "espiral" && escolha.meio === "gesto") erros.push("Espiral precisa de um traço que permaneça para armazenar PM.");
-  if (escolha.forma === "estrela" && !temProjetar) erros.push("Estrela distribui uma projeção entre alvos; esta fórmula não projeta.");
-  if (escolha.forma === "estrela" && estrutura) erros.push("Estrela distribui uma projeção; use outra forma para uma barreira.");
-  if (temExpressar && escolha.forma !== "circulo" && escolha.forma !== "espiral") erros.push("O sinal simples de Expressar usa Círculo; Espiral só é possível em suporte que permaneça.");
-  if (temProjetar && estrutura && operadores.indexOf("projetar") > operadores.findIndex((id) => id === "conter" || id === "rejeitar")) {
-    erros.push("Para criar uma barreira distante, escreva Projetar antes de Conter ou Rejeitar.");
-  }
-  if (temExpandir && estrutura && operadores.indexOf("expandir") < Math.max(operadores.indexOf("conter"), operadores.indexOf("rejeitar"))) {
-    erros.push("Para ampliar uma barreira, escreva Expandir depois da ação que a forma.");
-  }
-  if (temExpandir && estrutura && (escolha.meio === "gesto" || escolha.meio === "ar") && perfilPotencia.area >= 12) {
-    erros.push("Expandir não aumenta esta fronteira no ar: o limite é 12 m. Use um suporte físico preparado.");
-  }
-  if (temRepetir && operadores.at(-1) !== "repetir") erros.push("Repetir precisa ser a última palavra: ele duplica a saída pronta.");
+  if (verbos.length === 0) erros.push("Falta o verbo: uma fórmula sem verbo é mana parada.");
+  if (verbos.length > 2) erros.push("No máximo dois verbos numa fórmula.");
+  if (verbos.length === 2 && indice(escolha.rank) < 2) erros.push("Dois verbos na mesma fórmula só a partir do Avançado.");
+  if (indice(potencia) > indice(escolha.rank)) erros.push("A potência não passa do seu rank na Teórica.");
+  if (indice(forma.desde as RankTeorico) > indice(escolha.rank)) erros.push(`${forma.nome} se aprende no ${forma.desde}.`);
+  if (fere && !noAr && !escolha.armada) erros.push("Lançar que fere se desenha na hora, no ar — ou armado, a partir do Santo.");
+  if (escolha.meio === "pedra" && indice(escolha.rank) < 3) erros.push("Gravar em pedra se aprende no Santo.");
+  if (escolha.armada && indice(escolha.rank) < 3) erros.push("Armar uma fórmula se aprende no Santo.");
+  if (escolha.armada && noAr) erros.push("Uma fórmula armada precisa de giz, pergaminho ou pedra: no ar ela se apaga.");
 
-  const cobertura = Math.min(perfilPotencia.area, escolha.meio === "gesto" || escolha.meio === "ar" ? 12 : Number.POSITIVE_INFINITY);
-  const raioDireto = AREAS_DIRETAS[indicePotencia];
-  const raioAnterior = ([...new Set(AREAS_DIRETAS)].filter((valor) => valor < raioDireto)).at(-1) ?? 0;
-  const raioEfetivo = escolha.forma === "triangulo" ? raioAnterior : raioDireto;
-  const ofensiva = temProjetar && !estrutura;
-  const projecaoEmArea = ofensiva && temExpandir;
-  const alcanceNumero = medir(perfilPotencia.alcance * (escolha.forma === "linha" ? 1.5 : 1) * (expandirAntesDeProjetar ? 0.5 : 1));
-  const alcance = temProjetar ? `${alcanceNumero} m` : temExpressar ? "no ponto do desenho" : "toque";
-  const coberturaFinal = Math.min(cobertura * (temExpandir ? 2 : 1), escolha.meio === "gesto" || escolha.meio === "ar" ? 12 : Number.POSITIVE_INFINITY);
-  const area = estrutura
-    ? escolha.forma === "linha"
-      ? `parede de até ${medir(Math.min(coberturaFinal * 1.5, escolha.meio === "gesto" || escolha.meio === "ar" ? 12 : Number.POSITIVE_INFINITY))} m por 1,5 m`
-      : `fronteira de até ${coberturaFinal} m na maior dimensão`
-    : temExpressar
-      ? "sinal no ponto do desenho"
-      : !projecaoEmArea || raioEfetivo === 0
-        ? "alvo único"
-        : expandirAntesDeProjetar
-          ? `cone de ${alcanceNumero} m e ${escolha.forma === "triangulo" ? 45 : 90}° desde a origem`
-          : `raio de ${raioEfetivo} m no destino`;
-  const pv = temConter ? Math.ceil(perfilPotencia.pv * (1 + (escolha.essencia === "terra" ? .5 : 0) + (escolha.forma === "quadrado" ? .5 : 0))) : null;
-  const dadosDirigidos = perfilPotencia.dados + (escolha.forma === "triangulo" && ofensiva ? 1 : 0);
-  const dadosPrimeiraSaida = projecaoEmArea && raioEfetivo > 0 ? Math.ceil(dadosDirigidos / 2) : dadosDirigidos;
-  const dadosEco = temRepetir && ofensiva && escolha.essencia !== "vida" ? Math.min(Math.ceil(dadosPrimeiraSaida / 2), Math.max(0, 2 * perfilPotencia.dados - dadosPrimeiraSaida)) : 0;
-  if (temRepetir && ofensiva && escolha.essencia !== "vida" && dadosEco === 0) erros.push("A repetição ultrapassaria o orçamento de dados desta potência.");
-  const dadoPrincipal = `${dadosPrimeiraSaida}d8`;
-  const cura = escolha.essencia === "vida";
-  const dano = ofensiva ? `${dadoPrincipal}${cura ? "" : " + BC"}${dadosEco ? ` + ${dadosEco}d8 no turno seguinte` : ""}${escolha.forma === "estrela" ? " total, dividido entre até 3 alvos" : ""}` : null;
-  const tipo = ofensiva ? essencia.tipo : null;
-  const turnos = estrutura ? Math.ceil(10 * (temRepetir ? 2 : 1) * (escolha.forma === "circulo" ? 1.5 : 1)) : temExpressar ? 1 : 0;
-  const turnosAtivos = Math.min(turnos, DURACOES_MATERIAL[escolha.meio]);
-  const duracao = turnos ? `${turnosAtivos} turno${turnosAtivos === 1 ? "" : "s"}` : "instantânea";
-  const reservaPm = escolha.forma === "espiral" ? 2 * (indicePotencia + 1) : null;
-  const pisoAtivacao = indicePotencia < 2 ? 1 : indicePotencia < 4 ? 2 : 3;
-  const acoesAtivacao = escolha.meio === "ar" ? Math.max(2, pisoAtivacao) : escolha.meio === "gesto" ? Math.max(1, pisoAtivacao) : pisoAtivacao;
-  const ativacao = `${acoesAtivacao} ${acoesAtivacao === 1 ? "Ação" : "Ações"}${escolha.meio === "ar" || escolha.meio === "gesto" ? " (traçado incluso)" : " após preparar o suporte"}`;
-  const resolucao = ofensiva ? escolha.essencia === "vida"
-    ? `Cura ${dadoPrincipal} de PV em alvo voluntário${projecaoEmArea ? "; em área, divida os dados entre os beneficiários" : ""}.`
-    : projecaoEmArea && raioEfetivo > 0
-      ? `Área: Agilidade contra CD 8 + BC; metade do dano no sucesso. Dados dirigidos: ${dadosDirigidos}d8; orçamento de área: ${dadoPrincipal}.`
-      : `Alvo único: 1d20 + BC contra CA${escolha.forma === "estrela" ? "; distribua os dados inteiros entre até três alvos antes de rolar" : ""}.`
+  // ── Os números ──────────────────────────────────────────────────────────
+  const alcanceM = lancar ? medir(p.alcance * (escolha.forma === "linha" ? 1.5 : 1)) : 0;
+  const alcance = lancar ? `${fmt(alcanceM)} m` : "toque";
+  const tamanho = medir(p.tamanho * (escolha.forma === "onda" ? 2 : escolha.forma === "linha" ? 1.5 : 1));
+  const turnosBase = noAr ? 10 : escolha.meio === "giz" ? 100 : 14400;
+  const turnos = turnosBase * (escolha.forma === "eco" ? 2 : 1);
+  const duracaoEstrutura = noAr
+    ? `${escolha.forma === "eco" ? 2 : 1} minuto${escolha.forma === "eco" ? "s" : ""}`
+    : escolha.meio === "giz"
+      ? `${escolha.forma === "eco" ? 20 : 10} minutos`
+      : `${escolha.forma === "eco" ? 2 : 1} dia${escolha.forma === "eco" ? "s" : ""}`;
+
+  const dadosBase = p.dados + (escolha.forma === "triangulo" && fere ? 1 : 0);
+  const emArea = fere && escolha.forma === "onda";
+  const dadosSaida = emArea ? Math.ceil(dadosBase / 2) : dadosBase;
+  const dadosEco = fere && escolha.forma === "eco" ? Math.ceil(dadosBase / 2) : 0;
+  const dano = fere
+    ? `${dadosSaida}d8${cura ? "" : " + BC"}${dadosEco ? ` e, no começo do seu próximo turno, ${dadosEco}d8${cura ? "" : " + BC"}` : ""}${escolha.forma === "estrela" ? ", divididos entre até 3 alvos" : ""}`
     : null;
-  const umaPorTurno = ofensiva && !cura ? " Uma projeção ofensiva por turno (§8)." : "";
-  if (projecaoEmArea && escolha.forma === "triangulo" && raioEfetivo === 0) erros.push("Triângulo reduziria esta área a um alvo; remova Expandir ou aumente a potência.");
-  const magiaBarrada = escolha.essencia === "mana" ? "magia" : `magia de ${essencia.nome}`;
-  const regraDoSelo = `${magiaBarrada} de rank ${potencia} ou inferior; um rank acima atravessa com dados, área e duração pela metade; dois ou mais ranks acima atravessam integralmente`;
-  const bloqueio = temConter && temRejeitar
-    ? `criaturas e projéteis até perder os PV; ${regraDoSelo}`
-    : temConter
-      ? "criaturas e projéteis até perder os PV; magia atravessa"
-      : temRejeitar
-        ? `${regraDoSelo}; ataques físicos atravessam`
+  const tipo = fere ? essencia.tipo : null;
+
+  const pv = tem("erguer")
+    ? Math.ceil(p.pv * (1 + (escolha.essencia === "terra" ? 0.5 : 0) + (escolha.forma === "quadrado" ? 0.5 : 0)))
+    : null;
+
+  const regraDoSelo = `Contra ${escolha.essencia === "mana" ? "magia" : `magia de ${essencia.nome}`}: rank ${potencia} ou abaixo não atravessa; um rank acima atravessa com dados, área e duração pela metade; dois ou mais acima atravessam inteiras.`;
+  const bloqueio = tem("erguer") && tem("selar")
+    ? `Segura corpos e projéteis até perder os PV. ${regraDoSelo}`
+    : tem("erguer")
+      ? "Segura corpos e projéteis até perder os PV; magia atravessa."
+      : tem("selar")
+        ? `${regraDoSelo} Corpos, armas e Touki atravessam.`
         : null;
-  const efeitoDaEssencia = temConter ? {
-    mana: null,
-    fogo: `Contato corporal: ${Math.ceil(perfilPotencia.dados / 2)}d6 de dano ígneo, Agilidade contra CD 8 + BC para metade, uma vez por criatura por rodada; golpear com arma não transmite o efeito. Não aplica Em Chamas.`,
-    agua: "Contato corporal impõe Molhado até o fim do próximo turno; se for imposto, Agilidade contra CD 8 + BC evita a condição.",
-    vento: "Contato corporal: Força contra CD 8 + BC; falha empurra 1,5 m para o exterior declarado, uma vez por criatura por rodada.",
-    terra: "Terra acrescenta 50% aos PV base; soma com Quadrado, sem multiplicar os bônus entre si.",
-    som: "Contato corporal emite um sinal audível até 18 m. Não aplica Surdo.",
-    vida: `Na ativação, um beneficiário voluntário ao toque recebe ${perfilPotencia.dados} PV temporários por até ${Math.min(turnosAtivos, 10)} turnos; não acumula nem se renova por contato.`,
-  }[escolha.essencia] : null;
 
-  const nome = temExpressar ? `Sinal de ${essencia.nome}`
-    : temConter && temRejeitar ? `Égide de ${essencia.nome}`
-    : temConter ? `Muralha de ${essencia.nome}`
-      : temRejeitar ? `Selo de ${essencia.nome}`
-        : escolha.essencia === "vida" ? "Pulso de Vida"
-          : temExpandir ? `Onda de ${essencia.nome}` : `Rajada de ${essencia.nome}`;
+  const efeitoDaEssencia = tem("erguer") ? contato(escolha.essencia, p.dados, turnos) : null;
+
+  const area = fere
+    ? emArea
+      ? `raio de ${fmt(p.tamanho)} m no destino`
+      : escolha.forma === "estrela"
+        ? "até 3 alvos"
+        : "um alvo"
+    : tem("sinalizar") && !tem("erguer") && !tem("selar")
+      ? escolha.forma === "onda"
+        ? `percebido num raio de ${fmt(tamanho)} m`
+        : "no ponto do desenho"
+      : `até ${fmt(noAr ? Math.min(tamanho, 12) : tamanho)} m na maior dimensão${noAr && tamanho > 12 ? " (no ar, 12 m no máximo)" : ""}`;
+
+  const duracao = fere
+    ? "instantânea"
+    : tem("sinalizar") && !tem("erguer") && !tem("selar")
+      ? escolha.armada
+        ? "dispara uma vez"
+        : escolha.forma === "eco"
+          ? "2 turnos"
+          : "1 turno"
+      : duracaoEstrutura;
+
+  const ativacao = escolha.armada
+    ? `dispara sozinha quando ${GATILHOS[escolha.gatilho]}`
+    : noAr
+      ? `${ACOES_NO_AR[potencia]} Ações (desenhada na hora)`
+      : "1 Ação (já preparada)";
+
+  const resolucao = fere
+    ? cura
+      ? `Cura ${dadosSaida}d8 PV de um alvo voluntário${emArea ? " — em área, cada um na área recebe os dados" : ""}.`
+      : emArea
+        ? `Área: cada um testa Agilidade contra CD 8 + BC; metade do dano no sucesso.`
+        : `1d20 + BC contra a CA${escolha.forma === "estrela" ? " de cada alvo; distribua os dados antes de rolar" : ""}.`
+    : null;
+
+  // ── O nome e o texto ────────────────────────────────────────────────────
+  const de = essencia.nome;
+  const nome = tem("erguer") && tem("selar") ? `Égide de ${de}`
+    : tem("erguer") ? `Parede de ${de}`
+      : tem("selar") ? `Selo de ${de}`
+        : tem("sinalizar") ? `Sinal de ${de}`
+          : cura ? "Pulso de Vida"
+            : emArea ? `Onda de ${de}` : `Dardo de ${de}`;
+
   let resumo: string;
-  if (estrutura) {
-    const palavra = temConter && temRejeitar ? "barreira dupla" : temConter ? "barreira física" : "selo de rejeição";
-    resumo = `Cria ${palavra} de ${essencia.nome.toLowerCase()}${pv === null ? "" : ` com ${pv} PV`} em ${area}.`;
-    if (temConter && temRejeitar) {
-      resumo += ` A camada externa é ${operadores.indexOf("conter") < operadores.indexOf("rejeitar") ? "física" : "mágica"}; efeitos que atinjam as duas encontram essa camada primeiro.`;
-    }
-    if (temProjetar) resumo += ` Ela nasce em um ponto a até ${alcance}.`;
-    if (temRepetir) resumo += " Repetir dobra a duração, sem recuperar PV perdidos.";
-  } else if (temExpressar) {
-    resumo = escolha.essencia === "som"
-      ? "Emite um som perceptível até 18 m do desenho durante 1 turno. Não imita voz nem impõe condição."
-      : `Manifesta um sinal sensorial de ${essencia.nome.toLowerCase()} no ponto do desenho durante 1 turno, sem dano, cura, condição ou iluminação útil.`;
-  } else if (temProjetar && escolha.essencia === "vida") {
-    resumo = `Projeta energia vital para restaurar ${dano?.split(" + ")[0]} PV a ${escolha.forma === "estrela" ? "até três alvos, dividindo a cura total" : projecaoEmArea ? "beneficiários na área, dividindo os dados" : "um alvo voluntário"} a até ${alcance}.`;
-  } else if (temProjetar) {
-    resumo = `Projeta ${essencia.nome.toLowerCase()} a até ${alcance}, causando ${dano} de dano ${essencia.tipo}${temExpandir ? ` em ${area}` : escolha.forma === "estrela" ? " no conjunto dos alvos" : " em um alvo"}.`;
+  if (fere) {
+    resumo = cura
+      ? `Lança vida a até ${alcance}: cura ${dadosSaida}d8 PV${emArea ? ` em cada aliado num raio de ${fmt(p.tamanho)} m` : ""}.`
+      : `Lança ${de.toLowerCase()} a até ${alcance}: ${dano} de dano ${essencia.tipo}${emArea ? ` num raio de ${fmt(p.tamanho)} m` : escolha.forma === "estrela" ? "" : " num alvo"}.`;
+  } else if (tem("erguer") || tem("selar")) {
+    const oque = tem("erguer") && tem("selar") ? "uma parede que segura corpo e magia" : tem("erguer") ? "uma parede" : "um selo contra magia";
+    resumo = `Ergue ${oque}${pv === null ? "" : ` com ${pv} PV`}, ${area}${lancar ? `, a até ${alcance} de você` : ", ao seu alcance de toque"}.`;
+    if (tem("sinalizar")) resumo += " Quando for atingida ou cair, faz um sinal que se ouve a 18 m.";
+  } else if (tem("sinalizar")) {
+    resumo = `Um sinal de ${de.toLowerCase()} ${lancar ? `a até ${alcance}` : "no ponto do desenho"}, ${escolha.forma === "onda" ? `percebido num raio de ${fmt(tamanho)} m` : "visto ou ouvido por quem estiver perto"}. Sem dano, cura ou condição.`;
   } else {
-    resumo = "O desenho ainda não tem uma saída: ligue um operador central à essência.";
+    resumo = "A fórmula ainda não tem verbo.";
   }
+  if (escolha.armada) resumo += ` Armada: dispara sozinha uma vez quando ${GATILHOS[escolha.gatilho]}.`;
 
-  const ordem = temExpandir && temProjetar && !estrutura
-    ? expandirAntesDeProjetar ? "Expandir vem antes de Projetar: abre um cone na origem e reduz o alcance à metade." : "Projetar vem antes de Expandir: conserva o alcance e abre a área no destino."
-    : operadores.length > 1 ? `A ordem escrita é ${operadores.map((id) => OPERADORES[id].nome).join(" → ")}.` : "A essência alimenta diretamente a ação.";
-  const leitura = `${essencia.nome} → ${operadores.map((id) => OPERADORES[id].nome).join(" → ") || "?"} → ${forma.nome}. ${ordem}${escolha.gatilho ? " O gatilho adia a ativação até a condição declarada." : ""}`;
-  if (reservaPm !== null) resumo += ` A espiral guarda até ${reservaPm} PM para completar o custo depois.`;
-  if (escolha.gatilho) resumo += ` Ativa quando ${GATILHOS[escolha.condicao]}.`;
+  const leitura = [essencia.nome, ...verbos.map((v) => VERBOS[v].nome), forma.nome].join(" · ");
 
   return {
     nome,
     valida: erros.length === 0,
     erros,
     pm,
-    limitePm: perfil.pm,
-    simbolos,
-    limiteSimbolos: perfil.simbolos,
     potencia,
     preparo: meio.preparo,
     ativacao,
-    resolucao: resolucao ? resolucao + umaPorTurno : null,
+    resolucao,
     duracao,
     alcance,
     area,
@@ -316,7 +354,6 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
     pv,
     bloqueio,
     efeitoDaEssencia,
-    reservaPm,
     resumo,
     leitura,
     conta,

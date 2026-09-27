@@ -1,188 +1,110 @@
 import { describe, expect, it } from "vitest";
-import { criarFormula, type FormulaEscolha } from "./magiaTeorica";
+import { criarFormula, POTENCIA, RANKS_TEORICOS, type FormulaEscolha } from "./magiaTeorica";
+import { TEORICA_TREE } from "@/data/trees/teorica";
 
 const base: FormulaEscolha = {
   rank: "Principiante",
   essencia: "mana",
-  operadores: ["conter"],
-  forma: "quadrado",
+  verbos: ["lancar"],
+  forma: "circulo",
   meio: "ar",
-  gatilho: false,
-  condicao: "entrada",
+  armada: false,
+  gatilho: "entrada",
 };
+const f = (e: Partial<FormulaEscolha>) => criarFormula({ ...base, ...e });
 
-describe("oficina de Magia Teórica", () => {
-  it("transforma Mana, Conter e Quadrado numa barreira física calculável", () => {
-    const formula = criarFormula(base);
-    expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(2);
-    expect(formula.nome).toBe("Muralha de Mana");
-    expect(formula.pv).toBe(30);
-    expect(formula.dano).toBeNull();
-    expect(formula.bloqueio).toContain("magia atravessa");
+describe("Magia Teórica — três palavras e uma conta", () => {
+  it("o Dardo é a frase básica: 1 PM, 1d8 + BC, 9 m", () => {
+    const dardo = f({});
+    expect(dardo.valida).toBe(true);
+    expect(dardo.pm).toBe(1);
+    expect(dardo.dano).toBe("1d8 + BC");
+    expect(dardo.alcance).toBe("9 m");
+    expect(dardo.leitura).toBe("Mana · Lançar · Círculo");
   });
 
-  it("projeta Fogo com dano ígneo e o alcance alterado pela Linha", () => {
-    const formula = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "linha" });
-    expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(3);
-    expect(formula.dano).toBe("1d8 + BC");
-    expect(formula.tipo).toBe("ígneo");
-    expect(formula.alcance).toBe("13.5 m");
+  it("a conta é a potência + 1 por palavra fora do básico", () => {
+    // Fogo (+1) + Linha (+1), potência Intermediária (2) = 4
+    const r = f({ rank: "Intermediário", essencia: "fogo", forma: "linha" });
+    expect(r.pm).toBe(4);
+    expect(r.conta).toEqual(["Potência Intermediário 2", "Fogo 1", "Linha 1"]);
+    // segundo verbo +1 e armar +2
+    const armada = f({ rank: "Santo", verbos: ["erguer", "sinalizar"], meio: "giz", armada: true });
+    expect(armada.pm).toBe(6 + 1 + 2);
   });
 
-  it("cobra mais PM e símbolos para juntar contenção e rejeição", () => {
-    const formula = criarFormula({ ...base, rank: "Intermediário", operadores: ["conter", "rejeitar"], forma: "circulo" });
-    expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(4);
-    expect(formula.pv).toBe(40);
-    expect(formula.bloqueio).toContain("criaturas e projéteis");
-    expect(formula.bloqueio).toContain("magia de rank Intermediário");
-    expect(formula.resumo).toContain("camada externa é física");
-    const invertida = criarFormula({ ...base, rank: "Intermediário", operadores: ["rejeitar", "conter"], forma: "circulo" });
-    expect(invertida.resumo).toContain("camada externa é mágica");
+  it("a potência custa 1 PM por dado, e pode ficar abaixo do seu rank", () => {
+    for (const rank of RANKS_TEORICOS) expect(POTENCIA[rank].pm).toBe(POTENCIA[rank].dados);
+    const barata = f({ rank: "Rei", potencia: "Principiante" });
+    expect(barata.pm).toBe(1);
+    expect(barata.dano).toBe("1d8 + BC");
   });
 
-  it("lê a ordem das palavras sem mudar arbitrariamente o custo", () => {
-    const antes = criarFormula({ ...base, rank: "Avançado", essencia: "fogo", operadores: ["expandir", "projetar"], forma: "linha" });
-    const depois = criarFormula({ ...base, rank: "Avançado", essencia: "fogo", operadores: ["projetar", "expandir"], forma: "linha" });
-    expect(antes.valida).toBe(true);
-    expect(depois.valida).toBe(true);
-    expect(antes.pm).toBe(8);
-    expect(depois.pm).toBe(8);
-    expect(antes.leitura).toContain("cone na origem");
-    expect(depois.leitura).toContain("área no destino");
-    expect(antes.alcance).toBe("19.5 m");
-    expect(depois.alcance).toBe("40.5 m");
-    expect(antes.area).toContain("cone");
-    expect(depois.area).toContain("no destino");
+  it("a ordem das palavras não muda nada", () => {
+    const a = f({ rank: "Avançado", verbos: ["erguer", "selar"] });
+    const b = f({ rank: "Avançado", verbos: ["selar", "erguer"] });
+    expect(a.pm).toBe(b.pm);
+    expect(a.resumo).toBe(b.resumo);
+    expect(a.nome).toBe("Égide de Mana");
   });
 
-  it("impede gatilho no ar e permite o mesmo circuito em giz no Avançado", () => {
-    const ar = criarFormula({ ...base, rank: "Avançado", gatilho: true });
-    const giz = criarFormula({ ...base, rank: "Avançado", meio: "giz", gatilho: true });
-    expect(ar.valida).toBe(false);
-    expect(ar.erros).toContain("Um gatilho precisa de giz, pergaminho ou pedra gravada.");
-    expect(giz.valida).toBe(true);
-    expect(giz.pm).toBe(7);
-  });
-
-  it.each([
-    { nome: "Triângulo", escolha: { operadores: ["projetar"], forma: "triangulo" }, antes: "Principiante", liberado: "Intermediário", erro: "Triângulo exige Teórica Intermediária." },
-    { nome: "Estrela", escolha: { operadores: ["projetar"], forma: "estrela" }, antes: "Intermediário", liberado: "Avançado", erro: "Estrela exige Teórica Avançada." },
-    { nome: "Espiral", escolha: { forma: "espiral" }, antes: "Avançado", liberado: "Santo", erro: "Espiral exige Teórica Santa." },
-    { nome: "Pedra gravada", escolha: { meio: "pedra" }, antes: "Avançado", liberado: "Santo", erro: "Pedra gravada exige Teórica Santa." },
-  ] satisfies { nome: string; escolha: Partial<FormulaEscolha>; antes: FormulaEscolha["rank"]; liberado: FormulaEscolha["rank"]; erro: string }[])("só libera $nome no rank correto", ({ escolha, antes, liberado, erro }) => {
-    const bloqueada = criarFormula({ ...base, ...escolha, rank: antes });
-    const permitida = criarFormula({ ...base, ...escolha, rank: liberado });
-    expect(bloqueada.valida).toBe(false);
-    expect(bloqueada.erros).toContain(erro);
-    expect(permitida.valida).toBe(true);
-    expect(permitida.erros).not.toContain(erro);
-  });
-
-  it("permite Círculo como forma neutra e exige estrutura para Quadrado", () => {
-    const circuloInstantaneo = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "circulo" });
-    const quadradoSemEstrutura = criarFormula({ ...base, essencia: "fogo", operadores: ["projetar"], forma: "quadrado" });
-    expect(circuloInstantaneo.valida).toBe(true);
-    expect(circuloInstantaneo.pm).toBe(2);
-    expect(circuloInstantaneo.duracao).toBe("instantânea");
-    expect(circuloInstantaneo.dano).toBe("1d8 + BC");
-    expect(quadradoSemEstrutura.valida).toBe(false);
-    expect(quadradoSemEstrutura.erros[0]).toContain("não tem PV");
-  });
-
-  it("faz a essência alterar a barreira além do nome", () => {
-    const fogo = criarFormula({ ...base, essencia: "fogo" });
-    const terra = criarFormula({ ...base, essencia: "terra" });
-    expect(fogo.efeitoDaEssencia).toContain("dano ígneo");
-    expect(terra.pv).toBe(40);
-  });
-
-  it("faz um selo de rejeição sem PV físico e limita o bloqueio à essência", () => {
-    const selo = criarFormula({ ...base, essencia: "fogo", operadores: ["rejeitar"], forma: "circulo" });
-    expect(selo.valida).toBe(true);
+  it("Erguer soma Quadrado e Terra (não multiplica); Selar usa a Régua do Selo", () => {
+    expect(f({ verbos: ["erguer"], forma: "quadrado" }).pv).toBe(30);
+    expect(f({ rank: "Avançado", verbos: ["erguer"], forma: "quadrado", essencia: "terra" }).pv).toBe(120);
+    const selo = f({ rank: "Intermediário", verbos: ["selar"], essencia: "fogo" });
     expect(selo.pv).toBeNull();
     expect(selo.bloqueio).toContain("magia de Fogo");
     expect(selo.bloqueio).toContain("um rank acima atravessa");
-    expect(selo.bloqueio).toContain("ataques físicos atravessam");
+    expect(selo.bloqueio).toContain("Touki atravessam");
   });
 
-  it("exige uma ordem executável para projetar e repetir uma barreira", () => {
-    const invertida = criarFormula({ ...base, rank: "Avançado", operadores: ["conter", "projetar"], forma: "quadrado" });
-    const repeticaoPrematura = criarFormula({ ...base, rank: "Avançado", operadores: ["repetir", "conter"], forma: "quadrado" });
-    expect(invertida.valida).toBe(false);
-    expect(invertida.erros).toContain("Para criar uma barreira distante, escreva Projetar antes de Conter ou Rejeitar.");
-    expect(repeticaoPrematura.valida).toBe(false);
-    expect(repeticaoPrematura.erros).toContain("Repetir precisa ser a última palavra: ele duplica a saída pronta.");
-  });
-
-  it("separa construção e potência: circuitos avançados podem conter uma saída fraca", () => {
-    const formula = criarFormula({ ...base, rank: "Avançado", potencia: "Principiante", operadores: ["conter", "rejeitar"], forma: "circulo" });
-    expect(formula.valida).toBe(true);
-    expect(formula.pm).toBe(3);
-    expect(formula.pv).toBe(20);
-    expect(formula.bloqueio).toContain("rank Principiante");
-    expect(formula.ativacao).toContain("2 Ações");
-    expect(criarFormula({ ...base, rank: "Avançado", potencia: "Principiante", meio: "giz" }).ativacao).toContain("1 Ação");
-    const impossivel = criarFormula({ ...base, rank: "Principiante", potencia: "Avançado" });
-    expect(impossivel.valida).toBe(false);
-    expect(impossivel.erros).toContain("A potência não pode superar o rank de construção da Magia Teórica.");
-  });
-
-  it("permite sinal sensorial como opção inicial sem conceder dano nem Surdo", () => {
-    const sinal = criarFormula({ ...base, operadores: ["expressar"], forma: "circulo" });
-    expect(sinal.valida).toBe(true);
-    expect(sinal.pm).toBe(1);
-    expect(sinal.dano).toBeNull();
-    expect(sinal.duracao).toBe("1 turno");
-    const paredeSom = criarFormula({ ...base, essencia: "som" });
-    expect(paredeSom.efeitoDaEssencia).toContain("Não aplica Surdo");
-  });
-
-  it("limita a área de ataque e soma reforços físicos sem multiplicá-los", () => {
-    const onda = criarFormula({ ...base, rank: "Intermediário", potencia: "Intermediário", essencia: "fogo", operadores: ["projetar", "expandir"], forma: "circulo" });
-    expect(onda.valida).toBe(true);
-    expect(onda.area).toContain("raio de 3 m");
-    expect(onda.dano).toBe("1d8 + BC");
+  it("as formas: Triângulo +1 dado, Onda área com metade, Eco repete, Estrela divide", () => {
+    expect(f({ rank: "Intermediário", forma: "triangulo" }).dano).toBe("3d8 + BC");
+    const onda = f({ rank: "Avançado", forma: "onda" });
+    expect(onda.dano).toBe("3d8 + BC");
     expect(onda.resolucao).toContain("Agilidade");
-    const parede = criarFormula({ ...base, rank: "Avançado", potencia: "Avançado", essencia: "terra" });
-    expect(parede.pv).toBe(120);
+    expect(f({ rank: "Avançado", forma: "eco" }).dano).toContain("no começo do seu próximo turno, 3d8");
+    expect(f({ rank: "Avançado", forma: "estrela" }).dano).toContain("até 3 alvos");
+    // forma que não diz nada sobre o verbo não muda nada, e não é proibida
+    const quadradoNoTiro = f({ forma: "quadrado" });
+    expect(quadradoNoTiro.valida).toBe(true);
+    expect(quadradoNoTiro.dano).toBe("1d8 + BC");
   });
 
-  it("impede cura por repetição e alarme de quebra sem subcélula", () => {
-    const cura = criarFormula({ ...base, rank: "Intermediário", essencia: "vida", operadores: ["projetar", "repetir"], forma: "circulo" });
-    expect(cura.valida).toBe(false);
-    expect(cura.erros.some((erro) => erro.includes("Repetir não renova"))).toBe(true);
-    const quebra = criarFormula({ ...base, rank: "Avançado", meio: "giz", gatilho: true, condicao: "quebra" });
-    expect(quebra.valida).toBe(false);
-    expect(quebra.erros.some((erro) => erro.includes("outra célula"))).toBe(true);
+  it("Vida cura sem BC; Lançar com outro verbo só leva o efeito longe", () => {
+    expect(f({ essencia: "vida" }).dano).toBe("1d8");
+    const longe = f({ rank: "Avançado", verbos: ["lancar", "selar"] });
+    expect(longe.dano).toBeNull();
+    expect(longe.alcance).toBe("27 m");
+    expect(longe.resumo).toContain("a até 27 m de você");
   });
 
-  it("recalibragem 2026-09-26: Dardo por 1 PM, d8 + BC, e formas travadas por rank", () => {
-    const dardo = criarFormula({ ...base, operadores: ["projetar"], forma: "circulo" });
-    expect(dardo.pm).toBe(1);
-    expect(dardo.dano).toBe("1d8 + BC");
-    expect(dardo.resolucao).toContain("Uma projeção ofensiva por turno");
-    const anteparo = criarFormula(base);
-    expect(anteparo.alcance).toBe("toque");
-    const cura = criarFormula({ ...base, essencia: "vida", operadores: ["projetar"], forma: "circulo" });
-    expect(cura.dano).toBe("1d8");
-    const triangulo = criarFormula({ ...base, operadores: ["projetar"], forma: "triangulo" });
-    expect(triangulo.erros).toContain("Triângulo exige Teórica Intermediária.");
-    const imperador = criarFormula({ ...base, rank: "Imperador", potencia: "Imperador", operadores: ["projetar"], forma: "circulo" });
-    expect(imperador.pm).toBe(9);
-    expect(imperador.dano).toBe("6d8 + BC");
+  it.each([
+    ["dois verbos antes do Avançado", { rank: "Intermediário", verbos: ["erguer", "selar"] }, "Dois verbos"],
+    ["potência acima do rank", { potencia: "Avançado" }, "A potência não passa"],
+    ["forma de patamar acima", { forma: "triangulo" }, "Triângulo se aprende no Intermediário"],
+    ["tiro preparado em giz", { meio: "giz" }, "Lançar que fere se desenha"],
+    ["pedra antes do Santo", { rank: "Avançado", verbos: ["erguer"], meio: "pedra" }, "pedra se aprende no Santo"],
+    ["armar antes do Santo", { rank: "Avançado", verbos: ["erguer"], meio: "giz", armada: true }, "Armar uma fórmula se aprende no Santo"],
+    ["armar no ar", { rank: "Santo", verbos: ["erguer"], armada: true }, "precisa de giz"],
+  ] satisfies [string, Partial<FormulaEscolha>, string][])("recusa: %s", (_nome, escolha, erro) => {
+    const r = f(escolha);
+    expect(r.valida).toBe(false);
+    expect(r.erros.join(" ")).toContain(erro);
   });
 
-  it("reserva fronteiras enormes para instalações preparadas", () => {
-    const ar = criarFormula({ ...base, rank: "Rei", potencia: "Rei", forma: "circulo" });
-    const giz = criarFormula({ ...base, rank: "Rei", potencia: "Rei", forma: "circulo", meio: "giz" });
-    expect(ar.valida).toBe(true);
-    expect(ar.area).toContain("12 m");
-    expect(giz.area).toContain("150 m");
-    const ampliada = criarFormula({ ...base, rank: "Santo", potencia: "Santo", operadores: ["conter", "expandir"], forma: "circulo" });
-    expect(ampliada.valida).toBe(false);
-    expect(ampliada.erros.some((erro) => erro.includes("limite é 12 m"))).toBe(true);
+  it("a mina arcana: Lançar armado em giz sai no Santo", () => {
+    const mina = f({ rank: "Santo", essencia: "fogo", forma: "onda", meio: "giz", armada: true });
+    expect(mina.valida).toBe(true);
+    expect(mina.pm).toBe(6 + 1 + 1 + 2);
+    expect(mina.ativacao).toContain("dispara sozinha");
+  });
+
+  it("toda carta da árvore é uma fórmula que o motor aceita, e há uma carta de dano por patamar", () => {
+    for (const r of TEORICA_TREE.ranks) {
+      expect(r.abilities.some((a) => a.damage), `${r.rank} sem carta de dano`).toBe(true);
+    }
+    const frase = TEORICA_TREE.ranks.find((r) => r.rank === "Imperador")!.abilities.find((a) => a.id === "frase-final")!;
+    expect(frase.damage?.normal).toContain("13d8 + BC");
   });
 });

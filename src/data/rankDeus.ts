@@ -77,9 +77,9 @@ const RANK_DEUS: Record<string, RankDeusEntry> = {
   teorica: {
     title: "A Fórmula do Mundo",
     body: [
-      "O teórico Imperador escreve circuitos que articulam várias células, suportes e alimentadores. O patamar Divino seria compreender a fórmula que mantém um lugar inteiro.",
+      "O teórico Imperador arma fórmulas que acordam umas às outras e cobre uma vila com uma frase. O patamar Divino seria compreender a frase que mantém um lugar inteiro.",
       "Uma região onde a mana segue uma regra nova por gerações não é só uma barreira maior: é uma inscrição sustentada pelo mundo, com origem e consequências que uma campanha inteira precisaria descobrir.",
-      "Nenhuma ficha compra essa capacidade. A mesa decidiria quais símbolos, fontes e limites tornariam a obra possível, e como outros personagens poderiam ler ou romper suas ligações.",
+      "Nenhuma ficha compra essa capacidade. A mesa decidiria que palavras, fontes e limites tornariam a obra possível, e como outros personagens poderiam lê-la ou rompê-la.",
       "Se um personagem seu chegar a este patamar, isso é uma mudança permanente no cenário, sujeita à história e ao Mestre.",
     ],
   },

@@ -147,6 +147,22 @@ describe("as correções de id continuam valendo", () => {
     expect(m.purchasedAbilities[0].rank).toBe("Avançado");
   });
 
+  it("v18: as quatro cartas da Teórica que saíram viram a carta de dano do mesmo patamar e preço", () => {
+    const comprasAntigas = [
+      { treeId: "teorica", rank: "Avançado", kind: "ability", id: "barreira-incandescente-modelo" },
+      { treeId: "teorica", rank: "Santo", kind: "ability", id: "lacrar-passagem" },
+      { treeId: "teorica", rank: "Rei", kind: "ability", id: "vigia-de-espiral" },
+      { treeId: "teorica", rank: "Imperador", kind: "ability", id: "atlas-vivo" },
+    ];
+    const ficha = { ...fichaSalvaV13(), purchasedAbilities: comprasAntigas } as unknown as CharacterData;
+    const semCompras = getPaSpent({ ...ficha, purchasedAbilities: [] } as CharacterData);
+    const m = migrarRoster(roster(ficha), 17).characters["char_real"];
+    expect(m.purchasedAbilities.map((a) => a.id)).toEqual(["lanca-arcana", "traco-perfurante", "palavra-que-fere", "frase-final"]);
+    // O preço é o mesmo das cartas antigas (3 + 3 + 4 + 5): a ficha não ganha nem perde PA.
+    expect(getPaSpent(m) - semCompras).toBe(15);
+    expect(m.purchasedAbilities.map((a) => a.rank)).toEqual(["Avançado", "Santo", "Rei", "Imperador"]);
+  });
+
   it("tira o patamar Deus do Punho do Fogo, que deixou de existir", () => {
     const ficha = {
       ...fichaSalvaV13(),

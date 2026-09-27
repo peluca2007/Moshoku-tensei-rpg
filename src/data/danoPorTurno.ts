@@ -70,7 +70,7 @@ export const COLUNAS_MAGIA: ColunaDano[] = [
   { treeId: "terra", label: "Terra" },
   { treeId: "cura", label: "Cura", regua: false },
   { treeId: "desintoxicacao", label: "Desintox" },
-  { treeId: "teorica", label: "Teórica", regua: false },
+  { treeId: "teorica", label: "Teórica" },
   { treeId: "invocacao", label: "Invocação" },
 ];
 
@@ -124,10 +124,10 @@ export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = [
   // acontece com o combo inteiro montado — molhar, congelar, estilhaçar —, e é
   // exatamente isso que a régua deve mostrar: a Água paga em turnos e recebe de
   // uma vez.
-  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~28", teorica: "~25", invocacao: "~38" } },
-  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~34", teorica: "~30", invocacao: "~55" } },
-  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~45", teorica: "~36", invocacao: "~80" } },
-  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~60", teorica: "~42", invocacao: "~110" } },
+  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~28", teorica: "~30", invocacao: "~38" } },
+  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~34", teorica: "~36", invocacao: "~55" } },
+  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~45", teorica: "~55", invocacao: "~80" } },
+  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~60", teorica: "~65", invocacao: "~110" } },
 ];
 
 export const DANO_POR_TURNO_CORPO: DanoPorTurnoLinha[] = [

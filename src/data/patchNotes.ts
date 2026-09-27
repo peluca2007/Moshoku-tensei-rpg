@@ -16,6 +16,51 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.101",
+    date: "2026-09-26",
+    title: "Magia Teórica: três palavras e uma conta",
+    sections: [
+      {
+        heading: "A frase",
+        items: [
+          "Toda fórmula é uma essência + um verbo + uma forma. Os verbos agora têm nome de ação: Lançar (era Projetar), Erguer (Conter), Selar (Rejeitar) e Sinalizar (Expressar), os quatro já no Principiante. Expandir e Repetir viraram as formas Onda e Eco. A ordem das palavras deixou de ser regra.",
+          "Dois verbos na mesma fórmula a partir do Avançado (a parede que também barra magia é Erguer + Selar). Quando Lançar anda com outro verbo, ele só leva o efeito longe.",
+        ],
+      },
+      {
+        heading: "A conta",
+        items: [
+          "PM = o custo da potência + 1 por palavra fora do básico (Mana, o primeiro verbo e o Círculo são o básico); armar custa +2. A potência é o seu rank, ou menos — acabou a diferença entre construção e potência, e os tetos de símbolos e de PM por célula.",
+          "A potência custa 1 PM por dado: 1, 2, 5, 6, 10 e 12 d8 do Principiante ao Imperador (antes, 1 a 6 d8). Os saltos maiores ficam onde a magia passa a custar uma Ação a mais.",
+          "As regras que recusam uma fórmula caíram de 33 pra 7, e todas cabem numa frase.",
+        ],
+      },
+      {
+        heading: "Preparar e armar",
+        items: [
+          "Três lugares: no ar (na hora), em giz ou pergaminho (1 minuto antes; ativa com 1 Ação) e em pedra (Santo; 1 hora; dura 1 dia). Gestos saíram. Lançar que fere se desenha na hora.",
+          "Células, ligações, gatilho e Espiral viraram uma coisa só: ARMAR (Santo), a fórmula que dispara sozinha quando alguém entra, alguém toca ou outra fórmula sua cai. Uma armada no Santo, duas no Rei, três no Imperador. Lançar armado é a mina arcana.",
+        ],
+      },
+      {
+        heading: "As cartas e os talentos",
+        items: [
+          "Uma carta de dano por patamar: Dardo Arcano, Rajada Arcana, Lança Arcana, Traço Perfurante, Palavra que Fere e Frase Final. O teto de dano da Teórica foi de 6,2 por Ação (só o Dardo feria) pra 13,9, perto da Água (17,8).",
+          "Quatro cartas saíram — Modelo Incandescente, Lacrar Passagem, Vigia de Espiral e Atlas Vivo — e quem as tinha recebe a carta de dano do mesmo patamar e do mesmo preço, automaticamente.",
+          "Os talentos de símbolo viraram Essências que dizem o que fazem na mesa; Símbolo: Rejeitar virou Fórmula de Bolso, Símbolo: Repetir virou Assinatura, Reserva Metódica virou Carga Dupla, Sutura do Circuito virou Rearmar. Mesmo patamar, mesmo PA.",
+          "As cartas contam como magia comum: ficam fora da regra de uma fórmula que fere por turno.",
+        ],
+      },
+      {
+        heading: "O livro",
+        items: [
+          "O Cap. 2, §8 virou uma aula em três lições (era cinco): a frase, a conta, preparar e armar — com três tabelas geradas do mesmo motor que o Laboratório e as cartas usam. O Laboratório foi refeito pra frase de três palavras.",
+          "A árvore caiu de 12 pra 10 páginas no folheado, e o livro de 283 pra 280. A Teórica entrou na régua do Apêndice C.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.100",
     date: "2026-09-26",
     title: "O caminho mínimo, o kit de mesa e a ficha igual ao livro",

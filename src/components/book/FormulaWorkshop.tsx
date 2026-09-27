@@ -7,15 +7,15 @@ import {
   FORMAS,
   GATILHOS,
   MEIOS,
-  OPERADORES,
   RANKS_TEORICOS,
+  VERBOS,
   type EssenciaId,
   type FormaId,
   type FormulaEscolha,
   type GatilhoId,
   type MeioId,
-  type OperadorId,
   type RankTeorico,
+  type VerboId,
 } from "@/lib/magiaTeorica";
 import styles from "./FormulaWorkshop.module.css";
 import { GlifoComposto, TracoNucleo, TracoOperador, type CamadaDoGlifo } from "./FormulaGlyph";
@@ -25,79 +25,57 @@ import { avaliarFormulaNaFicha } from "@/lib/simbolosTeoricos";
 /**
  * O LABORATÓRIO DE FÓRMULAS, como um GRIMÓRIO aberto (2026-09-26).
  *
- * Pedido do autor: "da um rework geral nele, o estilo não condiz com o
- * livro". Escolha dele entre as opções: o grimório de duas páginas.
+ * - Página da esquerda, as PALAVRAS: essência, verbo (até dois), forma, e a
+ *   potência e onde se desenha. Cada palavra diz o rank em que se aprende; dá
+ *   pra tocar mesmo antes, e a carta explica por que não sai do papel.
+ * - Página da direita, o DESENHO: o círculo sendo traçado, a conta na lousa
+ *   (potência + 1 por palavra) e a carta pronta, no formato do catálogo.
  *
- * - Página da esquerda, o ALFABETO: as peças como cartas (núcleo, ações,
- *   forma) e a construção (rank, potência, material, gatilho). Cada peça diz
- *   o rank em que se aprende; dá pra tocar mesmo antes, e a carta explica por
- *   que não sai do papel — é assim que se aprende o limite.
- * - Página da direita, o DESENHO: o círculo sendo traçado, a conta feita na
- *   lousa e a carta pronta, no mesmo formato das cartas do catálogo (Cap. 3).
- *
- * O modo guiado de três passos saiu: quem ensina agora é a Aula da Roxy
- * (Cap. 2, §8). O laboratório é o caderno de exercícios.
+ * Desde "três palavras e uma conta" a ordem dos verbos não importa, e não há
+ * mais teto de símbolos nem de PM por célula: a conta é uma linha só.
  */
 
 const INICIAL: FormulaEscolha = {
   rank: "Principiante",
-  potencia: "Principiante",
   essencia: "mana",
-  operadores: ["projetar"],
+  verbos: ["lancar"],
   forma: "circulo",
   meio: "ar",
-  gatilho: false,
-  condicao: "entrada",
+  armada: false,
+  gatilho: "entrada",
 };
 
 const EXEMPLOS: { nome: string; escolha: FormulaEscolha }[] = [
   { nome: "Dardo Arcano", escolha: INICIAL },
-  { nome: "Parede de mana", escolha: { ...INICIAL, operadores: ["conter"], forma: "quadrado" } },
-  { nome: "Sinal arcano", escolha: { ...INICIAL, operadores: ["expressar"] } },
-  { nome: "Onda de fogo", escolha: { ...INICIAL, rank: "Intermediário", potencia: "Intermediário", essencia: "fogo", operadores: ["projetar", "expandir"] } },
+  { nome: "Parede de mana", escolha: { ...INICIAL, verbos: ["erguer"], forma: "quadrado" } },
+  { nome: "Sinal arcano", escolha: { ...INICIAL, verbos: ["sinalizar"] } },
+  { nome: "Onda de fogo", escolha: { ...INICIAL, rank: "Intermediário", essencia: "fogo", forma: "onda" } },
+  { nome: "Égide", escolha: { ...INICIAL, rank: "Avançado", verbos: ["erguer", "selar"] } },
 ];
 
 const DESAFIOS = [
   {
     id: "alcance",
     titulo: "Leve o Dardo a 13,5 m",
-    dica: "Mude só o contorno do Dardo Arcano.",
+    dica: "Mude só a forma do Dardo Arcano.",
     base: INICIAL,
-    certo: (e: FormulaEscolha) => e.essencia === "mana" && e.operadores.join() === "projetar" && e.forma === "linha",
+    certo: (e: FormulaEscolha) => e.essencia === "mana" && e.verbos.join() === "lancar" && e.forma === "linha",
   },
   {
     id: "parede",
     titulo: "Reforce a parede",
-    dica: "Mana e Conter já estão inscritos. Escolha a forma.",
-    base: { ...INICIAL, operadores: ["conter"] as OperadorId[] },
-    certo: (e: FormulaEscolha) => e.essencia === "mana" && e.operadores.join() === "conter" && e.forma === "quadrado",
+    dica: "Mana e Erguer já estão escritos. Escolha a forma.",
+    base: { ...INICIAL, verbos: ["erguer"] as VerboId[] },
+    certo: (e: FormulaEscolha) => e.essencia === "mana" && e.verbos.join() === "erguer" && e.forma === "quadrado",
   },
   {
     id: "sinal",
     titulo: "Avise sem ferir",
-    dica: "Mude só a ação sobre Mana.",
+    dica: "Troque só o verbo.",
     base: INICIAL,
-    certo: (e: FormulaEscolha) => e.essencia === "mana" && e.operadores.join() === "expressar" && e.forma === "circulo",
+    certo: (e: FormulaEscolha) => e.essencia === "mana" && e.verbos.join() === "sinalizar" && e.forma === "circulo",
   },
 ] as const;
-
-/** Onde cada peça se aprende (o livro: Cap. 2, §8, Lição 2). */
-const RANK_DA_ACAO: Record<OperadorId, RankTeorico> = {
-  projetar: "Principiante",
-  expressar: "Principiante",
-  conter: "Principiante",
-  rejeitar: "Principiante",
-  expandir: "Intermediário",
-  repetir: "Intermediário",
-};
-const RANK_DA_FORMA: Record<FormaId, RankTeorico> = {
-  circulo: "Principiante",
-  quadrado: "Principiante",
-  linha: "Principiante",
-  triangulo: "Intermediário",
-  estrela: "Avançado",
-  espiral: "Santo",
-};
 
 type Ponto = { x: number; y: number };
 type Traco = Ponto[];
@@ -110,7 +88,8 @@ function contorno(forma: FormaId) {
     case "triangulo": return <polygon points="260,82 444,412 76,412" />;
     case "quadrado": return <rect x="96" y="96" width="328" height="328" rx="7" />;
     case "linha": return <path d="M75 260H445M75 240L75 280M445 240L445 280" />;
-    case "espiral": return <path d="M259 260c-34-34-80 14-47 47 49 49 133-26 77-89-79-86-225 21-143 125 111 136 326-6 213-154-150-195-436 2-281 207" />;
+    case "onda": return <g><circle cx="260" cy="260" r="130" /><circle cx="260" cy="260" r="170" strokeDasharray="10 12" /><circle cx="260" cy="260" r="205" strokeDasharray="4 16" /></g>;
+    case "eco": return <g><circle cx="260" cy="260" r="166" /><circle cx="260" cy="260" r="186" /></g>;
     case "estrela": return <polygon points="260,71 310,197 445,197 340,280 380,410 260,329 140,410 180,280 75,197 210,197" />;
   }
 }
@@ -145,14 +124,18 @@ export default function FormulaWorkshop() {
   }
 
   function carregar(nova: FormulaEscolha, idDoDesafio: (typeof DESAFIOS)[number]["id"] | null = null) {
-    mudar({ ...nova, operadores: [...nova.operadores] });
+    mudar({ ...nova, verbos: [...nova.verbos] });
     setTracos([]);
     setDesafio(idDoDesafio);
   }
 
-  function alternarAcao(id: OperadorId) {
-    const atual = escolha.operadores;
-    mudar({ ...escolha, operadores: atual.includes(id) ? atual.filter((x) => x !== id) : [...atual, id] });
+  /** Um verbo; tocar num segundo o acrescenta (Avançado), e um terceiro troca o segundo. */
+  function alternarVerbo(id: VerboId) {
+    const atual = escolha.verbos;
+    const verbos = atual.includes(id)
+      ? atual.filter((x) => x !== id)
+      : atual.length < 2 ? [...atual, id] : [atual[0], id];
+    mudar({ ...escolha, verbos });
   }
 
   function iniciarTraco(evento: PointerEvent<SVGSVGElement>) {
@@ -182,11 +165,11 @@ export default function FormulaWorkshop() {
 
   return (
     <div className={styles.grimorio} style={{ ["--essencia" as string]: essencia.cor }}>
-      {/* ── A página do alfabeto ─────────────────────────────────────── */}
-      <section className={styles.pagina} aria-label="As peças da fórmula">
+      {/* ── A página das palavras ────────────────────────────────────── */}
+      <section className={styles.pagina} aria-label="As palavras da fórmula">
         <header className={styles.cabeca}>
           <p className={styles.selo}>Laboratório de Fórmulas</p>
-          <h4>Escreva uma frase em magia</h4>
+          <h4>Três palavras e uma conta</h4>
         </header>
 
         <div className={styles.fita} aria-label="Exemplos e desafios">
@@ -210,7 +193,7 @@ export default function FormulaWorkshop() {
         )}
 
         <fieldset className={styles.bloco}>
-          <legend><span>1</span> Núcleo — o que existe</legend>
+          <legend><span>1</span> Essência — o que existe</legend>
           <div className={styles.cartas}>
             {(Object.keys(ESSENCIAS) as EssenciaId[]).map((id) => (
               <button
@@ -224,7 +207,7 @@ export default function FormulaWorkshop() {
               >
                 <svg viewBox="-100 -100 200 200" aria-hidden="true"><TracoNucleo id={id} /></svg>
                 <strong>{ESSENCIAS[id].nome}</strong>
-                <small>{ESSENCIAS[id].custo} PM</small>
+                <small>{id === "mana" ? "básica" : "+1 PM"}</small>
               </button>
             ))}
           </div>
@@ -232,28 +215,28 @@ export default function FormulaWorkshop() {
         </fieldset>
 
         <fieldset className={styles.bloco}>
-          <legend><span>2</span> Ações — o que acontece</legend>
+          <legend><span>2</span> Verbo — o que acontece</legend>
           <div className={styles.cartas}>
-            {(Object.keys(OPERADORES) as OperadorId[]).map((id) => {
-              const ordem = escolha.operadores.indexOf(id);
+            {(Object.keys(VERBOS) as VerboId[]).map((id) => {
+              const ordem = escolha.verbos.indexOf(id);
               return (
                 <button
                   key={id}
                   type="button"
                   className={styles.carta}
                   aria-pressed={ordem >= 0}
-                  onClick={() => alternarAcao(id)}
-                  title={OPERADORES[id].papel}
+                  onClick={() => alternarVerbo(id)}
+                  title={VERBOS[id].papel}
                 >
-                  {ordem >= 0 && <span className={styles.ordem}>{ordem + 1}</span>}
+                  {ordem === 1 && <span className={styles.ordem}>2</span>}
                   <svg viewBox="-100 -100 200 200" aria-hidden="true"><TracoOperador id={id} /></svg>
-                  <strong>{OPERADORES[id].nome}</strong>
-                  <small>+{OPERADORES[id].custo} PM{RANK_DA_ACAO[id] !== "Principiante" ? ` · ${RANK_DA_ACAO[id]}` : ""}</small>
+                  <strong>{VERBOS[id].nome}</strong>
+                  <small>{ordem === 1 ? "+1 PM · Avançado" : "básico"}</small>
                 </button>
               );
             })}
           </div>
-          <p className={styles.origem}>A ordem em que você marca é a ordem escrita no desenho: os números nas cartas.</p>
+          <p className={styles.origem}>Um verbo; um segundo, a partir do Avançado, custa +1 PM. A ordem não importa.</p>
         </fieldset>
 
         <fieldset className={styles.bloco}>
@@ -270,7 +253,7 @@ export default function FormulaWorkshop() {
               >
                 <span className={styles.glifoDaForma} aria-hidden="true">{FORMAS[id].glifo}</span>
                 <strong>{FORMAS[id].nome}</strong>
-                <small>{FORMAS[id].custo} PM{RANK_DA_FORMA[id] !== "Principiante" ? ` · ${RANK_DA_FORMA[id]}` : ""}</small>
+                <small>{id === "circulo" ? "básica" : "+1 PM"}{FORMAS[id].desde !== "Principiante" ? ` · ${FORMAS[id].desde}` : ""}</small>
               </button>
             ))}
           </div>
@@ -278,7 +261,7 @@ export default function FormulaWorkshop() {
         </fieldset>
 
         <fieldset className={styles.bloco}>
-          <legend><span>4</span> Construção</legend>
+          <legend><span>4</span> Potência e onde se desenha</legend>
           <div className={styles.campos}>
             <label>
               Seu rank na Teórica
@@ -286,7 +269,7 @@ export default function FormulaWorkshop() {
                 value={escolha.rank}
                 onChange={(ev) => {
                   const rank = ev.target.value as RankTeorico;
-                  mudar({ ...escolha, rank, potencia: acima(potencia, rank) ? rank : potencia });
+                  mudar({ ...escolha, rank, potencia: acima(potencia, rank) ? rank : escolha.potencia });
                 }}
               >
                 {RANKS_TEORICOS.map((rank) => <option key={rank} value={rank}>{rank}</option>)}
@@ -299,25 +282,25 @@ export default function FormulaWorkshop() {
               </select>
             </label>
             <label>
-              Desenhada em
+              Onde
               <select value={escolha.meio} onChange={(ev) => mudar({ ...escolha, meio: ev.target.value as MeioId })}>
                 {(Object.keys(MEIOS) as MeioId[]).map((id) => <option key={id} value={id}>{MEIOS[id].nome}</option>)}
               </select>
             </label>
             <label className={styles.marca}>
-              <input type="checkbox" checked={escolha.gatilho} onChange={(ev) => mudar({ ...escolha, gatilho: ev.target.checked })} />
-              Gatilho (+2 PM, Avançado)
+              <input type="checkbox" checked={escolha.armada} onChange={(ev) => mudar({ ...escolha, armada: ev.target.checked })} />
+              Armada (+2 PM, Santo)
             </label>
-            {escolha.gatilho && (
+            {escolha.armada && (
               <label>
                 Dispara quando
-                <select value={escolha.condicao} onChange={(ev) => mudar({ ...escolha, condicao: ev.target.value as GatilhoId })}>
-                  {(Object.keys(GATILHOS) as GatilhoId[]).filter((id) => id !== "quebra").map((id) => <option key={id} value={id}>{GATILHOS[id]}</option>)}
+                <select value={escolha.gatilho} onChange={(ev) => mudar({ ...escolha, gatilho: ev.target.value as GatilhoId })}>
+                  {(Object.keys(GATILHOS) as GatilhoId[]).map((id) => <option key={id} value={id}>{GATILHOS[id]}</option>)}
                 </select>
               </label>
             )}
           </div>
-          <p className={styles.origem}>O rank limita o tamanho do desenho; a potência, a força da saída. O material muda o preparo e a duração.</p>
+          <p className={styles.origem}>A potência é o seu rank, ou menos: menos potência, fórmula mais barata. Onde se desenha muda o preparo e a duração.</p>
         </fieldset>
       </section>
 
@@ -335,7 +318,7 @@ export default function FormulaWorkshop() {
           className={`${styles.circulo} ${tracando ? styles.tracando : ""}`}
           viewBox="0 0 520 520"
           role="img"
-          aria-label={`Fórmula de ${essencia.nome} com ${escolha.operadores.map((id) => OPERADORES[id].nome).join(", ") || "nenhuma ação"} em ${FORMAS[escolha.forma].nome}`}
+          aria-label={`Fórmula: ${r.leitura}`}
           onPointerDown={iniciarTraco}
           onPointerMove={moverTraco}
           onPointerUp={terminarTraco}
@@ -355,15 +338,15 @@ export default function FormulaWorkshop() {
             );
           })}
           <g stroke={essencia.cor} strokeWidth="4" fill="none" filter="url(#grimorio-brilho)">{contorno(escolha.forma)}</g>
-          <g transform="translate(260 260) scale(1.32)" className={styles.glifo}><GlifoComposto essencia={escolha.essencia} operadores={escolha.operadores} camada={camada} /></g>
-          {escolha.gatilho && <text x="260" y="400" textAnchor="middle" className={styles.gatilho}>✦ GATILHO ✦</text>}
+          <g transform="translate(260 260) scale(1.32)" className={styles.glifo}><GlifoComposto essencia={escolha.essencia} verbos={escolha.verbos} camada={camada} /></g>
+          {escolha.armada && <text x="260" y="400" textAnchor="middle" className={styles.gatilho}>✦ ARMADA ✦</text>}
           {tracos.map((t, i) => <polyline key={i} points={t.map((p) => `${p.x},${p.y}`).join(" ")} fill="none" stroke="#fff0ca" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" filter="url(#grimorio-brilho)" />)}
         </svg>
         <div className={styles.camadas} aria-label="Destacar uma camada do símbolo">
           <button type="button" aria-pressed={camada === "todas"} onClick={() => setCamada("todas")}>Tudo</button>
           <button type="button" aria-pressed={camada === "nucleo"} onClick={() => setCamada("nucleo")}>{essencia.nome}</button>
-          {escolha.operadores.map((id, i) => (
-            <button type="button" key={id} aria-pressed={camada === id} onClick={() => setCamada(id)}>{i + 1}. {OPERADORES[id].nome}</button>
+          {escolha.verbos.map((id) => (
+            <button type="button" key={id} aria-pressed={camada === id} onClick={() => setCamada(id)}>{VERBOS[id].nome}</button>
           ))}
           {tracos.length > 0 && <button type="button" onClick={() => setTracos([])}>Apagar traços</button>}
         </div>
@@ -388,8 +371,7 @@ export default function FormulaWorkshop() {
             </tbody>
           </table>
           <p className={styles.lousaTetos}>
-            <span className={r.simbolos > r.limiteSimbolos ? styles.estourou : undefined}>{r.simbolos}/{r.limiteSimbolos} símbolos</span>
-            <span className={r.pm > r.limitePm ? styles.estourou : undefined}>teto de {r.limitePm} PM</span>
+            <span>ativar: {r.ativacao}</span>
             <span>preparo: {r.preparo}</span>
           </p>
         </div>
@@ -402,13 +384,12 @@ export default function FormulaWorkshop() {
             <p className={styles.cartaLinha}>Alcance: {r.alcance} · Área: {r.area} · Duração: {r.duracao}</p>
             <p className={styles.cartaEfeito}>{r.resumo}</p>
             {r.dano && <p className={styles.cartaLinha}><b>{r.tipo === "cura" ? "Cura" : "Dano"}:</b> {r.dano}{r.tipo && r.tipo !== "cura" ? ` (${r.tipo})` : ""}</p>}
-            {r.pv !== null && <p className={styles.cartaLinha}><b>Estrutura:</b> {r.pv} PV</p>}
-            {r.bloqueio && <p className={styles.cartaLinha}><b>Bloqueia:</b> {r.bloqueio}.</p>}
-            {r.efeitoDaEssencia && <p className={styles.cartaLinha}><b>Ao contato:</b> {r.efeitoDaEssencia}</p>}
+            {r.pv !== null && <p className={styles.cartaLinha}><b>Parede:</b> {r.pv} PV</p>}
+            {r.bloqueio && <p className={styles.cartaLinha}><b>Segura:</b> {r.bloqueio}</p>}
+            {r.efeitoDaEssencia && <p className={styles.cartaLinha}><b>Ao encostar:</b> {r.efeitoDaEssencia}</p>}
             {r.resolucao && <p className={styles.cartaLinha}><b>Como resolver:</b> {r.resolucao}</p>}
-            {r.reservaPm !== null && <p className={styles.cartaLinha}><b>Reserva da espiral:</b> {r.reservaPm} PM</p>}
             <p className={styles.cartaFormas}>
-              <span><small>Ativação</small>{r.ativacao}</span>
+              <span><small>Ativar</small>{r.ativacao}</span>
               <span><small>Preparo</small>{r.preparo}</span>
             </p>
             <p className={styles.cartaLeitura}>{r.leitura}</p>
@@ -422,7 +403,7 @@ export default function FormulaWorkshop() {
 
         <p className={styles.ficha}>
           <b>{personagem.id === "__none__" ? "Pra usar em jogo:" : `Na ficha de ${personagem.name}:`}</b>{" "}
-          {acessoDaFicha.length === 0 ? "você já tem o rank e conhece todos os símbolos deste desenho." : acessoDaFicha.join(" ")}
+          {acessoDaFicha.length === 0 ? "você já tem o rank e conhece todas as palavras desta fórmula." : acessoDaFicha.join(" ")}
         </p>
       </section>
     </div>
