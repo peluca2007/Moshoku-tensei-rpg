@@ -16,6 +16,19 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.113",
+    date: "2026-09-27",
+    title: "O Dragão não se transforma",
+    sections: [
+      {
+        heading: "Aura do Deus-Dragão",
+        items: [
+          "O despertar de Santo do Dragão deixou de ser a Forma do Dragão: como as asas, a transformação não existe na obra — Orsted, Laplace e Perugius têm corpo de gente. Agora é a Aura do Deus-Dragão: ao soltar, cada inimigo a até 9 metros resiste com Espírito ou fica Amedrontado. O resto é igual (PV Temporários, resistência física, garras um degrau acima, um Sopro a mais, Exaustão no fim). Sai o 'fica Grande' e o alcance extra. Quem já tinha comprado fica com a Aura.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.112",
     date: "2026-09-27",
     title: "A ficha cobra o Antecedente, e a régua do Apêndice C conferida",
