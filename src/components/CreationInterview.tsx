@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Dices, Sparkles, ScrollText, Sprout, UserRoundCheck } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
+import { useCriarFichaAoAbrir } from "@/store/useCriarFichaAoAbrir";
 import { getRaceById, RACES } from "@/data/races";
 import { getBackgroundById, getSubtableEntryById, BACKGROUNDS } from "@/data/backgrounds";
 import {
@@ -50,7 +51,6 @@ const SORTEIO_MS = 1900;
 
 export default function CreationInterview() {
   const router = useRouter();
-  const startedCreation = useRef(false);
   const [questions] = useState<InterviewQuestion[]>(() => drawInterviewQuestions());
   const [answers, setAnswers] = useState<InterviewOption[]>([]);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -59,11 +59,7 @@ export default function CreationInterview() {
   /** Raça escolhida na mão no modo "antecedente" (null no modo "ambos", onde ela é sorteada). */
   const [pickedRaceId, setPickedRaceId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (startedCreation.current) return;
-    startedCreation.current = true;
-    useCharacterStore.getState().createCharacter();
-  }, []);
+  useCriarFichaAoAbrir();
 
   const character = useActiveCharacter();
   const race = getRaceById(character.raceId);

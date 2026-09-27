@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Dices, LucideIcon, ScrollText, Sparkles, Sprout, Users } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
+import { useCriarFichaAoAbrir } from "@/store/useCriarFichaAoAbrir";
 import { getRaceById, RACES } from "@/data/races";
 import RaceCrest from "./RaceCrest";
 import { BACKGROUNDS, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
@@ -131,13 +132,8 @@ function WheelBlock({
 
 export default function CreationRoulette() {
   const router = useRouter();
-  const startedCreation = useRef(false);
 
-  useEffect(() => {
-    if (startedCreation.current) return;
-    startedCreation.current = true;
-    useCharacterStore.getState().createCharacter();
-  }, []);
+  useCriarFichaAoAbrir();
 
   const character = useActiveCharacter();
   const [step, setStep] = useState(0);
