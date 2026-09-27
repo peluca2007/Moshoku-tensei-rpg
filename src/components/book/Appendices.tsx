@@ -83,50 +83,13 @@ export default function Appendices() {
       </Section>
 
       <Section>
-        <SectionTitle id="apendice-c">C. Tabela Comparativa de Dano por Turno</SectionTitle>
+        <SectionTitle id="apendice-c">C. Dano por Turno — Comparando Árvores</SectionTitle>
         <P>
           Quanto cada árvore causa num turno típico, patamar a patamar — pra comparar builds e pra o Mestre
           saber quantos turnos uma criatura do Apêndice G aguenta. Valores médios, alvo de CA razoável,
           atributo principal progredindo de 4 até 8.
         </P>
-        <BookTable
-          headers={["Patamar", ...COLUNAS_MAGIA.map((c) => c.label)]}
-          rows={DANO_POR_TURNO_MAGIA.map((l) => [
-            l.patamar,
-            ...COLUNAS_MAGIA.map((c) => l.porArvore[c.treeId] ?? "—"),
-          ])}
-        />
-        <BookTable
-          headers={["Patamar", ...COLUNAS_CORPO.map((c) => c.label)]}
-          rows={DANO_POR_TURNO_CORPO.map((l) => [
-            l.patamar,
-            ...COLUNAS_CORPO.map((c) => l.porArvore[c.treeId] ?? "—"),
-          ])}
-        />
-        <Warning title="Quatro coisas que a tabela não diz sozinha">
-          <P>
-            <b>A Espada conta 4 Ações do Avançado em diante.</b> A Maestria &ldquo;Velocidade
-            Encarnada&rdquo; dá uma Ação extra a quem não se move no turno, e os números dela já assumem
-            isso. Ela é a única coluna com uma 4ª Ação antes do Imperador.
-          </P>
-          <P>
-            <b>Escudos pressupõe todas as Ações gastas defendendo.</b> Um Defensor Imperador que{" "}
-            <i>escolha</i> atacar faz perto de 84 por turno, não 27. A coluna mede o que ele faz no papel
-            dele, não o teto dele — e ele continua sendo a menor coluna do livro de propósito.
-          </P>
-          <P>
-            <b>A Utilidade tem três colunas.</b> Cada árvore tem um golpe próprio que
-            escala por patamar — Dano Furtivo, Ordem de Tiro, Dissonância —, todos na Maestria de 1º
-            patamar e todos uma vez por turno. Nenhuma das três recebe degraus de Dado de Arma (Cap. 3),
-            então o dado delas nunca cresce.
-          </P>
-          <P>
-            <b>Magia não está amortizada pelas Ações.</b> Muitas magias de Imperador custam 4 Ações — mais
-            que um turno inteiro. O Sol Menor é uma exceção: entrega ~130 contra alvo Em Chamas em 3 Ações.
-            Compare marcial com marcial e magia com magia; cruzar as duas metades desta tabela engana.
-          </P>
-        </Warning>
-        <Aside title="Como ler esta tabela">
+        <Aside title="Como ler as colunas">
           <P>Número alto não significa personagem melhor. Significa personagem mais estreito.</P>
           <List
             items={[
@@ -145,6 +108,30 @@ export default function Appendices() {
             ]}
           />
         </Aside>
+        <BookTable
+          headers={["Patamar", ...COLUNAS_MAGIA.map((c) => c.label)]}
+          rows={DANO_POR_TURNO_MAGIA.map((l) => [
+            l.patamar,
+            ...COLUNAS_MAGIA.map((c) => l.porArvore[c.treeId] ?? "—"),
+          ])}
+        />
+        <BookTable
+          headers={["Patamar", ...COLUNAS_CORPO.map((c) => c.label)]}
+          rows={DANO_POR_TURNO_CORPO.map((l) => [
+            l.patamar,
+            ...COLUNAS_CORPO.map((c) => l.porArvore[c.treeId] ?? "—"),
+          ])}
+        />
+        <Warning title="Quatro ressalvas">
+          <List
+            items={[
+              <span key="e"><b>A Espada conta 4 Ações do Avançado em diante:</b> a Velocidade Encarnada dá uma Ação extra a quem não se move.</span>,
+              <span key="s"><b>Escudos mede o turno gasto defendendo.</b> Um Defensor Imperador que escolha atacar faz perto de 84.</span>,
+              <span key="u"><b>A Utilidade não ganha degraus de Dado de Arma</b> (Cap. 3): o dado das três colunas nunca cresce.</span>,
+              <span key="m"><b>Magia não está dividida pelas Ações:</b> muita magia de Imperador custa 4. Compare marcial com marcial e magia com magia.</span>,
+            ]}
+          />
+        </Warning>
       </Section>
 
       <Section>
@@ -492,9 +479,9 @@ export default function Appendices() {
 
         <Aside title="Por que o chefe age mais de uma vez">
           <P>
-            Dobrar o PV resolve a vida do chefe e não resolve o problema real, que é{" "}
+            Mais PV resolve a vida do chefe e não resolve o problema real, que é{" "}
             <b>economia de ação</b>. Cinco personagens agem quinze vezes por rodada; um chefe age três. Só
-            com o PV dobrado, ele morre antes de agir duas vezes — é um saco de pancada com bastante PV, não
+            com PV a mais, ele morre antes de agir duas vezes — é um saco de pancada com bastante PV, não
             um chefe.
           </P>
           <P>
@@ -509,7 +496,7 @@ export default function Appendices() {
             items={[
               "Lacaio: metade do PV e do dano do patamar, e vale meia criatura no Orçamento de Encontro (abaixo). Use em bando.",
               <span key="chefe">
-                <b>Chefe único:</b> dobre o PV da linha do patamar dele, mantenha o dano — e dê a ele{" "}
+                <b>Chefe único:</b> o triplo do PV da linha do patamar dele e uma vez e meia o dano — e dê a ele{" "}
                 <b>uma rodada inteira a cada dois personagens</b> do grupo, arredondado pra baixo (grupos de
                 três ou menos não ganham rodada extra). Um grupo de cinco enfrenta um chefe que age duas
                 vezes por rodada.
@@ -548,7 +535,7 @@ export default function Appendices() {
         </P>
         <Aside title="O piso do dado, e o lacaio de 1º patamar">
           <P>
-            Um lacaio de 1º patamar tem <b>5</b> de orçamento no turno inteiro. O menor dado do livro é o d4,
+            Um lacaio de 1º patamar tem <b>6</b> de orçamento no turno inteiro. O menor dado do livro é o d4,
             que rende 2,5 — três ataques do menor dado que existe já dão 7,5, e a criatura mais fraca do livro
             sairia 50% acima da própria régua. Não existe fórmula que resolva isso: o problema é a
             granularidade do dado, não a conta.
@@ -573,11 +560,12 @@ export default function Appendices() {
           <P>
             <b>Trocar patamar por número</b>, para montar o resto: uma criatura <b>um patamar acima</b> vale
             duas do patamar do grupo; uma <b>um patamar abaixo</b> vale meia; <b>dois patamares abaixo</b>,
-            um quarto. Um <b>Chefe</b> vale <b>cinco</b> criaturas do mesmo patamar dele — um grupo inteiro.
+            um quarto. Um <b>Chefe</b> vale <b>quatro</b> criaturas do mesmo patamar dele — um grupo inteiro.
           </P>
           <P>
-            <b>Faixas de dificuldade:</b> <i>Fácil</i> até 0,75 do orçamento; <i>Equilibrado</i> acima de 0,75
-            até 1,25; <i>Difícil</i> acima de 1,25 até 1,5; <i>Mortal</i> acima de 1,5. Avise a mesa quando
+            <b>Faixas de dificuldade:</b> <i>Fácil</i> até 0,75 do orçamento (abaixo de 0,5 é <i>Trivial</i>:
+            narre em vez de rolar Iniciativa); <i>Equilibrado</i> acima de 0,75 até 1; <i>Difícil</i> acima
+            de 1 até 1,25; <i>Mortal</i> acima de 1,25. Avise a mesa quando
             o Perigo do contrato (Cap. 5, §2) apontar para um encontro mortal.
           </P>
           <P>
@@ -587,13 +575,13 @@ export default function Appendices() {
           </P>
         </Warning>
 
-        <SubTitle id="apendice-g-chefe">Por que o Chefe pesa cinco</SubTitle>
+        <SubTitle id="apendice-g-chefe">Por que o Chefe pesa quatro</SubTitle>
         <P>
-          O chefe não bate mais forte que uma criatura do patamar dele: ele aguenta o dobro e age mais vezes.
+          O chefe bate só uma vez e meia o que uma criatura do patamar dele bate: ele aguenta o triplo e age mais vezes.
           É a economia de ação, e não o dano por golpe, que o torna perigoso — o chefe que age duas vezes por
           rodada espalha o estrago pelo grupo em vez de apagar um personagem por vez. Isso vale{" "}
-          <b>um grupo inteiro</b>: cinco criaturas do patamar dele. Um chefe sozinho contra quatro jogadores
-          do mesmo patamar fica no teto do Equilibrado (5 contra 4 = 1,25); contra cinco, no meio dele.
+          <b>um grupo inteiro</b>: quatro criaturas do patamar dele. Um chefe sozinho contra quatro jogadores
+          do mesmo patamar é um encontro Equilibrado (4 contra 4 = 1).
         </P>
         <P>
           Pra um chefe mais duro, dê a ele companhia (lacaios, meia criatura cada) ou um patamar acima —
@@ -627,7 +615,7 @@ export default function Appendices() {
           renegada da Água, o colega de dojo que virou inimigo. Nenhum deles é um molde. Monte o rival como
           um personagem, gastando o PA de um personagem do patamar que você quer. Como rival <b>Padrão</b>,
           ele usa os PV, a CA, o ataque, as reservas e as técnicas da ficha. Como <b>Chefe único</b>,
-          começa com o dobro dos PV da ficha e recebe os turnos adicionais da regra de chefe acima;
+          começa com o triplo dos PV da ficha e recebe os turnos adicionais da regra de chefe acima;
           o dano de cada técnica permanece o mesmo.
         </P>
         <List
@@ -636,7 +624,7 @@ export default function Appendices() {
             "O rival usa as mesmas regras e fraquezas do grupo, por isso seus números podem diferir dos moldes de criatura.",
             "O rival conserva atributos, perícias, deslocamento, resistências, imunidades, iniciativa e reservas de PM, PT e PP da ficha. Uma técnica usa o bônus e a CD da sua própria árvore, mesmo se o rival estudou várias árvores.",
             "O invocador pode levar Pactos de combate preparados: respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha.",
-            "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 120 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
+            "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 180 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
           ]}
         />
       </Section>

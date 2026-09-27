@@ -79,7 +79,7 @@ export const RACES: Race[] = [
     ],
     traits: [
       "Adaptabilidade: 2 Perícias extras à escolha e +1 em UM atributo à sua escolha, permanente — nenhuma outra raça deixa você decidir onde o sangue pesa.",
-      "Determinação Humana: uma vez por sessão, repita um teste de Atributo (não de Perícia, não de dano) que tenha acabado de falhar e use o novo resultado — humanos vivem menos que qualquer raça deste livro e aprenderam a não desperdiçar a única tentativa que têm.",
+      "Determinação Humana: uma vez por sessão, repita um teste de atributo ou de perícia (não um ataque, nem uma rolagem de dano) que tenha acabado de falhar e use o novo resultado — humanos vivem menos que qualquer raça deste livro e aprenderam a não desperdiçar a única tentativa que têm.",
       "Línguas: Língua Humana (Comum), a que o mundo inteiro usa pra negociar.",
     ],
   },

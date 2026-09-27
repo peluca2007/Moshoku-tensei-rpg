@@ -2668,7 +2668,7 @@ function Recomendacao({
       <p className="mt-2 text-xs text-parchment-600 dark:text-parchment-400">
         Projeção com o ajuste: grupo vence {formatarPorcentagem(ajuste.vitoriaProjetada)} das vezes,
         com {ajuste.quedasProjetadas.toFixed(1)} personagem(ns) caído(s) ao fim de cada combate.
-        {ajuste.faixaProjetada && ` Faixa projetada: ${({ trivial: "Trivial", facil: "Fácil", equilibrado: "Equilibrado", perigoso: "Perigoso", letal: "Letal" })[ajuste.faixaProjetada]}.`}
+        {ajuste.faixaProjetada && ` Faixa projetada: ${({ trivial: "Trivial", facil: "Fácil", equilibrado: "Equilibrado", perigoso: "Difícil", letal: "Mortal" })[ajuste.faixaProjetada]}.`}
       </p>
       {sugestoes.some((s) => s.porAcoes && s.acoesAlteradas.length > 0) && (
         <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">

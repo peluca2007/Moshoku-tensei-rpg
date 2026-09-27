@@ -48,7 +48,7 @@ export function avaliar(r: ResultadoEncontro): Veredito {
   if (vitoria < 0.6) {
     return {
       faixa: "letal",
-      titulo: "Letal",
+      titulo: "Mortal",
       resumo:
         r.tpk > 0.5
           ? "O grupo inteiro cai na maioria das simulações. Considere uma rota de fuga ou reduza a dificuldade antes da sessão."
@@ -58,7 +58,7 @@ export function avaliar(r: ResultadoEncontro): Veredito {
   if (vitoria < 0.85 || quedas >= 1.5) {
     return {
       faixa: "perigoso",
-      titulo: "Perigoso",
+      titulo: "Difícil",
       resumo:
         "O grupo normalmente vence, mas paga caro e alguém costuma cair de verdade. É o encontro de fim de arco — não o de terça-feira.",
     };

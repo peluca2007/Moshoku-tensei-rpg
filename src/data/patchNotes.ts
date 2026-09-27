@@ -16,6 +16,65 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.105",
+    date: "2026-09-27",
+    title: "O orçamento de encontro diz a verdade",
+    sections: [
+      {
+        heading: "O que estava errado",
+        items: [
+          "O Apêndice G ensina que uma criatura do patamar do grupo por jogador é um encontro Equilibrado. O simulador do /encontros discordava, e cada vez mais a cada patamar: com o grupo do kit de mesa, no 2º patamar quatro criaturas davam Mortal; no 6º, DUAS já davam Mortal. Os moldes de criatura cresciam bem mais rápido que os personagens — uma Lenda batia 120 por turno e derrubava um personagem de 6º por rodada.",
+        ],
+      },
+      {
+        heading: "Os moldes novos",
+        items: [
+          "PV 25 / 38 / 58 / 80 / 105 / 130 e dano por turno 12 / 16 / 22 / 30 / 38 / 48, do 1º ao 6º (eram 20/45/90/150/220/320 e 10/20/35/55/80/120). CA, ataque e CD não mudam. Medido nos seis patamares: quatro criaturas contra quatro jogadores dão Equilibrado em todos (91–97% de vitória, menos de 1 personagem caído).",
+          "As seis criaturas prontas do Apêndice G tiveram os dados das ações ajustados na mesma proporção, e as ações sugeridas do Bloco do Monstro nunca arredondam o dano pra cima.",
+          "O chefe tem o triplo do PV do molde e uma vez e meia o dano (era o dobro do PV e o mesmo dano, e ficava Trivial sozinho). Ele vale quatro criaturas no orçamento (eram cinco): um chefe contra quatro jogadores é Equilibrado. O rival montado como ficha entra como chefe com o triplo dos PV.",
+          "As faixas ficaram onde o simulador as mede: Fácil até 0,75 (abaixo de 0,5, Trivial), Equilibrado até 1, Difícil até 1,25, Mortal acima. O site passou a usar os nomes do livro (Difícil e Mortal, em vez de Perigoso e Letal).",
+          "Quem quiser refazer a conta: npm run medir:orcamento.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.104",
+    date: "2026-09-27",
+    title: "O resto da revisão geral",
+    sections: [
+      {
+        heading: "Opções que não faziam nada",
+        items: [
+          "Tempo livre: Treinar numa perícia que você já tem vira +2 (Vantagem não empilha, como no Ajudar), e Vigiar as Costas diz o que dá em cada atividade — os 2d6 do Trabalhar rolados duas vezes, +2 no Estudar, o Treino valendo em dois testes, dois pedidos ao Contato, 1 Trauma a mais na Recuperação. O site passou a ler a mesma tabela do livro (a dele dizia que a Recuperação tirava Exaustão).",
+          "Dança de Aço (Norte, Rei) era cópia do Redemoinho de Aço do Intermediário: cada acerto agora aplica um efeito do Improviso sem gastar o uso do combate.",
+          "Domínio Climático (Água, Santo) repetia a exclusão de aliados da Maestria do Avançado: agora as magias de clima custam 1 Ação a menos.",
+          "Magia Teórica: Âncora de Trama (a fórmula de pedra não ocupa a sustentação), Fórmula de Bolso (o pergaminho não se apaga no Descanso Longo — e agora o desenho preparado se apaga), Olho do Diagrama (lê e desarma com 1 Ação), Memória de Runa (prepara em giz com 1 Ação), Fronteira Seletiva (até Bônus de Rank criaturas). O Eco Condicional, que não usava o Eco, virou Sinal Armado. O selo com essência de escola barra um rank a mais.",
+          "Vantagem de Estilo: o 'as Reações dele falham' saiu da regra geral e ficou só na aresta Norte vence Água, que não ganhava nada próprio.",
+          "O teto de PM dos dois primeiros patamares saiu: desde que os antecedentes dão PM escalar, ele só cortava a compra de PM com PA, que já só existe do Avançado de magia em diante.",
+        ],
+      },
+      {
+        heading: "Números",
+        items: [
+          "Pacto: Grifo 2d8 (era 3d10 e batia mais que o Urso, o Pacto de briga). Poção Imperial de Cura 8d8 + 6 (curava 2 PV a mais que a Régia por 3,3× o preço).",
+          "Amuleto de Resistência ao Fogo dispensa o teste de Clima Extremo por calor; Bússola Encantada dá Vantagem em Sobrevivência pra se orientar. Antes, nenhum dos dois dizia o que fazia.",
+        ],
+      },
+      {
+        heading: "Regra que a mesa lê de primeira",
+        items: [
+          "Restauração e Corpo Íntegro (Cura) são rituais de 10 minutos e de 1 hora, fora de combate; a carta mostra isso no lugar das Ações.",
+          "Tempestade Cortante: o preço é ocupar a sua sustentação (a regra geral), não 'não conjurar mais nada'.",
+          "A aflição Peçonha de Serpente-do-Pântano virou Veneno de Serpente-do-Pântano: não se confunde mais com a magia Peçonha da Desintoxicação.",
+          "Aranha Gigante e Wyvern pedem um teste só por acerto; falhar por 5 ou mais traz a aflição.",
+          "O Apêndice C virou 'Dano por Turno — Comparando Árvores': o quadro de como ler vem antes das tabelas, e as ressalvas cabem numa linha cada.",
+          "Menores: Cicatriz 9 (Voz Quebrada) tira o cântico inteiro; Segunda Guarda é +1 Reação por rodada; o talento Cavalaria do Tático virou Cavaleiro de Estrada; Determinação Humana vale em teste de atributo ou de perícia; armadura média e pesada custam 1 PA por categoria; a duração encurtada nunca fica abaixo de 1 turno; 'Crafting' virou 'Fabricação'; o aviso de Touki repetido três vezes no Cap. 3 ficou em dois lugares.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.103",
     date: "2026-09-27",
     title: "Quatro decisões da revisão geral",

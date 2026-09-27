@@ -113,11 +113,12 @@ const PADRAO = new RegExp(
 const PULAR = new Set(["a", "code", "pre", "h1", "h2", "h3", "h4", "h5", "h6", "svg", "summary"]);
 
 /**
- * Nomes de aflição (Cap. 4, §8) que contêm o nome de uma habilidade: a Peçonha
- * de Serpente-do-Pântano é um veneno do mundo, não a magia Peçonha. Dentro
- * deles não se cita nada.
+ * Nomes de aflição (Cap. 4, §8) que contêm o nome de uma habilidade: o Espinho
+ * da Rosa-Preta é um veneno do mundo, não a magia Rosa-Preta. Dentro deles não
+ * se cita nada. (A Peçonha de Serpente-do-Pântano, que tinha o mesmo problema,
+ * virou Veneno de Serpente-do-Pântano em 2026-09-27.)
  */
-const NAO_E_HABILIDADE = /Peçonha de Serpente-do-Pântano|Espinho da Rosa-Preta/gu;
+const NAO_E_HABILIDADE = /Espinho da Rosa-Preta/gu;
 
 function citarTexto(texto: string): ReactNode {
   PADRAO.lastIndex = 0;

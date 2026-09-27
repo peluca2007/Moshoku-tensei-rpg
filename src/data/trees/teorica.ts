@@ -160,7 +160,7 @@ export const TEORICA_TREE: Tree = {
           "[Três palavras] Você conhece a essência Mana, os quatro verbos — Lançar, Erguer, Selar e Sinalizar — e as formas Círculo, Linha e Quadrado. Toda fórmula é uma essência + um verbo + uma forma, e custa o PM da potência + 1 por palavra fora do básico (Mana, o primeiro verbo e o Círculo são o básico). A potência é o seu rank na Teórica, ou menos. No ar, desenhar custa as Ações de uma magia do rank da potência; em giz ou pergaminho, você prepara em 1 minuto e ativa com 1 Ação — só Lançar sozinho (o que fere ou cura) não se prepara. Qualquer pessoa que pague o PM alimenta uma fórmula sua já pronta. Tabelas e exemplos no Cap. 2, §8.",
       },
       talents: [
-        talento("Principiante", "simbolo-rejeitar", "Fórmula de Bolso", "Você carrega uma fórmula de Erguer, Selar ou Sinalizar preparada em pergaminho, dobrada no bolso. Ela não ocupa a sua sustentação até ser ativada (1 Ação). Refazer o pergaminho leva 1 minuto."),
+        talento("Principiante", "simbolo-rejeitar", "Fórmula de Bolso", "Você carrega uma fórmula de Erguer, Selar ou Sinalizar preparada em pergaminho, dobrada no bolso. Ela não se apaga no Descanso Longo: dura até ser ativada (1 Ação). Refazer o pergaminho leva 1 minuto."),
         essencia("fogo", "Fogo", "Lançar causa dano ígneo, e a parede queima quem encosta."),
         essencia("agua", "Água", "Lançar causa dano contundente, e a parede deixa quem encosta Molhado."),
         essencia("vento", "Vento", "Lançar causa dano cortante, e a parede empurra quem encosta."),
@@ -216,13 +216,13 @@ export const TEORICA_TREE: Tree = {
       rank: "Santo", hpDiceFormula: "1d8+2",
       mastery: { name: "Inscrição Durável", description: "Você grava em pedra (1 hora de preparo; dura 1 dia) e ARMA fórmulas: preparada em giz ou pedra, a fórmula armada (+2 PM) dispara sozinha, uma vez, quando alguém entrar na área, alguém tocar o desenho ou outra fórmula sua cair. Lançar armado é a mina arcana. Uma fórmula armada por vez." },
       talents: [
-        talento("Santo", "ancora-de-trama", "Âncora de Trama", "Uma fórmula sua gravada em pedra continua ativa quando você se afasta, até acabar a duração ou alguém romper o desenho."),
-        talento("Santo", "olho-do-diagrama", "Olho do Diagrama", "Olhando uma fórmula armada por 1 minuto, você sabe o que a dispara e o que ela faz; não a desarma."),
+        talento("Santo", "ancora-de-trama", "Âncora de Trama", "Uma fórmula sua gravada em pedra não ocupa a sua sustentação: ela segura sozinha até acabar a duração ou alguém romper o desenho."),
+        talento("Santo", "olho-do-diagrama", "Olho do Diagrama", "Com 1 Ação, você lê uma fórmula armada que vê, sem teste, e a desarma: ela se apaga sem disparar. Contra uma fórmula de rank acima do seu, teste de Intelecto contra 8 + o BC de quem a fez."),
         talento("Santo", "reserva-metodica", "Carga Dupla", "Uma fórmula armada sua dispara duas vezes antes de se apagar. O segundo disparo precisa de uma nova ocorrência do gatilho."),
       ],
       abilities: [
         modelo(S, "fortaleza-inscrita", "Fortaleza Inscrita", frase(S, "mana", ["erguer", "selar"], "quadrado", "pedra"), "A exceção da carta: levanta quatro lados e um teto — uma casa-forte, com os mesmos PV em cada lado.", { signature: true }),
-        modelo(S, "eco-condicional", "Eco Condicional", frase(S, "mana", ["sinalizar"], "circulo", "giz", { potencia: P, armada: true }), "Declare a condição ao preparar."),
+        modelo(S, "eco-condicional", "Sinal Armado", frase(S, "mana", ["sinalizar"], "circulo", "giz", { potencia: P, armada: true }), ""),
         modelo(S, "traco-perfurante", "Traço Perfurante", frase(S, "mana", ["lancar"], "triangulo"), ""),
       ],
     },
@@ -231,8 +231,8 @@ export const TEORICA_TREE: Tree = {
       mastery: { name: "Rede de Selos", description: "Até duas fórmulas armadas ao mesmo tempo. Uma delas pode usar a queda da outra como gatilho: quando a primeira cair, a segunda acorda." },
       talents: [
         talento("Rei", "dupla-inscricao", "Dupla Inscrição", "Uma fórmula sua gravada em pedra pode ser dividida em duas superfícies a até 90 m uma da outra: ela age nos dois lugares, e romper uma metade apaga só aquela metade."),
-        talento("Rei", "memoria-de-runa", "Memória de Runa", "Escolha quatro fórmulas: você as prepara em giz em 30 segundos em vez de 1 minuto."),
-        talento("Rei", "fronteira-seletiva", "Fronteira Seletiva", "Uma parede de Erguer sua abre passagem pra uma criatura que você nomear ao desenhá-la. Não muda o Selo."),
+        talento("Rei", "memoria-de-runa", "Memória de Runa", "Escolha quatro fórmulas: você as prepara em giz com 1 Ação, em vez de 1 minuto — no meio da luta."),
+        talento("Rei", "fronteira-seletiva", "Fronteira Seletiva", "Uma parede de Erguer sua abre passagem pra até Bônus de Rank criaturas que você nomear ao desenhá-la. Não muda o Selo."),
       ],
       abilities: [
         modelo(R, "rede-de-rejeicao", "Rede de Rejeição", frase(R, "mana", ["selar"], "onda", "pedra"), "Selos sobrepostos não reduzem o mesmo efeito duas vezes: cada magia é comparada com o selo mais forte uma vez só.", { signature: true }),

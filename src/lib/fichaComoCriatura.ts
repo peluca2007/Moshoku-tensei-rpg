@@ -359,7 +359,7 @@ export function criaturaDaFicha(
     temPassoVazio: ficha.temPassoVazio || undefined,
     patamar,
     papel,
-    pv: ficha.pvMax * (papel === "chefe" ? 2 : 1),
+    pv: ficha.pvMax * (papel === "chefe" ? 3 : 1),
     ca: ficha.ca,
     bonusAtaque: ficha.bc,
     // Ignorado enquanto houver ação ofensiva declarada (`usaAcoes`), mas

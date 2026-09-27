@@ -7,7 +7,7 @@ export interface PactoDeCombate { id: string; nome: string; descricao: string; c
 const perfis: Record<string, Partial<PactoDeCombate> & { dano: string }> = {
   "pacto-cao-de-caca": { dano: "2d6" }, "pacto-corvo-mensageiro": { dano: "1d6", deslocamento: 18 },
   "pacto-urso-das-cavernas": { dano: "4d10" }, "pacto-serpente-de-nevoa": { dano: "2d6 (veneno)" },
-  "pacto-grifo": { dano: "3d10", deslocamento: 24 }, "pacto-quimera": { dano: "2d8", golpes: 3 },
+  "pacto-grifo": { dano: "2d8", deslocamento: 24 }, "pacto-quimera": { dano: "2d8", golpes: 3 },
   "pacto-golem-de-guerra": { dano: "6d8", deslocamento: 6, resistencia: true },
   "pacto-alcateia": { dano: "1d8", quantidade: 5 }, "pacto-fera-ancestral": { dano: "4d10", golpes: 3 },
 };

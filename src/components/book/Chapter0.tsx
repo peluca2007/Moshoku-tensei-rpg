@@ -200,7 +200,7 @@ export default function Chapter0() {
             ["Magia Teórica", "Só se alguém escolher a Teórica", "Cap. 2, §8"],
             ["Empilhamento e os quatro Tetos", "Grupos com Tático, Bardo ou muita cura — raro antes do 3º patamar", "Cap. 4, §5"],
             ["Aflições (doenças e venenos que ficam depois da luta)", "Na primeira criatura que as causar — o Mestre avisa", "Cap. 4, §8"],
-            ["Reputação, Crafting e Alquimia", "Entre aventuras, a partir da segunda ou terceira sessão", "Cap. 5, §3 e §4"],
+            ["Reputação, Fabricação e Alquimia", "Entre aventuras, a partir da segunda ou terceira sessão", "Cap. 5, §3 e §4"],
             ["Viagem entre continentes e Cerco", "Quando a campanha sair do continente ou for à guerra", "Apêndices E e F"],
           ]}
         />

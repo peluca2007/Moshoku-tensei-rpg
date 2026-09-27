@@ -82,7 +82,7 @@ export const TATICO_TREE: Tree = {
       talents: [
         { id: "marcha-forcada", name: "Marcha Forçada", paCost: UTILITY_PA_COST.talent.Intermediário, description: "O grupo viaja o dobro da distância por dia; seu teste de Vigor final tem Vantagem, e você isenta um aliado por dia." },
         { id: "terreno-conhecido", name: "Terreno Conhecido", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Escolha um tipo de terreno: velocidade total nele, e Vantagem em navegação e ocultação." },
-        { id: "cavalaria-tatico", name: "Cavalaria", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você treina e monta qualquer besta de carga; não cai por efeito que permita teste de Agilidade." },
+        { id: "cavalaria-tatico", name: "Cavaleiro de Estrada", paCost: UTILITY_PA_COST.talent.Intermediário, description: "Você treina e monta qualquer besta de carga; não cai por efeito que permita teste de Agilidade." },
         { id: "retirada-ordenada", name: "Retirada Ordenada", paCost: UTILITY_PA_COST.talent.Intermediário, description: "1 Ação: até o fim do próximo turno, aliados que se afastarem de inimigos não provocam oportunidade." },
       ],
       abilities: [

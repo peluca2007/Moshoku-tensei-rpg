@@ -56,6 +56,9 @@ describe("Magia Teórica — três palavras e uma conta", () => {
     expect(selo.bloqueio).toContain("magia de Fogo");
     expect(selo.bloqueio).toContain("um rank acima atravessa");
     expect(selo.bloqueio).toContain("Touki atravessam");
+    // essência de escola: só barra aquela escola, e barra um rank a mais
+    expect(selo.bloqueio).toContain("rank Avançado ou abaixo não atravessa");
+    expect(f({ rank: "Intermediário", verbos: ["selar"] }).bloqueio).toContain("rank Intermediário ou abaixo não atravessa");
   });
 
   it("as formas: Triângulo +1 dado, Onda área com metade, Eco repete, Estrela divide", () => {
