@@ -285,13 +285,13 @@ export function ajustarFigurasLargas(fluxo: Element): void {
   fluxo.querySelectorAll(".folhear-larga").forEach((el) => el.classList.remove("folhear-larga"));
   const diagramas = Array.from(fluxo.querySelectorAll<HTMLElement>("figure.diagrama")).filter(visivel);
   diagramas.forEach((fig) => (fig.style.zoom = ""));
+  /** Quanto o conteúdo mais largo do diagrama passa da largura que ele tem. */
   const sobra = (fig: HTMLElement) => {
-    // Diagramas.tsx põe todo o desenho dentro do único `div` direto da
-    // figura. O scrollWidth desse contêiner já acumula qualquer min-width de
-    // netos; medir cada descendente repetia centenas de leituras de layout.
-    const conteudo = fig.querySelector<HTMLElement>(":scope > div");
-    if (!conteudo || conteudo.clientWidth <= 0 || conteudo.scrollWidth <= conteudo.clientWidth + 2) return 1;
-    return conteudo.scrollWidth / conteudo.clientWidth;
+    let pior = 1;
+    fig.querySelectorAll<HTMLElement>("*").forEach((el) => {
+      if (el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 2) pior = Math.max(pior, el.scrollWidth / el.clientWidth);
+    });
+    return pior;
   };
   const largas = diagramas.filter((fig) => sobra(fig) > 1);
   largas.forEach((fig) => fig.classList.add("folhear-larga"));
@@ -372,15 +372,9 @@ const SELETOR_TITULOS = [
 const BLOCOS_COM_TITULO =
   ".livro-caixa, .livro-maestria, .livro-proficiencias, .livro-mecanica, .livro-verbete, .livro-tabela, .livro-arvore";
 
-/*
- * Árvores que mudaram na passada anterior. Cada árvore começa em página nova,
- * então um empurrão dentro de Fogo não muda a posição relativa de nenhuma
- * peça de Água. Depois da primeira varredura, reler títulos das outras dezoito
- * árvores era trabalho puro: centenas de getClientRects que sempre davam a
- * mesma resposta. Títulos fora de árvore continuam sendo conferidos em todas
- * as passadas, porque ali uma mudança pode correr pelo capítulo seguinte.
- */
+/* Árvores alteradas na passada anterior; cada árvore começa em página nova. */
 let arvoresDeTitulosPendentes: Set<Element> | null = null;
+/** Consultas estáticas reaproveitadas durante uma diagramação. */
 let titulosDoFluxo: Element[] | null = null;
 let tabelasDoFluxo: Element[] | null = null;
 
@@ -1233,10 +1227,10 @@ const ARTE_MAXIMA = 320;
 const ESPALHAR_MAXIMO = 56;
 /** Colunas já espalhadas nesta diagramação (pelo bloco que fecha a coluna). */
 let espalhadas = new WeakSet<Element>();
-/** Só as árvores cuja ordem/coluna mudou na passada anterior. */
+/** Só as árvores cuja ordem, arte ou espaçamento mudou na passada anterior. */
 let arvoresParaEncaixar: Element[] | null = null;
+/** Ocupantes estáticos de cada árvore, coletados uma vez por diagramação. */
 let ocupantesDasArvores = new WeakMap<Element, Element[]>();
-
 /**
  * O VÃO NO PÉ DA COLUNA SE ENCHE COM CARTA OU COM ARTE — 2026-09-26.
  *
@@ -1448,9 +1442,8 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
       if (extra >= 6) {
         espalhadas.add(antes);
         tocadas.add(arvore);
-        // Lê todas as margens ainda no estado medido desta passada. Fazer
-        // getComputedStyle dentro do conserto intercalava leitura com as
-        // escritas anteriores e rediagramava as 275 páginas repetidas vezes.
+        // Captura as margens antes do lote de escritas para não forçar layout
+        // no meio dos consertos; o mapa preserva acréscimos acumulados.
         const margens = juncoes.map((el) => {
           const planejada = margensPlanejadas.get(el);
           const antiga = planejada?.inline ?? el.style.marginTop;
