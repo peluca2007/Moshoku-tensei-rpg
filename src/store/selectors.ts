@@ -827,6 +827,14 @@ export function getCustoDaEscolhaDeRaca(state: StoreState): number {
   return tier ? (CUSTO_DE_ESCOLHA[tier] ?? 0) : 0;
 }
 
+/**
+ * Escolher só o Antecedente custa 1 PA; escolher a raça também já cobre ele
+ * (Cap. 1, §5: "Escolher também o Antecedente não custa nada a mais").
+ */
+export function getCustoDaEscolhaDeAntecedente(state: StoreState): number {
+  return state.antecedenteEscolhido && state.backgroundId && !state.racaEscolhida ? 1 : 0;
+}
+
 /** Despertares raciais comprados (Cap. 1, §5). */
 function getRacialUpgradePaCost(state: StoreState): number {
   const upgrades = getRaceById(state.raceId)?.upgrades ?? [];
@@ -988,6 +996,7 @@ export function getPaSpent(state: StoreState): number {
     getHpMpPaCost(state) +
     getRacialUpgradePaCost(state) +
     getCustoDaEscolhaDeRaca(state) +
+    getCustoDaEscolhaDeAntecedente(state) +
     getSaveAdvantagePaCost(state) +
     getSkillPaCost(state) +
     getProficiencyPaCost(state) +

@@ -367,6 +367,7 @@ export default function CharacterSheet() {
     raceId,
     racaEscolhida,
     backgroundId,
+    antecedenteEscolhido,
     subtableEntryId,
     gold,
     startingTreeId,
@@ -939,6 +940,20 @@ export default function CharacterSheet() {
               </option>
             ))}
           </select>
+          {backgroundId && (
+            <label
+              className="inline-flex items-center gap-1.5 text-xs text-parchment-600 dark:text-parchment-400"
+              title="Cap. 1, §5: escolher só o Antecedente custa 1 PA; escolher a raça também já cobre ele."
+            >
+              <input
+                type="checkbox"
+                checked={!antecedenteEscolhido}
+                onChange={(e) => useCharacterStore.getState().setAntecedenteEscolhido(!e.target.checked)}
+              />
+              Sorteei no d100
+              {antecedenteEscolhido && !racaEscolhida && <span>· escolhido: 1 PA</span>}
+            </label>
+          )}
 
           {subtableOptions && (
             <select

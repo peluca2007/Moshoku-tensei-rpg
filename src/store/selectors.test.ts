@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   getCustoDaEscolhaDeRaca,
+  getCustoDaEscolhaDeAntecedente,
   canPurchaseAbility,
   canPurchaseCombinedSpell,
   getCombinedSpellPaCost,
@@ -597,5 +598,13 @@ describe("escolher a raça custa o tier (Cap. 1, §5)", () => {
   it("entra nos PA gastos", () => {
     const base = ficha({ raceId: "dragao" });
     expect(getPaSpent(ficha({ ...base, racaEscolhida: true }))).toBe(getPaSpent(base) + 3);
+  });
+});
+
+describe("escolher só o Antecedente custa 1 PA (Cap. 1, §5)", () => {
+  it("sorteado não paga; escolhido paga 1; com a raça escolhida, sai de graça", () => {
+    expect(getCustoDaEscolhaDeAntecedente(ficha({ backgroundId: "plebeu" }))).toBe(0);
+    expect(getCustoDaEscolhaDeAntecedente(ficha({ backgroundId: "plebeu", antecedenteEscolhido: true }))).toBe(1);
+    expect(getCustoDaEscolhaDeAntecedente(ficha({ backgroundId: "plebeu", antecedenteEscolhido: true, raceId: "humano", racaEscolhida: true }))).toBe(0);
   });
 });

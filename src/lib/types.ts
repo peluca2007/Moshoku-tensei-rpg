@@ -903,6 +903,12 @@ export interface CharacterData {
    */
   racaEscolhida?: boolean;
   backgroundId: string | null;
+  /**
+   * O Antecedente foi ESCOLHIDO (e não sorteado)? Custa 1 PA — mas só quando a
+   * raça foi sorteada: escolher a raça já paga a escolha dos dois (Cap. 1, §5).
+   * Ausente = sorteado. 2026-09-27.
+   */
+  antecedenteEscolhido?: boolean;
   subtableEntryId: string | null;
   attributeBase: Record<AttributeKey, number>;
   /**
