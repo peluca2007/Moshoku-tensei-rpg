@@ -16,6 +16,26 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.111",
+    date: "2026-09-27",
+    title: "O Dragão sem asas, e o Orsted de volta",
+    sections: [
+      {
+        heading: "A Raça Dragão",
+        items: [
+          "Sem asas: na obra, a Raça Dragão (Orsted, Laplace, Perugius) tem corpo de gente. Quem voa são os Dragões Vermelhos, que são monstro do bestiário, não raça.",
+          "A arte da raça volta a ser o Orsted de corpo inteiro na aura, em pé na página inteira da raça mítica. O esboço deitado, que o autor achou fraco, foi pro acervo.",
+        ],
+      },
+      {
+        heading: "Ícones das raças",
+        items: [
+          "Os ícones do Dragão, do Demônio Imortal e do Celestial tinham marca d'água de banco de imagem. Limpos.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.110",
     date: "2026-09-27",
     title: "Raças: o Dragão vira filhote, e escolher passa a custar na ficha",
