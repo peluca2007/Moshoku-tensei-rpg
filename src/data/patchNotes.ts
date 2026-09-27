@@ -16,6 +16,34 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.110",
+    date: "2026-09-27",
+    title: "Raças: o Dragão vira filhote, e escolher passa a custar na ficha",
+    sections: [
+      {
+        heading: "A Raça Dragão",
+        items: [
+          "Nerf grande, pedido do autor. O pacote valia mais de quinze vezes o de um Humano: +2 Força +1 Vigor, +3 de CA, resistência a corte e perfuração, imunidade a um elemento, voo livre de armadura, garras d10 e um Sopro de 1d10 por Bônus de Rank. Agora é um filhote de dragão: +1 Força +1 Vigor, +1 de CA, Resistência ao elemento do Sopro, garras d8, Sopro de 1d6 por Bônus de Rank num cone de 9 m, e asas com as mesmas restrições das celestiais. O Preço do Sangue (Desvantagem Absoluta em Persuasão) fica.",
+          "Os despertares também encolheram: o Sopro Desperto só dobra os usos, e a Forma do Dragão dá 5 × Bônus de Rank de PV temporários, Resistência a corte e perfuração enquanto dura e um Sopro a mais (antes, o Sopro recarregava todo turno).",
+          "Com o pacote de uma raça lendária, o Dragão passa a se ESCOLHER pelo preço dela: 3 PA. No d100 continua saindo só no 100.",
+        ],
+      },
+      {
+        heading: "As outras raças",
+        items: [
+          "Raça Fera, despertar Uivo que Paralisa: só quem falha por 5 ou mais fica Atordoado; o resto fica Desequilibrado. Atordoar o cone inteiro todo turno, por 2 PM, travava a luta.",
+          "Revisadas as doze: as outras cabem no tier que têm.",
+        ],
+      },
+      {
+        heading: "Escolher a raça custa na ficha",
+        items: [
+          "O livro sempre cobrou (1 PA comum ou incomum, 2 rara, 3 lendária ou mítica) e a ficha não: dava pra escolher qualquer raça de graça no seletor. Agora a raça escolhida desconta o preço dos PA, e a sorteada (roleta, entrevista, ou a caixa 'Sorteei no d100' ao lado do seletor) não. Fichas antigas continuam como estavam.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.109",
     date: "2026-09-27",
     title: "As Utilidades ganham um menu, e o Bardo, canções",

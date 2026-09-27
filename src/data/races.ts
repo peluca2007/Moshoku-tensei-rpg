@@ -239,7 +239,7 @@ export const RACES: Race[] = [
         paCost: 3,
         patamarMinimo: "Intermediário",
         description:
-          "Quem falha no teste do Grito de Guerra fica Atordoado até o fim do próximo turno dele, em vez de Desequilibrado.",
+          "Quem falha no teste do Grito de Guerra por 5 ou mais fica Atordoado até o fim do próximo turno dele, em vez de Desequilibrado; quem falha por menos fica Desequilibrado, como sempre.",
       },
       {
         id: "fera-furia-da-matilha",
@@ -478,7 +478,7 @@ export const RACES: Race[] = [
     traits: [
       "Brutamontes: Vantagem em testes de Força e de Atletismo para quebrar, erguer ou empurrar.",
       "Limite de carga dobrado: 30 kg × (Força + 5), contra os 15 kg × (Força + 5) de todo mundo.",
-      "+2 em Força, permanente — o maior bônus num atributo só, empatado apenas com o da Raça Dragão.",
+      "+2 em Força, permanente — o maior bônus num atributo só do livro.",
       "Línguas: Língua Humana (Comum) e Língua Demoníaca.",
     ],
   },
@@ -535,7 +535,7 @@ export const RACES: Race[] = [
     name: "Raça Dragão (Ryuzoku)",
     icon: "/racas/dragao.webp",
     description:
-      "Raça mítica (requer aprovação do Mestre). Fisicamente a mais poderosa da existência, pode viver mais de 100.000 anos.",
+      "Raça mítica. Fisicamente a mais poderosa da existência, pode viver mais de 100.000 anos — e quem nasce dela ainda é filhote.",
     // 2026-08-29 — buff, e o Dragão entrou no sorteio com 1% exato (ver
     // DRAGON_CHANCE em src/lib/randomCharacter.ts). Antes ele era uma raça
     // "mítica" com o pacote de uma raça rara comum: +1 Força e +5 PV fixos, o
@@ -552,14 +552,23 @@ export const RACES: Race[] = [
     // 3. Ganhou o Sopro, que é a única coisa que uma pessoa espera de um dragão
     //    e que a raça não tinha. Escala com o Maior Bônus de Rank e é limitado
     //    por Descanso Curto, então não vira o recurso principal de ninguém.
-    bonuses: { attributes: { forca: 2, vigor: 1 }, armorClass: 3 },
+    // 2026-09-27 — NERF grande, pedido do autor ("pensei em nerfar muito o
+    // dragão… ele tem potencial de ser bem forte, é só gastar PA"). O pacote
+    // de antes valia mais de 15 pontos de criação na régua do topo deste
+    // arquivo (+2 For +1 Vig, +3 CA, resistência a corte e perfuração, imunidade
+    // elemental, voo livre de armadura, garras d10, Sopro de 1d10 por MB) —
+    // quinze vezes um Humano. Agora é um filhote de dragão: o pacote cabe no
+    // de uma raça lendária (~6 PC, par do Demônio Imortal), e por isso passou a
+    // poder ser ESCOLHIDO pelo preço da lendária (3 PA). O dragão adulto é o
+    // despertar do Santo, uma vez por dia.
+    bonuses: { attributes: { forca: 1, vigor: 1 }, armorClass: 1 },
     upgrades: [
       {
         id: "dragao-sopro-desperto",
         name: "Sopro Desperto",
         paCost: 3,
         patamarMinimo: "Intermediário",
-        description: "O Sopro Dracônico passa a duas vezes por Descanso Curto, e o cone cresce para 18 metros.",
+        description: "O Sopro Dracônico passa a duas vezes por Descanso Curto.",
       },
       {
         id: "dragao-forma-do-dragao",
@@ -567,16 +576,16 @@ export const RACES: Race[] = [
         paCost: 5,
         patamarMinimo: "Santo",
         description:
-          "Uma vez por Descanso Longo, gastando 2 Ações, você assume a forma do dragão por 1 minuto: fica Grande (alcance corpo a corpo +1,5 metro), ganha PV Temporários iguais a 10 × seu Maior Bônus de Rank, as Garras e Presas sobem um degrau na Escada de Dados, e o Sopro recarrega no início de cada turno seu. Ao voltar, você ganha 1 nível de Exaustão — o corpo de gente não foi feito pra caber um deus.",
+          "Uma vez por Descanso Longo, gastando 2 Ações, você assume a forma do dragão por 1 minuto: fica Grande (alcance corpo a corpo +1,5 metro), ganha PV Temporários iguais a 5 × seu Maior Bônus de Rank e Resistência a dano cortante e perfurante mundano, as Garras e Presas sobem um degrau na Escada de Dados, e você pode usar o Sopro uma vez a mais durante a forma. Ao voltar, você ganha 1 nível de Exaustão — o corpo de gente não foi feito pra caber um deus.",
       },
     ],
     traits: [
-      "Escamas Dracônicas: +3 na CA (permanente, empilha com armadura) e Resistência a dano cortante e perfurante mundano.",
-      "Garras e Presas: ataques desarmados com Dado Base d10, que contam como arma marcial mágica e sobem na Escada de Dados (Cap. 3) com o seu maior patamar do Corpo.",
-      "Sopro Dracônico (1 Ação, 1 vez por Descanso Curto): cone de 12 metros do seu elemento, 1d10 por ponto do seu Maior Bônus de Rank (6d10 no Imperador). Agilidade contra CD 8 + Vigor + Maior Bônus de Rank para metade.",
-      "Asas: Deslocamento de Voo igual ao dobro do de caminhada, sem restrição de armadura ou carga — as asas de um Ryuzoku erguem aço. Voo e queda seguem a regra geral (Cap. 4, §3).",
-      "+2 em Força e +1 em Vigor, permanentes, e IMUNIDADE (não Resistência) a um tipo de dano à escolha: ígneo, frio ou elétrico. É o mesmo elemento do seu Sopro.",
-      "Cem Mil Anos: você não envelhece de forma perceptível, é imune a doença comum, e tem Vantagem em testes de resistência de Espírito contra ficar Amedrontado e contra qualquer efeito de controle mental.",
+      "Escamas Dracônicas: +1 na CA (permanente, empilha com armadura).",
+      "Garras e Presas: ataques desarmados com Dado Base d8, que sobem na Escada de Dados (Cap. 3) com o seu maior patamar do Corpo.",
+      "Sopro Dracônico (1 Ação, 1 vez por Descanso Curto): cone de 9 metros do seu elemento, 1d6 por ponto do seu Maior Bônus de Rank (6d6 no Imperador). Agilidade contra CD 8 + Vigor + Maior Bônus de Rank para metade.",
+      "Asas: Deslocamento de Voo igual ao de caminhada, com as mesmas restrições das asas celestiais — sem armadura média ou pesada e sem carregar mais da metade do seu limite de carga. Voo e queda seguem a regra geral (Cap. 4, §3).",
+      "+1 em Força e +1 em Vigor, permanentes, e Resistência a um tipo de dano à escolha: ígneo, frio ou elétrico. É o mesmo elemento do seu Sopro.",
+      "Cem Mil Anos: você não envelhece de forma perceptível e é imune a doença comum.",
       "O Preço do Sangue: Vantagem em Intimidação, mas Desvantagem Absoluta em Persuasão e Lábia, pra sempre — nada que já foi um deus finge ser gente comum.",
       "Línguas: Língua Humana (Comum) e Língua Dragônica.",
     ],

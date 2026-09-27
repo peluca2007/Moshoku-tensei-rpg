@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  getCustoDaEscolhaDeRaca,
   canPurchaseAbility,
   canPurchaseCombinedSpell,
   getCombinedSpellPaCost,
@@ -582,5 +583,19 @@ describe("Perícias que a árvore ensina sozinha (Cap. 1, §4)", () => {
         }
       }
     }
+  });
+});
+
+describe("escolher a raça custa o tier (Cap. 1, §5)", () => {
+  it("sorteada não paga; escolhida paga o preço do tier", () => {
+    expect(getCustoDaEscolhaDeRaca(ficha({ raceId: "humano" }))).toBe(0);
+    expect(getCustoDaEscolhaDeRaca(ficha({ raceId: "humano", racaEscolhida: true }))).toBe(1);
+    expect(getCustoDaEscolhaDeRaca(ficha({ raceId: "ogro", racaEscolhida: true }))).toBe(2);
+    expect(getCustoDaEscolhaDeRaca(ficha({ raceId: "dragao", racaEscolhida: true }))).toBe(3);
+  });
+
+  it("entra nos PA gastos", () => {
+    const base = ficha({ raceId: "dragao" });
+    expect(getPaSpent(ficha({ ...base, racaEscolhida: true }))).toBe(getPaSpent(base) + 3);
   });
 });
