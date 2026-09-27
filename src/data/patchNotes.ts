@@ -16,6 +16,28 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.109",
+    date: "2026-09-27",
+    title: "As Utilidades ganham um menu, e o Bardo, canções",
+    sections: [
+      {
+        heading: "O menu de Preparações",
+        items: [
+          "O Ladino, o Bardo e o Tático ganham sete Preparações cada, com custo em PP e efeito escritos: Fechadura Limada, Esconderijo Pronto, Armadilha Deixada, Chave Copiada; Rosto Conhecido, Carta de Apresentação, Rumor à Frente, Palco Montado; Suprimento Escondido, Terreno Visto Antes, Rota Mais Curta, Hora Certa — e outras. Gasta-se sem negociar.",
+          "O fato livre continua, pra tudo que o menu não cobre, com as mesmas quatro travas. As Preparações do menu não contam no limite de fatos livres por sessão: o PP já as limita. O Cap. 3 traz um exemplo jogado com as duas.",
+          "Dois talentos que eram só texto ganharam número: Mapa Vivo (o mapa de uma região rende 2d6 × Bônus de Rank PO) e Contrabandista (compra os itens Fora da Guilda pelo dobro).",
+        ],
+      },
+      {
+        heading: "Canções",
+        items: [
+          "A Dissonância deixa de disparar 'quando você usa uma habilidade da árvore' (difícil de explicar na mesa) e vira uma canção. O Bardo tem uma canção ativa de cada vez — Dissonância, Marcha (Cantiga de Marcha), Guerra (Canção de Guerra) ou Réquiem (Réquiem) — e começar ou trocar custa 1 Ação. A Dissonância bate no começo de cada turno seu.",
+          "A Canção de Guerra dava +2 no acerto, imunidade a Amedrontado e ignorava Exaustão, de graça e somada a tudo. Agora é a canção Guerra (+2 no acerto e a Exaustão): a imunidade ao medo é do Réquiem, e escolher uma é abrir mão da outra. A Canção Não Para (Avançado) deixa manter duas ao mesmo tempo por 1 Ação por turno.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.108",
     date: "2026-09-27",
     title: "A contabilidade: cada limite num relógio do livro",

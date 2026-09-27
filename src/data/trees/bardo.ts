@@ -13,7 +13,7 @@ export const BARDO_TREE: Tree = {
       "A pergunta dele é \"quem eu convenço?\". Faixa exclusiva: só o Bardo altera o que um inimigo SENTE.",
     loop: [
       "Toque. Enquanto estiver cantando, tocando ou falando, aliados que te ouvem somam o seu Bônus de Rank num teste de perícia por cena.",
-      "Sustente. Do Avançado em diante a canção não para: você mantém um efeito indefinidamente, sem Ação e sem ocupar a sua sustentação.",
+      "Cante. Uma canção sua fica ativa de cada vez — Dissonância, Marcha, Guerra, Réquiem —, e começar ou trocar custa 1 Ação. Escolher a canção é escolher o que o grupo precisa agora.",
       "Cresça o Escopo. Uma pessoa, uma taverna, um vilarejo, uma cidade, um reino, um continente — a cada patamar a sua reputação alcança mais longe, e vira verdade aceita.",
     ],
     cost:
@@ -49,11 +49,11 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A Plateia",
         description:
-          "[Domínio: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida. [Dissonância] Uma vez por turno, quando você usa uma habilidade desta árvore, até um número de criaturas hostis igual ao seu patamar nesta árvore, à sua escolha entre as que te OUÇAM, sofre 1d4 de dano sônico por patamar seu. É a mesma fraqueza do resto da árvore, cobrada no dano: quem não ouve não sofre, e criatura sem emoção também não.",
+          "[Domínio: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida. [Canções] Enquanto você toca, uma canção sua fica ativa, e só uma de cada vez (ela não é magia e não ocupa a sua sustentação): começar ou trocar custa 1 Ação em combate (fora dele, nada), e ela acaba se você for silenciado, nocauteado ou parar de tocar. Você começa sabendo a Dissonância; a Marcha, a Guerra e o Réquiem vêm de cartas desta árvore. DISSONÂNCIA: no começo de cada turno seu, até um número de criaturas hostis igual ao seu patamar nesta árvore, à sua escolha entre as que te OUÇAM, sofre 1d4 de dano sônico por patamar seu. É a mesma fraqueza do resto da árvore, cobrada no dano: quem não ouve não sofre, e criatura sem emoção também não.",
       },
       talents: [
         { id: "ouvido-absoluto", name: "Voz Emprestada", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você imita qualquer voz já ouvida e reproduz sotaques. Aprende idiomas em dias." },
-        { id: "cantiga-de-marcha", name: "Cantiga de Marcha", paCost: UTILITY_PA_COST.talent.Principiante, description: "O grupo viaja mais rápido e ignora o primeiro nível de Exaustão por marcha, enquanto você tocar." },
+        { id: "cantiga-de-marcha", name: "Cantiga de Marcha", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você sabe a canção MARCHA: enquanto ela estiver ativa, o grupo que te ouve viaja mais rápido, ignora o primeiro nível de Exaustão por marcha e ganha +1,5 m de Deslocamento." },
         { id: "insulto-afiado", name: "Insulto Afiado", paCost: UTILITY_PA_COST.talent.Principiante, description: "1 Ação: teste de Espírito contra Intuição do alvo. Se vencer, o próximo ataque dele tem Desvantagem." },
         { id: "colecionador-de-historias", name: "Colecionador de Histórias", paCost: UTILITY_PA_COST.talent.Principiante, description: "Sobre pessoa/família/cidade/artefato conhecidos, você sabe uma coisa verdadeira e uma exagerada, e distingue qual é qual." },
         { id: "contrato-de-bardo", name: "Contrato de Bardo", paCost: UTILITY_PA_COST.talent.Principiante, description: "Uma vez por mês de jogo, um patrono cobre as despesas do grupo em troca de você registrar os feitos deles." },
@@ -109,10 +109,10 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A Canção Não Para",
         description:
-          "Escopo: um vilarejo, uma companhia mercenária, uma corte pequena. Você sustenta um efeito de Bardo indefinidamente sem gastar Ação e sem ocupar a sua sustentação. Segurar dois ao mesmo tempo exige 1 Ação por turno.",
+          "Escopo: um vilarejo, uma companhia mercenária, uma corte pequena. Você pode manter DUAS canções ativas ao mesmo tempo, pagando 1 Ação por turno.",
       },
       talents: [
-        { id: "requiem", name: "Réquiem", paCost: UTILITY_PA_COST.talent.Avançado, description: "Aliados que te ouvem ficam imunes a Amedrontado e têm Vantagem contra efeitos que manipulem emoção ou mente." },
+        { id: "requiem", name: "Réquiem", paCost: UTILITY_PA_COST.talent.Avançado, description: "Você sabe a canção RÉQUIEM: enquanto ela estiver ativa, aliados que te ouvem ficam imunes a Amedrontado e têm Vantagem contra efeitos que manipulem emoção ou mente." },
         { id: "diplomata-de-guerra", name: "Diplomata de Guerra", paCost: UTILITY_PA_COST.talent.Avançado, description: "Você negocia trégua no meio de um combate. 1 Ação e 1 PP, uma vez por combate: criaturas hostis a até 9m que te ouçam fazem teste de Espírito (CD 8 + Espírito + Bônus de Rank); quem falhar não ataca por 2 turnos e escuta, e o efeito acaba em quem sofrer dano. Não funciona em criatura sem emoção." },
         { id: "voz-que-alcanca", name: "Voz que Alcança", paCost: UTILITY_PA_COST.talent.Avançado, description: "Sua voz é ouvida claramente a até 300 metros, atravessa tempestade e ruído de batalha." },
         { id: "a-balada-instrutiva", name: "A Balada Instrutiva", paCost: UTILITY_PA_COST.talent.Avançado, description: "Você transforma informação complexa em canção memorizável permanentemente pelo grupo em 10 minutos." },
@@ -126,7 +126,7 @@ export const BARDO_TREE: Tree = {
           range: "Voz",
           actions: { normal: 1 },
           effect:
-            "Sustentada de graça pela sua Maestria. Aliados que te ouvem recebem +2 em acertos, imunidade a Amedrontado, e ignoram a penalidade do primeiro nível de Exaustão. Acaba se você for silenciado, nocauteado ou morto.",
+            "Você aprende a canção GUERRA, e começá-la é esta carta. Enquanto ela estiver ativa, aliados que te ouvem recebem +2 em acertos e ignoram a penalidade do primeiro nível de Exaustão. É uma canção: só uma ativa de cada vez (Maestria A Plateia).",
           incantation:
             "Eu não canto pra que vocês esqueçam o medo, porque esquecer é coisa de covarde e nenhum de vocês é covarde. Eu canto pra que vocês lembrem por que vieram, lembrem quem ficou pra trás esperando, e lembrem que a marcha só acaba quando eu parar de tocar. Canção de Guerra!",
         },
