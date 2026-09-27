@@ -231,7 +231,7 @@ export const CURA_TREE: Tree = {
           costNote:
             "4 Ações em vez das 3 padrão do rank: é cura sustentada por 3 turnos inteiros, sem exigir concentração nem recast — um investimento de tempo maior na hora de erguer, em troca de ficar ativa sozinha depois. Comparar direto com uma magia de dano único do mesmo rank não é justo pros dois lados: aqui a Ação extra compra os dois turnos seguintes de graça.",
           damage: { normal: "1d6 + BC de PV por turno" },
-          effect: "3 turnos: todo aliado que começar o turno dentro da área recupera PV. Sustentada sem concentração, um círculo por vez.",
+          effect: "3 turnos: todo aliado que começar o turno dentro da área recupera PV. Não ocupa a sua sustentação; um círculo por vez.",
           incantation:
             "Chão que eu marco com luz e não com giz, fica aceso enquanto for preciso, sem me pedir mais nada e sem exigir que eu volte aqui. Cura, devagar e sem pressa nenhuma, todos os que pisarem dentro de ti — inclusive os que eu não teria escolhido. Círculo de Recuperação!",
         },

@@ -519,8 +519,8 @@ export function EscadaDePatamares() {
 export function OrdemDoDano() {
   const passos = [
     { valor: "17", rotulo: "O golpe", detalhe: "espada mundana, dano cheio" },
-    { valor: "−3", rotulo: "Redução fixa", detalhe: "Defender: Vigor 0 + Bônus de Rank +3" },
-    { valor: "14", rotulo: "Sobrou", detalhe: "é sobre ISTO que a Resistência age" },
+    { valor: "−2", rotulo: "Redução fixa", detalhe: "Defender: Vigor 0 + metade do Bônus de Rank +3" },
+    { valor: "15", rotulo: "Sobrou", detalhe: "é sobre ISTO que a Resistência age" },
     { valor: "÷2", rotulo: "Resistência", detalhe: "Casco do Escudeiro: dano físico mundano" },
     { valor: "7", rotulo: "Chega", detalhe: "o que sai dos PV dele", destaque: true },
   ];
@@ -531,7 +531,7 @@ export function OrdemDoDano() {
       nota={
         <>
           A ordem não é detalhe: invertida — Resistência primeiro, redução depois — o mesmo golpe de 17
-          chegaria como <b>5</b>, e a diferença só cresce com o patamar. Reduções fixas (Touki, Defender)
+          chegaria como <b>6</b>, e a diferença só cresce com o patamar. Reduções fixas (Touki, Defender)
           sempre <b>antes</b>; Resistência, Imunidade e Vulnerável <b>depois</b>.
         </>
       }

@@ -49,7 +49,7 @@ export default function Chapter0() {
             ["Atributos", "Força, Agilidade, Vigor, Intelecto, Espírito. Somam direto na rolagem de d20.", "Cap. 1, §1"],
             ["PV", "Sua vida. A 0, você começa a morrer — mas não morre de imediato.", "Cap. 4, §1"],
             ["PM / PT / PP", "Combustível. PM é magia, PT é aura de guerreiro, PP é preparação. Quem estuda mais de um pilar carrega mais de uma reserva, nunca duas do mesmo tipo.", "Cap. 4, §1 · Cap. 3"],
-            ["CA", "O quanto é difícil te acertar. 10 + Agilidade + armadura (a armadura média limita a Agilidade a +2; a pesada não soma Agilidade).", "Cap. 4, §1"],
+            ["CA", "O quanto é difícil te acertar. 10 + Agilidade + o bônus da armadura.", "Cap. 4, §1"],
             ["Bônus de Rank", "O quão bom você é numa escola específica. +1 no começo, +6 no topo.", "Cap. 1, §7"],
             ["PA", "A moeda do crescimento. Tudo que você compra sai daqui.", "Cap. 1, §2"],
           ]}
@@ -142,7 +142,7 @@ export default function Chapter0() {
             ["3", "Distribua 2 pontos de atributo", "Só dois. Você pode baixar um atributo a -1 e outro a -2 pra ganhar mais três — mas leia o aviso sobre o Vigor antes."],
             ["4", "Escolha a Árvore Inicial", "A mais importante das seis decisões: ela dá o seu kit grátis, as suas perícias iniciais, e define o que você faz numa luta."],
             ["5", "Gaste os PA iniciais", "Gaste os PA iniciais — 3, menos o que custou escolher a raça ou o Antecedente em vez de sortear (passo 1). A Árvore Inicial abre de graça (Cap. 1, §8); os PA compram magias, técnicas, talentos, perícias ou atributos."],
-            ["6", "Anote PV, PM, CA", "Ou deixe o site calcular. As fórmulas estão no Cap. 4, §1."],
+            ["6", "Anote PV, PM, PT, PP e CA", "Ou deixe o site calcular. As fórmulas estão no Cap. 4, §1."],
           ]}
         />
         <Warning title="Antes do passo 4, leia a tabela das dezenove mecânicas">

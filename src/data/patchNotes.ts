@@ -41,6 +41,31 @@ export const PATCH_NOTES: PatchNote[] = [
           "Cobertura Leve e Meia-Cobertura, que não existiam, viraram Cobertura Parcial. O 'Medo' de raças e itens virou a condição Amedrontado.",
           "O Teste de Concentração do Tiro Perfeito agora está completo (+ metade do maior Bônus de Rank), e a lista do 'não existe ação bônus' do Cap. 4 bate com a do Cap. 0 e do Cap. 2.",
           "O chefe sozinho contra quatro jogadores fica no teto do Equilibrado (1,25), pela própria regra do Apêndice G.",
+          "A CA é 10 + Agilidade + o bônus da armadura, sem teto de Agilidade na armadura média — o Cap. 0 e a Armadura Sagrada diziam o contrário do Cap. 4 e da ficha.",
+        ],
+      },
+      {
+        heading: "A carta diz quantas Ações custa",
+        items: [
+          "Técnica de 2 ou mais Ações sem as três formas de conjurar (Espada de Luz Verdadeira, Tiro do Céu, O Muro Final e mais 35) mostra as Ações na linha do custo, e toda Reação diz 'Reação'. Antes a carta lida parecia custar 1 Ação.",
+          "O Rei do Norte diz na própria Maestria que abrir o patamar custa 2 PA (a ficha já cobrava 2; o livro só dizia isso no bloco do Rank Deus).",
+        ],
+      },
+      {
+        heading: "Magia Teórica",
+        items: [
+          "O Eco repete o Lançar com metade dos dados SEM o BC, e o eco é a fórmula que fere daquele turno. Com o BC em dobro ele batia mais que o Triângulo em todo patamar, e as cartas de dano da árvore viravam opção morta.",
+          "Estrela: o BC soma uma vez, num alvo só.",
+          "Carta de giz ou de pedra não pede o preparo: sai com o cântico e dura o que o meio dá. A fórmula desenhada sem carta é Conjurar (Concentração e Perda de Foco valem), mas não se encurta, não se silencia e não ganha Recitação. Um selo com essência de escola só barra magia daquela escola.",
+          "Som causa dano sônico (era 'trovejante'), e o dano arcano da Mana entrou na lista de tipos de dano do Cap. 4.",
+        ],
+      },
+      {
+        heading: "Termos",
+        items: [
+          "'Concentração' (que não existe mais como regra) virou 'sem ocupar a sua sustentação' nas cartas de Água, Bardo, Cura e Vento.",
+          "Conjurando e Exausto entraram no Glossário de Condições.",
+          "O Trauma vem só de ver um aliado morrer, como a decisão 18 já tinha mandado; o gatilho de 'matar quem implorava' saiu.",
         ],
       },
     ],

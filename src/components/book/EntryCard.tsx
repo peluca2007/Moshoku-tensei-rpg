@@ -3,6 +3,7 @@ import ArteDaHabilidade from "./ArteDaHabilidade";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "../AbilityDetail";
 import ProsaComCondicoes from "../ProsaComCondicoes";
 import { condicoesCitadas } from "@/lib/condicoesNaProsa";
+import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 
 function isAbility(def: AbilityDef | TalentDef): def is AbilityDef {
   return "actions" in def;
@@ -16,6 +17,22 @@ export function costLabel(def: AbilityDef | TalentDef) {
     if (def.ppCost) parts.push(`${def.ppCost} PP`);
   }
   return parts.join(" | ");
+}
+
+/**
+ * As Ações de uma técnica que não tem as três formas de conjurar — 2026-09-27.
+ *
+ * A magia mostra as Ações no quadro Padrão/Encurtada/Silenciosa. A técnica de
+ * 2 ou 3 Ações (Espada de Luz Verdadeira, Tiro do Céu, O Muro Final…) não tinha
+ * onde dizer isso, e a carta lida parecia custar 1. Vai na linha do custo, sem
+ * linha nova; a de 1 Ação continua calada, que é o padrão do livro.
+ */
+export function acoesDaTecnica(def: AbilityDef | TalentDef): string | null {
+  if (!isAbility(def)) return null;
+  if (def.reaction) return "Reação";
+  if (def.ritual) return null; // o selo "Ritual" já diz o tempo
+  const temFormas = def.actions.encurtada !== undefined || def.actions.silenciosa !== undefined;
+  return !temFormas && def.actions.normal >= 2 ? rotuloDeAcoes(def.actions.normal) : null;
 }
 
 /**
@@ -57,6 +74,7 @@ export default function EntryCard({
           {def.name}
           <span className="livro-verbete-meta ml-1 text-xs font-normal text-parchment-600 dark:text-parchment-400">
             — {kind === "talent" ? "Talento" : "Técnica/Magia"} · {costLabel(def)}
+            {acoesDaTecnica(def) && <> · {acoesDaTecnica(def)}</>}
           </span>
         </p>
         {ability && <RitualBadge ability={ability} />}
