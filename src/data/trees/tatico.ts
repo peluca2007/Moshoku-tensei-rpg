@@ -67,7 +67,7 @@ export const TATICO_TREE: Tree = {
           paCost: UTILITY_PA_COST.signature.Principiante,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Uma vez por combate: se o grupo entrar em combate vindo de uma marcha conduzida por você, todos os aliados somam seu Bônus de Rank na Iniciativa, e você escolhe quem age primeiro.",
+          effect: "Se o grupo entrar em combate vindo de uma marcha conduzida por você, todos os aliados somam seu Bônus de Rank na Iniciativa, e você escolhe quem age primeiro.",
         },
       ],
     },

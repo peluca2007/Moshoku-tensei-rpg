@@ -144,7 +144,7 @@ export const BARDO_TREE: Tree = {
       talents: [
         { id: "o-favor-antigo", name: "O Favor Antigo", paCost: UTILITY_PA_COST.talent.Santo, description: "Gastando 2 PP, uma pessoa importante na cena te deve algo — dá uma informação, passagem, ou benefício da dúvida." },
         { id: "elegia", name: "Elegia", paCost: UTILITY_PA_COST.talent.Santo, description: "Uma vez por combate, cante para um inimigo que perdeu aliados nesta luta: teste de Espírito com Desvantagem ou ele deixa o combate, sem morrer." },
-        { id: "a-corte-na-palma", name: "A Corte na Palma", paCost: UTILITY_PA_COST.talent.Santo, description: "Uma vez por cena, gastando 1 PP: em ambiente formal, você não rola o teste social — declara o resultado desejado, desde que não contrarie interesses vitais de alguém presente." },
+        { id: "a-corte-na-palma", name: "A Corte na Palma", paCost: UTILITY_PA_COST.talent.Santo, description: "Uma vez por Descanso Curto, gastando 1 PP: em ambiente formal, você não rola o teste social — declara o resultado desejado, desde que não contrarie interesses vitais de alguém presente." },
       ],
       abilities: [
         {
