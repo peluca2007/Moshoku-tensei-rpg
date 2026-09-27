@@ -38,7 +38,7 @@ export const NORTE_TREE: Tree = {
       mastery: {
         name: "Sobreviver é Vencer",
         description:
-          "No Deus do Norte, use o MAIOR entre Força e Agilidade em toda fórmula de dano e em toda CD desta árvore que pedir Força — o rótulo da árvore promete a escolha, e é aqui que ela vira regra. +1 degrau no Dado de Arma. Proficiência universal em ARMAS, sem uma única exceção: simples, marcial, exótica, de haste, de arremesso, à distância, de outra cultura que você nunca viu — e qualquer objeto improvisado (Dado Base d6). Se dá pra empunhar, você sabe usar. Também toda armadura e todo escudo. [Improviso] O Improviso (1 Ação, uma vez por combate): descreva uma manobra usando o cenário. O alvo faz teste de Força, Agilidade ou Vigor (você escolhe o que faz sentido na cena) com CD 8 + Força + Rank, e rola com Desvantagem. Se falhar, escolha um: fica Caído; fica Cego até o fim do próximo turno dele; é empurrado 3m; ou o seu próximo ataque contra ele neste turno tem Vantagem. Técnicas marcadas [Improviso] exigem cenário utilizável e não gastam o uso do Improviso.",
+          "No Deus do Norte, use o MAIOR entre Força e Agilidade em toda fórmula de dano e em toda CD desta árvore que pedir Força. +1 degrau no Dado de Arma. Proficiência universal em ARMAS, sem uma única exceção: simples, marcial, exótica, de haste, de arremesso, à distância, de outra cultura que você nunca viu — e qualquer objeto improvisado (Dado Base d6). Se dá pra empunhar, você sabe usar. Também toda armadura e todo escudo. [Improviso] O Improviso (1 Ação, uma vez por combate): descreva uma manobra usando o cenário. O alvo faz teste de Força, Agilidade ou Vigor (você escolhe o que faz sentido na cena) com CD 8 + Força + Rank, e rola com Desvantagem. Se falhar, escolha um: fica Caído; fica Cego até o fim do próximo turno dele; é empurrado 3m; ou o seu próximo ataque contra ele neste turno tem Vantagem. Técnicas marcadas [Improviso] exigem cenário utilizável e não gastam o uso do Improviso.",
       },
       talents: [
         { id: "tres-bainhas", name: "Três Bainhas", paCost: 1, description: "Você carrega armas escondidas. Sacar uma arma nova é livre, e você nunca fica realmente desarmado." },
@@ -275,7 +275,7 @@ export const NORTE_TREE: Tree = {
       mastery: {
         name: "Leitura de Batalha",
         description:
-          "Ao final do primeiro turno de combate, identifique estilo, rank aproximado e maior fraqueza de um inimigo — contra ele, +2 em acertos e testes de resistência pelo resto do combate. Vantagem de Estilo contra o Deus da Água não é mais anulada por diferença de rank. O Improviso pode ser usado três vezes por combate.",
+          "Abrir o Rei do Norte custa 2 PA, e não 3. Ao final do primeiro turno de combate, identifique estilo, rank aproximado e maior fraqueza de um inimigo — contra ele, +2 em acertos e testes de resistência pelo resto do combate. Vantagem de Estilo contra o Deus da Água não é mais anulada por diferença de rank. O Improviso pode ser usado três vezes por combate.",
       },
       talents: [],
       abilities: [

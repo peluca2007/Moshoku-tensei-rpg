@@ -46,7 +46,7 @@ export const LUTADOR_TREE: Tree = {
       mastery: {
         name: "O Corpo é a Arma",
         description:
-          "[Quebrantado] Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência nos grupos desta árvore (Desarmado e Improvisado, Machados e Marretas, Hastes); empunhar arma de duas mãos com uma só custa apenas um degrau a menos. A TAXA BÁSICA: o primeiro ataque corpo a corpo seu que acertar cada criatura no seu turno aplica 1 acúmulo de Quebrantado — é assim que a mecânica da árvore aparece desde o 1º patamar, sem depender de comprar técnica. As técnicas que dizem um número aplicam aquele número no lugar deste. Você também usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar). Os colchetes nos nomes das técnicas são só rótulos, sem regra própria: [Peso] marca as de arma pesada e corrida; [Impacto], as de agarrar e golpe de corpo.",
+          "[Quebrantado] Seus ataques desarmados usam Dado Base d6 (com seus degraus normais). Proficiência nos grupos desta árvore (Desarmado e Improvisado, Machados e Marretas, Hastes); empunhar arma de duas mãos com uma só custa apenas um degrau a menos. A TAXA BÁSICA: o primeiro ataque corpo a corpo seu que acertar cada criatura no seu turno aplica 1 acúmulo de Quebrantado. As técnicas que dizem um número aplicam aquele número no lugar deste. Você também usa o combo de Momento (+1 Dado de Arma correndo 6m+ em linha reta antes de atacar). Os colchetes nos nomes das técnicas são só rótulos, sem regra própria: [Peso] marca as de arma pesada e corrida; [Impacto], as de agarrar e golpe de corpo.",
       },
       talents: [
         { id: "couro-grosso", name: "Couro Grosso", paCost: 1, description: "+4 PV por patamar seu nesta árvore. Aplicado sozinho na ficha, e cresce a cada patamar novo que você abrir nela." , grants: { hpPerRank: 4 } },
@@ -62,7 +62,7 @@ export const LUTADOR_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "+2 Dados de Arma (o Momento em dobro)" },
-          effect: "Requer 6m de corrida em linha reta. O seu Momento conta em dobro neste ataque, no lugar de somar com ele: +2 Dados de Arma, ou +4 com Não Para de Vir. Se acertar, teste de Força (CD 8 + Força + Rank) ou o alvo fica Caído e vai ao máximo de acúmulos de Quebrantado que você consegue aplicar. No Principiante isso é 1, e não 2: a técnica não promete o que o teto corta.",
+          effect: "Requer 6m de corrida em linha reta. O seu Momento conta em dobro neste ataque, no lugar de somar com ele: +2 Dados de Arma, ou +4 com Não Para de Vir. Se acertar, teste de Força (CD 8 + Força + Rank) ou o alvo fica Caído e vai ao máximo de acúmulos de Quebrantado que você consegue aplicar. No Principiante isso é 1 (o teto é o seu Bônus de Rank).",
         },
         {
           id: "agarrao",
@@ -88,7 +88,7 @@ export const LUTADOR_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "Metade do dado (você sofre 1d4)" },
-          effect: "Uma vez por combate contra cada alvo. Teste de Vigor (CD 8 + Força + Rank) ou o alvo perde 1 Ação no próximo turno dele — tonto, não fora de combate. Travar alguém de verdade é o Imperador desta árvore, não o 1º patamar.",
+          effect: "Uma vez por combate contra cada alvo. Teste de Vigor (CD 8 + Força + Rank) ou o alvo perde 1 Ação no próximo turno dele — tonto, não fora de combate.",
         },
         {
           id: "quebrar-equipamento",
@@ -293,7 +293,7 @@ export const LUTADOR_TREE: Tree = {
       mastery: {
         name: "Nada Fica de Pé",
         description:
-          "Você recebe 1 Ação adicional por turno, usável só para atacar ou agarrar. Toda criatura que começar o turno adjacente a você ganha 1 acúmulo de Quebrantado. Uma criatura que chegar ao máximo de acúmulos (o dobro do seu Bônus de Rank, por Nada Segura) faz teste de Vigor (CD 8 + Força + Rank) ou fica Atordoada até o fim do próximo turno dela — uma vez por combate por criatura. Não é Incapacitação permanente: tirar um chefe da luta inteira sem uma única rolagem não é o capstone desta árvore, é o fim dela.",
+          "Você recebe 1 Ação adicional por turno, usável só para atacar ou agarrar. Toda criatura que começar o turno adjacente a você ganha 1 acúmulo de Quebrantado. Uma criatura que chegar ao máximo de acúmulos (o dobro do seu Bônus de Rank, por Nada Segura) faz teste de Vigor (CD 8 + Força + Rank) ou fica Atordoada até o fim do próximo turno dela — uma vez por combate por criatura.",
       },
       talents: [
         { id: "sem-arma-nenhuma", name: "Sem Arma Nenhuma", paCost: 4, description: "Seus ataques desarmados sobem para o Dado de Arma de um montante (d10 base) e contam como mágicos, de cerco e adamantinos." },

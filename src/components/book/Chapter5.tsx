@@ -165,11 +165,10 @@ export default function Chapter5() {
           ]}
         />
         <Aside title="Por que relíquia não tem preço">
-          Porque um preço serve pra duas coisas, e as duas quebram. Se ela pode ser comprada, basta juntar
-          PO — e um item que fecha a campanha vira questão de paciência. Se ela pode ser vendida, o grupo que
-          achar UMA nunca mais precisa de dinheiro: o maior preço do resto do livro é 2.000 PO, e trabalhar
-          uma semana inteira no Downtime rende 2d6 × Bônus de Rank. A relíquia fica fora da conta justamente
-          pra que a conta continue existindo.
+          Se ela pudesse ser comprada, bastaria juntar PO — e um item que fecha a campanha viraria questão de
+          paciência. Se pudesse ser vendida, o grupo que achasse UMA nunca mais precisaria de dinheiro: o
+          maior preço do catálogo é 3.000 PO, e uma semana de trabalho no Downtime rende 2d6 × Bônus de
+          Rank. A relíquia troca de mão pela história, nunca pela planilha.
         </Aside>
 
         <SubTitle id="cap5-2-vender">Vender o que caiu</SubTitle>
@@ -370,9 +369,9 @@ export default function Chapter5() {
         <SectionTitle id="cap5-5">5. Dojos e Mestres — a progressão que não se compra</SectionTitle>
         <Prancha id="cap5-5" />
         <P>
-          Todo o resto deste livro se compra com PA. Isso funciona, e tem um preço que só aparece depois de
-          umas vinte sessões: <b>o mundo deixa de importar para a ficha</b>. Dá pra jogar a campanha inteira
-          numa taverna e progredir igual a quem atravessou o continente.
+          Quase tudo neste livro se compra com PA. Os Dojos são a exceção, e é por eles que{" "}
+          <b>o mundo importa para a ficha</b>: quem atravessou o continente atrás de um mestre aprende o que
+          nenhuma taverna ensina.
         </P>
         <P>
           Certos nós das árvores são <b>fechados a chave</b>, e a chave é uma pessoa. Não tem preço em PA,
@@ -451,9 +450,6 @@ export default function Chapter5() {
             </span>,
           ]}
         />
-        <Warning title="Por que o travado nunca passa do dobro do livre">
-          O limite de dois para um mantém a escolha entre PA travado e livre relevante em qualquer patamar.
-        </Warning>
 
         <SubTitle id="cap5-5-limites">Os limites</SubTitle>
         <List items={LIMITES.map((l, i) => <span key={i}>{l}</span>)} />

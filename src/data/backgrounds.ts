@@ -149,7 +149,7 @@ export const BACKGROUNDS: Background[] = [
     bonuses: { attributes: { vigor: 1, espirito: 1 } },
     startingGold: "0",
     traits: [
-      "Vantagem em resistência de Espírito (contra Medo) e de Vigor (contra Exaustão).",
+      "Vantagem em resistência de Espírito (contra ficar Amedrontado) e de Vigor (contra Exaustão).",
       "+1 em Vigor e +1 em Espírito, permanentes — o corpo que sobreviveu ao pior já não se assusta com o segundo pior, e a vontade que o carregou até aqui não some junto com as cicatrizes.",
     ],
   },
@@ -311,7 +311,7 @@ export const MIKO_TABLE: SubtableEntry[] = [
     bonuses: {},
     traits: [
       "Abençoada: lê pensamentos superficiais e fala telepaticamente num raio de 18m.",
-      "Maldição: fisicamente muda; Desvantagem em Iniciativa. Muda não é impedida de conjurar: toda magia sua sai obrigatoriamente em Conjuração Silenciosa (Cap. 2, §2), pagando a penalidade dela — metade do dano e um terço menos de área. Você nunca ganha o Bônus de Recitação Perfeita, porque não há voz pra recitar. É o preço, e é caro; sem esta linha, o resultado mais raro da tabela proibia magia sem dizer isso.",
+      "Maldição: fisicamente muda; Desvantagem em Iniciativa. Muda não é impedida de conjurar: toda magia sua sai obrigatoriamente em Conjuração Silenciosa (Cap. 2, §2), pagando a penalidade dela — metade do dano e um terço menos de área. Você nunca ganha o Bônus de Recitação Perfeita, porque não há voz pra recitar. É o preço, e é caro.",
     ],
   },
   {

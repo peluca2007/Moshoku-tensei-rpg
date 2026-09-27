@@ -163,7 +163,7 @@ const EXERCICIOS: { pergunta: string; escolha: Partial<FormulaEscolha>; resposta
     pergunta:
       "Um colega de Teórica Intermediária quer uma parede que também barre magia: Mana + Erguer + Selar + Círculo. Por que o desenho não sai do papel, e o que ele pode fazer hoje?",
     escolha: { rank: "Intermediário", verbos: ["erguer", "selar"] },
-    resposta: (r) => `${r.erros[0]} Hoje, ele desenha duas fórmulas — uma parede e um selo, uma em cada turno ou uma delas preparada em giz.`,
+    resposta: (r) => `${r.erros[0]} Hoje, ele não mantém as duas ao mesmo tempo: parede e selo ativos são sustentação, e só cabe uma (Cap. 2, §7). Ele ergue a que a cena pede — a parede contra quem corre, o selo contra quem conjura — ou espera o Avançado.`,
   },
 ];
 

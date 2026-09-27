@@ -1160,8 +1160,231 @@ export function preencherPes(fluxo: Element, g: Geometria, r: Regua): number {
   return selos.length;
 }
 
+/** O que o encaixe mexeu, pra desfazer antes de uma nova diagramação. */
+const desfazerEncaixe: (() => void)[] = [];
+
+const ARTE_MINIMA = 150;
+/** Arte que já tentou subir e não coube: não tenta de novo nesta diagramação. */
+let artesQueNaoCouberam = new WeakSet<Element>();
+const ARTE_MAXIMA = 320;
+/** O máximo que o vão acrescenta entre duas cartas quando a coluna se espalha. */
+const ESPALHAR_MAXIMO = 56;
+/** Colunas já espalhadas nesta diagramação (pelo bloco que fecha a coluna). */
+let espalhadas = new WeakSet<Element>();
+
+/**
+ * O VÃO NO PÉ DA COLUNA SE ENCHE COM CARTA OU COM ARTE — 2026-09-26.
+ *
+ * A carta não se parte (pedido do autor: nome, texto e regra juntos). Quando a
+ * próxima não cabe no pé da coluna, ela pula pra seguinte e deixa um vão — o
+ * autor chamou isso de "espaço enorme e vazio", e o selo no pé (preencherPes)
+ * enfeita o vão mas não o enche. O diagramador de livro enche, nesta ordem:
+ *
+ * 1. **A carta menor sobe.** Dentro de um patamar a ordem das cartas não é
+ *    regra: a maior carta do MESMO patamar que cabe no vão entra nele.
+ * 2. **A arte da carta de cima cresce** até o pé (ela é `object-contain` com o
+ *    fundo borrado da própria cena, então crescer não corta nada).
+ * 3. **A arte da carta de baixo sobe** pro vão, e o texto dela abre a coluna
+ *    seguinte inteiro. A arte já podia ir sozinha pra outra coluna (o autor
+ *    liberou); aqui ela vai pra antes, no tamanho do vão.
+ *
+ * Só pra vão de coluna de altura cheia (sem peça larga embaixo). O que muda
+ * carta de coluna (1 e 3) é um por árvore a cada passada — cada árvore começa
+ * em página nova, então mexer numa não muda a diagramação da outra; o que não
+ * muda nada de coluna (2 e 4) entra quantos couberem.
+ *
+ * @returns quantos vãos foram enchidos nesta passada
+ */
+export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
+  const topo = fluxo.getBoundingClientRect().top;
+  const colunaAlta = g.altura - g.topo - g.pe;
+  const meiaPagina = g.pagina / 2;
+  const y = (q: DOMRect) => (q.top - topo) / r.k;
+  const base = (q: DOMRect) => (q.bottom - topo) / r.k;
+  const coluna = (q: DOMRect) => Math.floor(((q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40)) / meiaPagina);
+  const pedacos = (el: Element) => Array.from(el.getClientRects()).filter((a) => a.height > 1);
+  const ESPACO = 14; // o respiro entre duas cartas, com folga
+  const arteDe = (carta: Element | null) =>
+    carta?.classList.contains("livro-verbete") ? (carta.querySelector(":scope > .livro-verbete-arte") as HTMLElement | null) : null;
+
+  // Até onde cada coluna já desce: um vão só conta se nada vier embaixo dele
+  // (uma peça larga no pé da página equilibra as colunas por cima).
+  const fundoDaColuna = new Map<number, number>();
+  // A carta que pulou de coluna deixa a CAIXA dela no vão (um pedaço vazio que
+  // desce até o pé): conta o que está dentro da carta, não a carta.
+  fluxo.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete > *, .livro-tabela, .diagrama").forEach((el) => {
+    for (const q of pedacos(el)) {
+      const c = coluna(q);
+      const cols = q.width / r.k > meiaPagina ? [c - (c % 2), c - (c % 2) + 1] : [c];
+      for (const k of cols) fundoDaColuna.set(k, Math.max(fundoDaColuna.get(k) ?? 0, base(q)));
+    }
+  });
+
+  const mexidas = new Set<Element>();
+  const consertos: (() => void)[] = [];
+  // A arte que sobe tem que ficar no vão: se não coube, ela volta pro fim da carta.
+  const conferir: (() => boolean)[] = [];
+  const desfazerDaArte: (() => void)[] = [];
+  const abridores = Array.from(fluxo.querySelectorAll(".livro-arvore .livro-verbete, .livro-arvore h4"));
+  for (const bloco of abridores) {
+    const arvore = bloco.closest(".livro-arvore");
+    if (!arvore || mexidas.has(arvore)) continue;
+    // Onde a carta começa de verdade: o primeiro pedaço com conteúdo.
+    const primeiro = bloco.classList.contains("livro-verbete")
+      ? Array.from(bloco.children).find((c) => pedacos(c).length > 0)
+      : bloco;
+    const q = primeiro ? pedacos(primeiro)[0] : undefined;
+    if (!q || y(q) > 30) continue;
+    // O que vem antes, e a última carta dele (o patamar anterior acaba numa carta).
+    let antes = bloco.previousElementSibling;
+    while (antes && pedacos(antes).length === 0) antes = antes.previousElementSibling;
+    if (!antes) continue;
+    const fim = pedacos(antes).at(-1);
+    if (!fim || fim.width / r.k > meiaPagina || coluna(fim) !== coluna(q) - 1) continue;
+    // Folga de 12 px: a arte é torta (rotate), e o retângulo dela passa uns
+    // pixels do fim da carta.
+    if ((fundoDaColuna.get(coluna(fim)) ?? 0) > base(fim) + 12) continue;
+    const vao = colunaAlta - base(fim) - ESPACO;
+    if (vao < 90) continue;
+
+    // 1. A maior carta do mesmo patamar que cabe no vão.
+    if (bloco.classList.contains("livro-verbete")) {
+      let melhor: Element | null = null;
+      let alturaMelhor = 0;
+      for (let n = bloco.nextElementSibling; n; n = n.nextElementSibling) {
+        if (!n.classList.contains("livro-verbete")) continue;
+        const p = pedacos(n);
+        if (p.length !== 1) continue;
+        const h = p[0].height / r.k;
+        if (h <= vao && h > alturaMelhor) {
+          melhor = n;
+          alturaMelhor = h;
+        }
+      }
+      if (melhor) {
+        const sobe = melhor;
+        const pai = bloco.parentElement!;
+        const lugar = sobe.nextElementSibling;
+        consertos.push(() => bloco.before(sobe));
+        desfazerEncaixe.push(() => sobe.isConnected && pai.insertBefore(sobe, lugar && lugar.parentElement === pai ? lugar : null));
+        mexidas.add(arvore);
+        continue;
+      }
+    }
+
+    // 2. A arte da carta de cima cresce até o pé.
+    const ultimaCarta = antes.classList.contains("livro-verbete") ? antes : antes.querySelector(":scope > .livro-verbete:last-child");
+    const arteDeCima = arteDe(ultimaCarta);
+    const qa = arteDeCima ? pedacos(arteDeCima).at(-1) : undefined;
+    if (arteDeCima && qa && Math.abs(base(qa) - base(fim)) < 12) {
+      const atual = qa.height / r.k;
+      const nova = Math.min(ARTE_MAXIMA, tetoDaArte(arteDeCima), atual + vao);
+      if (nova - atual >= 40) {
+        consertos.push(() => alturaDaArte(arteDeCima, nova));
+        desfazerEncaixe.push(() => alturaDaArte(arteDeCima, null));
+        continue; // local: nada muda de coluna, a árvore segue nesta passada
+      }
+    }
+
+    // 3. A arte da carta de baixo sobe pro vão.
+    const arteDeBaixo = arteDe(bloco);
+    if (arteDeBaixo && vao >= ARTE_MINIMA && !artesQueNaoCouberam.has(arteDeBaixo)) {
+      const alto = Math.min(ARTE_MAXIMA, tetoDaArte(arteDeBaixo), Math.floor(vao - 12));
+      const colunaDoVao = coluna(fim);
+      conferir.push(() => {
+        const qa = pedacos(arteDeBaixo)[0];
+        return !!qa && coluna(qa) === colunaDoVao;
+      });
+      consertos.push(() => {
+        arteDeBaixo.classList.add("folhear-arte-antes");
+        alturaDaArte(arteDeBaixo, alto);
+        bloco.prepend(arteDeBaixo);
+      });
+      const volta = () => {
+        arteDeBaixo.classList.remove("folhear-arte-antes");
+        alturaDaArte(arteDeBaixo, null);
+        if (arteDeBaixo.parentElement === bloco) bloco.append(arteDeBaixo);
+      };
+      desfazerEncaixe.push(volta);
+      desfazerDaArte.push(() => {
+        volta();
+        artesQueNaoCouberam.add(arteDeBaixo);
+      });
+      mexidas.add(arvore);
+      continue;
+    }
+
+    // 4. Nada cabe: o vão se espalha entre as cartas da coluna (a coluna
+    //    justifica, como a de um livro impresso), até ESPALHAR_MAXIMO por
+    //    junção. Só o que já está na coluna ganha margem, e a soma não passa do
+    //    vão: nada muda de coluna, então não precisa de conferência.
+    const colunaDoVao = coluna(fim);
+    // Antes de um patamar novo, o que vem antes é o patamar anterior inteiro:
+    // quem se espalha são as cartas dele.
+    const grupo = antes.querySelector(":scope > .livro-verbete") ? antes : antes.parentElement;
+    const juncoes = Array.from(grupo?.children ?? []).filter((el) => {
+      const a = pedacos(el)[0];
+      return !!a && coluna(a) === colunaDoVao && y(a) > 30 && !(el as HTMLElement).dataset.espalhada;
+    }) as HTMLElement[];
+    if (juncoes.length > 0 && !espalhadas.has(antes)) {
+      const extra = Math.min(ESPALHAR_MAXIMO, Math.floor((vao - 8) / juncoes.length));
+      if (extra >= 6) {
+        espalhadas.add(antes);
+        consertos.push(() =>
+          juncoes.forEach((el) => {
+            const antiga = el.style.marginTop;
+            el.style.marginTop = `${parseFloat(getComputedStyle(el).marginTop) + extra}px`;
+            el.dataset.espalhada = "1";
+            desfazerEncaixe.push(() => {
+              el.style.marginTop = antiga;
+              delete el.dataset.espalhada;
+            });
+          }),
+        );
+      }
+    }
+  }
+  // Em lote: ler posição entre uma mudança e outra rediagramaria o livro inteiro.
+  consertos.forEach((c) => c());
+  const falhas = conferir.map((ok) => !ok());
+  desfazerDaArte.forEach((volta, i) => falhas[i] && volta());
+  return consertos.length - falhas.filter(Boolean).length;
+}
+
+/**
+ * Até onde a arte pode crescer sem ampliar o arquivo mais de 1,5× (borra). Sem
+ * o arquivo carregado ainda, não se sabe: vale o teto geral.
+ */
+function tetoDaArte(arte: HTMLElement): number {
+  const img = arte.querySelector("img:not(.blur-2xl)") as HTMLImageElement | null;
+  return img?.naturalHeight ? img.naturalHeight * 1.5 : ARTE_MAXIMA;
+}
+
+/**
+ * A arte do livro é 16:9 (altura pela largura): pra mudar a altura sem ela
+ * crescer pro lado e estourar a coluna, a proporção fica livre. A imagem é
+ * `contain` com o fundo borrado da própria cena, então nada se corta.
+ */
+function alturaDaArte(arte: HTMLElement, alto: number | null): void {
+  if (alto === null) {
+    arte.style.removeProperty("height");
+    arte.style.removeProperty("aspect-ratio");
+    return;
+  }
+  arte.style.height = `${Math.floor(alto)}px`;
+  arte.style.aspectRatio = "auto";
+}
+
+/** Devolve cartas e artes ao lugar do livro (antes de uma nova diagramação). */
+function desencaixarCartas(): void {
+  while (desfazerEncaixe.length) desfazerEncaixe.pop()!();
+  artesQueNaoCouberam = new WeakSet();
+  espalhadas = new WeakSet();
+}
+
 /** Tira os empurrões antes de uma nova diagramação (outra geometria, outro texto). */
 export function soltarTitulos(fluxo: Element): void {
+  desencaixarCartas();
   // Os selos do pé (preencherPes) são da diagramação passada.
   fluxo.parentElement?.querySelector(":scope > .folhear-pes")?.remove();
   fluxo.querySelectorAll(".folhear-empurra").forEach((el) => el.classList.remove("folhear-empurra"));

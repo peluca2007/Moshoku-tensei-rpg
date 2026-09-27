@@ -283,6 +283,13 @@ export const CONDICOES: Condicao[] = [
  */
 export const ESTADOS_DE_REGRA: Condicao[] = [
   {
+    id: "conjurando",
+    nome: "Conjurando",
+    efeito:
+      "Do primeiro gasto de Ação de um cântico até a magia sair (Cap. 2, §6). Sofrer dano pede o Teste de Concentração; ficar sem gastar ao menos 1 Ação no cântico por turno é Perda de Foco (Cap. 4, §3).",
+    duracaoPadrao: "Até a magia sair ou ser interrompida",
+  },
+  {
     id: "desprevenido",
     nome: "Desprevenido",
     efeito:
@@ -301,6 +308,13 @@ export const ESTADOS_DE_REGRA: Condicao[] = [
     efeito:
       "A 0 PV, mas fora de perigo imediato: para de rolar o Fio da Vida e acorda com 1 PV em 1d4 horas, ou na hora com qualquer cura. Sofrer dano tira o Estabilizado e dá 1 Marca da Morte (2 se for crítico). Qualquer um estabiliza alguém com 1 Ação e teste de Medicina CD 10 (Vantagem com Kit de Primeiros Socorros).",
     duracaoPadrao: "Até acordar ou sofrer dano",
+  },
+  {
+    id: "exausto",
+    nome: "Exausto",
+    efeito:
+      "Exaustão de nível 3 ou mais (Cap. 4, §9). O Manto de Touki cai, e todo efeito que diz 'enquanto não Exausto' para.",
+    duracaoPadrao: "Até a Exaustão cair abaixo do nível 3",
   },
   {
     id: "inconsciente",
