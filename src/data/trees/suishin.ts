@@ -61,7 +61,7 @@ export const SUISHIN_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           effect:
-            "1 Reação, quando alvo de ataque corpo a corpo: some seu Bônus de Rank à CA contra aquele ataque, resolvido depois de ver a rolagem. ESTE bônus soma com qualquer outro bônus de CA, inclusive o da Postura de Água e o do Manto de Touki — é a única exceção nomeada à regra de empilhamento do Cap. 4, §5, e existe porque sem ela o Aparar somava exatamente ZERO dentro da Postura, que é o modo que a árvore inteira monta. Se com isso o ataque errar, o Fluxo dispara normalmente (o Aparar gasta a Reação; o Fluxo, nunca).",
+            "1 Reação, quando alvo de ataque corpo a corpo: some seu Bônus de Rank à CA contra aquele ataque, resolvido depois de ver a rolagem. ESTE bônus soma com qualquer outro bônus de CA, inclusive o da Postura de Água e o do Manto de Touki — é a única exceção nomeada à regra de empilhamento do Cap. 4, §5. Se com isso o ataque errar, o Fluxo dispara normalmente (o Aparar gasta a Reação; o Fluxo, nunca).",
         },
         {
           id: "guarda-do-corpo",
@@ -149,7 +149,7 @@ export const SUISHIN_TREE: Tree = {
           paCost: 1,
           range: "Passivo",
           actions: { normal: 0 },
-          effect: "Enquanto você não se mover no seu turno, aliados adjacentes recebem Cobertura Superior contra ataques à distância vindos da sua direção. (Diferente de Guarda do Corpo: isto é passivo, só contra distância, e não gasta Reação. Escudo Vivo no Avançado amplia Guarda do Corpo para 3m e 1 uso grátis/turno.)",
+          effect: "Enquanto você não se mover no seu turno, aliados adjacentes recebem Cobertura Superior contra ataques à distância vindos da sua direção. (Diferente de Guarda do Corpo: isto é passivo, só contra distância, e não gasta Reação.)",
         },
         {
           id: "contra-investida",
@@ -176,7 +176,7 @@ export const SUISHIN_TREE: Tree = {
       talents: [
         { id: "postura-movel", name: "Postura Móvel", paCost: 2, description: "Em Postura, você pode se mover até 3 metros por turno sem sair dela." },
         { id: "segunda-guarda", name: "Segunda Guarda", paCost: 2, description: "+1 Reação por turno, mesmo fora da Postura." },
-        { id: "escudo-vivo", name: "Escudo Vivo", paCost: 2, description: "Guarda do Corpo passa a alcançar 3 metros e pode ser usada uma vez por turno sem gastar Reação. (Muralha de Um Homem no Intermediário dá Cobertura Superior passiva contra distância se você não se mover — papéis diferentes: reação ativa vs passiva à distância.)" },
+        { id: "escudo-vivo", name: "Escudo Vivo", paCost: 2, description: "Guarda do Corpo passa a alcançar 3 metros e pode ser usada uma vez por turno sem gastar Reação." },
       ],
       abilities: [
         {

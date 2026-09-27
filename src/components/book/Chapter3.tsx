@@ -48,8 +48,8 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
       </P>
       <Warning title="O catálogo completo está logo abaixo, seção 'Todas as Sub-árvores'">
         Este capítulo primeiro cobre as regras <i>compartilhadas</i> entre árvores do mesmo pilar, e termina
-        com o catálogo completo de magias, talentos, técnicas e Maestrias das 19 sub-árvores — o mesmo dado
-        que alimenta a ficha, então nunca diverge dela. Prefere navegar visualmente? O{" "}
+        com o catálogo completo de magias, talentos, técnicas e Maestrias das 19 sub-árvores. Prefere
+        navegar visualmente? O{" "}
         <Link href="/arvores" className="text-wine-600 underline decoration-dotted hover:text-wine-500 dark:text-wine-300">
           mapa de Árvores
         </Link>{" "}
@@ -73,7 +73,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             <span key="t"><b>A tag.</b> Um rótulo curto — <i>Molhado → Congelado</i>, <i>Improviso</i>, <i>Ferida Fresca</i>. Ele aparece também entre colchetes na Maestria de 1º patamar da árvore, pra você reconhecer a mecânica quando ela voltar.</span>,
             <span key="h"><b>A frase.</b> O que esta árvore faz que nenhuma outra faz.</span>,
             <span key="l"><b>Como se joga.</b> Dois a quatro passos, na ordem em que acontecem na mesa. Não são conselhos: é literalmente o ciclo de turno da árvore.</span>,
-            <span key="c"><b>O que ela não faz.</b> A fraqueza declarada. Uma árvore sem fraqueza é uma árvore que ninguém sabe quando <i>não</i> escolher — e é assim que se escreve um sistema em que todo mundo joga a mesma ficha.</span>,
+            <span key="c"><b>O que ela não faz.</b> A fraqueza declarada: o que te diz quando <i>não</i> escolher esta árvore.</span>,
           ]}
         />
         <Aside title="A regra dos dois tempos">
@@ -135,9 +135,9 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           </li>
           <li>
             <b>As três formas</b> e quantas Ações cada uma custa. <b>Padrão</b>: o efeito inteiro.{" "}
-            <b>Encurtada</b>: metade do dano (ou da duração) e área um terço menor. <b>Silenciosa</b>: o mesmo
-            corte da Encurtada e mais um bônus de forma de graça — dobrar o alcance, mudar o formato da área ou
-            segurar o disparo por até 1 turno. Um <b>—</b> diz que a forma não existe nesta magia: Ritual não
+            <b>Encurtada</b>: metade do dano (ou da duração) e área um terço menor. <b>Silenciosa</b> (só pra
+            quem a tem por Antecedente, raça, Maestria ou talento): o mesmo corte da Encurtada e mais um bônus
+            de forma de graça — dobrar o alcance, mudar o formato da área ou segurar o disparo por até 1 turno. Um <b>—</b> diz que a forma não existe nesta magia: Ritual não
             encurta, e no Imperador não há Encurtada. A regra inteira está no Cap. 2, §2 e §3.
           </li>
           <li>
@@ -285,8 +285,8 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         </Warning>
         <Aside title="Acima do topo da escada">
           <P>
-            O 5d12 é o último degrau. Se um talento ou Maestria te der um degrau além dele — Espada
-            Emprestada e Punho Duplo são os dois casos do livro — cada degrau excedente vira{" "}
+            O 5d12 é o último degrau. Se um talento, Maestria ou técnica te der um degrau além dele — Espada
+            Emprestada, Punho Duplo, Braço de Bigorna, as etapas do Tiro Perfeito — cada degrau excedente vira{" "}
             <b>+2 de dano fixo</b> em vez de sumir. Nenhum PA gasto em degrau é jogado fora.
           </P>
         </Aside>
@@ -464,8 +464,9 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             jogo — e ninguém aposta dois turnos num tiro que uma rolagem ruim anula.
           </P>
           <P>
-            Sofrer dano no meio é outra coisa: aí é o mesmo teste da <b>Interrupção</b> de um cântico (Cap.
-            4, §3) — Espírito contra <b>CD 10 + o Bônus de Rank de quem te acertou</b>. Falhou, a Preparação
+            Sofrer dano no meio é outra coisa: aí é o mesmo <b>Teste de Concentração</b> de um cântico (Cap.
+            2, §6) — 1d20 + Espírito + metade do seu maior Bônus de Rank contra <b>CD 10 + o Bônus de Rank de
+            quem te acertou</b>. Falhou, a Preparação
             inteira se perde, e as Ações já gastas nela não voltam.
           </P>
         </Aside>
@@ -509,9 +510,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           </P>
           <P>
             <b>E cada aresta tem o efeito próprio dela</b>, porque as três doutrinas não se atacam pelo mesmo
-            lugar. Sem isto, o triângulo tinha uma aresta só funcionando: o Deus da Espada quase não vende
-            Reação defensiva, então &ldquo;as Reações dele falham&rdquo; não custava nada a ele — e desligava
-            a Água inteira, que é o estilo feito de Reações.
+            lugar:
           </P>
           <BookTable
             headers={["Aresta", "O que você ganha, além do acima"]}
@@ -532,8 +531,9 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
       <Section>
         <SectionTitle id="cap3-utilidade">A Árvore de Utilidade — Sistemas Compartilhados</SectionTitle>
         <P>
-          O terceiro pilar não compete em dano — um Lenda Oculta não bate mais forte que um Norte
-          Principiante. O que a Utilidade faz é decidir as <b>condições</b> em que a luta, a negociação ou o
+          O terceiro pilar não compete em dano — mesmo o Ladino, o que mais bate entre os três, fica bem atrás
+          de um guerreiro do mesmo patamar (a conta está em &ldquo;As Três Árvores em Combate&rdquo;, mais
+          abaixo). O que a Utilidade faz é decidir as <b>condições</b> em que a luta, a negociação ou o
           roubo acontecem.
         </P>
         <List
@@ -599,9 +599,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           </P>
           <P>
             <b>Navegação e Liderança é a exceção</b>, porque o atributo-chave dela <i>é</i> Intelecto: nesse
-            caso ele não conta duas vezes — some, no lugar, o seu <b>Bônus de Rank</b> naquela árvore. Sem
-            essa cláusula, o Tático chegava ao teto investindo <i>um</i> atributo só, onde os outros precisam
-            de dois.
+            caso ele não conta duas vezes — some, no lugar, o seu <b>Bônus de Rank</b> naquela árvore.
           </P>
         </Aside>
         <P>
@@ -653,8 +651,8 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
 
         <SubTitle id="cap3-faixas">As Três Faixas</SubTitle>
         <P>
-          A solução pra três árvores não virarem &ldquo;a mesma pessoa com roupa diferente&rdquo;: dividir o passado em
-          três domínios que não se tocam, cada um travado numa faixa exclusiva de combate.
+          As três árvores dividem o passado em três domínios que não se tocam, e cada uma tem uma faixa
+          exclusiva de combate.
         </P>
         <BookTable
           headers={["", "Ladino", "Bardo", "Tático"]}
@@ -668,16 +666,16 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         />
         <Aside title="A Regra da Faixa">
           <P>
-            Nenhuma habilidade pode invadir a faixa de outra árvore de Utilidade — um talento que dê Dano
-            Furtivo a um Bardo, ou que deixe um Ladino conceder uma Ação, está errado. A Faixa vale só entre
+            Nenhuma habilidade invade a faixa de outra árvore de Utilidade — nenhum talento dá Dano Furtivo
+            a um Bardo, nem deixa um Ladino conceder uma Ação. A Faixa vale só entre
             Ladino, Bardo e Tático; árvores do Corpo e de Magia cruzam essas linhas livremente.
           </P>
           <P>
             <b>Dano Furtivo, exatamente:</b> dano extra que o <i>próprio</i> personagem acrescenta ao
-            <i> próprio</i> ataque, condicionado a surpresa ou posição. É essa definição que a Faixa protege —
-            e é por isso que duas coisas que também causam dano ficam legitimamente de fora dela: a{" "}
-            <b>Dissonância</b> do Bardo não é extra de um ataque (é área automática, sem ataque nenhum, e
-            quem não ouve não sofre), e a <b>Ordem de Tiro</b> do Tático não é dano do próprio personagem (ela
+            <i> próprio</i> ataque, condicionado a surpresa ou posição. Por isso duas coisas que também
+            causam dano ficam de fora dela: a{" "}
+            <b>Dissonância</b> do Bardo não é extra de um ataque (é dano automático em quem o ouve, sem
+            ataque nenhum, e quem não ouve não sofre), e a <b>Ordem de Tiro</b> do Tático não é dano do próprio personagem (ela
             entra no golpe de um aliado, e sem esse aliado não existe). Cada um continua na sua faixa: o
             Ladino cobra posição, o Bardo cobra que escutem, o Tático cobra um aliado que acerte.
           </P>
@@ -710,25 +708,23 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           ]}
         />
         <P>
-          <b>A régua honesta.</b> Este parágrafo já disse que os três juntos somavam &ldquo;uns 30 de dano na
-          luta inteira&rdquo;, e isso era mentira — bonita, mas mentira. Contando as cartas: no Imperador, o
-          Dano Furtivo do Ladino é <b>+6d6 por turno</b> (uns 21), a Dissonância do Bardo é <b>6d4</b> (uns
-          15) em <i>cada</i> hostil que o ouça, e a Ordem de Tiro do Tático entrega <b>6d6</b> de uma vez no
-          golpe de um aliado. Um Deus do Norte Imperador bate cerca de 81 por turno.
+          <b>Quanto a Utilidade bate.</b> No Imperador, o Dano Furtivo do Ladino soma <b>+6d6 por turno</b>{" "}
+          (uns 21); a Dissonância do Bardo cobra <b>6d4</b> (uns 15) de até seis hostis que o ouçam; e a
+          Ordem de Tiro do Tático põe <b>6d6</b> no golpe de um aliado — até 12d6, se ninguém acertar o
+          alvo Apontado e você o apontar de novo. Um Deus do Norte Imperador bate cerca de 81 por turno.
         </P>
         <P>
-          Então a régua verdadeira é esta: <b>uma árvore de Utilidade causa, sozinha, algo entre um terço e
-          metade do dano de um guerreiro do mesmo patamar</b> — e o Ladino fica no topo dessa faixa de
-          propósito, porque dano é a faixa exclusiva dele. Isso é o desenho, não um vazamento. O que a
-          Utilidade <b>não</b> faz é substituir a linha de frente: ela causa esse dano de longe, uma vez por
+          Ou seja: <b>uma árvore de Utilidade causa, sozinha, algo entre um terço e metade do dano de um
+          guerreiro do mesmo patamar</b> — e o Ladino fica no topo dessa faixa, porque dano é a faixa
+          exclusiva dele. O que a Utilidade <b>não</b> faz é substituir a linha de frente: ela causa esse dano de longe, uma vez por
           turno, e quase sempre depende de uma condição (estar Escondido, o alvo ter te ouvido, um aliado
           acertar). E continua sendo a razão de o combate ter começado com o grupo em cima do telhado, os
           reforços trancados do lado de fora, metade dos inimigos apavorados, e o chefe já sabendo que perdeu.
         </P>
         <P>
-          <b>O teste do Apêndice B, aplicado às três:</b> cada árvore precisa ter, no patamar alto, ao menos
-          uma habilidade que um mago Imperador não replica com magia nenhuma. Não Estive Aqui derrota
-          adivinhação divina. A História Oficial decide o que o mundo acredita. A Guerra Já Acabou cancela um
+          <b>O que só elas fazem.</b> No patamar alto, cada uma das três tem ao menos uma habilidade que um
+          mago Imperador não replica com magia nenhuma. Não Estive Aqui escapa de rastreamento, adivinhação e
+          visão do passado. A História Oficial decide o que o mundo acredita. A Guerra Já Acabou cancela um
           confronto antes de ele existir. Zero Absoluto não te consegue um informante, não te dá reputação, e
           não impede que o exército chegue.
         </P>

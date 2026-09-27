@@ -36,11 +36,11 @@ export default function ShopCatalog() {
   return (
     <div className="space-y-6">
       <P>
-        O catálogo inteiro do mundo, e não só a prateleira. <b>Guilda F</b> a <b>Guilda S</b> é o Rank
-        mínimo pra comprar em <code>/loja</code>, onde a compra debita o PO e manda o item direto pra ficha.{" "}
-        <b>Fora da Guilda</b> é o que existe mas não está à venda ali — contrabando, drop e encomenda de
-        submundo: tem preço porque alguém paga, só não é a Guilda que vende. <b>Relíquia</b> não tem preço
-        nenhum: não se compra e não se vende (ver &ldquo;Vender o que caiu&rdquo;, abaixo).
+        O catálogo inteiro do mundo, e não só a prateleira, com a disponibilidade da tabela acima:{" "}
+        <b>Guilda F</b> a <b>Guilda S</b> é o Rank mínimo pra comprar na sede; <b>Fora da Guilda</b> tem
+        preço, mas não está na vitrine; <b>Relíquia</b> não se compra nem se vende (ver &ldquo;Vender o que
+        caiu&rdquo;, acima). Na ficha do site, a Loja vende o que está marcado Guilda e manda o item direto
+        pra ficha.
       </P>
       {SHOP_CATEGORY_ORDER.map((category) => {
         const items = SHOP_ITEMS.filter((i) => i.category === category);

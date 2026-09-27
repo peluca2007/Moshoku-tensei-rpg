@@ -132,7 +132,7 @@ export const TEORICA_TREE: Tree = {
       "Desenhe no ar (as Ações de uma magia do rank da potência) ou prepare em giz antes e ative com 1 Ação.",
       "Erguer segura corpo; Selar segura magia. A defesa é a mesma gramática do ataque.",
     ],
-    cost: "Uma fórmula desenhada que fere por turno (as cartas são magia comum e não entram nessa conta). A fórmula não herda Maestria nem condição da escola da essência.",
+    cost: "Só uma fórmula desenhada fere por turno (as cartas são magia comum e ficam fora desse limite). A fórmula não herda Maestria nem condição da escola da essência.",
   },
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PM",
