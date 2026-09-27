@@ -12,6 +12,7 @@ import VitrineDasArvores from "./VitrineDasArvores";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
 import TreeCrest from "../TreeCrest";
+import { PREPARACOES } from "@/data/preparacoes";
 
 /**
  * @param arvoresAbertas  o catálogo das árvores já sai aberto do servidor. O
@@ -594,12 +595,23 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           </P>
         </Aside>
         <P>
-          Gastando 1 PP, você declara em voz alta um fato sobre o passado que passa a ser verdade no jogo.
-          Cinco condições: (1) precisa caber no seu Escopo; (2) precisa caber no seu Domínio; (3) é sempre
-          pretérito; (4) custa 2 PP se resolver o obstáculo central da cena; (5) o Mestre não pode negar, mas
-          pode anexar uma complicação.
+          Há <b>duas formas de gastar PP</b>, e as duas declaram algo que já tinha acontecido:
         </P>
-        <Warning title="As quatro travas do fato — leia antes da primeira vez que alguém gastar PP">
+        <List
+          items={[
+            <span key="menu">
+              <b>Uma Preparação do menu</b> da sua árvore (logo abaixo): custo e efeito escritos, sem
+              negociar. É a forma de todo dia.
+            </span>,
+            <span key="fato">
+              <b>Um fato livre</b>, pra tudo que o menu não cobre. Gastando 1 PP, você declara em voz alta um
+              fato sobre o passado que passa a ser verdade no jogo. Cinco condições: (1) precisa caber no seu
+              Escopo; (2) precisa caber no seu Domínio; (3) é sempre pretérito; (4) custa 2 PP se resolver o
+              obstáculo central da cena; (5) o Mestre não pode negar, mas pode anexar uma complicação.
+            </span>,
+          ]}
+        />
+        <Warning title="As quatro travas do fato livre — leia antes da primeira vez que alguém gastar PP">
           <P>
             É a mecânica mais divertida do pilar, e é onde a mesa mais briga. Quatro frases resolvem as quatro
             brigas:
@@ -623,7 +635,8 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
                 sem gastar nada. Ninguém paga o dobro por surpresa.
               </span>,
               <span key="d">
-                <b>Fatos por sessão = o seu Bônus de Rank</b> naquela árvore. No Principiante é 1; no
+                <b>Fatos livres por sessão = o seu Bônus de Rank</b> naquela árvore (as Preparações do menu não
+                contam: o PP já as limita). No Principiante é 1; no
                 Imperador, 6. Sem isto, um Bardo com 15 PP encadeia quinze reescritas do mundo na mesma cena, e
                 a mesa para de jogar a cena pra assistir a ficha dele. O limite é por sessão, não por cena:
                 guardar o fato pro momento certo é metade da graça.
@@ -637,6 +650,41 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             logística (tabela das Faixas, logo abaixo). <b>Escopo</b> é até onde ele alcança: o da Maestria
             mais alta da árvore cujo Domínio o fato usa. Escopos não se somam entre árvores — um Ladino
             Imperador com Bardo Principiante declara fatos sobre pessoas com o Escopo do Bardo.
+          </P>
+        </Aside>
+
+        <SubTitle id="cap3-preparacoes">O menu de Preparações</SubTitle>
+        <P>
+          Toda Preparação obedece ao Domínio da árvore e ao Escopo da sua Maestria mais alta nela, e só se
+          declara antes de o fato ter sido mostrado na mesa — a primeira trava vale pra elas também. O
+          patamar ao lado do nome é quando ela entra no menu.
+        </P>
+        {[
+          ["furtividade-e-armadilhas", "Ladino — coisas e lugares"],
+          ["bardo-e-interacao", "Bardo — pessoas e reputação"],
+          ["navegacao-e-lideranca", "Tático — tempo e logística"],
+        ].map(([id, titulo]) => (
+          <BookTable
+            key={id}
+            headers={[titulo, "PP", "Efeito"]}
+            rows={PREPARACOES[id].map((p) => [
+              p.desde === "Principiante" ? p.nome : `${p.nome} (${p.desde})`,
+              String(p.pp),
+              p.efeito,
+            ])}
+          />
+        ))}
+        <Aside title="Exemplo jogado — a noite no armazém">
+          <P>
+            O grupo precisa entrar num armazém da guilda rival. A Ladina (Intermediária) gasta{" "}
+            <b>1 PP em Vigia Fora do Posto</b>: o guarda do portão foi beber. Gasta mais <b>1 PP em
+            Fechadura Limada</b> na porta dos fundos. Nenhuma discussão: está escrito.
+          </P>
+          <P>
+            Lá dentro, ela quer que o livro-caixa do rival esteja na mesa, e não no cofre. Isso não está no
+            menu: é um <b>fato livre</b>. Cabe no Domínio (coisas e lugares) e no Escopo (um edifício), e o
+            Mestre avisa antes: &ldquo;esse resolve a cena, custa 2 PP&rdquo;. Ela paga. O livro está lá — e
+            o Mestre anexa a complicação: o contador do rival dorme no canto da sala.
           </P>
         </Aside>
 
@@ -691,7 +739,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           headers={["Turno", "Ladino", "Bardo", "Tático"]}
           rows={[
             ["Antes", "Já sabotou o ambiente.", "Já sabe o que cada um quer.", "Já escolheu o terreno."],
-            ["1º", "Primeiro Golpe — seu pico de dano do combate inteiro.", "Canção de Guerra — e ela dura o resto da luta de graça.", "Primeiro a Ver — o grupo age antes e na ordem que você quis."],
+            ["1º", "Primeiro Golpe — seu pico de dano do combate inteiro.", "Uma canção: Guerra pro grupo acertar, ou Dissonância pro inimigo sangrar. Trocar custa 1 Ação.", "Primeiro a Ver — o grupo age antes e na ordem que você quis."],
             ["2º", "Ponto Cego — derruba a viga, tranca os reforços.", "Insulto que Fica — puxa o inimigo mais perigoso para longe do mago.", "Manobra — reposiciona três aliados sem gastar as Ações deles."],
             ["3º", "Veneno, roubo do item-chave, Dano Furtivo.", "Coro — pavor, fúria ou devoção em 18 metros.", "Avante — Ação extra para o grupo inteiro."],
             ["4º", "Passo Vazio e reposicionamento.", "Sustenta, inspira, mantém todos de pé.", "Foco de Fogo e leitura da ordem de Iniciativa."],

@@ -90,6 +90,7 @@ export const SUMARIO_DO_LIVRO: TocEntry[] = [
       { id: "cap3-preparacao", label: "— 3. O Tiro Perfeito" },
       { id: "cap3-triangulo", label: "— 4. Triângulo dos Estilos" },
       { id: "cap3-utilidade", label: "Árvore de Utilidade" },
+      { id: "cap3-preparacoes", label: "— O menu de Preparações" },
       { id: "cap3-todas", label: "Todas as Sub-árvores" },
     ],
   },

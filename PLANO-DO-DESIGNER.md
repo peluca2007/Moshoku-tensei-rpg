@@ -239,7 +239,9 @@ na lista. **Portão:** uma segunda sessão de mesa, com o mesmo kit da Etapa 1, 
 **Limite conhecido do motor** (não esconder): ele não vê Invocação, Bardo, Tático, Barreira nem o valor
 das condições. Essas cinco se julgam na mesa.
 
-### Etapa 5 — As três Utilidades: menu de Preparações + canções · G
+### Etapa 5 — As três Utilidades: menu de Preparações + canções · G · ✅ feito (0.1.109)
+
+> Feito em 2026-09-27: 7 Preparações por árvore (`src/data/preparacoes.ts`, impressas no Cap. 3 com exemplo jogado), o fato livre ficou como "outra coisa, com o Mestre", e as canções do Bardo (uma ativa, trocar custa 1 Ação). Nenhum talento saiu (evita migração); os dois mais vagos ganharam número. O teto do Tático segue o do Cap. 4, §5. Bardo e Tático continuam fora do simulador — o livro diz que se medem na mesa.
 
 **Já decidida** (★ do `PLANO-DE-REWORK.md`, §4). Hoje: 17 páginas, fato livre com quatro travas.
 
