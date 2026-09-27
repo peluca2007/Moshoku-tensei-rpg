@@ -585,6 +585,85 @@
   }
 }
 
+/* No papel estreito do /livro, a moldura e as margens antigas deixavam só
+ * ~210 px para o laboratório. Os controles também ficavam entre 30 e 35 px,
+ * pequenos para uma mesa que opera a interface com o polegar. */
+@media (max-width: 639px) {
+  :global(.livro-pagina) .grimorio {
+    border-width: 4px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45), 4px 4px 0 color-mix(in srgb, var(--acento) 35%, transparent);
+  }
+
+  :global(.livro-pagina) .pagina {
+    padding: 1rem 0.85rem 1.1rem;
+  }
+
+  :global(.livro-pagina) .cabeca h4 {
+    font-size: 1.65rem;
+  }
+
+  :global(.livro-pagina) .nota,
+  :global(.livro-pagina) .desafio,
+  :global(.livro-pagina) .origem,
+  :global(.livro-pagina) .carta strong,
+  :global(.livro-pagina) .campos select,
+  :global(.livro-pagina) .lousa table,
+  :global(.livro-pagina) .cartaLinha,
+  :global(.livro-pagina) .cartaLeitura,
+  :global(.livro-pagina) .ficha,
+  :global(.livro-pagina) .naoSai ul {
+    font-size: 0.875rem;
+  }
+
+  :global(.livro-pagina) .selo,
+  :global(.livro-pagina) .fitaRotulo,
+  :global(.livro-pagina) .carta small,
+  :global(.livro-pagina) .campos label,
+  :global(.livro-pagina) .lousaTitulo,
+  :global(.livro-pagina) .lousaTetos,
+  :global(.livro-pagina) .cartaFormas small {
+    font-size: 0.8125rem;
+  }
+
+  :global(.livro-pagina) .cartaMeta,
+  :global(.livro-pagina) .cartaFormas span {
+    font-size: 0.875rem;
+  }
+
+  :global(.livro-pagina) .fita button,
+  :global(.livro-pagina) .circuloTopo button,
+  :global(.livro-pagina) .camadas button,
+  :global(.livro-pagina) .campos select {
+    min-height: 40px;
+  }
+
+  :global(.livro-pagina) .fita button,
+  :global(.livro-pagina) .circuloTopo button,
+  :global(.livro-pagina) .camadas button {
+    padding-inline: 0.7rem;
+    font-size: 0.875rem;
+  }
+
+  :global(.livro-pagina) .campos .marca {
+    min-height: 40px;
+  }
+
+  :global(.livro-pagina) .campos .marca input {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  :global(.livro-pagina) .lousa {
+    margin-inline: 4px;
+    padding-inline: 0.65rem;
+  }
+
+  :global(.livro-pagina) .cartaPronta,
+  :global(.livro-pagina) .naoSai {
+    padding-inline: 0.75rem;
+  }
+}
+
 /* ── Sem rolar (2026-09-26) ──────────────────────────────────────────────
  * Pedido do autor: "não acho legal ter que scrollar". No computador o
  * grimório inteiro cabe na tela: as peças viram fileiras de fichas

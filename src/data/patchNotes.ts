@@ -56,6 +56,7 @@ export const PATCH_NOTES: PatchNote[] = [
         items: [
           "O Cap. 2, §8 virou uma aula em três lições (era cinco): a frase, a conta, preparar e armar — com três tabelas geradas do mesmo motor que o Laboratório e as cartas usam. O Laboratório foi refeito pra frase de três palavras.",
           "A árvore caiu de 12 pra 10 páginas no folheado, e o livro de 283 pra 280. A Teórica entrou na régua do Apêndice C.",
+          "No celular, as tabelas do livro agora viram fichas empilhadas que cabem na tela; sumário, cartas, diagramas e Laboratório ganharam texto e alvos de toque mais confortáveis.",
         ],
       },
     ],

@@ -57,16 +57,16 @@ export default function BookShell({ toc, children }: { toc: TocEntry[]; children
       */}
       <details
         ref={mobileToc}
-        className="livro-cabecalho-corrente print-hide sticky top-[var(--altura-nav)] z-30 mb-6 rounded-xl border border-parchment-300 bg-parchment-100/95 shadow-sm backdrop-blur-sm lg:hidden dark:border-parchment-800 dark:bg-parchment-900/95"
+        className="livro-cabecalho-corrente print-hide sticky top-[var(--altura-nav)] z-30 mb-4 rounded-xl border border-parchment-300 bg-parchment-100/95 shadow-sm backdrop-blur-sm sm:mb-6 lg:hidden dark:border-parchment-800 dark:bg-parchment-900/95"
       >
-        <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-left">
+        <summary className="flex min-h-10 cursor-pointer list-none items-center gap-2 px-3 py-2.5 text-left">
           <BookOpen className="h-4 w-4 shrink-0 text-gold-600 dark:text-gold-400" aria-hidden />
           <span className="min-w-0 flex-1">
-            <span className="block truncate font-display text-xs font-bold text-parchment-800 dark:text-parchment-200">
+            <span className="block truncate font-display text-sm font-bold text-parchment-800 dark:text-parchment-200">
               {capitulo?.label ?? "Sumário"}
             </span>
             {secao && (
-              <span className="block truncate text-2xs text-parchment-600 dark:text-parchment-400">
+              <span className="block truncate text-xs text-parchment-600 dark:text-parchment-400">
                 {secao.label}
               </span>
             )}
