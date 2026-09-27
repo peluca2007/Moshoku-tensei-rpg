@@ -10,7 +10,6 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 | Arquivo | O que mostra | Onde pode entrar |
 | --- | --- | --- |
 | `orsted-esboco-deitado.webp` | Esboço de fã do Orsted, meio corpo, em faixa deitada (foi a arte da Raça Dragão de 2026-09-26 a 2026-09-27; o autor achou fraca). | Só se nada melhor aparecer. |
-| `orsted-de-pe.webp` | Orsted em pé, de casaco branco, em faixa estreita e alta. | Vinheta vertical do Apêndice G. |
 | `orsted-e-nanahoshi.webp` | Orsted e Nanahoshi lado a lado. | Magia Teórica (a Nanahoshi é quem estuda os círculos). |
 | `hitogami.webp` | Uma figura branca de rosto em mosaico, com um véu de cores atrás: o Deus Humano. | O Rank Deus, ou uma página sobre o Mestre e o destino. |
 | `atofe-de-armadura.webp` | Atofe de chifre e armadura negra, em desenho quase monocromático. | Demônio Imortal (segunda arte), bestiário. |
@@ -40,7 +39,7 @@ Cada imagem foi aberta e olhada antes de ganhar nome. O nome diz o que está na 
 | `ruijerd-retrato.webp` | Ruijerd em pé, retrato (era a Raça Superd). | Vinheta da Raça Superd. |
 | `ghislaine-recorte.recorte.webp` | Ghislaine sem fundo (era o retrato do Deus da Espada). | Raça Fera. |
 | `deus-da-agua-sorrindo.webp` | Uma espadachim de cabelo azul sorrindo junto à janela (era a prancha do Triângulo). | Árvore do Deus da Água, ou antecedente. |
-| `auber-deus-do-norte.webp` | O Deus do Norte de poncho listrado, outra cena (640 px). | Vinheta do Deus do Norte. |
+| `aura-de-comando-norte-antiga.webp` | Espadachim num salão, captura de apenas 192 px que borrava ampliada. | Só como miniatura; era a Aura de Comando do Deus do Norte. |
 | `hobbits-folha-de-modelo.webp` | Quatro hobbits lado a lado, folha de modelo (250 px: bem pequena). | Só miniatura. |
 | `cavaleiro-meme-animado.webp` | Um cavaleiro de chapéu, animado, pequeno (era a arte da Cavalgada). | Meme da Cavalaria, se couber em algum canto. |
 | `fim-da-cancao-meme-animado.webp` | Cena animada de palco, pequena (era O Fim da Canção). | Meme do Bardo. |
@@ -56,16 +55,11 @@ outros ficam aqui, pra abrir árvores de página inteira (a ideia da próxima ro
 
 | Arquivo | O que mostra | Onde pode entrar |
 | --- | --- | --- |
-| `nami-navegadora.webp` | Navegadora ruiva de biquíni, em pé (alta resolução). | Página inteira de abertura de Navegação e Liderança. |
 | `estrategista-de-capa.webp` | Estrategista de cabelo escuro e capa, céu de nuvens. | Navegação e Liderança (o Tático). |
-| `esqueleto-musico-bardo.webp` | Esqueleto músico de cartola em fogo verde. | Página inteira do Bardo. |
-| `curandeira-no-campo-de-flores.webp` | Moça loira de vestido branco num campo de flores. | Magia de Cura. |
-| `mago-de-fogo-em-pe.webp` | Rapaz com chamas em espiral (alta resolução, em pé). | Magia de Fogo (abertura). |
+| `punho-de-fogo-final-antiga.webp` | Homem de uniforme vermelho envolto em fogo, numa captura larga com letterbox quando usada em página vertical. | Só como faixa; era o fecho do Punho do Fogo. |
 | `lutador-de-fogo-larga.webp` | Lutador entre chamas, larga (1920 px). | Punho do Fogo (troca da prancha, se o autor quiser). |
 | `punho-de-fogo-velho-larga.webp` | Velho musculoso de braço em chamas, larga. | Punho do Fogo. |
-| `punho-de-fogo-ruiva.webp` | Lutadora ruiva com leão de fogo. | Punho do Fogo. |
 | `punho-de-fogo-bombeiro.webp` | Bombeiro de pés em chamas (pequena). | Punho do Fogo, arte de habilidade. |
-| `espadachim-lamina-vermelha-larga.webp` | Espadachim de lâmina vermelha com água, larga (1920 px). | Deus do Norte. |
 | `arqueira-na-floresta.webp` | Arqueira de arco puxado na mata (pequena). | Arquearia. |
 | `espadachim-com-espirito.webp` | Espadachim com um espírito enorme atrás (pequena). | Espíritos e Feras. |
 | `lutador-chute.webp` | Lutador de faixa no meio de um chute (pequena). | Lutador. |
