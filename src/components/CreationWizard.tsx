@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, Plus, Sparkles, Check, Sprout } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
+import { useCriarFichaAoAbrir } from "@/store/useCriarFichaAoAbrir";
 import { RACES, getRaceById } from "@/data/races";
 import RaceCrest from "./RaceCrest";
 import { BACKGROUNDS, SUBTABLES, getBackgroundById, getSubtableEntryById } from "@/data/backgrounds";
@@ -31,16 +32,19 @@ function attributeBudget(base: Record<AttributeKey, number>) {
 
 export default function CreationWizard() {
   const router = useRouter();
-  const startedCreation = useRef(false);
 
-  useEffect(() => {
-    if (startedCreation.current) return;
-    startedCreation.current = true;
-    useCharacterStore.getState().createCharacter();
-  }, []);
+  useCriarFichaAoAbrir();
 
   const character = useActiveCharacter();
   const [step, setStep] = useState(0);
+
+  // O nome nasce "Novo Personagem", e a ficha nova só existe depois do foco
+  // automático: seleciona o nome quando ela chega, pra quem digita trocar o
+  // nome em vez de colar no fim dele.
+  const campoDoNome = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (step === 0) campoDoNome.current?.select();
+  }, [character.id, step]);
 
   const race = getRaceById(character.raceId);
   const background = getBackgroundById(character.backgroundId);
@@ -107,7 +111,9 @@ export default function CreationWizard() {
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Qual é o nome do seu personagem?</h2>
             <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Pode trocar depois, a qualquer momento, na ficha.</p>
             <input
+              ref={campoDoNome}
               autoFocus
+              onFocus={(e) => e.target.select()}
               value={character.name}
               onChange={(e) => useCharacterStore.getState().setName(e.target.value)}
               placeholder="Nome do personagem"

@@ -16,6 +16,61 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.115",
+    date: "2026-09-27",
+    title: "Um livro só, e o site com a cara dele",
+    sections: [
+      {
+        heading: "O livro de rolar",
+        items: [
+          "O /livro agora é o mesmo livro do folhear, com os dois jeitos de ler: Livro (páginas, no computador) e Contínuo (rolando, o padrão no celular). A página antiga, no pergaminho, saiu.",
+          "O Contínuo ganhou a identidade do livro: títulos gritados, a cor de cada capítulo e de cada árvore, caixas carimbadas, tabelas e cartas iguais às das páginas. O papel segue o tema do site (claro ou escuro).",
+          "O Contínuo abria em branco depois de passar pelo modo Livro: o texto ia parar fora da tela. Corrigido.",
+        ],
+      },
+      {
+        heading: "Os temas do site",
+        items: [
+          "Os títulos de página e de seção saem na letra gritada do livro, com o traço de marca-texto na cor da seção (Ficha azul, Árvores verde, Loja amarela…). Antes a cor já era a do livro, mas a letra continuava a do pergaminho.",
+          "A arte dos cabeçalhos aparece com a cor dela, à direita, em vez de uma névoa sépia por cima de tudo; o fio de luz dos cartões elevados trocou o dourado pela cor da seção.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.114",
+    date: "2026-09-27",
+    title: "Revisão da ficha antes da sessão",
+    sections: [
+      {
+        heading: "Criar personagem não apaga mais as outras fichas",
+        items: [
+          "Abrir a criação (guia, roleta ou entrevista) direto pelo endereço — link, F5, atalho do celular — criava a ficha nova antes de o navegador carregar as salvas, e gravava por cima delas: todas as fichas anteriores sumiam. Pelo menu não acontecia. Agora a criação espera as fichas carregarem.",
+          "Na criação guiada, o nome 'Novo Personagem' já vem selecionado: digitar troca o nome, em vez de colar no fim dele.",
+        ],
+      },
+      {
+        heading: "A CA do Deus da Espada",
+        items: [
+          "A doutrina do Estilo Deus da Espada (CA base −2, Cap. 3) estava no livro e não na ficha: quem seguia a árvore via a CA 2 pontos acima do certo. A ficha, o simulador e o Painel do Mestre agora cobram.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.113",
+    date: "2026-09-27",
+    title: "O Dragão não se transforma",
+    sections: [
+      {
+        heading: "Aura do Deus-Dragão",
+        items: [
+          "O despertar de Santo do Dragão deixou de ser a Forma do Dragão: como as asas, a transformação não existe na obra — Orsted, Laplace e Perugius têm corpo de gente. Agora é a Aura do Deus-Dragão: ao soltar, cada inimigo a até 9 metros resiste com Espírito ou fica Amedrontado. O resto é igual (PV Temporários, resistência física, garras um degrau acima, um Sopro a mais, Exaustão no fim). Sai o 'fica Grande' e o alcance extra. Quem já tinha comprado fica com a Aura.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.112",
     date: "2026-09-27",
     title: "A ficha cobra o Antecedente, e a régua do Apêndice C conferida",

@@ -574,12 +574,18 @@ export const RACES: Race[] = [
         description: "O Sopro Dracônico passa a duas vezes por Descanso Curto.",
       },
       {
+        // 2026-09-27 — era a "Forma do Dragão" (fica Grande, alcance +1,5 m).
+        // Pelo mesmo motivo das asas, saiu: na obra a Raça Dragão não vira
+        // dragão; o que pesa é a presença (a maldição do Orsted, que faz todo
+        // mundo temer e odiar). O pacote de números é o mesmo; o alcance virou
+        // o medo na hora de soltar a aura. O id fica, pra ficha antiga não
+        // perder a compra.
         id: "dragao-forma-do-dragao",
-        name: "Forma do Dragão",
+        name: "Aura do Deus-Dragão",
         paCost: 5,
         patamarMinimo: "Santo",
         description:
-          "Uma vez por Descanso Longo, gastando 2 Ações, você assume a forma do dragão por 1 minuto: fica Grande (alcance corpo a corpo +1,5 metro), ganha PV Temporários iguais a 5 × seu Maior Bônus de Rank e Resistência a dano cortante e perfurante mundano, as Garras e Presas sobem um degrau na Escada de Dados, e você pode usar o Sopro uma vez a mais durante a forma. Ao voltar, você ganha 1 nível de Exaustão — o corpo de gente não foi feito pra caber um deus.",
+          "Uma vez por Descanso Longo, gastando 2 Ações, você solta o sangue que o corpo de gente segura, por 1 minuto. Ao soltar, cada inimigo a até 9 metros faz um teste de resistência de Espírito contra CD 8 + Vigor + Maior Bônus de Rank ou fica Amedrontado por você. Enquanto dura, você tem PV Temporários iguais a 5 × seu Maior Bônus de Rank e Resistência a dano cortante e perfurante mundano, as Garras e Presas sobem um degrau na Escada de Dados, e você pode usar o Sopro uma vez a mais. Quando acaba, você ganha 1 nível de Exaustão — o corpo de gente não foi feito pra segurar um deus.",
       },
     ],
     traits: [
