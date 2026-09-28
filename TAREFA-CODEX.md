@@ -299,3 +299,84 @@ scripts `medir-*`/`check-*`.
 ### Pendências pro Claude
 
 (vazio)
+
+---
+
+## Tarefa 6 — o simulador enxerga o Tático, o Bardo e os invocados (2026-09-27)
+
+**Prioridade: depois da Tarefa 5.** É a peça que falta pra balancear o sistema inteiro pelo simulador
+(ideia do autor). O Claude está, ao mesmo tempo, mudando o ritmo de PA do livro, o montador de fichas
+do `scripts/balancear.mts` e recalibrando os moldes de criatura — fique fora dos arquivos dele (lista
+no fim).
+
+### O problema, medido
+
+`npm run balancear` põe cada uma das 19 árvores no 4º lugar de um grupo (Norte, Fogo, Cura) contra os
+encontros do Apêndice G. **Navegação e Liderança (o Tático), Bardo e Interação e Espíritos e Feras
+saem com números IDÊNTICOS em todos os patamares** (ex.: 1º patamar 54% de vitória, contribuição 14;
+6º patamar contribuição 2): o personagem não faz nada além de apanhar. O próprio motor confessa, em
+`src/lib/combatSim.ts` (as notas de limitação perto da linha 2310): "o motor não tem NENHUMA
+habilidade que DÊ Ação ou bônus a outro personagem", e o Tático "é a árvore mais invisível do livro
+aqui". Enquanto for assim, o balanceador não julga essas três árvores e a recalibração dos encontros
+fica torta (o kit de mesa, que tem um Tático, foi usado pra calibrar — contra um grupo de três).
+
+### O que fazer
+
+Ensine o motor as habilidades de COMBATE das três árvores, pelo texto do livro (a regra é a do livro;
+o motor obedece). Em ordem de impacto:
+
+1. **Tático** (`src/data/trees/` — Navegação e Liderança):
+   - a **Ordem de Tiro / Apontado** (condição no glossário, `src/data/condicoes.ts`): apontar, o +1d6
+     por patamar no primeiro acerto, o acúmulo até o dobro;
+   - **Voz que Corrige** (repete o ataque que errou o Apontado), **Antecipação** (aliado usa 1 Ação
+     como reação, 1×/combate), **Foco de Fogo** (+BR no dano de quem ataca o apontado), **Prever o
+     Golpe** (+4 CA retroativo), **Avante** (+1 Ação pra todos, 1×/combate), **A Batalha que Você
+     Escolheu**, **Voz de Sargento**, **Sem Baixas**;
+   - e, junto, os **tetos do Cap. 4, §5** que hoje não são honrados porque nada os alcançava:
+     **4 Ações próprias + 2 concedidas por turno** e **+6 de bônus vindos de aliados**.
+2. **Bardo**: as canções (Guerra, Réquiem e as outras — só uma por vez, a não ser com A Canção Não Para),
+   o Insulto e o que mais o livro der de efeito em combate.
+3. **Invocação**: `combatSummons.ts` e `prepararInvocados` existem, mas o personagem de Espíritos e
+   Feras montado pelo balanceador sai sem nenhum invocado em campo. Descubra por quê (o
+   `invocadosPreparados` do cenário vem vazio? o pacto comprado não entra em `pactosDeCombate`?) e faça
+   o invocado entrar quando a ficha tem o pacto, sem precisar de seleção manual.
+4. **A arma de quem é de Utilidade**: o Tático e o Bardo montados atacam com a "arma de referência
+   (d6)" e Força 0. Confira no livro com que atributo eles atacam e conserte o que for do motor.
+
+A IA precisa USAR isso com bom senso: apontar antes de o grupo atacar, gastar o Avante no turno em
+que ele rende mais, cantar antes da primeira troca. Simples serve; nulo não serve.
+
+### Regras
+
+- **Nada fora do livro:** se o texto de uma habilidade for ambíguo, modele a leitura mais simples e
+  anote a dúvida em "Pendências pro Claude" — não invente regra e não mude texto de regra.
+- Cada comportamento novo com teste em vitest (como os de `combatTrace.test.ts` /
+  `encounterSim.test.ts`).
+- Atualize as notas de limitação do motor (o que agora é modelado sai de lá; o que continua fora,
+  fica dito).
+
+### Arquivos
+
+Pode mexer: `src/lib/combatSim.ts`, `src/lib/combatSummons.ts`, `src/lib/combatReactions.ts`,
+`src/lib/combatScenario.ts`, `src/lib/encounterSim.ts` (o lado do grupo), os testes deles.
+
+**Não mexa** (do Claude agora): `src/data/bestiary.ts` e os moldes, `src/data/trees/**`,
+`scripts/balancear.mts`, `scripts/medir-*.mts`, `src/components/book/**` (texto do livro),
+`src/data/patchNotes.ts` só na sua própria entrada.
+
+### Como conferir e subir
+
+- `npm run balancear` antes e depois (cole as linhas das três árvores no relatório). O esperado:
+  as três deixam de sair idênticas e de contribuir ~0.
+- `npx tsc --noEmit -p .`, `npx vitest run`, `npx eslint src scripts`, `npm run check:progressao`,
+  `npm run check:sobrevivencia` (não pode quebrar), `npm run kit:mesa` (a Capitã Vela passa a pesar).
+- Commits pequenos direto na `main`, em português; nota curta em `src/data/patchNotes.ts`.
+
+### Entrega
+
+`RELATORIO-CODEX-SIMULADOR.md`: o que o motor passou a fazer (por habilidade), o que ficou de fora e
+por quê, e o antes/depois do `balancear` e do `kit:mesa`.
+
+### Pendências pro Claude
+
+(vazio)
