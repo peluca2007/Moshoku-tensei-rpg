@@ -39,15 +39,39 @@ const PRINCIPAL = [4, 4, 5, 6, 7, 8];
 const SEMENTE = 20260927;
 const MD = process.argv.includes("--md");
 
-/** O que o motor não enxerga (ou enxerga pela metade) em cada árvore. */
+/**
+ * O que o motor ainda não enxerga (ou enxerga pela metade) em cada árvore —
+ * depois da Tarefa 6 do Codex (RELATORIO-CODEX-SIMULADOR.md, 2026-09-28).
+ */
 const CEGOS: Record<string, string> = {
-  "navegacao-e-lideranca": "Tático: as Ações concedidas e o posicionamento só em parte",
-  "bardo-e-interacao": "canções e social",
+  "navegacao-e-lideranca": "Ponto de Estrangulamento, Manobra e Emboscada (mapa e preparo)",
+  "bardo-e-interacao": "Marcha, Réquiem e as canções de efeito narrativo",
+  invocacao: "ordens e poderes narrativos dos Pactos",
   "furtividade-e-armadilhas": "armadilha preparada, emboscada e furtividade",
   desintoxicacao: "a Dose montada em dois turnos",
-  invocacao: "os invocados",
   teorica: "fórmulas montadas na hora (o motor usa as fixas)",
 };
+
+/*
+ * O QUE COMPRAR (2026-09-28). Era "a assinatura e os primeiros da lista", e em
+ * metade das árvores de Utilidade isso é exploração (Mapa Vivo, Suprimento,
+ * Sinais) — e na Invocação eram três talentos preparatórios e nenhum Pacto até
+ * o 3º patamar. O personagem que vai pra luta compra o que luta: pontua cada
+ * item pelo texto e fica com os quatro melhores do patamar que a ficha aceita.
+ */
+type Item = { id: string; name: string; description?: string; effect?: string; signature?: boolean };
+function pesoDeCombate(item: Item, kind: "ability" | "talent"): number {
+  const t = `${item.name} ${item.description ?? ""} ${item.effect ?? ""}`;
+  let p = 0;
+  if (item.signature) p += 10;
+  if (/\d+d\d+/.test(t)) p += 4;
+  if (/^Pacto:/.test(item.name)) p += 4;
+  if (/Não (ataca|luta)/.test(t)) p -= 6;
+  if (/dano|ataque|acerto|Ação|Ações|aliad|Apontad|[Cc]anção|CA|Vantagem|Reação|Resistência|invocad/.test(t)) p += 2;
+  if (/viag|mapa|PO|dias|região|mercad|Descanso Longo|uma hora|Ofício|ritual|contato|negoci/i.test(t)) p -= 2;
+  if (kind === "ability") p += 1;
+  return p;
+}
 
 const ATRIBUTO: Record<string, AttributeKey> = {
   Força: "forca",
@@ -75,12 +99,15 @@ function montar(treeId: string, patamar: number, nome: string): CharacterData {
     useCharacterStore.getState().unlockRank(treeId, rank);
     const def = arvore.ranks.find((r) => r.rank === rank);
     if (!def) continue;
-    const tecnicas = [...def.abilities.filter((a) => a.signature), ...def.abilities.filter((a) => !a.signature)].slice(0, 3);
-    const compras = [
-      ...tecnicas.map((a) => ({ kind: "ability" as const, id: a.id })),
-      ...def.talents.map((t) => ({ kind: "talent" as const, id: t.id })),
-    ].slice(0, 4);
-    for (const c of compras) useCharacterStore.getState().purchaseAbility({ treeId, rank, ...c });
+    const candidatos = [
+      ...def.abilities.map((a) => ({ kind: "ability" as const, id: a.id, peso: pesoDeCombate(a as Item, "ability") })),
+      ...def.talents.map((t) => ({ kind: "talent" as const, id: t.id, peso: pesoDeCombate(t as Item, "talent") })),
+    ].sort((x, y) => y.peso - x.peso);
+    let compradas = 0;
+    for (const c of candidatos) {
+      if (compradas >= 4) break;
+      if (useCharacterStore.getState().purchaseAbility({ treeId, rank, kind: c.kind, id: c.id })) compradas++;
+    }
   }
   const fim = useCharacterStore.getState();
   return fim.characters[fim.activeId!];
