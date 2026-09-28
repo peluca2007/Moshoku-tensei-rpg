@@ -187,6 +187,21 @@ describe("invocações e recompensas", () => {
     expect(prepararInvocados([c], [semInvocado], { [c.id]: [] })).toEqual([]);
     expect(semInvocado.pm).toBe(semInvocado.ficha.pmMax);
   });
+  it("o Avançado mantém 2 Pactos ativos (PACTOS_ATIVOS), não o Bônus de Rank", () => {
+    const c = personagem({ startingTreeId: "invocacao", bonusMp: 80,
+      unlockedRanks: ["Principiante", "Intermediário", "Avançado"].map((rank) => ({ treeId: "invocacao", rank: rank as "Avançado" })),
+      purchasedAbilities: [
+        { treeId: "invocacao", rank: "Principiante", kind: "talent", id: "pacto-cao-de-caca" },
+        { treeId: "invocacao", rank: "Intermediário", kind: "talent", id: "pacto-urso-das-cavernas" },
+        { treeId: "invocacao", rank: "Avançado", kind: "talent", id: "pacto-quimera" },
+      ],
+    });
+    const dono = novoEstado(montarFicha(c));
+    expect(prepararInvocados([c], [dono])).toHaveLength(2);
+    expect(() => prepararInvocados([c], [novoEstado(montarFicha(c))], {
+      [c.id]: ["pacto-cao-de-caca", "pacto-urso-das-cavernas", "pacto-quimera"],
+    })).toThrow("limite");
+  });
   it("recusa pacto não comprado e preparo sem PM", () => {
     const c = invocador(); const dono = novoEstado(montarFicha(c));
     expect(() => prepararInvocados([c], [dono], { [c.id]: ["pacto-grifo"] })).toThrow("indisponível");
