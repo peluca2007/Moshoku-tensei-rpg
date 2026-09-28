@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
 import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } from "./buscaNoLivro";
@@ -208,6 +209,7 @@ export default function Folhear({
 
   const modo = useSyncExternalStore<Modo | null>(assinar, lerModo, () => null);
   const papel = useSyncExternalStore<Papel>(assinar, lerPapel, () => "noite");
+  const { resolvedTheme: temaDoSite } = useTheme();
 
   const [tamanho, setTamanho] = useState<{ w: number; h: number } | null>(null);
   const [zoom, setZoom] = useState(0);
@@ -886,9 +888,11 @@ export default function Folhear({
       ref={raiz}
       className={`folhear livro-shell ${FONTES_DO_LIVRO}`}
       data-modo={modo ?? undefined}
-      // O papel só vale no modo Livro; no contínuo manda o tema do site (senão o
-      // escuro do papel vazaria pro texto do contínuo, que é claro no tema claro).
-      data-papel={modo === "livro" ? papel : undefined}
+      // No modo Livro vale o papel escolhido no livro; no contínuo, o tema do
+      // site (o contínuo é o livro dentro do site, e segue a luz dele). Antes do
+      // modo existir (servidor e hidratação) fica sem papel, senão o servidor
+      // diria "noite", o navegador "dia", e o React não corrige atributo.
+      data-papel={modo === "livro" ? papel : modo === "continuo" ? (temaDoSite === "light" ? "dia" : "noite") : undefined}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
       data-fechado={livro && geo?.porDupla === 2 && dupla === 0 ? "" : undefined}
@@ -1097,7 +1101,7 @@ export default function Folhear({
 
                   <div
                     ref={fluxo}
-                    className={livro ? `folhear-fluxo${fontesProntas ? "" : " folhear-esperando"}` : "folhear-continuo livro-pagina surface"}
+                    className={livro ? `folhear-fluxo${fontesProntas ? "" : " folhear-esperando"}` : "folhear-continuo folhear-fluxo folhear-rolagem livro-pagina"}
                   >
                     {/* O LIVRO FECHADO (2026-09-25, pedido do autor: "pense igual um
                         livro"). A primeira dupla é uma página fantasma à esquerda
