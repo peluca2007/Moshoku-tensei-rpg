@@ -449,9 +449,17 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng, logger?: 
   for (const alvo of ordenarAlvosDaCriatura(alvos, c.fonte.tatica, rng)) {
     if (restante <= 0) break;
     if (!alvo.vivo) continue;
-    const teste = rolarD20ComRegistro(rng);
-    const ca = Math.max(1, alvo.ca - alvo.quebrantado);
-    const acertou = teste.natural !== 1 && (teste.natural === 20 || teste.natural + c.bonusAtaque >= ca);
+    const teste = rolarD20ComRegistro(rng, false, c.desvantagemNoProximoAtaque);
+    c.desvantagemNoProximoAtaque = false;
+    let ca = Math.max(1, alvo.ca - alvo.quebrantado);
+    const total = teste.natural + c.bonusAtaque;
+    const protetor = alvo.preverGolpePor;
+    if (teste.natural !== 1 && teste.natural !== 20 && total >= ca && total < ca + 4 &&
+        protetor?.vivo && consumirReacao(protetor)) {
+      ca += 4;
+      logger?.log(`[${protetor.nome}] usa Prever o Golpe: a CA de ${alvo.nome} sobe em +4 contra o ataque.`);
+    }
+    const acertou = teste.natural !== 1 && (teste.natural === 20 || total >= ca);
     // O teto do golpe é a reserva INTEIRA do alvo, casca incluída (0.1.37):
     // antes era só `alvo.pv`, e com PV Temporários no motor isso deixaria o
     // orçamento transbordar pro próximo alvo enquanto a casca deste ainda
@@ -459,7 +467,7 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng, logger?: 
     const golpe = acertou ? Math.min(restante, alvo.pv + alvo.pvTemp) : 0;
     const evento: EventoAtaque | undefined = logger ? {
       atacante: c.nome, alvo: alvo.nome, acao: "Ataque por orçamento",
-      teste: { ...teste, tipo: "ataque", bonus: c.bonusAtaque, total: teste.natural + c.bonusAtaque, defesa: ca },
+      teste: { ...teste, tipo: "ataque", bonus: c.bonusAtaque, total, defesa: ca },
       acertou, critico: false, parcelas: [], bonusDano: golpe, bruto: golpe, aposModificadores: golpe,
       notas: ["Dano fixo do orçamento da criatura; não há dados de dano cadastrados."],
     } : undefined;
@@ -546,7 +554,8 @@ function resolverAcaoCriatura(
   // Vantagem do Caído.
   const corpoACorpo = /corpo a corpo|toque/i.test(acao.alcance);
   const vantagem = c.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.inconsciente || alvo.cego;
-  const desvantagem = c.preso || c.caido || c.envenenado || !!acao.desvantagemAtaque || (!corpoACorpo && alvo.caido);
+  const desvantagem = c.preso || c.caido || c.envenenado || c.desvantagemNoProximoAtaque || !!acao.desvantagemAtaque || (!corpoACorpo && alvo.caido);
+  c.desvantagemNoProximoAtaque = false;
   const bonusAtaque = acao.bonusAtaque ?? c.bonusAtaque;
   const evento: EventoAtaque | undefined = logger ? {
     atacante: c.nome, alvo: alvo.nome, acao: acao.nome, acertou: true, critico: false,
@@ -570,8 +579,15 @@ function resolverAcaoCriatura(
   if (acao.tipo === "ataque") {
     const teste = rolarD20ComRegistro(rng, vantagem, desvantagem);
     const rolagem = teste.natural;
-    const ca = corpoACorpo ? caDepoisDeAparar(alvo, c, rolagem, rolagem + bonusAtaque, logger) : Math.max(1, alvo.ca - alvo.quebrantado);
-    if (evento) evento.teste = { ...teste, tipo: "ataque", bonus: bonusAtaque, total: rolagem + bonusAtaque, defesa: ca };
+    const total = rolagem + bonusAtaque;
+    let ca = corpoACorpo ? caDepoisDeAparar(alvo, c, rolagem, total, logger) : Math.max(1, alvo.ca - alvo.quebrantado);
+    const protetor = alvo.preverGolpePor;
+    if (rolagem !== 1 && rolagem !== 20 && total >= ca && total < ca + 4 &&
+        protetor?.vivo && consumirReacao(protetor)) {
+      ca += 4;
+      evento?.notas.push(`Prever o Golpe: ${protetor.nome} concede +4 CA retroativo.`);
+    }
+    if (evento) evento.teste = { ...teste, tipo: "ataque", bonus: bonusAtaque, total, defesa: ca };
     // Quebrantado abaixa a CA de quem o carrega, venha o golpe de onde vier.
     // Hoje isto é sempre zero deste lado — as treze citações da condição no
     // livro são de Armas Pesadas, e o Apêndice G não dá a condição a criatura
@@ -1221,6 +1237,11 @@ function prepararCenario(heroes: EstadoPersonagem[], inimigos: EstadoCriatura[],
     inimigo.percepcaoPassiva = percepcaoPassiva(inimigo.fonte.patamar, inimigo.fonte.arquetipo);
     if (cenario?.criaturasUmPv?.includes(inimigo.fonte.id)) inimigo.pv = 1;
   }
+  const tatico = heroes.find((h) => h.vivo && h.ficha.tatico);
+  if (tatico) {
+    // Onde Pisar: o grupo nunca fica Surpreso enquanto o Tático lidera.
+    for (const heroi of heroes) heroi.surpreso = false;
+  }
   // A abertura do Ladino vem da ficha. Um estado inicial explícito continua prevalecendo.
   for (const heroi of heroes) {
     if (!heroi.ficha.rankLadino || heroi.ficha.invocadoDe) continue;
@@ -1229,6 +1250,20 @@ function prepararCenario(heroes: EstadoPersonagem[], inimigos: EstadoCriatura[],
     heroi.escondido = rolagem + heroi.ficha.bonusFurtividade >= defesa;
     logger?.log(`[${heroi.nome}] tenta começar Escondido: ${rolagem} + ${heroi.ficha.bonusFurtividade} contra Percepção ${defesa} — ${heroi.escondido ? "conseguiu" : "falhou"}.`);
   }
+}
+
+function iniciativasDosHerois(heroes: EstadoPersonagem[], rng: Rng) {
+  const primeiro = heroes.find((h) => h.vivo && h.ficha.tatico?.primeiroAVer);
+  const bonus = primeiro?.ficha.tatico?.rank ?? 0;
+  const entradas = heroes.map((h) => ({ tipo: "heroi" as const, h, i: d20(rng) + h.ficha.iniciativa + bonus }));
+  if (primeiro) {
+    const maiorAliado = Math.max(...entradas.map((p) => p.i));
+    const entrada = entradas.find((p) => p.h === primeiro)!;
+    // Primeiro a Ver deixa o Tático escolher o primeiro ALIADO; a IA escolhe a
+    // si mesma para apontar antes dos ataques, sem ultrapassar a iniciativa inimiga.
+    entrada.i = maiorAliado + 0.01;
+  }
+  return entradas;
 }
 
 function replayBatalha(
@@ -1285,7 +1320,7 @@ function replayBatalha(
   prepararPactosDosRivais(inimigos, escala, logger);
   prepararCenario(heroes, inimigos, rng, cenario, logger);
   const ordem = [
-    ...heroes.map((h) => ({ tipo: "heroi" as const, h, i: d20(rng) + h.ficha.iniciativa })),
+    ...iniciativasDosHerois(heroes, rng),
     ...inimigos.map((c) => ({ tipo: "criatura" as const, c, i: d20(rng) + (c.fonte.bonusIniciativa ?? 0) })),
   ].sort((x, y) => y.i - x.i);
 
@@ -1447,7 +1482,7 @@ export function simularEncontro(
     prepararPactosDosRivais(inimigos, escala);
     prepararCenario(heroes, inimigos, rng, opcoes.cenario);
     const ordem = [
-      ...heroes.map((h) => ({ tipo: "heroi" as const, h, i: d20(rng) + h.ficha.iniciativa })),
+      ...iniciativasDosHerois(heroes, rng),
       ...inimigos.map((c) => ({ tipo: "criatura" as const, c, i: d20(rng) + (c.fonte.bonusIniciativa ?? 0) })),
     ].sort((x, y) => y.i - x.i);
 
