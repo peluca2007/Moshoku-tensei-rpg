@@ -6,6 +6,7 @@ describe("o limite de uso escrito no começo da carta", () => {
     expect(limiteDeUso("Uma vez por turno. Truque da escola…")).toBe("turno");
     expect(limiteDeUso("Uma vez por combate: acerta automaticamente…")).toBe("combate");
     expect(limiteDeUso("Uma vez por combate. Acerta automaticamente…")).toBe("combate");
+    expect(limiteDeUso("O golpe melhora. Continua uma vez por turno, como antes.")).toBe("turno");
   });
 
   it("não lê o limite de um efeito secundário no meio da carta", () => {
