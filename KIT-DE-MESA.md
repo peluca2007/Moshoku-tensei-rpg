@@ -56,20 +56,25 @@ Compras: Cura, Estancar, Vigor Emprestado, Prontidão, Bênção Coletiva, Luz A
 O grupo escolta um carregamento de ervas por uma trilha de tábuas sobre o pântano. No meio do
 caminho, uma boca de caverna na margem — e as tábuas somem debaixo de uma teia.
 
-**Encontro principal — Aranha Gigante das Cavernas + 3 Sapos-Lodo Gigantes** (Apêndice G, "As fichas
-das criaturas prontas"). O simulador do `/encontros` mede: **Equilibrado**, 89% de vitória, ~4,5
-rodadas, ~0,8 personagem caído por luta (moldes recalibrados em 2026-09-27, 0.1.118). O simulador
-ainda não enxerga o Tático: na mesa, com a Capitã Vela agindo, a luta tende a ser um pouco mais leve.
+**Encontro principal — Aranha Gigante das Cavernas + 2 Sapos-Lodo Gigantes** (Apêndice G, "As fichas
+das criaturas prontas"). O simulador do `/encontros` mede: 85% de vitória, ~5 rodadas, ~1 personagem
+caído por luta — Difícil por um fio, e o simulador ainda não enxerga o Tático: com a Capitã Vela
+agindo, fica perto de Equilibrado.
+
+> **Por que não o orçamento do livro (quatro criaturas de 2º patamar)?** O Apêndice G mede o encontro
+> contra o personagem que VIVE no patamar (~17 PA no 2º, Cap. 1, §2). Estas fichas têm 9 PA: acabaram
+> de chegar no 2º. Com elas, quatro criaturas do patamar dão Mortal; é pra isso que a mesa conta
+> corpos com o olho no grupo, não na tabela. (Moldes remedidos em 2026-09-27, 0.1.119.)
 
 - A aranha arma a **Teia** antes do combate (Preso, Agilidade CD 13) e ataca de emboscada.
 - Os sapos saem da água: a **Língua Pegajosa** puxa e prende; a **Mordida Babosa** traz a Baba de
   Sapo-Lodo (Cap. 4, §8).
 - O terreno é metade tábua, metade lama (terreno difícil). **Terreno Conhecido** e **Primeiro a
-  Ver** da Capitã Vela têm onde brilhar; a **Explosão** do Ignis tem três sapos pra pegar juntos.
+  Ver** da Capitã Vela têm onde brilhar; a **Explosão** do Ignis tem a aranha e os sapos pra pegar juntos.
 
-**Se sobrar fôlego — Serpente-do-Pântano + Aranha + 2 Sapos.** **Difícil**: 75% de vitória, ~1,3
-personagem caído por luta. É o teste de "a Cura segura o grupo?" — e só entra se a primeira luta
-terminou com folga.
+**Se sobrar fôlego — Serpente-do-Pântano + Aranha.** **Equilibrado**: 96% de vitória, ~0,4 personagem
+caído por luta — mas o grupo chega nela gasto da primeira. É o teste de "a Cura segura o grupo?", e
+só entra se a primeira luta terminou com folga.
 
 ---
 
