@@ -30,6 +30,7 @@
  */
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { TREES, getTreeById } from "@/data/trees";
+import { getStartingKit } from "@/data/startingKits";
 import { criaturaDoMolde, simularEncontro, type ResultadoEncontro } from "@/lib/encounterSim";
 import { RANKS, type AttributeKey, type CharacterData } from "@/lib/types";
 
@@ -104,6 +105,18 @@ function montar(treeId: string, patamar: number, nome: string): CharacterData {
     s.setAttribute("espirito", Math.max(0, PRINCIPAL[patamar - 1] - 2));
   }
   s.setStartingTree(treeId);
+  // O kit inicial da árvore, equipado (2026-09-28): sem ele todo mundo lutava
+  // pelado com a arma de referência (d6), e o tanque — cuja Guarda do Corpo
+  // só compensa com CA maior que a do protegido — não protegia ninguém.
+  let temArma = false;
+  for (const item of getStartingKit(arvore.subgroup)?.items ?? []) {
+    if (item.type === "geral") continue;
+    if (item.type === "arma" && temArma) continue;
+    useCharacterStore.getState().addItem({ ...item });
+    const inv = useCharacterStore.getState().characters[useCharacterStore.getState().activeId!].inventory;
+    useCharacterStore.getState().toggleEquipped(inv[inv.length - 1].id);
+    if (item.type === "arma") temArma = true;
+  }
   for (const rank of RANKS.slice(0, patamar)) {
     useCharacterStore.getState().unlockRank(treeId, rank);
     const def = arvore.ranks.find((r) => r.rank === rank);
