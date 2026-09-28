@@ -154,10 +154,10 @@ describe("Apêndice G — os papéis", () => {
     });
   });
 
-  it("chefe tem o triplo do PV e uma vez e meia o dano", () => {
+  it("chefe tem duas vezes e meia o PV e uma vez e meia o dano", () => {
     const molde = MOLDES_CRIATURA[3]; // 4º — Elite
     expect(aplicarPapel(4, "chefe")).toEqual({
-      pv: molde.pv * 3,
+      pv: Math.round(molde.pv * 2.5),
       danoPorTurno: Math.round(molde.danoPorTurno * 1.5),
     });
   });
@@ -533,6 +533,23 @@ describe("criatura com ações declaradas", () => {
     const armada = simularEncontro(grupo, [comAcoes("2d8+3")], base);
     expect(inofensiva.pvRestante).toBeGreaterThan(0.95);
     expect(armada.pvRestante).toBeLessThan(inofensiva.pvRestante - 0.05);
+  });
+
+  it("a criatura-molde golpeia três vezes, um terço do orçamento em cada, e o erro perde o golpe", () => {
+    // 2026-09-27: o orçamento saía inteiro num golpe só, e o erro rolava de
+    // novo contra o próximo da fila até acertar — a CA quase não protegia.
+    const r = simularEncontro(grupo, [{ ...orcamento(30), quantidade: 1 }], { batalhas: 30, semente: 5, gerarLogs: true });
+    const linhas = r.logsExtremos?.[0]?.linhas ?? [];
+    const fim = linhas.findIndex((l) => l.startsWith("--- Rodada 2"));
+    const primeira = linhas.slice(0, fim < 0 ? undefined : fim).filter((l) => l.includes("Ataque por orçamento"));
+    // Três golpes por turno da criatura (o log pode trazer mais de um turno dela).
+    expect(primeira.length).toBeGreaterThanOrEqual(3);
+    expect(primeira.length % 3).toBe(0);
+    for (const l of primeira) {
+      const dano = Number(/perda de PV: ([\d.]+)/.exec(l)?.[1] ?? 0);
+      expect(dano).toBeLessThanOrEqual(10);
+      if (l.includes("errou")) expect(dano).toBe(0);
+    }
   });
 
   it("dano maior nas ações derruba a taxa de vitória", () => {
