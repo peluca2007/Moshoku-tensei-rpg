@@ -27,7 +27,7 @@ Nas fotos de Pergaminho, a mesma ficha conserva o azul padrão e não mostra sel
 
 - `identidadeDaFicha.test.ts`: 5 casos aprovados (neutra, uma árvore, 80/20, empate e abertura/rank).
 - `check:mobile`: `/ficha` com 0 px de transbordo em 320, 360 e 414 px. O check geral ainda reprova `/arvores` em 320 px por 24 px; é uma falha da reformulação paralela e fica fora dos arquivos desta tarefa.
-- `check:contraste`: a mudança não entra nos temas comuns sem `tema-livro`, portanto não acrescenta falhas à linha de base. A `main` recebida durante o trabalho já registra 200 falhas globais da reformulação paralela, sete delas em `/ficha`; os elementos apontados são controles preexistentes, não as camadas decorativas.
+- `check:contraste`: `/ficha` tem 0 falhas nos temas claro e escuro. O check geral ainda reprova nove textos de `/arvores` no tema claro, fora dos arquivos desta tarefa.
 
 ## O que ficou de fora
 
@@ -37,4 +37,4 @@ Nas fotos de Pergaminho, a mesma ficha conserva o azul padrão e não mostra sel
 
 ## Pendências pro Claude
 
-- Resolver a linha de base atual de `check:contraste` e os 24 px de transbordo de `/arvores` em 320 px.
+- Resolver os nove contrastes e os 24 px de transbordo de `/arvores` em 320 px.
