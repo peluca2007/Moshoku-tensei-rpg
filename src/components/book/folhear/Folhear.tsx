@@ -33,6 +33,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { ehNoite } from "@/lib/temas";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
 import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } from "./buscaNoLivro";
@@ -209,7 +210,7 @@ export default function Folhear({
 
   const modo = useSyncExternalStore<Modo | null>(assinar, lerModo, () => null);
   const papel = useSyncExternalStore<Papel>(assinar, lerPapel, () => "noite");
-  const { resolvedTheme: temaDoSite } = useTheme();
+  const { theme: temaDoSite } = useTheme();
 
   const [tamanho, setTamanho] = useState<{ w: number; h: number } | null>(null);
   const [zoom, setZoom] = useState(0);
@@ -892,7 +893,7 @@ export default function Folhear({
       // site (o contínuo é o livro dentro do site, e segue a luz dele). Antes do
       // modo existir (servidor e hidratação) fica sem papel, senão o servidor
       // diria "noite", o navegador "dia", e o React não corrige atributo.
-      data-papel={modo === "livro" ? papel : modo === "continuo" ? (temaDoSite === "light" ? "dia" : "noite") : undefined}
+      data-papel={modo === "livro" ? papel : modo === "continuo" ? (temaDoSite && !ehNoite(temaDoSite) ? "dia" : "noite") : undefined}
       data-pronto={pronto ? "" : undefined}
       data-zoom={zoom > 0 ? "" : undefined}
       data-fechado={livro && geo?.porDupla === 2 && dupla === 0 ? "" : undefined}

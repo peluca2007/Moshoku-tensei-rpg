@@ -5,6 +5,7 @@ import { PATCH_NOTES } from "@/data/patchNotes";
 import SuporteOffline from "@/components/SuporteOffline";
 import ThemeProvider from "@/components/ThemeProvider";
 import { SCRIPT_TAMANHO_INICIAL } from "@/components/FontSizeToggle";
+import { SCRIPT_TEMA_INICIAL } from "@/lib/temas";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { OrnamentDefs } from "@/components/ui/Ornament";
@@ -119,6 +120,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           do próprio código, sem nada vindo de fora.
         */}
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TAMANHO_INICIAL }} />
+        {/* O tema do livro (`tema-livro`) também antes da primeira pintura; e
+            quem tinha "dark"/"light" salvo passa pro Pergaminho (src/lib/temas.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA_INICIAL }} />
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>

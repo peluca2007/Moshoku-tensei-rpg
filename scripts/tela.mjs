@@ -21,7 +21,7 @@
  * Opções:
  *   --largura N     largura da viewport (padrão 1280)
  *   --altura N      altura da viewport (padrão: página inteira)
- *   --tema dark|claro
+ *   --tema dark|claro|pergaminho-noite|pergaminho|livro-noite|livro-dia
  *   --ancora id     rola até o elemento antes de fotografar
  *   --saida arq.png
  */
@@ -45,7 +45,10 @@ const opcao = (nome, padrao) => {
 
 const largura = Number(opcao("largura", 1280));
 const alturaPedida = opcao("altura", null);
-const tema = opcao("tema", "dark") === "claro" ? "light" : "dark";
+// Os quatro temas (src/lib/temas.ts) pelo nome; "claro"/"dark" continuam
+// valendo e caem no Pergaminho, o padrão.
+const temaPedido = opcao("tema", "dark");
+const tema = temaPedido === "claro" ? "pergaminho" : temaPedido === "dark" ? "pergaminho-noite" : temaPedido;
 const ancora = opcao("ancora", null);
 const pasta = ".telas";
 const saida = opcao(
