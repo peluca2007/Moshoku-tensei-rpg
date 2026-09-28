@@ -512,7 +512,7 @@ export default function Appendices() {
             items={[
               "Lacaio: metade do PV e do dano do patamar, e vale meia criatura no Orçamento de Encontro (abaixo). Use em bando.",
               <span key="chefe">
-                <b>Chefe único:</b> o triplo do PV da linha do patamar dele e uma vez e meia o dano — e dê a ele{" "}
+                <b>Chefe único:</b> duas vezes e meia o PV da linha do patamar dele e uma vez e meia o dano — e dê a ele{" "}
                 <b>uma rodada inteira a cada dois personagens</b> do grupo, arredondado pra baixo (grupos de
                 três ou menos não ganham rodada extra). Um grupo de cinco enfrenta um chefe que age duas
                 vezes por rodada.
@@ -585,6 +585,11 @@ export default function Appendices() {
             o Perigo do contrato (Cap. 5, §2) apontar para um encontro mortal.
           </P>
           <P>
+            <b>A conta supõe o grupo que já vive no patamar</b> — o PA da tabela do Cap. 1, §2. Um grupo que
+            acabou de chegar (o 2º patamar com 9 PA, e não 17) pede <b>uma criatura a menos</b> no mesmo
+            nível de dificuldade; no 6º patamar, no auge, apertar um grupo pede <b>uma a mais</b>.
+          </P>
+          <P>
             <b>O que a conta não enxerga:</b> terreno, distância e quem age primeiro. Três arqueiros a 90
             metros num telhado valem o dobro dos mesmos três num corredor. A Iniciativa e o mapa mudam mais o
             resultado que o orçamento — ele é o piso da preparação, não a preparação inteira.
@@ -594,7 +599,7 @@ export default function Appendices() {
         <SubTitle id="apendice-g-chefe">Por que o Chefe pesa quatro</SubTitle>
         <Prancha id="apendice-g-orsted" />
         <P>
-          O chefe bate só uma vez e meia o que uma criatura do patamar dele bate: ele aguenta o triplo e age mais vezes.
+          O chefe bate só uma vez e meia o que uma criatura do patamar dele bate: ele aguenta duas vezes e meia e age mais vezes.
           É a economia de ação, e não o dano por golpe, que o torna perigoso — o chefe que age duas vezes por
           rodada espalha o estrago pelo grupo em vez de apagar um personagem por vez. Isso vale{" "}
           <b>um grupo inteiro</b>: quatro criaturas do patamar dele. Um chefe sozinho contra quatro jogadores
@@ -648,7 +653,7 @@ export default function Appendices() {
           renegada da Água, o colega de dojo que virou inimigo. Nenhum deles é um molde. Monte o rival como
           um personagem, gastando o PA de um personagem do patamar que você quer. Como rival <b>Padrão</b>,
           ele usa os PV, a CA, o ataque, as reservas e as técnicas da ficha. Como <b>Chefe único</b>,
-          começa com o triplo dos PV da ficha e recebe os turnos adicionais da regra de chefe acima;
+          começa com duas vezes e meia os PV da ficha e recebe os turnos adicionais da regra de chefe acima;
           o dano de cada técnica permanece o mesmo.
         </P>
         <List

@@ -16,6 +16,8 @@
  *
  * As criaturas são o molde do patamar (Apêndice G), papel "padrão", sem ações
  * escritas — o encontro que o Mestre monta só com a conta.
+ * Alvo aleatório (2026-09-27): na ordem do grupo, o primeiro da lista
+ * apanhava tudo e o resultado dependia de quem foi escrito primeiro.
  */
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { getTreeById } from "@/data/trees";
@@ -78,12 +80,12 @@ console.log("| --- | " + [1, 2, 3, 4, 5].map(() => "---").join(" | ") + " | --- 
 for (let patamar = 1; patamar <= 6; patamar++) {
   const grupo = GRUPO.map((g) => montar(g, patamar));
   const celulas: string[] = [];
-  const casos = [1, 2, 3, 4, 5].map((n) => ({ ...criaturaDoMolde(patamar, "padrao", "Criatura", `c${patamar}`), quantidade: n }));
+  const casos = [1, 2, 3, 4, 5].map((n) => ({ ...criaturaDoMolde(patamar, "padrao", "Criatura", `c${patamar}`), tatica: "aleatorio" as const, quantidade: n }));
   for (const c of casos) {
     const r = simularEncontro(grupo, [c], { batalhas: BATALHAS });
     celulas.push(`${avaliar(r).titulo} ${(r.vitorias * 100).toFixed(0)}% · ${r.quedasMedia.toFixed(1)}q`);
   }
-  const chefe = { ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), quantidade: 1 };
+  const chefe = { ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), tatica: "aleatorio" as const, quantidade: 1 };
   const rc = simularEncontro(grupo, [chefe], { batalhas: BATALHAS });
   celulas.push(`${avaliar(rc).titulo} ${(rc.vitorias * 100).toFixed(0)}% · ${rc.quedasMedia.toFixed(1)}q`);
   console.log(`| ${patamar}º | ${celulas.join(" | ")} |`);
@@ -95,7 +97,7 @@ if (process.argv.includes("--escala")) {
   console.log("| --- | --- | --- | --- | --- | --- |");
   for (let patamar = 1; patamar <= 6; patamar++) {
     const grupo = GRUPO.map((g) => montar(g, patamar));
-    const base = [{ ...criaturaDoMolde(patamar, "padrao", "Criatura", `c${patamar}`), quantidade: 4 }];
+    const base = [{ ...criaturaDoMolde(patamar, "padrao", "Criatura", `c${patamar}`), tatica: "aleatorio" as const, quantidade: 4 }];
     const aj = ajustarParaEquilibrio((e) => simularEncontro(grupo, aplicarEscalaAoEncontro(base, e), { batalhas: BATALHAS }));
     const m = MOLDES_CRIATURA[patamar - 1];
     console.log(aj ? `| ${patamar}º | ${aj.escala.toFixed(2)} | ${m.pv} → ${Math.round(m.pv * aj.escala)} | ${m.danoPorTurno} → ${Math.round(m.danoPorTurno * aj.escala)} | ${(aj.vitoriaProjetada * 100).toFixed(0)}% | ${aj.quedasProjetadas.toFixed(1)} |` : `| ${patamar}º | — |`);
@@ -108,7 +110,7 @@ if (process.argv.includes("--chefe")) {
   console.log("| --- | --- | --- | --- |");
   for (let patamar = 1; patamar <= 6; patamar++) {
     const grupo = GRUPO.map((g) => montar(g, patamar));
-    const base = [{ ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), quantidade: 1 }];
+    const base = [{ ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), tatica: "aleatorio" as const, quantidade: 1 }];
     const aj = ajustarParaEquilibrio((e) => simularEncontro(grupo, aplicarEscalaAoEncontro(base, e), { batalhas: BATALHAS }));
     console.log(aj ? `| ${patamar}º | ${aj.escala.toFixed(2)} | ${(aj.vitoriaProjetada * 100).toFixed(0)}% | ${aj.quedasProjetadas.toFixed(1)} |` : `| ${patamar}º | — |`);
   }
@@ -120,7 +122,7 @@ if (process.argv.includes("--chefe-pv")) {
     const grupo = GRUPO.map((g) => montar(g, patamar));
     const linha: string[] = [];
     for (const mult of [2, 3, 4, 5, 6]) {
-      const c = { ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), quantidade: 1 };
+      const c = { ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), tatica: "aleatorio" as const, quantidade: 1 };
       c.pv = Math.round((c.pv / 2) * mult);
       const r = simularEncontro(grupo, [c], { batalhas: BATALHAS });
       linha.push(`PV×${mult}: ${avaliar(r).titulo} ${(r.vitorias * 100).toFixed(0)}% ${r.quedasMedia.toFixed(1)}q ${r.rodadasMedia.toFixed(1)}r`);
