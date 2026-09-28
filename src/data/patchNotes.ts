@@ -16,6 +16,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.117",
+    date: "2026-09-27",
+    title: "O ritmo de PA dobra",
+    sections: [
+      {
+        heading: "2 PA por sessão, +2 por marco",
+        items: [
+          "O livro dava 1 PA por sessão e +1 por marco, e prometia 12 PA no 3º patamar e 24 no 5º. Não fechava: só abrir o 5º patamar comprando o mínimo já custa uns 40 PA, e a régua do Apêndice C, os monstros do Apêndice G e o simulador supõem o personagem que vive no patamar — 17 PA no 2º, 30 no 3º, 47 no 4º, 68 no 5º, 90 no 6º (medido nas 19 árvores).",
+          "Agora são 2 PA por sessão e +2 por marco. O 3º patamar chega por volta da 10ª sessão, o 5º por volta da 24ª. O Cap. 1 ganhou a tabela do PA de cada patamar. Nenhum custo de árvore mudou.",
+          "Os dojos continuam pagando o mesmo: o teto deles é o custo de abrir patamar, não o ritmo.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.116",
     date: "2026-09-27",
     title: "Quatro temas",
