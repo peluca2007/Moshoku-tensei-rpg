@@ -28,6 +28,13 @@ Data: 2026-09-28. Linha de base comparável: `9d421d6` (já inclui os moldes de 
 - Sem seleção manual do cenário, prepara automaticamente os Pactos comprados que caibam no limite do Rank e no PM.
 - Uma seleção explícita continua prevalecendo; uma seleção explícita vazia significa não invocar.
 
+### Condições de uso, áreas e cânticos longos
+
+- **Condições de uso:** `Golpe do Desespero` só entra com metade ou menos dos PV e acrescenta 1 nível de Exaustão depois de cada uso; no terceiro nível, os ataques passam a ter Desvantagem. Exigências por estado estruturado do alvo são conferidas. `Requer alvo Agarrado` mantém a aproximação anterior: custa +1 Ação para preparar e presume sucesso.
+- **Auditoria automática:** `npm run check:condicoes-combate` encontrou 23 cartas de dano com frases condicionais: 3 modeladas diretamente, 4 aproximadas de forma declarada e 16 listadas para revisão humana. O comando imprime a frase inteira e o tratamento do motor.
+- **Área sem mapa:** personagem e criatura usam a mesma régua: até 3 m alcança 2 alvos; 6 m, 3; 9 m, 4; acima disso, até 5. “Atinge até N” prevalece. Assim, um cone curto não vale o mesmo que uma esfera de 18 m e nenhum deles acerta automaticamente todos os inimigos.
+- **Cântico longo:** a IA estima a chance de terminar usando Concentração, inimigos vivos, dano esperado até o próximo turno e PV restante. Abaixo de 35% desiste; acima disso desconta o risco do valor esperado. Início, continuação, conclusão e perda por Concentração aparecem no log.
+
 ## `npm run balancear` — antes e depois
 
 Formato das células: `vitória difícil / chefe · contribuição`.
@@ -45,6 +52,19 @@ Invocação permanece igual no 1º e 2º patamares porque o montador atual compr
 
 Os avisos `motor cego` impressos por `scripts/balancear.mts` também são metadados antigos desse arquivo reservado ao Claude; os números acima já vêm do motor novo.
 
+### Estado final sobre os moldes 0.1.119
+
+O Claude tornou o golpe do molde honesto e remediu os monstros enquanto esta tarefa estava em andamento. Para não misturar essa mudança com o antes/depois histórico acima, esta é uma fotografia separada do motor final. Formato: `Difícil/Chefe · contribuição`.
+
+| Patamar | Tático | Bardo | Invocação |
+| --- | --- | --- | --- |
+| 1º | 13/84% · 43 | 7/72% · 14 | 3/65% · 14 |
+| 2º | 24/94% · 73 | 6/80% · 29 | 1/64% · 11 |
+| 3º | 27/44% · 100 | 14/18% · 41 | 35/63% · 66 |
+| 4º | 24/43% · 115 | 7/3% · 52 | 15/24% · 65 |
+| 5º | 95/85% · 273 | 58/3% · 59 | 95/91% · 144 |
+| 6º | 75/43% · 447 | 10/0% · 101 | 65/57% · 254 |
+
 ## `npm run kit:mesa` — Capitã Vela
 
 | Encontro | Antes | Depois |
@@ -58,6 +78,19 @@ Os avisos `motor cego` impressos por `scripts/balancear.mts` também são metada
 
 “Dano da Vela” agora inclui o dano assistido que só ocorreu por Ordem de Tiro ou Ação concedida; não afirma que a lança dela causou tudo.
 
+### Kit atual sobre os moldes 0.1.119
+
+| Encontro | Resultado final |
+| --- | --- |
+| 2 Serpentes | 100%; 3,0 rodadas; 0,10 quedas; Vela 71 |
+| Serpente + Aranha | 100%; 2,9; 0,10; Vela 72 |
+| Serpente + Aranha + 2 Sapos | 67%; 5,5; 1,76; Vela 120 |
+| Aranha + 3 Sapos | 87%; 5,2; 1,02; Vela 125 |
+| 2 Serpentes + Aranha | 89%; 4,5; 0,85; Vela 104 |
+| 2 Serpentes + 2 Aranhas | 31%; 5,1; 3,04; Vela 101 |
+
+O quadro anterior continua no relatório porque é o antes/depois isolado do suporte; este segundo quadro é o resultado atual depois da recalibração paralela dos monstros.
+
 ## O que ficou de fora
 
 - Tático: Ponto de Estrangulamento, Manobra, Doutrina, Emboscada Planejada e A Guerra Antes da Guerra dependem de mapa, preparação ou composição estratégica que o cenário não declara.
@@ -65,8 +98,16 @@ Os avisos `motor cego` impressos por `scripts/balancear.mts` também são metada
 - Pactos: os perfis cobrem PV, CA, deslocamento, resistências, quantidade e golpes. Ordens específicas, ajuda e poderes narrativos próprios continuam fora.
 - Ataques comuns de Tático e Bardo continuam usando o atributo normal da arma, Força ou Agilidade, como o livro determina; não foi trocado por Intelecto/Espírito. A arma de referência só existe quando o montador não equipa uma arma real.
 
+## Verificação
+
+- TypeScript, ESLint e `git diff --check`: sem erros.
+- Vitest: 57 arquivos, 805 testes aprovados.
+- `check:progressao`, `check:sobrevivencia`, `check:condicoes-combate`, `balancear` e `kit:mesa`: concluídos. Os dois primeiros checks de design continuam informativos e não reprovam por contrato.
+
 ## Pendências pro Claude
 
 - Fazer o montador de Espíritos e Feras comprar ao menos um Pacto de combate nos patamares 1 e 2; hoje ele compra três talentos preparatórios e nenhuma criatura.
 - Remover/atualizar as três mensagens `motor cego` de `scripts/balancear.mts` depois de fechar a recalibração paralela.
-- Rever pelo design, não pelo motor: o Tático visível ficou muito forte no 5º–6º patamar (contribuição 175/246), enquanto o Bardo ainda cai contra o Chefe de 6º (9% de vitória). Isso pode ser regra, seleção automática de cartas ou justamente a parcela narrativa do Bardo que o simulador não deve inventar.
+- Rever as 16 cartas que `npm run check:condicoes-combate` marca como `LISTADO`; são condicionais que o motor não deve adivinhar sem decisão de design ou novo estado estruturado.
+- O Golpe do Desespero não é mais usado com vida cheia, mas a régua do Norte ainda mede 50 contra ~34 no 3º e 61 contra ~42 no 4º. A inflação restante vem de outras ações/hipóteses e merece leitura separada; não foi mascarada com nerf no motor.
+- Rever pelo design, não pelo motor: no estado 0.1.119 o Tático chega a contribuição 273/447 no 5º–6º patamar, enquanto o Bardo cai a 3%/0% contra os Chefes. Isso pode ser regra, seleção automática de cartas ou justamente a parcela narrativa do Bardo que o simulador não deve inventar.
