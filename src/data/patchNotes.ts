@@ -29,6 +29,12 @@ export const PATCH_NOTES: PatchNote[] = [
           "Nos temas do Livro a logo perde o dourado e vira tinta de impressão: clara na noite, escura no dia.",
         ],
       },
+      {
+        heading: "A ficha veste suas árvores",
+        items: [
+          "Nos temas Livro, a árvore em que você mais gastou PA passa a dar a cor, o selo e os motivos da ficha. Outras árvores aparecem nas bordas na proporção do investimento; sem PA de árvore, a ficha continua neutra.",
+        ],
+      },
     ],
   },
   {
@@ -49,12 +55,6 @@ export const PATCH_NOTES: PatchNote[] = [
         items: [
           "Os títulos de página e de seção saem na letra gritada do livro, com o traço de marca-texto na cor da seção (Ficha azul, Árvores verde, Loja amarela…). Antes a cor já era a do livro, mas a letra continuava a do pergaminho.",
           "A arte dos cabeçalhos aparece com a cor dela, à direita, em vez de uma névoa sépia por cima de tudo; o fio de luz dos cartões elevados trocou o dourado pela cor da seção.",
-        ],
-      },
-      {
-        heading: "A ficha veste suas árvores",
-        items: [
-          "Nos temas Livro, a árvore em que você mais gastou PA passa a dar a cor, o selo e os motivos da ficha. Outras árvores aparecem nas bordas na proporção do investimento; sem PA de árvore, a ficha continua neutra.",
         ],
       },
     ],

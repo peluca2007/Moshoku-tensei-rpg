@@ -32,10 +32,9 @@ Nas fotos de Pergaminho, a mesma ficha conserva o azul padrão e não mostra sel
 ## O que ficou de fora
 
 - Não foi aplicado caos à impressão: a ficha impressa permanece limpa e econômica em tinta.
-- A classe `tema-livro` ainda não existe na `ThemeProvider` desta revisão da `main`. As fotos de Livro a aplicaram pelo DevTools, exatamente como orientado na tarefa. Quando o trabalho paralelo do Claude publicar o contrato dos quatro temas, o componente passa a aparecer sem outra mudança.
+- O contrato oficial dos quatro temas chegou durante a tarefa e foi mesclado. A rodada final de fotos usa os IDs `pergaminho-noite`, `pergaminho`, `livro-noite` e `livro-dia`; `tema-livro` já é aplicado pela `ThemeProvider`.
 - Não alterei os contrastes ou o transbordo de `/arvores`, pois pertencem aos arquivos reservados ao trabalho paralelo do Claude.
 
 ## Pendências pro Claude
 
-- Garantir que Livro Noite e Livro Dia apliquem `tema-livro` ao `<html>`; sem essa classe, a ficha fica intencionalmente neutra.
 - Resolver a linha de base atual de `check:contraste` e os 24 px de transbordo de `/arvores` em 320 px.
