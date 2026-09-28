@@ -69,6 +69,8 @@ function pesoDeCombate(item: Item, kind: "ability" | "talent"): number {
   if (/Não (ataca|luta)/.test(t)) p -= 6;
   if (/dano|ataque|acerto|Ação|Ações|aliad|Apontad|[Cc]anção|CA|Vantagem|Reação|Resistência|invocad/.test(t)) p += 2;
   if (/viag|mapa|PO|dias|região|mercad|Descanso Longo|uma hora|Ofício|ritual|contato|negoci/i.test(t)) p -= 2;
+  // A reserva da escola (+2 PM e +2 PV por patamar): o mago que luta compra.
+  if (/\+\d+ PM/.test(t)) p += 5;
   if (kind === "ability") p += 1;
   return p;
 }
@@ -94,6 +96,13 @@ function montar(treeId: string, patamar: number, nome: string): CharacterData {
   const principal = atributoDa(treeId);
   s.setAttribute(principal, PRINCIPAL[patamar - 1]);
   if (principal !== "vigor") s.setAttribute("vigor", arvore.category === "corpo" ? 3 : 2);
+  // O elementalista precisa de dois atributos, mira e mana (Cap. 1, §2: "o
+  // elementalista precisa de dois atributos pra chegar no mesmo lugar"). O
+  // PM é Espírito × Bônus de Rank + 8; só com Intelecto, o mago de 6º tinha
+  // 32 PM pra magias de 20–22 — uma por luta. Espírito dois abaixo da mira.
+  if (arvore.category === "magia" && principal === "intelecto" && !process.env.SEM_MANA) {
+    s.setAttribute("espirito", Math.max(0, PRINCIPAL[patamar - 1] - 2));
+  }
   s.setStartingTree(treeId);
   for (const rank of RANKS.slice(0, patamar)) {
     useCharacterStore.getState().unlockRank(treeId, rank);
