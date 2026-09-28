@@ -16,6 +16,36 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.118",
+    date: "2026-09-27",
+    title: "Os monstros recalibrados",
+    sections: [
+      {
+        heading: "O molde de criatura do Apêndice G",
+        items: [
+          "PV e dano por turno das criaturas subiram ~20% (6º patamar ~37%). O molde anterior tinha sido medido contra o kit de mesa, e o simulador não enxerga o Tático: foi calibrado, sem ninguém ver, contra um grupo de três. Do 3º patamar em diante o encontro Difícil do livro virava passeio (~100% de vitória em duas rodadas).",
+          "Remedido com quatro jogadores que o simulador enxerga: 4 criaturas do patamar = Equilibrado (97–99% de vitória), 5 = Difícil (65–69%), um Chefe = Equilibrado (93–98%; no 6º, Difícil). É o que o Apêndice G sempre prometeu.",
+          "As criaturas prontas (Sapo-Lodo, Serpente, Aranha, Wyvern, Ogro, Superd) ganharam +2 no dano pra acompanhar. O encontro principal do kit de mesa continua Equilibrado.",
+        ],
+      },
+    ],
+  },
+  {
+    version: "0.1.117",
+    date: "2026-09-27",
+    title: "O ritmo de PA dobra",
+    sections: [
+      {
+        heading: "2 PA por sessão, +2 por marco",
+        items: [
+          "O livro dava 1 PA por sessão e +1 por marco, e prometia 12 PA no 3º patamar e 24 no 5º. Não fechava: só abrir o 5º patamar comprando o mínimo já custa uns 40 PA, e a régua do Apêndice C, os monstros do Apêndice G e o simulador supõem o personagem que vive no patamar — 17 PA no 2º, 30 no 3º, 47 no 4º, 68 no 5º, 90 no 6º (medido nas 19 árvores).",
+          "Agora são 2 PA por sessão e +2 por marco. O 3º patamar chega por volta da 10ª sessão, o 5º por volta da 24ª. O Cap. 1 ganhou a tabela do PA de cada patamar. Nenhum custo de árvore mudou.",
+          "Os dojos continuam pagando o mesmo: o teto deles é o custo de abrir patamar, não o ritmo.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.116",
     date: "2026-09-27",
     title: "Quatro temas",

@@ -39,13 +39,28 @@ export interface MoldeCriatura {
  * "metade do Bônus de Ataque, arredondado pra cima", e escrevê-la à mão seria
  * convidar as duas a divergirem. Ver `bonusResistencia()` abaixo.
  */
+/*
+ * 2026-09-27 — PV e dano ~1,3× (6º: ~1,45×). A calibragem anterior (0.1.108)
+ * mediu "uma criatura por jogador = Equilibrado" contra o kit de mesa, e um
+ * dos quatro era a Tática, que o simulador não enxerga: o molde saiu medido
+ * contra um grupo de três, e o `npm run balancear` mostrou o Difícil do livro
+ * virando passeio do 3º patamar em diante (~100% de vitória em 2 rodadas).
+ * Remedido com um quarto membro que o motor vê (`medir:orcamento --escala
+ * --chefe`, Arqueira no lugar da Tática): a escala que põe 4 criaturas em
+ * ~92% saiu 1,30/1,28/1,33/1,28/1,30/1,59 e a do chefe 1,36/1,26/1,30/1,28/
+ * 1,21/1,29 — o molde fica no meio das duas, porque o chefe deriva dele.
+ * E um passo abaixo disso (×0,95): no ponto exato de 92%, cinco criaturas já
+ * davam Mortal (~40–56%), e o livro chama cinco de Difícil. A ×0,95 fica
+ * 4 criaturas = Equilibrado (97–99%), 5 = Difícil (65–69%), chefe =
+ * Equilibrado (93–98%); no 6º o chefe sai Difícil (82%), o patamar final.
+ */
 export const MOLDES_CRIATURA: MoldeCriatura[] = [
-  { patamar: 1, titulo: "Comum", pv: 25, ca: 12, bonusAtaque: 3, danoPorTurno: 12, cdResistencia: 11 },
-  { patamar: 2, titulo: "Perigosa", pv: 38, ca: 14, bonusAtaque: 4, danoPorTurno: 16, cdResistencia: 13 },
-  { patamar: 3, titulo: "Ameaça", pv: 58, ca: 16, bonusAtaque: 6, danoPorTurno: 22, cdResistencia: 15 },
-  { patamar: 4, titulo: "Elite", pv: 80, ca: 18, bonusAtaque: 8, danoPorTurno: 30, cdResistencia: 17 },
-  { patamar: 5, titulo: "Terror", pv: 105, ca: 20, bonusAtaque: 10, danoPorTurno: 38, cdResistencia: 19 },
-  { patamar: 6, titulo: "Lenda", pv: 130, ca: 22, bonusAtaque: 12, danoPorTurno: 48, cdResistencia: 21 },
+  { patamar: 1, titulo: "Comum", pv: 31, ca: 12, bonusAtaque: 3, danoPorTurno: 15, cdResistencia: 11 },
+  { patamar: 2, titulo: "Perigosa", pv: 46, ca: 14, bonusAtaque: 4, danoPorTurno: 19, cdResistencia: 13 },
+  { patamar: 3, titulo: "Ameaça", pv: 72, ca: 16, bonusAtaque: 6, danoPorTurno: 28, cdResistencia: 15 },
+  { patamar: 4, titulo: "Elite", pv: 97, ca: 18, bonusAtaque: 8, danoPorTurno: 36, cdResistencia: 17 },
+  { patamar: 5, titulo: "Terror", pv: 124, ca: 20, bonusAtaque: 10, danoPorTurno: 46, cdResistencia: 19 },
+  { patamar: 6, titulo: "Lenda", pv: 178, ca: 22, bonusAtaque: 12, danoPorTurno: 66, cdResistencia: 21 },
 ];
 
 /**
@@ -631,10 +646,11 @@ export function acoesSugeridas(
   /*
    * O PISO DO DADO — o lacaio de 1º patamar.
    *
-   * O menor dado do livro é o d4, que rende 2,5. Um lacaio de 1º tem 6 de
-   * orçamento por turno inteiro: três ataques do menor dado que existe já dão
-   * 7,5, e a criatura mais fraca do livro sairia 50% acima da régua. Não há
-   * fórmula de dado que resolva — o problema é granularidade, não conta.
+   * O menor dado do livro é o d4, que rende 2,5. Quando o orçamento do turno
+   * inteiro fica abaixo de 7,5, três ataques do menor dado que existe já
+   * passam da régua, e não há fórmula de dado que resolva — o problema é
+   * granularidade, não conta. (Era o lacaio de 1º até o molde de 2026-09-27;
+   * com o molde novo ele cabe, e esta saída só volta se o molde descer.)
    *
    * A saída é de ficção, e é a certa pra um lacaio: ele não ataca três vezes
    * por turno. Ele avança e dá UM golpe, que é exatamente o que um bicho que
@@ -850,7 +866,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Picada Peçonhenta",
         acoes: 1,
-        dano: "1d6+1",
+        dano: "1d6+3",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -861,7 +877,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Bote e Recuo",
         acoes: 2,
-        dano: "2d6+3",
+        dano: "2d6+5",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -885,7 +901,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Presas",
         acoes: 1,
-        dano: "1d8+1",
+        dano: "1d8+2",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -919,7 +935,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Mordida em Mergulho",
         acoes: 1,
-        dano: "1d8+3",
+        dano: "1d8+5",
         alcance: "Corpo a corpo, em voo",
         area: false,
         tipo: "ataque",
@@ -928,7 +944,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Ferrão da Cauda",
         acoes: 1,
-        dano: "1d6+2",
+        dano: "1d6+4",
         alcance: "3 m",
         area: false,
         tipo: "ataque",
@@ -952,7 +968,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Maça de Duas Mãos",
         acoes: 1,
-        dano: "2d8+1",
+        dano: "2d8+3",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -961,7 +977,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Pisão",
         acoes: 2,
-        dano: "2d8+3",
+        dano: "2d8+5",
         alcance: "Esfera de 3 m ao redor dela",
         area: true,
         tipo: "resistencia",
@@ -984,7 +1000,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Lança Demoníaca",
         acoes: 1,
-        dano: "2d8+4",
+        dano: "2d8+6",
         alcance: "3 m",
         area: false,
         tipo: "ataque",
@@ -993,7 +1009,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Maré Demoníaca",
         acoes: 2,
-        dano: "4d8+6",
+        dano: "4d8+9",
         alcance: "Linha de 18 m",
         area: true,
         tipo: "resistencia",

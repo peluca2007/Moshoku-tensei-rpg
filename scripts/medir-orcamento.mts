@@ -27,17 +27,29 @@ import { RANKS, type AttributeKey, type CharacterData } from "@/lib/types";
 const BATALHAS = Number(process.env.BATALHAS ?? 300);
 const PRINCIPAL = [4, 4, 5, 6, 7, 8];
 
+/*
+ * O quarto lugar (2026-09-27). O kit de mesa tem uma Tática (Vela), e o motor
+ * não enxerga o Tático: ela entrava na conta como um alvo que não faz nada, e
+ * os moldes foram calibrados contra um grupo de TRÊS. Até o motor aprender o
+ * Tático (Tarefa 6 do Codex), a calibragem usa uma Arqueira — a mediana do
+ * `npm run balancear`. `GRUPO=kit` volta ao kit de mesa.
+ */
+const QUARTO =
+  process.env.GRUPO === "kit"
+    ? { nome: "Vela", arvore: "navegacao-e-lideranca", principal: "espirito" as AttributeKey, corpo: false }
+    : { nome: "Mira", arvore: "arquearia", principal: "agilidade" as AttributeKey, corpo: true };
+
 const GRUPO: { nome: string; arvore: string; principal: AttributeKey; corpo: boolean }[] = [
   { nome: "Ignis", arvore: "fogo", principal: "intelecto", corpo: false },
   { nome: "Borrasca", arvore: "deus-do-norte", principal: "agilidade", corpo: true },
-  { nome: "Vela", arvore: "navegacao-e-lideranca", principal: "espirito", corpo: false },
+  QUARTO,
   { nome: "Sella", arvore: "cura", principal: "espirito", corpo: false },
 ];
 
 function montar(g: (typeof GRUPO)[number], patamar: number): CharacterData {
   const s = useCharacterStore.getState();
   s.createCharacter(`${g.nome} ${patamar}º`);
-  s.setRace("humano");
+  s.setRace("humano", false);
   s.setAttribute(g.principal, PRINCIPAL[patamar - 1]);
   s.setAttribute("vigor", g.corpo ? 3 : 2);
   s.setStartingTree(g.arvore);
