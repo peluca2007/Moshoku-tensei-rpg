@@ -3,7 +3,9 @@ import {
   EstadoPersonagem,
   acoesDe,
   aplicarDano,
+  chanceDeConcluirCantico,
   escolherAcao,
+  executarAtaquePersonagem,
   makeRng,
   montarFicha,
   novoAlvo,
@@ -124,6 +126,18 @@ describe("as magias que não cabem num turno", () => {
     const escolhida = escolherAcao(e, 1, sacoDePancada(), false);
     expect(escolhida.acoes).toBeLessThanOrEqual(1);
   });
+
+  it("desiste da magia longa quando muitos inimigos e pouco PV tornam a conclusão improvável", () => {
+    const e = mago();
+    e.pv = Math.ceil(e.ficha.pvMax / 4);
+    const inimigos = Array.from({ length: 5 }, (_, i) => Object.assign(
+      novoAlvo({ nome: `ameaça ${i}`, pv: 100, ca: 10 }),
+      { danoPorTurno: 30, bonusAtaque: 12 },
+    ));
+    const longa = e.ficha.acoes.find((a) => a.acoes > 3)!;
+    expect(chanceDeConcluirCantico(e, longa, inimigos)).toBeLessThan(0.35);
+    expect(escolherAcao(e, 3, inimigos[0], true, inimigos).acoes).toBeLessThanOrEqual(3);
+  });
 });
 
 describe("o cântico dividido", () => {
@@ -141,6 +155,18 @@ describe("o cântico dividido", () => {
     while (e.conjurando && guarda++ < 5) turnoPersonagem(e, [alvo], rng);
     expect(e.conjurando, "o cântico terminou").toBeNull();
     expect(alvo.pv, "e a magia saiu").toBeLessThan(100_000);
+  });
+
+  it("registra início, continuação e conclusão no log", () => {
+    const e = mago();
+    const linhas: string[] = [];
+    const logger = { log: (linha: string) => linhas.push(linha) };
+    const alvo = sacoDePancada();
+    turnoPersonagem(e, [alvo], makeRng(11), [], logger);
+    turnoPersonagem(e, [alvo], makeRng(12), [], logger);
+    expect(linhas.some((x) => x.includes("inicia o cântico"))).toBe(true);
+    expect(linhas.some((x) => x.includes("continua o cântico"))).toBe(true);
+    expect(linhas.some((x) => x.includes("conclui o cântico"))).toBe(true);
   });
 
   it("o PM é investido quando o cântico COMEÇA, não quando a magia sai", () => {
@@ -190,7 +216,7 @@ describe("o que derruba um cântico", () => {
 
     const falha = mago();
     falha.conjurando = { acao: falha.ficha.acoes[0], acoesGastas: 2, acoesNesteTurno: 2 };
-    testeDeConcentracao(falha, 6, d20Fixo(1));
+    expect(testeDeConcentracao(falha, 6, d20Fixo(1))).toBe("perdeu");
     expect(falha.conjurando, "falhou: perdeu tudo que investiu").toBeNull();
   });
 
@@ -211,6 +237,21 @@ describe("o que derruba um cântico", () => {
     // Bônus de Rank alto e 1 natural: a CD fica em 16 e o teste falha.
     aplicarDano(e, 5, 6, d20Fixo(1));
     expect(e.conjurando).toBeNull();
+  });
+
+  it("a perda por Concentração aparece no recibo do golpe", () => {
+    const alvo = mago();
+    alvo.ca = 1;
+    alvo.ficha.espirito = -100;
+    alvo.conjurando = { acao: alvo.ficha.acoes[0], acoesGastas: 2, acoesNesteTurno: 2 };
+    const atacante = mago();
+    const eventos: { notas: string[] }[] = [];
+    executarAtaquePersonagem(atacante, atacante.ficha.ataqueBasico, alvo, () => 0.999, {
+      log: () => undefined,
+      ataque: (evento) => eventos.push(evento),
+    });
+    expect(alvo.conjurando).toBeNull();
+    expect(eventos[0].notas.some((x) => x.includes("perdeu o cântico"))).toBe(true);
   });
 
   it("sem rng nenhum, o golpe não testa nada — é o caminho das contas puras", () => {

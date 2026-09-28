@@ -21,6 +21,12 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O golpe do monstro, e os monstros remedidos de novo",
     sections: [
       {
+        heading: "O simulador respeita o tamanho da área e o risco do cântico",
+        items: [
+          "Ataques em área não acertam mais todo inimigo indistintamente: cones e esferas alcançam uma quantidade coerente com o tamanho escrito. Técnicas condicionais respeitam PV e Exaustão, e a IA evita cânticos longos quando há pouca chance de terminá-los.",
+        ],
+      },
+      {
         heading: "O simulador: três golpes, e o erro perde",
         items: [
           "A criatura sem ações escritas (o molde) soltava o dano do turno inteiro num golpe só, e quando errava rolava de novo contra o próximo personagem até acertar: a CA quase não protegia, e o mago de 1º patamar caía num golpe. Agora são três golpes por turno, um terço do dano em cada, e o erro perde o golpe — como a criatura pronta já fazia.",
