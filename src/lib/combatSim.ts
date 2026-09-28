@@ -2275,14 +2275,16 @@ export function prepararSuporteDoTurno(
       custoAcoes++;
     }
     if (tocaGuerra) {
-      for (const aliado of aliados.filter((a) => a.vivo)) aliado.bonusAcertoDeAliados = Math.max(aliado.bonusAcertoDeAliados, 2);
+      // + Bônus de Rank do Bardo (mínimo +2) desde 2026-09-28; o teto de +6 de
+      // ajuda de aliado é aplicado na rolagem (`bonusAliadoAcerto`).
+      for (const aliado of aliados.filter((a) => a.vivo)) aliado.bonusAcertoDeAliados = Math.max(aliado.bonusAcertoDeAliados, Math.max(2, bardo.rank));
     }
     if (tocaDissonancia) {
       for (const alvo of vivos.slice(0, bardo.rank)) {
-        const dano = rolarDados(`${bardo.rank}d4`, rng);
+        const dano = rolarDados(`${bardo.rank}d6`, rng);
         e.danoCausado += aplicarDano(alvo, dano, bardo.rank, rng, false, "sônico");
       }
-      logger?.log(`[${e.nome}] mantém Dissonância: até ${bardo.rank} alvo(s) sofrem ${bardo.rank}d4 sônico.`);
+      logger?.log(`[${e.nome}] mantém Dissonância: até ${bardo.rank} alvo(s) sofrem ${bardo.rank}d6 sônico.`);
     }
     if (bardo.insultoAfiado && custoAcoes < 3) {
       vivos[0].desvantagemNoProximoAtaque = true;

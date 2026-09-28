@@ -340,7 +340,8 @@ describe("Tático e Bardo no combate", () => {
     const alvo = novoAlvo({ nome: "Alvo", pv: 100, ca: 15 });
     const custo = prepararSuporteDoTurno(bardo, [alvo], [bardo, aliado], () => .5);
     expect(custo).toBe(2);
-    expect(aliado.bonusAcertoDeAliados).toBe(2);
+    // A Guerra soma o Bônus de Rank do Bardo (Avançado = +3) desde 2026-09-28.
+    expect(aliado.bonusAcertoDeAliados).toBe(3);
     expect(alvo.desvantagemNoProximoAtaque).toBe(true);
     expect(alvo.pv).toBeLessThan(100);
   });
