@@ -346,6 +346,37 @@ o motor obedece). Em ordem de impacto:
 A IA precisa USAR isso com bom senso: apontar antes de o grupo atacar, gastar o Avante no turno em
 que ele rende mais, cantar antes da primeira troca. Simples serve; nulo não serve.
 
+### Acrescentado pelo Claude (2026-09-27, noite) — três defeitos do motor do PERSONAGEM
+
+O Claude consertou o lado da CRIATURA (`turnoPorOrcamento`: três golpes, o erro perde) e remediu os
+moldes (0.1.119). O `npm run balancear` depois disso achou três defeitos no lado do personagem, que é
+seu nesta tarefa. Eles distorcem o balanço mais que as três árvores cegas — faça-os primeiro.
+
+5. **Condições de uso ignoradas.** O Golpe do Desespero (Deus do Norte, `norte.ts`) diz *"Só usável
+   com metade ou menos dos PV. Depois de usar, 1 nível de Exaustão até o próximo Descanso Curto"* — o
+   motor usa três vezes por turno com a vida cheia (8d10 cada, no 5º patamar), e por isso o Norte mede
+   56 contra ~34 da régua no 3º (`npm run medir:regua`). A 0.1.112 já consertou dois casos da mesma
+   família ("Requer alvo Agarrado", "Requer 6 m de corrida" viram +1 Ação; "Uma vez por turno/combate"
+   limita). Faça uma **auditoria**: um script que lista todo `effect`/`description` de técnica e magia
+   de dano com condição de uso ("Só usável", "Requer", "Apenas se", "Depois de usar", "enquanto",
+   "contra alvo …") e diz como o motor trata cada uma; modele as que mudam a conta (pelo menos PV
+   mínimo/máximo, Exaustão depois de usar, e estado exigido do alvo) e liste as outras.
+6. **A área do personagem acerta TODO inimigo.** Em `executarTurnoPersonagem`,
+   `const alvos = a.area ? vivos : [vivos[0]]`: um cone de 3 m e uma esfera de 18 m pegam os cinco
+   monstros do mesmo jeito. Por isso as varreduras corpo a corpo do Lutador e do Vendaval valem mais
+   que a Bola de Fogo contra grupo (no 3º patamar: 260 de contribuição contra 155 do Fogo, e o Lutador
+   é o MENOR dano de alvo único dos combatentes). O lado da criatura já tem `naArea`; dê ao
+   personagem a mesma ideia — quantos alvos cabem pelo tamanho da área (a mesma tabela, pra criatura e
+   personagem, com teste), sem mapa.
+7. **O mago preso no cântico de 4 Ações.** No 5º patamar entram magias de 4 Ações (Rio de Magma e as
+   de Rei/Imperador); `escolherAcao(..., permitirCantico)` escolhe por dano por Ação, o mago começa o
+   cântico dividido, apanha, perde a magia e metade do PM, e no turno seguinte tenta de novo. A Terra
+   cai de 243 de contribuição no 4º patamar pra 41 no 5º; Vento, Água e Teórica igual. E o início do
+   cântico nem aparece no log (`e.conjurando = …` não chama o `logger`). Faça a IA pesar a chance de
+   terminar (Concentração, quantos inimigos vivos, PV dela) e desistir do cântico longo quando ele não
+   compensa — e registre no log quando começa, continua e perde.
+
+
 ### Regras
 
 - **Nada fora do livro:** se o texto de uma habilidade for ambíguo, modele a leitura mais simples e
@@ -358,7 +389,8 @@ que ele rende mais, cantar antes da primeira troca. Simples serve; nulo não ser
 ### Arquivos
 
 Pode mexer: `src/lib/combatSim.ts`, `src/lib/combatSummons.ts`, `src/lib/combatReactions.ts`,
-`src/lib/combatScenario.ts`, `src/lib/encounterSim.ts` (o lado do grupo), os testes deles.
+`src/lib/combatScenario.ts`, `src/lib/encounterSim.ts` (o lado do grupo — o `turnoPorOrcamento` da
+criatura é do Claude), os testes deles, e um script novo de auditoria em `scripts/`.
 
 **Não mexa** (do Claude agora): `src/data/bestiary.ts` e os moldes, `src/data/trees/**`,
 `scripts/balancear.mts`, `scripts/medir-*.mts`, `src/components/book/**` (texto do livro),
