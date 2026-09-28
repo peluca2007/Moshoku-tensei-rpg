@@ -22,6 +22,7 @@ import {
   getInitiative,
   getMaxHp,
   getMaxMp,
+  getPpPool,
   getPtPool,
   getTreeAttributeKey,
 } from "@/store/selectors";
@@ -325,6 +326,26 @@ export interface FichaCombate {
   invocadoDe?: string;
   acoesPorTurno?: number;
   ataquesPorAcao?: number;
+  tatico?: {
+    rank: number;
+    primeiroAVer: boolean;
+    vozQueCorrige: boolean;
+    antecipacao: boolean;
+    vozDeSargento: boolean;
+    focoDeFogo: boolean;
+    preverOGolpe: boolean;
+    semBaixas: boolean;
+    avante: boolean;
+    batalhaEscolhida: boolean;
+  };
+  bardo?: {
+    rank: number;
+    insultoAfiado: boolean;
+    insultoQueFica: boolean;
+    cancaoDeGuerra: boolean;
+    duasCancoes: boolean;
+  };
+  ppMax?: number;
   rankLadino: number;
   bonusFurtividade: number;
   temSombraLonga: boolean;
@@ -414,6 +435,14 @@ export interface Alvo {
   pv: number;
   ca: number;
   vivo: boolean;
+  /** Ordem de Tiro vigente; mora no alvo para qualquer aliado poder consumi-la. */
+  apontado?: { tatico: EstadoPersonagem; dados: number; focoDeFogo: boolean; acertou: boolean };
+  /** Insulto Afiado: a próxima rolagem de ataque deste alvo tem Desvantagem. */
+  desvantagemNoProximoAtaque: boolean;
+  /** Sem Baixas pode interceptar a primeira queda antes do Fio da Vida. */
+  evitarQueda?: () => boolean;
+  /** Tático com Prever o Golpe protegendo este aliado. */
+  preverGolpePor?: EstadoPersonagem;
   /**
    * Tipos de dano com Resistência e Imunidade — Cap. 4, §6 (0.1.90).
    *
@@ -579,6 +608,10 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
     pv: p.pv,
     ca: p.ca,
     vivo: p.vivo ?? true,
+    apontado: p.apontado,
+    desvantagemNoProximoAtaque: p.desvantagemNoProximoAtaque ?? false,
+    evitarQueda: p.evitarQueda,
+    preverGolpePor: p.preverGolpePor,
     molhado: p.molhado ?? false,
     emChamas: p.emChamas ?? 0,
     quebrantado: p.quebrantado ?? 0,
@@ -653,6 +686,17 @@ export interface EstadoPersonagem extends Alvo {
   ficha: FichaCombate;
   pm: number;
   pt: number;
+  pp: number;
+  /** Teto do Cap. 4, §5: no máximo duas Ações vindas de aliados por turno. */
+  acoesConcedidas: number;
+  concessorDeAcoes?: EstadoPersonagem;
+  bonusAcertoDeAliados: number;
+  suportePreparado: boolean;
+  usouAntecipacao: boolean;
+  usouAvante: boolean;
+  usouBatalhaEscolhida: boolean;
+  batalhaEscolhidaTurnos: number;
+  usouSemBaixas: boolean;
   buffs: { CA: number; dano: number; acerto: number; turnosRestantes?: number }[];
   fluxoRestante: number;
   emPostura: boolean;
@@ -977,9 +1021,31 @@ export function montarFicha(c: CharacterData, rotulo = "", armaId?: string | nul
   const rankDaArvore = (id: string) => { const rank = getHighestUnlockedRank(c, id); return rank ? RANK_BONUS[rank] : 0; };
   const comprou = (id: string, treeId: string) => c.purchasedAbilities.some((a) => a.id === id && a.treeId === treeId);
   const rankAgua = rankDaArvore("deus-da-agua-corpo");
+  const rankTatico = rankDaArvore("navegacao-e-lideranca");
+  const rankBardo = rankDaArvore("bardo-e-interacao");
 
   return {
     rankLadino: rankDaArvore("furtividade-e-armadilhas"),
+    ppMax: getPpPool(c),
+    tatico: rankTatico ? {
+      rank: rankTatico,
+      primeiroAVer: comprou("primeiro-a-ver", "navegacao-e-lideranca"),
+      vozQueCorrige: comprou("voz-que-corrige", "navegacao-e-lideranca"),
+      antecipacao: comprou("antecipacao", "navegacao-e-lideranca"),
+      vozDeSargento: comprou("voz-de-sargento", "navegacao-e-lideranca"),
+      focoDeFogo: comprou("foco-de-fogo", "navegacao-e-lideranca"),
+      preverOGolpe: comprou("prever-o-golpe", "navegacao-e-lideranca"),
+      semBaixas: comprou("sem-baixas", "navegacao-e-lideranca"),
+      avante: comprou("avante", "navegacao-e-lideranca"),
+      batalhaEscolhida: comprou("a-batalha-que-voce-escolheu", "navegacao-e-lideranca"),
+    } : undefined,
+    bardo: rankBardo ? {
+      rank: rankBardo,
+      insultoAfiado: comprou("insulto-afiado", "bardo-e-interacao"),
+      insultoQueFica: comprou("insulto-que-fica", "bardo-e-interacao"),
+      cancaoDeGuerra: comprou("cancao-de-guerra", "bardo-e-interacao"),
+      duasCancoes: rankBardo >= 3,
+    } : undefined,
     bonusFurtividade: agilidade + rankDaArvore("furtividade-e-armadilhas"),
     temSombraLonga: comprou("sombra-longa", "furtividade-e-armadilhas"),
     rankAgua,
@@ -1241,6 +1307,16 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     ficha,
     pm: ficha.pmMax,
     pt: ficha.ptMax,
+    pp: ficha.ppMax ?? 0,
+    acoesConcedidas: 0,
+    concessorDeAcoes: undefined,
+    bonusAcertoDeAliados: 0,
+    suportePreparado: false,
+    usouAntecipacao: false,
+    usouAvante: false,
+    usouBatalhaEscolhida: false,
+    batalhaEscolhidaTurnos: 0,
+    usouSemBaixas: false,
     pvCurado: 0,
     conjurando: null,
     fluxoRestante: 0,
@@ -1448,8 +1524,16 @@ export function resolver(
 ): number {
   const basico = ehGolpeBasico(a);
   const usaArma = basico || a.dadosDeArma > 0 || a.regra === "primeiro-golpe";
-  const bonus = (a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc) + (a.bonusContextual ?? 0);
-  const bonusAcerto = basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc;
+  const ordem = alvo.apontado;
+  const executaPropriaOrdem = !!ordem && ordem.tatico === e && usaArma && e.ficha.arma.proficiente;
+  const bonusDaOrdem = executaPropriaOrdem ? ordem.tatico.ficha.tatico?.rank ?? 0 : 0;
+  // Teto de Auxílio: bônus numérico vindo de aliados nunca passa de +6.
+  const bonusAliadoAcerto = Math.min(6, Math.max(0, e.bonusAcertoDeAliados));
+  const bonusAliadoDano = ordem?.focoDeFogo && ordem.tatico !== e ? Math.min(6, ordem.tatico.ficha.tatico?.rank ?? 0) : 0;
+  const bonus = (a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc) +
+    (a.bonusContextual ?? 0) + bonusDaOrdem + bonusAliadoDano;
+  const bonusAcerto = (basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc) +
+    bonusDaOrdem + bonusAliadoAcerto;
   // Preso, Caído e Envenenado (Cap. 4, §7-8): "seus ataques têm Desvantagem" é
   // igual pras três, então o personagem afetado por qualquer uma rola pior — e
   // "ataques contra você têm Vantagem" (só Preso e Caído) faz o ALVO comprado
@@ -1475,6 +1559,9 @@ export function resolver(
       ...(alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego ? ["Vantagem: condição do alvo"] : []),
       ...(!corpoACorpo && alvo.caido ? ["Desvantagem: ataque à distância contra alvo Caído"] : []),
       ...(basico ? [`Bônus de dano: atributo ${e.ficha.arma.attributeValue} + Rank ${e.ficha.arma.rankBonus}`] : []),
+      ...(bonusDaOrdem ? [`Ordem de Tiro própria: +${bonusDaOrdem} no acerto e no dano`] : []),
+      ...(bonusAliadoAcerto ? [`Canção de Guerra: +${bonusAliadoAcerto} no acerto`] : []),
+      ...(bonusAliadoDano ? [`Foco de Fogo: +${bonusAliadoDano} no dano`] : []),
     ],
   } : undefined;
   const autorizacao = autorizarAcao(e, a, alvo);
@@ -1500,19 +1587,36 @@ export function resolver(
     rolarParcela("Dados de Arma", e.ficha.ataqueBasico.dano, a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0), critico);
   let dano = 0;
   if (a.ataque) {
-    const teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
-    const rolagem = teste.natural;
-    const total = rolagem + bonusAcerto;
-    const caEfetiva = corpoACorpo ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
+    let teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
+    let rolagem = teste.natural;
+    let total = rolagem + bonusAcerto;
+    let caEfetiva = corpoACorpo ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
+    const errou = () => rolagem === 1 || (rolagem !== 20 && total < caEfetiva);
+    if (errou() && ordem?.tatico.ficha.tatico?.vozQueCorrige && consumirReacao(ordem.tatico)) {
+      teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
+      rolagem = teste.natural;
+      total = rolagem + bonusAcerto;
+      caEfetiva = corpoACorpo ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
+      evento?.notas.push(`Voz que Corrige: ataque repetido por ${ordem.tatico.nome}.`);
+    }
     if (evento) {
       evento.teste = { ...teste, tipo: "ataque", bonus: bonusAcerto, total, defesa: caEfetiva };
       if (caEfetiva > caDoAlvo) evento.notas.push(`Aparar: CA ${caDoAlvo} → ${caEfetiva}.`);
     }
-    if (rolagem === 1 || (rolagem !== 20 && total < caEfetiva)) {
+    if (errou()) {
       if (evento) { evento.acertou = false; registrar?.(evento); }
       return 0;
     }
     dano = rolarDano() + bonus;
+    if (ordem && !ordem.acertou) {
+      const bonusApontado = rolarParcela("Ordem de Tiro", `${ordem.dados}d6`);
+      dano += bonusApontado;
+      // Contribuição assistida: o golpe segue pertencendo a quem acertou, mas
+      // o relatório também precisa enxergar o valor criado pelo Tático.
+      ordem.tatico.danoCausado += bonusApontado + bonusAliadoDano;
+      ordem.acertou = true;
+      evento?.notas.push(`Apontado consumido: +${ordem.dados}d6 no primeiro acerto.`);
+    }
     // Crítico: todos os dados de novo, Dados de Arma incluídos; o bônus fixo não.
     if (rolagem === 20) {
       dano += rolarDano(true);
@@ -1694,6 +1798,18 @@ export function aplicarDano(
   if (rng && "conjurando" in alvo) testeDeConcentracao(alvo as EstadoPersonagem, bonusDeRankDeQuemBate, rng);
   if (rng) alvo.aoSofrerDano?.(bonusDeRankDeQuemBate, rng, evento);
   if (alvo.pv <= 0) {
+    if (alvo.evitarQueda?.()) {
+      alvo.pv = 1;
+      alvo.vivo = true;
+      alvo.inconsciente = false;
+      evento?.notas.push("Sem Baixas: a queda foi evitada e o alvo ficou com 1 PV.");
+      if (evento?.aplicacao) {
+        evento.aplicacao.absorvidoTemporario = absorvido;
+        evento.aplicacao.perdaPv = Math.max(0, pvAntes - alvo.pv);
+        evento.aplicacao.danoEfetivo = evento.aplicacao.perdaPv;
+      }
+      return Math.max(0, pvAntes - alvo.pv);
+    }
     alvo.pv = 0;
     alvo.vivo = false;
     /*
@@ -1987,7 +2103,121 @@ function melhorSuporte(candidatas: Acao[], alcance: number): Acao {
   return candidatas.reduce((m, a) => (valor(a) > valor(m) ? a : m));
 }
 
-/** Um turno inteiro de um personagem: 3 Ações gastas na melhor coisa disponível. */
+function concederAcao(alvo: EstadoPersonagem, fonte: EstadoPersonagem, quantidade = 1): void {
+  alvo.acoesConcedidas = Math.min(2, alvo.acoesConcedidas + quantidade);
+  alvo.concessorDeAcoes = fonte;
+}
+
+/**
+ * Decisões simples dos dois Ofícios de suporte. Elas acontecem antes do ataque:
+ * ordem antes do grupo bater, canção antes da primeira troca e economia de
+ * ação respeitando os tetos do Cap. 4, §5.
+ */
+export function prepararSuporteDoTurno(
+  e: EstadoPersonagem, inimigos: Alvo[], aliados: EstadoPersonagem[], rng: Rng,
+  logger?: RegistroCombate,
+): number {
+  let custoAcoes = 0;
+  const vivos = inimigos.filter((x) => x.vivo);
+
+  if (e.ficha.bardo && vivos.length) {
+    const bardo = e.ficha.bardo;
+    const tocaGuerra = bardo.cancaoDeGuerra;
+    const tocaDissonancia = !tocaGuerra || bardo.duasCancoes;
+    if (!e.suportePreparado) {
+      custoAcoes++;
+      e.suportePreparado = true;
+      logger?.log(`[${e.nome}] começa ${tocaGuerra ? "Canção de Guerra" : "Dissonância"} antes da troca de golpes.`);
+    } else if (tocaGuerra && bardo.duasCancoes) {
+      // A Canção Não Para mantém duas canções pelo preço escrito: 1 Ação/turno.
+      custoAcoes++;
+    }
+    if (tocaGuerra) {
+      for (const aliado of aliados.filter((a) => a.vivo)) aliado.bonusAcertoDeAliados = Math.max(aliado.bonusAcertoDeAliados, 2);
+    }
+    if (tocaDissonancia) {
+      for (const alvo of vivos.slice(0, bardo.rank)) {
+        const dano = rolarDados(`${bardo.rank}d4`, rng);
+        e.danoCausado += aplicarDano(alvo, dano, bardo.rank, rng, false, "sônico");
+      }
+      logger?.log(`[${e.nome}] mantém Dissonância: até ${bardo.rank} alvo(s) sofrem ${bardo.rank}d4 sônico.`);
+    }
+    if (bardo.insultoAfiado && custoAcoes < 3) {
+      vivos[0].desvantagemNoProximoAtaque = true;
+      custoAcoes++;
+      logger?.log(`[${e.nome}] usa Insulto Afiado: o próximo ataque de ${vivos[0].nome} tem Desvantagem.`);
+    }
+  }
+
+  if (e.ficha.tatico && vivos.length) {
+    const tatico = e.ficha.tatico;
+    const alvo = vivos[0];
+    const anterior = alvo.apontado?.tatico === e && !alvo.apontado.acertou ? alvo.apontado.dados : 0;
+    for (const inimigo of inimigos) if (inimigo !== alvo && inimigo.apontado?.tatico === e) inimigo.apontado = undefined;
+    alvo.apontado = {
+      tatico: e,
+      dados: Math.min(tatico.rank * 2, anterior + tatico.rank),
+      focoDeFogo: tatico.focoDeFogo,
+      acertou: false,
+    };
+    logger?.log(`[${e.nome}] aponta ${alvo.nome}: o primeiro acerto recebe +${alvo.apontado.dados}d6.`);
+
+    for (const aliado of aliados.filter((a) => a !== e)) {
+      aliado.evitarQueda = tatico.semBaixas ? () => {
+        if (e.usouSemBaixas || !e.vivo) return false;
+        e.usouSemBaixas = true;
+        return true;
+      } : undefined;
+      aliado.preverGolpePor = tatico.preverOGolpe ? e : undefined;
+    }
+
+    const melhoresAliados = aliados.filter((a) => a !== e && a.vivo && !a.ficha.invocadoDe)
+      .sort((a, b) =>
+        mediaFormula(b.ficha.ataqueBasico.dano) + b.ficha.arma.damageBonus -
+        (mediaFormula(a.ficha.ataqueBasico.dano) + a.ficha.arma.damageBonus));
+    if (tatico.batalhaEscolhida && !e.usouBatalhaEscolhida && inimigos.length > 1 && e.pp >= 4) {
+      e.usouBatalhaEscolhida = true;
+      e.batalhaEscolhidaTurnos = 3;
+      e.pp -= 4;
+      custoAcoes += 3;
+      logger?.log(`[${e.nome}] usa A Batalha Que Você Escolheu: +1 Ação aos aliados por 3 turnos.`);
+    }
+    if (e.batalhaEscolhidaTurnos > 0) {
+      for (const aliado of melhoresAliados) concederAcao(aliado, e);
+      e.batalhaEscolhidaTurnos--;
+    }
+    if (tatico.avante && !e.usouAvante && e.pp >= 3 && custoAcoes < 3) {
+      e.usouAvante = true;
+      e.pp -= 3;
+      custoAcoes++;
+      for (const aliado of melhoresAliados) concederAcao(aliado, e);
+      logger?.log(`[${e.nome}] usa Avante: todos os aliados recebem 1 Ação, respeitando o teto de duas concedidas.`);
+    }
+    if (tatico.antecipacao && !e.usouAntecipacao && e.pp >= 1 && melhoresAliados[0] && consumirReacao(e)) {
+      e.usouAntecipacao = true;
+      e.pp--;
+      concederAcao(melhoresAliados[0], e);
+      logger?.log(`[${e.nome}] prepara Antecipação para ${melhoresAliados[0].nome}: 1 Ação concedida.`);
+    }
+    // Comando (Rei): troca uma Ação própria por uma do melhor atacante.
+    if (tatico.rank >= 5 && melhoresAliados[0] && custoAcoes < 3) {
+      custoAcoes++;
+      concederAcao(melhoresAliados[0], e);
+      logger?.log(`[${e.nome}] usa Comando e concede 1 Ação a ${melhoresAliados[0].nome}.`);
+    }
+    if (tatico.vozDeSargento && custoAcoes < 3) {
+      const caido = aliados.find((a) => a !== e && a.vivo && a.caido);
+      if (caido) {
+        caido.caido = false;
+        custoAcoes++;
+        logger?.log(`[${e.nome}] usa Voz de Sargento: ${caido.nome} remove Caído.`);
+      }
+    }
+  }
+  return Math.min(3, custoAcoes);
+}
+
+/** Um turno inteiro de um personagem: Ações gastas na melhor coisa disponível. */
 export function turnoPersonagem(
   e: EstadoPersonagem, inimigos: Alvo[], rng: Rng,
   aliados: EstadoPersonagem[] = [], logger?: RegistroCombate,
@@ -2033,7 +2263,14 @@ function executarTurnoPersonagem(
   }
   if (!e.vivo) return;
 
-  let acoes = e.surpreso ? 1 : (e.ficha.acoesPorTurno ?? 3);
+  const concedidas = Math.min(2, e.acoesConcedidas);
+  const concessor = e.concessorDeAcoes;
+  e.acoesConcedidas = 0;
+  e.concessorDeAcoes = undefined;
+  const proprias = e.surpreso ? 1 : Math.min(4, e.ficha.acoesPorTurno ?? 3);
+  const danoAntesDoTurno = e.danoCausado;
+  let acoes = proprias + concedidas;
+  acoes = Math.max(0, acoes - prepararSuporteDoTurno(e, inimigos, aliados, rng, logger));
   let guarda = 0;
   let tentouEsconder = false;
   if (e.conjurando) e.conjurando.acoesNesteTurno = 0;
@@ -2183,6 +2420,10 @@ function executarTurnoPersonagem(
 
   // Fim do turno: quem não dedicou nenhuma Ação ao cântico o perde (Perda de Foco).
   perdaDeFoco(e);
+  if (concessor && concedidas > 0 && e.danoCausado > danoAntesDoTurno) {
+    const assistido = (e.danoCausado - danoAntesDoTurno) * concedidas / Math.max(1, proprias + concedidas);
+    concessor.danoCausado += assistido;
+  }
 }
 
 /**
@@ -2309,8 +2550,10 @@ export const SIMPLIFICACOES = [
   "A IA só COMEÇA um cântico longo com o turno inteiro na mão: é regra de decisão declarada, não do livro. Sem ela, um mago com 1 Ação sobrando largava o golpe de arma pra começar um cântico de 3 Ações e amarrava o turno seguinte — o time dos magos perdia 16 pontos de vitória por isso. E a IA não desconta o risco de interrupção ao escolher: ela é otimista, e o relatório mede o preço mesmo assim. Cura e escudo seguem sem cântico dividido — um curandeiro que passa dois turnos recitando enquanto o grupo cai é jogada ruim, não simplificação.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
-  "Os quatro TETOS do Cap. 4, §5: só um é honrado aqui. \"Vantagem é binária\" está no motor e tem teste (`vantagem.test.ts`). Os outros três não são modelados porque o que eles limitam também não é: o Teto de Auxílio (+6 de bônus vindos de aliados) e o Teto de Ações (4 próprias + 2 concedidas) exigem habilidades que DÃO Ação ou bônus a outro personagem, e o motor não tem nenhuma; Duas Salvações por Combate limita cinco efeitos de impedir morte, e só o Fio da Vida está implementado.",
-  "É por isso que Navegação e Liderança (o Tático) é a árvore mais invisível do livro aqui: as dezenove habilidades dela não causam dano NENHUM — ela fabrica Ação e bônus pros outros, que é a única moeda que este combate gasta. O próprio Cap. 4 diz o que acontece sem o teto: \"um Norte Imperador com um Tático Comandante na mesa chega a 7 Ações por turno, e o combate deixa de existir\". Nada disso é simulado, nem a favor nem contra.",
+  "Os tetos do Cap. 4, §5 entram no que o motor alcança: Vantagem continua binária; bônus numérico vindo de aliado para em +6; um turno aceita no máximo 4 Ações próprias e 2 concedidas. Duas Salvações por Combate ainda não é uma contagem geral: Sem Baixas e o Fio da Vida entram, mas as demais habilidades de impedir morte ainda não compartilham um contador único.",
+  "Navegação e Liderança entra pelo núcleo de combate: Ordem de Tiro/Apontado (inclusive acúmulo), Primeiro a Ver, Voz que Corrige, Antecipação, Voz de Sargento, Foco de Fogo, Prever o Golpe, Comando, Avante, Sem Baixas e A Batalha Que Você Escolheu. Ponto de Estrangulamento, Manobra, Doutrina, Emboscada Planejada e A Guerra Antes da Guerra continuam fora porque dependem de mapa, preparação ou composição estratégica do encontro. A IA concede Ações ao aliado de maior golpe médio e trata o encontro com mais de um inimigo como organizado para A Batalha Que Você Escolheu.",
+  "Bardo entra com Dissonância, Canção de Guerra, A Canção Não Para e Insulto Afiado. Marcha e Réquiem não alteram os encontros atuais (viagem, medo e emoção ainda não aparecem nos blocos); Inspiração, Insulto que Fica, Diplomata de Guerra, Elegia, Coro e O Fim da Canção dependem de escolhas, emoção ou alvo narrativo que o cenário não declara, por isso seguem fora em vez de presumir que todo monstro sente e raciocina.",
+  "Pactos comprados de Espíritos e Feras são preparados automaticamente quando o cenário não faz uma seleção manual, até o limite do Rank e do PM. Uma seleção explícita — inclusive vazia — continua prevalecendo. Efeitos especiais dos Pactos além de PV, CA, deslocamento, resistências, quantidade e golpes continuam resumidos pelos perfis de combate declarados.",
   "Proficiência de arma é conferida no golpe comum e nas técnicas com Dados de Arma: falta de proficiência impõe Desvantagem no acerto, sem reduzir o dano. O recibo mostra os dois d20. A arma de referência não pressupõe um grupo real de arma. O tipo físico de dano da arma ainda não vem do inventário, então resistências específicas a cortante, perfurante ou contundente não são inferidas nesse golpe.",
   "A ficha do Ladino ativa Dano Furtivo em aberturas válidas. Primeiro Golpe soma o ataque de arma, seu dano triplicado e a parcela furtiva normal quando elegível. Antes da iniciativa o Ladino tenta Esconder-se contra a Percepção das criaturas; Passo Vazio reabre o Primeiro Golpe uma vez. Com cobertura, pode gastar 1 Ação para tentar Esconder-se novamente. Segredos personalizados e demais reações não descritas no recibo precisam de arbitragem.",
   "Cenário opcional: distância em uma linha, alcance, terreno difícil, Escondido e Surpreso. Sem distância declarada, mantém o combate abstrato. Áreas atingem o grupo elegível; cobertura e geometria não são calculadas. Criaturas sem ações declaradas usam orçamento abstrato e não acionam Fluxo.",

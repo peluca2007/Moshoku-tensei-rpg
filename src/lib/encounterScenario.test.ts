@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { CharacterData } from "./types";
-import { aoIniciarRodada, autorizarAcao, executarAtaquePersonagem, montarFicha, novoAlvo, novoEstado, turnoPersonagem } from "./combatSim";
+import { aoIniciarRodada, autorizarAcao, executarAtaquePersonagem, montarFicha, novoAlvo, novoEstado, prepararSuporteDoTurno, turnoPersonagem } from "./combatSim";
 import { CombateLogger, criaturaDoMolde, simularEncontro } from "./encounterSim";
 import { caDepoisDeAparar, guardaDoCorpo, reagirComFluxo } from "./combatReactions";
 import { aproximar } from "./combatScenario";
@@ -178,6 +178,15 @@ describe("invocações e recompensas", () => {
     turnoPersonagem(invocado, [novoAlvo({ nome: "Alvo", pv: 1000, ca: 1 })], () => .5, [], log);
     expect(log.eventos).toHaveLength(1);
   });
+  it("prepara automaticamente Pactos comprados quando o cenário não escolhe", () => {
+    const c = invocador(); const dono = novoEstado(montarFicha(c));
+    expect(prepararInvocados([c], [dono]).map((i) => i.nome)).toEqual(["Cão de Caça (Ari)"]);
+    expect(dono.pm).toBe(dono.ficha.pmMax - 3);
+
+    const semInvocado = novoEstado(montarFicha(c));
+    expect(prepararInvocados([c], [semInvocado], { [c.id]: [] })).toEqual([]);
+    expect(semInvocado.pm).toBe(semInvocado.ficha.pmMax);
+  });
   it("recusa pacto não comprado e preparo sem PM", () => {
     const c = invocador(); const dono = novoEstado(montarFicha(c));
     expect(() => prepararInvocados([c], [dono], { [c.id]: ["pacto-grifo"] })).toThrow("indisponível");
@@ -226,5 +235,65 @@ describe("invocações e recompensas", () => {
     // Sem sub-arquétipo, o comportamento antigo continua valendo: encontro
     // montado antes disso não quebra.
     expect(gerarLootDoEncontro(400, 3).tralhas.length).toBeGreaterThan(0);
+  });
+});
+
+describe("Tático e Bardo no combate", () => {
+  function tatico() {
+    return novoEstado(montarFicha(personagem({
+      startingTreeId: "navegacao-e-lideranca",
+      unlockedRanks: [{ treeId: "navegacao-e-lideranca", rank: "Santo" }],
+      purchasedAbilities: [
+        { treeId: "navegacao-e-lideranca", rank: "Principiante", kind: "talent", id: "voz-que-corrige" },
+        { treeId: "navegacao-e-lideranca", rank: "Santo", kind: "talent", id: "foco-de-fogo" },
+      ],
+    })));
+  }
+
+  it("Ordem de Tiro aplica o bônus no primeiro acerto e Voz que Corrige repete a falha", () => {
+    const comandante = tatico();
+    const aliado = novoEstado(montarFicha(personagem({ id: "aliado", name: "Aliado" })));
+    const alvo = novoAlvo({ nome: "Alvo", pv: 500, ca: 18 });
+    aoIniciarRodada(comandante, true);
+    prepararSuporteDoTurno(comandante, [alvo], [comandante, aliado], () => .5);
+    expect(alvo.apontado?.dados).toBe(4);
+
+    const rng = vi.fn()
+      .mockReturnValueOnce(0) // 1 natural: Voz que Corrige dispara
+      .mockReturnValueOnce(.99) // 20 natural na repetição
+      .mockReturnValue(.5);
+    const log = new CombateLogger();
+    executarAtaquePersonagem(aliado, aliado.ficha.ataqueBasico, alvo, rng, log);
+    expect(alvo.apontado?.acertou).toBe(true);
+    expect(comandante.reacaoDisponivel).toBe(false);
+    expect(log.eventos[0].parcelas.some((p) => p.origem === "Ordem de Tiro")).toBe(true);
+    expect(log.eventos[0].notas.some((n) => n.includes("Voz que Corrige"))).toBe(true);
+  });
+
+  it("o teto aceita no máximo duas Ações concedidas no turno", () => {
+    const aliado = novoEstado(montarFicha(personagem()));
+    aliado.acoesConcedidas = 9;
+    const log = new CombateLogger();
+    turnoPersonagem(aliado, [novoAlvo({ nome: "Alvo", pv: 1000, ca: 1 })], () => .5, [aliado], log);
+    expect(log.eventos).toHaveLength(5);
+    expect(aliado.acoesConcedidas).toBe(0);
+  });
+
+  it("Bardo abre com Guerra, mantém Dissonância com A Canção Não Para e insulta", () => {
+    const bardo = novoEstado(montarFicha(personagem({
+      startingTreeId: "bardo-e-interacao",
+      unlockedRanks: [{ treeId: "bardo-e-interacao", rank: "Avançado" }],
+      purchasedAbilities: [
+        { treeId: "bardo-e-interacao", rank: "Principiante", kind: "talent", id: "insulto-afiado" },
+        { treeId: "bardo-e-interacao", rank: "Avançado", kind: "ability", id: "cancao-de-guerra" },
+      ],
+    })));
+    const aliado = novoEstado(montarFicha(personagem({ id: "aliado", name: "Aliado" })));
+    const alvo = novoAlvo({ nome: "Alvo", pv: 100, ca: 15 });
+    const custo = prepararSuporteDoTurno(bardo, [alvo], [bardo, aliado], () => .5);
+    expect(custo).toBe(2);
+    expect(aliado.bonusAcertoDeAliados).toBe(2);
+    expect(alvo.desvantagemNoProximoAtaque).toBe(true);
+    expect(alvo.pv).toBeLessThan(100);
   });
 });
