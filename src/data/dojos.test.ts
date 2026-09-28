@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { PA_TIPICO_POR_PATAMAR } from "./ritmoDePa";
 import {
   LIMITES,
   MARCA_DO_MESTRE,
@@ -25,8 +26,12 @@ import { RANK_PA_COST } from "@/data/trees/shared";
  * comprar sozinho meia árvore.
  */
 
-/** Quanto PA um personagem tem, por patamar — os números que o playtest usa. */
-const PATRIMONIO = { Avançado: 12, Santo: 18, Rei: 24 } as const;
+/** Quanto PA um personagem tem, por patamar — o ritmo do Cap. 1 (ritmoDePa.ts). */
+const PATRIMONIO = {
+  Avançado: PA_TIPICO_POR_PATAMAR[2],
+  Santo: PA_TIPICO_POR_PATAMAR[3],
+  Rei: PA_TIPICO_POR_PATAMAR[4],
+} as const;
 
 describe("A razão entre as duas moedas", () => {
   /*
@@ -96,7 +101,7 @@ describe("A escala por patamar", () => {
   });
 
   it("e nunca passa de um quinto do patrimônio de quem a recebe", () => {
-    // 12 PA no 3º patamar, 18 no 4º, 24 no 5º. Uma recompensa que passe disso
+    // O PA típico do 3º, 4º e 5º patamar (ritmoDePa.ts). Uma recompensa que passe disso
     // faz a provação valer mais que um patamar inteiro de progressão normal.
     const faixaDe = (r: keyof typeof PATRIMONIO) =>
       RECOMPENSA_POR_PATAMAR.find((f) => (f.patamares as string[]).includes(r))!;

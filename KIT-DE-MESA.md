@@ -12,7 +12,7 @@ kit depois de uma mudança de regra: `npm run kit:mesa`.
 
 ## 1. As quatro fichas (2º patamar, 9 PA cada)
 
-9 PA = os 3 PA iniciais + 6 sessões. Cada link abre `/ficha/importar` e pede confirmação antes de
+9 PA = os 3 PA iniciais + três sessões no ritmo do Cap. 1 (2 PA por sessão, +2 por marco): o começo do 2º patamar. Cada link abre `/ficha/importar` e pede confirmação antes de
 salvar. Raça e antecedente foram escolhidos pelo Mestre pra variar a mesa, e por isso a ficha conta
 os dois como sorteio (não pagam o PA da escolha, Cap. 1, §5); o jogador pode trocar a foto e o nome à
 vontade, mas **não as compras** (são elas que a sessão mede).

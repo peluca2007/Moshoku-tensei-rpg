@@ -58,9 +58,11 @@ export const EXCECOES_DE_HIERARQUIA = [
  *
  * ## Por que não é fixo em 3 PA
  *
- * Um personagem de 3º patamar tem cerca de 12 PA no total; um de 5º, cerca de
- * 24. Uma recompensa fixa de 3 PA é **25% do patrimônio** do primeiro e 12% do
- * segundo — ou seja, a mesma provação vale o dobro pra quem precisa menos dela.
+ * Um personagem vale bem mais PA no 5º patamar que no 3º (PA_TIPICO_POR_PATAMAR,
+ * `ritmoDePa.ts`). Uma recompensa fixa pesa muito mais pra quem tem menos —
+ * a mesma provação vale o dobro pra quem precisa menos dela.
+ * (2026-09-27: o ritmo de PA dobrou e o patrimônio subiu; as recompensas
+ * ficaram, porque o teto delas é o custo de abrir patamar, não o ritmo.)
  * Pior: ela deixa de ser notícia exatamente quando a ficção quer que um mestre
  * seja um evento (o Deus, o Imperador, o dojo escondido no fim do mundo).
  *

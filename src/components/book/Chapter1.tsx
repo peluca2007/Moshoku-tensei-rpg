@@ -12,6 +12,7 @@ import { PA_POR_GRUPO, WEAPON_GROUPS } from "@/data/weaponGroups";
 import { describeGrantedSkills, describeMasteryException } from "@/lib/treeSkills";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import { EscadaDePatamares } from "./Diagramas";
+import { PA_INICIAIS, PA_POR_MARCO, PA_POR_SESSAO, PA_TIPICO_POR_PATAMAR, sessoesAtePatamar } from "@/data/ritmoDePa";
 
 const SKILL_ATTRIBUTE_LABEL: Record<string, string> = {
   forca: "Força",
@@ -167,12 +168,26 @@ export default function Chapter1() {
         <P>
           A progressão ocorre quando o Mestre recompensa os jogadores com PA após sessões, missões
           importantes ou arcos da história (como subir de Rank na Guilda). Ao criar o personagem, você
-          recebe <b>3 PA iniciais</b>.
+          recebe <b>{PA_INICIAIS} PA iniciais</b>.
         </P>
         <P>
-          <b>O ritmo:</b> <b>1 PA por sessão jogada</b>, igual para o grupo inteiro, e <b>+1 PA por marco</b> —
-          fim de arco, missão importante, subida de Rank na Guilda —, mais ou menos um marco a cada três
-          sessões. Nesse ritmo, um personagem de 3º patamar soma cerca de 12 PA, e um de 5º, cerca de 24.
+          <b>O ritmo:</b> <b>{PA_POR_SESSAO} PA por sessão jogada</b>, igual para o grupo inteiro, e{" "}
+          <b>+{PA_POR_MARCO} PA por marco</b> — fim de arco, missão importante, subida de Rank na Guilda —, mais
+          ou menos um marco a cada três sessões.
+        </P>
+        <BookTable
+          headers={["Patamar", "PA de quem vive nele", "Chega por volta da"]}
+          rows={PA_TIPICO_POR_PATAMAR.map((pa, i) => [
+            `${i + 1}º`,
+            `~${pa} PA`,
+            i === 0 ? "criação (3 PA) à 3ª sessão" : `${sessoesAtePatamar(i + 1)}ª sessão`,
+          ])}
+        />
+        <P>
+          A tabela é o personagem que a régua do livro supõe em cada patamar: todos os ranks da árvore, umas
+          quatro compras em cada um, e o atributo principal subindo. É por ela que o Apêndice C compara dano
+          e o Apêndice G monta encontro. Um grupo que ganha mais ou menos PA que isso vai achar os encontros
+          do livro mais fáceis ou mais difíceis na mesma medida.
         </P>
         <BookTable
           headers={["Custo", "O que você recebe"]}
