@@ -35,6 +35,12 @@ export const PATCH_NOTES: PatchNote[] = [
           "A arte dos cabeçalhos aparece com a cor dela, à direita, em vez de uma névoa sépia por cima de tudo; o fio de luz dos cartões elevados trocou o dourado pela cor da seção.",
         ],
       },
+      {
+        heading: "A ficha veste suas árvores",
+        items: [
+          "Nos temas Livro, a árvore em que você mais gastou PA passa a dar a cor, o selo e os motivos da ficha. Outras árvores aparecem nas bordas na proporção do investimento; sem PA de árvore, a ficha continua neutra.",
+        ],
+      },
     ],
   },
   {
