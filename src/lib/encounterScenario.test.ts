@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { CharacterData } from "./types";
-import { aoIniciarRodada, autorizarAcao, executarAtaquePersonagem, montarFicha, novoAlvo, novoEstado, prepararSuporteDoTurno, turnoPersonagem } from "./combatSim";
+import { aoIniciarRodada, aplicarDano, autorizarAcao, executarAtaquePersonagem, montarFicha, novoAlvo, novoEstado, prepararSuporteDoTurno, turnoPersonagem } from "./combatSim";
 import { CombateLogger, criaturaDoMolde, simularEncontro } from "./encounterSim";
 import { caDepoisDeAparar, guardaDoCorpo, reagirComFluxo } from "./combatReactions";
 import { aproximar } from "./combatScenario";
@@ -277,6 +277,39 @@ describe("Tático e Bardo no combate", () => {
     turnoPersonagem(aliado, [novoAlvo({ nome: "Alvo", pv: 1000, ca: 1 })], () => .5, [aliado], log);
     expect(log.eventos).toHaveLength(5);
     expect(aliado.acoesConcedidas).toBe(0);
+  });
+
+  it("Avante e Comando respeitam o teto; Prever o Golpe e Sem Baixas protegem o aliado", () => {
+    const comandante = novoEstado(montarFicha(personagem({
+      startingTreeId: "navegacao-e-lideranca",
+      unlockedRanks: [{ treeId: "navegacao-e-lideranca", rank: "Rei" }],
+      purchasedAbilities: [
+        { treeId: "navegacao-e-lideranca", rank: "Santo", kind: "talent", id: "prever-o-golpe" },
+        { treeId: "navegacao-e-lideranca", rank: "Rei", kind: "talent", id: "sem-baixas" },
+        { treeId: "navegacao-e-lideranca", rank: "Rei", kind: "ability", id: "avante" },
+      ],
+    })));
+    const aliado = novoEstado(montarFicha(personagem({ id: "aliado", name: "Aliado" })));
+    const alvo = novoAlvo({ nome: "Alvo", pv: 500, ca: 15 });
+    aoIniciarRodada(comandante, true);
+    const custo = prepararSuporteDoTurno(comandante, [alvo], [comandante, aliado], () => .5);
+    expect(custo).toBe(2); // Avante + Comando
+    expect(aliado.acoesConcedidas).toBe(2);
+    expect(aliado.preverGolpePor).toBe(comandante);
+
+    aplicarDano(aliado, 999);
+    expect(aliado.pv).toBe(1);
+    expect(aliado.vivo).toBe(true);
+    expect(comandante.usouSemBaixas).toBe(true);
+  });
+
+  it("Apontado acumula quando ninguém acerta, só até o dobro do patamar", () => {
+    const comandante = tatico();
+    const alvo = novoAlvo({ nome: "Alvo", pv: 500, ca: 50 });
+    prepararSuporteDoTurno(comandante, [alvo], [comandante], () => .5);
+    prepararSuporteDoTurno(comandante, [alvo], [comandante], () => .5);
+    prepararSuporteDoTurno(comandante, [alvo], [comandante], () => .5);
+    expect(alvo.apontado?.dados).toBe(8);
   });
 
   it("Bardo abre com Guerra, mantém Dissonância com A Canção Não Para e insulta", () => {
