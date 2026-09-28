@@ -35,6 +35,12 @@ export const PATCH_NOTES: PatchNote[] = [
           "Nos temas Livro, a árvore em que você mais gastou PA passa a dar a cor, o selo e os motivos da ficha. Outras árvores aparecem nas bordas na proporção do investimento; sem PA de árvore, a ficha continua neutra.",
         ],
       },
+      {
+        heading: "O simulador enxerga quem dá suporte",
+        items: [
+          "Tático, Bardo e Espíritos e Feras agora entram de verdade nas simulações: ordens e Ações concedidas ajudam o grupo, canções e insultos alteram a luta, e Pactos comprados entram em campo mesmo sem seleção manual do cenário.",
+        ],
+      },
     ],
   },
   {
