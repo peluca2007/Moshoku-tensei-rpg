@@ -19,7 +19,7 @@ function acao(patch: Partial<AcaoCriatura> = {}): AcaoCriatura {
     id: "golpe",
     nome: "Golpe",
     acoes: 1,
-    dano: "1d8+3",
+    dano: "1d8+5",
     alcance: "Corpo a corpo",
     area: false,
     tipo: "ataque",
@@ -85,7 +85,7 @@ describe("avisarSobreCriatura — o que ele fala e quando cala", () => {
   });
 
   it("não reclama de quem está dentro da faixa do molde", () => {
-    // 1d8+3 (7,5) × 3 = 22,5 — dentro da faixa do molde de 3º.
+    // 1d8+5 (9,5) × 3 = 28,5 — dentro da faixa do molde de 3º.
     const c = criatura({ acoes: [acao()] });
     expect(pegar(avisarSobreCriatura(c, GRUPO), "orcamento")).toBeUndefined();
   });

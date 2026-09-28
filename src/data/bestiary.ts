@@ -40,27 +40,39 @@ export interface MoldeCriatura {
  * convidar as duas a divergirem. Ver `bonusResistencia()` abaixo.
  */
 /*
- * 2026-09-27 — PV e dano ~1,3× (6º: ~1,45×). A calibragem anterior (0.1.108)
- * mediu "uma criatura por jogador = Equilibrado" contra o kit de mesa, e um
- * dos quatro era a Tática, que o simulador não enxerga: o molde saiu medido
- * contra um grupo de três, e o `npm run balancear` mostrou o Difícil do livro
- * virando passeio do 3º patamar em diante (~100% de vitória em 2 rodadas).
- * Remedido com um quarto membro que o motor vê (`medir:orcamento --escala
- * --chefe`, Arqueira no lugar da Tática): a escala que põe 4 criaturas em
- * ~92% saiu 1,30/1,28/1,33/1,28/1,30/1,59 e a do chefe 1,36/1,26/1,30/1,28/
- * 1,21/1,29 — o molde fica no meio das duas, porque o chefe deriva dele.
- * E um passo abaixo disso (×0,95): no ponto exato de 92%, cinco criaturas já
- * davam Mortal (~40–56%), e o livro chama cinco de Difícil. A ×0,95 fica
- * 4 criaturas = Equilibrado (97–99%), 5 = Difícil (65–69%), chefe =
- * Equilibrado (93–98%); no 6º o chefe sai Difícil (82%), o patamar final.
+ * 2026-09-27 — o molde remedido (duas passadas no mesmo dia).
+ *
+ * A calibragem de 0.1.108 tinha dois vícios de instrumento, achados pelo
+ * `npm run balancear`: (1) um dos quatro jogadores era a Tática, invisível
+ * pro simulador — o molde foi medido contra um grupo de três; (2) a
+ * criatura-molde soltava o dano do turno inteiro num golpe só, e o erro
+ * rolava de novo contra o próximo da fila até acertar. Com os dois
+ * consertados (quatro jogadores que o motor vê; três golpes por turno, e o
+ * erro perde o golpe), o molde foi medido de novo com alvo aleatório:
+ *
+ * - o DANO sobe só até onde o mago de Vigor 0 ainda aguenta um turno de uma
+ *   criatura do patamar (check:sobrevivencia ≥ ~1,2) — ~1,3× o antigo, e no
+ *   6º quase o mesmo;
+ * - o PV fecha o resto: 5 criaturas = Difícil (~65–74%), 4 = Equilibrado
+ *   (95–99%), Chefe = Equilibrado (87–98%) do 1º ao 5º.
+ *
+ * O PV salta no 3º e no 6º porque o personagem salta ali (Avançado e
+ * Imperador trazem as técnicas e magias de área que acabam com um grupo em
+ * duas rodadas). No 6º nenhum ponto põe grupo e chefe na faixa ao mesmo
+ * tempo: com 350/50, 5 criaturas ainda são Equilibrado (~95%) e o Chefe é
+ * Difícil (~72%) — no auge, apertar um grupo pede uma criatura a mais.
+ *
+ * O molde supõe o personagem que VIVE no patamar (PA_TIPICO_POR_PATAMAR, em
+ * ritmoDePa.ts). Grupo recém-chegado — a primeira sessão, com 3 PA — pede
+ * lacaios ou uma criatura a menos.
  */
 export const MOLDES_CRIATURA: MoldeCriatura[] = [
-  { patamar: 1, titulo: "Comum", pv: 31, ca: 12, bonusAtaque: 3, danoPorTurno: 15, cdResistencia: 11 },
-  { patamar: 2, titulo: "Perigosa", pv: 46, ca: 14, bonusAtaque: 4, danoPorTurno: 19, cdResistencia: 13 },
-  { patamar: 3, titulo: "Ameaça", pv: 72, ca: 16, bonusAtaque: 6, danoPorTurno: 28, cdResistencia: 15 },
-  { patamar: 4, titulo: "Elite", pv: 97, ca: 18, bonusAtaque: 8, danoPorTurno: 36, cdResistencia: 17 },
-  { patamar: 5, titulo: "Terror", pv: 124, ca: 20, bonusAtaque: 10, danoPorTurno: 46, cdResistencia: 19 },
-  { patamar: 6, titulo: "Lenda", pv: 178, ca: 22, bonusAtaque: 12, danoPorTurno: 66, cdResistencia: 21 },
+  { patamar: 1, titulo: "Comum", pv: 53, ca: 12, bonusAtaque: 3, danoPorTurno: 16, cdResistencia: 11 },
+  { patamar: 2, titulo: "Perigosa", pv: 66, ca: 14, bonusAtaque: 4, danoPorTurno: 21, cdResistencia: 13 },
+  { patamar: 3, titulo: "Ameaça", pv: 139, ca: 16, bonusAtaque: 6, danoPorTurno: 29, cdResistencia: 15 },
+  { patamar: 4, titulo: "Elite", pv: 176, ca: 18, bonusAtaque: 8, danoPorTurno: 38, cdResistencia: 17 },
+  { patamar: 5, titulo: "Terror", pv: 210, ca: 20, bonusAtaque: 10, danoPorTurno: 48, cdResistencia: 19 },
+  { patamar: 6, titulo: "Lenda", pv: 350, ca: 22, bonusAtaque: 12, danoPorTurno: 50, cdResistencia: 21 },
 ];
 
 /**
@@ -419,12 +431,14 @@ export function aplicarPapel(patamar: number, papel: PapelCriatura): {
   if (papel === "lacaio") {
     return { pv: Math.round(molde.pv / 2), danoPorTurno: Math.round(molde.danoPorTurno / 2) };
   }
-  // O chefe: o triplo do PV e uma vez e meia o dano do molde (2026-09-27).
-  // Medido no simulador contra o grupo do kit nos seis patamares: com o dobro
-  // do PV e o mesmo dano ele era Trivial em todos; com isto, fica Equilibrado
-  // em todos (92–94% de vitória, ~1 queda) — o peso de quatro criaturas.
+  // O chefe: duas vezes e meia o PV e uma vez e meia o dano do molde.
+  // Era o triplo do PV (2026-09-27, manhã) medido com o golpe antigo da
+  // criatura-molde, que nunca perdia dano. Com os três golpes (errar perde o
+  // golpe) e o molde remedido, o triplo dava Difícil do 3º em diante (67–73%);
+  // com 2,5× fica Equilibrado do 1º ao 5º (87–98%) e Difícil no 6º (78%) — o
+  // peso de quatro criaturas.
   if (papel === "chefe") {
-    return { pv: molde.pv * 3, danoPorTurno: Math.round(molde.danoPorTurno * 1.5) };
+    return { pv: Math.round(molde.pv * 2.5), danoPorTurno: Math.round(molde.danoPorTurno * 1.5) };
   }
   return { pv: molde.pv, danoPorTurno: molde.danoPorTurno };
 }
@@ -483,8 +497,8 @@ export type Temperatura = (typeof TEMPERATURAS)[number]["id"];
  * Quanto UMA criatura pesa no orçamento, em "criaturas do patamar do grupo".
  *
  * O papel entra porque o Apêndice G já transforma os números por papel: o
- * lacaio tem metade do PV e do dano (logo, meia criatura), e o chefe tem PV
- * triplo e dano uma vez e meia MAIS uma rodada inteira a cada dois
+ * lacaio tem metade do PV e do dano (logo, meia criatura), e o chefe tem 2,5×
+ * o PV e dano uma vez e meia MAIS uma rodada inteira a cada dois
  * personagens — o que, medido em batalha, vale quatro criaturas.
  *
  * A imunidade é o preço declarado dela: apagar a jogada de alguém da mesa faz
@@ -832,7 +846,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Mordida Babosa",
         acoes: 1,
-        dano: "1d6+1",
+        dano: "1d6+2",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -841,7 +855,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Língua Pegajosa",
         acoes: 1,
-        dano: "1d4",
+        dano: "1d4+1",
         alcance: "4,5 m",
         area: false,
         tipo: "ataque",
@@ -866,7 +880,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Picada Peçonhenta",
         acoes: 1,
-        dano: "1d6+3",
+        dano: "1d6+4",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -877,7 +891,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Bote e Recuo",
         acoes: 2,
-        dano: "2d6+5",
+        dano: "2d6+6",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -901,7 +915,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Presas",
         acoes: 1,
-        dano: "1d8+2",
+        dano: "1d8+3",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -968,7 +982,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Maça de Duas Mãos",
         acoes: 1,
-        dano: "2d8+3",
+        dano: "2d8+4",
         alcance: "Corpo a corpo",
         area: false,
         tipo: "ataque",
@@ -977,7 +991,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Pisão",
         acoes: 2,
-        dano: "2d8+5",
+        dano: "2d8+6",
         alcance: "Esfera de 3 m ao redor dela",
         area: true,
         tipo: "resistencia",
@@ -1000,7 +1014,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Lança Demoníaca",
         acoes: 1,
-        dano: "2d8+6",
+        dano: "2d8+7",
         alcance: "3 m",
         area: false,
         tipo: "ataque",
@@ -1009,7 +1023,7 @@ export const CRIATURAS_PRONTAS: CriaturaPronta[] = [
       {
         nome: "Maré Demoníaca",
         acoes: 2,
-        dano: "4d8+9",
+        dano: "4d8+10",
         alcance: "Linha de 18 m",
         area: true,
         tipo: "resistencia",

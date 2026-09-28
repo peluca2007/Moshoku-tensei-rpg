@@ -426,10 +426,16 @@ function furtivoDoRival(c: EstadoCriatura, alvo: Alvo, corpoACorpo: boolean): bo
 /**
  * O turno da criatura SEM ações declaradas — o modelo de orçamento.
  *
- * Ela não escolhe nada: entrega `danoPorTurno` do Apêndice G, repartido entre
- * os alvos vivos na ordem do grupo, gastando uma rolagem de ataque por alvo. O
- * excedente de um alvo derrubado transborda pro próximo em vez de se perder —
- * é a abstração que faz "dano por turno" significar o mesmo aqui e na tabela.
+ * Ela não escolhe ação: faz TRÊS golpes (um por Ação, `ACOES_POR_TURNO`), cada
+ * um com um terço do `danoPorTurno` do Apêndice G, contra o alvo que a tática
+ * escolheu — e só passa pro próximo quando ele cai. Errar perde o golpe, e o
+ * que passar da reserva de quem caiu se perde também: é o que acontece com uma
+ * criatura de verdade na mesa, e é o que a criatura PRONTA (com ações) já fazia.
+ *
+ * Até 2026-09-27 o orçamento inteiro saía num golpe só, e o erro rolava de
+ * novo contra o próximo da fila até acertar: a CA quase não protegia, e o dano
+ * chegava em bloco (os 15 do 1º patamar de uma vez, contra os ~20 PV de um
+ * mago). O `npm run balancear` lia isso como "a magia é fraca no começo".
  */
 export function ordenarAlvosDaCriatura<T extends Alvo>(alvos: T[], tatica: CriaturaEncontro["tatica"], rng: Rng): T[] {
   const vivos = alvos.filter((a) => a.vivo);
@@ -445,10 +451,14 @@ export function ordenarAlvosDaCriatura<T extends Alvo>(alvos: T[], tatica: Criat
 }
 
 function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng, logger?: RegistroCombate): void {
-  let restante = c.danoPorTurno * c.rodadas / (c.surpreso ? 3 : 1);
-  for (const alvo of ordenarAlvosDaCriatura(alvos, c.fonte.tatica, rng)) {
-    if (restante <= 0) break;
-    if (!alvo.vivo) continue;
+  // Surpresa: uma Ação só no turno (o mesmo terço do orçamento de antes).
+  const golpes = (c.surpreso ? 1 : ACOES_POR_TURNO) * c.rodadas;
+  const porGolpe = c.danoPorTurno / ACOES_POR_TURNO;
+  let fila = ordenarAlvosDaCriatura(alvos, c.fonte.tatica, rng);
+  for (let g = 0; g < golpes; g++) {
+    fila = fila.filter((a) => a.vivo);
+    const alvo = fila[0];
+    if (!alvo) break;
     const teste = rolarD20ComRegistro(rng, false, c.desvantagemNoProximoAtaque);
     c.desvantagemNoProximoAtaque = false;
     let ca = Math.max(1, alvo.ca - alvo.quebrantado);
@@ -460,19 +470,15 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng, logger?: 
       logger?.log(`[${protetor.nome}] usa Prever o Golpe: a CA de ${alvo.nome} sobe em +4 contra o ataque.`);
     }
     const acertou = teste.natural !== 1 && (teste.natural === 20 || total >= ca);
-    // O teto do golpe é a reserva INTEIRA do alvo, casca incluída (0.1.37):
-    // antes era só `alvo.pv`, e com PV Temporários no motor isso deixaria o
-    // orçamento transbordar pro próximo alvo enquanto a casca deste ainda
-    // estava de pé — o chefe atacaria dois pelo preço de um.
-    const golpe = acertou ? Math.min(restante, alvo.pv + alvo.pvTemp) : 0;
+    // O teto do golpe é a reserva INTEIRA do alvo, casca incluída (0.1.37).
+    const golpe = acertou ? Math.min(porGolpe, alvo.pv + alvo.pvTemp) : 0;
     const evento: EventoAtaque | undefined = logger ? {
       atacante: c.nome, alvo: alvo.nome, acao: "Ataque por orçamento",
       teste: { ...teste, tipo: "ataque", bonus: c.bonusAtaque, total, defesa: ca },
       acertou, critico: false, parcelas: [], bonusDano: golpe, bruto: golpe, aposModificadores: golpe,
-      notas: ["Dano fixo do orçamento da criatura; não há dados de dano cadastrados."],
+      notas: ["Um terço do dano por turno do molde; não há dados de dano cadastrados."],
     } : undefined;
     bater(c, alvo, golpe, rng, false, undefined, evento);
-    restante -= golpe;
     if (evento) registrarAtaque(logger, evento);
   }
 }

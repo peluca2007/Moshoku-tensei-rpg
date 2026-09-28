@@ -109,8 +109,8 @@ const suspeitos: string[] = [];
 
 for (const patamar of PATAMARES) {
   const referencia = REFERENCIA.map((id, i) => montar(id, patamar, `Ref${i + 1}`));
-  const dificil = [{ ...criaturaDoMolde(patamar, "padrao", "Criatura", `d${patamar}`), quantidade: 5 }];
-  const chefe = [{ ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), quantidade: 1 }];
+  const dificil = [{ ...criaturaDoMolde(patamar, "padrao", "Criatura", `d${patamar}`), tatica: "aleatorio" as const, quantidade: 5 }];
+  const chefe = [{ ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), tatica: "aleatorio" as const, quantidade: 1 }];
 
   const linhas: Linha[] = [];
   for (const arvore of TREES) {
