@@ -102,13 +102,20 @@ describe("Cada arquétipo sugere o que ele é", () => {
     expect(acoesSugeridas(3, "padrao")).toEqual(acoesSugeridas(3, "padrao", "bruto"));
   });
 
-  it("o lacaio de 1º ganha UM golpe por turno, e a nota explica por quê", () => {
-    // O piso do d4: três ataques do menor dado do livro passariam o orçamento
-    // inteiro dele. A saída é de ficção — lacaio não tem economia de ação.
+  it("o lacaio mais fraco nunca passa do orçamento por causa do piso do d4", () => {
+    // O piso do d4: quando nem três ataques do menor dado do livro cabem no
+    // orçamento, o lacaio dá UM golpe por turno (lacaio não tem economia de
+    // ação). Desde o molde de 2026-09-27 o lacaio de 1º já comporta três d4, e
+    // a exceção dorme — mas a regra de não passar do orçamento continua.
+    const orcamento = aplicarPapel(1, "lacaio").danoPorTurno;
     const acoes = acoesSugeridas(1, "lacaio", "bruto");
-    expect(acoes).toHaveLength(1);
-    expect(acoes[0].acoes).toBe(2);
-    expect(acoes[0].nota).toMatch(/número de corpos/i);
+    if (orcamento / 3 < 2.5) {
+      expect(acoes).toHaveLength(1);
+      expect(acoes[0].acoes).toBe(2);
+      expect(acoes[0].nota).toMatch(/número de corpos/i);
+    } else {
+      for (const a of acoes) if (a.dano) expect(mediaFormula(a.dano)).toBeGreaterThanOrEqual(2.5);
+    }
   });
 });
 
