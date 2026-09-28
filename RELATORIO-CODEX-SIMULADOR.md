@@ -1,6 +1,6 @@
 # Relatório Codex — Tático, Bardo e invocados no simulador
 
-Data: 2026-09-27. Linha de base: `b2d1262`. Depois: Tarefa 6.
+Data: 2026-09-28. Linha de base comparável: `9d421d6` (já inclui os moldes de criatura 0.1.118, mas não a Tarefa 6). Depois: Tarefa 6 sobre os mesmos moldes.
 
 ## O que o motor passou a fazer
 
@@ -34,12 +34,12 @@ Formato das células: `vitória difícil / chefe · contribuição`.
 
 | Patamar | Tático antes → depois | Bardo antes → depois | Invocação antes → depois |
 | --- | --- | --- | --- |
-| 1º | 54/97% · 14 → **77/100% · 38** | 53/97% · 14 → **54/98% · 15** | 53/97% · 14 → **53/97% · 14** |
-| 2º | 29/94% · 14 → **83/100% · 72** | 28/94% · 14 → **54/98% · 33** | 28/94% · 14 → **28/94% · 14** |
-| 3º | 88/92% · 6 → **98/100% · 69** | 88/92% · 6 → **97/97% · 28** | 88/91% · 6 → **98/100% · 38** |
-| 4º | 86/92% · 4 → **98/100% · 80** | 86/91% · 4 → **96/99% · 37** | 86/91% · 4 → **92/100% · 38** |
-| 5º | 83/82% · 2 → **100/100% · 151** | 83/81% · 2 → **97/92% · 49** | 83/81% · 2 → **98/100% · 89** |
-| 6º | 82/78% · 2 → **100/100% · 176** | 82/78% · 2 → **97/91% · 52** | 82/78% · 2 → **98/100% · 89** |
+| 1º | 3/55% · 13 → **19/80% · 40** | 3/55% · 13 → **6/63% · 13** | 3/55% · 13 → **3/55% · 13** |
+| 2º | 3/61% · 13 → **30/96% · 78** | 3/60% · 13 → **8/77% · 31** | 3/60% · 13 → **3/60% · 13** |
+| 3º | 49/49% · 8 → **73/95% · 81** | 49/49% · 8 → **59/68% · 36** | 49/49% · 8 → **71/93% · 54** |
+| 4º | 52/46% · 5 → **88/99% · 97** | 52/45% · 5 → **64/62% · 50** | 52/45% · 5 → **66/91% · 54** |
+| 5º | 46/45% · 3 → **96/100% · 175** | 46/45% · 3 → **66/58% · 62** | 46/45% · 3 → **82/100% · 119** |
+| 6º | 15/5% · 2 → **82/91% · 246** | 15/5% · 2 → **31/9% · 74** | 15/5% · 2 → **41/68% · 166** |
 
 Invocação permanece igual no 1º e 2º patamares porque o montador atual compra a Assinatura e os três primeiros talentos, nenhum deles um Pacto. No 3º ele finalmente compra a Quimera e o novo caminho automático aparece. O motor foi testado separadamente com uma ficha que possui Cão de Caça; o invocado entra, cobra 3 PM e age. O Claude está alterando esse montador em paralelo, por isso ele não foi modificado aqui.
 
@@ -49,12 +49,12 @@ Os avisos `motor cego` impressos por `scripts/balancear.mts` também são metada
 
 | Encontro | Antes | Depois |
 | --- | --- | --- |
-| 2 Serpentes | 2,3 rodadas; Vela 11 | **1,9 rodadas; Vela 47** |
-| Serpente + Aranha | 2,4 rodadas; Vela 11 | **2,0 rodadas; Vela 47** |
-| Serpente + Aranha + 2 Sapos | 91% vitória; 4,2 rodadas; Vela 20 | **100%; 3,0; Vela 72** |
-| Aranha + 3 Sapos | 96%; 3,8; Vela 20 | **100%; 2,7; Vela 66** |
-| 2 Serpentes + Aranha | 98%; 3,5; Vela 17 | **100%; 2,6; Vela 64** |
-| 2 Serpentes + 2 Aranhas | 76%; 4,9; 1,28 quedas; Vela 22 | **99%; 3,6; 0,26 quedas; Vela 84** |
+| 2 Serpentes | 100%; 2,7 rodadas; Vela 13 | **100%; 2,2; Vela 54** |
+| Serpente + Aranha | 100%; 2,8; Vela 12 | **100%; 2,2; Vela 55** |
+| Serpente + Aranha + 2 Sapos | 75%; 4,7; 1,27 quedas; Vela 22 | **99%; 3,4; 0,20; Vela 83** |
+| Aranha + 3 Sapos | 89%; 4,6; 0,77 quedas; Vela 24 | **100%; 3,2; 0,10; Vela 78** |
+| 2 Serpentes + Aranha | 84%; 4,2; 0,91 quedas; Vela 18 | **100%; 3,1; 0,14; Vela 75** |
+| 2 Serpentes + 2 Aranhas | 45%; 4,8; 2,42 quedas; Vela 19 | **86%; 4,4; 1,02; Vela 98** |
 
 “Dano da Vela” agora inclui o dano assistido que só ocorreu por Ordem de Tiro ou Ação concedida; não afirma que a lança dela causou tudo.
 
@@ -69,3 +69,4 @@ Os avisos `motor cego` impressos por `scripts/balancear.mts` também são metada
 
 - Fazer o montador de Espíritos e Feras comprar ao menos um Pacto de combate nos patamares 1 e 2; hoje ele compra três talentos preparatórios e nenhuma criatura.
 - Remover/atualizar as três mensagens `motor cego` de `scripts/balancear.mts` depois de fechar a recalibração paralela.
+- Rever pelo design, não pelo motor: o Tático visível ficou muito forte no 5º–6º patamar (contribuição 175/246), enquanto o Bardo ainda cai contra o Chefe de 6º (9% de vitória). Isso pode ser regra, seleção automática de cartas ou justamente a parcela narrativa do Bardo que o simulador não deve inventar.
