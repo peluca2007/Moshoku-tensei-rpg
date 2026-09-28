@@ -32,7 +32,8 @@
     "gerar:impressao": "node scripts/gerar-impressao.mjs",
     "kit:mesa": "tsx scripts/kit-de-mesa.mts",
     "medir:orcamento": "tsx scripts/medir-orcamento.mts",
-    "medir:regua": "tsx scripts/medir-regua.mts"
+    "medir:regua": "tsx scripts/medir-regua.mts",
+    "balancear": "tsx scripts/balancear.mts"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",
