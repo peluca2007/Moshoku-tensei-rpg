@@ -31,7 +31,8 @@ Data: 2026-09-28. Linha de base comparável: `9d421d6` (já inclui os moldes de 
 ### Condições de uso, áreas e cânticos longos
 
 - **Condições de uso:** `Golpe do Desespero` só entra com metade ou menos dos PV e acrescenta 1 nível de Exaustão depois de cada uso; no terceiro nível, os ataques passam a ter Desvantagem. Exigências por estado estruturado do alvo são conferidas. `Requer alvo Agarrado` mantém a aproximação anterior: custa +1 Ação para preparar e presume sucesso.
-- **Auditoria automática:** `npm run check:condicoes-combate` encontrou 23 cartas de dano com frases condicionais: 3 modeladas diretamente, 4 aproximadas de forma declarada e 16 listadas para revisão humana. O comando imprime a frase inteira e o tratamento do motor.
+- **Auditoria automática:** `npm run check:condicoes-combate` encontrou 23 cartas de dano com frases condicionais: 13 modeladas diretamente, 5 aproximadas de forma declarada, 5 medidas deliberadamente só pelo caso base e **0 pendentes**. Uma redação condicional nova sem decisão explícita agora faz o check falhar.
+- **Cenário, preparo e equipamento:** técnicas `[Improviso]` exigem que o cenário declare material utilizável; Relâmpago exige `Cumulonimbus` ativa; pontes entre árvores conferem o patamar estruturado; Cruz Nebulosa exige Empunhadura Dupla e três armas no inventário; Empunhadura Dupla respeita o limite de uma vez por turno.
 - **Área sem mapa:** personagem e criatura usam a mesma régua: até 3 m alcança 2 alvos; 6 m, 3; 9 m, 4; acima disso, até 5. “Atinge até N” prevalece. Assim, um cone curto não vale o mesmo que uma esfera de 18 m e nenhum deles acerta automaticamente todos os inimigos.
 - **Cântico longo:** a IA estima a chance de terminar usando Concentração, inimigos vivos, dano esperado até o próximo turno e PV restante. Abaixo de 35% desiste; acima disso desconta o risco do valor esperado. Início, continuação, conclusão e perda por Concentração aparecem no log.
 
@@ -106,8 +107,6 @@ O quadro anterior continua no relatório porque é o antes/depois isolado do sup
 
 ## Pendências pro Claude
 
-- Fazer o montador de Espíritos e Feras comprar ao menos um Pacto de combate nos patamares 1 e 2; hoje ele compra três talentos preparatórios e nenhuma criatura.
-- Remover/atualizar as três mensagens `motor cego` de `scripts/balancear.mts` depois de fechar a recalibração paralela.
-- Rever as 16 cartas que `npm run check:condicoes-combate` marca como `LISTADO`; são condicionais que o motor não deve adivinhar sem decisão de design ou novo estado estruturado.
-- O Golpe do Desespero não é mais usado com vida cheia, mas a régua do Norte ainda mede 50 contra ~34 no 3º e 61 contra ~42 no 4º. A inflação restante vem de outras ações/hipóteses e merece leitura separada; não foi mascarada com nerf no motor.
 - Rever pelo design, não pelo motor: no estado 0.1.119 o Tático chega a contribuição 273/447 no 5º–6º patamar, enquanto o Bardo cai a 3%/0% contra os Chefes. Isso pode ser regra, seleção automática de cartas ou justamente a parcela narrativa do Bardo que o simulador não deve inventar.
+
+As outras quatro pendências foram fechadas. O montador de Espíritos e Feras e os avisos foram atualizados no trabalho paralelo do Claude. A auditoria não tem mais `LISTADO`. Na régua, o Norte caiu de **50 para 32** no 3º patamar (escrito: ~34) e de **61 para 40** no 4º (escrito: ~42) depois que Túmulo de Aço deixou de pressupor cenário utilizável; o restante da coluna é leitura real das técnicas disponíveis, não essa inflação.
