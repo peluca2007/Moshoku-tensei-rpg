@@ -213,6 +213,36 @@ describe("condições de uso escritas na carta", () => {
     const caido = novoAlvo({ nome: "caído", pv: 100, ca: 10, caido: true });
     expect(autorizarAcao(e, exigeCaido, caido).legal).toBe(true);
   });
+
+  it("não inventa cenário utilizável para Túmulo de Aço", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("deus-do-norte")));
+    const tumulo = e.ficha.acoes.find((a) => a.nome === "Túmulo de Aço [Improviso]")!;
+    expect(tumulo.requerCenarioUtilizavel).toBe(true);
+    expect(autorizarAcao(e, tumulo, novoAlvo({ nome: "alvo", pv: 100, ca: 10 })).legal).toBe(false);
+    e.cenarioUtilizavel = true;
+    expect(autorizarAcao(e, tumulo, novoAlvo({ nome: "alvo", pv: 100, ca: 10 })).legal).toBe(true);
+  });
+
+  it("não inventa Cumulonimbus ativa para lançar Relâmpago", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("agua")));
+    const relampago = e.ficha.acoes.find((a) => a.nome === "Relâmpago")!;
+    expect(relampago.efeitoAtivoExigido).toBe("Cumulonimbus");
+    expect(autorizarAcao(e, relampago, novoAlvo({ nome: "alvo", pv: 100, ca: 10 })).legal).toBe(false);
+    e.efeitosAtivos.add("cumulonimbus");
+    expect(autorizarAcao(e, relampago, novoAlvo({ nome: "alvo", pv: 100, ca: 10 })).legal).toBe(true);
+  });
+
+  it("respeita pré-requisito entre árvores e equipamento da Cruz Nebulosa", () => {
+    const vento = comArvoreInteira("vento");
+    expect(acoesDe(vento).some((a) => a.nome === "Nova Congelante")).toBe(false);
+    vento.unlockedRanks.push({ treeId: "agua", rank: "Principiante" });
+    expect(acoesDe(vento).some((a) => a.nome === "Nova Congelante")).toBe(true);
+
+    const norte = comArvoreInteira("deus-do-norte");
+    expect(acoesDe(norte).some((a) => a.nome === "Cruz Nebulosa")).toBe(false);
+    norte.inventory = ["a", "b", "c"].map((id) => ({ id, name: id, type: "arma", baseDie: "d6", equipped: id === "a" }));
+    expect(acoesDe(norte).some((a) => a.nome === "Cruz Nebulosa")).toBe(true);
+  });
 });
 
 describe("as ações de suporte deixaram de ser descartadas", () => {

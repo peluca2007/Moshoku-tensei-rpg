@@ -213,6 +213,10 @@ export interface Acao {
   estadoExigidoDoAlvo?: "agarrado" | "atolado" | "caido" | "congelado" | "em-chamas" | "marcado" | "molhado" | "preso";
   /** Níveis de Exaustão recebidos depois de resolver a ação. */
   exaustaoDepois?: number;
+  /** Técnicas [Improviso] que dependem de algo utilizável no ambiente. */
+  requerCenarioUtilizavel?: boolean;
+  /** Efeito sustentado que precisa estar ativo antes desta ação. */
+  efeitoAtivoExigido?: string;
   /**
    * "Uma vez por turno" / "uma vez por combate" no COMEÇO do efeito da carta —
    * 2026-09-27. Sem isto o motor usava a Espada de Luz Verdadeira (uma vez por
@@ -443,6 +447,8 @@ export interface Alvo {
   surpreso: boolean;
   jaAgiu: boolean;
   cego: boolean;
+  /** O cenário declarou cobertura, terreno ou outro elemento aproveitável. */
+  cenarioUtilizavel: boolean;
   nome: string;
   pv: number;
   ca: number;
@@ -616,6 +622,7 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
     surpreso: p.surpreso ?? false,
     jaAgiu: p.jaAgiu ?? false,
     cego: p.cego ?? false,
+    cenarioUtilizavel: p.cenarioUtilizavel ?? false,
     nome: p.nome,
     pv: p.pv,
     ca: p.ca,
@@ -653,7 +660,7 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
 
 /** O limite escrito no começo do efeito: "Uma vez por turno." / "Uma vez por combate:". */
 export function limiteDeUso(efeito: string): Acao["limite"] {
-  const m = efeito.trim().match(/^uma vez por (turno|combate)[.:,]/i);
+  const m = efeito.trim().match(/^(?:uma vez|.*?\bcontinua uma vez) por (turno|combate)[.:,]/i);
   return m ? (m[1].toLowerCase() as "turno" | "combate") : undefined;
 }
 
@@ -679,6 +686,8 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     pvDoUsuarioMinimo: p.pvDoUsuarioMinimo,
     estadoExigidoDoAlvo: p.estadoExigidoDoAlvo,
     exaustaoDepois: p.exaustaoDepois,
+    requerCenarioUtilizavel: p.requerCenarioUtilizavel,
+    efeitoAtivoExigido: p.efeitoAtivoExigido,
     limite: p.limite,
     ataque: p.ataque ?? false,
     frio: p.frio ?? false,
@@ -706,6 +715,8 @@ export interface EstadoPersonagem extends Alvo {
   pp: number;
   /** Exaustão acumulada durante esta batalha; hoje nasce de técnicas de combate. */
   exaustao: number;
+  /** Preparações sustentadas declaradas pelo cenário (ex.: Cumulonimbus ativa). */
+  efeitosAtivos: Set<string>;
   /** Teto do Cap. 4, §5: no máximo duas Ações vindas de aliados por turno. */
   acoesConcedidas: number;
   concessorDeAcoes?: EstadoPersonagem;
@@ -762,6 +773,20 @@ export function acoesDe(c: CharacterData): Acao[] {
     const rd = tree?.ranks.find((r) => r.rank === compra.rank);
     const a = rd?.abilities.find((x) => x.id === compra.id) as AbilityDef | undefined;
     if (!a?.damage?.normal) continue;
+    // A ficha impede compras inválidas, mas os montadores de referência e
+    // saves antigos podem trazer uma combinação que nunca passaria pela UI.
+    // O simulador não pode ganhar a habilidade só porque recebeu JSON direto.
+    if ((a.requires ?? []).some((id) => !c.purchasedAbilities.some((p) => p.treeId === compra.treeId && p.id === id))) continue;
+    if (a.requiresRank) {
+      const minimo = RANKS.indexOf(a.requiresRank.rank);
+      const atende = c.unlockedRanks.some((u) => RANKS.indexOf(u.rank) >= minimo
+        && (a.requiresRank?.treeId ? u.treeId === a.requiresRank.treeId : getTreeById(u.treeId)?.category === a.requiresRank?.categoria));
+      if (!atende) continue;
+    }
+    // Cruz Nebulosa não produz a terceira lâmina que sua própria carta exige.
+    // Contar a técnica sem três armas na mochila infla precisamente o perfil
+    // de referência que esta régua deveria auditar.
+    if (/terceira arma/i.test(a.effect) && c.inventory.filter((item) => item.type === "arma").length < 3) continue;
     const txt = a.damage.normal.toLowerCase();
     /*
      * Cura e PV Temporários — 0.1.37.
@@ -947,6 +972,8 @@ export function acoesDe(c: CharacterData): Acao[] {
         return exigido as Acao["estadoExigidoDoAlvo"];
       })(),
       exaustaoDepois: /depois de usar[^.;]*1 nível de exaustão/i.test(a.effect) ? 1 : undefined,
+      requerCenarioUtilizavel: /requer cenário utilizável/i.test(a.effect),
+      efeitoAtivoExigido: a.effect.match(/pré-requisito:\s*([^.;]+?)\s+ativa\b/i)?.[1].trim(),
       /*
        * A rolagem de ataque, lida do EFEITO — corrigido na 0.1.35.
        *
@@ -1364,6 +1391,7 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     pt: ficha.ptMax,
     pp: ficha.ppMax ?? 0,
     exaustao: 0,
+    efeitosAtivos: new Set(),
     acoesConcedidas: 0,
     concessorDeAcoes: undefined,
     bonusAcertoDeAliados: 0,
@@ -1483,6 +1511,12 @@ export function autorizarAcao(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): 
   }
   if (a.estadoExigidoDoAlvo && !alvoTemEstado(alvo, a.estadoExigidoDoAlvo)) {
     return { legal: false, motivo: `exige alvo ${a.estadoExigidoDoAlvo}` };
+  }
+  if (a.requerCenarioUtilizavel && !e.cenarioUtilizavel) {
+    return { legal: false, motivo: "exige cenário utilizável" };
+  }
+  if (a.efeitoAtivoExigido && !e.efeitosAtivos.has(a.efeitoAtivoExigido.toLowerCase())) {
+    return { legal: false, motivo: `exige ${a.efeitoAtivoExigido} ativa` };
   }
   if (a.regra === "primeiro-golpe") {
     if (e.usouPrimeiroGolpe) return { legal: false, motivo: "Primeiro Golpe já foi usado neste combate" };
