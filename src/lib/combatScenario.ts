@@ -10,6 +10,8 @@ export interface EstadoInicialCombate {
   caido?: boolean;
   preso?: boolean;
   envenenado?: boolean;
+  /** Preparações sustentadas que já estavam ativas quando a cena começou. */
+  efeitosAtivos?: string[];
 }
 
 export interface CenarioCombate {
@@ -19,6 +21,8 @@ export interface CenarioCombate {
   /** Distância em metros entre as duas linhas. Ausente conserva o cenário abstrato antigo. */
   distancia?: number;
   terrenoDificil?: boolean;
+  /** Há objeto, desnível ou estrutura que uma técnica [Improviso] possa usar. */
+  cenarioUtilizavel?: boolean;
   participantes?: Record<string, EstadoInicialCombate>;
 }
 
@@ -52,7 +56,10 @@ export function aplicarEstadoInicial(alvo: Alvo, id: string, lado: "grupo" | "cr
   const inicio = cenario.participantes?.[id] ?? {};
   if (cenario.distancia !== undefined) alvo.posicao = inicio.posicao ?? (lado === "grupo" ? 0 : cenario.distancia);
   alvo.terrenoDificil = cenario.terrenoDificil ?? false;
+  alvo.cenarioUtilizavel = cenario.cenarioUtilizavel ?? !!(cenario.terrenoDificil || cenario.cobertura);
   for (const chave of ["escondido", "surpreso", "molhado", "caido", "preso", "envenenado"] as const) {
     if (inicio[chave] !== undefined) alvo[chave] = inicio[chave];
   }
+  const comPreparacoes = alvo as Alvo & { efeitosAtivos?: Set<string> };
+  for (const efeito of inicio.efeitosAtivos ?? []) comPreparacoes.efeitosAtivos?.add(efeito.toLowerCase());
 }
