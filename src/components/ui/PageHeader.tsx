@@ -74,8 +74,12 @@ export default function PageHeader({
             Filtro depende de quão clara a arte é; véu não. Ele garante o piso
             de luminância que o texto precisa, qualquer que seja a imagem que
             entrar aqui amanhã.
+
+            2026-09-27: o véu virou degradê da esquerda (onde está o título)
+            pra direita, onde a arte aparece limpa — a névoa por cima da arte
+            inteira era o que deixava o cabeçalho com cara de papel sujo.
           */}
-          <div className="absolute inset-0 bg-parchment-50/72 dark:bg-parchment-950/45" />
+          <div className="absolute inset-0 bg-gradient-to-r from-parchment-50 via-parchment-50/75 to-parchment-50/35 dark:from-parchment-950 dark:via-parchment-950/65 dark:to-parchment-950/35" />
         </div>
       ) : (
         <div
@@ -86,7 +90,7 @@ export default function PageHeader({
 
       <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
         <div className="min-w-0">
-          <h1 className="flex items-center gap-2.5 text-2xl font-black tracking-tight text-parchment-900 drop-shadow-[0_1px_0_rgba(253,246,227,0.6)] dark:text-parchment-50 dark:drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] sm:text-3xl">
+          <h1 className="flex items-center gap-2.5 text-2xl font-black tracking-tight text-parchment-900 dark:text-parchment-50 sm:text-4xl">
             {/*
               O ícone ganhou moldura. Solto, ele era um pictograma vinho de 24px
               perdido ao lado de um título — do mesmo tamanho e da mesma cor que

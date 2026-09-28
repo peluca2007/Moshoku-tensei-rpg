@@ -304,6 +304,10 @@ describe("Escudo (Cap. 1, §4)", () => {
     const sera = comArvore("cura", { inventory: [couraça] });
     expect(getArmorClass(sera)).toBe(16);
   });
+
+  it("a doutrina do Deus da Espada cobra CA base −2 (Cap. 3)", () => {
+    expect(getArmorClass(comArvore("deus-da-espada"))).toBe(8);
+  });
 });
 
 describe("O catálogo", () => {
