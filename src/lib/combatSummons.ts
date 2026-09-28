@@ -27,15 +27,28 @@ export function pactosDeCombate(c: CharacterData): PactoDeCombate[] {
 }
 
 /** Pactos já invocados antes da iniciativa: o PM do preparo é descontado do dono. */
-export function prepararInvocados(grupo: CharacterData[], heroes: EstadoPersonagem[], selecao: Record<string, string[]> = {}): EstadoPersonagem[] {
+export function prepararInvocados(grupo: CharacterData[], heroes: EstadoPersonagem[], selecao?: Record<string, string[]>): EstadoPersonagem[] {
   const invocados: EstadoPersonagem[] = [];
   for (const c of grupo) {
     const dono = heroes.find((h) => h.ficha.id === c.id)!;
     const rank = getHighestUnlockedRank(c, "invocacao");
     const bonus = rank ? RANK_BONUS[rank] : 0;
-    const ids = [...new Set(selecao[c.id] ?? [])];
-    if (ids.length > bonus) throw new Error(`${dono.nome}: quantidade de Pactos superior ao limite do Rank.`);
     const disponiveis = pactosDeCombate(c);
+    /*
+     * O cenário interativo pode escolher Pactos (inclusive escolher nenhum).
+     * O balanceador, porém, só entrega a ficha. Nesse caso o invocador não
+     * esquece a própria árvore: prepara automaticamente os Pactos comprados
+     * que caibam no limite e na reserva de PM, na ordem publicada no livro.
+     */
+    const escolhaExplicita = !!selecao && Object.prototype.hasOwnProperty.call(selecao, c.id);
+    const ids = [...new Set(escolhaExplicita
+      ? selecao![c.id]
+      : disponiveis.reduce<string[]>((escolhidos, pacto) => {
+          const custo = escolhidos.reduce((total, id) => total + (disponiveis.find((p) => p.id === id)?.custo ?? 0), 0);
+          if (escolhidos.length < bonus && custo + pacto.custo <= dono.pm) escolhidos.push(pacto.id);
+          return escolhidos;
+        }, []))];
+    if (ids.length > bonus) throw new Error(`${dono.nome}: quantidade de Pactos superior ao limite do Rank.`);
     for (const id of ids) {
       const pacto = disponiveis.find((p) => p.id === id);
       if (!pacto || !bonus) throw new Error(`${dono.nome}: Pacto indisponível na ficha.`);
