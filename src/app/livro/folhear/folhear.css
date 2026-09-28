@@ -260,7 +260,7 @@
  * elemento onde foi declarada. Por isso a declaração se repete onde a cor
  * muda: no fluxo, em cada capítulo e em cada árvore.
  */
-.folhear[data-modo="livro"] .folhear-fluxo {
+.folhear .folhear-fluxo {
   --color-parchment-50: #f7f3ea;
   --color-parchment-100: #ece6da;
   --color-parchment-200: #dcd6ca;
@@ -274,10 +274,10 @@
   --color-parchment-950: #141418;
 }
 
-.folhear[data-modo="livro"] .folhear-fluxo,
-.folhear[data-modo="livro"] .folhear-fluxo [data-capitulo],
-.folhear[data-modo="livro"] .folhear-fluxo [data-arvore]:not(.livro-citacao),
-.folhear[data-modo="livro"] .folhear-fluxo [data-raca] {
+.folhear .folhear-fluxo,
+.folhear .folhear-fluxo [data-capitulo],
+.folhear .folhear-fluxo [data-arvore]:not(.livro-citacao),
+.folhear .folhear-fluxo [data-raca] {
   --color-wine-50: color-mix(in oklab, var(--cor) 9%, #fff);
   --color-wine-100: color-mix(in oklab, var(--cor) 18%, #fff);
   --color-wine-200: color-mix(in oklab, var(--cor) 36%, #fff);
@@ -651,6 +651,13 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   position: relative;
   height: 100%;
   min-width: 100%;
+}
+
+/* A diagramação estica a faixa na mão (style.width = as duplas lado a lado,
+   ~230 mil px). Voltando pro contínuo a largura ficava, e o texto centralizado
+   nela ia parar fora da tela: o contínuo abria em branco. */
+.folhear:not([data-modo="livro"]) .folhear-faixa {
+  width: auto !important;
 }
 
 /* ── As folhas: papel, marca d'água, marca de aba, rodapé ─────────────── */
@@ -3112,7 +3119,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 }
 
 .folhear-fluxo .livro-raca .livro-raca-numeros [data-vazio] dd {
-  color: color-mix(in srgb, var(--tinta-suave) 45%, transparent);
+  color: color-mix(in srgb, var(--tinta-suave) 80%, transparent);
 }
 
 .folhear-fluxo .livro-raca .livro-raca-numeros dd.livro-raca-nota {
@@ -4912,19 +4919,19 @@ html.livro-imersivo {
  * a árvore; o selo vazado, uma habilidade dela. A cor vem de `--cor`, que o
  * `[data-arvore]` de cada citação já troca pela da árvore (e escurece no
  * papel dia). */
-.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao {
+.folhear .folhear-fluxo a.livro-citacao {
   color: var(--cor);
   font-weight: 700;
   text-decoration: none;
 }
 
-.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao:hover {
+.folhear .folhear-fluxo a.livro-citacao:hover {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
 }
 
-.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao::before {
+.folhear .folhear-fluxo a.livro-citacao::before {
   content: var(--selo, "");
   display: inline-grid;
   width: 1.2em;
@@ -4943,18 +4950,18 @@ html.livro-imersivo {
   vertical-align: 0.14em;
 }
 
-.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao[data-tipo="habilidade"] {
+.folhear .folhear-fluxo a.livro-citacao[data-tipo="habilidade"] {
   font-style: italic;
 }
 
-.folhear[data-modo="livro"] .folhear-fluxo a.livro-citacao[data-tipo="habilidade"]::before {
+.folhear .folhear-fluxo a.livro-citacao[data-tipo="habilidade"]::before {
   background: transparent;
   color: var(--cor);
 }
 
 /* No título da tabela ou da caixa, a cor da página manda: a citação só fica
    na cor dela, sem selo. */
-.folhear[data-modo="livro"] .folhear-fluxo :is(th, .livro-caixa > p:first-child) a.livro-citacao::before {
+.folhear .folhear-fluxo :is(th, .livro-caixa > p:first-child) a.livro-citacao::before {
   display: none;
 }
 
@@ -5166,4 +5173,142 @@ html.livro-imersivo {
    a coluna seguinte. */
 .folhear-fluxo .livro-verbete.folhear-carta-partida > :has(+ .livro-cantico) {
   break-after: auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+ * O CONTÍNUO COM A CARA DO LIVRO (2026-09-27, o autor: "o livro de rolar tá
+ * feio").
+ *
+ * O contínuo era o texto cru num cartão do site: letra, cor e caixas de
+ * interface, nada da identidade do livro. Agora ele é o MESMO fluxo do modo
+ * Livro (`.folhear-fluxo`, com todas as regras de título gritado, caixa
+ * carimbada, tabela na cor do capítulo, cartas das árvores), só que sem as
+ * páginas: uma coluna de papel que rola. Aqui só se desfaz a paginação.
+ * O papel segue o tema do site (Folhear.tsx põe o data-papel).
+ * ═══════════════════════════════════════════════════════════════════════════ */
+.folhear-fluxo.folhear-rolagem {
+  --fonte: 16px;
+  position: static;
+  z-index: auto;
+  width: auto;
+  height: auto;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+  column-count: auto;
+  columns: auto;
+  border: 1px solid var(--fio);
+  background: var(--papel);
+  box-shadow: 0 24px 60px -30px var(--sombra);
+  color: var(--tinta);
+  font-size: var(--fonte);
+  line-height: 1.6;
+}
+
+@media (min-width: 640px) {
+  .folhear-fluxo.folhear-rolagem {
+    --fonte: 17px;
+    padding: 3rem 3rem 4rem;
+  }
+}
+
+/* Capa, guarda, rosto, sumário e colofão são do objeto livro; rolando, o
+   texto começa no capítulo (o Índice da barra faz as vezes do sumário). */
+.folhear-fluxo.folhear-rolagem > :is(.folhear-sumario, .folhear-fantasma, .folhear-capa, .folhear-guarda, .folhear-rosto, .folhear-colofao) {
+  display: none;
+}
+
+.folhear-fluxo.folhear-rolagem > .folhear-sumario + * {
+  margin-top: 0;
+}
+
+/* Cada capítulo numa coluna só, um depois do outro, com fôlego entre eles. */
+.folhear-fluxo.folhear-rolagem > :not(.folhear-fim) {
+  column-count: auto;
+  columns: auto;
+  break-before: auto;
+}
+
+.folhear-fluxo.folhear-rolagem > * + * {
+  margin-top: 5rem;
+}
+
+/* O sangramento da abertura pra cima só faz sentido na página. */
+.folhear-fluxo.folhear-rolagem .livro-abertura {
+  margin-top: 0;
+}
+
+/* Parágrafo seguido de bloco precisa de ar: no livro quem dá o ar é a coluna. */
+.folhear-fluxo.folhear-rolagem :is(.livro-caixa, .livro-tabela, figure, .livro-verbete, blockquote, ul, ol) {
+  margin-block: 1em;
+}
+
+/* O título carimbado da caixa sobe por cima da borda: precisa de mais ar. */
+.folhear-fluxo.folhear-rolagem .livro-caixa {
+  margin-top: 1.8em;
+}
+
+/* Uma raça depois da outra, separadas como fichas. */
+.folhear-fluxo.folhear-rolagem .livro-raca + .livro-raca {
+  margin-top: 3.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--fio);
+}
+
+/* A abertura da árvore é página inteira no livro; rolando, vira um cartaz em
+   pé no meio da coluna (a altura da página não existe aqui). */
+.folhear-fluxo.folhear-rolagem figure.livro-prancha-abertura {
+  width: min(100%, 24rem);
+  height: 32rem;
+  margin: 2em auto 2.5em;
+}
+
+/* No livro cada árvore abre página; rolando, as árvores fechadas do catálogo
+   são uma lista, e o fôlego de capítulo entre elas virava um vão. */
+.folhear-fluxo.folhear-rolagem > .livro-arvore-folhas + .livro-arvore-folhas {
+  margin-top: 0.5rem;
+}
+
+/* A raça mítica em duas metades só cabe com largura; no celular a arte vai
+   pra cima, em faixa, e as regras ocupam a coluna inteira. */
+@media (max-width: 639px) {
+  .folhear-fluxo.folhear-rolagem .livro-raca[data-tier="mitica"] {
+    display: block;
+  }
+
+  .folhear-fluxo.folhear-rolagem .livro-raca[data-tier="mitica"] .livro-raca-arte {
+    height: 22rem;
+    margin: 0 7px 1.2em 6px;
+  }
+
+  .folhear-fluxo.folhear-rolagem .livro-raca[data-tier="mitica"] .livro-raca-nome {
+    font-size: 2.6em;
+  }
+
+  .folhear-fluxo.folhear-rolagem .livro-raca-numeros {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Na página a tabela larga atravessa as colunas ou encolhe a letra; rolando
+   num celular ela precisa da rolagem de lado que o livro desliga — senão a
+   tabela empurra a tela inteira pra fora (check:mobile, 506 px em 320). */
+.folhear-fluxo.folhear-rolagem :is(.livro-tabela, .overflow-x-auto) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Abaixo de 640 px a tabela vira lista de registros (globals.css, "O LIVRO
+   CONTÍNUO NO CELULAR") e não rola mais. */
+@media (max-width: 639px) {
+  .folhear-fluxo.folhear-rolagem .livro-tabela {
+    overflow-x: visible;
+  }
+}
+
+/* O kanji do capítulo e as sombras fora de registro saem do papel de
+   propósito; na página a folha os corta, rolando quem corta é a coluna
+   (`clip`, e não `hidden`: não vira caixa de rolagem). */
+.folhear-fluxo.folhear-rolagem {
+  overflow-x: clip;
 }
