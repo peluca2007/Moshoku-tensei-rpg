@@ -57,6 +57,10 @@ import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import RaceCrest from "./RaceCrest";
 import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
+import CaosDaFicha from "./CaosDaFicha";
+import caosStyles from "./CaosDaFicha.module.css";
+import { identidadeVisualDaArvore } from "@/data/identidadeDasArvores";
+import { identidadeDaFicha } from "@/lib/identidadeDaFicha";
 
 interface ResolvedAbility {
   kind: "ability" | "talent";
@@ -592,6 +596,24 @@ export default function CharacterSheet() {
     return map;
   }, [unlockedRanks]);
 
+  /*
+   * Só recalcula quando o PA de árvore pode ter mudado. Digitar nome, ouro,
+   * PV ou anotações re-renderiza a ficha, mas não remonta as camadas de caos.
+   */
+  const identidadeVisual = useMemo(
+    () => identidadeDaFicha({ startingTreeId, unlockedRanks, purchasedAbilities }),
+    [startingTreeId, unlockedRanks, purchasedAbilities]
+  );
+  const arvoreDominante = identidadeVisual[0]
+    ? identidadeVisualDaArvore(identidadeVisual[0].treeId)
+    : undefined;
+  const estiloDaFicha = arvoreDominante
+    ? ({
+        "--ficha-cor-noite": arvoreDominante.corNoite,
+        "--ficha-cor-dia": arvoreDominante.corDia,
+      } as React.CSSProperties)
+    : undefined;
+
   return (
     /*
       `ficha-impressa` é o gancho do `@media print` do globals.css (0.1.29).
@@ -599,7 +621,14 @@ export default function CharacterSheet() {
       livro também é impresso, e apertar o corpo dele com as mesmas regras
       transformaria a leitura num panfleto.
     */
-    <div className="ficha-impressa mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
+    <div
+      className={`ficha-impressa relative isolate mx-auto max-w-5xl space-y-6 p-4 sm:p-6 ${
+        arvoreDominante ? caosStyles.fichaIdentidade : ""
+      }`}
+      style={estiloDaFicha}
+      data-arvore-dominante={identidadeVisual[0]?.treeId}
+    >
+      <CaosDaFicha identidades={identidadeVisual} />
       {/*
         De quem é a vez, acima de tudo. Ele se esconde na impressão e não rende
         NADA quando não há combate montado — sem wrapper próprio de propósito:

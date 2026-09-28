@@ -1,0 +1,123 @@
+.fichaIdentidade {
+  --ficha-cor: var(--ficha-cor-dia);
+}
+
+:global(html.tema-livro.dark) .fichaIdentidade {
+  --ficha-cor: var(--ficha-cor-noite);
+}
+
+:global(html.tema-livro) .fichaIdentidade {
+  --color-wine-50: color-mix(in oklab, var(--ficha-cor) 9%, #fff);
+  --color-wine-100: color-mix(in oklab, var(--ficha-cor) 18%, #fff);
+  --color-wine-200: color-mix(in oklab, var(--ficha-cor) 36%, #fff);
+  --color-wine-300: color-mix(in oklab, var(--ficha-cor) 58%, #fff);
+  --color-wine-400: color-mix(in oklab, var(--ficha-cor) 80%, #fff);
+  --color-wine-500: var(--ficha-cor);
+  --color-wine-600: color-mix(in oklab, var(--ficha-cor) 78%, #0b0b0e);
+  --color-wine-700: color-mix(in oklab, var(--ficha-cor) 62%, #0b0b0e);
+  --color-wine-800: color-mix(in oklab, var(--ficha-cor) 46%, #0b0b0e);
+  --color-wine-900: color-mix(in oklab, var(--ficha-cor) 30%, #0b0b0e);
+  --color-wine-950: color-mix(in oklab, var(--ficha-cor) 18%, #0b0b0e);
+  box-shadow:
+    inset 3px 0 color-mix(in srgb, var(--ficha-cor) 75%, transparent),
+    inset -3px 0 color-mix(in srgb, var(--ficha-cor) 75%, transparent);
+}
+
+.fichaIdentidade > :not(.caos) {
+  position: relative;
+  z-index: 1;
+}
+
+.caos {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: none;
+  overflow: hidden;
+  border-radius: 1rem;
+  pointer-events: none;
+}
+
+:global(html.tema-livro) .caos {
+  display: block;
+}
+
+.borda,
+.cabecalho {
+  position: absolute;
+  background-image: var(--caos);
+  background-repeat: repeat-y;
+  background-size: auto var(--escala);
+  opacity: var(--opacidade);
+}
+
+.borda {
+  top: 0;
+  bottom: 0;
+  width: clamp(2.75rem, 7vw, 5.5rem);
+  mask-image: linear-gradient(to bottom, #000 0 88%, transparent 100%);
+}
+
+.bordaEsquerda {
+  left: 0;
+  background-position: left var(--deslocamento);
+}
+
+.bordaDireita {
+  right: 0;
+  background-position: right var(--deslocamento);
+  transform: scaleX(-1);
+}
+
+.cabecalho {
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 18rem;
+  background-position: center var(--deslocamento);
+  background-repeat: no-repeat;
+  mask-image: linear-gradient(90deg, #000 0 18%, transparent 31% 69%, #000 82% 100%);
+}
+
+.selo {
+  position: absolute;
+  top: 0.25rem;
+  right: clamp(1rem, 5vw, 3.5rem);
+  color: var(--ficha-cor);
+  font-family: serif;
+  font-size: clamp(7rem, 22vw, 14rem);
+  font-weight: 900;
+  line-height: 0.9;
+  opacity: 0.09;
+  transform: rotate(-5deg);
+  user-select: none;
+}
+
+@media (max-width: 639px) {
+  .borda {
+    width: 2.35rem;
+  }
+
+  .cabecalho {
+    height: 13rem;
+    mask-image: linear-gradient(90deg, #000 0 12%, transparent 25% 75%, #000 88% 100%);
+  }
+
+  .selo {
+    right: 0.5rem;
+    font-size: 7rem;
+    opacity: 0.075;
+  }
+}
+
+@media print {
+  .caos {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caos * {
+    transition: none !important;
+  }
+}
