@@ -28,6 +28,12 @@ export const PATCH_NOTES: PatchNote[] = [
           "As criaturas prontas (Sapo-Lodo, Serpente, Aranha, Wyvern, Ogro, Superd) ganharam +2 no dano pra acompanhar. O encontro principal do kit de mesa continua Equilibrado.",
         ],
       },
+      {
+        heading: "O simulador enxerga quem dá suporte",
+        items: [
+          "Tático, Bardo e Espíritos e Feras agora entram de verdade nas simulações: ordens e Ações concedidas ajudam o grupo, canções e insultos alteram a luta, e Pactos comprados entram em campo mesmo sem seleção manual do cenário.",
+        ],
+      },
     ],
   },
   {
@@ -63,12 +69,6 @@ export const PATCH_NOTES: PatchNote[] = [
         heading: "A ficha veste suas árvores",
         items: [
           "Nos temas Livro, a árvore em que você mais gastou PA passa a dar a cor, o selo e os motivos da ficha. Outras árvores aparecem nas bordas na proporção do investimento; sem PA de árvore, a ficha continua neutra.",
-        ],
-      },
-      {
-        heading: "O simulador enxerga quem dá suporte",
-        items: [
-          "Tático, Bardo e Espíritos e Feras agora entram de verdade nas simulações: ordens e Ações concedidas ajudam o grupo, canções e insultos alteram a luta, e Pactos comprados entram em campo mesmo sem seleção manual do cenário.",
         ],
       },
     ],
