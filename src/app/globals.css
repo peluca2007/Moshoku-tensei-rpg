@@ -1766,18 +1766,67 @@ body,
     var(--background);
 }
 
-/* A voz gritada do livro nos títulos de página e de seção. */
-:where(main) :where(h1, h2) {
+/* A voz gritada do livro nos títulos de página e de seção.
+   Era `:where(main) :where(h1, h2)`, sem peso nenhum, e a regra velha dos
+   títulos (`h1, h2, h3` em Fraunces, lá em cima) ganhava: o site ficou com a
+   cor do livro e a letra do pergaminho (2026-09-27, "arrume os temas"). O
+   livro fica de fora porque tem a tipografia dele. */
+main :is(h1, h2):not(.livro-shell *) {
   font-family: var(--font-livro-grito), "Arial Narrow", system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: 0.01em;
   text-transform: uppercase;
+  text-shadow: none;
+}
+
+/* O título da rota com o traço de marca-texto da cor da seção passando por
+   baixo das letras, como as seções do livro. */
+main h1:not(.livro-shell *) {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--cor) 55%, transparent);
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: 0.3em;
+  text-underline-offset: -0.14em;
+}
+
+/* A arte de ambiente com a cor dela, como no livro. O sépia que puxava tudo
+   pro âmbar era do pergaminho; o que garante o texto é o véu, não o filtro. */
+.arte-ambiente,
+.faixa-arte {
+  filter: saturate(0.9) brightness(0.97);
+}
+
+.dark .arte-ambiente,
+.dark .faixa-arte {
+  filter: saturate(0.85) brightness(0.62);
+}
+
+/* No cabeçalho de rota a arte mora à direita e some na direção do título, em
+   vez de uma névoa por cima de tudo. */
+.faixa-arte {
+  mask-image: linear-gradient(to right, transparent 0%, black 50%, black 100%);
+}
+
+/* O fio de luz no alto do card elevado era dourado; agora é a cor da seção. */
+.surface-raised {
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--cor) 70%, transparent),
+    0 2px 4px rgb(0 0 0 / 0.06),
+    0 12px 32px -12px rgb(0 0 0 / 0.22);
+}
+
+.dark .surface-raised {
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--cor) 60%, transparent),
+    0 2px 6px rgb(0 0 0 / 0.45),
+    0 16px 40px -14px rgb(0 0 0 / 0.7);
 }
 
 /* ============================================================================
  * O LIVRO CONTÍNUO NO CELULAR (2026-09-26)
  *
- * Tudo fica sob `.livro-pagina` e abaixo de 640 px. O folheado compartilha
+ * Tudo fica sob `.livro-pagina` (e, desde 2026-09-27, sob o contínuo do
+ * folhear, `.folhear-rolagem`, que virou o /livro) e abaixo de 640 px. O folheado compartilha
  * componentes e a classe `.livro-shell`, mas não essa folha contínua; assim a
  * diagramação fixa de 816×1056 permanece intacta até numa viewport estreita.
  * ========================================================================== */
@@ -1792,21 +1841,21 @@ body,
 
   /* BookTable vira uma lista de registros. A pessoa lê a linha inteira sem
      arrastar a tela e sem perder o cabeçalho fora da viewport. */
-  .livro-shell .livro-pagina .livro-tabela {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela {
     overflow-x: visible;
     border-radius: 0.5rem;
   }
 
-  .livro-shell .livro-pagina .livro-tabela table,
-  .livro-shell .livro-pagina .livro-tabela tbody,
-  .livro-shell .livro-pagina .livro-tabela tr,
-  .livro-shell .livro-pagina .livro-tabela td {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela table,
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela tbody,
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela tr,
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela td {
     display: block;
     width: 100%;
     min-width: 0;
   }
 
-  .livro-shell .livro-pagina .livro-tabela thead {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela thead {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -1816,16 +1865,16 @@ body,
     white-space: nowrap;
   }
 
-  .livro-shell .livro-pagina .livro-tabela tbody tr {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela tbody tr {
     padding: 0.35rem 0;
     border-top: 1px solid color-mix(in srgb, var(--color-parchment-400) 45%, transparent);
   }
 
-  .livro-shell .livro-pagina .livro-tabela tbody tr:first-child {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela tbody tr:first-child {
     border-top: 0;
   }
 
-  .livro-shell .livro-pagina .livro-tabela td {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela td {
     display: grid;
     grid-template-columns: minmax(5.75rem, 0.8fr) minmax(0, 1.4fr);
     gap: 0.65rem;
@@ -1834,7 +1883,7 @@ body,
     font-size: 0.875rem;
   }
 
-  .livro-shell .livro-pagina .livro-tabela td::before {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela td::before {
     content: attr(data-label);
     color: var(--color-gold-700);
     font-family: var(--font-livro-rotulo), system-ui, sans-serif;
@@ -1845,30 +1894,30 @@ body,
     text-transform: uppercase;
   }
 
-  .dark .livro-shell .livro-pagina .livro-tabela td::before {
+  .dark .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-tabela td::before {
     color: var(--color-gold-300);
   }
 
   /* Cartas são material de consulta durante a sessão; custo, alcance, cântico
      e observações deixam de usar os 10–12 px herdados da versão compacta. */
-  .livro-shell .livro-pagina .livro-verbete :is(.text-3xs, .text-2xs, .text-xs),
-  .livro-shell .livro-pagina .livro-verbete-meta,
-  .livro-shell .livro-pagina .livro-verbete-alcance {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-verbete :is(.text-3xs, .text-2xs, .text-xs),
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-verbete-meta,
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-verbete-alcance {
     font-size: 0.875rem;
   }
 
-  .livro-shell .livro-pagina :is(.text-3xs, .text-2xs, .text-xs) {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) :is(.text-3xs, .text-2xs, .text-xs) {
     font-size: 0.875rem;
   }
 
-  .livro-shell .livro-pagina .livro-verbete {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-verbete {
     min-width: 0;
     overflow-wrap: anywhere;
   }
 
   /* Diagramas de sequência ainda rolam quando a relação espacial é a própria
      informação. A sombra interna e a barra visível avisam que há mais à direita. */
-  .livro-shell .livro-pagina .diagrama .overflow-x-auto {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .diagrama .overflow-x-auto {
     margin-inline: -0.25rem;
     padding-inline: 0.25rem;
     overscroll-behavior-inline: contain;
@@ -1877,33 +1926,33 @@ body,
     box-shadow: inset -14px 0 12px -16px var(--color-gold-500);
   }
 
-  .livro-shell .livro-pagina .diagrama :is(.text-3xs, .text-2xs, .text-xs, [class~="text-[10px]"]) {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .diagrama :is(.text-3xs, .text-2xs, .text-xs, [class~="text-[10px]"]) {
     font-size: 0.875rem;
   }
 
-  .livro-shell .livro-pagina .diagrama :is([class~="text-[8px]"], [class~="text-[9px]"]) {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .diagrama :is([class~="text-[8px]"], [class~="text-[9px]"]) {
     font-size: 0.75rem;
   }
 
-  .livro-shell .livro-pagina .diagrama [class~="w-[4.8rem]"] {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .diagrama [class~="w-[4.8rem]"] {
     width: 7rem;
   }
 
-  .livro-shell .livro-pagina :is(img, video, svg, canvas) {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) :is(img, video, svg, canvas) {
     max-width: 100%;
   }
 
-  .livro-shell .livro-pagina :is(.livro-antecedente-nome, .livro-vitrine-nome) {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) :is(.livro-antecedente-nome, .livro-vitrine-nome) {
     min-width: 0;
     overflow-wrap: anywhere;
   }
 
-  .livro-shell .livro-pagina :is(.livro-raca-link, .livro-fim a) {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) :is(.livro-raca-link, .livro-fim a) {
     min-height: 40px;
     align-items: center;
   }
 
-  .livro-shell .livro-pagina .livro-raca-link {
+  .livro-shell :is(.livro-pagina, .folhear-rolagem) .livro-raca-link {
     display: inline-flex;
   }
 }
