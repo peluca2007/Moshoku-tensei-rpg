@@ -412,3 +412,71 @@ por quê, e o antes/depois do `balancear` e do `kit:mesa`.
 ### Pendências pro Claude
 
 (vazio)
+
+---
+
+## Tarefa 7 — o que sobrou do balanço pelo simulador (2026-09-28)
+
+O Claude passou esta frente pra você (acabou o fôlego dele). Leia antes: `CLAUDE.md` (as três
+prioridades: Diversão > Balanceamento > Simplicidade; "nada fora do livro"), `RELATORIO-CODEX-SIMULADOR.md`,
+e as notas 0.1.117–0.1.120 em `src/data/patchNotes.ts` (ritmo de PA dobrado, moldes remedidos, golpe
+honesto do molde, Conjuração Concentrada, Pactos 2/2/3/3/4, Bardo com Bônus de Rank, Guarda do Corpo sem
+mapa, kit equipado no balanceador).
+
+**O instrumento:** `npm run balancear` (grupo Norte + Fogo + Cura + a árvore; Difícil = 5 criaturas do
+molde, e um Chefe; alvo aleatório; mesma semente). A mediana de vitória no Difícil fica ~65–80% por
+patamar; o Deus da Espada é a referência de combatente (76–96% no Difícil, 91–99% contra o Chefe).
+`npm run medir:regua` compara o dano de alvo único com a régua do Apêndice C. `npm run
+check:sobrevivencia` não pode voltar a ter caso abaixo de um turno.
+
+### O que falta, em ordem de impacto
+
+1. **A magia no 1º e 2º patamar.** Mago como 4º membro vence o Difícil 9–26% (Fogo 12–15%, Água
+   9–12%, Teórica 11%) contra 50–96% dos combatentes; ele cai cedo e causa pouco. Meça dois consertos
+   pequenos e escolha pelo número (e pela diversão): (a) um escudo de mana barato no Principiante das
+   escolas de magia (ex.: Reação, PM → PV Temporários); (b) mais PV pro mago no começo (o Dado de PV
+   das árvores de magia no Principiante/Intermediário, ou o talento de reserva mais forte cedo). Meta:
+   o mago de 1º–2º perto da mediana, sem passar o combatente. **Não mexa na régua de dano de alvo único**
+   — ela é desenho (o mago troca alvo único por área).
+2. **Magia contra o Chefe do 3º em diante:** ~40–60% contra 90–99% da espada, mesmo com a Conjuração
+   Concentrada. Veja se o que falta é PM (o mago medido já sobe Espírito, ver `scripts/balancear.mts`),
+   sobrevivência ou dano, e proponha — sem carta nova se der.
+3. **Bardo:** último da lista em todo patamar (7–15% no Difícil do 1º–2º; 16–27% contra o Chefe do
+   3º–6º), mesmo depois da 0.1.120. Ideia do Claude: uma carta de combate no Principiante (a
+   Dissonância está na Maestria e rende pouco no começo). A identidade é multiplicar o grupo e
+   atrapalhar o inimigo — não virar atacante.
+4. **Água, Teórica e Desintoxicação no simulador:** a força da Água é o combo molhar → congelar →
+   Quebra de Gelo (acerto automático e +3d8 contra Congelado), e a IA não monta o combo; a Teórica usa
+   fórmulas fixas; a Dose da Desintoxicação monta em dois turnos. Ensine a IA antes de julgar as
+   escolas (é motor, é seu).
+5. **As 16 técnicas `LISTADO` do `npm run check:condicoes-combate`** e a régua do Deus do Norte (medida
+   ~50 contra ~34 no 3º). Monte uma lista curta, técnica por técnica, com a leitura proposta — elas pedem
+   decisão do autor.
+
+### Regras
+
+- **Mudança de regra (número de carta, texto do livro) é decisão do autor.** Pro que for pequeno e
+  medido, aplique e explique no commit e na nota de versão. Pro que for grande (carta nova, regra nova,
+  número que muda o jogo de várias árvores), deixe PRONTO numa branch ou num relatório com antes/depois
+  do `balancear`, e peça a decisão ao autor com opções numeradas (formato do `CLAUDE.md`, com a sua
+  recomendação marcada).
+- Toda regra que o motor aplica tem de estar escrita no livro; o texto do livro sai dos dados das
+  árvores (`src/data/trees/**`) e dos `Chapter*.tsx`.
+- Antes de subir mudança no livro: `BASE=http://localhost:3020 npm run revisar:livro` (zero estouro,
+  zero título separado) e `npm run check:livro check:texto check:termos check:remissoes`.
+- `npx tsc --noEmit -p .`, `npx vitest run`, `npm run lint`. Commits pequenos direto na `main`, em
+  português; nota em `src/data/patchNotes.ts` (versão nova, 0.1.121 em diante).
+
+### Arquivos
+
+Agora são todos seus nesta frente: `src/lib/**` (motor), `scripts/balancear.mts` e `medir-*`,
+`src/data/trees/**`, `src/data/bestiary.ts`, os `Chapter*.tsx`/`Appendices.tsx` no que for regra.
+
+### Entrega
+
+`RELATORIO-CODEX-BALANCO.md`: a tabela do `balancear` antes e depois (as 19 árvores × 6 patamares,
+Difícil/Chefe), cada mudança com o porquê, e as decisões que ficaram pro autor.
+
+### Pendências pro Claude
+
+(vazio)
