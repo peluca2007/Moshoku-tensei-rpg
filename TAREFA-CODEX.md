@@ -218,3 +218,84 @@ quê). O autor decide pelo olho, então mostre.
 ### Pendências pro Claude
 
 (vazio)
+
+---
+
+## Tarefa 5 — a ficha que veste as árvores do personagem (2026-09-27)
+
+**Pode começar já** (é independente das Tarefas 3 e 4; se ainda estiver numa delas, feche o commit
+em andamento e venha). O Claude está fazendo, ao mesmo tempo, os **4 temas do site** e depois a
+revisão do sistema com o simulador — fique fora dos arquivos dele (lista no fim).
+
+O autor, com as palavras dele: *"se você tacar Deus da Espada na sua ficha, a sua ficha vai mudando
+de cor dependendo do que você tem. Na ficha vai ter o caos do livro, e vai tendo caos quanto mais.
+Se tiver um pouquinho de Água, vai ter o Deus da Água ali também, mas menos do que o Deus da
+Espada."* É estética pura: nenhum número da ficha muda.
+
+### As decisões (já tomadas pelo autor)
+
+1. **O que mede o "quanto": o PA gasto em cada árvore.** A árvore com mais PA manda; cada árvore
+   aparece na proporção do PA dela. Empate: a Árvore Inicial ganha. Ficha sem PA em árvore nenhuma
+   fica como está hoje (neutra).
+2. **Como aparece:**
+   - a **cor de acento** da ficha vira a da árvore dominante (as mesmas cores do livro: `--cor-arvore`
+     de cada `[data-arvore]` em `src/app/livro/folhear/folhear.css`, versão noite; no tema claro use a
+     versão escurecida que o livro usa no papel dia);
+   - os **motivos de caos** de cada árvore (`public/livro/caos/<treeId>.svg`, os mesmos das bordas do
+     livro, gerados por `scripts/gerar-caos.mjs`) se espalham pelas **bordas e pelo cabeçalho** da
+     ficha, mais densos e mais opacos quanto mais PA — a dominante muito, a de 10% quase nada;
+   - o **kanji** da árvore dominante (`--selo` / `--jp` no mesmo CSS) enorme e bem apagado no fundo
+     do cabeçalho da ficha, como nas páginas do livro.
+   - **Legibilidade manda:** o caos mora nas bordas e no cabeçalho, nunca embaixo de texto corrido,
+     número ou campo de formulário. `npm run check:contraste` não pode piorar em `/ficha`.
+3. **Só nos temas do livro.** O site vai ter 4 temas: Pergaminho Noite (o padrão), Pergaminho, Livro
+   Noite e Livro Dia. O caos da ficha vale **só nos dois do Livro**. O contrato (o Claude implementa
+   agora): nos temas do livro o `<html>` recebe a classe **`tema-livro`**, e o escuro continua sendo a
+   classe `dark`. Então: `html.tema-livro` = mostra o caos; `html.tema-livro.dark` = Livro Noite.
+   Enquanto essa classe não chega na `main`, teste pondo `tema-livro` no `<html>` à mão no DevTools.
+
+### Como eu faria (sugestão, não ordem)
+
+- Uma função pura `src/lib/identidadeDaFicha.ts` — recebe a ficha (`CharacterData`) e devolve
+  `[{ treeId, pa, peso }]` ordenado (peso = fração do PA em árvores), com teste em vitest cobrindo:
+  ficha vazia, uma árvore só, 80/20, empate decidido pela Árvore Inicial. O PA por árvore sai das
+  compras (`purchasedAbilities`) e dos patamares abertos (`unlockedRanks`) com as mesmas regras de
+  custo de `getPaSpent` em `src/store/selectors.ts` — reaproveite os helpers de lá, não reescreva
+  tabela de custo.
+- Um componente `src/components/CaosDaFicha.tsx` que desenha as camadas (posicionado atrás do
+  conteúdo, `pointer-events: none`, `aria-hidden`), e o `CharacterSheet.tsx` o usa e põe o
+  `--cor` da dominante na raiz da ficha.
+- As cores e os kanji das árvores hoje só existem no CSS do livro. Se precisar delas em TS, crie um
+  `src/data/identidadeDasArvores.ts` (cor noite, cor dia, kanji) e faça o `folhear.css` continuar
+  igual — não precisa migrar o livro.
+- Desempenho: a ficha re-renderiza a cada clique; o caos não pode recalcular SVG a cada tecla
+  (memorize pelo mapa de pesos) nem usar filtro caro.
+- Celular primeiro: em 390 px o caos fica só nas bordas do cabeçalho.
+
+### Arquivos
+
+Pode mexer: `src/lib/identidadeDaFicha.ts` (+ teste), `src/components/CaosDaFicha.tsx`,
+`src/data/identidadeDasArvores.ts`, `src/components/CharacterSheet.tsx` (só o necessário pra montar o
+caos e o `--cor`), e CSS novo seu (um `.module.css` do componente, de preferência).
+
+**Não mexa** (são do Claude agora): `src/app/globals.css`, `src/components/ThemeProvider.tsx`,
+`src/components/ThemeToggle.tsx`, `src/components/Nav.tsx`, a logo, `src/components/ui/PageHeader.tsx`,
+`src/lib/combatSim.ts`, `src/lib/encounterSim.ts`, `src/data/bestiary.ts`, `src/data/trees/**`, e os
+scripts `medir-*`/`check-*`.
+
+### Como conferir e subir
+
+- `npx tsc --noEmit -p .`, `npx vitest run`, `npx eslint src scripts`,
+  `BASE=http://localhost:3020 npm run check:contraste` e `npm run check:mobile`.
+- Fotografe a ficha nos 4 temas com 3 perfis (Deus da Espada puro; Deus da Espada + um pouco de
+  Água; mago de Fogo) — `node scripts/tela.mjs /ficha --tema claro` fotografa; pra ficha semeada use
+  a `/semente-dev`.
+- Commits pequenos direto na `main`, em português; nota curta em `src/data/patchNotes.ts`.
+
+### Entrega
+
+`RELATORIO-CODEX-FICHA.md` com as fotos (os 3 perfis × os temas do livro) e o que ficou de fora.
+
+### Pendências pro Claude
+
+(vazio)
