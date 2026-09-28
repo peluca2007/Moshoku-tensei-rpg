@@ -29,6 +29,9 @@ import Image from "next/image";
  * claro ele passa por `brightness(.3) sepia(.5) saturate(2)`, que escurece o
  * creme até um marrom quente e puxa o ouro pro sépia — a silhueta é a mesma, a
  * temperatura é a da paleta, e o contraste volta. No escuro, nenhum filtro.
+ *
+ * Nos temas do livro (`.tema-livro`) ela vira tinta, sem o dourado — ver
+ * "A LOGO no livro" no globals.css.
  */
 export default function Logo({
   className = "",
@@ -53,7 +56,7 @@ export default function Logo({
       height={1024}
       priority={priority}
       sizes={sizes}
-      className={`w-auto [filter:brightness(0.3)_sepia(0.5)_saturate(2)] dark:[filter:none] ${className}`}
+      className={`logo-marca w-auto [filter:brightness(0.3)_sepia(0.5)_saturate(2)] dark:[filter:none] ${className}`}
     />
   );
 }

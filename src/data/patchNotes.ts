@@ -16,6 +16,22 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.116",
+    date: "2026-09-27",
+    title: "Quatro temas",
+    sections: [
+      {
+        heading: "Escolha a roupa do site",
+        items: [
+          "O botão de tema (a paleta, no alto) abre um menu com quatro: Pergaminho Noite (o padrão), Pergaminho, Livro Noite e Livro Dia. Os dois Pergaminhos são o site de antes; os dois do Livro vestem o site com a identidade do livro folheado.",
+          "Quem tinha escolhido claro ou escuro cai no Pergaminho correspondente.",
+          "O livro (/livro) tem a identidade dele nos quatro temas; o tema muda o site em volta.",
+          "Nos temas do Livro a logo perde o dourado e vira tinta de impressão: clara na noite, escura no dia.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.115",
     date: "2026-09-27",
     title: "Um livro só, e o site com a cara dele",
