@@ -194,6 +194,11 @@ const ENCONTROS: [string, [string, number][]][] = [
   ["Serpente + Aranha", [["serpente-pantano", 1], ["aranha-cavernas", 1]]],
   ["Serpente + Aranha + 2 Sapos", [["serpente-pantano", 1], ["aranha-cavernas", 1], ["sapo-lodo", 2]]],
   ["Aranha + 3 Sapos", [["aranha-cavernas", 1], ["sapo-lodo", 3]]],
+  ["Aranha + 1 Sapo", [["aranha-cavernas", 1], ["sapo-lodo", 1]]],
+  ["Aranha + 2 Sapos", [["aranha-cavernas", 1], ["sapo-lodo", 2]]],
+  ["Serpente + 2 Sapos", [["serpente-pantano", 1], ["sapo-lodo", 2]]],
+  ["3 Sapos", [["sapo-lodo", 3]]],
+  ["Serpente + Aranha + 1 Sapo", [["serpente-pantano", 1], ["aranha-cavernas", 1], ["sapo-lodo", 1]]],
   ["2 Serpentes + Aranha", [["serpente-pantano", 2], ["aranha-cavernas", 1]]],
   ["2 Serpentes + 2 Aranhas (o orçamento do livro)", [["serpente-pantano", 2], ["aranha-cavernas", 2]]],
 ];

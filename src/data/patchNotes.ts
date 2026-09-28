@@ -16,6 +16,28 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.119",
+    date: "2026-09-27",
+    title: "O golpe do monstro, e os monstros remedidos de novo",
+    sections: [
+      {
+        heading: "O simulador: três golpes, e o erro perde",
+        items: [
+          "A criatura sem ações escritas (o molde) soltava o dano do turno inteiro num golpe só, e quando errava rolava de novo contra o próximo personagem até acertar: a CA quase não protegia, e o mago de 1º patamar caía num golpe. Agora são três golpes por turno, um terço do dano em cada, e o erro perde o golpe — como a criatura pronta já fazia.",
+        ],
+      },
+      {
+        heading: "O molde do Apêndice G",
+        items: [
+          "O dano sobe só até onde um mago de Vigor 0 ainda aguenta um turno de uma criatura do patamar dele; o PV fecha o resto. PV 53/66/139/176/210/350 e dano 16/21/29/38/48/50, do 1º ao 6º. As lutas ficam mais longas (4–5 rodadas) e ninguém cai antes de agir.",
+          "O chefe tem 2,5× o PV (era 3×) e 1,5× o dano. Do 1º ao 5º: 4 criaturas = Equilibrado, 5 = Difícil, Chefe = Equilibrado. No 6º o grupo está no auge: apertar pede uma criatura a mais, e o Chefe é Difícil.",
+          "O Apêndice G avisa: a conta supõe o grupo que já vive no patamar; grupo recém-chegado pede uma criatura a menos.",
+          "Kit de mesa: o encontro principal passa a ser Aranha + 2 Sapos (as fichas do kit estão no começo do 2º patamar).",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.118",
     date: "2026-09-27",
     title: "Os monstros recalibrados",
