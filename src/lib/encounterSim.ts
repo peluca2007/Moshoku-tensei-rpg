@@ -453,15 +453,18 @@ export function ordenarAlvosDaCriatura<T extends Alvo>(alvos: T[], tatica: Criat
   return vivos;
 }
 
-function turnoPorOrcamento(c: EstadoCriatura, alvos: Alvo[], rng: Rng, logger?: RegistroCombate): void {
+function turnoPorOrcamento(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng, logger?: RegistroCombate): void {
   // Surpresa: uma Ação só no turno (o mesmo terço do orçamento de antes).
   const golpes = (c.surpreso ? 1 : ACOES_POR_TURNO) * c.rodadas;
   const porGolpe = c.danoPorTurno / ACOES_POR_TURNO;
   let fila = ordenarAlvosDaCriatura(alvos, c.fonte.tatica, rng);
   for (let g = 0; g < golpes; g++) {
     fila = fila.filter((a) => a.vivo);
-    const alvo = fila[0];
-    if (!alvo) break;
+    const escolhido = fila[0];
+    if (!escolhido) break;
+    // A Guarda do Corpo (Cavalaria e Escudos) vale contra o golpe do molde
+    // também — era só contra a criatura com ações escritas.
+    const alvo = guardaDoCorpo(escolhido, c, alvos, logger);
     const teste = rolarD20ComRegistro(rng, false, c.desvantagemNoProximoAtaque);
     c.desvantagemNoProximoAtaque = false;
     let ca = Math.max(1, alvo.ca - alvo.quebrantado);
