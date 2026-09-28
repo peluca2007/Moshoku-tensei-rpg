@@ -2,13 +2,16 @@ import { describe, expect, it } from "vitest";
 import {
   Alvo,
   EstadoPersonagem,
+  alvosNaArea,
   acoesDe,
   aplicarDano,
+  autorizarAcao,
   casoBase,
   curar,
   darPvTemp,
   escolherAcao,
   escolherSuporte,
+  limiteDeAlvosNaArea,
   makeRng,
   montarFicha,
   novaAcao,
@@ -175,6 +178,40 @@ describe("o que é ataque em área e o que só anda em linha reta", () => {
 
   it("e atravessar o alvo pra pegar quem está atrás também", () => {
     expect(acaoDe("fogo", "Lança de Plasma")?.area, "atinge tudo atrás").toBe(true);
+  });
+
+  it("dimensiona a quantidade de alvos em vez de acertar o grupo inteiro", () => {
+    expect(limiteDeAlvosNaArea("Cone de 3m")).toBe(2);
+    expect(limiteDeAlvosNaArea("Esfera de 6 metros")).toBe(3);
+    expect(limiteDeAlvosNaArea("Esfera de 18m")).toBe(5);
+    expect(alvosNaArea([1, 2, 3, 4, 5], "Cone de 3m")).toEqual([1, 2]);
+  });
+});
+
+describe("condições de uso escritas na carta", () => {
+  it("Golpe do Desespero exige metade dos PV e cobra Exaustão depois de cada uso", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("deus-do-norte")));
+    const golpe = e.ficha.acoes.find((a) => a.nome === "Golpe do Desespero")!;
+    expect(golpe).toMatchObject({ pvDoUsuarioMaximo: 0.5, exaustaoDepois: 1 });
+    expect(autorizarAcao(e, golpe, novoAlvo({ nome: "alvo", pv: 1_000, ca: 1 })).legal).toBe(false);
+
+    e.pv = Math.floor(e.ficha.pvMax / 2);
+    e.pt = 99;
+    e.ficha.acoes = [golpe];
+    const alvo = novoAlvo({ nome: "alvo", pv: 10_000, ca: 1 });
+    expect(autorizarAcao(e, golpe, alvo).legal).toBe(true);
+    turnoPersonagem(e, [alvo], () => 0.5);
+    expect(e.exaustao).toBe(3);
+  });
+
+  it("cobra a preparação de Agarrado e nega outros estados exigidos quando ausentes", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("armas-pesadas")));
+    const arremesso = e.ficha.acoes.find((a) => a.nome === "Arremesso [Impacto]")!;
+    expect(arremesso.acoes).toBe(2);
+    const exigeCaido = novaAcao({ nome: "teste", estadoExigidoDoAlvo: "caido" });
+    expect(autorizarAcao(e, exigeCaido, novoAlvo({ nome: "livre", pv: 100, ca: 10 })).legal).toBe(false);
+    const caido = novoAlvo({ nome: "caído", pv: 100, ca: 10, caido: true });
+    expect(autorizarAcao(e, exigeCaido, caido).legal).toBe(true);
   });
 });
 

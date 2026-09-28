@@ -11,6 +11,7 @@ import {
   FichaCombate,
   Rng,
   TURNOS_SUSTENTADOS,
+  alvosNaArea,
   aoIniciarRodada,
   consumirReacao,
   d20,
@@ -325,12 +326,14 @@ export function planoDoTurno(c: CriaturaEncontro, acoesDisponiveis = ACOES_POR_T
  */
 export function planoDeCombate(
   c: CriaturaEncontro,
-  alvosNaArea: number,
+  quantidadeNaArea: number | ((acao: AcaoCriatura) => number),
   acoesDisponiveis = ACOES_POR_TURNO,
   elegivel?: (acao: AcaoCriatura) => boolean,
 ): AcaoCriatura[] {
   return planoPeloValor(c, acoesDisponiveis, (acao) =>
-    danoMedioDaAcao(acao) * (acao.area ? Math.max(1, alvosNaArea) : 1), elegivel
+    danoMedioDaAcao(acao) * (acao.area
+      ? Math.max(1, typeof quantidadeNaArea === "function" ? quantidadeNaArea(acao) : quantidadeNaArea)
+      : 1), elegivel
   );
 }
 
@@ -920,7 +923,7 @@ function turnoPorAcoes(c: EstadoCriatura, alvos: EstadoPersonagem[], aliados: Es
           if (alvo) executarSuporteDaCriatura(c, cantico.acao, alvo, aliados, rng, logger, true);
         } else {
           const vivos = ordenarAlvosDaCriatura(alvos, c.fonte.tatica, rng);
-          for (const alvo of cantico.acao.area ? naArea(alvos) : vivos.slice(0, 1))
+          for (const alvo of cantico.acao.area ? naArea(alvos, cantico.acao) : vivos.slice(0, 1))
             resolverAcaoCriatura(c, cantico.acao, alvo, rng, logger, alvos);
         }
       }
@@ -944,9 +947,9 @@ function turnoPorAcoes(c: EstadoCriatura, alvos: EstadoPersonagem[], aliados: Es
           break;
         }
         if (!longoSuporte) {
-          const curtas = planoDeCombate(c.fonte, naArea(alvos).length, acoesRestantes, (a) => podePagar(c, a))[0];
+          const curtas = planoDeCombate(c.fonte, (a) => naArea(alvos, a).length, acoesRestantes, (a) => podePagar(c, a))[0];
           const longas = acoesOfensivas(c.fonte).filter((a) => a.acoes > ACOES_POR_TURNO && podePagar(c, a));
-          const valor = (a: AcaoCriatura) => danoMedioDaAcao(a) * (a.area ? naArea(alvos).length : 1) / a.acoes;
+          const valor = (a: AcaoCriatura) => danoMedioDaAcao(a) * (a.area ? naArea(alvos, a).length : 1) / a.acoes;
           const longa = longas.sort((a, b) => valor(b) - valor(a))[0];
           if (longa && (!curtas || valor(longa) > valor(curtas))) {
             const distancia = distanciaEntre(c, vivos[0]);
@@ -977,7 +980,7 @@ function turnoPorAcoes(c: EstadoCriatura, alvos: EstadoPersonagem[], aliados: Es
       }
       // Recalcula depois de cada golpe: uma ação em área pode derrubar alguém
       // e deixar de ser a melhor escolha para as Ações que restam.
-      const acao = planoDeCombate(c.fonte, naArea(alvos).length, acoesRestantes, (candidata) =>
+      const acao = planoDeCombate(c.fonte, (candidata) => naArea(alvos, candidata).length, acoesRestantes, (candidata) =>
         podePagar(c, candidata) && (candidata.regra !== "primeiro-golpe" || (!c.usouPrimeiroGolpe && aberturaDoRival(c, vivos[0])))
         && (temDano(candidata.dano) || !candidata.aplicaEmChamas || vivos.some((a) => a.emChamas === 0))
       )[0];
@@ -995,7 +998,7 @@ function turnoPorAcoes(c: EstadoCriatura, alvos: EstadoPersonagem[], aliados: Es
         logger?.log(`[${c.nome}] usa Primeiro Golpe contra alvo Desprevenido; uso único deste combate consumido.`);
       }
       pagarAcao(c, acao, logger);
-      for (const alvo of acao.area ? naArea(alvos) : [vivos[0]]) {
+      for (const alvo of acao.area ? naArea(alvos, acao) : [vivos[0]]) {
         for (let golpe = 0; golpe < (acao.ataquesPorAcao ?? 1) && alvo.vivo; golpe++)
           resolverAcaoCriatura(c, acao, alvo, rng, logger, alvos);
       }
@@ -1005,8 +1008,9 @@ function turnoPorAcoes(c: EstadoCriatura, alvos: EstadoPersonagem[], aliados: Es
 }
 
 /** Quem uma ação em área alcança: os de pé e os caídos que ainda não morreram. */
-function naArea(alvos: EstadoPersonagem[]): EstadoPersonagem[] {
-  return alvos.filter((a) => a.vivo || (a.inconsciente && !a.morto));
+function naArea(alvos: EstadoPersonagem[], acao: AcaoCriatura): EstadoPersonagem[] {
+  const elegiveis = alvos.filter((a) => a.vivo || (a.inconsciente && !a.morto));
+  return alvosNaArea(elegiveis, `${acao.alcance} ${acao.nota}`);
 }
 
 function turnoCriatura(c: EstadoCriatura, alvos: EstadoPersonagem[], aliados: EstadoCriatura[],
@@ -1048,14 +1052,14 @@ function reagirComoChefe(
       podePagar(c, a) &&
       (a.regra !== "primeiro-golpe" || (!c.usouPrimeiroGolpe && aberturaDoRival(c, alvoGatilho))));
     if (candidatas.length === 0) return; // nada que caiba numa Reação — ela não dispara
-    const acao = planoDeCombate(c.fonte, naArea(grupo).length, 1, (a) =>
+    const acao = planoDeCombate(c.fonte, (a) => naArea(grupo, a).length, 1, (a) =>
       podePagar(c, a) && (a.regra !== "primeiro-golpe" || (!c.usouPrimeiroGolpe && aberturaDoRival(c, alvoGatilho)))
     )[0];
     if (!acao || !candidatas.some((candidata) => candidata.id === acao.id)) return;
     // O herói que acabou de agir é o alvo da Reação de alvo único. Uma ação em
     // área, porém, promete todos os alvos vivos — passar só esse herói tornava
     // "área" uma mentira justamente fora do turno normal do chefe.
-    const alvosDaReacao = acao.area ? naArea(grupo) : [alvoGatilho];
+    const alvosDaReacao = acao.area ? naArea(grupo, acao) : [alvoGatilho];
     logger?.log(`[${c.nome}] reage com ${acao.nome} (${alvosDaReacao.length} alvo${alvosDaReacao.length === 1 ? "" : "s"})`);
     if (acao.regra === "primeiro-golpe") c.usouPrimeiroGolpe = true;
     pagarAcao(c, acao, logger);

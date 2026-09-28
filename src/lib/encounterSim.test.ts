@@ -566,13 +566,17 @@ describe("criatura com ações declaradas", () => {
     expect(grande.vitorias).toBeLessThan(pequena.vitorias);
   });
 
-  it("ação em área pega o grupo inteiro, e a de alvo único não", () => {
+  it("ação em área curta alcança dois alvos, não o grupo inteiro", () => {
     const emArea = comAcoes("3d10");
     emArea.acoes[0].area = true;
-    const base = { batalhas: 120, semente: 31 };
-    const unico = simularEncontro(grupo, [comAcoes("3d10")], base);
-    const area = simularEncontro(grupo, [emArea], base);
-    expect(area.pvRestante).toBeLessThan(unico.pvRestante);
+    emArea.acoes[0].alcance = "Cone de 3m";
+    const area = simularEncontro(grupo, [emArea], {
+      batalhas: 10, semente: 31, maxRodadas: 1, gerarLogs: true,
+    });
+    for (const log of area.logsExtremos ?? []) {
+      const atingidos = new Set(log.eventos?.filter((e) => e.atacante.startsWith("Bicho")).map((e) => e.alvo));
+      expect(atingidos.size).toBeLessThanOrEqual(2);
+    }
   });
 });
 

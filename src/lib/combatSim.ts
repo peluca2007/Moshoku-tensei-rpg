@@ -203,6 +203,16 @@ export interface Acao {
   sempreFresca: boolean;
   dadosDeArma: number;
   area: boolean;
+  /** Texto que dimensiona a área sem exigir um mapa (alcance + efeito da carta). */
+  areaDescricao?: string;
+  /** Fração máxima dos PV atuais exigida de quem usa (0,5 = metade ou menos). */
+  pvDoUsuarioMaximo?: number;
+  /** Fração mínima dos PV atuais exigida de quem usa (0,5 = metade ou mais). */
+  pvDoUsuarioMinimo?: number;
+  /** Estado que precisa existir no alvo antes da ação. */
+  estadoExigidoDoAlvo?: "agarrado" | "atolado" | "caido" | "congelado" | "em-chamas" | "marcado" | "molhado" | "preso";
+  /** Níveis de Exaustão recebidos depois de resolver a ação. */
+  exaustaoDepois?: number;
   /**
    * "Uma vez por turno" / "uma vez por combate" no COMEÇO do efeito da carta —
    * 2026-09-27. Sem isto o motor usava a Espada de Luz Verdadeira (uma vez por
@@ -662,6 +672,11 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     sempreFresca: p.sempreFresca ?? false,
     dadosDeArma: p.dadosDeArma ?? 0,
     area: p.area ?? false,
+    areaDescricao: p.areaDescricao,
+    pvDoUsuarioMaximo: p.pvDoUsuarioMaximo,
+    pvDoUsuarioMinimo: p.pvDoUsuarioMinimo,
+    estadoExigidoDoAlvo: p.estadoExigidoDoAlvo,
+    exaustaoDepois: p.exaustaoDepois,
     limite: p.limite,
     ataque: p.ataque ?? false,
     frio: p.frio ?? false,
@@ -687,6 +702,8 @@ export interface EstadoPersonagem extends Alvo {
   pm: number;
   pt: number;
   pp: number;
+  /** Exaustão acumulada durante esta batalha; hoje nasce de técnicas de combate. */
+  exaustao: number;
   /** Teto do Cap. 4, §5: no máximo duas Ações vindas de aliados por turno. */
   acoesConcedidas: number;
   concessorDeAcoes?: EstadoPersonagem;
@@ -916,6 +933,18 @@ export function acoesDe(c: CharacterData): Acao[] {
       area: /esfera|cone|área|todos|atinge tudo|atinge até \d|cada criatura|linha de \d/.test(
         (a.range + " " + a.effect).toLowerCase()
       ),
+      areaDescricao: `${a.range} ${a.effect}`,
+      pvDoUsuarioMaximo: /(?:só usável|apenas se)[^.;]*metade ou menos dos pv/i.test(a.effect) ? 0.5 : undefined,
+      pvDoUsuarioMinimo: /(?:só usável|apenas se)[^.;]*metade ou mais dos pv/i.test(a.effect) ? 0.5 : undefined,
+      estadoExigidoDoAlvo: (() => {
+        const exigido = a.effect.match(/^requer alvo\s+(agarrado|atolado|caído|congelado|em chamas|marcado|molhado|preso)\b/i)?.[1]
+          .toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "-");
+        // Agarrado já é representado pelo custo de +1 Ação logo acima: a IA
+        // gasta a preparação e supõe que o teste de agarrar funcionou.
+        if (exigido === "agarrado") return undefined;
+        return exigido as Acao["estadoExigidoDoAlvo"];
+      })(),
+      exaustaoDepois: /depois de usar[^.;]*1 nível de exaustão/i.test(a.effect) ? 1 : undefined,
       /*
        * A rolagem de ataque, lida do EFEITO — corrigido na 0.1.35.
        *
@@ -1308,6 +1337,7 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     pm: ficha.pmMax,
     pt: ficha.ptMax,
     pp: ficha.ppMax ?? 0,
+    exaustao: 0,
     acoesConcedidas: 0,
     concessorDeAcoes: undefined,
     bonusAcertoDeAliados: 0,
@@ -1380,7 +1410,54 @@ export function motivoFurtivo(e: EstadoPersonagem, alvo: Alvo, corpoACorpo = tru
   return aberturaFurtiva(e, alvo) ?? (alvo.cego ? "alvo Cego" : alvo.preso ? "alvo imobilizado" : corpoACorpo && alvo.caido && !(e.preso || e.caido || e.envenenado) ? "Vantagem contra alvo Caído" : null);
 }
 
+/**
+ * Quantos corpos cabem numa área sem fingir que o combate abstrato tem mapa.
+ *
+ * A mesma régua é usada nos dois lados do encontro: área curta (até 3 m) pega
+ * 2, média (6 m) pega 3, grande (9 m) pega 4 e enorme (acima disso) pega 5.
+ * Uma carta que escreve “atinge até N” prevalece. Sem medida, usamos 2 — é o
+ * menor grupo que ainda faz a ação ser área, e evita transformar “cone” em
+ * “todo o bestiário”.
+ */
+export function limiteDeAlvosNaArea(descricao = ""): number {
+  const explicito = descricao.match(/atinge\s+at[ée]\s+(\d+)\s+(?:alvos?|criaturas?|inimigos?)/i);
+  if (explicito) return Math.max(1, Number(explicito[1]));
+  const medida = descricao.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros?)\b/i);
+  if (!medida) return 2;
+  const metros = Number(medida[1].replace(",", "."));
+  if (metros <= 1.5) return 1;
+  if (metros <= 3) return 2;
+  if (metros <= 6) return 3;
+  if (metros <= 9) return 4;
+  return 5;
+}
+
+export function alvosNaArea<T>(alvos: T[], descricao = ""): T[] {
+  return alvos.slice(0, limiteDeAlvosNaArea(descricao));
+}
+
+function alvoTemEstado(alvo: Alvo | null, estado: NonNullable<Acao["estadoExigidoDoAlvo"]>): boolean {
+  if (!alvo) return false;
+  if (estado === "caido") return alvo.caido;
+  if (estado === "em-chamas") return alvo.emChamas > 0;
+  if (estado === "molhado") return alvo.molhado;
+  if (estado === "preso") return alvo.preso;
+  // Agarrado, Atolado, Congelado e Marcado ainda não são estados estruturados
+  // deste motor. Uma técnica que os EXIGE não pode presumir que aconteceram.
+  return false;
+}
+
 export function autorizarAcao(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): { legal: boolean; motivo: string } {
+  const proporcaoPv = e.pv / Math.max(1, e.ficha.pvMax);
+  if (a.pvDoUsuarioMaximo !== undefined && proporcaoPv > a.pvDoUsuarioMaximo) {
+    return { legal: false, motivo: `exige ${Math.round(a.pvDoUsuarioMaximo * 100)}% ou menos dos PV` };
+  }
+  if (a.pvDoUsuarioMinimo !== undefined && proporcaoPv < a.pvDoUsuarioMinimo) {
+    return { legal: false, motivo: `exige ${Math.round(a.pvDoUsuarioMinimo * 100)}% ou mais dos PV` };
+  }
+  if (a.estadoExigidoDoAlvo && !alvoTemEstado(alvo, a.estadoExigidoDoAlvo)) {
+    return { legal: false, motivo: `exige alvo ${a.estadoExigidoDoAlvo}` };
+  }
   if (a.regra === "primeiro-golpe") {
     if (e.usouPrimeiroGolpe) return { legal: false, motivo: "Primeiro Golpe já foi usado neste combate" };
     const abertura = alvo && aberturaFurtiva(e, alvo);
@@ -1465,6 +1542,30 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
 }
 
 /**
+ * Estimativa deliberadamente simples da chance de um cântico atravessar até o
+ * próximo turno. Ela usa exatamente os três sinais que a decisão conhece:
+ * Concentração do conjurador, quantidade de inimigos ativos e PV restante.
+ */
+export function chanceDeConcluirCantico(e: EstadoPersonagem, a: Acao, inimigos: Alvo[]): number {
+  const acoesDoTurno = Math.min(4, e.ficha.acoesPorTurno ?? 3);
+  if (a.acoes <= acoesDoTurno) return 1;
+  const ativos = inimigos.filter((x) => x.vivo);
+  if (ativos.length === 0) return 1;
+  const bonusConcentracao = e.ficha.espirito + e.ficha.metadeDoMaiorRank;
+  const bonusRankMedio = ativos.reduce((s, x) => {
+    const bonusAtaque = (x as Alvo & { bonusAtaque?: number }).bonusAtaque ?? 2;
+    return s + Math.min(6, Math.max(1, Math.round(bonusAtaque / 2)));
+  }, 0) / ativos.length;
+  const cd = 10 + bonusRankMedio;
+  const chancePorTeste = Math.min(0.95, Math.max(0.05, (21 - (cd - bonusConcentracao)) / 20));
+  const testesEsperados = Math.max(1, ativos.length * 0.75);
+  const danoAteVoltar = ativos.reduce((s, x) =>
+    s + ((x as Alvo & { danoPorTurno?: number }).danoPorTurno ?? 0), 0);
+  const chanceDeFicarDePe = danoAteVoltar > 0 ? Math.min(1, e.pv / danoAteVoltar) : 1;
+  return Math.pow(chancePorTeste, testesEsperados) * chanceDeFicarDePe;
+}
+
+/**
  * Melhor ação que cabe nas Ações e recursos restantes, por dano ESPERADO por
  * Ação contra o alvo da vez.
  *
@@ -1486,7 +1587,8 @@ export function escolherAcao(
    * e o livro não pede nada parecido — ele só PERMITE dividir. Comprometer-se
    * com uma magia grande é decisão de começo de turno, não de sobra de turno.
    */
-  permitirCantico = false
+  permitirCantico = false,
+  inimigos: Alvo[] = alvo ? [alvo] : []
 ): Acao {
   /*
    * O filtro de Ações caiu na 0.1.40 — a Conjuração Dividida (Cap. 4, §3).
@@ -1508,11 +1610,15 @@ export function escolherAcao(
       a.pm <= e.pm &&
       a.pt <= e.pt &&
       (permitirCantico || a.acoes <= acoesRestantes) &&
+      (a.acoes <= acoesRestantes || chanceDeConcluirCantico(e, a, inimigos) >= 0.35) &&
       autorizarAcao(e, a, alvo).legal
   );
+  const valor = (a: Acao) => {
+    const chance = a.acoes > acoesRestantes ? chanceDeConcluirCantico(e, a, inimigos) : 1;
+    return danoEsperado(e, a, alvo) * chance / a.acoes;
+  };
   return viaveis.reduce(
-    (melhor, a) =>
-      danoEsperado(e, a, alvo) / a.acoes > danoEsperado(e, melhor, alvo) / melhor.acoes ? a : melhor,
+    (melhor, a) => valor(a) > valor(melhor) ? a : melhor,
     e.ficha.ataqueBasico
   );
 }
@@ -1540,7 +1646,7 @@ export function resolver(
   // por essas duas facilitar a vida de quem o ataca.
   const semProficiencia = usaArma && !e.ficha.arma.proficiente;
   const corpoACorpo = /corpo a corpo|toque/i.test(a.alcance ?? "") || ehGolpeBasico(a);
-  const desvantagemPropria = e.preso || e.caido || e.envenenado || semProficiencia || (!corpoACorpo && alvo.caido);
+  const desvantagemPropria = e.preso || e.caido || e.envenenado || e.exaustao >= 3 || semProficiencia || (!corpoACorpo && alvo.caido);
   const vantagemContraAlvo = e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
   /*
    * Quebrantado (Cap. 4, §2): cada acúmulo tira 1 da CA do alvo e 1 do dano de
@@ -1556,6 +1662,7 @@ export function resolver(
     notas: [
       ...(semProficiencia ? ["Desvantagem: sem proficiência com a arma"] : []),
       ...(e.preso || e.caido || e.envenenado ? ["Desvantagem: condição do atacante"] : []),
+      ...(e.exaustao >= 3 ? [`Desvantagem: Exaustão ${e.exaustao}`] : []),
       ...(alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego ? ["Vantagem: condição do alvo"] : []),
       ...(!corpoACorpo && alvo.caido ? ["Desvantagem: ataque à distância contra alvo Caído"] : []),
       ...(basico ? [`Bônus de dano: atributo ${e.ficha.arma.attributeValue} + Rank ${e.ficha.arma.rankBonus}`] : []),
@@ -1795,7 +1902,11 @@ export function aplicarDano(
    * Sucesso e o cântico segue com as Ações gastas valendo; falha e perde o
    * cântico e metade do PM investido.
    */
-  if (rng && "conjurando" in alvo) testeDeConcentracao(alvo as EstadoPersonagem, bonusDeRankDeQuemBate, rng);
+  if (rng && "conjurando" in alvo) {
+    const resultado = testeDeConcentracao(alvo as EstadoPersonagem, bonusDeRankDeQuemBate, rng);
+    if (resultado === "perdeu") evento?.notas.push("Concentração falhou: perdeu o cântico e metade do PM investido.");
+    if (resultado === "manteve") evento?.notas.push("Concentração passou: o cântico continua.");
+  }
   if (rng) alvo.aoSofrerDano?.(bonusDeRankDeQuemBate, rng, evento);
   if (alvo.pv <= 0) {
     if (alvo.evitarQueda?.()) {
@@ -1831,6 +1942,7 @@ export function aplicarDano(
       if (conjurador.conjurando && typeof conjurador.pm === "number") {
         conjurador.pm += Math.ceil(conjurador.conjurando.acao.pm / 2);
         conjurador.conjurando = null;
+        evento?.notas.push("Ficou Inconsciente: perdeu o cântico e metade do PM investido.");
       }
     }
   }
@@ -1899,13 +2011,16 @@ function testeDeVigor(e: EstadoPersonagem, rng: Rng): { natural: number; total: 
  * Bônus de Rank (Cap. 4, §1) — até a revisão do livro o motor rolava só
  * d20 + Espírito, e o Imperador se concentrava como um Principiante.
  */
-export function testeDeConcentracao(e: EstadoPersonagem, bonusDeRankDeQuemBate: number, rng: Rng): void {
-  if (!e.conjurando) return;
+export function testeDeConcentracao(
+  e: EstadoPersonagem, bonusDeRankDeQuemBate: number, rng: Rng
+): "sem-cantico" | "manteve" | "perdeu" {
+  if (!e.conjurando) return "sem-cantico";
   const cd = 10 + bonusDeRankDeQuemBate;
-  if (d20Ajustado(rng, false, e.envenenado) + e.ficha.espirito + e.ficha.metadeDoMaiorRank >= cd) return;
+  if (d20Ajustado(rng, false, e.envenenado) + e.ficha.espirito + e.ficha.metadeDoMaiorRank >= cd) return "manteve";
   // Falhou: perde metade do PM (pra baixo), então volta a outra metade (pra cima).
   e.pm += Math.ceil(e.conjurando.acao.pm / 2);
   e.conjurando = null;
+  return "perdeu";
 }
 
 /**
@@ -2229,6 +2344,12 @@ export function turnoPersonagem(
   finally { e.surpreso = false; }
 }
 
+function cobrarConsequenciaDaAcao(e: EstadoPersonagem, a: Acao, logger?: RegistroCombate): void {
+  if (!a.exaustaoDepois) return;
+  e.exaustao = Math.min(6, e.exaustao + a.exaustaoDepois);
+  logger?.log(`[${e.nome}] recebe ${a.exaustaoDepois} nível de Exaustão depois de ${a.nome} (nível ${e.exaustao}).`);
+}
+
 function executarTurnoPersonagem(
   e: EstadoPersonagem,
   inimigos: Alvo[],
@@ -2295,16 +2416,21 @@ function executarTurnoPersonagem(
       c.acoesGastas += gasta;
       c.acoesNesteTurno += gasta;
       acoes -= gasta;
-      if (c.acoesGastas < c.acao.acoes) break; // segue no próximo turno
+      logger?.log(`[${e.nome}] continua o cântico de ${c.acao.nome}: ${c.acoesGastas}/${c.acao.acoes} Ações.`);
+      if (c.acoesGastas < c.acao.acoes) {
+        break; // segue no próximo turno
+      }
       // O cântico completou: a magia sai agora.
       e.conjurando = null;
-      const alvos = c.acao.area ? vivos : [vivos[0]];
+      logger?.log(`[${e.nome}] conclui o cântico de ${c.acao.nome}.`);
+      const alvos = c.acao.area ? alvosNaArea(vivos, c.acao.areaDescricao) : [vivos[0]];
       for (const alvo of alvos) {
         // `c.acao.dano` é a fórmula inteira ("6d10 + BC (ígneo)") e serve de
         // tipo: Resistência e Imunidade procuram a palavra dentro dela. É o
         // mesmo lugar de onde a detecção de fogo do motor já lia.
         e.danoCausado += executarAtaquePersonagem(e, c.acao, alvo, rng, logger);
       }
+      cobrarConsequenciaDaAcao(e, c.acao, logger);
       break;
     }
 
@@ -2380,7 +2506,7 @@ function executarTurnoPersonagem(
       logger?.log(`[${e.nome}] gasta 1 Ação para Se Esconder: ${rolagem} + ${e.ficha.bonusFurtividade} contra Percepção ${defesa} — ${e.escondido ? "conseguiu" : "falhou"}.`);
       continue;
     }
-    const a = escolherAcao(e, acoes, vivos[0], acoes === 3);
+    const a = escolherAcao(e, acoes, vivos[0], acoes === proprias, vivos);
     const alcance = ehGolpeBasico(a) ? (e.alcanceArma ?? 1.5) : alcanceEmMetros(a.alcance);
     const distancia = distanciaEntre(e, vivos[0]);
     if (distancia !== undefined && distancia > alcance) {
@@ -2404,18 +2530,20 @@ function executarTurnoPersonagem(
      */
     if (a.acoes > acoes) {
       e.conjurando = { acao: a, acoesGastas: acoes, acoesNesteTurno: acoes };
+      logger?.log(`[${e.nome}] inicia o cântico de ${a.nome}: ${acoes}/${a.acoes} Ações; chance estimada de concluir ${Math.round(chanceDeConcluirCantico(e, a, vivos) * 100)}%.`);
       acoes = 0;
       break;
     }
 
     acoes -= a.acoes;
-    const alvos = a.area ? vivos : [vivos[0]];
+    const alvos = a.area ? alvosNaArea(vivos, a.areaDescricao) : [vivos[0]];
     for (const alvo of alvos) {
       for (let golpe = 0; golpe < (e.ficha.ataquesPorAcao ?? 1) && alvo.vivo; golpe++) {
         const dmg = executarAtaquePersonagem(e, a, alvo, rng, logger);
         e.danoCausado += dmg;
       }
     }
+    cobrarConsequenciaDaAcao(e, a, logger);
   }
 
   // Fim do turno: quem não dedicou nenhuma Ação ao cântico o perde (Perda de Foco).
@@ -2535,7 +2663,7 @@ export function consumirReacao(alvo: Alvo): boolean {
  * ele ignora é pior que nenhum número: parece mais confiável do que é.
  */
 export const SIMPLIFICACOES = [
-  "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação de uma criatura os declara — Preso, Caído e Envenenado (Vantagem pra quem ataca o alvo, Desvantagem pra ele). Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: as quatro são sobre movimento, alcance e posição, e este motor não tem mapa.",
+  "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação os declara — Preso, Caído e Envenenado. Restrições de carta por faixa de PV e estado estruturado do alvo bloqueiam a ação; 'Requer alvo Agarrado' custa +1 Ação e presume que o agarrão funcionou. Exaustão recebida depois de uma técnica acumula e, no nível 3, impõe Desvantagem aos ataques. Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
   "Dano por turno sustentado ENTRA desde a 0.1.57, por TRÊS turnos — o do lançamento mais dois. Três é escolha declarada, não do livro: a Tempestade Cortante dura \"1 minuto\" (dez turnos), e contar dez daria a ela um dano que nenhuma mesa vê, porque o alvo sai da área (não há mapa aqui) e o combate acaba antes. São sete magias, não três: Tomar o Ar, Tempestade Cortante e Vazio (Vento), Rio de Magma (Terra), Estrangular (Armas Pesadas), Prisão de Purgatório e Trono de Chamas (Punho do Fogo). Errar pra menos é o lado certo de errar.",
   "As duas Reações de Aguentar (Escudos) REDUZEM o dano de um golpe interceptado, e o motor não tem redução — ele as trata como PV Temporários, que é o mais próximo que sabe fazer. A diferença importa: casca some depois de gasta, redução vale em todo golpe que ela alcança. Até a 0.1.47 elas eram lidas como DANO CAUSADO, e davam a Cavalaria e Escudos uma técnica de 16,8 por Ação que ela não tem.",
@@ -2547,7 +2675,7 @@ export const SIMPLIFICACOES = [
   "A CD que a criatura impõe no Fio da Vida e na Concentração usa o Bônus de Rank do patamar dela (1 no 1º patamar, 6 no 6º). O golpe comum usa a arma escolhida no encontro ou a única equipada, os degraus da ficha e o atributo e Rank do contexto de arma. Sem escolha válida, usa uma referência d6 com aviso. As demais técnicas ainda compartilham o BC da árvore inicial; essa limitação não foi removida nesta etapa.",
   "Antes disso o motor matava a 0 PV, e isso não era só infidelidade: era a razão de TODO combate contra chefe dar 0% ou 100%. Quem caía sumia da luta pra sempre, o dano do grupo despencava, a luta se alongava e caía o próximo — realimentação positiva não produz meio-termo. Com o Fio da Vida e um curandeiro, o 4º patamar virou 55% de vitória contra 45% de dizimação.",
   "Conjuração Contínua e Dividida (Cap. 4, §3) entra na 0.1.40: magia que custa mais Ações do que o turno tem é recitada ao longo de turnos, com Perda de Foco (1 Ação por turno, no mínimo) e teste de Concentração (1d20 + Espírito + metade do maior Bônus de Rank) contra CD 10 + o Bônus de Rank de quem acertou; na falha, o cântico se perde junto com metade do PM investido, arredondado pra baixo. Cair Inconsciente interrompe sem teste, com o mesmo preço. Sem ela, as magias de 4 Ações (Rei e Imperador; o teto é 4) eram inalcançáveis — Sol Menor, Zero Absoluto, Era Glacial, Vazio, as maiores magias do jogo.",
-  "A IA só COMEÇA um cântico longo com o turno inteiro na mão: é regra de decisão declarada, não do livro. Sem ela, um mago com 1 Ação sobrando largava o golpe de arma pra começar um cântico de 3 Ações e amarrava o turno seguinte — o time dos magos perdia 16 pontos de vitória por isso. E a IA não desconta o risco de interrupção ao escolher: ela é otimista, e o relatório mede o preço mesmo assim. Cura e escudo seguem sem cântico dividido — um curandeiro que passa dois turnos recitando enquanto o grupo cai é jogada ruim, não simplificação.",
+  "A IA só COMEÇA um cântico longo com o turno inteiro na mão e agora pesa a chance de terminá-lo: Espírito + metade do Rank na Concentração, inimigos vivos, dano esperado até o próximo turno e proporção de PV. Abaixo de 35% ela desiste; acima disso o valor esperado é descontado pelo risco. É heurística declarada, não regra do livro. Início, continuação, conclusão e perda aparecem no log. Cura e escudo seguem sem cântico dividido — um curandeiro que passa dois turnos recitando enquanto o grupo cai é jogada ruim, não simplificação.",
   "A criatura bate igual todo turno, sem táticas próprias, e o que a torna perigosa no Apêndice G além das condições acima (teia que não causa dano, voo, emboscada) não é simulado.",
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Os tetos do Cap. 4, §5 entram no que o motor alcança: Vantagem continua binária; bônus numérico vindo de aliado para em +6; um turno aceita no máximo 4 Ações próprias e 2 concedidas. Duas Salvações por Combate ainda não é uma contagem geral: Sem Baixas e o Fio da Vida entram, mas as demais habilidades de impedir morte ainda não compartilham um contador único.",
@@ -2556,5 +2684,5 @@ export const SIMPLIFICACOES = [
   "Pactos comprados de Espíritos e Feras são preparados automaticamente quando o cenário não faz uma seleção manual, até o limite do Rank e do PM. Uma seleção explícita — inclusive vazia — continua prevalecendo. Efeitos especiais dos Pactos além de PV, CA, deslocamento, resistências, quantidade e golpes continuam resumidos pelos perfis de combate declarados.",
   "Proficiência de arma é conferida no golpe comum e nas técnicas com Dados de Arma: falta de proficiência impõe Desvantagem no acerto, sem reduzir o dano. O recibo mostra os dois d20. A arma de referência não pressupõe um grupo real de arma. O tipo físico de dano da arma ainda não vem do inventário, então resistências específicas a cortante, perfurante ou contundente não são inferidas nesse golpe.",
   "A ficha do Ladino ativa Dano Furtivo em aberturas válidas. Primeiro Golpe soma o ataque de arma, seu dano triplicado e a parcela furtiva normal quando elegível. Antes da iniciativa o Ladino tenta Esconder-se contra a Percepção das criaturas; Passo Vazio reabre o Primeiro Golpe uma vez. Com cobertura, pode gastar 1 Ação para tentar Esconder-se novamente. Segredos personalizados e demais reações não descritas no recibo precisam de arbitragem.",
-  "Cenário opcional: distância em uma linha, alcance, terreno difícil, Escondido e Surpreso. Sem distância declarada, mantém o combate abstrato. Áreas atingem o grupo elegível; cobertura e geometria não são calculadas. Criaturas sem ações declaradas usam orçamento abstrato e não acionam Fluxo.",
+  "Cenário opcional: distância em uma linha, alcance, terreno difícil, Escondido e Surpreso. Sem distância declarada, mantém o combate abstrato. Sem mapa, áreas usam a mesma régua nos dois lados: até 3 m pega 2 alvos, 6 m pega 3, 9 m pega 4 e acima disso pega até 5; 'atinge até N' prevalece. Cobertura e geometria fina não são calculadas. Criaturas sem ações declaradas usam orçamento abstrato e não acionam Fluxo.",
 ];
