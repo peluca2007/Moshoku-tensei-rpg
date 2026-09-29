@@ -38,6 +38,7 @@ const PATAMARES = (process.env.PATAMARES ?? "1,2,3,4,5,6").split(",").map(Number
 const PRINCIPAL = [4, 4, 5, 6, 7, 8];
 const SEMENTE = 20260927;
 const MD = process.argv.includes("--md");
+const EXPERIMENTO_MAGIA = process.env.EXPERIMENTO_MAGIA;
 
 /**
  * O que o motor ainda não enxerga (ou enxerga pela metade) em cada árvore —
@@ -48,7 +49,6 @@ const CEGOS: Record<string, string> = {
   "bardo-e-interacao": "Marcha, Réquiem e as canções de efeito narrativo",
   invocacao: "ordens e poderes narrativos dos Pactos",
   "furtividade-e-armadilhas": "armadilha preparada, emboscada e furtividade",
-  desintoxicacao: "a Dose montada em dois turnos",
   teorica: "fórmulas montadas na hora (o motor usa as fixas)",
 };
 
@@ -67,8 +67,8 @@ function pesoDeCombate(item: Item, kind: "ability" | "talent"): number {
   if (/\d+d\d+/.test(t)) p += 4;
   if (/^Pacto:/.test(item.name)) p += 4;
   if (/Não (ataca|luta)/.test(t)) p -= 6;
-  if (/dano|ataque|acerto|Ação|Ações|aliad|Apontad|[Cc]anção|CA|Vantagem|Reação|Resistência|invocad/.test(t)) p += 2;
-  if (/viag|mapa|PO|dias|região|mercad|Descanso Longo|uma hora|Ofício|ritual|contato|negoci/i.test(t)) p -= 2;
+  if (/\bdano\b|ataque|acerto|Ação|Ações|aliad|Apontad|[Cc]anção|\bCA\b|Vantagem|Reação|Resistência|invocad/.test(t)) p += 2;
+  if (/viag|mapa|\bPO\b|\bdias\b|região|mercad|Descanso Longo|uma hora|Ofício|ritual|contato|negoci/i.test(t)) p -= 2;
   if (kind === "ability") p += 1;
   return p;
 }
@@ -86,7 +86,7 @@ function atributoDa(treeId: string): AttributeKey {
   return ATRIBUTO[rotulo.split(" ou ")[0]] ?? "forca";
 }
 
-function montar(treeId: string, patamar: number, nome: string): CharacterData {
+function montar(treeId: string, patamar: number, nome: string, experimentar = false): CharacterData {
   const arvore = getTreeById(treeId)!;
   const s = useCharacterStore.getState();
   s.createCharacter(nome);
@@ -110,7 +110,20 @@ function montar(treeId: string, patamar: number, nome: string): CharacterData {
     }
   }
   const fim = useCharacterStore.getState();
-  return fim.characters[fim.activeId!];
+  const personagem = fim.characters[fim.activeId!];
+  if (!experimentar || arvore.category !== "magia") return personagem;
+  // Bancada da Tarefa 7: mede as duas propostas sem transformar hipótese em
+  // regra do livro. `PV` aproxima dados iniciais mais robustos; `ESCUDO`
+  // aproxima uma Reação de 2 PM que concede uma casca uma vez por combate.
+  if (EXPERIMENTO_MAGIA === "PV" && patamar <= 2) return { ...personagem, bonusHp: personagem.bonusHp + 4 * patamar };
+  if (EXPERIMENTO_MAGIA === "ESCUDO" && patamar <= 2) return { ...personagem, bonusHp: personagem.bonusHp + 9 + patamar };
+  if (EXPERIMENTO_MAGIA === "PV_TODOS") return { ...personagem, bonusHp: personagem.bonusHp + 4 * patamar };
+  if (EXPERIMENTO_MAGIA === "PM") return { ...personagem, bonusMp: personagem.bonusMp + 20 };
+  if (EXPERIMENTO_MAGIA === "BC") return {
+    ...personagem,
+    attributeBase: { ...personagem.attributeBase, [principal]: personagem.attributeBase[principal] + 2 },
+  };
+  return personagem;
 }
 
 const REFERENCIA = ["deus-do-norte", "fogo", "cura"];
@@ -141,7 +154,7 @@ for (const patamar of PATAMARES) {
 
   const linhas: Linha[] = [];
   for (const arvore of TREES) {
-    const heroi = montar(arvore.id, patamar, arvore.name);
+    const heroi = montar(arvore.id, patamar, arvore.name, true);
     const grupo = [...referencia, heroi];
     const rd = simularEncontro(grupo, dificil, { batalhas: BATALHAS, semente: SEMENTE });
     const rc = simularEncontro(grupo, chefe, { batalhas: BATALHAS, semente: SEMENTE });
