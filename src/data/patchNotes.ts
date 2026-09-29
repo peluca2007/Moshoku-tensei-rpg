@@ -16,6 +16,18 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.122",
+    date: "2026-09-29",
+    title: "Terra amortece o golpe; Bardo transforma a falha em fôlego",
+    sections: [{
+      heading: "Duas novas escolhas no Principiante",
+      items: [
+        "Couraça de Barro: 2 PM e uma Reação para reduzir um golpe físico contra o próprio mago em 1d6 + BC. A casca se quebra no golpe; não cria cobertura nem protege contra tudo.",
+        "Refrão da Retomada: quando outro aliado erra um ataque, o Bardo pode gastar 1 PP e uma Reação para conceder 1d6 + seu patamar em PV Temporários a até três aliados próximos que o ouçam. A falha continua sendo falha; o grupo ganha fôlego.",
+      ],
+    }],
+  },
+  {
     version: "0.1.121",
     date: "2026-09-29",
     title: "O simulador aprende as cobranças das escolas",
