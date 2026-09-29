@@ -17,6 +17,7 @@ import {
   novaAcao,
   novoAlvo,
   novoEstado,
+  resolver,
   turnoPersonagem,
 } from "./combatSim";
 import { getTreeById } from "@/data/trees";
@@ -243,6 +244,46 @@ describe("condições de uso escritas na carta", () => {
     norte.inventory = ["a", "b", "c"].map((id) => ({ id, name: id, type: "arma", baseDie: "d6", equipped: id === "a" }));
     expect(acoesDe(norte).some((a) => a.nome === "Cruz Nebulosa")).toBe(true);
   });
+
+  it("executa Molhado → Congelado → Quebra de Gelo e consome o preparo", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("agua")));
+    const campo = e.ficha.acoes.find((a) => a.nome === "Campo de Gelo")!;
+    const quebra = e.ficha.acoes.find((a) => a.nome === "Quebra de Gelo")!;
+    const alvo = novoAlvo({ nome: "molhado", pv: 10_000, ca: 99, molhado: true });
+    resolver(e, campo, alvo, () => 0);
+    expect(alvo.congelado).toBe(true);
+    expect(quebra.bonusSeCongelado).toBe("+3d8");
+    expect(resolver(e, quebra, alvo, () => 0)).toBeGreaterThan(0);
+    expect(alvo.congelado).toBe(false);
+  });
+
+  it("acumula Dose antes de Inverter e limpa a condição ao cobrar", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("desintoxicacao")));
+    const peconha = e.ficha.acoes.find((a) => a.nome === "Peçonha")!;
+    const purgar = e.ficha.acoes.find((a) => a.nome === "Purgar")!;
+    const alvo = novoAlvo({ nome: "alvo", pv: 10_000, ca: 10 });
+    expect(autorizarAcao(e, purgar, alvo).legal).toBe(false);
+    resolver(e, peconha, alvo, () => 0);
+    expect(alvo.doses).toBe(1);
+    resolver(e, peconha, alvo, () => 0);
+    expect(alvo.doses).toBe(2);
+    expect(alvo.envenenado).toBe(true);
+    expect(autorizarAcao(e, purgar, alvo).legal).toBe(true);
+    resolver(e, purgar, alvo, () => 0);
+    expect(alvo).toMatchObject({ doses: 0, envenenado: false });
+  });
+
+  it("Sopro Podre aplica 2 Doses na falha e 1 no sucesso", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("desintoxicacao")));
+    const sopro = e.ficha.acoes.find((a) => a.nome === "Sopro Podre")!;
+    expect(sopro).toMatchObject({ dosesNaFalha: 2, dosesNoSucesso: 1 });
+    const falhou = novoAlvo({ nome: "falhou", pv: 10_000, ca: 10 });
+    const passou = novoAlvo({ nome: "passou", pv: 10_000, ca: 10, bonusResistencia: 100 });
+    resolver(e, sopro, falhou, () => 0);
+    resolver(e, sopro, passou, () => 0);
+    expect(falhou).toMatchObject({ doses: 2, envenenado: true });
+    expect(passou.doses).toBe(1);
+  });
 });
 
 describe("as ações de suporte deixaram de ser descartadas", () => {
@@ -270,6 +311,11 @@ describe("as ações de suporte deixaram de ser descartadas", () => {
   it("PV Temporários são classificados como escudo, e não como cura", () => {
     const vigor = cura.find((a) => a.nome === "Vigor Emprestado");
     expect(vigor?.tipo).toBe("escudo");
+  });
+
+  it("a Parede de Emergência entra como Reação defensiva de 15 PV", () => {
+    const parede = acoesDe(comArvoreInteira("teorica")).find((a) => a.nome === "Parede de Emergência");
+    expect(parede).toMatchObject({ tipo: "escudo", reacao: true, formulaSuporte: "15" });
   });
 
   it("a Prontidão cura sempre como Ferida Fresca — é o que define a escola", () => {
