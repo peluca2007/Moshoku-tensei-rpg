@@ -1,4 +1,4 @@
-import { INVOCACAO_TREE } from "@/data/trees/invocacao";
+import { INVOCACAO_TREE, PACTOS_ATIVOS } from "@/data/trees/invocacao";
 import { getFinalAttribute, getHighestUnlockedRank } from "@/store/selectors";
 import { RANK_BONUS, type CharacterData } from "./types";
 import { novaAcao, novoEstado, type EstadoPersonagem } from "./combatSim";
@@ -6,7 +6,7 @@ import { novaAcao, novoEstado, type EstadoPersonagem } from "./combatSim";
 export interface PactoDeCombate { id: string; nome: string; descricao: string; custo: number; dano: string; quantidade: number; golpes: number; pvPorRank?: number; deslocamento?: number; resistencia?: boolean }
 const perfis: Record<string, Partial<PactoDeCombate> & { dano: string }> = {
   "pacto-cao-de-caca": { dano: "2d6" }, "pacto-corvo-mensageiro": { dano: "1d6", deslocamento: 18 },
-  "pacto-urso-das-cavernas": { dano: "4d10" }, "pacto-serpente-de-nevoa": { dano: "2d6 (veneno)" },
+  "pacto-urso-das-cavernas": { dano: "2d10" }, "pacto-serpente-de-nevoa": { dano: "2d6 (veneno)" },
   "pacto-grifo": { dano: "2d8", deslocamento: 24 }, "pacto-quimera": { dano: "2d8", golpes: 3 },
   "pacto-golem-de-guerra": { dano: "6d8", deslocamento: 6, resistencia: true },
   "pacto-alcateia": { dano: "1d8", quantidade: 5 }, "pacto-fera-ancestral": { dano: "4d10", golpes: 3 },
@@ -33,6 +33,7 @@ export function prepararInvocados(grupo: CharacterData[], heroes: EstadoPersonag
     const dono = heroes.find((h) => h.ficha.id === c.id)!;
     const rank = getHighestUnlockedRank(c, "invocacao");
     const bonus = rank ? RANK_BONUS[rank] : 0;
+    const limite = rank ? PACTOS_ATIVOS[rank] : 0;
     const disponiveis = pactosDeCombate(c);
     /*
      * O cenário interativo pode escolher Pactos (inclusive escolher nenhum).
@@ -45,10 +46,10 @@ export function prepararInvocados(grupo: CharacterData[], heroes: EstadoPersonag
       ? selecao![c.id]
       : disponiveis.reduce<string[]>((escolhidos, pacto) => {
           const custo = escolhidos.reduce((total, id) => total + (disponiveis.find((p) => p.id === id)?.custo ?? 0), 0);
-          if (escolhidos.length < bonus && custo + pacto.custo <= dono.pm) escolhidos.push(pacto.id);
+          if (escolhidos.length < limite && custo + pacto.custo <= dono.pm) escolhidos.push(pacto.id);
           return escolhidos;
         }, []))];
-    if (ids.length > bonus) throw new Error(`${dono.nome}: quantidade de Pactos superior ao limite do Rank.`);
+    if (ids.length > limite) throw new Error(`${dono.nome}: quantidade de Pactos superior ao limite do Rank.`);
     for (const id of ids) {
       const pacto = disponiveis.find((p) => p.id === id);
       if (!pacto || !bonus) throw new Error(`${dono.nome}: Pacto indisponível na ficha.`);

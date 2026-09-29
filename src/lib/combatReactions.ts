@@ -12,8 +12,11 @@ function gastar(e: EstadoPersonagem, atacante: Alvo): boolean {
 }
 
 export function guardaDoCorpo(alvo: EstadoPersonagem, atacante: Alvo, aliados: EstadoPersonagem[], logger?: RegistroCombate): EstadoPersonagem {
+  // Sem mapa (distância desconhecida), o guarda está ao lado de quem protege:
+  // é a posição dele na mesa, e sem isto o tanque nunca protegia ninguém no
+  // balanceador (2026-09-28).
   const guarda = aliados.find((e) => e !== alvo && e.vivo && e.ficha.temGuardaCorpo &&
-    adjacentes(e, alvo) && (e.ca > alvo.ca || alvo.pv < alvo.ficha.pvMax / 2) &&
+    (distanciaEntre(e, alvo) === undefined || adjacentes(e, alvo)) && (e.ca > alvo.ca || alvo.pv < alvo.ficha.pvMax / 2) &&
     disponivel(e, atacante));
   if (!guarda || !gastar(guarda, atacante)) return alvo;
   const posicao = guarda.posicao;

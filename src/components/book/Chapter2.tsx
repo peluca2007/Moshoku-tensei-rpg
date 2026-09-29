@@ -96,6 +96,24 @@ export default function Chapter2() {
             <span key="s"><b>Conjuração Silenciosa:</b> manipula a mana diretamente, sem palavra alguma. O método mais raro e mais flexível.</span>,
           ]}
         />
+        <P>
+          <b>Conjuração Concentrada.</b> Na Conjuração Padrão, você pode jogar a magia de dano inteira em{" "}
+          <b>uma criatura só</b>: a área (ou os vários alvos) vira um alvo, os <b>dados de dano sobem 50%</b>{" "}
+          (arredondado pra cima, em cada grupo de dados) e o <b>PM sobe 50%</b> (pra cima). O resto da magia
+          não muda: o mesmo tempo, o mesmo teste de resistência ou rolagem de ataque, o mesmo cântico. Truque
+          (0 PM) não concentra, e magia sem dados de dano também não.
+        </P>
+        <BookTable
+          headers={["Chuva de Meteoros (Terra, Avançado)", "Alvos", "Dano", "PM"]}
+          rows={[
+            ["Padrão", "Esfera de 18 m", "8d8 + BC", "7"],
+            ["Concentrada", "1 criatura", "12d8 + BC", "11"],
+          ]}
+        />
+        <P className="text-sm">
+          O mesmo dano por PM, em menos turnos. É a resposta do mago ao inimigo sozinho — o Chefe, o rival, a
+          fera grande — e é uma escolha, não um bônus: contra um grupo, a área continua rendendo mais.
+        </P>
         <Warning title="Penalidade do Encantamento Encurtado">
           <P>
             Ao encurtar, role a magia normalmente e <b>o dano total (dados + BC) cai pela metade</b>,

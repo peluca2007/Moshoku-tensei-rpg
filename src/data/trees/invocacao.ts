@@ -1,4 +1,4 @@
-import { Tree } from "@/lib/types";
+import { RankName, Tree } from "@/lib/types";
 import { RANK_PA_COST } from "./shared";
 
 /**
@@ -6,6 +6,26 @@ import { RANK_PA_COST } from "./shared";
  * Pacto comprado com PA, como uma magia — modelado aqui como Talento (mesmo
  * formato de custo + descrição), prefixado "Pacto:" pra clareza na UI.
  */
+/**
+ * Quantos Pactos ficam ativos ao mesmo tempo, por patamar (2026-09-28).
+ *
+ * Era o próprio Bônus de Rank (2/3/4/5/6). O `npm run balancear` mostrou o
+ * Invocador vencendo 95–100% do 3º patamar em diante, contra uma mediana de
+ * 60–76%: cada Pacto é uma criatura inteira em campo (PV 15 × Bônus de Rank,
+ * dano com o Bônus), e três no Avançado são um grupo dentro do grupo. Um a
+ * menos, e o Rei no número do Santo, põe o Invocador em 83–98% — forte, que
+ * é o que ele deve ser com o círculo pronto, sem ser a única resposta.
+ */
+export const PACTOS_ATIVOS: Record<RankName, number> = {
+  Principiante: 1,
+  Intermediário: 2,
+  Avançado: 2,
+  Santo: 3,
+  Rei: 3,
+  Imperador: 4,
+  Deus: 4,
+};
+
 export const INVOCACAO_TREE: Tree = {
   id: "invocacao",
   name: "Espíritos e Feras",
@@ -116,7 +136,7 @@ export const INVOCACAO_TREE: Tree = {
       mastery: {
         name: "Círculo Rápido",
         description:
-          "3 Pactos ativos. O círculo de preparo cai de 10 minutos para UM: você desenha entre uma porta e outra de masmorra, e não entre uma sessão e outra — é o que mais muda a rotina desta escola. Invocados passam a ter PV = 15 × seu Bônus de Rank e recebem seu Bônus de Rank no dano. DENTRO DE COMBATE nada muda: sem círculo pronto, a única forma de chamar alguém continua sendo o Chamado de Emergência, e são os talentos dele que o deixam rápido, barato e inteiro. A fraqueza declarada da escola não se compra com patamar. Desbloqueia Magia Combinada.",
+          "Continuam 2 Pactos ativos — o que o Avançado muda é o círculo e a força de cada um. O círculo de preparo cai de 10 minutos para UM: você desenha entre uma porta e outra de masmorra, e não entre uma sessão e outra — é o que mais muda a rotina desta escola. Invocados passam a ter PV = 15 × seu Bônus de Rank e recebem seu Bônus de Rank no dano. DENTRO DE COMBATE nada muda: sem círculo pronto, a única forma de chamar alguém continua sendo o Chamado de Emergência, e são os talentos dele que o deixam rápido, barato e inteiro. A fraqueza declarada da escola não se compra com patamar. Desbloqueia Magia Combinada.",
       },
       talents: [
         { id: "convocacao-aprimorada", requires: ["invocacao-de-emergencia"], name: "Convocação Aprimorada", paCost: RANK_PA_COST.talent.Avançado, description: "Requer Círculo Improvisado. O Chamado de Emergência passa a custar 1 Ação em vez de 3 — o círculo você já traça com o pé; o que sobrava de lento era o gesto. Não muda o PM nem a penalidade: quem quer o invocado inteiro compra Pacto Firmado." },
@@ -152,7 +172,7 @@ export const INVOCACAO_TREE: Tree = {
       mastery: {
         name: "Corpos Artificiais",
         description:
-          "4 Pactos ativos. Você constrói o corpo de um invocado à sua escolha entre sessões: escolha duas melhorias permanentes (+50% PV, +1 ataque por turno, sentido especial, resistência a um tipo de dano, ou voo). Invocados não desaparecem a 0 PV: o corpo quebra e se refaz no início do seu próximo turno com metade dos PV máximos, uma vez por combate por invocado. Na segunda queda vale a regra normal.",
+          "3 Pactos ativos. Você constrói o corpo de um invocado à sua escolha entre sessões: escolha duas melhorias permanentes (+50% PV, +1 ataque por turno, sentido especial, resistência a um tipo de dano, ou voo). Invocados não desaparecem a 0 PV: o corpo quebra e se refaz no início do seu próximo turno com metade dos PV máximos, uma vez por combate por invocado. Na segunda queda vale a regra normal.",
       },
       talents: [
         { id: "pacto-espirito-da-chama-antiga", name: "Pacto: Espírito da Chama Antiga", paCost: RANK_PA_COST.talent.Santo, description: "4d8 de dano ígneo em área de 6m por turno, sem gastar suas Ações. Não obedece bem: role Espírito (CD 15) a cada turno, ou ele escolhe o próprio alvo." },
@@ -184,7 +204,7 @@ export const INVOCACAO_TREE: Tree = {
       mastery: {
         name: "Círculo Permanente",
         description:
-          "5 Pactos ativos. Um invocado à sua escolha fica permanentemente ao seu lado, sem custo de PM e sem limite de tempo — ele come, dorme e tem opinião. Círculos que você desenhar em pedra ou metal duram para sempre e podem ser usados por outras pessoas, se souberem o nome certo.",
+          "Continuam 3 Pactos ativos — o Rei aprofunda o vínculo, não o número. Um invocado à sua escolha fica permanentemente ao seu lado, sem custo de PM e sem limite de tempo — ele come, dorme e tem opinião. Círculos que você desenhar em pedra ou metal duram para sempre e podem ser usados por outras pessoas, se souberem o nome certo.",
       },
       talents: [
         { id: "pacto-fera-ancestral", name: "Pacto: Fera Ancestral", paCost: RANK_PA_COST.common.Rei, description: "Gigantesca. 4d10 por golpe, três golpes com uma única Ação, voa, e respira um elemento à sua escolha em cone de 18m. Ela concorda em vir; não concorda em ficar." },
@@ -229,7 +249,7 @@ export const INVOCACAO_TREE: Tree = {
       mastery: {
         name: "O Grande Círculo",
         description:
-          "6 Pactos ativos, todos podem estar em campo ao mesmo tempo. Invocar deixa de custar Ação: você chama um invocado por turno de graça — dois, se tiver Convocação Aprimorada. Seus invocados usam os seus PV como reserva de emergência — ao chegar a 0, você pode transferir dano para si mesmo e mantê-lo de pé.",
+          "4 Pactos ativos, todos podem estar em campo ao mesmo tempo. Invocar deixa de custar Ação: você chama um invocado por turno de graça — dois, se tiver Convocação Aprimorada. Seus invocados usam os seus PV como reserva de emergência — ao chegar a 0, você pode transferir dano para si mesmo e mantê-lo de pé.",
       },
       talents: [
         { id: "ninguem-chega-sozinho", name: "Ninguém Chega Sozinho", paCost: RANK_PA_COST.talent.Imperador, description: "Todos os seus invocados em campo recebem +2 na CA, +2 no acerto e imunidade a efeitos de dissipação de patamar Rei ou inferior." },

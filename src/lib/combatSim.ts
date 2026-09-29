@@ -233,6 +233,8 @@ export interface Acao {
    */
   limite?: "turno" | "combate";
   /** true = rola contra a CA; false = o alvo faz um teste de resistência. */
+  /** Conjuração Concentrada (Cap. 2, §2): só entra quando resta um inimigo. */
+  concentrada?: boolean;
   ataque: boolean;
   frio: boolean;
   fogo: boolean;
@@ -1072,8 +1074,32 @@ export function acoesDe(c: CharacterData): Acao[] {
         return 1;
       })(),
     });
+    /*
+     * A CONJURAÇÃO CONCENTRADA (Cap. 2, §2 — 2026-09-28): na Conjuração Padrão,
+     * a magia de dano vai inteira num alvo só — +50% dos dados (arredondado
+     * pra cima) e +50% do PM (pra cima), sem área. Mesmo dano por PM, em menos
+     * turnos: é a resposta do mago ao Chefe. A IA só a considera quando resta
+     * um inimigo (`escolherAcao`); contra grupo, a área continua ganhando.
+     */
+    const feita = out[out.length - 1];
+    if (tree?.category === "magia" && feita.tipo === "dano" && !feita.reacao && feita.pm > 0 && /\d+d\d+/.test(feita.dano)) {
+      out.push({
+        ...feita,
+        nome: `${feita.nome} (Concentrada)`,
+        dano: concentrarDados(feita.dano),
+        pm: Math.ceil(feita.pm * 1.5),
+        area: false,
+        areaDescricao: undefined,
+        concentrada: true,
+      });
+    }
   }
   return out;
+}
+
+/** "8d8 + BC" → "12d8 + BC": +50% em cada grupo de dados, arredondado pra cima. */
+export function concentrarDados(formula: string): string {
+  return formula.replace(/(\d+)d(\d+)/g, (_, n: string, d: string) => `${Math.ceil(Number(n) * 1.5)}d${d}`);
 }
 
 /**
@@ -1708,6 +1734,7 @@ export function escolherAcao(
       a.pt <= e.pt &&
       (permitirCantico || a.acoes <= acoesRestantes) &&
       (a.acoes <= acoesRestantes || chanceDeConcluirCantico(e, a, inimigos) >= 0.35) &&
+      !(a.concentrada && inimigos.filter((x) => x.vivo).length > 1) &&
       autorizarAcao(e, a, alvo).legal
   );
   const valor = (a: Acao) => {
@@ -2390,14 +2417,16 @@ export function prepararSuporteDoTurno(
       custoAcoes++;
     }
     if (tocaGuerra) {
-      for (const aliado of aliados.filter((a) => a.vivo)) aliado.bonusAcertoDeAliados = Math.max(aliado.bonusAcertoDeAliados, 2);
+      // + Bônus de Rank do Bardo (mínimo +2) desde 2026-09-28; o teto de +6 de
+      // ajuda de aliado é aplicado na rolagem (`bonusAliadoAcerto`).
+      for (const aliado of aliados.filter((a) => a.vivo)) aliado.bonusAcertoDeAliados = Math.max(aliado.bonusAcertoDeAliados, Math.max(2, bardo.rank));
     }
     if (tocaDissonancia) {
       for (const alvo of vivos.slice(0, bardo.rank)) {
-        const dano = rolarDados(`${bardo.rank}d4`, rng);
+        const dano = rolarDados(`${bardo.rank}d6`, rng);
         e.danoCausado += aplicarDano(alvo, dano, bardo.rank, rng, false, "sônico");
       }
-      logger?.log(`[${e.nome}] mantém Dissonância: até ${bardo.rank} alvo(s) sofrem ${bardo.rank}d4 sônico.`);
+      logger?.log(`[${e.nome}] mantém Dissonância: até ${bardo.rank} alvo(s) sofrem ${bardo.rank}d6 sônico.`);
     }
     if (bardo.temInspiracao && e.inspiracoesRestantes > 0 && custoAcoes < 3) {
       const inspirado = aliados

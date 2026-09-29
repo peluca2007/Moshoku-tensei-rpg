@@ -49,7 +49,7 @@ export const BARDO_TREE: Tree = {
       mastery: {
         name: "A Plateia",
         description:
-          "[Domínio: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida. [Canções] Enquanto você toca, uma canção sua fica ativa, e só uma de cada vez (ela não é magia e não ocupa a sua sustentação): começar ou trocar custa 1 Ação em combate (fora dele, nada), e ela acaba se você for silenciado, nocauteado ou parar de tocar. Você começa sabendo a Dissonância; a Marcha, a Guerra e o Réquiem vêm de cartas desta árvore. DISSONÂNCIA: no começo de cada turno seu, até um número de criaturas hostis igual ao seu patamar nesta árvore, à sua escolha entre as que te OUÇAM, sofre 1d4 de dano sônico por patamar seu. É a mesma fraqueza do resto da árvore, cobrada no dano: quem não ouve não sofre, e criatura sem emoção também não.",
+          "[Domínio: pessoas e reputação] Escopo: uma pessoa que já te ouviu tocar ou falar. Enquanto estiver tocando/cantando/falando (sem custo de Ação fora de combate), aliados que te ouvem somam seu Bônus de Rank em um teste de perícia por cena, à escolha deles. Você nunca dorme na rua — uma apresentação garante cama e comida. [Canções] Enquanto você toca, uma canção sua fica ativa, e só uma de cada vez (ela não é magia e não ocupa a sua sustentação): começar ou trocar custa 1 Ação em combate (fora dele, nada), e ela acaba se você for silenciado, nocauteado ou parar de tocar. Você começa sabendo a Dissonância; a Marcha, a Guerra e o Réquiem vêm de cartas desta árvore. DISSONÂNCIA: no começo de cada turno seu, até um número de criaturas hostis igual ao seu patamar nesta árvore, à sua escolha entre as que te OUÇAM, sofre 1d6 de dano sônico por patamar seu. É a mesma fraqueza do resto da árvore, cobrada no dano: quem não ouve não sofre, e criatura sem emoção também não.",
       },
       talents: [
         { id: "ouvido-absoluto", name: "Voz Emprestada", paCost: UTILITY_PA_COST.talent.Principiante, description: "Você imita qualquer voz já ouvida e reproduz sotaques. Aprende idiomas em dias." },
@@ -126,7 +126,7 @@ export const BARDO_TREE: Tree = {
           range: "Voz",
           actions: { normal: 1 },
           effect:
-            "Você aprende a canção GUERRA, e começá-la é esta carta. Enquanto ela estiver ativa, aliados que te ouvem recebem +2 em acertos e ignoram a penalidade do primeiro nível de Exaustão. É uma canção: só uma ativa de cada vez (Maestria A Plateia).",
+            "Você aprende a canção GUERRA, e começá-la é esta carta. Enquanto ela estiver ativa, aliados que te ouvem somam o seu Bônus de Rank nesta árvore aos acertos (+3 no Avançado, +6 no Imperador — dentro do teto de +6 de ajuda de aliado) e ignoram a penalidade do primeiro nível de Exaustão. É uma canção: só uma ativa de cada vez (Maestria A Plateia).",
           incantation:
             "Eu não canto pra que vocês esqueçam o medo, porque esquecer é coisa de covarde e nenhum de vocês é covarde. Eu canto pra que vocês lembrem por que vieram, lembrem quem ficou pra trás esperando, e lembrem que a marcha só acaba quando eu parar de tocar. Canção de Guerra!",
         },
