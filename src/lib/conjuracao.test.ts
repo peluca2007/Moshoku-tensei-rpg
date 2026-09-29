@@ -4,6 +4,7 @@ import {
   acoesDe,
   aplicarDano,
   chanceDeConcluirCantico,
+  concentrarDados,
   escolherAcao,
   executarAtaquePersonagem,
   makeRng,
@@ -224,7 +225,7 @@ describe("o que derruba um cântico", () => {
     // O livro cobra metade, arredondado pra cima: quem foi interrompido perdeu
     // tempo e mana, mas não a magia inteira.
     const e = mago();
-    const acao = e.ficha.acoes.find((a) => a.pm >= 4)!;
+    const acao = e.ficha.acoes.find((a) => a.pm >= 4 && !a.concentrada)!;
     e.pm = 0;
     e.conjurando = { acao, acoesGastas: 2, acoesNesteTurno: 2 };
     testeDeConcentracao(e, 6, d20Fixo(1));
@@ -259,5 +260,33 @@ describe("o que derruba um cântico", () => {
     e.conjurando = { acao: e.ficha.acoes[0], acoesGastas: 2, acoesNesteTurno: 2 };
     aplicarDano(e, 5, 6);
     expect(e.conjurando).not.toBeNull();
+  });
+});
+
+describe("a Conjuração Concentrada (Cap. 2, §2)", () => {
+  it("+50% dos dados, arredondado pra cima, em cada grupo de dados", () => {
+    expect(concentrarDados("8d8 + BC (contundente)")).toBe("12d8 + BC (contundente)");
+    expect(concentrarDados("1d8 + BC")).toBe("2d8 + BC");
+    expect(concentrarDados("2d6 + BC + 1d4 de frio")).toBe("3d6 + BC + 2d4 de frio");
+  });
+
+  it("toda magia de dano com PM ganha a variante, com +50% de PM e sem área", () => {
+    const acoes = acoesDe(comArvoreInteira("terra"));
+    const chuva = acoes.find((a) => a.nome === "Chuva de Meteoros")!;
+    const concentrada = acoes.find((a) => a.nome === "Chuva de Meteoros (Concentrada)")!;
+    expect(concentrada.concentrada).toBe(true);
+    expect(concentrada.area).toBe(false);
+    expect(concentrada.pm).toBe(Math.ceil(chuva.pm * 1.5));
+    // Truque (0 PM) e técnica do Corpo não ganham.
+    expect(acoes.some((a) => a.nome === "Pedrisco (Concentrada)")).toBe(false);
+    expect(acoesDe(comArvoreInteira("deus-da-espada")).some((a) => a.concentrada)).toBe(false);
+  });
+
+  it("a IA só concentra quando resta um inimigo", () => {
+    const e = mago();
+    const um = sacoDePancada();
+    const dois = [sacoDePancada(), sacoDePancada()];
+    expect(escolherAcao(e, 3, dois[0], false, dois).concentrada).toBeFalsy();
+    expect(escolherAcao(e, 3, um, false, [um]).concentrada).toBe(true);
   });
 });

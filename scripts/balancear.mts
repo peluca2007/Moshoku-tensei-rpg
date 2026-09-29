@@ -30,6 +30,7 @@
  */
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { TREES, getTreeById } from "@/data/trees";
+import { getStartingKit } from "@/data/startingKits";
 import { criaturaDoMolde, simularEncontro, type ResultadoEncontro } from "@/lib/encounterSim";
 import { RANKS, type AttributeKey, type CharacterData } from "@/lib/types";
 
@@ -69,6 +70,8 @@ function pesoDeCombate(item: Item, kind: "ability" | "talent"): number {
   if (/Não (ataca|luta)/.test(t)) p -= 6;
   if (/\bdano\b|ataque|acerto|Ação|Ações|aliad|Apontad|[Cc]anção|\bCA\b|Vantagem|Reação|Resistência|invocad/.test(t)) p += 2;
   if (/viag|mapa|\bPO\b|\bdias\b|região|mercad|Descanso Longo|uma hora|Ofício|ritual|contato|negoci/i.test(t)) p -= 2;
+  // A reserva da escola (+2 PM e +2 PV por patamar): o mago que luta compra.
+  if (/\+\d+ PM/.test(t)) p += 5;
   if (kind === "ability") p += 1;
   return p;
 }
@@ -94,7 +97,26 @@ function montar(treeId: string, patamar: number, nome: string, experimentar = fa
   const principal = atributoDa(treeId);
   s.setAttribute(principal, PRINCIPAL[patamar - 1]);
   if (principal !== "vigor") s.setAttribute("vigor", arvore.category === "corpo" ? 3 : 2);
+  // O elementalista precisa de dois atributos, mira e mana (Cap. 1, §2: "o
+  // elementalista precisa de dois atributos pra chegar no mesmo lugar"). O
+  // PM é Espírito × Bônus de Rank + 8; só com Intelecto, o mago de 6º tinha
+  // 32 PM pra magias de 20–22 — uma por luta. Espírito dois abaixo da mira.
+  if (arvore.category === "magia" && principal === "intelecto" && !process.env.SEM_MANA) {
+    s.setAttribute("espirito", Math.max(0, PRINCIPAL[patamar - 1] - 2));
+  }
   s.setStartingTree(treeId);
+  // O kit inicial da árvore, equipado (2026-09-28): sem ele todo mundo lutava
+  // pelado com a arma de referência (d6), e o tanque — cuja Guarda do Corpo
+  // só compensa com CA maior que a do protegido — não protegia ninguém.
+  let temArma = false;
+  for (const item of getStartingKit(arvore.subgroup)?.items ?? []) {
+    if (item.type === "geral") continue;
+    if (item.type === "arma" && temArma) continue;
+    useCharacterStore.getState().addItem({ ...item });
+    const inv = useCharacterStore.getState().characters[useCharacterStore.getState().activeId!].inventory;
+    useCharacterStore.getState().toggleEquipped(inv[inv.length - 1].id);
+    if (item.type === "arma") temArma = true;
+  }
   for (const rank of RANKS.slice(0, patamar)) {
     useCharacterStore.getState().unlockRank(treeId, rank);
     const def = arvore.ranks.find((r) => r.rank === rank);

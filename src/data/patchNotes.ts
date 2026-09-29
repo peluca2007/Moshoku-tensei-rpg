@@ -16,6 +16,39 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.120",
+    date: "2026-09-28",
+    title: "Conjuração Concentrada, e o balanço das árvores pelo simulador",
+    sections: [
+      {
+        heading: "Magia: a resposta ao Chefe",
+        items: [
+          "Nova forma de conjurar (Cap. 2, §2): a Conjuração Concentrada. Na Conjuração Padrão, a magia de dano vai inteira numa criatura só — +50% dos dados e +50% do PM. O mesmo dano por PM, em menos turnos. Contra grupo a área continua melhor; contra o Chefe, o mago agora tem o que fazer.",
+          "Medido no simulador: no 3º patamar, um grupo com mago vencia o Chefe 36% das vezes (88% com o Deus da Espada); agora vence ~70%.",
+        ],
+      },
+      {
+        heading: "Invocação",
+        items: [
+          "Pactos ativos ao mesmo tempo: 2 no Intermediário e no Avançado, 3 no Santo e no Rei, 4 no Imperador (era 2/3/4/5/6). Cada Pacto é uma criatura inteira em campo, e o Invocador vencia 95–100% dos encontros do 3º patamar em diante. Continua forte com o círculo pronto — sem ser a única resposta.",
+          "O Pacto do Urso das Cavernas batia 4d10 no simulador; a carta diz 2d10.",
+        ],
+      },
+      {
+        heading: "Bardo",
+        items: [
+          "A Canção de Guerra soma o Bônus de Rank do Bardo nos acertos (+3 no Avançado, +6 no Imperador, dentro do teto de +6 de ajuda de aliado); era +2 fixo. A Dissonância dá 1d6 por patamar (era 1d4). Das três árvores de Utilidade, o Bardo era a única quase morta em combate.",
+        ],
+      },
+      {
+        heading: "O simulador",
+        items: [
+          "A Guarda do Corpo do tanque passou a valer contra qualquer criatura e mesmo sem mapa (o guarda fica ao lado de quem protege). Antes ela quase nunca disparava, e a Cavalaria e Escudos parecia não proteger ninguém.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.119",
     date: "2026-09-27",
     title: "O golpe do monstro, e os monstros remedidos de novo",
