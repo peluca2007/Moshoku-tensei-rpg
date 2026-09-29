@@ -74,7 +74,69 @@ O check atual encontra **23** cartas condicionais e **zero PENDENTE**. A lista c
 
 A régua do Deus do Norte no 3º patamar está em **41/63** no balanceador final, sem o antigo abuso do Golpe do Desespero. O dano da régua não voltou a ~50 contra ~34: a pendência foi encerrada pelo limiar de PV, Exaustão e pré-requisitos modelados na Tarefa 6.
 
-## Decisões para o autor
+## Continuação autorizada — 2026-09-29
+
+O autor autorizou seguir as recomendações. Primeira etapa implementada **localmente**, ainda sem publicação:
+
+- **Terra — Couraça de Barro, Principiante:** 1 PA, 2 PM e 1 Reação; reduz um ataque físico contra o próprio conjurador em 1d6 + BC, antes de Resistência. Não persiste, não cria cobertura e não funciona durante cântico. A carta contém exemplo numérico. Começamos por uma escola, conforme a recomendação; não distribuímos escudo universal.
+- **Bardo — Refrão da Retomada, Principiante:** 1 PA, 1 PP e 1 Reação após outro aliado errar um ataque; um único d6 + patamar em Bardo concede PV Temporários a até três aliados conscientes que ouçam o Bardo, a até 9 m. Não empilha, não repete o ataque e não concede Ações. A proteção dura até ser consumida ou o combate acabar. A carta contém exemplo.
+- O simulador cobra recursos, compra da carta e Reação; o Refrão só dispara depois de Inspiração/repetições. A Couraça não presume que dano sem tipo seja físico. Alcance é cobrado quando há posições; audibilidade e ausência de silêncio/surdez continuam premissas declaradas na lista de simplificações.
+- Mantida a diferença entre área e alvo único; nenhum bônus universal de PV, PM ou atributo.
+
+### Verificação e bloqueios da primeira tentativa (histórico)
+
+- 57 arquivos de teste, **826 testes aprovados**, incluindo seis novos casos das cartas. TypeScript e ESLint em `src scripts` sem erros.
+- `git diff --check` sem erros de espaço (somente avisos de normalização LF/CRLF).
+- **Sem resultado novo de balanceamento.** A execução da bancada solicitou autorização adicional, mas o serviço de aprovação não conseguiu avaliá-la por limite de uso. Não foi executada; os números antigos abaixo não medem estas cartas.
+- O balanceador aceita `SEM_NOVAS_DEFESAS=1` para comparar a compra antiga com a nova, mantendo o limite de quatro compras por patamar. A comparação precisa ser rodada com e sem essa variável, com os mesmos patamares, 300 batalhas e semente 20260927.
+- **Revisão visual não concluída:** a porta 3020 já estava ocupada e o Chrome de verificação não abriu a porta de depuração. Nenhum servidor de outro agente foi encerrado. Não há contagem nova de páginas nem confirmação de ausência de estouros.
+- **Sem commit/push nesta etapa.** Falta medir o efeito real, ajustar se necessário e concluir a revisão do livro antes de publicar. As demais escolas serão avaliadas uma por vez depois desta medição, não alteradas às cegas.
+
+### Validação retomada — 2026-09-29
+
+A autorização voltou a funcionar. A comparação descobriu e corrigiu um erro: a IA tratava defesas de Reação como escudos de Ação normal. Isso afetava também Parede de Emergência, por isso os controles abaixo foram medidos novamente **com a correção em ambos os lados**. Os resultados da tentativa anterior não devem ser usados para julgar as cartas.
+
+300 batalhas por encontro e patamar; semente 20260927; quatro compras por patamar. Valores = vitória Difícil/Chefe, em %. Sem cartas novas → com cartas novas:
+
+| Árvore | 1º | 2º | 3º | 4º | 5º | 6º |
+| --- | --- | --- | --- | --- | --- | --- |
+| Bardo | 10/82 → 48/94 | 15/83 → 48/91 | 18/17 → 27/33 | 16/20 → 24/25 | 71/20 → 75/28 | 60/8 → 61/11 |
+| Terra | 10/87 → 10/87 | 15/89 → 15/89 | 68/31 → 68/31 | 76/44 → 76/44 | 92/47 → 92/47 | 85/31 → 85/31 |
+
+**Leitura:** o Refrão melhora especialmente o começo, sem resolver o Bardo avançado. A bancada genérica não mede o benefício da Couraça: os ataques por orçamento não têm tipo de dano, portanto não ativam a carta. Não inventamos que todo dano seja físico para fabricar melhora. Testes separados usam ataques cortantes explícitos, verificam o acionamento da defesa e a igualdade entre simulação com e sem recibo; efeitos de resistência não a ativam. Próxima medição de Terra precisa de encontros com ações tipadas, não de mais PV artificiais.
+
+Revisão do livro: **285 páginas, 1351 títulos; zero títulos separados, estouros, artes quebradas ou tabelas partidas com linha solta**. Persistem 9 avisos de mancha vazia e 3 de recorte de arte; não são corrigidos mexendo na diagramação de outro agente. `check:livro`: zero erros, dois avisos (loop da Cura e arte de tralha). Termos e remissões: zero falhas e zero avisos.
+
+Não foram criadas outras regras: a prioridade continua sendo medir uma escola por vez e não compensar limitações do simulador com bônus universais. Os arquivos de loot, novos itens e plano do livro deixados pelo autor foram preservados.
+
+**Entrega técnica:** 57 arquivos / **829 testes aprovados**, TypeScript e ESLint (`src scripts`) sem erros. Regras em `7d23e41`; integração, regressões e comparação controlada em `0261d56`. Sete casos novos cobrem custo, disponibilidade da Reação, alcance, falha real e proibição de lançar Reação como Ação; mais dois cobrem ataques físicos versus efeitos de resistência, sempre comparando com e sem log. A sincronização com `origin/main` não exigiu merge de conteúdo. O relato de bloqueio acima fica como histórico, não como situação atual.
+
+Para reproduzir no PowerShell, na raiz do projeto:
+
+```powershell
+$env:BATALHAS = '300'
+$env:PATAMARES = '1,2,3,4,5,6'
+$env:SEM_NOVAS_DEFESAS = '1'
+npm run balancear -- --md
+Remove-Item Env:SEM_NOVAS_DEFESAS
+npm run balancear -- --md
+npx tsc --noEmit -p .
+npx vitest run
+npx eslint src scripts
+npm run check:livro
+npm run check:texto
+npm run check:termos
+npm run check:remissoes
+$env:BASE = 'http://localhost:3020'
+npm run revisar:livro -- --sem-fotos
+npm run check:mobile
+```
+
+`check:texto` também passou: 632 habilidades/talentos, zero falhas e avisos. `check:sobrevivencia` não encontrou casos abaixo de um turno do molde; é um piso de PV, não prova de equilíbrio destas defesas. Os avisos de armazenamento do Zustand na bancada são do ambiente sem navegador; não representam alterações de ficha persistida.
+
+`check:mobile` concluído com sucesso: 16 rotas em 320/360/414 px; livro em 320×800, 360×800, 375×812 e 390×844, nos dois temas. Zero tabelas com rolagem lateral e zero controles estruturais abaixo de 40 px; o verificador tolera o arredondamento de 1 px observado nas duas menores larguras. Persistem contagens informativas de alvos pequenos em outras telas e no texto corrido, sem reprovação do check. A revisão foi automatizada; não substitui testar com jogadores em aparelhos físicos.
+
+## Decisões para o autor (histórico, recomendações autorizadas)
 
 **Opções para a sobrevivência da magia no 1º–2º:**
 
