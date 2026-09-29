@@ -484,7 +484,7 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rn
       acertou, critico: false, parcelas: [], bonusDano: golpe, bruto: golpe, aposModificadores: golpe,
       notas: ["Um terço do dano por turno do molde; não há dados de dano cadastrados."],
     } : undefined;
-    bater(c, alvo, golpe, rng, false, undefined, evento);
+    bater(c, alvo, golpe, rng, false, undefined, evento, alvos);
     if (evento) registrarAtaque(logger, evento);
   }
 }
@@ -506,16 +506,25 @@ function bater(
    * não é um golpe, é uma média.
    */
   tipoDeDano?: string,
-  evento?: EventoAtaque
+  evento?: EventoAtaque,
+  defensores: EstadoPersonagem[] = []
 ): number {
   if (dano > 0 && "ficha" in alvo && (!tipoDeDano || /contundente|cortante|perfurante|físico/i.test(tipoDeDano))) {
-    const defensor = alvo as EstadoPersonagem;
-    const parede = defensor.ficha.acoes.find((a) => a.nome === "Parede de Emergência" && a.reacao);
-    if (parede && defensor.pm >= parede.pm && consumirReacao(defensor)) {
-      defensor.pm -= parede.pm;
+    const protegido = alvo as EstadoPersonagem;
+    const candidatos = [protegido, ...defensores.filter((d) => d !== protegido)].filter((d) => {
+      const distancia = distanciaEntre(d, protegido);
+      return d.vivo && (distancia === undefined || distancia <= 3);
+    });
+    const teorico = candidatos.find((d) => {
+      const parede = d.ficha.acoes.find((a) => a.nome === "Parede de Emergência" && a.reacao);
+      return parede && d.pm >= parede.pm && (d.reacaoDisponivel || d.reacoesExtra > 0);
+    });
+    const parede = teorico?.ficha.acoes.find((a) => a.nome === "Parede de Emergência" && a.reacao);
+    if (teorico && parede && consumirReacao(teorico)) {
+      teorico.pm -= parede.pm;
       const absorvido = Math.min(15, dano);
       dano -= absorvido;
-      evento?.notas.push(`Parede de Emergência: ${absorvido} de dano físico atingem a parede antes do alvo.`);
+      evento?.notas.push(`Parede de Emergência de ${teorico.nome}: ${absorvido} de dano físico atingem a parede antes de ${protegido.nome}.`);
     }
   }
   // `danoCausado` conta o PV REAL perdido, e não o golpe desferido: o que a
@@ -692,7 +701,7 @@ function resolverAcaoCriatura(
     if (escala !== 1) evento.notas.push(`Escala do encontro/ação: ×${escala}, arredondada`);
   }
   c.escondido = false;
-  bater(c, alvo, fDmg, rng, critico, acao.dano, evento);
+  bater(c, alvo, fDmg, rng, critico, acao.dano, evento, aliados);
   if (acao.danoPorTurno && fDmg > 0) {
     const media = (mediaDados(acao.danoPorTurno) + bonusAtaque) * c.escala * escalaDaAcao(acao);
     if (!alvo.sustentados.some((x) => Math.abs(x.media - media) < 0.01)) {
@@ -1100,7 +1109,7 @@ function reagirComoChefe(
     acertou, critico: false, parcelas: [], bonusDano: dano, bruto: dano, aposModificadores: dano,
     notas: ["Reação de chefe: dano fixo de um terço do orçamento; não há dados de dano cadastrados."],
   } : undefined;
-  bater(c, alvoGatilho, dano, rng, false, undefined, evento);
+  bater(c, alvoGatilho, dano, rng, false, undefined, evento, grupo);
   if (evento) registrarAtaque(logger, evento);
 }
 

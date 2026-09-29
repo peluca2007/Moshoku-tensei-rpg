@@ -43,10 +43,11 @@ describe("aberturas, ações e reações da cena", () => {
       purchasedAbilities: [{ treeId: "teorica", rank: "Principiante", kind: "ability", id: "parede-de-emergencia" }],
       bonusHp: 100,
     });
-    const monstro = { ...criaturaDoMolde(1, "padrao", "Martelo", "martelo"), pv: 1_000 };
-    const resultado = simularEncontro([teorico], [monstro], { batalhas: 1, gerarLogs: true, semente: 7, maxRodadas: 3 });
+    const aliado = personagem({ id: "aliado", name: "Aliado", bonusHp: -10 });
+    const monstro = { ...criaturaDoMolde(1, "padrao", "Martelo", "martelo"), pv: 1_000, tatica: "fragil" as const };
+    const resultado = simularEncontro([teorico, aliado], [monstro], { batalhas: 1, gerarLogs: true, semente: 7, maxRodadas: 3 });
     expect(resultado.logsExtremos?.some((log) => log.eventos?.some((evento) =>
-      evento.notas.some((nota) => nota.includes("Parede de Emergência"))))).toBe(true);
+      evento.alvo === "Aliado" && evento.notas.some((nota) => nota.includes("Parede de Emergência de"))))).toBe(true);
   });
 
   it("Primeiro Golpe usa o maior Rank e exige abertura antes de gastar a rolagem", () => {

@@ -257,6 +257,22 @@ describe("condições de uso escritas na carta", () => {
     expect(alvo.congelado).toBe(false);
   });
 
+  it("a IA monta Molhado → Congelado → Quebra em vez de julgar só a ação isolada", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("agua")));
+    e.ficha.acoes = [
+      novaAcao({ nome: "imediata", dano: "1d4", acoes: 1, ataque: true }),
+      novaAcao({ nome: "molhar", dano: "1d4", acoes: 1, ataque: true, aplicaMolhado: true }),
+      novaAcao({ nome: "congelar", dano: "1d4", acoes: 1, aplicaCongeladoSeMolhado: true }),
+      novaAcao({ nome: "quebrar", dano: "1d4", acoes: 1, ataque: true, bonusSeCongelado: "10d10" }),
+    ];
+    const alvo = novoAlvo({ nome: "alvo", pv: 10_000, ca: 18 });
+    expect(escolherAcao(e, 4, alvo).aplicaMolhado).toBe(true);
+    alvo.molhado = true;
+    expect(escolherAcao(e, 4, alvo).aplicaCongeladoSeMolhado).toBe(true);
+    alvo.congelado = true;
+    expect(escolherAcao(e, 4, alvo).bonusSeCongelado).toBe("10d10");
+  });
+
   it("acumula Dose antes de Inverter e limpa a condição ao cobrar", () => {
     const e = novoEstado(montarFicha(comArvoreInteira("desintoxicacao")));
     const peconha = e.ficha.acoes.find((a) => a.nome === "Peçonha")!;
@@ -283,6 +299,21 @@ describe("condições de uso escritas na carta", () => {
     resolver(e, sopro, passou, () => 0);
     expect(falhou).toMatchObject({ doses: 2, envenenado: true });
     expect(passou.doses).toBe(1);
+  });
+
+  it("a IA monta duas Doses antes de escolher Inverter", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("desintoxicacao")));
+    e.ficha.acoes = [
+      novaAcao({ nome: "imediata", dano: "1d4", acoes: 1, ataque: true }),
+      novaAcao({ nome: "dose", dano: "1d4", acoes: 1, dosesNaFalha: 1 }),
+      novaAcao({ nome: "inverter", dano: "10d10", acoes: 1, inverteDose: "10d10" }),
+    ];
+    const alvo = novoAlvo({ nome: "alvo", pv: 10_000, ca: 18 });
+    expect(escolherAcao(e, 4, alvo).dosesNaFalha).toBeGreaterThan(0);
+    alvo.doses = 1;
+    expect(escolherAcao(e, 4, alvo).dosesNaFalha).toBeGreaterThan(0);
+    alvo.doses = 2;
+    expect(escolherAcao(e, 4, alvo).inverteDose).toBeTruthy();
   });
 });
 
