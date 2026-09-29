@@ -370,6 +370,7 @@ export interface FichaCombate {
     cancaoDeGuerra: boolean;
     duasCancoes: boolean;
     temInspiracao: boolean;
+    refraoDaRetomada?: boolean;
     inspiracaoDados: number;
     inspiracoes: number;
   };
@@ -818,10 +819,10 @@ export function acoesDe(c: CharacterData): Acao[] {
     // A Parede de Emergência já é uma carta pronta e não depende de inventar
     // fórmula: 15 PV, Reação, ataque físico, até o próximo turno. Ela entra
     // como ação defensiva para o resolvedor de ataques da criatura consumi-la.
-    if (a.id === "parede-de-emergencia") {
+    if (a.id === "parede-de-emergencia" || a.id === "couraca-de-barro") {
       out.push(novaAcao({
         nome: a.name, tipo: "escudo", reacao: true, acoes: 1,
-        pm: a.pmCost ?? 0, formulaSuporte: "15", alcance: a.range,
+        pm: a.pmCost ?? 0, formulaSuporte: a.id === "couraca-de-barro" ? "1d6" : "15", alcance: a.range,
       }));
       continue;
     }
@@ -1176,6 +1177,7 @@ export function montarFicha(c: CharacterData, rotulo = "", armaId?: string | nul
       cancaoDeGuerra: comprou("cancao-de-guerra", "bardo-e-interacao"),
       duasCancoes: rankBardo >= 3,
       temInspiracao: comprou("inspiracao", "bardo-e-interacao"),
+      refraoDaRetomada: comprou("refrao-da-retomada", "bardo-e-interacao"),
       inspiracaoDados: Math.ceil(rankBardo / 2),
       inspiracoes: Math.max(0, espirito),
     } : undefined,
@@ -2191,10 +2193,12 @@ export function aplicarDano(
 
 /** Resolve e aplica o mesmo ataque; o recibo observa as rolagens já realizadas. */
 export function executarAtaquePersonagem(
-  e: EstadoPersonagem, acao: Acao, alvo: Alvo, rng: Rng, logger?: RegistroCombate
+  e: EstadoPersonagem, acao: Acao, alvo: Alvo, rng: Rng, logger?: RegistroCombate,
+  aliados: EstadoPersonagem[] = []
 ): number {
   let evento: EventoAtaque | undefined;
   const dano = resolver(e, acao, alvo, rng, (registro) => { evento = registro; });
+  if (acao.ataque && evento?.acertou === false) reagirAFalhaAliada(e, aliados, rng, evento);
   e.escondido = false;
   const pvAntes = alvo.pv;
   aplicarDano(alvo, dano, e.ficha.bonusDeRank, rng, evento?.critico ?? false, acao.dano, evento);
@@ -2210,6 +2214,36 @@ export function executarAtaquePersonagem(
     alvo.aoErrarCorpoACorpo?.(e, acao.dano, rng, logger);
   }
   return causado;
+}
+
+/** Uma defesa pessoal, antes de Resistência; não é PV extra sem custo. */
+export function amortecerComBarro(e: EstadoPersonagem, dano: number, tipo: string | undefined, rng: Rng, evento?: EventoAtaque): number {
+  const carta = e.ficha.acoes.find((a) => a.nome === "Couraça de Barro" && a.reacao);
+  if (!carta || dano <= 0 || !tipo || !/contundente|cortante|perfurante/i.test(tipo) ||
+    e.conjurando || e.pm < carta.pm || !consumirReacao(e)) return dano;
+  e.pm -= carta.pm;
+  const rolagem = rolarComRegistro(carta.formulaSuporte, rng);
+  const absorvido = Math.min(dano, rolagem.total + e.ficha.bc);
+  evento?.notas.push(`Couraça de Barro: dado ${rolagem.total} + BC ${e.ficha.bc}; absorve ${absorvido}, custa ${carta.pm} PM e 1 Reação.`);
+  return dano - absorvido;
+}
+
+/** Sem mapa, a bancada presume voz e alcance; com posições, cobra os 9 m. */
+export function reagirAFalhaAliada(autor: EstadoPersonagem, aliados: EstadoPersonagem[], rng: Rng, evento?: EventoAtaque): void {
+  const perto = (a: EstadoPersonagem, b: EstadoPersonagem) => (distanciaEntre(a, b) ?? 0) <= 9;
+  for (const bardo of aliados) {
+    if (bardo === autor || !bardo.ficha.bardo?.refraoDaRetomada || bardo.conjurando ||
+      bardo.pp < 1 || !perto(bardo, autor) || !bardo.vivo || bardo.surpreso) continue;
+    const rank = bardo.ficha.bardo.rank;
+    const escolhidos = aliados.filter((a) => a.vivo && perto(bardo, a) && a.pvTemp < rank + 6)
+      .sort((a, b) => a.pvTemp - b.pvTemp || a.pv - b.pv).slice(0, 3);
+    if (!escolhidos.length || !consumirReacao(bardo)) continue;
+    bardo.pp--;
+    const rolagem = rolarComRegistro("1d6", rng);
+    for (const a of escolhidos) darPvTemp(a, rolagem.total + rank);
+    evento?.notas.push(`Refrão da Retomada de ${bardo.nome}: 1 PP, 1 Reação; dado ${rolagem.total} + patamar ${rank} em PV Temporários para ${escolhidos.map((a) => a.nome).join(", ")}.`);
+    break; // A IA economiza: só um Bardo reage à mesma falha.
+  }
 }
 
 /**
@@ -2377,7 +2411,7 @@ export function escolherSuporte(
   aliados: EstadoPersonagem[]
 ): { acao: Acao; alvo: EstadoPersonagem } | null {
   const viaveis = e.ficha.acoes.filter(
-    (a) => a.tipo !== "dano" && a.acoes <= acoesRestantes && a.pm <= e.pm && a.pt <= e.pt
+    (a) => !a.reacao && a.tipo !== "dano" && a.acoes <= acoesRestantes && a.pm <= e.pm && a.pt <= e.pt
   );
   if (viaveis.length === 0) return null;
 
@@ -2676,7 +2710,7 @@ function executarTurnoPersonagem(
         // `c.acao.dano` é a fórmula inteira ("6d10 + BC (ígneo)") e serve de
         // tipo: Resistência e Imunidade procuram a palavra dentro dela. É o
         // mesmo lugar de onde a detecção de fogo do motor já lia.
-        e.danoCausado += executarAtaquePersonagem(e, c.acao, alvo, rng, logger);
+        e.danoCausado += executarAtaquePersonagem(e, c.acao, alvo, rng, logger, aliados);
       }
       cobrarConsequenciaDaAcao(e, c.acao, logger);
       break;
@@ -2787,7 +2821,7 @@ function executarTurnoPersonagem(
     const alvos = a.area ? alvosNaArea(vivos, a.areaDescricao) : [vivos[0]];
     for (const alvo of alvos) {
       for (let golpe = 0; golpe < (e.ficha.ataquesPorAcao ?? 1) && alvo.vivo; golpe++) {
-        const dmg = executarAtaquePersonagem(e, a, alvo, rng, logger);
+        const dmg = executarAtaquePersonagem(e, a, alvo, rng, logger, aliados);
         e.danoCausado += dmg;
       }
     }
@@ -2911,6 +2945,7 @@ export function consumirReacao(alvo: Alvo): boolean {
  * ele ignora é pior que nenhum número: parece mais confiável do que é.
  */
 export const SIMPLIFICACOES = [
+  "Couraça de Barro reduz um ataque físico tipado de criatura, cobrando PM e Reação; orçamento abstrato sem tipo não ativa a carta. Refrão da Retomada reage só a ataque de aliado que permaneceu errado após Inspiração/repetições, concede PV Temporários sem empilhar e cobra PP/Reação. Com posições, exige 9 m; sem elas, presume alcance. Voz audível, ausência de silêncio e ausência de surdez são premissas desta bancada, não verificações de cenário.",
   "Condições modeladas: Molhado (frio dobra), Congelado (Água prepara, cobra com Quebra de Gelo e consome), Dose (até 3, Envenenado na segunda, Colapso na terceira e Inversão por Dose), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação os declara — Preso, Caído e Envenenado. Restrições de carta por faixa de PV e estado estruturado do alvo bloqueiam a ação; 'Requer alvo Agarrado' custa +1 Ação e presume que o agarrão funcionou. Exaustão recebida depois de uma técnica acumula e, no nível 3, impõe Desvantagem aos ataques. Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
   "Dano por turno sustentado ENTRA desde a 0.1.57, por TRÊS turnos — o do lançamento mais dois. Três é escolha declarada, não do livro: a Tempestade Cortante dura \"1 minuto\" (dez turnos), e contar dez daria a ela um dano que nenhuma mesa vê, porque o alvo sai da área (não há mapa aqui) e o combate acaba antes. São sete magias, não três: Tomar o Ar, Tempestade Cortante e Vazio (Vento), Rio de Magma (Terra), Estrangular (Armas Pesadas), Prisão de Purgatório e Trono de Chamas (Punho do Fogo). Errar pra menos é o lado certo de errar.",

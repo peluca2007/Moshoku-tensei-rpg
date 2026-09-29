@@ -127,6 +127,8 @@ function montar(treeId: string, patamar: number, nome: string, experimentar = fa
     ].sort((x, y) => y.peso - x.peso);
     let compradas = 0;
     for (const c of candidatos) {
+      // Controle pareado, sem conceder PA ou recursos extras à versão nova.
+      if (process.env.SEM_NOVAS_DEFESAS === "1" && ["couraca-de-barro", "refrao-da-retomada"].includes(c.id)) continue;
       if (compradas >= 4) break;
       if (useCharacterStore.getState().purchaseAbility({ treeId, rank, kind: c.kind, id: c.id })) compradas++;
     }
