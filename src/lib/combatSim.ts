@@ -217,6 +217,15 @@ export interface Acao {
   requerCenarioUtilizavel?: boolean;
   /** Efeito sustentado que precisa estar ativo antes desta ação. */
   efeitoAtivoExigido?: string;
+  /** Água Avançada: frio congela quem já estava Molhado e falhou. */
+  aplicaCongeladoSeMolhado?: boolean;
+  /** Quebra de Gelo cobra o preparo e o consome. */
+  bonusSeCongelado?: string;
+  /** Doses aplicadas em cada resultado do teste de Vigor. */
+  dosesNaFalha?: number;
+  dosesNoSucesso?: number;
+  /** Fórmula por Dose removida por Inverter. */
+  inverteDose?: string;
   /**
    * "Uma vez por turno" / "uma vez por combate" no COMEÇO do efeito da carta —
    * 2026-09-27. Sem isto o motor usava a Espada de Luz Verdadeira (uma vez por
@@ -358,7 +367,11 @@ export interface FichaCombate {
     insultoQueFica: boolean;
     cancaoDeGuerra: boolean;
     duasCancoes: boolean;
+    temInspiracao: boolean;
+    inspiracaoDados: number;
+    inspiracoes: number;
   };
+  doseExtraEmFalhaGrave: boolean;
   ppMax?: number;
   rankLadino: number;
   bonusFurtividade: number;
@@ -447,6 +460,9 @@ export interface Alvo {
   cego: boolean;
   /** O cenário declarou cobertura, terreno ou outro elemento aproveitável. */
   cenarioUtilizavel: boolean;
+  congelado: boolean;
+  doses: number;
+  atordoadoTurnos: number;
   nome: string;
   pv: number;
   ca: number;
@@ -621,6 +637,9 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
     jaAgiu: p.jaAgiu ?? false,
     cego: p.cego ?? false,
     cenarioUtilizavel: p.cenarioUtilizavel ?? false,
+    congelado: p.congelado ?? false,
+    doses: p.doses ?? 0,
+    atordoadoTurnos: p.atordoadoTurnos ?? 0,
     nome: p.nome,
     pv: p.pv,
     ca: p.ca,
@@ -686,6 +705,11 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     exaustaoDepois: p.exaustaoDepois,
     requerCenarioUtilizavel: p.requerCenarioUtilizavel,
     efeitoAtivoExigido: p.efeitoAtivoExigido,
+    aplicaCongeladoSeMolhado: p.aplicaCongeladoSeMolhado,
+    bonusSeCongelado: p.bonusSeCongelado,
+    dosesNaFalha: p.dosesNaFalha,
+    dosesNoSucesso: p.dosesNoSucesso,
+    inverteDose: p.inverteDose,
     limite: p.limite,
     ataque: p.ataque ?? false,
     frio: p.frio ?? false,
@@ -693,6 +717,7 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     aplicaMolhado: p.aplicaMolhado ?? false,
     aplicaQuebrantado: p.aplicaQuebrantado ?? 0,
     danoPorTurno: p.danoPorTurno ?? "",
+    reacao: p.reacao ?? false,
   };
 }
 
@@ -715,6 +740,9 @@ export interface EstadoPersonagem extends Alvo {
   exaustao: number;
   /** Preparações sustentadas declaradas pelo cenário (ex.: Cumulonimbus ativa). */
   efeitosAtivos: Set<string>;
+  /** Inspiração recebida e ainda não gasta num teste. */
+  inspiracao?: { dados: number; fonte: EstadoPersonagem };
+  inspiracoesRestantes: number;
   /** Teto do Cap. 4, §5: no máximo duas Ações vindas de aliados por turno. */
   acoesConcedidas: number;
   concessorDeAcoes?: EstadoPersonagem;
@@ -770,7 +798,7 @@ export function acoesDe(c: CharacterData): Acao[] {
     const tree = getTreeById(compra.treeId);
     const rd = tree?.ranks.find((r) => r.rank === compra.rank);
     const a = rd?.abilities.find((x) => x.id === compra.id) as AbilityDef | undefined;
-    if (!a?.damage?.normal) continue;
+    if (!a) continue;
     // A ficha impede compras inválidas, mas os montadores de referência e
     // saves antigos podem trazer uma combinação que nunca passaria pela UI.
     // O simulador não pode ganhar a habilidade só porque recebeu JSON direto.
@@ -785,6 +813,17 @@ export function acoesDe(c: CharacterData): Acao[] {
     // Contar a técnica sem três armas na mochila infla precisamente o perfil
     // de referência que esta régua deveria auditar.
     if (/terceira arma/i.test(a.effect) && c.inventory.filter((item) => item.type === "arma").length < 3) continue;
+    // A Parede de Emergência já é uma carta pronta e não depende de inventar
+    // fórmula: 15 PV, Reação, ataque físico, até o próximo turno. Ela entra
+    // como ação defensiva para o resolvedor de ataques da criatura consumi-la.
+    if (a.id === "parede-de-emergencia") {
+      out.push(novaAcao({
+        nome: a.name, tipo: "escudo", reacao: true, acoes: 1,
+        pm: a.pmCost ?? 0, formulaSuporte: "15", alcance: a.range,
+      }));
+      continue;
+    }
+    if (!a.damage?.normal) continue;
     const txt = a.damage.normal.toLowerCase();
     /*
      * Cura e PV Temporários — 0.1.37.
@@ -972,6 +1011,15 @@ export function acoesDe(c: CharacterData): Acao[] {
       exaustaoDepois: /depois de usar[^.;]*1 nível de exaustão/i.test(a.effect) ? 1 : undefined,
       requerCenarioUtilizavel: /requer cenário utilizável/i.test(a.effect),
       efeitoAtivoExigido: a.effect.match(/pré-requisito:\s*([^.;]+?)\s+ativa\b/i)?.[1].trim(),
+      aplicaCongeladoSeMolhado: compra.treeId === "agua" && !!getHighestUnlockedRank(c, "agua") &&
+        RANKS.indexOf(getHighestUnlockedRank(c, "agua")!) >= RANKS.indexOf("Avançado") &&
+        /frio|gelo/i.test(a.damage.normal) && !/ataque mágico/i.test(a.effect),
+      bonusSeCongelado: /contra alvo congelado/i.test(a.effect)
+        ? a.effect.match(/causa\s+(\+?\d+d\d+)\s+de frio/i)?.[1]
+        : undefined,
+      dosesNaFalha: Number(a.effect.match(/falha:[^.;]*?\b(\d+)\s+Doses?\b/i)?.[1]) || undefined,
+      dosesNoSucesso: Number(a.effect.match(/sucesso:[^.;]*?\b(\d+)\s+Doses?\b/i)?.[1]) || undefined,
+      inverteDose: a.damage.normal.match(/(\d+d\d+)\s+de dano de veneno por Dose invertida/i)?.[1],
       /*
        * A rolagem de ataque, lida do EFEITO — corrigido na 0.1.35.
        *
@@ -1101,7 +1149,11 @@ export function montarFicha(c: CharacterData, rotulo = "", armaId?: string | nul
       insultoQueFica: comprou("insulto-que-fica", "bardo-e-interacao"),
       cancaoDeGuerra: comprou("cancao-de-guerra", "bardo-e-interacao"),
       duasCancoes: rankBardo >= 3,
+      temInspiracao: comprou("inspiracao", "bardo-e-interacao"),
+      inspiracaoDados: Math.ceil(rankBardo / 2),
+      inspiracoes: Math.max(0, espirito),
     } : undefined,
+    doseExtraEmFalhaGrave: comprou("mao-que-nao-contamina", "desintoxicacao"),
     bonusFurtividade: agilidade + rankDaArvore("furtividade-e-armadilhas"),
     temSombraLonga: comprou("sombra-longa", "furtividade-e-armadilhas"),
     rankAgua,
@@ -1366,6 +1418,8 @@ export function novoEstado(ficha: FichaCombate): EstadoPersonagem {
     pp: ficha.ppMax ?? 0,
     exaustao: 0,
     efeitosAtivos: new Set(),
+    inspiracao: undefined,
+    inspiracoesRestantes: ficha.bardo?.inspiracoes ?? 0,
     acoesConcedidas: 0,
     concessorDeAcoes: undefined,
     bonusAcertoDeAliados: 0,
@@ -1492,6 +1546,9 @@ export function autorizarAcao(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): 
   if (a.efeitoAtivoExigido && !e.efeitosAtivos.has(a.efeitoAtivoExigido.toLowerCase())) {
     return { legal: false, motivo: `exige ${a.efeitoAtivoExigido} ativa` };
   }
+  if (a.inverteDose && (!alvo || alvo.doses === 0)) {
+    return { legal: false, motivo: "exige ao menos 1 Dose no alvo" };
+  }
   if (a.regra === "primeiro-golpe") {
     if (e.usouPrimeiroGolpe) return { legal: false, motivo: "Primeiro Golpe já foi usado neste combate" };
     const abertura = alvo && aberturaFurtiva(e, alvo);
@@ -1518,8 +1575,12 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
    * erro da rolagem de ataque, na outra ponta do mesmo arquivo: a resolução
    * certa e a decisão cega.
    */
+  const dadosDaAcao = a.inverteDose && alvo
+    ? mediaDados(a.inverteDose) * alvo.doses
+    : (basico ? mediaFormula(a.dano) : mediaDados(a.dano));
+  const bonusCongelado = alvo?.congelado && a.bonusSeCongelado ? mediaDados(a.bonusSeCongelado) : 0;
   const impacto = Math.max(0,
-    (basico ? mediaFormula(a.dano) : mediaDados(a.dano)) +
+    dadosDaAcao + bonusCongelado +
     (a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0)) * mediaFormula(e.ficha.ataqueBasico.dano) + bonus - (basico ? e.quebrantado : 0));
 
   /*
@@ -1553,7 +1614,9 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     const vantagem = e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
     const desvantagem = e.preso || e.caido || e.envenenado || (!corpoACorpo && alvo.caido) ||
       ((basico || a.dadosDeArma > 0 || a.regra === "primeiro-golpe") && !e.ficha.arma.proficiente);
-    const chance = vantagem === desvantagem ? simples : vantagem ? 1 - (1 - simples) ** 2 : simples ** 2;
+    const chance = alvo.congelado && a.bonusSeCongelado
+      ? 1
+      : vantagem === desvantagem ? simples : vantagem ? 1 - (1 - simples) ** 2 : simples ** 2;
     const chanceCritico = vantagem === desvantagem ? 0.05 : vantagem ? 0.0975 : 0.0025;
     // O crítico (5% do d20) rola TODOS os dados de novo — os próprios da ação
     // e os Dados de Arma — e soma o bônus fixo uma vez só (Cap. 4, §6: "role os
@@ -1662,6 +1725,7 @@ export function resolver(
   e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng,
   registrar?: (evento: EventoAtaque) => void
 ): number {
+  const estavaMolhado = alvo.molhado;
   const basico = ehGolpeBasico(a);
   const usaArma = basico || a.dadosDeArma > 0 || a.regra === "primeiro-golpe";
   const ordem = alvo.apontado;
@@ -1722,23 +1786,36 @@ export function resolver(
     return rolagem.total;
   };
   // Dados próprios continuam separados dos bônus textuais da habilidade.
-  const proprios = basico ? a.dano : (a.dano.match(/\d+d\d+/gi) ?? []).join("+");
+  const proprios = a.inverteDose ? a.inverteDose : basico ? a.dano : (a.dano.match(/\d+d\d+/gi) ?? []).join("+");
+  const multiplicadorDose = a.inverteDose ? alvo.doses : 1;
   const rolarDano = (critico = false) =>
-    rolarParcela(basico ? "Arma" : "Habilidade", proprios, 1, critico) +
+    rolarParcela(a.inverteDose ? "Inversão por Dose" : basico ? "Arma" : "Habilidade", proprios, multiplicadorDose, critico) +
+    rolarParcela("Quebra de Gelo", alvo.congelado ? (a.bonusSeCongelado ?? "") : "", 1, critico) +
     rolarParcela("Dados de Arma", e.ficha.ataqueBasico.dano, a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0), critico);
   let dano = 0;
+  let falhouResistencia = true;
+  let inspiracaoUsada: EstadoPersonagem | undefined;
   if (a.ataque) {
     let teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
     let rolagem = teste.natural;
     let total = rolagem + bonusAcerto;
     let caEfetiva = corpoACorpo ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
-    const errou = () => rolagem === 1 || (rolagem !== 20 && total < caEfetiva);
+    const acertoAutomatico = alvo.congelado && !!a.bonusSeCongelado;
+    const errou = () => !acertoAutomatico && (rolagem === 1 || (rolagem !== 20 && total < caEfetiva));
     if (errou() && ordem?.tatico.ficha.tatico?.vozQueCorrige && consumirReacao(ordem.tatico)) {
       teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
       rolagem = teste.natural;
       total = rolagem + bonusAcerto;
       caEfetiva = corpoACorpo ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
       evento?.notas.push(`Voz que Corrige: ataque repetido por ${ordem.tatico.nome}.`);
+    }
+    if (errou() && rolagem !== 1 && e.inspiracao && total + e.inspiracao.dados * 6 >= caEfetiva) {
+      const inspiracao = e.inspiracao;
+      const acrescimo = rolarParcela("Inspiração", `${inspiracao.dados}d6`);
+      e.inspiracao = undefined;
+      total += acrescimo;
+      inspiracaoUsada = inspiracao.fonte;
+      evento?.notas.push(`Inspiração de ${inspiracao.fonte.nome}: +${acrescimo} depois de ver o resultado.`);
     }
     if (evento) {
       evento.teste = { ...teste, tipo: "ataque", bonus: bonusAcerto, total, defesa: caEfetiva };
@@ -1774,6 +1851,7 @@ export function resolver(
       evento?.notas.push(e.usouFurtivo ? "Dano Furtivo já usado neste turno." : "Dano Furtivo não aplicado: sem abertura ou Vantagem.");
     }
     if (evento) evento.bruto = dano;
+    if (inspiracaoUsada) inspiracaoUsada.danoCausado += dano;
   } else {
     // teste de resistência do alvo: metade se passar. Envenenado também cobra
     // Desvantagem em "testes de atributo" (Cap. 4, §7) — e resistir a uma
@@ -1788,6 +1866,7 @@ export function resolver(
       evento.bruto = dano;
     }
     if (resistencia >= 8 + e.ficha.bc) {
+      falhouResistencia = false;
       dano = Math.floor(dano / 2);
       evento?.notas.push("Resistência bem-sucedida: metade do dano, arredondada para baixo");
     }
@@ -1814,6 +1893,35 @@ export function resolver(
   // Fogo: Em Chamas cobra 1d6 no início de cada turno do alvo
   if (a.fogo && !alvo.molhado) alvo.emChamas = 6;
   if (a.fogo && alvo.molhado) alvo.molhado = false; // fogo evapora a água
+  if (a.aplicaCongeladoSeMolhado && estavaMolhado && falhouResistencia) {
+    alvo.congelado = true;
+    evento?.notas.push("Termodinâmica Aplicada: alvo Molhado fica Congelado.");
+  }
+  if (a.bonusSeCongelado && alvo.congelado) {
+    alvo.congelado = false;
+    evento?.notas.push("Quebra de Gelo: acerto automático, dano extra e Congelado removido.");
+  }
+  if (a.inverteDose) {
+    evento?.notas.push(`Inversão: ${alvo.doses} Dose(s) removida(s).`);
+    alvo.doses = 0;
+    alvo.envenenado = false;
+  } else {
+    const dosesDoResultado = falhouResistencia ? a.dosesNaFalha : a.dosesNoSucesso;
+    if (dosesDoResultado) {
+      const margem = evento?.teste ? evento.teste.defesa - evento.teste.total : 0;
+      const ganho = dosesDoResultado + (falhouResistencia && e.ficha.doseExtraEmFalhaGrave && margem >= 5 ? 1 : 0);
+      alvo.doses += ganho;
+      if (alvo.doses >= 3) {
+        alvo.doses = 0;
+        alvo.envenenado = false;
+        alvo.atordoadoTurnos = 1;
+        evento?.notas.push("Terceira Dose: Colapso; as Doses saem e o alvo perde o próximo turno.");
+      } else {
+        alvo.envenenado = alvo.doses >= 2;
+        evento?.notas.push(`Dose: alvo agora tem ${alvo.doses}.`);
+      }
+    }
+  }
 
   /*
    * Magia sustentada: registra os tiques que ainda vão acontecer — 0.1.57.
@@ -2291,6 +2399,17 @@ export function prepararSuporteDoTurno(
       }
       logger?.log(`[${e.nome}] mantém Dissonância: até ${bardo.rank} alvo(s) sofrem ${bardo.rank}d4 sônico.`);
     }
+    if (bardo.temInspiracao && e.inspiracoesRestantes > 0 && custoAcoes < 3) {
+      const inspirado = aliados
+        .filter((a) => a !== e && a.vivo && !a.ficha.invocadoDe && !a.inspiracao)
+        .sort((a, b) => danoEsperado(b, b.ficha.ataqueBasico, vivos[0]) - danoEsperado(a, a.ficha.ataqueBasico, vivos[0]))[0];
+      if (inspirado) {
+        inspirado.inspiracao = { dados: bardo.inspiracaoDados, fonte: e };
+        e.inspiracoesRestantes--;
+        custoAcoes++;
+        logger?.log(`[${e.nome}] inspira ${inspirado.nome}: ${bardo.inspiracaoDados}d6 para somar depois de ver um teste.`);
+      }
+    }
     if (bardo.insultoAfiado && custoAcoes < 3) {
       vivos[0].desvantagemNoProximoAtaque = true;
       custoAcoes++;
@@ -2697,11 +2816,11 @@ export function consumirReacao(alvo: Alvo): boolean {
  * ele ignora é pior que nenhum número: parece mais confiável do que é.
  */
 export const SIMPLIFICACOES = [
-  "Condições modeladas: Molhado (frio dobra), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação os declara — Preso, Caído e Envenenado. Restrições de carta por faixa de PV e estado estruturado do alvo bloqueiam a ação; 'Requer alvo Agarrado' custa +1 Ação e presume que o agarrão funcionou. Exaustão recebida depois de uma técnica acumula e, no nível 3, impõe Desvantagem aos ataques. Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: são sobre movimento, alcance e posição, e este motor não tem mapa.",
+  "Condições modeladas: Molhado (frio dobra), Congelado (Água prepara, cobra com Quebra de Gelo e consome), Dose (até 3, Envenenado na segunda, Colapso na terceira e Inversão por Dose), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação os declara — Preso, Caído e Envenenado. Restrições de carta por faixa de PV e estado estruturado do alvo bloqueiam a ação; 'Requer alvo Agarrado' custa +1 Ação e presume que o agarrão funcionou. Exaustão recebida depois de uma técnica acumula e, no nível 3, impõe Desvantagem aos ataques. Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
   "Dano por turno sustentado ENTRA desde a 0.1.57, por TRÊS turnos — o do lançamento mais dois. Três é escolha declarada, não do livro: a Tempestade Cortante dura \"1 minuto\" (dez turnos), e contar dez daria a ela um dano que nenhuma mesa vê, porque o alvo sai da área (não há mapa aqui) e o combate acaba antes. São sete magias, não três: Tomar o Ar, Tempestade Cortante e Vazio (Vento), Rio de Magma (Terra), Estrangular (Armas Pesadas), Prisão de Purgatório e Trono de Chamas (Punho do Fogo). Errar pra menos é o lado certo de errar.",
   "As duas Reações de Aguentar (Escudos) REDUZEM o dano de um golpe interceptado, e o motor não tem redução — ele as trata como PV Temporários, que é o mais próximo que sabe fazer. A diferença importa: casca some depois de gasta, redução vale em todo golpe que ela alcança. Até a 0.1.47 elas eram lidas como DANO CAUSADO, e davam a Cavalaria e Escudos uma técnica de 16,8 por Ação que ela não tem.",
-  "O que de suporte segue de fora: Salvações e as paredes, selos e fórmulas armadas da Magia Teórica — dependem de posição e suporte, e este motor não tem mapa. Julgamento e Luz Absoluta entram como as magias de DANO que são; a cura secundária que as duas descrevem na prosa não é contada.",
+  "O que de suporte segue de fora: Salvações e as paredes, selos e fórmulas armadas da Magia Teórica — dependem de posição e suporte, e este motor não tem mapa. A exceção modelada é Parede de Emergência: a carta pronta intercepta até 15 de um ataque físico como Reação. Julgamento e Luz Absoluta entram como as magias de DANO que são; a cura secundária que as duas descrevem na prosa não é contada.",
   "A IA escolhe sempre a ação de maior dano ESPERADO por Ação contra o alvo da vez — com Dados de Arma, bônus fixo e chance de errar na conta (0.1.35). O que ela continua não fazendo: recuar, focar fogo, guardar recurso pro turno seguinte, e dar qualquer valor a condição. É por isso que Quebrantado, embora modelado, quase não aparece nestes números: as técnicas que empilham acúmulos raramente são as de maior dano, e a IA nunca as escolhe por causa do acúmulo. Na mesa, um jogador escolhe.",
   "O Fio da Vida (Cap. 4, §7) entra desde a 0.1.38: a 0 PV o personagem CAI Inconsciente, rola 1d20 + Vigor + metade do maior Bônus de Rank (com a Escala do Vigor) contra CD 8 + o Bônus de Rank de quem o derrubou, junta Marcas da Morte e morre de vez na terceira — e qualquer cura de aliado o levanta com todas as Marcas removidas. Estabilizado para de rolar, como o livro manda; acordar sozinho leva 1d4 horas e nenhum combate daqui dura isso. Sofrer dano a 0 PV dá 1 Marca (2 no crítico) e tira o Estabilizado; aqui só a ação em ÁREA de uma criatura alcança quem está no chão, porque a IA não gasta golpe único em quem já não luta. O que fica de fora: a IA não gasta Ação estabilizando ninguém com Medicina (1 Ação, CD 10, Vantagem com Kit de Primeiros Socorros), o golpe corpo a corpo contra o caído não vira crítico automático (sem mapa, não há \"adjacente\"), e a Exaustão de quem acorda não é modelada. Criatura não tem Fio da Vida: a 0 PV ela morre.",
   "A Ferida Fresca é o dano que o alvo sofreu desde o fim do último turno de quem cura; o motor a conta como uma rodada a partir do golpe (a mesma duração, em média), e contra ela dobram os DADOS da cura, com o BC somado uma vez. Qualquer dano nessa janela abre a Ferida, mesmo o que os PV Temporários absorveram inteiro, e aí os dados da cura inteira dobram: o motor não mede quanto do dano foi fresco nem limita a cura a ele. Até a revisão do livro o motor dobrava dados e BC juntos e contava a janela por dois turnos do alvo.",
@@ -2714,7 +2833,7 @@ export const SIMPLIFICACOES = [
   "Reação de chefe: 1 ação avulsa por rodada da mesa, fora do turno normal dele — não a Reação nomeada de nenhuma árvore específica, só a economia de ação extra que os livros de chefe costumam dar.",
   "Os tetos do Cap. 4, §5 entram no que o motor alcança: Vantagem continua binária; bônus numérico vindo de aliado para em +6; um turno aceita no máximo 4 Ações próprias e 2 concedidas. Duas Salvações por Combate ainda não é uma contagem geral: Sem Baixas e o Fio da Vida entram, mas as demais habilidades de impedir morte ainda não compartilham um contador único.",
   "Navegação e Liderança entra pelo núcleo de combate: Ordem de Tiro/Apontado (inclusive acúmulo), Primeiro a Ver, Voz que Corrige, Antecipação, Voz de Sargento, Foco de Fogo, Prever o Golpe, Comando, Avante, Sem Baixas e A Batalha Que Você Escolheu. Ponto de Estrangulamento, Manobra, Doutrina, Emboscada Planejada e A Guerra Antes da Guerra continuam fora porque dependem de mapa, preparação ou composição estratégica do encontro. A IA concede Ações ao aliado de maior golpe médio e trata o encontro com mais de um inimigo como organizado para A Batalha Que Você Escolheu.",
-  "Bardo entra com Dissonância, Canção de Guerra, A Canção Não Para e Insulto Afiado. Marcha e Réquiem não alteram os encontros atuais (viagem, medo e emoção ainda não aparecem nos blocos); Inspiração, Insulto que Fica, Diplomata de Guerra, Elegia, Coro e O Fim da Canção dependem de escolhas, emoção ou alvo narrativo que o cenário não declara, por isso seguem fora em vez de presumir que todo monstro sente e raciocina.",
+  "Bardo entra com Dissonância, Inspiração (entregue ao melhor atacante e gasta depois de uma falha que o dado ainda pode salvar), Canção de Guerra, A Canção Não Para e Insulto Afiado. Marcha e Réquiem não alteram os encontros atuais (viagem, medo e emoção ainda não aparecem nos blocos); Insulto que Fica, Diplomata de Guerra, Elegia, Coro e O Fim da Canção dependem de escolhas, emoção ou alvo narrativo que o cenário não declara, por isso seguem fora em vez de presumir que todo monstro sente e raciocina.",
   "Pactos comprados de Espíritos e Feras são preparados automaticamente quando o cenário não faz uma seleção manual, até o limite do Rank e do PM. Uma seleção explícita — inclusive vazia — continua prevalecendo. Efeitos especiais dos Pactos além de PV, CA, deslocamento, resistências, quantidade e golpes continuam resumidos pelos perfis de combate declarados.",
   "Proficiência de arma é conferida no golpe comum e nas técnicas com Dados de Arma: falta de proficiência impõe Desvantagem no acerto, sem reduzir o dano. O recibo mostra os dois d20. A arma de referência não pressupõe um grupo real de arma. O tipo físico de dano da arma ainda não vem do inventário, então resistências específicas a cortante, perfurante ou contundente não são inferidas nesse golpe.",
   "A ficha do Ladino ativa Dano Furtivo em aberturas válidas. Primeiro Golpe soma o ataque de arma, seu dano triplicado e a parcela furtiva normal quando elegível. Antes da iniciativa o Ladino tenta Esconder-se contra a Percepção das criaturas; Passo Vazio reabre o Primeiro Golpe uma vez. Com cobertura, pode gastar 1 Ação para tentar Esconder-se novamente. Segredos personalizados e demais reações não descritas no recibo precisam de arbitragem.",

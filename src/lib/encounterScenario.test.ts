@@ -36,6 +36,19 @@ function agua() {
 }
 
 describe("aberturas, ações e reações da cena", () => {
+  it("Parede de Emergência intercepta um ataque físico como Reação", () => {
+    const teorico = personagem({
+      startingTreeId: "teorica",
+      unlockedRanks: [{ treeId: "teorica", rank: "Principiante" }],
+      purchasedAbilities: [{ treeId: "teorica", rank: "Principiante", kind: "ability", id: "parede-de-emergencia" }],
+      bonusHp: 100,
+    });
+    const monstro = { ...criaturaDoMolde(1, "padrao", "Martelo", "martelo"), pv: 1_000 };
+    const resultado = simularEncontro([teorico], [monstro], { batalhas: 1, gerarLogs: true, semente: 7, maxRodadas: 3 });
+    expect(resultado.logsExtremos?.some((log) => log.eventos?.some((evento) =>
+      evento.notas.some((nota) => nota.includes("Parede de Emergência"))))).toBe(true);
+  });
+
   it("Primeiro Golpe usa o maior Rank e exige abertura antes de gastar a rolagem", () => {
     const e = ladino();
     const a = e.ficha.acoes.find((a) => a.regra === "primeiro-golpe")!;
@@ -328,5 +341,21 @@ describe("Tático e Bardo no combate", () => {
     expect(aliado.bonusAcertoDeAliados).toBe(2);
     expect(alvo.desvantagemNoProximoAtaque).toBe(true);
     expect(alvo.pv).toBeLessThan(100);
+  });
+
+  it("o Bardo entrega Inspiração e o aliado a usa depois de ver uma falha salvável", () => {
+    const bardo = novoEstado(montarFicha(personagem({
+      startingTreeId: "bardo-e-interacao",
+      attributeBase: { forca: 2, agilidade: 2, vigor: 2, intelecto: 2, espirito: 6 },
+      unlockedRanks: [{ treeId: "bardo-e-interacao", rank: "Principiante" }],
+      purchasedAbilities: [{ treeId: "bardo-e-interacao", rank: "Principiante", kind: "ability", id: "inspiracao" }],
+    })));
+    const aliado = novoEstado(montarFicha(personagem({ id: "aliado", name: "Aliado" })));
+    const alvo = novoAlvo({ nome: "Alvo", pv: 100, ca: 18 });
+    prepararSuporteDoTurno(bardo, [alvo], [bardo, aliado], () => .5);
+    expect(aliado.inspiracao).toMatchObject({ dados: 1, fonte: bardo });
+    executarAtaquePersonagem(aliado, aliado.ficha.ataqueBasico, alvo, () => .5);
+    expect(aliado.inspiracao).toBeUndefined();
+    expect(bardo.danoCausado).toBeGreaterThan(0);
   });
 });

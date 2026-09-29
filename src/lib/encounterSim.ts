@@ -505,6 +505,16 @@ function bater(
   tipoDeDano?: string,
   evento?: EventoAtaque
 ): number {
+  if (dano > 0 && "ficha" in alvo && (!tipoDeDano || /contundente|cortante|perfurante|físico/i.test(tipoDeDano))) {
+    const defensor = alvo as EstadoPersonagem;
+    const parede = defensor.ficha.acoes.find((a) => a.nome === "Parede de Emergência" && a.reacao);
+    if (parede && defensor.pm >= parede.pm && consumirReacao(defensor)) {
+      defensor.pm -= parede.pm;
+      const absorvido = Math.min(15, dano);
+      dano -= absorvido;
+      evento?.notas.push(`Parede de Emergência: ${absorvido} de dano físico atingem a parede antes do alvo.`);
+    }
+  }
   // `danoCausado` conta o PV REAL perdido, e não o golpe desferido: o que a
   // casca absorveu não feriu ninguém, e é o mesmo critério que o lado dos
   // personagens usa desde a 0.1.37.
@@ -1016,6 +1026,12 @@ function naArea(alvos: EstadoPersonagem[], acao: AcaoCriatura): EstadoPersonagem
 function turnoCriatura(c: EstadoCriatura, alvos: EstadoPersonagem[], aliados: EstadoCriatura[],
   pendentes: EstadoCriatura[], rng: Rng, logger?: RegistroCombate): void {
   if (!c.vivo) return;
+  if (c.atordoadoTurnos > 0) {
+    c.atordoadoTurnos--;
+    c.jaAgiu = true;
+    logger?.log(`[${c.nome}] perde o turno pelo Colapso da terceira Dose.`);
+    return;
+  }
   c.jaAgiu = true;
   c.usouFurtivo = false;
   for (const heroi of alvos) heroi.fluxosNesteTurno.clear();
