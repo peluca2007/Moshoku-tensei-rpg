@@ -17,7 +17,7 @@ export const TERRA_TREE: Tree = {
       "Enterre. Cárcere e Sepultamento convertem um alvo já Atolado em Soterrado — Deslocamento 0, Preso, sem visão nem gesto, sufocando a 2d10 por turno. A Prisão de Pedra enterra qualquer um, mas quem já estava Atolado resiste com Desvantagem.",
     ],
     cost:
-      "É a escola mais lenta do livro: Muro de Terra é um ritual de 3 Ações e nada aqui resolve um turno sozinho. Você compra controle e concreto, não velocidade.",
+      "Construir continua lento: Muro de Terra é um ritual de 3 Ações. A Couraça de Barro é a resposta de emergência, mas só amortece um golpe físico em você; não levanta uma fortaleza.",
   },
   keyAttributeLabel: "Intelecto",
   resourceLabel: "PM",
@@ -48,6 +48,18 @@ export const TERRA_TREE: Tree = {
         { id: "mineralogista", name: "Mineralogista", paCost: RANK_PA_COST.talent.Principiante, description: "Você identifica minérios e pedras preciosas, e sabe, ao tocar uma parede, o que existe atrás dela." },
       ],
       abilities: [
+        {
+          id: "couraca-de-barro",
+          name: "Couraça de Barro",
+          paCost: RANK_PA_COST.common.Principiante,
+          pmCost: 2,
+          reaction: true,
+          range: "Pessoal",
+          actions: { normal: 1 },
+          costNote: "1 Reação em vez das 2 Ações do rank: a casca se quebra no próprio golpe, protege só você e não cria cobertura.",
+          effect: "Quando um ataque causar dano contundente, cortante ou perfurante a você, gaste 1 Reação e 2 PM: reduza esse dano em 1d6 + BC (mínimo 0), antes de Resistência. A casca se desfaz imediatamente; não protege contra outros tipos de dano nem contra outro golpe. Não pode ser usada durante um cântico. Exemplo: com BC 5 e resultado 3 no dado, um golpe de 12 causa 4 de dano antes de Resistência.",
+          incantation: "Barro, veste meu corpo e quebra em meu lugar. Couraça de Barro!",
+        },
         {
           id: "pedrisco",
           name: "Pedrisco",

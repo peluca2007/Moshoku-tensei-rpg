@@ -60,6 +60,17 @@ export const BARDO_TREE: Tree = {
       ],
       abilities: [
         {
+          id: "refrao-da-retomada",
+          name: "Refrão da Retomada",
+          paCost: UTILITY_PA_COST.talent.Principiante,
+          ppCost: 1,
+          reaction: true,
+          range: "9 metros",
+          actions: { normal: 1 },
+          costNote: "1 Reação e 1 PP: não repete o ataque perdido nem concede Ações; transforma a falha em fôlego coletivo.",
+          effect: "Quando outro aliado a até 9 m errar um ataque contra um inimigo, depois de resolver Inspiração e repetições, gaste 1 Reação e 1 PP. Escolha até três aliados conscientes a até 9 m que te ouçam (pode incluir você): role 1d6 uma vez e cada escolhido recebe esse resultado + seu patamar em Bardo em PV Temporários. Não se somam a outros PV Temporários: vale o maior valor. Duram até serem consumidos ou até o fim do combate. Você precisa poder falar e não pode usar durante um cântico. Exemplo: no Principiante, um 4 concede 5 PV Temporários a cada um dos três escolhidos, sem transformar a falha em acerto.",
+        },
+        {
           id: "inspiracao",
           name: "Inspiração",
           signature: true,
