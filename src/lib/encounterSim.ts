@@ -6,6 +6,7 @@
  * (`combatSim.ts`) do comparador de builds.
  */
 import {
+  amortecerComBarro,
   Alvo,
   EstadoPersonagem,
   FichaCombate,
@@ -507,8 +508,10 @@ function bater(
    */
   tipoDeDano?: string,
   evento?: EventoAtaque,
-  defensores: EstadoPersonagem[] = []
+  defensores: EstadoPersonagem[] = [],
+  permiteCouraca = true
 ): number {
+  if (permiteCouraca && rng && "ficha" in alvo) dano = amortecerComBarro(alvo as EstadoPersonagem, dano, tipoDeDano, rng, evento);
   if (dano > 0 && "ficha" in alvo && (!tipoDeDano || /contundente|cortante|perfurante|físico/i.test(tipoDeDano))) {
     const protegido = alvo as EstadoPersonagem;
     const candidatos = [protegido, ...defensores.filter((d) => d !== protegido)].filter((d) => {
@@ -701,7 +704,7 @@ function resolverAcaoCriatura(
     if (escala !== 1) evento.notas.push(`Escala do encontro/ação: ×${escala}, arredondada`);
   }
   c.escondido = false;
-  bater(c, alvo, fDmg, rng, critico, acao.dano, evento, aliados);
+  bater(c, alvo, fDmg, rng, critico, acao.dano, evento, aliados, acao.tipo === "ataque");
   if (acao.danoPorTurno && fDmg > 0) {
     const media = (mediaDados(acao.danoPorTurno) + bonusAtaque) * c.escala * escalaDaAcao(acao);
     if (!alvo.sustentados.some((x) => Math.abs(x.media - media) < 0.01)) {

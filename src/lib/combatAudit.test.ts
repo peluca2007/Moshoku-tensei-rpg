@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { CharacterData } from "./types";
-import { aplicarDano, danoEsperado, executarAtaquePersonagem, montarFicha, novaAcao, novoAlvo, novoEstado, resolver } from "./combatSim";
+import { escolherSuporte, amortecerComBarro, reagirAFalhaAliada, aplicarDano, danoEsperado, executarAtaquePersonagem, montarFicha, novaAcao, novoAlvo, novoEstado, resolver } from "./combatSim";
 import { CombateLogger, criaturaDoMolde, simularEncontro } from "./encounterSim";
 import { EventoAtaque } from "./combatTrace";
 
@@ -16,6 +16,95 @@ function personagem(patch: Partial<CharacterData> = {}): CharacterData {
     currentHp: null, currentMp: null, currentPt: null, currentPp: null, overrides: {}, ...patch,
   };
 }
+
+describe("defesas de Terra e Bardo aprovadas pelo autor", () => {
+  function comCarta(treeId: string, id: string) {
+    const estado = novoEstado(montarFicha(personagem({
+      startingTreeId: treeId, unlockedRanks: [{ treeId, rank: "Principiante" }],
+      purchasedAbilities: [{ treeId, rank: "Principiante", kind: "ability", id }],
+    })));
+    estado.reacaoDisponivel = true;
+    return estado;
+  }
+  it("barro cobra PM e Reação, reduz antes de Resistência e não protege duas vezes", () => {
+    const e = comCarta("terra", "couraca-de-barro");
+    const pm = e.pm;
+    expect(amortecerComBarro(e, 30, "cortante", () => 0)).toBe(30 - 1 - e.ficha.bc);
+    expect(e.pm).toBe(pm - 2);
+    expect(e.reacaoDisponivel).toBe(false);
+    expect(amortecerComBarro(e, 30, "cortante", () => 0)).toBe(30);
+  });
+  it("a IA não transforma uma defesa de Reação em escudo lançado com Ações", () => {
+    const e = comCarta("terra", "couraca-de-barro");
+    expect(e.ficha.acoes.some((a) => a.nome === "Couraça de Barro")).toBe(true);
+    expect(escolherSuporte(e, 3, [e])).toBeNull();
+    e.ficha.acoes = [novaAcao({ nome: "Parede de Emergência", tipo: "escudo", reacao: true, formulaSuporte: "15", pm: 2 })];
+    expect(escolherSuporte(e, 3, [e])).toBeNull();
+  });
+  it("barro não reage a fogo, dano sem tipo, cântico ou reserva insuficiente", () => {
+    const e = comCarta("terra", "couraca-de-barro");
+    const rng = vi.fn(() => 0);
+    for (const tipo of ["ígneo", undefined]) expect(amortecerComBarro(e, 30, tipo, rng)).toBe(30);
+    e.conjurando = { acao: e.ficha.ataqueBasico, acoesGastas: 1, acoesNesteTurno: 1 };
+    expect(amortecerComBarro(e, 30, "cortante", rng)).toBe(30);
+    e.conjurando = null;
+    e.pm = 1;
+    expect(amortecerComBarro(e, 30, "cortante", rng)).toBe(30);
+    expect(rng).not.toHaveBeenCalled();
+    expect(e.reacaoDisponivel).toBe(true);
+  });
+  it("Refrão rola uma vez, protege no máximo três e não soma PV Temporários", () => {
+    const b = comCarta("bardo-e-interacao", "refrao-da-retomada");
+    b.pp = 2;
+    const aliados = [b, ...Array.from({ length: 3 }, () => novoEstado(montarFicha(personagem())))];
+    aliados[3].pvTemp = 20;
+    const rng = vi.fn(() => 0.5);
+    reagirAFalhaAliada(aliados[1], aliados, rng);
+    expect(aliados.map((a) => a.pvTemp)).toEqual([5, 5, 5, 20]);
+    expect(b.pp).toBe(1);
+    expect(rng).toHaveBeenCalledTimes(1);
+    reagirAFalhaAliada(aliados[1], aliados, rng);
+    expect(rng).toHaveBeenCalledTimes(1);
+  });
+  it("Refrão não dispara com falha própria, Bardo surpreso ou sem PP", () => {
+    const b = comCarta("bardo-e-interacao", "refrao-da-retomada");
+    const a = novoEstado(montarFicha(personagem()));
+    const rng = vi.fn(() => 0.5);
+    b.pp = 2;
+    reagirAFalhaAliada(b, [b, a], rng);
+    b.surpreso = true;
+    reagirAFalhaAliada(a, [b, a], rng);
+    b.surpreso = false;
+    b.pp = 0;
+    reagirAFalhaAliada(a, [b, a], rng);
+    expect(rng).not.toHaveBeenCalled();
+  });
+  it("o ataque errado aciona Refrão, mas um acerto não gasta a reação", () => {
+    const b = comCarta("bardo-e-interacao", "refrao-da-retomada");
+    const a = novoEstado(montarFicha(personagem()));
+    const alvo = novoAlvo({ nome: "Inimigo", pv: 100, ca: 1 });
+    b.pp = 2;
+    executarAtaquePersonagem(a, a.ficha.ataqueBasico, alvo, () => 0.5, undefined, [a, b]);
+    expect(b.pp).toBe(2);
+    executarAtaquePersonagem(a, a.ficha.ataqueBasico, alvo, () => 0, undefined, [a, b]);
+    expect(b.pp).toBe(1);
+    expect(a.pvTemp).toBe(2);
+  });
+  it("cobra alcance da falha e dos beneficiados quando há posições", () => {
+    const b = comCarta("bardo-e-interacao", "refrao-da-retomada");
+    const a = novoEstado(montarFicha(personagem()));
+    const longe = novoEstado(montarFicha(personagem()));
+    b.pp = 2;
+    b.posicao = 0; a.posicao = 10; longe.posicao = 20;
+    reagirAFalhaAliada(a, [a, b, longe], () => 0.5);
+    expect(b.pp).toBe(2);
+    a.posicao = 9;
+    reagirAFalhaAliada(a, [a, b, longe], () => 0.5);
+    expect(b.pp).toBe(1);
+    expect(a.pvTemp).toBe(5);
+    expect(longe.pvTemp).toBe(0);
+  });
+});
 
 describe("recibo do combate usa os valores que alteraram os PV", () => {
   it("mostra o d20, degrau e dado real do ataque comum, sem sortear outra vez", () => {
@@ -132,6 +221,19 @@ describe("recibo do combate usa os valores que alteraram os PV", () => {
 });
 
 describe("encontro com seleção de arma e auditoria", () => {
+  it.each(["ataque", "resistencia"] as const)("Couraça mantém resultados com e sem log contra %s", (tipo) => {
+    const c = personagem({ startingTreeId: "terra", unlockedRanks: [{ treeId: "terra", rank: "Principiante" }],
+      purchasedAbilities: [{ treeId: "terra", rank: "Principiante", kind: "ability", id: "couraca-de-barro" }] });
+    const monstro = { ...criaturaDoMolde(1, "padrao", "Teste", "teste"), acoes: [{
+      id: "golpe", nome: "Golpe", acoes: 1, dano: "1d6+2 (cortante)", alcance: "Corpo a corpo", area: false, tipo, nota: "",
+    }] };
+    const opcoes = { batalhas: 30, semente: 31, maxRodadas: 8 };
+    const sem = simularEncontro([c], [monstro], opcoes);
+    const com = simularEncontro([c], [monstro], { ...opcoes, gerarLogs: true });
+    expect({ ...com, logsExtremos: undefined }).toEqual({ ...sem, logsExtremos: undefined });
+    const usou = com.logsExtremos!.some((log) => log.eventos?.some((e) => e.notas.some((n) => n.startsWith("Couraça de Barro:"))));
+    expect(usou).toBe(tipo === "ataque");
+  });
   it("o replay preserva resultado e arma escolhida, com eventos dos dois lados", () => {
     const c = personagem({ inventory: [
       { id: "espada", name: "Espada Longa", baseDie: "d8", type: "arma", equipped: true },
