@@ -16,6 +16,19 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.121",
+    date: "2026-09-29",
+    title: "O simulador aprende as cobranças das escolas",
+    sections: [
+      {
+        heading: "Simulação mais fiel",
+        items: [
+          "A IA agora avalia o ciclo inteiro de Molhado → Congelado → Quebra de Gelo e de Dose → Inversão antes de preparar a cobrança; a Parede de Emergência protege também um aliado a até 3 m; e a Inspiração do Bardo pode salvar um ataque depois de ver a falha. Nenhuma regra de personagem mudou — mudou apenas o que o simulador consegue enxergar.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.120",
     date: "2026-09-28",
     title: "Conjuração Concentrada, e o balanço das árvores pelo simulador",

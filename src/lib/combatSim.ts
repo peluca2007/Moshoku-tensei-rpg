@@ -1741,6 +1741,72 @@ export function escolherAcao(
     const chance = a.acoes > acoesRestantes ? chanceDeConcluirCantico(e, a, inimigos) : 1;
     return danoEsperado(e, a, alvo) * chance / a.acoes;
   };
+
+  /*
+   * Combos escritos nas próprias escolas. Comparar só o dano desta Ação faz a
+   * IA nunca pagar o preparo e, portanto, nunca alcançar a cobrança.
+   *
+   * Água: Molhado → magia de frio com resistência → Quebra de Gelo.
+   * Desintoxicação: duas Doses → Inverter. Com uma Dose, cobrar cedo apaga o
+   * investimento que a carta manda montar; com duas, insistir na terceira
+   * troca o dano pelo Colapso, então a bancada prefere a cobrança mensurável.
+   */
+  if (alvo) {
+    const melhor = (acoes: Acao[]) => acoes.reduce((x, a) => valor(a) > valor(x) ? a : x);
+    const melhorImediata = viaveis.reduce(
+      (x, a) => valor(a) > valor(x) ? a : x,
+      e.ficha.ataqueBasico,
+    );
+    const valorImediato = valor(melhorImediata);
+    const valorDoPlano = (etapas: Array<{ acao: Acao; alvo: Alvo }>) =>
+      etapas.reduce((s, etapa) => s + danoEsperado(e, etapa.acao, etapa.alvo), 0) /
+      etapas.reduce((s, etapa) => s + etapa.acao.acoes, 0);
+    const conheceComboAgua = e.ficha.acoes.some((a) => a.aplicaCongeladoSeMolhado) &&
+      e.ficha.acoes.some((a) => a.bonusSeCongelado);
+    if (conheceComboAgua) {
+      const molha = viaveis.filter((a) => a.aplicaMolhado);
+      const congela = viaveis.filter((a) => !!a.aplicaCongeladoSeMolhado);
+      const quebra = viaveis.filter((a) => !!a.bonusSeCongelado);
+      if (alvo.congelado && quebra.length) {
+        const cobranca = melhor(quebra);
+        if (valor(cobranca) > valorImediato) return cobranca;
+      } else if (alvo.molhado && congela.length && quebra.length) {
+        const preparo = melhor(congela);
+        const cobranca = melhor(quebra);
+        const plano = valorDoPlano([
+          { acao: preparo, alvo },
+          { acao: cobranca, alvo: { ...alvo, congelado: true } },
+        ]);
+        if (plano > valorImediato) return preparo;
+      } else if (molha.length && congela.length && quebra.length) {
+        const abertura = melhor(molha);
+        const preparo = melhor(congela);
+        const cobranca = melhor(quebra);
+        const molhado = { ...alvo, molhado: true };
+        const plano = valorDoPlano([
+          { acao: abertura, alvo },
+          { acao: preparo, alvo: molhado },
+          { acao: cobranca, alvo: { ...molhado, congelado: true } },
+        ]);
+        if (plano > valorImediato) return abertura;
+      }
+    }
+    const aplicadores = viaveis.filter((a) => !!a.dosesNaFalha);
+    const inversores = viaveis.filter((a) => !!a.inverteDose);
+    if (alvo.doses >= 2 && inversores.length) {
+      const cobranca = melhor(inversores);
+      if (valor(cobranca) > valorImediato) return cobranca;
+    } else if (aplicadores.length && inversores.length) {
+      const preparo = melhor(aplicadores);
+      const dosesDepois = Math.min(2, alvo.doses + (preparo.dosesNaFalha ?? 0));
+      const cobranca = melhor(inversores);
+      const plano = valorDoPlano([
+        { acao: preparo, alvo },
+        { acao: cobranca, alvo: { ...alvo, doses: dosesDepois } },
+      ]);
+      if (plano > valorImediato) return preparo;
+    }
+  }
   return viaveis.reduce(
     (melhor, a) => valor(a) > valor(melhor) ? a : melhor,
     e.ficha.ataqueBasico
