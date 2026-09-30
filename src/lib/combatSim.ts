@@ -237,6 +237,8 @@ export interface Acao {
   concentrada?: boolean;
   ataque: boolean;
   frio: boolean;
+  /** Ex.: Nova Congelante já imprime o resultado dobrado na própria fórmula. */
+  frioJaDobrado?: boolean;
   fogo: boolean;
   aplicaMolhado: boolean;
   aplicaQuebrantado: number | "maximo";
@@ -716,6 +718,7 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     limite: p.limite,
     ataque: p.ataque ?? false,
     frio: p.frio ?? false,
+    frioJaDobrado: p.frioJaDobrado,
     fogo: p.fogo ?? false,
     aplicaMolhado: p.aplicaMolhado ?? false,
     aplicaQuebrantado: p.aplicaQuebrantado ?? 0,
@@ -1043,6 +1046,7 @@ export function acoesDe(c: CharacterData): Acao[] {
        */
       ataque: a.id === "primeiro-golpe" || /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`),
       frio: /frio|gelo/.test(txt),
+      frioJaDobrado: /já contando a duplicação/i.test(a.damage.normal),
       fogo: /ígneo|chamas|fogo/.test(txt),
       // Ler apenas a palavra "Molhado" confundia um gatilho ("frio dobra
       // contra Molhado") com a aplicação da condição. A própria carta diz
@@ -1585,10 +1589,16 @@ export function autorizarAcao(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): 
   return { legal: true, motivo: a.gatilho ?? "ação disponível" };
 }
 
+/** Índices dos grupos explicitamente frios; mantém a ordem dos dados na fórmula. */
+export function indicesDeFrio(formula: string): number[] {
+  return [...formula.matchAll(/\d+\s*d\s*\d+/gi)].flatMap((dado, indice) =>
+    /^\s+de frio\b/i.test(formula.slice((dado.index ?? 0) + dado[0].length)) ? [indice] : []);
+}
+
 export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): number {
   if (!autorizarAcao(e, a, alvo).legal) return 0;
   const basico = ehGolpeBasico(a);
-  const bonus = a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc;
+  const bonus = a.inverteDose ? 0 : a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc;
   const bonusAcerto = basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc;
 
   /*
@@ -1629,9 +1639,16 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     : 0;
   const corpoACorpo = /corpo a corpo|toque/i.test(a.alcance ?? "") || ehGolpeBasico(a);
   const furtivo = a.ataque && alvo && motivoFurtivo(e, alvo, corpoACorpo) ? e.ficha.rankLadino * 3.5 : 0;
-  const bruto = impacto + sustentado + furtivo;
+  const indicesFrio = indicesDeFrio(a.dano);
+  const formulas = a.dano.match(/\d+d\d+/gi) ?? [];
+  const frioMedio = indicesFrio.reduce((s, i) => s + mediaDados(formulas[i] ?? ""), 0) + bonusCongelado;
+  const dobraFrio = a.frio && !a.frioJaDobrado && alvo?.molhado;
+  // Ação legada sem parcelas tipadas conserva a interpretação de frio integral.
+  const extraFrio = dobraFrio ? (indicesFrio.length ? frioMedio : impacto) : 0;
+  const bruto = impacto + sustentado + furtivo + extraFrio;
 
   if (!alvo) return bruto;
+  if (a.inverteDose) return bruto; // O veneno já está dentro: sem teste e sem BC por Dose.
 
   if (a.ataque) {
     // O d20 acerta quando `rolagem + bonus >= ca`; o 20 sempre acerta e dobra
@@ -1645,7 +1662,7 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     const chance = alvo.congelado && a.bonusSeCongelado
       ? 1
       : vantagem === desvantagem ? simples : vantagem ? 1 - (1 - simples) ** 2 : simples ** 2;
-    const chanceCritico = vantagem === desvantagem ? 0.05 : vantagem ? 0.0975 : 0.0025;
+    const chanceCritico = alvo.congelado && a.bonusSeCongelado ? 0 : vantagem === desvantagem ? 0.05 : vantagem ? 0.0975 : 0.0025;
     // O crítico (5% do d20) rola TODOS os dados de novo — os próprios da ação
     // e os Dados de Arma — e soma o bônus fixo uma vez só (Cap. 4, §6: "role os
     // dados de dano duas vezes e some os bônus fixos uma vez só"). Até a revisão
@@ -1653,7 +1670,7 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     // tinham o crítico mais fraco do jogo.
     return (
       chance * bruto +
-      chanceCritico * (mediaDados(a.dano) + furtivo + (a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0)) * mediaDados(e.ficha.ataqueBasico.dano))
+      chanceCritico * (mediaDados(a.dano) + furtivo + (dobraFrio ? (indicesFrio.length ? frioMedio : mediaDados(a.dano)) : 0) + (a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0)) * mediaDados(e.ficha.ataqueBasico.dano))
     );
   }
 
@@ -1662,7 +1679,8 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
   // ficha cai na conta antiga de metade do BC do atacante. Igual a `resolver`.
   const cd = 8 + e.ficha.bc;
   const bonusDoAlvo = alvo.bonusResistencia ?? Math.ceil(e.ficha.bc / 2);
-  const passa = Math.min(0.95, Math.max(0.05, (21 - (cd - bonusDoAlvo)) / 20));
+  const simples = Math.min(1, Math.max(0, (21 - (cd - bonusDoAlvo)) / 20));
+  const passa = alvo.envenenado || (a.frio && alvo.molhado) ? simples ** 2 : simples;
   return bruto * (1 - passa / 2);
 }
 
@@ -1829,7 +1847,7 @@ export function resolver(
   // Teto de Auxílio: bônus numérico vindo de aliados nunca passa de +6.
   const bonusAliadoAcerto = Math.min(6, Math.max(0, e.bonusAcertoDeAliados));
   const bonusAliadoDano = ordem?.focoDeFogo && ordem.tatico !== e ? Math.min(6, ordem.tatico.ficha.tatico?.rank ?? 0) : 0;
-  const bonus = (a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc) +
+  const bonus = a.inverteDose ? 0 : (a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc) +
     (a.bonusContextual ?? 0) + bonusDaOrdem + bonusAliadoDano;
   const bonusAcerto = (basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc) +
     bonusDaOrdem + bonusAliadoAcerto;
@@ -1872,12 +1890,17 @@ export function resolver(
   if (a.regra || a.gatilho) evento?.notas.push(`Gatilho: ${autorizacao.motivo}`);
   if (e.escondido) evento?.notas.push("Vantagem: atacante Escondido");
   if (a.regra === "primeiro-golpe") e.usouPrimeiroGolpe = true;
+  const indicesFrio = indicesDeFrio(a.dano);
+  let frioRolado = 0;
   const rolarParcela = (origem: string, formula: string, multiplicador = 1, critico = false) => {
     if (!formula || multiplicador === 0) return 0;
     const rolagem = critico
       ? rolarCriticoComRegistro(formula, rng, multiplicador)
       : rolarComRegistro(formula, rng, multiplicador);
     evento?.parcelas.push({ origem: critico ? `${origem} (dados adicionais do crítico)` : origem, rolagem });
+    if (origem === "Habilidade") {
+      for (const indice of indicesFrio) frioRolado += rolagem.grupos[indice]?.resultados.reduce((s, v) => s + v, 0) ?? 0;
+    } else if (origem === "Quebra de Gelo") frioRolado += rolagem.total;
     return rolagem.total;
   };
   // Dados próprios continuam separados dos bônus textuais da habilidade.
@@ -1889,14 +1912,20 @@ export function resolver(
     rolarParcela("Dados de Arma", e.ficha.ataqueBasico.dano, a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0), critico);
   let dano = 0;
   let falhouResistencia = true;
+  let danoAntesDaResistencia = 0;
   let margemResistencia = 0;
   let inspiracaoUsada: EstadoPersonagem | undefined;
-  if (a.ataque) {
-    let teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
+  if (a.inverteDose) {
+    dano = rolarDano();
+    if (evento) { evento.bruto = dano; evento.notas.push("Inverter: somente os dados por Dose, sem BC e sem teste de resistência."); }
+  } else if (a.ataque) {
+    const acertoAutomatico = alvo.congelado && !!a.bonusSeCongelado;
+    let teste = acertoAutomatico
+      ? { dados: [], natural: 0, ajuste: "normal" as const }
+      : rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
     let rolagem = teste.natural;
     let total = rolagem + bonusAcerto;
-    let caEfetiva = corpoACorpo ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
-    const acertoAutomatico = alvo.congelado && !!a.bonusSeCongelado;
+    let caEfetiva = corpoACorpo && !acertoAutomatico ? (alvo.caAposAparar?.(e, rolagem, total) ?? caDoAlvo) : caDoAlvo;
     const errou = () => !acertoAutomatico && (rolagem === 1 || (rolagem !== 20 && total < caEfetiva));
     if (errou() && ordem?.tatico.ficha.tatico?.vozQueCorrige && consumirReacao(ordem.tatico)) {
       teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
@@ -1914,7 +1943,7 @@ export function resolver(
       evento?.notas.push(`Inspiração de ${inspiracao.fonte.nome}: +${acrescimo} depois de ver o resultado.`);
     }
     if (evento) {
-      evento.teste = { ...teste, tipo: "ataque", bonus: bonusAcerto, total, defesa: caEfetiva };
+      if (!acertoAutomatico) evento.teste = { ...teste, tipo: "ataque", bonus: bonusAcerto, total, defesa: caEfetiva };
       if (caEfetiva > caDoAlvo) evento.notas.push(`Aparar: CA ${caDoAlvo} → ${caEfetiva}.`);
     }
     if (errou()) {
@@ -1953,11 +1982,12 @@ export function resolver(
     // Desvantagem em "testes de atributo" (Cap. 4, §7) — e resistir a uma
     // magia é isso. O bônus é o do ALVO; só o boneco sem ficha usa metade do
     // BC de quem ataca.
-    const teste = rolarD20ComRegistro(rng, false, alvo.envenenado);
+    const teste = rolarD20ComRegistro(rng, false, alvo.envenenado || (a.frio && alvo.molhado));
     const bonusResistencia = alvo.bonusResistencia ?? Math.ceil(e.ficha.bc / 2);
     const resistencia = teste.natural + bonusResistencia;
     margemResistencia = 8 + e.ficha.bc - resistencia;
     dano = rolarDano() + bonus;
+    danoAntesDaResistencia = dano;
     if (evento) {
       evento.teste = { ...teste, tipo: "resistencia", bonus: bonusResistencia, total: resistencia, defesa: 8 + e.ficha.bc };
       evento.bruto = dano;
@@ -1969,9 +1999,13 @@ export function resolver(
     }
   }
   // Água: frio dobra contra Molhado (Cap. 4, §5)
-  if (a.frio && alvo.molhado) {
-    dano *= 2;
-    evento?.notas.push("Frio contra Molhado: dano ×2");
+  if (a.frio && alvo.molhado && !a.frioJaDobrado) {
+    if (indicesFrio.length) {
+      // Resistência arredonda depois da dobra: recupera o bruto para não
+      // somar metade de duas parcelas arredondadas separadamente.
+      dano = falhouResistencia ? dano + frioRolado : Math.floor((danoAntesDaResistencia + frioRolado) / 2);
+    } else dano *= 2;
+    evento?.notas.push("Frio contra Molhado: dobra somente a parcela fria (ações legadas sem tipo usam dano integral).");
   }
   // O próprio atacante Quebrantado bate mais fraco — 1 por acúmulo, e nunca
   // abaixo de zero: a condição enfraquece o golpe, não cura o alvo.
@@ -2930,11 +2964,11 @@ export function consumirReacao(alvo: Alvo): boolean {
   if (!alvo.reacaoDisponivel) {
     if ("ficha" in alvo && (alvo as EstadoPersonagem).reacoesExtra > 0) {
       (alvo as EstadoPersonagem).reacoesExtra--;
-      return true;
-    }
-    return false;
-  }
-  alvo.reacaoDisponivel = false;
+    } else return false;
+  } else alvo.reacaoDisponivel = false;
+  // Cap. 2, §6: optar por uma Reação encerra o cântico imediatamente.
+  // Não é falha de Concentração por dano: não devolve metade da mana.
+  if ("ficha" in alvo) (alvo as EstadoPersonagem).conjurando = null;
   return true;
 }
 
@@ -2946,6 +2980,7 @@ export function consumirReacao(alvo: Alvo): boolean {
  * ele ignora é pior que nenhum número: parece mais confiável do que é.
  */
 export const SIMPLIFICACOES = [
+  "Inverter usa somente os dados por Dose, sem BC nem teste. Quebra de Gelo contra Congelado acerta sem d20 nem crítico. Em fórmulas tipadas, Molhado dobra apenas os dados de frio; Nova Congelante já inclui sua dobra. Ações legadas sem parcelas identificadas ainda tratam o dano como frio integral. Usar Reação encerra cântico em andamento sem reembolso; a IA não executa Fluxo durante o cântico.",
   "Couraça de Barro reduz um ataque físico tipado de criatura, cobrando PM e Reação; orçamento abstrato sem tipo não ativa a carta. Refrão da Retomada reage só a ataque de aliado que permaneceu errado após Inspiração/repetições, concede PV Temporários sem empilhar e cobra PP/Reação. Com posições, exige 9 m; sem elas, presume alcance. Voz audível, ausência de silêncio e ausência de surdez são premissas desta bancada, não verificações de cenário.",
   "Condições modeladas: Molhado (frio dobra), Congelado (Água prepara, cobra com Quebra de Gelo e consome), Dose (até 3, Envenenado na segunda, Colapso na terceira e Inversão por Dose), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação os declara — Preso, Caído e Envenenado. Restrições de carta por faixa de PV e estado estruturado do alvo bloqueiam a ação; 'Requer alvo Agarrado' custa +1 Ação e presume que o agarrão funcionou. Exaustão recebida depois de uma técnica acumula e, no nível 3, impõe Desvantagem aos ataques. Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",

@@ -7,7 +7,7 @@ function disponivel(e: EstadoPersonagem, atacante: Alvo): boolean {
 }
 function gastar(e: EstadoPersonagem, atacante: Alvo): boolean {
   if (!disponivel(e, atacante)) return false;
-  if (e.emPostura && e.ficha.rankAgua >= 6) { e.reacoesNesteTurno.add(atacante); return true; }
+  if (e.emPostura && e.ficha.rankAgua >= 6) { e.reacoesNesteTurno.add(atacante); e.conjurando = null; return true; }
   return consumirReacao(e);
 }
 
@@ -36,7 +36,7 @@ export function caDepoisDeAparar(e: EstadoPersonagem, atacante: Alvo, natural: n
 
 /** Fluxo é um contragolpe gratuito; Devolver modifica este golpe e nunca cria outro. */
 export function reagirComFluxo(e: EstadoPersonagem, atacante: Alvo, formula: string, escala: number, rng: Rng, logger?: RegistroCombate): boolean {
-  if (!e.vivo || !atacante.vivo || e.surpreso || !adjacentes(e, atacante) || e.fluxoRestante <= 0) return false;
+  if (!e.vivo || !atacante.vivo || e.surpreso || e.conjurando || !adjacentes(e, atacante) || e.fluxoRestante <= 0) return false;
   if (e.fluxoRestante === Infinity && e.fluxosNesteTurno.has(atacante)) return false;
   e.fluxoRestante--;
   e.fluxosNesteTurno.add(atacante);
