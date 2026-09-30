@@ -2566,13 +2566,14 @@ function Relatorio({ relatorio, anterior, desatualizado }: { relatorio: Relatori
         Quem fez o quê
       </h3>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-96 text-left text-sm">
+        {/* No celular os cabeçalhos encurtam em vez de a tabela rolar de lado. */}
+        <table className="w-full text-left text-sm">
           <thead className="text-xs uppercase text-parchment-600 dark:text-parchment-400">
             <tr>
               <th className="py-1 pr-3 font-semibold">Personagem</th>
-              <th className="py-1 pr-3 text-right font-semibold">Dano por combate</th>
-              <th className="py-1 pr-3 text-right font-semibold">PV devolvidos</th>
-              <th className="py-1 text-right font-semibold">Sobreviveu</th>
+              <th className="py-1 pr-3 text-right font-semibold"><span className="sm:hidden">Dano</span><span className="hidden sm:inline">Dano por combate</span></th>
+              <th className="py-1 pr-3 text-right font-semibold"><span className="sm:hidden">Cura</span><span className="hidden sm:inline">PV devolvidos</span></th>
+              <th className="py-1 text-right font-semibold"><span className="sm:hidden">De pé</span><span className="hidden sm:inline">Sobreviveu</span></th>
             </tr>
           </thead>
           <tbody>
