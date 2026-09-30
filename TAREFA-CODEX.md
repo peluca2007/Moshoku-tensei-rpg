@@ -532,7 +532,9 @@ interface do livro, e o livro é o produto) e `PASSAGEM-CODEX-CLAUDE.md` (inclus
    - Teclado e foco: tudo alcançável com Tab, foco visível, Esc fecha o que abre. `npm run check:a11y`
      e `npm run check:contraste` sem regressão.
    - Textos de interface curtos e no mesmo tom (pt-BR, verbo no começo do botão).
-4. **A arena 2.5D do `/encontros`** (do Claude; pode polir, sem mudar o que ela mostra).
+4. **A arena 2.5D do `/encontros`** — **com o Claude desde 2026-09-30; pule este item.** Não edite
+   `ArenaDoReplay.tsx`, `ArenaDoReplay.module.css` nem `EncounterCombatLogs.tsx`; se a varredura achar
+   defeito ali, anote no inventário que o Claude pega.
    - Ataque em área faz uma investida por alvo: agrupe os recibos consecutivos do mesmo atacante e da
      mesma ação numa investida só, com os efeitos em todos os alvos.
    - Batalha longa cansa: botão "próxima rodada" e atalhos de teclado no desktop (espaço
