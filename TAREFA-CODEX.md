@@ -1,6 +1,6 @@
 # Tarefas para o Codex
 
-> **Tarefa atual: Tarefa 8 — polir tudo**, no fim do arquivo.
+> **Tarefas atuais: Tarefa 9 — o caos da ficha (primeiro) e Tarefa 8 — polir tudo**, no fim do arquivo.
 >
 > **Passagem atualizada em 2026-09-30:** leia `PASSAGEM-CODEX-CLAUDE.md` antes de continuar em conjunto. Ela distingue commits publicados, correções recentes, testes e limitações ainda abertas. As tarefas abaixo preservam o histórico dos pedidos.
 
@@ -576,3 +576,71 @@ Atualize também a `PASSAGEM-CODEX-CLAUDE.md` com a frente e os arquivos tocados
 ### Pendências pro Claude
 
 (vazio)
+
+---
+
+## Tarefa 9 — o caos da ficha tem que aparecer, e ser bonito (2026-09-30)
+
+**Prioridade: antes dos consertos da Tarefa 8.** Feche o commit em andamento, faça esta, e volte.
+O autor viu o caos da ficha (Tarefa 5) e disse, com as palavras dele: *"não está legal, do jeito que
+está está meio paia."* A ideia continua a mesma da Tarefa 5 (a ficha veste as árvores do
+personagem, mais caos quanto mais PA), mas a execução não entrega.
+
+### O diagnóstico (o Claude conferiu em 3010, Livro Noite e Livro Dia)
+
+1. **Cor errada: o desenho é máscara e está sendo usado como imagem.** `public/livro/caos/*.svg` é
+   só forma, em preto (ver o cabeçalho de `scripts/gerar-caos.mjs`). O livro usa o arquivo como
+   `mask` sobre uma camada pintada com `--cor` (`.folhear-caos`, `folhear.css:4258`).
+   `CaosDaFicha.module.css` usa como `background-image`: no Livro Noite dá preto sobre quase preto
+   (some), e no Livro Dia dá borrão preto sem a cor da árvore.
+2. **Recorte errado.** Cada SVG tem **três variantes de página inteira lado a lado** (2448 × 1056).
+   A ficha repete a tira inteira (`auto 360px`, `repeat-y`) numa faixa de 56 px: o que aparece é a
+   beirada interna da variante 1, que é justamente a parte quase vazia do desenho.
+3. **Camadas empilhadas no mesmo lugar.** Todas as árvores desenham nas mesmas bordas, só com um
+   deslocamento de 43 px: a secundária não se lê como "um pouco de Água", ela vira ruído embaixo da
+   dominante.
+4. **O selo quase não existe:** kanji a 9% de opacidade atrás de um cabeçalho que já tem capa.
+5. **Ninguém vê no tema padrão.** O caos só liga em `html.tema-livro`, e o padrão do site é o
+   Pergaminho Noite. Ver "Decisão do autor" abaixo.
+
+### O que fazer
+
+- **Use como o livro usa:** uma camada `background: color-mix(in srgb, var(--cor-da-arvore) X%,
+  transparent)` com `mask: url(caos.svg) <variante> / 300% 100% no-repeat`, escolhendo **uma**
+  variante (0%, 50% ou 100%) por árvore, e espelhada na borda esquerda. A cor de cada camada é a da
+  **árvore daquela camada** (`identidadeDasArvores.ts`), não a da dominante.
+- **Proporção pelo desenho, não pela página:** o desenho foi feito para uma página de 816 × 1056. Na
+  ficha, aplique-o a áreas com essa proporção aproximada (os cantos do cabeçalho e as laterais do
+  topo da ficha), em vez de esticar uma tira de 56 px pela altura toda da página.
+- **Uma zona por árvore:** a dominante fica com as duas bordas do cabeçalho e o canto de cima; a
+  segunda, um canto de baixo do cabeçalho; a terceira em diante, só um respingo. A densidade/opacidade
+  segue o peso (PA), como decidido na Tarefa 5.
+- **Selo que se vê:** o kanji da dominante na cor dela, grande, entre 14% e 20% de opacidade no
+  Noite e um pouco menos no Dia, sem passar por cima do nome do personagem.
+- **O momento que dá graça (Diversão primeiro):** quando o jogador compra uma habilidade, a camada
+  daquela árvore dá um pulso curto (0,6 s) e cresce um pouco. É ali que "mais caos quanto mais PA"
+  vira sensação. Respeite `prefers-reduced-motion` (sem pulso, só o estado final).
+- **Legibilidade continua mandando:** nada de caos embaixo de número, campo ou texto corrido;
+  `check:contraste` em `/ficha` não pode piorar.
+
+### Decisão do autor
+
+Se o caos aparece **só nos temas do Livro** (como decidido na Tarefa 5) ou **nos quatro temas**. O
+Claude perguntou ao autor em 2026-09-30. Até a resposta chegar aqui, implemente atrás de uma única
+regra CSS (o seletor que liga o caos), para a troca ser uma linha.
+
+### Arquivos
+
+São seus: `src/components/CaosDaFicha.tsx`, `CaosDaFicha.module.css`, `src/lib/identidadeDaFicha.ts`
+(+ teste), `src/data/identidadeDasArvores.ts`, e em `src/components/CharacterSheet.tsx` só o
+necessário para posicionar as zonas e disparar o pulso. Não regenere os SVGs sem necessidade; se
+precisar de uma variante própria para a ficha, acrescente ao `gerar-caos.mjs` sem mudar as do livro.
+
+### Como conferir e entregar
+
+- Fotos antes e depois em `/ficha`, **desktop primeiro** (1440 e 1024), celular (390) só como
+  conferência: 3 perfis (Deus da Espada puro; Deus da Espada + pouco de Água; mago de Fogo) × Livro
+  Noite e Livro Dia (e os dois Pergaminho, se o autor liberar).
+- `npx tsc --noEmit -p .`, `npx vitest run`, `npm run lint`, `BASE=http://localhost:3020 npm run
+  check:contraste`. Commits pequenos na `main`.
+- Atualize `RELATORIO-CODEX-FICHA.md` com as fotos novas e o que mudou.
