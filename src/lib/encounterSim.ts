@@ -1139,6 +1139,42 @@ export interface LogCombate {
   /** Os números da batalha original, antes de ela ser reexecutada com log. */
   resumo: ResumoBatalha;
   linhas: string[];
+  /** Fotografias da arena para o replay em 2.5D; ausente em logs antigos. */
+  replay?: ReplayCombate;
+}
+
+/**
+ * Quem aparece na arena do replay. `origem` é o id da ficha (personagem) ou da
+ * criatura do encontro — é por ele que a tela acha o retrato, sem o motor
+ * carregar imagem nenhuma.
+ */
+export interface AtorDoReplay {
+  nome: string;
+  lado: "grupo" | "criaturas";
+  origem: string;
+  pvMax: number;
+  /** Pacto, invocação ou reforço que entrou na cena sem ser uma ficha do grupo. */
+  invocado: boolean;
+}
+
+/**
+ * O estado da arena logo DEPOIS de uma linha do log. `pv`, `vivo` e `posicao`
+ * seguem a ordem de `atores`; um ator que ainda não entrou (invocado no meio da
+ * luta) simplesmente não tem índice nos quadros anteriores.
+ */
+export interface QuadroDoReplay {
+  rodada: number;
+  linha: number;
+  /** Índice em `LogCombate.eventos` quando a linha é o recibo de um ataque. */
+  evento?: number;
+  pv: number[];
+  vivo: boolean[];
+  posicao?: (number | null)[];
+}
+
+export interface ReplayCombate {
+  atores: AtorDoReplay[];
+  quadros: QuadroDoReplay[];
 }
 
 interface BatalhaDestacada {
@@ -1150,12 +1186,56 @@ export class CombateLogger {
   linhas: string[] = [];
   eventos: EventoAtaque[] = [];
   rodada = 0;
-  log(msg: string) { this.linhas.push(msg); }
+  /** Chamado depois de cada linha; o replay usa para fotografar a arena. */
+  aoRegistrar?: (linha: number, evento?: number) => void;
+  private eventoDaLinha?: number;
+  log(msg: string) {
+    this.linhas.push(msg);
+    this.aoRegistrar?.(this.linhas.length - 1, this.eventoDaLinha);
+    this.eventoDaLinha = undefined;
+  }
   ataque(evento: EventoAtaque) {
     evento.rodada = this.rodada;
     this.eventos.push(evento);
+    this.eventoDaLinha = this.eventos.length - 1;
     this.log(formatarEventoAtaque(evento));
   }
+}
+
+/**
+ * Fotografa heróis e criaturas a cada linha do log. Lê as listas vivas — um
+ * pacto que entra na rodada 3 ganha índice ali, sem reescrever os quadros
+ * anteriores.
+ */
+function gravarReplay(logger: CombateLogger, heroes: EstadoPersonagem[], inimigos: EstadoCriatura[]): ReplayCombate {
+  const replay: ReplayCombate = { atores: [], quadros: [] };
+  const indices = new Map<Alvo, number>();
+  const indiceDe = (alvo: Alvo, ator: () => AtorDoReplay) => {
+    let i = indices.get(alvo);
+    if (i === undefined) { i = replay.atores.push(ator()) - 1; indices.set(alvo, i); }
+    return i;
+  };
+  logger.aoRegistrar = (linha, evento) => {
+    const pv: number[] = [];
+    const vivo: boolean[] = [];
+    const posicao: (number | null)[] = [];
+    const anotar = (alvo: Alvo, i: number) => {
+      pv[i] = Math.max(0, alvo.pv);
+      vivo[i] = alvo.vivo;
+      posicao[i] = alvo.posicao ?? null;
+    };
+    for (const h of heroes) anotar(h, indiceDe(h, () => ({
+      nome: h.nome, lado: "grupo", origem: h.ficha.invocadoDe ?? h.ficha.id, pvMax: h.ficha.pvMax, invocado: !!h.ficha.invocadoDe,
+    })));
+    for (const c of inimigos) anotar(c, indiceDe(c, () => ({
+      nome: c.nome, lado: "criaturas", origem: c.origemDoPacto?.fonte.id ?? c.fonte.id, pvMax: c.pvMax, invocado: !!c.origemDoPacto,
+    })));
+    replay.quadros.push({
+      rodada: logger.rodada, linha, evento, pv, vivo,
+      posicao: posicao.some((p) => p !== null) ? posicao : undefined,
+    });
+  };
+  return replay;
 }
 
 function registrarAtaque(logger: RegistroCombate | undefined, evento: EventoAtaque): void {
@@ -1358,6 +1438,7 @@ function replayBatalha(
     }
   }
 
+  const replay = gravarReplay(logger, heroes, inimigos);
   prepararPactosDosRivais(inimigos, escala, logger);
   prepararCenario(heroes, inimigos, rng, cenario, logger);
   const ordem = [
@@ -1424,6 +1505,7 @@ function replayBatalha(
     resumo,
     linhas: logger.linhas,
     eventos: logger.eventos,
+    replay,
   };
 }
 

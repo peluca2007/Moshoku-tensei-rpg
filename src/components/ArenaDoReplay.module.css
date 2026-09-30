@@ -1,0 +1,652 @@
+/*
+ * A arena do replay em 2.5D. Mora num módulo próprio, e não no globals.css,
+ * para que o palco inteiro seja apagável num arquivo só.
+ *
+ * Chão e standees usam a MESMA projeção feita à mão (topo, escala e z-index
+ * calculados pela profundidade). Um plano com rotateX sumia atrás do ponto de
+ * fuga no celular, e o preserve-3d o Safari do iPhone desenha errado; assim as
+ * imagens da ficha ficam sempre de frente e o chão sempre embaixo delas.
+ */
+
+.palco {
+  position: relative;
+  overflow: hidden;
+  container-type: size;
+  border-radius: 0.9rem;
+  background: linear-gradient(180deg, #2a1d14 0%, #3b2a1d 45%, #1b130d 100%);
+  isolation: isolate;
+  user-select: none;
+}
+
+.fundo {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(3px) saturate(0.8) brightness(0.45);
+  transform: scale(1.08);
+  z-index: -2;
+}
+
+.chao {
+  position: absolute;
+  inset: 0;
+  /* Trapézio na mesma projeção dos standees (ver `topo` no componente). */
+  clip-path: polygon(14% 26%, 86% 26%, 104% 100%, -4% 100%);
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 62%, rgb(223 203 163 / 0.3), transparent 70%),
+    repeating-linear-gradient(180deg, transparent 0 22px, rgb(0 0 0 / 0.08) 22px 24px),
+    linear-gradient(180deg, #3f3120 0%, #6d5638 55%, #8a6d45 100%);
+  box-shadow: inset 0 0 60px rgb(0 0 0 / 0.5);
+  z-index: -1;
+}
+
+/* A linha do combate: o livro mede distância numa reta só, não num grid. */
+.linha {
+  position: absolute;
+  left: 50%;
+  top: 26%;
+  bottom: 0;
+  width: 0;
+  border-left: 2px dashed rgb(253 246 227 / 0.35);
+}
+
+.distancia {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: rgb(27 19 13 / 0.8);
+  color: #fdf6e3;
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: top 450ms ease;
+  z-index: 1;
+}
+
+.standee {
+  position: absolute;
+  width: var(--tamanho);
+  transform: translate(-50%, -100%) scale(var(--escala));
+  transform-origin: 50% 100%;
+  transition:
+    left 450ms ease,
+    top 450ms ease,
+    transform 450ms ease;
+}
+
+.corpo {
+  position: relative;
+  transform: perspective(300px) rotateX(0deg);
+  transform-origin: 50% 100%;
+  transition:
+    transform 500ms cubic-bezier(0.5, 0, 0.8, 0.4),
+    filter 500ms ease,
+    opacity 500ms ease;
+}
+
+.cartao {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 0.5rem;
+  border: 3px solid #fdf6e3;
+  background: #3b2a1d;
+  overflow: hidden;
+  box-shadow: 0 6px 10px rgb(0 0 0 / 0.45);
+}
+
+.criaturas .cartao {
+  border-color: #e9c9c9;
+}
+
+.cartao img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.inicial {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: calc(var(--tamanho) * 0.45);
+  font-weight: 900;
+  color: #fdf6e3;
+  background: linear-gradient(160deg, #7a2e2e, #3b1a1a);
+}
+
+.grupo .inicial {
+  background: linear-gradient(160deg, #3d5a7a, #1d2b3b);
+}
+
+.selo {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  padding: 0 0.25rem;
+  border-radius: 999px;
+  background: rgb(27 19 13 / 0.85);
+  color: #f5d77a;
+  font-size: 0.6rem;
+  line-height: 1.2rem;
+}
+
+/* A base de papelão: é ela que faz o retrato "ficar em pé" na mesa. */
+.base {
+  margin: -4px auto 0;
+  width: 86%;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgb(0 0 0 / 0.55), transparent 70%);
+}
+
+.nome {
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+  color: #fdf6e3;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-shadow: 0 1px 2px #000;
+}
+
+.barra {
+  margin-top: 2px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.55);
+  overflow: hidden;
+}
+
+.barra > span {
+  display: block;
+  height: 100%;
+  background: #4caf6a;
+  transition:
+    width 450ms ease,
+    background-color 450ms ease;
+}
+
+.barra > span[data-nivel="meio"] {
+  background: #d9a441;
+}
+
+.barra > span[data-nivel="baixo"] {
+  background: #c94040;
+}
+
+/* Quem age brilha na cor do golpe; sem tipo conhecido, dourado. */
+.agindo .cartao {
+  border-color: var(--elemento, #f5d77a);
+  box-shadow:
+    0 0 0 2px var(--elemento, #f5d77a),
+    0 0 18px var(--elemento, rgb(245 215 122 / 0.7));
+}
+
+.caido .corpo {
+  transform: perspective(300px) rotateX(72deg);
+  filter: grayscale(1) brightness(0.6);
+  opacity: 0.75;
+}
+
+/* ─── Animações de um quadro ─────────────────────────────────────────── */
+
+.investida {
+  animation: investida 620ms ease-in-out;
+}
+
+@keyframes investida {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  45% {
+    translate: var(--dx) var(--dy);
+  }
+}
+
+.apanha {
+  animation: apanha 480ms ease-out 260ms;
+}
+
+@keyframes apanha {
+  0%,
+  100% {
+    translate: 0 0;
+    filter: none;
+  }
+  15% {
+    translate: -6px 0;
+    filter: brightness(1.4) sepia(1) hue-rotate(-40deg) saturate(5);
+  }
+  35% {
+    translate: 5px 0;
+  }
+  55% {
+    translate: -3px 0;
+  }
+  75% {
+    translate: 2px 0;
+  }
+}
+
+.esquiva {
+  animation: esquiva 420ms ease-out 240ms;
+}
+
+@keyframes esquiva {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  40% {
+    translate: 12px -4px;
+  }
+}
+
+.numero {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% 0;
+  white-space: nowrap;
+  font-weight: 900;
+  font-size: 1.05rem;
+  color: #ffdddd;
+  text-shadow:
+    0 0 3px #7a1010,
+    0 2px 3px #000;
+  pointer-events: none;
+  opacity: 0;
+  animation: sobe 1100ms ease-out 260ms forwards;
+  z-index: 5;
+}
+
+.numero[data-tipo="cura"] {
+  color: #d4ffd9;
+  text-shadow:
+    0 0 3px #106a2a,
+    0 2px 3px #000;
+}
+
+.numero[data-tipo="erro"] {
+  color: #fdf6e3;
+  font-size: 0.85rem;
+  text-shadow: 0 2px 3px #000;
+}
+
+.numero[data-tipo="critico"] {
+  color: #f5d77a;
+  font-size: 1.3rem;
+  text-shadow:
+    0 0 4px #7a4a00,
+    0 2px 3px #000;
+}
+
+@keyframes sobe {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.7);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.15);
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-34px) scale(1);
+  }
+}
+
+.faixa {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 42%;
+  padding: 0.35rem 0;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fdf6e3;
+  background: linear-gradient(90deg, transparent, rgb(122 46 46 / 0.85), transparent);
+  animation: faixa 900ms ease-out forwards;
+  pointer-events: none;
+  z-index: 50;
+}
+
+@keyframes faixa {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.4);
+  }
+  25%,
+  70% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fim {
+  position: absolute;
+  inset: auto 0 38% 0;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: #fdf6e3;
+  text-shadow: 0 2px 6px #000;
+  animation: surgeFim 700ms ease-out forwards;
+  z-index: 50;
+}
+
+@keyframes surgeFim {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── Efeitos por tipo de dano ───────────────────────────────────────── */
+
+.efeito {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  --cor: var(--elemento, #fff);
+}
+
+/* O lampejo sobre o retrato, na cor do elemento. */
+.tinta {
+  position: absolute;
+  inset: 0 0 10px;
+  border-radius: 0.5rem;
+  background: radial-gradient(circle at 50% 45%, var(--cor), transparent 75%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: lampejo 520ms ease-out 240ms;
+}
+
+@keyframes lampejo {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Partícula genérica: sai do centro do retrato no ângulo --a. */
+.efeito i {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--cor);
+  box-shadow: 0 0 6px var(--cor);
+  opacity: 0;
+  animation: estoura 650ms ease-out calc(240ms + var(--i) * 18ms) both;
+}
+
+@keyframes estoura {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(var(--tamanho) * -0.75)) scale(0.3);
+  }
+}
+
+/* Fogo: línguas que sobem balançando, do amarelo ao vermelho. */
+.efeito[data-elemento="fogo"] i {
+  top: 70%;
+  width: 11px;
+  height: 15px;
+  border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+  background: radial-gradient(circle at 50% 70%, #fff3b0, #ffb020 45%, #ff4d00);
+  box-shadow: 0 0 10px #ff7a1a;
+  animation-name: chama;
+  animation-duration: 800ms;
+}
+
+@keyframes chama {
+  0% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 4) * 7px), 0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 4) * 4px), calc(var(--tamanho) * -0.9)) scale(0.2);
+  }
+}
+
+/* Gelo: estilhaços em losango. */
+.efeito[data-elemento="gelo"] i {
+  width: 6px;
+  height: 14px;
+  border-radius: 1px;
+  background: linear-gradient(#ffffff, #9fdcff);
+  box-shadow: 0 0 6px #bfe9ff;
+}
+
+/* Água: gotas que respingam e caem. */
+.efeito[data-elemento="agua"] i {
+  width: 8px;
+  height: 11px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: #6fb8ff;
+  animation-name: respingo;
+}
+
+@keyframes respingo {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(0);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(var(--tamanho) * -0.55));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + var(--tamanho) * 0.3)) rotate(var(--a)) translateY(calc(var(--tamanho) * -0.55));
+  }
+}
+
+/* Raio: o relâmpago cai sobre o alvo e solta faíscas. */
+.relampago {
+  position: absolute;
+  left: 50%;
+  bottom: 30%;
+  width: 45%;
+  height: 130%;
+  translate: -50% 0;
+  fill: #fff6a8;
+  filter: drop-shadow(0 0 6px #f2c200);
+  opacity: 0;
+  animation: relampago 420ms steps(1, end) 220ms;
+}
+
+@keyframes relampago {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.efeito[data-elemento="raio"] i {
+  width: 4px;
+  height: 10px;
+  border-radius: 1px;
+  background: #fff6a8;
+}
+
+/* Veneno: bolhas verdes que sobem. */
+.efeito[data-elemento="veneno"] i {
+  top: 65%;
+  background: transparent;
+  border: 2px solid #9be35f;
+  box-shadow: 0 0 5px #6fb33a;
+  animation-name: bolha;
+  animation-duration: 900ms;
+}
+
+@keyframes bolha {
+  0% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 3) * 8px), 0) scale(0.4);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 3) * 10px), calc(var(--tamanho) * -0.8)) scale(1.1);
+  }
+}
+
+/* Som: anéis concêntricos. */
+.efeito[data-elemento="som"] i,
+.efeito[data-elemento="impacto"] i:first-child {
+  width: 20%;
+  height: auto;
+  aspect-ratio: 1;
+  background: transparent;
+  border: 3px solid var(--cor);
+  box-shadow: none;
+  animation-name: anel;
+  animation-delay: calc(240ms + var(--i) * 120ms);
+}
+
+.efeito[data-elemento="som"] i {
+  border-color: #d7b8ff;
+}
+
+.efeito[data-elemento="impacto"] i:first-child {
+  border-color: #fdf6e3;
+}
+
+@keyframes anel {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(4);
+  }
+}
+
+/* Luz: raios finos e dourados. */
+.efeito[data-elemento="luz"] i {
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  background: linear-gradient(#fffbe0, #e8b923);
+}
+
+/* Arcano: estrelinhas roxas. */
+.efeito[data-elemento="arcano"] i {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  background: #d9b3ff;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+
+/* Terra e impacto: lascas quadradas. */
+.efeito[data-elemento="terra"] i,
+.efeito[data-elemento="impacto"] i {
+  width: 8px;
+  height: 7px;
+  border-radius: 2px;
+  background: #b98a55;
+  box-shadow: none;
+}
+
+/* Corte: um risco claro atravessando o retrato. */
+.efeito[data-elemento="corte"] i {
+  left: 8%;
+  top: 18%;
+  width: 84%;
+  height: 3px;
+  border-radius: 2px;
+  background: #ffffff;
+  box-shadow: 0 0 8px #fff;
+  transform-origin: 0 50%;
+  animation: corte 380ms ease-out 230ms both;
+}
+
+@keyframes corte {
+  0% {
+    opacity: 1;
+    transform: rotate(38deg) scaleX(0);
+  }
+  55% {
+    opacity: 1;
+    transform: rotate(38deg) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(38deg) scaleX(1);
+  }
+}
+
+/*
+ * Menos movimento: sem investida, tremor nem faixa voando — o quadro chega
+ * pronto. O número de dano continua aparecendo (parado), porque ele é
+ * informação, não enfeite.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .investida,
+  .apanha,
+  .esquiva,
+  .faixa,
+  .fim {
+    animation: none;
+  }
+  .efeito {
+    display: none;
+  }
+  .numero {
+    animation: none;
+    opacity: 1;
+    transform: translateY(-14px);
+  }
+  .standee,
+  .corpo,
+  .barra > span,
+  .distancia {
+    transition: none;
+  }
+}
