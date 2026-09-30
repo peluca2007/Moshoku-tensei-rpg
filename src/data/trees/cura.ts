@@ -13,8 +13,7 @@ export const CURA_TREE: Tree = {
       "Não é quanto você cura — é quando. A mesma magia rola o dobro de dados se chegar a tempo.",
     loop: [
       "Chegue a tempo. Contra Ferida Fresca, toda magia de Cura rola o DOBRO dos dados; o BC soma uma vez só. Ferida Fresca é o dano que o alvo sofreu desde o fim do SEU último turno — você só olha a sua própria vez. Não se mede quanto: qualquer dano nessa janela conta, mesmo o que PV Temporários absorveram. Poção não é magia e não dobra.",
-      "Ou segure a ferida aberta. Selar a Ferida faz o alvo contar como tendo Ferida Fresca por 1 hora inteira, muito depois de a janela fechar.",
-      "Ou não espere o turno. Prontidão é 1 Reação, disparada quando o aliado sofre o golpe — então é sempre Ferida Fresca, por definição.",
+      "Ou crie a janela. Selar a Ferida faz o alvo contar como tendo Ferida Fresca por 1 hora inteira, muito depois de a janela fechar; e Prontidão é 1 Reação, disparada quando o aliado sofre o golpe — então é sempre Ferida Fresca, por definição.",
       "Escolha o seu caminho. Os talentos da escola seguem três: o Cirurgião (curar mais e melhor), o Guardião (segurar o golpe antes de ele matar) e o Juiz (a luz que fere). Não é classe: compre dos três, na ordem que quiser.",
       "Ou vire a luz. Toda magia de Cura pode ferir um inimigo em vez de curar: ele sofre como dano radiante o valor normal da magia, sem o dobro da Ferida Fresca (só a Culpa Fresca, no Rei, dobra os dados da luz). Morto-vivo, construto e corrompido não escapam — a luz acerta sempre e não permite teste.",
     ],
