@@ -100,8 +100,10 @@ export default function Chapter2() {
           <b>Conjuração Concentrada.</b> Na Conjuração Padrão, você pode jogar a magia de dano inteira em{" "}
           <b>uma criatura só</b>: a área (ou os vários alvos) vira um alvo, os <b>dados de dano sobem 50%</b>{" "}
           (arredondado pra cima, em cada grupo de dados) e o <b>PM sobe 50%</b> (pra cima). O resto da magia
-          não muda: o mesmo tempo, o mesmo teste de resistência ou rolagem de ataque, o mesmo cântico. Truque
-          (0 PM) não concentra, e magia sem dados de dano também não.
+          não muda: o mesmo tempo, o mesmo teste de resistência ou rolagem de ataque, o mesmo cântico. Magia
+          que já mira uma criatura só também concentra: aí mudam só os dados e o PM. Todo grupo de dados de
+          dano conta, inclusive o que só vale sob condição (o +3d8 da Quebra de Gelo contra Congelado vira
+          +5d8). Truque (0 PM) não concentra, e magia sem dados de dano também não.
         </P>
         <BookTable
           headers={["Chuva de Meteoros (Terra, Avançado)", "Alvos", "Dano", "PM"]}
