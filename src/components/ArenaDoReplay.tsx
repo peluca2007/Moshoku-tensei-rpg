@@ -327,6 +327,33 @@ function Placar({ placar }: { placar: PlacarDaBatalha }) {
           </span>)
         : "Ninguém caiu."}
     </div>
+    {placar.porPersonagem.length > 0 && <div className={`${caixa} overflow-x-auto sm:col-span-3`}>
+      <span className={rotulo}>O grupo, um por um</span>
+      <table className="mt-1 w-full text-left">
+        <thead className="text-2xs uppercase text-parchment-600 dark:text-parchment-400">
+          <tr>
+            <th className="py-0.5 pr-2 font-semibold">Personagem</th>
+            <th className="py-0.5 pr-2 text-right font-semibold">Dano</th>
+            <th className="py-0.5 pr-2 text-right font-semibold">Acertos</th>
+            <th className="hidden py-0.5 pr-2 text-right font-semibold sm:table-cell">Cura</th>
+            <th className="hidden py-0.5 pr-2 text-right font-semibold sm:table-cell">Reações</th>
+            <th className="py-0.5 pr-2 text-right font-semibold">Perdeu</th>
+            <th className="py-0.5 text-right font-semibold">Fim</th>
+          </tr>
+        </thead>
+        <tbody className="font-mono">
+          {placar.porPersonagem.map((l) => <tr key={l.nome} className="border-t border-parchment-300 dark:border-parchment-800">
+            <td className="py-1 pr-2 font-sans font-semibold">{l.nome}</td>
+            <td className="py-1 pr-2 text-right">{l.dano}</td>
+            <td className="py-1 pr-2 text-right">{l.acertos}/{l.tentativas}</td>
+            <td className="hidden py-1 pr-2 text-right sm:table-cell">{l.cura || "—"}</td>
+            <td className="hidden py-1 pr-2 text-right sm:table-cell">{l.reacoes || "—"}</td>
+            <td className="py-1 pr-2 text-right">{l.recebido}</td>
+            <td className={`py-1 text-right font-sans ${l.caiuNaRodada ? "text-rose-700 dark:text-rose-300" : ""}`}>{l.caiuNaRodada ? `caiu R${l.caiuNaRodada}` : "de pé"}</td>
+          </tr>)}
+        </tbody>
+      </table>
+    </div>}
   </section>;
 }
 

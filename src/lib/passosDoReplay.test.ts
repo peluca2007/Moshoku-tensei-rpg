@@ -105,5 +105,9 @@ describe("placar do fim da batalha", () => {
     expect(placar.destaque).toEqual({ nome: "Eris", dano: 14 });
     expect(placar.maiorGolpe).toMatchObject({ atacante: "Lobo", dano: 12, critico: true });
     expect(placar.quedas).toEqual([{ nome: "Lobo", rodada: 2, lado: "criaturas" }]);
+    expect(placar.porPersonagem).toEqual([
+      { nome: "Eris", dano: 14, acertos: 2, tentativas: 2, cura: 0, recebido: 0, reacoes: 0, caiuNaRodada: undefined },
+      { nome: "Ari", dano: 4, acertos: 1, tentativas: 1, cura: 0, recebido: 12, reacoes: 0, caiuNaRodada: undefined },
+    ]);
   });
 });
