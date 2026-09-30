@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { Download } from "lucide-react";
-import type { LogCombate } from "@/lib/encounterSim";
+import type { CriaturaEncontro, LogCombate } from "@/lib/encounterSim";
+import type { CharacterData } from "@/lib/types";
+import ArenaDoReplay from "./ArenaDoReplay";
 import { formatarEventoAtaque, formatarRolagemDados, type EventoAtaque } from "@/lib/combatTrace";
 
 function baixarLog(log: LogCombate) {
@@ -31,10 +33,13 @@ function Recibo({ evento }: { evento: EventoAtaque }) {
   </details>;
 }
 
-function Batalha({ log, indice }: { log: LogCombate; indice: number }) {
+type Elenco = { grupo: CharacterData[]; criaturas: CriaturaEncontro[] };
+
+function Batalha({ log, indice, elenco }: { log: LogCombate; indice: number; elenco: Elenco }) {
   const [aberta, setAberta] = useState(false);
   const [personagem, setPersonagem] = useState("");
-  const [modo, setModo] = useState<"recibos" | "texto">("recibos");
+  const temArena = !!log.replay?.quadros.length;
+  const [modo, setModo] = useState<"arena" | "recibos" | "texto">(temArena ? "arena" : "recibos");
   const eventos = log.eventos ?? [];
   const nomes = [...new Set(eventos.flatMap((e) => [e.atacante, e.alvo]))];
   const filtrados = eventos.filter((e) => !personagem || e.atacante === personagem || e.alvo === personagem);
@@ -46,13 +51,19 @@ function Batalha({ log, indice }: { log: LogCombate; indice: number }) {
       <span className="mt-1 block text-xs text-parchment-600 dark:text-parchment-400">{log.motivo} · {log.resumo.rodadas} rodada(s) · semente {log.seed}</span>
     </summary>
     {aberta && <div className="border-t border-parchment-300 p-3 dark:border-parchment-800">
+      {temArena && <div role="tablist" aria-label="Como ver a batalha" className="mb-3 flex gap-1 rounded-lg bg-parchment-200/70 p-1 text-xs font-semibold dark:bg-parchment-800/70">
+        {([["arena", "Arena 2.5D"], ["recibos", "Recibos"], ["texto", "Texto"]] as const).map(([valor, rotulo]) =>
+          <button key={valor} type="button" role="tab" aria-selected={modo === valor} onClick={() => setModo(valor)}
+            className={`min-h-9 flex-1 rounded-md px-2 ${modo === valor ? "bg-parchment-50 text-wine-800 shadow-sm dark:bg-parchment-950 dark:text-wine-200" : "text-parchment-700 dark:text-parchment-300"}`}>{rotulo}</button>)}
+      </div>}
+      {modo === "arena" && temArena ? <ArenaDoReplay log={log} grupo={elenco.grupo} criaturas={elenco.criaturas} /> : <>
       <div className="mb-3 flex flex-wrap items-end gap-2">
         <label className="text-xs font-semibold text-parchment-700 dark:text-parchment-300">Participante
           <select value={personagem} onChange={(e) => setPersonagem(e.target.value)} className="mt-1 block max-w-full rounded-lg border border-parchment-300 bg-parchment-50 p-2 dark:border-parchment-700 dark:bg-parchment-950">
             <option value="">Todos os participantes</option>{nomes.map((nome) => <option key={nome}>{nome}</option>)}
           </select>
         </label>
-        <button type="button" className="rounded-lg border border-parchment-300 px-3 py-2 text-xs dark:border-parchment-700" onClick={() => setModo(modo === "recibos" ? "texto" : "recibos")}>{modo === "recibos" ? "Ver texto completo" : "Ver ataques por rodada"}</button>
+        {!temArena && <button type="button" className="rounded-lg border border-parchment-300 px-3 py-2 text-xs dark:border-parchment-700" onClick={() => setModo(modo === "recibos" ? "texto" : "recibos")}>{modo === "recibos" ? "Ver texto completo" : "Ver ataques por rodada"}</button>}
         <button type="button" onClick={() => baixarLog(log)} className="inline-flex items-center gap-1 rounded-lg border border-parchment-300 px-3 py-2 text-xs dark:border-parchment-700"><Download className="h-3.5 w-3.5" /> Baixar batalha</button>
       </div>
       <div className="max-h-[32rem] overflow-y-auto overscroll-contain">
@@ -61,14 +72,15 @@ function Batalha({ log, indice }: { log: LogCombate; indice: number }) {
           <div className="space-y-2">{filtrados.filter((e) => (e.rodada ?? 0) === rodada).map((evento, i) => <Recibo key={i} evento={evento} />)}</div>
         </section>)}
       </div>
+      </>}
     </div>}
   </details>;
 }
 
-export default function EncounterCombatLogs({ logs }: { logs: LogCombate[] }) {
+export default function EncounterCombatLogs({ logs, grupo = [], criaturas = [] }: { logs: LogCombate[] } & Partial<Elenco>) {
   return <section className="mt-6">
     <h3 className="font-bold text-parchment-900 dark:text-parchment-50">Batalhas notáveis ({logs.length})</h3>
-    <p className="mt-1 mb-3 text-xs text-parchment-600 dark:text-parchment-400">Abra uma batalha, escolha um participante e confira cada ataque. Os recibos mostram os dados realmente rolados, os bônus e a perda de PV. O texto completo inclui os demais acontecimentos.</p>
-    <div className="space-y-2">{logs.map((log, i) => <Batalha key={log.seed} log={log} indice={i} />)}</div>
+    <p className="mt-1 mb-3 text-xs text-parchment-600 dark:text-parchment-400">Abra uma batalha e assista na arena, com os retratos das fichas, ou escolha um participante e confira cada ataque. Os recibos mostram os dados realmente rolados, os bônus e a perda de PV. O texto completo inclui os demais acontecimentos.</p>
+    <div className="space-y-2">{logs.map((log, i) => <Batalha key={log.seed} log={log} indice={i} elenco={{ grupo, criaturas }} />)}</div>
   </section>;
 }
