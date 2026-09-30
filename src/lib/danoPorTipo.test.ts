@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aplicarDano, novoAlvo, partesDoDano } from "./combatSim";
+import { aplicarDano, fracaoFria, novoAlvo, partesDoDano } from "./combatSim";
 
 /**
  * Cap. 4, §6: "Resistência: você sofre metade do dano DAQUELE tipo". Dano
@@ -44,5 +44,12 @@ describe("dano de mais de um tipo", () => {
     const alvo = novoAlvo({ nome: "Lobo de Fogo", pv: 30, ca: 10, resistencias: ["ígneo"] });
     aplicarDano(alvo, 11, 2, undefined, false, "ígneo");
     expect(alvo.pv).toBe(25);
+  });
+});
+
+describe("dano misto das criaturas (inclusive montadas de ficha)", () => {
+  it("estima a parte fria pela média dos dados", () => {
+    expect(fracaoFria("1d8 + bc (cortante) + 1d4 de frio")).toBeCloseTo(2.5 / 7, 5);
+    expect(fracaoFria("2d6 cortante")).toBe(0);
   });
 });

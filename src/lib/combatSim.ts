@@ -2144,6 +2144,19 @@ export function partesDoDano(formula: string, dano: number, frio: number): Parte
 }
 
 /**
+ * Quanto de uma fórmula é frio, pela média dos dados — para quem rola a
+ * fórmula inteira de uma vez e não guarda os grupos (as criaturas, inclusive
+ * as montadas de ficha). O personagem usa os dados frios que de fato rolou.
+ */
+export function fracaoFria(formula: string): number {
+  const grupos = [...formula.matchAll(/(\d+)\s*d\s*(\d+)/gi)].map((m) => Number(m[1]) * (Number(m[2]) + 1) / 2);
+  const total = mediaFormula(formula);
+  if (!grupos.length || total <= 0) return 0;
+  const frio = indicesDeFrio(formula).reduce((soma, i) => soma + (grupos[i] ?? 0), 0);
+  return Math.min(1, frio / total);
+}
+
+/**
  * A defesa do alvo contra UMA parte. Dano de dois tipos ao mesmo tempo só é
  * resistido (ou anulado) se o alvo tiver a defesa contra os DOIS — Cap. 4, §6.
  */

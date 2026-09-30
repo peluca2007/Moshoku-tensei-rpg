@@ -20,6 +20,8 @@ import {
   mediaFormula,
   montarFicha,
   aplicarDano,
+  fracaoFria,
+  partesDoDano,
   curar,
   darPvTemp,
   mediaDados,
@@ -536,6 +538,9 @@ function bater(
   // Quem já está a 0 PV leva o golpe sem teto: não há PV pra limitar, e o que
   // conta ali é a Marca da Morte que o dano cobra (`aplicarDano`).
   const pvAntes = alvo.pv;
+  // Dano misto também se defende por tipo (Cap. 4, §6). A criatura rola a
+  // fórmula inteira de uma vez, então a parte fria sai pela média dos dados.
+  const formula = tipoDeDano ?? "";
   aplicarDano(
     alvo,
     dano,
@@ -543,7 +548,8 @@ function bater(
     rng,
     critico,
     tipoDeDano,
-    evento
+    evento,
+    partesDoDano(formula, dano, Math.round(dano * fracaoFria(formula)))
   );
   // O teto vem DEPOIS de Resistência, Imunidade e PV Temporários. Cortar o
   // golpe antes disso fazia, por exemplo, 10 de dano contra 4 PV com
