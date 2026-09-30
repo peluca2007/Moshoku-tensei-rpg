@@ -2594,7 +2594,7 @@ function Relatorio({ relatorio, anterior, desatualizado }: { relatorio: Relatori
         </p>
       </details>
       {resultado.logsExtremos && resultado.logsExtremos.length > 0 && (
-        <EncounterCombatLogs logs={resultado.logsExtremos} grupo={relatorio.entrada.grupo} criaturas={relatorio.entrada.criaturas} />
+        <EncounterCombatLogs logs={resultado.logsExtremos} entrada={relatorio.entrada} />
       )}
     </section>
   );
