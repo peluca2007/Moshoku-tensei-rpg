@@ -16,6 +16,18 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.125",
+    date: "2026-09-30",
+    title: "A Conjuração Concentrada vale também para magia de um alvo só",
+    sections: [{
+      heading: "O livro passa a dizer o que a mesa já podia fazer (Cap. 2, §2)",
+      items: [
+        "Magia de dano que já mira uma criatura só também concentra: +50% nos dados e +50% no PM, sem mudar o resto. O texto descrevia só a área virando um alvo e deixava a dúvida.",
+        "Todo grupo de dados de dano sobe, inclusive o que só vale sob condição: o +3d8 da Quebra de Gelo contra Congelado vira +5d8 na Concentrada.",
+      ],
+    }],
+  },
+  {
     version: "0.1.124",
     date: "2026-09-30",
     title: "Dano de dois tipos: cada parte com a sua defesa",
