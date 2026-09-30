@@ -13,6 +13,7 @@ import {
 } from "@/lib/passosDoReplay";
 import { sonsDoPasso, type Toque } from "@/lib/sonsDaArena";
 import { tocar, useSomDaArena } from "@/lib/tocadorDaArena";
+import { narrarArea, narrarGolpe, narrarLinha } from "@/lib/narracaoDaArena";
 import { useBestiaryStore } from "@/store/useBestiaryStore";
 import estilo from "./ArenaDoReplay.module.css";
 
@@ -107,6 +108,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
   const fileira = Math.max(3, ...contagemPorLado(atores, quadro).map(tamanhoDaFileira));
   const distancia = distanciaEntreLados(atores, quadro);
   const elemento = evento ? elementoDoGolpe(evento) : undefined;
+  const narracao = eventos.length > 1 ? narrarArea(eventos) : evento ? narrarGolpe(evento) : narrarLinha(texto);
   // "Brasa" não diz "ígneo" na fórmula, mas o efeito já sabe que é fogo pelo
   // nome: sem arma e com elemento mágico, o golpe é feitiço, e feitiço voa.
   const formaBruta = evento ? formaDoGolpe(evento) : undefined;
@@ -252,12 +254,17 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
       {ultimo && <div className={estilo.fim}>{log.categoria}</div>}
     </div>
 
-    <p className="min-h-[2.75rem] rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 text-xs text-parchment-800 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-200" aria-live={tocando ? "off" : "polite"}>
+    <div className="min-h-[2.75rem] rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 text-xs text-parchment-800 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-200" aria-live={tocando ? "off" : "polite"}>
       <span className="mr-2 font-bold text-wine-700 dark:text-wine-300">R{quadro.rodada || 0}</span>
       {eventos.length > 0 && reacoes.map((r, n) => <span key={n} className="mr-1.5 inline-block rounded-full bg-sky-700 px-1.5 text-2xs font-bold text-white">Reação: {r.nome}</span>)}
       {elemento && eventos.some((e) => e.acertou) && <span className="mr-1.5 inline-block rounded-full px-1.5 text-2xs font-bold text-white" style={{ background: ELEMENTOS[elemento].cor }}>{ELEMENTOS[elemento].nome}</span>}
-      {eventos.length > 1 ? resumirEmArea(eventos) : evento ? resumirEvento(evento) : texto.split("\n")[0] || "Preparação da cena."}
-    </p>
+      {narracao.frase}
+      {/* A conta do motor continua a um toque: a frase é para a mesa, a conta é para quem confere. */}
+      {narracao.conta && <details className="mt-1">
+        <summary className="cursor-pointer text-2xs font-semibold text-parchment-600 dark:text-parchment-400">ver a conta</summary>
+        <p className="mt-1 whitespace-pre-wrap break-words font-mono text-2xs text-parchment-700 dark:text-parchment-300">{narracao.conta}</p>
+      </details>}
+    </div>
 
     {ultimo && <Placar placar={placar} />}
 
@@ -457,20 +464,10 @@ function Numero({ ator, quadro, anterior, evento }: {
   </span>;
 }
 
-function resumirEmArea(eventos: EventoAtaque[]): string {
-  const alvos = eventos.map((e) => `${e.alvo} (${!e.acertou ? "errou" : `${e.critico ? "crítico, " : ""}−${e.aplicacao?.perdaPv ?? 0} PV`})`);
-  return `${eventos[0].atacante} usa ${eventos[0].acao} em ${eventos.length} alvos: ${alvos.join(", ")}.`;
-}
 
 function tamanhoDaFileira(n: number): number {
   // Em duas fileiras o cartão encolhe o bastante para a de trás aparecer nos vãos da da frente.
   return n > POR_FILEIRA ? n * 0.75 : n;
-}
-
-function resumirEvento(e: EventoAtaque): string {
-  const resultado = !e.acertou ? "errou" : `${e.critico ? "crítico, " : ""}${e.aplicacao?.perdaPv ?? 0} PV perdidos`;
-  const teste = e.teste ? ` (${e.teste.total} contra ${e.teste.tipo === "ataque" ? "CA" : "CD"} ${e.teste.defesa})` : "";
-  return `${e.atacante} usa ${e.acao} em ${e.alvo}${teste}: ${resultado}.`;
 }
 
 /** Retrato da ficha; sem ele, a arte da raça (ou do Apêndice G); sem ela, a inicial. */
