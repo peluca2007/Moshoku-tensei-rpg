@@ -39,6 +39,11 @@ export interface EventoAtaque {
     danoEfetivo: number;
   };
   arma?: { nome: string; baseDie: string; escalatedDie: string; steps: number };
+  /**
+   * O texto de tipo que chegou em `aplicarDano` ("ígneo", ou a fórmula inteira
+   * da carta, "2d6 frio + BC"). Só a arena do replay lê, para escolher o efeito.
+   */
+  tipoDeDano?: string;
   notas: string[];
 }
 

@@ -108,3 +108,18 @@ O cenário `PERFIL_FISICO=1` é experimental: golpes cortantes de 1 Ação com d
 Nenhuma mensagem foi enviada automaticamente ao Claude. A coordenação entregue aqui é o documento compartilhado no repositório.
 
 O servidor iniciado para esta validação foi deixado em execução na porta **3020**. Antes de iniciar outro nessa porta, confirme qual processo a ocupa; não assuma que ela está livre.
+
+## Claude — arena 2.5D do `/encontros` (2026-09-30)
+
+Frente escolhida: **visualização das batalhas**, a pedido do autor. Nenhuma regra, carta ou número do livro mudou; a arena só toca o que a simulação já fez.
+
+| Commit | Entrega |
+| --- | --- |
+| `84e9245` | `replayBatalha` grava um quadro por linha do log (PV, queda e posição de cada ator) em `LogCombate.replay`; nova `ArenaDoReplay` com standees das fotos da ficha, capa de fundo, investida, tremor, número de dano e tombo. Profundidade = linha de combate, sem grid. |
+| `a73805e` | Criatura pronta do Apêndice G entra no encontro com `portrait` (a dica da tela já prometia). |
+| `5fc083a` | `EventoAtaque.tipoDeDano`, gravado em `aplicarDano` (**uma linha em `combatSim.ts`, sem mudar cálculo**); a arena escolhe o efeito visual por ele. |
+| `617e81b` | Botão "Assistir uma batalha nova": uma batalha com semente aleatória, mesmo instantâneo do relatório, direto na tela (sem worker). |
+
+Toques no motor, para quem mexer em `encounterSim.ts`: `CombateLogger.aoRegistrar` é chamado depois de cada `log`; `gravarReplay` lê as listas vivas de heróis e inimigos. Se um caminho novo alterar PV sem passar por uma linha de log, a arena só mostra a mudança na linha seguinte.
+
+Testes: `src/lib/replayDoCombate.test.ts` (4 casos). Suíte: 850 aprovados; `tsc` e `eslint` limpos nos arquivos tocados. Verificação visual em 3010, celular e desktop. Limites conhecidos: ataque em área faz uma investida por alvo; efeito por elemento é heurística de texto (tipo declarado primeiro, nome da ação depois).

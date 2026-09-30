@@ -1065,6 +1065,8 @@ function SecaoCriaturas({
                   imunidades: p.imunidades,
                   movimentoEspecial: p.movimentoEspecial,
                   sentido: p.sentido,
+                  // O retrato vem junto, como a dica da seção promete.
+                  portrait: p.icon,
                 });
                 // As ações vêm do Apêndice G sem id — quem sorteia é a store.
                 for (const acao of p.acoes) adicionarAcao(id, acao);
@@ -2592,7 +2594,7 @@ function Relatorio({ relatorio, anterior, desatualizado }: { relatorio: Relatori
         </p>
       </details>
       {resultado.logsExtremos && resultado.logsExtremos.length > 0 && (
-        <EncounterCombatLogs logs={resultado.logsExtremos} />
+        <EncounterCombatLogs logs={resultado.logsExtremos} entrada={relatorio.entrada} />
       )}
     </section>
   );
