@@ -132,3 +132,12 @@ O autor trouxe 25 sons; eles moram em `public/sons/arena/` com nome curto (orige
 - `ConfiguracaoEncontro.vozes` (opcional): a voz do grito no crítico, escolhida no card de arma do grupo em `/encontros` (`VozDoPersonagem` em `EncounterBuilder.tsx`). A simulação não lê; fica fora da assinatura do relatório.
 - `EncounterRewards.tsx`: "Sortear outros itens" toca moedas quando o som está ligado.
 - `sonsDaArena.test.ts` trava as frases de buff do motor (`aponta … o primeiro acerto`, `inspira …:`, `antes da troca de golpes.`), como `passosDoReplay.test.ts` trava as de reação.
+
+## Claude — Tarefas 8 e 9 concluídas (2026-09-30)
+
+O Codex parou no meio da Tarefa 8 (commit local `96b2ecd` e um ajuste sem commit no `check-contraste.mjs`); o Claude subiu os dois e terminou as Tarefas 8 e 9. Resultado e inventário em `RELATORIO-CODEX-POLIMENTO.md`; o fechamento da ficha em `RELATORIO-CODEX-FICHA.md`.
+
+- `check:contraste` 0 nas 64 combinações (16 rotas × 4 temas), `check:a11y` 0, `check:mobile` 0 px, `revisar:livro` sem regressão (as 7 manchas vazias seguem como pendência do autor).
+- Tokens que mudaram e que outros arquivos leem: tema Livro (`globals.css`: `wine-600…900`, `gold-600…900`, `parchment-400/600`); papel do livro (`folhear.css`: cores de capítulo e de árvore no dia, tinta suave, e o livro sem `data-papel` passa a seguir o tema do site); `corDia` das árvores 56%.
+- `data-cores-proprias`: quem pinta a si mesmo dentro do livro (hoje, o Laboratório de Fórmulas) fica fora da regra que faz o texto herdar a tinta do papel.
+- `check-contraste.mjs` termina as animações antes de medir e aceita `ROTA=` e `LIMITE=`. No Git Bash, rode com `MSYS_NO_PATHCONV=1`, senão `ROTA=/ficha` vira um caminho do Windows.
