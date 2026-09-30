@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
-import { Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
+import { ChevronsRight, Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
 import type { CharacterData } from "@/lib/types";
 import type { AtorDoReplay, CriaturaEncontro, LogCombate, QuadroDoReplay } from "@/lib/encounterSim";
 import type { EventoAtaque } from "@/lib/combatTrace";
 import { getRaceById } from "@/data/races";
 import { CRIATURAS_PRONTAS } from "@/data/bestiary";
+import { montarPassos, partesDoNome } from "@/lib/passosDoReplay";
 import estilo from "./ArenaDoReplay.module.css";
 
 /**
@@ -19,6 +20,8 @@ import estilo from "./ArenaDoReplay.module.css";
  */
 
 const VELOCIDADES = [1, 2, 4] as const;
+/** Acima disto, o lado vai para duas fileiras: dez cartões numa só escondem o PV. */
+const POR_FILEIRA = 6;
 
 interface Posto {
   x: number;
@@ -35,27 +38,31 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
 }) {
   const replay = log.replay!;
   const { atores, quadros } = replay;
-  // `animar` só é verdadeiro quando o quadro chegou andando UM passo para
-  // frente: pular na linha do tempo ou voltar mostra a cena pronta.
+  const passos = useMemo(() => montarPassos(quadros, log.eventos), [quadros, log.eventos]);
+  // `animar` só é verdadeiro quando o passo chegou andando UM para frente:
+  // pular na linha do tempo ou voltar mostra a cena pronta.
   const [{ indice, animar: avancouUm }, setPasso] = useState({ indice: 0, animar: false });
   const [pediuTocar, setTocando] = useState(tocarAoAbrir);
   const [velocidade, setVelocidade] = useState<(typeof VELOCIDADES)[number]>(1);
-  const irPara = (i: number, animar = false) => setPasso({ indice: Math.max(0, Math.min(quadros.length - 1, i)), animar });
+  const irPara = (i: number, animar = false) => setPasso({ indice: Math.max(0, Math.min(passos.length - 1, i)), animar });
 
-  const quadro = quadros[indice];
-  const quadroAnterior = indice > 0 ? quadros[indice - 1] : undefined;
-  const evento = quadro.evento !== undefined ? log.eventos?.[quadro.evento] : undefined;
+  const passo = passos[indice];
+  const quadro = quadros[passo.ate];
+  const quadroAnterior = passo.de > 0 ? quadros[passo.de - 1] : undefined;
+  const eventos = passo.eventos;
+  const evento = eventos[0];
   const texto = (log.linhas[quadro.linha] ?? "").trim();
   const ehRodada = /^--- Rodada/.test(texto);
-  const ultimo = indice === quadros.length - 1;
+  const ultimo = indice === passos.length - 1;
   const tocando = pediuTocar && !ultimo;
+  const proximaRodada = passos.findIndex((p, i) => i > indice && quadros[p.ate].rodada > quadro.rodada);
 
   useEffect(() => {
     if (!tocando) return;
     const pausa = (evento ? 1150 : ehRodada ? 950 : 600) / velocidade;
-    const t = setTimeout(() => setPasso((p) => ({ indice: Math.min(p.indice + 1, quadros.length - 1), animar: true })), pausa);
+    const t = setTimeout(() => setPasso((p) => ({ indice: Math.min(p.indice + 1, passos.length - 1), animar: true })), pausa);
     return () => clearTimeout(t);
-  }, [tocando, indice, velocidade, evento, ehRodada, quadros.length]);
+  }, [tocando, indice, velocidade, evento, ehRodada, passos.length]);
 
   const imagens = useMemo(() => imagensDosAtores(atores, grupo, criaturas), [atores, grupo, criaturas]);
   const vaoInicial = useMemo(() => vaoDaLinha(quadros), [quadros]);
@@ -63,15 +70,49 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
   const fundo = grupo.find((c) => c.cover)?.cover;
 
   const indiceDoNome = (nome?: string) => (nome === undefined ? -1 : atores.findIndex((a) => a.nome === nome));
-  const atacante = avancouUm ? indiceDoNome(evento?.atacante) : -1;
-  const alvo = avancouUm ? indiceDoNome(evento?.alvo) : -1;
-  // O cartão encolhe com a fileira mais cheia, medido na largura do palco.
-  const fileira = Math.max(3, ...contagemPorLado(atores, quadro));
+  const quemAge = indiceDoNome(evento?.atacante);
+  const atacante = avancouUm ? quemAge : -1;
+  // O recibo de cada alvo do passo, por índice de ator.
+  const golpeEm = new Map<number, EventoAtaque>();
+  if (avancouUm) for (const e of eventos) golpeEm.set(indiceDoNome(e.alvo), e);
+  golpeEm.delete(-1);
+  // A investida vai até o meio dos alvos: num golpe em área, ninguém é favorito.
+  const destinos = [...golpeEm.keys()].map((i) => postos[i]).filter((p): p is Posto => !!p);
+  const centro = destinos.length ? {
+    x: media(destinos.map((p) => p.x))!,
+    profundidade: media(destinos.map((p) => p.profundidade))!,
+  } : undefined;
+  const fileira = Math.max(3, ...contagemPorLado(atores, quadro).map(tamanhoDaFileira));
   const distancia = distanciaEntreLados(atores, quadro);
   const elemento = evento ? elementoDoGolpe(evento) : undefined;
 
+  function teclado(e: React.KeyboardEvent<HTMLDivElement>) {
+    // Só o palco em foco responde; o botão e o controle deslizante têm teclas próprias.
+    if (e.target !== e.currentTarget) return;
+    const acoes: Record<string, () => void> = {
+      " ": () => { if (ultimo) irPara(0); setTocando(!tocando); },
+      ArrowRight: () => { setTocando(false); irPara(indice + 1, true); },
+      ArrowLeft: () => { setTocando(false); irPara(indice - 1); },
+      PageDown: () => { if (proximaRodada >= 0) { setTocando(false); irPara(proximaRodada); } },
+      Home: () => { setTocando(false); irPara(0); },
+      End: () => { setTocando(false); irPara(passos.length - 1); },
+    };
+    const acao = acoes[e.key];
+    if (!acao) return;
+    e.preventDefault();
+    acao();
+  }
+
   return <div className="space-y-2">
-    <div className={`${estilo.palco} aspect-[4/5] w-full sm:aspect-[16/10]`}>
+    <div
+      className={`${estilo.palco} aspect-[4/5] w-full sm:aspect-[16/10]`}
+      tabIndex={0}
+      role="group"
+      aria-roledescription="arena"
+      aria-label="Arena da batalha. Espaço toca ou pausa; setas passam um passo; Page Down pula para a próxima rodada."
+      aria-keyshortcuts="Space ArrowRight ArrowLeft PageDown Home End"
+      onKeyDown={teclado}
+    >
       {fundo && <div className={estilo.fundo} style={{ backgroundImage: `url(${fundo})` }} aria-hidden />}
       <div className={estilo.chao} aria-hidden><div className={estilo.linha} /></div>
       {distancia !== undefined && <span className={estilo.distancia} style={{ top: `${topo(0.5)}%` }}>{formatarMetros(distancia)}</span>}
@@ -81,16 +122,17 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
         if (!posto) return null;
         const pv = quadro.pv[i];
         const caido = !quadro.vivo[i];
-        const alvoDoEvento = i === alvo && evento;
-        const lunge = i === atacante && alvo >= 0 && postos[alvo] ? {
-          "--dx": `${(postos[alvo].x - posto.x) * 0.45}cqw`,
-          "--dy": `${(topo(postos[alvo].profundidade) - topo(posto.profundidade)) * 0.45}cqh`,
+        const golpe = golpeEm.get(i);
+        const lunge = i === atacante && centro ? {
+          "--dx": `${(centro.x - posto.x) * 0.45}cqw`,
+          "--dy": `${(topo(centro.profundidade) - topo(posto.profundidade)) * 0.45}cqh`,
         } : {};
         const pct = Math.max(0, Math.min(1, pv / ator.pvMax));
         const escala = 1.05 - posto.profundidade * 0.45;
+        const { base, numero } = partesDoNome(ator.nome);
         return <div
           key={i}
-          className={`${estilo.standee} ${estilo[ator.lado]} ${caido ? estilo.caido : ""} ${i === indiceDoNome(evento?.atacante) ? estilo.agindo : ""}`}
+          className={`${estilo.standee} ${estilo[ator.lado]} ${caido ? estilo.caido : ""} ${i === quemAge ? estilo.agindo : ""}`}
           style={{
             left: `${posto.x}%`, top: `${topo(posto.profundidade)}%`,
             "--elemento": elemento ? ELEMENTOS[elemento].cor : undefined,
@@ -100,8 +142,8 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
           } as unknown as CSSProperties}
         >
           <div className={estilo.corpo}>
-            <div key={i === atacante || alvoDoEvento ? `a${indice}` : "parado"} className={
-              i === atacante ? estilo.investida : alvoDoEvento ? (evento.acertou ? estilo.apanha : estilo.esquiva) : undefined
+            <div key={i === atacante || golpe ? `a${indice}` : "parado"} className={
+              i === atacante ? estilo.investida : golpe ? (golpe.acertou ? estilo.apanha : estilo.esquiva) : undefined
             }>
               <div className={estilo.cartao}>
                 {imagens[i]
@@ -112,13 +154,14 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
               </div>
               <div className={estilo.base} />
             </div>
-            {alvoDoEvento && evento.acertou && elemento && <Efeito key={`e${indice}`} elemento={elemento} />}
+            {golpe?.acertou && <Efeito key={`e${indice}`} elemento={elementoDoGolpe(golpe)} />}
           </div>
-          <p className={estilo.nome}>{ator.nome}</p>
+          {/* O número da cópia nunca some: "Sapo-Lodo Gi… 2" continua distinguível. */}
+          <p className={estilo.nome} title={ator.nome}><span>{base}</span>{numero && <b>{numero}</b>}</p>
           <div className={estilo.barra} title={`${pv}/${ator.pvMax} PV`}>
             <span style={{ width: `${pct * 100}%` }} data-nivel={pct > 0.5 ? "alto" : pct > 0.25 ? "meio" : "baixo"} />
           </div>
-          {avancouUm && <Numero key={`n${indice}`} ator={i} quadro={quadro} anterior={quadroAnterior} evento={alvoDoEvento ? evento : undefined} />}
+          {avancouUm && <Numero key={`n${indice}`} ator={i} quadro={quadro} anterior={quadroAnterior} evento={golpe} />}
         </div>;
       })}
 
@@ -128,8 +171,8 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
 
     <p className="min-h-[2.75rem] rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 text-xs text-parchment-800 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-200" aria-live={tocando ? "off" : "polite"}>
       <span className="mr-2 font-bold text-wine-700 dark:text-wine-300">R{quadro.rodada || 0}</span>
-      {elemento && evento?.acertou && <span className="mr-1.5 inline-block rounded-full px-1.5 text-2xs font-bold text-white" style={{ background: ELEMENTOS[elemento].cor }}>{ELEMENTOS[elemento].nome}</span>}
-      {evento ? resumirEvento(evento) : texto.split("\n")[0] || "Preparação da cena."}
+      {elemento && eventos.some((e) => e.acertou) && <span className="mr-1.5 inline-block rounded-full px-1.5 text-2xs font-bold text-white" style={{ background: ELEMENTOS[elemento].cor }}>{ELEMENTOS[elemento].nome}</span>}
+      {eventos.length > 1 ? resumirEmArea(eventos) : evento ? resumirEvento(evento) : texto.split("\n")[0] || "Preparação da cena."}
     </p>
 
     <div className="flex flex-wrap items-center gap-2">
@@ -143,6 +186,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
         {tocando ? <><Pause className="h-4 w-4" /> Pausar</> : <><Play className="h-4 w-4" /> {ultimo ? "Ver de novo" : "Assistir"}</>}
       </button>
       <BotaoArena rotulo="Avançar um passo" onClick={() => { setTocando(false); irPara(indice + 1, true); }}><SkipForward className="h-4 w-4" /></BotaoArena>
+      <BotaoArena rotulo="Próxima rodada" desativado={proximaRodada < 0} onClick={() => { setTocando(false); irPara(proximaRodada); }}><ChevronsRight className="h-4 w-4" /></BotaoArena>
       <button
         type="button"
         onClick={() => setVelocidade(VELOCIDADES[(VELOCIDADES.indexOf(velocidade) + 1) % VELOCIDADES.length])}
@@ -150,18 +194,24 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
         aria-label={`Velocidade ${velocidade}x; tocar para mudar`}
       >{velocidade}×</button>
       <input
-        type="range" min={0} max={quadros.length - 1} value={indice}
+        type="range" min={0} max={passos.length - 1} value={indice}
         onChange={(e) => { setTocando(false); irPara(Number(e.target.value)); }}
         aria-label="Linha do tempo da batalha"
+        aria-valuetext={`Rodada ${quadro.rodada || 0}, passo ${indice + 1} de ${passos.length}`}
         className="min-w-0 flex-1 basis-40 accent-wine-700"
       />
     </div>
+    <p className="hidden text-2xs text-parchment-600 sm:block dark:text-parchment-400">
+      Clique na arena para usar o teclado: <kbd>Espaço</kbd> toca ou pausa, <kbd>←</kbd> <kbd>→</kbd> passam um passo, <kbd>Page Down</kbd> pula para a próxima rodada.
+    </p>
   </div>;
 }
 
-function BotaoArena({ rotulo, onClick, children }: { rotulo: string; onClick: () => void; children: React.ReactNode }) {
-  return <button type="button" onClick={onClick} aria-label={rotulo} title={rotulo}
-    className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-parchment-300 dark:border-parchment-700">
+function BotaoArena({ rotulo, onClick, desativado = false, children }: {
+  rotulo: string; onClick: () => void; desativado?: boolean; children: React.ReactNode;
+}) {
+  return <button type="button" onClick={onClick} aria-label={rotulo} title={rotulo} disabled={desativado}
+    className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-parchment-300 disabled:opacity-40 dark:border-parchment-700">
     {children}
   </button>;
 }
@@ -236,6 +286,16 @@ function Numero({ ator, quadro, anterior, evento }: {
   </span>;
 }
 
+function resumirEmArea(eventos: EventoAtaque[]): string {
+  const alvos = eventos.map((e) => `${e.alvo} (${!e.acertou ? "errou" : `${e.critico ? "crítico, " : ""}−${e.aplicacao?.perdaPv ?? 0} PV`})`);
+  return `${eventos[0].atacante} usa ${eventos[0].acao} em ${eventos.length} alvos: ${alvos.join(", ")}.`;
+}
+
+function tamanhoDaFileira(n: number): number {
+  // Em duas fileiras o cartão encolhe o bastante para a de trás aparecer nos vãos da da frente.
+  return n > POR_FILEIRA ? n * 0.75 : n;
+}
+
 function resumirEvento(e: EventoAtaque): string {
   const resultado = !e.acertou ? "errou" : `${e.critico ? "crítico, " : ""}${e.aplicacao?.perdaPv ?? 0} PV perdidos`;
   const teste = e.teste ? ` (${e.teste.total} contra ${e.teste.tipo === "ataque" ? "CA" : "CD"} ${e.teste.defesa})` : "";
@@ -303,13 +363,20 @@ function postosDaCena(atores: AtorDoReplay[], quadro: QuadroDoReplay, vao: numbe
   const postos: (Posto | undefined)[] = [];
   for (const lado of ["grupo", "criaturas"] as const) {
     const sinal = lado === "grupo" ? -1 : 1;
+    const total = porLado[lado].length;
+    const duasFileiras = total > POR_FILEIRA;
     porLado[lado].forEach((i, ordem) => {
       const pos = quadro.posicao?.[i];
       const afastamento = pos !== null && pos !== undefined && meio !== undefined && vao > 0
         ? 0.13 + 0.3 * Math.min(1, Math.abs(pos - meio) / (vao / 2))
         : 0.3;
-      const profundidade = 0.5 + sinal * afastamento;
-      const base = ((ordem + 1) / (porLado[lado].length + 1)) * 100;
+      // Com muita gente, metade recua uma fileira (para longe do centro) e as
+      // duas se intercalam: ninguém cobre a barra de PV de ninguém.
+      const fileira = duasFileiras ? ordem % 2 : 0;
+      const naFileira = duasFileiras ? Math.floor(ordem / 2) : ordem;
+      const daFileira = duasFileiras ? Math.ceil((total - fileira) / 2) : total;
+      const profundidade = Math.max(-0.02, Math.min(1.02, 0.5 + sinal * (afastamento + fileira * 0.14)));
+      const base = ((naFileira + 1 + (fileira ? 0.5 : 0) - (duasFileiras ? 0.25 : 0)) / (daFileira + 1)) * 100;
       // O fundo é mais estreito: a perspectiva aperta a fileira de trás.
       const x = 50 + (base - 50) * (0.8 + 0.2 * (1 - profundidade));
       postos[i] = { x, profundidade };

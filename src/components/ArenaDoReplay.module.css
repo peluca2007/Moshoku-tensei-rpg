@@ -145,15 +145,34 @@
 }
 
 .nome {
+  display: flex;
+  justify-content: center;
+  gap: 0.2em;
   margin-top: 1px;
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
   text-align: center;
   color: #fdf6e3;
   font-size: 0.65rem;
   font-weight: 700;
   text-shadow: 0 1px 2px #000;
+}
+
+/* A base do nome corta; o número da cópia fica sempre inteiro. */
+.nome > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nome > b {
+  flex-shrink: 0;
+  color: #f5d77a;
+}
+
+/* Foco do teclado visível no palco, sem mexer no layout. */
+.palco:focus-visible {
+  outline: 3px solid #f5d77a;
+  outline-offset: 2px;
 }
 
 .barra {
