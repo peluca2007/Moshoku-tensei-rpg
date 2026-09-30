@@ -1849,7 +1849,9 @@ export function escolherAcao(
 /** Resolve UMA ação contra UM alvo e devolve o dano causado. */
 export function resolver(
   e: EstadoPersonagem, a: Acao, alvo: Alvo, rng: Rng,
-  registrar?: (evento: EventoAtaque) => void
+  registrar?: (evento: EventoAtaque) => void,
+  /** Recebe as partes do dano com o tipo de cada uma (ver `partesDoDano`). */
+  saida?: { partes?: ParteDeDano[] }
 ): number {
   const estavaMolhado = alvo.molhado;
   const basico = ehGolpeBasico(a);
@@ -2022,6 +2024,10 @@ export function resolver(
     } else dano *= 2;
     evento?.notas.push("Frio contra Molhado: dobra somente a parcela fria (ações legadas sem tipo usam dano integral).");
   }
+  // Quanto do dano final é frio: a parcela rolada, dobrada pelo Molhado e
+  // cortada pela metade se o alvo resistiu — o resto é do tipo da carta.
+  let frioFinal = frioRolado * (a.frio && alvo.molhado && !a.frioJaDobrado && indicesFrio.length ? 2 : 1);
+  if (!falhouResistencia) frioFinal = Math.floor(frioFinal / 2);
   // O próprio atacante Quebrantado bate mais fraco — 1 por acúmulo, e nunca
   // abaixo de zero: a condição enfraquece o golpe, não cura o alvo.
   dano = Math.max(0, dano - e.quebrantado);
@@ -2037,6 +2043,7 @@ export function resolver(
     alvo.quebrantado = Math.min(teto, alvo.quebrantado + ganho);
   }
   // Fogo: Em Chamas cobra 1d6 no início de cada turno do alvo
+  if (saida) saida.partes = partesDoDano(a.dano, dano, frioFinal);
   if (a.fogo && !alvo.molhado) alvo.emChamas = 6;
   if (a.fogo && alvo.molhado) alvo.molhado = false; // fogo evapora a água
   if (a.aplicaCongeladoSeMolhado && estavaMolhado && falhouResistencia) {
@@ -2093,6 +2100,63 @@ export function resolver(
 }
 
 /**
+ * Uma parte do dano e o tipo dela. Dois tipos na MESMA parte ("ígneo e
+ * contundente") querem dizer que aquele dano é dos dois ao mesmo tempo.
+ */
+export interface ParteDeDano {
+  tipos: string[];
+  valor: number;
+}
+
+/**
+ * Separa o dano final pelos tipos que a carta escreve — Cap. 4, §6.
+ *
+ * - "3d8 + BC (cortante) + 1d6 de frio": o frio é a parcela fria (`frio`,
+ *   já dobrada pelo Molhado e cortada pela resistência); o resto é cortante.
+ * - "16d12 dividido igualmente entre ígneo, sônico e contundente": terços.
+ * - "4d8 + BC (ígneo e contundente)": uma parte só, dos dois tipos.
+ *
+ * Devolve `undefined` quando a carta tem um tipo só: aí vale o caminho antigo.
+ */
+export function partesDoDano(formula: string, dano: number, frio: number): ParteDeDano[] | undefined {
+  if (dano <= 0) return undefined;
+  const f = formula.toLowerCase();
+  const dividido = f.match(/dividido igualmente entre ([^.;()]+)/);
+  if (dividido) {
+    const tipos = dividido[1].split(/,\s*|\s+e\s+/).map((t) => t.trim())
+      .filter((t) => TIPOS_DE_DANO_CONHECIDOS.some((conhecido) => t.includes(conhecido)));
+    if (tipos.length > 1) {
+      const cada = Math.floor(dano / tipos.length);
+      const resto = dano - cada * tipos.length;
+      return tipos.map((tipo, i) => ({ tipos: [tipo], valor: cada + (i < resto ? 1 : 0) }));
+    }
+  }
+  const parenteses = [...f.matchAll(/\(([^)]*)\)/g)].map((m) => m[1])
+    .find((dentro) => TIPOS_DE_DANO_CONHECIDOS.some((t) => t !== "frio" && dentro.includes(t)));
+  const tiposDoGolpe = parenteses ? TIPOS_DE_DANO_CONHECIDOS.filter((t) => parenteses.includes(t)) : [];
+  if (frio > 0 && tiposDoGolpe.length && !tiposDoGolpe.includes("frio")) {
+    const parteFria = Math.min(frio, dano);
+    return [{ tipos: [...tiposDoGolpe], valor: dano - parteFria }, { tipos: ["frio"], valor: parteFria }]
+      .filter((p) => p.valor > 0);
+  }
+  if (tiposDoGolpe.length > 1) return [{ tipos: [...tiposDoGolpe], valor: dano }];
+  return undefined;
+}
+
+/**
+ * A defesa do alvo contra UMA parte. Dano de dois tipos ao mesmo tempo só é
+ * resistido (ou anulado) se o alvo tiver a defesa contra os DOIS — Cap. 4, §6.
+ */
+function defesaDaParte(alvo: Alvo, tipos: string[]): "imune" | "resiste" | "nada" {
+  if (!tipos.length) return "nada";
+  const imune = (t: string) => alvo.imunidades.some((i) => t.includes(i));
+  const resiste = (t: string) => alvo.resistencias.some((r) => t.includes(r));
+  if (tipos.every(imune)) return "imune";
+  if (tipos.every((t) => imune(t) || resiste(t))) return "resiste";
+  return "nada";
+}
+
+/**
  * A ÚNICA porta por onde dano entra num alvo — 0.1.37.
  *
  * Antes disto, `alvo.pv -= dano; if (alvo.pv <= 0) alvo.vivo = false;` estava
@@ -2124,7 +2188,13 @@ export function aplicarDano(
    * do orçamento por turno, que não tem tipo declarado.
    */
   tipoDeDano?: string,
-  evento?: EventoAtaque
+  evento?: EventoAtaque,
+  /**
+   * O dano separado por tipo (Cap. 4, §6: "metade do dano DAQUELE tipo").
+   * Sem as partes, o tipo inteiro vale para o dano inteiro — o caso das
+   * criaturas e das ações de um tipo só.
+   */
+  partes?: ParteDeDano[]
 ): number {
   if (evento) evento.aplicacao = { aposResistencia: Math.max(0, dano), absorvidoTemporario: 0, perdaPv: 0, danoEfetivo: 0 };
   if (evento && tipoDeDano) evento.tipoDeDano = tipoDeDano;
@@ -2139,7 +2209,20 @@ export function aplicarDano(
    * reduzido. Imunidade zera antes de a casca ser gastada, que é o certo: não
    * se gasta escudo contra o que não machuca.
    */
-  if (tipoDeDano) {
+  if (partes?.length && dano > 0) {
+    let total = 0;
+    const notas: string[] = [];
+    for (const parte of partes) {
+      const defesa = defesaDaParte(alvo, parte.tipos);
+      const valor = defesa === "imune" ? 0 : defesa === "resiste" ? Math.floor(parte.valor / 2) : parte.valor;
+      if (defesa !== "nada") notas.push(`${parte.tipos.join(" e ")} ${defesa === "imune" ? "com Imunidade" : "com Resistência"}: ${parte.valor} → ${valor}`);
+      total += valor;
+    }
+    if (notas.length) evento?.notas.push(`Dano por tipo — ${notas.join("; ")}`);
+    dano = total;
+    if (evento?.aplicacao) evento.aplicacao.aposResistencia = dano;
+    if (dano <= 0) return 0;
+  } else if (tipoDeDano) {
     const t = tipoDeDano.toLowerCase();
     if (alvo.imunidades.some((i) => t.includes(i))) {
       if (evento?.aplicacao) evento.aplicacao.aposResistencia = 0;
@@ -2248,11 +2331,12 @@ export function executarAtaquePersonagem(
   aliados: EstadoPersonagem[] = []
 ): number {
   let evento: EventoAtaque | undefined;
-  const dano = resolver(e, acao, alvo, rng, (registro) => { evento = registro; });
+  const saida: { partes?: ParteDeDano[] } = {};
+  const dano = resolver(e, acao, alvo, rng, (registro) => { evento = registro; }, saida);
   if (acao.ataque && evento?.acertou === false) reagirAFalhaAliada(e, aliados, rng, evento);
   e.escondido = false;
   const pvAntes = alvo.pv;
-  aplicarDano(alvo, dano, e.ficha.bonusDeRank, rng, evento?.critico ?? false, acao.dano, evento);
+  aplicarDano(alvo, dano, e.ficha.bonusDeRank, rng, evento?.critico ?? false, acao.dano, evento, saida.partes);
   const causado = Math.max(0, pvAntes - alvo.pv);
   if (evento?.aplicacao) evento.aplicacao.danoEfetivo = causado;
   if (evento && logger) {

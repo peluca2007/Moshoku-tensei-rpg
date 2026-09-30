@@ -16,6 +16,18 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.124",
+    date: "2026-09-30",
+    title: "Dano de dois tipos: cada parte com a sua defesa",
+    sections: [{
+      heading: "Regra escrita (Cap. 4, §6)",
+      items: [
+        "Golpe que soma partes de tipos diferentes (a Lâmina de Gelo: cortante + frio) ou divide o dano entre tipos usa, em cada parte, a Resistência, a Imunidade ou o Vulnerável daquele tipo. Um elemental Imune a frio sofre o corte e ignora só o frio.",
+        "Dano que é de dois tipos ao mesmo tempo (o Punho de Fogo: ígneo e contundente) só é resistido ou anulado por quem tem a defesa contra os dois; Vulnerável vale contra qualquer um. O livro não dizia o que fazer nesse caso, e o simulador cortava pela metade o golpe inteiro de quem resistia a um tipo só.",
+      ],
+    }],
+  },
+  {
     version: "0.1.123",
     date: "2026-09-30",
     title: "O simulador respeita as exceções de gelo e veneno",
