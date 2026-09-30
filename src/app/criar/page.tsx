@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { prefetchDe } from "@/lib/prefetch";
 import { ArrowRight, Dices, ListChecks, ScrollText, Sparkles } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import Surface from "@/components/ui/Surface";
+
+export const metadata: Metadata = {
+  title: "Criar personagem",
+  description: "Três jeitos de nascer: manual, pela Roleta do Destino ou pela Entrevista.",
+};
 
 const OPTIONS = [
   {

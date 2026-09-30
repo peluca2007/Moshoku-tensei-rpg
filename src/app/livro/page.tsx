@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import FolhearPage from "./folhear/page";
 
 export const metadata: Metadata = {
-  title: "Livro de Regras — Mushoku Tensei RPG",
+  title: "Livro de Regras",
 };
 
 /**

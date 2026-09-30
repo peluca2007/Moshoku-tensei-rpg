@@ -12,7 +12,7 @@ import { PATCH_NOTES } from "@/data/patchNotes";
 import "./folhear.css";
 
 export const metadata: Metadata = {
-  title: "Folhear o Livro — Mushoku Tensei RPG",
+  title: "Folhear o Livro",
 };
 
 /**
