@@ -256,6 +256,20 @@ describe("condições de uso escritas na carta", () => {
     expect(resolver(e, quebra, alvo, () => 0)).toBeGreaterThan(0);
     expect(alvo.congelado).toBe(false);
   });
+  it("a leitura da carta conserva a dobra já incluída em Nova Congelante", () => {
+    const c = comArvoreInteira("vento");
+    c.unlockedRanks.push({ treeId: "agua", rank: "Principiante" });
+    const novas = acoesDe(c).filter((a) => a.nome.startsWith("Nova Congelante"));
+    expect(novas.length).toBeGreaterThan(0);
+    expect(novas.every((a) => a.frio && a.frioJaDobrado)).toBe(true);
+  });
+  it("a carta real de Purgar inverte sem conceder teste ao alvo", () => {
+    const e = novoEstado(montarFicha(comArvoreInteira("desintoxicacao")));
+    const a = e.ficha.acoes.find((a) => a.nome === "Purgar")!;
+    const alvo = novoAlvo({ nome: "Alvo", pv: 1000, ca: 999, bonusResistencia: 999, doses: 2 });
+    expect(resolver(e, a, alvo, () => 0)).toBe(4);
+    expect(alvo.doses).toBe(0);
+  });
 
   it("a IA monta Molhado → Congelado → Quebra em vez de julgar só a ação isolada", () => {
     const e = novoEstado(montarFicha(comArvoreInteira("agua")));

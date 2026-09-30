@@ -16,6 +16,18 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.123",
+    date: "2026-09-30",
+    title: "O simulador respeita as exceções de gelo e veneno",
+    sections: [{
+      heading: "Correções do motor, sem mudar as cartas",
+      items: [
+        "Inverter cobra somente os dados por Dose, sem teste de resistência nem BC extra. Quebra de Gelo contra Congelado acerta sem d20 e sem crítico. Molhado dobra apenas a parcela fria dos ataques mistos; Nova Congelante não recebe uma segunda dobra.",
+        "Reações encerram um cântico em andamento, e Fluxo não ataca durante a recitação. A estimativa da IA acompanha as correções de dano e a Desvantagem ao resistir ao frio estando Molhado.",
+      ],
+    }],
+  },
+  {
     version: "0.1.122",
     date: "2026-09-29",
     title: "Terra amortece o golpe; Bardo transforma a falha em fôlego",
