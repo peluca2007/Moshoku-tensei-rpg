@@ -3683,17 +3683,6 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   text-underline-offset: 0.2em;
 }
 
-/* O termo pintado no próprio texto do livro (Custom Highlight API). */
-::highlight(busca-livro) {
-  background-color: rgb(255 212 59 / 0.35);
-  color: inherit;
-}
-
-::highlight(busca-livro-atual) {
-  background-color: #ffd43b;
-  color: #111114;
-}
-
 /* ── A barra no telefone ──────────────────────────────────────────────────
  * Sete botões e o título não cabem em 390px: o título ficava por cima dos
  * ícones. No telefone a barra mostra só o essencial (índice, busca, a página
