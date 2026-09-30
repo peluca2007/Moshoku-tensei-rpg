@@ -26,17 +26,19 @@ interface Posto {
   profundidade: number;
 }
 
-export default function ArenaDoReplay({ log, grupo, criaturas }: {
+export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = false }: {
   log: LogCombate;
   grupo: CharacterData[];
   criaturas: CriaturaEncontro[];
+  /** A batalha nova já começa tocando: quem pediu quer assistir. */
+  tocarAoAbrir?: boolean;
 }) {
   const replay = log.replay!;
   const { atores, quadros } = replay;
   // `animar` só é verdadeiro quando o quadro chegou andando UM passo para
   // frente: pular na linha do tempo ou voltar mostra a cena pronta.
   const [{ indice, animar: avancouUm }, setPasso] = useState({ indice: 0, animar: false });
-  const [pediuTocar, setTocando] = useState(false);
+  const [pediuTocar, setTocando] = useState(tocarAoAbrir);
   const [velocidade, setVelocidade] = useState<(typeof VELOCIDADES)[number]>(1);
   const irPara = (i: number, animar = false) => setPasso({ indice: Math.max(0, Math.min(quadros.length - 1, i)), animar });
 
@@ -66,6 +68,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas }: {
   // O cartão encolhe com a fileira mais cheia, medido na largura do palco.
   const fileira = Math.max(3, ...contagemPorLado(atores, quadro));
   const distancia = distanciaEntreLados(atores, quadro);
+  const elemento = evento ? elementoDoGolpe(evento) : undefined;
 
   return <div className="space-y-2">
     <div className={`${estilo.palco} aspect-[4/5] w-full sm:aspect-[16/10]`}>
@@ -90,6 +93,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas }: {
           className={`${estilo.standee} ${estilo[ator.lado]} ${caido ? estilo.caido : ""} ${i === indiceDoNome(evento?.atacante) ? estilo.agindo : ""}`}
           style={{
             left: `${posto.x}%`, top: `${topo(posto.profundidade)}%`,
+            "--elemento": elemento ? ELEMENTOS[elemento].cor : undefined,
             zIndex: Math.round((1 - posto.profundidade) * 40) + 2,
             "--tamanho": `min(${ator.invocado ? 80 : 110}px, ${(ator.invocado ? 52 : 70) / fileira}cqw)`, "--escala": escala,
             ...lunge,
@@ -108,6 +112,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas }: {
               </div>
               <div className={estilo.base} />
             </div>
+            {alvoDoEvento && evento.acertou && elemento && <Efeito key={`e${indice}`} elemento={elemento} />}
           </div>
           <p className={estilo.nome}>{ator.nome}</p>
           <div className={estilo.barra} title={`${pv}/${ator.pvMax} PV`}>
@@ -123,6 +128,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas }: {
 
     <p className="min-h-[2.75rem] rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 text-xs text-parchment-800 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-200" aria-live={tocando ? "off" : "polite"}>
       <span className="mr-2 font-bold text-wine-700 dark:text-wine-300">R{quadro.rodada || 0}</span>
+      {elemento && evento?.acertou && <span className="mr-1.5 inline-block rounded-full px-1.5 text-2xs font-bold text-white" style={{ background: ELEMENTOS[elemento].cor }}>{ELEMENTOS[elemento].nome}</span>}
       {evento ? resumirEvento(evento) : texto.split("\n")[0] || "Preparação da cena."}
     </p>
 
@@ -158,6 +164,61 @@ function BotaoArena({ rotulo, onClick, children }: { rotulo: string; onClick: ()
     className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-parchment-300 dark:border-parchment-700">
     {children}
   </button>;
+}
+
+/**
+ * O efeito de impacto por tipo de dano. Só visual: lê o texto de tipo que o
+ * recibo carrega (e, na falta, o nome da ação) e nunca decide regra nenhuma.
+ */
+const ELEMENTOS = {
+  fogo: { nome: "Fogo", cor: "#e8620f", particulas: 9 },
+  gelo: { nome: "Gelo", cor: "#3a9fd6", particulas: 8 },
+  agua: { nome: "Água", cor: "#2f7fd0", particulas: 8 },
+  raio: { nome: "Raio", cor: "#c79a00", particulas: 6 },
+  veneno: { nome: "Veneno", cor: "#4f8f25", particulas: 7 },
+  som: { nome: "Som", cor: "#8f5fd6", particulas: 3 },
+  luz: { nome: "Luz", cor: "#b8860b", particulas: 8 },
+  arcano: { nome: "Arcano", cor: "#8446bf", particulas: 7 },
+  terra: { nome: "Terra", cor: "#8a5a2b", particulas: 7 },
+  corte: { nome: "Corte", cor: "#5f6570", particulas: 1 },
+  impacto: { nome: "Impacto", cor: "#8f5a24", particulas: 6 },
+} as const;
+type Elemento = keyof typeof ELEMENTOS;
+
+const PISTAS: [Elemento, RegExp][] = [
+  ["fogo", /ígne|igne|fogo|chama|brasa|incend|lava|calor|queima/],
+  ["gelo", /frio|gelo|congel|neve|glacial/],
+  ["raio", /elétr|eletr|raio|trov|relâmp|relamp/],
+  ["veneno", /veneno|ácid|acid|tóxic|toxic|dose|peçonh|inverter/],
+  ["som", /sônic|sonic|canç|canc|grito|refrão|refrao|melodia|insulto/],
+  ["luz", /radiant|sagrad|divin|luz/],
+  ["arcano", /psíq|psiq|arcan|mágic|magic|teóric|teoric/],
+  ["agua", /água|agua|onda|maré|mare|jato|torrente|fluxo/],
+  ["terra", /terra|pedra|barro|rocha|lama|lodo/],
+  ["impacto", /contundente|martelo|soco|punho|clava|pancada|mordida|investida/],
+];
+
+function elementoDoGolpe(e: EventoAtaque): Elemento {
+  const tipo = (e.tipoDeDano ?? "").toLowerCase();
+  const nome = e.acao.toLowerCase();
+  // O tipo declarado manda; o nome da ação só desempata quando não há tipo.
+  for (const texto of [tipo, nome]) {
+    const achado = PISTAS.find(([, re]) => re.test(texto));
+    if (achado) return achado[0];
+  }
+  return "corte";
+}
+
+function Efeito({ elemento }: { elemento: Elemento }) {
+  const { particulas } = ELEMENTOS[elemento];
+  return <div className={estilo.efeito} data-elemento={elemento} aria-hidden>
+    <span className={estilo.tinta} />
+    {Array.from({ length: particulas }, (_, i) => <i key={i} style={{
+      "--a": `${(i * 360) / particulas + ((i * 37) % 23) - 11}deg`,
+      "--i": i,
+    } as CSSProperties} />)}
+    {elemento === "raio" && <svg viewBox="0 0 20 60" className={estilo.relampago}><path d="M12 0 4 26h7L6 60l12-36h-7z" /></svg>}
+  </div>;
 }
 
 /** O número que sobe da cabeça: dano, cura, "Errou" ou crítico. */

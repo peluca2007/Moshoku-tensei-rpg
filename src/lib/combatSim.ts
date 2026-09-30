@@ -2112,6 +2112,7 @@ export function aplicarDano(
   evento?: EventoAtaque
 ): number {
   if (evento) evento.aplicacao = { aposResistencia: Math.max(0, dano), absorvidoTemporario: 0, perdaPv: 0, danoEfetivo: 0 };
+  if (evento && tipoDeDano) evento.tipoDeDano = tipoDeDano;
   if (dano <= 0) return 0;
   /*
    * RESISTÊNCIA E IMUNIDADE — Cap. 4, §6, antes de tudo o mais.

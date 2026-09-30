@@ -181,11 +181,12 @@
   background: #c94040;
 }
 
+/* Quem age brilha na cor do golpe; sem tipo conhecido, dourado. */
 .agindo .cartao {
-  border-color: #f5d77a;
+  border-color: var(--elemento, #f5d77a);
   box-shadow:
-    0 0 0 2px #f5d77a,
-    0 0 18px rgb(245 215 122 / 0.7);
+    0 0 0 2px var(--elemento, #f5d77a),
+    0 0 18px var(--elemento, rgb(245 215 122 / 0.7));
 }
 
 .caido .corpo {
@@ -361,6 +362,266 @@
   }
 }
 
+/* ─── Efeitos por tipo de dano ───────────────────────────────────────── */
+
+.efeito {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  --cor: var(--elemento, #fff);
+}
+
+/* O lampejo sobre o retrato, na cor do elemento. */
+.tinta {
+  position: absolute;
+  inset: 0 0 10px;
+  border-radius: 0.5rem;
+  background: radial-gradient(circle at 50% 45%, var(--cor), transparent 75%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: lampejo 520ms ease-out 240ms;
+}
+
+@keyframes lampejo {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Partícula genérica: sai do centro do retrato no ângulo --a. */
+.efeito i {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--cor);
+  box-shadow: 0 0 6px var(--cor);
+  opacity: 0;
+  animation: estoura 650ms ease-out calc(240ms + var(--i) * 18ms) both;
+}
+
+@keyframes estoura {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(var(--tamanho) * -0.75)) scale(0.3);
+  }
+}
+
+/* Fogo: línguas que sobem balançando, do amarelo ao vermelho. */
+.efeito[data-elemento="fogo"] i {
+  top: 70%;
+  width: 11px;
+  height: 15px;
+  border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+  background: radial-gradient(circle at 50% 70%, #fff3b0, #ffb020 45%, #ff4d00);
+  box-shadow: 0 0 10px #ff7a1a;
+  animation-name: chama;
+  animation-duration: 800ms;
+}
+
+@keyframes chama {
+  0% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 4) * 7px), 0) scale(0.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 4) * 4px), calc(var(--tamanho) * -0.9)) scale(0.2);
+  }
+}
+
+/* Gelo: estilhaços em losango. */
+.efeito[data-elemento="gelo"] i {
+  width: 6px;
+  height: 14px;
+  border-radius: 1px;
+  background: linear-gradient(#ffffff, #9fdcff);
+  box-shadow: 0 0 6px #bfe9ff;
+}
+
+/* Água: gotas que respingam e caem. */
+.efeito[data-elemento="agua"] i {
+  width: 8px;
+  height: 11px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: #6fb8ff;
+  animation-name: respingo;
+}
+
+@keyframes respingo {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(0);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(var(--a)) translateY(calc(var(--tamanho) * -0.55));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + var(--tamanho) * 0.3)) rotate(var(--a)) translateY(calc(var(--tamanho) * -0.55));
+  }
+}
+
+/* Raio: o relâmpago cai sobre o alvo e solta faíscas. */
+.relampago {
+  position: absolute;
+  left: 50%;
+  bottom: 30%;
+  width: 45%;
+  height: 130%;
+  translate: -50% 0;
+  fill: #fff6a8;
+  filter: drop-shadow(0 0 6px #f2c200);
+  opacity: 0;
+  animation: relampago 420ms steps(1, end) 220ms;
+}
+
+@keyframes relampago {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  25%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.efeito[data-elemento="raio"] i {
+  width: 4px;
+  height: 10px;
+  border-radius: 1px;
+  background: #fff6a8;
+}
+
+/* Veneno: bolhas verdes que sobem. */
+.efeito[data-elemento="veneno"] i {
+  top: 65%;
+  background: transparent;
+  border: 2px solid #9be35f;
+  box-shadow: 0 0 5px #6fb33a;
+  animation-name: bolha;
+  animation-duration: 900ms;
+}
+
+@keyframes bolha {
+  0% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 3) * 8px), 0) scale(0.4);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + (var(--i) - 3) * 10px), calc(var(--tamanho) * -0.8)) scale(1.1);
+  }
+}
+
+/* Som: anéis concêntricos. */
+.efeito[data-elemento="som"] i,
+.efeito[data-elemento="impacto"] i:first-child {
+  width: 20%;
+  height: auto;
+  aspect-ratio: 1;
+  background: transparent;
+  border: 3px solid var(--cor);
+  box-shadow: none;
+  animation-name: anel;
+  animation-delay: calc(240ms + var(--i) * 120ms);
+}
+
+.efeito[data-elemento="som"] i {
+  border-color: #d7b8ff;
+}
+
+.efeito[data-elemento="impacto"] i:first-child {
+  border-color: #fdf6e3;
+}
+
+@keyframes anel {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(4);
+  }
+}
+
+/* Luz: raios finos e dourados. */
+.efeito[data-elemento="luz"] i {
+  width: 3px;
+  height: 18px;
+  border-radius: 2px;
+  background: linear-gradient(#fffbe0, #e8b923);
+}
+
+/* Arcano: estrelinhas roxas. */
+.efeito[data-elemento="arcano"] i {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  background: #d9b3ff;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+}
+
+/* Terra e impacto: lascas quadradas. */
+.efeito[data-elemento="terra"] i,
+.efeito[data-elemento="impacto"] i {
+  width: 8px;
+  height: 7px;
+  border-radius: 2px;
+  background: #b98a55;
+  box-shadow: none;
+}
+
+/* Corte: um risco claro atravessando o retrato. */
+.efeito[data-elemento="corte"] i {
+  left: 8%;
+  top: 18%;
+  width: 84%;
+  height: 3px;
+  border-radius: 2px;
+  background: #ffffff;
+  box-shadow: 0 0 8px #fff;
+  transform-origin: 0 50%;
+  animation: corte 380ms ease-out 230ms both;
+}
+
+@keyframes corte {
+  0% {
+    opacity: 1;
+    transform: rotate(38deg) scaleX(0);
+  }
+  55% {
+    opacity: 1;
+    transform: rotate(38deg) scaleX(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(38deg) scaleX(1);
+  }
+}
+
 /*
  * Menos movimento: sem investida, tremor nem faixa voando — o quadro chega
  * pronto. O número de dano continua aparecendo (parado), porque ele é
@@ -373,6 +634,9 @@
   .faixa,
   .fim {
     animation: none;
+  }
+  .efeito {
+    display: none;
   }
   .numero {
     animation: none;
