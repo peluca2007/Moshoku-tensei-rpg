@@ -23,18 +23,13 @@
     inset -3px 0 color-mix(in srgb, var(--ficha-cor) 75%, transparent);
 }
 
-.fichaIdentidade > :not(.caos) {
-  position: relative;
-  z-index: 1;
-}
-
 .caos {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 0;
   display: none;
   overflow: hidden;
-  border-radius: 1rem;
+  border-radius: inherit;
   pointer-events: none;
 }
 
@@ -42,71 +37,129 @@
   display: block;
 }
 
-.borda,
-.cabecalho {
+.zona {
   position: absolute;
-  background-image: var(--caos);
-  background-repeat: repeat-y;
-  background-size: auto var(--escala);
-  opacity: var(--opacidade);
+  aspect-ratio: 816 / 1056;
 }
 
-.borda {
-  top: 0;
-  bottom: 0;
-  width: clamp(2.75rem, 7vw, 5.5rem);
-  mask-image: linear-gradient(to bottom, #000 0 88%, transparent 100%);
+.tinta {
+  --cor-caos: var(--cor-caos-dia);
+  --espelho: 1;
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--cor-caos) var(--densidade), transparent);
+  mask: var(--caos) var(--variante) center / 300% 100% no-repeat;
+  transform: scaleX(var(--espelho));
+  transform-origin: center;
 }
 
-.bordaEsquerda {
-  left: 0;
-  background-position: left var(--deslocamento);
+:global(html.tema-livro.dark) .tinta {
+  --cor-caos: var(--cor-caos-noite);
 }
 
-.bordaDireita {
-  right: 0;
-  background-position: right var(--deslocamento);
-  transform: scaleX(-1);
+.dominante {
+  top: -2.6rem;
+  width: clamp(11rem, 19vw, 15rem);
 }
 
-.cabecalho {
-  top: 0;
-  right: 0;
-  left: 0;
-  height: 18rem;
-  background-position: center var(--deslocamento);
-  background-repeat: no-repeat;
-  mask-image: linear-gradient(90deg, #000 0 18%, transparent 31% 69%, #000 82% 100%);
+.dominanteEsquerda {
+  left: -2.1rem;
+}
+
+.dominanteEsquerda .tinta,
+.respingoEsquerdo .tinta {
+  --espelho: -1;
+}
+
+.dominanteDireita {
+  right: -2.1rem;
+}
+
+.secundaria {
+  right: clamp(7rem, 22vw, 18rem);
+  bottom: -5.5rem;
+  width: clamp(8.5rem, 14vw, 11rem);
+}
+
+.respingo {
+  top: var(--topo);
+  width: clamp(4rem, 7vw, 5.5rem);
+}
+
+.respingoEsquerdo {
+  left: var(--recuo);
+}
+
+.respingoDireito {
+  right: var(--recuo);
 }
 
 .selo {
+  --selo-cor: var(--selo-cor-dia);
   position: absolute;
-  top: 0.25rem;
-  right: clamp(1rem, 5vw, 3.5rem);
-  color: var(--ficha-cor);
+  top: 0.35rem;
+  right: clamp(1rem, 4vw, 2.75rem);
+  color: var(--selo-cor);
   font-family: serif;
-  font-size: clamp(7rem, 22vw, 14rem);
+  font-size: clamp(7.5rem, 15vw, 11rem);
   font-weight: 900;
   line-height: 0.9;
-  opacity: 0.09;
+  opacity: 0.12;
   transform: rotate(-5deg);
   user-select: none;
 }
 
+:global(html.tema-livro.dark) .selo {
+  --selo-cor: var(--selo-cor-noite);
+  opacity: 0.17;
+}
+
+.pulso {
+  animation: pulso-do-caos 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes pulso-do-caos {
+  0%, 100% {
+    transform: scaleX(var(--espelho)) scale(1);
+  }
+  42% {
+    transform: scaleX(var(--espelho)) scale(1.09);
+  }
+}
+
 @media (max-width: 639px) {
-  .borda {
-    width: 2.35rem;
+  .dominante {
+    top: -1.75rem;
+    width: 10rem;
   }
 
-  .cabecalho {
-    height: 13rem;
-    mask-image: linear-gradient(90deg, #000 0 12%, transparent 25% 75%, #000 88% 100%);
+  .dominanteEsquerda {
+    left: -3.4rem;
+  }
+
+  .dominanteDireita {
+    right: -3.4rem;
+  }
+
+  .secundaria {
+    right: 4.5rem;
+    bottom: -3.8rem;
+    width: 7.5rem;
+  }
+
+  .respingo {
+    width: 3.8rem;
   }
 
   .selo {
-    right: 0.5rem;
-    font-size: 7rem;
-    opacity: 0.075;
+    top: 0.2rem;
+    right: 0.6rem;
+    font-size: 7.5rem;
+    opacity: 0.1;
+  }
+
+  :global(html.tema-livro.dark) .selo {
+    opacity: 0.15;
   }
 }
 
@@ -117,7 +170,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .caos * {
-    transition: none !important;
+  .pulso {
+    animation: none;
   }
 }
