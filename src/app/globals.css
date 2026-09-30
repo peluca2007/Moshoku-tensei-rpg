@@ -1718,9 +1718,9 @@ input[type="number"],
   --color-parchment-100: #ece6da;
   --color-parchment-200: #dcd6ca;
   --color-parchment-300: #c6c1b7;
-  --color-parchment-400: #a19c92;
+  --color-parchment-400: #aca79d; /* 5:1 sobre o cartão escuro do livro (era 4,5) */
   --color-parchment-500: #807c76;
-  --color-parchment-600: #5d616e;
+  --color-parchment-600: #565a66; /* 4,8:1 sobre o parchment-200 do Livro Dia (era 4,3) */
   --color-parchment-700: #454852;
   --color-parchment-800: #2e2f37;
   --color-parchment-900: #1e1e24;
@@ -1732,10 +1732,11 @@ input[type="number"],
   --color-wine-300: color-mix(in oklab, var(--cor) 58%, #fff);
   --color-wine-400: color-mix(in oklab, var(--cor) 80%, #fff);
   --color-wine-500: var(--cor);
-  --color-wine-600: color-mix(in oklab, var(--cor) 78%, #0b0b0e);
-  --color-wine-700: color-mix(in oklab, var(--cor) 62%, #0b0b0e);
-  --color-wine-800: color-mix(in oklab, var(--cor) 44%, #0b0b0e);
-  --color-wine-900: color-mix(in oklab, var(--cor) 28%, #0b0b0e);
+  /* 600 em diante carrega texto branco: a 78% a Loja (amarela) ficava em 2,6:1. */
+  --color-wine-600: color-mix(in oklab, var(--cor) 54%, #0b0b0e);
+  --color-wine-700: color-mix(in oklab, var(--cor) 44%, #0b0b0e);
+  --color-wine-800: color-mix(in oklab, var(--cor) 34%, #0b0b0e);
+  --color-wine-900: color-mix(in oklab, var(--cor) 24%, #0b0b0e);
   --color-wine-950: color-mix(in oklab, var(--cor) 16%, #0b0b0e);
 
   --tinta-da-cor: color-mix(in oklab, var(--cor) 55%, #aaa59c);
@@ -1745,10 +1746,10 @@ input[type="number"],
   --color-gold-300: color-mix(in oklab, var(--tinta-da-cor) 62%, #fff);
   --color-gold-400: color-mix(in oklab, var(--tinta-da-cor) 82%, #fff);
   --color-gold-500: var(--tinta-da-cor);
-  --color-gold-600: color-mix(in oklab, var(--tinta-da-cor) 76%, #0b0b0e);
-  --color-gold-700: color-mix(in oklab, var(--tinta-da-cor) 60%, #0b0b0e);
-  --color-gold-800: color-mix(in oklab, var(--tinta-da-cor) 44%, #0b0b0e);
-  --color-gold-900: color-mix(in oklab, var(--tinta-da-cor) 28%, #0b0b0e);
+  --color-gold-600: color-mix(in oklab, var(--tinta-da-cor) 60%, #0b0b0e);
+  --color-gold-700: color-mix(in oklab, var(--tinta-da-cor) 50%, #0b0b0e);
+  --color-gold-800: color-mix(in oklab, var(--tinta-da-cor) 38%, #0b0b0e);
+  --color-gold-900: color-mix(in oklab, var(--tinta-da-cor) 26%, #0b0b0e);
   --color-gold-950: color-mix(in oklab, var(--tinta-da-cor) 16%, #0b0b0e);
 }
 

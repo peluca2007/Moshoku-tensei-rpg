@@ -174,7 +174,7 @@ export default function Shop() {
 
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-500">
+          <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
             Tipo
           </span>
           <Chip aceso={categoryFilter === "todos"} onClick={() => setCategoryFilter("todos")}>
@@ -188,7 +188,7 @@ export default function Shop() {
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-500">
+          <span className="text-2xs font-semibold uppercase tracking-wide text-parchment-600 dark:text-parchment-400">
             Rank
           </span>
           <Chip cor="gold" aceso={rankFilter === "todos"} onClick={() => setRankFilter("todos")}>
