@@ -1,5 +1,7 @@
 # Tarefas para o Codex
 
+> **Tarefa atual: Tarefa 8 — polir tudo**, no fim do arquivo.
+>
 > **Passagem atualizada em 2026-09-30:** leia `PASSAGEM-CODEX-CLAUDE.md` antes de continuar em conjunto. Ela distingue commits publicados, correções recentes, testes e limitações ainda abertas. As tarefas abaixo preservam o histórico dos pedidos.
 
 ## ✅ Tarefa 1 — o livro contínuo no celular (2026-09-26)
@@ -478,6 +480,96 @@ Agora são todos seus nesta frente: `src/lib/**` (motor), `scripts/balancear.mts
 
 `RELATORIO-CODEX-BALANCO.md`: a tabela do `balancear` antes e depois (as 19 árvores × 6 patamares,
 Difícil/Chefe), cada mudança com o porquê, e as decisões que ficaram pro autor.
+
+### Pendências pro Claude
+
+(vazio)
+
+---
+
+## Tarefa 8 — polir tudo (2026-09-30)
+
+O autor pediu: **o objetivo agora é polir tudo.** Nada de sistema novo, carta nova ou tela nova: é
+deixar o que já existe acabado. **O celular importa, mas não é o principal**: o foco é a leitura e o
+uso no computador (1440 e 1024 px), e o celular (375 e 360 px) entra como conferência de que nada
+quebrou.
+
+Leia antes: `CLAUDE.md` (Diversão > Balanceamento > Simplicidade; "O Livro é a Fonte": o site é a
+interface do livro, e o livro é o produto) e `PASSAGEM-CODEX-CLAUDE.md` (inclusive a seção da arena
+2.5D do Claude).
+
+### Como trabalhar: primeiro o inventário, depois o conserto
+
+1. **Varredura sem consertar.** Abra cada rota em 3020, em 1440 px e em 1024 px, nos temas claro e
+   escuro: `/`, `/livro`, `/livro/folhear`, `/arvores`, `/criar`, `/ficha`, `/personagens`,
+   `/comparar`, `/encontros`, `/iniciativa`, `/sessao`, `/mestre`, `/loja`, `/busca`, `/novidades`,
+   `/offline`. Use `/semente-dev?ir=<rota>` para a tela não abrir vazia. Anote cada defeito numa linha:
+   rota, largura/tema, o que está errado, gravidade (**quebra** / **atrapalha** / **acabamento**).
+2. **Ordene e conserte** de cima pra baixo: quebra antes de atrapalha, atrapalha antes de acabamento;
+   livro antes do resto.
+3. **Celular no fim:** `npm run check:mobile` e uma passada manual em 375 px nas rotas que você tocou.
+   Só conserte no celular o que for quebra ou atrapalha.
+
+### O que é "polir", em ordem de prioridade
+
+1. **O livro (`/livro` e `/livro/folhear`).**
+   - As 7 manchas vazias do `revisar:livro` (páginas 35, 37, 69, 97, 115, 136 e 278) e os 2 avisos do
+     `check:livro` (Cura com cinco passos no loop; tralha sem arte própria).
+   - O aviso do parser em `::highlight(busca-livro-atual)` (`folhear.css:3692`): confira no navegador
+     se o realce da busca funciona e se a sintaxe é aceita pelo transformador de CSS antes de trocar.
+   - Leitura de uma ponta a outra no desktop: título órfão, tabela que corta, exemplo jogado sem
+     destaque, diagrama pequeno demais, remissão que leva ao lugar errado, espaço irregular entre
+     seções. O que for **texto de regra** você não reescreve (ver Regras).
+2. **Consistência entre o livro e o site.** O mesmo termo com o mesmo nome e a mesma grafia em todo
+   lugar (ficha, simulador, loja, encontros, busca). Número que o site mostra tem que bater com o
+   livro. Onde divergir, o livro manda; se o livro estiver errado, é decisão do autor.
+3. **Acabamento das telas no desktop.**
+   - Alinhamento, espaçamento e hierarquia: cabeçalhos (`PageHeader`), cartões e botões com o mesmo
+     peso em todas as telas; nada esticado de borda a borda em 1440 px quando devia ter largura de
+     leitura.
+   - Estados: vazio (`EmptyState`), carregando, erro e sucesso em toda ação que demora ou pode falhar.
+     Nenhum botão que "não faz nada" sem explicar por quê.
+   - Teclado e foco: tudo alcançável com Tab, foco visível, Esc fecha o que abre. `npm run check:a11y`
+     e `npm run check:contraste` sem regressão.
+   - Textos de interface curtos e no mesmo tom (pt-BR, verbo no começo do botão).
+4. **A arena 2.5D do `/encontros`** (do Claude; pode polir, sem mudar o que ela mostra).
+   - Ataque em área faz uma investida por alvo: agrupe os recibos consecutivos do mesmo atacante e da
+     mesma ação numa investida só, com os efeitos em todos os alvos.
+   - Batalha longa cansa: botão "próxima rodada" e atalhos de teclado no desktop (espaço
+     toca/pausa, setas passam o quadro).
+   - Nomes repetidos ("Sapo-Lodo Gigante 1/2") truncam igual: mostre o número mesmo quando o nome
+     corta.
+   - Tema escuro: confira o contraste da narração e das etiquetas de elemento.
+   - Encontro com 10 ou mais criaturas: os cartões não podem se sobrepor a ponto de esconder o PV.
+5. **Desempenho percebido.** Troca de rota, abertura do folhear e o botão "Testar o encontro" sem
+   travar a tela. Meça antes de otimizar e anote o antes/depois.
+
+### Regras
+
+- **Polir não é mudar regra.** Número de carta, texto de regra e mecânica são decisão do autor. Se a
+  varredura achar uma regra confusa ou uma incongruência, anote no relatório com opções numeradas
+  (formato do `CLAUDE.md`, com a sua recomendação marcada) e siga em frente.
+- Nada de tela, sistema ou dependência nova. Se um conserto pedir isso, vira pendência no relatório.
+- Commits pequenos direto na `main`, um assunto por commit, em português; `git fetch` + merge de
+  `origin/main` antes de começar e antes de subir (nunca rebase). Servidor na **3020**; não derrube
+  3000 nem 3010.
+- Antes de subir mudança no livro: `BASE=http://localhost:3020 npm run revisar:livro` e `npm run
+  check:livro check:texto check:termos check:remissoes`. Sempre: `npx tsc --noEmit -p .`,
+  `npx vitest run`, `npm run lint`.
+- Nota em `src/data/patchNotes.ts` só quando mudar o que o jogador lê ou joga; polimento visual puro
+  não precisa de versão nova.
+
+### Entrega
+
+`RELATORIO-CODEX-POLIMENTO.md` com:
+
+- o inventário da varredura (rota, largura/tema, defeito, gravidade, commit que consertou ou
+  "pendente");
+- o antes/depois dos checks (`revisar:livro`, `check:*`, `check:mobile`, `check:a11y`,
+  `check:contraste`) e das medições de desempenho;
+- as decisões que ficaram para o autor, com opções numeradas.
+
+Atualize também a `PASSAGEM-CODEX-CLAUDE.md` com a frente e os arquivos tocados.
 
 ### Pendências pro Claude
 
