@@ -21,10 +21,10 @@ terminou a rodada. Tudo abaixo está na `main`. O item 4 (a arena 2.5D) foi do C
 | Rota / lugar | Tema / largura | Defeito | Gravidade | Commit |
 | --- | --- | --- | --- | --- |
 | `/livro` (folhear) | todos | aviso do compilador em `::highlight(...)` | acabamento | `96b2ecd` (Codex) |
-| `/livro`, Laboratório de Fórmulas | papel dia | texto escuro sobre as cartas escuras do grimório (1,0:1) | **quebra** | `066624f` |
-| `/livro`, antes de hidratar | tema claro | caixas no papel noite com texto escuro por alguns segundos | **atrapalha** | `066624f` |
-| `/livro`, papel dia | Pergaminho, Livro Dia | cor do capítulo como texto: Cap. 0 2,8:1, Cap. 5 3,3:1, árvores 3,7:1 | atrapalha | `066624f` |
-| `/livro`, fichas de criatura | temas escuros | linha de tipo em 4,5:1 | acabamento | `066624f` |
+| `/livro`, Laboratório de Fórmulas | papel dia | texto escuro sobre as cartas escuras do grimório (1,0:1) | **quebra** | `75a9307` |
+| `/livro`, antes de hidratar | tema claro | caixas no papel noite com texto escuro por alguns segundos | **atrapalha** | `75a9307` |
+| `/livro`, papel dia | Pergaminho, Livro Dia | cor do capítulo como texto: Cap. 0 2,8:1, Cap. 5 3,3:1, árvores 3,7:1 | atrapalha | `75a9307` |
+| `/livro`, fichas de criatura | temas escuros | linha de tipo em 4,5:1 | acabamento | `75a9307` |
 | tema Livro, site inteiro | Livro Noite / Dia | vinho e dourado com texto branco a 2,6:1 (Loja amarela) | atrapalha | `41241ce` |
 | tema Livro Dia | 1440 | cinza secundário a 4,3:1 | acabamento | `41241ce` |
 | `/loja` | Livro Noite | rótulos Tipo/Rank a 4,4:1 | acabamento | `41241ce` |
