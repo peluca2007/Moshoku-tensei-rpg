@@ -107,6 +107,24 @@ describe("defesas de Terra e Bardo aprovadas pelo autor", () => {
 });
 
 describe("recibo do combate usa os valores que alteraram os PV", () => {
+  it.each([4, 5, 6])("Dose Certa independe do recibo ao falhar por %i", (margem) => {
+    const criar = () => {
+      const e = novoEstado(montarFicha(personagem()));
+      e.ficha.doseExtraEmFalhaGrave = true;
+      return e;
+    };
+    const e = criar();
+    const criarAlvo = () => novoAlvo({ nome: "Alvo", pv: 100, ca: 1, bonusResistencia: 8 + e.ficha.bc - 1 - margem });
+    const sem = criarAlvo(), com = criarAlvo();
+    const acao = novaAcao({ nome: "Veneno de teste", ataque: false, dano: "1d6", dosesNaFalha: 1 });
+    const rngSem = vi.fn(() => 0), rngCom = vi.fn(() => 0);
+    const danoSem = resolver(e, acao, sem, rngSem);
+    const danoCom = resolver(criar(), acao, com, rngCom, () => {});
+    expect(danoSem).toBe(danoCom);
+    expect(sem).toEqual(com);
+    expect(sem.doses).toBe(margem >= 5 ? 2 : 1);
+    expect(rngSem).toHaveBeenCalledTimes(rngCom.mock.calls.length);
+  });
   it("mostra o d20, degrau e dado real do ataque comum, sem sortear outra vez", () => {
     const e = novoEstado(montarFicha(personagem()));
     const alvo = novoAlvo({ nome: "Goblin", pv: 100, ca: 15 });
