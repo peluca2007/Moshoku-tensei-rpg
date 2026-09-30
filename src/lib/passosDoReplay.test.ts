@@ -3,7 +3,7 @@ import type { EventoAtaque } from "./combatTrace";
 import type { QuadroDoReplay } from "./encounterSim";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { FRASES_DE_REACAO, formaDoGolpe, montarPassos, partesDoNome, reacoesDoPasso } from "./passosDoReplay";
+import { FRASES_DE_REACAO, formaDoGolpe, montarPassos, partesDoNome, placarDaBatalha, reacoesDoPasso } from "./passosDoReplay";
 
 function recibo(atacante: string, acao: string, alvo: string): EventoAtaque {
   return { atacante, acao, alvo, acertou: true, critico: false, parcelas: [], bonusDano: 0, bruto: 0, aposModificadores: 0, notas: [] };
@@ -77,5 +77,33 @@ describe("reações na arena", () => {
     for (const [chave, frase] of Object.entries(FRASES_DE_REACAO)) {
       expect(motor.includes(frase), `a frase de "${chave}" sumiu do motor: ${frase}`).toBe(true);
     }
+  });
+});
+
+describe("placar do fim da batalha", () => {
+  it("destaque do grupo, maior golpe e quedas em ordem, só com o que o replay gravou", () => {
+    const golpe = (atacante: string, alvo: string, perdaPv: number, critico = false) =>
+      ({ ...recibo(atacante, "Golpe", alvo), critico, aplicacao: { aposResistencia: perdaPv, absorvidoTemporario: 0, perdaPv, danoEfetivo: perdaPv } });
+    const log = {
+      seed: 1, categoria: "Vitória", motivo: "", linhas: [],
+      resumo: { seed: 1, resultado: "vitoria" as const, rodadas: 2, quedas: 0, pvRestantePct: 0.5, menorPvPct: 0.3 },
+      eventos: [golpe("Eris", "Lobo", 9), golpe("Ari", "Lobo", 4), golpe("Lobo", "Ari", 12, true), golpe("Eris", "Lobo", 5)],
+      replay: {
+        atores: [
+          { nome: "Eris", lado: "grupo" as const, origem: "e", pvMax: 30, invocado: false },
+          { nome: "Ari", lado: "grupo" as const, origem: "a", pvMax: 20, invocado: false },
+          { nome: "Lobo", lado: "criaturas" as const, origem: "l", pvMax: 18, invocado: false },
+        ],
+        quadros: [
+          { rodada: 1, linha: 0, pv: [30, 20, 18], vivo: [true, true, true] },
+          { rodada: 1, linha: 1, pv: [30, 8, 9], vivo: [true, true, true] },
+          { rodada: 2, linha: 2, pv: [30, 8, 0], vivo: [true, true, false] },
+        ],
+      },
+    };
+    const placar = placarDaBatalha(log);
+    expect(placar.destaque).toEqual({ nome: "Eris", dano: 14 });
+    expect(placar.maiorGolpe).toMatchObject({ atacante: "Lobo", dano: 12, critico: true });
+    expect(placar.quedas).toEqual([{ nome: "Lobo", rodada: 2, lado: "criaturas" }]);
   });
 });
