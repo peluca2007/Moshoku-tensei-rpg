@@ -27,6 +27,10 @@
  *   npm run balancear                 (6 patamares, 300 batalhas)
  *   PATAMARES=1,3,6 BATALHAS=200 npm run balancear
  *   npm run balancear -- --md         (tabela em markdown pra colar no plano)
+ *   PERFIL_FISICO=1 npm run balancear -- --md
+ *     (diagnóstico com golpes cortantes explícitos, não o molde abstrato)
+ *   SEM_NOVAS_DEFESAS=1 PERFIL_FISICO=1 npm run balancear -- --md
+ *     (controle sem Couraça/Refrão, mantendo o limite de compras)
  */
 import { useCharacterStore } from "@/store/useCharacterStore";
 import { TREES, getTreeById } from "@/data/trees";
@@ -40,6 +44,7 @@ const PRINCIPAL = [4, 4, 5, 6, 7, 8];
 const SEMENTE = 20260927;
 const MD = process.argv.includes("--md");
 const EXPERIMENTO_MAGIA = process.env.EXPERIMENTO_MAGIA;
+const PERFIL_FISICO = process.env.PERFIL_FISICO === "1";
 
 /**
  * O que o motor ainda não enxerga (ou enxerga pela metade) em cada árvore —
@@ -171,14 +176,28 @@ function mediana(v: number[]): number {
 const pct = (x: number) => `${Math.round(x * 100)}%`;
 const suspeitos: string[] = [];
 
+if (PERFIL_FISICO) console.log("BANCADA FÍSICA EXPERIMENTAL: três golpes cortantes de 1 Ação; dano médio arredondado do molde dividido por três. Não é uma criatura oficial nem comparação direta com o orçamento abstrato.");
+
 for (const patamar of PATAMARES) {
   const referencia = REFERENCIA.map((id, i) => montar(id, patamar, `Ref${i + 1}`));
   const dificil = [{ ...criaturaDoMolde(patamar, "padrao", "Criatura", `d${patamar}`), tatica: "aleatorio" as const, quantidade: 5 }];
   const chefe = [{ ...criaturaDoMolde(patamar, "chefe", "Chefe", `k${patamar}`), tatica: "aleatorio" as const, quantidade: 1 }];
+  if (PERFIL_FISICO) {
+    for (const criatura of [...dificil, ...chefe]) {
+      criatura.acoes = [{
+        id: "golpe-fisico-da-bancada", nome: "Golpe físico da bancada", acoes: 1,
+        dano: `1d6 + ${Math.max(0, Math.round(criatura.danoPorTurno / 3 - 3.5))} (cortante)`,
+        alcance: "Corpo a corpo", area: false, tipo: "ataque", nota: "Perfil experimental, não regra de criatura pronta.",
+      }];
+    }
+  }
 
   const linhas: Linha[] = [];
   for (const arvore of TREES) {
     const heroi = montar(arvore.id, patamar, arvore.name, true);
+    if (PERFIL_FISICO && arvore.id === "terra") {
+      console.log(`Terra ${patamar}º: Couraça ${heroi.purchasedAbilities.some((a) => a.id === "couraca-de-barro") ? "comprada" : "ausente"}; ${heroi.purchasedAbilities.length} compras no total.`);
+    }
     const grupo = [...referencia, heroi];
     const rd = simularEncontro(grupo, dificil, { batalhas: BATALHAS, semente: SEMENTE });
     const rc = simularEncontro(grupo, chefe, { batalhas: BATALHAS, semente: SEMENTE });
