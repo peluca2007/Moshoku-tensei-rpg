@@ -8,7 +8,7 @@ export interface IdentidadeVisualDaArvore {
 function identidade(corNoite: string, kanji: string, selo: string): IdentidadeVisualDaArvore {
   return {
     corNoite,
-    corDia: `color-mix(in oklab, ${corNoite} 64%, #000)`,
+    corDia: `color-mix(in oklab, ${corNoite} 56%, #000)`,
     kanji,
     selo,
   };

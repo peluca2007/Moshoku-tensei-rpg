@@ -13,28 +13,38 @@
   --color-wine-300: color-mix(in oklab, var(--ficha-cor) 58%, #fff);
   --color-wine-400: color-mix(in oklab, var(--ficha-cor) 80%, #fff);
   --color-wine-500: var(--ficha-cor);
-  --color-wine-600: color-mix(in oklab, var(--ficha-cor) 78%, #0b0b0e);
-  --color-wine-700: color-mix(in oklab, var(--ficha-cor) 62%, #0b0b0e);
-  --color-wine-800: color-mix(in oklab, var(--ficha-cor) 46%, #0b0b0e);
-  --color-wine-900: color-mix(in oklab, var(--ficha-cor) 30%, #0b0b0e);
-  --color-wine-950: color-mix(in oklab, var(--ficha-cor) 18%, #0b0b0e);
+  /*
+   * 600 em diante leva texto branco (botões). Com 78% a árvore amarela ficava
+   * em 2,5:1; 54% é o que deixa as 19 cores do livro, noite e dia, acima de
+   * 4,5:1 (pior caso 4,9:1, o amarelo-lima). Conta em `check:contraste`.
+   */
+  --color-wine-600: color-mix(in oklab, var(--ficha-cor) 54%, #0b0b0e);
+  --color-wine-700: color-mix(in oklab, var(--ficha-cor) 44%, #0b0b0e);
+  --color-wine-800: color-mix(in oklab, var(--ficha-cor) 34%, #0b0b0e);
+  --color-wine-900: color-mix(in oklab, var(--ficha-cor) 24%, #0b0b0e);
+  --color-wine-950: color-mix(in oklab, var(--ficha-cor) 16%, #0b0b0e);
   box-shadow:
     inset 3px 0 color-mix(in srgb, var(--ficha-cor) 75%, transparent),
     inset -3px 0 color-mix(in srgb, var(--ficha-cor) 75%, transparent);
 }
 
+/*
+ * Nos quatro temas (decisão do autor, 2026-09-30): forte nos do Livro e mais
+ * discreto nos Pergaminho, que é onde o site abre. A cor de acento da ficha
+ * (os --color-wine-* acima) continua só nos temas do Livro.
+ */
 .caos {
   position: absolute;
   inset: 0;
   z-index: 0;
-  display: none;
   overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
+  opacity: 0.6;
 }
 
 :global(html.tema-livro) .caos {
-  display: block;
+  opacity: 1;
 }
 
 .zona {
@@ -53,7 +63,7 @@
   transform-origin: center;
 }
 
-:global(html.tema-livro.dark) .tinta {
+:global(html.dark) .tinta {
   --cor-caos: var(--cor-caos-noite);
 }
 
@@ -109,7 +119,7 @@
   user-select: none;
 }
 
-:global(html.tema-livro.dark) .selo {
+:global(html.dark) .selo {
   --selo-cor: var(--selo-cor-noite);
   opacity: 0.17;
 }
@@ -158,7 +168,7 @@
     opacity: 0.1;
   }
 
-  :global(html.tema-livro.dark) .selo {
+  :global(html.dark) .selo {
     opacity: 0.15;
   }
 }
