@@ -1,5 +1,5 @@
 import type { EventoAtaque } from "./combatTrace";
-import type { QuadroDoReplay } from "./encounterSim";
+import type { LogCombate, QuadroDoReplay } from "./encounterSim";
 import { grupoDaArma, type WeaponGroupId } from "@/data/weaponGroups";
 
 /**
@@ -160,4 +160,55 @@ export function reacoesDoPasso(linha: string, eventos: EventoAtaque[]): ReacaoNa
     }
   }
   return achadas;
+}
+
+/* ─── O placar do fim da batalha ─────────────────────────────────────── */
+
+export interface PlacarDaBatalha {
+  /** Quem do grupo mais tirou PV dos inimigos (dano real, depois de resistência e PV temporário). */
+  destaque?: { nome: string; dano: number };
+  /** O golpe que mais tirou PV de uma vez só, de qualquer lado. */
+  maiorGolpe?: { atacante: string; acao: string; alvo: string; dano: number; critico: boolean };
+  /** Quem caiu, na ordem, e em que rodada. */
+  quedas: { nome: string; rodada: number; lado: "grupo" | "criaturas" }[];
+}
+
+/**
+ * O que a mesa comenta quando a luta acaba. Lê só o que o replay gravou: os
+ * recibos (dano real) e os quadros (quem caiu e quando). Nenhum número novo.
+ */
+export function placarDaBatalha(log: LogCombate): PlacarDaBatalha {
+  const replay = log.replay;
+  const eventos = log.eventos ?? [];
+  const lado = new Map(replay?.atores.map((a) => [a.nome, a.lado]) ?? []);
+  // Invocações somam para quem as chamou: o Pacto é a mão do invocador.
+  const dono = new Map(replay?.atores.filter((a) => a.invocado && a.lado === "grupo")
+    .map((a) => [a.nome, replay.atores.find((b) => !b.invocado && b.lado === "grupo" && b.origem === a.origem)?.nome ?? a.nome]) ?? []);
+
+  const danoPorHeroi = new Map<string, number>();
+  let maiorGolpe: PlacarDaBatalha["maiorGolpe"];
+  for (const e of eventos) {
+    const dano = e.aplicacao?.perdaPv ?? 0;
+    if (dano <= 0) continue;
+    if (lado.get(e.atacante) === "grupo") {
+      const autor = dono.get(e.atacante) ?? e.atacante;
+      danoPorHeroi.set(autor, (danoPorHeroi.get(autor) ?? 0) + dano);
+    }
+    if (!maiorGolpe || dano > maiorGolpe.dano) maiorGolpe = { atacante: e.atacante, acao: e.acao, alvo: e.alvo, dano, critico: e.critico };
+  }
+  const [nome, dano] = [...danoPorHeroi].sort((a, b) => b[1] - a[1])[0] ?? [];
+
+  const quedas: PlacarDaBatalha["quedas"] = [];
+  if (replay) {
+    const jaCaiu = new Set<number>();
+    for (const q of replay.quadros) {
+      q.vivo.forEach((vivo, i) => {
+        if (vivo === false && !jaCaiu.has(i)) {
+          jaCaiu.add(i);
+          quedas.push({ nome: replay.atores[i].nome, rodada: q.rodada, lado: replay.atores[i].lado });
+        }
+      });
+    }
+  }
+  return { destaque: nome ? { nome, dano: dano! } : undefined, maiorGolpe, quedas };
 }

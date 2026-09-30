@@ -8,8 +8,8 @@ import type { EventoAtaque } from "@/lib/combatTrace";
 import { getRaceById } from "@/data/races";
 import { CRIATURAS_PRONTAS } from "@/data/bestiary";
 import {
-  FORMAS_A_DISTANCIA, formaDoGolpe, montarPassos, partesDoNome, reacoesDoPasso,
-  type FormaDoGolpe, type TipoDeReacao,
+  FORMAS_A_DISTANCIA, formaDoGolpe, montarPassos, partesDoNome, placarDaBatalha, reacoesDoPasso,
+  type FormaDoGolpe, type PlacarDaBatalha, type TipoDeReacao,
 } from "@/lib/passosDoReplay";
 import { sonsDoPasso, type Toque } from "@/lib/sonsDaArena";
 import { tocar, useSomDaArena } from "@/lib/tocadorDaArena";
@@ -45,6 +45,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
   const replay = log.replay!;
   const { atores, quadros } = replay;
   const passos = useMemo(() => montarPassos(quadros, log.eventos), [quadros, log.eventos]);
+  const placar = useMemo(() => placarDaBatalha(log), [log]);
   // `animar` só é verdadeiro quando o passo chegou andando UM para frente:
   // pular na linha do tempo ou voltar mostra a cena pronta.
   const [{ indice, animar: avancouUm }, setPasso] = useState({ indice: 0, animar: false });
@@ -258,6 +259,8 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
       {eventos.length > 1 ? resumirEmArea(eventos) : evento ? resumirEvento(evento) : texto.split("\n")[0] || "Preparação da cena."}
     </p>
 
+    {ultimo && <Placar placar={placar} />}
+
     <div className="flex flex-wrap items-center gap-2">
       <BotaoArena rotulo="Recomeçar" onClick={() => { setTocando(false); irPara(0); }}><RotateCcw className="h-4 w-4" /></BotaoArena>
       <BotaoArena rotulo="Voltar um passo" onClick={() => { setTocando(false); irPara(indice - 1); }}><SkipBack className="h-4 w-4" /></BotaoArena>
@@ -291,6 +294,33 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
       Clique na arena para usar o teclado: <kbd>Espaço</kbd> toca ou pausa, <kbd>←</kbd> <kbd>→</kbd> passam um passo, <kbd>Page Down</kbd> pula para a próxima rodada.
     </p>
   </div>;
+}
+
+/** O que a mesa comenta quando a luta acaba. Aparece no último passo. */
+function Placar({ placar }: { placar: PlacarDaBatalha }) {
+  const { destaque, maiorGolpe, quedas } = placar;
+  const caixa = "rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 dark:border-parchment-700 dark:bg-parchment-950";
+  const rotulo = "block text-2xs font-bold uppercase tracking-wider text-wine-700 dark:text-wine-300";
+  return <section aria-label="Placar da batalha" className="grid gap-2 text-xs text-parchment-800 sm:grid-cols-3 dark:text-parchment-200">
+    <div className={caixa}>
+      <span className={rotulo}>Destaque do grupo</span>
+      {destaque ? <><b>{destaque.nome}</b> · {destaque.dano} PV tirados dos inimigos</> : "Ninguém do grupo tirou PV."}
+    </div>
+    <div className={caixa}>
+      <span className={rotulo}>Maior golpe</span>
+      {maiorGolpe
+        ? <><b>{maiorGolpe.atacante}</b>, {maiorGolpe.acao} em {maiorGolpe.alvo}: <b>{maiorGolpe.dano} PV</b>{maiorGolpe.critico ? " (crítico)" : ""}</>
+        : "Nenhum golpe tirou PV."}
+    </div>
+    <div className={caixa}>
+      <span className={rotulo}>Quedas</span>
+      {quedas.length
+        ? quedas.map((q, i) => <span key={q.nome} className={q.lado === "grupo" ? "text-rose-700 dark:text-rose-300" : ""}>
+            {i > 0 && ", "}{q.nome} (R{q.rodada})
+          </span>)
+        : "Ninguém caiu."}
+    </div>
+  </section>;
 }
 
 function BotaoArena({ rotulo, onClick, desativado = false, ativo, children }: {
