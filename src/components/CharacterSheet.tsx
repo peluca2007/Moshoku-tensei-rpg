@@ -414,10 +414,14 @@ export default function CharacterSheet() {
   const podeCompartilhar = usePodeCompartilhar();
   const [qrAberto, setQrAberto] = useState(false);
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
+  const [pulsoDoCaos, setPulsoDoCaos] = useState<{ treeId: string; sequencia: number } | null>(null);
+  const sequenciaDoCaosRef = useRef(0);
+  const caosTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
       if (linkTimeoutRef.current) clearTimeout(linkTimeoutRef.current);
+      if (caosTimeoutRef.current) clearTimeout(caosTimeoutRef.current);
     },
     []
   );
@@ -604,6 +608,33 @@ export default function CharacterSheet() {
     () => identidadeDaFicha({ startingTreeId, unlockedRanks, purchasedAbilities }),
     [startingTreeId, unlockedRanks, purchasedAbilities]
   );
+  /*
+   * A compra acontece no mapa de árvores, então a ficha normalmente não está
+   * montada no instante do clique. A assinatura em sessionStorage guarda o que
+   * esta ficha viu por último: ao voltar, a árvore recém-comprada pulsa uma vez.
+   * Se uma compra ocorrer com a ficha aberta, a mesma comparação reage na hora.
+   */
+  useEffect(() => {
+    const chave = `mushoku-caos-visto:${character.id}`;
+    const atuais = purchasedAbilities.map(({ treeId, rank, kind, id }) => `${treeId}|${rank}|${kind}|${id}`);
+    let anteriores: string[] | null = null;
+    try {
+      const salva = sessionStorage.getItem(chave);
+      anteriores = salva ? JSON.parse(salva) as string[] : null;
+      sessionStorage.setItem(chave, JSON.stringify(atuais));
+    } catch {
+      // Privacidade estrita pode bloquear storage; a ficha continua funcional.
+    }
+    if (!anteriores) return;
+    const vistas = new Set(anteriores);
+    const nova = purchasedAbilities.findLast(({ treeId, rank, kind, id }) =>
+      !vistas.has(`${treeId}|${rank}|${kind}|${id}`)
+    );
+    if (!nova) return;
+    setPulsoDoCaos({ treeId: nova.treeId, sequencia: ++sequenciaDoCaosRef.current });
+    if (caosTimeoutRef.current) clearTimeout(caosTimeoutRef.current);
+    caosTimeoutRef.current = setTimeout(() => setPulsoDoCaos(null), 650);
+  }, [character.id, purchasedAbilities]);
   const arvoreDominante = identidadeVisual[0]
     ? identidadeVisualDaArvore(identidadeVisual[0].treeId)
     : undefined;
@@ -628,7 +659,6 @@ export default function CharacterSheet() {
       style={estiloDaFicha}
       data-arvore-dominante={identidadeVisual[0]?.treeId}
     >
-      <CaosDaFicha identidades={identidadeVisual} />
       {/*
         De quem é a vez, acima de tudo. Ele se esconde na impressão e não rende
         NADA quando não há combate montado — sem wrapper próprio de propósito:
@@ -685,6 +715,7 @@ export default function CharacterSheet() {
         <div className="pointer-events-none absolute inset-0 -z-10 bg-parchment-50/72 dark:bg-parchment-950/55" aria-hidden />
         <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-gold-500/10 blur-3xl" aria-hidden />
         <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-wine-500/10 blur-3xl" aria-hidden />
+        <CaosDaFicha identidades={identidadeVisual} pulso={pulsoDoCaos} />
         {/*
           O h1 da rota. O nome do personagem é um <input> editável, e input não
           é cabeçalho: sem isto `/ficha` era a única rota do site sem h1 — quem

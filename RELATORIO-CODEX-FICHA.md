@@ -1,6 +1,26 @@
 # Relatório Codex — a ficha veste as árvores
 
-Data: 2026-09-27
+Data: 2026-09-27 · polimento revisto em 2026-09-30
+
+## Atualização — Tarefa 9: o caos aparece e continua legível
+
+O diagnóstico do Claude estava certo: os SVGs de 2448 × 1056 eram máscaras de três páginas, mas a ficha os tratava como imagens pretas repetidas. O resultado antigo quase sumia no Livro Noite, virava borrão no Livro Dia e ainda esticava as três variantes numa faixa estreita pela ficha inteira.
+
+O conserto agora:
+
+- pinta cada máscara com a cor da própria árvore e escolhe uma das três variantes de modo estável;
+- limita o desenho ao cabeçalho, em áreas próximas da proporção original de 816 × 1056: a dominante ocupa os dois cantos, a secundária ocupa um canto inferior e as demais viram respingos pequenos;
+- mostra o kanji dominante com 17% de opacidade no Livro Noite e 12% no Livro Dia, sem atravessar o nome;
+- conserva o efeito somente em `html.tema-livro`; Pergaminho Dia/Noite continua neutro e a decisão futura troca um único seletor;
+- guarda por ficha quais compras já foram vistas. Ao voltar do mapa de árvores depois de comprar uma habilidade, a camada daquela árvore pulsa por 0,6 s. O teste de navegador detectou a classe animada; com `prefers-reduced-motion`, ela salta direto ao estado final.
+
+### Fotos novas
+
+As 18 comparações pedidas estão em `.telas/ficha-caos-antes/` e `.telas/ficha-caos-depois/`: três perfis (Deus da Espada puro, Deus da Espada + Água e Mago de Fogo), Livro Noite/Livro Dia, em 1440, 1024 e 390 px. A captura do pulso está em `.telas/ficha-caos-depois/pulso-fogo-1024.png`.
+
+Na inspeção visual, o preto quase invisível do tema noturno desapareceu; o selo passou a identificar a árvore de imediato; Água se lê separada do rosa de Deus da Espada; e nenhum motivo invade os cartões, números ou texto corrido abaixo do cabeçalho.
+
+Validação desta rodada: TypeScript aprovado; 856 testes em 59 arquivos aprovados; lint sem erro; `/ficha` com zero falhas de contraste nos temas claro e escuro. O `check:contraste` geral ainda falha somente em `/livro` (50 ocorrências no claro e 7 no escuro), que pertence à sequência da Tarefa 8.
 
 ## Resultado
 
