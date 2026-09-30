@@ -194,7 +194,7 @@ describe("o efeito dos acúmulos", () => {
     const limpo = novoEstado(montarFicha(pesado(["Principiante"])));
     const ferido = novoEstado(montarFicha(pesado(["Principiante"])));
     ferido.quebrantado = 3;
-    const acao = acaoDeTeste({ dano: "10" });
+    const acao = acaoDeTeste({ dano: "1d1 + BC" });
 
     const a = resolver(limpo, acao, boneco(), makeRng(5));
     const b = resolver(ferido, acao, boneco(), makeRng(5));
@@ -219,7 +219,7 @@ describe("o efeito dos acúmulos", () => {
  */
 describe("cada acúmulo tira 1 da CA do alvo", () => {
   const e = novoEstado(montarFicha(pesado(["Principiante"])));
-  const acao = acaoDeTeste({ ataque: true, dano: "10" });
+  const acao = acaoDeTeste({ ataque: true, dano: "1d1 + BC" });
   const CA = e.ficha.bc + 15; // alta o bastante pra sobrar espaço pros 5 acúmulos
 
   function acertos(quebrantado: number): number {

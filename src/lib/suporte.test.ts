@@ -318,8 +318,8 @@ describe("condições de uso escritas na carta", () => {
   it("a IA monta duas Doses antes de escolher Inverter", () => {
     const e = novoEstado(montarFicha(comArvoreInteira("desintoxicacao")));
     e.ficha.acoes = [
-      novaAcao({ nome: "imediata", dano: "1d4", acoes: 1, ataque: true }),
-      novaAcao({ nome: "dose", dano: "1d4", acoes: 1, dosesNaFalha: 1 }),
+      novaAcao({ nome: "imediata", dano: "1d4 + BC", acoes: 1, ataque: true }),
+      novaAcao({ nome: "dose", dano: "1d4 + BC", acoes: 1, dosesNaFalha: 1 }),
       novaAcao({ nome: "inverter", dano: "10d10", acoes: 1, inverteDose: "10d10" }),
     ];
     const alvo = novoAlvo({ nome: "alvo", pv: 10_000, ca: 18 });

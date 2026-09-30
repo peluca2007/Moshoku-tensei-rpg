@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { CharacterData } from "./types";
-import { consumirReacao, escolherSuporte, amortecerComBarro, reagirAFalhaAliada, aplicarDano, danoEsperado, executarAtaquePersonagem, montarFicha, novaAcao, novoAlvo, novoEstado, resolver } from "./combatSim";
+import { acoesDe, consumirReacao, escolherSuporte, amortecerComBarro, reagirAFalhaAliada, aplicarDano, danoEsperado, executarAtaquePersonagem, montarFicha, novaAcao, novoAlvo, novoEstado, resolver } from "./combatSim";
 import { CombateLogger, criaturaDoMolde, simularEncontro } from "./encounterSim";
 import { EventoAtaque } from "./combatTrace";
 
@@ -288,7 +288,7 @@ describe("recibo do combate usa os valores que alteraram os PV", () => {
     const e = novoEstado(montarFicha(personagem()));
     const logger = new CombateLogger();
     const alvo = novoAlvo({ nome: "Alvo", pv: 3, ca: 1, pvTemp: 2, resistencias: ["frio"] });
-    const acao = novaAcao({ nome: "Frio", ataque: true, dano: "1d6 frio" });
+    const acao = novaAcao({ nome: "Frio", ataque: true, dano: "1d6 + BC frio" });
     executarAtaquePersonagem(e, acao, alvo, () => 0.5, logger);
     expect(logger.eventos[0]).toMatchObject({ bruto: 9, aplicacao: { aposResistencia: 4, absorvidoTemporario: 2, perdaPv: 2, danoEfetivo: 2 } });
     const ev = logger.eventos[0];
@@ -305,6 +305,41 @@ describe("recibo do combate usa os valores que alteraram os PV", () => {
     executarAtaquePersonagem(e, e.ficha.ataqueBasico, com, () => 0.99, new CombateLogger());
     expect(com).toEqual(sem);
     expect(com.marcasDaMorte).toBe(2);
+  });
+
+  it("soma BC no dano somente quando a fórmula ou os Dados de Arma mandam", () => {
+    const e = novoEstado(montarFicha(personagem()));
+    const alvo = () => novoAlvo({ nome: "Alvo", pv: 100, ca: 1 });
+    const semBc = novaAcao({ nome: "Sem BC", ataque: true, dano: "1d1" });
+    const comBc = novaAcao({ nome: "Com BC", ataque: true, dano: "1d1 + BC" });
+    const comArma = novaAcao({ nome: "Com arma", ataque: true, dadosDeArma: 1 });
+
+    expect(resolver(e, semBc, alvo(), () => 0.5)).toBe(1);
+    expect(resolver(e, comBc, alvo(), () => 0.5)).toBe(1 + e.ficha.bc);
+    expect(resolver(e, comArma, alvo(), () => 0.5)).toBeGreaterThan(e.ficha.bc);
+    expect(danoEsperado(e, semBc, null)).toBe(1);
+    expect(danoEsperado(e, comBc, null)).toBe(1 + e.ficha.bc);
+  });
+
+  it("Concentrada aumenta também Dose, bônus condicional e dano por turno", () => {
+    const comprar = (treeId: string, rank: CharacterData["unlockedRanks"][number]["rank"], id: string) =>
+      acoesDe(personagem({
+        startingTreeId: treeId,
+        unlockedRanks: [{ treeId, rank }],
+        purchasedAbilities: [{ treeId, rank, kind: "ability", id }],
+      })).find((a) => a.nome.endsWith("(Concentrada)"))!;
+
+    const purgar = comprar("desintoxicacao", "Principiante", "purgar");
+    expect(purgar).toMatchObject({ dano: "3d6 de dano de veneno por Dose invertida", inverteDose: "3d6", somaBc: false });
+
+    const quebra = comprar("agua", "Avançado", "quebra-de-gelo");
+    expect(quebra.dano).toContain("8d8 + BC");
+    expect(quebra.dano).toContain("3d6 de frio");
+    expect(quebra.bonusSeCongelado).toBe("+5d8");
+
+    const era = comprar("agua", "Rei", "era-glacial");
+    expect(era.danoPorTurno).toBe("5d10 de frio por turno, por 3 turnos");
+    expect(era.somaBcPorTurno).toBe(false);
   });
 });
 
