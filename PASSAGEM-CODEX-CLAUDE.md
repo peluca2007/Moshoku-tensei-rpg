@@ -123,3 +123,12 @@ Frente escolhida: **visualização das batalhas**, a pedido do autor. Nenhuma re
 Toques no motor, para quem mexer em `encounterSim.ts`: `CombateLogger.aoRegistrar` é chamado depois de cada `log`; `gravarReplay` lê as listas vivas de heróis e inimigos. Se um caminho novo alterar PV sem passar por uma linha de log, a arena só mostra a mudança na linha seguinte.
 
 Testes: `src/lib/replayDoCombate.test.ts` (4 casos). Suíte: 850 aprovados; `tsc` e `eslint` limpos nos arquivos tocados. Verificação visual em 3010, celular e desktop. Limites conhecidos: ataque em área faz uma investida por alvo; efeito por elemento é heurística de texto (tipo declarado primeiro, nome da ação depois).
+
+## Claude — sons da arena (2026-09-30)
+
+O autor trouxe 25 sons; eles moram em `public/sons/arena/` com nome curto (origem de cada um no cabeçalho de `src/lib/sonsDaArena.ts`). Som **desligado por padrão**, botão na arena, preferência em `localStorage` (`arena-som`).
+
+- `src/lib/sonsDaArena.ts` (puro, testado): o que tocar por passo. `src/lib/tocadorDaArena.ts` (só navegador): tocar.
+- `ConfiguracaoEncontro.vozes` (opcional): a voz do grito no crítico, escolhida no card de arma do grupo em `/encontros` (`VozDoPersonagem` em `EncounterBuilder.tsx`). A simulação não lê; fica fora da assinatura do relatório.
+- `EncounterRewards.tsx`: "Sortear outros itens" toca moedas quando o som está ligado.
+- `sonsDaArena.test.ts` trava as frases de buff do motor (`aponta … o primeiro acerto`, `inspira …:`, `antes da troca de golpes.`), como `passosDoReplay.test.ts` trava as de reação.

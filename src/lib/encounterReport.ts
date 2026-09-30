@@ -1,5 +1,6 @@
 import type { CharacterData } from "./types";
 import type { CenarioCombate } from "./combatScenario";
+import type { VozDeCombate } from "./sonsDaArena";
 import { simularEncontro, type CriaturaEncontro, type ResultadoEncontro } from "./encounterSim";
 import { ajustarParaEquilibrio, aplicarEscalaAoEncontro, avaliar, type AjusteSugerido, type Veredito } from "./encounterBalance";
 
@@ -11,6 +12,11 @@ export interface ConfiguracaoEncontro {
   recompensa?: { orcamento: number; semente: number };
   semente: number;
   armasPorPersonagem: Record<string, string | null>;
+  /**
+   * A voz de cada personagem no grito do crítico da arena. Só som: a
+   * simulação não lê, e a ausência (o padrão) é "não grita".
+   */
+  vozes?: Record<string, VozDeCombate>;
 }
 
 export interface PedidoRelatorio {

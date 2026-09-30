@@ -634,7 +634,39 @@ function ArmaDoEncontro({
           {arma.aviso}
         </p>
       )}
+      <VozDoPersonagem personagem={personagem} />
     </div>
+  );
+}
+
+/**
+ * A voz do grito no crítico, na arena. A ficha não tem gênero e o site não
+ * adivinha pelo nome: sem escolha, o personagem não grita.
+ */
+function VozDoPersonagem({ personagem }: { personagem: CharacterData }) {
+  const vozes = useBestiaryStore((s) => s.configuracao.vozes);
+  const configurar = useBestiaryStore((s) => s.configurarEncontro);
+  const voz = vozes?.[personagem.id] ?? "";
+  return (
+    <label className="mt-3 block text-xs font-semibold text-parchment-900 dark:text-parchment-50">
+      Voz de combate na arena
+      <select
+        value={voz}
+        onChange={(event) => {
+          const proximas = { ...vozes };
+          const valor = event.target.value;
+          if (valor === "masculina" || valor === "feminina") proximas[personagem.id] = valor;
+          else delete proximas[personagem.id];
+          configurar({ vozes: proximas });
+        }}
+        className="mt-1 block w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-2 text-xs font-normal text-parchment-900 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-50"
+      >
+        <option value="">Sem grito</option>
+        <option value="masculina">Masculina</option>
+        <option value="feminina">Feminina</option>
+      </select>
+      <span className="mt-1 block font-normal text-parchment-600 dark:text-parchment-400">Grita no acerto crítico, quando o som da arena está ligado.</span>
+    </label>
   );
 }
 
