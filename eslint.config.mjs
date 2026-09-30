@@ -23,6 +23,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Checkouts paralelos do Claude têm código e builds próprios. A revisão
+    // desta main não deve entrar neles; o Git já ignora o mesmo diretório.
+    ".claude/worktrees/**",
   ]),
 ]);
 

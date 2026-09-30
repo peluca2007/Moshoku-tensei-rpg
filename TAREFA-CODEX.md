@@ -1,5 +1,7 @@
 # Tarefas para o Codex
 
+> **Passagem atualizada em 2026-09-30:** leia `PASSAGEM-CODEX-CLAUDE.md` antes de continuar em conjunto. Ela distingue commits publicados, correções recentes, testes e limitações ainda abertas. As tarefas abaixo preservam o histórico dos pedidos.
+
 ## ✅ Tarefa 1 — o livro contínuo no celular (2026-09-26)
 
 Feita: commits `59b846d`, `ef55151`, `a9848ec` e `39ec628` (tabelas, rótulos do laboratório, alvos de

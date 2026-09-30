@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { CharacterData } from "./types";
-import { escolherSuporte, amortecerComBarro, reagirAFalhaAliada, aplicarDano, danoEsperado, executarAtaquePersonagem, montarFicha, novaAcao, novoAlvo, novoEstado, resolver } from "./combatSim";
+import { consumirReacao, escolherSuporte, amortecerComBarro, reagirAFalhaAliada, aplicarDano, danoEsperado, executarAtaquePersonagem, montarFicha, novaAcao, novoAlvo, novoEstado, resolver } from "./combatSim";
 import { CombateLogger, criaturaDoMolde, simularEncontro } from "./encounterSim";
 import { EventoAtaque } from "./combatTrace";
 
@@ -107,6 +107,76 @@ describe("defesas de Terra e Bardo aprovadas pelo autor", () => {
 });
 
 describe("recibo do combate usa os valores que alteraram os PV", () => {
+  it.each([1, 2])("Inverter cobra %i Dose(s), sem BC, d20 ou resistência", (doses) => {
+    const e = novoEstado(montarFicha(personagem()));
+    const alvo = novoAlvo({ nome: "Envenenado", pv: 1000, ca: 999, bonusResistencia: 999, doses, envenenado: true });
+    const acao = novaAcao({ nome: "Purgar", dano: "2d6 de dano de veneno por Dose invertida", inverteDose: "2d6" });
+    const rng = vi.fn(() => 0);
+    let recibo: EventoAtaque | undefined;
+    expect(danoEsperado(e, acao, alvo)).toBe(7 * doses);
+    expect(resolver(e, acao, alvo, rng, (ev) => { recibo = ev; })).toBe(2 * doses);
+    expect(rng).toHaveBeenCalledTimes(2 * doses);
+    expect(recibo?.teste).toBeUndefined();
+    expect(recibo?.bonusDano).toBe(0);
+    expect(alvo).toMatchObject({ doses: 0, envenenado: false });
+  });
+  it("Quebra automática não rola d20 nem crítico e dobra só o frio", () => {
+    const e = novoEstado(montarFicha(personagem()));
+    const alvo = novoAlvo({ nome: "Congelado", pv: 1000, ca: 999, congelado: true, molhado: true });
+    const acao = novaAcao({ nome: "Quebra", ataque: true, frio: true, dano: "5d8 + BC (perfurante) + 2d6 de frio", bonusSeCongelado: "3d8" });
+    const rng = vi.fn(() => 0.99);
+    let recibo: EventoAtaque | undefined;
+    expect(danoEsperado(e, acao, alvo)).toBe(63.5 + e.ficha.bc);
+    expect(resolver(e, acao, alvo, rng, (ev) => { recibo = ev; })).toBe(112 + e.ficha.bc);
+    expect(rng).toHaveBeenCalledTimes(10);
+    expect(recibo?.teste).toBeUndefined();
+    expect(recibo?.critico).toBe(false);
+    expect(alvo.congelado).toBe(false);
+  });
+  it.each([false, true])("Molhado dobra a parcela fria, preservando dano físico e BC (crítico=%s)", (critico) => {
+    const e = novoEstado(montarFicha(personagem()));
+    const alvo = novoAlvo({ nome: "Molhado", pv: 1000, ca: 1, molhado: true });
+    const acao = novaAcao({ nome: "Lança", ataque: true, frio: true, dano: "2d8 + BC (perfurante) + 1d8 de frio" });
+    const rng = vi.fn(() => 0).mockReturnValueOnce(critico ? 0.99 : 0.5);
+    expect(resolver(e, acao, alvo, rng)).toBe((critico ? 8 : 4) + e.ficha.bc);
+    expect(rng).toHaveBeenCalledTimes(critico ? 7 : 4);
+    expect(danoEsperado(e, acao, alvo)).toBeCloseTo(0.95 * (18 + e.ficha.bc) + 0.05 * 18);
+  });
+  it("resistência ao frio contra Molhado tem Desvantagem e arredonda depois da dobra", () => {
+    const e = novoEstado(montarFicha(personagem()));
+    const alvo = novoAlvo({ nome: "Molhado", pv: 1000, ca: 1, molhado: true, bonusResistencia: 999 });
+    const acao = novaAcao({ nome: "Gelo", frio: true, dano: "2d8 + BC (perfurante) + 1d8 de frio" });
+    const rng = vi.fn(() => 0);
+    let recibo: EventoAtaque | undefined;
+    expect(resolver(e, acao, alvo, rng, (ev) => { recibo = ev; })).toBe(Math.floor((4 + e.ficha.bc) / 2));
+    expect(recibo?.teste?.ajuste).toBe("desvantagem");
+    expect(rng).toHaveBeenCalledTimes(5);
+  });
+  it("fórmula que já inclui a dobra do frio não dobra novamente", () => {
+    const e = novoEstado(montarFicha(personagem()));
+    const acao = novaAcao({ nome: "Nova", dano: "6d8 de frio", frio: true, frioJaDobrado: true });
+    const seco = novoAlvo({ nome: "Seco", pv: 1000, ca: 1, bonusResistencia: -100 });
+    const molhado = { ...seco, molhado: true };
+    expect(resolver(e, acao, seco, () => 0)).toBe(resolver(e, acao, molhado, () => 0));
+    expect(danoEsperado(e, acao, seco)).toBe(danoEsperado(e, acao, molhado));
+  });
+  it.each([false, true])("usar Reação encerra o cântico sem devolver mana (extra=%s)", (extra) => {
+    const e = novoEstado(montarFicha(personagem()));
+    e.reacaoDisponivel = !extra;
+    e.reacoesExtra = extra ? 1 : 0;
+    e.conjurando = { acao: novaAcao({ nome: "Cântico", pm: 10 }), acoesGastas: 1, acoesNesteTurno: 1 };
+    const pm = e.pm;
+    expect(consumirReacao(e)).toBe(true);
+    expect(e.conjurando).toBeNull();
+    expect(e.pm).toBe(pm);
+  });
+  it("Reação indisponível não cancela o cântico", () => {
+    const e = novoEstado(montarFicha(personagem()));
+    e.reacaoDisponivel = false; e.reacoesExtra = 0;
+    e.conjurando = { acao: novaAcao({ nome: "Cântico" }), acoesGastas: 1, acoesNesteTurno: 1 };
+    expect(consumirReacao(e)).toBe(false);
+    expect(e.conjurando).not.toBeNull();
+  });
   it.each([4, 5, 6])("Dose Certa independe do recibo ao falhar por %i", (margem) => {
     const criar = () => {
       const e = novoEstado(montarFicha(personagem()));

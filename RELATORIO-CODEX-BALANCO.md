@@ -1,5 +1,7 @@
 # Relatório Codex — o que sobrou do balanço pelo simulador
 
+> Atualização de 2026-09-30: correções posteriores de Inverter, Quebra de Gelo, frio misto e Reações/cântico estão documentadas em `PASSAGEM-CODEX-CLAUDE.md`, junto de um recorte de medição atual. As tabelas abaixo são registros históricos das versões indicadas, não uma medição do motor mais recente.
+
 Data: 2026-09-29. Comparação entre `13d35c5` (antes da Tarefa 7) e o motor final desta tarefa. Cada célula é **Difícil/Chefe, antes → depois**, em 300 batalhas, com a mesma semente `20260927`. O grupo é sempre Norte + Fogo + Cura + a árvore da linha.
 
 ## As 19 árvores nos 6 patamares
