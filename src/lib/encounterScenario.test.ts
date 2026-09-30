@@ -146,6 +146,28 @@ describe("aberturas, ações e reações da cena", () => {
     expect(reagirComFluxo(e, inimigo, "1d6", 1, () => .5)).toBe(true);
     expect(reagirComFluxo(e, inimigo, "1d6", 1, () => .5)).toBe(false);
   });
+  it("Fluxo não ataca enquanto o personagem está recitando", () => {
+    const e = agua(); e.posicao = 0;
+    const inimigo = novoAlvo({ nome: "Inimigo", pv: 500, ca: 1, posicao: 1 });
+    aoIniciarRodada(e, true);
+    e.conjurando = { acao: e.ficha.ataqueBasico, acoesGastas: 1, acoesNesteTurno: 1 };
+    const usos = e.fluxoRestante;
+    expect(reagirComFluxo(e, inimigo, "1d6", 1, () => .5)).toBe(false);
+    expect(e.fluxoRestante).toBe(usos);
+    expect(e.conjurando).not.toBeNull();
+  });
+  it("Aparar ilimitado também encerra o cântico, mas só quando a Reação acontece", () => {
+    const e = agua(); e.posicao = 0; e.ca = 15;
+    e.ficha.rankAgua = 6; e.emPostura = true;
+    const inimigo = novoAlvo({ nome: "Inimigo", pv: 500, ca: 1, posicao: 1 });
+    const cantico = { acao: e.ficha.ataqueBasico, acoesGastas: 1, acoesNesteTurno: 1 };
+    e.conjurando = cantico;
+    expect(caDepoisDeAparar(e, inimigo, 12, 16)).toBe(21);
+    expect(e.conjurando).toBeNull();
+    e.conjurando = cantico;
+    expect(caDepoisDeAparar(e, inimigo, 12, 16)).toBe(15);
+    expect(e.conjurando).toBe(cantico);
+  });
 
   it("Guarda do Corpo exige aliado adjacente, troca posição e consome reação", () => {
     const e = agua(); e.posicao = 0; e.ca = 20;
