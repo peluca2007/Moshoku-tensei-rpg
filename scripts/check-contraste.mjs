@@ -58,6 +58,10 @@ const TEMAS = process.env.TEMA ? [process.env.TEMA] : ["light", "dark"];
 const LIMITE = Number(process.env.LIMITE ?? 8);
 
 const AUDITORIA = String.raw`(() => {
+  // Mede o estado FINAL de cada animação: um texto que surge (opacidade 0 → 1)
+  // era medido no meio do caminho e reprovava. Terminar a animação mostra o
+  // que o leitor vê; um contraste ruim no fim dela continua sendo achado.
+  for (const a of document.getAnimations()) { try { a.finish(); } catch { /* animação infinita ou por rolagem */ } }
   const canal = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
   const lum = ([r, g, b]) => 0.2126 * canal(r) + 0.7152 * canal(g) + 0.0722 * canal(b);
   const razao = (a, b) => { const l1 = lum(a), l2 = lum(b); const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1]; return (hi + 0.05) / (lo + 0.05); };
