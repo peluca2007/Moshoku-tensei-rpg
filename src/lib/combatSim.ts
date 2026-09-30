@@ -1889,6 +1889,7 @@ export function resolver(
     rolarParcela("Dados de Arma", e.ficha.ataqueBasico.dano, a.dadosDeArma + (a.regra === "primeiro-golpe" ? 1 : 0), critico);
   let dano = 0;
   let falhouResistencia = true;
+  let margemResistencia = 0;
   let inspiracaoUsada: EstadoPersonagem | undefined;
   if (a.ataque) {
     let teste = rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);
@@ -1955,6 +1956,7 @@ export function resolver(
     const teste = rolarD20ComRegistro(rng, false, alvo.envenenado);
     const bonusResistencia = alvo.bonusResistencia ?? Math.ceil(e.ficha.bc / 2);
     const resistencia = teste.natural + bonusResistencia;
+    margemResistencia = 8 + e.ficha.bc - resistencia;
     dano = rolarDano() + bonus;
     if (evento) {
       evento.teste = { ...teste, tipo: "resistencia", bonus: bonusResistencia, total: resistencia, defesa: 8 + e.ficha.bc };
@@ -2003,8 +2005,7 @@ export function resolver(
   } else {
     const dosesDoResultado = falhouResistencia ? a.dosesNaFalha : a.dosesNoSucesso;
     if (dosesDoResultado) {
-      const margem = evento?.teste ? evento.teste.defesa - evento.teste.total : 0;
-      const ganho = dosesDoResultado + (falhouResistencia && e.ficha.doseExtraEmFalhaGrave && margem >= 5 ? 1 : 0);
+      const ganho = dosesDoResultado + (falhouResistencia && e.ficha.doseExtraEmFalhaGrave && margemResistencia >= 5 ? 1 : 0);
       alvo.doses += ganho;
       if (alvo.doses >= 3) {
         alvo.doses = 0;
