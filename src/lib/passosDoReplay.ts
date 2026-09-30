@@ -171,6 +171,23 @@ export interface PlacarDaBatalha {
   maiorGolpe?: { atacante: string; acao: string; alvo: string; dano: number; critico: boolean };
   /** Quem caiu, na ordem, e em que rodada. */
   quedas: { nome: string; rodada: number; lado: "grupo" | "criaturas" }[];
+  /** A linha de cada personagem do grupo (invocações somadas ao invocador). */
+  porPersonagem: LinhaDoPlacar[];
+}
+
+export interface LinhaDoPlacar {
+  nome: string;
+  /** PV tirados dos inimigos, reais. */
+  dano: number;
+  acertos: number;
+  tentativas: number;
+  /** PV que as magias de cura dele rolaram (o motor não separa o que passou do máximo). */
+  cura: number;
+  /** PV reais que ele perdeu. */
+  recebido: number;
+  reacoes: number;
+  /** Rodada em que caiu; ausente = terminou de pé. */
+  caiuNaRodada?: number;
 }
 
 /**
@@ -210,5 +227,24 @@ export function placarDaBatalha(log: LogCombate): PlacarDaBatalha {
       });
     }
   }
-  return { destaque: nome ? { nome, dano: dano! } : undefined, maiorGolpe, quedas };
+  const porPersonagem: LinhaDoPlacar[] = (replay?.atores ?? [])
+    .filter((a) => a.lado === "grupo" && !a.invocado)
+    .map((a) => ({
+      nome: a.nome, dano: danoPorHeroi.get(a.nome) ?? 0, acertos: 0, tentativas: 0, cura: 0, recebido: 0, reacoes: 0,
+      caiuNaRodada: quedas.find((q) => q.nome === a.nome)?.rodada,
+    }));
+  const linhaDe = (nome: string) => porPersonagem.find((l) => l.nome === (dono.get(nome) ?? nome));
+  for (const e of eventos) {
+    const quemBate = linhaDe(e.atacante);
+    if (quemBate) { quemBate.tentativas++; if (e.acertou) quemBate.acertos++; }
+    const quemApanha = porPersonagem.find((l) => l.nome === e.alvo);
+    if (quemApanha) quemApanha.recebido += e.aplicacao?.perdaPv ?? 0;
+  }
+  for (const linha of log.linhas) {
+    const cura = linha.trim().match(/^\[(.+?)\] usa .+ em .+ \(cura: ([\d.]+)\)/);
+    if (cura) { const l = linhaDe(cura[1]); if (l) l.cura += Math.round(Number(cura[2])); }
+    for (const r of reacoesDoPasso(linha, [])) { const l = linhaDe(r.quem); if (l) l.reacoes++; }
+  }
+  for (const e of eventos) for (const r of reacoesDoPasso("", [e])) { const l = linhaDe(r.quem); if (l) l.reacoes++; }
+  return { destaque: nome ? { nome, dano: dano! } : undefined, maiorGolpe, quedas, porPersonagem };
 }
