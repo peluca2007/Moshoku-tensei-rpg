@@ -136,6 +136,25 @@ npm run check:mobile
 
 `check:mobile` concluído com sucesso: 16 rotas em 320/360/414 px; livro em 320×800, 360×800, 375×812 e 390×844, nos dois temas. Zero tabelas com rolagem lateral e zero controles estruturais abaixo de 40 px; o verificador tolera o arredondamento de 1 px observado nas duas menores larguras. Persistem contagens informativas de alvos pequenos em outras telas e no texto corrido, sem reprovação do check. A revisão foi automatizada; não substitui testar com jogadores em aparelhos físicos.
 
+### Segunda rodada — Couraça contra ataques físicos e Dose Certa
+
+Foi acrescentado `PERFIL_FISICO=1` ao balanceador. Em vez do orçamento abstrato, cada criatura recebe um golpe cortante de 1 Ação com `1d6 + máximo(0, arredondar(danoPorTurno / 3 − 3,5))`. Três Ações permitem três golpes. Os demais atributos, papéis, quantidade, compras e semente são preservados. A Reação especial do Chefe continua usando o orçamento genérico sem tipo: não ativa Couraça. **É um cenário experimental explícito, não uma criatura oficial nem equivalência exata com o molde antigo.**
+
+300 batalhas por encontro/patamar, semente 20260927; sem as duas cartas → com elas; vitória Difícil/Chefe em %:
+
+| Árvore | 1º | 2º | 3º | 4º | 5º | 6º |
+| --- | --- | --- | --- | --- | --- | --- |
+| Terra | 10/89 → 11/95 | 11/94 → 16/96 | 76/60 → 78/59 | 84/70 → 84/64 | 94/78 → 96/78 | 88/47 → 95/56 |
+| Bardo | 6/84 → 43/98 | 18/92 → 50/100 | 21/42 → 37/60 | 30/40 → 46/49 | 82/50 → 86/54 | 70/22 → 73/30 |
+
+A bancada imprime se a Couraça foi comprada. Confirmado nos seis patamares, com 4/8/12/16/19/22 compras totais (até quatro por patamar, nunca concedida de graça). A sobrevivência média individual da Terra, agregando os dois encontros, passou de 39/47/53/61/76/56% para 51/53/56/61/81/68%. A carta ajuda a suportar ataques, mas competir por mana pode piorar o Chefe, como no 4º. Não alterei custos nem dados para perseguir uma taxa de vitória. Diferenças pequenas de poucos pontos não demonstram superioridade estatística; uma única semente e uma única família de inimigos não representam a mesa.
+
+Também foi corrigida **Dose Certa**: a margem da resistência vinha do objeto de registro, então chamar o resolvedor sem recibo omitia a Dose adicional na falha por 5. Agora a margem pertence ao cálculo do combate. Três testes com falhas por 4, 5 e 6 verificam o mesmo dano, estados e quantidade de sorteios com e sem registro. Não mudou o texto nem a regra do livro. Os dois lados da bancada física acima usam esta correção.
+
+Reprodução no PowerShell: use os comandos da seção anterior, acrescentando `$env:PERFIL_FISICO = '1'` antes das duas execuções. Depois, `Remove-Item Env:PERFIL_FISICO` volta à bancada abstrata. Não compare diretamente os percentuais de cenários diferentes.
+
+Validação desta rodada: **832 testes em 57 arquivos**, TypeScript e ESLint sem erros; livro com **285 páginas e 1351 títulos**, sem estouro, título separado, arte quebrada ou linha solta de tabela. Permanecem os mesmos 9 avisos de mancha vazia e 3 de recorte. Nenhum capítulo, árvore, regra ou CSS do livro foi alterado nesta rodada.
+
 ## Decisões para o autor (histórico, recomendações autorizadas)
 
 **Opções para a sobrevivência da magia no 1º–2º:**
