@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { ChevronsRight, Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
+import { ChevronsRight, Pause, Play, RotateCcw, SkipBack, SkipForward, Volume2, VolumeX } from "lucide-react";
 import type { CharacterData } from "@/lib/types";
 import type { AtorDoReplay, CriaturaEncontro, LogCombate, QuadroDoReplay } from "@/lib/encounterSim";
 import type { EventoAtaque } from "@/lib/combatTrace";
@@ -11,6 +11,9 @@ import {
   FORMAS_A_DISTANCIA, formaDoGolpe, montarPassos, partesDoNome, reacoesDoPasso,
   type FormaDoGolpe, type TipoDeReacao,
 } from "@/lib/passosDoReplay";
+import { sonsDoPasso, type Toque } from "@/lib/sonsDaArena";
+import { tocar, useSomDaArena } from "@/lib/tocadorDaArena";
+import { useBestiaryStore } from "@/store/useBestiaryStore";
 import estilo from "./ArenaDoReplay.module.css";
 
 /**
@@ -121,6 +124,22 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
       if (postos[i]) projeteis.push({ de: postos[atacante]!, para: postos[i]!, forma: forma!, cor: ELEMENTOS[elementoDoGolpe(e)].cor, chave: `p${i}` });
     }
   }
+  const [somLigado, alternarSom] = useSomDaArena();
+  const vozes = useBestiaryStore((s) => s.configuracao.vozes);
+  const origemDoAtacante = evento ? atores[quemAge]?.origem : undefined;
+  const curou = !evento && !!quadroAnterior && quadro.pv.some((pv, i) => (quadroAnterior.pv[i] ?? pv) < pv);
+  // Em texto, para o efeito só disparar quando o passo muda de verdade (um
+  // array novo a cada render tocaria o mesmo golpe de novo a cada clique).
+  const partitura = JSON.stringify(sonsDoPasso({
+    forma, elemento, eventos, reacoes, linha: texto, curou, semente: indice,
+    vozDoAtacante: origemDoAtacante && atores[quemAge]?.lado === "grupo" ? vozes?.[origemDoAtacante] : undefined,
+  }));
+  // Só toca quando o passo chegou andando: pular na linha do tempo fica mudo.
+  useEffect(() => {
+    if (!somLigado || !avancouUm) return;
+    return tocar(JSON.parse(partitura) as Toque[], velocidade);
+  }, [somLigado, avancouUm, partitura, velocidade, indice]);
+
   if (avancouUm) {
     for (const r of reacoes.filter((x) => x.tipo === "fluxo")) {
       const de = postos[indiceDoNome(r.quem)];
@@ -250,6 +269,9 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
         {tocando ? <><Pause className="h-4 w-4" /> Pausar</> : <><Play className="h-4 w-4" /> {ultimo ? "Ver de novo" : "Assistir"}</>}
       </button>
       <BotaoArena rotulo="Avançar um passo" onClick={() => { setTocando(false); irPara(indice + 1, true); }}><SkipForward className="h-4 w-4" /></BotaoArena>
+      <BotaoArena rotulo={somLigado ? "Desligar o som da arena" : "Ligar o som da arena"} ativo={somLigado} onClick={alternarSom}>
+        {somLigado ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+      </BotaoArena>
       <BotaoArena rotulo="Próxima rodada" desativado={proximaRodada < 0} onClick={() => { setTocando(false); irPara(proximaRodada); }}><ChevronsRight className="h-4 w-4" /></BotaoArena>
       <button
         type="button"
@@ -271,11 +293,11 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
   </div>;
 }
 
-function BotaoArena({ rotulo, onClick, desativado = false, children }: {
-  rotulo: string; onClick: () => void; desativado?: boolean; children: React.ReactNode;
+function BotaoArena({ rotulo, onClick, desativado = false, ativo, children }: {
+  rotulo: string; onClick: () => void; desativado?: boolean; ativo?: boolean; children: React.ReactNode;
 }) {
-  return <button type="button" onClick={onClick} aria-label={rotulo} title={rotulo} disabled={desativado}
-    className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-parchment-300 disabled:opacity-40 dark:border-parchment-700">
+  return <button type="button" onClick={onClick} aria-label={rotulo} title={rotulo} disabled={desativado} aria-pressed={ativo}
+    className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-parchment-300 disabled:opacity-40 aria-pressed:border-wine-600 aria-pressed:text-wine-700 dark:border-parchment-700 dark:aria-pressed:text-wine-300">
     {children}
   </button>;
 }

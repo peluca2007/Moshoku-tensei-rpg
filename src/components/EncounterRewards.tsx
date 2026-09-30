@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { gerarLootDoEncontro } from "@/lib/lootGenerator";
 import { useBestiaryStore } from "@/store/useBestiaryStore";
+import { tocarSeLigado } from "@/lib/tocadorDaArena";
 
 export default function EncounterRewards({ tamanhoGrupo }: { tamanhoGrupo: number }) {
   const configuracao = useBestiaryStore((s) => s.configuracao);
@@ -34,7 +35,7 @@ export default function EncounterRewards({ tamanhoGrupo }: { tamanhoGrupo: numbe
     <p className="mt-2 text-sm text-parchment-600 dark:text-parchment-400">Escolha o valor do tesouro. O sorteio usa itens e preços da Loja da Guilda; a dificuldade do combate não determina automaticamente a riqueza dos inimigos. Esta preparação fica salva com a cena.</p>
     <div className="my-3 flex flex-wrap items-end gap-3">
       <label className="text-sm">Orçamento (PO)<input aria-label="Orçamento da recompensa em PO" type="number" min={0} max={1000000} step={1} value={recompensa.orcamento} onChange={(e) => configurar({ recompensa: { ...recompensa, orcamento: Math.min(1000000, Math.max(0, Math.trunc(Number(e.target.value) || 0))) } })} className="mt-1 block w-36 rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 dark:border-parchment-700 dark:bg-parchment-950" /></label>
-      <button type="button" onClick={() => configurar({ recompensa: { ...recompensa, semente: recompensa.semente + 1 } })} className="rounded-lg border border-parchment-300 px-3 py-2 text-sm dark:border-parchment-700">Sortear outros itens</button>
+      <button type="button" onClick={() => { configurar({ recompensa: { ...recompensa, semente: recompensa.semente + 1 } }); tocarSeLigado("moedas"); }} className="rounded-lg border border-parchment-300 px-3 py-2 text-sm dark:border-parchment-700">Sortear outros itens</button>
     </div>
     <p className="text-sm font-semibold">{loot.moedas} PO em moedas</p>
     {tamanhoGrupo > 0 && <p className="text-xs text-parchment-600 dark:text-parchment-400">Divisão: {Math.floor(loot.moedas / tamanhoGrupo)} PO por personagem; {loot.moedas % tamanhoGrupo} PO no caixa do grupo.</p>}
