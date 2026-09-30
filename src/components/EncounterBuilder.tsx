@@ -1065,6 +1065,8 @@ function SecaoCriaturas({
                   imunidades: p.imunidades,
                   movimentoEspecial: p.movimentoEspecial,
                   sentido: p.sentido,
+                  // O retrato vem junto, como a dica da seção promete.
+                  portrait: p.icon,
                 });
                 // As ações vêm do Apêndice G sem id — quem sorteia é a store.
                 for (const acao of p.acoes) adicionarAcao(id, acao);
