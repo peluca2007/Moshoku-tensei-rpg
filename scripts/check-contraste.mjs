@@ -52,8 +52,10 @@
  */
 import { BASE, comNavegador, dormir, exigirSemeador, servidorNoAr, urlSemeada } from "./lib/navegador.mjs";
 
-const ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/comparar", "/sessao", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
+const TODAS_AS_ROTAS = ["/", "/ficha", "/arvores", "/personagens", "/iniciativa", "/encontros", "/mestre", "/comparar", "/sessao", "/loja", "/livro", "/busca?q=fogo", "/criar", "/offline", "/rota-que-nao-existe", "/ficha/importar#g:linkCortadoDeProposito"];
+const ROTAS = process.env.ROTA ? [process.env.ROTA] : TODAS_AS_ROTAS;
 const TEMAS = process.env.TEMA ? [process.env.TEMA] : ["light", "dark"];
+const LIMITE = Number(process.env.LIMITE ?? 8);
 
 const AUDITORIA = String.raw`(() => {
   const canal = (c) => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
@@ -157,7 +159,7 @@ await comNavegador(async ({ abrir }) => {
 
       total += achados.length;
       console.log(`${achados.length === 0 ? "ok " : "!! "}${tema.padEnd(5)} ${rota.padEnd(14)} ${achados.length}`);
-      for (const a of achados.sort((x, y) => x.razao - y.razao).slice(0, 8)) {
+      for (const a of achados.sort((x, y) => x.razao - y.razao).slice(0, LIMITE)) {
         console.log(`      ${String(a.razao).padStart(5)}:1 (min ${a.minimo})  ${a.cor} sobre ${a.fundo}  ${a.px}px/${a.peso}`);
         console.log(`      "${a.texto}"`);
         console.log(`      .${a.classe}`);
