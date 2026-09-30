@@ -164,7 +164,7 @@ export default function FormulaWorkshop() {
   }));
 
   return (
-    <div className={styles.grimorio} style={{ ["--essencia" as string]: essencia.cor }}>
+    <div className={styles.grimorio} data-cores-proprias style={{ ["--essencia" as string]: essencia.cor }}>
       {/* ── A página das palavras ────────────────────────────────────── */}
       <section className={styles.pagina} aria-label="As palavras da fórmula">
         <header className={styles.cabeca}>

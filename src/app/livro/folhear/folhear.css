@@ -42,7 +42,7 @@
   --papel: #141418;
   --papel-2: #1e1e24;
   --tinta: #e8e3d9;
-  --tinta-suave: #a19c92;
+  --tinta-suave: #aca79d; /* 5:1 sobre o cartão escuro (era 4,5) */
   --fio: rgb(232 227 217 / 0.13);
   --sobre-cor: #111114;
   --sombra: rgb(0 0 0 / 0.55);
@@ -65,21 +65,29 @@
   --folhear-topo: var(--altura-nav);
 }
 
-.folhear[data-papel="dia"] {
+/*
+ * Antes da hidratação o livro ainda não tem papel (`data-papel` nulo — ver
+ * Folhear.tsx). Sem esta segunda forma, esse instante caía no papel noite com
+ * o site claro, e as caixas escuras saíam com texto escuro até o livro
+ * decidir: sem papel, o livro segue o tema do site.
+ */
+:is(.folhear[data-papel="dia"], :root:not(.dark) .folhear:not([data-papel])) {
   --papel: #f7f3ea;
   --papel-2: #ece6da;
   --tinta: #1d1e24;
-  --tinta-suave: #5d616e;
+  --tinta-suave: #50535d; /* 4,9:1 até sobre o cartão da ficha de criatura */
   --fio: rgb(29 30 36 / 0.13);
   --sobre-cor: #ffffff;
   --sombra: rgb(40 32 20 / 0.28);
 
-  --cor-cap0: #c9742a;
-  --cor-cap1: #2f6fb3;
+  /* As cores do papel dia viram TEXTO (rótulos, números, títulos): todas
+     passam de 4,5:1 sobre o papel. O laranja e o dourado estavam em 2,8 e 3,3. */
+  --cor-cap0: #95541c;
+  --cor-cap1: #2a66a5;
   --cor-cap2: #6546b8;
-  --cor-cap3: #22805a;
-  --cor-cap4: #c43c3c;
-  --cor-cap5: #a8740f;
+  --cor-cap3: #1d7250;
+  --cor-cap4: #b43636;
+  --cor-cap5: #895e0a;
   --cor-apendices: #4e6377;
   --cor: #3b4a6b;
 
@@ -234,8 +242,9 @@
   --cor: var(--cor-arvore);
 }
 
-.folhear[data-papel="dia"] [data-arvore] {
-  --cor: color-mix(in oklab, var(--cor-arvore) 64%, #000);
+:is(.folhear[data-papel="dia"], :root:not(.dark) .folhear:not([data-papel])) [data-arvore] {
+  /* 56%: a árvore mais clara (o amarelo-lima) chega a 5:1 sobre o papel; a 64% ficava em 3,7. */
+  --cor: color-mix(in oklab, var(--cor-arvore) 56%, #000);
 }
 
 /*
@@ -265,9 +274,9 @@
   --color-parchment-100: #ece6da;
   --color-parchment-200: #dcd6ca;
   --color-parchment-300: #c6c1b7;
-  --color-parchment-400: #a19c92;
+  --color-parchment-400: #aca79d;
   --color-parchment-500: #807c76;
-  --color-parchment-600: #5d616e;
+  --color-parchment-600: #565a66;
   --color-parchment-700: #454852;
   --color-parchment-800: #2e2f37;
   --color-parchment-900: #1e1e24;
@@ -847,6 +856,12 @@ html.livro-imersivo .folhear[data-modo="livro"] {
    logo abaixo mandarem. */
 .folhear-fluxo :where(:not(.diagrama, .diagrama *)) {
   margin-block: 0;
+}
+
+/* A cor herdada também pula quem pinta a si mesmo (`data-cores-proprias`): o
+   Laboratório de Fórmulas é um grimório noturno em qualquer papel, e herdar a
+   tinta do papel dia deixava o texto dele escuro sobre as cartas escuras. */
+.folhear-fluxo :where(:not(.diagrama, .diagrama *, [data-cores-proprias], [data-cores-proprias] *)) {
   color: inherit;
 }
 
@@ -2833,7 +2848,7 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   --cor: var(--cor-raca);
 }
 
-.folhear[data-papel="dia"] [data-raca] {
+:is(.folhear[data-papel="dia"], :root:not(.dark) .folhear:not([data-papel])) [data-raca] {
   --cor: color-mix(in oklab, var(--cor-raca) 58%, #000);
 }
 
@@ -4254,7 +4269,7 @@ html.livro-imersivo {
   mask: var(--caos) 0 0 / 300% 100% no-repeat;
 }
 
-.folhear[data-papel="dia"] .folhear-caos {
+:is(.folhear[data-papel="dia"], :root:not(.dark) .folhear:not([data-papel])) .folhear-caos {
   background: color-mix(in srgb, var(--cor) 36%, transparent);
 }
 
