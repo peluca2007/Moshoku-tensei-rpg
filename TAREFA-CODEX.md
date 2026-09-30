@@ -625,9 +625,16 @@ personagem, mais caos quanto mais PA), mas a execução não entrega.
 
 ### Decisão do autor
 
-Se o caos aparece **só nos temas do Livro** (como decidido na Tarefa 5) ou **nos quatro temas**. O
-Claude perguntou ao autor em 2026-09-30. Até a resposta chegar aqui, implemente atrás de uma única
-regra CSS (o seletor que liga o caos), para a troca ser uma linha.
+**Decidido pelo autor em 2026-09-30: o caos aparece nos quatro temas.** Forte nos dois temas do Livro
+(como está no `69fbc71`) e mais discreto nos dois Pergaminho — o tema padrão do site é o Pergaminho
+Noite, e sem isso quase ninguém vê a ideia.
+
+- Nos Pergaminho: as camadas de caos e o selo, com uns 60% da opacidade dos temas do Livro. A cor de
+  acento da ficha (os `--color-wine-*` trocados pela cor da árvore) continua **só** nos temas do Livro;
+  no Pergaminho o acento segue o vinho do site.
+- O pulso na compra de habilidade vale nos quatro.
+- `check:contraste` em `/ficha` nos quatro temas, e fotos dos 3 perfis também nos dois Pergaminho no
+  `RELATORIO-CODEX-FICHA.md`.
 
 ### Arquivos
 
