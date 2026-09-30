@@ -32,11 +32,45 @@
  *   SEM_NOVAS_DEFESAS=1 PERFIL_FISICO=1 npm run balancear -- --md
  *     (controle sem Couraça/Refrão, mantendo o limite de compras)
  */
-import { useCharacterStore } from "@/store/useCharacterStore";
-import { TREES, getTreeById } from "@/data/trees";
-import { getStartingKit } from "@/data/startingKits";
-import { criaturaDoMolde, simularEncontro, type ResultadoEncontro } from "@/lib/encounterSim";
-import { RANKS, type AttributeKey, type CharacterData } from "@/lib/types";
+import type { ResultadoEncontro } from "@/lib/encounterSim";
+import type { AttributeKey, CharacterData } from "@/lib/types";
+
+/*
+ * A store é persistida no navegador. No Node, o middleware do Zustand tenta
+ * gravar cada mutação sem ter `localStorage` e imprime um aviso por compra —
+ * milhares numa medição completa, enterrando justamente a tabela que este
+ * script existe para produzir. Um armazenamento volátil conserva a semântica
+ * da store durante a execução sem ler nem escrever o roster real do jogador.
+ * O import precisa ser dinâmico: o persist captura o storage ao criar a store.
+ */
+const armazenamentoVolatil = new Map<string, string>();
+Object.defineProperty(globalThis, "localStorage", {
+  configurable: true,
+  value: {
+    get length() { return armazenamentoVolatil.size; },
+    clear: () => armazenamentoVolatil.clear(),
+    getItem: (chave: string) => armazenamentoVolatil.get(chave) ?? null,
+    key: (indice: number) => [...armazenamentoVolatil.keys()][indice] ?? null,
+    removeItem: (chave: string) => { armazenamentoVolatil.delete(chave); },
+    setItem: (chave: string, valor: string) => { armazenamentoVolatil.set(chave, valor); },
+  } satisfies Storage,
+});
+Object.defineProperty(globalThis, "window", {
+  configurable: true,
+  value: { localStorage: globalThis.localStorage },
+});
+const [arvores, kits, encontros, tipos, store] = await Promise.all([
+  import("@/data/trees"),
+  import("@/data/startingKits"),
+  import("@/lib/encounterSim"),
+  import("@/lib/types"),
+  import("@/store/useCharacterStore"),
+]);
+const { TREES, getTreeById } = arvores;
+const { getStartingKit } = kits;
+const { criaturaDoMolde, simularEncontro } = encontros;
+const { RANKS } = tipos;
+const { useCharacterStore } = store;
 
 const BATALHAS = Number(process.env.BATALHAS ?? 300);
 const PATAMARES = (process.env.PATAMARES ?? "1,2,3,4,5,6").split(",").map(Number);
