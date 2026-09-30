@@ -184,6 +184,13 @@ export interface Acao {
    * caminho de dano soma ZERO em vez de curar o inimigo: `mediaDados("")` é 0.
    */
   dano: string;
+  /**
+   * O texto de dano da carta como o livro escreve, com os tipos ("5d8 + BC
+   * (perfurante) + 2d6 de frio…"). `dano` é a fórmula limpa para ROLAR, e o
+   * caso base perde as anotações entre parênteses; a defesa por tipo
+   * (`partesDoDano`, Cap. 4, §6) lê daqui.
+   */
+  tipagem?: string;
   /** A fórmula escreve +BC, ou usa Dados de Arma que já carregam o bônus. */
   somaBc: boolean;
   /** A parcela sustentada escreve +BC; não herda o bônus do impacto. */
@@ -702,6 +709,7 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     pm: p.pm ?? 0,
     pt: p.pt ?? 0,
     dano: p.dano ?? "",
+    tipagem: p.tipagem,
     somaBc: p.somaBc ?? (!!p.dadosDeArma || /\bBC\b|Bônus de Combate|dados? de arma|dano de arma/i.test(p.dano ?? "")),
     somaBcPorTurno: p.somaBcPorTurno ?? /\bBC\b|Bônus de Combate/i.test(p.danoPorTurno ?? ""),
     tipo: p.tipo ?? "dano",
@@ -925,6 +933,7 @@ export function acoesDe(c: CharacterData): Acao[] {
         }
         return base;
       })(),
+      tipagem: ehSuporte ? undefined : a.damage.normal,
       somaBc: /\bBC\b|Bônus de Combate|dados? de arma|dano de arma/i.test(a.damage.normal),
       somaBcPorTurno: /\bBC\b|Bônus de Combate/i.test(a.damage.porTurno ?? separarSustentado(a.damage.normal).porTurno),
       /*
@@ -2043,7 +2052,7 @@ export function resolver(
     alvo.quebrantado = Math.min(teto, alvo.quebrantado + ganho);
   }
   // Fogo: Em Chamas cobra 1d6 no início de cada turno do alvo
-  if (saida) saida.partes = partesDoDano(a.dano, dano, frioFinal);
+  if (saida) saida.partes = partesDoDano(a.tipagem ?? a.dano, dano, frioFinal);
   if (a.fogo && !alvo.molhado) alvo.emChamas = 6;
   if (a.fogo && alvo.molhado) alvo.molhado = false; // fogo evapora a água
   if (a.aplicaCongeladoSeMolhado && estavaMolhado && falhouResistencia) {
@@ -2349,7 +2358,7 @@ export function executarAtaquePersonagem(
   if (acao.ataque && evento?.acertou === false) reagirAFalhaAliada(e, aliados, rng, evento);
   e.escondido = false;
   const pvAntes = alvo.pv;
-  aplicarDano(alvo, dano, e.ficha.bonusDeRank, rng, evento?.critico ?? false, acao.dano, evento, saida.partes);
+  aplicarDano(alvo, dano, e.ficha.bonusDeRank, rng, evento?.critico ?? false, acao.tipagem ?? acao.dano, evento, saida.partes);
   const causado = Math.max(0, pvAntes - alvo.pv);
   if (evento?.aplicacao) evento.aplicacao.danoEfetivo = causado;
   if (evento && logger) {
