@@ -2,6 +2,36 @@
 
 > Atualização de 2026-09-30: correções posteriores de Inverter, Quebra de Gelo, frio misto e Reações/cântico estão documentadas em `PASSAGEM-CODEX-CLAUDE.md`, junto de um recorte de medição atual. As tabelas abaixo são registros históricos das versões indicadas, não uma medição do motor mais recente.
 
+## Medição vigente depois da auditoria de BC
+
+Commit `5f89bf9`, 300 batalhas por encontro/patamar, semente `20260927`. Cada célula é **Difícil/Chefe**. Esta tabela substitui a anterior para decisões futuras; a tabela “antes → depois” continua abaixo apenas como histórico da Tarefa 7.
+
+O instrumento somava o BC a toda habilidade, mesmo quando a carta trazia apenas dados. Agora impacto e dano por turno somam BC separadamente e somente quando a fórmula escreve `BC` ou usa Dados de Arma. A Conjuração Concentrada também passou a ampliar os dados por Dose, o dano por turno e o bônus condicional da Quebra de Gelo. Nenhuma carta ou número de regra mudou.
+
+| Árvore | 1º | 2º | 3º | 4º | 5º | 6º |
+| --- | --- | --- | --- | --- | --- | --- |
+| Arquearia | 63/98 | 53/97 | 35/54 | 37/62 | 79/69 | 80/53 |
+| Bardo e Interação | 48/94 | 46/93 | 30/34 | 25/28 | 76/31 | 44/11 |
+| Cavalaria e Escudos | 63/98 | 51/98 | 50/63 | 44/51 | 79/57 | 59/33 |
+| Estilo Deus da Água | 77/99 | 70/98 | 62/80 | 59/72 | 93/82 | 68/64 |
+| Estilo Deus da Espada | 76/99 | 76/100 | 55/83 | 61/90 | 91/98 | 87/99 |
+| Estilo Deus do Norte | 49/98 | 40/95 | 23/37 | 30/57 | 95/72 | 80/67 |
+| Estilo Vendaval | 43/96 | 39/97 | 87/59 | 80/53 | 97/68 | 94/50 |
+| Espíritos e Feras | 19/92 | 29/90 | 56/49 | 69/59 | 96/77 | 93/62 |
+| Furtividade e Armadilhas | 45/96 | 48/94 | 35/54 | 31/52 | 76/61 | 28/24 |
+| Lutador | 53/98 | 57/97 | 39/77 | 50/78 | 87/89 | 63/83 |
+| Magia de Água | 9/86 | 7/82 | 14/16 | 41/23 | 80/32 | 60/14 |
+| Magia de Cura | 40/96 | 37/90 | 20/16 | 12/10 | 68/19 | 47/9 |
+| Magia de Desintoxicação | 15/87 | 15/82 | 8/17 | 7/26 | 63/35 | 17/10 |
+| Magia de Fogo | 12/86 | 11/85 | 54/33 | 63/32 | 89/54 | 83/27 |
+| Magia Teórica | 11/86 | 12/89 | 10/27 | 11/32 | 56/32 | 19/13 |
+| Magia de Terra | 12/87 | 10/85 | 64/31 | 63/36 | 90/45 | 68/22 |
+| Magia de Vento | 12/87 | 52/89 | 30/22 | 54/44 | 83/37 | 69/28 |
+| Navegação e Liderança | 38/93 | 35/93 | 17/32 | 17/42 | 95/85 | 89/55 |
+| Punho do Fogo | 62/99 | 91/99 | 43/73 | 55/85 | 99/95 | 95/89 |
+
+As quedas grandes mostram quanto o instrumento antigo inflava cartas sem `+ BC`; não justificam compensação automática no livro. Magia inicial, Bardo avançado, Cura em patamares altos e Desintoxicação seguem como sinais para leitura humana, não como autorização para aumentar números.
+
 Data: 2026-09-29. Comparação entre `13d35c5` (antes da Tarefa 7) e o motor final desta tarefa. Cada célula é **Difícil/Chefe, antes → depois**, em 300 batalhas, com a mesma semente `20260927`. O grupo é sempre Norte + Fogo + Cura + a árvore da linha.
 
 ## As 19 árvores nos 6 patamares

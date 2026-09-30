@@ -31,7 +31,7 @@ Histórico anterior: tarefas 1–7 em `TAREFA-CODEX.md`; relatórios `RELATORIO-
 
 ## Rodada atual: fidelidade às regras existentes
 
-Commits desta rodada: **`2bc481b`** (motor, testes e nota 0.1.123) e **`df5dba9`** (lint). A documentação entra em commit separado, imediatamente depois deles. Ao concluir esta entrega, Codex libera os arquivos desta frente; não há tarefa de edição autônoma ou subagente em execução.
+Commits desta rodada: **`2bc481b`** (gelo, veneno, cântico e testes), **`df5dba9`** (lint), **`5f89bf9`** (BC explícito e variantes Concentradas) e **`57fa021`** (saída legível do balanceador). A documentação entra em commits separados. Ao concluir esta entrega, Codex libera os arquivos desta frente; não há tarefa de edição autônoma ou subagente em execução.
 
 Nenhuma carta foi rebalanceada nesta rodada. A nota **0.1.123**, de 2026-09-30, descreve correções do motor.
 
@@ -44,14 +44,18 @@ Nenhuma carta foi rebalanceada nesta rodada. A nota **0.1.123**, de 2026-09-30, 
 | Nova Congelante não recebe outra dobra por Molhado. | `src/data/trees/vento.ts`: “já contando a duplicação”. | Campo `frioJaDobrado`, extraído da carta e preservado nas variantes. |
 | Previsão de resistência permite 0%/100%, sem impor o piso/teto de ataque. | Resistência compara total com CD; o resolvedor já fazia isso. | Apenas cálculo de probabilidade na IA. |
 | Gastar Reação encerra cântico, inclusive reação extra e Aparar ilimitado. Não devolve mana por interrupção voluntária. Fluxo não ataca enquanto recita. | `Chapter2.tsx`, Conjurando: usar Reação encerra a conjuração; restituição parcial pertence à falha de Concentração por dano. | `consumirReacao` e `combatReactions.ts`. Reação indisponível não cancela nada. |
+| BC não é bônus oculto: entra no dano somente se a fórmula escreve BC ou usa Dados de Arma. Impacto e parcela sustentada são lidos separadamente. | Fórmulas impressas das cartas; a conversão ficha → criatura já obedecia a essa leitura. | `somaBc`/`somaBcPorTurno` em `Acao`, usados por resolução e previsão. |
+| Concentrada amplia cada grupo de dados, inclusive Inverter por Dose, bônus da Quebra contra Congelado e dano por turno. | `Chapter2.tsx`, §2: “dados de dano sobem 50% (arredondado pra cima, em cada grupo de dados)”. | A variante agora transforma `dano`, `inverteDose`, `bonusSeCongelado` e `danoPorTurno`. |
 
 ### Arquivos desta rodada
 
 - `src/lib/combatSim.ts`: cálculo, estados, previsão e explicação de simplificações.
 - `src/lib/combatReactions.ts`: cântico versus Aparar/Fluxo.
-- `src/lib/combatAudit.test.ts`: 10 casos adicionais de regressão nesta rodada.
+- `src/lib/combatAudit.test.ts`: 12 casos adicionais de regressão nesta rodada, incluindo BC explícito e três parcelas de Concentrada.
 - `src/lib/encounterScenario.test.ts`: 2 casos de cântico com Fluxo/Aparar ilimitado.
 - `src/lib/suporte.test.ts`: 2 casos de extração das cartas reais.
+- `src/lib/fichaComoCriatura.ts`: documentação alinhada; a conversão e o motor agora obedecem à mesma fórmula.
+- `scripts/balancear.mts`: usa um `localStorage` volátil só durante a medição. O roster real não é lido nem escrito, e milhares de avisos do Zustand deixaram de esconder a tabela.
 - `src/data/patchNotes.ts`: nota 0.1.123, sem mudança de regra.
 - `eslint.config.mjs`: ignora **somente `.claude/worktrees/**`** além dos ignores anteriores. Esses checkouts paralelos já são ignorados pelo Git; o lint da main não deve analisar cópias de fontes e builds de outro agente. Nenhum arquivo desses diretórios foi apagado ou editado.
 - Esta passagem, o índice em `TAREFA-CODEX.md` e a atualização de `RELATORIO-CODEX-BALANCO.md`.
@@ -59,14 +63,15 @@ Nenhuma carta foi rebalanceada nesta rodada. A nota **0.1.123**, de 2026-09-30, 
 ## Testes e verificações
 
 - TypeScript: `npx tsc --noEmit -p .`, aprovado.
-- Vitest: **846 testes / 57 arquivos**, aprovados; eram 832 antes desta rodada.
+- Vitest: **848 testes / 57 arquivos**, aprovados; eram 832 antes desta rodada.
 - `npx eslint src scripts` e **`npm run lint` completo**, aprovados após isolar os checkouts paralelos.
 - `check:livro`: zero erros, dois avisos existentes (Cura com cinco passos no loop; tralha sem arte própria).
 - `check:texto`: 632 habilidades/talentos, zero falhas/avisos.
 - `check:termos`: 108 termos, zero falhas/avisos.
 - `check:remissoes`: 421 remissões, zero falhas/avisos.
 - Revisão visual desta rodada: **284 páginas / 1351 títulos**, zero títulos separados, estouros, arte quebrada/ampliada/cortada demais ou linha solta de tabela; 7 avisos de mancha vazia (páginas 35, 37, 69, 97, 115, 136 e 278). A medição anterior registrava 285 páginas, 9 avisos de mancha e 3 recortes. Não atribuí a diferença a uma correção de CSS: nenhum CSS mudou, e não foi feita comparação controlada de fontes/ambiente entre as duas execuções. A primeira tentativa desta rodada falhou porque o servidor 3020 não estava mais ativo; a porta foi conferida e um novo servidor foi iniciado, sem derrubar processo alheio.
-- `check:mobile` não foi repetido nesta rodada de motor. A execução anterior passou em 16 rotas e oito combinações de tamanho/tema do livro; detalhes no relatório de balanço. Nenhum CSS foi alterado aqui.
+- `check:mobile`: 16 rotas sem transbordo entre 320 e 414 px; `/livro` cabe nas oito combinações de 320/360/375/390 px e tema claro/escuro. Nenhum CSS foi alterado aqui.
+- Balanceador: matriz completa com 300 batalhas por encontro/patamar; uma execução mínima adicional confirmou a saída sem avisos de armazenamento. O primeiro disparo dentro do isolamento falhou em `tsx` com `uv_os_get_passwd/ENOMEM`; as execuções fora dele concluíram normalmente.
 
 ## Medição atual — não comparar com históricos como se fosse a mesma versão
 
@@ -74,8 +79,8 @@ Nenhuma carta foi rebalanceada nesta rodada. A nota **0.1.123**, de 2026-09-30, 
 
 | Árvore | 1º | 2º | 3º | 4º | 5º | 6º |
 | --- | --- | --- | --- | --- | --- | --- |
-| Água | 9/86 | 11/85 | 14/15 | 39/30 | 82/32 | 69/23 |
-| Desintoxicação | 28/92 | 25/89 | 17/51 | 19/62 | 74/77 | 64/77 |
+| Água | 9/86 | 7/82 | 14/16 | 41/23 | 80/32 | 60/14 |
+| Desintoxicação | 15/87 | 15/82 | 8/17 | 7/26 | 63/35 | 17/10 |
 
 Esses resultados não são prova de nerf ou buff nas cartas: **as cartas não mudaram**. Corrigir dano antes inflado, testes indevidos e decisões da IA muda também a ordem dos sorteios. Não compensar automaticamente uma correção de instrumento aumentando os números do livro.
 
@@ -84,8 +89,8 @@ O cenário `PERFIL_FISICO=1` é experimental: golpes cortantes de 1 Ação com d
 ## Pendências e limites para a próxima dupla de trabalho
 
 1. **Não declarar o simulador completo.** Fórmulas livres da Teórica, mapa detalhado, silêncio/surdez, efeitos narrativos e várias cartas de controle sem dano ainda são aproximações ou ficam de fora.
-2. **Auditar o BC implícito.** Fora de Inverter, o motor ainda usa BC como bônus padrão para habilidades; cartas de dano puro sem “+ BC” merecem uma revisão separada, com testes por carta. Esta rodada não resolve essa questão inteira.
-3. **Auditar variantes e conversões.** Conferir Inverter Concentrada, dados condicionais de Quebra Concentrada e a conversão ficha → criatura. Não presumir que corrigir `resolver` conserta automaticamente cada caminho paralelo.
+2. **BC e variantes foram auditados.** O motor só soma BC explícito/Dados de Arma; a ficha convertida já seguia essa regra. Inverter, Quebra e dano por turno Concentrados têm testes com cartas reais. Se surgir outro campo de dano fora desses quatro, ele precisa entrar deliberadamente na transformação.
+3. **A nova régua invalida comparações antigas.** `RELATORIO-CODEX-BALANCO.md` traz a matriz vigente das 19 árvores × 6 patamares. Não compensar as quedas aumentando cartas automaticamente: o que mudou foi o instrumento.
 4. **Dano misto ainda não está integralmente tipado.** A dobra de frio foi corrigida; resistência/imunidade por parcela, dano sustentado e ações legadas sem marcação precisam de auditoria própria. Ação legada sem parcelas frias identificadas mantém o fallback de frio integral, explicitado na interface.
 5. **IA de combos ainda é heurística.** Rever chance de conseguir congelar/aplicar Doses e custo total de PM do plano, em vez de tratar o preparo como garantido. Não medir só a carta isolada.
 6. **Balanço de produto:** magia inicial e Bardo avançado continuam abaixo de várias referências; a Couraça teve benefício moderado no cenário físico. Não criar escudo universal nem alterar a troca área/alvo único sem nova evidência.
