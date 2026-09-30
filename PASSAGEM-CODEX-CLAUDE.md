@@ -63,7 +63,7 @@ Nenhuma carta foi rebalanceada nesta rodada. A nota **0.1.123**, de 2026-09-30, 
 ## Testes e verificações
 
 - TypeScript: `npx tsc --noEmit -p .`, aprovado.
-- Vitest: **848 testes / 57 arquivos**, aprovados; eram 832 antes desta rodada.
+- Vitest após integrar a arena 2.5D: **852 testes / 58 arquivos**, aprovados; eram 832 antes desta rodada.
 - `npx eslint src scripts` e **`npm run lint` completo**, aprovados após isolar os checkouts paralelos.
 - `check:livro`: zero erros, dois avisos existentes (Cura com cinco passos no loop; tralha sem arte própria).
 - `check:texto`: 632 habilidades/talentos, zero falhas/avisos.
