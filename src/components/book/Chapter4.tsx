@@ -446,8 +446,15 @@ export default function Chapter4() {
             <span key="vul"><b>Vulnerável:</b> você sofre o dobro do dano daquele tipo.</span>,
             <span key="empilha"><b>Não empilham.</b> Duas Resistências valem uma; Resistência e Vulnerável se anulam.</span>,
             <span key="ordem"><b>Ordem:</b> reduções fixas (Touki, Defender) entram antes; depois, Resistência, Imunidade ou Vulnerável.</span>,
+            <span key="misto"><b>Dano de mais de um tipo:</b> quando o golpe soma partes de tipos diferentes (&ldquo;3d8 + BC cortante + 1d6 de frio&rdquo;) ou divide o dano entre tipos, cada parte usa a defesa do próprio tipo. Quando o <b>mesmo</b> dano é de dois tipos ao mesmo tempo (&ldquo;ígneo e contundente&rdquo;), Resistência e Imunidade só valem se o alvo as tiver contra os dois; Vulnerável vale contra qualquer um.</span>,
           ]}
         />
+        <P className="text-sm">
+          Exemplo: a Lâmina de Gelo (1d8 + BC cortante + 1d4 de frio) rola 7 de corte e 3 de frio contra um
+          elemental Imune a frio. Ele sofre os 7 cortantes; os 3 de frio somem. Já o Impacto Meteórico do Punho
+          de Fogo (ígneo e contundente) contra uma salamandra que só resiste a fogo entra inteiro: ela não
+          resiste ao contundente.
+        </P>
         <Aside title="Os tipos de dano do livro">
           <P>
             <b>Cortante, perfurante e contundente</b> — os três formam o &ldquo;físico&rdquo;. Depois:{" "}
