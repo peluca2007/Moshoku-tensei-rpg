@@ -58,3 +58,13 @@ Nas fotos de Pergaminho, a mesma ficha conserva o azul padrão e não mostra sel
 ## Pendências pro Claude
 
 - Resolver os nove contrastes e os 24 px de transbordo de `/arvores` em 320 px.
+
+## Fechamento pelo Claude — quatro temas e contraste (2026-09-30)
+
+O Codex parou depois do `69fbc71`; o Claude terminou a Tarefa 9 com a decisão do autor (caos nos quatro temas).
+
+- **Quatro temas.** `.caos` liga sempre: opacidade 1 nos temas do Livro e 0,6 nos Pergaminho. A cor noite das camadas e do selo passa a valer em qualquer tema escuro (`html.dark`), não só no Livro Noite. O acento da ficha (`--color-wine-*` trocado pela cor da árvore) continua só nos temas do Livro.
+- **Contraste do acento.** `wine-600` misturava 78% da cor da árvore com preto: a árvore amarelo-lima dava 2,5:1 com texto branco. A 54% (e 700–950 escurecendo na mesma proporção) o pior caso das 19 árvores, noite e dia, fica em 4,9:1.
+- **Cor dia das árvores.** `corDia` passou de 64% para 56% da cor noite (a mesma fórmula do papel dia do livro), para o amarelo-lima chegar a 5:1 sobre o papel.
+- **Conferência.** `check:contraste` com `ROTA=/ficha` nos quatro temas: 0 achados (antes: 7 no Livro Noite, 4 no Livro Dia, que vinham do acento e da paleta do tema).
+- **Pendência do Codex para o Claude (`/arvores`):** os nove contrastes do tema claro já não aparecem na varredura; o transbordo de 24 px em 320 px foi conferido no `check:mobile` (ver `RELATORIO-CODEX-POLIMENTO.md`).
