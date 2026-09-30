@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ChevronsRight, Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
 import type { CharacterData } from "@/lib/types";
 import type { AtorDoReplay, CriaturaEncontro, LogCombate, QuadroDoReplay } from "@/lib/encounterSim";
 import type { EventoAtaque } from "@/lib/combatTrace";
 import { getRaceById } from "@/data/races";
 import { CRIATURAS_PRONTAS } from "@/data/bestiary";
-import { montarPassos, partesDoNome } from "@/lib/passosDoReplay";
+import {
+  FORMAS_A_DISTANCIA, formaDoGolpe, montarPassos, partesDoNome, reacoesDoPasso,
+  type FormaDoGolpe, type TipoDeReacao,
+} from "@/lib/passosDoReplay";
 import estilo from "./ArenaDoReplay.module.css";
 
 /**
@@ -56,13 +59,28 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
   const ultimo = indice === passos.length - 1;
   const tocando = pediuTocar && !ultimo;
   const proximaRodada = passos.findIndex((p, i) => i > indice && quadros[p.ate].rodada > quadro.rodada);
+  const reacoes = useMemo(() => reacoesDoPasso(texto, eventos), [texto, eventos]);
+  // Aparar e Fluxo são o "clang" da árvore da Água: a cena prende o fôlego um instante.
+  const congela = reacoes.some((r) => r.tipo === "aparar" || r.tipo === "fluxo" || r.tipo === "devolver");
 
   useEffect(() => {
     if (!tocando) return;
-    const pausa = (evento ? 1150 : ehRodada ? 950 : 600) / velocidade;
+    const pausa = (congela ? 1500 : reacoes.length ? 1300 : evento ? 1150 : ehRodada ? 950 : 600) / velocidade;
     const t = setTimeout(() => setPasso((p) => ({ indice: Math.min(p.indice + 1, passos.length - 1), animar: true })), pausa);
     return () => clearTimeout(t);
-  }, [tocando, indice, velocidade, evento, ehRodada, passos.length]);
+  }, [tocando, indice, velocidade, evento, ehRodada, passos.length, congela, reacoes.length]);
+
+  // A proporção do palco, para a flecha apontar para onde voa.
+  const palco = useRef<HTMLDivElement>(null);
+  const [proporcao, setProporcao] = useState(1.6);
+  useEffect(() => {
+    const el = palco.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const medir = () => { if (el.clientHeight) setProporcao(el.clientWidth / el.clientHeight); };
+    const observador = new ResizeObserver(medir);
+    observador.observe(el);
+    return () => observador.disconnect();
+  }, []);
 
   const imagens = useMemo(() => imagensDosAtores(atores, grupo, criaturas), [atores, grupo, criaturas]);
   const vaoInicial = useMemo(() => vaoDaLinha(quadros), [quadros]);
@@ -85,6 +103,31 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
   const fileira = Math.max(3, ...contagemPorLado(atores, quadro).map(tamanhoDaFileira));
   const distancia = distanciaEntreLados(atores, quadro);
   const elemento = evento ? elementoDoGolpe(evento) : undefined;
+  // "Brasa" não diz "ígneo" na fórmula, mas o efeito já sabe que é fogo pelo
+  // nome: sem arma e com elemento mágico, o golpe é feitiço, e feitiço voa.
+  const formaBruta = evento ? formaDoGolpe(evento) : undefined;
+  const forma = formaBruta === "golpe" && elemento && !evento?.arma && !ELEMENTOS_FISICOS.has(elemento) ? "magia" : formaBruta;
+  const aDistancia = !!forma && FORMAS_A_DISTANCIA.has(forma);
+  const reacoesDe = (i: number) => reacoes.filter((r) => indiceDoNome(r.quem) === i);
+  const protegidoPor = (i: number) => reacoes.filter((r) => r.alvos.some((a) => indiceDoNome(a) === i));
+  // Guarda do Corpo: quem reage corre até o aliado que protege.
+  const guarda = avancouUm ? reacoes.find((r) => r.tipo === "guarda") : undefined;
+  const guardiao = guarda ? indiceDoNome(guarda.quem) : -1;
+  const protegidoDaGuarda = guarda ? postos[indiceDoNome(guarda.alvos[0])] : undefined;
+  // Projéteis: o golpe a distância e o Fluxo que devolve água em quem errou.
+  const projeteis: { de: Posto; para: Posto; forma: FormaDoGolpe; cor: string; chave: string }[] = [];
+  if (avancouUm && aDistancia && atacante >= 0 && postos[atacante]) {
+    for (const [i, e] of golpeEm) {
+      if (postos[i]) projeteis.push({ de: postos[atacante]!, para: postos[i]!, forma: forma!, cor: ELEMENTOS[elementoDoGolpe(e)].cor, chave: `p${i}` });
+    }
+  }
+  if (avancouUm) {
+    for (const r of reacoes.filter((x) => x.tipo === "fluxo")) {
+      const de = postos[indiceDoNome(r.quem)];
+      const para = postos[indiceDoNome(r.alvos[0])];
+      if (de && para) projeteis.push({ de, para, forma: "magia", cor: ELEMENTOS.agua.cor, chave: `f${r.quem}` });
+    }
+  }
 
   function teclado(e: React.KeyboardEvent<HTMLDivElement>) {
     // Só o palco em foco responde; o botão e o controle deslizante têm teclas próprias.
@@ -105,7 +148,8 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
 
   return <div className="space-y-2">
     <div
-      className={`${estilo.palco} aspect-[4/5] w-full sm:aspect-[16/10]`}
+      ref={palco}
+      className={`${estilo.palco} ${avancouUm && congela ? estilo.congela : ""} aspect-[4/5] w-full sm:aspect-[16/10]`}
       tabIndex={0}
       role="group"
       aria-roledescription="arena"
@@ -123,28 +167,39 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
         const pv = quadro.pv[i];
         const caido = !quadro.vivo[i];
         const golpe = golpeEm.get(i);
-        const lunge = i === atacante && centro ? {
-          "--dx": `${(centro.x - posto.x) * 0.45}cqw`,
-          "--dy": `${(topo(centro.profundidade) - topo(posto.profundidade)) * 0.45}cqh`,
+        const rumo = i === atacante && centro && !aDistancia ? centro : i === guardiao ? protegidoDaGuarda : undefined;
+        const lunge = rumo ? {
+          "--dx": `${(rumo.x - posto.x) * 0.45}cqw`,
+          "--dy": `${(topo(rumo.profundidade) - topo(posto.profundidade)) * 0.45}cqh`,
         } : {};
+        // O golpe a distância só "chega" quando o projétil chega.
+        const atraso = golpe && aDistancia ? { "--atraso": "440ms" } : {};
+        // De que lado vem a arma: a espada varre e o soco entra a partir do atacante.
+        const de = atacante >= 0 && postos[atacante] ? { "--de": postos[atacante]!.x <= posto.x ? 1 : -1 } : {};
+        const minhasReacoes = reacoesDe(i);
+        const aneis: TipoDeReacao[] = avancouUm ? [...minhasReacoes.map((r) => r.tipo), ...protegidoPor(i).map((r) => r.tipo)] : [];
         const pct = Math.max(0, Math.min(1, pv / ator.pvMax));
         const escala = 1.05 - posto.profundidade * 0.45;
         const { base, numero } = partesDoNome(ator.nome);
+        // Quem avança leva o standee inteiro (nome e PV junto); a chave nova
+        // por passo é o que faz a investida tocar de novo a cada golpe.
+        const avanca = i === atacante ? (aDistancia ? estilo.dispara : estilo.investida) : i === guardiao ? estilo.investida : "";
         return <div
-          key={i}
-          className={`${estilo.standee} ${estilo[ator.lado]} ${caido ? estilo.caido : ""} ${i === quemAge ? estilo.agindo : ""}`}
+          key={avanca ? `${i}-${indice}` : i}
+          className={`${estilo.standee} ${estilo[ator.lado]} ${caido ? estilo.caido : ""} ${i === quemAge ? estilo.agindo : ""} ${avanca}`}
           style={{
             left: `${posto.x}%`, top: `${topo(posto.profundidade)}%`,
             "--elemento": elemento ? ELEMENTOS[elemento].cor : undefined,
             zIndex: Math.round((1 - posto.profundidade) * 40) + 2,
             "--tamanho": `min(${ator.invocado ? 80 : 110}px, ${(ator.invocado ? 52 : 70) / fileira}cqw)`, "--escala": escala,
-            ...lunge,
+            ...lunge, ...atraso, ...de,
           } as unknown as CSSProperties}
         >
           <div className={estilo.corpo}>
-            <div key={i === atacante || golpe ? `a${indice}` : "parado"} className={
-              i === atacante ? estilo.investida : golpe ? (golpe.acertou ? estilo.apanha : estilo.esquiva) : undefined
-            }>
+            <div key={golpe || aneis.length ? `a${indice}` : "parado"} className={[
+              golpe ? (golpe.acertou ? estilo.apanha : estilo.esquiva) : "",
+              avancouUm && minhasReacoes.length ? estilo.reagindo : "",
+            ].join(" ")}>
               <div className={estilo.cartao}>
                 {imagens[i]
                   // eslint-disable-next-line @next/next/no-img-element
@@ -155,7 +210,13 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
               <div className={estilo.base} />
             </div>
             {golpe?.acertou && <Efeito key={`e${indice}`} elemento={elementoDoGolpe(golpe)} />}
+            {golpe && forma && !aDistancia && forma !== "golpe" && <ArmaNoAlvo key={`w${indice}`} forma={forma} />}
+            {aneis.map((tipo, n) => <span key={`${tipo}${n}${indice}`} className={estilo.anel} data-tipo={tipo} aria-hidden>
+              {tipo === "aparar" && <SvgDaArma forma="espada" />}
+              {tipo === "refrao" && <><i>♪</i><i>♫</i><i>♪</i></>}
+            </span>)}
           </div>
+          {minhasReacoes.map((r, n) => <span key={`s${n}${indice}`} className={estilo.seloReacao} data-tipo={r.tipo}>{r.nome}!</span>)}
           {/* O número da cópia nunca some: "Sapo-Lodo Gi… 2" continua distinguível. */}
           <p className={estilo.nome} title={ator.nome}><span>{base}</span>{numero && <b>{numero}</b>}</p>
           <div className={estilo.barra} title={`${pv}/${ator.pvMax} PV`}>
@@ -165,12 +226,15 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
         </div>;
       })}
 
+      {projeteis.map((p) => <Projetil key={`${p.chave}${indice}`} {...p} proporcao={proporcao} />)}
+
       {avancouUm && ehRodada && <div key={`r${indice}`} className={estilo.faixa}>Rodada {quadro.rodada}</div>}
       {ultimo && <div className={estilo.fim}>{log.categoria}</div>}
     </div>
 
     <p className="min-h-[2.75rem] rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 text-xs text-parchment-800 dark:border-parchment-700 dark:bg-parchment-950 dark:text-parchment-200" aria-live={tocando ? "off" : "polite"}>
       <span className="mr-2 font-bold text-wine-700 dark:text-wine-300">R{quadro.rodada || 0}</span>
+      {eventos.length > 0 && reacoes.map((r, n) => <span key={n} className="mr-1.5 inline-block rounded-full bg-sky-700 px-1.5 text-2xs font-bold text-white">Reação: {r.nome}</span>)}
       {elemento && eventos.some((e) => e.acertou) && <span className="mr-1.5 inline-block rounded-full px-1.5 text-2xs font-bold text-white" style={{ background: ELEMENTOS[elemento].cor }}>{ELEMENTOS[elemento].nome}</span>}
       {eventos.length > 1 ? resumirEmArea(eventos) : evento ? resumirEvento(evento) : texto.split("\n")[0] || "Preparação da cena."}
     </p>
@@ -234,6 +298,7 @@ const ELEMENTOS = {
   impacto: { nome: "Impacto", cor: "#8f5a24", particulas: 6 },
 } as const;
 type Elemento = keyof typeof ELEMENTOS;
+const ELEMENTOS_FISICOS: ReadonlySet<Elemento> = new Set(["corte", "impacto"]);
 
 const PISTAS: [Elemento, RegExp][] = [
   ["fogo", /ígne|igne|fogo|chama|brasa|incend|lava|calor|queima/],
@@ -268,6 +333,60 @@ function Efeito({ elemento }: { elemento: Elemento }) {
       "--i": i,
     } as CSSProperties} />)}
     {elemento === "raio" && <svg viewBox="0 0 20 60" className={estilo.relampago}><path d="M12 0 4 26h7L6 60l12-36h-7z" /></svg>}
+  </div>;
+}
+
+/**
+ * A arma desenhada. SVG simples e chapado, no espírito dos standees de papel:
+ * a mesa reconhece a espada, o martelo e o punho de relance.
+ */
+function SvgDaArma({ forma }: { forma: FormaDoGolpe }) {
+  switch (forma) {
+    case "espada":
+      return <svg viewBox="0 0 20 100" aria-hidden><path d="M10 0 14 68H6z" fill="#eef3f8" stroke="#8a97a6" strokeWidth="1.5" /><rect x="1" y="68" width="18" height="5" rx="2" fill="#c9a24a" /><rect x="7.5" y="73" width="5" height="19" fill="#6b4a2b" /><circle cx="10" cy="95" r="4" fill="#c9a24a" /></svg>;
+    case "martelo":
+      return <svg viewBox="0 0 60 100" aria-hidden><rect x="26" y="20" width="8" height="80" rx="3" fill="#7a5230" /><rect x="4" y="2" width="52" height="26" rx="4" fill="#9aa3ad" stroke="#5d6570" strokeWidth="2" /></svg>;
+    case "lanca":
+      return <svg viewBox="0 0 120 20" aria-hidden><rect x="0" y="8" width="96" height="4" rx="2" fill="#7a5230" /><path d="M94 2 120 10 94 18z" fill="#dfe6ee" stroke="#8a97a6" strokeWidth="1.5" /></svg>;
+    case "soco":
+      return <svg viewBox="0 0 44 36" aria-hidden><rect x="2" y="4" width="32" height="28" rx="10" fill="#f1c9a0" stroke="#7a4a2a" strokeWidth="2.5" /><path d="M12 6v11M20 5v12M28 6v11" stroke="#7a4a2a" strokeWidth="2" strokeLinecap="round" /><rect x="31" y="12" width="10" height="14" rx="5" fill="#f1c9a0" stroke="#7a4a2a" strokeWidth="2.5" /></svg>;
+    case "mordida":
+      return <svg viewBox="0 0 60 60" aria-hidden>
+        <g><path d="M4 26Q30 0 56 26z" fill="#5a1a1a" /><path d="M10 25l4 9 4-9 4 9 4-9 4 9 4-9 4 9 4-9 4 9 4-9z" fill="#fff8e8" /></g>
+        <g><path d="M4 34Q30 60 56 34z" fill="#5a1a1a" /><path d="M10 35l4-9 4 9 4-9 4 9 4-9 4 9 4-9 4 9 4-9 4 9z" fill="#fff8e8" /></g>
+      </svg>;
+    case "garra":
+      return <svg viewBox="0 0 60 60" aria-hidden><path d="M8 6q14 26 6 50M24 4q14 26 6 52M40 6q14 26 6 50" fill="none" stroke="#fff" strokeWidth="5" strokeLinecap="round" /></svg>;
+    case "flecha":
+      return <svg viewBox="0 0 60 12" aria-hidden><rect x="6" y="5" width="44" height="2" fill="#7a5230" /><path d="M48 1 60 6 48 11z" fill="#cfd6de" /><path d="M0 1h10l-4 5 4 5H0l3-5z" fill="#c94040" /></svg>;
+    case "arremesso":
+      return <svg viewBox="0 0 30 30" aria-hidden><path d="M15 0 18 18h-6z" fill="#dfe6ee" stroke="#8a97a6" /><rect x="11" y="18" width="8" height="3" fill="#c9a24a" /><rect x="13.5" y="21" width="3" height="8" fill="#6b4a2b" /></svg>;
+    default:
+      return null;
+  }
+}
+
+/** A arma aparecendo sobre quem apanha, no golpe corpo a corpo. */
+function ArmaNoAlvo({ forma }: { forma: FormaDoGolpe }) {
+  return <div className={estilo.arma} data-forma={forma} aria-hidden><SvgDaArma forma={forma} /></div>;
+}
+
+/**
+ * O que atravessa a arena: flecha, faca girando, feitiço, ou a água do Fluxo.
+ * Sai do peito de quem lança e para no peito de quem recebe.
+ */
+function Projetil({ de, para, forma, cor, proporcao }: {
+  de: Posto; para: Posto; forma: FormaDoGolpe; cor: string; proporcao: number;
+}) {
+  const peito = (p: Posto) => topo(p.profundidade) - 9 * (1.05 - p.profundidade * 0.45);
+  const dx = para.x - de.x;
+  const dy = peito(para) - peito(de);
+  const angulo = (Math.atan2(dy, dx * proporcao) * 180) / Math.PI;
+  return <div className={estilo.projetil} data-forma={forma} aria-hidden style={{
+    left: `${de.x}%`, top: `${peito(de)}%`,
+    "--px": `${dx}cqw`, "--py": `${dy}cqh`, "--ang": `${angulo}deg`, "--cor": cor,
+  } as CSSProperties}>
+    {forma === "magia" ? <span /> : <SvgDaArma forma={forma} />}
   </div>;
 }
 
