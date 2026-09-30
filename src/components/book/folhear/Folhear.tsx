@@ -174,6 +174,22 @@ function gravarPapel(p: Papel) {
 const DURACAO_VIRADA_MS = 460;
 
 /*
+ * O navegador aceita a Custom Highlight API, mas o parser CSS do Turbopack
+ * ainda rejeita `::highlight(nome)` e repetia um aviso a cada rota. Manter a
+ * regra como texto entrega a sintaxe intacta ao Chrome sem passar por esse
+ * transformador. A busca e as duas cores continuam sendo as mesmas.
+ */
+const CSS_REALCES_DA_BUSCA = `
+::highlight(busca-livro) {
+  background-color: rgb(255 212 59 / 0.35);
+  color: inherit;
+}
+::highlight(busca-livro-atual) {
+  background-color: #ffd43b;
+  color: #111114;
+}`;
+
+/*
  * "Voltar de onde parei". Com a página de tamanho fixo, o número da página é
  * o mesmo em qualquer tela — então guardar a página basta. Só vale quando o
  * livro abre sem link pra uma seção (o link sempre ganha).
@@ -900,6 +916,7 @@ export default function Folhear({
       style={variaveis}
       onClick={aoClicar}
     >
+      <style>{CSS_REALCES_DA_BUSCA}</style>
       {/*
         A BARRA DO LIVRO. No modo Livro ela substitui o menu do site (que some:
         ver "leitor imersivo" no CSS), então carrega a volta pro site e o tema.
