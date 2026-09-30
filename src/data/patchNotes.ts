@@ -23,6 +23,8 @@ export const PATCH_NOTES: PatchNote[] = [
       heading: "Correções do motor, sem mudar as cartas",
       items: [
         "Inverter cobra somente os dados por Dose, sem teste de resistência nem BC extra. Quebra de Gelo contra Congelado acerta sem d20 e sem crítico. Molhado dobra apenas a parcela fria dos ataques mistos; Nova Congelante não recebe uma segunda dobra.",
+        "O simulador deixou de somar BC escondido a toda habilidade: agora o bônus entra somente quando a carta escreve + BC ou usa Dados de Arma. A ficha convertida em criatura e o motor passam a ler a mesma fórmula.",
+        "Conjuração Concentrada aumenta todos os grupos de dados da magia, inclusive dano por Dose, dano por turno e o bônus condicional da Quebra de Gelo — não apenas a primeira parcela.",
         "Reações encerram um cântico em andamento, e Fluxo não ataca durante a recitação. A estimativa da IA acompanha as correções de dano e a Desvantagem ao resistir ao frio estando Molhado.",
       ],
     }],

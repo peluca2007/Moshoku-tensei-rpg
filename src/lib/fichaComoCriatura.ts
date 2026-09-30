@@ -38,11 +38,10 @@ import { pactosDeCombate } from "./combatSummons";
  * personagem: se estes números divergissem dos da simulação, o teste de 300
  * batalhas estaria medindo um inimigo que não existe.
  *
- * As FÓRMULAS de dano são o único ponto em que a conversão segue o livro em vez
- * do motor — ver `formulaDaAcao`. O motor soma o Bônus de Combate em toda ação,
- * como simplificação declarada dele; o cartão soma onde a carta da habilidade
- * escreve "+ BC", porque quem lê o cartão na mesa tem a carta ao lado, e as
- * duas precisam fechar.
+ * As FÓRMULAS de dano seguem a mesma leitura usada pelo motor — ver
+ * `formulaDaAcao`: o Bônus de Combate entra onde a carta escreve "+ BC", e não
+ * como bônus implícito de toda habilidade. Quem lê o cartão na mesa tem a carta
+ * da habilidade ao lado, e as duas precisam fechar.
  *
  * O molde do Apêndice G fica de fora: uma ficha de personagem tem seus
  * próprios números. O cartão identifica sua origem e não sugere recalibrá-los
@@ -64,10 +63,9 @@ import { pactosDeCombate } from "./combatSummons";
  *    dados. Lido como modificador fixo, ele entra duas vezes: uma como dados,
  *    outra como bônus.
  * 3. **O "BC" é escrito, não presumido.** O texto soma o Bônus de Combate onde
- *    ele vale ("1d8 + BC"), e cala onde não vale ("2d8 de frio"). Aqui a regra
- *    seguida é a do LIVRO, e não a do motor de simulação, que soma o BC em toda
- *    ação como simplificação declarada: quem lê este cartão na mesa lê a carta
- *    da habilidade ao lado, e as duas têm que fechar.
+ *    ele vale ("1d8 + BC"), e cala onde não vale ("2d8 de frio"). Esta é a
+ *    mesma regra do motor de simulação: ficha convertida, carta e resolução
+ *    precisam fechar.
  */
 const TIPOS_DE_DANO = ["cortante", "perfurante", "contundente", "ígneo", "frio", "elétrico", "radiante", "sônico", "veneno", "ácido", "psíquico"];
 

@@ -184,6 +184,10 @@ export interface Acao {
    * caminho de dano soma ZERO em vez de curar o inimigo: `mediaDados("")` é 0.
    */
   dano: string;
+  /** A fórmula escreve +BC, ou usa Dados de Arma que já carregam o bônus. */
+  somaBc: boolean;
+  /** A parcela sustentada escreve +BC; não herda o bônus do impacto. */
+  somaBcPorTurno: boolean;
   tipo: TipoDeAcao;
   /**
    * A fórmula do CASO BASE de PV curados ou de PV Temporários. Vazia em dano.
@@ -698,6 +702,8 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     pm: p.pm ?? 0,
     pt: p.pt ?? 0,
     dano: p.dano ?? "",
+    somaBc: p.somaBc ?? (!!p.dadosDeArma || /\bBC\b|Bônus de Combate|dados? de arma|dano de arma/i.test(p.dano ?? "")),
+    somaBcPorTurno: p.somaBcPorTurno ?? /\bBC\b|Bônus de Combate/i.test(p.danoPorTurno ?? ""),
     tipo: p.tipo ?? "dano",
     formulaSuporte: p.formulaSuporte ?? "",
     sempreFresca: p.sempreFresca ?? false,
@@ -919,6 +925,8 @@ export function acoesDe(c: CharacterData): Acao[] {
         }
         return base;
       })(),
+      somaBc: /\bBC\b|Bônus de Combate|dados? de arma|dano de arma/i.test(a.damage.normal),
+      somaBcPorTurno: /\bBC\b|Bônus de Combate/i.test(a.damage.porTurno ?? separarSustentado(a.damage.normal).porTurno),
       /*
        * O que se repete a cada turno (0.1.57).
        *
@@ -1092,6 +1100,9 @@ export function acoesDe(c: CharacterData): Acao[] {
         ...feita,
         nome: `${feita.nome} (Concentrada)`,
         dano: concentrarDados(feita.dano),
+        danoPorTurno: feita.danoPorTurno ? concentrarDados(feita.danoPorTurno) : "",
+        bonusSeCongelado: feita.bonusSeCongelado ? concentrarDados(feita.bonusSeCongelado) : undefined,
+        inverteDose: feita.inverteDose ? concentrarDados(feita.inverteDose) : undefined,
         pm: Math.ceil(feita.pm * 1.5),
         area: false,
         areaDescricao: undefined,
@@ -1598,7 +1609,9 @@ export function indicesDeFrio(formula: string): number[] {
 export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): number {
   if (!autorizarAcao(e, a, alvo).legal) return 0;
   const basico = ehGolpeBasico(a);
-  const bonus = a.inverteDose ? 0 : a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc;
+  const bonus = a.inverteDose ? 0 : a.regra === "primeiro-golpe" || basico
+    ? e.ficha.arma.damageBonus
+    : a.somaBc ? e.ficha.bc : 0;
   const bonusAcerto = basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc;
 
   /*
@@ -1635,7 +1648,7 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
    * deveria depender do mesmo d20; quando isso acontecer, o teste vai acusar.
    */
   const sustentado = a.danoPorTurno
-    ? (mediaDados(a.danoPorTurno) + bonus) * (TURNOS_SUSTENTADOS - 1)
+    ? (mediaDados(a.danoPorTurno) + (a.somaBcPorTurno ? e.ficha.bc : 0)) * (TURNOS_SUSTENTADOS - 1)
     : 0;
   const corpoACorpo = /corpo a corpo|toque/i.test(a.alcance ?? "") || ehGolpeBasico(a);
   const furtivo = a.ataque && alvo && motivoFurtivo(e, alvo, corpoACorpo) ? e.ficha.rankLadino * 3.5 : 0;
@@ -1847,7 +1860,9 @@ export function resolver(
   // Teto de Auxílio: bônus numérico vindo de aliados nunca passa de +6.
   const bonusAliadoAcerto = Math.min(6, Math.max(0, e.bonusAcertoDeAliados));
   const bonusAliadoDano = ordem?.focoDeFogo && ordem.tatico !== e ? Math.min(6, ordem.tatico.ficha.tatico?.rank ?? 0) : 0;
-  const bonus = a.inverteDose ? 0 : (a.regra === "primeiro-golpe" || basico ? e.ficha.arma.damageBonus : e.ficha.bc) +
+  const bonus = (a.inverteDose ? 0 : a.regra === "primeiro-golpe" || basico
+    ? e.ficha.arma.damageBonus
+    : a.somaBc ? e.ficha.bc : 0) +
     (a.bonusContextual ?? 0) + bonusDaOrdem + bonusAliadoDano;
   const bonusAcerto = (basico || a.regra === "primeiro-golpe" ? e.ficha.arma.attackBonus : e.ficha.bc) +
     bonusDaOrdem + bonusAliadoAcerto;
@@ -2066,7 +2081,7 @@ export function resolver(
    * turnos seguidos dobraria o relógio.
    */
   if (a.danoPorTurno && dano > 0) {
-    const media = mediaDados(a.danoPorTurno) + e.ficha.bc;
+    const media = mediaDados(a.danoPorTurno) + (a.somaBcPorTurno ? e.ficha.bc : 0);
     const jaTem = alvo.sustentados.some((x) => Math.abs(x.media - media) < 0.01);
     if (!jaTem) alvo.sustentados.push({ media, turnos: TURNOS_SUSTENTADOS - 1 });
   }
@@ -2980,7 +2995,7 @@ export function consumirReacao(alvo: Alvo): boolean {
  * ele ignora é pior que nenhum número: parece mais confiável do que é.
  */
 export const SIMPLIFICACOES = [
-  "Inverter usa somente os dados por Dose, sem BC nem teste. Quebra de Gelo contra Congelado acerta sem d20 nem crítico. Em fórmulas tipadas, Molhado dobra apenas os dados de frio; Nova Congelante já inclui sua dobra. Ações legadas sem parcelas identificadas ainda tratam o dano como frio integral. Usar Reação encerra cântico em andamento sem reembolso; a IA não executa Fluxo durante o cântico.",
+  "O BC só entra no dano quando a fórmula da carta escreve BC ou usa Dados de Arma; impacto e parcela por turno são lidos separadamente. Inverter usa somente os dados por Dose, sem BC nem teste. Quebra de Gelo contra Congelado acerta sem d20 nem crítico. Em fórmulas tipadas, Molhado dobra apenas os dados de frio; Nova Congelante já inclui sua dobra. Ações legadas sem parcelas identificadas ainda tratam o dano como frio integral. Usar Reação encerra cântico em andamento sem reembolso; a IA não executa Fluxo durante o cântico.",
   "Couraça de Barro reduz um ataque físico tipado de criatura, cobrando PM e Reação; orçamento abstrato sem tipo não ativa a carta. Refrão da Retomada reage só a ataque de aliado que permaneceu errado após Inspiração/repetições, concede PV Temporários sem empilhar e cobra PP/Reação. Com posições, exige 9 m; sem elas, presume alcance. Voz audível, ausência de silêncio e ausência de surdez são premissas desta bancada, não verificações de cenário.",
   "Condições modeladas: Molhado (frio dobra), Congelado (Água prepara, cobra com Quebra de Gelo e consome), Dose (até 3, Envenenado na segunda, Colapso na terceira e Inversão por Dose), Em Chamas, Quebrantado (−1 de CA e −1 de dano por acúmulo, até o Bônus de Rank de quem aplicou) e — quando a ação os declara — Preso, Caído e Envenenado. Restrições de carta por faixa de PV e estado estruturado do alvo bloqueiam a ação; 'Requer alvo Agarrado' custa +1 Ação e presume que o agarrão funcionou. Exaustão recebida depois de uma técnica acumula e, no nível 3, impõe Desvantagem aos ataques. Atolado, Desequilibrado, Marcado e Soterrado ficam de fora: são sobre movimento, alcance e posição, e este motor não tem mapa.",
   "Cura e PV Temporários ENTRAM desde a 0.1.37, com a dobra da Ferida Fresca: quem cura devolve PV de verdade, e a coluna \"PV devolvidos\" mostra quanto. A IA cura quem estiver na metade ou abaixo, começando pelo pior, e oferece casca a quem ainda não tem — um limiar declarado, não uma tática: curandeiro que espera demais perde gente e o que cura cedo demais desperdiça.",
