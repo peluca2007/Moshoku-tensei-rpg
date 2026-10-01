@@ -1560,6 +1560,63 @@ export function encaixarCartas(fluxo: Element, g: Geometria, r: Regua): number {
 }
 
 /**
+ * Balanceia páginas só de texto cuja primeira coluna acaba mais de 30% abaixo
+ * da segunda. Arte grande e fecho são assimétricos de propósito e ficam fora.
+ */
+export function equilibrarColunasCurtas(fluxo: Element, g: Geometria, r: Regua): number {
+  fluxo.querySelectorAll(".folhear-equilibra-colunas").forEach((el) => el.classList.remove("folhear-equilibra-colunas"));
+  const topo = fluxo.getBoundingClientRect().top;
+  const colunaAlta = g.altura - g.topo - g.pe;
+  const meiaPagina = g.pagina / 2;
+  const pagina = (q: DOMRect) => Math.floor((q.left - r.origem) / r.k / g.pagina);
+  const coluna = (q: DOMRect) =>
+    Math.floor(((q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40)) / meiaPagina) % 2;
+  const y = (q: DOMRect) => (q.top - topo) / r.k;
+  const base = (q: DOMRect) => (q.bottom - topo) / r.k;
+  const explicadas = new Set<number>();
+  fluxo.querySelectorAll(".folhear-larga, .livro-fecho, figure").forEach((el) => {
+    if (!visivel(el)) return;
+    for (const q of Array.from(el.getClientRects())) {
+      if (q.height < 2) continue;
+      if (el.matches(".livro-fecho, .folhear-larga") || q.height / r.k > colunaAlta * 0.25) explicadas.add(pagina(q));
+    }
+  });
+
+  const fundos = new Map<number, [number, number]>();
+  fluxo.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete > *, dl, blockquote").forEach((el) => {
+    if (!visivel(el)) return;
+    for (const q of Array.from(el.getClientRects())) {
+      if (q.height < 2 || q.width / r.k > meiaPagina) continue;
+      const p = pagina(q);
+      const f = fundos.get(p) ?? [0, 0];
+      f[coluna(q)] = Math.max(f[coluna(q)], base(q));
+      fundos.set(p, f);
+    }
+  });
+
+  const candidatos = Array.from(
+    fluxo.querySelectorAll<HTMLElement>("h3, h4, p, ul, ol, .livro-caixa, .livro-verbete"),
+  ).filter((el) => {
+    if (!visivel(el)) return false;
+    const dono = el.closest(".livro-caixa, .livro-verbete");
+    return !dono || dono === el;
+  });
+  let total = 0;
+  for (const [p, [a, b]] of fundos) {
+    if (explicadas.has(p) || !a || !b || a - b <= colunaAlta * 0.3) continue;
+    const alvo = (a + b) / 2;
+    const escolhido = candidatos
+      .flatMap((el) => Array.from(el.getClientRects()).filter((q) => pagina(q) === p && coluna(q) === 0).map((q) => ({ el, q })))
+      .filter(({ q }) => y(q) >= alvo && y(q) < a - 20)
+      .sort((x, z) => y(x.q) - y(z.q))[0]?.el;
+    if (!escolhido) continue;
+    escolhido.classList.add("folhear-equilibra-colunas");
+    total++;
+  }
+  return total;
+}
+
+/**
  * Até onde a arte pode crescer sem ampliar o arquivo mais de 1,5× (borra). Sem
  * o arquivo carregado ainda, não se sabe: vale o teto geral.
  */
