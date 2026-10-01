@@ -265,7 +265,7 @@ export default function Appendices() {
           pra decidir a frequência de testes de Clima e a chance de encontro por bloco de viagem.
         </P>
         <BookTable
-          headers={["Região", "Teste de Clima", "Chance de encontro / semana", "Nota"]}
+          headers={["Região", "Teste de Clima", "Encontro por semana", "Nota"]}
           rows={[
             ["Grande Floresta (Millis)", "Nenhum — clima ameno", "Alta (1d6: 1-2)", "Perder-se é o perigo real, não o combate."],
             ["Deserto de Begaritt", "CD 14 (perigoso) ao meio-dia", "Média (1d6: 1)", "Sem ração de sobra, a Sede sozinha mata uma caravana despreparada."],
