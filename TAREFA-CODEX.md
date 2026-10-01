@@ -792,3 +792,22 @@ As da Tarefa 3: assinatura idêntica, não mexer no texto nem em `src/data/`. De
 no `folhear.css` se precisar, mas o contínuo (`.folhear-rolagem`, fim do arquivo) é do Claude: não
 tire o `content-visibility` de lá. Commits pequenos direto na `main`, dizendo quanto cada um
 economizou (rápido e 4×).
+
+### Andamento (Claude assumiu em 2026-10-01, 17:45)
+
+Feito, medido com `npm run medir:folhear` no build de produção (1440×900):
+
+| | antes | agora |
+| --- | ---: | ---: |
+| reabertura, máquina rápida | ~4,7 s | **~2,0 s** |
+| reabertura, CPU 4× | ~27 s | **~12 s** |
+| abertura fria (primeira visita) | ~5 s / ~27 s | igual |
+
+- **Ideia 1, o diário** (`diarioDaDiagramacao.ts`): grava o estado final, não a sequência de
+  mutações — é por isso que não desloca nada (ver o cabeçalho do arquivo). Conferido em 5 de 5
+  reaberturas; ida e volta pro contínuo desfaz e reaplica.
+- Três recálculos de estilo do livro inteiro logo depois do pronto (`visibility` herdada no palco,
+  `--escala` herdada na raiz, o contêiner das folhas inserido cheio): ~2 s a menos com CPU 4×.
+
+Falta: **a abertura fria**. Ela ainda roda todas as passadas (~20 s de layout com CPU 4×), e a
+reabertura com CPU 4× ainda passa de 10 s (um layout de ~6 s + carregar e hidratar ~5 s).
