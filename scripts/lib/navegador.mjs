@@ -124,6 +124,11 @@ export async function comNavegador(tarefa, { porta = Number(process.env.PORTA_CD
       "--headless=new",
       "--disable-gpu",
       "--force-color-profile=srgb",
+      // O Chrome novo extrai o "conteúdo da página" pra IA dele logo depois de
+      // carregar, e pra isso diagrama a página INTEIRA, inclusive o que o
+      // `content-visibility: auto` pula. No /livro do celular eram ~6 s de
+      // layout que não são do livro, e as medidas mentiam. Fora.
+      "--disable-features=AIPageContentAgent,AnnotatedPageContentExtraction,PageContentAnnotations,OptimizationHints",
       `--remote-debugging-port=${porta}`,
       `--user-data-dir=${perfil}`,
       "about:blank",
