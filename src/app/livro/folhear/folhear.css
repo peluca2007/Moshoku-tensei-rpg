@@ -370,8 +370,12 @@
   display: none;
 }
 
+/* Escondido até a diagramação acabar. `opacity`, e não `visibility`: esta é
+   herdada, e virá-la no fim recalculava o estilo do livro inteiro (~26 mil
+   elementos: 0,3 s numa máquina rápida, 2 s num notebook comum, medido em
+   2026-10-01). A opacidade só toca o palco. */
 .folhear[data-modo="livro"]:not([data-pronto]) .folhear-palco {
-  visibility: hidden;
+  opacity: 0;
 }
 
 /* ── A barra ──────────────────────────────────────────────────────────── */
