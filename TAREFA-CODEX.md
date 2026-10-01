@@ -672,6 +672,10 @@ Leia antes: `CLAUDE.md` (o livro é o produto), o cabeçalho de `scripts/revisar
    4–5 palavras por linha, a linha da tabela fica com 8+ linhas de texto e sobra área morta.
    - p. 8 (`dupla-003`): "Quem / O que faz / A conta" — a coluna "O que faz" com ~60 px.
    - p. 240 (Aflições), p. 272 (Viagem entre Continentes, coluna da direita).
+   - Cap. 2: p. 48 (Magias Combinadas, **7 colunas** começando numa coluna), p. 50 ("Combinação /
+     Resultado / Efeito"), p. 56 (lições da Teórica, 5 colunas). Nenhuma delas está dentro de caixa,
+     e mesmo assim não atravessaram — vale entender por quê antes de mexer no limiar.
+   - A p. 8 já foi resolvida pelo Claude no conteúdo (`32d4fa1`): virou tabela de duas colunas.
    `espalharTabelasEspremidas` só atravessa a página com **4+ colunas** ou linha mais alta que 7
    linhas de texto; a da p. 8 tem 3 colunas e escapa.
 2. **Tabela partida com 2 linhas de um lado.** p. 8 → p. 9: duas linhas de "Quem / O que faz" em

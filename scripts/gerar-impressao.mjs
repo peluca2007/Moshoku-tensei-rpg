@@ -42,6 +42,30 @@ for (const origem of ORIGENS) andar(path.join(RAIZ, origem));
 
 let feitas = 0;
 let puladas = 0;
+/** Desvio-padrão do cinza de um quadro: perto de zero é chapado (branco, preto ou borrão). */
+async function contraste(arte, pagina) {
+  const { channels } = await sharp(arte, { page: pagina }).greyscale().stats();
+  return channels[0].stdev;
+}
+
+/**
+ * O quadro que vai pro papel. O do meio, se ele tem desenho; senão, o de mais
+ * contraste entre ~24 amostras — desde que seja bem mais rico (1,5×), pra não
+ * trocar à toa uma arte que é suave do começo ao fim.
+ */
+async function quadroDaImpressao(arte, paginas) {
+  const meio = Math.floor(paginas / 2);
+  const doMeio = await contraste(arte, meio);
+  if (doMeio >= 35) return meio;
+  let melhor = meio;
+  let maior = doMeio;
+  for (let p = 0; p < paginas; p += Math.max(1, Math.floor(paginas / 24))) {
+    const c = await contraste(arte, p);
+    if (c > maior) { maior = c; melhor = p; }
+  }
+  return maior >= doMeio * 1.5 ? melhor : meio;
+}
+
 for (const arte of artes) {
   // public/livro/racas/anao.webp → public/impressao/livro/racas/anao.jpg
   const relativo = path.relative(path.join(RAIZ, "public"), arte).replace(/\.[^.]+$/, ".jpg");
@@ -52,9 +76,11 @@ for (const arte of artes) {
   }
   mkdirSync(path.dirname(saida), { recursive: true });
   try {
-    // Arte animada: o quadro do meio, onde a cena está acontecendo.
+    // Arte animada: o quadro do meio, onde a cena costuma estar acontecendo —
+    // a não ser que ele seja chapado (o Clarão abre e passa metade do tempo em
+    // branco; o Empurrão, num borrão). Aí vale o quadro de mais contraste.
     const meta = await sharp(arte, { pages: 1 }).metadata().catch(() => ({}));
-    const quadro = (meta.pages ?? 1) > 1 ? Math.floor(meta.pages / 2) : 0;
+    const quadro = (meta.pages ?? 1) > 1 ? await quadroDaImpressao(arte, meta.pages) : 0;
     await sharp(arte, { page: quadro })
       .flatten({ background: PAPEL_DIA })
       .resize({ width: 1000, withoutEnlargement: true })

@@ -16,6 +16,17 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.126",
+    date: "2026-09-30",
+    title: "O rival chefe tem duas vezes e meia os PV, como o livro diz",
+    sections: [{
+      heading: "Incongruência corrigida (Apêndice G)",
+      items: [
+        "Desde a 0.1.119 o Apêndice G diz que o rival montado de ficha entra como Chefe único com duas vezes e meia os PV da ficha, igual ao chefe de molde. O exemplo logo abaixo e o /encontros ainda usavam o triplo (60 PV → 180). Agora os três dizem o mesmo: 60 PV → 150.",
+      ],
+    }],
+  },
+  {
     version: "0.1.125",
     date: "2026-09-30",
     title: "A Conjuração Concentrada vale também para magia de um alvo só",

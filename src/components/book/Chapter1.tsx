@@ -268,7 +268,7 @@ export default function Chapter1() {
           e a Inversão, no Cap. 3), mas bate menos que uma escola de dano — por isso custa menos.
         </P>
         <BookTable
-          headers={["Rank", "Magia Comum", "Magia Assinatura ◆", "Talento", "(tabela padrão, pra comparar)"]}
+          headers={["Rank", "Magia Comum", "Magia Assinatura ◆", "Talento", "Padrão (comparar)"]}
           rows={RANKS.filter((r) => r !== "Deus").map((rank) => [
             rank,
             `${DESINTOX_PA_COST.common[rank]} PA`,
@@ -379,7 +379,7 @@ export default function Chapter1() {
         </Warning>
 
         <BookTable
-          headers={["Pilar", "Árvore", "Ensina, se for a sua Árvore Inicial"]}
+          headers={["Pilar", "Árvore", "Ensina, se for a Inicial"]}
           rows={TREES.filter((t) => !t.hiddenFromCreation).map((t) => [
             t.category === "magia" ? "Magia" : t.category === "corpo" ? "Corpo" : "Utilidade",
             t.name,
