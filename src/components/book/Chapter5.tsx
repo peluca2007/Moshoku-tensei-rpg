@@ -70,7 +70,7 @@ export default function Chapter5() {
           contratos e a Guilda sabe o nome deles.
         </P>
         <BookTable
-          headers={["Rank", "Feito representativo (não é checklist)", "O que muda"]}
+          headers={["Rank", "Feito típico (não é lista)", "O que muda"]}
           rows={[
             ["F", "Recém-registrado — ainda não fez nada que a sede saiba.", "Só pega contrato de mural público, sem escolta nem garantia."],
             ["E", "Sobreviveu ao trabalho de rotina algumas vezes.", "Escolta de caravana, extermínio de pragas, entrega em estrada segura."],
@@ -171,7 +171,7 @@ export default function Chapter5() {
           tudo que o grupo tirar do campo:
         </P>
         <BookTable
-          headers={["O que você está vendendo", "Quanto rende", "Por quê"]}
+          headers={["O que vende", "Quanto rende", "Por quê"]}
           rows={[
             [
               "Espólio (presa, casco, gema esgotada, pano amaldiçoado)",
@@ -281,7 +281,7 @@ export default function Chapter5() {
           Por não ser magia, a Ferida Fresca não dobra os dados dela — e nenhuma poção apaga Ferimento Crítico.
         </P>
         <BookTable
-          headers={["Poção", "CD de Ofícios · receita", "Custo (venda / fabricação)", "Efeito"]}
+          headers={["Poção", "CD de Ofícios · receita", "Venda / fabricação", "Efeito"]}
           rows={[
             ["Poção Menor de Cura", "11 · Cura Principiante", "15 PO / 8 PO", "Cura 1d8 + 2 PV."],
             ["Poção de Antídoto", "13 · Desintoxicação Principiante", "25 PO / 13 PO", "Remove um veneno ou uma doença de rank Principiante (Cap. 4, §8). Contra ranks acima disso, não faz nada — é uma dose, não um mago."],
@@ -303,7 +303,7 @@ export default function Chapter5() {
           Combate ou em Segredo&rdquo;.
         </P>
         <BookTable
-          headers={["Rank", "Exemplo", "CD de Ofícios", "Custo (venda / fabricação)"]}
+          headers={["Rank", "Exemplo", "CD de Ofícios", "Venda / fabricação"]}
           rows={[
             ["Principiante", "Baba de Sapo-Lodo", "10", "5 PO / 3 PO"],
             ["Intermediário", "Veneno de Serpente-do-Pântano", "12", "20 PO / 10 PO"],
@@ -325,7 +325,7 @@ export default function Chapter5() {
           gancho de campanha.
         </P>
         <BookTable
-          headers={["Efeito", "Rank exigido no encantador", "Tempo", "Custo em PO"]}
+          headers={["Efeito", "Rank do encantador", "Tempo", "Custo em PO"]}
           rows={[
             ["+1 degrau na Escada de Dados (arma, Cap. 3) ou +1 na CA (armadura — o +1 entra no valor da própria armadura: +3 vira +4)", "Avançado", "1 bloco", "150 PO"],
             ["Dano elemental extra (+1d6, tipo à escolha)", "Santo", "2 blocos", "300 PO"],
@@ -419,7 +419,7 @@ export default function Chapter5() {
             é informação — é uma coluna. E era ela que empurrava a tabela pra fora
             da tela num celular de 390px. A Marca está na lista logo abaixo. */}
         <BookTable
-          headers={["Patamar do aluno", "PA travados na árvore nova", "PA livre"]}
+          headers={["Patamar do aluno", "PA travados na nova", "PA livre"]}
           rows={RECOMPENSA_POR_PATAMAR.map((r) => [
             `${r.patamares[0]}–${r.patamares[r.patamares.length - 1]}`,
             `${r.travados} PA`,
