@@ -357,7 +357,8 @@ export function criaturaDaFicha(
     temPassoVazio: ficha.temPassoVazio || undefined,
     patamar,
     papel,
-    pv: ficha.pvMax * (papel === "chefe" ? 3 : 1),
+    // Chefe único: duas vezes e meia os PV da ficha (Apêndice G, 0.1.119 — era o triplo).
+    pv: papel === "chefe" ? Math.round(ficha.pvMax * 2.5) : ficha.pvMax,
     ca: ficha.ca,
     bonusAtaque: ficha.bc,
     // Ignorado enquanto houver ação ofensiva declarada (`usaAcoes`), mas
