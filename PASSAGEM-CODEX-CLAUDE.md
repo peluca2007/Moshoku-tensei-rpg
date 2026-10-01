@@ -2,6 +2,20 @@
 
 Atualizado em **2026-09-30**. Este arquivo é o ponto de entrada para continuar em conjunto. Não substitui `CLAUDE.md`, `AGENTS.md` nem o texto do livro.
 
+## Quem está em quê agora (2026-10-01)
+
+O autor mandou "continue suas tarefas" para os dois ao mesmo tempo e deu **prioridade ao Claude** em
+caso de choque.
+
+- **Codex:** Tarefa 11 (o folhear rápido), em `src/components/book/folhear/**`, `folhear.css` e
+  `scripts/revisar-livro.mjs`. O Claude **não** mexe nesses arquivos nesta rodada.
+- **Claude:** as "Pendências para o Claude" da Tarefa 10 (`RELATORIO-CODEX-COMPOSICAO.md`): cabeçalho da
+  p. 64, partidas curtas, colunas curtas e manchas, **por conteúdo** (`src/components/book/Chapter*.tsx`,
+  `Appendices.tsx`, `Diagramas.tsx`, `src/data/**`).
+- **Atenção, Codex:** os commits de conteúdo do Claude mudam a assinatura da diagramação. Compare a
+  assinatura sempre contra uma base tirada **no mesmo commit de conteúdo**; depois de cada merge de
+  `origin/main`, tire a base de novo antes de medir.
+
 ## Escopo e divisão sugerida
 
 - O autor autorizou seguir as recomendações do relatório, continuar as correções e documentar o trabalho para o Claude.
