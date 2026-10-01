@@ -1201,7 +1201,10 @@ export default function Folhear({
                 onPointerCancel={() => (toque.current = null)}
               >
                 <div ref={faixa} className="folhear-faixa">
-                  {livro && geo && paginacao && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} toc={toc} />}
+                  {/* O contêiner das folhas existe desde o começo, vazio: inserir
+                      ele já cheio, depois da diagramação, custava ~0,5 s numa
+                      máquina rápida; encher um que já está lá, ~70 ms. */}
+                  {livro && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} toc={toc} />}
 
                   <div
                     ref={fluxo}
@@ -1306,11 +1309,12 @@ function Folhas({
   duplas,
   toc,
 }: {
-  geo: Geometria;
-  paginacao: Paginacao;
+  geo: Geometria | null;
+  paginacao: Paginacao | null;
   duplas: number;
   toc: TocEntry[];
 }) {
+  if (!geo || !paginacao) return <div aria-hidden className="folhear-folhas" />;
   const total = duplas * geo.porDupla;
   return (
     <div aria-hidden className="folhear-folhas">
