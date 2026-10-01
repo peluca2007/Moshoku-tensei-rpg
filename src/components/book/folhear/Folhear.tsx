@@ -37,6 +37,16 @@ import { ehNoite } from "@/lib/temas";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
 import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } from "./buscaNoLivro";
+import {
+  aplicar as aplicarDiario,
+  assinar as assinarDiagramacao,
+  esquecerDiario,
+  gravar as gravarDiario,
+  guardarDiario,
+  lerDiario,
+  primeiraDiferenca,
+  retratar,
+} from "./diarioDaDiagramacao";
 import { ARTE_DA_FOLHA_DE_ROSTO, CAPA as ARTE_DA_CAPA } from "../arteDasAberturas";
 import {
   type Geometria,
@@ -222,6 +232,10 @@ export default function Folhear({
   const faixa = useRef<HTMLDivElement>(null);
   const fluxo = useRef<HTMLDivElement>(null);
   const fim = useRef<HTMLSpanElement>(null);
+  /** O fluxo ainda está como o React o desenhou (nenhuma passada, nenhum diário). */
+  const livroIntocado = useRef(true);
+  /** Desfaz o diário aplicado, devolvendo o livro intocado. */
+  const desfazerDiario = useRef<(() => void) | null>(null);
   const botaoIndice = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
@@ -441,47 +455,104 @@ export default function Folhear({
         if (medir(`${nome}-passada`, passo) <= 0) break;
       }
     };
-    medir("soltar", () => soltarTitulos(f));
-    medir("figuras", () => ajustarFigurasLargas(f));
-    medir("tabelas-largas", () => espalharTabelasEspremidas(f, g, regua(fx)));
-    medir("caixas", () => segurarCaixasCurtas(f, g, regua(fx)));
-    medir("tabelas-apertar", () => ajustarTabelasLargas(f, g, regua(fx)));
-    medir("pranchas", () => acomodarPranchas(f, g, regua(fx)));
-    medir("tabelas-partidas", () => apertarTabelasPartidas(f, g, regua(fx)));
-    // A carta menor sobe pro vão que a carta grande deixou no pé da coluna.
-    medir("cartas", () => {
-      repetir("cartas", 8, () => encaixarCartas(f, g, regua(fx)));
-    });
-    // Por último, porque tudo acima mexe em onde as coisas caem. Cada
-    // empurrão pode criar outro caso adiante: repete até zerar.
-    medir("titulos", () => {
-      repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
-      // Calço que ficou fora do lugar sai, e a conferência roda de novo.
-      for (let rodada = 0; rodada < 3 && medir("titulos-calcos", () => limparCalcosInuteis(f, regua(fx), g)) > 0; rodada++) {
+    // A diagramação inteira, passada por passada.
+    const diagramar = (): Paginacao => {
+      medir("soltar", () => soltarTitulos(f));
+      medir("figuras", () => ajustarFigurasLargas(f));
+      medir("tabelas-largas", () => espalharTabelasEspremidas(f, g, regua(fx)));
+      medir("caixas", () => segurarCaixasCurtas(f, g, regua(fx)));
+      medir("tabelas-apertar", () => ajustarTabelasLargas(f, g, regua(fx)));
+      medir("pranchas", () => acomodarPranchas(f, g, regua(fx)));
+      medir("tabelas-partidas", () => apertarTabelasPartidas(f, g, regua(fx)));
+      // A carta menor sobe pro vão que a carta grande deixou no pé da coluna.
+      medir("cartas", () => {
+        repetir("cartas", 8, () => encaixarCartas(f, g, regua(fx)));
+      });
+      // Por último, porque tudo acima mexe em onde as coisas caem. Cada
+      // empurrão pode criar outro caso adiante: repete até zerar.
+      medir("titulos", () => {
         repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
+        // Calço que ficou fora do lugar sai, e a conferência roda de novo.
+        for (let rodada = 0; rodada < 3 && medir("titulos-calcos", () => limparCalcosInuteis(f, regua(fx), g)) > 0; rodada++) {
+          repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
+        }
+        // E o empurrão que ficou velho (o bloco já cabia onde estava) sai.
+        if (medir("titulos-velhos", () => soltarEmpurroesVelhos(f, g, regua(fx))) > 0) {
+          repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
+        }
+        // Tabela larga que desceu de página deixando buraco volta pra coluna.
+        if (medir("titulos-tabelas", () => estreitarTabelasQueAbremBuraco(f, g, regua(fx))) > 0) {
+          ajustarTabelasLargas(f, g, regua(fx));
+          repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
+        }
+        if (medir("titulos-velhos", () => soltarEmpurroesVelhos(f, g, regua(fx))) > 0) {
+          repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
+        }
+      });
+      medir("equilibrar-colunas", () => equilibrarColunasCurtas(f, g, regua(fx)));
+      esquecerIndice(f);
+      medir("cabecalhos", () => repetirCabecalhos(f));
+      medir("vitrines", () => esticarVitrines(f, g, regua(fx)));
+      medir("fechos", () => fecharArvores(f, g, regua(fx)));
+      medir("vinhetas", () => preencherBuracos(f, g, regua(fx)));
+      medir("pes", () => preencherPes(f, g, regua(fx)));
+      return medir("medir", () => medirPaginas(f, fim.current!, regua(fx), g, toc));
+    };
+
+    /*
+     * O DIÁRIO (diarioDaDiagramacao.ts). Um diário aplicado antes é desfeito
+     * primeiro: as passadas abaixo partem sempre do livro intocado ou do que
+     * elas mesmas fizeram. Com o livro intocado, um diário que casa com ele e
+     * com uma/duas páginas é aplicado e conferido pela assinatura — um layout
+     * em vez de dezenas. Sem diário (ou se a assinatura não bater), a
+     * diagramação roda inteira, e a gravação fica pra próxima abertura.
+     */
+    if (desfazerDiario.current) {
+      desfazerDiario.current();
+      desfazerDiario.current = null;
+      livroIntocado.current = true;
+    }
+    let p: Paginacao | null = null;
+    let gravacao: ReturnType<typeof gravarDiario> | null = null;
+    if (livroIntocado.current) {
+      livroIntocado.current = false;
+      const retrato = medir("diario-retrato", () => retratar(f));
+      const diario = lerDiario(porDupla, retrato.impressao);
+      const desfazer = diario ? medir("diario-aplicar", () => aplicarDiario(diario, f, retrato)) : null;
+      if (diario && desfazer) {
+        const tentativa = medir("medir", () => medirPaginas(f, fim.current!, regua(fx), g, toc));
+        const conferida = medir("diario-conferir", () => assinarDiagramacao(f, fx, g.pagina));
+        if (conferida === diario.assinatura) {
+          p = tentativa;
+          desfazerDiario.current = desfazer;
+          // As cópias de cabeçalho entraram: o índice da busca é refeito.
+          esquecerIndice(f);
+        } else {
+          // Pra quem investiga (a régua `medir:folhear` lê): qual peça saiu do lugar.
+          const i = primeiraDiferenca(diario.assinatura, conferida);
+          const onde = (a: string) => a.split(",")[i - 1];
+          try {
+            sessionStorage.setItem("livro-folhear-diario-diagnostico", `assinatura:${i}:${onde(diario.assinatura)}→${onde(conferida)}`);
+          } catch {
+            /* sem sessionStorage: só não fica o diagnóstico */
+          }
+          desfazer();
+          esquecerDiario(porDupla);
+        }
       }
-      // E o empurrão que ficou velho (o bloco já cabia onde estava) sai.
-      if (medir("titulos-velhos", () => soltarEmpurroesVelhos(f, g, regua(fx))) > 0) {
-        repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
-      }
-      // Tabela larga que desceu de página deixando buraco volta pra coluna.
-      if (medir("titulos-tabelas", () => estreitarTabelasQueAbremBuraco(f, g, regua(fx))) > 0) {
-        ajustarTabelasLargas(f, g, regua(fx));
-        repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
-      }
-      if (medir("titulos-velhos", () => soltarEmpurroesVelhos(f, g, regua(fx))) > 0) {
-        repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
-      }
-    });
-    medir("equilibrar-colunas", () => equilibrarColunasCurtas(f, g, regua(fx)));
-    esquecerIndice(f);
-    medir("cabecalhos", () => repetirCabecalhos(f));
-    medir("vitrines", () => esticarVitrines(f, g, regua(fx)));
-    medir("fechos", () => fecharArvores(f, g, regua(fx)));
-    medir("vinhetas", () => preencherBuracos(f, g, regua(fx)));
-    medir("pes", () => preencherPes(f, g, regua(fx)));
+      if (!p) gravacao = gravarDiario(f, retrato);
+    }
+    if (!p) p = diagramar();
     const r = regua(fx);
-    const p = medir("medir", () => medirPaginas(f, fim.current!, r, g, toc));
+    if (gravacao) {
+      const parcial = gravacao.terminar(porDupla);
+      if (parcial) {
+        // Na hora: são dezenas de KB (milissegundos), e quem fecha a aba logo
+        // depois de abrir o livro também ganha a próxima abertura rápida.
+        medir("diario-guardar", () => guardarDiario({ ...parcial, assinatura: assinarDiagramacao(f, fx, g.pagina) }));
+      }
+    }
+
     const total = Math.ceil(p.total / porDupla);
     // A faixa cresce aqui mesmo, antes do React pintar: o scroll logo abaixo
     // precisa de largura pra chegar na dupla certa.
