@@ -1,3 +1,4 @@
+import VideoDaArte from "./VideoDaArte";
 import { ehVideo, midiaDaHabilidade, type MidiaDeHabilidade } from "@/data/midiaDeHabilidade";
 
 /**
@@ -15,7 +16,7 @@ import { ehVideo, midiaDaHabilidade, type MidiaDeHabilidade } from "@/data/midia
  * leitura. Mudo não é escolha estética: navegador nenhum dá autoplay com som, e
  * um vídeo que não toca é um retângulo preto.
  *
- * **`loading="lazy"` e `preload="none"`.** O `/livro` tem 87 mil pixels de
+ * **`loading="lazy"`, e vídeo só perto da tela (`VideoDaArte`).** O `/livro` tem 87 mil pixels de
  * rolagem; baixar dezessete arquivos de mídia na abertura pra mostrar um deles
  * três capítulos abaixo é o oposto de um site que funciona offline numa mesa.
  */
@@ -49,16 +50,7 @@ export default function ArteDaHabilidade({
      */
     <figure className="livro-verbete-arte relative mt-2 flex h-64 items-center justify-center overflow-hidden rounded-lg border border-gold-500/25 bg-parchment-950">
       {ehVideo(midia.src) ? (
-        <video
-          src={midia.src}
-          aria-label={midia.alt}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="none"
-          className="relative z-10 block h-full w-full object-contain"
-        />
+        <VideoDaArte src={midia.src} alt={midia.alt} className="relative z-10 block h-full w-full object-contain" />
       ) : (
         <>
           {/*
