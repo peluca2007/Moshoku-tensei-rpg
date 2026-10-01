@@ -16,6 +16,19 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.127",
+    date: "2026-09-30",
+    title: "O livro abre em 2,5 s no celular, não em 21",
+    sections: [{
+      heading: "Leitura contínua",
+      items: [
+        "No celular o /livro é o livro inteiro numa coluna só: uns 400 mil pixels de altura. O navegador diagramava tudo isso antes de responder, e num celular médio o livro levava ~21 s pra aceitar o primeiro toque. Agora só a parte perto da tela é diagramada; o resto espera o leitor chegar. Mesmo texto, mesma busca, mesmo Ctrl+F — o livro responde em ~2,5 s.",
+        "Os saltos do Índice e os links com # (/livro#cap5-2) caem no lugar certo mesmo com o resto do livro ainda por desenhar, e o título pedido acende ao chegar.",
+        "O Índice fecha sozinho quando você escolhe uma seção.",
+      ],
+    }],
+  },
+  {
     version: "0.1.126",
     date: "2026-09-30",
     title: "O rival chefe tem duas vezes e meia os PV, como o livro diz",

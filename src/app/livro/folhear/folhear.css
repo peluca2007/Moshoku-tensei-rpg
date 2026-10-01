@@ -5316,3 +5316,36 @@ html.livro-imersivo {
 .folhear-fluxo.folhear-rolagem {
   overflow-x: clip;
 }
+
+/* Rolando, o navegador só diagrama o que está perto da tela (2026-09-30).
+   O contínuo é o livro inteiro numa coluna: ~400 mil px de altura e 20 mil
+   elementos. Num celular médio (CPU 4× mais lenta), diagramar e estilizar
+   tudo isso a cada pedaço do HTML que chegava levava o livro a responder em
+   ~21 s; com a regra, ~2,5 s. Com `content-visibility: auto` cada seção,
+   árvore, carta e tabela longe da tela vira uma caixa vazia do tamanho
+   lembrado (`auto`) ou estimado, e só ganha miolo quando o leitor chega
+   perto. Ctrl+F, âncoras e leitores de tela continuam achando o texto. Só
+   aqui: o modo Livro mede tudo pra paginar.
+   Dois efeitos colaterais, compensados: a caixa pulada corta a pintura na
+   borda (a folga de 1,5rem deixa passar o selo torto do cartaz e a sombra
+   fora de registro), e a margem do primeiro filho não atravessa mais a
+   caixa (por isso a árvore seguinte perde os 0,5rem dela). */
+.folhear-fluxo.folhear-rolagem :is(.livro-prosa, .livro-arvore-folhas) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 2400px;
+  overflow-clip-margin: 1.5rem;
+}
+
+.folhear-fluxo.folhear-rolagem > .livro-arvore-folhas {
+  contain-intrinsic-size: auto 400px;
+}
+
+.folhear-fluxo.folhear-rolagem > .livro-arvore-folhas + .livro-arvore-folhas {
+  margin-top: 0;
+}
+
+.folhear-fluxo.folhear-rolagem :is(.livro-verbete, .livro-tabela) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 260px;
+  overflow-clip-margin: 1.5rem;
+}

@@ -585,9 +585,18 @@ export default function Folhear({
     if (fluxo.current) limparCabecalhosRepetidos(fluxo.current);
     const guardada = ancora.current;
     ancora.current = null;
-    if (!guardada) return;
-    const topo = alturaDoTopo();
-    window.scrollTo({ top: window.scrollY + guardada.getBoundingClientRect().top - topo - 16, behavior: "instant" });
+    if (guardada) {
+      rolarAte(guardada, false);
+      return;
+    }
+    // Chegou por link (/livro#cap5-2): o navegador já rolou até o #, mas com as
+    // alturas estimadas do contínuo (folhear.css) o alvo escorrega quando as
+    // vizinhas ganham miolo. Aqui ele assenta e acende.
+    const doLink = location.hash ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null;
+    if (doLink && fluxo.current?.contains(doLink)) {
+      rolarAte(doLink, false);
+      destacar(doLink);
+    }
   }, [modo]);
 
   // ── Zoom: o ponto clicado continua embaixo do cursor ───────────────────
@@ -645,8 +654,7 @@ export default function Folhear({
       if (m === "livro" && g && faixa.current) {
         irPara(Math.floor(paginaDoElemento(el, regua(faixa.current), g) / g.porDupla), false);
       } else {
-        const topo = alturaDoTopo();
-        window.scrollTo({ top: window.scrollY + el.getBoundingClientRect().top - topo - 16, behavior: "smooth" });
+        rolarAte(el, true);
       }
       destacar(el);
     },
@@ -1056,9 +1064,12 @@ export default function Folhear({
       )}
 
       {/* ── O índice, com a página de cada seção ──────────────────────── */}
+      {/* O clique de dentro do índice SOBE até o `aoClicar` da raiz (é ele que
+          leva à dupla certa no Livro e fecha o índice); o fundo só fecha
+          quando o clique cai nele mesmo, fora do painel. */}
       {indiceAberto && (
-        <div className="folhear-indice-fundo print-hide" onClick={() => setIndiceAberto(false)}>
-          <aside id="folhear-indice" className="folhear-indice" aria-label="Índice" onClick={(e) => e.stopPropagation()}>
+        <div className="folhear-indice-fundo print-hide" onClick={(e) => e.target === e.currentTarget && setIndiceAberto(false)}>
+          <aside id="folhear-indice" className="folhear-indice" aria-label="Índice">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-2xs font-bold uppercase tracking-[0.3em] text-gold-700 dark:text-gold-400">Índice</p>
               <button
@@ -1632,6 +1643,47 @@ function PainelDeBusca({
 function alturaDoTopo() {
   const barra = document.querySelector(".folhear-barra")?.getBoundingClientRect().bottom ?? 0;
   return Math.max(0, barra);
+}
+
+/** Desliga a vigia do último salto (um salto novo ou o leitor assumindo). */
+let pararVigia: (() => void) | null = null;
+
+/**
+ * Rola o contínuo até `el`, logo abaixo da barra.
+ *
+ * Longe da tela as seções do contínuo têm altura ESTIMADA
+ * (`content-visibility: auto`, folhear.css): quando o leitor chega, as
+ * vizinhas do alvo ganham a altura de verdade, a arte acima carrega, e o
+ * alvo escorrega. Por isso o salto longo é instantâneo (a rolagem suave
+ * passaria por dezenas de seções, e cada uma mudaria de tamanho no caminho)
+ * e uma vigia segura o alvo no lugar por 2,5 s, ou até o leitor tocar, rolar
+ * ou teclar. Suave, só o salto que cabe em duas telas.
+ */
+function rolarAte(el: Element, suave: boolean) {
+  pararVigia?.();
+  const falta = () => el.getBoundingClientRect().top - alturaDoTopo() - 16;
+  if (suave && Math.abs(falta()) < window.innerHeight * 2) {
+    window.scrollBy({ top: falta(), behavior: "smooth" });
+    return;
+  }
+  const fim = performance.now() + 2500;
+  const gestos = ["wheel", "touchstart", "pointerdown", "keydown"] as const;
+  let viva = true;
+  const parar = () => {
+    viva = false;
+    pararVigia = null;
+    for (const g of gestos) window.removeEventListener(g, parar, true);
+  };
+  for (const g of gestos) window.addEventListener(g, parar, { capture: true, passive: true });
+  pararVigia = parar;
+  const conferir = () => {
+    if (!viva) return;
+    if (performance.now() > fim) return parar();
+    const d = falta();
+    if (Math.abs(d) >= 2) window.scrollBy({ top: d, behavior: "instant" });
+    requestAnimationFrame(conferir);
+  };
+  conferir();
 }
 
 /** O título que você pediu acende por um instante: "é aqui". */
