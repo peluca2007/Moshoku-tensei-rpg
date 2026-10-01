@@ -256,21 +256,73 @@ export function ajustarTabelasLargas(fluxo: Element, g: Geometria, r: Regua): vo
  * @returns quantas tabelas compactaram
  */
 export function apertarTabelasPartidas(fluxo: Element, g: Geometria, r: Regua): number {
+  // Desfaz o agrupamento da composição anterior antes de medir de novo.
+  fluxo.querySelectorAll<HTMLTableSectionElement>("tbody.folhear-grupo-final").forEach((grupo) => {
+    const origem = grupo.previousElementSibling;
+    if (origem?.tagName === "TBODY") while (grupo.firstChild) origem.append(grupo.firstChild);
+    grupo.remove();
+  });
   fluxo.querySelectorAll(".folhear-tabela-compacta").forEach((el) => el.classList.remove("folhear-tabela-compacta"));
   const pagina = (q: DOMRect) => Math.floor((q.left - r.origem) / r.k / g.pagina);
-  const compactar: Element[] = [];
-  fluxo.querySelectorAll(".livro-tabela").forEach((caixa) => {
-    if (!visivel(caixa)) return;
-    const rs = Array.from(caixa.getClientRects()).filter((a) => a.height > 1);
-    if (rs.length < 2) return;
-    const total = rs.reduce((s, a) => s + a.height, 0);
-    const ultimaPagina = pagina(rs[rs.length - 1]);
-    if (ultimaPagina === pagina(rs[0])) return;
-    const rabo = rs.filter((a) => pagina(a) === ultimaPagina).reduce((s, a) => s + a.height, 0);
-    if (rabo / total <= 0.3 && total / r.k < (g.altura - g.topo - g.pe) * 1.2) compactar.push(caixa);
-  });
-  compactar.forEach((el) => el.classList.add("folhear-tabela-compacta"));
-  return compactar.length;
+  const coluna = (q: DOMRect) =>
+    Math.floor(((q.left - r.origem) / r.k + Math.min(q.width / r.k / 2, 40)) / (g.pagina / 2));
+  const alteradas = new Set<Element>();
+  // Compactar uma tabela pode deslocar a seguinte; duas passadas bastam para
+  // conferir o novo encaixe sem introduzir quebras forçadas e buracos.
+  for (let tentativa = 0; tentativa < 2; tentativa++) {
+    const compactar: Element[] = [];
+    const inteiras: Element[] = [];
+    const agrupar: { corpo: HTMLTableSectionElement; linhas: HTMLTableRowElement[] }[] = [];
+    fluxo.querySelectorAll(".livro-tabela").forEach((caixa) => {
+      if (!visivel(caixa) || caixa.closest(".livro-catalogo-itens")) return;
+      const rs = Array.from(caixa.getClientRects()).filter((a) => a.height > 1);
+      if (rs.length < 2) return;
+      const total = rs.reduce((s, a) => s + a.height, 0);
+      const ultimaPagina = pagina(rs[rs.length - 1]);
+      if (ultimaPagina === pagina(rs[0])) return;
+      const rabo = rs.filter((a) => pagina(a) === ultimaPagina).reduce((s, a) => s + a.height, 0);
+      const linhas = Array.from(caixa.querySelectorAll("tbody tr"));
+      const grupos = new Map<number, number>();
+      linhas.forEach((tr) => {
+        const q = Array.from(tr.getClientRects()).find((a) => a.height > 1);
+        if (q) grupos.set(coluna(q), (grupos.get(coluna(q)) ?? 0) + 1);
+      });
+      const quantidades = [...grupos.values()];
+      const partidaCurta = quantidades.length > 1 && (quantidades[0] <= 2 || quantidades[quantidades.length - 1] <= 2);
+      const raboCurto = quantidades[quantidades.length - 1];
+      const trio = linhas.slice(-3).filter((linha): linha is HTMLTableRowElement => linha instanceof HTMLTableRowElement);
+      const corpo = trio[0]?.parentElement;
+      if (raboCurto <= 2 && trio.length === 3 && corpo instanceof HTMLTableSectionElement && trio.every((linha) => linha.parentElement === corpo))
+        agrupar.push({ corpo, linhas: trio });
+      if (partidaCurta && total / r.k < (g.altura - g.topo - g.pe) * 0.72 && !caixa.classList.contains("folhear-inteira"))
+        inteiras.push(caixa);
+      if (
+        (partidaCurta || rabo / total <= 0.3) &&
+        total / r.k < (g.altura - g.topo - g.pe) * 1.2 &&
+        !caixa.classList.contains("folhear-tabela-compacta")
+      )
+        compactar.push(caixa);
+    });
+    compactar.forEach((el) => {
+      el.classList.add("folhear-tabela-compacta");
+      alteradas.add(el);
+    });
+    inteiras.forEach((el) => {
+      el.classList.add("folhear-inteira");
+      alteradas.add(el);
+    });
+    agrupar.forEach(({ corpo, linhas }) => {
+      const grupo = document.createElement("tbody");
+      grupo.className = "folhear-grupo-final";
+      corpo.after(grupo);
+      linhas.forEach((linha) => grupo.append(linha));
+      alteradas.add(corpo.closest(".livro-tabela") ?? corpo);
+    });
+    // O novo <tbody> já pede outra fragmentação; não agrupa outro trio na
+    // mesma composição, o que poderia consumir a tabela de trás para frente.
+    if (agrupar.length || compactar.length + inteiras.length === 0) break;
+  }
+  return alteradas.size;
 }
 
 /**
@@ -316,15 +368,14 @@ export function ajustarFigurasLargas(fluxo: Element): void {
  * jeito de sempre: a tabela larga vai de margem a margem (`column-span: all`),
  * e o texto em volta continua em duas colunas acima e abaixo dela.
  *
- * Também atravessa a tabela de poucas colunas que ainda saiu com alguma linha
- * mais alta que sete linhas de texto. Não mexe em tabela dentro de caixa,
+ * Também atravessa a tabela de poucas colunas que ainda saiu com uma célula
+ * abaixo de 90 px e alguma linha mais alta que seis linhas de texto. Não mexe em tabela dentro de caixa,
  * verbete ou catálogo de árvore: lá dentro ela não pode sair da caixa.
  */
 export function espalharTabelasEspremidas(fluxo: Element, g: Geometria, r: Regua): void {
   fluxo
-    .querySelectorAll(".livro-tabela.folhear-larga, .livro-caixa.folhear-larga")
-    .forEach((el) => el.classList.remove("folhear-larga"));
-  const alturaMaxima = g.fonte * 1.3 * 7;
+    .querySelectorAll(".livro-tabela.folhear-larga, .livro-caixa.folhear-larga, .folhear-torre")
+    .forEach((el) => el.classList.remove("folhear-larga", "folhear-torre"));
   const espremidas = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-tabela")).filter((caixa) => {
     if (!visivel(caixa) || caixa.closest(".livro-arvore, .livro-verbete, .livro-maestria, .livro-catalogo-itens"))
       return false;
@@ -335,8 +386,24 @@ export function espalharTabelasEspremidas(fluxo: Element, g: Geometria, r: Regua
     const tabela = caixa.querySelector("table");
     if (!tabela) return false;
     const colunas = tabela.tHead?.rows[0]?.cells.length ?? tabela.rows[0]?.cells.length ?? 0;
-    if (colunas >= 4) return true;
-    return Array.from(tabela.tBodies[0]?.rows ?? []).some((tr) => tr.getBoundingClientRect().height / r.k > alturaMaxima);
+    const celulas = Array.from(tabela.querySelectorAll("tbody td"));
+    const torre = celulas.some((celula) => {
+      const q = Array.from(celula.getClientRects()).find((a) => a.width > 1);
+      if (!q || q.width / r.k >= 90) return false;
+      const faixa = document.createRange();
+      faixa.selectNodeContents(celula);
+      const topos: number[] = [];
+      for (const pedaco of Array.from(faixa.getClientRects())) {
+        if (pedaco.width < 1 || pedaco.height < 1) continue;
+        const topo = Math.round(pedaco.top / r.k);
+        if (!topos.some((v) => Math.abs(v - topo) <= 1)) topos.push(topo);
+      }
+      return topos.length > 6;
+    });
+    if (torre) (caixa.closest(".livro-caixa") ?? caixa).classList.add("folhear-torre");
+    // Preserva a regra anterior: quatro colunas já são largas por natureza,
+    // mesmo antes de uma linha chegar ao limite de torre.
+    return colunas >= 4 || torre;
   });
   espremidas.forEach((caixa) => (caixa.closest(".livro-caixa") ?? caixa).classList.add("folhear-larga"));
 }
@@ -662,7 +729,7 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
   const vitrines = Array.from(fluxo.querySelectorAll<HTMLElement>(".livro-vitrine"));
   if (vitrines.length === 0) return;
   vitrines.forEach((el) => {
-    el.classList.remove("folhear-vitrine-cheia", "folhear-vitrine-compacta", "folhear-vitrine-some", "folhear-vitrine-faixa");
+    el.classList.remove("folhear-vitrine-cheia", "folhear-vitrine-compacta", "folhear-vitrine-some", "folhear-vitrine-faixa", "folhear-fecho-inteiro");
     el.style.removeProperty("--altura-vitrine");
   });
   const topo = fluxo.getBoundingClientRect().top;
@@ -690,6 +757,12 @@ export function esticarVitrines(fluxo: Element, g: Geometria, r: Regua): void {
     el.style.setProperty("--altura-vitrine", `${resto}px`);
     el.classList.add("folhear-vitrine-cheia");
   });
+  // Fecho de capítulo entra inteiro. Essas imagens são lazy e ainda não têm
+  // naturalWidth quando esta passada roda; tentar decidir pelo tamanho natural
+  // deixava justamente os fechos baixos em `cover`, cortando 60% da cena.
+  vitrines
+    .filter((el) => el.classList.contains("livro-fecho") && !el.classList.contains("livro-fecho-arvore") && el.classList.contains("folhear-vitrine-cheia"))
+    .forEach((el) => el.classList.add("folhear-fecho-inteiro"));
   // O espaço mudou com o resto do livro (uma prancha nova antes, um texto
   // maior): se o conteúdo não coube, somem os nomes; se nem assim, a vitrine.
   const transborda = (el: HTMLElement) => el.scrollHeight > el.clientHeight + 2;
@@ -840,7 +913,7 @@ export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
     if (!o || !w || !h) return;
     const escala = Math.max(o.w / w, o.h / h);
     const mostra = (o.w * o.h) / (w * h * escala * escala);
-    el.classList.toggle("folhear-fecho-inteiro", mostra < 0.45 || escala > 1.6);
+    el.classList.toggle("folhear-fecho-inteiro", mostra < 0.5 || escala > 1.6);
   });
 
   // A conferência: o fecho ficou na página onde a árvore acaba? Se pulou, vira
@@ -849,9 +922,19 @@ export function fecharArvores(fluxo: Element, g: Geometria, r: Regua): void {
     const o = escolhas[i];
     return o && o.nome !== "pagina" && !medir(el).mesma;
   });
-  pularam.forEach((el) =>
-    aplicar(el, el.classList.contains("livro-fecho-marca") ? null : { nome: "pagina", w: larguraCheia, h: colunaAlta - 4 }),
-  );
+  pularam.forEach((el) => {
+    const o = el.classList.contains("livro-fecho-marca") ? null : { nome: "pagina" as const, w: larguraCheia, h: colunaAlta - 4 };
+    aplicar(el, o);
+    // A opção mudou depois da escolha inicial; recalcula também o recorte.
+    // Sem isso, um fecho que pulava para página inteira continuava em `cover`
+    // com a decisão tomada para a faixa anterior e mostrava só 36–40% da arte.
+    const w = Number(el.dataset.largura) || 0;
+    const h = Number(el.dataset.altura) || 0;
+    if (!o || !w || !h) return;
+    const escala = Math.max(o.w / w, o.h / h);
+    const mostra = (o.w * o.h) / (w * h * escala * escala);
+    el.classList.toggle("folhear-fecho-inteiro", mostra < 0.5 || escala > 1.6);
+  });
 }
 
 /**
@@ -956,6 +1039,7 @@ export function estreitarTabelasQueAbremBuraco(fluxo: Element, g: Geometria, r: 
   };
   fluxo.querySelectorAll(".livro-tabela.folhear-larga, .livro-caixa.folhear-larga").forEach((larga) => {
     if (!visivel(larga)) return;
+    if (larga.classList.contains("folhear-torre")) return;
     /*
      * O buraco DEPOIS da peça larga (2026-09-26): a tabela das Três Facções
      * fechava a pág. 244 no meio, e o que vinha depois (duas caixas curtas e a
@@ -1183,7 +1267,9 @@ export function preencherPes(fluxo: Element, g: Geometria, r: Regua): number {
     const fim = pedacos[pedacos.length - 1];
     if (!fim || fim.width / r.k > meiaPagina || coluna(fim) !== coluna(q) - 1) return;
     const vao = colunaAlta - base(fim);
-    if (vao < 130 || !colunaCheia(bloco, coluna(q)) || !livre(coluna(fim), base(fim), colunaAlta)) return;
+    // Só ornamenta um vazio realmente grande: 15% ou mais da mancha. Em uma
+    // página menor a proporção continua correta, sem depender de 130 px fixos.
+    if (vao < colunaAlta * 0.15 || !colunaCheia(bloco, coluna(q)) || !livre(coluna(fim), base(fim), colunaAlta)) return;
     vistos.add(antes);
     const estilo = getComputedStyle(antes);
     selos.push({

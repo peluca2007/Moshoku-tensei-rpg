@@ -117,7 +117,7 @@ const MEDIR = `(async () => {
   // 1b. Tabela partida com só UMA OU DUAS linhas de um lado: no pé da
   // coluna ou sozinhas no alto da seguinte, com o cabeçalho repetido.
   f.querySelectorAll(".livro-tabela").forEach((tab) => {
-    if (oculto(tab)) return;
+    if (oculto(tab) || tab.closest(".livro-catalogo-itens")) return;
     const grupos = [];
     tab.querySelectorAll("tbody tr:not(.folhear-cabecalho-repetido)").forEach((tr) => {
       const q = tr.getClientRects()[0];
@@ -135,20 +135,28 @@ const MEDIR = `(async () => {
   // 1c. Tabela-torre e cabeçalho alto. A medida é visual: largura e altura
   // computadas depois de todas as passadas, já na geometria da impressão.
   f.querySelectorAll(".livro-tabela").forEach((caixa) => {
-    if (oculto(caixa) || getComputedStyle(caixa).columnSpan === "all" || caixa.closest(".folhear-larga")) return;
+    // O catálogo troca a tabela por cartões no folhear; suas células continuam
+    // no DOM, mas já não são colunas visuais e portanto não podem ser "torre".
+    if (oculto(caixa) || caixa.closest(".livro-catalogo-itens") || getComputedStyle(caixa).columnSpan === "all" || caixa.closest(".folhear-larga")) return;
     const tabela = caixa.querySelector("table");
     if (!tabela) return;
-    const celulas = [...tabela.querySelectorAll("th, td")].filter((el) => el.getClientRects()[0]?.width > 1);
-    const estreita = celulas.find((el) => el.getClientRects()[0].width / k < 90);
-    const linhaAlta = [...tabela.querySelectorAll("tbody tr")].find((tr) => {
-      const q = tr.getClientRects()[0];
-      const estilo = getComputedStyle(tr.cells[0] ?? tr);
-      const lh = parseFloat(estilo.lineHeight) || parseFloat(estilo.fontSize) * 1.3;
-      return q && q.height / k > lh * 6;
+    const celulas = [...tabela.querySelectorAll("tbody td")].filter((el) => el.getClientRects()[0]?.width > 1);
+    const torre = celulas.find((celula) => {
+      const q = celula.getClientRects()[0];
+      if (q.width / k >= 90) return false;
+      const faixa = document.createRange();
+      faixa.selectNodeContents(celula);
+      const topos = [];
+      for (const r of faixa.getClientRects()) {
+        if (r.width < 1 || r.height < 1) continue;
+        const topo = Math.round(r.top / k);
+        if (!topos.some((v) => Math.abs(v - topo) <= 1)) topos.push(topo);
+      }
+      return topos.length > 6;
     });
-    if (estreita && linhaAlta) {
-      const q = linhaAlta.getClientRects()[0];
-      anotar(pagina(q.left), "torre", Math.round(estreita.getClientRects()[0].width / k) + " px; linha de " + Math.round(q.height / k) + " px: " + (linhaAlta.textContent || "").trim().slice(0, 55));
+    if (torre) {
+      const q = torre.getClientRects()[0];
+      anotar(pagina(q.left), "torre", Math.round(q.width / k) + " px; " + (torre.textContent || "").trim().slice(0, 55));
     }
   });
   f.querySelectorAll(".livro-tabela th").forEach((th) => {
@@ -232,15 +240,20 @@ const MEDIR = `(async () => {
     cap.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete, dl, blockquote").forEach((el) => {
       for (const q of el.getClientRects()) if (q.height > 1) ultima = Math.max(ultima, onde(q.left + 2).p);
     });
-    if (ultima >= 0) finaisDeCapitulo.set(ultima, cap.dataset.capitulo || "capítulo");
+    if (ultima >= 0) {
+      const nome = cap.dataset.capitulo || "capítulo";
+      const anterior = finaisDeCapitulo.get(nome) ?? -1;
+      finaisDeCapitulo.set(nome, Math.max(anterior, ultima));
+    }
   });
+  const capitulosPorPagina = new Map([...finaisDeCapitulo].map(([nome, pag]) => [pag, nome]));
   for (let p = 0; p < total; p++) {
     if (semTexto.has(p) || abertura.has(p) || paginasComLarga.has(p)) continue;
     const a = fundo.get(p * 2) ?? 0, b = fundo.get(p * 2 + 1) ?? 0;
     if (!a || !b) continue;
     const diferenca = Math.abs(a - b) / H;
     if (diferenca > 0.3) {
-      const fim = finaisDeCapitulo.get(p);
+      const fim = capitulosPorPagina.get(p);
       anotar(p, "coluna-curta", Math.round(diferenca * 100) + "% de diferença" + (fim ? "; última página de " + fim : ""));
     }
   }
