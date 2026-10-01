@@ -18,7 +18,10 @@
  * - PÁGINA VAZIA: mais de 18% da mancha em branco.
  * - ARTE QUEBRADA: imagem que não carregou.
  * - ARTE BORRADA: imagem ampliada mais de 1,6× do tamanho que o arquivo tem.
- * - LINHA SOLTA: tabela partida com uma linha só de um lado da quebra.
+ * - TABELA-TORRE: célula estreita demais transforma uma linha em parede alta.
+ * - PARTIDA CURTA: tabela partida com só uma ou duas linhas de um lado.
+ * - COLUNA CURTA: as duas colunas de uma página terminam muito desniveladas.
+ * - CABEÇALHO ALTO: título de coluna quebra em mais de duas linhas.
  * - RECORTE FORTE: imagem cortada pra caber no quadro mostrando menos de 45%
  *   dela (o rosto do Orsted cortado era isso).
  *
@@ -111,10 +114,10 @@ const MEDIR = `(async () => {
     if (c && coluna(c) > coluna(r)) anotar(pagina(r.left), "titulo", (t.textContent || "").trim().slice(0, 60));
   });
 
-  // 1b. Tabela partida com UMA linha de um lado: no pé da coluna (o título
-  // órfão das tabelas) ou sozinha no alto da seguinte, com o cabeçalho repetido.
+  // 1b. Tabela partida com só UMA OU DUAS linhas de um lado: no pé da
+  // coluna ou sozinhas no alto da seguinte, com o cabeçalho repetido.
   f.querySelectorAll(".livro-tabela").forEach((tab) => {
-    if (oculto(tab)) return;
+    if (oculto(tab) || tab.closest(".livro-catalogo-itens")) return;
     const grupos = [];
     tab.querySelectorAll("tbody tr:not(.folhear-cabecalho-repetido)").forEach((tr) => {
       const q = tr.getClientRects()[0];
@@ -125,8 +128,53 @@ const MEDIR = `(async () => {
     });
     if (grupos.length < 2) return;
     const ultimo = grupos[grupos.length - 1];
-    if (ultimo.n === 1) anotar(pagina(ultimo.left), "linha-solta", "última linha sozinha: " + ultimo.texto);
-    if (grupos[0].n === 1) anotar(pagina(grupos[0].left), "linha-solta", "primeira linha sozinha no pé: " + grupos[0].texto);
+    if (ultimo.n <= 2) anotar(pagina(ultimo.left), "partida-curta", ultimo.n + " linha(s) sozinha(s) no alto: " + ultimo.texto);
+    if (grupos[0].n <= 2) anotar(pagina(grupos[0].left), "partida-curta", grupos[0].n + " linha(s) sozinha(s) no pé: " + grupos[0].texto);
+  });
+
+  // 1c. Tabela-torre e cabeçalho alto. A medida é visual: largura e altura
+  // computadas depois de todas as passadas, já na geometria da impressão.
+  f.querySelectorAll(".livro-tabela").forEach((caixa) => {
+    // O catálogo troca a tabela por cartões no folhear; suas células continuam
+    // no DOM, mas já não são colunas visuais e portanto não podem ser "torre".
+    if (oculto(caixa) || caixa.closest(".livro-catalogo-itens") || getComputedStyle(caixa).columnSpan === "all" || caixa.closest(".folhear-larga")) return;
+    const tabela = caixa.querySelector("table");
+    if (!tabela) return;
+    const celulas = [...tabela.querySelectorAll("tbody td")].filter((el) => el.getClientRects()[0]?.width > 1);
+    const torre = celulas.find((celula) => {
+      const q = celula.getClientRects()[0];
+      if (q.width / k >= 90) return false;
+      const faixa = document.createRange();
+      faixa.selectNodeContents(celula);
+      const topos = [];
+      for (const r of faixa.getClientRects()) {
+        if (r.width < 1 || r.height < 1) continue;
+        const topo = Math.round(r.top / k);
+        if (!topos.some((v) => Math.abs(v - topo) <= 1)) topos.push(topo);
+      }
+      return topos.length > 6;
+    });
+    if (torre) {
+      const q = torre.getClientRects()[0];
+      anotar(pagina(q.left), "torre", Math.round(q.width / k) + " px; " + (torre.textContent || "").trim().slice(0, 55));
+    }
+  });
+  f.querySelectorAll(".livro-tabela th").forEach((th) => {
+    if (oculto(th)) return;
+    const q = th.getClientRects()[0];
+    if (!q || q.height < 2) return;
+    // A altura do <th> é compartilhada pela linha inteira; medir a caixa faria
+    // um título curto parecer alto quando o vizinho quebra. Os retângulos do
+    // conteúdo revelam quantas linhas este cabeçalho realmente ocupa.
+    const faixa = document.createRange();
+    faixa.selectNodeContents(th);
+    const topos = [];
+    for (const r of faixa.getClientRects()) {
+      if (r.width < 1 || r.height < 1) continue;
+      const topo = Math.round(r.top / k);
+      if (!topos.some((v) => Math.abs(v - topo) <= 1)) topos.push(topo);
+    }
+    if (topos.length > 2) anotar(pagina(q.left), "cabecalho-alto", topos.length + " linhas: " + (th.textContent || "").trim().slice(0, 55));
   });
 
   // 2. Estouro: bloco passando da coluna ou da página.
@@ -178,6 +226,42 @@ const MEDIR = `(async () => {
     for (const q of el.getClientRects()) semTexto.add(onde(q.left + 2).p);
   });
   const total = Math.max(...[...fundo.keys()].map((c) => Math.floor(c / 2))) + 1;
+
+  // Peça de margem a margem explica o desnível: o texto acima ou abaixo dela
+  // forma outra faixa e não precisa terminar na mesma altura.
+  const paginasComLarga = new Set();
+  f.querySelectorAll(".folhear-larga, .livro-vitrine, .livro-prancha, figure").forEach((el) => {
+    if (oculto(el)) return;
+    for (const q of el.getClientRects()) {
+      // Um fecho ou uma ilustração grande de coluna também explica o desnível:
+      // ali a assimetria é composição, não texto abandonado.
+      const explica = el.matches(".livro-fecho") || q.width / k > colW + 4 || (el.matches("figure") && q.height / k > H * 0.25);
+      if (q.height > 1 && explica) paginasComLarga.add(onde(q.left + 2).p);
+    }
+  });
+  const finaisDeCapitulo = new Map();
+  f.querySelectorAll(":scope > [data-capitulo]").forEach((cap) => {
+    let ultima = -1;
+    cap.querySelectorAll("p, li, tr, h2, h3, h4, figure, .livro-caixa, .livro-verbete, dl, blockquote").forEach((el) => {
+      for (const q of el.getClientRects()) if (q.height > 1) ultima = Math.max(ultima, onde(q.left + 2).p);
+    });
+    if (ultima >= 0) {
+      const nome = cap.dataset.capitulo || "capítulo";
+      const anterior = finaisDeCapitulo.get(nome) ?? -1;
+      finaisDeCapitulo.set(nome, Math.max(anterior, ultima));
+    }
+  });
+  const capitulosPorPagina = new Map([...finaisDeCapitulo].map(([nome, pag]) => [pag, nome]));
+  for (let p = 0; p < total; p++) {
+    if (semTexto.has(p) || abertura.has(p) || paginasComLarga.has(p)) continue;
+    const a = fundo.get(p * 2) ?? 0, b = fundo.get(p * 2 + 1) ?? 0;
+    if (!a || !b) continue;
+    const diferenca = Math.abs(a - b) / H;
+    if (diferenca > 0.3) {
+      const fim = capitulosPorPagina.get(p);
+      anotar(p, "coluna-curta", Math.round(diferenca * 100) + "% de diferença" + (fim ? "; última página de " + fim : ""));
+    }
+  }
   for (let p = 0; p < total; p++) {
     if (semTexto.has(p) || abertura.has(p + 1)) continue;
     const a = (fundo.get(p * 2) ?? 0) / H, b = (fundo.get(p * 2 + 1) ?? 0) / H;
@@ -354,7 +438,10 @@ const NOMES = {
   "arte-quebrada": "Arte que não carregou",
   "arte-borrada": "Arte ampliada demais (pode ficar borrada)",
   "recorte-forte": "Arte cortada demais pra caber no quadro",
-  "linha-solta": "Tabela partida com uma linha só de um lado",
+  torre: "Tabela-torre",
+  "partida-curta": "Tabela partida com até duas linhas de um lado",
+  "coluna-curta": "Coluna curta sem peça larga que explique",
+  "cabecalho-alto": "Cabeçalho de tabela com mais de duas linhas",
 };
 const porTipo = Object.fromEntries(Object.keys(NOMES).map((t) => [t, medida.problemas.filter((p) => p.tipo === t)]));
 const linhas = [

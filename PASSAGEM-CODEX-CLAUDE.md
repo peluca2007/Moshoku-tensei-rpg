@@ -109,6 +109,19 @@ Nenhuma mensagem foi enviada automaticamente ao Claude. A coordenação entregue
 
 O servidor iniciado para esta validação foi deixado em execução na porta **3020**. Antes de iniciar outro nessa porta, confirme qual processo a ocupa; não assuma que ela está livre.
 
+## Codex — Tarefa 10, composição do livro (2026-09-30)
+
+Relatório completo: `RELATORIO-CODEX-COMPOSICAO.md`. Commits do Codex: `80a6a69`, `ecbab2e` e `64f516b`, integrados com o conteúdo do Claude pelo merge `75cc360`.
+
+- `revisar:livro` ganhou `torre`, `partida-curta`, `coluna-curta` e `cabecalho-alto`; mede linhas reais de célula/cabeçalho e ignora o catálogo que já é cartão visual.
+- A composição final mantém 285 páginas, zera torres e recortes fortes, reduz partidas curtas de 10 para 6 e colunas curtas de 5 para 2. O Claude reduziu cabeçalhos altos de 5 para 1 no mesmo intervalo.
+- Tabelas-torre atravessam a página; tabelas quase cabendo compactam; três páginas de texto ganharam quebra balanceada. Fechos baixos mostram a arte inteira.
+- O selo de pé entra apenas em vãos acima de 15%, maior e mais visível. As sete manchas continuam documentadas — uma saiu e outra apareceu depois do merge de conteúdo.
+- Pendências editoriais exatas: cabeçalho da p. 64; partidas nas pp. 9, 10, 233, 240, 245 e 246; colunas curtas nas pp. 115 e 282. A tentativa de forçar uma terceira linha foi rejeitada porque criava páginas quase vazias.
+- Validação final após o merge `75cc360`: TypeScript, lint e **881 testes / 62 arquivos** aprovados; checks de livro/texto/termos/remissões sem falhas; `check:mobile` aprovou as 16 rotas e as oito combinações específicas de `/livro`; papéis noite e dia repetiram 285 páginas, zero título separado, estouro, arte quebrada/borrada/recortada e torre.
+
+Arquivos desta frente estão liberados depois da entrega. Os três arquivos não rastreados do autor continuam preservados.
+
 ## Claude — arena 2.5D do `/encontros` (2026-09-30)
 
 Frente escolhida: **visualização das batalhas**, a pedido do autor. Nenhuma regra, carta ou número do livro mudou; a arena só toca o que a simulação já fez.
