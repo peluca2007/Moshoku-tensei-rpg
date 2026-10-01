@@ -232,7 +232,12 @@ const MEDIR = `(async () => {
   const paginasComLarga = new Set();
   f.querySelectorAll(".folhear-larga, .livro-vitrine, .livro-prancha, figure").forEach((el) => {
     if (oculto(el)) return;
-    for (const q of el.getClientRects()) if (q.height > 1 && q.width / k > colW + 4) paginasComLarga.add(onde(q.left + 2).p);
+    for (const q of el.getClientRects()) {
+      // Um fecho ou uma ilustração grande de coluna também explica o desnível:
+      // ali a assimetria é composição, não texto abandonado.
+      const explica = el.matches(".livro-fecho") || q.width / k > colW + 4 || (el.matches("figure") && q.height / k > H * 0.25);
+      if (q.height > 1 && explica) paginasComLarga.add(onde(q.left + 2).p);
+    }
   });
   const finaisDeCapitulo = new Map();
   f.querySelectorAll(":scope > [data-capitulo]").forEach((cap) => {

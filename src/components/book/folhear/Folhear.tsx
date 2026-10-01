@@ -51,6 +51,7 @@ import {
   calcularGeometria,
   acomodarPranchas,
   espalharTabelasEspremidas,
+  equilibrarColunasCurtas,
   esticarVitrines,
   fecharArvores,
   limparCabecalhosRepetidos,
@@ -472,6 +473,7 @@ export default function Folhear({
         repetir("titulos", 8, () => segurarTitulos(f, g, regua(fx)));
       }
     });
+    medir("equilibrar-colunas", () => equilibrarColunasCurtas(f, g, regua(fx)));
     esquecerIndice(f);
     medir("cabecalhos", () => repetirCabecalhos(f));
     medir("vitrines", () => esticarVitrines(f, g, regua(fx)));

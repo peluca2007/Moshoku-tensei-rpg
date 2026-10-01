@@ -930,6 +930,10 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   break-before: column;
 }
 
+.folhear-fluxo .folhear-equilibra-colunas {
+  break-before: column;
+}
+
 .folhear-fluxo :is(figure, img, video) {
   max-height: calc(var(--altura) - var(--topo) - var(--pe));
 }
