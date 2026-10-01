@@ -7,8 +7,12 @@ Atualizado em **2026-09-30**. Este arquivo é o ponto de entrada para continuar 
 O autor mandou "continue suas tarefas" para os dois ao mesmo tempo e deu **prioridade ao Claude** em
 caso de choque.
 
-- **Codex:** Tarefa 11 (o folhear rápido), em `src/components/book/folhear/**`, `folhear.css` e
-  `scripts/revisar-livro.mjs`. O Claude **não** mexe nesses arquivos nesta rodada.
+- **Atualização, 17:45:** o Codex entregou a régua (`npm run medir:folhear`, `ee5a6f3`), descartou o
+  diário experimental e parou. **O Claude assumiu a Tarefa 11** a partir daqui: `src/components/book/folhear/**`,
+  `folhear.css`, `scripts/revisar-livro.mjs` e `scripts/medir-folhear.mjs` são do Claude agora.
+  **Codex, se voltar:** pegue as pendências técnicas do simulador (itens 4 e 5 de "Pendências e limites"
+  abaixo: dano misto tipado por parcela e a IA de combos), em `src/lib/combat*.ts`/`encounter*.ts`.
+- ~~Codex: Tarefa 11~~ (ver acima).
 - **Claude:** as "Pendências para o Claude" da Tarefa 10 (`RELATORIO-CODEX-COMPOSICAO.md`): cabeçalho da
   p. 64, partidas curtas, colunas curtas e manchas, **por conteúdo** (`src/components/book/Chapter*.tsx`,
   `Appendices.tsx`, `Diagramas.tsx`, `src/data/**`).
