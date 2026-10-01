@@ -44,7 +44,7 @@ export default function Chapter0() {
         <SectionTitle id="cap0-2">2. A ficha em seis números</SectionTitle>
         <P>Tudo na sua ficha desce destes seis. Se você entender estes, entendeu a ficha.</P>
         <BookTable
-          headers={["Número", "O que é", "Onde a regra completa está"]}
+          headers={["Número", "O que é", "Onde"]}
           rows={[
             ["Atributos", "Força, Agilidade, Vigor, Intelecto, Espírito. Somam direto na rolagem de d20.", "Cap. 1, §1"],
             ["PV", "Sua vida. A 0, você começa a morrer — mas não morre de imediato.", "Cap. 4, §1"],
@@ -86,28 +86,29 @@ export default function Chapter0() {
           Dois aventureiros contra dois lobos de gelo. Repare em quantas coisas acontecem sem ninguém
           consultar uma tabela.
         </P>
+        {/*
+          Duas colunas, e não três: numa coluna de livro, "O que faz" e "A conta"
+          lado a lado viravam faixas de quatro palavras por linha. O lance vai em
+          negrito e a conta logo embaixo, na mesma célula.
+        */}
         <BookTable
-          headers={["Quem", "O que faz", "A conta"]}
+          headers={["Quem", "O lance e a conta"]}
           rows={[
             [
               "Elina (Água, Intermediária)",
-              "Conjura Flecha de Água no lobo da frente. Ele fica Molhado.",
-              "2 Ações pra conjurar. 1d20 + BC 5 contra CA 13. Acerta: 1d8+5 de dano. Sobra 1 Ação, e ela recua 9 metros.",
+              <span key="e1"><b>Conjura Flecha de Água no lobo da frente. Ele fica Molhado.</b> 2 Ações pra conjurar. 1d20 + BC 5 contra CA 13. Acerta: 1d8 + 5 de dano. Sobra 1 Ação, e ela recua 9 metros.</span>,
             ],
             [
               "Borg (Deus do Norte, Principiante)",
-              "Chuta areia no segundo lobo e ataca com o machado.",
-              "O chute é o Improviso da Maestria (1 Ação, uma vez por combate): o lobo testa Agilidade com Desvantagem contra CD 8 + Força 3 + Rank 1 = 12, falha e fica Cego até o fim do próximo turno dele. Borg ataca com Vantagem (alvo Cego): 1d10 + 3 + 1.",
+              <span key="b1"><b>Chuta areia no segundo lobo e ataca com o machado.</b> O chute é o Improviso da Maestria (1 Ação, uma vez por combate): o lobo testa Agilidade com Desvantagem contra CD 8 + Força 3 + Rank 1 = 12, falha e fica Cego até o fim do próximo turno dele. Borg ataca com Vantagem (alvo Cego): 1d10 + 3 + 1.</span>,
             ],
             [
               "Lobo (turno dele)",
-              "O lobo Molhado avança e morde Borg.",
-              "Nada acontece de especial — mas o lobo continua Molhado, e é isso que importa no próximo turno dela.",
+              <span key="l1"><b>O lobo Molhado avança e morde Borg.</b> Nada de especial — mas ele continua Molhado, e é isso que importa no próximo turno de Elina.</span>,
             ],
             [
               "Rodada 2 — Elina",
-              "Impacto de Gelo no lobo Molhado.",
-              "O frio dobra contra Molhado: 1d8 + 5 vira 2d8 + 5, passe ele no teste ou não, e o lobo cai.",
+              <span key="e2"><b>Impacto de Gelo no lobo Molhado.</b> O dano é 1d8 de frio + BC 5 (contundente). Molhado dobra só o frio: ela rola o 1d8 e conta em dobro, depois soma os 5 — passe o lobo no teste ou não, e ele cai.</span>,
             ],
           ]}
         />
