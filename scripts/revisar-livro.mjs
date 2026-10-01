@@ -40,6 +40,18 @@
  *
  * Sai com código 1 se houver título separado, estouro ou arte quebrada: dá
  * pra usar antes de abrir um PR.
+ *
+ * ## O diário que vai com o livro (2026-10-01)
+ *
+ * A revisão diagrama o livro do zero (o uso do diário fica desligado aqui,
+ * senão ela conferiria o diário em vez da diagramação) e, de brinde, grava o
+ * resultado em `public/livro/diagramacao-2.json` e, abrindo de novo numa tela
+ * de tablet em pé, `diagramacao-1.json`. É com eles que a primeira visita ao
+ * modo Livro abre sem diagramar (ver diarioDaDiagramacao.ts). Mexeu no livro,
+ * rode a revisão e suba os dois junto; esquecer não quebra nada, só deixa a
+ * primeira abertura lenta até a próxima revisão. Mexeu numa passada ou no CSS
+ * do livro com o servidor de pé, reinicie o servidor antes: a versão do motor
+ * que vai no diário é calculada quando ele sobe (next.config.ts).
  */
 
 import { mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
@@ -335,7 +347,7 @@ for (const f of readdirSync(SAIDA)) rmSync(path.join(SAIDA, f), { force: true })
 const resultado = await comNavegador(async ({ abrir }) => {
   const { enviar, avaliar } = await abrir("about:blank");
   await enviar("Page.addScriptToEvaluateOnNewDocument", {
-    source: `try { localStorage.setItem("theme", "dark"); localStorage.setItem("livro-folhear-modo", "livro"); localStorage.setItem("livro-folhear-papel", ${JSON.stringify(papel)}); } catch {}`,
+    source: `try { localStorage.setItem("theme", "dark"); localStorage.setItem("livro-folhear-modo", "livro"); localStorage.setItem("livro-folhear-papel", ${JSON.stringify(papel)}); localStorage.setItem("livro-folhear-diario-desligado", "1"); } catch {}`,
   });
   await enviar("Emulation.setDeviceMetricsOverride", { width: LARGURA, height: ALTURA, deviceScaleFactor: Number(process.env.ESCALA ?? 1), mobile: false });
   await enviar("Page.navigate", { url: `${BASE}/livro/folhear` });
@@ -356,6 +368,14 @@ const resultado = await comNavegador(async ({ abrir }) => {
     throw new Error(`não consegui medir o livro: ${detalhe}`);
   }
 
+  // O diário desta diagramação (duas páginas) vai com o livro.
+  const lerDiario = (porDupla) =>
+    avaliar(`(() => {
+      const k = Object.keys(localStorage).find((k) => k.startsWith("livro-folhear-diario:v") && k.endsWith(":${porDupla}"));
+      return k ? localStorage.getItem(k) : null;
+    })()`);
+  const diarioDeDuas = await lerDiario(2);
+
   const fotos = [];
   if (!semFotos) {
     const duplas = Math.ceil(medida.paginas / 2);
@@ -372,11 +392,28 @@ const resultado = await comNavegador(async ({ abrir }) => {
       if (d % 20 === 0) process.stdout.write(`  fotografando… dupla ${d} de ${duplas}\n`);
     }
   }
-  return { medida, fotos };
+
+  // E o de uma página por vez: o mesmo livro numa tela de tablet em pé.
+  await enviar("Emulation.setDeviceMetricsOverride", { width: 820, height: 1180, deviceScaleFactor: 1, mobile: false });
+  await enviar("Page.navigate", { url: `${BASE}/livro/folhear` });
+  let diarioDeUma = null;
+  for (let i = 0; i < 240 && !diarioDeUma; i++) {
+    await dormir(250);
+    if (await avaliar("!!document.querySelector('.folhear[data-pronto]')")) diarioDeUma = await lerDiario(1);
+  }
+  return { medida, fotos, diarios: { 2: diarioDeDuas, 1: diarioDeUma } };
 });
 
+const { medida, fotos, diarios } = resultado;
+for (const [porDupla, diario] of Object.entries(diarios)) {
+  if (!diario) {
+    console.warn(`⚠️  Sem diário de ${porDupla} página(s): a primeira abertura nessa geometria vai diagramar do zero.`);
+    continue;
+  }
+  writeFileSync(path.join("public", "livro", `diagramacao-${porDupla}.json`), `${diario}\n`);
+}
+
 // ── As folhas de contato: quatro duplas por folha ───────────────────────
-const { medida, fotos } = resultado;
 const relatorioDaAssinatura = {
   viewport: { largura: LARGURA, altura: ALTURA },
   papel,
