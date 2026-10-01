@@ -184,7 +184,9 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         </Aside>
         <VitrineDasArvores />
         <BookTable
-          headers={["Patamar", "Bônus", ...rankLabelTrees.map((t) => t.name)]}
+          // O "e" anda colado à palavra seguinte: "Furtividade / e Armadilhas" quebra em
+          // duas linhas, não em três ("Furtividade / e / Armadilhas").
+          headers={["Patamar", "Bônus", ...rankLabelTrees.map((t) => t.name.replace(/ e /g, " e "))]}
           rows={RANKS.map((rank, i) => [
             `${i + 1}º · ${rank}`,
             `+${RANK_BONUS[rank]}`,
@@ -436,6 +438,31 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             ["4. A Solta", "o ataque normal, contra a CA do alvo", "O disparo. Também é uma jogada: nenhuma etapa garante o acerto."],
           ]}
         />
+        <Aside title="A escada da Preparação">
+          <List
+            items={[
+              <span key="1">
+                <b>Principiante</b> — o Tiro Perfeito, e <b>Respiração Contada</b>, que deixa guardar uma
+                Preparação pronta até o fim do turno seguinte antes de soltar.
+              </span>,
+              <span key="2">
+                <b>Intermediário — Etapa Encurtada:</b> A Corda e A Leitura, as duas primeiras, passam a caber numa Ação só. O
+                tiro inteiro cai de 4 para 3 Ações, e passa a caber num turno.
+              </span>,
+              <span key="3">
+                <b>Avançado — Olho Que Já Viu:</b> a Leitura não pede mais teste. Ela passa sempre.
+              </span>,
+              <span key="4">
+                <b>Santo — Ponto Vital Lido:</b> a etapa d&rsquo;O Ponto passa a custar 0 Ações.
+              </span>,
+              <span key="5">
+                <b>Rei — Preparação Perfeita:</b> um Tiro Perfeito em que Corda, Dedos, Leitura e O Ponto
+                passaram, e a Solta acertou, fura o Manto de Touki, sem gastar PT. É a segunda forma de
+                furar o Manto, e cobra em turnos o que a Flecha de Touki cobra em recurso.
+              </span>,
+            ]}
+          />
+        </Aside>
         <Aside title="Por que a Leitura vem antes dos Dedos">
           <P>
             A ordem não é enfeite, é a própria técnica. Você <b>puxa</b> a corda, <b>lê</b> pra onde o alvo
@@ -463,61 +490,32 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             inteira se perde, e as Ações já gastas nela não voltam.
           </P>
         </Aside>
-        <Aside title="A escada da Preparação">
-          <List
-            items={[
-              <span key="1">
-                <b>Principiante</b> — o Tiro Perfeito, e <b>Respiração Contada</b>, que deixa guardar uma
-                Preparação pronta até o fim do turno seguinte antes de soltar.
-              </span>,
-              <span key="2">
-                <b>Intermediário — Etapa Encurtada:</b> A Corda e A Leitura, as duas primeiras, passam a caber numa Ação só. O
-                tiro inteiro cai de 4 para 3 Ações, e passa a caber num turno.
-              </span>,
-              <span key="3">
-                <b>Avançado — Olho Que Já Viu:</b> a Leitura não pede mais teste. Ela passa sempre.
-              </span>,
-              <span key="4">
-                <b>Santo — Ponto Vital Lido:</b> a etapa d&rsquo;O Ponto passa a custar 0 Ações.
-              </span>,
-              <span key="5">
-                <b>Rei — Preparação Perfeita:</b> um Tiro Perfeito em que Corda, Dedos, Leitura e O Ponto
-                passaram, e a Solta acertou, fura o Manto de Touki, sem gastar PT. É a segunda forma de
-                furar o Manto, e cobra em turnos o que a Flecha de Touki cobra em recurso.
-              </span>,
-            ]}
-          />
-        </Aside>
 
         <SubTitle id="cap3-triangulo">4. O Triângulo dos Estilos</SubTitle>
         <Prancha id="cap3-triangulo" />
-        <TrianguloDosEstilos />
         <Quote attribution="Lema do Estilo Deus da Espada">A vitória é de quem se move primeiro.</Quote>
-        <Aside title="Regra da Vantagem de Estilo">
-          <P>
-            <b>Espada vence Norte, Norte vence Água, Água vence Espada.</b> Quando você luta contra um
-            praticante do estilo que o seu contra-ataca, e ambos possuem Rank naqueles estilos: você rola com
-            Vantagem em todas as Disputas contra ele. Se o Rank dele for dois ou mais acima do seu, a vantagem
-            se anula — treino bruto supera a tabela de tipos.
-          </P>
-          <P>
-            <b>E cada aresta tem o efeito próprio dela</b>, porque as três doutrinas não se atacam pelo mesmo
-            lugar:
-          </P>
-          <BookTable
-            headers={["Aresta", "O que você ganha, além da Vantagem nas Disputas"]}
-            rows={[
-              ["Espada vence Norte", "O Improviso do Norte não funciona contra a sua primeira Ação do turno. Você é rápido demais pra ele improvisar em cima."],
-              ["Norte vence Água", "As Reações defensivas dele falham contra a sua primeira Ação de cada turno. O Norte luta sujo: ataca o que a postura não cobre."],
-              ["Água vence Espada", "O primeiro ataque dele contra você a cada turno tem Desvantagem. A Água não bloqueia a Espada — ela faz a Espada errar."],
-            ]}
-          />
-          <P>
-            Seu estilo é o do seu maior Rank entre os três (em empate, escolha no início do combate); o
-            Vendaval conta como Deus da Espada. Os Ranks comparados acima são os desses dois estilos, o seu e
-            o dele. A vantagem vale só em ataques corpo a corpo.
-          </P>
-        </Aside>
+        <P>
+          <b>Espada vence Norte, Norte vence Água, Água vence Espada.</b> Contra quem pratica o estilo que
+          o seu vence, você rola com Vantagem em todas as Disputas corpo a corpo — a menos que o Rank dele
+          no estilo dele seja dois ou mais acima do seu no seu: treino bruto supera a tabela de tipos.
+        </P>
+        <P>
+          Seu estilo é o do seu maior Rank entre os três (empate: escolha no início do combate); o Vendaval
+          conta como Deus da Espada.
+        </P>
+        <P>
+          <b>E cada aresta tem o efeito próprio dela</b>, porque as três doutrinas não se atacam pelo mesmo
+          lugar:
+        </P>
+        <BookTable
+          headers={["Aresta", "Além da Vantagem, você ganha"]}
+          rows={[
+            ["Espada vence Norte", "O Improviso do Norte não funciona contra a sua primeira Ação do turno: rápido demais pra improvisar em cima."],
+            ["Norte vence Água", "As Reações defensivas dele falham contra a sua primeira Ação de cada turno: o Norte ataca o que a postura não cobre."],
+            ["Água vence Espada", "O primeiro ataque dele contra você a cada turno tem Desvantagem: a Água não bloqueia a Espada, faz a Espada errar."],
+          ]}
+        />
+        <TrianguloDosEstilos />
       </Section>
 
       <Section>
