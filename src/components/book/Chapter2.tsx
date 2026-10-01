@@ -272,7 +272,7 @@ export default function Chapter2() {
           </P>
         </Warning>
         <BookTable
-          headers={["Rank da Magia", "Piso do cântico (concede bônus a partir daqui)", "Teto de caracteres do cântico"]}
+          headers={["Rank da Magia", "Piso (bônus daqui em diante)", "Teto"]}
           rows={RANKS.map((rank) => [
             rank,
             `${INCANTATION_LENGTH[rank].min} caracteres`,
@@ -333,7 +333,7 @@ export default function Chapter2() {
           Máximo (Cap. 4, §1).
         </P>
         <BookTable
-          headers={["Rank da Magia", "PM mais comum (mediana)", "Faixa no livro"]}
+          headers={["Rank da Magia", "PM típico (mediana)", "Faixa no livro"]}
           rows={RANKS.flatMap((rank) => {
             const ref = pmDeReferencia(rank);
             return ref ? [[rank, `${ref.mediana} PM`, `${ref.min} a ${ref.max} PM`]] : [];
