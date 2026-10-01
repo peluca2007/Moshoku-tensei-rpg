@@ -138,11 +138,11 @@ export default function Chapter0() {
         <BookTable
           headers={["#", "Passo", "Detalhe"]}
           rows={[
-            ["1", "Role a Raça (1d100)", "Humano, Elfo, Anão, Migurd, Ogro, Povo Pequeno, Raça Fera… Quanto mais forte, mais rara. Cada uma dá bônus por fora do seu orçamento de pontos; escolher em vez de rolar custa de 1 a 3 PA, pelo tier da raça, e o Dragão não se escolhe (Cap. 1, §5)."],
+            ["1", "Role a Raça (1d100)", "Humano, Elfo, Anão, Migurd, Ogro, Povo Pequeno, Raça Fera… Quanto mais forte, mais rara, e o bônus dela vem por fora dos seus pontos. Escolher em vez de rolar custa de 1 a 3 PA, pelo tier (Cap. 1, §5)."],
             ["2", "Role o Antecedente (1d100)", "Sua infância. Decide perícias, traços e quanto ouro você começa com."],
             ["3", "Distribua 2 pontos de atributo", "Só dois. Você pode baixar um atributo a -1 e outro a -2 pra ganhar mais três — mas leia o aviso sobre o Vigor antes."],
             ["4", "Escolha a Árvore Inicial", "A mais importante das seis decisões: ela dá o seu kit grátis, as suas perícias iniciais, e define o que você faz numa luta."],
-            ["5", "Gaste os PA iniciais", "Gaste os PA iniciais — 3, menos o que custou escolher a raça ou o Antecedente em vez de sortear (passo 1). A Árvore Inicial abre de graça (Cap. 1, §8); os PA compram magias, técnicas, talentos, perícias ou atributos."],
+            ["5", "Gaste os PA iniciais", "São 3, menos o que custou escolher a raça ou o Antecedente em vez de rolar (passos 1 e 2). A Árvore Inicial abre de graça (Cap. 1, §8); os PA compram magias, técnicas, talentos, perícias ou atributos."],
             ["6", "Anote PV, PM, PT, PP e CA", "Ou deixe o site calcular. As fórmulas estão no Cap. 4, §1."],
           ]}
         />

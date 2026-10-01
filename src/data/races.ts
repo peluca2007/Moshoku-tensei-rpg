@@ -31,7 +31,8 @@ import { Race } from "@/lib/types";
  * qualquer que fosse a raça, então o Dragão (~9 PC) e o Demônio Imortal
  * custavam o mesmo que um Humano. Agora cada raça tem um TIER, que decide a
  * faixa no d100 e o preço de escolher (CUSTO_DE_ESCOLHA): Comum e Incomum 1 PA,
- * Rara 2, Lendária 3; a Mítica (Dragão) não se escolhe.
+ * Rara 2, Lendária 3. A Mítica (Dragão) não se escolhia; desde a 0.1.110 se
+ * escolhe pelo preço da Lendária (ver CUSTO_DE_ESCOLHA).
  *
  * E cada raça ganhou DOIS DESPERTARES comprados com PA (como a Sombra Absoluta
  * do Povo Pequeno, que era a única): o 1º a partir do Intermediário, o 2º a
