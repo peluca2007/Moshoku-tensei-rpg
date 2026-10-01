@@ -307,8 +307,8 @@ export default function Chapter2() {
           <P>
             Seis magias do livro passam do teto de propósito, e elas são uma categoria, não exceções soltas.
             Uma <b>Grande Obra</b> custa <b>5 ou 6 Ações</b> — quase dois turnos, ou dois inteiros — e é sempre
-            um <b>Ritual</b>: não encurta, não silencia, não se retoma. Interrompida em qualquer ponto, some
-            junto com todo o PM (§6).
+            um <b>Ritual</b> (não encurta, não se retoma) e, ao contrário dos outros Rituais, também{" "}
+            <b>não silencia</b>. Interrompida em qualquer ponto, some junto com todo o PM (§6).
           </P>
           <P>
             <b>Ponto de Não Retorno.</b> A partir da segunda Ação gasta, a Grande Obra fica visível pra cena
