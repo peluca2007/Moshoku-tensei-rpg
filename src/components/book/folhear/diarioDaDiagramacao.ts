@@ -43,7 +43,14 @@
  * estava e a diagramação roda do zero.
  */
 
-const VERSAO = 1;
+const VERSAO = 2;
+/** A versão do motor (next.config.ts): passada ou CSS mudou, diário velho não vale. */
+const MOTOR = process.env.VERSAO_DA_DIAGRAMACAO ?? "sem-versao";
+/**
+ * Desliga o uso do diário (a gravação continua). A revisão do livro liga isto:
+ * ela tem que conferir a diagramação de verdade, não o diário.
+ */
+const DESLIGADO = "livro-folhear-diario-desligado";
 const CHAVE = (porDupla: number) => `livro-folhear-diario:v${VERSAO}:${porDupla}`;
 /** Acima disso o diário não vale o localStorage que ocupa. */
 const TETO_DE_BYTES = 3_000_000;
@@ -55,6 +62,7 @@ type No = number | string | { t: string; ns?: string; a: [string, string][]; c: 
 export interface Diario {
   v: number;
   porDupla: number;
+  motor: string;
   impressao: string;
   /** [índice, [[atributo, valor final ou null], ...]] */
   atributos: [number, [string, string | null][]][];
@@ -65,7 +73,12 @@ export interface Diario {
   assinatura: string;
 }
 
-/** Todos os nós do fluxo, na ordem do documento (o fluxo é o 0), e a impressão deles. */
+/**
+ * Os elementos e textos do fluxo, na ordem do documento (o fluxo é o 0), e a
+ * impressão deles. Comentários ficam de fora: são marcadores do React que não
+ * pesam no layout, e o build de produção tem alguns a mais que o servidor de
+ * desenvolvimento — sem eles, o diário gravado na revisão vale pros dois.
+ */
 export interface Retrato {
   nos: Node[];
   impressao: string;
@@ -75,7 +88,7 @@ export const FORA_DO_DIARIO = "data-fora-do-diario";
 
 export function retratar(fluxo: Element): Retrato {
   const nos: Node[] = [fluxo];
-  const w = document.createTreeWalker(fluxo, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT | NodeFilter.SHOW_COMMENT);
+  const w = document.createTreeWalker(fluxo, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
   // FNV-1a em duas sementes: colisão de 64 bits é coisa de outro universo.
   let a = 0x811c9dc5;
   let b = 0x01000193 ^ 0x5bd1e995;
@@ -90,7 +103,13 @@ export function retratar(fluxo: Element): Retrato {
   let n: Node | null = w.nextNode();
   while (n) {
     nos.push(n);
-    mistura(n.nodeType === 1 ? (n as Element).tagName : n.nodeType === 3 ? (n as Text).data : "#");
+    if (n.nodeType === 1) {
+      // As classes também: trocar `text-sm` por `text-base` muda a diagramação
+      // sem mudar texto nenhum. As `folhear-*` o próprio livro liga e desliga
+      // depois de pronto (a página visível, por exemplo), então ficam fora.
+      const classes = (n as Element).getAttribute("class");
+      mistura((n as Element).tagName + (classes ? classes.split(/\s+/).filter((c) => !c.startsWith("folhear-")).join(" ") : ""));
+    } else mistura((n as Text).data);
     if (n.nodeType === 1 && (n as Element).hasAttribute(FORA_DO_DIARIO)) {
       // Pula o miolo: o próximo é o irmão seguinte, ou o de um ancestral.
       n = w.nextSibling();
@@ -115,7 +134,10 @@ export function assinar(fluxo: Element, faixa: HTMLElement, pagina: number): str
   const caixa = faixa.getBoundingClientRect();
   const k = faixa.offsetWidth > 0 ? caixa.width / faixa.offsetWidth : 1;
   return Array.from(fluxo.querySelectorAll(PECAS), (el) => {
-    const q = Array.from(el.getClientRects()).find((r) => r.height > 1);
+    // O fiapo de borda que sobra no pé de uma coluna não conta, e o limiar é
+    // em pixels de PÁGINA: em pixels de tela ele mudaria com a escala da
+    // janela, e a mesma carta "mudaria de coluna" de um monitor pro outro.
+    const q = Array.from(el.getClientRects()).find((r) => r.height / k > 2);
     // Pelo miolo do primeiro pedaço, não pela borda: a arte que sangra até a
     // borda da página começa exatamente na divisa entre colunas, e a escala
     // do livro (transform) faz a borda oscilar uma fração de pixel pra lá ou
@@ -205,6 +227,7 @@ export function gravar(fluxo: Element, retrato: Retrato) {
       return {
         v: VERSAO,
         porDupla,
+        motor: MOTOR,
         impressao: retrato.impressao,
         atributos,
         filhos,
@@ -250,7 +273,11 @@ export function aplicar(diario: Diario, fluxo: Element, retrato: Retrato): (() =
   const listas = diario.filhos.map(([i, lista]) => [nos[i], lista.map(criar)] as const);
   if (invalido) return null;
 
-  for (const [pai, lista] of listas) (pai as Element).replaceChildren(...lista);
+  for (const [pai, lista] of listas) {
+    // Os comentários do pai (marcadores do React) continuam lá, no fim.
+    const comentarios = Array.from(pai.childNodes).filter((n) => n.nodeType === 8);
+    (pai as Element).replaceChildren(...lista, ...comentarios);
+  }
   for (const [i, pares] of diario.atributos) {
     const el = nos[i] as Element;
     for (const [nome, valor] of pares) {
@@ -274,12 +301,62 @@ export function aplicar(diario: Diario, fluxo: Element, retrato: Retrato): (() =
   };
 }
 
+/*
+ * O DIÁRIO QUE VEM COM O LIVRO. A revisão (`npm run revisar:livro`) grava o
+ * diário de cada geometria em `public/livro/diagramacao-<1|2>.json`, então a
+ * primeira visita também abre sem diagramar — se a impressão bater com o livro
+ * publicado (o JSON ficou velho? é ignorado) e se a conferência passar neste
+ * navegador (medido em 2026-10-01: passa em Chrome 152 e 154, em janelas de
+ * 1280 a 1920 px e densidade 1 e 2). Não bateu, a diagramação roda inteira e
+ * este navegador grava o diário dele.
+ */
+const doLivro = new Map<number, Promise<void>>();
+const prontosDoLivro = new Map<number, Diario | null>();
+
+/** Baixa o diário do livro pra uma geometria (uma vez por página aberta). */
+export function buscarDiarioDoLivro(porDupla: number): Promise<void> {
+  let busca = doLivro.get(porDupla);
+  if (!busca) {
+    busca = fetch(`/livro/diagramacao-${porDupla}.json`)
+      .then((r) => (r.ok ? (r.json() as Promise<Diario>) : null))
+      .catch(() => null)
+      .then((d) => void prontosDoLivro.set(porDupla, d && d.v === VERSAO && d.motor === MOTOR && d.porDupla === porDupla ? d : null));
+    doLivro.set(porDupla, busca);
+  }
+  return busca;
+}
+
+/** O diário do livro, se já chegou e casa com o livro intocado. */
+export function diarioDoLivro(porDupla: number, impressao: string): Diario | null {
+  if (diarioDesligado()) return null;
+  const d = prontosDoLivro.get(porDupla);
+  return d && d.impressao === impressao ? d : null;
+}
+
+/** Já há diário deste navegador pra esta geometria (de qualquer versão do livro)? */
+export function temDiarioProprio(porDupla: number): boolean {
+  try {
+    return diarioDesligado() || localStorage.getItem(CHAVE(porDupla)) !== null;
+  } catch {
+    return false;
+  }
+}
+
+export function diarioDesligado(): boolean {
+  try {
+    return localStorage.getItem(DESLIGADO) === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function lerDiario(porDupla: number, impressao: string): Diario | null {
+  if (diarioDesligado()) return null;
   try {
     const bruto = localStorage.getItem(CHAVE(porDupla));
     if (!bruto) return null;
     const d = JSON.parse(bruto) as Diario;
-    return d.v === VERSAO && d.porDupla === porDupla && d.impressao === impressao ? d : null;
+    return d.v === VERSAO && d.motor === MOTOR && d.porDupla === porDupla && d.impressao === impressao ? d : null;
   } catch {
     return null;
   }

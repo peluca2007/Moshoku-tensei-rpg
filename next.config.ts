@@ -1,6 +1,31 @@
+import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import type { NextConfig } from "next";
 
+/**
+ * A versão do motor da diagramação do livro folheado (2026-10-01).
+ *
+ * O diário da diagramação (src/components/book/folhear/diarioDaDiagramacao.ts)
+ * guarda o resultado das passadas. Mudou uma passada ou o CSS do livro, o
+ * diário velho não vale mais, mesmo com o texto igual: esta versão entra na
+ * chave dele. O fim de linha é normalizado porque o Windows (onde a revisão
+ * grava o diário do livro) e a Vercel (onde o site é montado) discordam nele.
+ */
+const ARQUIVOS_DA_DIAGRAMACAO = [
+  "src/components/book/folhear/diagramacao.ts",
+  "src/components/book/folhear/diarioDaDiagramacao.ts",
+  "src/components/book/folhear/Folhear.tsx",
+  "src/app/livro/folhear/folhear.css",
+  "src/app/globals.css",
+];
+const versaoDaDiagramacao = createHash("sha1")
+  .update(ARQUIVOS_DA_DIAGRAMACAO.map((arquivo) => readFileSync(arquivo, "utf8").replace(/\r/g, "")).join("\0"))
+  .digest("hex")
+  .slice(0, 12);
+
 const nextConfig: NextConfig = {
+  env: { VERSAO_DA_DIAGRAMACAO: versaoDaDiagramacao },
+
   // O pacote `typst` resolve o binário nativo certo pra cada SO em tempo de execução
   // (`import.meta.resolve("@typst-community/typst-<os>-<arch>")`, ver
   // node_modules/typst/dist/lib/getTypstPath.js) — como isso não é um import estático, o

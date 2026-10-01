@@ -40,12 +40,15 @@ import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } fro
 import {
   aplicar as aplicarDiario,
   assinar as assinarDiagramacao,
+  buscarDiarioDoLivro,
+  diarioDoLivro,
   esquecerDiario,
   gravar as gravarDiario,
   guardarDiario,
   lerDiario,
   primeiraDiferenca,
   retratar,
+  temDiarioProprio,
 } from "./diarioDaDiagramacao";
 import { ARTE_DA_FOLHA_DE_ROSTO, CAPA as ARTE_DA_CAPA } from "../arteDasAberturas";
 import {
@@ -350,14 +353,25 @@ export default function Folhear({
      * fonte reserva, e a troca depois deixaria tabela partida e buraco. Aqui o
      * livro pede as faces latinas dele e espera todas.
      */
+    /*
+     * Junto com as fontes chega o diário que vem com o livro (diarioDaDiagramacao.ts),
+     * pra geometria que este palco vai ter — o mesmo palpite do tamanho do palco
+     * lá em cima. Quem já tem diário próprio não baixa nada. Rede lenta não
+     * segura o livro: depois de 1,5 s ele diagrama sem esperar.
+     */
+    const porDuplaProvavel = calcularGeometria(window.innerWidth, Math.max(0, window.innerHeight - 96)).porDupla;
+    const diarioDoLivroPronto = temDiarioProprio(porDuplaProvavel)
+      ? Promise.resolve()
+      : Promise.race([buscarDiarioDoLivro(porDuplaProvavel), new Promise<void>((r) => setTimeout(r, 1500))]);
     if (document.fonts) {
       const faces = Array.from(document.fonts).filter(
         (face) => /barlow/i.test(face.family) && face.status === "unloaded" && /U\+0+-0*FF\b/i.test(face.unicodeRange)
       );
       void Promise.all(faces.map((face) => face.load().catch(() => null)))
         .then(() => document.fonts.ready)
+        .then(() => diarioDoLivroPronto)
         .then(aoCarregar);
-    } else aoCarregar();
+    } else void diarioDoLivroPronto.then(aoCarregar);
     const f = fluxo.current;
     // Vários <details> mudando juntos viram UMA recomposição, não uma por
     // details — e os que o próprio livro abriu (logo abaixo) não contam.
@@ -517,7 +531,8 @@ export default function Folhear({
     if (livroIntocado.current) {
       livroIntocado.current = false;
       const retrato = medir("diario-retrato", () => retratar(f));
-      const diario = lerDiario(porDupla, retrato.impressao);
+      const proprio = lerDiario(porDupla, retrato.impressao);
+      const diario = proprio ?? diarioDoLivro(porDupla, retrato.impressao);
       const desfazer = diario ? medir("diario-aplicar", () => aplicarDiario(diario, f, retrato)) : null;
       if (diario && desfazer) {
         const tentativa = medir("medir", () => medirPaginas(f, fim.current!, regua(fx), g, toc));
@@ -525,6 +540,8 @@ export default function Folhear({
         if (conferida === diario.assinatura) {
           p = tentativa;
           desfazerDiario.current = desfazer;
+          // O do livro passou aqui: vira o deste navegador (a próxima abertura nem baixa).
+          if (!proprio) guardarDiario(diario);
           // As cópias de cabeçalho entraram: o índice da busca é refeito.
           esquecerIndice(f);
         } else {
@@ -537,7 +554,7 @@ export default function Folhear({
             /* sem sessionStorage: só não fica o diagnóstico */
           }
           desfazer();
-          esquecerDiario(porDupla);
+          if (proprio) esquecerDiario(porDupla);
         }
       }
       if (!p) gravacao = gravarDiario(f, retrato);

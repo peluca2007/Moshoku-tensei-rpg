@@ -14,6 +14,10 @@
  *
  * TAXAS=1,4 escolhe as desacelerações de CPU. Por padrão a régua mede a
  * máquina livre e depois uma CPU 4× mais lenta, como o notebook da Tarefa 11.
+ *
+ * A abertura "fria" já usa o diário que vai com o livro
+ * (`public/livro/diagramacao-*.json`), como a primeira visita de verdade.
+ * SEM_DIARIO=1 desliga todo diário e mede a diagramação inteira.
  */
 import { comNavegador, dormir } from "./lib/navegador.mjs";
 
@@ -103,6 +107,7 @@ await comNavegador(async ({ abrir }) => {
       localStorage.setItem("theme", "dark");
       localStorage.setItem("livro-folhear-modo", "livro");
       localStorage.setItem("livro-folhear-papel", "noite");
+      ${SEM_DIARIO ? `localStorage.setItem("livro-folhear-diario-desligado", "1");` : ""}
     } catch {}`,
   });
 
