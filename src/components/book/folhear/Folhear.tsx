@@ -977,7 +977,6 @@ export default function Folhear({
         "--fonte": `${geo.fonte}px`,
         "--por-dupla": geo.porDupla,
         "--capa": `${CAPA}px`,
-        "--escala": geo.escala,
       } as CSSProperties)
     : undefined;
 
@@ -1185,7 +1184,10 @@ export default function Folhear({
             <div
               className="folhear-livro"
               data-por-dupla={geo?.porDupla}
-              style={geo ? { transform: `scale(${escalaVisual})` } : undefined}
+              // A escala mora aqui, e não na raiz: variável na raiz é herdada
+              // pelo livro inteiro, e mudá-la recalculava o estilo de ~26 mil
+              // elementos (ver @property --escala no folhear.css).
+              style={geo ? ({ transform: `scale(${escalaVisual})`, "--escala": geo.escala } as CSSProperties) : undefined}
               onDoubleClick={(e) => {
                 if (!livro || (e.target as Element).closest("a, button, summary, input")) return;
                 mudarZoom(zoom > 0 ? 0 : 2, e);
