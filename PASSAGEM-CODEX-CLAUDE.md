@@ -232,3 +232,18 @@ Commits `706c52f` (diário), `963a6db` (palco com opacidade), `9e132ce` (`--esca
 - `medir:folhear` mostra no campo `diario` qual peça saiu do lugar quando a conferência reprova.
 - **Não é reprovação do diário:** vídeo sem altura declarada muda alguns pixels de uma abertura pra
   outra (o da Maestria da Água); por isso a conferência olha só a coluna, como o `revisar:livro`.
+
+## Claude — a Tarefa 11 terminada, e o rascunho do Codex (2026-10-01, 19:30)
+
+O autor pediu pro Claude terminar a tarefa do Codex. O Codex tinha, **sem commit, no checkout
+principal**, outra versão da Tarefa 11: `src/components/book/folhear/diarioDaDiagramacao.ts`
+(não rastreado), `Folhear.tsx`, `next.config.ts`, `scripts/medir-folhear.mjs` (e `layout.tsx`/
+`fontes.ts` só com fim de linha). O que era novo entrou na `main` por cima do diário que já estava lá:
+
+- folhas virtualizadas (`5ca3389`), com a impressão montando todas;
+- marcas `folhear:diagramado` / `folhear:pronto-render` e as colunas da régua (`a3558fa`).
+
+**Codex: esse rascunho está superado — não suba.** Ele conflita com a `main` (mesmo nome de
+arquivo, outro formato de diário, `generateBuildId` que não é mais necessário). O Claude não mexeu no
+checkout principal. Pra continuar, descarte só esses arquivos (os três `.md` não rastreados do autor
+ficam) e faça merge de `origin/main`.

@@ -1,6 +1,6 @@
 # Tarefas para o Codex
 
-> **Tarefa atual: Tarefa 11 — o folhear abre rápido num notebook comum**, no fim do arquivo. (Tarefa 10 entregue em `RELATORIO-CODEX-COMPOSICAO.md`; Tarefas 8 e 9 concluídas pelo Claude; ver `PASSAGEM-CODEX-CLAUDE.md`.)
+> **Tarefa 11 concluída (2026-10-01)** — o folhear abre em ~2 s (máquina rápida) e ~9 s (CPU 4×), já na primeira visita; ver o fim do arquivo. Não há tarefa aberta pro Codex agora; as pendências do simulador estão em `PASSAGEM-CODEX-CLAUDE.md`. (Tarefa 10 entregue em `RELATORIO-CODEX-COMPOSICAO.md`; Tarefas 8 e 9 concluídas pelo Claude; ver `PASSAGEM-CODEX-CLAUDE.md`.)
 >
 > **Passagem atualizada em 2026-09-30:** leia `PASSAGEM-CODEX-CLAUDE.md` antes de continuar em conjunto. Ela distingue commits publicados, correções recentes, testes e limitações ainda abertas. As tarefas abaixo preservam o histórico dos pedidos.
 
@@ -741,7 +741,7 @@ para o Claude.
 
 ---
 
-## Tarefa 11 — o folhear abre rápido num notebook comum (2026-09-30)
+## ✅ Tarefa 11 — o folhear abre rápido num notebook comum (2026-09-30)
 
 O autor: "temos um problema sério de otimização do livro folhear". O lado do celular (contínuo) o
 Claude já resolveu: ~21 s → ~2,5 s (ver `PASSAGEM-CODEX-CLAUDE.md`, "o contínuo do livro mais leve").
@@ -826,3 +826,18 @@ Conferido peça por peça contra a diagramação do zero (1.275 peças, 0 difere
 1280×720), e o diário gravado em 1440×900 passa em janelas de 1280 a 1920 px, densidade 1 e 2, e no
 Chromium 152 e 154. Navegador que não bater (Firefox/Safari, não medidos) perde um layout na primeira
 visita e depois usa o diário dele.
+
+**Fechamento, 19:30.** Concluída. Do rascunho do Codex (não commitado, no checkout principal) entraram
+as folhas virtualizadas — só a dupla aberta e as vizinhas, todas na impressão — e as marcas de tempo
+da régua (`5ca3389`, `a3558fa`). O diário dele (chave por build, só local) ficou de fora: o da
+`main` já faz isso e cobre a primeira visita. Números finais, build de produção:
+
+| | antes | agora |
+| --- | ---: | ---: |
+| primeira abertura, máquina rápida | ~5 s | **2,3 s** |
+| primeira abertura, CPU 4× | ~27 s | **9,5 s** |
+| reabertura, CPU 4× | ~27 s | **9,8 s** |
+
+O que sobra pra baixar mais: o único layout do livro inteiro (~5 s com CPU 4×) e o carregamento com
+hidratação (~2–3 s). Os dois pedem mudar a estrutura (o livro em vários fluxos, ou menos HTML
+hidratado); não vale sem pedido.
