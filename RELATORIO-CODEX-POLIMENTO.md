@@ -45,9 +45,9 @@ sem defeito visível além dos acima.
    tralha, e escolher por nome de arquivo já deu errado antes. Precisa de uma imagem sua.
 2. **As 7 manchas vazias do livro** (pp. 35, 37, 69, 97, 115, 136, 278, 20–28% em branco). São
    cartões indivisíveis (antecedentes, cartas) que não cabem no fim da página. Opções:
-   1. **Arte de vinheta para esses vãos** — a passada `vinhetas` já preenche buracos quando há arte do
-      tamanho certo; 3–4 artes horizontais estreitas resolveriam a maioria. *(recomendada: não mexe
-      no texto nem na ordem)*
+   1. **Deixar o selo do pé mais presente** — correção: a `preencherPes` já carimba o selo do
+      capítulo nesses vãos (não arte, como este relatório dizia antes), mas ele quase não aparece.
+      Virou o item 5 da Tarefa 10. *(recomendada: não mexe no texto nem na ordem)*
    2. Reordenar os cartões dentro de cada seção para encaixar (muda a ordem das tabelas d100).
    3. Aceitar: 20–28% vazio em 7 de 284 páginas.
 3. Nada mudou de regra nesta rodada; `patchNotes.ts` não ganhou versão (polimento visual puro).

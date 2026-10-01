@@ -1,6 +1,6 @@
 # Tarefas para o Codex
 
-> **Tarefas atuais: Tarefa 9 — o caos da ficha (primeiro) e Tarefa 8 — polir tudo**, no fim do arquivo.
+> **Tarefa atual: Tarefa 10 — a composição do livro folheado**, no fim do arquivo. (Tarefas 8 e 9 concluídas pelo Claude; ver `PASSAGEM-CODEX-CLAUDE.md`.)
 >
 > **Passagem atualizada em 2026-09-30:** leia `PASSAGEM-CODEX-CLAUDE.md` antes de continuar em conjunto. Ela distingue commits publicados, correções recentes, testes e limitações ainda abertas. As tarefas abaixo preservam o histórico dos pedidos.
 
@@ -651,3 +651,86 @@ precisar de uma variante própria para a ficha, acrescente ao `gerar-caos.mjs` s
 - `npx tsc --noEmit -p .`, `npx vitest run`, `npm run lint`, `BASE=http://localhost:3020 npm run
   check:contraste`. Commits pequenos na `main`.
 - Atualize `RELATORIO-CODEX-FICHA.md` com as fotos novas e o que mudou.
+
+---
+
+## Tarefa 10 — a composição do livro folheado (2026-09-30)
+
+O autor, com as palavras dele: *"no livro ainda tem vários erros, tipo tabelas que saem espaços vazios,
+páginas que poderiam ter uma composição melhor."* A revisão automática (`revisar:livro`) passa limpa
+em título separado e estouro, mas não enxerga os defeitos que ele vê. Esta tarefa é ensinar a revisão
+a ver, e depois consertar o que ela achar **na máquina de diagramação**. O Claude faz, ao mesmo
+tempo, a parte de **conteúdo** (ver Divisão).
+
+Leia antes: `CLAUDE.md` (o livro é o produto), o cabeçalho de `scripts/revisar-livro.mjs` e de
+`src/components/book/folhear/diagramacao.ts` (as passadas existentes: `espalharTabelasEspremidas`,
+`apertarTabelasPartidas`, `estreitarTabelasQueAbremBuraco`, `preencherBuracos`, `preencherPes`).
+
+### Os defeitos, com exemplos que o Claude viu nas fotos (`.telas/revisao/`, papel noite, 1440 × 900)
+
+1. **Tabela-torre.** Tabela de 3 ou 4 colunas numa coluna de livro: cada célula vira uma faixa de
+   4–5 palavras por linha, a linha da tabela fica com 8+ linhas de texto e sobra área morta.
+   - p. 8 (`dupla-003`): "Quem / O que faz / A conta" — a coluna "O que faz" com ~60 px.
+   - p. 240 (Aflições), p. 272 (Viagem entre Continentes, coluna da direita).
+   `espalharTabelasEspremidas` só atravessa a página com **4+ colunas** ou linha mais alta que 7
+   linhas de texto; a da p. 8 tem 3 colunas e escapa.
+2. **Tabela partida com 2 linhas de um lado.** p. 8 → p. 9: duas linhas de "Quem / O que faz" em
+   cada página. O check atual (`linha-solta`) só reprova 1 linha.
+3. **Coluna desequilibrada.** Mesma página, uma coluna cheia e a outra acabando no meio, sem peça
+   larga embaixo: p. 10 (fim do "Comece Aqui", coluna da esquerda para em ~60%), p. 268
+   (Apêndice C). No fim de capítulo, livro impresso equilibra as duas colunas.
+4. **Cabeçalho de tabela alto.** p. 8: "Onde a regra completa está" quebra em 4 linhas e o
+   cabeçalho fica mais alto que as linhas.
+5. **Manchas vazias** (pp. 35, 37, 69, 97, 115, 136, 279; 20–28%): carta indivisível que não coube
+   no pé. O `preencherPes` carimba o selo do capítulo no vão, e ele mal aparece (selo apagado sobre
+   fundo escuro). Ver item 5 abaixo.
+
+### O que fazer
+
+1. **Detectar primeiro** (em `revisar-livro.mjs`, cada um vira uma linha do relatório e da contagem):
+   - `torre`: tabela visível dentro de uma coluna (não `column-span: all`) com alguma célula mais
+     estreita que ~90 px **e** alguma linha mais alta que ~6 linhas de texto;
+   - `partida-curta`: tabela partida com **até 2** linhas de corpo de um lado (substitui `linha-solta`);
+   - `coluna-curta`: página em que as duas colunas terminam com diferença maior que 30% da mancha,
+     sem peça larga que explique (diga se é a última página do capítulo);
+   - `cabecalho-alto`: `th` com mais de 2 linhas.
+   Rode e anote os números **antes** de consertar.
+2. **Consertar na diagramação**, com a régua de sempre (medir, não adivinhar):
+   - torre → atravessa a página (`folhear-larga`), mesmo com 3 colunas, quando couber; se a tabela
+     estiver dentro de caixa, a caixa atravessa (a regra que já existe);
+   - partida-curta → as poucas linhas descem juntas para a página seguinte (ou sobem), como a
+     `apertarTabelasPartidas` já faz para 1 linha;
+   - coluna-curta no **fim de capítulo** → equilibrar as duas colunas da última página
+     (`column-fill: balance` no último bloco do capítulo, ou calço medido);
+   - cabeçalho alto → reportar; quem encurta o texto do cabeçalho é o Claude (é conteúdo).
+3. **O pé vazio (item 5):** o selo no vão é a decisão de 2026-09-26 e continua; o problema é que ele
+   quase não se vê. Teste o selo mais presente (cor da árvore/capítulo a ~25–30% em vez do
+   apagado atual) e só nos vãos acima de 15% da mancha. Mostre antes/depois das 7 páginas.
+
+### Divisão — para os dois não mexerem no mesmo arquivo
+
+- **Codex:** `scripts/revisar-livro.mjs`, `src/components/book/folhear/**` (`diagramacao.ts`,
+  `Folhear.tsx`), `src/app/livro/folhear/folhear.css`.
+- **Claude (ao mesmo tempo):** o conteúdo — `src/components/book/Chapter*.tsx`, `Appendices.tsx`,
+  `Diagramas.tsx`, `BookUI.tsx`, `src/data/**`: encurtar cabeçalhos, trocar tabela-torre que deveria
+  ser lista ou quadro, dar arte ou diagrama a página que é só parede de texto.
+- Se o conserto de um item pedir mudança de conteúdo, não faça: anote em "Pendências pro Claude".
+
+### Regras
+
+- Nenhuma regra de jogo muda. Nenhum texto do livro muda (isso é do Claude nesta tarefa).
+- Depois de cada passo: `BASE=http://localhost:3020 npm run revisar:livro` sem regressão nos
+  defeitos antigos (título separado, estouro, arte), e os números novos caindo. Confira também o
+  papel dia (`-- --papel dia`) e o modo contínuo no celular (`check:mobile`).
+- `npx tsc --noEmit -p .`, `npx vitest run`, `npm run lint`. Commits pequenos na `main`, em português;
+  `git fetch` + merge de `origin/main` antes de começar e antes de subir (nunca rebase).
+
+### Entrega
+
+`RELATORIO-CODEX-COMPOSICAO.md`: a tabela dos quatro detectores novos antes/depois, as páginas
+consertadas (com o nome da dupla em `.telas/revisao/`), o antes/depois das 7 manchas, e o que ficou
+para o Claude.
+
+### Pendências pro Claude
+
+(preencha)
