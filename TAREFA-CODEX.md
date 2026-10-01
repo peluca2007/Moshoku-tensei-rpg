@@ -1,6 +1,6 @@
 # Tarefas para o Codex
 
-> **Tarefa atual: Tarefa 10 — a composição do livro folheado**, no fim do arquivo. (Tarefas 8 e 9 concluídas pelo Claude; ver `PASSAGEM-CODEX-CLAUDE.md`.)
+> **Tarefa atual: Tarefa 11 — o folhear abre rápido num notebook comum**, no fim do arquivo. (Tarefa 10 entregue em `RELATORIO-CODEX-COMPOSICAO.md`; Tarefas 8 e 9 concluídas pelo Claude; ver `PASSAGEM-CODEX-CLAUDE.md`.)
 >
 > **Passagem atualizada em 2026-09-30:** leia `PASSAGEM-CODEX-CLAUDE.md` antes de continuar em conjunto. Ela distingue commits publicados, correções recentes, testes e limitações ainda abertas. As tarefas abaixo preservam o histórico dos pedidos.
 
@@ -738,3 +738,57 @@ para o Claude.
 ### Pendências pro Claude
 
 (preencha)
+
+---
+
+## Tarefa 11 — o folhear abre rápido num notebook comum (2026-09-30)
+
+O autor: "temos um problema sério de otimização do livro folhear". O lado do celular (contínuo) o
+Claude já resolveu: ~21 s → ~2,5 s (ver `PASSAGEM-CODEX-CLAUDE.md`, "o contínuo do livro mais leve").
+Falta o **modo Livro**, que pagina o livro inteiro no navegador antes de mostrar.
+
+**Medido no `next build` + `next start` (porta 3011), 1440×900, Chrome headless:**
+
+| | máquina rápida | CPU 4× mais lenta (notebook comum) |
+| --- | ---: | ---: |
+| até `data-pronto` | 4,4 s | **29,5 s** |
+| layout (soma) | 2,9 s | 20,1 s |
+| `figuras` (inclui o 1º layout do livro inteiro) | 1,1 s | 7,1 s |
+| `cartas` (8 passadas) | 0,9 s | 7,0 s |
+| `titulos` | 0,5 s | 3,5 s |
+| `equilibrar-colunas` | 0,3 s | 2,0 s |
+| `caixas` + `tabelas-apertar` + `fechos` | 0,4 s | 3,2 s |
+
+Cada passada que escreve e depois mede custa um layout do fluxo inteiro (~70 ms rápido, ~500 ms 4×):
+o multicolunas não tem layout parcial, qualquer mudança lá dentro rediagrama tudo. A virada de
+página em si não é o problema (~10–20 ms medidos dentro da página).
+
+**Meça assim** (o `navegador.mjs` já desliga a extração de página pra IA do Chrome, que somava ~6 s
+falsos): `Emulation.setCPUThrottlingRate {rate: 4}` antes de navegar, espere `.folhear[data-pronto]`,
+leia `performance.getEntriesByType("measure")` (`folhear:*`) e `Performance.getMetrics`.
+
+**Objetivo: `data-pronto` abaixo de 10 s com CPU 4× (e ~1,5 s na máquina rápida), com a MESMA
+assinatura de diagramação** (`revisar:livro --assinatura` / `--comparar-assinatura`, regra da
+Tarefa 3).
+
+### Ideias, da de maior ganho pra menor (o designer recomenda começar pela 1)
+
+1. **Diário da diagramação.** O resultado depende só do HTML (build), da geometria (`porDupla`,
+   `pagina`, `altura`, `fonte`) e das fontes. Grave as mudanças que as passadas fazem (um
+   `MutationObserver` durante a diagramação: atributos, `style`, nós inseridos), endereçadas por
+   índice em `fluxo.querySelectorAll("*")` do começo, numa chave `build + geometria`
+   (`localStorage`, com teto de tamanho). Na próxima abertura com a mesma chave, reaplica tudo e faz
+   UM layout: o livro abre no custo do primeiro layout (~1 s rápido). Se a assinatura medida depois
+   não bater com a gravada, descarta o diário e diagrama do zero.
+2. **Passadas por árvore.** Cada árvore começa em página nova: `encaixarCartas` e `segurarTitulos`
+   podem medir só as árvores que mudaram na passada anterior (já era ideia da Tarefa 3; confira o
+   que ficou de fora).
+3. **Juntar passadas que só escrevem**: várias rodam "limpa → mede → escreve" e a seguinte mede de
+   novo. Onde a escrita de uma não muda a medida da outra, as duas medem do mesmo layout.
+
+### Regras
+
+As da Tarefa 3: assinatura idêntica, não mexer no texto nem em `src/data/`. Desta vez **pode** mexer
+no `folhear.css` se precisar, mas o contínuo (`.folhear-rolagem`, fim do arquivo) é do Claude: não
+tire o `content-visibility` de lá. Commits pequenos direto na `main`, dizendo quanto cada um
+economizou (rápido e 4×).
