@@ -102,12 +102,12 @@ describe("ficha como criatura", () => {
     expect(criatura.portrait).toBe("data:image/jpeg;base64,xx");
   });
 
-  it("cria chefe da ficha com o triplo dos PV e preserva suas defesas e reservas", () => {
+  it("cria chefe da ficha com duas vezes e meia os PV e preserva suas defesas e reservas", () => {
     const c = espadachim();
     const derivada = montarFicha(c);
     const chefe = criaturaDaFicha(c, novoId, "chefe");
     expect(chefe.papel).toBe("chefe");
-    expect(chefe.pv).toBe(derivada.pvMax * 3);
+    expect(chefe.pv).toBe(Math.round(derivada.pvMax * 2.5));
     expect(chefe.ca).toBe(derivada.ca);
     expect(chefe.bonusResistencia).toBe(derivada.resistencia);
     expect(chefe.bonusIniciativa).toBe(derivada.iniciativa);

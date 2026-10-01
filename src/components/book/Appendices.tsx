@@ -662,7 +662,7 @@ export default function Appendices() {
             "O rival usa as mesmas regras e fraquezas do grupo, por isso seus números podem diferir dos moldes de criatura.",
             "O rival conserva atributos, perícias, deslocamento, resistências, imunidades, iniciativa e reservas de PM, PT e PP da ficha. Uma técnica usa o bônus e a CD da sua própria árvore, mesmo se o rival estudou várias árvores.",
             "O invocador pode levar Pactos de combate preparados: respeite o limite de seu Rank e pague o PM antes da iniciativa. Cada invocado entra com seus PV e sua iniciativa, e age com uma Ação própria por turno. Com Chamado de Emergência comprado, pode trazer outro Pacto durante a luta, pagando as Ações e PM da ficha.",
-            "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 180 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
+            "Exemplo: um espadachim com 60 PV e uma técnica de 2 Ações que custa 2 PT entra como chefe com 150 PV. A técnica mantém seu dano e gasta 2 PT por uso; quando não houver PT, o ataque comum continua disponível.",
           ]}
         />
       </Section>
