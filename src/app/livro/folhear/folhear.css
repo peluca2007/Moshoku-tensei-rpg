@@ -1388,6 +1388,10 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   break-after: avoid;
 }
 
+.folhear-fluxo .livro-tabela tbody.folhear-grupo-final {
+  break-inside: avoid;
+}
+
 /* Tabela que não cabe na coluna: primeiro a letra diminui, depois a palavra
    pode quebrar na borda da célula. Nunca invade a coluna vizinha. */
 .folhear-fluxo table.folhear-tabela-justa {
@@ -1405,12 +1409,12 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 /* A tabela que passava um pouco da página (apertarTabelasPartidas): letra e
    respiro das linhas encolhem pra ela caber inteira. */
 .folhear-fluxo .folhear-tabela-compacta table {
-  font-size: 0.82em;
-  line-height: 1.22;
+  font-size: 0.78em;
+  line-height: 1.16;
 }
 
 .folhear-fluxo .folhear-tabela-compacta :is(td, th) {
-  padding-block: 0.12em;
+  padding-block: 0.08em;
 }
 
 /* ── Arte: torta, com a sombra da cor do capítulo fora de registro ────── */
@@ -4871,8 +4875,8 @@ html.livro-imersivo {
   font-size: var(--fonte);
   /* Discreto: é um ornamento no pé da coluna, não um carimbo (o autor achou
      o de 150px "um símbolo enorme"). */
-  --lado: min(72px, calc(var(--alto, 120px) * 0.45));
-  opacity: 0.55;
+  --lado: min(92px, calc(var(--alto, 120px) * 0.58));
+  opacity: 0.72;
 }
 
 @media print {
