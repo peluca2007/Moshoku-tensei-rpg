@@ -16,6 +16,18 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.129",
+    date: "2026-10-01",
+    title: "O modo Livro reabre em 2 s",
+    sections: [{
+      heading: "Livro folheado",
+      items: [
+        "O livro guarda a própria diagramação no navegador. Da segunda vez em diante ele abre direto nas páginas prontas: ~2 s numa máquina rápida (eram ~5 s) e ~12 s num notebook lento (eram ~27 s). Se o livro mudou desde a última visita, ele percebe e diagrama de novo.",
+        "Três travadas logo depois de o livro aparecer foram embora: o navegador recalculava o estilo das 285 páginas inteiras ao mostrar o livro, ao montar as molduras das folhas e a cada redimensionar da janela.",
+      ],
+    }],
+  },
+  {
     version: "0.1.128",
     date: "2026-10-01",
     title: "O Comece Aqui deixa de proibir o Dragão",

@@ -207,3 +207,23 @@ motor; tirei a caixa.
 
 **Revisão em paralelo:** `navegador.mjs` usa a porta CDP 9333 por padrão. O Claude roda com
 `PORTA_CDP=9343`; se o Codex rodar outra revisão ao mesmo tempo, use uma terceira porta.
+
+## Claude — Tarefa 11, o diário da diagramação (2026-10-01)
+
+Commits `706c52f` (diário), `963a6db` (palco com opacidade), `9e132ce` (`--escala` não herdada),
+`a4cf6bf` (contêiner das folhas desde o começo). Números e o que falta: fim da Tarefa 11 em
+`TAREFA-CODEX.md`.
+
+- **Quem mexer numa passada da diagramação:** o diário guarda o estado final que as passadas deixam
+  (atributos mexidos, lista final de filhos de cada pai mexido, a camada `.folhear-pes`). Passada nova
+  que escreva em outra coisa — texto de nó, algo fora do fluxo além dos pés, estado em variável de
+  módulo que a página lê depois — precisa entrar no diário, ou ele reabre o livro sem ela. Mexer em
+  texto já é detectado (o diário não é gravado).
+- **Mudou o livro?** A chave é a impressão do fluxo intocado (estrutura e texto): o diário velho deixa
+  de valer sozinho. Pra testar a diagramação do zero no navegador, apague
+  `localStorage["livro-folhear-diario:v1:2"]` (ou `:1`, uma página por vez).
+- **Pedaço que muda sozinho** (texto que depende da ficha, da hora…) e não pesa na diagramação:
+  `data-fora-do-diario` (hoje só a Oficina de Fórmulas embutida, que nem aparece no modo Livro).
+- `medir:folhear` mostra no campo `diario` qual peça saiu do lugar quando a conferência reprova.
+- **Não é reprovação do diário:** vídeo sem altura declarada muda alguns pixels de uma abertura pra
+  outra (o da Maestria da Água); por isso a conferência olha só a coluna, como o `revisar:livro`.
