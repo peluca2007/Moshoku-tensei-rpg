@@ -154,3 +154,12 @@ O Codex parou no meio da Tarefa 8 (commit local `96b2ecd` e um ajuste sem commit
 - Tokens que mudaram e que outros arquivos leem: tema Livro (`globals.css`: `wine-600…900`, `gold-600…900`, `parchment-400/600`); papel do livro (`folhear.css`: cores de capítulo e de árvore no dia, tinta suave, e o livro sem `data-papel` passa a seguir o tema do site); `corDia` das árvores 56%.
 - `data-cores-proprias`: quem pinta a si mesmo dentro do livro (hoje, o Laboratório de Fórmulas) fica fora da regra que faz o texto herdar a tinta do papel.
 - `check-contraste.mjs` termina as animações antes de medir e aceita `ROTA=` e `LIMITE=`. No Git Bash, rode com `MSYS_NO_PATHCONV=1`, senão `ROTA=/ficha` vira um caminho do Windows.
+
+## Claude — o contínuo do livro mais leve (2026-09-30)
+
+O /livro no celular levava ~21 s pra responder (CPU 4× mais lenta, 390 px); agora ~2,5 s. Medida em `next build` + `next start`, não no `dev`.
+
+- `folhear.css`, fim do bloco `.folhear-rolagem`: `content-visibility: auto` em `.livro-prosa`, `.livro-arvore-folhas`, `.livro-verbete` e `.livro-tabela` **só no contínuo**. O modo Livro não é tocado (a regra exige `.folhear-rolagem`); `revisar:livro` igual. Se uma regra nova do contínuo pintar fora da caixa dessas classes, a folga é `overflow-clip-margin: 1.5rem`; margem de filho não atravessa mais essas caixas.
+- `Folhear.tsx`: saltos no contínuo passam por `rolarAte(el, suave)` (instantâneo quando longe, com vigia de 2,5 s que para ao toque/rolagem/tecla). Não use `scrollTo` direto pra levar o leitor a um elemento do contínuo: o destino escorrega.
+- O `<aside>` do Índice não tem mais `stopPropagation`; o clique sobe até o `aoClicar` (no Livro, vira dupla; no contínuo, `rolarAte`) e fecha o painel. O fundo fecha só com clique nele mesmo.
+- `scripts/lib/navegador.mjs` desliga a extração de página pra IA do Chrome (`--disable-features=AIPageContentAgent,…`): ela diagramava a página inteira e somava ~6 s falsos às medidas.
