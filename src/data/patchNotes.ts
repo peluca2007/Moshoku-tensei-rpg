@@ -16,6 +16,25 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.128",
+    date: "2026-10-01",
+    title: "O Comece Aqui deixa de proibir o Dragão",
+    sections: [{
+      heading: "Incongruências corrigidas",
+      items: [
+        "Desde a 0.1.110 a Raça Dragão se escolhe por 3 PA (Cap. 1, §5, e a ficha cobram isso), mas o Comece Aqui ainda dizia que o Dragão não se escolhe. Agora diz só o preço pelo tier.",
+        "O passo 5 da criação mandava ver o \"passo 1\" para o custo de escolher a raça ou o Antecedente; o Antecedente é o passo 2.",
+        "Grande Obra: o Cap. 2 dizia que ela \"é um Ritual: não encurta, não silencia\", como se nenhum Ritual silenciasse. Ritual não encurta nem se retoma; quem não silencia é só a Grande Obra. As cartas já eram assim.",
+      ],
+    }, {
+      heading: "Diagramação (sem mudança de regra)",
+      items: [
+        "A Regra da Vantagem de Estilo saiu da caixa e virou texto corrido logo abaixo do Triângulo, com a definição de \"seu estilo\" antes da tabela das arestas. Acabou o buraco no meio da p. 69.",
+        "A tabela dos títulos por patamar quebra \"Furtividade / e Armadilhas\" em duas linhas, não em três.",
+      ],
+    }],
+  },
+  {
     version: "0.1.127",
     date: "2026-09-30",
     title: "O livro abre em 2,5 s no celular, não em 21",
