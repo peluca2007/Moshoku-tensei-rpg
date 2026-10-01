@@ -13,6 +13,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { flushSync } from "react-dom";
 import {
   BookOpenText,
   ChevronLeft,
@@ -263,6 +264,8 @@ export default function Folhear({
   const [buscaAberta, setBuscaAberta] = useState(false);
   const [telaCheia, setTelaCheia] = useState(false);
   const [imprimindo, setImprimindo] = useState(false);
+  /** O Ctrl+P do navegador: a impressão precisa das 285 folhas, não só das da vista. */
+  const [imprimindoPeloNavegador, setImprimindoPeloNavegador] = useState(false);
 
   const geo = useMemo<Geometria | null>(
     () => (modo === "livro" && tamanho ? calcularGeometria(tamanho.w, tamanho.h) : null),
@@ -604,9 +607,28 @@ export default function Folhear({
 
     // Medir o layout e só então pintar a moldura é exatamente o caso de uso
     // do useLayoutEffect: sem isso o rodapé piscaria errado por um quadro.
+    performance.mark("folhear:diagramado");
     setPaginacao(p);
     setDupla(destino);
   }, [porDupla, versao, toc, fontesProntas]);
+
+  // Pra régua (medir:folhear): quando o React terminou de montar o livro pronto.
+  useLayoutEffect(() => {
+    if (paginacao) performance.mark("folhear:pronto-render");
+  }, [paginacao]);
+
+  // A impressão pelo navegador (Ctrl+P) também leva todas as folhas. O
+  // `flushSync` monta as folhas antes de o navegador fotografar a página.
+  useEffect(() => {
+    const antes = () => flushSync(() => setImprimindoPeloNavegador(true));
+    const depois = () => setImprimindoPeloNavegador(false);
+    window.addEventListener("beforeprint", antes);
+    window.addEventListener("afterprint", depois);
+    return () => {
+      window.removeEventListener("beforeprint", antes);
+      window.removeEventListener("afterprint", depois);
+    };
+  }, []);
 
   /*
    * SÓ A DUPLA ABERTA SE MEXE (2026-09-25).
@@ -1221,7 +1243,16 @@ export default function Folhear({
                   {/* O contêiner das folhas existe desde o começo, vazio: inserir
                       ele já cheio, depois da diagramação, custava ~0,5 s numa
                       máquina rápida; encher um que já está lá, ~70 ms. */}
-                  {livro && <Folhas geo={geo} paginacao={paginacao} duplas={duplas} toc={toc} />}
+                  {livro && (
+                    <Folhas
+                      geo={geo}
+                      paginacao={paginacao}
+                      duplas={duplas}
+                      dupla={dupla}
+                      todas={imprimindo || imprimindoPeloNavegador}
+                      toc={toc}
+                    />
+                  )}
 
                   <div
                     ref={fluxo}
@@ -1324,18 +1355,34 @@ function Folhas({
   geo,
   paginacao,
   duplas,
+  dupla,
+  todas,
   toc,
 }: {
   geo: Geometria | null;
   paginacao: Paginacao | null;
   duplas: number;
+  /** A dupla aberta. */
+  dupla: number;
+  /** Na impressão, todas as folhas; na tela, só as perto da dupla aberta. */
+  todas: boolean;
   toc: TocEntry[];
 }) {
   if (!geo || !paginacao) return <div aria-hidden className="folhear-folhas" />;
   const total = duplas * geo.porDupla;
+  /*
+   * SÓ AS FOLHAS PERTO DA VISTA (ideia do Codex, Tarefa 11). Papel, caos,
+   * rodapé e marca d'água são decoração em posição absoluta: não precisam
+   * existir nas 285 páginas ao mesmo tempo. Ficam a dupla aberta e uma de
+   * cada lado, pra a virada não encontrar fundo vazio. O fluxo de texto
+   * continua inteiro: paginação, busca e seleção não mudam. Na impressão
+   * (botão PDF ou Ctrl+P) entram todas.
+   */
+  const primeira = todas ? 0 : Math.max(0, (dupla - 1) * geo.porDupla);
+  const ultima = todas ? total : Math.min(total, (dupla + 2) * geo.porDupla);
   return (
     <div aria-hidden className="folhear-folhas">
-      {Array.from({ length: total }, (_, k) => {
+      {Array.from({ length: ultima - primeira }, (_, i) => primeira + i).map((k) => {
         const r = paginacao.rotulos[k];
         const lado = geo.porDupla === 1 ? (k % 2 === 0 ? "dir" : "esq") : k % 2 === 0 ? "esq" : "dir";
         const capitulo = (r?.capitulo ?? "").split(" · ")[0];
