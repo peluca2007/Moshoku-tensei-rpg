@@ -36,7 +36,8 @@ export default function LaboratorioDeFormulas() {
 
   return (
     <>
-      <div className="livro-laboratorio-inline">
+      {/* Muda com a ficha ativa; no modo Livro nem aparece. Fica fora do diário da diagramação. */}
+      <div className="livro-laboratorio-inline" data-fora-do-diario="">
         <FormulaWorkshop />
       </div>
 
