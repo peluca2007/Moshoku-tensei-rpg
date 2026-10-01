@@ -598,6 +598,32 @@ input[type="number"],
   font-variant-numeric: tabular-nums;
 }
 
+/*
+ * A DIETA DO HTML DO LIVRO — 2026-09-30.
+ *
+ * O /livro desenha as 601 habilidades e centenas de tabelas numa página só, e
+ * o Next manda cada `class` duas vezes (no HTML e no payload do React). Só as
+ * listas de utilitários do cartão de habilidade e da linha de tabela somavam
+ * ~1,5 MB do documento de 6 MB. Estas classes curtas geram as MESMAS regras
+ * (`@utility` + `@apply`: mesma camada, mesma especificidade), então o visual e
+ * as sobrescritas do folhear.css não mudam — só o documento encolhe.
+ *
+ * As classes de TAMANHO (`text-xs`, `text-sm`…) ficam no elemento, fora daqui:
+ * o folhear.css reescala o livro mirando esses nomes (`.folhear-fluxo .text-xs`).
+ */
+@utility lv-card { @apply rounded-lg border border-parchment-300 bg-parchment-50/80 p-3 dark:border-parchment-800 dark:bg-parchment-950/40; }
+@utility lv-topo { @apply flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1; }
+@utility lv-nome { @apply font-bold text-parchment-900 dark:text-parchment-50; }
+@utility lv-meta { @apply ml-1 font-normal text-parchment-600 dark:text-parchment-400; }
+@utility lv-fino { @apply mt-1 text-parchment-600 dark:text-parchment-400; }
+@utility lv-efeito { @apply mt-1 leading-relaxed text-parchment-700 dark:text-parchment-300; }
+@utility lv-tabela { @apply w-full min-w-[320px] border-collapse bg-parchment-50/60 text-left dark:bg-parchment-950/40; }
+@utility lv-cab { @apply border-b border-gold-500/30 bg-parchment-100 dark:bg-parchment-900; }
+@utility lv-th { @apply px-3 py-2.5 text-[0.7rem] font-bold uppercase tracking-wider text-gold-700 dark:text-gold-300; }
+@utility lv-tr { @apply border-t border-parchment-300/70 even:bg-parchment-200/30 dark:border-parchment-800/70 dark:even:bg-parchment-950/40; }
+@utility lv-td { @apply px-3 py-2 align-top text-parchment-700 dark:text-parchment-300; }
+@utility lv-td1 { @apply px-3 py-2 align-top font-semibold text-parchment-900 dark:text-parchment-100; }
+
 /* ============================================================================
  * O SELECT (2026-09-23)
  *
