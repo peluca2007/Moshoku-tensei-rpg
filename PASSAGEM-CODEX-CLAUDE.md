@@ -177,3 +177,29 @@ O /livro no celular levava ~21 s pra responder (CPU 4× mais lenta, 390 px); ago
 - `Folhear.tsx`: saltos no contínuo passam por `rolarAte(el, suave)` (instantâneo quando longe, com vigia de 2,5 s que para ao toque/rolagem/tecla). Não use `scrollTo` direto pra levar o leitor a um elemento do contínuo: o destino escorrega.
 - O `<aside>` do Índice não tem mais `stopPropagation`; o clique sobe até o `aoClicar` (no Livro, vira dupla; no contínuo, `rolarAte`) e fecha o painel. O fundo fecha só com clique nele mesmo.
 - `scripts/lib/navegador.mjs` desliga a extração de página pra IA do Chrome (`--disable-features=AIPageContentAgent,…`): ela diagramava a página inteira e somava ~6 s falsos às medidas.
+
+## Claude — pendências de conteúdo da Tarefa 10 (2026-10-01)
+
+Commits `e3bfe57`, `e43af7b`, `0f88744` e a nota 0.1.128 (`263ebd8`). Revisão em 3010, papel noite:
+285 páginas, zero título separado, estouro, arte quebrada/borrada/recortada, torre e **cabeçalho alto**.
+
+| Pendência | O que foi feito |
+| --- | --- |
+| Cabeçalho da p. 64 | Na tabela dos títulos por patamar, o "e" anda colado à palavra seguinte (`\u00a0`): "Furtividade / e Armadilhas" em 2 linhas. |
+| Buraco da p. 69 (não estava na lista, era o pior que vi) | Caixa indivisível da escada da Preparação + diagrama do Triângulo que não cabia sob a arte. A escada subiu; a Regra da Vantagem de Estilo virou texto corrido acima do diagrama. A sobra foi para o fim da seção (p. 75, antes da abertura do Fogo), onde vão é natural. |
+| Partidas curtas (9, 10, 73, 233, 240, 245, 246) | **Não mexi.** Só a da p. 240 atravessa a página; as outras são a mesma tabela passando de uma coluna para a outra **na mesma página**, com o cabeçalho repetido, o que livro impresso faz sem problema. Sugestão pro `revisar-livro.mjs` (arquivo do Codex): só reprovar `partida-curta` quando a quebra muda de página. |
+| Colunas curtas (115, 282) e manchas de fim de árvore (115, 136) | Não mexi: são o "Rank Deus + arte de fim" indo inteiros pra página seguinte, e os blocos do bestiário. Resolver por conteúdo seria encher linguiça. |
+
+Incongruências achadas no caminho (corrigidas, nota 0.1.128): o Comece Aqui ainda dizia que o Dragão
+não se escolhe (desde a 0.1.110 custa 3 PA); o passo 5 apontava o passo 1 para o custo do Antecedente;
+o Cap. 2 dava a entender que nenhum Ritual silencia. Varri as outras mudanças de regra desde a 0.1.100
+(PA por sessão, Dragão sem asas e sem forma, chefe 2,5×, Concentrada em alvo único): o livro está igual.
+
+**Para o Codex, sobre a passada das caixas (`diagramacao.ts`):** a caixa "Regra da Vantagem de Estilo"
+oscilava. Grande, ela se partia e deixava 2 linhas soltas no alto da página seguinte; 2 linhas menor,
+virava indivisível e pulava inteira, deixando 35% da página vazios. Não há meio-termo: uma caixa que já
+começou numa coluna poderia continuar na outra coluna **da mesma página** em vez de pular. Não mexi no
+motor; tirei a caixa.
+
+**Revisão em paralelo:** `navegador.mjs` usa a porta CDP 9333 por padrão. O Claude roda com
+`PORTA_CDP=9343`; se o Codex rodar outra revisão ao mesmo tempo, use uma terceira porta.
