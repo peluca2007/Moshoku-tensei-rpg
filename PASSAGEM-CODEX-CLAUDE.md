@@ -221,7 +221,12 @@ Commits `706c52f` (diário), `963a6db` (palco com opacidade), `9e132ce` (`--esca
   texto já é detectado (o diário não é gravado).
 - **Mudou o livro?** A chave é a impressão do fluxo intocado (estrutura e texto): o diário velho deixa
   de valer sozinho. Pra testar a diagramação do zero no navegador, apague
-  `localStorage["livro-folhear-diario:v1:2"]` (ou `:1`, uma página por vez).
+  `localStorage["livro-folhear-diario:v2:2"]` (ou `:1`, uma página por vez), ou ponha
+  `localStorage["livro-folhear-diario-desligado"] = "1"` (desliga todo diário; a revisão usa isso).
+- **O diário vai com o livro:** `revisar:livro` regrava `public/livro/diagramacao-1.json` e `-2.json`;
+  suba os dois junto com a mudança no livro (está no `AGENTS.md`). A chave tem a impressão do livro
+  (texto, tags e classes) e a versão do motor (hash da diagramação e do CSS, `next.config.ts`):
+  arquivo velho é ignorado sozinho, só deixa a primeira visita lenta.
 - **Pedaço que muda sozinho** (texto que depende da ficha, da hora…) e não pesa na diagramação:
   `data-fora-do-diario` (hoje só a Oficina de Fórmulas embutida, que nem aparece no modo Livro).
 - `medir:folhear` mostra no campo `diario` qual peça saiu do lugar quando a conferência reprova.

@@ -16,6 +16,17 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.130",
+    date: "2026-10-01",
+    title: "O modo Livro abre em 2 s já na primeira visita",
+    sections: [{
+      heading: "Livro folheado",
+      items: [
+        "A diagramação do livro agora vem pronta com o site, e a primeira visita ao modo Livro também abre direto nas páginas: ~2 s numa máquina rápida e ~9 s num notebook lento (eram ~5 s e ~27 s). Nada muda no que se lê: o livro confere se cada título, carta, tabela e figura caiu na mesma coluna da diagramação feita do zero, e se algo não caiu, diagrama do zero.",
+      ],
+    }],
+  },
+  {
     version: "0.1.129",
     date: "2026-10-01",
     title: "O modo Livro reabre em 2 s",
