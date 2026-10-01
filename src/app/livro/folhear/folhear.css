@@ -4482,6 +4482,16 @@ html.livro-imersivo {
    Na primeira dupla só existe a metade direita (a capa). O livro esconde a
    metade esquerda e anda meia largura pra ficar no centro; ao abrir, volta
    deslizando enquanto a capa vira. */
+/* A escala do livro na tela (Folhear.tsx, no próprio .folhear-livro). NÃO
+   herdada: ela muda a cada redimensionar, e uma variável herdada fazia o
+   navegador recalcular o estilo do livro inteiro (0,6–0,8 s numa máquina
+   rápida, medido em 2026-10-01) logo depois de o livro ficar pronto. */
+@property --escala {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
 .folhear[data-modo="livro"] .folhear-livro {
   transition:
     translate 480ms cubic-bezier(0.3, 0.7, 0.2, 1),
