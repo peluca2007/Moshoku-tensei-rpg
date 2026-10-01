@@ -34,6 +34,7 @@
     "kit:mesa": "tsx scripts/kit-de-mesa.mts",
     "medir:orcamento": "tsx scripts/medir-orcamento.mts",
     "medir:regua": "tsx scripts/medir-regua.mts",
+    "medir:folhear": "node scripts/medir-folhear.mjs",
     "balancear": "tsx scripts/balancear.mts"
   },
   "dependencies": {
