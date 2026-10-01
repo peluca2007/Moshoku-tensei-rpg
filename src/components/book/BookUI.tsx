@@ -280,13 +280,13 @@ export function BookTable({ headers, rows }: { headers: string[]; rows: (string 
         largura: a tabela que precisa de mais continua empurrando e rolando, como
         sempre. O que muda é que as pequenas param de rolar à toa.
       */}
-      <table className="w-full min-w-[320px] border-collapse bg-parchment-50/60 text-left text-sm dark:bg-parchment-950/40">
+      <table className="lv-tabela text-sm">
         <thead>
-          <tr className="border-b border-gold-500/30 bg-parchment-100 dark:bg-parchment-900">
+          <tr className="lv-cab">
             {headers.map((h) => (
               <th
                 key={h}
-                className="px-3 py-2.5 text-[0.7rem] font-bold uppercase tracking-wider text-gold-700 dark:text-gold-300"
+                className="lv-th"
               >
                 {h}
               </th>
@@ -297,17 +297,13 @@ export function BookTable({ headers, rows }: { headers: string[]; rows: (string 
           {rows.map((row, i) => (
             <tr
               key={i}
-              className="border-t border-parchment-300/70 even:bg-parchment-200/30 dark:border-parchment-800/70 dark:even:bg-parchment-950/40"
+              className="lv-tr"
             >
               {row.map((cell, j) => (
                 <td
                   key={j}
                   data-label={headers[j] ?? ""}
-                  className={`px-3 py-2 align-top ${
-                    j === 0
-                      ? "font-semibold text-parchment-900 dark:text-parchment-100"
-                      : "text-parchment-700 dark:text-parchment-300"
-                  }`}
+                  className={j === 0 ? "lv-td1" : "lv-td"}
                 >
                   {citar(cell)}
                 </td>
