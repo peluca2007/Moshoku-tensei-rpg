@@ -40,6 +40,9 @@ async function esperarLivro(aba) {
       const tempos = performance.getEntriesByType("measure")
         .filter((e) => e.name.startsWith("folhear:"))
         .map((e) => [e.name.slice(8), e.duration]);
+      const marcas = Object.fromEntries(performance.getEntriesByType("mark")
+        .filter((e) => e.name.startsWith("folhear:"))
+        .map((e) => [e.name.slice(8), e.startTime]));
       const armazenamento = Object.keys(localStorage).map((chave) => {
         const valor = localStorage.getItem(chave) || "";
         return [chave, chave.length + valor.length];
@@ -65,6 +68,7 @@ async function esperarLivro(aba) {
         pronto: performance.now(),
         paginas: Number(document.querySelector(".folhear-posicao-paginas")?.textContent?.match(/de\\s+(\\d+)/)?.[1] || 0),
         tempos,
+        marcas,
         armazenamento,
         diario: elemento ? diagnostico + ":" + elemento.tagName.toLowerCase() + "#" + (elemento.id || "-") + "." + elemento.className.toString().split(/\s+/).slice(0, 3).join(".") + ":" + (elemento.textContent || "").trim().slice(0, 45) : diagnostico,
         assinatura,
@@ -92,6 +96,13 @@ function resumir(tipo, taxa, medida) {
     cartas: segundos(porNome.get("cartas") ?? 0),
     titulos: segundos(porNome.get("titulos") ?? 0),
     equilibrio: segundos(porNome.get("equilibrar-colunas") ?? 0),
+    "diário aplicar": segundos(porNome.get("diario-aplicar") ?? 0),
+    "diário conferir": segundos(porNome.get("diario-conferir") ?? 0),
+    // Quando cada etapa terminou, contando do começo da navegação.
+    montado: medida.marcas.montado === undefined ? "—" : segundos(medida.marcas.montado),
+    fontes: medida.marcas.fontes === undefined ? "—" : segundos(medida.marcas.fontes),
+    diagramado: medida.marcas.diagramado === undefined ? "—" : segundos(medida.marcas.diagramado),
+    render: medida.marcas["pronto-render"] === undefined ? "—" : segundos(medida.marcas["pronto-render"]),
     paginas: medida.paginas || "—",
     localStorage: `${Math.round(bytesLocais / 1024)} KB`,
     diario: medida.diario,
