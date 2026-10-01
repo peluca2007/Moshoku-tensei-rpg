@@ -811,3 +811,18 @@ Feito, medido com `npm run medir:folhear` no build de produção (1440×900):
 
 Falta: **a abertura fria**. Ela ainda roda todas as passadas (~20 s de layout com CPU 4×), e a
 reabertura com CPU 4× ainda passa de 10 s (um layout de ~6 s + carregar e hidratar ~5 s).
+
+**Atualização, 18:55 — a abertura fria também.** O diário agora vai com o livro
+(`public/livro/diagramacao-1.json` e `-2.json`, regravados pelo `revisar:livro`). Build de produção,
+`medir:folhear`:
+
+| | antes | agora |
+| --- | ---: | ---: |
+| primeira abertura, máquina rápida | ~5 s | **2,2 s** |
+| primeira abertura, CPU 4× | ~27 s | **9,1 s** |
+| reabertura, CPU 4× | ~27 s | **9,8 s** |
+
+Conferido peça por peça contra a diagramação do zero (1.275 peças, 0 diferenças, em 1440×900 e
+1280×720), e o diário gravado em 1440×900 passa em janelas de 1280 a 1920 px, densidade 1 e 2, e no
+Chromium 152 e 154. Navegador que não bater (Firefox/Safari, não medidos) perde um layout na primeira
+visita e depois usa o diário dele.
