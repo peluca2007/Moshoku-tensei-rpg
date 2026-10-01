@@ -67,19 +67,19 @@ export default function EntryCard({
   const ability = isAbility(def) ? def : null;
   const description = isAbility(def) ? def.effect : def.description;
   return (
-    <div className="livro-verbete print-avoid-break rounded-lg border border-parchment-300 bg-parchment-50/80 p-3 text-sm dark:border-parchment-800 dark:bg-parchment-950/40">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <p className="livro-verbete-nome font-bold text-parchment-900 dark:text-parchment-50">
+    <div className="livro-verbete print-avoid-break lv-card text-sm">
+      <div className="lv-topo">
+        <p className="livro-verbete-nome lv-nome">
           {ability?.signature && <span className="text-gold-600 dark:text-gold-400">◆ </span>}
           {def.name}
-          <span className="livro-verbete-meta ml-1 text-xs font-normal text-parchment-600 dark:text-parchment-400">
+          <span className="livro-verbete-meta lv-meta text-xs">
             — {kind === "talent" ? "Talento" : "Técnica/Magia"} · {costLabel(def)}
             {acoesDaTecnica(def) && <> · {acoesDaTecnica(def)}</>}
           </span>
         </p>
         {ability && <RitualBadge ability={ability} />}
       </div>
-      {ability?.range && <p className="livro-verbete-alcance mt-1 text-xs text-parchment-600 dark:text-parchment-400">Alcance: {ability.range}</p>}
+      {ability?.range && <p className="livro-verbete-alcance lv-fino text-xs">Alcance: {ability.range}</p>}
       {/*
         O efeito passa pelo reconhecedor de condições (0.1.23): "o alvo fica
         Envenenado" vira um verbete que abre ali mesmo, em vez de mandar a mesa
@@ -95,13 +95,13 @@ export default function EntryCard({
       {condicoesCitadas(description).length > 0 ? (
         <ProsaComCondicoes
           texto={description}
-          className="livro-verbete-efeito mt-1 block leading-relaxed text-parchment-700 dark:text-parchment-300"
+          className="livro-verbete-efeito lv-efeito block"
         />
       ) : (
-        <p className="livro-verbete-efeito mt-1 leading-relaxed text-parchment-700 dark:text-parchment-300">{description}</p>
+        <p className="livro-verbete-efeito lv-efeito">{description}</p>
       )}
       {ability?.damage && (
-        <p className="mt-1 text-xs text-parchment-600 dark:text-parchment-400">
+        <p className="lv-fino text-xs">
           <b>Dano:</b> {ability.damage.normal}
           {ability.damage.encurtada && <> · Encurtada: {ability.damage.encurtada}</>}
         </p>
