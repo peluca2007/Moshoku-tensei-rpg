@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import PatchNotes from "@/components/PatchNotes";
+import NotasDeVersao from "@/components/notas/NotasDeVersao";
 
 export const metadata: Metadata = {
   title: "Notas de versão",
 };
 
 /**
- * O histórico inteiro de mudanças de regra (0.1.99). Morava na capa, e a capa
- * carregava ~300 KB de texto que quase ninguém abre; lá ficaram a versão atual
- * e as cinco anteriores, com o link pra cá.
+ * O histórico inteiro de mudanças (0.1.99), por fase e por área (0.1.131).
+ * A capa mostra só a versão atual e uma lista curta das anteriores.
  */
 export default function NovidadesPage() {
-  return (
-    <div className="pt-8">
-      <PatchNotes />
-    </div>
-  );
+  return <NotasDeVersao />;
 }

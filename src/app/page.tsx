@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { prefetchDe } from "@/lib/prefetch";
 import { BookOpen, Dices, ScrollText, Skull, Sparkles, Store, Swords, TreePine, UserPlus, Users } from "lucide-react";
-import PatchNotes from "@/components/PatchNotes";
+import NovidadesNaCapa from "@/components/notas/NovidadesNaCapa";
 import Surface from "@/components/ui/Surface";
 import Logo from "@/components/ui/Logo";
 import Ornament from "@/components/ui/Ornament";
@@ -364,7 +364,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <PatchNotes limite={5} />
+      <NovidadesNaCapa />
     </div>
   );
 }

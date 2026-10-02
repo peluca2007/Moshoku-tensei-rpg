@@ -1,4 +1,30 @@
+/**
+ * A área de cada bloco de nota (2026-10-01). É o filtro da página Novidades e a
+ * etiqueta colorida de cada bloco:
+ * - `regras`: o que muda na mesa — regra, número, carta, raça, árvore;
+ * - `livro`: como o livro se lê — diagramação, arte, sumário, texto sem regra nova;
+ * - `encontros`: o que o Mestre usa — encontros, bestiário, simulador, moldes;
+ * - `site`: a ficha e o resto do site — temas, criação, compartilhar, celular;
+ * - `desempenho`: o site mais rápido ou mais leve;
+ * - `bastidores`: ferramentas do projeto — checks, testes, faxina, segurança.
+ */
+export type AreaDaNota = "regras" | "livro" | "encontros" | "site" | "desempenho" | "bastidores";
+
+/** As áreas na ordem do filtro, com o nome que a página mostra. */
+export const AREAS_DAS_NOTAS: { id: AreaDaNota; nome: string }[] = [
+  { id: "regras", nome: "Regras" },
+  { id: "livro", nome: "Livro" },
+  { id: "encontros", nome: "Encontros e simulador" },
+  { id: "site", nome: "Site e ficha" },
+  { id: "desempenho", nome: "Desempenho" },
+  { id: "bastidores", nome: "Bastidores" },
+];
+
+/** A âncora de uma versão na página Novidades (os pontos viram hífens). */
+export const idDaVersao = (versao: string) => `v${versao.replace(/\./g, "-")}`;
+
 export interface PatchNoteSection {
+  area: AreaDaNota;
   heading: string;
   items: string[];
 }
@@ -8,18 +34,48 @@ export interface PatchNote {
   date: string;
   title: string;
   sections: PatchNoteSection[];
+  /**
+   * A nota foi escrita depois, pra uma mudança que entrou no site sem nota de
+   * versão. Leva o número da versão anterior com um ponto a mais (0.1.95.1) e a
+   * data em que a mudança entrou.
+   */
+  escritaDepois?: boolean;
 }
 
 /**
  * Histórico de mudanças de game design do sistema, mais recente primeiro.
- * Toda atualização relevante de regras/balanceamento entra aqui.
+ * Toda atualização relevante de regras/balanceamento entra aqui, e cada bloco
+ * diz a sua área (AreaDaNota). As fases e o "Na mesa" de cada uma moram em
+ * `fasesDasNotas.ts`: versão nova entra na fase aberta, ou abre uma fase.
  */
 export const PATCH_NOTES: PatchNote[] = [
+  {
+    version: "0.1.131",
+    date: "2026-10-01",
+    title: "As notas de versão ganham fases, áreas e o que muda na mesa",
+    sections: [{
+      area: "site",
+      heading: "A página Novidades",
+      items: [
+        "As 132 notas de versão estão divididas em onze fases, cada uma com um 'Na mesa': o que mudou pra quem joga e pra quem mestra, com a versão de cada linha. Quem ficou um tempo sem jogar lê só as fases que perdeu.",
+        "Cada bloco de nota diz a área dele — Regras, Livro, Encontros e simulador, Site e ficha, Desempenho ou Bastidores — e um filtro mostra só uma área.",
+        "Seis mudanças que tinham entrado sem nota ganharam a sua, na data em que aconteceram, marcadas como nota escrita depois: o livro virando livro (0.1.95.1), o nascimento do livro folheado (0.1.96.1), a Magia Teórica no lugar da Barreira (0.1.96.2), a arena das batalhas (0.1.123.1), o polimento de contraste (0.1.123.2) e a composição do livro folheado (0.1.126.1).",
+        "A capa mostra a versão atual e uma lista curta das anteriores; o histórico inteiro mora em Novidades.",
+      ],
+    }, {
+      area: "desempenho",
+      heading: "Livro folheado",
+      items: [
+        "O modo Livro monta só as molduras das folhas perto da página aberta (papel, rodapé, marca d'água): 4 na tela em vez de 286. O PDF e a impressão continuam levando todas.",
+      ],
+    }],
+  },
   {
     version: "0.1.130",
     date: "2026-10-01",
     title: "O modo Livro abre em 2 s já na primeira visita",
     sections: [{
+      area: "desempenho",
       heading: "Livro folheado",
       items: [
         "A diagramação do livro agora vem pronta com o site, e a primeira visita ao modo Livro também abre direto nas páginas: ~2 s numa máquina rápida e ~9 s num notebook lento (eram ~5 s e ~27 s). Nada muda no que se lê: o livro confere se cada título, carta, tabela e figura caiu na mesma coluna da diagramação feita do zero, e se algo não caiu, diagrama do zero.",
@@ -31,6 +87,7 @@ export const PATCH_NOTES: PatchNote[] = [
     date: "2026-10-01",
     title: "O modo Livro reabre em 2 s",
     sections: [{
+      area: "desempenho",
       heading: "Livro folheado",
       items: [
         "O livro guarda a própria diagramação no navegador. Da segunda vez em diante ele abre direto nas páginas prontas: ~2 s numa máquina rápida (eram ~5 s) e ~12 s num notebook lento (eram ~27 s). Se o livro mudou desde a última visita, ele percebe e diagrama de novo.",
@@ -43,6 +100,7 @@ export const PATCH_NOTES: PatchNote[] = [
     date: "2026-10-01",
     title: "O Comece Aqui deixa de proibir o Dragão",
     sections: [{
+      area: "regras",
       heading: "Incongruências corrigidas",
       items: [
         "Desde a 0.1.110 a Raça Dragão se escolhe por 3 PA (Cap. 1, §5, e a ficha cobram isso), mas o Comece Aqui ainda dizia que o Dragão não se escolhe. Agora diz só o preço pelo tier.",
@@ -50,6 +108,7 @@ export const PATCH_NOTES: PatchNote[] = [
         "Grande Obra: o Cap. 2 dizia que ela \"é um Ritual: não encurta, não silencia\", como se nenhum Ritual silenciasse. Ritual não encurta nem se retoma; quem não silencia é só a Grande Obra. As cartas já eram assim.",
       ],
     }, {
+      area: "livro",
       heading: "Diagramação (sem mudança de regra)",
       items: [
         "A Regra da Vantagem de Estilo saiu da caixa e virou texto corrido logo abaixo do Triângulo, com a definição de \"seu estilo\" antes da tabela das arestas. Acabou o buraco no meio da p. 69.",
@@ -62,6 +121,7 @@ export const PATCH_NOTES: PatchNote[] = [
     date: "2026-09-30",
     title: "O livro abre em 2,5 s no celular, não em 21",
     sections: [{
+      area: "desempenho",
       heading: "Leitura contínua",
       items: [
         "No celular o /livro é o livro inteiro numa coluna só: uns 400 mil pixels de altura. O navegador diagramava tudo isso antes de responder, e num celular médio o livro levava ~21 s pra aceitar o primeiro toque. Agora só a parte perto da tela é diagramada; o resto espera o leitor chegar. Mesmo texto, mesma busca, mesmo Ctrl+F — o livro responde em ~2,5 s.",
@@ -71,10 +131,34 @@ export const PATCH_NOTES: PatchNote[] = [
     }],
   },
   {
+    version: "0.1.126.1",
+    date: "2026-09-30",
+    title: "A composição do livro folheado",
+    escritaDepois: true,
+    sections: [{
+      area: "livro",
+      heading: "A revisão vê o que o autor via",
+      items: [
+        "A revisão automática do livro passou a apontar quatro defeitos que só se viam na foto da página: tabela-torre (célula estreita que vira uma parede alta), tabela partida com uma ou duas linhas de um lado, as duas colunas de uma página muito desniveladas e cabeçalho de tabela com mais de duas linhas.",
+        "A diagramação conserta a maior parte sozinha: a tabela-torre atravessa a página, a tabela que quase cabe compacta, e páginas de texto ganham colunas equilibradas. Os cabeçalhos que quebravam em três ou quatro linhas foram encurtados no texto, e a tabela da rodada de exemplo do Comece Aqui virou duas colunas.",
+        "O selo no pé de uma coluna vazia ficou maior e mais visível, e só entra quando o vão passa de 15% da página.",
+        "No PDF, as artes animadas saem com um quadro desenhado da própria cena, e não com o quadro borrado do meio do vídeo.",
+      ],
+    }, {
+      area: "desempenho",
+      heading: "O livro mais leve",
+      items: [
+        "Os vídeos de arte do livro só baixam e tocam quando chegam perto da tela; antes, os seis vídeos (4,9 MB) baixavam assim que o livro abria.",
+        "O HTML do livro encolheu: listas longas de classes viraram classes curtas.",
+      ],
+    }],
+  },
+  {
     version: "0.1.126",
     date: "2026-09-30",
     title: "O rival chefe tem duas vezes e meia os PV, como o livro diz",
     sections: [{
+      area: "regras",
       heading: "Incongruência corrigida (Apêndice G)",
       items: [
         "Desde a 0.1.119 o Apêndice G diz que o rival montado de ficha entra como Chefe único com duas vezes e meia os PV da ficha, igual ao chefe de molde. O exemplo logo abaixo e o /encontros ainda usavam o triplo (60 PV → 180). Agora os três dizem o mesmo: 60 PV → 150.",
@@ -86,6 +170,7 @@ export const PATCH_NOTES: PatchNote[] = [
     date: "2026-09-30",
     title: "A Conjuração Concentrada vale também para magia de um alvo só",
     sections: [{
+      area: "regras",
       heading: "O livro passa a dizer o que a mesa já podia fazer (Cap. 2, §2)",
       items: [
         "Magia de dano que já mira uma criatura só também concentra: +50% nos dados e +50% no PM, sem mudar o resto. O texto descrevia só a área virando um alvo e deixava a dúvida.",
@@ -98,10 +183,49 @@ export const PATCH_NOTES: PatchNote[] = [
     date: "2026-09-30",
     title: "Dano de dois tipos: cada parte com a sua defesa",
     sections: [{
+      area: "regras",
       heading: "Regra escrita (Cap. 4, §6)",
       items: [
         "Golpe que soma partes de tipos diferentes (a Lâmina de Gelo: cortante + frio) ou divide o dano entre tipos usa, em cada parte, a Resistência, a Imunidade ou o Vulnerável daquele tipo. Um elemental Imune a frio sofre o corte e ignora só o frio.",
         "Dano que é de dois tipos ao mesmo tempo (o Punho de Fogo: ígneo e contundente) só é resistido ou anulado por quem tem a defesa contra os dois; Vulnerável vale contra qualquer um. O livro não dizia o que fazer nesse caso, e o simulador cortava pela metade o golpe inteiro de quem resistia a um tipo só.",
+      ],
+    }],
+  },
+  {
+    version: "0.1.123.2",
+    date: "2026-09-30",
+    title: "Contraste em todo tema, e o caos da ficha de verdade",
+    escritaDepois: true,
+    sections: [{
+      area: "site",
+      heading: "Texto que se lê",
+      items: [
+        "O texto que mal se lia nos temas Livro (no site inteiro) e no papel dia do livro ganhou contraste. A verificação automática mede as 16 rotas nos quatro temas e só aceita texto legível.",
+        "Cada página do site tem o próprio título na aba do navegador.",
+        "A tabela 'Quem fez o quê' dos encontros cabe no celular sem rolar de lado.",
+      ],
+    }, {
+      area: "site",
+      heading: "O caos da ficha",
+      items: [
+        "Os motivos da árvore em que você mais investiu (o 'caos' nas bordas da ficha) aparecem de verdade, e agora nos quatro temas, não só nos do Livro.",
+      ],
+    }],
+  },
+  {
+    version: "0.1.123.1",
+    date: "2026-09-30",
+    title: "A arena das batalhas",
+    escritaDepois: true,
+    sections: [{
+      area: "encontros",
+      heading: "Assistir a batalha",
+      items: [
+        "As batalhas notáveis do simulador do /encontros podem ser assistidas numa arena 2.5D: cada personagem aparece com a imagem da ficha, cada criatura pronta do Apêndice G com o retrato dela, e a profundidade da arena é a linha de combate.",
+        "Cada golpe mostra o elemento (fogo, gelo, veneno, raio e outros), a arma de quem bate e o número do dano; cada reação tem a sua animação, e quem cai, tomba. Golpe em área vira uma investida só, e a arena anda pelo teclado.",
+        "Cada passo vem narrado em frase de mesa, com a conta exata do motor a um toque. No fim, um placar com o destaque, o maior golpe e as quedas, e o botão 'Assistir uma batalha nova' sorteia outra na hora.",
+        "Som, desligado por padrão: 25 sons escolhidos pelo autor, e a voz do grito no crítico de cada personagem se escolhe no card de arma do grupo. Sortear outros itens nas recompensas toca moedas.",
+        "Nenhuma regra mudou: a arena só mostra o que a simulação já fez.",
       ],
     }],
   },
@@ -111,6 +235,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O simulador respeita as exceções de gelo e veneno",
     sections: [
       {
+        area: "encontros",
         heading: "Correções do motor, sem mudar as cartas",
         items: [
           "Inverter cobra somente os dados por Dose, sem teste de resistência nem BC extra. Quebra de Gelo contra Congelado acerta sem d20 e sem crítico. Molhado dobra apenas a parcela fria dos ataques mistos; Nova Congelante não recebe uma segunda dobra.",
@@ -120,6 +245,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A ficha veste suas árvores",
         items: [
           "Nos temas Livro, as árvores agora deixam marcas coloridas e separadas no cabeçalho da ficha; o kanji dominante aparece de verdade, e a árvore de uma habilidade recém-comprada pulsa quando você volta à ficha.",
@@ -132,6 +258,7 @@ export const PATCH_NOTES: PatchNote[] = [
     date: "2026-09-29",
     title: "Terra amortece o golpe; Bardo transforma a falha em fôlego",
     sections: [{
+      area: "regras",
       heading: "Duas novas escolhas no Principiante",
       items: [
         "Couraça de Barro: 2 PM e uma Reação para reduzir um golpe físico contra o próprio mago em 1d6 + BC. A casca se quebra no golpe; não cria cobertura nem protege contra tudo.",
@@ -145,6 +272,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O simulador aprende as cobranças das escolas",
     sections: [
       {
+        area: "encontros",
         heading: "Simulação mais fiel",
         items: [
           "A IA agora avalia o ciclo inteiro de Molhado → Congelado → Quebra de Gelo e de Dose → Inversão antes de preparar a cobrança; a Parede de Emergência protege também um aliado a até 3 m; e a Inspiração do Bardo pode salvar um ataque depois de ver a falha. Nenhuma regra de personagem mudou — mudou apenas o que o simulador consegue enxergar.",
@@ -158,6 +286,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Conjuração Concentrada, e o balanço das árvores pelo simulador",
     sections: [
       {
+        area: "regras",
         heading: "Magia: a resposta ao Chefe",
         items: [
           "Nova forma de conjurar (Cap. 2, §2): a Conjuração Concentrada. Na Conjuração Padrão, a magia de dano vai inteira numa criatura só — +50% dos dados e +50% do PM. O mesmo dano por PM, em menos turnos. Contra grupo a área continua melhor; contra o Chefe, o mago agora tem o que fazer.",
@@ -165,6 +294,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Invocação",
         items: [
           "Pactos ativos ao mesmo tempo: 2 no Intermediário e no Avançado, 3 no Santo e no Rei, 4 no Imperador (era 2/3/4/5/6). Cada Pacto é uma criatura inteira em campo, e o Invocador vencia 95–100% dos encontros do 3º patamar em diante. Continua forte com o círculo pronto — sem ser a única resposta.",
@@ -172,12 +302,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Bardo",
         items: [
           "A Canção de Guerra soma o Bônus de Rank do Bardo nos acertos (+3 no Avançado, +6 no Imperador, dentro do teto de +6 de ajuda de aliado); era +2 fixo. A Dissonância dá 1d6 por patamar (era 1d4). Das três árvores de Utilidade, o Bardo era a única quase morta em combate.",
         ],
       },
       {
+        area: "encontros",
         heading: "O simulador",
         items: [
           "A Guarda do Corpo do tanque passou a valer contra qualquer criatura e mesmo sem mapa (o guarda fica ao lado de quem protege). Antes ela quase nunca disparava, e a Cavalaria e Escudos parecia não proteger ninguém.",
@@ -191,18 +323,21 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O golpe do monstro, e os monstros remedidos de novo",
     sections: [
       {
+        area: "encontros",
         heading: "O simulador respeita o tamanho da área e o risco do cântico",
         items: [
           "Ataques em área não acertam mais todo inimigo indistintamente: cones e esferas alcançam uma quantidade coerente com o tamanho escrito. Técnicas condicionais respeitam PV e Exaustão, e a IA evita cânticos longos quando há pouca chance de terminá-los.",
         ],
       },
       {
+        area: "encontros",
         heading: "O simulador: três golpes, e o erro perde",
         items: [
           "A criatura sem ações escritas (o molde) soltava o dano do turno inteiro num golpe só, e quando errava rolava de novo contra o próximo personagem até acertar: a CA quase não protegia, e o mago de 1º patamar caía num golpe. Agora são três golpes por turno, um terço do dano em cada, e o erro perde o golpe — como a criatura pronta já fazia.",
         ],
       },
       {
+        area: "encontros",
         heading: "O molde do Apêndice G",
         items: [
           "O dano sobe só até onde um mago de Vigor 0 ainda aguenta um turno de uma criatura do patamar dele; o PV fecha o resto. PV 53/66/139/176/210/350 e dano 16/21/29/38/48/50, do 1º ao 6º. As lutas ficam mais longas (4–5 rodadas) e ninguém cai antes de agir.",
@@ -219,6 +354,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Os monstros recalibrados",
     sections: [
       {
+        area: "encontros",
         heading: "O molde de criatura do Apêndice G",
         items: [
           "PV e dano por turno das criaturas subiram ~20% (6º patamar ~37%). O molde anterior tinha sido medido contra o kit de mesa, e o simulador não enxerga o Tático: foi calibrado, sem ninguém ver, contra um grupo de três. Do 3º patamar em diante o encontro Difícil do livro virava passeio (~100% de vitória em duas rodadas).",
@@ -227,6 +363,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O simulador enxerga quem dá suporte",
         items: [
           "Tático, Bardo e Espíritos e Feras agora entram de verdade nas simulações: ordens e Ações concedidas ajudam o grupo, canções e insultos alteram a luta, e Pactos comprados entram em campo mesmo sem seleção manual do cenário.",
@@ -240,6 +377,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O ritmo de PA dobra",
     sections: [
       {
+        area: "regras",
         heading: "2 PA por sessão, +2 por marco",
         items: [
           "O livro dava 1 PA por sessão e +1 por marco, e prometia 12 PA no 3º patamar e 24 no 5º. Não fechava: só abrir o 5º patamar comprando o mínimo já custa uns 40 PA, e a régua do Apêndice C, os monstros do Apêndice G e o simulador supõem o personagem que vive no patamar — 17 PA no 2º, 30 no 3º, 47 no 4º, 68 no 5º, 90 no 6º (medido nas 19 árvores).",
@@ -255,6 +393,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Quatro temas",
     sections: [
       {
+        area: "site",
         heading: "Escolha a roupa do site",
         items: [
           "O botão de tema (a paleta, no alto) abre um menu com quatro: Pergaminho Noite (o padrão), Pergaminho, Livro Noite e Livro Dia. Os dois Pergaminhos são o site de antes; os dois do Livro vestem o site com a identidade do livro folheado.",
@@ -264,6 +403,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A ficha veste suas árvores",
         items: [
           "Nos temas Livro, a árvore em que você mais gastou PA passa a dar a cor, o selo e os motivos da ficha. Outras árvores aparecem nas bordas na proporção do investimento; sem PA de árvore, a ficha continua neutra.",
@@ -277,6 +417,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Um livro só, e o site com a cara dele",
     sections: [
       {
+        area: "livro",
         heading: "O livro de rolar",
         items: [
           "O /livro agora é o mesmo livro do folhear, com os dois jeitos de ler: Livro (páginas, no computador) e Contínuo (rolando, o padrão no celular). A página antiga, no pergaminho, saiu.",
@@ -285,6 +426,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Os temas do site",
         items: [
           "Os títulos de página e de seção saem na letra gritada do livro, com o traço de marca-texto na cor da seção (Ficha azul, Árvores verde, Loja amarela…). Antes a cor já era a do livro, mas a letra continuava a do pergaminho.",
@@ -299,6 +441,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Revisão da ficha antes da sessão",
     sections: [
       {
+        area: "site",
         heading: "Criar personagem não apaga mais as outras fichas",
         items: [
           "Abrir a criação (guia, roleta ou entrevista) direto pelo endereço — link, F5, atalho do celular — criava a ficha nova antes de o navegador carregar as salvas, e gravava por cima delas: todas as fichas anteriores sumiam. Pelo menu não acontecia. Agora a criação espera as fichas carregarem.",
@@ -306,6 +449,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A CA do Deus da Espada",
         items: [
           "A doutrina do Estilo Deus da Espada (CA base −2, Cap. 3) estava no livro e não na ficha: quem seguia a árvore via a CA 2 pontos acima do certo. A ficha, o simulador e o Painel do Mestre agora cobram.",
@@ -319,6 +463,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Dragão não se transforma",
     sections: [
       {
+        area: "regras",
         heading: "Aura do Deus-Dragão",
         items: [
           "O despertar de Santo do Dragão deixou de ser a Forma do Dragão: como as asas, a transformação não existe na obra — Orsted, Laplace e Perugius têm corpo de gente. Agora é a Aura do Deus-Dragão: ao soltar, cada inimigo a até 9 metros resiste com Espírito ou fica Amedrontado. O resto é igual (PV Temporários, resistência física, garras um degrau acima, um Sopro a mais, Exaustão no fim). Sai o 'fica Grande' e o alcance extra. Quem já tinha comprado fica com a Aura.",
@@ -332,12 +477,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A ficha cobra o Antecedente, e a régua do Apêndice C conferida",
     sections: [
       {
+        area: "site",
         heading: "Escolher o Antecedente",
         items: [
           "Como a raça: escolher só o Antecedente custa 1 PA na ficha, e sai de graça se a raça também foi escolhida (Cap. 1, §5). A roleta e a entrevista contam como sorteio, e há a caixa 'Sorteei no d100' ao lado do seletor. Fichas antigas não pagam.",
         ],
       },
       {
+        area: "regras",
         heading: "A régua do Apêndice C",
         items: [
           "O 1º patamar das quatro escolas elementais subiu (Água ~16, Fogo ~18, Vento ~15, Terra ~16): é o truque de escola da 0.1.107.",
@@ -346,6 +493,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O simulador conta o agarrão e a corrida",
         items: [
           "Técnica que 'Requer alvo Agarrado' ou 'Requer 6m de corrida' custa, no simulador, a Ação do agarrão ou do Andar (Cap. 4, §3). Antes o Lutador usava o Arremesso e a Investida três vezes por turno sem nunca ter agarrado nem corrido — no 2º patamar ele saía com o dobro do dano de qualquer um.",
@@ -360,6 +508,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Dragão sem asas, e o Orsted de volta",
     sections: [
       {
+        area: "regras",
         heading: "A Raça Dragão",
         items: [
           "Sem asas: na obra, a Raça Dragão (Orsted, Laplace, Perugius) tem corpo de gente. Quem voa são os Dragões Vermelhos, que são monstro do bestiário, não raça.",
@@ -367,12 +516,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "Ícones das raças",
         items: [
           "Os doze ícones agora são recortes das próprias ilustrações das raças; saíram as silhuetas de banco de imagem que destoavam do livro.",
         ],
       },
       {
+        area: "livro",
         heading: "Arte das árvores e do Bestiário",
         items: [
           "Magia de Fogo, Magia de Cura, Deus do Norte, Bardo e Navegação ganham aberturas ilustradas; o Bestiário ganha Orsted na explicação de chefes, o Punho do Fogo fecha com uma nova arte vertical, e a Aura de Comando deixa de borrar.",
@@ -386,6 +537,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Raças: o Dragão vira filhote, e escolher passa a custar na ficha",
     sections: [
       {
+        area: "regras",
         heading: "A Raça Dragão",
         items: [
           "Nerf grande, pedido do autor. O pacote valia mais de quinze vezes o de um Humano: +2 Força +1 Vigor, +3 de CA, resistência a corte e perfuração, imunidade a um elemento, voo livre de armadura, garras d10 e um Sopro de 1d10 por Bônus de Rank. Agora é um filhote de dragão: +1 Força +1 Vigor, +1 de CA, Resistência ao elemento do Sopro, garras d8, Sopro de 1d6 por Bônus de Rank num cone de 9 m, e asas com as mesmas restrições das celestiais. O Preço do Sangue (Desvantagem Absoluta em Persuasão) fica.",
@@ -394,6 +546,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "As outras raças",
         items: [
           "Raça Fera, despertar Uivo que Paralisa: só quem falha por 5 ou mais fica Atordoado; o resto fica Desequilibrado. Atordoar o cone inteiro todo turno, por 2 PM, travava a luta.",
@@ -401,6 +554,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Escolher a raça custa na ficha",
         items: [
           "O livro sempre cobrou (1 PA comum ou incomum, 2 rara, 3 lendária ou mítica) e a ficha não: dava pra escolher qualquer raça de graça no seletor. Agora a raça escolhida desconta o preço dos PA, e a sorteada (roleta, entrevista, ou a caixa 'Sorteei no d100' ao lado do seletor) não. Fichas antigas continuam como estavam.",
@@ -414,6 +568,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "As Utilidades ganham um menu, e o Bardo, canções",
     sections: [
       {
+        area: "regras",
         heading: "O menu de Preparações",
         items: [
           "O Ladino, o Bardo e o Tático ganham sete Preparações cada, com custo em PP e efeito escritos: Fechadura Limada, Esconderijo Pronto, Armadilha Deixada, Chave Copiada; Rosto Conhecido, Carta de Apresentação, Rumor à Frente, Palco Montado; Suprimento Escondido, Terreno Visto Antes, Rota Mais Curta, Hora Certa — e outras. Gasta-se sem negociar.",
@@ -422,6 +577,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Canções",
         items: [
           "A Dissonância deixa de disparar 'quando você usa uma habilidade da árvore' (difícil de explicar na mesa) e vira uma canção. O Bardo tem uma canção ativa de cada vez — Dissonância, Marcha (Cantiga de Marcha), Guerra (Canção de Guerra) ou Réquiem (Réquiem) — e começar ou trocar custa 1 Ação. A Dissonância bate no começo de cada turno seu.",
@@ -436,6 +592,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A contabilidade: cada limite num relógio do livro",
     sections: [
       {
+        area: "regras",
         heading: "Os 111 'uma vez por…', lidos um a um",
         items: [
           "Sete limites não mudavam nada e saíram: 'uma vez por interceptação' no Aguentar o Baque e no Aguentar Soberano (cada interceptação já é uma), 'uma vez por rodada' no Estado Anulado e 'uma vez por turno' no Passo Entre Rajadas (a Reação já é uma por rodada), o do Primeiro a Ver (só acontece ao entrar no combate) e o do Círculo de Convocação (os 16 PM já seguram). A Leitura de Abertura troca o 'uma vez por combate' por 1 PT.",
@@ -451,12 +608,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Auditoria de balanço",
     sections: [
       {
+        area: "regras",
         heading: "O truque da escola",
         items: [
           "As quatro escolas elementais ganham, no Principiante, um truque: Brasa (Fogo), Respingo (Água, deixa Molhado), Rajada Curta (Vento) e Pedrisco (Terra). Vem com o Principiante, sem PA, sem PM: 1 Ação, 1d6 + BC a 9 m, uma vez por turno. O mago de 1º patamar, que gastava 2 Ações pra 1d8 + BC e ficava parado quando o PM acabava, sai de ~6 pra ~12 de dano por turno.",
         ],
       },
       {
+        area: "regras",
         heading: "Técnicas de topo que rendiam menos que as de baixo",
         items: [
           "Golpe do Fim da Linha (Norte, Imperador): + 9d12 (era 4d12) — rendia menos por Ação que o Golpe do Desespero do Santo.",
@@ -467,6 +626,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Outros números",
         items: [
           "Luz Absoluta (Cura, Imperador): 12d8 radiante (era 20d8). Com 3 Ações, 30 m, e ainda curando os aliados, ela batia mais que o Zero Absoluto da Água, a escola de área. Agora fica abaixo dele.",
@@ -475,6 +635,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O simulador",
         items: [
           "Ele passou a respeitar 'Uma vez por turno' e 'Uma vez por combate' escritos no começo da carta. Antes usava a Espada de Luz Verdadeira e o Golpe do Fim da Linha em todo turno. O orçamento de encontro da 0.1.105 continua Equilibrado nos seis patamares depois disso.",
@@ -489,6 +650,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O catálogo de criaturas entra no livro",
     sections: [
       {
+        area: "encontros",
         heading: "Nada fora do livro",
         items: [
           "As 28 criaturas do catálogo do /encontros existiam só no site. Agora o Apêndice G tem 'O catálogo': cada uma com o jeito de montar (patamar, papel e arquétipo do Bloco do Monstro) e os traços que o molde não traz. O livro e o site leem a mesma lista.",
@@ -504,12 +666,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O orçamento de encontro diz a verdade",
     sections: [
       {
+        area: "encontros",
         heading: "O que estava errado",
         items: [
           "O Apêndice G ensina que uma criatura do patamar do grupo por jogador é um encontro Equilibrado. O simulador do /encontros discordava, e cada vez mais a cada patamar: com o grupo do kit de mesa, no 2º patamar quatro criaturas davam Mortal; no 6º, DUAS já davam Mortal. Os moldes de criatura cresciam bem mais rápido que os personagens — uma Lenda batia 120 por turno e derrubava um personagem de 6º por rodada.",
         ],
       },
       {
+        area: "encontros",
         heading: "Os moldes novos",
         items: [
           "PV 25 / 38 / 58 / 80 / 105 / 130 e dano por turno 12 / 16 / 22 / 30 / 38 / 48, do 1º ao 6º (eram 20/45/90/150/220/320 e 10/20/35/55/80/120). CA, ataque e CD não mudam. Medido nos seis patamares: quatro criaturas contra quatro jogadores dão Equilibrado em todos (91–97% de vitória, menos de 1 personagem caído).",
@@ -527,6 +691,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O resto da revisão geral",
     sections: [
       {
+        area: "regras",
         heading: "Opções que não faziam nada",
         items: [
           "Tempo livre: Treinar numa perícia que você já tem vira +2 (Vantagem não empilha, como no Ajudar), e Vigiar as Costas diz o que dá em cada atividade — os 2d6 do Trabalhar rolados duas vezes, +2 no Estudar, o Treino valendo em dois testes, dois pedidos ao Contato, 1 Trauma a mais na Recuperação. O site passou a ler a mesma tabela do livro (a dele dizia que a Recuperação tirava Exaustão).",
@@ -538,6 +703,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Números",
         items: [
           "Pacto: Grifo 2d8 (era 3d10 e batia mais que o Urso, o Pacto de briga). Poção Imperial de Cura 8d8 + 6 (curava 2 PV a mais que a Régia por 3,3× o preço).",
@@ -545,6 +711,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Regra que a mesa lê de primeira",
         items: [
           "Restauração e Corpo Íntegro (Cura) são rituais de 10 minutos e de 1 hora, fora de combate; a carta mostra isso no lugar das Ações.",
@@ -563,12 +730,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Quatro decisões da revisão geral",
     sections: [
       {
+        area: "regras",
         heading: "Ofício não tem Rank Deus",
         items: [
           "Os sete Ofícios (Lutador, Cavalaria e Escudos, Arquearia, Punho do Fogo, Ladino, Bardo e Tático) imprimiam um quadro de Rank Deus, e o próprio Cap. 3 diz que Ofício termina no 6º patamar. Os quadros saíram do livro, junto com o rótulo 'Deus do Fogo Marcial'. O texto, que é bom, ficou guardado como lore pra um futuro capítulo do mundo.",
         ],
       },
       {
+        area: "regras",
         heading: "Controle com rolagem",
         items: [
           "Maestria de Imperador da Terra: quem começa o turno a até 9 m testa Força (CD 8 + BC) antes de ficar Soterrado. Sem teste, ela tirava qualquer chefe corpo a corpo da luta.",
@@ -578,12 +747,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Mestre da Adaptação",
         items: [
           "O talento da Água (Avançado) tira o corte de dano da Encurtada só nas magias de rank Intermediário ou abaixo — o Cântico Fluido, um rank acima. Em todas, ele desfazia a decisão de a Encurtada custar metade do dano, e a Padrão da Água morria no Avançado.",
         ],
       },
       {
+        area: "livro",
         heading: "A carta pode se partir no cântico",
         items: [
           "Quando o vão no pé da coluna passa de 1/3 dela, a carta se parte ENTRE o efeito e o cântico: nome, custo, regra, dano e formas ficam juntos no vão, e o cântico, inteiro, abre a coluna seguinte. O fim de cada árvore também passou a pesar o branco que a arte de fecho deixa na página. Somado à 0.1.102: o branco das colunas com vão caiu quase pela metade, e o livro tem 274 páginas (eram 280).",
@@ -597,18 +768,21 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Revisão geral: menos vão, menos bastidor",
     sections: [
       {
+        area: "livro",
         heading: "O vão no pé da coluna",
         items: [
           "A carta não se parte, e a que não cabia no pé da coluna pulava e deixava um buraco. Agora o livro enche esse vão, nesta ordem: uma carta menor do mesmo patamar sobe pro lugar; a arte da carta de cima cresce até o pé; a arte da carta de baixo sobe pro vão; e, se nada couber, as cartas da coluna se espalham. Medido: o branco das colunas com vão caiu cerca de um terço, e o livro ficou com 276 páginas (eram 280).",
         ],
       },
       {
+        area: "livro",
         heading: "Bastidor fora do livro",
         items: [
           "Cerca de 70 frases que falavam com quem projeta o jogo, e não com quem joga, saíram ou foram reescritas: histórico ('até a versão tal…'), contas de simulador e de dano por Ação, e justificativas de balanceamento. Os quadros 'Por que 1,67', 'Por que existe um piso', 'Por que a CD usa o Rank de quem acerta', 'Por que CA e resistência crescem' e 'Por que o travado nunca passa do dobro' saíram inteiros.",
         ],
       },
       {
+        area: "regras",
         heading: "Texto que não batia com a regra",
         items: [
           "PV: a média é da fórmula de cada patamar, arredondada pra cima (1d8+3 conta 8, 3d6 conta 11), como a ficha sempre fez. A Roxy do Apêndice A tem 157 PV, e não 143.",
@@ -621,6 +795,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "A carta diz quantas Ações custa",
         items: [
           "Técnica de 2 ou mais Ações sem as três formas de conjurar (Espada de Luz Verdadeira, Tiro do Céu, O Muro Final e mais 35) mostra as Ações na linha do custo, e toda Reação diz 'Reação'. Antes a carta lida parecia custar 1 Ação.",
@@ -628,6 +803,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Magia Teórica",
         items: [
           "O Eco repete o Lançar com metade dos dados SEM o BC, e o eco é a fórmula que fere daquele turno. Com o BC em dobro ele batia mais que o Triângulo em todo patamar, e as cartas de dano da árvore viravam opção morta.",
@@ -637,6 +813,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Termos",
         items: [
           "'Concentração' (que não existe mais como regra) virou 'sem ocupar a sua sustentação' nas cartas de Água, Bardo, Cura e Vento.",
@@ -652,6 +829,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Magia Teórica: três palavras e uma conta",
     sections: [
       {
+        area: "regras",
         heading: "A frase",
         items: [
           "Toda fórmula é uma essência + um verbo + uma forma. Os verbos agora têm nome de ação: Lançar (era Projetar), Erguer (Conter), Selar (Rejeitar) e Sinalizar (Expressar), os quatro já no Principiante. Expandir e Repetir viraram as formas Onda e Eco. A ordem das palavras deixou de ser regra.",
@@ -659,6 +837,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "A conta",
         items: [
           "PM = o custo da potência + 1 por palavra fora do básico (Mana, o primeiro verbo e o Círculo são o básico); armar custa +2. A potência é o seu rank, ou menos — acabou a diferença entre construção e potência, e os tetos de símbolos e de PM por célula.",
@@ -667,6 +846,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Preparar e armar",
         items: [
           "Três lugares: no ar (na hora), em giz ou pergaminho (1 minuto antes; ativa com 1 Ação) e em pedra (Santo; 1 hora; dura 1 dia). Gestos saíram. Lançar que fere se desenha na hora.",
@@ -674,6 +854,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "As cartas e os talentos",
         items: [
           "Uma carta de dano por patamar: Dardo Arcano, Rajada Arcana, Lança Arcana, Traço Perfurante, Palavra que Fere e Frase Final. O teto de dano da Teórica foi de 6,2 por Ação (só o Dardo feria) pra 13,9, perto da Água (17,8).",
@@ -683,6 +864,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "O livro",
         items: [
           "O Cap. 2, §8 virou uma aula em três lições (era cinco): a frase, a conta, preparar e armar — com três tabelas geradas do mesmo motor que o Laboratório e as cartas usam. O Laboratório foi refeito pra frase de três palavras.",
@@ -698,30 +880,35 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O caminho mínimo, o kit de mesa e a ficha igual ao livro",
     sections: [
       {
+        area: "livro",
         heading: "Comece Aqui: o caminho mínimo",
         items: [
           "Nova seção 6 no Cap. 0: o que a primeira sessão precisa (as seções 2 e 3, a carta das suas habilidades e o Glossário de Condições) e uma tabela do que pode esperar — Recitação Perfeita, conjuração em mais de um turno, Magias Combinadas, os Tetos, Aflições, Crafting, Viagem e Cerco —, com o patamar em que cada coisa começa a importar.",
         ],
       },
       {
+        area: "livro",
         heading: "Um nome de patamar só",
         items: [
           "As sete árvores com escada própria (Arquearia, Armas Pesadas, Escudos, Punho de Fogo, Ladino, Bardo e Tático) passam a mostrar o nome do Rank primeiro e o título do ofício depois: 'Intermediário · Caçador', em vez de só 'Caçador'. Vale no livro, na ficha, no mapa de árvores, no Painel do Mestre e no comparador. Uma escada só pra decorar; o título continua lá.",
         ],
       },
       {
+        area: "site",
         heading: "A ficha diz o que o livro diz",
         items: [
           "O resumo de regras da ficha ainda mostrava o Teto de Ações antigo ('máximo 5 Ações por turno, 2 externas') e o Teto de Auxílio de +5. Agora: 4 Ações próprias + 2 concedidas, e +6 — como no Cap. 4, §5.",
         ],
       },
       {
+        area: "livro",
         heading: "Sumário",
         items: [
           "As cinco Lições da Magia Teórica, 'Onde se desenha', 'As cartas são fórmulas', 'Três exercícios' e 'A carta de uma habilidade' existiam no livro e não estavam no índice. Entraram.",
         ],
       },
       {
+        area: "encontros",
         heading: "Para o Mestre: o kit do teste de mesa",
         items: [
           "Quatro personagens de 2º patamar prontos pra importar por link (Fogo, Deus do Norte, Tático e Cura, 9 PA cada), um encontro com as criaturas do Apêndice G e uma folha de observação. Está em KIT-DE-MESA.md; é a sessão de referência do próximo ciclo de balanço.",
@@ -735,6 +922,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Cura sem contabilidade, Desintoxicação com jogada, site mais leve",
     sections: [
       {
+        area: "regras",
         heading: "Raças: tiers, preço de escolha e despertares",
         items: [
           "Toda raça tem um tier, que decide a faixa no d100: comuns 15–16 números, incomuns 9, raras 5, o Demônio Imortal (lendário) 2 — era 8, o mesmo do Elfo — e o Dragão (mítico) só no 100.",
@@ -746,6 +934,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "Livro folheado: a diagramação que o autor pediu",
         items: [
           "Toda carta inteira: nome, texto, regra e cântico de uma habilidade nunca se separam. Só a arte/GIF pode ir sozinha pra coluna seguinte.",
@@ -755,6 +944,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "desempenho",
         heading: "Site mais leve",
         items: [
           "As páginas fora do livro baixam cerca de 2,3 MB em vez de 6,7 a 10 MB: o menu e o rodapé não pré-baixam mais o livro inteiro, o logo vem no tamanho em que aparece, e o histórico de versões e as árvores deixaram de ir junto em toda página.",
@@ -765,6 +955,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Magia de Cura",
         items: [
           "Ferida Fresca agora é o dano que o alvo sofreu desde o fim do SEU último turno — quem cura só olha a própria vez. A Culpa Fresca usa a mesma janela.",
@@ -774,6 +965,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Magia de Desintoxicação — Dose e Inversão",
         items: [
           "Condição nova, Dose (Cap. 4): os venenos da escola deixam 1 Dose na falha do Vigor, até 3. Com 2 o alvo está Envenenado; a 3ª é o Colapso — as Doses saem e ele fica Atordoado até o fim do próximo turno.",
@@ -791,6 +983,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O livro mais bonito, e mais leve",
     sections: [
       {
+        area: "livro",
         heading: "Livro folheado",
         items: [
           "Abre em metade do tempo, e agora tem porta: o botão Folhear como livro, na capa do /livro e no rodapé.",
@@ -802,6 +995,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "Cartas e Magia Teórica",
         items: [
           "A carta de habilidade mostra as três formas de conjurar num quadrinho com as Ações; o Cap. 3 ensina a ler a carta com a Bola de Fogo anotada.",
@@ -811,6 +1005,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "Arte e revisão",
         items: [
           "Arte nova da Raça Dragão, quatro pranchas novas e o acervo de arte guardado pro futuro.",
@@ -825,6 +1020,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A revisão do livro inteiro",
     sections: [
       {
+        area: "regras",
         heading: "Magia Teórica recalibrada",
         items: [
           "A gramática custava cerca de três vezes o PM de uma escola elemental. Agora Mana custa 0 PM, as ações 1 PM, a potência sobe +0/+1/+2/+4/+6/+8 e o dano é d8 + BC (a cura, d8). Uma projeção ofensiva por turno.",
@@ -832,6 +1028,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Conjuração e criação",
         items: [
           "Tabela d100 de raças no livro; o site rola a mesma.",
@@ -842,6 +1039,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Árvores",
         items: [
           "Segunda Bala +1 Ação; Colapso Solar 10d10 + BC em 30 m; Cabeçada tira 1 Ação, uma vez por combate por alvo; Vazio com teste de Vigor por turno e 3 turnos; Urso das Cavernas 2d10.",
@@ -850,6 +1048,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Combate e mesa",
         items: [
           "Chefe: PV dobrado, mesmo dano, uma rodada a cada dois personagens, e pesa 5 no orçamento. Quatro temperaturas de encontro.",
@@ -861,11 +1060,56 @@ export const PATCH_NOTES: PatchNote[] = [
     ],
   },
   {
+    version: "0.1.96.2",
+    date: "2026-09-25",
+    title: "A Magia Teórica no lugar da Barreira",
+    escritaDepois: true,
+    sections: [{
+      area: "regras",
+      heading: "Uma escola nova entre as dezenove",
+      items: [
+        "A Barreira saiu das árvores do livro, e a Magia Teórica entrou no lugar dela: a magia escrita como fórmula, com o Laboratório de Fórmulas pra montar e testar cada uma. As notas 0.1.97, 0.1.98 e 0.1.101 contam como ela foi calibrada e reescrita depois.",
+        "Ficha que tinha Barreira: os patamares abertos (e a Árvore Inicial) viram patamares de Teórica, e as compras da Barreira saem da ficha com os PA devolvidos e um recibo do que eram.",
+      ],
+    }, {
+      area: "livro",
+      heading: "No livro",
+      items: [
+        "A Teórica ocupa o lugar da Barreira no livro com identidade própria: a cor da Mana, 理論魔術, o selo 式 e o caderno quadriculado.",
+      ],
+    }],
+  },
+  {
+    version: "0.1.96.1",
+    date: "2026-09-25",
+    title: "Nasce o livro folheado",
+    escritaDepois: true,
+    sections: [{
+      area: "livro",
+      heading: "O livro aberto",
+      items: [
+        "Um jeito novo de ler o livro: aberto em duas páginas no computador (uma no tablet em pé), com virada de folha, setas, teclado, roda do mouse, deslize e régua. O texto continua vivo: seleção, Ctrl+F, links e mídia.",
+        "Página de tamanho fixo (Carta) e duas colunas, como livro impresso. A tela se adapta pela escala e pelo zoom, então o número da página é o mesmo em qualquer tela.",
+        "Quatro identidades testadas até chegar ao livro noturno: papel noite e papel dia escolhidos no próprio livro, a letra gritada nos títulos, a cor de cada capítulo como marca-texto, e as 19 árvores com cor, nome japonês da escola, selo e textura próprios.",
+        "As raças ganharam uma página cada; capítulos e árvores ganharam o caos controlado nas bordas (dados no Comece Aqui, armas jogadas no Deus do Norte, brasas no Fogo); as artes do autor entraram pelo nome do arquivo; e o livro abre fechado, na capa.",
+        "Busca dentro do livro (a lupa, ou Ctrl+K): procura no texto diagramado, vira o livro até o trecho e o pinta no próprio texto.",
+      ],
+    }, {
+      area: "desempenho",
+      heading: "Leve desde o começo",
+      items: [
+        "Uma perspectiva 3D que só servia pra virar a folha punha o livro inteiro num contexto 3D, e cada repintura levava de 4 a 8 segundos. Medido depois do conserto: quadro de 7,6 s para 0,1 s, e a busca de 15 s para 0,3 s.",
+        "As fontes japonesas deixaram de ser baixadas: de 366 arquivos de fonte para 29. E só a dupla aberta anima diagramas e toca vídeo.",
+      ],
+    }],
+  },
+  {
     version: "0.1.96",
     date: "2026-09-24",
     title: "Chefes que lutam como a própria ficha",
     sections: [
       {
+        area: "encontros",
         heading: "Da ficha para o encontro",
         items: [
           "Agora dá para levar uma ficha completa do roster para Encontros como Rival padrão ou Chefe único. O rival conserva atributos, defesa, reservas, técnicas e custos; o Chefe dobra os PV e recebe os turnos extras do seu papel. A conversão cria uma cópia, então os ajustes do Mestre não alteram o personagem original.",
@@ -873,6 +1117,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Invocações, Água e Fogo",
         items: [
           "Pactos de combate preparados entram com PV e iniciativa próprios e agem com uma Ação por turno. Chamado de Emergência pode trazer reforços durante a luta, respeitando PM, limite de Pactos e os talentos Círculo Improvisado, Convocação Aprimorada, Pacto Firmado e Duas Vidas.",
@@ -881,6 +1126,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Resultado mais claro",
         items: [
           "A régua de orçamento inclui os Pactos preparados e mostra, à parte, uma estimativa do peso dos reforços possíveis por Chamado de Emergência. O relatório continua usando os PV, ataques e recursos reais da batalha simulada.",
@@ -891,11 +1137,48 @@ export const PATCH_NOTES: PatchNote[] = [
     ],
   },
   {
+    version: "0.1.95.1",
+    date: "2026-09-23",
+    title: "O livro vira livro",
+    escritaDepois: true,
+    sections: [{
+      area: "livro",
+      heading: "Capa, folha de rosto e índice",
+      items: [
+        "O /livro abre com capa emoldurada, cada capítulo tem folha de rosto e fólio de fim, e a página é uma folha. No celular, um cabeçalho corrente fica no alto, diz onde a leitura está e abre o índice em qualquer ponto.",
+        "O sumário virou um índice de verdade: o número mora numa coluna própria (romano no capítulo, arábico na seção).",
+        "Dois diagramas que rodam a regra acontecendo: a ordem do dano (17, menos 3 de redução fixa, metade pela Resistência: chegam 7) e o Quebrantado, acúmulo a acúmulo, mostrando onde a pilha para.",
+      ],
+    }, {
+      area: "regras",
+      heading: "O Compêndio de Itens",
+      items: [
+        "65 itens novos entram no livro, passados pela régua dele, com duas regras pra não quebrarem a economia: todo item tem disponibilidade (Guilda F a S, Fora da Guilda ou Relíquia), e Relíquia não tem preço nem se sorteia. Quem entrega uma relíquia é a história, não o d20.",
+        "Consertados no caminho: a Armadura Zariff dava CA +8 (o teto é +6) e triplicava o dano; a Panaceia e a Pílula de Adrenalina vendiam o que qualquer cura já dá de graça; e três condições citadas não existiam.",
+      ],
+    }, {
+      area: "encontros",
+      heading: "Sub-arquétipo de criatura",
+      items: [
+        "Além do arquétipo (o que a criatura faz), o sub-arquétipo diz o que ela é: Besta, Monstruosidade, Humanoide, Morto-Vivo, Construto ou Demônio. Dele saem o espólio, se ela carrega bolsa, as resistências de graça e Ações típicas.",
+        "A recompensa do encontro sai de quem foi derrotado, e não de um sorteio no catálogo inteiro: um lobo não carrega bolsa, então caçar rende espólio que vende pelo preço cheio.",
+      ],
+    }, {
+      area: "site",
+      heading: "A ficha mostra o personagem",
+      items: [
+        "A ficha abre mostrando o personagem: dos nove botões de gerenciamento, sete foram pra um menu 'Exportar, compartilhar e imagens', e os atributos aparecem na primeira tela do celular.",
+        "Os botões do site viraram dois componentes, e os 41 seletores entraram na paleta do site; os filtros da loja passaram a dizer ao leitor de tela qual está aceso.",
+      ],
+    }],
+  },
+  {
     version: "0.1.95",
     date: "2026-09-22",
     title: "O Simulador de Combate Definitivo",
     sections: [
       {
+        area: "encontros",
         heading: "O Fim do 'Bate-Bate' Cego: Cenário e Motor de Eventos",
         items: [
           "O simulador de combate parou de apenas rolar o maior dado do inventário. Ele agora roda com um motor de eventos completo, testando quem está Escondido, Surpreso, a distância do alvo e quem já agiu na rodada.",
@@ -904,6 +1187,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Bestiário Turbinado: Cenas, Catálogo e Recompensas",
         items: [
           "O Bestiário ganhou suporte a Pastas e Cenas Salvas. Você pode preparar os encontros da sessão inteira, salvá-los e carregá-los com um clique no Tracker de Iniciativa.",
@@ -912,6 +1196,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Comparador de Builds e Fichas no Bestiário",
         items: [
           "A página ganhou um Comparador de Builds. Coloque duas fichas do grupo frente a frente contra o mesmo alvo, rode 400 batalhas, e descubra quem realmente sustenta a luta — com alerta se houver diferença de PA investido.",
@@ -919,6 +1204,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "desempenho",
         heading: "Performance e Web Workers",
         items: [
           "Colocar milhares de simulações completas na tela travava a interface. Agora todo o motor de combate (incluindo o Comparador) roda isolado em Web Workers.",
@@ -933,6 +1219,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Grande Revisão (Resumo das atualizações 0.1.75 a 0.1.93)",
     sections: [
       {
+        area: "regras",
         heading: "O Livro Inteiro Passado a Limpo",
         items: [
           "Durante as últimas semanas de atualizações fechadas, revisamos literalmente todas as 601 habilidades das 19 árvores do sistema para garantir que as regras conversem perfeitamente com a matemática dos Apêndices.",
@@ -941,6 +1228,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "A Ferramenta do Mestre: O Construtor de Encontros",
         items: [
           "O site ganhou um painel profissional para o Mestre planejar o jogo. O Apêndice G deixou de ser um conceito e se tornou o Bloco do Monstro.",
@@ -949,6 +1237,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Novas Identidades para Árvores (Espada, Arqueiro e Venenos)",
         items: [
           "DEUS DA ESPADA: Para resolver o problema de que o espadachim era um 'canhão de vidro incontrolável', criamos o talento Postura do Espadachim (Principiante), trazendo a Postura de Vento (defensiva) e a Postura de Trovão (agressiva extrema) para o arsenal. Agora você cadencia a luta.",
@@ -957,6 +1246,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Qualidade de Vida e Offline de Verdade",
         items: [
           "O site ganhou uma ferramenta de Busca Global instantânea nos 879 verbetes das regras, abrindo explicações no mesmo instante.",
@@ -971,6 +1261,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Venenos, Posturas e o Tiro Perfeito",
     sections: [
       {
+        area: "regras",
         heading: "DESINTOXICAÇÃO: O Catálogo de Venenos",
         items: [
           "A árvore tinha uma única habilidade de dano (Peçonha) nos três primeiros patamares. O purificador era obrigado a jogar reativamente, esperando alguém ficar doente ou envenenado para ter função.",
@@ -978,6 +1269,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "DEUS DA ESPADA: Postura de Vento e Postura de Trovão",
         items: [
           "O estilo é um canhão de vidro (-2 de CA base, maior dano do jogo), mas no nível da mecânica isso deixava o jogador com 8% de sobrevivência e pouca margem de decisão.",
@@ -988,6 +1280,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "ARQUEARIA: O Tiro Perfeito não se compra, se aprende",
         items: [
           "O Tiro Perfeito perdeu o custo de 2 PA e saiu da lista de habilidades. Ele agora faz parte integral da Maestria 'Olho do Caçador'.",
@@ -995,6 +1288,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "TÁTICO: O Teto de Ações (Cap. 4, §5)",
         items: [
           "A regra antiga limitava o personagem a '5 ações por turno, sendo no máximo 2 externas'. Isso engessava classes que fabricam ações próprias (como a Velocidade Encarnada do Deus da Espada).",
@@ -1009,12 +1303,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Nenhuma Compra Morta",
     sections: [
       {
+        area: "regras",
         heading: "As duas opções mortas que a revisão tinha separado",
         items: [
           "Eram o último item de LIVRO em aberto, e as duas eram o mesmo erro: uma Maestria GRATUITA apagando PA que o jogador já tinha pago. É a prioridade 2 do projeto — nenhuma escolha obrigatória, nenhuma escolha morta.",
         ],
       },
       {
+        area: "regras",
         heading: "INVOCAÇÃO: a Maestria do Avançado apagava 6 PA de compras",
         items: [
           "O Círculo Rápido dizia 'invocar deixa de exigir círculo desenhado: gaste 1 Ação e trace no ar'. Com isso, quatro compras do Principiante viravam lixo de ficha na hora: o Chamado de Emergência (2 PA, a ASSINATURA da escola), o Círculo Improvisado (1 PA), o Pacto Firmado (1 PA) e a Convocação Aprimorada (2 PA) — todos existiam pra invocar sem círculo, rápido e barato, que era exatamente o que a Maestria passou a dar de graça.",
@@ -1023,6 +1319,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "TERRA: a Fortaleza Rápida tornava o Muro de Terra inútil",
         items: [
           "A Fortaleza (Intermediário, 4 PM, 2 Ações) dava um CÍRCULO de muralhas com 60 PV por seção e 1 hora de duração. O Muro (Principiante, 2 PM, 3 Ações e Ritual) dava UMA parede de 40 PV por 10 minutos. Mais barato em Ações, mais forte, mais longo, mais paredes — a magia do 1º patamar morria no dia em que você abria o 2º.",
@@ -1031,6 +1328,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A FICHA passou a cobrar os pré-requisitos de outra árvore",
         items: [
           "Quatro habilidades do livro são PONTES entre escolas e diziam isso na prosa: Vapor Seco (Fogo, pede Vento), Nova Congelante (Vento, pede Água), Explosão Silenciosa (Vento, pede Fogo) e Dedos de Mana (Ladino, pede qualquer escola de magia). A ficha deixava comprar as quatro sem o outro lado, porque o campo de pré-requisito só sabia olhar a PRÓPRIA árvore.",
@@ -1046,6 +1344,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Bloco do Monstro",
     sections: [
       {
+        area: "encontros",
         heading: "O MESTRE NÃO CONSEGUIA DAR ATRIBUTO NEM PERÍCIA A UM MONSTRO",
         items: [
           "A tela de encontros dava PV, CA, acerto, dano e CD — e mais nada. Quando a mesa perguntava 'qual a Força dele?', 'ele percebe o ladino?', 'corre quanto?', 'resiste a fogo?', o Mestre inventava. O Apêndice G tinha os números do combate e nenhuma das respostas que a cena pede.",
@@ -1053,6 +1352,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "LIVRO: os cinco arquétipos e os atributos derivados",
         items: [
           "Bruto (ogro, urso, golem), Ágil (lobo, assassino, Wyvern), Fortaleza (tartaruga, cavaleiro), Conjurador (necromante, xamã) e Mente (íncubo, ilusionista, dragão antigo). São cinco, e não quinze, porque o arquétipo existe pra ser escolhido em voz alta no meio de uma frase — uma lista que não cabe na cabeça do Mestre vira uma tabela que ele não abre.",
@@ -1061,6 +1361,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: Percepção passiva = 10 + o Espírito dela, sem exceção pra monstro",
         items: [
           "É a MESMA fórmula da regra de ficar Escondido (Cap. 4, §3). Se monstro tivesse fórmula própria, existiriam duas regras de furtividade no livro e a mesa aplicaria a errada.",
@@ -1069,6 +1370,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "REGRA: Orçamento de Encontro, agora com medidor na tela",
         items: [
           "A regra entrou no livro na 0.1.89 e agora o site calcula enquanto o Mestre monta: adicionou um lobo, a barra andou. Um encontro equilibrado é uma criatura do patamar do grupo POR JOGADOR; uma acima vale duas, uma abaixo vale meia, um Chefe vale três.",
@@ -1077,6 +1379,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O motor passou a aplicar Resistência e Imunidade",
         items: [
           "O Cap. 4, §6 definiu as três palavras na revisão do livro, e o motor ignorava as três: um elemental de fogo levava dano ígneo cheio em 2.000 combates simulados, e o Mestre calibrava o encontro por um número que não existia na mesa. Um campo de ficha que não muda número nenhum é o pior tipo de campo.",
@@ -1085,6 +1388,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "A ficha do monstro vai junto pro combate, e o dano se digita",
         items: [
           "O bloco se monta na tela de Encontros, mas a mesa acontece no rastreador de Iniciativa — e era lá que o Mestre não tinha a CA, a Percepção passiva nem as resistências na frente. Ele voltava de tela no meio da rodada, ou chutava. Agora a ficha viaja junto, como cópia: recalibrar a criatura no meio da luta não muda o bicho que já está na mesa.",
@@ -1092,6 +1396,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "BOTÃO: Sugerir ações — o Mestre parou de inventar fórmula de dado",
         items: [
           "Definir os atributos resolveu 'qual a Força dele?'. Sobrou o mais chato: 'quanto uma Ameaça bate num golpe?' — que é calibragem, não ficção, e o livro já sabia a resposta na coluna Dano por turno.",
@@ -1101,6 +1406,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O personagem também resiste — e o motor descobriu sozinho quem",
         items: [
           "Depois que o Apêndice G deu Resistência às criaturas, deixar o lado dos personagens de fora seria a mesma regra valendo num sentido só. Só que nenhuma habilidade do livro declara resistência num campo: está tudo na prosa. Agora o motor lê a prosa das Maestrias e talentos, como já fazia pra detectar fogo, Quebrantado e cura.",
@@ -1109,6 +1415,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "AVISO: a Imunidade que apaga a jogada de alguém da mesa",
         items: [
           "O Orçamento cobra um patamar pela Imunidade, mas ele mede DIFICULDADE — e uma criatura imune a ígneo contra três magos de Fogo não é um encontro difícil: é um jogador sem jogada. A mesa leva vinte minutos rolando dados que não fazem nada antes de desconfiar.",
@@ -1116,6 +1423,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Miudezas que fechavam buracos antigos",
         items: [
           "As seis criaturas prontas do Apêndice G ganharam o bloco: a Wyvern voa 18 m e tem faro, o Superd Renegado é Conjurador e vê mana, o Sapo-Lodo sente vibração na lama. Um bloco que nenhuma criatura do bestiário demonstra é uma regra que a mesa nunca vê funcionando.",
@@ -1131,6 +1439,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Revisão Acabou",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: as doze partes fecharam, e o arquivo foi apagado",
         items: [
           "230 achados, 24 agentes, doze partes. A última passagem fechou Raças e Antecedentes, Cap. 5 e a loja, Apêndices e Bestiário, e as costuras entre capítulos. O REVISAO-DO-LIVRO.md esvaziou e foi apagado — que era o que ele mesmo mandava fazer.",
@@ -1138,6 +1447,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: Orçamento de Encontro",
         items: [
           "A primeira pergunta de todo Mestre montando a primeira sessão — quantas criaturas, e de qual patamar — não tinha resposta no livro. Agora tem, e cabe numa linha: um encontro equilibrado é uma criatura do patamar do grupo POR JOGADOR.",
@@ -1146,6 +1456,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: o patamar da criatura É o Bônus de Rank dela",
         items: [
           "Meia dúzia de regras pedem 'o Bônus de Rank de quem te acertou' — Concentração, Fio da Vida, teto do Quebrantado, CD de escapar de Atolado. Monstro não tem árvore, então a pergunta aparecia em toda mesa e morria ali. O motor já resolvia assim há versões; o livro é que não dizia.",
@@ -1153,6 +1464,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o PM de antecedente valia zero justamente quando era prometido",
         items: [
           "Acólito +4, Estudioso Precoce +8, Olho Místico +6, Miko Abençoada +10 — quatro promessas de PM fixo que o teto dos dois primeiros patamares zerava por completo. Com Espírito 4 e Bônus 1 a reserva já bate no teto: o jogador lia o número na ficha e recebia nada. No Acúmulo era pior — a maldição (Exaustão diária) valia da primeira sessão, e a bênção só chegava no Avançado.",
@@ -1161,6 +1473,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: sortear ou escolher a raça, e o preço de cada porta",
         items: [
           "A roleta de raça e antecedente existia só no site; o livro mandava escolher. E as raças NÃO são equilibradas entre si, de propósito — é a desigualdade que faz a rolagem valer a pena.",
@@ -1168,6 +1481,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "As arestas que sobraram",
         items: [
           "A Miko muda podia ter rolado o resultado mais raro da tabela e descoberto que não conjurava nada. Agora ela conjura — obrigatoriamente em Conjuração Silenciosa, pagando a penalidade dela e sem nunca ganhar o Bônus de Recitação. É caro, e está escrito.",
@@ -1183,12 +1497,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "As Dezenove Fecharam",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: o catálogo inteiro está revisado",
         items: [
           "Oitava das doze partes: Escudos, Vendaval, Punho do Fogo, Arquearia, Ladino, Bardo e Tático. Com ela, AS 19 ÁRVORES DO LIVRO estão fechadas, e os cinco capítulos de regra também. Sobram 71 de 230 — e o que sobra é o que fica em volta: raças, loja, apêndices e as costuras entre capítulos.",
         ],
       },
       {
+        area: "regras",
         heading: "O Punho do Fogo diz enfim com que atributo ele bate",
         items: [
           "A árvore anuncia 'Força ou Intelecto' e escala TUDO por BC — só que BC, no resto do livro, é o número de uma escola de magia. Um jogador que abrisse a carta não tinha como saber qual dos dois atributos entrava, nem se era o Rank do Punho ou o da Magia de Fogo. A resposta estava só no Cap. 1, §7, a dois capítulos de distância.",
@@ -1196,6 +1512,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Disparo Duplo derrubava o alvo contra o próprio arqueiro",
         items: [
           "Ele não tinha limite por turno (três disparos duplos com as três Ações), o segundo tiro somava atributo e Bônus de Rank inteiros, e o alvo caía — o que é BOM para quem está no corpo a corpo e péssimo para quem atira de 90 metros, porque um alvo Caído em vantagem contra tiro.",
@@ -1203,6 +1520,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: a Dissonância do Bardo escalava com o tamanho do grupo inimigo",
         items: [
           "Ela causava dano sônico em CADA criatura hostil que ouvisse o bardo, todo turno, sem limite de alvos. Contra doze goblins, uma árvore de Utilidade sozinha passava do dano de um guerreiro do mesmo patamar — e a Regra da Faixa (Cap. 3), que existe justamente para que Ladino, Bardo e Tático não invadam a faixa um do outro, deixava de valer.",
@@ -1210,6 +1528,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "E o Puro Escudo parou de dizer 'os efeitos defensivos'",
         items: [
           "O talento que define o Defensor prometia que 'seus efeitos defensivos passam a se aplicar também aos aliados adjacentes' — sem dizer QUAIS efeitos, o que deixava a mesa decidindo carta por carta. Agora ele usa o termo que a própria árvore já define: aliados adjacentes contam como Sob Sua Guarda, além do seu limite normal. Uma frase no lugar de uma lista.",
@@ -1223,6 +1542,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Molha, Congela, Estilhaça",
     sections: [
       {
+        area: "regras",
         heading: "O filhote aprendeu a conjurar de verdade",
         items: [
           "A Evolução: Forma Suprema dizia que o bicho 'pode conjurar uma magia menor da sua árvore'. Só que a árvore é Espíritos e Feras, e ela NÃO TEM magia menor nenhuma — o catálogo dela é pacto, invocação e troca de lugar. A recompensa do Avançado da linha mais longa da escola era uma frase que apontava para o vazio.",
@@ -1232,12 +1552,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: as quatro escolas elementais fecharam",
         items: [
           "Sétima das doze partes: Fogo, Água, Vento e Terra. Sobram 90 de 230.",
         ],
       },
       {
+        area: "regras",
         heading: "O Congelado finalmente cobra alguma coisa",
         items: [
           "A Água inteira é montada sobre 'molhe primeiro, cobre depois' — e o Molhado cobrava (frio em dobro), mas o CONGELADO, que é o segundo tempo da escola, não cobrava nada. Nenhuma magia do livro ganhava qualquer coisa contra alvo congelado: o jogador gastava uma conjuração inteira pra aplicar uma condição que só reduzia Deslocamento.",
@@ -1246,6 +1568,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Três regras gerais que faltavam no Cap. 2, §7",
         items: [
           "'Esfera de 9 m' é RAIO, sempre, em toda área do livro — cobre 18 m de ponta a ponta. Cone e linha saem de você. E quando a carta não diz onde a área nasce, o centro é um ponto visível a até 18 m (Principiante e Intermediário), 36 m (Avançado e Santo) ou 90 m (Rei e Imperador). A mesa discutia isso em toda magia de área.",
@@ -1262,6 +1585,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Régua do Selo",
     sections: [
       {
+        area: "regras",
         heading: "E a mesma régua consertou o Vento",
         items: [
           "O Vácuo Localizado emudecia um mago de QUALQUER rank, sem teste, por 2 PM — o mesmo erro da Barreira, numa carta de Intermediário. Agora ele segue a Régua do Selo: contra rank igual ou inferior ao seu em Vento, o ar simplesmente sai, sem teste; contra rank superior, a criatura testa Vigor e ignora se passar. E a mesma criatura não pode ser afetada em dois turnos seguidos — calar um mago é uma janela, não uma coleira.",
@@ -1270,6 +1594,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REWORK: a Barreira selava para cima, e isso não fazia sentido nenhum",
         items: [
           "Pergunta do autor, e ela derruba a árvore inteira: qual é o sentido de um Principiante anular um Imperador? Era exatamente o que acontecia. O Selado barrava magia de rank SUPERIOR ao seu, então uma barreira de 3 PM erguida por um novato desligava o arquimago. A versão anterior (0.1.85) piorou: passou a barrar 'igual ou superior', ou seja, TUDO.",
@@ -1277,6 +1602,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "A REGRA NOVA: você sela até onde chegou, e nada além",
         items: [
           "A Régua do Selo vale para tudo que a escola anula, sela ou barra, e são três linhas: rank IGUAL OU INFERIOR ao seu em Barreira não acontece (as Ações e o PM se perdem); UM rank acima acontece pela metade — metade dos dados, da área e da duração; DOIS ou mais acima atravessa como se você não estivesse ali.",
@@ -1285,6 +1611,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O que mudou, carta por carta",
         items: [
           "Selado: barra rank igual ou inferior ao seu. Um Selado de Avançado barra até Avançado, corta o Santo pela metade e não toca em Rei nem Imperador.",
@@ -1295,6 +1622,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "E a Lei Local virou a única coisa que quebra a Régua",
         items: [
           "A Maestria de Imperador já dizia que o Selado 'passa a valer contra todo rank, incluindo Deus'. Antes isso era só mais um número num teto que já vazava por todo lado. Agora é a ÚNICA exceção à Régua do Selo em todo o livro — e é exatamente o que o patamar mais caro deveria comprar: o direito de dizer não para alguém acima de você.",
@@ -1309,12 +1637,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Casca Chega no Meio do Golpe",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: Cura, Desintoxicação, Barreira e Invocação fecharam",
         items: [
           "Sexta das doze partes, e a maior delas: 23 achados. Sobram 110 de 230 — o livro passou da metade.",
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o mago de Barreira era o melhor curandeiro do 1º patamar",
         items: [
           "A Casca dava 2d8 + BC de PV Temporários por UMA Ação: 10 pontos por Ação no Principiante, mais um bônus em teste de resistência. O Vigor Emprestado, da escola que existe pra curar, dava 2,75 por Ação. A opção da Cura era simplesmente morta.",
@@ -1323,6 +1653,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: a Redoma tirava um chefe da luta por 5 PM",
         items: [
           "Sem teste, sem duração, sem dizer se o alvo era aliado ou inimigo: um Avançado neutralizava até um chefe de rank Rei, enquanto a Prisão Absoluta (Rei, 14 PM) pede teste com Desvantagem. E o cântico dela ('fecha-te sobre nós') sugeria que a magia era pra PROTEGER.",
@@ -1330,6 +1661,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O Selado passou a fazer alguma coisa contra inimigo do mesmo patamar",
         items: [
           "A tag principal da escola só barrava magia de rank SUPERIOR ao seu em Barreira. Num encontro equilibrado, contra um inimigo do mesmo patamar, ela não fazia absolutamente nada — e quem divide PA entre árvores fica atrás no rank de Barreira, o que piorava ainda mais.",
@@ -1337,6 +1669,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "A Ferida Mortal deixou de ser uma Maestria vazia",
         items: [
           "Ela prometia levar um aliado de 0 PV a PV positivos 'sem Exaustão' — só que o Cap. 4 já diz que qualquer cura remove as Marcas e acorda, a Cura Suprema do mesmo patamar já tirava a Exaustão, e a Mão que Acalma tira por 2 PM desde o Principiante. Era um patamar inteiro sem momento de mesa.",
@@ -1351,12 +1684,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Rótulo Não Era Armadilha",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: as quatro árvores do Corpo fecharam",
         items: [
           "Quinta das doze partes: os 21 achados de Espada, Suishin, Norte e Lutador — a maior concentração de problemas graves que restava. Sobram 133 de 230.",
         ],
       },
       {
+        area: "regras",
         heading: "O rótulo 'Força ou Agilidade' passou a valer de verdade",
         items: [
           "Três árvores prometem escolha no atributo-chave — Deus do Norte e Estilo Vendaval ('Força ou Agilidade') e Punho do Fogo ('Força ou Intelecto') — e o Cap. 1, §7 diz com todas as letras que o Punho usa 'o MAIOR entre Força e Intelecto'. Mesmo assim, TODO o código pegava o primeiro nome da frase: ficha, rolador, PDF e simulador. Quem montava um Norte ágil descobria na mesa que o dano e as CDs ignoravam a Agilidade.",
@@ -1364,6 +1699,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Aparar somava zero exatamente onde a árvore o queria",
         items: [
           "Na Postura de Água (Avançado), a Postura dá Bônus de Rank na CA e o Aparar dá o mesmo Bônus de Rank. Como bônus do mesmo tipo não somam, o Aparar acrescentava ZERO — e o jogador gastava a Reação à toa dentro do modo que a árvore inteira monta. O ciclo Postura, Aparar, Fluxo quebrava justamente no patamar em que devia amadurecer.",
@@ -1371,6 +1707,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O turno do Suishin deixou de ser 'esperar apanhar'",
         items: [
           "Do Principiante ao Santo quase tudo o que o Suishin compra é Reação. No próprio turno ele tinha o ataque comum e um Provocar limitado a uma vez POR CRIATURA por combate — ou seja, o jogador passava o turno sem decisão e a diversão dependia de o Mestre mandar os inimigos no corpo a corpo.",
@@ -1378,6 +1715,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Lutador travava chefes sem uma única rolagem",
         items: [
           "No Imperador, Mão na Garganta (agarra sem disputa, 2 acúmulos) seguida de Prensa (Quebrantado ao máximo, sem teste) levava qualquer criatura aos 12 acúmulos, que era exatamente o limiar da Incapacitação — e Incapacitado não termina sozinho. Duas Ações, 5 PT, zero rolagens, chefe fora do combate inteiro.",
@@ -1385,6 +1723,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O Quebrantado finalmente aparece no 1º patamar",
         items: [
           "'Seus golpes aplicam Quebrantado' não dizia quantos nem quando, então o motor lia zero no ataque comum e a única fonte no Principiante era a Investida Devastadora — que exigia 6m de corrida, um teste, e prometia 2 acúmulos contra um teto de 1. A identidade da árvore era invisível nos dois primeiros patamares.",
@@ -1400,12 +1739,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Três Golpes Fracos",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: o Cap. 2 fechou",
         items: [
           "Quarta das doze partes: os 17 achados do Cap. 2 — As Leis da Magia. Sobram 154 de 230, e os quatro capítulos de regra do livro estão fechados.",
         ],
       },
       {
+        area: "regras",
         heading: "CORREÇÃO DO AUTOR: o Deus da Água usa Agilidade",
         items: [
           "O Suishin-ryū estava com Vigor como atributo-chave, e isso fazia a árvore de contra-ataque rolar com o atributo do tanque. O estilo não vende aguentar o golpe: vende LER o golpe e chegar meio segundo antes dele. Aparar, postura e contragolpe são timing, e timing é Agilidade.",
@@ -1413,6 +1754,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: três golpes fracos calam um mago melhor que um forte",
         items: [
           "O livro mandava concentrar o dano num golpe só pra derrubar um cântico. A conta diz o contrário, e a conta é consequência de uma regra boa: como a CD de Concentração é fixa pelo RANK de quem acertou, e não pelo dano, cada acerto é um teste NOVO. Um Avançado com Espírito 2 falha 40% num teste — e 78% em três.",
@@ -1420,6 +1762,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Encurtado apagava magia de um dado",
         items: [
           "'Metade dos dados, arredondado pra baixo' transformava toda magia de UM dado em zero dados. A Bola de Fogo (1d8 + BC) encurtada virava só BC: a penalidade apagava a magia em vez de enfraquecê-la, e apagava justamente as magias que um Principiante tem. Agora arredonda PRA CIMA — 1d8 continua 1d8, 3d8 vira 2d8. Vale igual na Silenciosa.",
@@ -1427,6 +1770,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Meteoro virou a quinta Grande Obra",
         items: [
           "Ele fazia média 165 numa área de 9m por 25 PM, com portas de Fogo Rei e Terra Avançado — mais que o Sol Menor, que é a assinatura de IMPERADOR e pede a escola inteira. Por Ação rendia 27,5 contra 22,8 do Sol Menor. E as 6 Ações dele contradiziam o teto de 4 sem uma palavra de explicação.",
@@ -1442,12 +1786,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Puxa, Lê, Coloca os Dedos",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: o Cap. 3 fechou",
         items: [
           "Terceira das doze partes: os 15 achados do Cap. 3 — Regras gerais das árvores. Sobram 171 de 230.",
         ],
       },
       {
+        area: "regras",
         heading: "O TIRO PERFEITO FOI REDESENHADO",
         items: [
           "A ordem mudou, e a ordem é a regra: A Corda, A LEITURA, Os Dedos, A Solta. Você puxa, lê pra onde o alvo vai, e só ENTÃO coloca os dedos no vão que a leitura revelou. A etapa que fura Cobertura passou a ser a correção final, não a primeira — é assim que a técnica faz sentido sendo lida em voz alta.",
@@ -1458,6 +1804,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Punho do Fogo devolveu dois degraus",
         items: [
           "Ele subia NOVE degraus de Dado de Arma — exatamente os mesmos do Deus da Espada, cuja identidade declarada é 'o maior dano do livro' — e ainda somava Em Chamas e Quebrantado por cima. O aviso do Cap. 3 citava só a Espada e os Escudos, então o terceiro caso ficava escondido.",
@@ -1465,6 +1812,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o triângulo tinha uma aresta só funcionando",
         items: [
           "A regra era a mesma nas três: 'as Reações defensivas dele falham'. Só que o Deus da Espada quase não vende Reação defensiva, então perder Reações não custava nada a ele — enquanto desligava a Água inteira, que é o estilo FEITO de Reações. Das três arestas, uma funcionava.",
@@ -1472,6 +1820,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: Touki Concentrado virou duas manobras",
         items: [
           "A metade defensiva quase nunca disparava: ativada no SEU turno e durando 'até o fim do turno', ela protegia só do que te acertasse dentro do seu próprio turno — quase nada. Metade da manobra era texto morto, e como era 'Sem Ação' sem limite, dava pra ler 3 PT como três vezes o bônus.",
@@ -1479,6 +1828,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "A RÉGUA DA UTILIDADE ERA MENTIRA — e o Ladino não foi nerfado",
         items: [
           "O livro dizia que Ladino, Bardo e Tático 'talvez somem 30 de dano na luta inteira'. Contando as cartas: no Imperador o Dano Furtivo é +6d6 POR TURNO, a Dissonância é 6d4 em cada hostil que ouve, e a Ordem de Tiro entrega 6d6 de uma vez. A frase era bonita e falsa.",
@@ -1487,6 +1837,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: as quatro travas do fato de PP",
         items: [
           "É a mecânica mais divertida do pilar e a que mais gera briga na mesa. Quatro frases: um fato nunca contradiz o que já foi mostrado em cena; a complicação nunca desfaz nem anula o fato, cobra um preço ao lado dele; o Mestre diz ANTES se o fato custa 2 PP, e o jogador pode desistir sem gastar; e o limite é o seu Bônus de Rank em fatos por sessão — 1 no Principiante, 6 no Imperador.",
@@ -1494,6 +1845,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "CORREÇÃO: o Manto de Touki e a palavra 'mundano'",
         items: [
           "O Manto reduzia 'projéteis mundanos', e a Maestria do Avançado da Arquearia torna os disparos mágicos — então o arqueiro furava o Manto três patamares antes da hora, de graça, e a Flecha de Touki de 3 PT no Rei não fazia sentido nenhum.",
@@ -1508,12 +1860,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Que Está No Meio",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: o Cap. 4 fechou",
         items: [
           "A segunda das doze partes saiu inteira: os 17 achados do Cap. 4 — Combate e Sobrevivência. Sobram 186 de 230.",
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: Cobertura finalmente tem número (e tem desenho)",
         items: [
           "Três capítulos citavam Cobertura parcial e Total, e nenhum dizia quanto ela valia. Agora: Parcial +2 de CA, Superior +5, Total não pode ser alvo — e as duas primeiras dão Vantagem contra efeito de área.",
@@ -1523,6 +1877,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: Bloquear com Escudo falhava 85% das vezes",
         items: [
           "O quadro das três mãos do guerreiro prometia 'uma Reação que anula um golpe inteiro'. Na prática o escudo dava +2, então o bloqueio só virava um acerto em erro quando o d20 caía exatamente na CA ou na CA+1 — cerca de 15% dos acertos. Nos outros 85%, a Reação era jogada fora.",
@@ -1530,6 +1885,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: a Falha Crítica virou um menu de três",
         items: [
           "O 1 natural era 'o Mestre pode acrescentar uma complicação' — ou seja, nada, e uma discussão por rodada. Agora o Mestre escolhe um de três: você larga a arma (cai a 1,5 m), fica Caído, ou perde a Reação até o seu próximo turno. Menu curto de propósito: a mesa não para pra inventar, e nenhum dos três causa dano nem mata.",
@@ -1537,12 +1893,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "CORREÇÃO: largar o Vigor cobra mais do que a tabela mostrava",
         items: [
           "O Fio da Vida dizia que 'A Escala do Vigor vale aqui' e listava duas penalidades — Desvantagem, e perder o Bônus de Rank — que a Escala não tinha. A Escala ganhou a coluna: Vigor −1 dá Desvantagem em todo teste de Vigor; Vigor −2 dá Desvantagem, tira a metade do Bônus de Rank e faz 1 ou 2 contarem como 1 natural. Vale pra veneno, clima, Exaustão e Fio da Vida, não só pra morrer.",
         ],
       },
       {
+        area: "regras",
         heading: "CORREÇÃO: o teto de PM corta o Espírito, e agora o livro admite",
         items: [
           "O Aside dizia que o teto dos dois primeiros ranks 'corta só o que entra por fora da árvore'. Não é verdade: o teto usa 4 fixo, então um mago de Espírito 6 no Intermediário calcula 20 e leva 16, igual ao de Espírito 4. O texto prometia o contrário do que o motor faz há versões.",
@@ -1557,12 +1915,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Preço do Espírito",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: o Núcleo fechou",
         items: [
           "A primeira das doze partes da revisão — Comece Aqui e Cap. 1 — está inteira resolvida: os 14 achados saíram do REVISAO-DO-LIVRO.md. Sobram 203 de 230.",
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: o BC não é de Intelecto — é do atributo-chave da escola",
         items: [
           "O §7 dizia 'BC = Intelecto + Bônus de Rank' e quatro escolas conjuravam com Espírito. A Cura mandava ler o §7 pra descobrir que usava Espírito, e o §7 dizia Intelecto. Agora está escrito: Intelecto em Fogo, Água, Vento e Terra; Espírito em Cura, Barreira, Desintoxicação e Espíritos e Feras.",
@@ -1570,6 +1930,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: as escolas de Espírito ficaram as mais caras do livro",
         items: [
           "Quem conjura com Espírito subia UM atributo e recebia duas coisas: mira e reserva. Um Imperador de Cura com Espírito 8 tinha BC 14 e 56 PM; o de Fogo com Intelecto 8 e Espírito 4 tinha o mesmo BC 14 e só 32 PM — e empatar custaria ~20 PA no alto da escada progressiva.",
@@ -1578,6 +1939,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "NOVA CATEGORIA: Grande Obra — as magias de 5 e 6 Ações",
         items: [
           "O Comece Aqui dizia 'de 2 a 6 Ações' e o teto era 4 desde a 0.1.47. O teto caiu naquela versão por um motivo bom: uma magia de 6 Ações rendia MENOS dano por Ação que uma de dois ranks abaixo. A magia suprema era pior que a intermediária.",
@@ -1586,6 +1948,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "CORREÇÃO: a Árvore Inicial é de graça, e agora as três páginas concordam",
         items: [
           "O Comece Aqui e o §4 cobravam 1 PA pela Inicial, a tabela do §3 imprimia 'Principiante: 1 PA', e o §8 e o código cobravam 0. Dependendo da página aberta, o jogador novo fechava a ficha com 2 ou com 3 PA livres.",
@@ -1593,6 +1956,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "CORREÇÃO: comprar +PM com PA rendia exatamente zero",
         items: [
           "A tabela do §2 vendia '+PM por 2 PA' sem avisar que o teto dos dois primeiros patamares (Cap. 4, §1) corta todo extra avulso. Com Bônus de magia 1 ou 2, a compra rendia 0 PM. Agora a linha diz isso em maiúsculas, e a ficha bloqueia a compra até o Avançado, explicando por quê ao passar o mouse.",
@@ -1600,6 +1964,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: Ajudar quem já tem Vantagem",
         items: [
           "Perícia só dá Vantagem, e Vantagem não empilha — então ajudar o especialista valia ZERO, justamente na cena em que o grupo mais quer cooperar. Agora: se o aliado já tem Vantagem, a ajuda vira +2, e esse +2 conta no Teto de Auxílio +6.",
@@ -1615,12 +1980,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Noite Devolve Tudo",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO DO LIVRO: 24 agentes, 230 achados",
         items: [
           "O livro inteiro foi revisado — capítulos, apêndices, raças, antecedentes, loja, bestiário, condições, Rank Deus e as dezenove árvores — por doze revisores e doze céticos que abriram cada trecho citado e tentaram derrubar o achado. Sobraram 230 problemas confirmados, 51 deles graves. A lista completa, com proposta de conserto, está em REVISAO-DO-LIVRO.md. Esta versão aplica as oito primeiras decisões do autor.",
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: o Descanso Longo devolve todas as reservas",
         items: [
           "O Longo tinha três definições no livro e devolvia MENOS PT que o Curto: 50% contra 100%. A jogada ótima era tirar um Curto logo depois de dormir.",
@@ -1629,18 +1996,21 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: quantos PA por sessão",
         items: [
           "O livro nunca dizia. Agora o Cap. 1 diz: 1 PA por sessão jogada, igual para o grupo, e +1 PA por marco (fim de arco, missão importante, subida de Rank na Guilda), mais ou menos um a cada três sessões. É o ritmo em que as tabelas foram calibradas: ~12 PA no 3º patamar e ~24 no 5º.",
         ],
       },
       {
+        area: "regras",
         heading: "NOVA CONDIÇÃO: Surpreso",
         items: [
           "Várias árvores diziam 'nunca fica Surpreso' e o livro nunca definia surpresa. Agora: quem não percebeu a ameaça tem só 1 Ação e nenhuma Reação na primeira rodada. A emboscada assusta, mas ninguém passa uma rodada inteira só assistindo.",
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: toda condição tem duração",
         items: [
           "Molhado, Envenenado, Cego, Surdo e Atolado não tinham fim, e Amedrontado não deixava tentar de novo: um chefe que amedrontava tirava o jogador da luta inteira.",
@@ -1649,6 +2019,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: Recitação Perfeita",
         items: [
           "Recitar bem na Encurtada e na Silenciosa apagava a penalidade delas, então quem recitava nunca usava a Padrão. E o reembolso de PM era maior que o custo das magias baratas de suporte: o curandeiro lucrava PM a cada Cura.",
@@ -1656,6 +2027,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "CONDIÇÃO: Desequilibrado passa a fazer alguma coisa",
         items: [
           "A cláusula 'no máximo uma Reação por rodada' repetia a regra geral e não fazia nada. Agora Desequilibrado tira TODA Reação (nem ataque de oportunidade, nem bloqueio): quem está desequilibrado não te alcança de volta, como a árvore do Vento sempre prometeu.",
@@ -1663,6 +2035,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Tiro Perfeito virou um tiro de verdade",
         items: [
           "Quatro Ações de Tiro Perfeito rendiam 6 de dano esperado contra 19 de quatro disparos comuns: a assinatura do arqueiro perdia para não usar técnica nenhuma.",
@@ -1671,6 +2044,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: armadura sem proficiência",
         items: [
           "Qualquer mago vestia Armadura Pesada por 150 PO e ganhava +5 de CA perdendo só 3 m. Agora, sem proficiência, a armadura dá Desvantagem em todo ataque (com arma ou com magia) e em Concentração, além da Furtividade, da Acrobacia e dos -3 m de antes.",
@@ -1684,6 +2058,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Primeiro Soco Acende",
     sections: [
       {
+        area: "regras",
         heading: "REWORK: o Punho do Fogo agora é o Fogo e o Lutador que você já tem",
         items: [
           "A árvore era a mais confusa do livro: três recursos ao mesmo tempo (PT, PM e Calor), técnicas de Corpo pagas em PM, quatro talentos com o nome da própria Maestria e cinco condições que o livro nunca definiu. A diretriz do autor foi uma frase: quem chega aqui já tem Magia de Fogo e Lutador na ficha — junte os dois sem confundir.",
@@ -1692,6 +2067,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O que saiu",
         items: [
           "Os quatro nomes duplicados: os talentos viraram Fôlego de Fornalha (+1 PT por patamar), Brasa Funda (Em Chamas queima 1d10), Vulcão Largo (a Presença do Vulcão alcança 18m) e Beber o Fogo.",
@@ -1701,6 +2077,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Os números",
         items: [
           "O dano caiu pra perto do Lutador. Punho da Condenação: 8d8 → 6d8 + BC. Lança Incandescente: 6d6 → 4d6 + BC. Impacto Meteórico: 5d8 → 4d8 + BC. Colapso Solar: 19d12 → 14d12 + BC, uma vez por combate.",
@@ -1715,6 +2092,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Luz Que Fere",
     sections: [
       {
+        area: "regras",
         heading: "BALANCEAMENTO: toda cura caiu pela metade",
         items: [
           "A Cura do Principiante devolvia 19 PV com Ferida Fresca, a vida inteira de um mago Principiante, e três multiplicadores se empilhavam por cima: o dobro da Ferida Fresca, o custo de 1 PM no Intermediário e o +1d8 por rank de diferença no Rei. No Rei ela chegava a 59 PV por 1 PM; no Imperador, a 118.",
@@ -1724,6 +2102,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "NOVA REGRA: a Luz de Dois Gumes",
         items: [
           "A Magia de Cura agora fere qualquer inimigo, não só morto-vivo. Na Maestria de 1º patamar: toda magia de Cura pode, em vez de curar, mirar uma criatura hostil. A de alvo único vira ataque mágico, a de área pede teste de Vigor pra metade, e o alvo sofre como dano radiante o valor que a magia curaria, sem o dobro da Ferida Fresca. Contra morto-vivo, construto e corrompido, a luz acerta sempre e não permite teste.",
@@ -1732,6 +2111,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "NOVA MAESTRIA DO REI: Culpa Fresca",
         items: [
           "O Golpe Divino, que só mordia morto-vivo, deu lugar ao espelho da regra da escola: quem feriu um aliado seu neste turno ou no anterior carrega Culpa Fresca e sofre a sua luz em DOBRO. A mesma janela que cura em dobro quem apanhou queima em dobro quem bateu.",
@@ -1739,6 +2119,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "REGRA: todo guerreiro tem Touki desde o 1º patamar",
         items: [
           "As árvores cobravam PT no Principiante e no Intermediário enquanto as próprias Maestrias diziam que a reserva só chegava no Avançado. O PT Menor (igual ao Vigor) dava 1 ou 2 pontos, e o Escudeiro usava a própria Assinatura uma ou duas vezes.",
@@ -1747,6 +2128,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "CONSERTOS: o livro parou de se contradizer",
         items: [
           "Escudos: o Custe o Que Custar Soberano dava 'PV igual ao seu nível', num sistema sem nível. Agora devolve Vigor + Bônus de Rank, e reduz em 2d12 o dano interceptado. O Nome na Porta citava a condição 'Abalado', que não existe; agora diz o efeito direto.",
@@ -1766,6 +2148,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Casa Arrumada Antes da Reforma",
     sections: [
       {
+        area: "regras",
         heading: "REVISÃO: as dezenove árvores lidas de ponta a ponta, e nenhuma regra mexida ainda",
         items: [
           "Uma leitura completa das 601 habilidades com três perguntas, nesta ordem: é divertido? está equilibrado? dá pra entender de primeira? Os consertos decididos entraram na 0.1.77; o que ficou aberto (Punho do Fogo, Invocação e o Muro de Terra) está no O-QUE-FALTA.",
@@ -1776,6 +2159,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "O papel do designer, escrito",
         items: [
           "O CLAUDE.md agora diz quem revisa o livro e com que régua: diversão primeiro, balanceamento depois, simplicidade em terceiro. Uma mecânica legal e confusa reprova, e o designer sempre dá a própria opinião antes de o autor decidir.",
@@ -1783,6 +2167,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "FAXINA: a documentação só guarda o que está vivo",
         items: [
           "O PATCH_NOTES.md foi apagado. Ele era uma segunda cópia deste histórico, e já tinha divergido: seis versões (0.1.41, 0.1.45, 0.1.46, 0.1.48, 0.1.49 e 0.1.56) existiam só lá e nunca apareceram no site. As seis entraram aqui antes de o arquivo sair. O patch notes do site é agora a única cópia.",
@@ -1791,6 +2176,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Pedido anotado: a ficha de monstro",
         items: [
           "Na tela de encontros, a criatura feita à mão não tem atributos, bônus de acerto, Deslocamento, perícias, proficiências nem passivas, e na mesa o Mestre ficou sem saber quanto o monstro tem pra acertar. Também foram pedidos um contador de PV por criatura (digitar o dano e a vida cair ali) e o Deslocamento na ficha do jogador e no PDF.",
@@ -1805,6 +2191,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Mago Tinha Corpo de Guerreiro",
     sections: [
       {
+        area: "regras",
         heading: "BALANCEAMENTO: os PV de todas as oito escolas de magia caíram",
         items: [
           "O pedido foi 'diminui a vida de todos os magos', e a medição mostrou por quê: as faixas de PV dos três pilares se CRUZAVAM. Magia de Terra fechava o Imperador com 99 PV e Barreira com 92, contra 100 da Arquearia — a árvore de CORPO mais frágil do livro. Escolhendo a escola certa, o mago tinha corpo de guerreiro, e corpo é a única coisa que este livro cobra em troca de alcance, área e condição.",
@@ -1815,6 +2202,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "AUDITORIA: o livro nunca tinha medido o lado que APANHA",
         items: [
           "O projeto media o lado que bate por dois caminhos (check:arvores compara o teto do turno com a régua do Apêndice C; check:progressao mede dano por Ação). Nenhum dos dois olhava a reserva de PV contra o dano que vem de volta — e era justamente onde o livro não tinha número: dezenove escadas de Dado de PV escritas árvore a árvore, sem nada comparando uma com a outra nem com o inimigo do patamar.",
@@ -1825,6 +2213,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "E as duas pontas que a auditoria tinha deixado apontadas",
         items: [
           "O CÂNTICO DA CHAMA DO ÊXODO tinha 344 caracteres contra o teto de 280 do Avançado — a única magia do livro fora da faixa do próprio rank. Foi pra 270, que continua acima do piso de 200 onde mora o Bônus de Recitação Perfeita. As cinco imagens do cântico continuam de pé; o que saiu foram os advérbios e as repetições. Com isso o check:livro fechou em 0 erros e 0 avisos pela primeira vez.",
@@ -1833,6 +2222,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "As quatro divergências que a auditoria encontrou e consertou",
         items: [
           "Apêndice C, duas células abaixo do que a própria árvore entrega: Água no 3º prometia ~28 com um golpe único de média 30, e Terra no 4º prometia ~52 com um de 55. A régua pode ficar acima do maior golpe (são três Ações, vários alvos), nunca abaixo. Foram pra ~30 e ~55.",
@@ -1848,6 +2238,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Duas Armas na Mão, Cento e Vinte Arquivos na Pasta",
     sections: [
       {
+        area: "regras",
         heading: "NOVA REGRA: duas armas, uma em cada mão (Cap. 4, §3)",
         items: [
           "O livro tinha a Empunhadura Dupla do Deus do Norte e nada mais: quem não fosse dessa árvore e quisesse uma arma em cada mão não encontrava resposta em lugar nenhum, e a mesa decidia de novo toda vez que a pergunta aparecia.",
@@ -1858,6 +2249,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Espada Emprestada: o livro não dizia como a espada chega",
         items: [
           "O talento dava 'uma espada de qualidade superior' e parava aí. Na mesa isso vira duas leituras opostas — o Mestre entrega junto com o PA gasto, ou cobra uma missão inteira por ela — e nenhuma das duas estava errada, porque o texto não escolhia.",
@@ -1866,6 +2258,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "BALANCEAMENTO: o Tiro Perfeito parou de garantir o acerto",
         items: [
           "A Corda dava +3 degraus de uma vez, e as outras duas etapas empilhavam tudo que existe de garantia: Vantagem no acerto, o alvo sem somar Agilidade na CA, e um disparo que não podia ser aparado, desviado nem interceptado. Quatro Ações é caro — mas o que saía do outro lado era um tiro que praticamente não errava, e ataque que não erra tira do alvo qualquer decisão.",
@@ -1875,6 +2268,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "CORREÇÃO: cinco artes estavam na habilidade errada",
         items: [
           "Túmulo de Aço enterra alguém sob escombros, com dano contundente e a condição Preso. A arte que estava lá é uma briga de corredor com cabo de vassoura e carteira de escola de escudo — que é a MAESTRIA do Deus do Norte inteira ('se dá pra empunhar, você sabe usar'), e é pra lá que ela foi. Túmulo de Aço ficou sem arte.",
@@ -1885,6 +2279,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "Doze arquivos que estavam na pasta e ninguém via",
         items: [
           "Três Bainhas, Bala de Lágrimas e Desarme (Deus do Norte); Primeiro Golpe, Veneno Refinado, O Dossiê e A Mão Longa (Furtividade); Cantiga de Marcha e Cantiga de Ninar (Bardo); Emboscada Planejada (Navegação); Espada Emprestada (Deus da Espada) e Nome de Reidar (Deus da Água).",
@@ -1893,6 +2288,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "desempenho",
         heading: "🐛 Um gif de 6,75 MB entrou no livro sem passar pela dieta",
         items: [
           "A arte da Evolução: Forma Suprema foi mapeada logo depois de chegar — e a dieta (`comprimir-midia`) tinha rodado ANTES disso. Ela ficou no livro com 6,75 MB, mais que todas as outras artes da página somadas. Virou WebP animado de 765 KB, 88% menor.",
@@ -1901,6 +2297,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "A arte saiu da raiz de public/ e passou a espelhar o livro",
         items: [
           "Os ~120 arquivos ficavam soltos na raiz, com o nome que tinham quando foram baixados — `300.webp`, `desarmar dn=deus do norte.jpg`, `hazy cross dn.webp` — e misturados com o ícone do PWA, o logo e a capa da home.",
@@ -1909,6 +2306,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "As barras de rolagem deixaram de ser do Windows",
         items: [
           "Eram 15px de cinza com uma seta quadrada em cima e outra embaixo — uma correndo a página inteira ao lado do pergaminho, outra dentro do painel do sumário, colada nos títulos. Num site que cuida de textura, filete dourado e vinheta, elas eram o único pedaço de interface que ainda era do sistema operacional.",
@@ -1918,6 +2316,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "🐛 As duas setinhas no meio do menu não eram um botão",
         items: [
           "Era uma BARRA DE ROLAGEM. A faixa de links do topo tem `overflow-x-auto` pra caber em telas de ~900px, e overflow num eixo faz o outro virar `auto` por especificação: o conteúdo tinha 37px de altura (o link mais o filete dourado do ativo, 9px abaixo dele) numa caixa de 28px, e o Chrome desenhava uma barra vertical de 15px com setinha em cima e embaixo, no meio do menu, pra rolar nove pixels.",
@@ -1925,6 +2324,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "🐛 O sumário lateral do /livro começava debaixo do nav",
         items: [
           "Ele grudava a 16px do topo da janela — e o nav é `sticky top-0` com 81px de altura, ou seja, está sempre lá. O título 'Sumário' ficava borrado atrás da barra translúcida e a lista parecia começar cortada.",
@@ -1932,6 +2332,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "🐛 O sumário do livro parava de acompanhar a leitura",
         items: [
           "As posições dos títulos eram medidas uma única vez, e o livro não para de crescer depois disso: são ~120 artes carregando aos poucos, os catálogos de árvore abrindo e fechando, a fonte de display trocando quando termina de baixar. Cada uma empurra os títulos pra baixo, e o marcador ficava dezenas de milhares de pixels atrasado — o leitor no Cap. 4 e o sumário insistindo no Cap. 2.",
@@ -1947,6 +2348,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Duas Regras Que o Livro Prometia e o Código Não Cumpria",
     sections: [
       {
+        area: "site",
         heading: "Quebrantado tinha teto na regra e não tinha no sistema",
         items: [
           "A condição sempre disse 'até o máximo do Bônus de Rank de quem aplicou', e a árvore do Lutador repete isso na Mecânica Central. O código devolvia a contagem crua: nove cliques no + do Painel do Mestre levavam a CA a −9 e o dano de TODO ataque a −9, sem nada no sistema dizendo que aquilo era impossível.",
@@ -1955,6 +2357,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O Descanso Curto dizia três coisas diferentes",
         items: [
           "A tabela do Cap. 4 dava '25% dos seus PM, PP e PT'. O aviso logo abaixo dela dizia que PT voltam INTEIROS — corrigindo a tabela que estava três centímetros acima — e, no meio do argumento, que o Curto 'devolve metade da reserva de PM'. O Cap. 3 repetia a metade. Três números pro mesmo descanso.",
@@ -1970,6 +2373,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Cento e Seis Artes, e Setenta Megabytes a Menos",
     sections: [
       {
+        area: "desempenho",
         heading: "A arte do livro pesava 115 MB — agora pesa 44",
         items: [
           "Um único GIF tinha 18 MB, e outros dois passavam de 7. Num livro que precisa abrir offline numa mesa e no 4G de quem chegou atrasado, isso não é detalhe de build. Tudo virou WebP animado, descendo uma escada de largura e qualidade até caber: 60% menor no total, e nenhum arquivo abaixo de 400px de largura numa moldura que mostra 256px de altura.",
@@ -1977,6 +2381,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "CORREÇÃO: a falange de escudos era uma lâmina de água",
         items: [
           "O arquivo se chamava `300.webp` e foi mapeado como a parede de escudos do filme, em 'A Linha' — a habilidade de Rei do Escudeiro. É um corte de espada sobre água rasa, e foi parar em Fluxo Verdadeiro, no Deus da Água, que é onde ele sempre pertenceu.",
@@ -1985,6 +2390,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "Chama do Êxodo, e o Manto de Touki ilustrado",
         items: [
           "'Tempestade de Fogo' passou a se chamar Chama do Êxodo (獄炎火弾 / Exodus Flame): magia de Fogo Avançado que existe no material original com a mesma forma que a do livro — esfera grande, área que continua queimando. O `id` interno não mudou, porque ele é a chave das fichas já salvas na mesa.",
@@ -1999,6 +2405,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Tiro Perfeito Não É de Todo Mundo",
     sections: [
       {
+        area: "livro",
         heading: "O Tiro Perfeito volta a ser exclusivo da Arquearia — na leitura, não só na regra",
         items: [
           "A regra nunca mudou: o Tiro Perfeito é a habilidade de assinatura de Arquearia no patamar Principiante, e sempre exigiu comprar aquele nó da árvore e estar com arco ou besta em mãos. O problema era onde ela está escrita — no Capítulo 3, que é o capítulo das regras que valem pra TODO MUNDO, ao lado de Ações, Reações e Touki. O pré-requisito aparecia no meio do segundo parágrafo, e o lugar dizia mais alto que o texto.",
@@ -2006,12 +2413,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "CORREÇÃO: o diagrama do Tiro Perfeito publicava uma CD que não existe",
         items: [
           "A quarta etapa, A Solta, aparecia no diagrama como 'ataque · CD 12'. A Solta é o ataque NORMAL, rolado contra a CA do alvo — a CD 12 fixa vale só para as três etapas de preparação, e o rótulo estava sendo repetido nas quatro caixas. Quem jogasse pelo diagrama rolaria o disparo final contra 12 e acertaria coisa que devia errar. O diagrama agora diz 'ataque normal', sem CD.",
         ],
       },
       {
+        area: "livro",
         heading: "Sessenta habilidades do livro passam a ter arte",
         items: [
           "As 44 mídias que estavam paradas em public/ entraram no livro: Deus da Espada, Deus da Água, Deus do Norte, Cavalaria e Escudos, Armas Pesadas, Vendaval, Arquearia, Furtividade, Bardo, Navegação, Invocação, Desintoxicação e as magias elementares. Talento também pode ter arte agora, e não só magia e técnica — Marcha Forçada foi o caso que forçou a mudança.",
@@ -2026,6 +2435,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Vinte e Cinco Por Cento",
     sections: [
       {
+        area: "encontros",
         heading: "O chefe agora dizima o grupo em 25% das vezes — antes era 0%",
         items: [
           "O ajuste de Chefe do Apêndice G virou POR PATAMAR, porque um número só não podia servir aos três: o PV somado de um grupo sobe cerca de 28% por patamar e o dano por turno das linhas do bestiário sobe cerca de 50%. O dano corre 1,7 vez mais rápido, então o mesmo multiplicador que deixa o 3º patamar fácil deixa o 5º impossível.",
@@ -2041,6 +2451,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Zero",
     sections: [
       {
+        area: "regras",
         heading: "Nenhum capstone rende menos que o rank abaixo dele — pela primeira vez",
         items: [
           "O contador nasceu em dezesseis na 0.1.41, caiu pra três na 0.1.50 e fechou em ZERO. A decisão era subir as três técnicas do topo; duas subiram e a terceira saiu sozinha, porque o Sepultamento (Terra, Imperador) já tinha o dano por turno escrito num campo estruturado que o motor não lia. Ler o campo bastou: o teto da Magia subiu de 30,6 pra 33,0 por Ação, e o Corpo deixou de render 1,7 vez mais que a Magia pra render 1,6.",
@@ -2056,6 +2467,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Por Turno",
     sections: [
       {
+        area: "encontros",
         heading: "O livro escreve 'por turno' em sete magias, e o motor contava uma vez só",
         items: [
           "Em Chamas sempre teve relógio; magia sustentada não tinha nenhum. São sete e não três, que era quanto o backlog listava: Tomar o Ar, Tempestade Cortante e Vazio (Vento), Rio de Magma (Terra), Estrangular (Armas Pesadas), Prisão de Purgatório e Trono de Chamas (Punho do Fogo). Medida, a Tempestade Cortante era 36 de dano; agora é 36 de impacto mais 34 mais 34.",
@@ -2071,6 +2483,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Verde Falso",
     sections: [
       {
+        area: "bastidores",
         heading: "Os checks de tela passavam medindo a página 404",
         items: [
           "Os checks mobile, a11y e contraste entram no site por /semente-dev, que devolve 404 em produção de propósito. Rodados contra npm run start, os três mediam a página de erro dezesseis vezes e diziam que estava tudo certo.",
@@ -2078,6 +2491,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Os dois achados que o verde falso escondia",
         items: [
           "O texto 'Só por árvore ou 1 PA', dos Grupos de Arma, tinha contraste 2,86:1 no tema claro. Foi pra 4,7:1.",
@@ -2085,12 +2499,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "O sumário não descrevia o livro",
         items: [
           "Vinte e quatro seções não estavam no índice, entre elas os quatro sistemas compartilhados do Cap. 3 (Dado de Arma, Touki, Tiro Perfeito e Triângulo dos Estilos). Virou o npm run check:sumario, que acusa âncora prometida e inexistente e seção existente e não citada.",
         ],
       },
       {
+        area: "bastidores",
         heading: "Segurança e leitura",
         items: [
           "O next@16.3.2 tinha uma falha crítica de execução remota de código (GHSA-p293-qw3h-jr36, CVSS 9.0). Subiu pra 16.3.4, e o npm audit fechou em zero.",
@@ -2106,6 +2522,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Progressão Que Não Se Compra",
     sections: [
       {
+        area: "regras",
         heading: "Dojos e Mestres: certos nós agora são fechados a chave, e a chave é uma pessoa",
         items: [
           "Até aqui PA era a única porta de toda a progressão, e isso tem um preço que só aparece depois de vinte sessões: o mundo deixa de importar para a ficha. Dá pra jogar a campanha inteira numa taverna e progredir igual a quem atravessou o continente. Um mestre precisa estar dois patamares acima — divindades ignoram a escada, e um salto de patente (Imperador ensinando um Rei) vale por dois.",
@@ -2123,6 +2540,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Quatro Ações Num Turno de Três",
     sections: [
       {
+        area: "regras",
         heading: "O Tiro Perfeito: a única técnica que compra potência com tempo",
         items: [
           "Toda técnica do livro paga em recurso — PT, PM, PP. O Tiro Perfeito paga em TURNOS: quatro Ações num turno de três, então ele sempre atravessa turnos. Quem prepara um passou um turno inteiro sem defender ninguém.",
@@ -2140,6 +2558,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Espada Sim, Adaga Não",
     sections: [
       {
+        area: "regras",
         heading: "Proficiência de arma virou grupo, e não faixa de dano",
         items: [
           "A régua antiga era 'arma simples é até d6, arma marcial é d8+'. Isso deixava a Rapieira (d6) livre pra todo mundo e a Espada Longa (d8) não; punha o Arco Curto e a Espada Curta na mesma categoria; e tornava impossível o caso mais óbvio de todos — ser proficiente em espada e não em adaga, já que a adaga (d4) estava ABAIXO da faixa livre.",
@@ -2157,6 +2576,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Ficha Impressa",
     sections: [
       {
+        area: "site",
         heading: "Cinco defeitos que só a folha em papel mostra",
         items: [
           "Cabeçalho de seção órfão: \"ARMAS E ATAQUES MARCIAIS\" terminava a página 1 e a tabela dele começava a 2 — idem \"EQUIPAMENTO E INVENTÁRIO\". Agora o título vai grudado no conteúdo dele, e quando o par não cabe ele pula inteiro pra folha seguinte.",
@@ -2173,6 +2593,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Santo Que Ninguém Usava",
     sections: [
       {
+        area: "regras",
         heading: "A magistral da árvore rendia menos que a técnica de três patamares atrás",
         items: [
           "Espada de Luz (Deus da Espada) e Golpe do Desespero (Deus do Norte) eram, cada um, a ÚNICA habilidade de 2 Ações num galho inteiro de 1 Ação — e por isso rendiam menos por Ação que o rank abaixo deles. Quem chegava ao Santo destravava a magistral e continuava usando a técnica antiga.",
@@ -2188,6 +2609,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Terror Nunca Foi Invencível",
     sections: [
       {
+        area: "encontros",
         heading: "A tabela de chefes media a distância, não a calibragem",
         items: [
           "A tabela punha um único grupo de 12 PA contra chefes de 3º, 4º e 5º patamar. Agora cada linha monta o grupo do patamar dela, e o resultado é o oposto: contra um grupo do mesmo patamar, todo chefe perde 100% das vezes e não mata ninguém. O 'Terror invencível' era artefato do banco de provas.",
@@ -2202,6 +2624,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Era a Ficha, Não a Árvore",
     sections: [
       {
+        area: "encontros",
         heading: "O Deus da Espada tinha o talento, e o playtest nunca o comprava",
         items: [
           "O Vex estava em 1% de sobrevivência. A árvore tem o Braço de Ferro (1 PA, +4 PV por patamar), mas o algoritmo das fichas de playtest comprava em ordem de arquivo e nunca chegava nos talentos. Com o talento, o time do Vex foi de 45,1% pra 54,9% de vitória.",
@@ -2217,6 +2640,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Escada Que Não Subia",
     sections: [
       {
+        area: "regras",
         heading: "O teto de conjuração caiu de 6 Ações pra 4",
         items: [
           "A escada antiga subia 2-2-3-4-5-6: o custo em Ações TRIPLICAVA do Principiante ao Imperador enquanto o dano não triplicava junto, e a magia suprema valia menos por Ação que a de dois ranks abaixo. Agora é 2-2-3-3-4-4, e nenhum dado foi mexido — só o custo. Fogo no Imperador foi de 13,6 pra 20,4 por Ação; Água de 11,9 pra 17,8; Terra de 13,2 pra 19,8.",
@@ -2224,6 +2648,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Os dezesseis capstones viraram cinco — e onze não eram desequilíbrio",
         items: [
           "Três eram ERRO DE LEITURA do motor: Aguentar e Aguentar Soberano (Escudos) têm \"Reduz 2d10 + Vigor\" no campo de dano — é redução, e o motor contava como dano causado; e Empunhadura Dupla (Norte) é regra de arma, não ataque. Corrigidos junto com \"Metade do dado\" e \"arma secundária\", que o motor lia como zero.",
@@ -2232,6 +2657,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "A Mara virou o que a descrição dela diz",
         items: [
           "O Golpe de Escudo Soberano era PRINCIPIANTE, 1 Ação, 3d8 + Força + Bônus de Rank — e escalava com o Rank pra sempre. Era ele, sozinho, que fazia a build descrita como \"protege, não mata\" liderar o dano do playtest. Caiu pra 2d8: a versão Soberana continua melhor que o Golpe de Escudo comum, mas pelo CONTROLE (empurra 6m, CD +2, a marca de última posição), não pelo dano.",
@@ -2247,12 +2673,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "As Quatro Árvores que Ninguém Tinha Lido",
     sections: [
       {
+        area: "regras",
         heading: "Suishin, Escudos, Ladino e Tático, lidas linha a linha",
         items: [
           "Nada quebrado: as quatro são coerentes com o que prometem. O Tático não tem uma única habilidade de dano, e as dezenove habilidades dele fabricam Ação e bônus pros outros. O Suishin é uma árvore inteira de Reações. Em Escudos, todo o dano vem do Golpe de Escudo Soberano, do Principiante. O Ladino tem uma habilidade de dano. As quatro são invisíveis pro simulador e só se respondem jogando.",
         ],
       },
       {
+        area: "encontros",
         heading: "Os tetos do Cap. 4 no motor",
         items: [
           "'Vantagem é binária' já funcionava no motor e ganhou cinco testes, inclusive o cancelamento: Preso atacando um alvo Caído rola um d20 só.",
@@ -2267,6 +2695,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Apagar o que Já Foi Feito",
     sections: [
       {
+        area: "bastidores",
         heading: "Faxina, sem regra nova",
         items: [
           "Quatro funções mortas saíram (ACEITA_NA_IMPORTACAO_CRIATURA, getAvailableCombinedSpells, rollRandomCharacter e getCondicaoPorNome), e onze exports usados só dentro do próprio arquivo perderam o export.",
@@ -2281,6 +2710,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O iPhone Era Meio Cidadão",
     sections: [
       {
+        area: "site",
         heading: "O ícone da tela de início era uma captura da página",
         items: [
           "A mesa usa iPhone E Android, e o caminho padrão de PWA é o do Chromium — três coisas que pareciam prontas cobriam só o Android.",
@@ -2289,6 +2719,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O entalhe e a barra de gestos",
         items: [
           "O layout declarava a barra de status translúcida — que manda o conteúdo passar POR BAIXO dela — mas sem viewport-fit=cover. As duas regras brigam num aparelho com entalhe: uma manda o conteúdo pra baixo do relógio, a outra encaixa a página dentro da área segura.",
@@ -2304,6 +2735,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Navegar as Árvores com o Polegar",
     sections: [
       {
+        area: "site",
         heading: "O mapa era o único jeito, em qualquer tela",
         items: [
           "O mapa radial é a identidade visual do projeto, e era também a ÚNICA forma de navegar as árvores: dezenove delas, seis patamares cada, espremidos em 390px e alcançados por pinça e arrasto. O relato veio do autor, num aparelho de verdade — \"achei bem ruim navegar pelas árvores\" —, e nenhum script tinha como dizer isso: o check:mobile mede transbordo e alvo de toque, e os dois passavam há versões. O que ele não mede é quantos gestos custa chegar numa habilidade.",
@@ -2312,6 +2744,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "“2 Açãoões”",
         items: [
           "A lista nova expôs um erro de texto que já existia: o plural de \"Ação\" era feito grudando o sufixo na palavra inteira em vez de substituí-la, então 2 virava \"2 Açãoões\".",
@@ -2326,6 +2759,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Curandeiro na Tela do Mestre",
     sections: [
       {
+        area: "encontros",
         heading: "A tabela “Quem fez o quê” media o curandeiro pelo que ele não faz",
         items: [
           "O /encontros simula 300 batalhas contra as fichas de verdade do grupo e imprime quem fez o quê. A tabela tinha duas colunas — dano por combate e sobreviveu — e um curandeiro aparecia ali com um 0 ao lado do nome, na última linha. Isso lê como ficha ruim, e é papel diferente.",
@@ -2341,6 +2775,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Subir de Rank Vale a Pena?",
     sections: [
       {
+        area: "bastidores",
         heading: "Um check novo: npm run check:progressao",
         items: [
           "Ele mede duas coisas por Ação: a melhor técnica de um rank rende mais que a do rank abaixo? E Corpo e Magia estão no mesmo campeonato?",
@@ -2356,6 +2791,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Magia que Não Cabe no Turno",
     sections: [
       {
+        area: "encontros",
         heading: "Vinte magias nunca tinham sido simuladas. Nenhuma vez.",
         items: [
           "Um turno tem 3 Ações, e o custo de conjuração sobe com o rank: Avançado 3, Santo 4, Rei 5, Imperador 6. Ou seja, magia de Santo pra cima NÃO CABE num turno — e o motor escolhia ações filtrando pelo que cabia. Vinte ações de dano do livro eram inalcançáveis, e não as menores: Sol Menor, Zero Absoluto, Era Glacial, Vazio, Flashover, Maremoto, Sepultamento.",
@@ -2364,6 +2800,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "E o que o destravamento revelou",
         items: [
           "Com as magias longas finalmente na mesa, dá pra comparar o melhor dano esperado POR AÇÃO de cada árvore. Só 2 das 6 árvores de magia têm a magia longa valendo a pena: no Fogo, o Sol Menor (Imperador, 22 PM, 6 Ações) rende MENOS por Ação que a Lança de Plasma (Avançado, 13 PM, 3 Ações). A magia suprema é pior que a de dois ranks abaixo. No Vento é a mesma coisa.",
@@ -2379,6 +2816,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Exceção Cobrada Junto com a Regra",
     sections: [
       {
+        area: "encontros",
         heading: "Sete técnicas rolavam a exceção SOMADA ao caso base",
         items: [
           "A rolagem soma todo grupo de dados que encontra na linha, e o livro escreve os dois casos juntos — então a condição era cobrada junto com a regra. O Zero Absoluto (Água) rolava 36d12 onde o livro escreve 12d12: três vezes. O Sol Menor rolava 2,4×, a Explosão do Fogo o dobro, e mais quatro: Lança de Fogo, Guilhotina de Vácuo, Lâmina do Horizonte e Rio de Magma.",
@@ -2387,6 +2825,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Correr em linha reta não é atacar em área",
         items: [
           "A palavra \"linha\" sozinha marcava como ataque EM ÁREA cinco técnicas sem área nenhuma, e as três piores são as que a IA mais escolhe: a Investida (Deus da Espada), a Forma Quadrúpede (Deus do Norte) e a Investida Devastadora (Armas Pesadas) — as três dizem \"avance em LINHA RETA\", que é o caminho de quem corre e não a forma do golpe. A Investida acertava os cinco inimigos do playtest, todo turno.",
@@ -2394,6 +2833,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O playtest, de novo — e uma pergunta afiada",
         items: [
           "Mara (Escudos) foi de 112 para 196 de dano por batalha e de 56% para 67% de sobrevivência. Gorr (Armas Pesadas) de 101 para 177. Sera devolve 205 PV por batalha. E Vex (Deus da Espada) DESPENCOU de 92 para 29, com a sobrevivência caindo de 28% para 8%.",
@@ -2409,12 +2849,14 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Fio da Vida",
     sections: [
       {
+        area: "encontros",
         heading: "O pedido: um chefe tem que poder dizimar o grupo",
         items: [
           "O alvo é 25% de dizimação no mínimo. Pra mirar nisso foi preciso primeiro MEDIR: a tabela de chefes mostrava vitória e mortes médias, nunca a taxa de dizimação — e \"2,8 mortes médias\" tanto pode ser \"quase sempre morrem três\" quanto \"metade das vezes ninguém morre e na outra metade morrem todos\". A coluna DIZIMADO existe agora, e mediu 0% / 5% / 100% no 3º, 4º e 5º patamares. Um penhasco, não uma curva.",
         ],
       },
       {
+        area: "encontros",
         heading: "Por que não havia meio-termo: o motor matava a 0 PV",
         items: [
           "O Cap. 4 §7 é explícito: a 0 PV o personagem cai INCONSCIENTE, rola o Fio da Vida a cada turno, junta Marcas da Morte, e qualquer magia de cura de um aliado remove todas as Marcas e o acorda. O simulador tratava 0 PV como morte instantânea e permanente.",
@@ -2423,6 +2865,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "A tabela de chefes lutava contra o único time sem curandeiro",
         items: [
           "Ela usava \"o time que venceu o 5×5\" — estranho por si, já que fazia a régua de chefe do livro depender de um confronto entre jogadores, e um problema de verdade depois que a cura entrou no motor: o vencedor é sempre o Time B, e o Time B não tem curandeiro. A tabela publicava o comportamento de um grupo que não pode levantar ninguém do chão.",
@@ -2430,6 +2873,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O resultado, e o que ele revelou",
         items: [
           "O 4º patamar ganhou o meio-termo que não existia: de 92%/8% para 55% de vitória contra 45% de dizimação, em 4,8 rodadas médias. Ele já cumpre o alvo de 25%, e deixou de ser cara-ou-coroa porque levantar um companheiro interrompe a espiral.",
@@ -2445,6 +2889,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Curandeira Não Bate",
     sections: [
       {
+        area: "encontros",
         heading: "O instrumento via 20% do livro, e não era 20% espalhado",
         items: [
           "Contado: o livro tem 601 habilidades e talentos, e a lista de ações do simulador tinha 122. A distribuição é que era o problema — Barreira e Proteção 0 de 21, Espíritos e Feras 0 de 7, Bardo 0 de 6, Navegação e Liderança 0 de 6, Estilo Deus da Água 1 de 19, Cura 2 de 23, Cavalaria e Escudos 4 de 23; do outro lado, Fogo 14 de 19 e Água 17 de 24.",
@@ -2453,6 +2898,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Cura e PV Temporários entraram",
         items: [
           "O motor DESCARTAVA cura e PV Temporários com um filtro de texto. Recusar estava certo — os três moram no mesmo campo do livro e o sinal é oposto, e somar cura como dano já contou a Prontidão como 105 de dano por turno. O erro era parar aí.",
@@ -2461,6 +2907,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Um erro de três vezes o valor, achado no meio do caminho",
         items: [
           "A rolagem soma TODO grupo de dados que encontra na fórmula, e o livro escreve os dois casos na mesma linha: \"2d8 + BC de PV (4d8 + BC se Ferida Fresca)\". A linha crua rola 2d8+4d8, e dobrar isso pela Ferida Fresca devolveria 12d8 onde o livro promete 4d8.",
@@ -2468,6 +2915,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O playtest ganhou a coluna que faltava",
         items: [
           "O Time A (com a Sera) subiu de 6,7% para 8,3% de vitória. A tabela de contribuição agora tem PV DEVOLVIDOS ao lado do dano: a Sera aparece com 21 de dano e 44 de cura por batalha, e sai do fim da tabela para o quinto lugar. O que mudou não foi a ficha dela, foi a régua.",
@@ -2476,6 +2924,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O que foi consertado por baixo",
         items: [
           "Uma porta só pra dano. A subtração de PV estava copiada em cinco lugares — enquanto dano era subtração, cinco cópias eram feias e inofensivas; PV Temporários e Ferida Fresca são consequências de LEVAR dano, e um lugar que não as aplicasse viraria buraco silencioso.",
@@ -2491,6 +2940,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Dez Destinos Viraram Sete",
     sections: [
       {
+        area: "site",
         heading: "A barra do topo tinha dez links",
         items: [
           "Ela cresceu um link por ferramenta nova, e uma barra com dez respostas deixa de ser uma pergunta. Três saíram — nenhum por ser pouco usado. A barra ficou com Ficha, Árvores, Personagens, Mestre, Loja, Livro e Busca.",
@@ -2500,6 +2950,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Iniciativa e Encontros agora moram no Painel do Mestre",
         items: [
           "As duas são trabalho de Mestre, e o /mestre passou a ser a porta delas — junto do comparador de builds, que já estava fora da barra pelo mesmo motivo e agora deixou de ser exceção. O painel abre com três cartões, e cada um diz o que a ferramenta RESPONDE, não o que ela é: \"este encontro mata a mesa?\" informa; \"Encontros\" não informa nada a quem nunca abriu.",
@@ -2515,6 +2966,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A CA era Decoração",
     sections: [
       {
+        area: "encontros",
         heading: "Nenhuma técnica do livro errava — literalmente nenhuma",
         items: [
           "O simulador decide se uma técnica rola ataque (e portanto pode ERRAR) procurando frases como \"Ataque mágico à distância\" no texto dela. Ele procurava no campo errado: lia a fórmula de dano, e a frase mora na descrição do efeito. Medido: ZERO das 122 ações do livro inteiro rolavam ataque. Todas caíam no ramo de teste de resistência, que não consulta a CA do alvo e garante metade do dano mesmo quando o alvo passa no teste.",
@@ -2523,6 +2975,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "A IA sabia resolver e não sabia escolher",
         items: [
           "O mesmo erro tinha um irmão na outra ponta do arquivo. QUINZE técnicas do livro multiplicam o dado da arma (\"+2 Dados de Arma\", \"Dado de arma rolado cinco vezes\") em vez de trazer dados próprios — entre elas CINCO das seis ações de dano do Deus da Espada, que o livro chama de maior dano do jogo. A RESOLUÇÃO sempre as rolou; a IA que ESCOLHE contava zero nelas e preferia qualquer outra coisa.",
@@ -2531,6 +2984,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O playtest mudou de dono",
         items: [
           "Vex (Deus da Espada) caiu de 94 pra 69 de dano por batalha e de 45% pra 28% de sobrevivência. Ele era o maior beneficiado por nunca errar, e é quem mais perde quando a CA volta a existir — mesmo ganhando os Dados de Arma que a IA agora enxerga (o golpe dele subiu de 21 pra 35 por turno).",
@@ -2539,6 +2993,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "Quebrantado entrou na simulação",
         items: [
           "Das cinco condições que o motor declarava não modelar, Quebrantado era a única puramente numérica: cada acúmulo tira 1 da CA e 1 do dano de quem o carrega, até o teto do Bônus de Rank de quem aplicou. As outras quatro (Atolado, Desequilibrado, Marcado, Soterrado) são sobre movimento e posição, e este motor não tem mapa.",
@@ -2555,6 +3010,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Comprar o Quê?",
     sections: [
       {
+        area: "site",
         heading: "Os botões passaram a dizer o que fazem",
         items: [
           "Numa grade de 85 itens da loja, um leitor de tela anunciava \"Comprar, botão\" oitenta e cinco vezes seguidas. O texto visível basta pra quem enxerga o card em volta; não basta pra quem só ouve o botão. Agora cada um anuncia o nome e o preço — na loja, nas árvores e nas magias combinadas.",
@@ -2570,6 +3026,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Aponte a Câmera",
     sections: [
       {
+        area: "site",
         heading: "A ficha vira um QR",
         items: [
           "Entre dois celulares na mesma mesa, o caminho mais curto não é link nem arquivo: é apontar a câmera. Não passa por aplicativo de mensagem, não depende de o link sobreviver inteiro, e não precisa de gerenciador de arquivos.",
@@ -2579,6 +3036,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E a prova de que ele lê de verdade",
         items: [
           "A objeção contra fazer isso era boa: não dá pra VERIFICAR um QR sem uma câmera, e um QR que desenha mas não lê é uma funcionalidade que mente.",
@@ -2595,6 +3053,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Rolar a Perícia",
     sections: [
       {
+        area: "site",
         heading: "Não existia lugar nenhum pra rolar uma perícia",
         items: [
           "Provavelmente a rolagem mais frequente da mesa, e o site não tinha onde fazê-la: a ficha listava as perícias sem botão, e o rolador tinha quatro fontes de Teste — Livre, Atributo, Magia e Marcial — nenhuma delas perícia.",
@@ -2605,6 +3064,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O dado que faltava pra isso existir",
         items: [
           "O Bônus de Rank em perícia estava escrito só na PROSA de cada árvore (\"soma em Furtividade, Ladinagem, Percepção…\"), e prosa não é computável: ler aquilo exigiria adivinhar por regex numa frase escrita à mão, que quebra em silêncio no dia em que alguém a reescrever.",
@@ -2619,6 +3079,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Que a Mesa Mostrou",
     sections: [
       {
+        area: "site",
         heading: "O site passou a contar sozinho",
         items: [
           "Metade das pendências de balanceamento pede uma contagem que só sai no papel. A do Vendaval é literal: conte os ataques corpo a corpo que ACERTARAM o Vendaval e compare com o outro da linha de frente. Ninguém faz isso com lápis no meio de uma sessão — e é por isso que essas pendências não fecham.",
@@ -2628,6 +3089,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E o que ele não finge saber",
         items: [
           "Se um ataque acertou. O site vê a rolagem, não a CA do alvo — quem decide o acerto é o Mestre, na cabeça dele. Uma taxa de acerto ali seria número inventado.",
@@ -2642,6 +3104,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Duas Builds, Um Alvo",
     sections: [
       {
+        area: "encontros",
         heading: "Comparar deixou de ser opinião",
         items: [
           "Metade das pendências de balanceamento do projeto é \"jogar e ver\" — e parte delas tem um lado que dá pra medir ANTES da mesa. Enquanto não se mede, \"essa build é mais forte\" é palpite com número nenhum atrás.",
@@ -2652,6 +3115,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E a barra do topo respirou",
         items: [
           "Com dez destinos, \"Livro de Regras\" era o rótulo que empurrava a Busca pra fora da tela em monitores estreitos. Virou \"Livro\".",
@@ -2666,6 +3130,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Ctrl+P",
     sections: [
       {
+        area: "site",
         heading: "A ficha agora imprime como ficha",
         items: [
           "O PDF do Typst continua sendo o documento bonito de três páginas — e ele precisa do servidor, porque o Typst roda lá. Isto é o outro caminho: Ctrl+P na própria ficha, funcionando OFFLINE, porque é só CSS.",
@@ -2684,6 +3149,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Mestre Olha a Mesa",
     sections: [
       {
+        area: "encontros",
         heading: "As fichas do grupo lado a lado",
         items: [
           "O montador de encontros já simula contra as fichas de verdade, mas isso responde uma pergunta de preparo: este encontro mata a mesa? Entre um turno e outro o Mestre tem outra, e ela é de consulta — quem está mais machucado, quem ainda tem recurso, quem está com o quê pegando.",
@@ -2693,6 +3159,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "E um número que ele deliberadamente não mostra",
         items: [
           "\"Dano por turno do grupo\" contra a régua do Apêndice C parecia o número mais óbvio a exibir aqui — e é justamente o que a própria régua avisa não ser automatizável: ela embute quantas Ações a árvore gasta, quantos alvos ela pega e se o alvo veste Touki, e nada disso está nos dados de uma magia isolada.",
@@ -2707,6 +3174,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Modo Mesa",
     sections: [
       {
+        area: "site",
         heading: "Uma tela só, aberta a sessão inteira",
         items: [
           "Ficha, iniciativa, encontros e rolador são quatro rotas, e numa sessão de verdade a pessoa alterna entre elas o tempo todo — num celular, com uma mão, enquanto é a vez dela. Cada troca é um toque e uma perda de contexto, e o contexto que se perde é justamente de quem é o turno.",
@@ -2723,6 +3191,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Eu Aguento Isso?",
     sections: [
       {
+        area: "encontros",
         heading: "O simulador saiu da mão do Mestre e chegou na do jogador",
         items: [
           "O /encontros sempre soube rodar 300 batalhas contra as fichas do grupo, mas isso responde a pergunta do MESTRE: este encontro mata a mesa? A pergunta do jogador é outra e mais simples — quantos turnos eu aguento contra um Sapo-Lodo? e contra três?",
@@ -2740,6 +3209,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Dormir Conta",
     sections: [
       {
+        area: "site",
         heading: "Descanso virou botão, com a conta à vista",
         items: [
           "Descanso Curto e Longo agora acontecem na ficha, pelas regras exatas do Cap. 4, §7. Nada muda sozinho: a tela mostra quanto vai devolver de cada reserva e de onde saiu cada número (\"25% de 40\", \"20% rolado no Vigor\"), e só aplica no segundo toque. Um número que aparece sem a conta ao lado é um número que a mesa não confere.",
@@ -2749,6 +3219,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E o Downtime saiu do papel",
         items: [
           "As seis atividades de uma semana livre (Cap. 5, §1) estão na ficha. Trabalhar rola 2d6 × seu maior Bônus de Rank e o ouro entra na hora; Recuperar-se enche os PV. As outras quatro são combinação de mesa — o site mostra o texto em vez de fingir que resolve.",
@@ -2756,6 +3227,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Uma contradição do livro que precisa de você",
         items: [
           "Sobre quanto PM o Descanso Curto devolve, o livro diz duas coisas diferentes: a tabela do Cap. 4 diz 25%, e o aviso logo abaixo dela e o Cap. 3 dizem metade. Não é detalhe — o próprio aviso constrói a defesa do teto de dois Curtos em cima da conta de 50%.",
@@ -2770,6 +3242,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Ficha Sabe Que Você Está Envenenado",
     sections: [
       {
+        area: "site",
         heading: "Condição deixou de ser anotação no papel",
         items: [
           "A ficha tem uma seção de Condições: marque Envenenado, Preso, Quebrantado, e o site passa a saber. Ela fica logo abaixo dos números que ela muda, de propósito — ler as duas coisas juntas é o que faz um número menor parecer explicado em vez de errado.",
@@ -2780,6 +3253,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O que ela não tenta fazer: contar rodadas",
         items: [
           "A duração das condições do Cap. 4 é escrita em prosa — \"até quebrar o gelo\", \"enquanto a fonte do medo estiver visível\". Um contador numérico obrigaria a mesa a inventar um número que a regra não pediu e a mantê-lo atualizado a cada turno pra ele não mentir.",
@@ -2794,6 +3268,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Condição Que Se Explica",
     sections: [
       {
+        area: "site",
         heading: "\"O alvo fica Envenenado\" agora diz o que isso faz",
         items: [
           "O glossário do Cap. 4 sempre avisou que é \"aqui, e só aqui\" que cada condição tem definição completa — e centenas de habilidades a citam pelo nome sem repetir o efeito. Na mesa isso era: ler a magia, não lembrar o que Quebrantado faz, sair da magia, procurar o capítulo 4, voltar. No meio do turno.",
@@ -2803,6 +3278,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "E o glossário virou dado",
         items: [
           "As 24 condições saíram de uma tabela escrita à mão no capítulo e viraram src/data/condicoes.ts. A tabela impressa no livro é gerada de lá, então não existe cópia pra divergir.",
@@ -2817,6 +3293,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Dado Segue Você",
     sections: [
       {
+        area: "site",
         heading: "O rolador existia só na ficha",
         items: [
           "Ele nasceu dentro da ficha, o que fazia sentido enquanto rolar dado fosse uma coisa que se faz olhando a ficha. Não é: no meio do combate a pessoa está no tracker de iniciativa vendo de quem é o turno, ou em Encontros com a criatura aberta — e era exatamente aí que ela tinha que sair da tela pra rolar um d20.",
@@ -2832,6 +3309,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Atalho Que Faltava",
     sections: [
       {
+        area: "site",
         heading: "Macro agora guarda Teste, e não só dano",
         items: [
           "Os macros do rolador só sabiam guardar fórmula de dano — \"Bola de Fogo → 2d10+5\". Metade do que se repete numa sessão é o outro lado: Furtividade com Vantagem, resistir ao veneno, iniciativa. Tudo d20 com um modificador e um modo de vantagem, e nada disso cabia numa fórmula de dados.",
@@ -2849,6 +3327,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Um Toque, e Foi",
     sections: [
       {
+        area: "site",
         heading: "Passar a ficha adiante virou um toque",
         items: [
           "A ficha e a criatura ganharam um botão Compartilhar que abre a bandeja do próprio celular — a mesma que aparece em qualquer app. Escolhe o contato e acabou: sem passar pela área de transferência, sem baixar arquivo, sem gerenciador de arquivos.",
@@ -2858,6 +3337,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E o site diz que dá pra instalar",
         items: [
           "O site é instalável desde a 0.1.15, mas isso só servia pra quem sabia caçar \"Adicionar à tela de início\" no menu do navegador. Agora tem um botão no rodapé.",
@@ -2873,6 +3353,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Link Que Chegou Pela Metade",
     sections: [
       {
+        area: "site",
         heading: "\"Este link não traz uma ficha\" dizia a mesma coisa para cinco problemas diferentes",
         items: [
           "Um link de ficha que não abre podia ser: o app de mensagem comendo a parte depois do #, um link de criatura aberto na tela de ficha, o link cortado no meio, o navegador antigo demais, ou um conteúdo que não é ficha. A tela dizia a mesma frase para os cinco, e quem recebia não tinha como saber de quem era o problema.",
@@ -2880,6 +3361,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O link que não abriu no iPhone tem nome",
         items: [
           "A descompressão que o link usa (DecompressionStream) só existe no Safari a partir do iOS 16.4, de março de 2023. Num iPhone mais antigo o link comprimido simplesmente não abre — e o erro era engolido, virando \"link inválido\", que manda a pessoa culpar o link e quem mandou.",
@@ -2888,6 +3370,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Colar o link, em vez de baixar arquivo",
         items: [
           "Toda tela de link que falha agora tem um campo de colar. É o caminho principal no celular: baixar um arquivo e achá-lo de novo num gerenciador de arquivos é o passo em que a importação morre num telefone.",
@@ -2895,6 +3378,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E agora se sabe quanto o link pesa",
         items: [
           "Medido: uma ficha com uma árvore inteira até Imperador dá um link de ~1.086 caracteres; com duas árvores, ~1.594; com três, ~2.058; com cinco, ~2.990.",
@@ -2910,6 +3394,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Porta Errada",
     sections: [
       {
+        area: "site",
         heading: "O site respondia 404 em inglês",
         items: [
           "Um endereço errado devolvia literalmente \"404: This page could not be found.\" — em inglês, num site declarado como pt-BR, e com dois <title> no mesmo documento, porque a tela embutida do framework trazia o dela por cima do que o layout já tinha escrito.",
@@ -2918,6 +3403,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E um erro de execução era indistinguível de falta de sinal",
         items: [
           "Sem tela de erro própria, qualquer defeito de runtime caía na tela padrão do framework. Isso ficou pior depois da 0.1.15: offline, essa tela é idêntica a \"faltou rede\", e quem está numa mesa sem sinal não tinha como saber se acabou de perder a ficha.",
@@ -2934,6 +3420,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Onde Está a Peçonha",
     sections: [
       {
+        area: "site",
         heading: "O livro tinha 879 verbetes e nenhum jeito de procurar um",
         items: [
           "Não existia caminho pra \"qual magia aplica Envenenado\" ou \"onde está a Peçonha\". O filtro do sumário do /livro reduz TÍTULOS de seção, e o seletor do mapa acha árvore por nome — nenhum dos dois entra no texto das regras. Sobrava rolar os 190 mil caracteres do livro, no meio do turno, com o grupo esperando.",
@@ -2943,6 +3430,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O resultado abre ali, e não manda você pro livro",
         items: [
           "Quem busca no meio do turno quer o texto, não a viagem. Tocar num resultado abre o card COMPLETO na hora — o mesmo do livro, com as três formas de conjuração, o dano, o cântico e o que a Recitação Perfeita paga. O link pro lugar de origem continua embaixo, pra quem quer o contexto em volta.",
@@ -2959,6 +3447,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Dedo Alcança",
     sections: [
       {
+        area: "site",
         heading: "O mapa de árvores era intocável no celular",
         items: [
           "Medido a 414px de largura, o Destiny Board abria com os nós entre 6 e 14 pixels — onze deles empatados em 6×6. O mínimo do WCAG 2.2 (critério 2.5.8) é 24. Era um quarto disso, na tela principal de progressão, num projeto cuja primeira regra é mobile-first.",
@@ -2968,6 +3457,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "E os alvos pequenos do resto do site",
         items: [
           "Os dez links do rodapé tinham 18px de altura, e o rodapé está em TODAS as rotas — eram a maior parte dos alvos pequenos do site inteiro.",
@@ -2984,6 +3474,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Porão Sem Sinal",
     sections: [
       {
+        area: "site",
         heading: "O site funciona sem internet",
         items: [
           "O O-QUE-FALTA.md listava isso como \"a maior pendência funcional\", e o caso de uso estava escrito com todas as letras: mesa física num porão sem sinal. As fichas já viviam no localStorage — o que morria sem rede era o SITE. De nada adianta o personagem estar salvo no aparelho se a página que o desenha precisa de um servidor pra chegar.",
@@ -2993,6 +3484,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Instalável na tela inicial",
         items: [
           "Com manifesto e ícones próprios, o site instala como app: abre sem barra de endereço, com ícone na gaveta e splash própria. Segurar o ícone abre três atalhos — Ficha, Dados e Iniciativa —, que são as três coisas que se faz com o celular na mão NO MEIO da sessão.",
@@ -3001,6 +3493,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O que o site diz quando o sinal cai",
         items: [
           "Uma faixa abaixo do menu avisa que a rede caiu e que ficha e site continuam funcionando. Ela fica no fluxo da página, e não flutuando: a primeira versão era uma tarja no rodapé e ela cobria o botão de rolar dados — o canto de baixo já tinha dois donos.",
@@ -3017,6 +3510,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Que a Mesa Devolveu",
     sections: [
       {
+        area: "regras",
         heading: "O Tático executa a própria ordem",
         items: [
           "O O-QUE-FALTA.md já avisava que a Ordem de Tiro tinha sido inventada pra que o Tático tivesse o que medir, e que, se não fosse divertida na mesa, o certo era TROCÁ-LA, não ajustá-la. Jogaram de Explorador e o veredito foi esse: ele não dá dano nenhum. E não dava mesmo — o bônus somava no ataque de um ALIADO, três pontos e meio no 1º patamar, e só se outra pessoa escolhesse o alvo que você apontou.",
@@ -3028,6 +3522,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Barreira e Proteção volta a proteger",
         items: [
           "O nome prometia duas coisas e a escola entregava uma: contra um conjurador ela é o melhor kit do livro, contra um urso era um mago de 1d6 de PV assistindo. E nenhuma barreira do livro dizia quantos PV tinha — Recinto declarava 120, Redoma 60, e o Círculo Menor, o Domo e o Anteparo não declaravam nada, enquanto o talento Trama Densa prometia \"o dobro de PV\" de um número que não existia.",
@@ -3041,6 +3536,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "A escola barata ganhou o que fazer no turno",
         items: [
           "O rework de 2026-09-03 tirou dano e imunidades da Desintoxicação e devolveu o valor em preço. O que ele não resolveu foi o buraco do 1º ao 3º patamar: fora de uma cena de veneno, o purificador não tinha uma única linha pra gastar o turno.",
@@ -3051,6 +3547,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O Calor tem quatro regras, e não vinte",
         items: [
           "O pedido não foi \"está fraco\": foi \"está confuso, e leve em conta que ele tem que pegar outras coisas\". Cada patamar do Punho do Fogo reescrevia o recurso do zero — teto numa escada torta (5, 8, 12, 16, 20, 25), decaimento mudando de regra no 2º patamar, estouro com três nomes e três efeitos (Brasa Viva, Fúria Vulcânica, Erupção Contínua) e cada técnica cobrando um número próprio de Calor: 1, 2, 3, 4, 5, 6, 8, 10 por turno.",
@@ -3071,6 +3568,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Covil Ganhou Gavetas",
     sections: [
       {
+        area: "encontros",
         heading: "O covil ganhou gavetas",
         items: [
           "/encontros nasceu como uma lista de cartões sempre abertos. Isso funciona até a terceira criatura; com trinta montadas — que é o uso real depois de algumas sessões — a tela vira uma parede de formulário em que \"onde está o chefe do arco 2?\" só se responde rolando a página inteira.",
@@ -3087,6 +3585,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "A ficha do jogador, do lado errado da iniciativa",
         items: [
           "O rival que persegue o grupo há três sessões, o cavaleiro que virou inimigo, o PJ de quem faltou hoje, o duelo entre dois jogadores — todos são a mesma coisa na mesa: um personagem construído com as regras inteiras, jogando CONTRA o grupo. O Mestre tinha duas saídas ruins: montar uma criatura do zero e chutar os números, ou desistir e narrar. As duas jogam fora uma ficha que já existe, já está paga em PA e já tem as técnicas escritas.",
@@ -3098,6 +3597,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "A criatura saiu do navegador",
         items: [
           "Até aqui a criatura vivia só no localStorage de quem a montou. Isso combinava com ela ser \"rascunho de sessão\" enquanto era sete números soltos; desde que ganhou Ações escritas, ela é conteúdo que vale levar de uma campanha pra outra.",
@@ -3109,6 +3609,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Calor do Punho do Fogo virou número",
         items: [
           "Calor só existia na prosa da árvore (\"Calor máximo sobe para 8/12/16/20/25\") — nenhum campo, nenhum \"atual\" editável, nada que a ficha somasse. Agora ele segue o mesmo padrão de PV/PM/PT/PP: teto por patamar, contador com override na ficha, e o contador só aparece pra quem tem Punho do Fogo desbloqueado.",
@@ -3116,12 +3617,14 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A foto entra na criação",
         items: [
           "As três vias (Manual, Roleta e Entrevista) terminavam sem nunca oferecer a foto de perfil — a pessoa só descobria que dava pra pôr uma depois, já em /ficha. A tela final de cada via é exatamente o momento em que raça e antecedente já estão fechados e a pessoa está imaginando a cara do personagem, então é ali que a foto entra: sempre opcional, com o mesmo brasão da raça como alternativa.",
         ],
       },
       {
+        area: "bastidores",
         heading: "Os dez avisos do check:texto, e um bug de cura",
         items: [
           "Nove habilidades tinham dado escrito na prosa e nenhum campo onde guardá-lo. damage.condicional, damage.porTurno e healing.normal são esse lugar — bônus condicional, dano por turno de condição/terreno, e a cura de Julgamento e Luz Absoluta. Barreira e Proteção sobe pra 1d8+4 no Rei, pra quebrar um PV parado por três patamares.",
@@ -3129,6 +3632,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Suishin e Escudos: dois ajustes da leitura das quatro árvores restantes",
         items: [
           "\"Nome de Reidar\" era o único talento do livro sem efeito jogável nenhum. Ganha um favor pontual por sessão, no molde de \"Homem Dentro\" do Ladino.",
@@ -3143,6 +3647,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Que a R\u00e9gua N\u00e3o Media",
     sections: [
       {
+        area: "bastidores",
         heading: "O Corpo virou medi\u00e7\u00e3o, e a Magia estava certa desde sempre",
         items: [
           "O check:arvores de 0.1.11 acusava 11 c\u00e9lulas e dizia, honestamente, que n\u00e3o confiava em seis delas: as do Corpo saíam marcadas como PISO porque o Dado de Arma \u2014 o golpe base de toda \u00e1rvore marcial \u2014 n\u00e3o entrava na conta. As onze ca\u00edram para zero, e nenhuma delas caiu por um nerf.",
@@ -3152,6 +3657,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "Um script que l\u00ea texto",
         items: [
           "A d\u00edvida da auditoria linha a linha carregava uma ressalva: \"leitura manual ainda \u00e9 o que pega texto de habilidade errado, e o script n\u00e3o l\u00ea texto\". Agora existe check:texto, e ele l\u00ea as 592 habilidades e talentos conferindo a prosa contra os campos. Ele n\u00e3o substitui a leitura \u2014 faz o que a leitura faz PIOR: quem l\u00ea 400 cartas perde a que diz \"2 A\u00e7\u00f5es\" com actions: 1 na terceira hora.",
@@ -3161,6 +3667,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "A Dist\u00e2ncia Roubada, medida",
         items: [
           "O teto \u00e9 18 metros, atingido no 5\u00ba patamar, e custa 1 das 3 A\u00e7\u00f5es em todo patamar. A pr\u00f3pria \u00e1rvore j\u00e1 bate mais longe sem a mec\u00e2nica: Arremesso Cortante faz 18m no 1\u00ba patamar e Golpe que N\u00e3o Tem Origem faz 27m no 5\u00ba.",
@@ -3169,6 +3676,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Foto de perfil e capa nas fichas",
         items: [
           "A imagem mora DENTRO da ficha, em base64. Guardar s\u00f3 uma URL faria \"exporte o JSON pra levar pra outra m\u00e1quina\" virar mentira: a ficha chegaria do outro lado apontando pra um arquivo que n\u00e3o existe l\u00e1.",
@@ -3180,6 +3688,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Acessibilidade que d\u00e1 pra medir",
         items: [
           "Tr\u00eas checagens novas, todas num Chrome de verdade. A primeira li\u00e7\u00e3o foi essa: os primeiros prints desta s\u00e9rie sa\u00edram com perfil de cor aplicado, e um bot\u00e3o wine-600 (#4a0e2e) apareceu como #7d505e \u2014 o suficiente pra \"achar\" um defeito de contraste que n\u00e3o existia.",
@@ -3190,6 +3699,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O Ap\u00eandice C ganhou tr\u00eas colunas, e duas \u00e1rvores ganharam dano",
         items: [
           "A tabela tinha UMA coluna chamada Utilidade para as tr\u00eas \u00e1rvores da categoria, e a raz\u00e3o era constrangedora: duas delas n\u00e3o tinham dano nenhum pra medir. S\u00f3 o Ladino tinha, e ainda assim escondido — o Dano Furtivo dele vive na Maestria de 1\u00ba patamar e n\u00e3o num campo de dano, ent\u00e3o nenhuma conta do projeto o enxergava. Uma coluna para tr\u00eas \u00e1rvores diferentes \u00e9 uma coluna que n\u00e3o descreve nenhuma delas.",
@@ -3199,6 +3709,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O Invocador estava cobrando PA pra ligar a \u00e1rvore",
         items: [
           "A Maestria de 1\u00ba patamar ensinava a fechar Pactos e a desenhar c\u00edrculos — e n\u00e3o invocava. Invocar era uma habilidade comprada. Na pr\u00e1tica, um invocador que gastasse o PA todo em Pactos ficava com um caderno de acordos e nenhuma forma de chamar ningu\u00e9m. Invocar virou a MAESTRIA: c\u00edrculo preparado (10 minutos, fora de combate) e 3 PM, sem PA nenhum. Piso de escola n\u00e3o se compra.",
@@ -3209,6 +3720,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Um arquivo de ficha no lugar do JSON",
         items: [
           "Passar a ficha adiante tinha dois caminhos, e o de arquivo envelheceu no dia em que a ficha ganhou foto e capa: base64 \u00e9 texto, e uma ficha com as duas passava de 350 KB de JSON — quase tudo caracteres de base64.",
@@ -3219,6 +3731,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Est\u00e9tica",
         items: [
           "O favicon virou um bras\u00e3o. A ressalva de 0.1.11 dizia que em 16px o letreiro inteiro vira mancha e que legibilidade ali pediria um s\u00edmbolo; o s\u00edmbolo chegou pronto. Ele veio como JPEG, e JPEG n\u00e3o tem canal alfa: o quadriculado de transpar\u00eancia do editor veio QUEIMADO nos pixels, e publicado como estava o \u00edcone sairia com o xadrez em volta. O script apaga esse fundo antes de recortar, com uma regra dupla — um pixel s\u00f3 \u00e9 fundo se for cinza E cair perto de um dos dois tons do xadrez, e o dourado do bras\u00e3o nunca \u00e9 cinza. Foram 82% dos pixels. A arte-fonte saiu de public/ pra assets-fonte/, pela mesma regra de sempre: mat\u00e9ria-prima de build n\u00e3o \u00e9 asset de site.",
@@ -3233,6 +3746,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Grupo Inteiro num Link",
     sections: [
       {
+        area: "site",
         heading: "Ficha por link",
         items: [
           "Passar uma ficha adiante eram cinco passos: exportar JSON, achar o arquivo, mandar, o outro baixar, importar — uma vez por jogador, toda vez que alguém mudava alguma coisa. O montador de encontros depende de ter o grupo carregado, então o atrito estava exatamente no caminho da funcionalidade mais cara do site.",
@@ -3241,6 +3755,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A Entrevista deixou de repetir",
         items: [
           "O banco tinha 14 perguntas de 4 respostas, e o sorteio pegava 10 perguntas — mas as respostas eram sempre as mesmas quatro. Quem fizesse a Via 3 duas vezes reconhecia as opções de cor e escolhia por memória, não por leitura.",
@@ -3249,6 +3764,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "Auditoria automatizada das árvores",
         items: [
           "`npm run check:arvores` mede o TETO DO TURNO de cada árvore em cada patamar — quanto ela causa gastando as 3 Ações da melhor forma que o patamar permite — e compara com a coluna do Apêndice C. O check:livro já verificava o piso; o teto é o lado perigoso, porque uma coluna pode prometer 40 e a árvore entregar 12 sem nada perceber.",
@@ -3258,6 +3774,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Faixas, favicon, tema claro e README",
         items: [
           "As duas faixas de baixa resolução foram trocadas: loja.jpg era 600x279 e livro.jpg 525x350, contra 960-1900 das outras seis — elas amaciavam justamente em tela larga, que é onde a faixa é grande. A loja saiu de uma arte de 3840px e agora é a maior das oito (1600x794); o livro subiu pra 680x384 e continua sendo o menor do conjunto, porque a imagem encontrada não tinha mais que isso e ampliar não cria detalhe.",
@@ -3274,6 +3791,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Sem Arestas",
     sections: [
       {
+        area: "site",
         heading: "A faixa de convite estava mascarando a coisa errada",
         items: [
           "0.1.8 mascarou a IMAGEM e depois pôs um véu radial por cima dela. A arte sumia nas pontas como devia — mas o véu era um retângulo opaco, e era ELE que desenhava as duas linhas horizontais duras que faziam a seção parecer um bloco colado na página. Mascarar a arte não adianta enquanto a caixa de cor continuar lá.",
@@ -3282,6 +3800,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Um bug que só o tema CLARO tinha",
         items: [
           "Todos os prints desta série saíram no tema escuro — o Chrome headless segue o tema do SO. Forçando o claro, o cabeçalho de /arvores apareceu ilegível: título parchment-900 sobre o campo estelar, que é quase preto. O filtro de .faixa-arte dessatura e ESCURECE, o que funciona enquanto a arte é clara; escurecer um preto não faz nada.",
@@ -3289,6 +3808,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A logo, de novo",
         items: [
           "A primeira tentativa de dissolver a faixa usou uma ELIPSE, e as duas linhas duras continuaram. O motivo é aritmético: com raio vertical de 92% da altura, a borda de cima fica a 54% do raio, e a rampa só ia de 28% a 80% — a máscara chegava na borda ainda com METADE da opacidade. Máscara que não chega a zero dentro da caixa não dissolve nada, só desenha uma borda mais clara. Trocada por linear-gradient vertical, onde transparent 0% e transparent 100% SÃO as bordas.",
@@ -3304,6 +3824,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Seis Portas",
     sections: [
       {
+        area: "site",
         heading: "A vitrine da landing dobrou",
         items: [
           "Eram três destinos — árvores, loja, livro — e metade do site continuava invisível pra quem chega: a ficha, o roster e o montador de encontros (que é onde o Mestre passa o tempo dele) só apareciam como texto numa lista de bullets embaixo. Agora são seis, cada um com a arte da própria rota, na ordem de uso: descobrir o sistema → fazer a ficha → equipar → guardar o grupo → o lado do Mestre → a referência.",
@@ -3312,6 +3833,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A faixa de convite deixou de ser um recorte colado",
         items: [
           "Ela tinha duas camadas — a arte e um véu chapado — e o resultado era corte reto em cima e embaixo, laterais que simplesmente terminavam, e a tocha do grupo brilhando por trás da linha de texto.",
@@ -3319,6 +3841,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A logo cresceu, e a segunda faxina",
         items: [
           "A marca ficou 40% maior na landing, na barra e no rodapé. Ela tinha ficado tímida quando perdeu o cartucho — sem a moldura, o mesmo tamanho lê menor do que lia antes.",
@@ -3327,6 +3850,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O favicon ainda é da marca antiga",
         items: [
           "src/app/icon.svg continua derivado de public/logo.svg — o letreiro velho. É o único lugar do site que ainda mostra a marca anterior, e sobrevive por razão técnica: favicon precisa ser vetorial pra ler num quadrado de 16px, e a marca nova é um PNG. Trocar exige rasterizar e recortar. Fica anotado como pendência declarada, não como esquecimento.",
@@ -3340,6 +3864,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Ordem do Livro",
     sections: [
       {
+        area: "livro",
         heading: "O Capítulo 2 estava na ordem errada",
         items: [
           "O capítulo rodava 1, 2, 6, 7, 3, 4, 5: \"Interromper uma Conjuração\" e \"Regras Gerais\" ficavam entre a §2 e a §3. A §6 abre dizendo \"uma magia de rank Santo custa 4 Ações\" — número que só a §3 estabelece, e que o leitor ainda não tinha visto.",
@@ -3347,6 +3872,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "O Capítulo 4 numerava 8 seções; o sumário, 9",
         items: [
           "\"Reações e Ações Defensivas\" — a tabela com Ataque de Oportunidade, Esquivar, Defender e Bloquear com Escudo, que é regra central de combate — estava enterrada como subtítulo dentro da seção de Exaustão, Fome, Sede e Clima, entre \"Removendo Exaustão\" e \"Fome e Sede\".",
@@ -3354,6 +3880,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "O Capítulo 3 apresentava três pilares e dava seção a dois",
         items: [
           "A abertura nomeia Magia, Corpo e Utilidade; o capítulo tinha seção de sistemas compartilhados para Corpo e Utilidade, e nada para a Magia. A razão era boa (os sistemas compartilhados da Magia são o Capítulo 2 inteiro), mas não estava escrita em lugar nenhum — quem rolava procurando concluía que faltava uma parte.",
@@ -3361,6 +3888,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "O sumário virou teste",
         items: [
           "Nada disso quebrava tsc, eslint ou vitest: eram âncoras válidas apontando pro lugar errado. Um livro é uma ORDEM, e ordem precisa de teste.",
@@ -3368,6 +3896,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A logo perdeu o fundo",
         items: [
           "Em 0.1.6 ela ia ao ar dentro de um cartucho escuro com mix-blend-mode: screen — o preto sumia contra o cartucho, mas o cartucho continuava sendo um retângulo em volta da marca, que é justamente o que uma logo não pode ter.",
@@ -3383,6 +3912,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Letreiro e a Faxina",
     sections: [
       {
+        area: "site",
         heading: "A logo nova, e o fim do \"RPG\" avulso",
         items: [
           "A marca virou /logo-real.png, e isso muda estrutura, não só arte: o \"RPG\" agora está DENTRO do letreiro. Até 0.1.5 ele era um texto ao lado da imagem em três lugares (nav, landing, rodapé), porque o logo da franquia não trazia a palavra que este projeto acrescenta ao nome. Trazendo, o texto virou repetição — e saiu dos três.",
@@ -3390,6 +3920,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "As quatro rotas que faltavam ganharam arte",
         items: [
           "/ficha (a ficha na mesa, com vela, pena e tinteiro), /personagens (o salão da guilda), /iniciativa (uma escaramuça em floresta) e /criar (a mão desenhando um círculo mágico). Com elas, todas as sete rotas têm identidade visual própria.",
@@ -3398,6 +3929,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O mapa parou de parecer de outro projeto",
         items: [
           "Os três pilares eram sky-600, rose-600 e emerald-600 — três primárias saturadas de biblioteca num site inteiro de pergaminho, vinho e ouro. O mapa é a página mais bonita do projeto e era a única que parecia ter vindo de outro. Viraram teal fundo, vinho e oliva: água, sangue e mata. A distinção entre os ramos continua igual; o que mudou foi a temperatura.",
@@ -3405,6 +3937,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Gastar passou a ter instante",
         items: [
           "Comprar item e gastar PA eram instantâneos: o \"150 PO\" virava \"85 PO\" entre um quadro e outro, e nada dizia que você acabou de gastar 65. Agora a bolsa e o contador de PA contam até o novo valor — duração fixa de 420 ms, e não passo fixo, porque ir de 0 a 6 e de 0 a 3.400 tem que levar o mesmo tempo.",
@@ -3412,6 +3945,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "Faxina no repositório",
         items: [
           "Um git worktree inteiro do Claude estava commitado em .claude/worktrees/ — cópia completa do projeto, package-lock.json incluído, 30 arquivos rastreados. Saiu do índice e do disco; os markdowns do livro que moravam lá foram preservados fora do repositório.",
@@ -3420,6 +3954,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "Dois defeitos que o tsc aprovou e a tela reprovou",
         items: [
           "A página inteira quebrou ao abrir: CopyChip recebia o ícone como `icon: ComponentType`, e React recusa uma FUNÇÃO atravessando de Server pra Client Component. tsc e eslint passaram os dois. Agora o ícone entra como children, já construído.",
@@ -3434,6 +3969,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Três Níveis de Papel",
     sections: [
       {
+        area: "site",
         heading: "O site tinha UM card, repetido 23 vezes",
         items: [
           "A string do card (`rounded-2xl border border-parchment-300 bg-parchment-100/70 p-4 shadow-sm…`) estava copiada literalmente 23 vezes no JSX, e o botão vinho outras 23. Em ~11 mil linhas havia 36 `shadow-sm` e exatamente 1 `group-hover`: nada tinha relevo, nada reagia ao mouse, e uma tela cheia lia como uma lista de retângulos igualmente importantes.",
@@ -3442,6 +3978,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Cada rota tem uma cara",
         items: [
           "/ficha, /loja, /encontros e /iniciativa eram estruturalmente a mesma página: h1 + ícone + grade. O novo PageHeader põe a arte de ambiente da rota atrás do título — a taverna da guilda na Loja, o covil de teia nos Encontros, o grimório à luz de vela no Livro, o céu estrelado nas Árvores.",
@@ -3450,6 +3987,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O mapa de progressão ganhou céu",
         items: [
           "O tabuleiro era o objeto mais bonito do site rodando sobre um retângulo bege chapado. Agora tem campo estelar de fundo e vinheta radial fechando as quatro pontas.",
@@ -3458,6 +3996,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "livro",
         heading: "O livro virou livro",
         items: [
           "Capitular na abertura de cinco capítulos, e filigrana sob cada título de capítulo.",
@@ -3466,6 +4005,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "O bestiário e a loja",
         items: [
           "As 6 criaturas prontas do Apêndice G ganharam retrato (`CriaturaPronta.icon`, em public/criaturas/<id>), com `check:livro` conferindo que cada arquivo existe. O Superd Renegado reaproveita o retrato da raça Superd — a criatura do Apêndice G é um membro renegado dessa mesma raça.",
@@ -3475,6 +4015,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Estados vazios, rodapé e barra fixa",
         items: [
           "\"Nenhuma perícia ainda.\", \"Nenhuma magia ou talento comprado ainda.\", \"Nenhum item ainda.\" — três frases cinzas em sequência eram a primeira impressão de quem acabava de criar um personagem. Viraram poços com o ícone da seção grande e apagado, e a frase na voz do livro: o grimório está em branco, a mochila está vazia, o covil está vazio.",
@@ -3485,6 +4026,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Três defeitos que só o print pegou",
         items: [
           "O ornamento saía com uma moldura dourada: a região padrão de um filtro SVG é 10% maior que o elemento, e lá fora o pixel é preto transparente — que, pela conta do filtro, vira alfa 1, ou seja, ouro chapado na margem inteira.",
@@ -3501,6 +4043,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "As Doze Raças Ganharam Cara",
     sections: [
       {
+        area: "site",
         heading: "Escolher raça deixou de ser uma lista suspensa",
         items: [
           "As 12 raças ganharam retrato (`Race.icon`, em public/racas/<id>). O arquivo se chama como o id da raça, então não existe tabela de mapeamento em lugar nenhum — mesma regra dos brasões de árvore e dos ícones da loja.",
@@ -3510,6 +4053,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "desempenho",
         heading: "As imagens pararam de ser servidas cruas",
         items: [
           "Os retratos chegaram com até 1,28 MB por arquivo. O componente de medalhão servia tudo sem otimização (uma decisão que fazia sentido quando só existiam SVGs e PNGs pequenos) — mandar um megabyte pro navegador desenhar um selo de 44px, não.",
@@ -3526,6 +4070,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Site Ganhou Cara",
     sections: [
       {
+        area: "site",
         heading: "O mapa de árvores cabia numa moeda",
         items: [
           "O zoom inicial de /arvores era a constante 0,35 — sem relação nenhuma com o tamanho do visor nem do canvas, que cresce junto com o número de árvores. Num monitor comum o grafo inteiro virava uma bolinha no meio de um retângulo vazio de 800px: os brasões eram pontos de 3px e a primeira impressão da tela mais importante do site era a de uma página que não carregou.",
@@ -3533,6 +4078,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "A loja repetia a mesma frase doze vezes",
         items: [
           "As doze armas mundanas nascem de um mesmo molde e compartilham uma descrição só. A loja imprimia uma cópia dela em cada card — doze parágrafos idênticos empilhados, e as armas que TÊM algo próprio a dizer (Adaga de Prata, Lâmina Balanceada) afogadas no meio.",
@@ -3541,6 +4087,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Pergaminho, paisagem e o logo consertado",
         items: [
           "O site inteiro passou a ter fundo de pergaminho de verdade: 60% no tema claro (onde a textura é o assunto) e 20% no escuro (onde ela só precisa quebrar o marrom chapado). As dez páginas pintavam um fundo sólido por cima do corpo, então nenhuma textura teria aparecido — isso saiu junto.",
@@ -3558,6 +4105,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Que a Criatura Faz",
     sections: [
       {
+        area: "encontros",
         heading: "A ficha de monstro deixou de ser sete números soltos",
         items: [
           "A criatura de /encontros era PV, CA, ataque, dano por turno, CD, quantidade e uma linha de texto livre. Isso basta pra dizer se um encontro é justo e não basta pra NADA do que acontece na mesa: o Mestre sabia que a Wyvern mergulha, e tinha que inventar na hora quanto a mordida dela tira.",
@@ -3568,6 +4116,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "encontros",
         heading: "O site sugere ENQUANTO você digita o dano",
         items: [
           "A simulação responde depois do fato: monte tudo, clique, espere 300 batalhas. Isso fecha um encontro e não ajuda a escrever um monstro. O conselho novo é a outra ponta — sem rolagem nenhuma, ele recalcula a cada tecla.",
@@ -3579,6 +4128,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "As dezenove árvores ganharam brasão, e o jogo ganhou logo",
         items: [
           "Cada árvore agora declara `icon` — e o arquivo se chama como o id dela, então o mapeamento nome→arquivo deixou de existir como tabela. /arvores desenha o brasão no nó do mapa e no painel lateral, /livro no cabeçalho de cada catálogo, a criação no seletor de Árvore Inicial, a ficha na Árvore Inicial e em cada grupo do Grimório, e /encontros no cartão de cada personagem do grupo.",
@@ -3596,6 +4146,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Cenário Hipotético",
     sections: [
       {
+        area: "encontros",
         heading: "/encontros — montar a criatura e testá-la contra o grupo antes da sessão",
         items: [
           "O Apêndice G sempre teve o molde de criatura por patamar, e ele só existia como tabela impressa: o Mestre lia PV 150, CA 18, ~55 de dano e tinha que adivinhar o que isso faz contra OS CINCO PERSONAGENS dele. A tabela é calibrada contra um grupo genérico; nenhuma mesa tem um grupo genérico.",
@@ -3609,6 +4160,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "O motor de simulação virou código compartilhado",
         items: [
           "O simulador de combate vivia inteiro dentro de scripts/simular-combate.mts. A tela que diz ao Mestre \"este encontro é justo\" precisa responder pelos MESMOS números que calibram o livro — duas cópias da mesma simulação divergem em silêncio, e a que diverge é sempre a que ninguém roda.",
@@ -3618,6 +4170,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "Apêndice G deixou de ser texto digitado à mão",
         items: [
           "Mesma cirurgia que a régua de dano do Apêndice C tinha recebido: as duas tabelas do Bestiário — o molde por patamar e as seis criaturas prontas — eram valores digitados dentro de Appendices.tsx, e são a régua contra a qual o Mestre monta todo inimigo do jogo.",
@@ -3635,6 +4188,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Duas Portas",
     sections: [
       {
+        area: "regras",
         heading: "Magias Combinadas — rework completo",
         items: [
           "Elas eram uma tabela impressa e nada mais: nenhuma era comprável em lugar nenhum, o motor não sabia que existiam, a ficha não as guardava, e o PA que o livro dizia que elas custavam nunca saía de lugar nenhum.",
@@ -3648,6 +4202,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Correções",
         items: [
           "TRÊS das nove magias apontavam para a árvore \"curar\", que nunca existiu — o id é \"cura\". O livro imprimia a coluna da árvore vazia nessas três, e nenhuma verificação pegava porque nada no código lia o campo. Um teste novo trava isso: toda porta de toda Combinada tem que apontar para uma árvore que existe.",
@@ -3663,6 +4218,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Ganhar Duas Vezes a Mesma Coisa",
     sections: [
       {
+        area: "regras",
         heading: "Pontos de Touki entram no Padrão das Reservas",
         items: [
           "PT era a única das três reservas fora do Padrão do Cap. 1: PV e PM escalavam por patamar, PT vinha como número fixo. A consequência não era só inconsistência — era redundância. CINCO árvores tinham DOIS talentos de PT em patamares diferentes fazendo a mesma coisa com um número diferente: \"+2 PT Máximos\" no Intermediário, \"+3 PT Máximos\" no Avançado.",
@@ -3671,6 +4227,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Estilo Vendaval — duas habilidades que só repetiam um patamar anterior",
         items: [
           "Mil Cortes no Vendaval (Rei) era o Redemoinho de Aço (Intermediário) com o raio 3× maior e o dado 2× maior, quatro patamares depois — o mesmo botão, mais caro. Agora o raio VEM da Distância Roubada do turno (3m a 12m): você não gira no lugar, atravessa o grupo e corta no caminho. Cada alvo que cair devolve 1 PT.",
@@ -3678,6 +4235,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "O chefe solo não sobrevivia a um grupo de cinco",
         items: [
           "A regra do Apêndice G era \"chefe único: dobre o PV e mantenha o dano\". Ela resolve a vida do chefe e ignora o problema real, que é economia de ação: cinco personagens agem quinze vezes por rodada, um chefe age três.",
@@ -3686,6 +4244,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "npm run check:redundancia",
         items: [
           "Detector novo: compara toda habilidade, talento e Maestria com todas as outras da MESMA árvore, entre patamares diferentes, por sobreposição de vocabulário. Ele procura a progressão que não progride — \"ganho isso no 1º e ganho quase igual no 3º\" — que nenhum check de consistência pega, porque não há contradição nenhuma, só repetição.",
@@ -3693,6 +4252,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Correções",
         items: [
           "getPtPool lia só o campo de PT fixo e ignorava o novo campo escalar — os sete talentos convertidos estavam concedendo ZERO. Pego por um teste escrito junto com a mudança, antes de qualquer ficha ver.",
@@ -3707,6 +4267,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Régua Agora Se Mede",
     sections: [
       {
+        area: "bastidores",
         heading: "Apêndice C — a régua de dano saiu da prosa",
         items: [
           "A Tabela Comparativa de Dano por Turno — que o livro chama de \"a régua com que toda árvore futura deve ser medida\" — era 15 colunas × 6 linhas de valores digitados à mão dentro do texto. Era a única régua do livro que ninguém verificava, e ela já estava errada: o Sopro Podre caiu de 10d8 pra 6d8 no rework da 0.0.3 e a coluna da Desintoxicação continuou anunciando ~55 no 5º patamar, um número que a escola não alcança mais.",
@@ -3717,6 +4278,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "Testes — 35 fórmulas, zero cobertura",
         items: [
           "selectors.ts calcula TODO número da ficha (PV, PM, PT, PP, CA, BC e o PA gasto) em 35 funções puras, e não tinha um único teste. Duas das correções desta sessão foram exatamente do tipo que teste pega e revisão humana não: a ficha imprimia count × 2 PA enquanto o motor cobrava a escada progressiva, e perfectRecitationBonus lia um campo que nunca existiu no tipo.",
@@ -3725,6 +4287,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "Lint limpo pela primeira vez",
         items: [
           "Os quatro avisos que arrastavam há sessões foram resolvidos — e nenhum deles era um bug: os três hooks do Destiny Board estavam CERTOS como estavam, e adicionar as dependências que o linter pedia causaria loop (o mapa saltaria de volta ao centro sem parar, a câmera ficaria presa numa árvore). Cada um ganhou o disable com o motivo escrito.",
@@ -3739,6 +4302,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Divino Não Se Compra",
     sections: [
       {
+        area: "regras",
         heading: "Punho de Fogo — patamar Deus virou narrativo",
         items: [
           "O Punho de Fogo era a única das 19 árvores com um patamar Deus COMPRÁVEL: uma Maestria, um talento e três habilidades, custando PA como qualquer outro rank. Isso contradizia o Cap. 1, §3, que diz que o Divino \"não possui custo mecânico de PA\" e \"só pode ser alcançado através de intenso Roleplay e eventos lendários\".",
@@ -3748,6 +4312,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Correções",
         items: [
           "A tabela de custos do Cap. 1, §3 imprimia DUAS linhas \"Deus\": uma cobrando 4 PA (vinda de RANK_REQUIREMENTS) e outra, escrita à mão logo abaixo, dizendo \"Narrativa\". As duas se contradiziam no meio da seção que existe justamente para explicar quanto cada rank custa. É o mesmo bug de linha duplicada que a tabela de patamares do Cap. 3 tinha.",
@@ -3762,6 +4327,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Mão Não Envelhece",
     sections: [
       {
+        area: "regras",
         heading: "Magia de Cura — o Rei deixou de ser um patamar morto",
         items: [
           "A escada de cura direta parava no Santo: Cura Radiante (10 PM, 20d8+BC contra Ferida Fresca) era a melhor magia de cura de um Santo, de um Rei E de um Imperador. O Rei ganhava Restauração e Milagre Menor — utilidade alta — mas curava exatamente o mesmo que o patamar anterior, num livro em que toda escola ofensiva ganha um número maior a cada rank.",
@@ -3770,6 +4336,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Rank Deus do Estilo Vendaval",
         items: [
           "Era a única árvore do livro sem quadro do patamar Divino — e a ausência pesava mais nela, porque uma árvore híbrida já é um teto por definição.",
@@ -3777,6 +4344,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Uma regra, uma redação",
         items: [
           "O teto de PM dos dois primeiros patamares estava escrito quase palavra por palavra em Cap. 1, §1 e Cap. 4, §1. Duas cópias da mesma regra é exatamente como nasceram as sete contradições corrigidas na 0.0.5. Agora a redação canônica vive no Cap. 4, §1 (junto da fórmula) e o Cap. 1 aponta pra lá.",
@@ -3784,6 +4352,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "bastidores",
         heading: "npm run check:livro",
         items: [
           "Substitui o check:magias por uma verificação de consistência entre os DADOS e o TEXTO do livro. As sete contradições da 0.0.5 nasceram todas do mesmo jeito: um número escrito à mão numa frase, e depois o dado mudou.",
@@ -3799,6 +4368,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Comece Aqui",
     sections: [
       {
+        area: "regras",
         heading: "Novo capítulo de abertura",
         items: [
           "O livro ganhou um capítulo \"Comece Aqui\", antes do Capítulo 1: o que é o jogo, a ficha em seis números, um turno de combate, uma rodada jogada de ponta a ponta, criação em seis passos, e um índice de onde encontrar cada coisa.",
@@ -3807,6 +4377,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Contradições de regra corrigidas",
         items: [
           "INTERRUPÇÃO DE CONJURAÇÃO: existiam duas regras conflitantes. O Cap. 2, §6 (novo na 0.0.4) usava CD 8 + metade do dano; o Cap. 4, §3 usava CD 10 + Bônus de Rank de quem acertou. Vale a do Cap. 4 — o próprio livro já explicava, desde 2026-08-29, por que a versão baseada em dano não sobrevive à progressão: o dano cresce sem teto e o teste trava em +11, então magia de 4 a 6 Ações ficaria impossível de conjurar nos patamares em que ela existe.",
@@ -3819,6 +4390,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "site",
         heading: "Site",
         items: [
           "\"Criar\" saiu da barra de navegação. Criar personagem não é um destino que se visita: é uma coisa que se faz a partir do roster, e /personagens já abre com o botão de criação ao lado das fichas existentes. A rota continua existindo e linkada da landing e do roster.",
@@ -3832,6 +4404,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "O Cântico Tem Preço",
     sections: [
       {
+        area: "regras",
         heading: "Recitação Perfeita — agora existe um piso",
         items: [
           "O Bônus de Recitação Perfeita deixa de ser automático. Uma magia cujo cântico for MAIS CURTO que o piso do rank dela não concede bônus nenhum, por melhor que você recite — a carta dela passa a dizer \"Sem bônus\".",
@@ -3842,6 +4415,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Novas regras de magia (Cap. 2)",
         items: [
           "INTERROMPER UMA CONJURAÇÃO — o Cap. 2 ganhou uma seção inteira sobre isso. (A CD publicada aqui estava errada e foi corrigida na 0.0.5: vale CD 10 + Bônus de Rank de quem te acertou, a mesma do Cap. 4, §3.) Falha: perde todas as Ações gastas e metade do PM da magia.",
@@ -3853,6 +4427,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Mecânica Central — as 19 árvores",
         items: [
           "Toda árvore passa a declarar a sua Mecânica Central num quadro no topo do catálogo: a tag, o que ela faz que nenhuma outra faz, o ciclo de jogo numerado, e — o que faltava — a fraqueza declarada.",
@@ -3862,6 +4437,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Estilo Vendaval — mecânica nova",
         items: [
           "Era a única árvore do livro sem identidade própria: mobilidade solta, alcance estendido em três patamares diferentes e nenhuma regra ligando as duas coisas.",
@@ -3878,6 +4454,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "A Profundidade Morreu",
     sections: [
       {
+        area: "regras",
         heading: "Rework: Magia de Desintoxicação",
         items: [
           "A mecânica de Profundidade foi APAGADA. Aflições não têm mais um número de 1 a 5 que sobe sozinho com o relógio, e nenhuma magia move esse número pra cima ou pra baixo.",
@@ -3893,6 +4470,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Identidade das Árvores",
         items: [
           "Nova condição SOTERRADO (Cap. 4, §5), a metade que faltava da identidade da Terra: Deslocamento 0, Preso, sem visão nem gesto, 2d10 de sufocamento por turno. Só pode ser aplicada a quem já está Atolado, Preso ou Caído.",
@@ -3904,6 +4482,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Custos de PA",
         items: [
           "A compra de Atributo é oficialmente PROGRESSIVA no livro e na ficha: 1, 1, 2, 2, 3, 3… PA. O motor já cobrava assim; a tabela do Cap. 1 e o painel da ficha ainda anunciavam 2 PA fixos.",
@@ -3912,6 +4491,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Loja e Mundo",
         items: [
           "Os três venenos à venda passam a ser nomeados por rank (Principiante, Intermediário, Avançado) em vez de Profundidade 1/2/3. Preços e Ranks de Guilda exigidos não mudaram.",
@@ -3927,6 +4507,7 @@ export const PATCH_NOTES: PatchNote[] = [
     title: "Guarda Erguida",
     sections: [
       {
+        area: "regras",
         heading: "Ações e Reações de Combate",
         items: [
           "Nova Ação Padrão — Defender/Absorver: em vez de tentar desviar, você foca em aguentar o golpe. O atacante ganha Vantagem na rolagem de acerto contra você, mas se acertado o dano é reduzido pela sua mitigação: (Vigor × 2) + Bônus de Rank do seu maior Estilo de Corpo.",
@@ -3935,6 +4516,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Vida e Mana",
         items: [
           "PV Máximos agora escalam de forma mais contida nos primeiros patamares — o 1º patamar volta a ser uma fase de risco real, não um colchão de vida.",
@@ -3942,6 +4524,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Classe de Invocação",
         items: [
           "Invocar em combate sem um círculo já desenhado agora exige o talento Convocar sob Pressão: custa 6 Ações, e o invocado chega com metade dos PV e um degrau a menos no dado de dano.",
@@ -3953,6 +4536,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Classe de Escudos",
         items: [
           "Nova linha de identidade — Puro Escudo: ao abrir mão de empunhar arma de dano (só escudo ou escudo grande), você desbloqueia versões Soberanas, mais fortes, das suas habilidades em todos os ranks, estendendo seus efeitos defensivos também a aliados adjacentes.",
@@ -3963,6 +4547,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Magia Combinada",
         items: [
           "Deixa de ser \"qualquer combinação que o Mestre aprove na hora\" e vira uma tabela oficial com 9 magias fixas — Magma, Gelo Tempestuoso, Relâmpago Santo, Barreira Incandescente, Tempestade de Cura, Pânico, Muralha de Espinhos, Nevasca Curativa e Meteoro — cada uma com PM, alcance, Ações e dano definidos.",
@@ -3971,6 +4556,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Nova Sub-árvore: Punho de Fogo",
         items: [
           "Árvore híbrida do Corpo (Fogo + Lutador), revelada só quando você alcança Rank Intermediário nas duas árvores-base.",
@@ -3978,6 +4564,7 @@ export const PATCH_NOTES: PatchNote[] = [
         ],
       },
       {
+        area: "regras",
         heading: "Criação de Personagem",
         items: [
           "O orçamento livre de atributos na criação passa de 4 para 2 pontos, e destravar os dois Defeitos (-1 e -2) agora libera 5 pontos para redistribuir, em vez de 7.",
