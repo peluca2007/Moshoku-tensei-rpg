@@ -15,7 +15,8 @@ decidiu voltar a trabalhar **direto na `main`**: commits pequenos, um assunto po
 mensagem dizendo o que mudou e por quê. Branch e PR continuam valendo quando o autor pedir, ou para um
 experimento grande que ainda não deve chegar à `main`.
 
-Antes de subir qualquer mudança no livro, rode `npm run revisar:livro` (ver `PLANO-LIVRO-DIGITAL.md`)
+Antes de subir qualquer mudança no livro, rode `npm run revisar:livro` (o plano do livro digital, os relatórios e as passagens entre agentes moram só no disco,
+em `_local/docs/` do checkout principal, e não vão pro GitHub)
 e suba junto os `public/livro/diagramacao-*.json` que ela regrava: é com eles que o modo Livro abre
 sem diagramar na primeira visita (ver `src/components/book/folhear/diarioDaDiagramacao.ts`).
 

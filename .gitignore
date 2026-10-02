@@ -77,3 +77,25 @@ livro em txt.txt
 
 # Originais das artes em alta resolução (organizados por pasta, ver o LEIAME de lá)
 /_originais-das-artes/
+
+# Só local, nunca no GitHub (2026-10-01): planos, relatórios, passagens entre
+# agentes, o que falta, rascunhos de design e o acervo de arte que ainda não
+# entrou no livro. O livro e o site são o produto; o resto é bastidor. As cópias
+# moram em /_local/ (no checkout principal) e continuam valendo onde já estiverem.
+/_local/
+/acervo-de-arte/
+/.vscode/
+/ARTE-PARA-O-LIVRO.md
+/ENCONTROS.md
+/KIT-DE-MESA.md
+/LENDAS-DOS-OFICIOS.md
+/MAGIA-TEORICA*.md
+/NOVOS_ITENS.md
+/O-QUE-FALTA.md
+/PASSAGEM-*.md
+/PLANO-*.md
+/PROGRESS.md
+/RELATORIO-*.md
+/REVISAO-DO-LIVRO.md
+/SISTEMA_DE_LOOT.md
+/TAREFA-*.md

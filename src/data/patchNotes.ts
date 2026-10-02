@@ -911,7 +911,7 @@ export const PATCH_NOTES: PatchNote[] = [
         area: "encontros",
         heading: "Para o Mestre: o kit do teste de mesa",
         items: [
-          "Quatro personagens de 2º patamar prontos pra importar por link (Fogo, Deus do Norte, Tático e Cura, 9 PA cada), um encontro com as criaturas do Apêndice G e uma folha de observação. Está em KIT-DE-MESA.md; é a sessão de referência do próximo ciclo de balanço.",
+          "Quatro personagens de 2º patamar prontos pra importar por link (Fogo, Deus do Norte, Tático e Cura, 9 PA cada), um encontro com as criaturas do Apêndice G e uma folha de observação. É a sessão de referência do próximo ciclo de balanço.",
         ],
       },
     ],
