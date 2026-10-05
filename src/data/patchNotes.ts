@@ -50,6 +50,19 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.144",
+    date: "2026-10-05",
+    title: "O Chrome Aprendeu a Hifenizar",
+    sections: [{
+      area: "livro",
+      heading: "O livro no Chrome novo, e gestos mais curtos e longe do número da página",
+      items: [
+        "O Chrome 154 passou a hifenizar português no Windows e a obedecer o `hyphens: auto` que o livro sempre pediu (Safari e Firefox já faziam). O texto corrido ficou mais denso e o livro tem agora 280 páginas; mas as tabelas encolheram as colunas até o mínimo hifenizado e 69 cabeçalhos viraram 'PT GA-NHOS' em três linhas. Cabeçalho de tabela não hifeniza mais: sobram 2 cabeçalhos longos em três linhas, e nenhum estouro.",
+        "Os gestos das escolas (0.1.142) tocam no máximo uns 8 a 14 segundos por página e descansam — antes podiam chegar a 40 s. E ficam fora do rodapé: o gelo da Água corre abaixo do número da página, o corte da Espada passa rente ao pé, a mureta da Terra, os baques das Armas Pesadas e os olhos da Furtividade foram pro canto de dentro.",
+      ],
+    }],
+  },
+  {
     version: "0.1.143",
     date: "2026-10-05",
     title: "Mais Espaço para o Seu Caminho",
