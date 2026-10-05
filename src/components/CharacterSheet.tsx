@@ -58,6 +58,9 @@ import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import RaceCrest from "./RaceCrest";
 import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 import CaosDaFicha from "./CaosDaFicha";
+import NumeroAnimado from "./ui/NumeroAnimado";
+import BarraDeRecurso from "./ui/BarraDeRecurso";
+import MomentoDoPatamar from "./ui/MomentoDoPatamar";
 import caosStyles from "./CaosDaFicha.module.css";
 import { identidadeVisualDaArvore } from "@/data/identidadeDasArvores";
 import { identidadeDaFicha } from "@/lib/identidadeDaFicha";
@@ -184,6 +187,7 @@ function ResourceCard({
         {extra}
       </div>
 
+      <BarraDeRecurso atual={current} maximo={max} nome={label} />
       {/*
         Os passos só aparecem quando há máximo pra andar dentro: numa reserva
         zerada eles seriam quatro botões que não fazem nada.
@@ -634,6 +638,21 @@ export default function CharacterSheet() {
     setPulsoDoCaos({ treeId: nova.treeId, sequencia: ++sequenciaDoCaosRef.current });
     if (caosTimeoutRef.current) clearTimeout(caosTimeoutRef.current);
     caosTimeoutRef.current = setTimeout(() => setPulsoDoCaos(null), 650);
+    const animacoes: Animation[] = [];
+    const io = new IntersectionObserver((entradas) => {
+      for (const e of entradas) {
+        if (!e.isIntersecting) continue;
+        io.unobserve(e.target);
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
+        animacoes.push((e.target as HTMLElement).animate([{ opacity: .55, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 280, easing: "ease-out" }));
+      }
+    });
+    document.querySelectorAll<HTMLElement>("[data-carta-comprada]").forEach((el) => { if (el.dataset.cartaComprada === nova.id) io.observe(el); });
+    const cancelar = () => animacoes.forEach((a) => a.cancel());
+    const reduzido = matchMedia("(prefers-reduced-motion: reduce)");
+    reduzido.addEventListener("change", cancelar);
+    window.addEventListener("beforeprint", cancelar);
+    return () => { io.disconnect(); cancelar(); reduzido.removeEventListener("change", cancelar); window.removeEventListener("beforeprint", cancelar); };
   }, [character.id, purchasedAbilities]);
   const arvoreDominante = identidadeVisual[0]
     ? identidadeVisualDaArvore(identidadeVisual[0].treeId)
@@ -1054,7 +1073,7 @@ export default function CharacterSheet() {
             title="Só informativo — quem controla quanto PA você tem é o Mestre."
             className="flex items-center gap-1 rounded-full bg-gold-500/10 px-3 py-1 font-medium text-gold-600 ring-1 ring-gold-500/30 dark:text-gold-400"
           >
-            <Gem className="h-3.5 w-3.5" /> {paSpent} PA gastos
+            <Gem className="h-3.5 w-3.5" /> <NumeroAnimado valor={paSpent} /> PA gastos
           </span>
 
           <label
@@ -1468,7 +1487,8 @@ export default function CharacterSheet() {
                   key={treeId}
                   className={`rounded-2xl border-l-4 ${accent.border} border-y border-r border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-y-parchment-800 dark:border-r-parchment-800 dark:bg-parchment-900/60`}
                 >
-                  <h3 className="mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
+                  <h3 className="relative mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
+                    <MomentoDoPatamar key={`${character.id}:${tree.id}`} arvore={tree.id} rank={highestRank} personagem={character.id} />
                     <TreeCrest tree={tree} size={32} />
                     {tree.name}
                     <span className={`rounded-full bg-parchment-900/5 px-2 py-0.5 text-3xs font-semibold uppercase tracking-wide ${accent.text} dark:bg-white/5`}>
@@ -1505,6 +1525,7 @@ export default function CharacterSheet() {
                   {resolved.map(({ kind, rank, def }) => (
                     <div
                       key={def.id}
+                      data-carta-comprada={def.id}
                       className="surface rounded-xl border border-parchment-300 bg-parchment-100/80 p-3 dark:border-parchment-800 dark:bg-parchment-950/50"
                     >
                       <div className="mb-1 flex items-start justify-between gap-2">

@@ -1,0 +1,9 @@
+.barra { height: .3rem; margin-top: .65rem; overflow: hidden; border-radius: 1rem; background: var(--color-parchment-300); }
+:global(.dark) .barra { background: var(--color-parchment-800); }
+.tinta { display: block; height: 100%; background: var(--color-wine-500); transform: scaleX(var(--proporcao)); transform-origin: left; }
+.barra[data-recurso="PV"] .tinta { background: var(--color-rose-500); }
+.barra[data-recurso="PM"] .tinta { background: var(--color-sky-500); }
+.barra[data-recurso="PT"] .tinta { background: var(--color-gold-500); }
+.selo { position: absolute; right: 1rem; top: .5rem; font-size: 3rem; line-height: 1; opacity: 0; color: var(--cor-selo-dia); pointer-events: none; }
+:global(.dark) .selo { color: var(--cor-selo-noite); }
+@media print { .tinta { transition: none; } .selo { display: none; } }
