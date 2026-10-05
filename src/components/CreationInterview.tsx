@@ -1,4 +1,6 @@
 "use client";
+import { useAssentarEscolha } from "./ui/useAssentarEscolha";
+import "./criacaoMovimento.css";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -53,6 +55,7 @@ export default function CreationInterview() {
   const router = useRouter();
   const [questions] = useState<InterviewQuestion[]>(() => drawInterviewQuestions());
   const [answers, setAnswers] = useState<InterviewOption[]>([]);
+  const { bloco, assentar, cancelar } = useAssentarEscolha();
   const [questionIndex, setQuestionIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("modo");
   const [mode, setMode] = useState<InterviewMode>("ambos");
@@ -109,6 +112,7 @@ export default function CreationInterview() {
   }
 
   function backOneQuestion() {
+    cancelar();
     if (questionIndex === 0) return;
     setQuestionIndex((i) => i - 1);
     setAnswers((prev) => prev.slice(0, -1));
@@ -157,7 +161,8 @@ export default function CreationInterview() {
         </div>
       </header>
 
-      <div className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+      {answers.length > 0 && <ol className="mb-3 flex flex-wrap gap-2" aria-label="Escolhas concluídas">{answers.map((resposta, i) => <li key={`${i}:${resposta.id}`} className="escolha-assentada max-w-full truncate rounded-lg border border-gold-500/30 px-2 py-1 text-xs" title={resposta.text}><span aria-hidden>✓ </span>{resposta.text}</li>)}</ol>}
+      <div ref={bloco} className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
         {phase === "modo" && (
           <div className="animate-fade-slide-in">
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">
@@ -250,7 +255,7 @@ export default function CreationInterview() {
                 <button
                   key={option.id}
                   type="button"
-                  onClick={() => answer(option)}
+                  onClick={() => { void assentar(() => answer(option)); }}
                   style={{ animationDelay: `${i * 55}ms` }}
                   className="animate-fade-slide-in w-full rounded-xl border border-parchment-300 bg-parchment-50 p-3 text-left text-sm text-parchment-700 transition-colors hover:border-wine-400 hover:bg-wine-50 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200 dark:hover:bg-wine-950/30"
                 >

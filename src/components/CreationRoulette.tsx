@@ -1,4 +1,6 @@
 "use client";
+import { useAssentarEscolha } from "./ui/useAssentarEscolha";
+import "./criacaoMovimento.css";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -137,6 +139,7 @@ export default function CreationRoulette() {
 
   const character = useActiveCharacter();
   const [step, setStep] = useState(0);
+  const { bloco, assentar, cancelar } = useAssentarEscolha();
   const [attributesRolled, setAttributesRolled] = useState(false);
 
   const raceWheel = useWheelSpin(rollRandomRace);
@@ -166,9 +169,10 @@ export default function CreationRoulette() {
   const anySpinning = raceWheel.spinning || backgroundWheel.spinning;
 
   function next() {
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    void assentar(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)));
   }
   function back() {
+    cancelar();
     setStep((s) => Math.max(s - 1, 0));
   }
 
@@ -208,7 +212,8 @@ export default function CreationRoulette() {
         </div>
       </header>
 
-      <div className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+      {step > 0 && <ol className="mb-3 flex flex-wrap gap-2" aria-label="Escolhas concluídas">{STEPS.slice(0, step).map((nome) => <li key={nome} className="escolha-assentada rounded-lg border border-gold-500/30 px-2 py-1 text-xs"><span aria-hidden>✓ </span>{nome}</li>)}</ol>}
+      <div ref={bloco} className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
         {step === 0 && (
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha sua Árvore Inicial</h2>

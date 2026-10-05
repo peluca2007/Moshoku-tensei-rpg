@@ -15,6 +15,8 @@ import RaceBackgroundDetails from "./RaceBackgroundDetails";
 import SkillsSection from "./SkillsSection";
 import TreePicker from "./TreePicker";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
+import "./criacaoMovimento.css";
+import { useAssentarEscolha } from "./ui/useAssentarEscolha";
 
 const STEPS = ["Nome", "Raça", "Antecedente", "Atributos", "Árvore Inicial", "Perícias", "Equipamento", "Pronto"];
 
@@ -37,6 +39,7 @@ export default function CreationWizard() {
 
   const character = useActiveCharacter();
   const [step, setStep] = useState(0);
+  const { bloco: blocoPasso, assentar, cancelar } = useAssentarEscolha();
 
   // O nome nasce "Novo Personagem", e a ficha nova só existe depois do foco
   // automático: seleciona o nome quando ela chega, pra quem digita trocar o
@@ -58,9 +61,10 @@ export default function CreationWizard() {
   const { budget, remaining } = attributeBudget(character.attributeBase);
 
   function next() {
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    void assentar(() => setStep((s) => Math.min(s + 1, STEPS.length - 1)));
   }
   function back() {
+    cancelar();
     setStep((s) => Math.max(s - 1, 0));
   }
 
@@ -105,7 +109,8 @@ export default function CreationWizard() {
         </p>
       </header>
 
-      <div className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
+      {step > 0 && <ol className="mb-3 flex flex-wrap gap-2" aria-label="Escolhas concluídas">{STEPS.slice(0, step).map((label, i) => <li key={label} className="escolha-assentada rounded-lg border border-gold-500/30 px-2 py-1 text-xs"><span aria-hidden>✓ </span>{label}: {i === 0 ? character.name : i === 1 ? race?.name ?? "A escolher" : i === 2 ? background?.name ?? "A escolher" : i === 4 ? startingTree?.name ?? "A escolher" : "Conferido"}</li>)}</ol>}
+      <div ref={blocoPasso} className="min-h-[22rem] rounded-2xl border border-parchment-300 bg-parchment-100/70 p-5 shadow-sm dark:border-parchment-800 dark:bg-parchment-900/60">
         {step === 0 && (
           <div>
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Qual é o nome do seu personagem?</h2>

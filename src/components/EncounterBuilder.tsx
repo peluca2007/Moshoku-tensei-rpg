@@ -1,4 +1,6 @@
 "use client";
+import BarraDeRecurso from "./ui/BarraDeRecurso";
+import EntradaDeMomento from "./ui/EntradaDeMomento";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
@@ -2507,10 +2509,11 @@ function Relatorio({ relatorio, anterior, desatualizado }: { relatorio: Relatori
           window.setTimeout(() => URL.revokeObjectURL(url), 1000);
         }} className="rounded-lg border border-parchment-300 px-3 py-2 text-sm dark:border-parchment-700">Baixar relatório completo</button>
       </div>
-      <div className={`rounded-2xl border p-4 ${CORES_FAIXA[veredito.faixa]}`}>
+      <EntradaDeMomento key={`${relatorio.semente}:${veredito.faixa}`} className={`rounded-2xl border p-4 ${CORES_FAIXA[veredito.faixa]}`}>
         <h2 className="text-lg font-black">{veredito.titulo}</h2>
         <p className="mt-1 text-sm">{veredito.resumo}</p>
-      </div>
+        <BarraDeRecurso atual={Math.round(resultado.vitorias * 100)} maximo={100} nome="Chance de vitória do grupo" entrada />
+      </EntradaDeMomento>
 
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
         <Numero rotulo="Grupo vence" valor={formatarPorcentagem(resultado.vitorias)} />
