@@ -69,19 +69,16 @@ describe("Sob Minha Guarda", () => {
     expect(r.dano).toBeLessThanOrEqual(mago.pv - 7);
   });
 
-  it("Escudo Estendido: do Avançado em diante, uma interceptação por rodada sai sem Reação", () => {
+  it("Escudo Estendido dá alcance, não interceptação grátis (0.1.135)", () => {
     const { mara, mago, grupo } = mesa(3);
     expect(sobMinhaGuarda(mago, mago.pv, grupo, makeRng(1)).interceptado).toBe(true);
-    expect(mara.reacaoDisponivel).toBe(true);
-    expect(sobMinhaGuarda(mago, mago.pv, grupo, makeRng(1)).interceptado).toBe(true);
     expect(mara.reacaoDisponivel).toBe(false);
+    expect(sobMinhaGuarda(mago, mago.pv, grupo, makeRng(1)).interceptado).toBe(false);
   });
 
-  it("Aegis: do Santo em diante, o protegido sofre METADE do Bônus de Rank a menos (0.1.134)", () => {
+  it("Aegis não reduz dano (0.1.135)", () => {
     const { mago, grupo } = mesa(4);
-    // Bônus de Rank 4 no Santo: −2, não −4.
-    expect(sobMinhaGuarda(mago, 2, grupo, makeRng(1)).dano).toBe(0);
-    expect(sobMinhaGuarda(mesa(4).mago, 3, mesa(4).grupo, makeRng(1)).dano).toBeGreaterThan(0);
+    expect(sobMinhaGuarda(mago, 2, grupo, makeRng(1)).dano).toBe(2);
   });
 
   it("Aguentar o Baque vale uma vez por rodada (0.1.134)", () => {
@@ -95,8 +92,8 @@ describe("Sob Minha Guarda", () => {
   it("Ninguém Passa: sem Reação uma vez por aliado protegido por rodada, não quantas quiser (0.1.134)", () => {
     const { mara, mago, grupo } = mesa(5);
     const golpe = () => sobMinhaGuarda(mago, mago.pv, grupo, makeRng(1)).interceptado;
-    // Ninguém Passa, Escudo Estendido e a Reação: três; o quarto passa.
-    expect([golpe(), golpe(), golpe(), golpe()]).toEqual([true, true, true, false]);
+    // Ninguém Passa (uma pelo mago) e a Reação: duas; a terceira passa.
+    expect([golpe(), golpe(), golpe()]).toEqual([true, true, false]);
     expect(mara.reacaoDisponivel).toBe(false);
   });
 

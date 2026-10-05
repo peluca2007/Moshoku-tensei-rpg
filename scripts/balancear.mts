@@ -90,7 +90,7 @@ const CEGOS: Record<string, string> = {
   invocacao: "ordens e poderes narrativos dos Pactos",
   "furtividade-e-armadilhas": "armadilha preparada, emboscada e furtividade",
   teorica: "fórmulas montadas na hora (o motor usa as fixas)",
-  "cavalaria-e-escudos": "Provocar Ódio, Muralha da Companhia, Não Ele e o Enquanto Eu Estiver de Pé (Sob Minha Guarda, Aguentar e Aegis entram)",
+  "cavalaria-e-escudos": "Provocar Ódio, Muralha da Companhia, Não Ele, Aegis e o Enquanto Eu Estiver de Pé (Sob Minha Guarda e Aguentar entram)",
 };
 
 /*

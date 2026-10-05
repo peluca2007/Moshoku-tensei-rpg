@@ -812,8 +812,6 @@ export interface EstadoPersonagem extends Alvo {
   fluxoRestante: number;
   emPostura: boolean;
   protegidos: string[];
-  /** Escudo Estendido (Avançado de Escudos): a interceptação sem Reação desta rodada ainda está guardada. */
-  interposLivre?: boolean;
   /** Ninguém Passa (Rei de Escudos): os protegidos já poupados sem Reação nesta rodada. */
   poupadosNaRodada: Set<string>;
   /** Aguentar o Baque e o Soberano: uma vez por rodada. */
@@ -3128,7 +3126,6 @@ export function aoIniciarRodada(alvo: Alvo, elegivel: boolean): void {
       const e = alvo as EstadoPersonagem;
       e.fluxoRestante = e.emPostura && e.ficha.rankAgua >= 6 ? Infinity : e.ficha.fluxoUsosMax;
       e.fluxosNesteTurno.clear();
-      e.interposLivre = (e.ficha.escudo?.rank ?? 0) >= 3;
       e.poupadosNaRodada.clear();
       e.aguentouNaRodada = false;
       if (e.emPostura) {
