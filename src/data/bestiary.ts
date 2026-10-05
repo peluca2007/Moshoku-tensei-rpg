@@ -62,15 +62,23 @@ export interface MoldeCriatura {
  * tempo: com 350/50, 5 criaturas ainda são Equilibrado (~95%) e o Chefe é
  * Difícil (~72%) — no auge, apertar um grupo pede uma criatura a mais.
  *
+ * 2026-10-05 — o PV do 2º, 3º e 4º recalibrado (66 → 59, 139 → 108,
+ * 176 → 141). Três correções do motor de 28 a 30/09 (preparo e
+ * pré-requisitos cobrados, a IA sem gastar Reação como Ação, o BC só onde a
+ * carta manda) tiraram dos heróis o que eles ganhavam de graça, e o 3º
+ * patamar com 5 criaturas caiu de 67% pra 31% de vitória sem ninguém ver. O
+ * `npm run check:molde` existe pra que isso não volte a acontecer calado.
+ * O 5º e o 6º ficam: PV nenhum põe as 5 criaturas e o chefe na faixa juntos.
+ *
  * O molde supõe o personagem que VIVE no patamar (PA_TIPICO_POR_PATAMAR, em
  * ritmoDePa.ts). Grupo recém-chegado — a primeira sessão, com 3 PA — pede
  * lacaios ou uma criatura a menos.
  */
 export const MOLDES_CRIATURA: MoldeCriatura[] = [
   { patamar: 1, titulo: "Comum", pv: 53, ca: 12, bonusAtaque: 3, danoPorTurno: 16, cdResistencia: 11 },
-  { patamar: 2, titulo: "Perigosa", pv: 66, ca: 14, bonusAtaque: 4, danoPorTurno: 21, cdResistencia: 13 },
-  { patamar: 3, titulo: "Ameaça", pv: 139, ca: 16, bonusAtaque: 6, danoPorTurno: 29, cdResistencia: 15 },
-  { patamar: 4, titulo: "Elite", pv: 176, ca: 18, bonusAtaque: 8, danoPorTurno: 38, cdResistencia: 17 },
+  { patamar: 2, titulo: "Perigosa", pv: 59, ca: 14, bonusAtaque: 4, danoPorTurno: 21, cdResistencia: 13 },
+  { patamar: 3, titulo: "Ameaça", pv: 108, ca: 16, bonusAtaque: 6, danoPorTurno: 29, cdResistencia: 15 },
+  { patamar: 4, titulo: "Elite", pv: 141, ca: 18, bonusAtaque: 8, danoPorTurno: 38, cdResistencia: 17 },
   { patamar: 5, titulo: "Terror", pv: 210, ca: 20, bonusAtaque: 10, danoPorTurno: 48, cdResistencia: 19 },
   { patamar: 6, titulo: "Lenda", pv: 350, ca: 22, bonusAtaque: 12, danoPorTurno: 50, cdResistencia: 21 },
 ];

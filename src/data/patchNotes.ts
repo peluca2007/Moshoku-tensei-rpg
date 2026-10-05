@@ -50,6 +50,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.136",
+    date: "2026-10-05",
+    title: "O Meio da Campanha Volta a Ser Difícil, Não Mortal",
+    sections: [
+      {
+        area: "encontros",
+        heading: "O PV do molde do 2º, 3º e 4º patamar",
+        items: [
+          "Apêndice G: o PV da criatura-molde passa de 66 para 59 no 2º patamar, de 139 para 108 no 3º e de 176 para 141 no 4º. O dano não muda. O Chefe continua com 2,5× o PV do molde.",
+          "Por quê: o livro promete '4 criaturas = Equilibrado, 5 = Difícil'. De 28 a 30/09, três correções do simulador (preparo e pré-requisitos cobrados, a IA sem gastar Reação como Ação, o BC só onde a carta manda) tiraram dos heróis o que eles ganhavam de graça, e o molde nunca foi medido de novo. O 3º patamar com 5 criaturas tinha caído de 67% para 31% de vitória, e o Chefe de 88% para 60%: o livro dizia Difícil e entregava Mortal.",
+          "Agora, contra o grupo do kit de mesa: 5 criaturas dão 73%, 67% e 71% de vitória no 2º, 3º e 4º patamar, e o Chefe 99%, 90% e 90%. A mediana do balanceador ficou plana do 1º ao 6º, e Cavalaria e Escudos, que parecia muito acima no 3º, ficou 10 pontos acima em vez de 30.",
+        ],
+      },
+      {
+        area: "bastidores",
+        heading: "Um alarme para o molde",
+        items: [
+          "`npm run check:molde` (e o mesmo teste na suíte) mede o molde dos seis patamares contra o grupo de calibragem e reprova se um número se afastar mais de 8 pontos da referência. A próxima correção do motor que mexer na força dos heróis avisa no mesmo commit, em vez de uma semana depois.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.135",
     date: "2026-10-05",
     title: "O Aegis Deixa de Ser Armadura",
