@@ -172,6 +172,16 @@ await comNavegador(
     for (const rota of ROTAS) {
       const aba = await abrir(urlSemeada(rota));
       await dormir(Number(process.env.ESPERA_MS ?? 5000));
+      // O livro pode ainda estar na rota semeadora: não confundir sua página
+      // vazia com três defeitos de acessibilidade do destino.
+      const destino = new URL(rota, BASE).pathname;
+      let pronta = false;
+      for (let i = 0; i < 60; i++) {
+        pronta = await aba.avaliar(`location.pathname === ${JSON.stringify(destino)} && !!document.querySelector("main") && (!document.querySelector(".folhear") || !!document.querySelector(".folhear[data-pronto]"))`);
+        if (pronta) break;
+        await dormir(500);
+      }
+      if (!pronta) { await aba.fechar(); throw new Error(`A rota ${rota} não terminou de carregar; acessibilidade não medida.`); }
       const problemas = JSON.parse((await aba.avaliar(MEDICAO)) ?? "[]");
       await aba.fechar();
 
