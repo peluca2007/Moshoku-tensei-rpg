@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Share2, Check, Footprints } from "lucide-react";
@@ -695,52 +694,12 @@ export default function CharacterSheet() {
 
       {/* Cabeçalho */}
       <header data-ficha-cabecalho className="surface-raised relative isolate overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 p-4 sm:p-6 dark:border-parchment-700/80 dark:bg-parchment-900/80">
-        {/*
-          A ficha na mesa, atrás do nome do personagem (0.1.6). É a arte que
-          mais fala do que a página faz: papel, vela, pena e tinteiro — e o
-          letreiro do projeto impresso nela. Passa pelo mesmo `.faixa-arte` dos
-          cabeçalhos de rota, então some antes de encostar nos campos editáveis.
-        */}
-        {cover ? (
-          /*
-            A CAPA da ficha, quando o jogador põe uma (0.1.12). Ela entra no
-            lugar exato da arte padrão, e não em cima dela: duas imagens
-            empilhadas atrás do mesmo texto brigariam por contraste, e a de
-            baixo nunca apareceria inteira.
-
-            É `<img>` e não `next/image` de propósito. A imagem é um data URL
-            que já saiu do `imagemDaFicha` no tamanho final; o otimizador do
-            Next não tem o que fazer com ela além de um round-trip pelo
-            servidor — e mandar a foto do personagem de alguém pro servidor é
-            justamente o que este projeto não faz.
-          */
+        {cover && (
+          // A capa permanece local; o véu protege os campos sobre qualquer foto.
           // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={cover}
-            alt=""
-            aria-hidden
-            className="capa-da-ficha absolute inset-0 -z-10 h-full w-full object-cover"
-          />
-        ) : (
-          <Image
-            src="/faixas/ficha.png"
-            alt=""
-            aria-hidden
-            fill
-            sizes="(max-width: 1024px) 100vw, 1024px"
-            className="faixa-arte -z-10 object-cover object-[center_30%]"
-          />
+          <img src={cover} alt="" aria-hidden className="capa-da-ficha absolute inset-0 -z-10 h-full w-full object-cover" />
         )}
-        {/*
-          O mesmo véu do `PageHeader`, pelo mesmo motivo — e aqui ele é mais
-          necessário ainda: esta arte é uma FICHA impressa, com rótulos próprios
-          ("Deus Protetor", "Classes de Magia"). Sem o véu, o texto da foto
-          disputa leitura com os campos de verdade da ficha por cima dela, e o
-          olho não sabe qual dos dois é para preencher.
-        */}
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-parchment-50/72 dark:bg-parchment-950/55" aria-hidden />
-        <div className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-gold-500/10 blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-wine-500/10 blur-3xl" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-parchment-50/90 dark:bg-parchment-950/85" aria-hidden />
         <CaosDaFicha identidades={identidadeVisual} pulso={pulsoDoCaos} />
         {/*
           O h1 da rota. O nome do personagem é um <input> editável, e input não
@@ -750,14 +709,14 @@ export default function CharacterSheet() {
           nome, em corpo 30, logo abaixo.
         */}
         <h1 className="sr-only">{name ? `Ficha de ${name}` : "Ficha de personagem"}</h1>
-        <div className="relative flex flex-col gap-3 sm:flex-row sm:items-start">
+        <div className="relative grid grid-cols-[4rem_minmax(0,1fr)] items-center gap-3 sm:flex sm:flex-wrap sm:items-start">
           {/*
             A FOTO DE PERFIL. Sem foto o lugar não fica vazio: cai no brasão da
             raça, que já resolvia esse buraco desde 0.1.2 — e uma ficha sem foto
             continua sendo uma ficha completa, não uma ficha pela metade.
           */}
           <div className="flex shrink-0 items-center gap-3">
-            <div data-ficha-retrato className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-parchment-300/80 bg-parchment-100/80 shadow-sm dark:border-parchment-700/80 dark:bg-parchment-900/80 sm:h-24 sm:w-24">
+            <div data-ficha-retrato className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-parchment-300/80 bg-parchment-100/80 shadow-sm dark:border-parchment-700/80 dark:bg-parchment-900/80 sm:h-24 sm:w-24">
               {portrait ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -802,7 +761,7 @@ export default function CharacterSheet() {
             mesa impresso. O resto é gerenciamento: acontece uma vez, quando a
             ficha nasce ou muda de dono, e agora mora atrás do "Exportar".
           */}
-          <div className="print-hide flex flex-wrap gap-2 sm:shrink-0">
+          <div className="print-hide col-span-2 flex flex-wrap gap-2 sm:shrink-0">
             <Button
               onClick={() => useCharacterStore.getState().undo()}
               disabled={!canUndo}
@@ -1415,197 +1374,199 @@ export default function CharacterSheet() {
           </div>
         </aside>
 
-        {/* Corpo principal: Grimório */}
+        {/* Resumo do personagem, antes do grimório em largura inteira. */}
         <div className="space-y-4">
           <RaceBackgroundDetails race={race} background={background} subtable={chosenSubtable} />
           <SkillsSection race={race} background={background} skills={skills} />
           <GruposDeArmaSection />
+        </div>
+      </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-parchment-900 dark:text-parchment-50">
-              <Sparkles className="h-5 w-5 text-wine-500" /> Grimório &amp; Habilidades
-            </h2>
-            {abilitiesByTree.size > 0 && (
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -tranparchment-y-1/2 text-parchment-400" />
-                <input
-                  value={grimoireQuery}
-                  onChange={(e) => setGrimoireQuery(e.target.value)}
-                  placeholder="Buscar magia, talento ou árvore..."
-                  aria-label="Buscar no grimório"
-                  className="w-56 rounded-full border border-parchment-300 bg-parchment-50 py-1.5 pl-8 pr-7 text-xs text-parchment-700 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200"
-                />
-                {grimoireQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setGrimoireQuery("")}
-                    aria-label="Limpar busca"
-                    className="absolute right-2 top-1/2 -tranparchment-y-1/2 text-parchment-400 hover:text-parchment-600 dark:hover:text-parchment-200"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-
-          {abilitiesByTree.size === 0 && (purchasedCombinedSpells ?? []).length === 0 && (
-            <EmptyState
-              icon={Sparkles}
-              hint="Abra as Árvores de Progressão e desbloqueie um patamar — magias, talentos e técnicas caem aqui sozinhos."
-            >
-              O grimório está em branco.
-            </EmptyState>
-          )}
-
-          {(() => {
-            const query = grimoireQuery.trim().toLowerCase();
-            const entries = Array.from(abilitiesByTree.entries()).flatMap(([treeId, purchases]) => {
-              const tree = getTreeById(treeId);
-              if (!tree) return [];
-              const resolved = resolveAbilities(tree, purchases);
-              const treeNameMatches = tree.name.toLowerCase().includes(query);
-              const filtered = !query || treeNameMatches ? resolved : resolved.filter(({ def }) => def.name.toLowerCase().includes(query));
-              if (query && filtered.length === 0) return [];
-              return [{
-                treeId,
-                tree,
-                resolved: filtered,
-                highestRank: highestRankByTree.get(treeId),
-                unlockedTreeRanks: unlockedRanksByTree.get(treeId) ?? [],
-              }];
-            });
-
-            if (query && entries.length === 0) {
-              return (
-                <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
-                  Nada encontrado para “{grimoireQuery}”.
-                </p>
-              );
-            }
-
-            return entries.map(({ treeId, tree, resolved, highestRank, unlockedTreeRanks }) => {
-              const masteries = unlockedTreeRanks
-                .map((rank) => ({ rank, mastery: tree.ranks.find((r) => r.rank === rank)?.mastery }))
-                .filter((m): m is { rank: RankName; mastery: NonNullable<typeof m.mastery> } => !!m.mastery);
-              const accent = CATEGORY_ACCENT[tree.category];
-
-              return (
-                <div
-                  key={treeId}
-                  data-painel-arvore={treeId}
-                  style={coresDaEscola(treeId)}
-                  className={`${tramaStyles.painel} rounded-2xl border-l-4 ${accent.border} border-y border-r border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-y-parchment-800 dark:border-r-parchment-800 dark:bg-parchment-900/60`}
+      <section className="space-y-4" aria-labelledby="titulo-grimorio">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 id="titulo-grimorio" className="flex items-center gap-2 text-lg font-bold text-parchment-900 dark:text-parchment-50">
+            <Sparkles className="h-5 w-5 text-wine-500" /> Grimório &amp; Habilidades
+          </h2>
+          {abilitiesByTree.size > 0 && (
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -tranparchment-y-1/2 text-parchment-400" />
+              <input
+                value={grimoireQuery}
+                onChange={(e) => setGrimoireQuery(e.target.value)}
+                placeholder="Buscar magia, talento ou árvore..."
+                aria-label="Buscar no grimório"
+                className="w-56 rounded-full border border-parchment-300 bg-parchment-50 py-1.5 pl-8 pr-7 text-xs text-parchment-700 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-200"
+              />
+              {grimoireQuery && (
+                <button
+                  type="button"
+                  onClick={() => setGrimoireQuery("")}
+                  aria-label="Limpar busca"
+                  className="absolute right-2 top-1/2 -tranparchment-y-1/2 text-parchment-400 hover:text-parchment-600 dark:hover:text-parchment-200"
                 >
-                  <span className={tramaStyles.marca} aria-hidden="true">{identidadeVisualDaArvore(treeId)?.selo}</span>
-                  <h3 className="relative mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
-                    <MomentoDoPatamar key={`${character.id}:${tree.id}`} arvore={tree.id} rank={highestRank} personagem={character.id} />
-                    <TreeCrest tree={tree} size={32} />
-                    {tree.name}
-                    <span className={`rounded-full bg-parchment-900/5 px-2 py-0.5 text-3xs font-semibold uppercase tracking-wide ${accent.text} dark:bg-white/5`}>
-                      {CATEGORY_LABELS[tree.category]}
-                    </span>
-                    {highestRank && (
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${RANK_COLORS[highestRank]}`}
-                      >
-                        {highestRank}
-                      </span>
-                    )}
-                  </h3>
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
 
-                {masteries.length > 0 && (
-                  <div className="mb-3 space-y-2">
-                    {masteries.map(({ rank, mastery }) => (
-                      <div
-                        key={rank}
-                        className="rounded-xl border border-gold-200 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30"
-                      >
-                        <span className="font-semibold text-gold-700 dark:text-gold-400">
-                          ◈ Maestria ({rank}): {mastery.name}
-                        </span>
-                        <p className="mt-0.5 text-xs text-gold-900/80 dark:text-gold-200/80">
-                          {mastery.description}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
+        {abilitiesByTree.size === 0 && (purchasedCombinedSpells ?? []).length === 0 && (
+          <EmptyState
+            icon={Sparkles}
+            hint="Abra as Árvores de Progressão e desbloqueie um patamar — magias, talentos e técnicas caem aqui sozinhos."
+          >
+            O grimório está em branco.
+          </EmptyState>
+        )}
 
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  {resolved.map(({ kind, rank, def }) => (
-                    <div
-                      key={def.id}
-                      data-carta-comprada={def.id}
-                      data-assinatura={kind === "ability" && !!(def as AbilityDef).signature}
-                      className="surface rounded-xl border border-parchment-300 bg-parchment-100/80 p-3 dark:border-parchment-800 dark:bg-parchment-950/50"
+        {(() => {
+          const query = grimoireQuery.trim().toLowerCase();
+          const entries = Array.from(abilitiesByTree.entries()).flatMap(([treeId, purchases]) => {
+            const tree = getTreeById(treeId);
+            if (!tree) return [];
+            const resolved = resolveAbilities(tree, purchases);
+            const treeNameMatches = tree.name.toLowerCase().includes(query);
+            const filtered = !query || treeNameMatches ? resolved : resolved.filter(({ def }) => def.name.toLowerCase().includes(query));
+            if (query && filtered.length === 0) return [];
+            return [{
+              treeId,
+              tree,
+              resolved: filtered,
+              highestRank: highestRankByTree.get(treeId),
+              unlockedTreeRanks: unlockedRanksByTree.get(treeId) ?? [],
+            }];
+          });
+
+          if (query && entries.length === 0) {
+            return (
+              <p className="rounded-xl border border-dashed border-parchment-300 p-6 text-center text-sm text-parchment-600 dark:border-parchment-700 dark:text-parchment-400">
+                Nada encontrado para “{grimoireQuery}”.
+              </p>
+            );
+          }
+
+          return entries.map(({ treeId, tree, resolved, highestRank, unlockedTreeRanks }) => {
+            const masteries = unlockedTreeRanks
+              .map((rank) => ({ rank, mastery: tree.ranks.find((r) => r.rank === rank)?.mastery }))
+              .filter((m): m is { rank: RankName; mastery: NonNullable<typeof m.mastery> } => !!m.mastery);
+            const accent = CATEGORY_ACCENT[tree.category];
+
+            return (
+              <div
+                key={treeId}
+                data-painel-arvore={treeId}
+                style={coresDaEscola(treeId)}
+                className={`${tramaStyles.painel} rounded-2xl border-l-4 ${accent.border} border-y border-r border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-y-parchment-800 dark:border-r-parchment-800 dark:bg-parchment-900/60`}
+              >
+                <span className={tramaStyles.marca} aria-hidden="true">{identidadeVisualDaArvore(treeId)?.selo}</span>
+                <h3 className="relative mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
+                  <MomentoDoPatamar key={`${character.id}:${tree.id}`} arvore={tree.id} rank={highestRank} personagem={character.id} />
+                  <TreeCrest tree={tree} size={32} />
+                  {tree.name}
+                  <span className={`rounded-full bg-parchment-900/5 px-2 py-0.5 text-3xs font-semibold uppercase tracking-wide ${accent.text} dark:bg-white/5`}>
+                    {CATEGORY_LABELS[tree.category]}
+                  </span>
+                  {highestRank && (
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ${RANK_COLORS[highestRank]}`}
                     >
-                      <div className="mb-1 flex items-start justify-between gap-2">
-                        <span className="font-semibold text-parchment-900 dark:text-parchment-50">
-                          {kind === "ability" && (def as AbilityDef).signature && "◆ "}
-                          {def.name}
-                        </span>
-                        <div className="flex shrink-0 items-center gap-1">
-                          {kind === "ability" && <RitualBadge ability={def as AbilityDef} />}
-                          <span
-                            className={`rounded-full px-2 py-0.5 text-3xs font-semibold ring-1 ${RANK_COLORS[rank]}`}
-                          >
-                            {rank}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="text-xs text-parchment-600 dark:text-parchment-400">
-                        {kind === "ability" ? "Habilidade" : "Talento"} · {def.paCost} PA
-                        {kind === "ability" && (() => {
-                          const ability = def as AbilityDef;
-                          const pm = ability.pmCost !== undefined ? ` · ${ability.pmCost} PM` : "";
-                          const pt = ability.ptCost !== undefined ? ` · ${ability.ptCost} PT` : "";
-                          const pp = ability.ppCost !== undefined ? ` · ${ability.ppCost} PP` : "";
-                          const actionLabel = ability.reaction
-                            ? "1 Reação"
-                            : ability.actions.normal === 0
-                              ? "Passivo"
-                              : rotuloDeAcoes(ability.actions.normal);
-                          return `${pm}${pt}${pp} · ${ability.range} · ${actionLabel}`;
-                        })()}
+                      {highestRank}
+                    </span>
+                  )}
+                </h3>
+
+              {masteries.length > 0 && (
+                <div className="mb-3 space-y-2">
+                  {masteries.map(({ rank, mastery }) => (
+                    <div
+                      key={rank}
+                      className="rounded-xl border border-gold-200 bg-gold-50/60 p-3 text-sm dark:border-gold-900 dark:bg-gold-950/30"
+                    >
+                      <span className="font-semibold text-gold-700 dark:text-gold-400">
+                        ◈ Maestria ({rank}): {mastery.name}
+                      </span>
+                      <p className="mt-0.5 text-xs text-gold-900/80 dark:text-gold-200/80">
+                        {mastery.description}
                       </p>
-                      {kind === "ability" ? (
-                        <>
-                          <p className="mt-1 text-sm text-parchment-700 dark:text-parchment-300">
-                            {(def as AbilityDef).damage?.normal && (
-                              <span className="font-medium">{(def as AbilityDef).damage!.normal}. </span>
-                            )}
-                            {(def as AbilityDef).effect}
-                          </p>
-                          <CastingBreakdown ability={def as AbilityDef} />
-                          <IncantationBlock ability={def as AbilityDef} rank={rank} />
-                          <AbilityQuickRoll
-                            label={def.name}
-                            hintText={(def as AbilityDef).damage?.normal ?? (def as AbilityDef).effect}
-                          />
-                        </>
-                      ) : (
-                        <p className="mt-1 text-sm text-parchment-700 dark:text-parchment-300">
-                          {(def as TalentDef).description}
-                        </p>
-                      )}
                     </div>
                   ))}
                 </div>
+              )}
+
+              <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
+                {resolved.map(({ kind, rank, def }) => (
+                  <div
+                    key={def.id}
+                    data-carta-comprada={def.id}
+                    data-assinatura={kind === "ability" && !!(def as AbilityDef).signature}
+                    className="surface rounded-xl border border-parchment-300 bg-parchment-100/80 p-3 dark:border-parchment-800 dark:bg-parchment-950/50"
+                  >
+                    <div className="mb-1 flex items-start justify-between gap-2">
+                      <span className="font-semibold text-parchment-900 dark:text-parchment-50">
+                        {kind === "ability" && (def as AbilityDef).signature && "◆ "}
+                        {def.name}
+                      </span>
+                      <div className="flex shrink-0 items-center gap-1">
+                        {kind === "ability" && <RitualBadge ability={def as AbilityDef} />}
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-3xs font-semibold ring-1 ${RANK_COLORS[rank]}`}
+                        >
+                          {rank}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-parchment-600 dark:text-parchment-400">
+                      {kind === "ability" ? "Habilidade" : "Talento"} · {def.paCost} PA
+                      {kind === "ability" && (() => {
+                        const ability = def as AbilityDef;
+                        const pm = ability.pmCost !== undefined ? ` · ${ability.pmCost} PM` : "";
+                        const pt = ability.ptCost !== undefined ? ` · ${ability.ptCost} PT` : "";
+                        const pp = ability.ppCost !== undefined ? ` · ${ability.ppCost} PP` : "";
+                        const actionLabel = ability.reaction
+                          ? "1 Reação"
+                          : ability.actions.normal === 0
+                            ? "Passivo"
+                            : rotuloDeAcoes(ability.actions.normal);
+                        return `${pm}${pt}${pp} · ${ability.range} · ${actionLabel}`;
+                      })()}
+                    </p>
+                    {kind === "ability" ? (
+                      <>
+                        <p className="mt-1 text-sm text-parchment-700 dark:text-parchment-300">
+                          {(def as AbilityDef).damage?.normal && (
+                            <span className="font-medium">{(def as AbilityDef).damage!.normal}. </span>
+                          )}
+                          {(def as AbilityDef).effect}
+                        </p>
+                        <CastingBreakdown ability={def as AbilityDef} />
+                        <IncantationBlock ability={def as AbilityDef} rank={rank} ornamento={false} />
+                        <AbilityQuickRoll
+                          label={def.name}
+                          hintText={(def as AbilityDef).damage?.normal ?? (def as AbilityDef).effect}
+                        />
+                      </>
+                    ) : (
+                      <p className="mt-1 text-sm text-parchment-700 dark:text-parchment-300">
+                        {(def as TalentDef).description}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
-              );
-            });
-          })()}
+            </div>
+            );
+          });
+        })()}
 
-          <CombinedSpellsSection query={grimoireQuery} />
+        <CombinedSpellsSection query={grimoireQuery} />
 
-          <InventorySection />
-          {/* A lore é leitura, não consulta de turno — fora do papel. */}
-          <div className="print-hide">
-            <LoreSection lore={lore} />
-          </div>
+        <InventorySection />
+        {/* A lore é leitura, não consulta de turno — fora do papel. */}
+        <div className="print-hide">
+          <LoreSection lore={lore} />
         </div>
-      </div>
+      </section>
 
       {/*
         Painel de regras rápidas.

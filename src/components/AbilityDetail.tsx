@@ -160,7 +160,7 @@ export function CastingBreakdown({ ability, compacta = false }: { ability: Abili
  * três superfícies que renderizam isto (livro, ficha e mapa de árvores) têm o
  * rank em mãos e devem passá-lo sempre.
  */
-export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?: RankName }) {
+export function IncantationBlock({ ability, rank, ornamento = true }: { ability: AbilityDef; rank?: RankName; ornamento?: boolean }) {
   if (!ability.incantation) return null;
 
   const bonus = perfectRecitationBonus(ability, rank);
@@ -168,7 +168,7 @@ export function IncantationBlock({ ability, rank }: { ability: AbilityDef; rank?
 
   return (
     <div className="livro-cantico relative mt-2">
-      <div className="absolute -top-3 left-2 -z-10 h-10 w-10 rounded-full bg-gold-500/20 ring-2 ring-gold-400/50 dark:bg-gold-500/10" />
+      {ornamento && <div aria-hidden className="absolute -top-3 left-2 -z-10 h-10 w-10 rounded-full bg-gold-500/20 ring-2 ring-gold-400/50 dark:bg-gold-500/10" />}
       <blockquote className="relative rounded-lg border border-wine-300/30 bg-parchment-50/50 p-3 pl-6 ring-1 ring-inset ring-wine-300/10 dark:border-wine-800/30 dark:bg-parchment-900/50 dark:ring-wine-800/10">
         <div className="flex items-start gap-1.5">
           {/*

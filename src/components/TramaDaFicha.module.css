@@ -25,3 +25,12 @@
 .caminhoDaColecao { display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem; color: var(--color-parchment-700); font-size: .75rem; font-weight: 600; }
 :global(html.dark) .caminhoDaColecao { color: var(--color-parchment-300); }
 @media print { .trama { margin-top: .5rem; padding-top: .5rem; } .marca, .filete { display: none; } .escola { background: transparent !important; box-shadow: none; color: #000 !important; } .selo { color: #000; } }
+
+.escola { max-width: 100%; min-width: 0; }
+.escola > span:last-child { overflow-wrap: anywhere; }
+.selo { flex-shrink: 0; }
+.outras { margin-top: .5rem; color: var(--color-parchment-700); font-size: .75rem; }
+:global(html.dark) .outras { color: var(--color-parchment-200); }
+.outras summary { cursor: pointer; min-height: 44px; padding-block: .8rem; }
+.outras .escolas { margin-top: .25rem; }
+@media print { .outras > ul { display: flex !important; } }
