@@ -25,7 +25,7 @@ export default function TramaDaFicha({ identidades }: { identidades: PesoDeArvor
       </div>
       <p className={styles.rotulo}>Seu caminho</p>
       <ul className={styles.escolas} aria-label="Árvores que compõem seu personagem">
-        {identidades.map(({ treeId }, i) => {
+        {identidades.slice(0, 3).map(({ treeId }, i) => {
           const arvore = getTreeById(treeId);
           const identidade = identidadeVisualDaArvore(treeId);
           if (!arvore || !identidade) return null;
@@ -37,6 +37,19 @@ export default function TramaDaFicha({ identidades }: { identidades: PesoDeArvor
           );
         })}
       </ul>
+      {identidades.length > 3 && (
+        <details className={styles.outras}>
+          <summary>Mais {identidades.length - 3} escolas no seu caminho</summary>
+          <ul className={styles.escolas} aria-label="Demais árvores do personagem">
+            {identidades.slice(3).map(({ treeId }) => (
+              <li key={treeId} className={styles.escola} style={coresDaEscola(treeId)}>
+                <span className={styles.selo} aria-hidden>{identidadeVisualDaArvore(treeId)?.selo}</span>
+                <span>{getTreeById(treeId)?.name}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
     </div>
   );
 }
