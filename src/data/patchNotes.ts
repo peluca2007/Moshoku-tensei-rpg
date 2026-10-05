@@ -50,6 +50,29 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.137",
+    date: "2026-10-05",
+    title: "O Veneno Que Não Se Perde",
+    sections: [
+      {
+        area: "regras",
+        heading: "Desintoxicação: os venenos somam BC, e a Dose ganha o Transbordo",
+        items: [
+          "Transbordo (condição Dose, Cap. 4): quem cai a 0 PV com Dose passa as Doses, sem teste, para o aliado dele mais próximo a até 9 m; se ele chegar a 3, é o Colapso dele. O veneno num alvo que o grupo derrubou antes da cobrança não se perde mais.",
+          "Os venenos passam a somar BC, como todo dano de magia do livro: Peçonha 2d6 + BC, Sangue de Serpente 3d6 + BC. E os três grandes sobem: Corrosão 8d6 + BC (era 5d6), Fel Alado 8d8 + BC (era 4d8), Sopro Podre 12d8 + BC (era 8d8).",
+          "Por quê: a escola era a última do balanceador em todos os patamares e entregava menos que a própria régua do Apêndice C (17 a 32 de dano por turno, contra ~14 a ~60 escritos). Agora entrega 18/19/23/28/36/46 do 1º ao 6º patamar, dentro da régua, e saiu da lista de árvores fracas do 2º patamar em diante (no 3º ainda fica um pouco abaixo da mediana), sem virar forte em nenhum.",
+        ],
+      },
+      {
+        area: "bastidores",
+        heading: "A Cura 'fraca' era o método",
+        items: [
+          "O trio de referência do balanceador já tem uma Cura, então a Cura no quarto lugar media um segundo curandeiro. `REFERENCIA=...` troca o trio; com um trio sem cura, ela fica ao lado do Bardo, e não é desequilíbrio. O `medir:regua` passou a medir a Desintoxicação, porque o motor já joga a Dose.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.136",
     date: "2026-10-05",
     title: "O Meio da Campanha Volta a Ser Difícil, Não Mortal",
