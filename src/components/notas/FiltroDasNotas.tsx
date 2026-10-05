@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AREAS_DAS_NOTAS, type AreaDaNota } from "@/data/patchNotes";
 import s from "./notas.module.css";
+import IconeDaArea from "./IconeDaArea";
 
 type Filtro = AreaDaNota | "tudo";
 const CHAVE = "notas-filtro";
@@ -84,7 +85,7 @@ export default function FiltroDasNotas() {
       </button>
       {AREAS_DAS_NOTAS.map((a) => (
         <button key={a.id} type="button" data-area={a.id} aria-pressed={filtro === a.id} onClick={() => escolher(a.id)}>
-          {a.nome}
+          <IconeDaArea area={a.id} />{a.nome}
         </button>
       ))}
     </div>
