@@ -1,0 +1,16 @@
+.mesa { margin: auto; width: min(44rem, calc(100vw - 2rem)); max-height: calc(100dvh - 2rem); overflow: auto; padding: 1.5rem; border: 1px solid var(--color-gold-600); border-radius: 1rem; color: var(--color-parchment-900); background: var(--color-parchment-100); box-shadow: 0 1.5rem 5rem #0005; }
+:global(.dark) .mesa { color: var(--color-parchment-100); background: var(--color-parchment-950); }
+.mesa::backdrop { background: #0009; }
+.quadros { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; list-style: none; padding: 0; }
+.quadro { flex: 1 1 7rem; display: flex; flex-direction: column; gap: .4rem; padding: .8rem; border: 1px solid var(--color-parchment-500); border-radius: .6rem; }
+.quadro[data-ativo] { border-color: var(--color-gold-600); background: color-mix(in srgb, var(--color-gold-500) 12%, transparent); }
+.controles { display: flex; flex-wrap: wrap; gap: .5rem; margin-block: 1rem; }
+.botao { min-height: 44px; padding: .5rem .75rem; border: 1px solid var(--color-parchment-500); border-radius: .5rem; font-size: .875rem; font-weight: 600; cursor: pointer; background: transparent; }
+.botao:disabled { opacity: .5; cursor: default; }
+.botao:focus-visible { outline: 2px solid var(--color-gold-600); outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) { .mesa[open] { animation: mesa-entra 180ms ease-out; } @keyframes mesa-entra { from { opacity: .7; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } } }
+@media print { .mesa, .interativo::after { display: none !important; } }
+.interativo { position: relative; }
+.interativo::after { content: "Experimentar ↗"; position: absolute; right: 0; top: 0; padding: .1rem .25rem; font: 600 9px/1.2 sans-serif; color: var(--color-gold-700); background: var(--color-parchment-100); border-radius: .2rem; pointer-events: none; }
+:global(.dark) .interativo::after { color: var(--color-gold-300); background: var(--color-parchment-950); }
+.interativo:focus-visible { outline: 2px solid var(--color-gold-600); outline-offset: 3px; }

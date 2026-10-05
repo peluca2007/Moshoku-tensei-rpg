@@ -1,5 +1,7 @@
 import { WEAPON_DIE_LADDER } from "@/lib/weaponDie";
 import { RANK_BONUS, RANKS } from "@/lib/types";
+import DiagramaInterativo, { type Demonstracao, type EtapaDeTiro } from "./DiagramaInterativo";
+const ACOES_DO_TURNO = [1, 2, 3];
 
 /**
  * Os diagramas do livro, em CSS e SVG puros — 0.1.63, refeitos em 0.1.64.
@@ -41,11 +43,17 @@ function Quadro({
   nota,
   children,
   rolavel = false,
+  demonstracao,
+  etapas,
+  caInicial,
 }: {
   titulo: string;
   nota?: React.ReactNode;
   children: React.ReactNode;
   rolavel?: boolean;
+  demonstracao?: Demonstracao;
+  etapas?: EtapaDeTiro[];
+  caInicial?: number;
 }) {
   return (
     <figure className="diagrama my-5 rounded-2xl border border-gold-500/25 bg-gradient-to-br from-parchment-100/80 to-parchment-200/40 p-4 shadow-sm dark:border-gold-600/20 dark:from-parchment-900/70 dark:to-parchment-950/60">
@@ -56,7 +64,7 @@ function Quadro({
         </span>
         <span aria-hidden className="h-px flex-1 bg-gradient-to-l from-transparent to-gold-500/40" />
       </figcaption>
-      <div className={rolavel ? "overflow-x-auto pb-1" : ""}>{children}</div>
+      {demonstracao ? <DiagramaInterativo tipo={demonstracao} etapas={etapas} caInicial={caInicial} acoes={ACOES_DO_TURNO.length} className={rolavel ? "overflow-x-auto pb-1 cursor-pointer" : "cursor-pointer"}>{children}</DiagramaInterativo> : <div className={rolavel ? "overflow-x-auto pb-1" : ""}>{children}</div>}
       {nota && (
         <p className="surge mt-3 text-xs leading-relaxed text-parchment-600 dark:text-parchment-400">
           {nota}
@@ -366,10 +374,12 @@ export function EtapasDoTiroPerfeito() {
   return (
     <Quadro
       titulo="O Tiro Perfeito, Ação por Ação — só quem tem Arquearia"
+      demonstracao="tiro"
+      etapas={etapas}
       nota="Quatro Ações num turno de três: ele sempre atravessa turnos. Cada etapa compra uma coisa diferente — potência, acerto contra quem se mexe, ângulo — e a quarta é o disparo, que pode errar como qualquer outro. A linha tracejada é onde o seu turno acaba, e é por isso que levar dano no meio cobra o teste de Espírito da Interrupção (CD 10 + o Bônus de Rank de quem te acertou). O talento Etapa Encurtada junta as duas primeiras e faz o tiro caber num turno."
       rolavel
     >
-      <ol className="acende-em-sequencia flex min-w-max items-stretch gap-2 pt-1">
+      <ol className="flex min-w-max items-stretch gap-2 pt-1">
         {etapas.map((e, i) => (
           <li key={e.n} style={{ animationDelay: `${i * 340}ms` }} className="flex items-stretch gap-2">
             <div className="etapa-acende flex w-32 flex-col rounded-xl border border-gold-500/40 bg-gradient-to-b from-gold-50/80 to-gold-100/30 p-2.5 dark:border-gold-700/50 dark:from-gold-950/40 dark:to-gold-950/10">
@@ -586,11 +596,13 @@ export function OrdemDoDano() {
  */
 export function QuebrantadoEmpilha() {
   const CA_INICIAL = 15;
-  const acumulos = [0, 1, 2, 3];
+  const acumulos = Array.from({ length: RANK_BONUS.Avançado + 1 }, (_, n) => n);
 
   return (
     <Quadro
       titulo="Quebrantado, acúmulo a acúmulo"
+      demonstracao="quebrantado"
+      caInicial={CA_INICIAL}
       nota={
         <>
           O teto é o <b>Bônus de Rank de quem aplicou</b> — aqui, um Veterano (+3). Não é ferimento: magia
@@ -648,11 +660,12 @@ export function AnatomiaDoTurno() {
   return (
     <Quadro
       titulo="Um Turno"
+      demonstracao="turno"
       nota="A Reação NÃO sai das suas três Ações — ela é uma quarta coisa, e acontece no turno dos outros. Ela volta no começo de cada rodada."
     >
       <div className="flex flex-col gap-2.5 sm:flex-row">
-        <ol className="acende-em-sequencia flex flex-1 gap-2">
-          {[1, 2, 3].map((n) => (
+        <ol className="flex flex-1 gap-2">
+          {ACOES_DO_TURNO.map((n) => (
             <li
               key={n}
               style={{ animationDelay: `${(n - 1) * 380}ms` }}

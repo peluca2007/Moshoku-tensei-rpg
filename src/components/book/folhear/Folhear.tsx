@@ -37,6 +37,7 @@ import { useTheme } from "next-themes";
 import { ehNoite } from "@/lib/temas";
 import type { TocEntry } from "../BookToc";
 import { FONTES_DO_LIVRO } from "./fontes";
+import { observarAberturas } from "./movimentoDoLivro";
 import { type Achado, buscarNoLivro, esquecerIndice, limparRealce, realcar } from "./buscaNoLivro";
 import {
   aplicar as aplicarDiario,
@@ -681,6 +682,8 @@ export default function Folhear({
     };
   }, [modo, paginacao]);
 
+  const aberturasVistas = useRef(new WeakSet<Element>());
+
   // Guarda a página a cada virada (a primeira da dupla aberta).
   useEffect(() => {
     if (modo !== "livro" || !paginacao || !porDupla) return;
@@ -1002,6 +1005,10 @@ export default function Folhear({
 
   const livro = modo === "livro";
   const pronto = modo === "continuo" || (livro && paginacao !== null);
+  useEffect(() => {
+    if (!fluxo.current || !modo || (modo === "livro" && !pronto)) return;
+    return observarAberturas(fluxo.current, modo === "livro" ? janela.current : null, aberturasVistas.current);
+  }, [modo, pronto]);
   const paginaInicial = geo ? dupla * geo.porDupla : 0;
   const rotuloAtual = paginacao?.rotulos[Math.min(paginaInicial + (geo?.porDupla ?? 1) - 1, paginacao.total - 1)];
 
