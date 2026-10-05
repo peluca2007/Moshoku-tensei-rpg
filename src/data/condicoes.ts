@@ -125,7 +125,7 @@ export const CONDICOES: Condicao[] = [
     id: "dose",
     nome: "Dose",
     efeito:
-      "Acumulável até 3, e só os venenos da Magia de Desintoxicação a aplicam. Com 1 Dose, nada ainda: o veneno está se instalando. Com 2 Doses, o alvo está Envenenado. A 3ª Dose é o Colapso: as Doses saem todas e o alvo fica Atordoado até o fim do próximo turno dele. Dura até o fim do combate (1 minuto fora dele), ou até ser purgada ou Invertida (Cap. 2, Desintoxicação). Construtos, mortos-vivos e quem não respira não recebem Dose.",
+      "Acumulável até 3, e só os venenos da Magia de Desintoxicação a aplicam. Com 1 Dose, nada ainda: o veneno está se instalando. Com 2 Doses, o alvo está Envenenado. A 3ª Dose é o Colapso: as Doses saem todas e o alvo fica Atordoado até o fim do próximo turno dele. Transbordo: quem cai a 0 PV com Dose passa as Doses dele, sem teste, para o aliado dele mais próximo a até 9 m (se chegar a 3, é o Colapso deste). Dura até o fim do combate (1 minuto fora dele), ou até ser purgada ou Invertida (Cap. 2, Desintoxicação). Construtos, mortos-vivos e quem não respira não recebem Dose.",
     mecanica: {
       acumulavel: true,
       tetoFixo: 3,
