@@ -77,10 +77,27 @@ describe("Sob Minha Guarda", () => {
     expect(mara.reacaoDisponivel).toBe(false);
   });
 
-  it("Aegis: do Santo em diante, o protegido sofre o Bônus de Rank a menos", () => {
+  it("Aegis: do Santo em diante, o protegido sofre METADE do Bônus de Rank a menos (0.1.134)", () => {
     const { mago, grupo } = mesa(4);
-    const r = sobMinhaGuarda(mago, 3, grupo, makeRng(1));
-    expect(r.dano).toBe(0);
+    // Bônus de Rank 4 no Santo: −2, não −4.
+    expect(sobMinhaGuarda(mago, 2, grupo, makeRng(1)).dano).toBe(0);
+    expect(sobMinhaGuarda(mesa(4).mago, 3, mesa(4).grupo, makeRng(1)).dano).toBeGreaterThan(0);
+  });
+
+  it("Aguentar o Baque vale uma vez por rodada (0.1.134)", () => {
+    const { mara, mago, grupo } = mesa(3, ["aguentar"]);
+    const pt = mara.pt;
+    sobMinhaGuarda(mago, mago.pv, grupo, makeRng(1));
+    sobMinhaGuarda(mago, mago.pv, grupo, makeRng(1));
+    expect(mara.pt).toBe(pt - 1);
+  });
+
+  it("Ninguém Passa: sem Reação uma vez por aliado protegido por rodada, não quantas quiser (0.1.134)", () => {
+    const { mara, mago, grupo } = mesa(5);
+    const golpe = () => sobMinhaGuarda(mago, mago.pv, grupo, makeRng(1)).interceptado;
+    // Ninguém Passa, Escudo Estendido e a Reação: três; o quarto passa.
+    expect([golpe(), golpe(), golpe(), golpe()]).toEqual([true, true, true, false]);
+    expect(mara.reacaoDisponivel).toBe(false);
   });
 
   it("o limite de protegidos é 1, 2 e 3, e não ilimitado do Santo em diante", () => {

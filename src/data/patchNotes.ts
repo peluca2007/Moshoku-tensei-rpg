@@ -50,6 +50,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.134",
+    date: "2026-10-05",
+    title: "As Camadas do Escudeiro",
+    sections: [{
+      area: "regras",
+      heading: "Cavalaria e Escudos: três camadas que se somavam ficam menores",
+      items: [
+        "Aguentar o Baque e Aguentar Soberano: uma vez por rodada. Antes, toda interceptação podia ser reduzida, e a do Soberano devolvia o PT quando zerava: interceptar saía de graça.",
+        "Aegis (Santo): a redução de dano dos protegidos é metade do Bônus de Rank, arredondada pra cima (2 no Santo, 3 no Rei e no Imperador). Ela vale contra TODO golpe nos protegidos, e no 6º patamar era o que fazia o grupo nunca cair.",
+        "Ninguém Passa (Rei): interceptar sem Reação vale uma vez por rodada para cada aliado protegido, e não quantas vezes quiser.",
+        "Medido no `balancear` (vitória no encontro difícil / contra o chefe): no 3º patamar, de 87%/94% para 84%/87%; no 6º, de 100%/99% para 100%/93%. A mediana é 44% e 69%. A árvore continua acima: o que pesa no 3º é interceptar o golpe que derrubaria alguém, e no 6º o Aegis. Os próximos cortes são decisão do autor.",
+      ],
+    }],
+  },
+  {
     version: "0.1.133",
     date: "2026-10-05",
     title: "O Escudeiro Entra na Frente",
