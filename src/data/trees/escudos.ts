@@ -246,7 +246,7 @@ export const ESCUDOS_TREE: Tree = {
           range: "Pessoal",
           actions: { normal: 0 },
           damage: { normal: "Reduz 1d10 + Vigor + Bônus de Rank" },
-          effect: "Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 1d10 + Vigor + Bônus de Rank antes de aplicá-lo em você.",
+          effect: "Uma vez por rodada, ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 1d10 + Vigor + Bônus de Rank antes de aplicá-lo em você.",
         },
         {
           id: "aguentar-soberano",
@@ -258,7 +258,7 @@ export const ESCUDOS_TREE: Tree = {
           range: "Pessoal",
           actions: { normal: 0 },
           damage: { normal: "Reduz 2d10 + Vigor + Bônus de Rank" },
-          effect: "Requer Puro Escudo. Ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 2d10 + Vigor + Bônus de Rank antes de aplicá-lo em você. Se a redução zerar o dano, você recupera 1 PT imediatamente.",
+          effect: "Requer Puro Escudo. Uma vez por rodada, ao interceptar dano por Sob Minha Guarda, gaste 1 PT (sem Ação e sem Reação): reduza esse dano em 2d10 + Vigor + Bônus de Rank antes de aplicá-lo em você. Se a redução zerar o dano, você recupera 1 PT imediatamente.",
         },
         {
           id: "escudo-erguido",
@@ -356,7 +356,7 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Aegis",
         description:
-          "Aliados Sob Sua Guarda recebem, passivamente e sem custo: redução de dano igual ao seu Bônus de Rank contra todo dano recebido, imunidade a acertos críticos, e o direito de repetir um teste de resistência falho por turno.",
+          "Aliados Sob Sua Guarda recebem, passivamente e sem custo: redução de dano igual à metade do seu Bônus de Rank (arredondada para cima) contra todo dano recebido, imunidade a acertos críticos, e o direito de repetir um teste de resistência falho por turno.",
       },
       talents: [
         {
@@ -417,7 +417,7 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Ninguém Passa",
         description:
-          "Criaturas hostis não podem se mover para além de você (3m para cada lado da sua linha) sem antes vencer uma disputa de Força ou Vigor. Você intercepta dano por Sob Minha Guarda sem gastar Reação, quantas vezes quiser por rodada. Imune a Paralisia, Petrificação, Preso e efeitos que impeçam agir, com 1+ PT.",
+          "Criaturas hostis não podem se mover para além de você (3m para cada lado da sua linha) sem antes vencer uma disputa de Força ou Vigor. Você intercepta dano por Sob Minha Guarda sem gastar Reação uma vez por rodada para cada aliado Sob Sua Guarda (o mesmo aliado não é poupado duas vezes de graça). Imune a Paralisia, Petrificação, Preso e efeitos que impeçam agir, com 1+ PT.",
       },
       talents: [],
       abilities: [

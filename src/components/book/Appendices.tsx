@@ -204,7 +204,7 @@ export default function Appendices() {
         />
 
         <SubTitle>Sobre Ações e Reações</SubTitle>
-        <QA q="Quantas Reações eu tenho?" a="Uma por rodada, sempre — a menos que um efeito diga o contrário (Postura de Água, Segunda Guarda, Ninguém Passa — a Maestria de Rei do Escudos)." />
+        <QA q="Quantas Reações eu tenho?" a="Uma por rodada, sempre — a menos que um efeito diga o contrário (Postura de Água, Segunda Guarda; e o Ninguém Passa, Maestria de Rei do Escudos, deixa interceptar sem Reação uma vez por aliado protegido)." />
         <QA q="Posso usar a Reação no meu próprio turno?" a="Pode, desde que o gatilho aconteça." />
         <QA
           q="Conjurar uma magia de 4 Ações me deixa sem Reação?"

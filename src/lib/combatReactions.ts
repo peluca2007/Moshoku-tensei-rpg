@@ -77,10 +77,14 @@ export interface DecisaoDaGuarda {
  *   protegido apanha sem interceptação, o Escudeiro recupera 1 PT.
  * - **Peso do Aço / Escudo Estendido**: alcance 4,5 m e 9 m; do Avançado em
  *   diante, uma interceptação por rodada sem Reação. **Ninguém Passa** (Rei):
- *   todas sem Reação.
- * - **Aguentar o Baque** e o **Soberano**: 1 PT reduz o dano interceptado em
- *   1d10 (2d10) + Vigor + Bônus de Rank; o Soberano devolve o PT se zerar.
- * - **Aegis** (Santo): o protegido sofre o Bônus de Rank a menos.
+ *   uma sem Reação por aliado protegido, por rodada.
+ * - **Aguentar o Baque** e o **Soberano**, uma vez por rodada: 1 PT reduz o
+ *   dano interceptado em 1d10 (2d10) + Vigor + Bônus de Rank; o Soberano
+ *   devolve o PT se zerar.
+ * - **Aegis** (Santo): o protegido sofre metade do Bônus de Rank a menos.
+ *
+ * Os três limites ("uma vez por rodada", "por aliado", "metade") são da
+ * 0.1.134: sem eles a árvore era a mais forte do livro do 3º patamar em diante.
  *
  * Quem protege quem: os aliados de menos PV máximos, até o limite (é o que a
  * mesa faz — o mago e o curandeiro). Quando interceptar: se o golpe derrubaria
@@ -106,8 +110,9 @@ export function sobMinhaGuarda(
     }
     if (!g.protegidos.includes(alvo.ficha.id)) continue;
     if (escudo.rank >= 4) {
-      dano = Math.max(0, dano - escudo.rank);
-      logger?.log(`[${g.nome}] Aegis: ${alvo.nome} sofre ${escudo.rank} a menos.`);
+      const aegis = Math.ceil(escudo.rank / 2);
+      dano = Math.max(0, dano - aegis);
+      logger?.log(`[${g.nome}] Aegis: ${alvo.nome} sofre ${aegis} a menos.`);
       if (dano === 0) return { ...semGuarda, dano };
     }
     recupera ??= g;
@@ -118,12 +123,15 @@ export function sobMinhaGuarda(
     const maisInteiro = g.pv / g.ficha.pvMax >= alvo.pv / alvo.ficha.pvMax;
     if (g.pv + g.pvTemp <= dano || !(derrubaria || maisInteiro)) continue;
     let pagou: string;
-    if (escudo.rank >= 5) pagou = "sem Reação (Ninguém Passa)";
-    else if (g.interposLivre) { g.interposLivre = false; pagou = "sem Reação (Escudo Estendido)"; }
+    if (escudo.rank >= 5 && !g.poupadosNaRodada.has(alvo.ficha.id)) {
+      g.poupadosNaRodada.add(alvo.ficha.id);
+      pagou = "sem Reação (Ninguém Passa)";
+    } else if (g.interposLivre) { g.interposLivre = false; pagou = "sem Reação (Escudo Estendido)"; }
     else if (consumirReacao(g)) pagou = "1 Reação";
     else continue;
     let reduzido = dano;
-    if (escudo.aguentar && g.pt >= 1) {
+    if (escudo.aguentar && g.pt >= 1 && !g.aguentouNaRodada) {
+      g.aguentouNaRodada = true;
       g.pt--;
       const reducao = rolarComRegistro(escudo.aguentar, rng).total + g.ficha.vigor + escudo.rank;
       reduzido = Math.max(0, dano - reducao);
