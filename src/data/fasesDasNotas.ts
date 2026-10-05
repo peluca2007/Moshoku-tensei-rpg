@@ -283,6 +283,7 @@ export const FASES_DAS_NOTAS: FaseDasNotas[] = [
       "O livro no celular responde em 2,5 s, o modo Livro abre em 2 s, três incongruências do texto caem, e as notas de versão ganham fases e áreas.",
     mesa: {
       jogador: [
+        { titulo: "Cada escola com o seu elemento", texto: "no modo Livro, brasa no Fogo, onda na Água, rajada no Vento, pedrisco na Terra — e um elemento pra cada árvore, só nas margens.", versoes: ["0.1.140"] },
         { titulo: "O livro rápido", texto: "no celular, ~2,5 s em vez de ~21 s; o modo Livro, ~2 s já na primeira visita.", versoes: ["0.1.127", "0.1.129", "0.1.130"] },
         { titulo: "O Dragão se escolhe", texto: "o Comece Aqui parou de dizer o contrário: escolher o Dragão custa 3 PA.", versoes: ["0.1.128"] },
         { titulo: "Grande Obra", texto: "é ela que não silencia; Ritual comum silencia.", versoes: ["0.1.128"] },

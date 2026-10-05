@@ -5371,3 +5371,465 @@ html.livro-imersivo {
   contain-intrinsic-size: auto 260px;
   overflow-clip-margin: 1.5rem;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+ * O ELEMENTO VIVO NA PÁGINA (2026-10-05) — ver elementosDoLivro.tsx.
+ *
+ * Só no modo Livro (as folhas não existem no contínuo), só na dupla aberta,
+ * só com transform e opacity, e só nas margens: a máscara apaga o miolo da
+ * página, onde mora a mancha de texto. A cor é a da árvore (--cor-arvore).
+ * ═══════════════════════════════════════════════════════════════════════ */
+.folhear-elemento {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  container-type: size;
+  color: var(--cor-arvore, #f5d77a);
+  -webkit-mask-image: radial-gradient(ellipse 64% 60% at 50% 48%, transparent 58%, #000 96%);
+  mask-image: radial-gradient(ellipse 64% 60% at 50% 48%, transparent 58%, #000 96%);
+}
+
+.folhear[data-papel="dia"] .folhear-elemento {
+  color: color-mix(in oklab, var(--cor-arvore, #b08a2e) 62%, #000);
+  mix-blend-mode: multiply;
+}
+
+.folhear-elemento i {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  font-style: normal;
+  line-height: 1;
+  opacity: 0;
+  animation-delay: var(--atraso);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+/* ── Sobe: brasa, faísca, luz, bolha, nota, fumaça ──────────────────────── */
+.folhear-elemento:is([data-efeito="brasa"], [data-efeito="faisca"], [data-efeito="luz"], [data-efeito="bolha"], [data-efeito="nota"], [data-efeito="fumaca"]) i {
+  top: 102%;
+  animation-name: elemento-sobe;
+  animation-duration: calc(var(--duracao) * 11s);
+}
+
+@keyframes elemento-sobe {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(var(--tamanho));
+  }
+  12% {
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(calc(var(--deriva) * 18px), -55cqh) scale(var(--tamanho));
+  }
+  80% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--deriva) * -10px), -108cqh) scale(calc(var(--tamanho) * 0.6));
+  }
+}
+
+.folhear-elemento[data-efeito="brasa"] i {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff3c4 0 25%, currentColor 55%, transparent 72%);
+  box-shadow: 0 0 14px 4px color-mix(in srgb, currentColor 70%, transparent);
+}
+
+/* O pé da página do Fogo aquece. */
+.folhear-elemento[data-efeito="brasa"]::after,
+.folhear-elemento[data-efeito="faisca"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 16%;
+  background: linear-gradient(0deg, color-mix(in srgb, currentColor 32%, transparent), transparent);
+  animation: elemento-calor 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes elemento-calor {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+.folhear-elemento[data-efeito="faisca"] i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffe7a3;
+  box-shadow: 0 0 6px 1px currentColor;
+  animation-duration: calc(var(--duracao) * 5s);
+}
+
+.folhear-elemento[data-efeito="luz"] i {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, currentColor 80%, #fff) 0, transparent 70%);
+  animation-duration: calc(var(--duracao) * 15s);
+}
+
+.folhear-elemento[data-efeito="bolha"] i {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  background: radial-gradient(circle at 30% 30%, color-mix(in srgb, currentColor 35%, transparent), transparent 60%);
+  animation-name: elemento-bolha;
+  animation-duration: calc(var(--duracao) * 12s);
+}
+
+@keyframes elemento-bolha {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(var(--tamanho));
+  }
+  12% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.7;
+    transform: translate(calc(var(--deriva) * 16px), -80cqh) scale(var(--tamanho));
+  }
+  92% {
+    opacity: 0.9;
+    transform: translate(calc(var(--deriva) * 16px), -84cqh) scale(calc(var(--tamanho) * 1.5));
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--deriva) * 16px), -84cqh) scale(calc(var(--tamanho) * 1.8));
+  }
+}
+
+.folhear-elemento[data-efeito="nota"] i {
+  font-size: 26px;
+  font-weight: 700;
+  animation-duration: calc(var(--duracao) * 14s);
+}
+
+.folhear-elemento[data-efeito="fumaca"] i {
+  width: 120px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, color-mix(in srgb, currentColor 55%, #000) 0, transparent 70%);
+  filter: blur(6px);
+  animation-duration: calc(var(--duracao) * 20s);
+}
+
+/* ── Onda e fluxo: o pé da página corre ───────────────────────────────── */
+.folhear-elemento:is([data-efeito="onda"], [data-efeito="fluxo"]) i {
+  --onda: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 20' preserveAspectRatio='none'%3E%3Cpath d='M0 12 Q25 2 50 12 T100 12 T150 12 T200 12 V20 H0Z'/%3E%3C/svg%3E");
+  left: 0;
+  top: auto;
+  bottom: -1%;
+  width: 200%;
+  height: 7%;
+  opacity: 0.45;
+  background: currentColor;
+  -webkit-mask: var(--onda) repeat-x 0 0 / 25% 100%;
+  mask: var(--onda) repeat-x 0 0 / 25% 100%;
+  animation: elemento-onda 9s linear infinite;
+}
+
+.folhear-elemento:is([data-efeito="onda"], [data-efeito="fluxo"]) i:nth-child(2) {
+  bottom: 2.5%;
+  height: 6%;
+  opacity: 0.22;
+  animation-duration: 14s;
+  animation-direction: reverse;
+}
+
+/* O Deus da Água corre também no alto: a água que contorna. */
+.folhear-elemento[data-efeito="fluxo"] i:nth-child(2) {
+  bottom: auto;
+  top: -1%;
+  scale: 1 -1;
+}
+
+@keyframes elemento-onda {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: -50% 0;
+  }
+}
+
+/* ── Vento, folha, pétala: atravessam ──────────────────────────────────── */
+.folhear-elemento[data-efeito="vento"] i {
+  left: -50%;
+  width: 46%;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, currentColor 75%, #fff) 50%, transparent);
+  box-shadow: 0 9px 0 -1px color-mix(in srgb, currentColor 45%, transparent);
+  animation-name: elemento-rajada;
+  animation-duration: calc(var(--duracao) * 6s);
+  animation-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes elemento-rajada {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.85;
+    transform: translate(150cqw, calc(var(--deriva) * 14px));
+  }
+  61%,
+  100% {
+    opacity: 0;
+    transform: translate(150cqw, calc(var(--deriva) * 14px));
+  }
+}
+
+.folhear-elemento:is([data-efeito="folha"], [data-efeito="petala"]) i {
+  left: -6%;
+  width: 16px;
+  height: 11px;
+  border-radius: 0 100% 0 100%;
+  background: currentColor;
+  animation-name: elemento-deriva;
+  animation-duration: calc(var(--duracao) * 13s);
+}
+
+.folhear-elemento[data-efeito="petala"] i {
+  border-radius: 50% 50% 50% 0;
+  background: color-mix(in srgb, currentColor 80%, #fff);
+}
+
+@keyframes elemento-deriva {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(var(--tamanho));
+  }
+  10% {
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(55cqw, calc(var(--deriva) * 30px + 10cqh)) rotate(220deg) scale(var(--tamanho));
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(112cqw, 22cqh) rotate(440deg) scale(var(--tamanho));
+  }
+}
+
+/* ── Terra e neve: caem ───────────────────────────────────────────────── */
+.folhear-elemento:is([data-efeito="terra"], [data-efeito="neve"]) i {
+  top: -4%;
+  animation-name: elemento-cai;
+  animation-duration: calc(var(--duracao) * 13s);
+}
+
+.folhear-elemento[data-efeito="terra"] i {
+  width: 11px;
+  height: 9px;
+  border-radius: 35% 45% 30% 50%;
+  background: color-mix(in srgb, currentColor 75%, #000);
+  animation-name: elemento-pedrisco;
+  animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
+  animation-duration: calc(var(--duracao) * 7s);
+}
+
+/* O pé da página da Terra assenta. */
+.folhear-elemento[data-efeito="terra"]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 5%;
+  background: linear-gradient(0deg, color-mix(in srgb, currentColor 45%, transparent), transparent);
+}
+
+@keyframes elemento-pedrisco {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(var(--tamanho));
+  }
+  8% {
+    opacity: 0.85;
+  }
+  86% {
+    opacity: 0.85;
+    transform: translate(calc(var(--deriva) * 6px), 101cqh) rotate(200deg) scale(var(--tamanho));
+  }
+  91% {
+    transform: translate(calc(var(--deriva) * 9px), 98cqh) rotate(230deg) scale(var(--tamanho));
+  }
+  96%,
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--deriva) * 11px), 101cqh) rotate(250deg) scale(var(--tamanho));
+  }
+}
+
+.folhear-elemento[data-efeito="neve"] i {
+  font-size: 22px;
+  color: color-mix(in srgb, currentColor 55%, #fff);
+}
+
+@keyframes elemento-cai {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg) scale(var(--tamanho));
+  }
+  10% {
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(calc(var(--deriva) * 22px), 55cqh) rotate(120deg) scale(var(--tamanho));
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--deriva) * -12px), 108cqh) rotate(240deg) scale(var(--tamanho));
+  }
+}
+
+/* ── Runa e estrela: ficam e brilham ───────────────────────────────────── */
+.folhear-elemento[data-efeito="runa"] i {
+  --runa: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23000' stroke-width='1.4'%3E%3Ccircle cx='50' cy='50' r='47'/%3E%3Ccircle cx='50' cy='50' r='38'/%3E%3Cpath d='M50 12 L83 69 L17 69 Z M50 88 L17 31 L83 31 Z'/%3E%3Ccircle cx='50' cy='50' r='12'/%3E%3C/svg%3E");
+  top: auto;
+  bottom: -14%;
+  width: 52%;
+  aspect-ratio: 1;
+  opacity: 0.3;
+  background: currentColor;
+  -webkit-mask: var(--runa) center / contain no-repeat;
+  mask: var(--runa) center / contain no-repeat;
+  animation: elemento-gira 60s linear infinite;
+}
+
+.folhear-elemento[data-efeito="runa"][data-lado="esq"] i {
+  left: -16%;
+}
+
+.folhear-elemento[data-efeito="runa"][data-lado="dir"] i {
+  left: auto;
+  right: -16%;
+  animation-direction: reverse;
+}
+
+@keyframes elemento-gira {
+  to {
+    rotate: 360deg;
+  }
+}
+
+.folhear-elemento[data-efeito="estrela"] i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: color-mix(in srgb, currentColor 60%, #fff);
+  box-shadow: 0 0 6px 1px currentColor;
+  animation-name: elemento-brilha;
+  animation-duration: calc(var(--duracao) * 4s);
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes elemento-brilha {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(calc(var(--tamanho) * 0.4));
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(calc(var(--tamanho) * 1.3));
+  }
+}
+
+/* ── Corte e brilho: um gesto de luz de tempos em tempos ──────────────── */
+.folhear-elemento[data-efeito="corte"] i {
+  top: 12%;
+  left: -10%;
+  width: 70%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, currentColor 60%, #fff), transparent);
+  box-shadow: 0 0 12px currentColor;
+  transform-origin: 0 50%;
+  rotate: -28deg;
+  animation: elemento-corte 7s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+}
+
+.folhear-elemento[data-efeito="corte"] i:nth-child(2) {
+  top: auto;
+  bottom: 10%;
+  left: 40%;
+  animation-delay: -3.5s;
+}
+
+@keyframes elemento-corte {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  4% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+  14%,
+  100% {
+    opacity: 0;
+    transform: scaleX(1);
+  }
+}
+
+.folhear-elemento[data-efeito="brilho"] i {
+  top: 0;
+  left: -30%;
+  width: 22%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, color-mix(in srgb, currentColor 30%, transparent) 50%, transparent);
+  animation: elemento-brilho-varre 8s ease-in-out infinite;
+}
+
+@keyframes elemento-brilho-varre {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  10% {
+    opacity: 1;
+  }
+  35% {
+    opacity: 1;
+    transform: translateX(650%);
+  }
+  36%,
+  100% {
+    opacity: 0;
+    transform: translateX(650%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folhear-elemento {
+    display: none;
+  }
+}
+
+@media print {
+  .folhear-elemento {
+    display: none;
+  }
+}
