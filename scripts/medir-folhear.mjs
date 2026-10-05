@@ -65,7 +65,9 @@ async function esperarLivro(aba) {
         return p + ":" + (x - p * paginaLargura < paginaLargura / 2 ? 0 : 1);
       }).join(",");
       return {
-        pronto: performance.now(),
+        // A assinatura acima pode custar segundos com CPU 4×. O leitor já
+        // podia folhear antes dela: medir o fim da régua inventava esse atraso.
+        pronto: marcas["pronto-render"] ?? performance.now(),
         paginas: Number(document.querySelector(".folhear-posicao-paginas")?.textContent?.match(/de\\s+(\\d+)/)?.[1] || 0),
         tempos,
         marcas,
