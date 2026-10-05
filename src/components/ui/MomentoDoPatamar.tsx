@@ -21,14 +21,20 @@ export default function MomentoDoPatamar({ arvore, rank, personagem }: { arvore:
     if (!rank || !antes || RANKS.indexOf(rank) <= RANKS.indexOf(antes) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const el = selo.current;
     if (!el) return;
-    const r = el.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > innerHeight) return;
-    const animacao = el.animate([{ opacity: 0, transform: "scale(.85)" }, { opacity: .35, transform: "scale(1)", offset: .3 }, { opacity: 0, transform: "scale(1.06)" }], { duration: 480, easing: "ease-out" });
-    const cancelar = () => animacao.cancel();
+    let animacao: Animation | undefined;
+    let entrou = false;
+    const cancelar = () => animacao?.cancel();
     const reduzido = matchMedia("(prefers-reduced-motion: reduce)");
+    const io = new IntersectionObserver((entradas) => {
+      if (!entradas[0].isIntersecting) { cancelar(); return; }
+      if (entrou || reduzido.matches) return;
+      entrou = true;
+      animacao = el.animate([{ opacity: 0, transform: "scale(.85)" }, { opacity: .35, transform: "scale(1)", offset: .3 }, { opacity: 0, transform: "scale(1.06)" }], { duration: 480, easing: "ease-out" });
+    });
+    io.observe(el);
     reduzido.addEventListener("change", cancelar);
     window.addEventListener("beforeprint", cancelar);
-    return () => { cancelar(); reduzido.removeEventListener("change", cancelar); window.removeEventListener("beforeprint", cancelar); };
+    return () => { io.disconnect(); cancelar(); reduzido.removeEventListener("change", cancelar); window.removeEventListener("beforeprint", cancelar); };
   }, [rank, personagem, arvore]);
   return <span ref={selo} aria-hidden="true" className={styles.selo} style={{ "--cor-selo-dia": identidade?.corDia, "--cor-selo-noite": identidade?.corNoite } as CSSProperties}>{identidade?.kanji}</span>;
 }

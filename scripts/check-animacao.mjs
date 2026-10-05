@@ -14,6 +14,11 @@ async function foto(aba, nome) {
   exigir(r.result?.data, "Captura não retornou imagem");
   writeFileSync(`.telas/animacao/${nome}.png`, Buffer.from(r.result.data, "base64"));
 }
+async function irAoCapitulo(aba, id) {
+  await aba.avaliar('Array.from(document.querySelectorAll("button")).find(b => b.getAttribute("aria-controls") === "folhear-indice").click()');
+  await esperar(aba, '!!document.querySelector("#folhear-indice")');
+  await aba.avaliar(`document.querySelector("#folhear-indice").querySelector(${JSON.stringify(`a[href="#${id}"]`)}).click()`);
+}
 await comNavegador(async ({ abrir }) => {
   for (const largura of [1440, 390]) {
     const aba = await abrir("about:blank");
@@ -30,6 +35,24 @@ await comNavegador(async ({ abrir }) => {
       // O modo rolado permite examinar cada diagrama sem depender do número de página.
       await aba.avaliar('Array.from(document.querySelectorAll("button")).find(b => /Contínuo/.test(b.textContent))?.click()');
       await esperar(aba, '!!document.querySelector(".folhear[data-modo=continuo]")');
+      await aba.avaliar(`window.entradasCapitulo = 0; const animateOriginal = Element.prototype.animate;
+        Element.prototype.animate = function(...args) {
+          if (this.closest(".livro-abertura")?.querySelector("h2")?.id === "cap1") window.entradasCapitulo++;
+          return animateOriginal.apply(this, args);
+        };
+        `);
+      await irAoCapitulo(aba, "cap1");
+      await dormir(100);
+      await foto(aba, `${largura}-capitulo-entrada`);
+      await dormir(2700);
+      const entradasCapitulo = await aba.avaliar("window.entradasCapitulo");
+      exigir(entradasCapitulo > 0, "Abertura não reagiu ao entrar na tela");
+      await foto(aba, `${largura}-capitulo-final`);
+      await irAoCapitulo(aba, "cap0");
+      await dormir(2700);
+      await irAoCapitulo(aba, "cap1");
+      await dormir(2700);
+      exigir(await aba.avaliar("window.entradasCapitulo") === entradasCapitulo, "Abertura repetiu ao voltar ao capítulo");
       for (const [tipo, titulo, passos, esperado] of [
         ["turno", "Anatomia do Turno", 4, "Conjuração concluída"],
         ["quebrantado", "Quebrantado Empilha", 4, "teto foi alcançado"],
@@ -62,7 +85,7 @@ await comNavegador(async ({ abrir }) => {
         await esperar(aba, '!document.querySelector("dialog[open]")');
         await aba.enviar("Emulation.setEmulatedMedia", { media: "screen", features: [] });
       }
-      for (const rota of ["/ficha", "/criar", "/criar/manual", "/arvores", "/loja", "/personagens", "/novidades", "/busca", "/encontros"]) {
+      for (const rota of ["/ficha", "/criar", "/criar/manual", "/criar/roleta", "/criar/entrevista", "/arvores", "/loja", "/personagens", "/novidades", "/busca", "/encontros"]) {
         await aba.enviar("Page.navigate", { url: urlSemeada(rota, "livro-noite") });
         await esperar(aba, `location.pathname === ${JSON.stringify(rota)} && !!document.querySelector("main")`);
         await dormir(1200);
@@ -80,14 +103,22 @@ await comNavegador(async ({ abrir }) => {
           exigir(await aba.avaliar('Number(document.querySelector("[role=progressbar][aria-label=PV]").getAttribute("aria-valuenow"))') === Math.max(0, antes - 5), "Barra de PV não acompanhou o valor da ficha");
           await foto(aba, `${largura}-pv-depois`);
         }
-        if (rota === "/criar/manual") {
+        if (rota === "/criar/manual" || rota === "/criar/roleta") {
           await aba.avaliar('Array.from(document.querySelectorAll("button")).find(b => b.textContent.includes("Avançar")).click()');
           await dormir(400);
           exigir(await aba.avaliar('Array.from(document.querySelectorAll("ol")).some(el => el.getAttribute("aria-label") === "Escolhas concluídas")'), "Passo da criação não assentou no resumo");
           await foto(aba, `${largura}-criar-depois`);
         }
+        if (rota === "/criar/entrevista") {
+          await aba.avaliar('Array.from(document.querySelectorAll("main button")).find(b => b.textContent.includes("Raça e Antecedente")).click()');
+          await dormir(250);
+          await aba.avaliar('document.querySelector("main .space-y-2 > button").click()');
+          await dormir(400);
+          exigir(await aba.avaliar('Array.from(document.querySelectorAll("ol")).some(el => el.getAttribute("aria-label") === "Escolhas concluídas")'), "Resposta da entrevista não assentou no resumo");
+          await foto(aba, `${largura}-entrevista-depois`);
+        }
       }
-      console.log(`✅ ${largura}px: três diagramas, falha no tiro, teclado, redução, impressão, PV, criação e nove rotas`);
+      console.log(`✅ ${largura}px: três diagramas, falha no tiro, teclado, redução, impressão, PV, três criações e onze rotas`);
     } finally { await aba.fechar(); }
   }
 });
