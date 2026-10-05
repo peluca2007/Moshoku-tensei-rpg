@@ -50,6 +50,30 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.139",
+    date: "2026-10-05",
+    title: "O Livro e a Ficha Ganham Vida",
+    sections: [
+      {
+        area: "livro",
+        heading: "A regra no seu ritmo",
+        items: [
+          "Aberturas de capítulo entram em sequência breve; a escola deixa seu motivo na borda ao chegar. Cada abertura toca uma vez por visita.",
+          "Toque em Anatomia do Turno, Quebrantado Empilha ou Etapas do Tiro Perfeito para experimentar. Rever, voltar e avançar funcionam por teclado; uma falha intermediária no tiro perde só o bônus daquela etapa. A impressão conserva o diagrama completo.",
+        ],
+      },
+      {
+        area: "site",
+        heading: "Movimento nos momentos da mesa",
+        items: [
+          "A compra apresenta a carta nova e anima o total de PA gastos. Um patamar novo recebe o selo da árvore. As barras de PV, PM e PT acompanham o valor; uma perda maior que um quarto da reserva dá um tremor curto.",
+          "Na criação manual, na roleta e na entrevista, as escolhas assentam em um resumo. Cartões respondem ao ponteiro e ao foco; a navegação usa uma transição breve nos navegadores compatíveis. O resultado do encontro chega com sua barra de vitória.",
+          "Tudo mostra o estado final quando você prefere menos movimento ou imprime. Os efeitos breves respeitam a área visível e mantêm a paleta dos quatro temas.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.138",
     date: "2026-10-05",
     title: "A Arena Respira",
