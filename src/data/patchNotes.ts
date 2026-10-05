@@ -50,6 +50,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.132",
+    date: "2026-10-05",
+    title: "O Deus da Espada Volta a Errar",
+    sections: [{
+      area: "encontros",
+      heading: "O simulador lia como teste de resistência o que a carta chama de ataque",
+      items: [
+        "Toda técnica corpo a corpo escrita 'Ataque que…', 'Ataque com Vantagem…' ou '…e ataque ao final' caía no ramo de teste de resistência: nunca errava e, no pior caso, dava metade. São nove cartas, quatro do Deus da Espada (Investida, Quebra-Armadura, Espada do Silêncio, Espada de Luz), e agora todas rolam contra a CA.",
+        "Os cinco golpes finais que abrem com 'Acerta automaticamente' (Espada de Luz Verdadeira, Golpe do Fim da Linha, O Golpe que Fecha a Conta, A Flecha que Não Erra, Corte do Horizonte Infinito) davam metade a quem passasse num teste que a carta não pede; agora entram inteiros. O Esmagar fica de fora: o acerto automático dele é só contra alvo Caído, Agarrado, Preso ou Atolado.",
+        "Também passam a valer a Vantagem escrita na carta (Espada de Luz), o bônus da Quebra-Armadura só contra armadura completa e a Investida uma vez por turno (a corrida de 9 m não se repete). E '+2 Dados de Arma' passou a somar ao dado do golpe, como '+1 Dado de Arma' já somava.",
+        "O efeito no `balancear`: o Deus da Espada era a árvore mais forte do livro em todo patamar e virou uma do pelotão. No 1º patamar fica no meio do Corpo; no 3º empata com Punho do Fogo e Lutador; no 6º anda com o Punho do Fogo. Nenhuma regra do livro mudou: a Espada não estava forte demais, ela não errava.",
+      ],
+    }],
+  },
+  {
     version: "0.1.131",
     date: "2026-10-01",
     title: "As notas de versão ganham fases, áreas e o que muda na mesa",
