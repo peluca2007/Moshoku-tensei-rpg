@@ -247,6 +247,10 @@ export interface Acao {
   /** Conjuração Concentrada (Cap. 2, §2): só entra quando resta um inimigo. */
   concentrada?: boolean;
   ataque: boolean;
+  /** "Ataque com Vantagem" escrito na própria carta (Espada de Luz, Cruz Nebulosa). */
+  vantagemPropria?: boolean;
+  /** "Acerta automaticamente, sem rolagem" (Espada de Luz Verdadeira): nem ataque, nem teste. */
+  acertaSempre?: boolean;
   frio: boolean;
   /** Ex.: Nova Congelante já imprime o resultado dobrado na própria fórmula. */
   frioJaDobrado?: boolean;
@@ -691,7 +695,30 @@ export function novoAlvo(p: Partial<Alvo> & { nome: string; pv: number; ca: numb
   };
 }
 
+/*
+ * A carta que COMEÇA dizendo que é um ataque rola contra a CA — 2026-10-05.
+ *
+ * A rede de cima ("ataque mágico", "à distância", "se acertar") deixava de fora
+ * toda técnica corpo a corpo escrita como "Ataque que…", "Ataque com Vantagem…",
+ * "…e ataque ao final": Investida, Quebra-Armadura, Espada do Silêncio e
+ * Espada de Luz (Deus da Espada), Cruz Nebulosa e Forma Quadrúpede (Norte),
+ * Golpe Circular (Armas Pesadas), Toque Escaldante (Fogo) e Corte que Chega
+ * Antes (Vendaval). Elas caíam no ramo de teste de resistência: nunca erravam
+ * e, no pior caso, davam metade. Quatro delas são do Deus da Espada, e era
+ * isso — não a árvore — que o punha no topo do `balancear` em todo patamar.
+ */
+const CARTA_DE_ATAQUE = /^(?:\d+ Aç(?:ão|ões): )?ataque\b|\.\s+ataque com\b|\be ataque ao final\b|:\s*ataque corpo a corpo\b/i;
+/**
+ * "Acerta automaticamente" ABRINDO a carta (depois do "Uma vez por combate"):
+ * o dano inteiro, sem CA e sem teste — os golpes finais de Espada, Norte,
+ * Armas Pesadas, Arquearia e Vendaval. O do Esmagar vem depois de "Contra alvo
+ * Caído…": é condicional e fica fora. O Corte do Horizonte Infinito ainda pede
+ * teste pra metade dos 4d10 do vento; o motor conta o dano cheio.
+ */
+const ACERTO_AUTOMATICO = /^(?:uma vez por (?:turno|combate)[.:,]\s*)?acerta automaticamente/i;
+
 /** O limite escrito no começo do efeito: "Uma vez por turno." / "Uma vez por combate:". */
+
 export function limiteDeUso(efeito: string): Acao["limite"] {
   const m = efeito.trim().match(/^(?:uma vez|.*?\bcontinua uma vez) por (turno|combate)[.:,]/i);
   return m ? (m[1].toLowerCase() as "turno" | "combate") : undefined;
@@ -731,6 +758,8 @@ export function novaAcao(p: Partial<Acao> & { nome: string }): Acao {
     inverteDose: p.inverteDose,
     limite: p.limite,
     ataque: p.ataque ?? false,
+    vantagemPropria: p.vantagemPropria,
+    acertaSempre: p.acertaSempre,
     frio: p.frio ?? false,
     frioJaDobrado: p.frioJaDobrado,
     fogo: p.fogo ?? false,
@@ -893,7 +922,7 @@ export function acoesDe(c: CharacterData): Acao[] {
         : "cura";
     out.push({
       regra: a.id === "primeiro-golpe" ? "primeiro-golpe" : undefined,
-      limite: a.id === "primeiro-golpe" ? undefined : limiteDeUso(a.effect),
+      limite: a.id === "primeiro-golpe" ? undefined : a.id === "investida-espada" ? "turno" : limiteDeUso(a.effect),
       alcance: a.range,
       reacao: !!a.reaction,
       nome: a.name,
@@ -982,17 +1011,17 @@ export function acoesDe(c: CharacterData): Acao[] {
         const norm = a.damage.normal.toLowerCase();
         let count = 0;
 
-        if (/dano de arma|dado de arma/.test(norm)) count = 1;
+        // "dados?": até 2026-10-05 o plural não contava, e "+2 Dados de Arma"
+        // rendia 2 dados enquanto "+1 Dado de Arma" rendia 2 também (o golpe + 1).
+        if (/dano de arma|dados? de arma/.test(norm)) count = 1;
 
         const v = norm.match(/rolado (duas|três|quatro|cinco|seis|sete) vezes/);
         if (v) count = { duas: 2, três: 3, quatro: 4, cinco: 5, seis: 6, sete: 7 }[v[1]] ?? 0;
 
-        const m = norm.match(/\+\s*(\d+)\s+dados? de arma/);
-        if (m) {
-           // If it said "+X dados", we just add X to whatever base we had (which is usually 0 if "dado de arma" wasn't written, but if it was, it's 1)
-           // Actually, "+2 Dados de Arma" contains "dados de arma", so it triggered count=1 above!
-           count += Number(m[1]);
-        }
+        const m = norm.match(/\+\s*(\d+)\s+dados? de arma(?!\s+contra\b)/);
+        // "+N" soma ao dado do golpe; "+N contra armadura completa" é condicional
+        // e fica fora do caso base, como toda condição que o motor não enxerga.
+        if (m) count += Number(m[1]);
 
         if (/metade do dado/i.test(norm)) return 0.5;
         if (/arma secund[áa]ria/i.test(norm)) return 1;
@@ -1061,7 +1090,10 @@ export function acoesDe(c: CharacterData): Acao[] {
        * (Deus da Água), cuja frase descreve o ataque DO INIMIGO que dispara a
        * Reação, não uma rolagem dela.
        */
-      ataque: a.id === "primeiro-golpe" || /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`),
+      ataque: a.id === "primeiro-golpe" || /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`) ||
+        CARTA_DE_ATAQUE.test(a.effect.trim()) || ACERTO_AUTOMATICO.test(a.effect.trim()),
+      vantagemPropria: /(^|[.:]\s*)ataque com vantagem/i.test(a.effect.trim()) || undefined,
+      acertaSempre: ACERTO_AUTOMATICO.test(a.effect.trim()) || undefined,
       frio: /frio|gelo/.test(txt),
       frioJaDobrado: /já contando a duplicação/i.test(a.damage.normal),
       fogo: /ígneo|chamas|fogo/.test(txt),
@@ -1678,7 +1710,8 @@ export function danoEsperado(e: EstadoPersonagem, a: Acao, alvo: Alvo | null): n
     const ca = Math.max(1, alvo.ca - alvo.quebrantado);
     const precisa = ca - bonusAcerto;
     const simples = Math.min(0.95, Math.max(0.05, (21 - precisa) / 20));
-    const vantagem = e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
+    if (a.acertaSempre) return bruto;
+    const vantagem = !!a.vantagemPropria || e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
     const desvantagem = e.preso || e.caido || e.envenenado || (!corpoACorpo && alvo.caido) ||
       ((basico || a.dadosDeArma > 0 || a.regra === "primeiro-golpe") && !e.ficha.arma.proficiente);
     const chance = alvo.congelado && a.bonusSeCongelado
@@ -1884,7 +1917,7 @@ export function resolver(
   const semProficiencia = usaArma && !e.ficha.arma.proficiente;
   const corpoACorpo = /corpo a corpo|toque/i.test(a.alcance ?? "") || ehGolpeBasico(a);
   const desvantagemPropria = e.preso || e.caido || e.envenenado || e.exaustao >= 3 || semProficiencia || (!corpoACorpo && alvo.caido);
-  const vantagemContraAlvo = e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
+  const vantagemContraAlvo = !!a.vantagemPropria || e.escondido || alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego;
   /*
    * Quebrantado (Cap. 4, §2): cada acúmulo tira 1 da CA do alvo e 1 do dano de
    * QUEM o carrega. Aqui aparecem os dois lados da mesma condição — a CA menor
@@ -1901,6 +1934,8 @@ export function resolver(
       ...(e.preso || e.caido || e.envenenado ? ["Desvantagem: condição do atacante"] : []),
       ...(e.exaustao >= 3 ? [`Desvantagem: Exaustão ${e.exaustao}`] : []),
       ...(alvo.preso || (corpoACorpo && alvo.caido) || alvo.cego ? ["Vantagem: condição do alvo"] : []),
+      ...(a.vantagemPropria ? ["Vantagem: escrita na carta"] : []),
+      ...(a.acertaSempre ? ["Acerta automaticamente, sem rolagem"] : []),
       ...(!corpoACorpo && alvo.caido ? ["Desvantagem: ataque à distância contra alvo Caído"] : []),
       ...(basico ? [`Bônus de dano: atributo ${e.ficha.arma.attributeValue} + Rank ${e.ficha.arma.rankBonus}`] : []),
       ...(bonusDaOrdem ? [`Ordem de Tiro própria: +${bonusDaOrdem} no acerto e no dano`] : []),
@@ -1945,7 +1980,7 @@ export function resolver(
     dano = rolarDano();
     if (evento) { evento.bruto = dano; evento.notas.push("Inverter: somente os dados por Dose, sem BC e sem teste de resistência."); }
   } else if (a.ataque) {
-    const acertoAutomatico = alvo.congelado && !!a.bonusSeCongelado;
+    const acertoAutomatico = !!a.acertaSempre || (alvo.congelado && !!a.bonusSeCongelado);
     let teste = acertoAutomatico
       ? { dados: [], natural: 0, ajuste: "normal" as const }
       : rolarD20ComRegistro(rng, vantagemContraAlvo, desvantagemPropria);

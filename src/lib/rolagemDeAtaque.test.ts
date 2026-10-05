@@ -103,6 +103,29 @@ describe("a rolagem de ataque é lida do campo certo", () => {
     expect(agua.find((a) => a.nome === "Flecha de Água")?.ataque).toBe(true);
   });
 
+  /*
+   * 2026-10-05: as cartas corpo a corpo escritas "Ataque que…", "Ataque com
+   * Vantagem…", "…e ataque ao final" caíam no ramo de resistência e nunca
+   * erravam. Quatro eram do Deus da Espada, e eram elas que o punham no topo do
+   * `balancear` em todo patamar.
+   */
+  it("a técnica corpo a corpo que diz 'Ataque' rola ataque, com o que a carta promete", () => {
+    const espada = acoesDe(comArvoreInteira("deus-da-espada"));
+    const carta = (nome: string) => espada.find((a) => a.nome === nome)!;
+    for (const nome of ["Investida", "Quebra-Armadura", "Espada do Silêncio", "Espada de Luz"]) {
+      expect(carta(nome).ataque, nome).toBe(true);
+    }
+    expect(carta("Espada de Luz").vantagemPropria).toBe(true);
+    expect(carta("Espada de Luz Verdadeira").acertaSempre).toBe(true);
+    // A corrida de 9 m não se repete no mesmo turno.
+    expect(carta("Investida").limite).toBe("turno");
+    // "+2 Dados de Arma" soma ao dado do golpe; "+2 contra armadura completa" é condicional.
+    expect(carta("Espada do Silêncio").dadosDeArma).toBe(3);
+    expect(carta("Quebra-Armadura").dadosDeArma).toBe(1);
+    // O Corte do Horizonte pede teste de Agilidade: continua no ramo de resistência.
+    expect(carta("Corte do Horizonte").ataque).toBe(false);
+  });
+
   it("o que não é ataque continua não sendo — o ramo de resistência não sumiu", () => {
     const agua = acoesDe(comArvoreInteira("agua"));
     const semAtaque = agua.filter((a) => !a.ataque);
