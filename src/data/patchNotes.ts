@@ -50,6 +50,22 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.141",
+    date: "2026-10-05",
+    title: "Sua Ficha Tem a Sua Marca",
+    sections: [
+      {
+        area: "site",
+        heading: "Você é o que escolheu estudar",
+        items: [
+          "A árvore inicial já veste a ficha. Conforme você compra habilidades e patamares, as cores se combinam: a escola em que mais investiu ganha o destaque, e as demais entram na faixa do seu caminho.",
+          "O retrato e o cabeçalho acompanham essa identidade nos quatro temas. Cada escola recebe sua própria cor e selo no painel de habilidades; as habilidades de assinatura têm um fio de destaque.",
+          "Em Meus Personagens, cada ficha mostra sua escola principal. A capa do site, os cabeçalhos das telas e os cartões ganham medalhões, filetes e mais profundidade; a impressão permanece limpa.",
+        ],
+      },
+    ],
+  },
+  {
     version: "0.1.139",
     date: "2026-10-05",
     title: "O Livro e a Ficha Ganham Vida",
