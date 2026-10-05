@@ -31,6 +31,10 @@
  *     (diagnóstico com golpes cortantes explícitos, não o molde abstrato)
  *   SEM_NOVAS_DEFESAS=1 PERFIL_FISICO=1 npm run balancear -- --md
  *     (controle sem Couraça/Refrão, mantendo o limite de compras)
+ *   REFERENCIA=deus-do-norte,fogo,arquearia npm run balancear
+ *     (outro trio de referência — 2026-10-05: com a Cura no trio, a Cura no
+ *     quarto lugar mede um SEGUNDO curandeiro e sai "fraca" por redundância;
+ *     um trio sem cura mede o primeiro)
  */
 import type { ResultadoEncontro } from "@/lib/encounterSim";
 import type { AttributeKey, CharacterData } from "@/lib/types";
@@ -190,7 +194,7 @@ function montar(treeId: string, patamar: number, nome: string, experimentar = fa
   return personagem;
 }
 
-const REFERENCIA = ["deus-do-norte", "fogo", "cura"];
+const REFERENCIA = (process.env.REFERENCIA ?? "deus-do-norte,fogo,cura").split(",");
 
 interface Linha {
   treeId: string;
@@ -252,7 +256,7 @@ for (const patamar of PATAMARES) {
   const medRod = mediana(linhas.map((l) => (l.dificil.rodadasMedia + l.chefe.rodadasMedia) / 2));
   const medCon = mediana(linhas.map((l) => l.contribuicao));
 
-  console.log(`\n## ${patamar}º patamar — grupo de referência (Norte, Fogo, Cura) + a árvore\n`);
+  console.log(`\n## ${patamar}º patamar — grupo de referência (${REFERENCIA.map((id) => getTreeById(id)?.name ?? id).join(", ")}) + a árvore\n`);
   console.log(
     MD
       ? "| Árvore | Difícil (5) | Chefe | Rodadas | Caídos | Contribuição | Sobrevive | |\n| --- | --- | --- | --- | --- | --- | --- | --- |"
