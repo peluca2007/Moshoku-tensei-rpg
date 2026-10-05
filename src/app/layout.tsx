@@ -1,4 +1,7 @@
 import type { Metadata, Viewport } from "next";
+import type {} from "react/canary";
+import { ViewTransition } from "react";
+import MovimentoDoSite from "@/components/MovimentoDoSite";
 import { Fraunces, Geist, Geist_Mono, Literata } from "next/font/google";
 import { HidratacaoTardia, RoladorTardio } from "@/components/CamadaTardia";
 import { PATCH_NOTES } from "@/data/patchNotes";
@@ -147,7 +150,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               simular isso — e com um rodapé de verdade no fim, esse
               `min-h-screen` viraria uma tela inteira de pergaminho vazio entre
               o conteúdo e o rodapé em TODAS as páginas. */}
-          <main className="flex-1">{children}</main>
+          <MovimentoDoSite />
+          <ViewTransition name="conteudo-do-site" default="rota">
+            <main className="flex-1">{children}</main>
+          </ViewTransition>
           <Footer />
           {/*
             O rolador de dados vive AQUI desde a 0.1.22, e não mais dentro da
