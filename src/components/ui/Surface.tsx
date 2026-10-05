@@ -1,4 +1,5 @@
 import type { ElementType, ReactNode } from "react";
+import styles from "./acabamentoDoSite.module.css";
 
 /**
  * O card do site, em três níveis (0.1.5).
@@ -44,8 +45,8 @@ export default function Surface({
 } & Record<string, unknown>) {
   return (
     <Tag
-      className={`rounded-2xl border ${NIVEL[level]} ${
-        interactive ? "lift cursor-pointer hover:border-wine-400 dark:hover:border-wine-600" : ""
+      className={`${styles.superficie} rounded-2xl border ${NIVEL[level]} ${
+        interactive ? `${styles.interativa} lift cursor-pointer hover:border-wine-400 dark:hover:border-wine-600` : ""
       } ${className}`}
       {...rest}
     >

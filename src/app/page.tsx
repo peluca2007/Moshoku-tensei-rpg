@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { prefetchDe } from "@/lib/prefetch";
-import { BookOpen, Dices, ScrollText, Skull, Sparkles, Store, Swords, TreePine, UserPlus, Users } from "lucide-react";
+import { ArrowUpRight, BookOpen, Dices, ScrollText, Skull, Sparkles, Store, Swords, TreePine, UserPlus, Users } from "lucide-react";
+import acabamento from "@/components/ui/acabamentoDoSite.module.css";
 import NovidadesNaCapa from "@/components/notas/NovidadesNaCapa";
 import Surface from "@/components/ui/Surface";
 import Logo from "@/components/ui/Logo";
@@ -113,7 +114,7 @@ const FEATURES = [
 export default function LandingPage() {
   return (
     <div>
-      <div className="relative overflow-hidden">
+      <div className={`${acabamento.capa} relative overflow-hidden`}>
         {/*
           A paisagem do Mundo de Seis Faces, atrás do herói (2026-09-03).
           Antes daqui o topo da landing era texto sobre nada — e a primeira
@@ -183,12 +184,12 @@ export default function LandingPage() {
 
       <div className="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          {VITRINE.map(({ href, arte, icon: Icon, kicker, title, description }) => (
+          {VITRINE.map(({ href, arte, icon: Icon, kicker, title, description }, i) => (
             <Link key={href} href={href} prefetch={prefetchDe(href)} className="group block focus-visible:outline-none">
               <Surface
                 level="raised"
                 interactive
-                className="flex h-full flex-col overflow-hidden group-focus-visible:ring-2 group-focus-visible:ring-gold-500"
+                className={`${acabamento.vitrine} flex h-full flex-col overflow-hidden group-focus-visible:ring-2 group-focus-visible:ring-gold-500`}
               >
                 <div className="relative h-36 overflow-hidden">
                   <Image
@@ -196,7 +197,7 @@ export default function LandingPage() {
                     alt=""
                     fill
                     sizes="(max-width: 768px) 100vw, 340px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover"
                   />
                   {/* A arte precisa morrer antes do texto: sem esta camada, o
                       "kicker" dourado cai em cima de uma nebulosa clara e some. */}
@@ -204,6 +205,7 @@ export default function LandingPage() {
                   <span className="absolute left-4 top-4 flex h-9 w-9 items-center justify-center rounded-xl bg-wine-600/95 text-parchment-50 shadow-lg ring-1 ring-gold-400/50 backdrop-blur-sm">
                     <Icon className="h-4.5 w-4.5" />
                   </span>
+                  <span className={acabamento.numero} aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
                 </div>
                 {/*
                   `relative` não é decoração aqui: o bloco da arte acima é
@@ -223,6 +225,10 @@ export default function LandingPage() {
                   <p className="mt-2 text-sm leading-relaxed text-parchment-600 dark:text-parchment-400">
                     {description}
                   </p>
+                  <span className={acabamento.convite} aria-hidden="true">
+                    {href === "/ficha" ? "Abrir minha ficha" : href === "/livro" ? "Abrir o livro" : "Explorar"}
+                    <ArrowUpRight className="h-4 w-4" />
+                  </span>
                 </div>
               </Surface>
             </Link>
