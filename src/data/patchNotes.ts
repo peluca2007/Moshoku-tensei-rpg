@@ -66,6 +66,19 @@ export const PATCH_NOTES: PatchNote[] = [
     ],
   },
   {
+    version: "0.1.140",
+    date: "2026-10-05",
+    title: "Cada Escola com o Seu Elemento",
+    sections: [{
+      area: "livro",
+      heading: "O elemento vivo nas páginas de cada árvore (modo Livro)",
+      items: [
+        "Na dupla aberta, as páginas de cada árvore ganham o elemento da escola nas bordas: brasas subindo e o pé da página aquecendo no Fogo, ondas correndo na Água, rajadas no Vento, pedriscos assentando na Terra; luz na Cura, bolhas na Desintoxicação, o círculo rúnico girando na Teórica, pétalas na Invocação, cortes de luz no Deus da Espada, neve no Norte, faíscas no Punho de Fogo, notas no Bardo, fumaça na Furtividade, estrelas no Tático, e assim por diante.",
+        "O efeito fica atrás do texto e só nas margens; some na impressão, com movimento reduzido e no contínuo. A paginação do livro não muda (285 páginas, a mesma revisão).",
+      ],
+    }],
+  },
+  {
     version: "0.1.139",
     date: "2026-10-05",
     title: "O Livro e a Ficha Ganham Vida",

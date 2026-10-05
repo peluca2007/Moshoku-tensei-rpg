@@ -86,6 +86,7 @@ import {
   preencherBuracos,
   preencherPes,
 } from "./diagramacao";
+import { ElementoDaFolha } from "./elementosDoLivro";
 
 /**
  * O LIVRO FOLHEADO — o /livro aberto como livro impresso (2026-09-24).
@@ -1426,6 +1427,10 @@ function Folhas({
             {/* O caos controlado: os motivos do capítulo (ou da árvore) nas
                 bordas. Vem do CSS (--caos), como a cor e o selo. */}
             {k >= PRIMEIRA_PAGINA_DE_TEXTO && indice >= 0 && !r?.abertura && <span className="folhear-caos" />}
+            {/* O elemento da escola, vivo só na dupla aberta (elementosDoLivro.tsx). */}
+            {!todas && r?.arvoreId && k >= dupla * geo.porDupla && k < (dupla + 1) * geo.porDupla && (
+              <ElementoDaFolha arvoreId={r.arvoreId} pagina={k} lado={lado} />
+            )}
             {k >= PRIMEIRA_PAGINA_DE_TEXTO && indice >= 0 && (
               <>
                 <span className="folhear-marca" style={{ "--aba-i": indice } as CSSProperties} />
