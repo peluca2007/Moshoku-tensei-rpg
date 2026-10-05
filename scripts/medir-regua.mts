@@ -13,9 +13,10 @@
  * (4 no 1º, 8 no 6º) e Vigor 2. É o teto honesto de quem vive naquela árvore.
  *
  * O que ele NÃO mede, e por isso fica de fora ou com nota escrita à mão: as
- * colunas que o livro marca como não sendo régua (`regua: false`), a Dose da
- * Desintoxicação, os invocados, o Suishin (que só reage), e área — o alvo é um
- * só, então a magia de área aparece pelo que faz num alvo.
+ * colunas que o livro marca como não sendo régua (`regua: false`), os
+ * invocados, o Suishin (que só reage), e área — o alvo é um só, então a magia
+ * de área aparece pelo que faz num alvo. A Desintoxicação entrou em
+ * 2026-10-05: o motor já joga a Dose, a Inversão e o Contágio.
  *
  * Imprime a tabela medida ao lado da escrita, e marca onde as duas se afastam
  * mais de 25%. Com `--escrever`, atualiza os números de `danoPorTurno.ts` nas
@@ -43,7 +44,7 @@ const RODADAS = Number(process.env.RODADAS ?? 6);
 const REPETICOES = Number(process.env.REPETICOES ?? 300);
 const ATRIBUTO = [4, 4, 5, 6, 7, 8];
 /** O que este motor não sabe medir (ver o cabeçalho). */
-const FORA = new Set(["desintoxicacao", "invocacao", "deus-da-agua-corpo", "cura"]);
+const FORA = new Set(["invocacao", "deus-da-agua-corpo", "cura"]);
 
 function personagem(treeId: string, patamar: number): CharacterData {
   const tree = TREES.find((t) => t.id === treeId)!;
