@@ -1,0 +1,27 @@
+.trama {
+  position: relative;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--ficha-cor, var(--color-gold-600)) 20%, transparent);
+}
+.filete { position: absolute; inset: -1px 0 auto; display: flex; gap: 3px; height: 3px; overflow: hidden; border-radius: 2px; }
+.filete span { background: var(--escola-dia); min-width: 3px; flex-basis: 0; }
+:global(html.dark) .filete span { background: var(--escola-noite); }
+.rotulo { margin-bottom: .5rem; color: var(--color-parchment-600); font-size: .625rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+:global(html.dark) .rotulo { color: var(--color-parchment-400); }
+.escolas { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; list-style: none; padding: 0; }
+.escola { --escola: var(--escola-dia); display: flex; align-items: center; gap: .5rem; border: 1px solid color-mix(in srgb, var(--escola) 24%, transparent); border-radius: 99px; padding: .4rem .75rem; background: color-mix(in srgb, var(--escola) 6%, var(--color-parchment-50)); color: var(--color-parchment-800); font-size: .75rem; line-height: 1.3; }
+:global(html.dark) .escola { --escola: var(--escola-noite); background: color-mix(in srgb, var(--escola) 9%, var(--color-parchment-950)); color: var(--color-parchment-100); }
+.dominante { padding: .25rem .85rem .25rem .25rem; font-weight: 700; box-shadow: 0 2px 8px color-mix(in srgb, var(--escola) 10%, transparent); }
+.selo { color: var(--escola); font-family: serif; font-size: 1rem; font-weight: 700; }
+.painel { --escola: var(--escola-dia); position: relative; isolation: isolate; overflow: hidden; border-left-color: var(--escola) !important; background-image: linear-gradient(115deg, color-mix(in srgb, var(--escola) 5%, transparent), transparent 65%); }
+:global(html.dark) .painel { --escola: var(--escola-noite); }
+.marca { position: absolute; top: -.15rem; right: 1rem; z-index: -1; pointer-events: none; color: var(--escola); opacity: .075; font: 900 7rem/.95 serif; transform: rotate(-7deg); }
+.painel [data-carta-comprada] { border-top-color: color-mix(in srgb, var(--escola) 24%, var(--color-parchment-300)); }
+:global(html.dark) .painel [data-carta-comprada] { border-top-color: color-mix(in srgb, var(--escola) 24%, var(--color-parchment-800)); }
+.painel [data-assinatura=true] { box-shadow: inset 2px 0 color-mix(in srgb, var(--escola) 55%, transparent); }
+.colecao { --escola: var(--escola-dia); border-top: 2px solid var(--escola); background-image: linear-gradient(135deg, color-mix(in srgb, var(--escola) 6%, transparent), transparent 70%); }
+:global(html.dark) .colecao { --escola: var(--escola-noite); }
+.caminhoDaColecao { display: flex; align-items: center; gap: .5rem; margin-bottom: .75rem; color: var(--color-parchment-700); font-size: .75rem; font-weight: 600; }
+:global(html.dark) .caminhoDaColecao { color: var(--color-parchment-300); }
+@media print { .trama { margin-top: .5rem; padding-top: .5rem; } .marca, .filete { display: none; } .escola { background: transparent !important; box-shadow: none; color: #000 !important; } .selo { color: #000; } }

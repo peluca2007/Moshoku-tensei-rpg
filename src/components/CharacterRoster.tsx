@@ -13,6 +13,11 @@ import PageHeader from "./ui/PageHeader";
 import EmptyState from "./ui/EmptyState";
 import { ACEITA_NA_IMPORTACAO, FichaIlegivel, lerArquivoDeFicha } from "@/lib/fichaArquivo";
 import type { CharacterData } from "@/lib/types";
+import { identidadeDaFicha } from "@/lib/identidadeDaFicha";
+import { identidadeVisualDaArvore } from "@/data/identidadeDasArvores";
+import { getTreeById } from "@/data/trees";
+import { coresDaEscola } from "./TramaDaFicha";
+import tramaStyles from "./TramaDaFicha.module.css";
 
 /**
  * A barra de PV/PM do card (0.1.12).
@@ -169,11 +174,15 @@ export default function CharacterRoster() {
           const background = getBackgroundById(character.backgroundId);
           const isActive = id === activeId;
           const isConfirming = confirmingId === id;
+          const escolaId = identidadeDaFicha(character)[0]?.treeId ?? character.startingTreeId;
+          const escola = escolaId ? getTreeById(escolaId) : undefined;
+          const brasao = escolaId ? identidadeVisualDaArvore(escolaId) : undefined;
 
           return (
             <div
               key={id}
-              className={`rounded-2xl border p-4 shadow-sm transition-colors ${
+              style={escolaId ? coresDaEscola(escolaId) : undefined}
+              className={`${escolaId ? tramaStyles.colecao : ""} rounded-2xl border p-4 shadow-sm transition-colors ${
                 isActive
                   ? "border-wine-400 bg-wine-50/60 dark:border-wine-500 dark:bg-wine-950/30"
                   : "border-parchment-300 bg-parchment-100/70 dark:border-parchment-800 dark:bg-parchment-900/60"
@@ -221,6 +230,12 @@ export default function CharacterRoster() {
                   </p>
                 </div>
               </div>
+              {escola && brasao && (
+                <p className={tramaStyles.caminhoDaColecao}>
+                  <span className={tramaStyles.selo} aria-hidden="true">{brasao.selo}</span>
+                  {escola.name}
+                </p>
+              )}
               <div className="mb-3 space-y-1.5">
                 <BarraDeRecurso
                   icone={Heart}

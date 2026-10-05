@@ -62,6 +62,8 @@ import NumeroAnimado from "./ui/NumeroAnimado";
 import BarraDeRecurso from "./ui/BarraDeRecurso";
 import MomentoDoPatamar from "./ui/MomentoDoPatamar";
 import caosStyles from "./CaosDaFicha.module.css";
+import TramaDaFicha, { coresDaEscola } from "./TramaDaFicha";
+import tramaStyles from "./TramaDaFicha.module.css";
 import { identidadeVisualDaArvore } from "@/data/identidadeDasArvores";
 import { identidadeDaFicha } from "@/lib/identidadeDaFicha";
 
@@ -609,7 +611,10 @@ export default function CharacterSheet() {
    * PV ou anotações re-renderiza a ficha, mas não remonta as camadas de caos.
    */
   const identidadeVisual = useMemo(
-    () => identidadeDaFicha({ startingTreeId, unlockedRanks, purchasedAbilities }),
+    () => {
+      const identidade = identidadeDaFicha({ startingTreeId, unlockedRanks, purchasedAbilities });
+      return identidade.length || !startingTreeId ? identidade : [{ treeId: startingTreeId, pa: 0, peso: 1, inicial: true }];
+    },
     [startingTreeId, unlockedRanks, purchasedAbilities]
   );
   /*
@@ -661,6 +666,8 @@ export default function CharacterSheet() {
     ? ({
         "--ficha-cor-noite": arvoreDominante.corNoite,
         "--ficha-cor-dia": arvoreDominante.corDia,
+        "--ficha-cor-secundaria-dia": identidadeVisualDaArvore(identidadeVisual[1]?.treeId ?? "")?.corDia ?? arvoreDominante.corDia,
+        "--ficha-cor-secundaria-noite": identidadeVisualDaArvore(identidadeVisual[1]?.treeId ?? "")?.corNoite ?? arvoreDominante.corNoite,
       } as React.CSSProperties)
     : undefined;
 
@@ -687,7 +694,7 @@ export default function CharacterSheet() {
       <VezDaMesa />
 
       {/* Cabeçalho */}
-      <header className="surface-raised relative isolate overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 p-4 sm:p-6 dark:border-parchment-700/80 dark:bg-parchment-900/80">
+      <header data-ficha-cabecalho className="surface-raised relative isolate overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 p-4 sm:p-6 dark:border-parchment-700/80 dark:bg-parchment-900/80">
         {/*
           A ficha na mesa, atrás do nome do personagem (0.1.6). É a arte que
           mais fala do que a página faz: papel, vela, pena e tinteiro — e o
@@ -750,7 +757,7 @@ export default function CharacterSheet() {
             continua sendo uma ficha completa, não uma ficha pela metade.
           */}
           <div className="flex shrink-0 items-center gap-3">
-            <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-parchment-300/80 bg-parchment-100/80 shadow-sm dark:border-parchment-700/80 dark:bg-parchment-900/80 sm:h-24 sm:w-24">
+            <div data-ficha-retrato className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-parchment-300/80 bg-parchment-100/80 shadow-sm dark:border-parchment-700/80 dark:bg-parchment-900/80 sm:h-24 sm:w-24">
               {portrait ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -1101,6 +1108,7 @@ export default function CharacterSheet() {
             {!guildRankEstimated && <span className="text-3xs uppercase tracking-wide">fixado</span>}
           </label>
         </div>
+        <TramaDaFicha identidades={identidadeVisual} />
       </header>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
@@ -1485,8 +1493,11 @@ export default function CharacterSheet() {
               return (
                 <div
                   key={treeId}
-                  className={`rounded-2xl border-l-4 ${accent.border} border-y border-r border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-y-parchment-800 dark:border-r-parchment-800 dark:bg-parchment-900/60`}
+                  data-painel-arvore={treeId}
+                  style={coresDaEscola(treeId)}
+                  className={`${tramaStyles.painel} rounded-2xl border-l-4 ${accent.border} border-y border-r border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-y-parchment-800 dark:border-r-parchment-800 dark:bg-parchment-900/60`}
                 >
+                  <span className={tramaStyles.marca} aria-hidden="true">{identidadeVisualDaArvore(treeId)?.selo}</span>
                   <h3 className="relative mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
                     <MomentoDoPatamar key={`${character.id}:${tree.id}`} arvore={tree.id} rank={highestRank} personagem={character.id} />
                     <TreeCrest tree={tree} size={32} />
@@ -1526,6 +1537,7 @@ export default function CharacterSheet() {
                     <div
                       key={def.id}
                       data-carta-comprada={def.id}
+                      data-assinatura={kind === "ability" && !!(def as AbilityDef).signature}
                       className="surface rounded-xl border border-parchment-300 bg-parchment-100/80 p-3 dark:border-parchment-800 dark:bg-parchment-950/50"
                     >
                       <div className="mb-1 flex items-start justify-between gap-2">

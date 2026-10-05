@@ -1,12 +1,27 @@
 .fichaIdentidade {
   --ficha-cor: var(--ficha-cor-dia);
+  --ficha-secundaria: var(--ficha-cor-secundaria-dia);
+  border-radius: 1.75rem;
+  background-image:
+    radial-gradient(ellipse at 0 0, color-mix(in srgb, var(--ficha-cor) 7%, transparent), transparent 55%),
+    radial-gradient(ellipse at 100% 35%, color-mix(in srgb, var(--ficha-secundaria) 5%, transparent), transparent 60%);
 }
 
-:global(html.tema-livro.dark) .fichaIdentidade {
+:global(html.dark) .fichaIdentidade {
   --ficha-cor: var(--ficha-cor-noite);
+  --ficha-secundaria: var(--ficha-cor-secundaria-noite);
 }
 
-:global(html.tema-livro) .fichaIdentidade {
+.fichaIdentidade [data-ficha-cabecalho] {
+  border-top: 2px solid color-mix(in srgb, var(--ficha-cor) 65%, var(--color-parchment-300));
+  box-shadow: 0 12px 36px -22px color-mix(in srgb, var(--ficha-cor) 45%, transparent), inset 0 1px color-mix(in srgb, var(--ficha-cor) 12%, transparent);
+}
+.fichaIdentidade [data-ficha-retrato] {
+  border-color: color-mix(in srgb, var(--ficha-cor) 65%, var(--color-parchment-300));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ficha-cor) 12%, transparent), 0 6px 18px -8px color-mix(in srgb, var(--ficha-cor) 40%, transparent);
+}
+
+.fichaIdentidade {
   --color-wine-50: color-mix(in oklab, var(--ficha-cor) 9%, #fff);
   --color-wine-100: color-mix(in oklab, var(--ficha-cor) 18%, #fff);
   --color-wine-200: color-mix(in oklab, var(--ficha-cor) 36%, #fff);
@@ -30,8 +45,9 @@
 
 /*
  * Nos quatro temas (decisão do autor, 2026-09-30): forte nos do Livro e mais
- * discreto nos Pergaminho, que é onde o site abre. A cor de acento da ficha
- * (os --color-wine-* acima) continua só nos temas do Livro.
+ * discreto nos Pergaminho, que é onde o site abre. No pedido visual de
+ * 2026-10-05 a cor de acento passa a vestir a ficha nos quatro temas;
+ * a intensidade da tinta continua maior no Livro.
  */
 .caos {
   position: absolute;
@@ -174,6 +190,8 @@
 }
 
 @media print {
+  .fichaIdentidade { background-image: none; box-shadow: none !important; }
+  .fichaIdentidade [data-ficha-cabecalho], .fichaIdentidade [data-ficha-retrato] { box-shadow: none; border-color: #bbb; }
   .caos {
     display: none !important;
   }
