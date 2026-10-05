@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import styles from "./acabamentoDoSite.module.css";
 
 /**
  * O cabeçalho de uma rota, com a arte de ambiente dela atrás (0.1.5).
@@ -48,7 +49,7 @@ export default function PageHeader({
 }) {
   return (
     <header
-      className={`surface-raised relative isolate mb-6 overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 dark:border-parchment-700/80 dark:bg-parchment-900/80 ${className}`}
+      className={`${styles.cabecalho} surface-raised relative isolate mb-6 overflow-hidden rounded-2xl border border-parchment-300/90 bg-parchment-50/90 dark:border-parchment-700/80 dark:bg-parchment-900/80 ${className}`}
     >
       {faixa ? (
         <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
@@ -88,15 +89,15 @@ export default function PageHeader({
         />
       )}
 
-      <div className="flex flex-col gap-3 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
+      <div className={`${styles.conteudo} flex flex-col gap-3 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6`}>
         <div className="min-w-0">
-          <h1 className="flex items-center gap-2.5 text-2xl font-black tracking-tight text-parchment-900 drop-shadow-[0_1px_0_rgba(253,246,227,0.6)] dark:text-parchment-50 dark:drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] sm:text-3xl">
+          <h1 className={`${styles.titulo} flex items-center gap-2.5 text-2xl font-black tracking-tight text-parchment-900 drop-shadow-[0_1px_0_rgba(253,246,227,0.6)] dark:text-parchment-50 dark:drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)] sm:text-3xl`}>
             {/*
               O ícone ganhou moldura. Solto, ele era um pictograma vinho de 24px
               perdido ao lado de um título — do mesmo tamanho e da mesma cor que
               os outros dez ícones de seção da página, sem hierarquia nenhuma.
             */}
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-wine-600 text-parchment-50 shadow-md ring-1 ring-gold-400/50">
+            <span className={`${styles.emblema} flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-wine-600 text-parchment-50 shadow-md ring-1 ring-gold-400/50`}>
               <Icon className="h-5 w-5" />
             </span>
             {title}
