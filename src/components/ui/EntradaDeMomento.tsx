@@ -1,4 +1,5 @@
 "use client";
+import { MOVIMENTO } from "./temposDeMovimento";
 import { useEffect, useRef, type ReactNode } from "react";
 
 export default function EntradaDeMomento({ children, className }: { children: ReactNode; className?: string }) {
@@ -11,7 +12,7 @@ export default function EntradaDeMomento({ children, className }: { children: Re
     const io = new IntersectionObserver((entradas) => {
       if (!entradas[0].isIntersecting) { cancelar(); return; }
       io.disconnect();
-      if (!reduzido.matches) animacao = ref.current?.animate([{ opacity: .55, transform: "scale(.985) translateY(5px)" }, { opacity: 1, transform: "scale(1) translateY(0)" }], { duration: 320, easing: "ease-out" });
+      if (!reduzido.matches) animacao = ref.current?.animate([{ opacity: .55, transform: "scale(.985) translateY(5px)" }, { opacity: 1, transform: "scale(1) translateY(0)" }], { duration: MOVIMENTO.entrada, easing: MOVIMENTO.curva });
     }, { threshold: .15 });
     io.observe(ref.current);
     reduzido.addEventListener("change", cancelar);

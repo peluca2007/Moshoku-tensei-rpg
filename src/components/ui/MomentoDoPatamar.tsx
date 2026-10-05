@@ -1,4 +1,5 @@
 "use client";
+import { MOVIMENTO } from "./temposDeMovimento";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { RANKS, type RankName } from "@/lib/types";
 import { identidadeVisualDaArvore } from "@/data/identidadeDasArvores";
@@ -29,7 +30,7 @@ export default function MomentoDoPatamar({ arvore, rank, personagem }: { arvore:
       if (!entradas[0].isIntersecting) { cancelar(); return; }
       if (entrou || reduzido.matches) return;
       entrou = true;
-      animacao = el.animate([{ opacity: 0, transform: "scale(.85)" }, { opacity: .35, transform: "scale(1)", offset: .3 }, { opacity: 0, transform: "scale(1.06)" }], { duration: 480, easing: "ease-out" });
+      animacao = el.animate([{ opacity: 0, transform: "scale(.85)" }, { opacity: .35, transform: "scale(1)", offset: .3 }, { opacity: 0, transform: "scale(1.06)" }], { duration: MOVIMENTO.celebracao, easing: MOVIMENTO.curva });
     });
     io.observe(el);
     reduzido.addEventListener("change", cancelar);
