@@ -3040,6 +3040,7 @@ function executarTurnoPersonagem(
         e.danoCausado += dmg;
       }
     }
+    transbordarDoses(inimigos, logger);
     cobrarConsequenciaDaAcao(e, a, logger);
   }
 
@@ -3117,6 +3118,40 @@ function feridaDoInicioDoTurno(alvo: Alvo): void {
  * isso é decisão de quem chama, exatamente como os outros ganchos deste
  * arquivo (`tickChamas`, `resolver`) não decidem quando são chamados.
  */
+
+/**
+ * Transbordo (Dose, Cap. 4 §2) — 2026-10-05.
+ *
+ * Quem cai a 0 PV com Dose passa as Doses pro aliado dele mais próximo, a até
+ * 9 m, sem teste; se isso chega a 3, é o Colapso dele. Sem isto o `balancear`
+ * mostrava a Desintoxicação em último em todo patamar por um motivo só: as
+ * Doses se espalhavam em alvos que o resto do grupo matava antes da cobrança,
+ * e o ciclo Dose → Inverter nunca pagava numa luta de três rodadas.
+ */
+export function transbordarDoses(inimigos: Alvo[], logger?: RegistroCombate): void {
+  for (const caido of inimigos) {
+    if (caido.vivo || caido.doses === 0) continue;
+    const doses = caido.doses;
+    caido.doses = 0;
+    caido.envenenado = false;
+    const perto = inimigos
+      .filter((x) => x.vivo && x !== caido)
+      .map((x) => ({ x, d: distanciaEntre(x, caido) }))
+      .filter(({ d }) => d === undefined || d <= 9)
+      .sort((a, b) => (a.d ?? 0) - (b.d ?? 0))[0]?.x;
+    if (!perto) continue;
+    perto.doses += doses;
+    if (perto.doses >= 3) {
+      perto.doses = 0;
+      perto.envenenado = false;
+      perto.atordoadoTurnos = 1;
+      logger?.log(`Transbordo: ${caido.nome} cai e ${doses} Dose(s) passam a ${perto.nome} — Colapso, perde o próximo turno.`);
+    } else {
+      perto.envenenado = perto.doses >= 2;
+      logger?.log(`Transbordo: ${caido.nome} cai e ${doses} Dose(s) passam a ${perto.nome} (agora ${perto.doses}).`);
+    }
+  }
+}
 
 /** Rearma a Reação/ação lendária no início de uma rodada da mesa, se elegível. */
 export function aoIniciarRodada(alvo: Alvo, elegivel: boolean): void {

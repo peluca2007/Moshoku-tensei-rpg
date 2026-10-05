@@ -752,15 +752,16 @@ export default function Chapter4() {
             ["2", "Envenenado: Desvantagem em ataques e em testes de atributo."],
             ["3", "Colapso: as Doses saem todas, e o alvo fica Atordoado até o fim do próximo turno dele."],
             ["Inverter", "Purgar, Purga Profunda ou Anular num alvo com Dose: tira todas e cada uma vira dano de veneno, sem teste (2d6, 4d6 ou 5d8 por Dose)."],
+            ["Transbordo", "Quem cai a 0 PV com Dose passa as Doses, sem teste, para o aliado dele mais próximo a até 9 m. Se ele chegar a 3, é o Colapso dele."],
           ]}
         />
         <Aside title="Exemplo jogado — a decisão das 2 Doses">
           Íris, purificadora Intermediária, abre a luta contra um capitão bandido com a <b>Peçonha</b>: ele falha
-          no Vigor, sofre 2d6 e fica com 1 Dose. Na mesma rodada, o <b>Sangue de Serpente</b> pega de novo — 2
+          no Vigor, sofre 2d6 + BC e fica com 1 Dose. Na mesma rodada, o <b>Sangue de Serpente</b> pega de novo — 2
           Doses, Envenenado, e Desvantagem em Vigor. No turno seguinte ela tem duas saídas. <b>Inverter</b> com a
           Purga Profunda: 8d6 de uma vez, sem teste, e o capitão deixa de estar Envenenado. Ou arriscar mais uma{" "}
           <b>Peçonha</b>: se pegar, é o Colapso — o capitão perde o turno inteiro, mas as Doses somem e o
-          veneno recomeça do zero. Íris olha o guerreiro do grupo, que ainda não atacou, e escolhe o Colapso.
+          veneno recomeça do zero. Íris olha o guerreiro do grupo, que ainda não atacou, e escolhe o Colapso. Se o guerreiro derrubar o capitão antes, nada se perde: as Doses transbordam pro bandido mais perto dele.
         </Aside>
 
         <SubTitle>Doenças</SubTitle>

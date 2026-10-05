@@ -32,6 +32,14 @@ import { MAGIC_ACTIONS, DESINTOX_PA_COST } from "./shared";
  * Cap. 4, até 3; 2 = Envenenado; a 3ª é o Colapso), e os feitiços de purgar
  * podem INVERTER as Doses em dano de uma vez. A decisão de mesa é a de 2 Doses:
  * cobrar agora ou arriscar a 3ª e derrubar o turno do alvo.
+ *
+ * Balanço de 2026-10-05: a escola era a última do `balancear` em todo patamar,
+ * nos dois trios de referência, e entregava menos que a própria régua do
+ * Apêndice C (17/17/19/23/27/32 por turno contra ~14/22/28/34/45/60 escritos).
+ * Os venenos passaram a somar BC (como todo dano de magia do livro) e os três
+ * grandes subiram (Corrosão 5d6 → 8d6, Fel Alado 4d8 → 8d8, Sopro Podre 8d8 →
+ * 12d8); e a Dose ganhou o Transbordo, pra que o veneno num alvo que o grupo
+ * derrubou não se perca. Medido depois: 18/19/23/28/36/46, dentro da régua.
  */
 
 /** Inverter (Cap. 2): o mesmo texto nas três cartas que cobram a Dose. */
@@ -52,7 +60,7 @@ export const DESINTOXICACAO_TREE: Tree = {
     hook:
       "Envenena aos poucos e cobra tudo de uma vez — e continua sendo a única que cura o que ninguém mais cura.",
     loop: [
-      "Dose. Todo veneno da escola, na falha do Vigor, deixa 1 Dose no alvo (até 3, dura o combate). Com 2 Doses ele está Envenenado. A 3ª é o Colapso: as Doses saem e ele fica Atordoado até o fim do próximo turno dele.",
+      "Dose. Todo veneno da escola, na falha do Vigor, deixa 1 Dose no alvo (até 3, dura o combate). Com 2 Doses ele está Envenenado. A 3ª é o Colapso: as Doses saem e ele fica Atordoado até o fim do próximo turno dele. Se ele cair antes da cobrança, as Doses transbordam pro aliado dele mais próximo.",
       "Inverter. Purgar, Purga Profunda e Anular, lançados numa criatura com Dose, tiram todas as Doses e as viram dano de veneno de uma vez, sem teste: 2d6, 4d6 e 5d8 por Dose. Com 2 Doses no alvo, a escolha é sua — cobrar agora, ou arriscar a 3ª e tirar o turno dele.",
       "Purificar. Num aliado, os mesmos feitiços fazem o que sempre fizeram: rank contra rank — um feitiço de rank X remove uma aflição de rank X ou inferior. Paladar diz o rank; Sangria e Selar a Maldição são o preço quando o seu não alcança.",
     ],
@@ -133,7 +141,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           actions: { normal: 1 },
           costNote:
             "1 Ação onde o rank pede 2. É o veneno que abre a Dose no 1º patamar, e a 2 Ações ninguém o usaria: o purificador voltaria a passar a luta inteira esperando que alguém fosse envenenado pra ter o que fazer. Quem entende de veneno sabe fazer veneno — a Maestria de Rei só admite em voz alta o que este feitiço já faz pequeno.",
-          damage: { normal: "2d6 de dano de veneno" },
+          damage: { normal: "2d6 + BC de dano de veneno" },
           effect:
             "Teste de Vigor (CD 8 + BC). Falha: dano e 1 Dose. Sucesso: metade do dano e nenhuma Dose. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
@@ -244,7 +252,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           actions: { normal: 1 },
           costNote:
             "1 Ação onde o rank pede 2. É a segunda arma ofensiva da escola, e sem ela o purificador passa o 2º patamar inteiro com a Peçonha do 1º como único golpe — duas Ações de conjuração num veneno que é a mesma coisa que ele já fazia, só mais forte, não é jogo: é burocracia.",
-          damage: { normal: "3d6 de dano de veneno" },
+          damage: { normal: "3d6 + BC de dano de veneno" },
           effect: "Teste de Vigor (CD 8 + BC). Falha: dano, 1 Dose e Desvantagem em testes de Vigor por 1 minuto — a próxima Dose entra mais fácil. Sucesso: metade do dano e nenhuma Dose. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
             "Sangue de serpente que rasteja no fundo dos pântanos onde ninguém volta a pescar: envenena as entranhas dele e faz com que o corpo inteiro esqueça como resistir ao que vier depois. Sangue de Serpente!",
@@ -296,7 +304,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 8,
           range: "18 metros",
           actions: MAGIC_ACTIONS.Avançado,
-          damage: { normal: "5d6 de dano ácido (dobrado contra construtos e armaduras pesadas)" },
+          damage: { normal: "8d6 + BC de dano ácido (dobrado contra construtos e armaduras pesadas)" },
           effect: "Teste de Vigor (CD 8 + BC). Falha: dano e 1 Dose (construtos sofrem o ácido, mas não recebem Dose). Metal não-mágico exposto perde 2 de CA até uma hora de conserto com ferramentas.",
           incantation:
             "Ácido voraz que devoras aço, pedra e carne sem te dares ao trabalho de distinguir qual delas é qual, dissolve a carcaça do meu inimigo justamente por onde ela for mais orgulhosa, e não deixes nenhuma armadura inteira o bastante pra contar a história depois. Corrosão!",
@@ -368,7 +376,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           range: "18 metros",
           actions: MAGIC_ACTIONS.Santo,
           costNote: "O cântico breve condensa o preparo do veneno de Wyvern; as demais regras da conjuração permanecem.",
-          damage: { normal: "4d8 de dano de veneno" },
+          damage: { normal: "8d8 + BC de dano de veneno" },
           effect: "Teste de Vigor (CD 8 + BC). Falha: dano, 1 Dose e Cego até o fim do próximo turno. Sucesso: metade do dano e nenhuma condição. O veneno de Wyvern não é o mais forte do catálogo — é o mais cruel: mata devagar, e arranca a visão antes da vida. Não afeta construtos, mortos-vivos nem quem não respira.",
           incantation:
             "Bile de Wyvern destilada no Continente Demoníaco, onde até o ar tem gosto de cinza e os bichos aprenderam a cegar antes de matar: queima os olhos dele primeiro, depois o resto — na ordem que o monstro ensinou. Fel Alado!",
@@ -395,7 +403,7 @@ export const DESINTOXICACAO_TREE: Tree = {
           pmCost: 18,
           range: "Cone de 18m",
           actions: MAGIC_ACTIONS.Rei,
-          damage: { normal: "8d8 de dano de veneno" },
+          damage: { normal: "12d8 + BC de dano de veneno" },
           effect:
             "Teste de Vigor (CD 8 + BC). Falha: dano, 2 Doses (o alvo fica Envenenado) e uma aflição de rank Avançado à sua escolha. Sucesso: metade do dano e 1 Dose. Não funciona em construtos, mortos-vivos ou quem não respira.",
           incantation:

@@ -277,7 +277,7 @@ export const FASES_DAS_NOTAS: FaseDasNotas[] = [
     id: "o-livro-abre-rapido",
     nome: "O livro abre rápido",
     primeira: "0.1.127",
-    ultima: "0.1.136",
+    ultima: "0.1.137",
     datas: "30 de setembro e 1º de outubro",
     resumo:
       "O livro no celular responde em 2,5 s, o modo Livro abre em 2 s, três incongruências do texto caem, e as notas de versão ganham fases e áreas.",
@@ -286,6 +286,7 @@ export const FASES_DAS_NOTAS: FaseDasNotas[] = [
         { titulo: "O livro rápido", texto: "no celular, ~2,5 s em vez de ~21 s; o modo Livro, ~2 s já na primeira visita.", versoes: ["0.1.127", "0.1.129", "0.1.130"] },
         { titulo: "O Dragão se escolhe", texto: "o Comece Aqui parou de dizer o contrário: escolher o Dragão custa 3 PA.", versoes: ["0.1.128"] },
         { titulo: "Grande Obra", texto: "é ela que não silencia; Ritual comum silencia.", versoes: ["0.1.128"] },
+        { titulo: "Veneno que transborda", texto: "Desintoxicação: venenos somam BC, os três grandes sobem, e as Doses de quem cai passam pro aliado mais próximo.", versoes: ["0.1.137"] },
         { titulo: "Escudeiro mais contido", texto: "Aguentar uma vez por rodada, Ninguém Passa uma vez por aliado; o Aegis passa a proteger de crítico em vez de reduzir dano, e o Escudo Estendido só dá alcance.", versoes: ["0.1.134", "0.1.135"] },
         { titulo: "Novidades por fase", texto: "esta página: fases, o 'Na mesa' de cada uma e um filtro por área.", versoes: ["0.1.131"] },
       ],
