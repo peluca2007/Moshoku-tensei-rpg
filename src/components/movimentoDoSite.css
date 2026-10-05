@@ -1,6 +1,6 @@
 /* A tinta existente dá profundidade; foco tem a mesma resposta do ponteiro. */
 @media (prefers-reduced-motion: no-preference) {
-  .cartao-vivo { transition: transform 180ms ease-out, box-shadow 180ms ease-out; }
+  .cartao-vivo { transition: transform var(--mov-resposta) var(--mov-curva), box-shadow var(--mov-resposta) var(--mov-curva); }
   .cartao-vivo:focus-within { transform: translateY(-2px); box-shadow: 0 5px 16px color-mix(in srgb, var(--cor, var(--color-wine-600)) 12%, transparent); }
   @media (hover: hover) { .cartao-vivo:hover { transform: translateY(-2px); box-shadow: 0 5px 16px color-mix(in srgb, var(--cor, var(--color-wine-600)) 12%, transparent); } }
   ::view-transition-old(.rota) { animation: rota-sai 140ms ease-out both; }

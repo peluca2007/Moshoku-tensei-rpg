@@ -141,7 +141,7 @@
 }
 
 .pulso {
-  animation: pulso-do-caos 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: pulso-do-caos var(--mov-celebracao) var(--mov-curva);
 }
 
 @keyframes pulso-do-caos {

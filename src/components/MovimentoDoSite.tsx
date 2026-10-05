@@ -1,4 +1,5 @@
 "use client";
+import { MOVIMENTO } from "./ui/temposDeMovimento";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import "./movimentoDoSite.css";
@@ -24,7 +25,7 @@ export default function MovimentoDoSite() {
         vistos.add(el);
         if (reduzido.matches) continue;
         const d = document.documentElement.classList.contains("tema-livro") ? 8 : 5;
-        const animacao = el.animate([{ opacity: .65, transform: `translateY(${d}px)` }, { opacity: 1, transform: "translateY(0)" }], { duration: 280, delay: Math.min(ordem++ * 35, 140), easing: "cubic-bezier(.2,.7,.2,1)" });
+        const animacao = el.animate([{ opacity: .65, transform: `translateY(${d}px)` }, { opacity: 1, transform: "translateY(0)" }], { duration: MOVIMENTO.entrada, delay: Math.min(ordem++ * 35, 140), easing: MOVIMENTO.curva });
         animacoes.set(el, animacao);
         void animacao.finished.then(() => animacoes.delete(el), () => {});
       }

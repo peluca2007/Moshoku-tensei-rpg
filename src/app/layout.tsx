@@ -1,3 +1,4 @@
+import { VARIAVEIS_MOVIMENTO } from "@/components/ui/temposDeMovimento";
 import type { Metadata, Viewport } from "next";
 import type {} from "react/canary";
 import { ViewTransition } from "react";
@@ -111,6 +112,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
+      style={VARIAVEIS_MOVIMENTO}
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${literata.variable} ${FONTES_DO_LIVRO} h-full antialiased`}
     >
