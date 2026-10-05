@@ -36,7 +36,7 @@ import {
 import { PapelCriatura, aplicarPapel, getMoldePorPatamar, percepcaoPassiva, rodadasDoChefe } from "@/data/bestiary";
 import { adjacentes, aplicarEstadoInicial, aproximar, alcanceEmMetros, distanciaEntre, type CenarioCombate } from "./combatScenario";
 import { prepararInvocados } from "./combatSummons";
-import { caDepoisDeAparar, guardaDoCorpo, reagirComFluxo } from "./combatReactions";
+import { caDepoisDeAparar, guardaDoCorpo, reagirComFluxo, sobMinhaGuarda } from "./combatReactions";
 import { CharacterData, type AttributeKey } from "@/lib/types";
 import {
   rolarComRegistro, rolarCriticoComRegistro, rolarD20ComRegistro, formatarEventoAtaque,
@@ -487,7 +487,7 @@ function turnoPorOrcamento(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rn
       acertou, critico: false, parcelas: [], bonusDano: golpe, bruto: golpe, aposModificadores: golpe,
       notas: ["Um terço do dano por turno do molde; não há dados de dano cadastrados."],
     } : undefined;
-    bater(c, alvo, golpe, rng, false, undefined, evento, alvos);
+    bater(c, alvo, golpe, rng, false, undefined, evento, alvos, true, true);
     if (evento) registrarAtaque(logger, evento);
   }
 }
@@ -511,8 +511,24 @@ function bater(
   tipoDeDano?: string,
   evento?: EventoAtaque,
   defensores: EstadoPersonagem[] = [],
-  permiteCouraca = true
+  permiteCouraca = true,
+  /** Golpe de alvo único: Sob Minha Guarda (Cavalaria e Escudos) pode tomá-lo pra si. */
+  interceptavel = false
 ): number {
+  let recuperaPT: EstadoPersonagem | undefined;
+  if (interceptavel && rng && "ficha" in alvo) {
+    const guarda = sobMinhaGuarda(alvo as EstadoPersonagem, dano, defensores, rng,
+      evento ? { log: (t) => evento.notas.push(t) } : undefined);
+    if (guarda.interceptado) {
+      if (evento) evento.alvo = guarda.alvo.nome;
+      // "Não reduzível por Resistência, mas sim pelas técnicas desta árvore."
+      alvo = guarda.alvo;
+      tipoDeDano = undefined;
+      permiteCouraca = false;
+    }
+    dano = guarda.dano;
+    recuperaPT = guarda.recupera;
+  }
   if (permiteCouraca && rng && "ficha" in alvo) dano = amortecerComBarro(alvo as EstadoPersonagem, dano, tipoDeDano, rng, evento);
   if (dano > 0 && "ficha" in alvo && (!tipoDeDano || /contundente|cortante|perfurante|físico/i.test(tipoDeDano))) {
     const protegido = alvo as EstadoPersonagem;
@@ -559,6 +575,10 @@ function bater(
     evento.notas.push("Queda em um golpe: o personagem estava com todos os PV antes deste ataque.");
   }
   if (evento?.aplicacao) evento.aplicacao.danoEfetivo = danoReal;
+  if (recuperaPT && danoReal > 0) {
+    recuperaPT.pt = Math.min(recuperaPT.ficha.ptMax, recuperaPT.pt + 1);
+    evento?.notas.push(`${recuperaPT.nome} recupera 1 PT: o protegido apanhou sem interceptação.`);
+  }
   c.danoCausado += danoReal;
   return danoReal;
 }
@@ -710,7 +730,7 @@ function resolverAcaoCriatura(
     if (escala !== 1) evento.notas.push(`Escala do encontro/ação: ×${escala}, arredondada`);
   }
   c.escondido = false;
-  bater(c, alvo, fDmg, rng, critico, acao.dano, evento, aliados, acao.tipo === "ataque");
+  bater(c, alvo, fDmg, rng, critico, acao.dano, evento, aliados, acao.tipo === "ataque", acao.tipo === "ataque" && !acao.area);
   if (acao.danoPorTurno && fDmg > 0) {
     const media = (mediaDados(acao.danoPorTurno) + bonusAtaque) * c.escala * escalaDaAcao(acao);
     if (!alvo.sustentados.some((x) => Math.abs(x.media - media) < 0.01)) {
@@ -1118,7 +1138,7 @@ function reagirComoChefe(
     acertou, critico: false, parcelas: [], bonusDano: dano, bruto: dano, aposModificadores: dano,
     notas: ["Reação de chefe: dano fixo de um terço do orçamento; não há dados de dano cadastrados."],
   } : undefined;
-  bater(c, alvoGatilho, dano, rng, false, undefined, evento, grupo);
+  bater(c, alvoGatilho, dano, rng, false, undefined, evento, grupo, true, true);
   if (evento) registrarAtaque(logger, evento);
 }
 

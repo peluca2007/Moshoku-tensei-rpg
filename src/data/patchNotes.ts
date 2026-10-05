@@ -50,6 +50,21 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.133",
+    date: "2026-10-05",
+    title: "O Escudeiro Entra na Frente",
+    sections: [{
+      area: "encontros",
+      heading: "O simulador passa a jogar Sob Minha Guarda",
+      items: [
+        "A Maestria que define Cavalaria e Escudos não existia no motor: o Escudeiro só batia, e o balanceador o chamava de 'contribui pouco'. Agora ele protege os aliados de menos PV (1, 2 e 3 do Avançado em diante) e, por 1 Reação, toma pra si o golpe que derrubaria um deles. Quando o protegido apanha sem interceptação, ele recupera 1 PT.",
+        "Também entram o alcance de cada patamar, a interceptação sem Reação do Escudo Estendido (uma por rodada) e do Ninguém Passa (todas), o Aguentar o Baque e o Soberano (1 PT reduz o dano interceptado) e o Aegis (o protegido sofre o Bônus de Rank a menos). Provocar Ódio, Muralha da Companhia, Não Ele e o Imperador continuam fora, e o balanceador avisa.",
+        "O limite de protegidos lia o primeiro rank aberto (sempre 1) e virava ilimitado do Santo em diante; agora é 1, 2 e 3, como o livro diz.",
+        "O efeito no `balancear`: do 3º patamar em diante, a árvore passa de 'lenta' pra mais forte do livro (no 6º, o grupo quase nunca perde alguém). Nenhuma regra mudou nesta versão: o que fazer com o número é decisão do livro.",
+      ],
+    }],
+  },
+  {
     version: "0.1.132",
     date: "2026-10-05",
     title: "O Deus da Espada Volta a Errar",

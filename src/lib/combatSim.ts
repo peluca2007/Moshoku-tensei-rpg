@@ -460,6 +460,12 @@ export interface FichaCombate {
   posturaBonusCA: number;
   posturaReacoesExtra: number;
   protegidosMax: number;
+  /**
+   * Cavalaria e Escudos (Cap. 3), como o motor joga Sob Minha Guarda: o Bônus
+   * de Rank na árvore e a redução comprada (Aguentar o Baque ou o Soberano).
+   * Ausente em quem não abriu a árvore.
+   */
+  escudo?: { rank: number; aguentar: string | null; aguentarSoberano: boolean };
   ataqueBasico: Acao;
 }
 
@@ -806,6 +812,8 @@ export interface EstadoPersonagem extends Alvo {
   fluxoRestante: number;
   emPostura: boolean;
   protegidos: string[];
+  /** Escudo Estendido (Avançado de Escudos): a interceptação sem Reação desta rodada ainda está guardada. */
+  interposLivre?: boolean;
   reacoesExtra: number;
   usouPrimeiroGolpe: boolean;
   /**
@@ -1274,11 +1282,23 @@ export function montarFicha(c: CharacterData, rotulo = "", armaId?: string | nul
     fluxoDano: "1d6",
     posturaBonusCA: rankAgua >= 3 ? rankAgua : 0,
     posturaReacoesExtra: rankAgua >= 3 ? Math.ceil(rankAgua / 2) : 0,
+    // 1 no Principiante, 2 no Intermediário, 3 do Avançado em diante (Cap. 3).
+    // Até 2026-10-05 lia o PRIMEIRO rank aberto (sempre 1) e dava ilimitado do
+    // Santo em diante, que o livro não diz. Guarda Ampla: o dobro do Bônus de Rank.
     protegidosMax: (() => {
-      const s = c.unlockedRanks.find((r) => r.treeId === "cavalaria-e-escudos")?.rank;
-      if (!s) return 0;
-      const idx = ["Principiante", "Intermediário", "Avançado", "Santo", "Rei", "Imperador"].indexOf(s);
-      return idx === 0 ? 1 : idx === 1 ? 2 : idx === 2 ? 3 : 99;
+      const rank = rankDaArvore("cavalaria-e-escudos");
+      if (!rank) return 0;
+      return comprou("guarda-ampla", "cavalaria-e-escudos") ? 2 * rank : Math.min(rank, 3);
+    })(),
+    escudo: (() => {
+      const rank = rankDaArvore("cavalaria-e-escudos");
+      if (!rank) return undefined;
+      const soberano = comprou("aguentar-soberano", "cavalaria-e-escudos");
+      return {
+        rank,
+        aguentar: soberano ? "2d10" : comprou("aguentar", "cavalaria-e-escudos") ? "1d10" : null,
+        aguentarSoberano: soberano,
+      };
     })(),
     ataqueBasico: novaAcao({
       /*
@@ -3103,6 +3123,7 @@ export function aoIniciarRodada(alvo: Alvo, elegivel: boolean): void {
       const e = alvo as EstadoPersonagem;
       e.fluxoRestante = e.emPostura && e.ficha.rankAgua >= 6 ? Infinity : e.ficha.fluxoUsosMax;
       e.fluxosNesteTurno.clear();
+      e.interposLivre = (e.ficha.escudo?.rank ?? 0) >= 3;
       if (e.emPostura) {
         e.reacoesExtra = e.ficha.posturaReacoesExtra + e.ficha.reacaoExtraFixa;
       } else {
