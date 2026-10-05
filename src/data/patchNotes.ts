@@ -50,6 +50,20 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.138",
+    date: "2026-10-05",
+    title: "A Arena Respira",
+    sections: [{
+      area: "encontros",
+      heading: "A arena 2.5D com vida entre os golpes",
+      items: [
+        "Quem não tem retrato entra com o brasão da árvore principal (a cor e o selo do livro: 水 na Água, 剣 no Deus da Espada) em vez do ícone da raça; a criatura sem arte entra com 魔.",
+        "Os standees respiram, fora de fase, e têm sombra no chão; quem age ganha um anel de luz na cor do golpe; poeira sobe devagar no ar. Tudo para quando a arena sai da tela, e com movimento reduzido fica parado.",
+        "O golpe do monstro-molde passa a ser arredondado: a arena mostrava '−9,666666666666666'. No 6º patamar isso deixa 5 criaturas em 69% de vitória (era 78%), mais perto do Difícil que o Apêndice G promete.",
+      ],
+    }],
+  },
+  {
     version: "0.1.137",
     date: "2026-10-05",
     title: "O Veneno Que Não Se Perde",

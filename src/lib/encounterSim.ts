@@ -459,7 +459,8 @@ export function ordenarAlvosDaCriatura<T extends Alvo>(alvos: T[], tatica: Criat
 function turnoPorOrcamento(c: EstadoCriatura, alvos: EstadoPersonagem[], rng: Rng, logger?: RegistroCombate): void {
   // Surpresa: uma Ação só no turno (o mesmo terço do orçamento de antes).
   const golpes = (c.surpreso ? 1 : ACOES_POR_TURNO) * c.rodadas;
-  const porGolpe = c.danoPorTurno / ACOES_POR_TURNO;
+  // Arredondado: o PV é inteiro, e sem isto a arena mostrava "−9,666666666666666" (2026-10-05).
+  const porGolpe = Math.max(1, Math.round(c.danoPorTurno / ACOES_POR_TURNO));
   let fila = ordenarAlvosDaCriatura(alvos, c.fonte.tatica, rng);
   for (let g = 0; g < golpes; g++) {
     fila = fila.filter((a) => a.vivo);

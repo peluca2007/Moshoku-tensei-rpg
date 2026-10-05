@@ -7,6 +7,8 @@ import type { AtorDoReplay, CriaturaEncontro, LogCombate, QuadroDoReplay } from 
 import type { EventoAtaque } from "@/lib/combatTrace";
 import { getRaceById } from "@/data/races";
 import { CRIATURAS_PRONTAS } from "@/data/bestiary";
+import { identidadeVisualDaArvore } from "@/data/identidadeDasArvores";
+import { identidadeDaFicha } from "@/lib/identidadeDaFicha";
 import {
   FORMAS_A_DISTANCIA, formaDoGolpe, montarPassos, partesDoNome, placarDaBatalha, reacoesDoPasso,
   type FormaDoGolpe, type PlacarDaBatalha, type TipoDeReacao,
@@ -77,6 +79,15 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
 
   // A proporção do palco, para a flecha apontar para onde voa.
   const palco = useRef<HTMLDivElement>(null);
+  // Respiração e poeira só andam com a arena na tela (2026-10-05).
+  const [longe, setLonge] = useState(false);
+  useEffect(() => {
+    const el = palco.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const vigia = new IntersectionObserver(([e]) => setLonge(!e.isIntersecting));
+    vigia.observe(el);
+    return () => vigia.disconnect();
+  }, []);
   const [proporcao, setProporcao] = useState(1.6);
   useEffect(() => {
     const el = palco.current;
@@ -88,6 +99,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
   }, []);
 
   const imagens = useMemo(() => imagensDosAtores(atores, grupo, criaturas), [atores, grupo, criaturas]);
+  const brasoes = useMemo(() => brasoesDosAtores(atores, grupo), [atores, grupo]);
   const vaoInicial = useMemo(() => vaoDaLinha(quadros), [quadros]);
   const postos = postosDaCena(atores, quadro, vaoInicial);
   const fundo = grupo.find((c) => c.cover)?.cover;
@@ -172,6 +184,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
     <div
       ref={palco}
       className={`${estilo.palco} ${avancouUm && congela ? estilo.congela : ""} aspect-[4/5] w-full sm:aspect-[16/10]`}
+      data-longe={longe || undefined}
       tabIndex={0}
       role="group"
       aria-roledescription="arena"
@@ -181,6 +194,9 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
     >
       {fundo && <div className={estilo.fundo} style={{ backgroundImage: `url(${fundo})` }} aria-hidden />}
       <div className={estilo.chao} aria-hidden><div className={estilo.linha} /></div>
+      <div className={estilo.poeira} aria-hidden>
+        {POEIRA.map((p, n) => <i key={n} style={{ left: `${p.x}%`, top: `${p.y}%`, animationDelay: `${p.atraso}s`, animationDuration: `${p.duracao}s` }} />)}
+      </div>
       {distancia !== undefined && <span className={estilo.distancia} style={{ top: `${topo(0.5)}%` }}>{formatarMetros(distancia)}</span>}
 
       {atores.map((ator, i) => {
@@ -214,6 +230,7 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
             "--elemento": elemento ? ELEMENTOS[elemento].cor : undefined,
             zIndex: Math.round((1 - posto.profundidade) * 40) + 2,
             "--tamanho": `min(${ator.invocado ? 80 : 110}px, ${(ator.invocado ? 52 : 70) / fileira}cqw)`, "--escala": escala,
+            "--fase": `${-((i * 0.83) % 3.4).toFixed(2)}s`,
             ...lunge, ...atraso, ...de,
           } as unknown as CSSProperties}
         >
@@ -226,7 +243,11 @@ export default function ArenaDoReplay({ log, grupo, criaturas, tocarAoAbrir = fa
                 {imagens[i]
                   // eslint-disable-next-line @next/next/no-img-element
                   ? <img src={imagens[i]} alt="" draggable={false} />
-                  : <span className={estilo.inicial}>{ator.nome.charAt(0).toUpperCase()}</span>}
+                  : brasoes[i]
+                    ? <span className={estilo.brasao} style={{ "--cor": brasoes[i]!.cor } as CSSProperties}>
+                      <span lang="ja">{brasoes[i]!.selo}</span><b>{ator.nome.charAt(0).toUpperCase()}</b>
+                    </span>
+                    : <span className={estilo.inicial}>{ator.nome.charAt(0).toUpperCase()}</span>}
                 {ator.invocado && <span className={estilo.selo} title="Invocação">✦</span>}
               </div>
               <div className={estilo.base} />
@@ -492,21 +513,58 @@ function Numero({ ator, quadro, anterior, evento }: {
 }
 
 
+/** Grãos de poeira no ar da arena: posição e ritmo fixos, pra não sortear a cada render. */
+const POEIRA = Array.from({ length: 12 }, (_, n) => ({
+  x: (n * 37 + 11) % 96 + 2,
+  y: (n * 23 + 7) % 60 + 20,
+  atraso: -((n * 1.7) % 9),
+  duracao: 8 + (n % 5) * 1.5,
+}));
+
 function tamanhoDaFileira(n: number): number {
   // Em duas fileiras o cartão encolhe o bastante para a de trás aparecer nos vãos da da frente.
   return n > POR_FILEIRA ? n * 0.75 : n;
 }
 
-/** Retrato da ficha; sem ele, a arte da raça (ou do Apêndice G); sem ela, a inicial. */
+/**
+ * Retrato da ficha; sem ele, o herói veste o brasão da árvore dele (ver
+ * `brasoesDosAtores`) e a criatura, a arte do Apêndice G; sem nada, a inicial.
+ */
 function imagensDosAtores(atores: AtorDoReplay[], grupo: CharacterData[], criaturas: CriaturaEncontro[]): (string | undefined)[] {
   return atores.map((ator) => {
     if (ator.lado === "grupo") {
       const ficha = grupo.find((c) => c.id === ator.origem);
-      return ficha?.portrait ?? getRaceById(ficha?.raceId ?? null)?.icon;
+      return ficha?.portrait ?? (ficha && arvorePrincipal(ficha) ? undefined : getRaceById(ficha?.raceId ?? null)?.icon);
     }
     const criatura = criaturas.find((c) => c.id === ator.origem);
     // Criaturas prontas montadas antes do retrato vir junto: acha pela arte do Apêndice G.
     return criatura?.portrait ?? CRIATURAS_PRONTAS.find((p) => p.nome === criatura?.nome)?.icon;
+  });
+}
+
+/** A árvore em que a ficha pôs mais PA: é a cor e o selo dela que o herói veste. */
+function arvorePrincipal(ficha: CharacterData): string | undefined {
+  const pesos = identidadeDaFicha(ficha);
+  const id = pesos.length ? pesos.reduce((a, b) => (b.pa > a.pa ? b : a)).treeId : ficha.startingTreeId ?? undefined;
+  return id && identidadeVisualDaArvore(id) ? id : undefined;
+}
+
+/*
+ * O brasão (2026-10-05): o herói sem retrato entrava com o ícone da raça, e o
+ * do humano é uma silhueta que, no tamanho do cartão, parecia uma boca de
+ * dentes. A cor e o selo da árvore principal — os mesmos do livro e da ficha —
+ * dizem mais sobre quem está ali do que a raça. A criatura só usa o brasão se
+ * não tiver arte nenhuma: a imagem sempre vem antes.
+ */
+function brasoesDosAtores(atores: AtorDoReplay[], grupo: CharacterData[]): ({ cor: string; selo: string } | undefined)[] {
+  return atores.map((ator) => {
+    // A criatura sem arte (o molde cru do Apêndice G) veste 魔, o monstro.
+    if (ator.lado !== "grupo") return { cor: "#d9534f", selo: "魔" };
+    const ficha = grupo.find((c) => c.id === ator.origem);
+    if (!ficha || ficha.portrait) return undefined;
+    const id = arvorePrincipal(ficha);
+    const visual = id ? identidadeVisualDaArvore(id) : undefined;
+    return visual ? { cor: visual.corNoite, selo: visual.selo } : undefined;
   });
 }
 

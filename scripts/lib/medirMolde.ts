@@ -18,7 +18,9 @@ export const REFERENCIA: Record<number, Medida> = {
   3: { quatro: 97, cinco: 67, chefe: 90 },
   4: { quatro: 96, cinco: 71, chefe: 90 },
   5: { quatro: 97, cinco: 88, chefe: 72 },
-  6: { quatro: 99, cinco: 78, chefe: 53 },
+  // 6º atualizado no mesmo dia: o golpe do molde passou a ser arredondado
+  // (50/3 = 16,67 → 17), e as 5 criaturas foram de 78% a 69% — mais perto do Difícil.
+  6: { quatro: 98, cinco: 69, chefe: 53 },
 };
 
 export interface Medida { quatro: number; cinco: number; chefe: number }
