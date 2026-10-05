@@ -50,6 +50,20 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.135",
+    date: "2026-10-05",
+    title: "O Aegis Deixa de Ser Armadura",
+    sections: [{
+      area: "regras",
+      heading: "Cavalaria e Escudos: as duas camadas que a medição apontou",
+      items: [
+        "Aegis (Santo): os protegidos ficam imunes a crítico e repetem um teste de resistência falho por turno, e não reduzem mais o dano. A redução valia contra TODO golpe nos três protegidos e era o que, no 6º patamar, fazia o grupo quase nunca cair.",
+        "Escudo Estendido (Avançado): alcance de 9 m só com linha de visão e 3 protegidos, como antes, mas sem a interceptação por rodada que não gastava Reação. Interceptar volta a custar a Reação até o Rei.",
+        "Medido no `balancear` (vitória no encontro difícil / contra o chefe): no 3º patamar, de 84%/87% para 71%/79%; no 6º, de 100%/93% para 96%/76%. As medianas são 44% e 69%. A árvore continua forte, agora pela Interpor em si: interceptar o golpe que derrubaria alguém.",
+      ],
+    }],
+  },
+  {
     version: "0.1.134",
     date: "2026-10-05",
     title: "As Camadas do Escudeiro",

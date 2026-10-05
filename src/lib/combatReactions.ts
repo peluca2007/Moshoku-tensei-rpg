@@ -75,16 +75,16 @@ export interface DecisaoDaGuarda {
  * - **Interpor** (Maestria do Principiante): o ataque rola contra o protegido,
  *   e todo o dano vem pro Escudeiro, por 1 Reação, sem Resistência. Se o
  *   protegido apanha sem interceptação, o Escudeiro recupera 1 PT.
- * - **Peso do Aço / Escudo Estendido**: alcance 4,5 m e 9 m; do Avançado em
- *   diante, uma interceptação por rodada sem Reação. **Ninguém Passa** (Rei):
- *   uma sem Reação por aliado protegido, por rodada.
+ * - **Peso do Aço / Escudo Estendido**: alcance 4,5 m e 9 m. **Ninguém Passa**
+ *   (Rei): uma interceptação sem Reação por aliado protegido, por rodada.
  * - **Aguentar o Baque** e o **Soberano**, uma vez por rodada: 1 PT reduz o
  *   dano interceptado em 1d10 (2d10) + Vigor + Bônus de Rank; o Soberano
  *   devolve o PT se zerar.
- * - **Aegis** (Santo): o protegido sofre metade do Bônus de Rank a menos.
  *
- * Os três limites ("uma vez por rodada", "por aliado", "metade") são da
- * 0.1.134: sem eles a árvore era a mais forte do livro do 3º patamar em diante.
+ * Os limites ("uma vez por rodada", "por aliado") são da 0.1.134, e na 0.1.135
+ * o Aegis deixou de reduzir dano e o Escudo Estendido de interceptar sem
+ * Reação: sem isso a árvore era a mais forte do livro do 3º patamar em diante.
+ * O Aegis de hoje (imune a crítico, repetir um teste) fica fora do motor.
  *
  * Quem protege quem: os aliados de menos PV máximos, até o limite (é o que a
  * mesa faz — o mago e o curandeiro). Quando interceptar: se o golpe derrubaria
@@ -109,12 +109,6 @@ export function sobMinhaGuarda(
         .map((x) => x.ficha.id);
     }
     if (!g.protegidos.includes(alvo.ficha.id)) continue;
-    if (escudo.rank >= 4) {
-      const aegis = Math.ceil(escudo.rank / 2);
-      dano = Math.max(0, dano - aegis);
-      logger?.log(`[${g.nome}] Aegis: ${alvo.nome} sofre ${aegis} a menos.`);
-      if (dano === 0) return { ...semGuarda, dano };
-    }
     recupera ??= g;
     const alcance = escudo.rank >= 3 ? 9 : escudo.rank >= 2 ? 4.5 : 3;
     const distancia = distanciaEntre(g, alvo);
@@ -126,8 +120,7 @@ export function sobMinhaGuarda(
     if (escudo.rank >= 5 && !g.poupadosNaRodada.has(alvo.ficha.id)) {
       g.poupadosNaRodada.add(alvo.ficha.id);
       pagou = "sem Reação (Ninguém Passa)";
-    } else if (g.interposLivre) { g.interposLivre = false; pagou = "sem Reação (Escudo Estendido)"; }
-    else if (consumirReacao(g)) pagou = "1 Reação";
+    } else if (consumirReacao(g)) pagou = "1 Reação";
     else continue;
     let reduzido = dano;
     if (escudo.aguentar && g.pt >= 1 && !g.aguentouNaRodada) {

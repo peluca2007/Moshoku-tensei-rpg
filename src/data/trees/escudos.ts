@@ -295,7 +295,7 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Escudo Estendido",
         description:
-          "Você veste o Manto de Touki e destrava as manobras de gasto. O Touki é projetado para fora do corpo: Sob Minha Guarda alcança 9 metros e exige apenas linha de visão. Interceptar dano deixa de custar Reação uma vez por rodada. O limite de protegidos sobe para 3.",
+          "Você veste o Manto de Touki e destrava as manobras de gasto. O Touki é projetado para fora do corpo: Sob Minha Guarda alcança 9 metros e exige apenas linha de visão. O limite de protegidos sobe para 3.",
       },
       talents: [
         { id: "casco-escudos", name: "Casco", paCost: 2, description: "Você tem Resistência a dano físico de armas mundanas enquanto empunhar escudo." },
@@ -356,7 +356,7 @@ export const ESCUDOS_TREE: Tree = {
       mastery: {
         name: "Aegis",
         description:
-          "Aliados Sob Sua Guarda recebem, passivamente e sem custo: redução de dano igual à metade do seu Bônus de Rank (arredondada para cima) contra todo dano recebido, imunidade a acertos críticos, e o direito de repetir um teste de resistência falho por turno.",
+          "Aliados Sob Sua Guarda recebem, passivamente e sem custo: imunidade a acertos críticos (o crítico contra eles vira acerto comum) e o direito de repetir um teste de resistência falho por turno.",
       },
       talents: [
         {
