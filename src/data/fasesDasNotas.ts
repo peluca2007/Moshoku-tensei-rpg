@@ -277,7 +277,7 @@ export const FASES_DAS_NOTAS: FaseDasNotas[] = [
     id: "o-livro-abre-rapido",
     nome: "O livro abre rápido",
     primeira: "0.1.127",
-    ultima: "0.1.135",
+    ultima: "0.1.136",
     datas: "30 de setembro e 1º de outubro",
     resumo:
       "O livro no celular responde em 2,5 s, o modo Livro abre em 2 s, três incongruências do texto caem, e as notas de versão ganham fases e áreas.",
@@ -292,6 +292,7 @@ export const FASES_DAS_NOTAS: FaseDasNotas[] = [
       mestre: [
         { titulo: "Filtro por área", texto: "'Encontros e simulador' mostra só o que é do Mestre.", versoes: ["0.1.131"] },
         { titulo: "Técnica que diz 'Ataque' erra", texto: "o simulador rola contra a CA nove cartas corpo a corpo que nunca erravam, e os golpes finais que acertam sozinhos entram inteiros; o Deus da Espada deixa o topo.", versoes: ["0.1.132"] },
+        { titulo: "Molde do meio recalibrado", texto: "PV do molde 59, 108 e 141 no 2º, 3º e 4º patamar: 5 criaturas voltam a ser Difícil, não Mortal.", versoes: ["0.1.136"] },
         { titulo: "O Escudeiro protege", texto: "o simulador joga Sob Minha Guarda, Aguentar e Aegis; o Escudeiro toma o golpe que derrubaria o mago.", versoes: ["0.1.133"] },
       ],
     },
