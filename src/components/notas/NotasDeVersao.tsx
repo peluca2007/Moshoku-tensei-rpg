@@ -3,6 +3,7 @@ import { FASES_DAS_NOTAS, type FaseDasNotas, type LinhaDaMesa } from "@/data/fas
 import { AREAS_DAS_NOTAS, PATCH_NOTES, idDaVersao, type AreaDaNota, type PatchNote } from "@/data/patchNotes";
 import FiltroDasNotas from "./FiltroDasNotas";
 import s from "./notas.module.css";
+import IconeDaArea from "./IconeDaArea";
 
 /**
  * A página Novidades (2026-10-01): o histórico inteiro por fase, cada bloco
@@ -51,7 +52,7 @@ export function Blocos({ nota }: { nota: PatchNote }) {
       {nota.sections.map((sec, i) => (
         <section key={i} className={s.bloco} data-area={sec.area}>
           <h4>
-            <span className={s.etiqueta}>{nomeDaArea(sec.area)}</span> {sec.heading}
+            <span className={s.etiqueta}><IconeDaArea area={sec.area} />{nomeDaArea(sec.area)}</span> {sec.heading}
           </h4>
           <ul>
             {sec.items.map((item, j) => (
@@ -221,7 +222,7 @@ export default function NotasDeVersao() {
             {porArea.map((a) => (
               <li key={a.id} data-area={a.id}>
                 <i />
-                {a.nome} <b>{a.n}</b>
+                <IconeDaArea area={a.id} />{a.nome} <b>{a.n}</b>
               </li>
             ))}
           </ul>

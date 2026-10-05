@@ -50,6 +50,20 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.143",
+    date: "2026-10-05",
+    title: "Mais Espaço para o Seu Caminho",
+    sections: [{
+      area: "site",
+      heading: "A ficha respira e as cartas ficam mais fáceis de consultar",
+      items: [
+        "O grimório ocupa toda a largura depois do resumo do personagem. Cartas curtas ficam alinhadas pelo topo, sem acompanhar a altura dos cânticos ao lado.",
+        "O cabeçalho usa a identidade das escolas e mantém a capa pessoal sob um véu de leitura. No celular, retrato e nome ficam lado a lado. Três escolas aparecem primeiro; as demais ficam disponíveis em Mais escolas.",
+        "As áreas de Novidades ganharam ícones junto dos nomes e cores. Escolhas, entradas e celebrações da interface compartilham um ritmo de movimento, respeitando movimento reduzido e impressão.",
+      ],
+    }],
+  },
+  {
     version: "0.1.142",
     date: "2026-10-05",
     title: "O Gesto de Cada Escola",

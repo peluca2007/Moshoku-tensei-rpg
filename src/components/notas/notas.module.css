@@ -214,3 +214,6 @@ summary.versaoCabeca:hover h3 { text-decoration: underline; text-decoration-thic
   .filtro { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -1rem; padding-inline: 1rem; }
   .filtro button { flex: none; }
 }
+
+.etiqueta, .filtro button { display: inline-flex; align-items: center; gap: .35rem; }
+.etiqueta svg, .filtro button svg { flex-shrink: 0; }
