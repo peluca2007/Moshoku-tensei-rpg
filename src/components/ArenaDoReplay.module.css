@@ -135,6 +135,41 @@
   line-height: 1.2rem;
 }
 
+/*
+ * O brasão (2026-10-05): o herói sem retrato veste a cor e o selo da árvore
+ * principal, os mesmos do livro e da ficha. O kanji é a arte; a inicial, a
+ * legenda.
+ */
+.brasao {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 50% 38%, color-mix(in srgb, var(--cor) 55%, transparent), transparent 62%),
+    linear-gradient(165deg, color-mix(in srgb, var(--cor) 45%, #1b130d), #120c08 85%);
+}
+
+.brasao > span {
+  font-size: calc(var(--tamanho) * 0.62);
+  line-height: 1;
+  color: color-mix(in srgb, var(--cor) 80%, #fdf6e3);
+  text-shadow:
+    0 0 12px color-mix(in srgb, var(--cor) 70%, transparent),
+    0 2px 2px rgb(0 0 0 / 0.6);
+}
+
+.brasao > b {
+  position: absolute;
+  right: 6%;
+  bottom: 4%;
+  font-size: calc(var(--tamanho) * 0.2);
+  font-weight: 900;
+  color: #fdf6e3;
+  opacity: 0.85;
+}
+
 /* A base de papelão: é ela que faz o retrato "ficar em pé" na mesa. */
 .base {
   margin: -4px auto 0;
@@ -142,6 +177,114 @@
   height: 10px;
   border-radius: 50%;
   background: radial-gradient(ellipse, rgb(0 0 0 / 0.55), transparent 70%);
+}
+
+/*
+ * A sombra no chão e o anel de quem age (2026-10-05). A sombra fica parada
+ * enquanto o cartão respira em cima dela: é isso que faz o standee pesar.
+ */
+.corpo::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 130%;
+  height: 16px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.55), transparent);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.agindo .corpo::after {
+  background:
+    radial-gradient(closest-side, transparent 55%, color-mix(in srgb, var(--elemento, #f5d77a) 55%, #f5d77a) 78%, transparent 100%),
+    radial-gradient(closest-side, rgb(0 0 0 / 0.45), transparent);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--elemento, #f5d77a) 60%, #f5d77a));
+  animation: anelDeQuemAge 1.4s ease-in-out infinite;
+}
+
+@keyframes anelDeQuemAge {
+  0%,
+  100% {
+    opacity: 0.65;
+    scale: 1;
+  }
+  50% {
+    opacity: 1;
+    scale: 1.12;
+  }
+}
+
+.caido .corpo::after {
+  opacity: 0.4;
+}
+
+/* Respiração: um balanço curto, fora de fase entre os standees. */
+.cartao {
+  animation: respira 3.4s ease-in-out var(--fase, 0s) infinite;
+  transform-origin: 50% 100%;
+}
+
+.caido .cartao {
+  animation: none;
+}
+
+@keyframes respira {
+  0%,
+  100% {
+    translate: 0 0;
+    scale: 1 1;
+  }
+  50% {
+    translate: 0 -2.5%;
+    scale: 1.01 0.99;
+  }
+}
+
+/* Poeira no ar da arena, atrás dos standees. */
+.poeira {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.poeira i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgb(253 236 190 / 0.55);
+  box-shadow: 0 0 6px rgb(253 236 190 / 0.5);
+  opacity: 0;
+  animation-name: poeira;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes poeira {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  15%,
+  70% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    translate: 18px -90px;
+  }
+}
+
+/* Fora da tela, nada anda. */
+.palco[data-longe] .cartao,
+.palco[data-longe] .poeira i,
+.palco[data-longe] .corpo::after {
+  animation-play-state: paused;
 }
 
 .nome {
@@ -1187,8 +1330,13 @@
   .reagindo,
   .dispara,
   .congela,
-  .seloReacao {
+  .seloReacao,
+  .cartao,
+  .agindo .corpo::after {
     animation: none;
+  }
+  .poeira {
+    display: none;
   }
   .numero {
     animation: none;
