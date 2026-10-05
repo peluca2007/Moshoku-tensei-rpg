@@ -50,6 +50,20 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.142",
+    date: "2026-10-05",
+    title: "O Gesto de Cada Escola",
+    sections: [{
+      area: "livro",
+      heading: "Cada árvore conta a sua mecânica num gesto, e o livro fica leve",
+      items: [
+        "Os efeitos das páginas de árvore (0.1.140) viraram gestos que contam a regra: a Água corre e congela (Molhado → Congelado), a Terra ergue a mureta e soterra, a Desintoxicação pinga três Doses e estoura na terceira, a Teórica escreve essência, verbo e forma e acende, o Deus da Espada fica parado e corta uma vez só, o Escudo segura o golpe que era de outro, o Norte arremessa o que estiver à mão, a Arquearia marca lá no alto e a flecha sobe até a mira, o Tático traça a rota ponto a ponto — e assim cada uma.",
+        "Leve: o gesto toca quando a página abre, repete umas três vezes e descansa no último quadro; ler a página depois disso não custa nada. Enquanto toca, só mexe em posição e transparência (o que a placa de vídeo faz sozinha). Medido com o processador 4× mais lento: de 108 a 400 ms de trabalho por segundo, sempre, para algo entre 17 e 97 enquanto toca e perto de zero depois.",
+        "Tudo fica nas margens, inclusive na página da direita, que espelha a da esquerda. Some na impressão, com movimento reduzido e no contínuo.",
+      ],
+    }],
+  },
+  {
     version: "0.1.141",
     date: "2026-10-05",
     title: "Sua Ficha Tem a Sua Marca",
