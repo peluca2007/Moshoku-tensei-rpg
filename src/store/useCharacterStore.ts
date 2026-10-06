@@ -1,3 +1,4 @@
+import { registrarCompraParaAnimacao, cancelarCompraParaAnimacao } from "@/lib/compraParaAnimacao";
 import { WeaponGroupId } from "@/data/weaponGroups";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -321,6 +322,7 @@ export const useCharacterStore = create<RosterState>()(
       history: {},
 
       createCharacter: (name = "Novo Personagem") => {
+        cancelarCompraParaAnimacao();
         const id = makeId("char");
         const character = blankCharacter(id, name);
         set((state) => ({
@@ -332,6 +334,7 @@ export const useCharacterStore = create<RosterState>()(
       },
 
       importCharacter: (data) => {
+        cancelarCompraParaAnimacao();
         const id = makeId("char");
         // JSON exportado antes do campo `lore` existir não traz essa chave — preenche vazio.
         // `comImagensSaneadas` derruba foto/capa que não sejam `data:image/` dentro
@@ -362,7 +365,7 @@ export const useCharacterStore = create<RosterState>()(
           return { characters: { ...state.characters, [id]: { ...character, name } } };
         }),
 
-      setActiveCharacter: (id) => set({ activeId: id }),
+      setActiveCharacter: (id) => { cancelarCompraParaAnimacao(); set({ activeId: id }); },
 
       ensureActiveCharacter: () => {
         const state = get();
@@ -618,6 +621,7 @@ export const useCharacterStore = create<RosterState>()(
         if (!active || !canPurchaseAbility(active, ability.treeId, ability.rank, ability.kind, ability.id).ok) {
           return false;
         }
+        registrarCompraParaAnimacao(active.id, ability);
         updateActive(get, set, (c) => ({ ...c, purchasedAbilities: [...c.purchasedAbilities, ability] }));
         return true;
       },
@@ -646,6 +650,7 @@ export const useCharacterStore = create<RosterState>()(
         })),
 
       undo: () => {
+        cancelarCompraParaAnimacao();
         const state = get();
         if (!state.activeId) return;
         const stack = state.history[state.activeId];
