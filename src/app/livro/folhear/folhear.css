@@ -1374,6 +1374,17 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   overflow-wrap: break-word;
 }
 
+/*
+ * Cabeçalho de tabela não hifeniza (2026-10-05). O Chrome 154 passou a ter o
+ * dicionário de português no Windows e a obedecer o `hyphens: auto` que o livro
+ * sempre pediu: o texto corrido ficou melhor, mas a tabela automática encolheu
+ * as colunas até o mínimo hifenizado e 69 cabeçalhos viraram "PT GA-NHOS" em
+ * três linhas. Cabeçalho é rótulo: quebra entre palavras, nunca dentro delas.
+ */
+.folhear-fluxo .livro-tabela th {
+  hyphens: manual;
+}
+
 .folhear-fluxo thead {
   break-after: avoid;
   break-inside: avoid;
@@ -5597,8 +5608,8 @@ html.livro-imersivo {
 @keyframes el-gota {
   0% { opacity: 0; transform: translateY(0); }
   2% { opacity: 0.95; }
-  10% { opacity: 0.95; transform: translateY(316px); }
-  11%, 100% { opacity: 0; transform: translateY(316px); }
+  10% { opacity: 0.95; transform: translateY(342px); }
+  11%, 100% { opacity: 0; transform: translateY(342px); }
 }
 .folhear-elemento i[data-p="poca"] {
   border-radius: 50%;
@@ -5680,7 +5691,7 @@ html.livro-imersivo {
   to { opacity: 0.85; transform: rotate(360deg) translateX(20px) rotate(-360deg); }
 }
 .folhear-elemento i[data-p="errante"] {
-  animation: el-errante 16s ease-in-out infinite;
+  animation: el-errante 12s ease-in-out infinite;
 }
 @keyframes el-errante {
   0% { opacity: 0; transform: translate(0, 0); }
@@ -5704,10 +5715,10 @@ html.livro-imersivo {
   animation: el-corte 7s linear infinite;
 }
 @keyframes el-corte {
-  0%, 82% { opacity: 0; transform: rotate(-14deg) scaleX(0); }
-  84% { opacity: 1; transform: rotate(-14deg) scaleX(1); }
-  90% { opacity: 0.5; transform: rotate(-14deg) scaleX(1); }
-  96%, 100% { opacity: 0; transform: rotate(-14deg) scaleX(1); }
+  0%, 82% { opacity: 0; transform: rotate(-4deg) scaleX(0); }
+  84% { opacity: 1; transform: rotate(-4deg) scaleX(1); }
+  90% { opacity: 0.5; transform: rotate(-4deg) scaleX(1); }
+  96%, 100% { opacity: 0; transform: rotate(-4deg) scaleX(1); }
 }
 .folhear-elemento i[data-p="rastro"] {
   border-radius: 50%;
@@ -5715,9 +5726,9 @@ html.livro-imersivo {
   animation: el-rastro 7s linear infinite;
 }
 @keyframes el-rastro {
-  0%, 83% { opacity: 0; transform: rotate(-14deg) scaleX(0); }
-  85% { opacity: 0.8; transform: rotate(-14deg) scaleX(1); }
-  97%, 100% { opacity: 0; transform: rotate(-14deg) scaleX(1); }
+  0%, 83% { opacity: 0; transform: rotate(-4deg) scaleX(0); }
+  85% { opacity: 0.8; transform: rotate(-4deg) scaleX(1); }
+  97%, 100% { opacity: 0; transform: rotate(-4deg) scaleX(1); }
 }
 .folhear-elemento i[data-p="lasca"] {
   border-radius: 50%;
@@ -6007,7 +6018,7 @@ html.livro-imersivo {
 .folhear-elemento i[data-p="bussola"] {
   --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Ccircle cx='50' cy='50' r='46'/%3E%3Ccircle cx='50' cy='50' r='36' stroke-dasharray='1 4'/%3E%3Cpath d='M50 6 L56 50 L50 94 L44 50 Z M6 50 L50 44 L94 50 L50 56 Z' fill='%23000' fill-opacity='.35'/%3E%3C/svg%3E");
   opacity: 0.3;
-  animation: el-gira 40s linear infinite;
+  animation: el-gira 12s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
 }
 @keyframes el-gira {
   to { transform: rotate(360deg); }
@@ -6038,22 +6049,29 @@ html.livro-imersivo {
 }
 
 /*
- * Leve: o gesto toca quando a página abre, repete umas vezes e descansa no
- * último quadro (a onda parada, o arco da guarda aceso de leve). Ler a página
+ * Leve e curto: o gesto toca quando a página abre e descansa no último quadro
+ * em ~8–14 s (orçamento combinado com o Codex: "ser finito não é descansar
+ * cedo"). Ciclos curtos repetem duas vezes; os longos, uma. Ler a página
  * depois disso não custa nada; virar a página toca o gesto da nova.
  */
 .folhear-elemento > i[data-p] {
-  animation-iteration-count: 3;
+  animation-iteration-count: 2;
   /* O atalho `animation:` de cada peça zera isto; aqui volta: segura o último quadro. */
   animation-fill-mode: both;
 }
-.folhear-elemento > i[data-p="calor"] {
-  animation-iteration-count: 8;
+.folhear-elemento > i:is([data-p="calor"]) {
+  animation-iteration-count: 4;
 }
-.folhear-elemento > i[data-p="errante"] {
-  animation-iteration-count: 2;
+.folhear-elemento > i:is([data-p="pulso"]) {
+  animation-iteration-count: 3;
 }
-.folhear-elemento > i[data-p="bussola"] {
+.folhear-elemento > i:is([data-p="brasa-alta"], [data-p^="onda"], [data-p="gelo"], [data-p="cristal"],
+  [data-p="pedra"], [data-p="manto"], [data-p="areia"], [data-p="luz"],
+  [data-p="gota"], [data-p="poca"], [data-p="estouro"],
+  [data-p="essencia"], [data-p="verbo"], [data-p="forma"],
+  [data-p="orbita"], [data-p="errante"], [data-p="arremesso"], [data-p="poeira"],
+  [data-p="racha"], [data-p="baque"], [data-p="mira"], [data-p="flecha"],
+  [data-p="sombra"], [data-p="olho"], [data-p="trilha"], [data-p="marco"], [data-p="bussola"]) {
   animation-iteration-count: 1;
 }
 
