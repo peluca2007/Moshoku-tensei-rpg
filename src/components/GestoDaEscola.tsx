@@ -1,29 +1,34 @@
-import type { CSSProperties } from "react";
+"use client";
+
+import { useLayoutEffect, useRef, type CSSProperties } from "react";
+import { identidadeVisualDaArvore } from "@/data/identidadeDasArvores";
+import estilo from "./GestoDaEscola.module.css";
 
 /**
- * O GESTO DA ESCOLA NA PÁGINA (2026-10-05, pedidos do autor: "animações no
- * livro de fogo, água, vento, terra… o folhear é pra ser lindo"; depois, "dá
- * pra melhorar e deixar mais leve" e "leve em conta o que cada árvore
- * representa").
+ * O GESTO DA ESCOLA (2026-10-05, pedidos do autor: "animações no livro de
+ * fogo, água, vento, terra"; "dá pra melhorar e deixar mais leve"; "leve em
+ * conta o que cada árvore representa").
  *
- * Cada árvore conta a MECÂNICA dela num gesto curto, nas margens da página:
- * a Água molha e depois congela, a Terra ergue a mureta e depois soterra, a
- * Desintoxicação pinga três Doses e estoura na terceira, o Deus da Espada fica
- * parado e corta uma vez só. O texto da regra é o mesmo; o gesto é a mesma
- * ideia, sem palavras.
+ * Cada árvore conta a MECÂNICA dela num gesto curto: a Água molha e depois
+ * congela, a Terra ergue a mureta e depois soterra, a Desintoxicação pinga três
+ * Doses e estoura na terceira, o Deus da Espada fica parado e corta uma vez
+ * só. O texto da regra é o mesmo; o gesto é a mesma ideia, sem palavras.
  *
- * LEVE (medido com CPU 4×, numa dupla aberta): a primeira versão gastava de
- * 108 a 400 ms de processador por segundo, porque as animações liam variáveis
- * e unidades de contêiner dentro dos keyframes, e o contêiner tinha máscara e
- * mistura de cor — tudo isso tira a animação da placa de vídeo. Agora:
- * - os keyframes só mexem em `transform` e `opacity`, com valores fixos em px
- *   da página nativa (816 × 1056, ver `diagramacao.ts`);
- * - o que varia por peça (posição, tamanho, ritmo, atraso) é estático, inline;
- * - nada de filtro, sombra animada, máscara no contêiner nem mistura de cor;
- * - poucas peças por página (de 3 a 9), e só nas duas páginas da dupla aberta.
+ * Dois modos (conversa com o Codex, proposta 3.1):
+ * - `pagina` — o livro: a camada ocupa a folha inteira (816 × 1056), nas
+ *   margens, longe do número da página; repete 1–2 vezes e descansa em ~8–14 s.
+ * - `painel` — a ficha: o mesmo palco, em escala, ancorado embaixo do cartão
+ *   (a faixa de baixo da página, onde a maioria dos gestos acontece); toca uma
+ *   vez. Quem decide QUANDO tocar é quem usa: troque a `key` pra tocar de novo.
+ *
+ * LEVE (medido com CPU 4×): os keyframes só mexem em `transform` e `opacity`,
+ * com valores fixos em px da página nativa; o que varia por peça é estático e
+ * inline. Sem filtro, sem máscara no contêiner, sem mistura de cor. A primeira
+ * versão gastava 108–400 ms/s de processador sempre; esta, 17–97 tocando e ~0
+ * depois.
  *
  * As receitas são desenhadas pra página da ESQUERDA (a borda de fora é a
- * esquerda); a da direita é espelhada no CSS (`data-lado="dir"`).
+ * esquerda); a da direita espelha no CSS (`data-lado="dir"`).
  */
 
 /** Uma peça da receita: o nome do gesto (CSS), onde ela mora e o ritmo dela. */
@@ -190,29 +195,100 @@ export const RECEITA_DA_ARVORE: Record<string, Peca[]> = {
   ],
 };
 
+
+/*
+ * No painel só a faixa de baixo aparece. As peças que no livro moram no alto da
+ * página descem pra ela; o resto da receita é o mesmo.
+ */
+const NO_PAINEL: Record<string, Peca[]> = {
+  cura: [
+    { p: "pulso", x: -40, y: 940, w: 160, h: 160 },
+    { p: "pulso", x: -40, y: 940, w: 160, h: 160, a: 0.32 },
+    { p: "luz", x: 40, y: 1060, w: 14, h: 14 },
+    { p: "luz", x: 90, y: 1060, w: 10, h: 10, a: 0.6 },
+  ],
+  "punho-de-fogo": [
+    { p: "soco", x: 30, y: 930, w: 120, h: 120 },
+    { p: "soco", x: 30, y: 930, w: 120, h: 120, a: 0.45 },
+    { p: "faisca", x: 88, y: 988, w: 6, h: 6, t: "a" },
+    { p: "faisca", x: 88, y: 988, w: 5, h: 5, t: "b" },
+    { p: "faisca", x: 88, y: 988, w: 6, h: 6, t: "c" },
+  ],
+  invocacao: [
+    { p: "orbita", x: 60, y: 990, w: 12, h: 12 },
+    { p: "orbita", x: 60, y: 990, w: 9, h: 9, a: -4 },
+    { p: "errante", x: 30, y: 1010, w: 14, h: 14 },
+  ],
+  arquearia: [
+    { p: "mira", x: 700, y: 950, w: 56, h: 56 },
+    { p: "arranque", x: -100, y: 977, w: 160, h: 3 },
+  ],
+  vento: [
+    { p: "rajada", x: -320, y: 990, w: 320, h: 3 },
+    { p: "rajada", x: -320, y: 1012, w: 240, h: 2, a: 0.35 },
+    { p: "folha-solta", x: 22, y: 1000, w: 16, h: 10 },
+  ],
+};
+
 /** O mesmo atraso a cada visita, diferente entre páginas: na dupla, uma página nunca imita a outra. */
 function deslocamento(pagina: number): number {
   return ((pagina * 7919) % 1000) / 1000;
 }
 
-export function ElementoDaFolha({ arvoreId, pagina, lado }: { arvoreId: string; pagina: number; lado: string }) {
-  const receita = RECEITA_DA_ARVORE[arvoreId];
+export function GestoDaEscola({
+  arvoreId,
+  modo = "pagina",
+  pagina = 0,
+  lado,
+}: {
+  arvoreId: string;
+  modo?: "pagina" | "painel";
+  /** No livro: o índice da página, que desencontra as duas páginas da dupla. */
+  pagina?: number;
+  /** No livro: "esq" ou "dir" (a direita espelha). */
+  lado?: string;
+}) {
+  const raiz = useRef<HTMLSpanElement>(null);
+  // No painel, o palco (816 px) cabe na largura do cartão: mede uma vez e a cada redimensionamento.
+  useLayoutEffect(() => {
+    const el = raiz.current;
+    if (modo !== "painel" || !el) return;
+    const ajustar = () => el.style.setProperty("--escala-gesto", String(el.clientWidth / 816));
+    ajustar();
+    if (typeof ResizeObserver === "undefined") return;
+    const vigia = new ResizeObserver(ajustar);
+    vigia.observe(el);
+    return () => vigia.disconnect();
+  }, [modo]);
+
+  const receita = (modo === "painel" && NO_PAINEL[arvoreId]) || RECEITA_DA_ARVORE[arvoreId];
   if (!receita) return null;
-  const extra = deslocamento(pagina) * 3;
+  const extra = modo === "pagina" ? deslocamento(pagina) * 3 : 0;
+  const cor = identidadeVisualDaArvore(arvoreId)?.corNoite;
   return (
-    <span className="folhear-elemento" data-efeito={arvoreId} data-lado={lado} aria-hidden>
-      {receita.map((peca, i) => {
-        const estilo: CSSProperties = {
-          left: peca.x,
-          top: peca.y,
-          width: peca.w,
-          height: peca.h,
-          animationDelay: `${((peca.a ?? 0) - extra).toFixed(2)}s`,
-          animationDuration: peca.d ? `${peca.d}s` : undefined,
-        };
-        const texto = peca.p === "nota" ? peca.t : undefined;
-        return <i key={i} data-p={peca.p} data-t={texto ? undefined : peca.t} style={estilo}>{texto}</i>;
-      })}
+    <span
+      ref={raiz}
+      className={estilo.gesto}
+      data-efeito={arvoreId}
+      data-modo={modo}
+      data-lado={lado}
+      style={cor ? ({ "--cor-gesto": cor } as CSSProperties) : undefined}
+      aria-hidden
+    >
+      <span className={estilo.palco}>
+        {receita.map((peca, i) => {
+          const s: CSSProperties = {
+            left: peca.x,
+            top: peca.y,
+            width: peca.w,
+            height: peca.h,
+            animationDelay: `${((peca.a ?? 0) - extra).toFixed(2)}s`,
+            animationDuration: peca.d ? `${peca.d}s` : undefined,
+          };
+          const texto = peca.p === "nota" ? peca.t : undefined;
+          return <i key={i} data-p={peca.p} data-t={texto ? undefined : peca.t} style={s}>{texto}</i>;
+        })}
+      </span>
     </span>
   );
 }
