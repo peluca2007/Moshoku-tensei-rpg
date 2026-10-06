@@ -723,6 +723,40 @@ const CARTA_DE_ATAQUE = /^(?:\d+ Aç(?:ão|ões): )?ataque\b|\.\s+ataque com\b|\
  */
 const ACERTO_AUTOMATICO = /^(?:uma vez por (?:turno|combate)[.:,]\s*)?acerta automaticamente/i;
 
+/*
+ * O golpe de arma que a carta não escreve na linha de dano — 2026-10-05.
+ *
+ * "Ataque. Se acertar, o alvo larga a arma" é um golpe de arma com um efeito
+ * a mais: o livro não repete "dano de arma normal" porque a palavra "Ataque"
+ * já diz. O motor só lia a linha de dano, e treze técnicas de Corpo saíam com
+ * ZERO: as sem linha nenhuma (Corte de Braço, Golpe Contínuo, Passo Encurtado,
+ * Corte Ascendente, Um Só Movimento, Quebra-Guarda, Dança de Aço, Golpe
+ * Ascendente, Não Sobra Formação) nem entravam na lista, e as que só escrevem
+ * o extra (Dois Cortes, Forma Quadrúpede, Cruz Nebulosa, Corte Reverso)
+ * rendiam só o extra. Era isso que punha cinco delas na lista de "capstones
+ * que não compensam" do `check:progressao`.
+ *
+ * A regra: carta de arma (não mágica) que abre com o ataque rola o Dado de Arma
+ * uma vez, duas quando são dois golpes ("Dois ataques", "segundo corte"), e
+ * soma o extra só quando ele não tem condição ("+1d6 no ataque ao final", sim;
+ * "+1d10 se ignorar uma Reação", não, como todo "contra X" do motor). Os
+ * disparos da Arquearia ficam de fora: quase todos pedem alvo Marcado, que o
+ * motor não modela.
+ */
+const GOLPE_DE_ARMA = /^(?:\d+ Aç(?:ão|ões): )?(?:ataque|dois ataques)\b|\.\s+ataque com\b|\be ataque (?:ao final|imediatamente)\b/i;
+
+export function comGolpeDeArma(a: AbilityDef): AbilityDef {
+  const ef = a.effect.trim();
+  if (a.reaction || /ataque mágico/i.test(ef) || !GOLPE_DE_ARMA.test(ef)) return a;
+  const linha = a.damage?.normal ?? "";
+  if (/dano de arma|dados? de arma|dado de arma rolado/i.test(linha)) return a;
+  const golpe = /dois ataques|segundo (?:ataque|corte)/i.test(`${ef} ${linha}`)
+    ? "Dado de arma rolado duas vezes"
+    : "Dano de arma normal";
+  const extra = linha.split(/[;,]/)[0].trim().match(/^\+\s*\d+d\d+(?![^]*\b(?:se|contra)\b)/)?.[0] ?? "";
+  return { ...a, damage: { ...a.damage, normal: extra ? `${golpe} ${extra}` : golpe } };
+}
+
 /** O limite escrito no começo do efeito: "Uma vez por turno." / "Uma vez por combate:". */
 
 export function limiteDeUso(efeito: string): Acao["limite"] {
@@ -856,8 +890,9 @@ export function acoesDe(c: CharacterData): Acao[] {
     if (compra.kind !== "ability") continue;
     const tree = getTreeById(compra.treeId);
     const rd = tree?.ranks.find((r) => r.rank === compra.rank);
-    const a = rd?.abilities.find((x) => x.id === compra.id) as AbilityDef | undefined;
-    if (!a) continue;
+    const lida = rd?.abilities.find((x) => x.id === compra.id) as AbilityDef | undefined;
+    if (!lida) continue;
+    const a = comGolpeDeArma(lida);
     // A ficha impede compras inválidas, mas os montadores de referência e
     // saves antigos podem trazer uma combinação que nunca passaria pela UI.
     // O simulador não pode ganhar a habilidade só porque recebeu JSON direto.
@@ -932,7 +967,9 @@ export function acoesDe(c: CharacterData): Acao[] {
         : "cura";
     out.push({
       regra: a.id === "primeiro-golpe" ? "primeiro-golpe" : undefined,
-      limite: a.id === "primeiro-golpe" ? undefined : a.id === "investida-espada" ? "turno" : limiteDeUso(a.effect),
+      // A carga (Investida, Forma Quadrúpede) pede uma corrida em linha reta
+      // até o alvo: uma por turno, que o motor não tem mapa pra medir o espaço.
+      limite: a.id === "primeiro-golpe" ? undefined : a.id === "investida-espada" || a.id === "forma-quadrupede" ? "turno" : limiteDeUso(a.effect),
       alcance: a.range,
       reacao: !!a.reaction,
       nome: a.name,
@@ -1056,7 +1093,7 @@ export function acoesDe(c: CharacterData): Acao[] {
        * que é como o livro escreve a forma de verdade, e cobre à parte os dois
        * jeitos que ele usa pra dizer "atravessa e pega quem está atrás".
        */
-      area: /esfera|cone|área|todos|atinge tudo|atinge até \d|cada criatura|linha de \d/.test(
+      area: /esfera|cone|área|todos|todas as criaturas|atinge tudo|atinge até \d|cada criatura|linha de \d/.test(
         (a.range + " " + a.effect).toLowerCase()
       ),
       areaDescricao: `${a.range} ${a.effect}`,
@@ -1101,7 +1138,7 @@ export function acoesDe(c: CharacterData): Acao[] {
        * Reação, não uma rolagem dela.
        */
       ataque: a.id === "primeiro-golpe" || /ataque mágico|ataque à distância|se acertar/i.test(`${a.damage.normal} ${a.effect} ${a.range}`) ||
-        CARTA_DE_ATAQUE.test(a.effect.trim()) || ACERTO_AUTOMATICO.test(a.effect.trim()),
+        CARTA_DE_ATAQUE.test(a.effect.trim()) || GOLPE_DE_ARMA.test(a.effect.trim()) || ACERTO_AUTOMATICO.test(a.effect.trim()),
       vantagemPropria: /(^|[.:]\s*)ataque com vantagem/i.test(a.effect.trim()) || undefined,
       acertaSempre: ACERTO_AUTOMATICO.test(a.effect.trim()) || undefined,
       frio: /frio|gelo/.test(txt),
