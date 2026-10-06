@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { consumirCompraParaAnimacao } from "@/lib/compraParaAnimacao";
+import { MOVIMENTO } from "./ui/temposDeMovimento";
 import { Heart, Droplets, Shield, Swords, Coins, Sparkles, Target, Gem, Flame, Compass, Search, X, BookOpen, FileDown, FileJson, Loader2, RotateCcw, Plus, Undo2, Activity, Sprout, Dices, Link2, Share2, Check, Footprints } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import { useCharacterDerived } from "@/store/useCharacterDerived";
@@ -616,28 +618,9 @@ export default function CharacterSheet() {
     },
     [startingTreeId, unlockedRanks, purchasedAbilities]
   );
-  /*
-   * A compra acontece no mapa de árvores, então a ficha normalmente não está
-   * montada no instante do clique. A assinatura em sessionStorage guarda o que
-   * esta ficha viu por último: ao voltar, a árvore recém-comprada pulsa uma vez.
-   * Se uma compra ocorrer com a ficha aberta, a mesma comparação reage na hora.
-   */
+  // Apenas purchaseAbility produz este evento; importar ou desfazer não é compra.
   useEffect(() => {
-    const chave = `mushoku-caos-visto:${character.id}`;
-    const atuais = purchasedAbilities.map(({ treeId, rank, kind, id }) => `${treeId}|${rank}|${kind}|${id}`);
-    let anteriores: string[] | null = null;
-    try {
-      const salva = sessionStorage.getItem(chave);
-      anteriores = salva ? JSON.parse(salva) as string[] : null;
-      sessionStorage.setItem(chave, JSON.stringify(atuais));
-    } catch {
-      // Privacidade estrita pode bloquear storage; a ficha continua funcional.
-    }
-    if (!anteriores) return;
-    const vistas = new Set(anteriores);
-    const nova = purchasedAbilities.findLast(({ treeId, rank, kind, id }) =>
-      !vistas.has(`${treeId}|${rank}|${kind}|${id}`)
-    );
+    const nova = consumirCompraParaAnimacao(character.id, purchasedAbilities);
     if (!nova) return;
     setPulsoDoCaos({ treeId: nova.treeId, sequencia: ++sequenciaDoCaosRef.current });
     if (caosTimeoutRef.current) clearTimeout(caosTimeoutRef.current);
@@ -648,7 +631,7 @@ export default function CharacterSheet() {
         if (!e.isIntersecting) continue;
         io.unobserve(e.target);
         if (matchMedia("(prefers-reduced-motion: reduce)").matches) continue;
-        animacoes.push((e.target as HTMLElement).animate([{ opacity: .55, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 280, easing: "ease-out" }));
+        animacoes.push((e.target as HTMLElement).animate([{ opacity: .55, transform: "translateY(8px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: MOVIMENTO.entrada, easing: MOVIMENTO.curva }));
       }
     });
     document.querySelectorAll<HTMLElement>("[data-carta-comprada]").forEach((el) => { if (el.dataset.cartaComprada === nova.id) io.observe(el); });
