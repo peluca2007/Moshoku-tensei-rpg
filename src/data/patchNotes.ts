@@ -50,6 +50,23 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.147",
+    date: "2026-10-05",
+    title: "O Golpe que a Carta Não Escrevia",
+    sections: [
+      { area: "encontros", heading: "O simulador rola o golpe de arma das técnicas \"Ataque. Se acertar…\"", items: [
+        "Treze técnicas de Corpo escrevem só o efeito a mais (\"Ataque. Se acertar, o alvo larga a arma\") e confiam na palavra \"Ataque\" para o golpe da arma. O simulador lia só a linha de dano e dava zero a elas: Corte de Braço, Golpe Contínuo, Passo Encurtado, Dois Cortes, Corte Ascendente e Um Só Movimento (Deus da Espada); Forma Quadrúpede, Corte Reverso, Quebra-Guarda e Dança de Aço (Deus do Norte); Golpe Ascendente e Não Sobra Formação (Armas Pesadas). Agora rolam o Dado de Arma (duas vezes nos golpes duplos), e o extra só soma quando não tem condição.",
+        "A Forma Quadrúpede é uma carga, como a Investida da Espada: o simulador usa uma por turno, porque ela precisa de corrida em linha reta.",
+        "Efeito medido: o Norte, o Lutador e o Deus da Espada sobem de 4 a 9 pontos no Difícil do 1º patamar e ficam no pelotão. O molde do Apêndice G continua dentro da faixa.",
+        "Das doze técnicas de rank alto que pareciam render menos que a do rank de baixo, sobram nove, e todas têm explicação: são de área, condicionais ou de outra linha. Nenhuma carta precisou mudar.",
+      ] },
+      { area: "livro", heading: "Duas correções de leitura", items: [
+        "O Corte Reverso (Deus do Norte) passa a abrir com \"Ataque.\", como as outras técnicas de golpe. A regra é a mesma, mas a carta não dizia que era um ataque.",
+        "As tabelas de Preparações (Ladino, Bardo, Tático) põem o Domínio no cabeçalho do Efeito. No nome, a coluna estreita quebrava o título em três linhas.",
+      ] },
+    ],
+  },
+  {
     version: "0.1.146",
     date: "2026-10-05",
     title: "O Caminho nas Mãos e no Teclado",

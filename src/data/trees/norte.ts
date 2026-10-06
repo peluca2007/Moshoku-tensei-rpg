@@ -189,7 +189,7 @@ export const NORTE_TREE: Tree = {
           range: "Corpo a corpo",
           actions: { normal: 1 },
           damage: { normal: "+1d10 se ignorar uma Reação defensiva" },
-          effect: "Se o ataque for aparado/bloqueado/anulado por Reação, ele acontece mesmo assim, ignorando a Reação. Contra Deus da Água, não gasta PT.",
+          effect: "Ataque. Se ele for aparado, bloqueado ou anulado por Reação, acontece mesmo assim, ignorando a Reação. Contra Deus da Água, não gasta PT.",
         },
         {
           id: "tumulo-de-aco",

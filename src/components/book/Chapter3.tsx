@@ -658,13 +658,15 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           patamar ao lado do nome é quando ela entra no menu.
         </P>
         {[
-          ["furtividade-e-armadilhas", "Ladino — coisas e lugares"],
-          ["bardo-e-interacao", "Bardo — pessoas e reputação"],
-          ["navegacao-e-lideranca", "Tático — tempo e logística"],
-        ].map(([id, titulo]) => (
+          // O Domínio mora no cabeçalho do Efeito, a coluna larga: no nome, a
+          // coluna estreita quebrava "Ladino — coisas e lugares" em três linhas.
+          ["furtividade-e-armadilhas", "Ladino", "coisas e lugares"],
+          ["bardo-e-interacao", "Bardo", "pessoas e reputação"],
+          ["navegacao-e-lideranca", "Tático", "tempo e logística"],
+        ].map(([id, titulo, dominio]) => (
           <BookTable
             key={id}
-            headers={[titulo, "PP", "Efeito"]}
+            headers={[titulo, "PP", `Efeito (Domínio: ${dominio})`]}
             rows={PREPARACOES[id].map((p) => [
               p.desde === "Principiante" ? p.nome : `${p.nome} (${p.desde})`,
               String(p.pp),
