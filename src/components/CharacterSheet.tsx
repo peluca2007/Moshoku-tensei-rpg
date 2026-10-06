@@ -59,6 +59,7 @@ import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
 import RaceCrest from "./RaceCrest";
 import { rotuloDeAcoes } from "@/lib/rotuloDeAcoes";
 import CaosDaFicha from "./CaosDaFicha";
+import GestoNaFicha from "./GestoNaFicha";
 import NumeroAnimado from "./ui/NumeroAnimado";
 import BarraDeRecurso from "./ui/BarraDeRecurso";
 import MomentoDoPatamar from "./ui/MomentoDoPatamar";
@@ -160,6 +161,7 @@ function ResourceCard({
             <input
               type="number"
               value={current}
+              aria-label={`${label} atual`}
               onChange={(e) => onCurrentChange(Number(e.target.value))}
               title="Valor atual — vai gastando/recuperando em jogo"
               className="tabular w-14 rounded bg-transparent font-display text-2xl font-black leading-tight text-parchment-900 outline-none focus:ring-2 focus:ring-wine-400 dark:text-parchment-50"
@@ -168,6 +170,7 @@ function ResourceCard({
             <input
               type="number"
               value={max}
+              aria-label={`${label} máximo`}
               onChange={(e) => onMaxChange(Number(e.target.value))}
               title="Máximo calculado — edite pra sobrescrever (item, exceção de mesa, etc.)"
               className={`w-12 rounded bg-transparent py-1 text-sm font-semibold outline-none focus:ring-2 focus:ring-wine-400 ${
@@ -191,6 +194,7 @@ function ResourceCard({
       </div>
 
       <BarraDeRecurso atual={current} maximo={max} nome={label} />
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{label}: {current} de {max}.</p>
       {/*
         Os passos só aparecem quando há máximo pra andar dentro: numa reserva
         zerada eles seriam quatro botões que não fazem nada.
@@ -255,6 +259,7 @@ function EditableStatCard({
           <input
             type="number"
             value={value}
+            aria-label={label}
             onChange={(e) => onChange(Number(e.target.value))}
             title="Calculado — edite pra sobrescrever"
             className={`tabular w-16 rounded bg-transparent font-display text-2xl font-black leading-tight outline-none focus:ring-2 focus:ring-wine-400 ${
@@ -421,14 +426,20 @@ export default function CharacterSheet() {
   const podeCompartilhar = usePodeCompartilhar();
   const [qrAberto, setQrAberto] = useState(false);
   const [arquivoState, setArquivoState] = useState<"idle" | "loading" | "erro">("idle");
-  const [pulsoDoCaos, setPulsoDoCaos] = useState<{ treeId: string; sequencia: number } | null>(null);
-  const sequenciaDoCaosRef = useRef(0);
-  const caosTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [gestoDaCompra, setGestoDaCompra] = useState<{ treeId: string; sequencia: number; personagem: string; compra: string } | null>(null);
+  const sequenciaDoGestoRef = useRef(0);
+  const ultimaCompraVista = useRef<{ personagem: string; compras: PurchasedAbility[] } | null>(null);
+  // Após a navegação, o teclado começa no nome; não rouba foco de um controle ativo.
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      if (document.activeElement === document.body) document.querySelector<HTMLInputElement>('[aria-label="Nome do personagem"]')?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [character.id]);
   const linkTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
       if (linkTimeoutRef.current) clearTimeout(linkTimeoutRef.current);
-      if (caosTimeoutRef.current) clearTimeout(caosTimeoutRef.current);
     },
     []
   );
@@ -620,11 +631,16 @@ export default function CharacterSheet() {
   );
   // Apenas purchaseAbility produz este evento; importar ou desfazer não é compra.
   useEffect(() => {
+    const anterior = ultimaCompraVista.current;
+    ultimaCompraVista.current = { personagem: character.id, compras: purchasedAbilities };
     const nova = consumirCompraParaAnimacao(character.id, purchasedAbilities);
-    if (!nova) return;
-    setPulsoDoCaos({ treeId: nova.treeId, sequencia: ++sequenciaDoCaosRef.current });
-    if (caosTimeoutRef.current) clearTimeout(caosTimeoutRef.current);
-    caosTimeoutRef.current = setTimeout(() => setPulsoDoCaos(null), 650);
+    if (!nova) {
+      // Mudança sem evento de compra encerra o gesto, inclusive undo e troca.
+      // A repetição de montagem do React em dev conserva os mesmos dados.
+      if (anterior && (anterior.personagem !== character.id || anterior.compras !== purchasedAbilities)) setGestoDaCompra(null);
+      return;
+    }
+    setGestoDaCompra({ treeId: nova.treeId, sequencia: ++sequenciaDoGestoRef.current, personagem: character.id, compra: nova.id });
     const animacoes: Animation[] = [];
     const io = new IntersectionObserver((entradas) => {
       for (const e of entradas) {
@@ -683,7 +699,7 @@ export default function CharacterSheet() {
           <img src={cover} alt="" aria-hidden className="capa-da-ficha absolute inset-0 -z-10 h-full w-full object-cover" />
         )}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-parchment-50/90 dark:bg-parchment-950/85" aria-hidden />
-        <CaosDaFicha identidades={identidadeVisual} pulso={pulsoDoCaos} />
+        <CaosDaFicha identidades={identidadeVisual} />
         {/*
           O h1 da rota. O nome do personagem é um <input> editável, e input não
           é cabeçalho: sem isto `/ficha` era a única rota do site sem h1 — quem
@@ -926,7 +942,8 @@ export default function CharacterSheet() {
         </details>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
           <select
-            value={raceId ?? ""}
+            aria-label="Raça"
+              value={raceId ?? ""}
             onChange={(e) => useCharacterStore.getState().setRace(e.target.value || null)}
             className="rounded-full border-0 bg-parchment-900/5 px-3 py-1 font-medium text-parchment-700 outline-none ring-1 ring-parchment-900/10 dark:bg-white/5 dark:text-parchment-200 dark:ring-white/10"
           >
@@ -957,7 +974,8 @@ export default function CharacterSheet() {
           )}
 
           <select
-            value={backgroundId ?? ""}
+            aria-label="Antecedente"
+              value={backgroundId ?? ""}
             onChange={(e) => useCharacterStore.getState().setBackground(e.target.value || null)}
             className="rounded-full border-0 bg-parchment-900/5 px-3 py-1 font-medium text-parchment-700 outline-none ring-1 ring-parchment-900/10 dark:bg-white/5 dark:text-parchment-200 dark:ring-white/10"
           >
@@ -985,6 +1003,7 @@ export default function CharacterSheet() {
 
           {subtableOptions && (
             <select
+              aria-label="Resultado da subtabela"
               value={subtableEntryId ?? ""}
               onChange={(e) => useCharacterStore.getState().setSubtableEntry(e.target.value || null)}
               className="rounded-full border-0 bg-gold-500/10 px-3 py-1 font-medium text-gold-600 outline-none ring-1 ring-gold-500/30 dark:text-gold-400"
@@ -1077,6 +1096,7 @@ export default function CharacterSheet() {
                       type="number"
                       min={ATTRIBUTE_FLOOR}
                       max={ATTRIBUTE_HARD_CAP}
+                      aria-label={`${label} base`}
                       value={base}
                       onChange={(e) => useCharacterStore.getState().setAttribute(key, Number(e.target.value))}
                       className="w-12 bg-transparent text-center text-lg font-black text-parchment-900 outline-none dark:text-parchment-50"
@@ -1310,6 +1330,7 @@ export default function CharacterSheet() {
               <Sprout className="h-3.5 w-3.5 text-wine-500" /> Árvore Inicial
             </h2>
             <select
+              aria-label="Árvore Inicial"
               value={startingTreeId ?? ""}
               onChange={(e) => {
                 useCharacterStore.getState().setStartingTree(e.target.value || null);
@@ -1442,6 +1463,7 @@ export default function CharacterSheet() {
                 style={coresDaEscola(treeId)}
                 className={`${tramaStyles.painel} rounded-2xl border-l-4 ${accent.border} border-y border-r border-parchment-300 bg-parchment-100/70 p-4 shadow-sm dark:border-y-parchment-800 dark:border-r-parchment-800 dark:bg-parchment-900/60`}
               >
+                {gestoDaCompra?.treeId === tree.id && gestoDaCompra.personagem === character.id && purchasedAbilities.some(c => c.treeId === tree.id && c.id === gestoDaCompra.compra) && <GestoNaFicha key={`${character.id}-${gestoDaCompra.sequencia}`} arvoreId={tree.id} />}
                 <span className={tramaStyles.marca} aria-hidden="true">{identidadeVisualDaArvore(treeId)?.selo}</span>
                 <h3 className="relative mb-3 flex flex-wrap items-center gap-2 text-base font-bold text-parchment-900 dark:text-parchment-50">
                   <MomentoDoPatamar key={`${character.id}:${tree.id}`} arvore={tree.id} rank={highestRank} personagem={character.id} />

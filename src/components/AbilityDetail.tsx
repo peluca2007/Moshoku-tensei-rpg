@@ -195,7 +195,7 @@ export function IncantationBlock({ ability, rank, ornamento = true }: { ability:
       {bonus?.ok === true && (
         <div className="livro-recitacao mt-2 inline-flex items-center gap-1.5 rounded-full bg-gold-500/10 px-2.5 py-1 text-3xs font-semibold text-gold-700 ring-1 ring-gold-500/30 dark:text-gold-300 dark:ring-gold-500/20">
           <span className="relative flex h-3 w-3">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-400 opacity-75" />
+            {ornamento && <span aria-hidden className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-400 opacity-75" />}
             <span className="relative inline-flex h-3 w-3 rounded-full bg-gold-500" />
           </span>
           <span>Recitação Perfeita: {bonus.text}</span>
