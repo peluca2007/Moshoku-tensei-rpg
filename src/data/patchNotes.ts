@@ -50,6 +50,14 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.145",
+    date: "2026-10-05",
+    title: "Uma Compra, Uma Celebração",
+    sections: [{ area: "site", heading: "O efeito da ficha acompanha a compra de verdade", items: [
+      "A celebração da escola aparece uma vez após uma compra válida. Importar ou restaurar uma ficha, desfazer, reembolsar e trocar de personagem não criam uma celebração indevida. Voltar à ficha não repete o efeito.",
+    ] }],
+  },
+  {
     version: "0.1.144",
     date: "2026-10-05",
     title: "O Chrome Aprendeu a Hifenizar",
