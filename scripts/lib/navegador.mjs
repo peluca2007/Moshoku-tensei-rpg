@@ -117,6 +117,23 @@ export async function comNavegador(tarefa, { porta = Number(process.env.PORTA_CD
     process.exit(1);
   }
 
+  // Porta já ocupada = um Chrome órfão de outra checagem (parar a tarefa no
+  // Windows deixa o processo vivo). Sem esta trava, o `esperar` abaixo achava a
+  // porta aberta e media NAQUELE Chrome, com o perfil velho dele: em
+  // 2026-10-05 um órfão das 18:58 que tinha baixado o dicionário de hifenização
+  // deu 280 páginas ao livro por horas, contra 285 de um perfil limpo.
+  try {
+    if ((await fetch(`http://127.0.0.1:${porta}/json/version`)).ok) {
+      console.error(
+        `❌ A porta ${porta} já tem um Chrome (órfão de outra checagem?). Feche-o ou use outra PORTA_CDP.\n` +
+          `   No Windows: Get-CimInstance Win32_Process -Filter "Name='chrome.exe'" | ? CommandLine -match '${porta}' | % { Stop-Process -Id $_.ProcessId -Force }`
+      );
+      process.exit(1);
+    }
+  } catch {
+    /* porta livre: é o esperado */
+  }
+
   const perfil = mkdtempSync(path.join(tmpdir(), "tela-"));
   const navegador = spawn(
     chrome,
