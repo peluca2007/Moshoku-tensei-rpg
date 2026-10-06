@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { useCharacterStore } from "@/store/useCharacterStore";
@@ -34,6 +35,7 @@ export default function AbilityListItem({
   def: AbilityDef | TalentDef;
   showToast: (msg: string, type?: "info" | "success" | "warning") => void;
 }) {
+  const motivoId = useId();
   const natural = treeId === "teorica" && kind === "talent" ? origemNaturalDoSimbolo(character, def.id) : null;
   const owned = Boolean(natural) || character.purchasedAbilities.some((a) => a.treeId === treeId && a.id === def.id);
   const check = canPurchaseAbility(character, treeId, rank, kind, def.id);
@@ -79,27 +81,32 @@ export default function AbilityListItem({
       ) : (
         <p className="text-xs text-parchment-600 dark:text-parchment-300">{talent?.description}</p>
       )}
-      {!owned && (
+      {!natural && (
         <motion.button
           type="button"
-          disabled={!check.ok}
+          aria-disabled={owned || !check.ok}
+          aria-describedby={!check.ok && check.reason ? motivoId : undefined}
           onClick={() => {
-            useCharacterStore.getState().purchaseAbility({ treeId, rank, kind, id: def.id });
-            showToast(`${def.name} comprado!`, "success");
+            if (owned) return;
+            const atual = useCharacterStore.getState();
+            const ficha = atual.activeId ? atual.characters[atual.activeId] : character;
+            const valido = canPurchaseAbility(ficha, treeId, rank, kind, def.id);
+            if (!valido.ok) { if (valido.reason) showToast(valido.reason, "warning"); return; }
+            if (atual.purchaseAbility({ treeId, rank, kind, id: def.id })) showToast(`${def.name} comprado!`, "success");
           }}
           // Ver o mesmo cuidado na Loja: "Comprar (2 PA)" repetido dezenas de
           // vezes não diz a quem só ouve O QUE está sendo comprado.
-          aria-label={`Comprar ${def.name} por ${def.paCost} PA`}
-          className="mt-2 w-full rounded-lg bg-wine-600 px-2 py-1.5 text-xs font-semibold text-white transition-colors enabled:hover:bg-wine-500 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label={owned ? `${def.name} comprado` : `Comprar ${def.name} por ${def.paCost} PA`}
+          className="mt-2 w-full rounded-lg bg-wine-600 px-2 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-wine-500 aria-disabled:cursor-not-allowed aria-disabled:opacity-40"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          Comprar ({def.paCost} PA)
+          {owned ? "Comprado" : `Comprar (${def.paCost} PA)`}
         </motion.button>
       )}
-      {!check.ok && check.reason && <p className="mt-1 text-2xs text-rose-500">{check.reason}</p>}
+      {!check.ok && check.reason && <p id={motivoId} className="mt-1 text-2xs text-rose-500">{check.reason}</p>}
     </motion.div>
   );
 }

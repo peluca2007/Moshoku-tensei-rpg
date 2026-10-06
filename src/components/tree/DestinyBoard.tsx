@@ -828,6 +828,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
         </div>
       </div>
 
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{toast?.message ?? ""}</p>
       {toast && (
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.95 }}

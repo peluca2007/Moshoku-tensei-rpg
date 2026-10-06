@@ -97,6 +97,8 @@ function RaceChoices({ race }: { race: Race }) {
                     key={key}
                     type="button"
                     title={label}
+                    aria-label={`Bônus racial: +1 em ${label}`}
+                    aria-pressed={ativo}
                     onClick={() => setChoice(i, ativo ? null : (key as AttributeKey))}
                     className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-colors ${
                       ativo
