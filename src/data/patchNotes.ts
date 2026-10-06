@@ -50,6 +50,15 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.146",
+    date: "2026-10-05",
+    title: "O Caminho nas Mãos e no Teclado",
+    sections: [{ area: "site", heading: "A escola celebra a compra, e o teclado acompanha cada escolha", items: [
+      "Comprar uma habilidade toca o gesto da sua escola no painel do grimório, uma vez quando ele entra na tela. O efeito termina, respeita movimento reduzido e impressão e deixa os controles livres. O pulso simultâneo do cabeçalho e o brilho contínuo da recitação saíram da ficha.",
+      "Na criação manual o foco acompanha o novo passo. Comprar mantém o foco no botão, anuncia o resultado e explica uma recusa. Campos da ficha ganharam nomes acessíveis e alterações de recursos são anunciadas sem reler a ficha inteira.",
+    ] }],
+  },
+  {
     version: "0.1.145",
     date: "2026-10-05",
     title: "Uma Compra, Uma Celebração",
