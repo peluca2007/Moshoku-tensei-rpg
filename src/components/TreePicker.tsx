@@ -28,6 +28,8 @@ export default function TreePicker({
                 <button
                   key={t.id}
                   type="button"
+                  aria-label={t.name}
+                  aria-pressed={selectedTreeId === t.id}
                   onClick={() => onSelect(t.id)}
                   className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 text-xs font-medium transition-colors ${
                     selectedTreeId === t.id

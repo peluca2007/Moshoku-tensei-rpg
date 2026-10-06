@@ -45,6 +45,8 @@ export default function CreationWizard() {
   // automático: seleciona o nome quando ela chega, pra quem digita trocar o
   // nome em vez de colar no fim dele.
   const campoDoNome = useRef<HTMLInputElement>(null);
+  const passoAtual = useRef<HTMLParagraphElement>(null);
+  useEffect(() => { if (step > 0) passoAtual.current?.focus(); }, [step]);
   useEffect(() => {
     if (step === 0) campoDoNome.current?.select();
   }, [character.id, step]);
@@ -104,7 +106,7 @@ export default function CreationWizard() {
             />
           ))}
         </div>
-        <p className="mt-2 text-xs font-medium text-parchment-600 dark:text-parchment-400">
+        <p ref={passoAtual} tabIndex={-1} data-passo={step} className="mt-2 text-xs font-medium text-parchment-600 dark:text-parchment-400">
           Passo {step + 1} de {STEPS.length} — {STEPS[step]}
         </p>
       </header>
@@ -116,6 +118,7 @@ export default function CreationWizard() {
             <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Qual é o nome do seu personagem?</h2>
             <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Pode trocar depois, a qualquer momento, na ficha.</p>
             <input
+              aria-label="Nome do personagem"
               ref={campoDoNome}
               autoFocus
               onFocus={(e) => e.target.select()}
@@ -145,6 +148,15 @@ export default function CreationWizard() {
               <div
                 role="radiogroup"
                 aria-label="Raça"
+                onKeyDown={(e) => {
+                  if (!["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp", "Home", "End"].includes(e.key)) return;
+                  e.preventDefault();
+                  const opcoes = Array.from(e.currentTarget.querySelectorAll<HTMLButtonElement>('[role="radio"]'));
+                  const atual = opcoes.indexOf(document.activeElement as HTMLButtonElement);
+                  const proximo = e.key === "Home" ? 0 : e.key === "End" ? opcoes.length - 1 : (atual + (e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1) + opcoes.length) % opcoes.length;
+                  opcoes[proximo]?.focus();
+                  if (opcoes[proximo]?.getAttribute("aria-checked") !== "true") opcoes[proximo]?.click();
+                }}
                 className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4"
               >
                 {RACES.map((r) => {
@@ -154,6 +166,7 @@ export default function CreationWizard() {
                       key={r.id}
                       type="button"
                       role="radio"
+                      tabIndex={escolhida || (!character.raceId && r.id === RACES[0].id) ? 0 : -1}
                       aria-checked={escolhida}
                       onClick={() => useCharacterStore.getState().setRace(escolhida ? null : r.id)}
                       className={`flex flex-col items-center gap-1.5 rounded-xl border p-2 text-center transition-colors ${
@@ -192,6 +205,7 @@ export default function CreationWizard() {
               <h2 className="mb-1 text-lg font-bold text-parchment-900 dark:text-parchment-50">Escolha um antecedente</h2>
               <p className="mb-3 text-sm text-parchment-600 dark:text-parchment-400">Cap. 1, seção 6 — o Destino e a Infância. Define dinheiro inicial e perícias extras.</p>
               <select
+                aria-label="Antecedente"
                 value={character.backgroundId ?? ""}
                 onChange={(e) => useCharacterStore.getState().setBackground(e.target.value || null)}
                 className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-3 py-2 outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
@@ -208,6 +222,7 @@ export default function CreationWizard() {
               <div>
                 <label className="mb-1 block text-sm font-semibold text-gold-600 dark:text-gold-400">Resultado da subtabela</label>
                 <select
+                  aria-label="Resultado da subtabela"
                   value={character.subtableEntryId ?? ""}
                   onChange={(e) => useCharacterStore.getState().setSubtableEntry(e.target.value || null)}
                   className="w-full rounded-lg border border-gold-500/30 bg-gold-500/10 px-3 py-2 text-gold-700 outline-none dark:text-gold-300"

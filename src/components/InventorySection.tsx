@@ -95,6 +95,7 @@ function ItemFields({
           Tipo
         </label>
         <select
+          aria-label="Tipo de item do inventário"
           value={type}
           onChange={(e) => setType(e.target.value as InventoryItem["type"])}
           className="rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
@@ -145,6 +146,7 @@ function ItemFields({
               Atributo
             </label>
             <select
+              aria-label="Atributo de dano do item"
               value={damageAttribute}
               onChange={(e) => setDamageAttribute(e.target.value as AttributeKey)}
               className="w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-wine-400 dark:border-parchment-700 dark:bg-parchment-900 dark:text-parchment-100"
