@@ -43,20 +43,24 @@ function porcento(valor: number, pct: number): number {
 /**
  * Descanso Curto (1 a 2 horas).
  *
- * PV ficam em ZERO de propósito, e é a regra mais importante do capítulo: "a
- * carne não fecha sozinha". Um Curto que devolvesse PV apagaria a promessa de
- * que um grupo sem curandeiro sangra na segunda luta.
+ * 2026-10-08 (0.1.155): o Curto passou a devolver 25% dos PV máximos, como já
+ * devolvia de PM e PP. Até aqui ele não devolvia PV nenhum ("a carne não fecha
+ * sozinha"), e a medição do dia de aventura (medir:dia-de-aventura) mostrou o
+ * preço: o Apêndice G prometia três a quatro lutas Equilibradas por dia, e o
+ * grupo vencia a segunda em metade dos dias e quase nunca a terceira. A carne
+ * continua não fechando de vez: um quarto por descanso, dois descansos por dia.
  */
 export function descansoCurto(max: ReservasMaximas): GanhoDeDescanso {
+  const pv = porcento(max.pv, 25);
   const pm = porcento(max.pm, 25);
   const pp = porcento(max.pp, 25);
   return {
-    pv: 0,
+    pv,
     pm,
     pt: max.pt,
     pp,
     detalhe: [
-      "PV: nada — a carne não fecha sozinha (Cap. 4, §7)",
+      `PV: +${pv} (25% de ${max.pv}) — o resto fecha com cura, kit ou tempo (Cap. 4, §7)`,
       `PM: +${pm} (25% de ${max.pm})`,
       `PT: +${max.pt} — voltam inteiros, é o único recurso que faz isso (Cap. 3)`,
       `PP: +${pp} (25% de ${max.pp})`,
@@ -78,14 +82,17 @@ export const CURTOS_POR_DIA = 2;
  * cama tem nome próprio: Convalescença.
  */
 export function descansoLongo(max: ReservasMaximas, vigor: number, maiorBonus: number): GanhoDeDescanso {
-  const pv = Math.max(1, vigor + 2 * maiorBonus);
+  // 0.1.155: o Longo nunca devolve menos que o Curto — os mesmos 25%, mais o sono.
+  const sono = Math.max(1, vigor + 2 * maiorBonus);
+  const quarto = porcento(max.pv, 25);
+  const pv = quarto + sono;
   return {
     pv,
     pm: max.pm,
     pt: max.pt,
     pp: max.pp,
     detalhe: [
-      `PV: +${pv} (Vigor ${vigor} + 2 × Bônus de Rank ${maiorBonus}, mínimo 1)`,
+      `PV: +${pv} (25% de ${max.pv} = ${quarto}, mais Vigor ${vigor} + 2 × Bônus de Rank ${maiorBonus}, mínimo 1)`,
       `PM: +${max.pm} (todos)`,
       `PT: +${max.pt} (todos)`,
       `PP: +${max.pp} (todos)`,

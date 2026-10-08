@@ -5,14 +5,12 @@ const MAX = { pv: 40, pm: 16, pt: 10, pp: 6 };
 
 describe("Descanso Curto (Cap. 4, §7)", () => {
   /*
-   * A regra mais importante do capítulo inteiro: "a carne não fecha sozinha".
-   * Um Curto que devolvesse PV apagaria a promessa de que um grupo sem
-   * curandeiro sangra na segunda luta — que é a premissa de que o Cap. 4
-   * depende.
+   * 0.1.155: um quarto dos PV, como PM e PP — sem ele, o grupo não passava da
+   * segunda luta do dia (medir:dia-de-aventura).
    */
-  it("NÃO devolve PV. Nenhum.", () => {
-    expect(descansoCurto(MAX).pv).toBe(0);
-    expect(descansoCurto({ pv: 999, pm: 0, pt: 0, pp: 0 }).pv).toBe(0);
+  it("devolve 25% dos PV máximos, arredondando pra baixo", () => {
+    expect(descansoCurto(MAX).pv).toBe(10);
+    expect(descansoCurto({ pv: 999, pm: 0, pt: 0, pp: 0 }).pv).toBe(249);
   });
 
   it("devolve 25% de PM e PP, arredondando pra baixo", () => {
@@ -53,12 +51,16 @@ describe("Descanso Longo (Cap. 4, §7)", () => {
     expect(descansoLongo(MAX, 0, 1).pt).toBeGreaterThanOrEqual(descansoCurto(MAX).pt);
   });
 
-  it("PV = Vigor + 2 × maior Bônus de Rank, sem dado", () => {
-    expect(descansoLongo(MAX, 2, 3).pv).toBe(8);
+  it("PV = 25% do máximo + Vigor + 2 × maior Bônus de Rank, sem dado", () => {
+    expect(descansoLongo(MAX, 2, 3).pv).toBe(10 + 8);
+  });
+
+  it("nunca devolve menos PV que o Curto", () => {
+    expect(descansoLongo(MAX, -3, 0).pv).toBeGreaterThan(descansoCurto(MAX).pv);
   });
 
   it("Vigor negativo ainda dorme alguma coisa: mínimo 1", () => {
-    expect(descansoLongo(MAX, -2, 1).pv).toBe(1);
+    expect(descansoLongo(MAX, -2, 1).pv).toBe(10 + 1); // 25% de 40, e o sono com mínimo 1
   });
 
   it("mostra a conta de cada número, e não só o resultado", () => {

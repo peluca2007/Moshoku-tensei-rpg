@@ -8,8 +8,8 @@
  * luta começa de onde a anterior parou (`reservasIniciais` do motor). Morto não
  * volta; caído estabilizado acorda no Descanso Curto se o 1d4 de horas couber.
  *
- * O Descanso Curto é o do Cap. 4, §7: PT inteiro, PM e PP +25% do máximo, PV
- * só por Cuidar dos Ferimentos (Vigor + 2 × o maior Bônus de Rank, um por
+ * O Descanso Curto é o do Cap. 4, §7: PT inteiro, PV, PM e PP +25% do máximo, e
+ * mais PV por Cuidar dos Ferimentos (Vigor + 2 × o maior Bônus de Rank, um por
  * criatura, 10 usos de kit). No grupo com Cura, a curandeira cura depois de
  * toda luta (a Cura do Principiante, 2 PM, 1d8 + BC): levanta quem caiu e
  * trata quem está abaixo da metade, guardando 25% do PM pra próxima luta.
@@ -96,6 +96,8 @@ function umDia(grupo: CharacterData[], descansos: number[], semente: number, com
         e.pp = Math.min(f.ppMax ?? 0, (e.pp ?? 0) + Math.floor((f.ppMax ?? 0) / 4));
         // Estabilizado acorda com 1 PV em 1d4 horas; o Curto dura 1 a 2.
         if ((e.pv ?? 0) <= 0 && e.estabilizado && Math.floor(rng() * 4) + 1 <= 2) { e.pv = 1; e.marcasDaMorte = 0; }
+        // O Curto devolve 25% dos PV máximos a quem está de pé (Cap. 4, §7, desde 0.1.155).
+        if ((e.pv ?? 0) > 0) e.pv = Math.min(f.pvMax, (e.pv ?? 0) + Math.floor(f.pvMax / 4));
       }
       if (!comCura) {
         const acordados = grupo.filter((c) => !estado[c.id]?.morto && (estado[c.id]?.pv ?? 0) > 0);
