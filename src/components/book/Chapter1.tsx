@@ -469,7 +469,11 @@ export default function Chapter1() {
         <Aside title="Os Oito Grupos, e os Escudos">
           <BookTable
             headers={["Grupo", "O que o treino é", "Armas"]}
-            rows={WEAPON_GROUPS.map((g) => [g.name, g.description, g.examples.join(", ")])}
+            rows={WEAPON_GROUPS.map((g) => [
+              g.name,
+              g.description,
+              g.examples.join(", ") + (g.alcance ? `. Alcance ${g.alcance.normal} m, longo ${g.alcance.longo} m (Cap. 4, §3)` : ""),
+            ])}
           />
         </Aside>
         <SubTitle id="cap1-4-como-se-ganha">Como se ganha um grupo</SubTitle>

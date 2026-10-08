@@ -50,6 +50,13 @@ export interface WeaponGroup {
   description: string;
   /** Armas de exemplo, pra mesa reconhecer o grupo sem decorar a lista. */
   examples: string[];
+  /**
+   * Alcance das armas que disparam ou se arremessam, em metros (Cap. 4, §3) — 2026-10-07.
+   * Até `normal` o tiro é comum; além dele e até `longo` (a distância longa), Desvantagem;
+   * além do `longo`, não alcança. Antes disso o livro não tinha alcance nenhum, e a
+   * Arquearia tirava uma Desvantagem por distância que não existia.
+   */
+  alcance?: { normal: number; longo: number };
 }
 
 export const WEAPON_GROUPS: WeaponGroup[] = [
@@ -87,6 +94,7 @@ export const WEAPON_GROUPS: WeaponGroup[] = [
     description:
       "Tiro tenso, a corda armazenando o golpe. Puxar arco é força de costas treinada; besta troca essa força por tempo de recarga. O treino de mira é o mesmo, e por isso andam juntos.",
     examples: ["Arco Curto", "Arco Longo", "Besta", "Besta Leve"],
+    alcance: { normal: 24, longo: 90 },
   },
   {
     id: "arremesso",
@@ -94,6 +102,7 @@ export const WEAPON_GROUPS: WeaponGroup[] = [
     description:
       "O que sai da mão e não volta. Peso, giro e leitura de vento — nada disso se aprende puxando corda, e é por isso que não é o mesmo grupo dos arcos.",
     examples: ["Funda", "Dardo", "Azagaia", "Machadinha de Arremesso"],
+    alcance: { normal: 9, longo: 27 },
   },
   {
     id: "flexiveis",
