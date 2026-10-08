@@ -1,3 +1,4 @@
+import regua from "./reguaMedida.json";
 /**
  * Apêndice C — a régua de dano por turno.
  *
@@ -115,29 +116,49 @@ export const COLUNAS_CORPO: ColunaDano[] = [
   { treeId: "punho-de-fogo", label: "Punho" },
 ];
 
-export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = [
-  { patamar: "1º", porArvore: { agua: "~16", fogo: "~18", vento: "~15", terra: "~16", cura: "~10", desintoxicacao: "~14", teorica: "~10", invocacao: "~13" } },
-  { patamar: "2º", porArvore: { agua: "~20", fogo: "~26", vento: "~18", terra: "~24", cura: "~12", desintoxicacao: "~22", teorica: "~20", invocacao: "~24" } },
-  // Água no 3º subiu de ~30 para ~44 em 0.1.87: a Quebra de Gelo passou a
-  // cobrar pelo Congelado (+3d8 e acerto automático contra alvo congelado), que
-  // era o pagamento que a escola prometia e nunca entregava. O número alto só
-  // acontece com o combo inteiro montado — molhar, congelar, estilhaçar —, e é
-  // exatamente isso que a régua deve mostrar: a Água paga em turnos e recebe de
-  // uma vez.
-  { patamar: "3º", porArvore: { agua: "~44 com o combo", fogo: "~40", vento: "~32", terra: "~36", cura: "~22", desintoxicacao: "~28", teorica: "~30", invocacao: "~38" } },
-  { patamar: "4º", porArvore: { agua: "~22 + área", fogo: "~62", vento: "~45", terra: "~55", cura: "~32", desintoxicacao: "~34", teorica: "~36", invocacao: "~55" } },
-  { patamar: "5º", porArvore: { agua: "~54", fogo: "~90", vento: "~70", terra: "~76", cura: "~56 em área", desintoxicacao: "~45", teorica: "~55", invocacao: "~80" } },
-  { patamar: "6º", porArvore: { agua: "~39 em 45m", fogo: "~130", vento: "~110", terra: "~105", cura: "~90 em área", desintoxicacao: "~60", teorica: "~65", invocacao: "~110" } },
-];
+/*
+ * AS TABELAS SAEM DA MEDIÇÃO (2026-10-08, decisão do autor A-1).
+ *
+ * Até aqui as duas tabelas eram escritas à mão, "~16" a "~130", e a conferência
+ * pelo simulador as achava longe do jogo (magia de 1º prometendo ~16 e
+ * entregando ~5). Agora cada célula é `reguaMedida.json`, gerado por
+ * `npm run gerar:regua` com o método escrito nele (e impresso no Apêndice C):
+ * "grupo · alvo único" — a luta contra cinco criaturas do molde e a mesma luta
+ * contra uma só, com o PV das cinco. A Cura mede PV curados por turno.
+ * `check:regua` reprova quando o JSON fica velho.
+ */
+export interface CelulaMedida {
+  treeId: string;
+  patamar: number;
+  grupo: number;
+  alvo: number;
+  cura: number;
+  sobrevive: number;
+}
 
-export const DANO_POR_TURNO_CORPO: DanoPorTurnoLinha[] = [
-  { patamar: "1º", porArvore: { "deus-da-espada": "~25", "deus-do-norte": "~19", "deus-da-agua-corpo": "~11", arquearia: "~22", "armas-pesadas": "~21", "cavalaria-e-escudos": "~10", "furtividade-e-armadilhas": "~22", "navegacao-e-lideranca": "~18", "bardo-e-interacao": "~16", vendaval: "~36", "punho-de-fogo": "~40" } },
-  { patamar: "2º", porArvore: { "deus-da-espada": "~34", "deus-do-norte": "~25", "deus-da-agua-corpo": "~26", arquearia: "~34", "armas-pesadas": "~32", "cavalaria-e-escudos": "~13", "furtividade-e-armadilhas": "~29", "navegacao-e-lideranca": "~24", "bardo-e-interacao": "~21", vendaval: "~44", "punho-de-fogo": "~48" } },
-  { patamar: "3º", porArvore: { "deus-da-espada": "~62", "deus-do-norte": "~34", "deus-da-agua-corpo": "~40", arquearia: "~48", "armas-pesadas": "~44", "cavalaria-e-escudos": "~16", "furtividade-e-armadilhas": "~36", "navegacao-e-lideranca": "~30", "bardo-e-interacao": "~26", vendaval: "~58", "punho-de-fogo": "~62" } },
-  { patamar: "4º", porArvore: { "deus-da-espada": "~78", "deus-do-norte": "~42", "deus-da-agua-corpo": "~60", arquearia: "~62", "armas-pesadas": "~58", "cavalaria-e-escudos": "~19", "furtividade-e-armadilhas": "~43", "navegacao-e-lideranca": "~36", "bardo-e-interacao": "~31", vendaval: "~72", "punho-de-fogo": "~78" } },
-  { patamar: "5º", porArvore: { "deus-da-espada": "~98", "deus-do-norte": "~55", "deus-da-agua-corpo": "~85", arquearia: "~78", "armas-pesadas": "~74", "cavalaria-e-escudos": "~23", "furtividade-e-armadilhas": "~50", "navegacao-e-lideranca": "~42", "bardo-e-interacao": "~36", vendaval: "~88", "punho-de-fogo": "~95" } },
-  { patamar: "6º", porArvore: { "deus-da-espada": "~118", "deus-do-norte": "~87", "deus-da-agua-corpo": "0 a ∞", arquearia: "~91", "armas-pesadas": "~95", "cavalaria-e-escudos": "~27", "furtividade-e-armadilhas": "~55", "navegacao-e-lideranca": "~47", "bardo-e-interacao": "~40", vendaval: "~105", "punho-de-fogo": "~115" } },
-];
+export const REGUA_MEDIDA = regua as { metodo: string; batalhas: number; semente: number; hash: string; linhas: CelulaMedida[] };
+
+export function celulaMedida(treeId: string, patamar: number): CelulaMedida | undefined {
+  return REGUA_MEDIDA.linhas.find((l) => l.treeId === treeId && l.patamar === patamar);
+}
+
+const inteiro = (n: number) => String(Math.round(n));
+
+function linhasDe(colunas: ColunaDano[]): DanoPorTurnoLinha[] {
+  return [1, 2, 3, 4, 5, 6].map((patamar) => ({
+    patamar: `${patamar}º`,
+    porArvore: Object.fromEntries(
+      colunas.flatMap((c) => {
+        const m = celulaMedida(c.treeId, patamar);
+        if (!m) return [];
+        return [[c.treeId, c.treeId === "cura" ? `cura ${inteiro(m.cura)}` : `${inteiro(m.grupo)} · ${inteiro(m.alvo)}`]];
+      }),
+    ),
+  }));
+}
+
+export const DANO_POR_TURNO_MAGIA: DanoPorTurnoLinha[] = linhasDe(COLUNAS_MAGIA);
+export const DANO_POR_TURNO_CORPO: DanoPorTurnoLinha[] = linhasDe(COLUNAS_CORPO);
 
 /** O número da célula, quando ela tem um. "—" e "0 a ∞" devolvem null de propósito. */
 export function valorNumerico(celula: string): number | null {

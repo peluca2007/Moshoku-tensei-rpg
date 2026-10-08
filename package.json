@@ -44,7 +44,9 @@
     "check:carimbos-pdf": "node scripts/check-carimbos-pdf.mjs",
     "check:numeros": "tsx scripts/check-numeros.mts",
     "medir:largura": "tsx scripts/medir-largura.mts",
-    "medir:dia-de-aventura": "tsx scripts/medir-dia-de-aventura.mts"
+    "medir:dia-de-aventura": "tsx scripts/medir-dia-de-aventura.mts",
+    "gerar:regua": "tsx scripts/gerar-regua.mts",
+    "check:regua": "tsx scripts/check-regua.mts"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

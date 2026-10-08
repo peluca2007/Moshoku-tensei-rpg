@@ -7,9 +7,7 @@ import { diceAverage } from "../src/lib/dice";
 import {
   COLUNAS_CORPO,
   COLUNAS_MAGIA,
-  DANO_POR_TURNO_CORPO,
-  DANO_POR_TURNO_MAGIA,
-  valorNumerico,
+  celulaMedida,
 } from "../src/data/danoPorTurno";
 import { MAGIC_ACTIONS } from "../src/data/trees/shared";
 import { SHOP_CATEGORY_ICONS, SHOP_CATEGORY_ORDER } from "../src/data/shopItems";
@@ -245,26 +243,27 @@ const COLUNAS_DA_REGUA = new Set(
   [...COLUNAS_MAGIA, ...COLUNAS_CORPO].filter((c) => c.regua !== false).map((c) => c.treeId)
 );
 
-for (const tabela of [DANO_POR_TURNO_MAGIA, DANO_POR_TURNO_CORPO]) {
-  tabela.forEach((linha, i) => {
-    for (const [treeId, celula] of Object.entries(linha.porArvore)) {
-      if (!COLUNAS_DA_REGUA.has(treeId)) continue;
-      // Célula com qualificador — "~22 + área", "~39 em 45m", "0 a ∞" — não é um
-      // número de dano por turno comparável: o livro escolheu descrever outra
-      // coisa ali de propósito. Verificar isso seria inventar uma regra que o
-      // texto não tem.
-      if (/[a-zA-Zà-úÀ-Ú∞]/.test(celula.replace(/^~?\d+\s*/, ""))) continue;
-      const prometido = valorNumerico(celula);
-      if (prometido === null) continue;
-      const piso = Math.round(danoPorTurnoDaArvore(treeId, i));
-      if (piso > 0 && prometido < piso) {
-        aviso(
-          `Apêndice C: ${treeId} no ${linha.patamar} promete ${celula}, mas o maior golpe único do ` +
-            `patamar já tem média ${piso} — a régua está abaixo do que a árvore entrega`
-        );
-      }
+/*
+ * A RÉGUA É MEDIDA (2026-10-08): a célula não é mais promessa escrita à mão, e
+ * "abaixo do maior golpe" deixou de ser defeito — a medição conta erro, recurso
+ * que acaba e quem cai. O que continua sendo defeito é o motor NÃO USAR a
+ * carta: contra um alvo só, o número medido abaixo de 40% do maior golpe
+ * único do patamar diz que a árvore está sendo medida sem a técnica dela
+ * (foi assim que o truque da escola sumiu da régua até 2026-10-08).
+ */
+for (const coluna of [...COLUNAS_MAGIA, ...COLUNAS_CORPO]) {
+  if (!COLUNAS_DA_REGUA.has(coluna.treeId)) continue;
+  for (let i = 0; i < 6; i++) {
+    const medida = celulaMedida(coluna.treeId, i + 1);
+    if (!medida) continue;
+    const piso = Math.round(danoPorTurnoDaArvore(coluna.treeId, i));
+    if (piso > 0 && medida.alvo < piso * 0.4) {
+      aviso(
+        `Apêndice C: ${coluna.treeId} no ${i + 1}º mede ${medida.alvo} contra um alvo, menos de 40% do maior golpe único ` +
+          `do patamar (${piso}) — o motor provavelmente não está usando a carta`
+      );
     }
-  });
+  }
 }
 
 // ---------------------------------------------------------------------------

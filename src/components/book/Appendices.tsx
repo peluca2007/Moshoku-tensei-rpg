@@ -4,6 +4,7 @@ import {
   COLUNAS_MAGIA,
   DANO_POR_TURNO_CORPO,
   DANO_POR_TURNO_MAGIA,
+  REGUA_MEDIDA,
 } from "@/data/danoPorTurno";
 import {
   ARQUETIPOS_CRIATURA,
@@ -128,26 +129,34 @@ export default function Appendices() {
       <Section>
         <SectionTitle id="apendice-c">C. Dano por Turno — Comparando Árvores</SectionTitle>
         <P>
-          Quanto cada árvore causa num turno típico, patamar a patamar — pra comparar builds e pra o Mestre
-          saber quantos turnos uma criatura do Apêndice G aguenta. Valores médios, alvo de CA razoável,
-          atributo principal progredindo de 4 até 8.
+          Quanto cada árvore causa num turno, patamar a patamar — pra comparar builds e pra o Mestre saber
+          quantos turnos uma criatura do Apêndice G aguenta. Os números não são estimativa: <b>são medidos</b>,
+          pelo mesmo simulador do site, e mudam quando uma carta muda.
         </P>
+        <Aside title="Como a régua é medida">
+          <P>{REGUA_MEDIDA.metodo}</P>
+          <P>
+            Cada célula traz os dois números: <b>contra cinco · contra um</b>. O primeiro é a luta de verdade, e
+            nele a área pesa. O segundo é a luta longa contra uma criatura só: ninguém divide a área, e o
+            recurso acaba no meio. É ali que o mago do 3º patamar em diante cai — a magia dele custa 3 Ações,
+            não sobra Ação pro truque, e o PM não dura uma luta longa. A Cura mostra outra coisa:{" "}
+            <b>PV curados por turno</b>, porque é o trabalho dela.
+          </P>
+        </Aside>
         <Aside title="Como ler as colunas">
           <P>Número alto não significa personagem melhor. Significa personagem mais estreito.</P>
           <List
             items={[
-              "O Fogo tem o maior número e o menor corpo: 64 PV no Imperador, com Vigor 0. Mata tudo, morre de qualquer coisa, e queima o saque no processo.",
-              "A Água tem o menor número entre as ofensivas e vence campanhas — o valor dela é em área, a 45 metros, com aliados poupados e sem chance de errar.",
-              "A Terra é a única que constrói. Metade do valor dela nunca aparece aqui: pontes, fortalezas, masmorras vedadas, um grupo que nunca mais dorme exposto.",
+              "Magia fere pouco no 1º e 2º patamar e explode do 3º em diante, quando a área chega: compare o primeiro número (contra cinco) com o segundo (contra um) e você vê quanto daquela coluna é área. O mago paga isso no corpo — é o primeiro a cair quando a luta chega nele.",
+              "A Água e a Terra têm metade do valor fora da tabela: a Água em controle (Molhado, Congelado, empurrões), a Terra no que constrói — pontes, fortalezas, um grupo que nunca mais dorme exposto.",
               "O Arco só é real contra quem não veste o Manto de Touki. Contra um guerreiro do Corpo Avançado ou superior, subtraia o dobro do Bônus de Rank do alvo de cada disparo, até a Flecha de Touki (Santo) furar o Manto.",
-              "O Suishin-ryū não tem número. Contra quatro inimigos agressivos ele bate mais que qualquer coisa deste livro. Contra um inimigo parado, causa zero, pra sempre.",
-              "O Lutador tem o número errado na tabela — o que ele realmente faz é acumular Quebrantado. No quarto turno, o inimigo já perdeu 6 de CA e 6 de dano e a luta já acabou sem a tabela registrar.",
-              "Escudos é a menor coluna do livro e o personagem mais difícil de substituir. Ele bate, mas bater não é o trabalho dele: é decidir quem sobrevive.",
-              "O Ladino é a maior das três colunas de Utilidade, e o número dela é da EMBOSCADA. O Dano Furtivo exige alvo desprevenido, cego, imobilizado ou com Vantagem — em luta aberta, sem preparação, o Ladino é o pior combatente direto das dezenove.",
-              "O Tático é a coluna que decide quem executa. A Ordem de Tiro soma no primeiro ataque que acertar o alvo Apontado — de um aliado ou dele mesmo — e é só contra esse alvo que ele soma o Bônus de Rank no próprio golpe. Sem grupo, ele aponta e atira sozinho: perde a escolha de quem bate, não o número.",
-              "O Bardo é a menor das três, e a única cujo dano é em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
-              "O Vendaval e o Punho do Fogo são híbridas, e a linha é o patamar dentro delas: quem abre o 1º já chega Intermediário nas duas árvores-mãe, e por isso as duas começam acima das árvores-mãe. O número do Vendaval depende de quantos metros ele andou antes de golpear; o do Punho não conta o Quebrantado que empilha, que faz com ele o mesmo que faz com o Lutador.",
-              "A Cura fere, e fere mais fundo quem abriu a ferida. A coluna dela é a Luz de Dois Gumes: o valor que cada magia curaria, virado em dano radiante contra um hostil, sem o dobro da Ferida Fresca. Contra quem carrega Culpa Fresca (Rei), os dados da luz dobram e o BC soma uma vez só. A Desintoxicação entra com o ciclo da Dose: dois venenos que pegam e uma Inversão que cobra os dois — o número só aparece se o alvo respira e se as Doses pegaram. A Magia Teórica entra com o dano da fórmula que desenhar (Cap. 2, §8) — o Dardo de Mana do Principiante faz 1d8 + BC.",
+              "O Suishin-ryū só reage: o número dele é o de quem apanha muito. Contra um inimigo que não o ataca, cai a quase nada.",
+              "O Lutador tem o número errado na tabela — o que ele realmente faz é acumular Quebrantado: no quarto turno o inimigo perdeu CA e dano, e a tabela não registra.",
+              "Escudos mede o turno de quem defende: do 3º patamar em diante o Defensor passa a proteger o grupo, e o número de dano dele despenca. É a coluna mais difícil de substituir, não a mais alta.",
+              "O Ladino é a maior das três colunas de Utilidade, e o número é de luta aberta; numa emboscada, com alvo desprevenido, ele sobe. O Tático é medido pelo que o grupo faz a mais com as Ações e a Ordem de Tiro dele, e por isso dispara no 5º patamar, quando o Avante dá uma Ação a todos.",
+              "O Bardo é a única das três com dano em área — a Dissonância pega todo hostil que o ouça. Contra construto, morto-vivo e criatura surda, ela é zero.",
+              "Espíritos e Feras conta o dano do invocado: o invocador luta pelas mãos dele, com as Ações do Comando. A Magia Teórica é a coluna de quem resolve com parede e selo: o número de dano dela é o menor da magia de propósito.",
+              "O Vendaval e o Punho do Fogo são híbridas, e a linha é o patamar dentro delas: quem abre o 1º já chega Intermediário nas duas árvores-mãe, e por isso as duas começam acima das árvores-mãe.",
             ]}
           />
         </Aside>
@@ -169,9 +178,9 @@ export default function Appendices() {
           <List
             items={[
               <span key="e"><b>A Espada conta 4 Ações do Avançado em diante:</b> a Velocidade Encarnada dá uma Ação extra a quem não se move.</span>,
-              <span key="s"><b>Escudos mede o turno gasto defendendo.</b> Um Defensor Imperador que escolha atacar faz perto de 84.</span>,
               <span key="u"><b>A Utilidade não ganha degraus de Dado de Arma</b> (Cap. 3): o dado das três colunas nunca cresce.</span>,
               <span key="m"><b>Magia não está dividida pelas Ações:</b> muita magia de Imperador custa 4. Compare marcial com marcial e magia com magia.</span>,
+              <span key="r"><b>O turno é a rodada da luta:</b> quem cai cedo puxa o próprio número pra baixo, e é de propósito — sobreviver faz parte de bater.</span>,
             ]}
           />
         </Warning>
@@ -239,7 +248,7 @@ export default function Appendices() {
         />
         <QA
           q="O invocado gasta minhas Ações?"
-          a="Ordem geral (atacar o mais próximo, proteger alguém, seguir você) é grátis e vale até você mudar. Ordem específica (alvo exato, truque, ajudar alguém) custa 1 Ação sua, e ele a cumpre com a Ação dele; a partir do Vínculo (Intermediário), essa 1 Ação vale para todos os seus invocados de uma vez. Fora isso, ele age sozinho com a própria 1 Ação e 1 Reação por turno."
+          a="Ordem geral (atacar o mais próximo, proteger alguém, seguir você) é grátis e vale até você mudar. Ordem específica (alvo exato, truque, ajudar alguém) custa 1 Ação sua, e ele a cumpre com a Ação dele; a partir do Vínculo (Intermediário), essa 1 Ação vale para todos os seus invocados de uma vez. Fora isso, ele age sozinho com a própria 1 Ação e 1 Reação por turno — e o Comando (Maestria do Principiante) deixa você ceder até 2 Ações suas por turno: ele age na hora, uma vez por Ação cedida."
         />
 
         <SubTitle>Sobre Preparação (PP)</SubTitle>
