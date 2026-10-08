@@ -39,7 +39,11 @@
     "medir:orcamento": "tsx scripts/medir-orcamento.mts",
     "medir:regua": "tsx scripts/medir-regua.mts",
     "medir:folhear": "node scripts/medir-folhear.mjs",
-    "balancear": "tsx scripts/balancear.mts"
+    "balancear": "tsx scripts/balancear.mts",
+    "check:fantasmas": "tsx scripts/check-fantasmas.mts",
+    "check:numeros": "tsx scripts/check-numeros.mts",
+    "medir:largura": "tsx scripts/medir-largura.mts",
+    "medir:dia-de-aventura": "tsx scripts/medir-dia-de-aventura.mts"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",

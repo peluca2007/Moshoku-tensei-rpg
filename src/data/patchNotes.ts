@@ -50,6 +50,17 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.150",
+    date: "2026-10-07",
+    title: "Os Marcadores da Mesa na Ficha",
+    sections: [{ area: "site", heading: "Na mesa, sem papel ao lado do celular", items: [
+      "A ficha acompanha usos limitados de cartas e Maestrias que têm limite reconhecido. Descanso Curto, Longo, Novo combate e Nova sessão recuperam os usos do período certo; limites ambíguos ficam para revisão.",
+      "Exaustão acompanha Deslocamento, PV Máximos e lembretes de Desvantagem. O bloco Na mesa registra Marcas da Morte, Estabilizado, Salvações, Trauma e Cicatrizes, usando as mesmas tabelas do livro.",
+      "A zero PV, a ficha mostra a conta do Fio da Vida e a Escala do Vigor. Cura remove as Marcas e acrescenta Exaustão; Ferida Mortal pode ser marcada como exceção. Descanso Longo só reduz Exaustão quando a causa acabou.",
+      "Cuidar dos Ferimentos entra no Descanso Curto: confira os PV antes de aplicar, registre quem tratou e acompanhe os dez tratamentos de cada kit. O quadro De onde vem o seu PV mostra o dado escolhido em cada patamar e a conta do máximo.",
+    ] }],
+  },
+  {
     version: "0.1.149",
     date: "2026-10-07",
     title: "O Corpo Treina Uma Vez por Degrau",
@@ -61,7 +72,7 @@ export const PATCH_NOTES: PatchNote[] = [
       ] },
       { area: "regras", heading: "Alcance de arma à distância (Cap. 1, §4 e Cap. 4, §3)", items: [
         "Arcos e Bestas têm alcance 24 m e longo 90 m; Arremesso, 9 m e 27 m. Além do normal e até o longo, Desvantagem. Atirar com um inimigo colado também dá Desvantagem, sem ataque de oportunidade.",
-        "Isso dá sentido a quatro coisas que citavam regra inexistente: a Maestria da Arquearia que tira a Desvantagem por distância longa, o \"alcance da arma\" e o \"alcance máximo\" das cartas, e o talento Passo e Tiro, que agora tira a Desvantagem de atirar colado (antes anulava um ataque de oportunidade que disparar nunca provocou).",
+        "Isso dá sentido a quatro coisas que citavam regra inexistente: a Maestria da Arquearia que tira a Desvantagem por distância longa, o \"alcance da arma\" e o \"alcance máximo\" das cartas, e o talento Passo e Tiro, que agora tira a Desvantagem de atirar colado (antes anulava um ataque de oportunidade que disparar nunca provocou). A Cicatriz 11 (Olho Perdido) passa a falar do alcance normal da arma, e não de um \"alcance curto\" que não existia.",
       ] },
       { area: "regras", heading: "Cuidar dos Ferimentos no Descanso Curto (Cap. 4, §7)", items: [
         "Quem tem Medicina e um Kit de Primeiros Socorros trata o grupo no Descanso Curto: cada criatura recupera Vigor + 2 × o maior Bônus de Rank, o que uma noite de sono devolve. Um tratamento por criatura por descanso, 10 por kit. A Cura continua muito melhor, mas deixou de ser obrigatória: grupo sem curandeiro sangra mais, e não perde a campanha.",
