@@ -886,7 +886,19 @@ export interface EstadoPersonagem extends Alvo {
  */
 export function acoesDe(c: CharacterData): Acao[] {
   const out: Acao[] = [];
-  for (const compra of c.purchasedAbilities) {
+  /*
+   * O TRUQUE DA ESCOLA VEM COM O PRINCIPIANTE (Cap. 2, §1) — 2026-10-08.
+   * Carta de 0 PA não se compra: quem abriu o patamar a tem. O motor só lia
+   * `purchasedAbilities`, e a ficha de referência (4 compras por patamar)
+   * deixava a Brasa de fora: o mago de 1º gastava a terceira Ação numa
+   * bengalada de cajado, e a régua media a magia sem o truque dela.
+   */
+  const gratuitas = c.unlockedRanks.flatMap((u) =>
+    (getTreeById(u.treeId)?.ranks.find((r) => r.rank === u.rank)?.abilities ?? [])
+      .filter((x) => x.paCost === 0 && !c.purchasedAbilities.some((p) => p.treeId === u.treeId && p.id === x.id))
+      .map((x) => ({ treeId: u.treeId, rank: u.rank, kind: "ability" as const, id: x.id })),
+  );
+  for (const compra of [...c.purchasedAbilities, ...gratuitas]) {
     if (compra.kind !== "ability") continue;
     const tree = getTreeById(compra.treeId);
     const rd = tree?.ranks.find((r) => r.rank === compra.rank);
@@ -1648,6 +1660,14 @@ export function motivoFurtivo(e: EstadoPersonagem, alvo: Alvo, corpoACorpo = tru
 export function limiteDeAlvosNaArea(descricao = ""): number {
   const explicito = descricao.match(/atinge\s+at[ée]\s+(\d+)\s+(?:alvos?|criaturas?|inimigos?)/i);
   if (explicito) return Math.max(1, Number(explicito[1]));
+  /*
+   * A LINHA É ESTREITA (2026-10-08). A medida de uma linha é o COMPRIMENTO, e
+   * o motor a lia como raio: "linha de 27 m" pegava as cinco criaturas da
+   * luta. Uma linha de 1,5 m de largura atravessa duas, quando o grupo
+   * inimigo não está em fila. Era isso que punha a Aura Cortante do Norte em
+   * 216 por turno e o Corte do Horizonte do Vendaval em 143.
+   */
+  if (/\blinha\b/i.test(descricao)) return 2;
   const medida = descricao.match(/(\d+(?:[.,]\d+)?)\s*(?:m|metros?)\b/i);
   if (!medida) return 2;
   const metros = Number(medida[1].replace(",", "."));
@@ -2926,6 +2946,22 @@ function executarTurnoPersonagem(
   const danoAntesDoTurno = e.danoCausado;
   let acoes = proprias + concedidas;
   acoes = Math.max(0, acoes - prepararSuporteDoTurno(e, inimigos, aliados, rng, logger));
+  /*
+   * COMANDO (Invocação, O Primeiro Pacto — 2026-10-08). O invocador cede até
+   * 2 Ações por turno ao invocado, que age uma vez a mais por Ação cedida no
+   * próximo turno dele. A IA cede quando o invocador não tem golpe próprio
+   * que valha a Ação (sem magia de dano): é o caso de quase todo invocador,
+   * que antes passava as três Ações batendo de cajado.
+   */
+  const meuInvocado = aliados.find((a) => a.vivo && a.ficha.invocadoDe === e.ficha.id);
+  if (meuInvocado && !e.ficha.invocadoDe && !e.ficha.acoes.some((a) => !a.reacao && temDano(a.dano ?? ""))) {
+    const cede = Math.min(2, acoes - 1);
+    if (cede > 0) {
+      concederAcao(meuInvocado, e, cede);
+      acoes -= cede;
+      logger?.log(`[${e.nome}] Comando: cede ${cede} Ação(ões) a ${meuInvocado.nome}.`);
+    }
+  }
   let guarda = 0;
   let tentouEsconder = false;
   if (e.conjurando) e.conjurando.acoesNesteTurno = 0;
@@ -3083,7 +3119,9 @@ function executarTurnoPersonagem(
 
   // Fim do turno: quem não dedicou nenhuma Ação ao cântico o perde (Perda de Foco).
   perdaDeFoco(e);
-  if (concessor && concedidas > 0 && e.danoCausado > danoAntesDoTurno) {
+  // O dano do invocado já é do invocador (encounterSim soma por `invocadoDe`):
+  // creditar a Ação cedida de novo contaria a mordida duas vezes.
+  if (concessor && concedidas > 0 && e.danoCausado > danoAntesDoTurno && e.ficha.invocadoDe !== concessor.ficha.id) {
     const assistido = (e.danoCausado - danoAntesDoTurno) * concedidas / Math.max(1, proprias + concedidas);
     concessor.danoCausado += assistido;
   }
