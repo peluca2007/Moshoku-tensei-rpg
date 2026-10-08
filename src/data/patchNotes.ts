@@ -50,6 +50,15 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.151",
+    date: "2026-10-08",
+    title: "O Carimbo da Árvore e o Papel da Ficha",
+    sections: [{ area: "site", heading: "As mesmas árvores, o tema que você escolheu", items: [
+      "O mapa, a lista e o painel das árvores usam os mesmos carimbos do livro, com a tinta própria de cada escola no tema claro ou escuro.",
+      "Baixar PDF acompanha o tema escolhido no site: Pergaminho, Pergaminho Noite, Livro Dia ou Livro Noite. Papel, texto, reservas, tabelas e cartões de técnicas recebem a paleta correspondente.",
+    ] }],
+  },
+  {
     version: "0.1.150",
     date: "2026-10-07",
     title: "Os Marcadores da Mesa na Ficha",
