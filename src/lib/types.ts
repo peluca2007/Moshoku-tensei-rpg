@@ -846,6 +846,8 @@ export interface UnlockedRank {
 
 export interface InventoryItem {
   id: string;
+  /** Tratamentos já gastos neste kit (Cap. 4, §7); descansos não os recuperam. */
+  tratamentosUsados?: number;
   name: string;
   type: "arma" | "armadura" | "geral";
   description?: string;

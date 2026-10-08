@@ -1,6 +1,7 @@
 import { registrarCompraParaAnimacao, cancelarCompraParaAnimacao } from "@/lib/compraParaAnimacao";
 import { atualizarMesa, mesaDa, recuperarDeZero, reiniciarUsos, type Mesa } from "@/lib/mesa";
 import { limitesDaFicha, type PeriodoDeUso } from "@/lib/limitesDeUso";
+import { ehKitDeSocorros, pvDoTratamento, temMedicina, usosDoKit } from "@/lib/ferimentos";
 import { WeaponGroupId } from "@/data/weaponGroups";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -202,7 +203,7 @@ interface RosterState {
    * regra que segura o livro inteiro em pé, e uma store que o ignorasse
    * deixaria a tela sozinha vigiando.
    */
-  descansar: (tipo: "curto" | "longo", ganho: { pv: number; pm: number; pt: number; pp: number }, maximos: { pv: number; pm: number; pt: number; pp: number }, causaAcabou?: boolean, sonoPerturbado?: boolean) => boolean;
+  descansar: (tipo: "curto" | "longo", ganho: { pv: number; pm: number; pt: number; pp: number }, maximos: { pv: number; pm: number; pt: number; pp: number }, causaAcabou?: boolean, sonoPerturbado?: boolean, tratamento?: { kitId?: string }) => boolean;
   addSkill: (name: string) => void;
   removeSkill: (name: string) => void;
   addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
@@ -520,27 +521,35 @@ export const useCharacterStore = create<RosterState>()(
           return { ...c, overrides };
         }),
 
-      descansar: (tipo, ganho, maximos, causaAcabou = false, sonoPerturbado = false) => {
+      descansar: (tipo, ganho, maximos, causaAcabou = false, sonoPerturbado = false, tratamento) => {
         const state = get();
         const atual = state.activeId ? state.characters[state.activeId] : undefined;
         if (!atual) return false;
         if (tipo === "curto" && (atual.descansosCurtos ?? 0) >= CURTOS_POR_DIA) return false;
+        const tratado = tipo === "curto" && tratamento !== undefined;
+        if (tratado && tratamento.kitId) {
+          const kit = atual.inventory.find(i => i.id === tratamento.kitId && ehKitDeSocorros(i));
+          if (!kit || !temMedicina(atual) || usosDoKit(kit) >= 10) return false;
+        }
 
         // `?? maximos.x` porque `null` em `currentX` significa "cheio, ainda não
         // tocado" (ver getCurrentHp) — somar em cima de null daria NaN.
         const somar = (corrente: number | null | undefined, ganhoDoRecurso: number, teto: number) =>
           Math.min(teto, (corrente ?? teto) + ganhoDoRecurso);
 
-        updateActive(get, set, (c) => ({
-          ...reiniciarUsos(c,tipo as PeriodoDeUso),
-          currentHp: mesaDa(c).marcas>=3 ? c.currentHp : somar(c.currentHp, ganho.pv, maximos.pv),
+        updateActive(get, set, (c) => {
+          const hp = somar(c.currentHp, ganho.pv + (tratado ? pvDoTratamento(c) : 0), maximos.pv);
+          const curado = recuperarDeZero(c, hp);
+          return ({
+          ...reiniciarUsos(curado,tipo as PeriodoDeUso),
+          inventory: c.inventory.map(i => tratado && i.id === tratamento.kitId ? { ...i, tratamentosUsados: usosDoKit(i) + 1 } : i),
           currentMp: somar(c.currentMp, tipo === "longo" && mesaDa(c).trauma >= 3 && sonoPerturbado ? Math.floor(ganho.pm/2) : ganho.pm, maximos.pm),
           currentPt: somar(c.currentPt, ganho.pt, maximos.pt),
           currentPp: somar(c.currentPp, tipo === "longo" && mesaDa(c).trauma >= 3 && sonoPerturbado ? Math.floor(ganho.pp/2) : ganho.pp, maximos.pp),
-          mesa: { ...mesaDa(reiniciarUsos(c,tipo)), exaustao: tipo === "longo" && causaAcabou ? Math.max(0,mesaDa(c).exaustao-1) : mesaDa(c).exaustao },
+          mesa: { ...mesaDa(reiniciarUsos(curado,tipo)), exaustao: tipo === "longo" && causaAcabou ? Math.max(0,mesaDa(curado).exaustao-1) : mesaDa(curado).exaustao },
           // O Longo é o que vira o dia: zera o contador de Curtos.
           descansosCurtos: tipo === "longo" ? 0 : (c.descansosCurtos ?? 0) + 1,
-        }));
+        }); });
         return true;
       },
       aplicarCondicao: (id) =>
