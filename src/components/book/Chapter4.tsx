@@ -664,7 +664,7 @@ export default function Chapter4() {
           rows={[
             [
               "Curto (1 a 2 horas)",
-              "Recupera 25% dos seus PM e PP máximos (arredondado para baixo) e TODOS os seus PT. Não recupera Pontos de Vida (0%)."
+              "Recupera 25% dos seus PM e PP máximos (arredondado para baixo) e TODOS os seus PT. Pontos de Vida, só com Cuidar dos Ferimentos (abaixo)."
             ],
             [
               "Longo (8 horas de sono seguro)",
@@ -690,6 +690,7 @@ export default function Chapter4() {
             items={[
               "Magia de Cura — rápida, cara em PM, do rank certo pro tipo de ferimento.",
               "Poções — caras em dinheiro, limitadas em estoque.",
+              "Cuidar dos Ferimentos — no Descanso Curto, com Medicina e um Kit de Primeiros Socorros (abaixo).",
               "Convalescença — uma semana inteira de cama, em lugar seguro, devolve todos os PV (Cap. 5, a atividade Recuperar-se).",
             ]}
           />
@@ -699,9 +700,18 @@ export default function Chapter4() {
             Maior Bônus de Rank — e o teto de dois Curtos por dia continua valendo.
           </P>
           <P>
-            Um grupo sem curandeiro não perde combates — perde a campanha: vence a primeira luta, sangra na
-            segunda, e na terceira decide voltar pra cidade porque o guerreiro está com um terço da vida e
-            não existe descanso que resolva.
+            <b>Cuidar dos Ferimentos.</b> Num Descanso Curto, quem tem a perícia Medicina e um Kit de
+            Primeiros Socorros trata o grupo: cada criatura tratada recupera PV iguais ao Vigor dela + 2 × o
+            maior Bônus de Rank dela (mínimo 1) — o que uma noite de sono devolve, sem esperar a noite. Cada
+            criatura recebe um tratamento por Descanso Curto, venha de quem vier, e quem trata pode tratar a
+            si mesmo. Não tem teste: o descanso é o tempo do curativo. Cada tratamento gasta um dos 10 usos do
+            kit.
+          </P>
+          <P>
+            Um grupo sem curandeiro sangra mais que um com Cura: a Cura levanta quem caiu, dobra os dados na
+            Ferida Fresca e fecha a ferida no meio da luta, e nada disso o kit faz. Mas ele não perde a
+            campanha: com alguém de Medicina no grupo, os dois Descansos Curtos do dia valem duas noites de
+            sono a mais pra cada um.
           </P>
         </Warning>
 
