@@ -50,6 +50,23 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.153",
+    date: "2026-10-08",
+    title: "Os Três Pilares Ganham Porta",
+    sections: [
+      { area: "livro", heading: "As entradas dos pilares e o recuo (Cap. 3)", items: [
+        "Magia, Corpo e Utilidade abrem com uma entrada própria: o kanji do pilar a pincel (魔 · 闘 · 道), os carimbos das árvores que ele junta (cada um leva ao catálogo) e o índice numerado dos sistemas. Antes, a passagem de um pilar pro outro era um título do tamanho de um subtítulo.",
+        "Cada sistema (o Dado de Arma, o Touki, a Preparação, os Pontos de Preparação, as Faixas…) leva o número na margem e o conteúdo recuado atrás de uma régua na cor do capítulo, até o próximo. Dá pra saber em que sistema se está mesmo duas páginas depois do título. A Utilidade ganhou a numeração que o Corpo já tinha, e o sumário também.",
+        "No livro folheado, o título de seção do Cap. 3 voltou a ser maior que o subtítulo: uma regra de tamanho do site o derrubava, e seção, subseção e etiqueta de caixa saíam quase do mesmo tamanho.",
+      ] },
+      { area: "livro", heading: "Três diagramas onde só havia texto", items: [
+        "Um turno de Touki: a reserva de um Avançado em bolinhas, as manobras gastando, o Manto de fora (0 PT, mesmo com a reserva vazia) e o Descanso Curto devolvendo tudo. A tabela das manobras e o diagrama leem da mesma lista.",
+        "Para onde vai um PP: as duas saídas (o menu e o fato livre) e as quatro portas do fato livre na ordem em que a mesa pergunta (Domínio, Escopo, pretérito, preço).",
+        "As Três Faixas viraram três raias com uma parede entre elas, no lugar da tabela, porque a regra é a parede. O Triângulo dos Estilos subiu pra antes das regras, e a Universidade de Magia abre o catálogo numa página inteira, de frente pra abertura do Fogo.",
+      ] },
+    ],
+  },
+  {
     version: "0.1.152",
     date: "2026-10-08",
     title: "Três Turnos com as Árvores Difíceis",
