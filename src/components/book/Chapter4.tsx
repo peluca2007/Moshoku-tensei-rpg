@@ -72,18 +72,18 @@ export default function Chapter4() {
           em qualquer árvore. As fórmulas abaixo são as que valem sempre, do 1º patamar ao Imperador; a ficha
           recalcula os dois números automaticamente a cada Rank novo.
         </P>
-        <Aside title="PV Máximos = (14 + 1,67 × soma dos seus Dados de PV) × Fator de Vigor">
+        <Aside title="PV Máximos = (14 + 1,67 × um Dado de PV por patamar) × Fator de Vigor">
           <P>
             Uma linha, dois passos, nenhuma exceção:
           </P>
           <List
             items={[
               <span key="c">
-                <b>1. O corpo treinado.</b> Some os Dados de PV de <b>todos</b> os patamares que você
-                desbloqueou, em todas as árvores (use a média da fórmula de cada patamar, arredondada pra
-                cima — 1d8+3 conta 8, 3d6 conta 11 —, ou role, se a mesa preferir),
-                <b> multiplique por 1,67</b> e some <b>14</b>. Esses 14 são o corpo com que todo
-                mundo nasce.
+                <b>1. O corpo treinado.</b> Em cada patamar que você alcançou (1º, 2º, 3º…), pegue{" "}
+                <b>um Dado de PV só</b>: o maior entre as árvores que chegaram naquele patamar. Some esses
+                dados (a média de cada um, arredondada pra cima — 1d8+3 conta 8, 3d6 conta 11 —, ou role,
+                se a mesa preferir), <b>multiplique por 1,67</b> e some <b>14</b>. Esses 14 são o corpo com
+                que todo mundo nasce.
               </span>,
               <span key="v">
                 <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonde
@@ -92,13 +92,37 @@ export default function Chapter4() {
             ]}
           />
           <P>
-            É só isso. Não existe piso, e nenhum patamar novo muda a forma da conta — desbloquear um Rank só
-            acrescenta mais um Dado de PV ao passo 1. Os talentos de reserva (&ldquo;+N PV por
-            patamar&rdquo;) e os PV fixos de raça ou antecedente entram somados DEPOIS do Fator de Vigor, sem
-            multiplicar. Tabela de referência com Vigor 0 (acumulado até o
-            patamar): Escudeiro 27/44/64 PV (P→A); Lutador 29/44/62; Espada 27/42/59; Magia de Água
-            19/25/34; Terra 22/32/44.
+            É só isso. Não existe piso. Chegar a um patamar novo acrescenta um dado ao passo 1; abrir outra
+            árvore num patamar que você já tem só troca o dado daquele patamar, e só se o dela for maior. Os
+            talentos de reserva (&ldquo;+N PV por patamar&rdquo;) e os PV fixos de raça ou antecedente
+            entram somados DEPOIS do Fator de Vigor, sem multiplicar. Tabela de referência com Vigor 0
+            (acumulado até o patamar): Escudeiro 27/44/64 PV (P→A); Lutador 29/44/62; Espada 27/42/59;
+            Magia de Água 19/25/34; Terra 22/32/44.
           </P>
+          <P>
+            <b>Por que um dado só por patamar.</b> O corpo treina uma vez por degrau, na escola mais dura
+            que você frequentou naquele degrau. Quem passa por cinco dojos no mesmo mês volta com cinco
+            técnicas, não com cinco corpos. Se cada árvore somasse o próprio dado, cinco árvores do Corpo no
+            1º patamar dariam 100 PV com 15 PA, o dobro de um Lutador que gastou o mesmo PA pra chegar ao 2º.
+            Abrir árvore nova continua valendo a Maestria, as técnicas e o PT (Cap. 3); o que ela não dá é
+            um segundo corpo.
+          </P>
+          <P>
+            <b>Exemplo.</b> {EXEMPLO_DE_PV.nome} tem Lutador no 2º patamar, Deus do Norte e Magia de Fogo no
+            1º, e Vigor +{EXEMPLO_DE_PV.vigor}. A ficha faz a conta sozinha; à mão, é esta:
+          </P>
+          <BookTable
+            headers={["Patamar", "Árvores que chegaram nele", "Conta"]}
+            rows={[
+              ...EXEMPLO_DE_PV.patamares.map((p) => [
+                p.patamar,
+                p.dados.map((d) => `${d.arvore} ${d.formula} (${d.media})`).join(" · "),
+                `${p.conta}${p.dados.length > 1 ? ", o maior" : ""}`,
+              ]),
+              ["Corpo treinado", `14 + 1,67 × ${EXEMPLO_DE_PV.soma}`, EXEMPLO_DE_PV.corpo],
+              [`Vigor +${EXEMPLO_DE_PV.vigor}`, `× ${EXEMPLO_DE_PV.fator}, pra baixo`, `${EXEMPLO_DE_PV.pv} PV`],
+            ]}
+          />
         </Aside>
 
         <SubTitle id="cap4-vigor">A Escala do Vigor</SubTitle>

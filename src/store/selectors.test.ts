@@ -15,6 +15,8 @@ import {
   getSpellDC,
   getAttackBonus,
   getTrainedBody,
+  getDadosDePvPorPatamar,
+  getCurrentHp,
   getTreeGrantedSkills,
   getSkillPaCost,
 } from "./selectors";
@@ -93,6 +95,41 @@ describe("PV Máximos (Cap. 4, §1)", () => {
   it("sem nenhum patamar, o corpo é só a constante de base", () => {
     expect(getTrainedBody(ficha())).toBe(PV_BASE);
     expect(getMaxHp(ficha())).toBe(PV_BASE);
+  });
+
+  it("um Dado de PV por patamar: cinco árvores no 1º contam como uma (o maior dado)", () => {
+    const umaArvore = ficha({ unlockedRanks: [{ treeId: "armas-pesadas", rank: "Principiante" }] });
+    const cincoArvores = ficha({
+      unlockedRanks: ["armas-pesadas", "deus-da-espada", "cavalaria-e-escudos", "deus-da-agua-corpo", "deus-do-norte"].map(
+        (treeId) => ({ treeId, rank: "Principiante" as const })
+      ),
+    });
+    // O Lutador tem o maior dado do 1º patamar (1d10+3): as outras quatro ficam de fora.
+    expect(getTrainedBody(cincoArvores)).toBe(getTrainedBody(umaArvore));
+    expect(getDadosDePvPorPatamar(cincoArvores)).toHaveLength(1);
+    expect(getDadosDePvPorPatamar(cincoArvores)[0]).toMatchObject({ treeId: "armas-pesadas", rank: "Principiante" });
+    expect(getDadosDePvPorPatamar(cincoArvores)[0].deFora).toHaveLength(4);
+  });
+
+  it("árvores em patamares diferentes: cada patamar soma o maior dado que chegou nele", () => {
+    const lutador2Fogo1 = ficha({
+      unlockedRanks: [
+        { treeId: "armas-pesadas", rank: "Principiante" },
+        { treeId: "armas-pesadas", rank: "Intermediário" },
+        { treeId: "fogo", rank: "Principiante" },
+      ],
+    });
+    const dados = getDadosDePvPorPatamar(lutador2Fogo1);
+    expect(dados.map((d) => [d.rank, d.treeId])).toEqual([
+      ["Principiante", "armas-pesadas"],
+      ["Intermediário", "armas-pesadas"],
+    ]);
+    expect(dados[0].deFora.map((d) => d.treeId)).toEqual(["fogo"]);
+  });
+
+  it("o PV salvo nunca passa do máximo (fichas salvas antes do Dado por patamar)", () => {
+    const salva = ficha({ unlockedRanks: [{ treeId: "fogo", rank: "Principiante" }], currentHp: 500 });
+    expect(getCurrentHp(salva)).toBe(getMaxHp(salva));
   });
 
   it("Vigor multiplica o corpo treinado, e o fator vem da tabela do livro", () => {
