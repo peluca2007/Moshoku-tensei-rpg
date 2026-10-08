@@ -63,3 +63,100 @@ export function aplicarEstadoInicial(alvo: Alvo, id: string, lado: "grupo" | "cr
   const comPreparacoes = alvo as Alvo & { efeitosAtivos?: Set<string> };
   for (const efeito of inicio.efeitosAtivos ?? []) comPreparacoes.efeitosAtivos?.add(efeito.toLowerCase());
 }
+
+/**
+ * COMO O PERSONAGEM CHEGA NA LUTA (2026-10-08, Tarefa 14d).
+ *
+ * Até aqui toda batalha começava com o grupo descansado: PV, PM, PT e PP no
+ * máximo. Isso mede uma luta, não um dia. A pergunta que o livro precisa
+ * responder — o mago chega na quarta luta do dia com alguma coisa? — pede que
+ * o encontro comece de onde o anterior terminou.
+ *
+ * Cada campo ausente fica no máximo da ficha (o comportamento antigo). Os
+ * máximos não mudam: chegar ferido não encolhe a reserva.
+ */
+export interface ReservasIniciais {
+  pv?: number;
+  pm?: number;
+  pt?: number;
+  pp?: number;
+  /** 0 a 6. A partir de 3, Desvantagem nos ataques (como já acontece na luta). */
+  exaustao?: number;
+  /** A 0 PV: as Marcas da Morte que ele traz da luta anterior. */
+  marcasDaMorte?: number;
+  /**
+   * A 0 PV: estabilizado não rola o Fio da Vida. Padrão `true` — quem chega
+   * caído numa luta nova foi, quase sempre, estabilizado depois da anterior.
+   */
+  estabilizado?: boolean;
+  /** Morto não volta: não age, não é alvo de cura, conta como caído. */
+  morto?: boolean;
+}
+
+/** O retrato de um personagem no fim de uma batalha: a entrada da próxima. */
+export interface EstadoFinalDoPersonagem extends Required<ReservasIniciais> {
+  id: string;
+  /** Chegou a 0 PV em algum momento desta batalha, mesmo que tenha sido levantado. */
+  caiu: boolean;
+  /** Está a 0 PV no fim (inconsciente, estabilizado ou não). */
+  inconsciente: boolean;
+}
+
+interface EstadoComReservas extends Alvo {
+  ficha: { pvMax: number; pmMax: number; ptMax: number; ppMax?: number };
+  pm: number;
+  pt: number;
+  pp: number;
+  exaustao: number;
+}
+
+const limitar = (valor: number | undefined, maximo: number) =>
+  valor === undefined || !Number.isFinite(valor) ? maximo : Math.max(0, Math.min(maximo, Math.floor(valor)));
+
+/**
+ * Aplica as reservas de chegada a um personagem recém-criado (`novoEstado`).
+ * A 0 PV ele entra como o Fio da Vida o deixaria: caído e fora da luta, com as
+ * Marcas que trouxe; com 3 Marcas, ou `morto`, entra morto.
+ */
+export function aplicarReservasIniciais(e: EstadoComReservas, r: ReservasIniciais | undefined): void {
+  if (!r) return;
+  e.pv = limitar(r.pv, e.ficha.pvMax);
+  e.pm = limitar(r.pm, e.ficha.pmMax);
+  e.pt = limitar(r.pt, e.ficha.ptMax);
+  e.pp = limitar(r.pp, e.ficha.ppMax ?? 0);
+  e.exaustao = limitar(r.exaustao ?? 0, 6);
+  e.marcasDaMorte = limitar(r.marcasDaMorte ?? 0, 3);
+  if (r.morto || e.marcasDaMorte >= 3) {
+    e.pv = 0;
+    e.vivo = false;
+    e.inconsciente = false;
+    e.morto = true;
+    return;
+  }
+  if (e.pv <= 0) {
+    e.pv = 0;
+    e.vivo = false;
+    e.inconsciente = true;
+    e.estabilizado = r.estabilizado ?? true;
+  } else {
+    // De pé, as Marcas não existem: qualquer cura as apaga, e acordar também.
+    e.marcasDaMorte = 0;
+  }
+}
+
+/** Lê o estado final de um personagem, no formato que a próxima luta aceita. */
+export function estadoFinal(id: string, e: EstadoComReservas, caiu: boolean): EstadoFinalDoPersonagem {
+  return {
+    id,
+    pv: Math.max(0, e.pv),
+    pm: e.pm,
+    pt: e.pt,
+    pp: e.pp,
+    exaustao: e.exaustao,
+    marcasDaMorte: e.marcasDaMorte,
+    estabilizado: e.estabilizado,
+    morto: e.morto,
+    inconsciente: e.inconsciente,
+    caiu,
+  };
+}
