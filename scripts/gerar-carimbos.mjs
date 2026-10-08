@@ -137,3 +137,36 @@ const svg =
 const saida = path.join(RAIZ, "public", "livro", "carimbos.svg");
 writeFileSync(saida, svg);
 console.log(`${selos.length} carimbos · ${(Buffer.byteLength(svg) / 1024).toFixed(1)} KB → ${path.relative(RAIZ, saida)}`);
+
+// ── Os nomes em japonês, na vertical, e o selo solto (2026-10-08) ────────────
+// Pro cabeçalho de cada árvore (o 火魔術 em pé) e pra marca d'água gigante das
+// páginas dela, que eram texto na fonte do aparelho. Um arquivo por uso, só
+// forma (preto): o livro usa como máscara e pinta com a cor que já estava lá.
+// Cada página carrega só os da árvore que mostra (~1 a 4 KB cada).
+import { mkdirSync } from "node:fs";
+const nomes = [...identidade.matchAll(/"?([a-z-]+)"?: identidade\("#[0-9a-f]{6}", "([^"]+)", "(.)"\)/g)].map((m) => ({ id: m[1], jp: m[2], selo: m[3] }));
+const pastaKanji = path.join(RAIZ, "public", "livro", "kanji");
+mkdirSync(pastaKanji, { recursive: true });
+const upm = font.unitsPerEm;
+function glifoEm(char, x, y, tamanho) {
+  const g = font.charToGlyph(char);
+  if (!g || g.index === 0) throw new Error(`O kanji ${char} não está na fonte.`);
+  return g.getPath(x, y, tamanho);
+}
+let bytes = 0;
+for (const { id, jp, selo } of nomes) {
+  // Vertical: uma casa de 1000 por kanji, centrado na casa.
+  const partes = [...jp].map((c, i) => {
+    const p = glifoEm(c, 0, 0, upm);
+    const cx = p.getBoundingBox();
+    const dx = 500 - (cx.x1 + cx.x2) / 2, dy = i * 1000 + 500 - (cx.y1 + cx.y2) / 2;
+    return relativo(glifoEm(c, dx, dy, upm).commands);
+  });
+  const vertical = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 ${jp.length * 1000}"><path d="${partes.join("")}"/></svg>`;
+  const s = glifoEm(selo, 0, 0, upm).getBoundingBox();
+  const solto = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="${relativo(glifoEm(selo, 500 - (s.x1 + s.x2) / 2, 500 - (s.y1 + s.y2) / 2, upm).commands)}"/></svg>`;
+  writeFileSync(path.join(pastaKanji, `${id}.svg`), vertical);
+  writeFileSync(path.join(pastaKanji, `${id}-selo.svg`), solto);
+  bytes += vertical.length + solto.length;
+}
+console.log(`${nomes.length * 2} desenhos de kanji · ${(bytes / 1024).toFixed(1)} KB → public/livro/kanji/`);
