@@ -50,6 +50,18 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.148",
+    date: "2026-10-07",
+    title: "Três Frases que Contavam Outra Regra",
+    sections: [
+      { area: "livro", heading: "Correções achadas na revisão do sistema", items: [
+        "O crítico (Cap. 4, §6) citava \"O Ponto, do Suishin-ryū\" como exemplo de habilidade que fura Resistência. O Ponto é a etapa opcional do Tiro Perfeito, da Arquearia; o Deus da Água não tem nada parecido.",
+        "\"Quanto a Utilidade bate\" (Cap. 3) ainda dava à Dissonância do Bardo 6d4 no Imperador. Desde que ela passou a 1d6 por patamar, são 6d6 (uns 21). O número do Deus do Norte na mesma frase dizia 81 enquanto o Apêndice C dizia 87; agora a frase lê o Apêndice C.",
+        "O Teste de Concentração do Cap. 4, §3 pedia só \"um teste de Espírito\". A regra do Cap. 2, §6 soma também metade do maior Bônus de Rank, e agora as duas dizem o mesmo.",
+      ] },
+    ],
+  },
+  {
     version: "0.1.147",
     date: "2026-10-05",
     title: "O Golpe que a Carta Não Escrevia",
