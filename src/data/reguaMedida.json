@@ -1,0 +1,920 @@
+{
+ "metodo": "Cada número é o dano médio por turno de um personagem que vive naquela árvore, medido pelo mesmo simulador do /encontros. O personagem abre todos os ranks da árvore até o patamar, faz até quatro compras por rank (as de combate primeiro) e tem o truque da escola; o atributo principal sobe de 4 (1º) a 8 (6º), com o kit inicial da árvore. Ele luta num grupo de quatro, ao lado de um Deus do Norte, um mago de Fogo e um curandeiro do mesmo patamar, contra cinco criaturas do molde do patamar (Apêndice G), que escolhem o alvo ao acaso. O primeiro número é essa luta: conta o acerto rolado, o recurso que acaba, a área que pega mais de um e o turno perdido de quem cai. O segundo é a mesma luta contra uma criatura só, com o PV das cinco somado: mostra o dano de quem não cai e não tem com quem dividir a área. Média de várias centenas de lutas, com semente fixa; o turno é a rodada inteira da luta, do começo até o fim.",
+ "batalhas": 200,
+ "semente": 20261008,
+ "hash": "5367d2d1331c4eb9",
+ "linhas": [
+  {
+   "treeId": "agua",
+   "patamar": 1,
+   "grupo": 11.3,
+   "alvo": 19.7,
+   "cura": 0,
+   "sobrevive": 0.235
+  },
+  {
+   "treeId": "agua",
+   "patamar": 2,
+   "grupo": 13.3,
+   "alvo": 21.1,
+   "cura": 0,
+   "sobrevive": 0.28
+  },
+  {
+   "treeId": "agua",
+   "patamar": 3,
+   "grupo": 19.4,
+   "alvo": 21.7,
+   "cura": 0,
+   "sobrevive": 0.18
+  },
+  {
+   "treeId": "agua",
+   "patamar": 4,
+   "grupo": 39.4,
+   "alvo": 23.1,
+   "cura": 0,
+   "sobrevive": 0.265
+  },
+  {
+   "treeId": "agua",
+   "patamar": 5,
+   "grupo": 43.6,
+   "alvo": 26,
+   "cura": 0,
+   "sobrevive": 0.265
+  },
+  {
+   "treeId": "agua",
+   "patamar": 6,
+   "grupo": 51.3,
+   "alvo": 27.5,
+   "cura": 0,
+   "sobrevive": 0.275
+  },
+  {
+   "treeId": "fogo",
+   "patamar": 1,
+   "grupo": 8.7,
+   "alvo": 14.6,
+   "cura": 0,
+   "sobrevive": 0.18
+  },
+  {
+   "treeId": "fogo",
+   "patamar": 2,
+   "grupo": 13.3,
+   "alvo": 20.4,
+   "cura": 0,
+   "sobrevive": 0.34
+  },
+  {
+   "treeId": "fogo",
+   "patamar": 3,
+   "grupo": 81,
+   "alvo": 23.7,
+   "cura": 0,
+   "sobrevive": 0.55
+  },
+  {
+   "treeId": "fogo",
+   "patamar": 4,
+   "grupo": 128.7,
+   "alvo": 24.9,
+   "cura": 0,
+   "sobrevive": 0.595
+  },
+  {
+   "treeId": "fogo",
+   "patamar": 5,
+   "grupo": 157.9,
+   "alvo": 31.8,
+   "cura": 0,
+   "sobrevive": 0.685
+  },
+  {
+   "treeId": "fogo",
+   "patamar": 6,
+   "grupo": 203.7,
+   "alvo": 28.2,
+   "cura": 0,
+   "sobrevive": 0.735
+  },
+  {
+   "treeId": "vento",
+   "patamar": 1,
+   "grupo": 9.3,
+   "alvo": 15.9,
+   "cura": 0,
+   "sobrevive": 0.17
+  },
+  {
+   "treeId": "vento",
+   "patamar": 2,
+   "grupo": 25,
+   "alvo": 24.2,
+   "cura": 0,
+   "sobrevive": 0.515
+  },
+  {
+   "treeId": "vento",
+   "patamar": 3,
+   "grupo": 23.6,
+   "alvo": 12.5,
+   "cura": 0,
+   "sobrevive": 0.15
+  },
+  {
+   "treeId": "vento",
+   "patamar": 4,
+   "grupo": 47.6,
+   "alvo": 17.3,
+   "cura": 0,
+   "sobrevive": 0.485
+  },
+  {
+   "treeId": "vento",
+   "patamar": 5,
+   "grupo": 49.9,
+   "alvo": 17.3,
+   "cura": 0,
+   "sobrevive": 0.485
+  },
+  {
+   "treeId": "vento",
+   "patamar": 6,
+   "grupo": 62.8,
+   "alvo": 18.4,
+   "cura": 0,
+   "sobrevive": 0.54
+  },
+  {
+   "treeId": "terra",
+   "patamar": 1,
+   "grupo": 9.1,
+   "alvo": 15.9,
+   "cura": 0,
+   "sobrevive": 0.165
+  },
+  {
+   "treeId": "terra",
+   "patamar": 2,
+   "grupo": 13.1,
+   "alvo": 18.5,
+   "cura": 0,
+   "sobrevive": 0.33
+  },
+  {
+   "treeId": "terra",
+   "patamar": 3,
+   "grupo": 94.2,
+   "alvo": 19.4,
+   "cura": 0,
+   "sobrevive": 0.685
+  },
+  {
+   "treeId": "terra",
+   "patamar": 4,
+   "grupo": 45.9,
+   "alvo": 20,
+   "cura": 0,
+   "sobrevive": 0.425
+  },
+  {
+   "treeId": "terra",
+   "patamar": 5,
+   "grupo": 51.8,
+   "alvo": 22.7,
+   "cura": 0,
+   "sobrevive": 0.39
+  },
+  {
+   "treeId": "terra",
+   "patamar": 6,
+   "grupo": 55.5,
+   "alvo": 20.2,
+   "cura": 0,
+   "sobrevive": 0.3
+  },
+  {
+   "treeId": "cura",
+   "patamar": 1,
+   "grupo": 1.8,
+   "alvo": 4,
+   "cura": 7.2,
+   "sobrevive": 0.43
+  },
+  {
+   "treeId": "cura",
+   "patamar": 2,
+   "grupo": 1.6,
+   "alvo": 3.2,
+   "cura": 12,
+   "sobrevive": 0.595
+  },
+  {
+   "treeId": "cura",
+   "patamar": 3,
+   "grupo": 0.6,
+   "alvo": 2,
+   "cura": 12.7,
+   "sobrevive": 0.255
+  },
+  {
+   "treeId": "cura",
+   "patamar": 4,
+   "grupo": 0.3,
+   "alvo": 1.2,
+   "cura": 14.7,
+   "sobrevive": 0.22
+  },
+  {
+   "treeId": "cura",
+   "patamar": 5,
+   "grupo": 0.3,
+   "alvo": 7.9,
+   "cura": 15.9,
+   "sobrevive": 0.225
+  },
+  {
+   "treeId": "cura",
+   "patamar": 6,
+   "grupo": 35.3,
+   "alvo": 8.9,
+   "cura": 19,
+   "sobrevive": 0.39
+  },
+  {
+   "treeId": "desintoxicacao",
+   "patamar": 1,
+   "grupo": 8.7,
+   "alvo": 9.5,
+   "cura": 0,
+   "sobrevive": 0.25
+  },
+  {
+   "treeId": "desintoxicacao",
+   "patamar": 2,
+   "grupo": 11.1,
+   "alvo": 11.8,
+   "cura": 0,
+   "sobrevive": 0.425
+  },
+  {
+   "treeId": "desintoxicacao",
+   "patamar": 3,
+   "grupo": 21.5,
+   "alvo": 11.9,
+   "cura": 0,
+   "sobrevive": 0.25
+  },
+  {
+   "treeId": "desintoxicacao",
+   "patamar": 4,
+   "grupo": 29.4,
+   "alvo": 14.9,
+   "cura": 0,
+   "sobrevive": 0.415
+  },
+  {
+   "treeId": "desintoxicacao",
+   "patamar": 5,
+   "grupo": 36.6,
+   "alvo": 21.4,
+   "cura": 0,
+   "sobrevive": 0.475
+  },
+  {
+   "treeId": "desintoxicacao",
+   "patamar": 6,
+   "grupo": 42.4,
+   "alvo": 20.9,
+   "cura": 0,
+   "sobrevive": 0.385
+  },
+  {
+   "treeId": "teorica",
+   "patamar": 1,
+   "grupo": 6,
+   "alvo": 10.6,
+   "cura": 0,
+   "sobrevive": 0.12
+  },
+  {
+   "treeId": "teorica",
+   "patamar": 2,
+   "grupo": 9.2,
+   "alvo": 13.5,
+   "cura": 0,
+   "sobrevive": 0.22
+  },
+  {
+   "treeId": "teorica",
+   "patamar": 3,
+   "grupo": 12.7,
+   "alvo": 10.5,
+   "cura": 0,
+   "sobrevive": 0.125
+  },
+  {
+   "treeId": "teorica",
+   "patamar": 4,
+   "grupo": 13.8,
+   "alvo": 10.8,
+   "cura": 0,
+   "sobrevive": 0.11
+  },
+  {
+   "treeId": "teorica",
+   "patamar": 5,
+   "grupo": 14.5,
+   "alvo": 13.9,
+   "cura": 0,
+   "sobrevive": 0.13
+  },
+  {
+   "treeId": "teorica",
+   "patamar": 6,
+   "grupo": 16.7,
+   "alvo": 14.1,
+   "cura": 0,
+   "sobrevive": 0.12
+  },
+  {
+   "treeId": "invocacao",
+   "patamar": 1,
+   "grupo": 8,
+   "alvo": 14.5,
+   "cura": 0,
+   "sobrevive": 0.435
+  },
+  {
+   "treeId": "invocacao",
+   "patamar": 2,
+   "grupo": 11.4,
+   "alvo": 15.4,
+   "cura": 0,
+   "sobrevive": 0.665
+  },
+  {
+   "treeId": "invocacao",
+   "patamar": 3,
+   "grupo": 15.5,
+   "alvo": 22.6,
+   "cura": 0,
+   "sobrevive": 0.66
+  },
+  {
+   "treeId": "invocacao",
+   "patamar": 4,
+   "grupo": 24.2,
+   "alvo": 34.2,
+   "cura": 0,
+   "sobrevive": 0.815
+  },
+  {
+   "treeId": "invocacao",
+   "patamar": 5,
+   "grupo": 27.3,
+   "alvo": 36.8,
+   "cura": 0,
+   "sobrevive": 0.8
+  },
+  {
+   "treeId": "invocacao",
+   "patamar": 6,
+   "grupo": 38.8,
+   "alvo": 48.1,
+   "cura": 0,
+   "sobrevive": 0.9
+  },
+  {
+   "treeId": "deus-da-espada",
+   "patamar": 1,
+   "grupo": 18.4,
+   "alvo": 23.8,
+   "cura": 0,
+   "sobrevive": 0.525
+  },
+  {
+   "treeId": "deus-da-espada",
+   "patamar": 2,
+   "grupo": 24.9,
+   "alvo": 30.9,
+   "cura": 0,
+   "sobrevive": 0.65
+  },
+  {
+   "treeId": "deus-da-espada",
+   "patamar": 3,
+   "grupo": 39.3,
+   "alvo": 47.5,
+   "cura": 0,
+   "sobrevive": 0.55
+  },
+  {
+   "treeId": "deus-da-espada",
+   "patamar": 4,
+   "grupo": 53.8,
+   "alvo": 62.1,
+   "cura": 0,
+   "sobrevive": 0.64
+  },
+  {
+   "treeId": "deus-da-espada",
+   "patamar": 5,
+   "grupo": 72.8,
+   "alvo": 89.2,
+   "cura": 0,
+   "sobrevive": 0.705
+  },
+  {
+   "treeId": "deus-da-espada",
+   "patamar": 6,
+   "grupo": 102.9,
+   "alvo": 121,
+   "cura": 0,
+   "sobrevive": 0.785
+  },
+  {
+   "treeId": "deus-do-norte",
+   "patamar": 1,
+   "grupo": 18.7,
+   "alvo": 22.5,
+   "cura": 0,
+   "sobrevive": 0.575
+  },
+  {
+   "treeId": "deus-do-norte",
+   "patamar": 2,
+   "grupo": 19.9,
+   "alvo": 24.3,
+   "cura": 0,
+   "sobrevive": 0.555
+  },
+  {
+   "treeId": "deus-do-norte",
+   "patamar": 3,
+   "grupo": 25.2,
+   "alvo": 33.2,
+   "cura": 0,
+   "sobrevive": 0.365
+  },
+  {
+   "treeId": "deus-do-norte",
+   "patamar": 4,
+   "grupo": 37.9,
+   "alvo": 43.4,
+   "cura": 0,
+   "sobrevive": 0.47
+  },
+  {
+   "treeId": "deus-do-norte",
+   "patamar": 5,
+   "grupo": 73.1,
+   "alvo": 57.7,
+   "cura": 0,
+   "sobrevive": 0.655
+  },
+  {
+   "treeId": "deus-do-norte",
+   "patamar": 6,
+   "grupo": 84.7,
+   "alvo": 76.9,
+   "cura": 0,
+   "sobrevive": 0.66
+  },
+  {
+   "treeId": "deus-da-agua-corpo",
+   "patamar": 1,
+   "grupo": 18.3,
+   "alvo": 20.6,
+   "cura": 0,
+   "sobrevive": 0.71
+  },
+  {
+   "treeId": "deus-da-agua-corpo",
+   "patamar": 2,
+   "grupo": 20.1,
+   "alvo": 22.6,
+   "cura": 0,
+   "sobrevive": 0.775
+  },
+  {
+   "treeId": "deus-da-agua-corpo",
+   "patamar": 3,
+   "grupo": 25.1,
+   "alvo": 32.4,
+   "cura": 0,
+   "sobrevive": 0.655
+  },
+  {
+   "treeId": "deus-da-agua-corpo",
+   "patamar": 4,
+   "grupo": 30.9,
+   "alvo": 39.2,
+   "cura": 0,
+   "sobrevive": 0.75
+  },
+  {
+   "treeId": "deus-da-agua-corpo",
+   "patamar": 5,
+   "grupo": 37.8,
+   "alvo": 45.9,
+   "cura": 0,
+   "sobrevive": 0.67
+  },
+  {
+   "treeId": "deus-da-agua-corpo",
+   "patamar": 6,
+   "grupo": 44.5,
+   "alvo": 47.4,
+   "cura": 0,
+   "sobrevive": 0.56
+  },
+  {
+   "treeId": "arquearia",
+   "patamar": 1,
+   "grupo": 17.1,
+   "alvo": 18.5,
+   "cura": 0,
+   "sobrevive": 0.62
+  },
+  {
+   "treeId": "arquearia",
+   "patamar": 2,
+   "grupo": 19.1,
+   "alvo": 20.6,
+   "cura": 0,
+   "sobrevive": 0.605
+  },
+  {
+   "treeId": "arquearia",
+   "patamar": 3,
+   "grupo": 24.3,
+   "alvo": 28.3,
+   "cura": 0,
+   "sobrevive": 0.525
+  },
+  {
+   "treeId": "arquearia",
+   "patamar": 4,
+   "grupo": 32,
+   "alvo": 38,
+   "cura": 0,
+   "sobrevive": 0.6
+  },
+  {
+   "treeId": "arquearia",
+   "patamar": 5,
+   "grupo": 38.3,
+   "alvo": 46.7,
+   "cura": 0,
+   "sobrevive": 0.57
+  },
+  {
+   "treeId": "arquearia",
+   "patamar": 6,
+   "grupo": 102.2,
+   "alvo": 58.3,
+   "cura": 0,
+   "sobrevive": 0.725
+  },
+  {
+   "treeId": "armas-pesadas",
+   "patamar": 1,
+   "grupo": 17.1,
+   "alvo": 20.8,
+   "cura": 0,
+   "sobrevive": 0.55
+  },
+  {
+   "treeId": "armas-pesadas",
+   "patamar": 2,
+   "grupo": 21.5,
+   "alvo": 26.6,
+   "cura": 0,
+   "sobrevive": 0.625
+  },
+  {
+   "treeId": "armas-pesadas",
+   "patamar": 3,
+   "grupo": 31,
+   "alvo": 41.8,
+   "cura": 0,
+   "sobrevive": 0.525
+  },
+  {
+   "treeId": "armas-pesadas",
+   "patamar": 4,
+   "grupo": 41.3,
+   "alvo": 57,
+   "cura": 0,
+   "sobrevive": 0.615
+  },
+  {
+   "treeId": "armas-pesadas",
+   "patamar": 5,
+   "grupo": 49.9,
+   "alvo": 71.6,
+   "cura": 0,
+   "sobrevive": 0.63
+  },
+  {
+   "treeId": "armas-pesadas",
+   "patamar": 6,
+   "grupo": 63.5,
+   "alvo": 93.8,
+   "cura": 0,
+   "sobrevive": 0.64
+  },
+  {
+   "treeId": "cavalaria-e-escudos",
+   "patamar": 1,
+   "grupo": 16.5,
+   "alvo": 18.1,
+   "cura": 0,
+   "sobrevive": 0.62
+  },
+  {
+   "treeId": "cavalaria-e-escudos",
+   "patamar": 2,
+   "grupo": 17.3,
+   "alvo": 18.7,
+   "cura": 0,
+   "sobrevive": 0.825
+  },
+  {
+   "treeId": "cavalaria-e-escudos",
+   "patamar": 3,
+   "grupo": 2.8,
+   "alvo": 14.5,
+   "cura": 0,
+   "sobrevive": 0.88
+  },
+  {
+   "treeId": "cavalaria-e-escudos",
+   "patamar": 4,
+   "grupo": 4.9,
+   "alvo": 16.3,
+   "cura": 0,
+   "sobrevive": 0.845
+  },
+  {
+   "treeId": "cavalaria-e-escudos",
+   "patamar": 5,
+   "grupo": 2.7,
+   "alvo": 17.4,
+   "cura": 0,
+   "sobrevive": 0.97
+  },
+  {
+   "treeId": "cavalaria-e-escudos",
+   "patamar": 6,
+   "grupo": 4.2,
+   "alvo": 21.6,
+   "cura": 0,
+   "sobrevive": 0.93
+  },
+  {
+   "treeId": "furtividade-e-armadilhas",
+   "patamar": 1,
+   "grupo": 13.1,
+   "alvo": 15.3,
+   "cura": 0,
+   "sobrevive": 0.415
+  },
+  {
+   "treeId": "furtividade-e-armadilhas",
+   "patamar": 2,
+   "grupo": 18,
+   "alvo": 22.1,
+   "cura": 0,
+   "sobrevive": 0.62
+  },
+  {
+   "treeId": "furtividade-e-armadilhas",
+   "patamar": 3,
+   "grupo": 28.1,
+   "alvo": 25.7,
+   "cura": 0,
+   "sobrevive": 0.42
+  },
+  {
+   "treeId": "furtividade-e-armadilhas",
+   "patamar": 4,
+   "grupo": 35.3,
+   "alvo": 28.9,
+   "cura": 0,
+   "sobrevive": 0.495
+  },
+  {
+   "treeId": "furtividade-e-armadilhas",
+   "patamar": 5,
+   "grupo": 37.3,
+   "alvo": 31.7,
+   "cura": 0,
+   "sobrevive": 0.425
+  },
+  {
+   "treeId": "furtividade-e-armadilhas",
+   "patamar": 6,
+   "grupo": 37.5,
+   "alvo": 29,
+   "cura": 0,
+   "sobrevive": 0.25
+  },
+  {
+   "treeId": "navegacao-e-lideranca",
+   "patamar": 1,
+   "grupo": 14.5,
+   "alvo": 19.7,
+   "cura": 0,
+   "sobrevive": 0.335
+  },
+  {
+   "treeId": "navegacao-e-lideranca",
+   "patamar": 2,
+   "grupo": 21.6,
+   "alvo": 27.7,
+   "cura": 0,
+   "sobrevive": 0.425
+  },
+  {
+   "treeId": "navegacao-e-lideranca",
+   "patamar": 3,
+   "grupo": 26.6,
+   "alvo": 34,
+   "cura": 0,
+   "sobrevive": 0.27
+  },
+  {
+   "treeId": "navegacao-e-lideranca",
+   "patamar": 4,
+   "grupo": 33.1,
+   "alvo": 41.3,
+   "cura": 0,
+   "sobrevive": 0.43
+  },
+  {
+   "treeId": "navegacao-e-lideranca",
+   "patamar": 5,
+   "grupo": 101.2,
+   "alvo": 71.4,
+   "cura": 0,
+   "sobrevive": 0.84
+  },
+  {
+   "treeId": "navegacao-e-lideranca",
+   "patamar": 6,
+   "grupo": 146.9,
+   "alvo": 83.1,
+   "cura": 0,
+   "sobrevive": 0.74
+  },
+  {
+   "treeId": "bardo-e-interacao",
+   "patamar": 1,
+   "grupo": 7.2,
+   "alvo": 8.5,
+   "cura": 0,
+   "sobrevive": 0.52
+  },
+  {
+   "treeId": "bardo-e-interacao",
+   "patamar": 2,
+   "grupo": 15.8,
+   "alvo": 12.8,
+   "cura": 0,
+   "sobrevive": 0.655
+  },
+  {
+   "treeId": "bardo-e-interacao",
+   "patamar": 3,
+   "grupo": 24,
+   "alvo": 17.2,
+   "cura": 0,
+   "sobrevive": 0.42
+  },
+  {
+   "treeId": "bardo-e-interacao",
+   "patamar": 4,
+   "grupo": 32.4,
+   "alvo": 19.9,
+   "cura": 0,
+   "sobrevive": 0.425
+  },
+  {
+   "treeId": "bardo-e-interacao",
+   "patamar": 5,
+   "grupo": 44.8,
+   "alvo": 20.7,
+   "cura": 0,
+   "sobrevive": 0.39
+  },
+  {
+   "treeId": "bardo-e-interacao",
+   "patamar": 6,
+   "grupo": 53.4,
+   "alvo": 20.7,
+   "cura": 0,
+   "sobrevive": 0.295
+  },
+  {
+   "treeId": "vendaval",
+   "patamar": 1,
+   "grupo": 15,
+   "alvo": 18,
+   "cura": 0,
+   "sobrevive": 0.405
+  },
+  {
+   "treeId": "vendaval",
+   "patamar": 2,
+   "grupo": 27.1,
+   "alvo": 21.8,
+   "cura": 0,
+   "sobrevive": 0.715
+  },
+  {
+   "treeId": "vendaval",
+   "patamar": 3,
+   "grupo": 48.7,
+   "alvo": 32.4,
+   "cura": 0,
+   "sobrevive": 0.67
+  },
+  {
+   "treeId": "vendaval",
+   "patamar": 4,
+   "grupo": 65.5,
+   "alvo": 41.1,
+   "cura": 0,
+   "sobrevive": 0.63
+  },
+  {
+   "treeId": "vendaval",
+   "patamar": 5,
+   "grupo": 80.1,
+   "alvo": 51.6,
+   "cura": 0,
+   "sobrevive": 0.63
+  },
+  {
+   "treeId": "vendaval",
+   "patamar": 6,
+   "grupo": 97.7,
+   "alvo": 58.3,
+   "cura": 0,
+   "sobrevive": 0.725
+  },
+  {
+   "treeId": "punho-de-fogo",
+   "patamar": 1,
+   "grupo": 18.3,
+   "alvo": 21.7,
+   "cura": 0,
+   "sobrevive": 0.685
+  },
+  {
+   "treeId": "punho-de-fogo",
+   "patamar": 2,
+   "grupo": 40,
+   "alvo": 26.5,
+   "cura": 0,
+   "sobrevive": 0.925
+  },
+  {
+   "treeId": "punho-de-fogo",
+   "patamar": 3,
+   "grupo": 33.9,
+   "alvo": 37.5,
+   "cura": 0,
+   "sobrevive": 0.62
+  },
+  {
+   "treeId": "punho-de-fogo",
+   "patamar": 4,
+   "grupo": 49.6,
+   "alvo": 60.3,
+   "cura": 0,
+   "sobrevive": 0.665
+  },
+  {
+   "treeId": "punho-de-fogo",
+   "patamar": 5,
+   "grupo": 110,
+   "alvo": 60,
+   "cura": 0,
+   "sobrevive": 0.905
+  },
+  {
+   "treeId": "punho-de-fogo",
+   "patamar": 6,
+   "grupo": 121.3,
+   "alvo": 76.5,
+   "cura": 0,
+   "sobrevive": 0.95
+  }
+ ]
+}

@@ -16,15 +16,15 @@ import { AberturaDoPilar, Sistema } from "./Pilar";
 import CarimboQueCai from "./CarimboQueCai";
 import Carimbo from "../Carimbo";
 import { PREPARACOES } from "@/data/preparacoes";
-import { DANO_POR_TURNO_CORPO } from "@/data/danoPorTurno";
+import { celulaMedida } from "@/data/danoPorTurno";
 
 /**
  * O número do Norte em "Quanto a Utilidade bate" sai da régua do Apêndice C.
- * Escrito à mão, ele dizia 81 enquanto o Apêndice dizia 87 (2026-10-07).
+ * Escrito à mão, ele dizia 81 enquanto o Apêndice dizia 87 (2026-10-07). Desde
+ * 2026-10-08 a régua é medida: aqui vai o número contra um alvo só, que é a
+ * comparação do parágrafo (o Dano Furtivo e a Ordem de Tiro são de um alvo).
  */
-const DANO_DO_NORTE_NO_IMPERADOR = (
-  DANO_POR_TURNO_CORPO.find((l) => l.patamar === "6º")?.porArvore["deus-do-norte"] ?? ""
-).replace("~", "");
+const DANO_DO_NORTE_NO_IMPERADOR = String(Math.round(celulaMedida("deus-do-norte", 6)?.alvo ?? 0));
 
 /**
  * @param arvoresAbertas  o catálogo das árvores já sai aberto do servidor. O
@@ -785,7 +785,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             (uns 21); a Dissonância do Bardo cobra <b>6d6</b> (uns 21) de até seis hostis que o ouçam; e a
             Ordem de Tiro do Tático põe <b>6d6</b> no golpe de um aliado — até 12d6, se ninguém acertar o
             alvo Apontado e você o apontar de novo. Um Deus do Norte Imperador bate cerca de{" "}
-            {DANO_DO_NORTE_NO_IMPERADOR} por turno (Apêndice C).
+            {DANO_DO_NORTE_NO_IMPERADOR} por turno contra um alvo só (Apêndice C).
           </P>
           <P>
             Ou seja: <b>uma árvore de Utilidade causa, sozinha, algo entre um terço e metade do dano de um
