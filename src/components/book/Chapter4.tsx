@@ -5,6 +5,53 @@ import { AnatomiaDoTurno, Cobertura, FioDaVida, OrdemDoDano, QuebrantadoEmpilha 
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_DO_FIO_DA_VIDA, ARTE_DO_TOUKI } from "@/data/midiaDeHabilidade";
 import { CONDICOES, ESTADOS_DE_REGRA } from "@/data/condicoes";
+import { getTreeById } from "@/data/trees";
+import { diceAverage } from "@/lib/dice";
+import { WEAPON_GROUPS } from "@/data/weaponGroups";
+
+/** "24/90 m": o alcance normal e o longo de um grupo de arma (Cap. 4, §3), lido do Cap. 1. */
+function alcanceDoGrupo(id: string): string {
+  const alcance = WEAPON_GROUPS.find((g) => g.id === id)?.alcance;
+  return alcance ? `${alcance.normal}/${alcance.longo} m` : "";
+}
+const ALCANCE_DO_ARCO = alcanceDoGrupo("arcos-e-bestas");
+const ALCANCE_DO_ARREMESSO = alcanceDoGrupo("arremesso");
+
+/**
+ * O exemplo do "um Dado de PV por patamar" (Cap. 4, §1), calculado dos dados
+ * das árvores, pra não defasar quando um Dado de PV mudar (2026-10-07).
+ */
+const EXEMPLO_DE_PV = (() => {
+  const vigor = 1;
+  const arvores = [
+    { id: "armas-pesadas", nome: "Lutador", patamares: 2 },
+    { id: "deus-do-norte", nome: "Norte", patamares: 1 },
+    { id: "fogo", nome: "Fogo", patamares: 1 },
+  ];
+  const patamares = (["1º", "2º"] as const).map((patamar, i) => {
+    const dados = arvores
+      .filter((a) => a.patamares > i)
+      .map((a) => {
+        const formula = getTreeById(a.id)?.ranks[i]?.hpDiceFormula ?? "0";
+        return { arvore: a.nome, formula, media: diceAverage(formula) };
+      })
+      .sort((x, y) => y.media - x.media);
+    return { patamar, dados, conta: dados[0]?.media ?? 0 };
+  });
+  const soma = patamares.reduce((total, p) => total + p.conta, 0);
+  const corpo = 14 + 1.67 * soma;
+  const fator = VIGOR_FACTOR_TABLE.find((v) => v.vigor === vigor)?.factor ?? 1;
+  const virgula = (n: number) => String(Math.round(n * 100) / 100).replace(".", ",");
+  return {
+    nome: "Kael",
+    vigor,
+    patamares,
+    soma,
+    corpo: virgula(corpo),
+    fator: virgula(fator),
+    pv: Math.floor(corpo * fator),
+  };
+})();
 
 export default function Chapter4() {
   return (
@@ -248,6 +295,8 @@ export default function Chapter4() {
         <List
           items={[
             <span key="alcance"><b>Alcance corpo a corpo:</b> 1,5 m — o espaço ao lado. Lança e alabarda alcançam 3 m. É desse alcance que o Ataque de Oportunidade (§4) fala.</span>,
+            <span key="distancia"><b>Alcance à distância:</b> toda arma que dispara ou se arremessa tem dois números, o alcance <b>normal</b> e o <b>longo</b> — Arcos e Bestas {ALCANCE_DO_ARCO}, Arremesso {ALCANCE_DO_ARREMESSO} (Cap. 1, §4). Até o normal, o ataque é comum; além dele e até o longo (a <b>distância longa</b>), Desvantagem; além do longo, não alcança. Quando uma carta diz &ldquo;alcance da arma&rdquo;, é o normal; &ldquo;alcance máximo&rdquo; é o longo.</span>,
+            <span key="colado"><b>Atirar colado:</b> disparar ou arremessar com uma criatura hostil a 1,5 m de você dá Desvantagem no ataque — ela está em cima da sua mira. Não provoca Ataque de Oportunidade: só sair do alcance provoca (§4).</span>,
             <span key="levantar"><b>Levantar-se:</b> quem está Caído gasta metade do Deslocamento de um Andar pra ficar de pé, e anda a outra metade com a mesma Ação.</span>,
             <span key="queda"><b>Queda:</b> 1d6 de dano de queda por 3 m de altura, até 20d6, e você fica Caído. É esse o &ldquo;dano de queda&rdquo; que as árvores citam.</span>,
             <span key="voo"><b>Voo:</b> voar é Andar pelo ar, pelo mesmo custo. Quem está no chão te alcança corpo a corpo se você estiver até 1,5 m acima do alcance normal dele. Se ficar Atordoado, Paralisado, Incapacitado ou a 0 PV no ar, você cai e sofre a queda acima.</span>,
