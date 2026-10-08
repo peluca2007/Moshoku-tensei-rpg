@@ -652,11 +652,11 @@ export default function Chapter4() {
           rows={[
             [
               "Curto (1 a 2 horas)",
-              "Recupera 25% dos seus PM e PP máximos (arredondado para baixo) e TODOS os seus PT. Pontos de Vida, só com Cuidar dos Ferimentos (abaixo)."
+              "Recupera 25% dos seus PV, PM e PP máximos (arredondado para baixo) e TODOS os seus PT. Com Cuidar dos Ferimentos (abaixo), os PV sobem mais."
             ],
             [
               "Longo (8 horas de sono seguro)",
-              "Recupera TODOS os seus PM, PP e PT. Recupera PV iguais ao seu Vigor + 2 × o seu maior Bônus de Rank (mínimo 1) — dormir fecha pouco."
+              "Recupera TODOS os seus PM, PP e PT. Recupera 25% dos PV máximos, como o Curto, mais o seu Vigor + 2 × o seu maior Bônus de Rank (mínimo 1) — dormir fecha pouco."
             ],
           ]}
         />
@@ -669,11 +669,11 @@ export default function Chapter4() {
           </P>
           <P>
             <b>PT são a exceção</b>, e voltam inteiros em qualquer Descanso Curto — é por isso que a tabela
-            acima os separa dos outros dois. O Touki é fôlego, não mana: recupera-se sentando.
+            acima os separa dos outros. O Touki é fôlego, não mana: recupera-se sentando.
           </P>
         </Warning>
         <Warning title="A Carne Não Fecha Sozinha">
-          <P>Um corte não some porque você dormiu: a noite devolve só o seu Vigor + 2 × o Bônus de Rank. Fechar a ferida de verdade tem três caminhos:</P>
+          <P>Um corte não some porque você sentou: cada Descanso Curto fecha um quarto dos seus PV, e a noite, um quarto e o seu Vigor + 2 × o Bônus de Rank. Com dois Curtos por dia, o descanso devolve metade de um corpo — o resto tem quatro caminhos:</P>
           <List
             items={[
               "Magia de Cura — rápida, cara em PM, do rank certo pro tipo de ferimento.",
@@ -684,8 +684,8 @@ export default function Chapter4() {
           />
           <P>
             A exceção é de sangue, não de regra: a Regeneração Profunda do Demônio Imortal fecha a carne
-            sozinha, mas só em combate. Fora dele, cada Descanso Curto devolve a ele PV iguais a 5 × o seu
-            Maior Bônus de Rank — e o teto de dois Curtos por dia continua valendo.
+            sozinha, mas só em combate. Fora dele, cada Descanso Curto devolve a ele, além do quarto que todo
+            mundo recebe, PV iguais a 5 × o seu Maior Bônus de Rank — e o teto de dois Curtos por dia continua valendo.
           </P>
           <P>
             <b>Cuidar dos Ferimentos.</b> Num Descanso Curto, quem tem a perícia Medicina e um Kit de

@@ -728,7 +728,7 @@ export function UmTurnoDeTouki() {
       titulo="Um turno de Touki"
       nota={
         <>
-          O PT é o único recurso que volta <b>inteiro</b> num Descanso Curto (PM e PP voltam a 25%). Guardar
+          O PT é o único recurso que volta <b>inteiro</b> num Descanso Curto (PV, PM e PP voltam 25%). Guardar
           Touki pro fim do dia é jogar fora: gaste nas lutas de antes do descanso. E o Manto não sai das
           bolinhas, nem quando elas acabam.
         </>

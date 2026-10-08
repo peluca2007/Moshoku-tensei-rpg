@@ -523,7 +523,7 @@ export const RACES: Race[] = [
       // que o Demônio volta ao máximo parado alguns minutos fora de combate, o
       // que quebra a campanha de atrito do Cap. 4 ("A Carne Não Fecha Sozinha").
       // A regeneração fica só em combate; fora dele, quem paga é o Descanso Curto.
-      "Regeneração Profunda: regenera PV iguais ao seu Maior Bônus de Rank (Cap. 1, §7) no início do seu turno, desde que esteja com mais de 0 PV. Só em combate. Fora dele, cada Descanso Curto devolve a você PV iguais a 5 × seu Maior Bônus de Rank (o teto de dois Descansos Curtos por dia, Cap. 4, §7, continua valendo).",
+      "Regeneração Profunda: regenera PV iguais ao seu Maior Bônus de Rank (Cap. 1, §7) no início do seu turno, desde que esteja com mais de 0 PV. Só em combate. Fora dele, cada Descanso Curto devolve a você, além dos 25% de todo mundo, PV iguais a 5 × seu Maior Bônus de Rank (o teto de dois Descansos Curtos por dia, Cap. 4, §7, continua valendo).",
       "+8 PV Máximos, permanentes.",
       "Descendência Divina: Vantagem em testes de resistência de Vigor contra veneno e doença (Cap. 4, §8).",
       "Línguas: Língua Humana (Comum) e Língua Demoníaca.",

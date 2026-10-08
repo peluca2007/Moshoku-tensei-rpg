@@ -605,7 +605,10 @@ export default function Appendices() {
           <P>
             <b>Encontro equilibrado = um número de criaturas do mesmo patamar do grupo igual ao número de
             jogadores.</b> Quatro jogadores no 3º patamar encaram quatro criaturas de 3º. É o encontro que
-            custa recursos e não mata ninguém — e um grupo com curandeiro aguenta de três a quatro deles por dia de aventura.
+            custa recursos e não mata ninguém — e custa bastante. Medido no simulador, um grupo vence o segundo do
+            dia quase sempre se fizer um Descanso Curto entre os dois — do 3º patamar em diante, só se o mago
+            não gastar todo o PM no primeiro — e o terceiro já é aposta. Dia com mais lutas pede encontros
+            Fáceis no meio, ou um Descanso Longo.
           </P>
           <P>
             <b>Trocar patamar por número</b>, para montar o resto: uma criatura <b>um patamar acima</b> vale
