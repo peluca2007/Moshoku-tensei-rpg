@@ -50,6 +50,38 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.149",
+    date: "2026-10-07",
+    title: "O Corpo Treina Uma Vez por Degrau",
+    sections: [
+      { area: "regras", heading: "Um Dado de PV por patamar (Cap. 4, §1)", items: [
+        "Em cada patamar conta só o maior Dado de PV entre as árvores que chegaram nele. Antes somavam todos: cinco árvores do Corpo no 1º patamar davam 100 PV com 15 PA, contra 52 PV de um Lutador no 2º que gastou o mesmo. Abrir árvore nova continua dando Maestria, técnica e PT; só não dá um segundo corpo.",
+        "O Cap. 4 ganhou um exemplo jogado, calculado dos dados (Kael: Lutador no 2º, Norte e Fogo no 1º, 52 PV). A Roxy do Apêndice A cai de 157 para 75 PV, o que combina com a professora de corpo frágil que o texto descreve.",
+        "Fichas salvas: quem tinha mais de uma árvore vê o PV Máximo menor. O PV atual nunca passa do máximo novo; ninguém abre a ficha com 157 de 75.",
+      ] },
+      { area: "regras", heading: "Alcance de arma à distância (Cap. 1, §4 e Cap. 4, §3)", items: [
+        "Arcos e Bestas têm alcance 24 m e longo 90 m; Arremesso, 9 m e 27 m. Além do normal e até o longo, Desvantagem. Atirar com um inimigo colado também dá Desvantagem, sem ataque de oportunidade.",
+        "Isso dá sentido a quatro coisas que citavam regra inexistente: a Maestria da Arquearia que tira a Desvantagem por distância longa, o \"alcance da arma\" e o \"alcance máximo\" das cartas, e o talento Passo e Tiro, que agora tira a Desvantagem de atirar colado (antes anulava um ataque de oportunidade que disparar nunca provocou).",
+      ] },
+      { area: "regras", heading: "Cuidar dos Ferimentos no Descanso Curto (Cap. 4, §7)", items: [
+        "Quem tem Medicina e um Kit de Primeiros Socorros trata o grupo no Descanso Curto: cada criatura recupera Vigor + 2 × o maior Bônus de Rank, o que uma noite de sono devolve. Um tratamento por criatura por descanso, 10 por kit. A Cura continua muito melhor, mas deixou de ser obrigatória: grupo sem curandeiro sangra mais, e não perde a campanha.",
+      ] },
+      { area: "regras", heading: "O Marcado da Arquearia funciona desde o 1º patamar", items: [
+        "Marcar com 1 Ação de observação e o +1 no acerto contra o Marcado desceram para a Maestria do Principiante. Antes só o Disparo Duplo marcava, e o efeito do Marcado para o arqueiro (ignorar Cobertura parcial) a Maestria dele já dava contra qualquer alvo. No Intermediário, marcar passa a ser de graça: o primeiro disparo que acerta, uma vez por turno, já marca.",
+      ] },
+      { area: "encontros", heading: "A recompensa sai sozinha (Apêndice G, \"A recompensa\")", items: [
+        "Cada criatura vale base do patamar (10 PO no 1º, dobrando até 320 no 6º) × papel × arquétipo × sub-arquétipo, e o encontro vale a soma. A Imunidade conta um patamar acima, como no Orçamento. O /encontros faz a conta, lista o valor de cada criatura e sorteia os itens; o Mestre ainda pode escrever outro valor.",
+        "O valor aparece inteiro, dividido pela moeda do sub-arquétipo. A besta não carrega moeda: antes o site transformava em moeda tudo o que a tralha não cobria, ao contrário do que o livro diz. O que a lista de espólio não cobre vira as partes valiosas do bicho, que vendem pelo preço cheio.",
+        "Três sub-arquétipos novos, Elemental, Dragônico e Planta, com oito espólios novos na loja: são 45 combinações de arquétipo e sub-arquétipo. Os dragões, as hidras, o Treant e a Serpente de Fogo do catálogo passaram para eles.",
+        "Os contratos da Guilda pagam a recompensa das criaturas que prometem (Cap. 5, §2).",
+      ] },
+      { area: "livro", heading: "Dois nomes que confundiam", items: [
+        "O talento de Imperador do Bardo \"A Marcha\" virou \"O Hino\": tinha o nome da canção MARCHA, que é outra coisa.",
+        "O Cap. 3 diz que a Preparação Perfeita do Rei é uma carta de 4 PA, e não um degrau gratuito do Tiro Perfeito.",
+      ] },
+    ],
+  },
+  {
     version: "0.1.148",
     date: "2026-10-07",
     title: "Três Frases que Contavam Outra Regra",
