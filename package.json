@@ -41,6 +41,7 @@
     "medir:folhear": "node scripts/medir-folhear.mjs",
     "balancear": "tsx scripts/balancear.mts",
     "check:fantasmas": "tsx scripts/check-fantasmas.mts",
+    "check:carimbos-pdf": "node scripts/check-carimbos-pdf.mjs",
     "check:numeros": "tsx scripts/check-numeros.mts",
     "medir:largura": "tsx scripts/medir-largura.mts",
     "medir:dia-de-aventura": "tsx scripts/medir-dia-de-aventura.mts"

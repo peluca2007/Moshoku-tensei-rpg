@@ -11,7 +11,7 @@ import { AbilityDef, CharacterData, RANK_BONUS, RANK_REQUIREMENTS, RankName, Tal
 import { CATEGORY_ACCENT, RANK_ACCENT } from "@/lib/rankColors";
 import { layoutRadialTree, RadialInputNode, PositionedNode, RadialEdge } from "@/lib/radialLayout";
 import { describeGrantedSkills } from "@/lib/treeSkills";
-import TreeCrest from "@/components/TreeCrest";
+import Carimbo from "@/components/Carimbo";
 import AbilityListItem from "./AbilityListItem";
 import { rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
 
@@ -505,7 +505,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
           Icon: iconForCategory(meta.tree.category),
           className: empty
             ? "bg-parchment-100 dark:bg-parchment-900 text-parchment-300 dark:text-parchment-700 border-parchment-300 dark:border-parchment-800"
-            : `${CATEGORY_ACCENT[meta.tree.category].solidBg} text-white border-white/80 shadow dark:border-parchment-950`,
+            : `bg-parchment-50 dark:bg-parchment-950 ${CATEGORY_ACCENT[meta.tree.category].border} shadow`,
         };
       }
       case "rank": {
@@ -769,8 +769,8 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
                           return { width: lado, height: lado };
                         })()}
                       />
-                      {node.meta.kind === "tree" && node.meta.tree.icon && !isTreeEmpty(node.meta.tree) ? (
-                        <TreeCrest tree={node.meta.tree} size={size - 6} rounded="rounded-full" />
+                      {node.meta.kind === "tree" && !isTreeEmpty(node.meta.tree) ? (
+                        <Carimbo treeId={node.meta.tree.id} tamanho={size - 6} />
                       ) : (
                         <Icon style={{ width: size * 0.5, height: size * 0.5 }} />
                       )}
@@ -784,6 +784,7 @@ export default function DestinyBoard({ initialFocusTreeId }: { initialFocusTreeI
         <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-lg border border-parchment-300 bg-parchment-100/90 px-2.5 py-1.5 shadow dark:border-parchment-700 dark:bg-parchment-800/90">
           <Search className="h-3.5 w-3.5 shrink-0 text-parchment-400" />
           <select
+            aria-label="Buscar árvore no mapa"
             value=""
             onChange={(e) => {
               if (e.target.value) focusOnTree(e.target.value);
@@ -931,7 +932,7 @@ function DetailPanel({ meta, showToast }: { meta: NodeMeta; showToast: (msg: str
         title={meta.tree.name}
         subtitle={meta.tree.subgroup}
         accentClass={CATEGORY_ACCENT[meta.tree.category].text}
-        crest={<TreeCrest tree={meta.tree} size={44} />}
+        crest={<Carimbo treeId={meta.tree.id} tamanho={44} />}
       >
         {empty ? (
           <p className="text-parchment-600 dark:text-parchment-400">Em Breve — conteúdo desta árvore ainda não foi escrito.</p>

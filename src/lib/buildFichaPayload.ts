@@ -30,6 +30,7 @@ import {
 import { rotuloDeAcoes } from "./rotuloDeAcoes";
 import { weaponGroupName } from "@/data/weaponGroups";
 import { rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
+import { temaDaFichaPdf } from "./temaDaFichaPdf";
 
 function actionLabel(ability: AbilityDef): string {
   if (ability.reaction) return "1 Reação";
@@ -49,6 +50,7 @@ function costLabel(kind: "ability" | "talent", def: AbilityDef | TalentDef): str
 }
 
 export interface FichaPayloadInputs {
+  tema?: string;
   character: CharacterData;
   race?: Race;
   background?: Background;
@@ -294,6 +296,7 @@ export function buildFichaPayload(input: FichaPayloadInputs): FichaPdfPayload {
   }
 
   return {
+    tema: temaDaFichaPdf(input.tema),
     name: character.name || "Sem nome",
     portrait: character.portrait,
     raceName: race?.name ?? "",
