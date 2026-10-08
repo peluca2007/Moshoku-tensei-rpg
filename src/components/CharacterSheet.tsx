@@ -58,6 +58,7 @@ import { linkDaFicha } from "@/lib/fichaLink";
 import { LIMITE_DISCORD, passaDoDiscord } from "@/lib/diagnosticoDeLink";
 import { compartilhar, usePodeCompartilhar } from "@/lib/compartilharNativo";
 import { BotaoQr, PainelQr } from "./QrDaFicha";
+import BotaoMesaRoblox from "./BotaoMesaRoblox";
 import { empacotarFicha } from "@/lib/fichaArquivo";
 import EmptyState from "@/components/ui/EmptyState";
 import ImagemDaFicha from "@/components/ui/ImagemDaFicha";
@@ -878,6 +879,9 @@ export default function CharacterSheet() {
                 porque um bloco de largura total dentro dela a quebrava.
               */}
               <BotaoQr aberto={qrAberto} aoAlternar={() => setQrAberto((v) => !v)} />
+
+              {/* Código para colar no painel da Mesa Moshoku no Roblox (lib/codigoDeMesa.ts). */}
+              <BotaoMesaRoblox key={character.id} character={character} />
             </div>
 
             {qrAberto && (
