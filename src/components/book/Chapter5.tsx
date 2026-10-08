@@ -108,7 +108,8 @@ export default function Chapter5() {
           contratos até o próprio Rank de Aventureiro. O <b>Perigo</b> é o patamar sugerido pra quem vai
           encarar, e a Guilda diz isso ao grupo antes de ele assinar. Calibre o Perigo pelo patamar do grupo,
           nunca pelo Rank — o Deus da Espada Rank F só pega contrato de F, mas nada impede que um contrato
-          de F venha etiquetado com Perigo de Santo.
+          de F venha etiquetado com Perigo de Santo. Quanto o contrato paga é a recompensa das criaturas que ele
+          promete (Apêndice G, &ldquo;A recompensa&rdquo;): o Perigo diz o patamar, e o patamar diz a base.
         </Aside>
 
         <SubTitle>A Loja da Guilda</SubTitle>

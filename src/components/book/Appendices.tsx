@@ -14,14 +14,41 @@ import {
   bonusResistencia,
   rotuloPatamar,
   sinal,
+  FRACAO_EM_MOEDA,
+  PAPEL_NA_RECOMPENSA,
+  PO_DO_PATAMAR,
+  getSubArquetipo,
+  recompensaDaCriatura,
 } from "@/data/bestiary";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
 import FichaDeCriatura from "./FichaDeCriatura";
-import { BESTIARIO } from "@/data/preMadeMonsters";
+import { BESTIARIO, subArquetipoDoMonstro } from "@/data/preMadeMonsters";
 import { getArquetipo } from "@/data/bestiary";
 import { SHOP_ITEMS } from "@/data/shopItems";
 
 const NOME_DO_PAPEL = { padrao: "Padrão", lacaio: "Lacaio", chefe: "Chefe" } as const;
+
+/** 1,25 em vez de 1.25; ½ em vez de 0,5 (os multiplicadores da recompensa). */
+const virgula = (n: number) => (n === 0.5 ? "½" : String(n).replace(".", ","));
+const pct = (n: number) => `${Math.round(n * 100)}%`;
+
+/**
+ * O exemplo de "A recompensa" (Apêndice G), calculado da mesma conta que o
+ * /encontros usa — pra não defasar quando um fator mudar (2026-10-07).
+ */
+const EXEMPLO_DE_RECOMPENSA = (() => {
+  const lobo = recompensaDaCriatura({ patamar: 2, papel: "padrao", arquetipo: "agil", subArquetipo: "besta" });
+  const bandido = recompensaDaCriatura({ patamar: 2, papel: "padrao", arquetipo: "bruto", subArquetipo: "humanoide" });
+  const moedaDoBandido = Math.round(bandido * FRACAO_EM_MOEDA.bolsa);
+  const agil = getArquetipo("agil")?.perigoNaRecompensa ?? 1;
+  return {
+    texto:
+      `Quatro lobos de gelo de 2º patamar (Ágil, Besta, Padrão) valem ${PO_DO_PATAMAR[1]} × ${virgula(agil)} = ${lobo} PO cada, ` +
+      `${lobo * 4} PO no total — e a Besta não carrega moeda: são ${lobo * 4} PO em presa, chifre e couro, vendidos pelo preço cheio. ` +
+      `Um bandido de estrada do mesmo patamar (Bruto, Humanoide) vale ${bandido} PO: ${moedaDoBandido} em moeda, e ${bandido - moedaDoBandido} ` +
+      `em pertences e equipamento que ele carregava.`,
+  };
+})();
 
 /** Uma linha do catálogo: os traços que a ficha do molde não traz sozinha. */
 function tracosDoCatalogo(m: (typeof BESTIARIO)[number]): string {
@@ -429,8 +456,9 @@ export default function Appendices() {
           O arquétipo diz o que a criatura <b>faz</b>: em qual atributo os números dela aparecem. O
           sub-arquétipo diz o que ela <b>é</b> — e é dele que sai o que o corpo dela deixa quando ela cai.
           Os dois se cruzam: um Bruto/Besta é um urso, um Bruto/Morto-Vivo é um zumbi grande, um
-          Conjurador/Humanoide é um necromante. Cinco por seis dão trinta criaturas reconhecíveis a partir
-          de onze palavras.
+          Conjurador/Humanoide é um necromante, um Ágil/Dragônico é uma wyvern. São {ARQUETIPOS_CRIATURA.length} arquétipos por{" "}
+          {SUBARQUETIPOS_CRIATURA.length} sub-arquétipos: {ARQUETIPOS_CRIATURA.length * SUBARQUETIPOS_CRIATURA.length}{" "}
+          criaturas reconhecíveis a partir de {ARQUETIPOS_CRIATURA.length + SUBARQUETIPOS_CRIATURA.length} palavras.
         </P>
         <BookTable
           headers={["Sub-arquétipo", "O corpo deixa", "Moeda", "De graça", "Ações típicas", "Exemplo"]}
@@ -464,11 +492,8 @@ export default function Appendices() {
           sugestões — e a Imunidade continua custando um patamar no Orçamento de Encontro.
         </P>
         <P>
-          Na recompensa de um encontro, o orçamento em PO é um <b>teto</b>, não uma quantia garantida. Uma
-          Besta não deixa moedas nem equipamento aleatório: se as partes do corpo não alcançarem o teto, a
-          diferença simplesmente não aparece. Humanoides podem carregar bolsa e equipamento; encontros
-          mistos usam a média dos sub-arquétipos presentes. O Mestre escolhe o teto conforme a história,
-          porque perigo em combate não determina riqueza.
+          Quanto ela vale quando cai está em &ldquo;A recompensa&rdquo;, logo depois do Orçamento de
+          Encontro: o sub-arquétipo decide de que o valor é feito, e o arquétipo, quanto ele pesa.
         </P>
 
         <Aside title="O que cada atributo da criatura faz, e onde">
@@ -618,6 +643,51 @@ export default function Appendices() {
           três lugares pra saber a Força do bicho. A ficha já traz tudo aquilo,
           e a tabela e a caixa saíram por repetirem o que ela diz.
         */}
+        <SubTitle id="apendice-g-recompensa">A recompensa</SubTitle>
+        <P>
+          Cada criatura derrotada vale uma conta de quatro números, e o encontro vale a soma delas:
+        </P>
+        <Aside title="PO da criatura = base do patamar × papel × arquétipo × sub-arquétipo">
+          <BookTable
+            headers={["Patamar", ...PO_DO_PATAMAR.map((_, i) => `${i + 1}º`)]}
+            rows={[["Base (PO)", ...PO_DO_PATAMAR.map((po) => String(po))]]}
+          />
+          <BookTable
+            headers={["Multiplica", "Por quanto"]}
+            rows={[
+              ["Papel", `Lacaio ×${virgula(PAPEL_NA_RECOMPENSA.lacaio)} · Padrão ×${virgula(PAPEL_NA_RECOMPENSA.padrao)} · Chefe ×${virgula(PAPEL_NA_RECOMPENSA.chefe)}`],
+              ["Arquétipo", ARQUETIPOS_CRIATURA.map((a) => `${a.nome} ×${virgula(a.perigoNaRecompensa)}`).join(" · ")],
+              ["Sub-arquétipo", SUBARQUETIPOS_CRIATURA.map((s) => `${s.nome} ×${virgula(s.riqueza)}`).join(" · ")],
+            ]}
+          />
+          <P>
+            A <b>base</b> dobra a cada patamar, como os preços da loja (Cap. 5). A Imunidade conta um patamar
+            acima, como no Orçamento de Encontro: a criatura que apaga a jogada de alguém custa mais pra
+            vencer e vale mais. O <b>papel</b> pesa o mesmo que pesa no orçamento. O <b>arquétipo</b> é o
+            prêmio do risco: os números do patamar são iguais pra todos, mas o Ágil escolhe a luta e foge, e
+            o Conjurador e a Mente acertam o grupo em área e furam o esconderijo. O{" "}
+            <b>sub-arquétipo</b> é o que o corpo vale: trapo de morto-vivo vale pouco, gema de construto e
+            escama de dragão valem muito.
+          </P>
+        </Aside>
+        <P>
+          <b>De que o valor é feito.</b> Ele aparece inteiro, dividido pela moeda do sub-arquétipo:{" "}
+          <b>Carrega bolsa</b>, {pct(FRACAO_EM_MOEDA.bolsa)} em moeda; <b>Pouca</b>,{" "}
+          {pct(FRACAO_EM_MOEDA.pouca)}; <b>Nenhuma</b>, nada. O resto é espólio: os itens da lista do
+          sub-arquétipo (tabela acima), e o que a lista não cobre vira as <b>partes valiosas</b> dele — o
+          couro inteiro, o núcleo, o sangue —, que vendem pelo preço cheio, como toda tralha. Só quem carrega
+          bolsa traz também equipamento (poção, veneno, corda), até 40% do que não veio em moeda, e esse
+          revende pela metade (Cap. 5, &ldquo;Vender o que caiu&rdquo;).
+        </P>
+        <P>
+          <b>Exemplo.</b> {EXEMPLO_DE_RECOMPENSA.texto}
+        </P>
+        <P>
+          O /encontros faz essa conta sozinho e sorteia os itens. O Mestre pode escrever outro valor quando
+          a história pedir — o tesouro do covil, o contrato que paga a mais —, e a divisão em moeda e espólio
+          continua a mesma.
+        </P>
+
         <SubTitle id="apendice-g-fichas">As fichas das criaturas prontas</SubTitle>
         <P>
           As seis fichas abaixo são o Bloco do Monstro funcionando: todo número sai das três escolhas. O
@@ -642,7 +712,7 @@ export default function Appendices() {
           headers={["Criatura", "Monte assim", "Traços e perigo"]}
           rows={BESTIARIO.map((m) => [
             m.nome,
-            `${m.patamar}º · ${NOME_DO_PAPEL[m.papel]} · ${getArquetipo(m.arquetipo)?.nome ?? m.arquetipo}`,
+            `${m.patamar}º · ${NOME_DO_PAPEL[m.papel]} · ${getArquetipo(m.arquetipo)?.nome ?? m.arquetipo} · ${getSubArquetipo(subArquetipoDoMonstro(m))?.nome ?? subArquetipoDoMonstro(m)}`,
             tracosDoCatalogo(m),
           ])}
         />
