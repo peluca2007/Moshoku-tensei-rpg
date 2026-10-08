@@ -618,8 +618,9 @@ export interface AbilityDef {
 export interface TreeRankDef {
   rank: RankName;
   /**
-   * O Dado de PV do patamar (Cap. 4, "Cálculos Vitais"). A soma das médias de
-   * todos os patamares abertos é o "corpo treinado" — ver `getTrainedBody`.
+   * O Dado de PV do patamar (Cap. 4, "Cálculos Vitais"). Em cada patamar conta
+   * o maior dado entre as árvores que chegaram nele, e a soma desses é o "corpo
+   * treinado" — ver `getDadosDePvPorPatamar` e `getTrainedBody`.
    *
    * **As três faixas** (2026-09-13, nerf de PV dos magos pedido pelo usuário:
    * "diminui a vida de todos os magos"). Antes desta data as faixas se

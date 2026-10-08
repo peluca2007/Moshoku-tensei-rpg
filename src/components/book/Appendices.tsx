@@ -55,7 +55,7 @@ export default function Appendices() {
         <List
           items={[
             "Atributos: Força 0 · Agilidade 3 · Vigor 2 · Intelecto 6 (já com +1 de Migurd) · Espírito 5",
-            "PV (Cap. 4, §1): corpo treinado (14 + 1,67 × 59, a soma das médias arredondadas dos dados de PV dos 12 ranks dela, nas 4 árvores = 112,53) × Fator de Vigor 2 (×1,40), arredondado pra baixo = 157 PV",
+            "PV (Cap. 4, §1): um Dado de PV por patamar, o maior de cada um — Terra no 1º, 2º e 3º (5, 6 e 7), Água no 4º (6) —, soma 24; corpo treinado 14 + 1,67 × 24 = 54,08; × Fator de Vigor 2 (×1,40), arredondado pra baixo = 75 PV. Os doze patamares dela, nas quatro escolas, contam como quatro: um por degrau",
             "PM (Cap. 4, §1): só a melhor escola de magia conta, nunca a soma de todas — Espírito 5 × Bônus do Santo de Água (4) + 8 = 28, mais os PM do Migurd (3 × MB = 12) = 40 PM",
             "BC de Água: 6 + 4 = 10 → acerta com 1d20+10, CD 18, dano +10",
             "CA: 13",
@@ -66,16 +66,16 @@ export default function Appendices() {
         />
         <P>
           Leitura da ficha: ela acerta praticamente qualquer coisa, tem uma reserva de mana que sustenta um
-          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 157 PV é bastante
-          numa conta isolada, mas fica baixo perto de um personagem do Corpo com a mesma quantidade de Ranks
-          investidos, cujos dados de PV por patamar são bem maiores. É exatamente isso que ela é na história —
+          combate longo inteiro, e cai em poucos golpes de qualquer espadachim decente — 75 PV, contra 113 de
+          um Lutador Santo com o mesmo Vigor, porque os dados de PV do Corpo são bem maiores e ela não ganha
+          corpo novo por abrir mais escolas. É exatamente isso que ela é na história —
           uma professora genial dentro de um corpo frágil, que sobrevive porque nunca deixa ninguém chegar
           perto. Se a sua ficha de mago não estiver produzindo esse perfil (acerto altíssimo, mana generosa,
           vida baixa pro nível dela), algum número precisa de ajuste.
         </P>
         <P>
           Repare no que o Fator de Vigor faz aqui: com Vigor 2 ela multiplica por 1,40. Se tivesse largado
-          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 112,53 viraria 45 PV —
+          Vigor em -2 pra comprar mais um ponto de Intelecto, o mesmo corpo treinado de 54,08 viraria 21 PV —
           e um único golpe de espadachim Santo resolveria a luta. É o tipo de troca que a Escala do Vigor
           (Cap. 4, §1) existe pra tornar visível antes de a ficha ser fechada.
         </P>
