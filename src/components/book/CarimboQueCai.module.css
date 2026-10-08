@@ -1,0 +1,186 @@
+/* O carimbo que cai (Cap. 3). Só transform e opacity: a diagramação do modo
+   Livro não sente nada. */
+.carimbo {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  width: var(--tamanho);
+  height: var(--tamanho);
+  transform: rotate(var(--giro));
+  transition: transform 0.25s cubic-bezier(0.3, 0.9, 0.4, 1.2), filter 0.25s;
+  outline: none;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.miolo,
+.gesto {
+  display: inline-flex;
+}
+
+/* A mancha de tinta que espirra quando o carimbo bate. Fica invisível em
+   repouso e na impressão. */
+.tinta {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(120 30 30 / 0.35), transparent 68%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+:global(.dark) .tinta {
+  background: radial-gradient(circle, rgb(255 210 160 / 0.25), transparent 68%);
+}
+
+/* Em cima dele, o carimbo se endireita e sobe, como se fosse pegá-lo da mesa. */
+.carimbo:hover,
+.carimbo:focus-visible {
+  z-index: 6;
+  transform: rotate(0) translateY(-4px) scale(1.1);
+  filter: drop-shadow(0 6px 8px rgb(0 0 0 / 0.28));
+}
+
+.carimbo:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 10px;
+}
+
+/* O gesto do elemento, uma vez por hover (0,5 s). */
+@media (prefers-reduced-motion: no-preference) {
+  .carimbo:hover .chama,
+  .carimbo:focus-visible .chama {
+    animation: chama 0.5s ease-out;
+  }
+  .carimbo:hover .onda,
+  .carimbo:focus-visible .onda {
+    animation: onda 0.55s ease-in-out;
+  }
+  .carimbo:hover .rajada,
+  .carimbo:focus-visible .rajada {
+    animation: rajada 0.45s ease-out;
+  }
+  .carimbo:hover .tremor,
+  .carimbo:focus-visible .tremor {
+    animation: tremor 0.4s linear;
+  }
+  .carimbo:hover .corte,
+  .carimbo:focus-visible .corte {
+    animation: corte 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
+  .carimbo:hover .sombra,
+  .carimbo:focus-visible .sombra {
+    animation: sombra 0.6s ease-in-out;
+  }
+  .carimbo:hover .pulso,
+  .carimbo:focus-visible .pulso {
+    animation: pulso 0.5s ease-out;
+  }
+}
+
+@keyframes chama {
+  0% { transform: none; }
+  25% { transform: translateY(-3px) scale(1.05, 1.12); }
+  50% { transform: translateY(1px) scale(0.98, 0.94); }
+  75% { transform: translateY(-2px) scale(1.03, 1.07); }
+  100% { transform: none; }
+}
+@keyframes onda {
+  0%, 100% { transform: none; }
+  25% { transform: rotate(-7deg) translateX(-2px); }
+  60% { transform: rotate(6deg) translateX(2px); }
+}
+@keyframes rajada {
+  0% { transform: none; }
+  35% { transform: skewX(-14deg) translateX(4px); }
+  70% { transform: skewX(5deg) translateX(-1px); }
+  100% { transform: none; }
+}
+@keyframes tremor {
+  0%, 100% { transform: none; }
+  20% { transform: translate(-2px, 1px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, 2px); }
+  80% { transform: translate(1px, -1px); }
+}
+@keyframes corte {
+  0% { transform: none; }
+  40% { transform: rotate(-16deg) scale(1.06); }
+  100% { transform: none; }
+}
+@keyframes sombra {
+  0%, 100% { opacity: 1; transform: none; }
+  45% { opacity: 0.25; transform: translateX(5px); }
+}
+@keyframes pulso {
+  0%, 100% { transform: none; }
+  40% { transform: scale(1.12); }
+}
+
+/* O cartão: o que o carimbo representa. Abre no hover, no foco e no toque. */
+.cartao {
+  position: absolute;
+  bottom: calc(100% + 10px) !important;
+  left: 50% !important;
+  height: auto !important;
+  z-index: 20;
+  display: grid;
+  gap: 2px;
+  width: max-content;
+  width: max-content !important;
+  max-width: min(15rem, 70vw);
+  padding: 8px 10px;
+  border: 1px solid rgb(120 90 40 / 0.35);
+  border-radius: 10px;
+  background: #fbf6ea;
+  color: #2b2118;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  text-align: left;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 0.2);
+  pointer-events: none;
+  transform: translate(-50%, 4px) rotate(calc(var(--giro) * -1));
+  transition: opacity 0.18s, transform 0.18s;
+}
+
+:global(.dark) .cartao,
+:global(.folhear[data-papel="noite"]) .cartao {
+  border-color: rgb(230 200 140 / 0.25);
+  background: #221d2b;
+  color: #f1e7d4;
+}
+
+:global(.folhear[data-papel="dia"]) .cartao {
+  background: #fbf6ea;
+  color: #2b2118;
+}
+
+.carimbo:hover .cartao,
+.carimbo:focus-visible .cartao {
+  opacity: 1 !important;
+  transform: translate(-50%, 0) rotate(0);
+}
+
+.mecanica {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  opacity: 0.75;
+}
+
+.frase {
+  font-style: italic;
+}
+
+@media print {
+  .cartao,
+  .tinta {
+    display: none;
+  }
+  .carimbo {
+    transform: rotate(var(--giro));
+    filter: none;
+  }
+}

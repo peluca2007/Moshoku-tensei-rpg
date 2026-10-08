@@ -75,6 +75,11 @@ export const PATCH_NOTES: PatchNote[] = [
         "Três sub-arquétipos novos, Elemental, Dragônico e Planta, com oito espólios novos na loja: são 45 combinações de arquétipo e sub-arquétipo. Os dragões, as hidras, o Treant e a Serpente de Fogo do catálogo passaram para eles.",
         "Os contratos da Guilda pagam a recompensa das criaturas que prometem (Cap. 5, §2).",
       ] },
+      { area: "livro", heading: "Os carimbos das 19 árvores (Cap. 3)", items: [
+        "Cada árvore ganhou um carimbo: o kanji dela a pincel (火, 水, 剣…) numa moldura de hanko, redonda na Magia, quadrada no Corpo e comprida na Utilidade. É um desenho só pro livro inteiro (22 KB), igual em iPhone, Android e computador, no lugar dos ícones de banco de imagem.",
+        "O Mapa Completo das Árvores ganhou um mural: os 19 carimbos tortos e empilhados sobre o caos de cada pilar, caindo um a um quando a seção aparece. No hover, no toque ou no foco do teclado, o carimbo se endireita, faz o gesto do elemento (o Fogo tremula, a Água ondula, a lâmina corta) e mostra o nome e a mecânica central. Cada um leva ao catálogo da árvore.",
+        "Os carimbos também entram na abertura de cada árvore, na tabela das dezenove mecânicas e nos vértices do Triângulo dos Estilos. Quem pede movimento reduzido, e a impressão, veem tudo parado.",
+      ] },
       { area: "livro", heading: "Dois nomes que confundiam", items: [
         "O talento de Imperador do Bardo \"A Marcha\" virou \"O Hino\": tinha o nome da canção MARCHA, que é outra coisa.",
         "O Cap. 3 diz que a Preparação Perfeita do Rei é uma carta de 4 PA, e não um degrau gratuito do Tiro Perfeito.",
