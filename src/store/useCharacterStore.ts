@@ -1,4 +1,6 @@
 import { registrarCompraParaAnimacao, cancelarCompraParaAnimacao } from "@/lib/compraParaAnimacao";
+import { atualizarMesa, mesaDa, recuperarDeZero, reiniciarUsos, type Mesa } from "@/lib/mesa";
+import { limitesDaFicha, type PeriodoDeUso } from "@/lib/limitesDeUso";
 import { WeaponGroupId } from "@/data/weaponGroups";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -168,7 +170,10 @@ interface RosterState {
   setGold: (value: number) => void;
   setBonusHp: (value: number) => void;
   setBonusMp: (value: number) => void;
-  setCurrentHp: (value: number | null) => void;
+  setCurrentHp: (value: number | null, feridaMortal?: boolean) => void;
+  setMesa: (patch: Partial<Mesa>) => void;
+  usarCarta: (chave: string, quantidade: number) => void;
+  novoPeriodo: (periodo: "combate" | "sessao") => void;
   setCurrentMp: (value: number | null) => void;
   setCurrentPt: (value: number | null) => void;
   setCurrentPp: (value: number | null) => void;
@@ -197,7 +202,7 @@ interface RosterState {
    * regra que segura o livro inteiro em pé, e uma store que o ignorasse
    * deixaria a tela sozinha vigiando.
    */
-  descansar: (tipo: "curto" | "longo", ganho: { pv: number; pm: number; pt: number; pp: number }, maximos: { pv: number; pm: number; pt: number; pp: number }) => boolean;
+  descansar: (tipo: "curto" | "longo", ganho: { pv: number; pm: number; pt: number; pp: number }, maximos: { pv: number; pm: number; pt: number; pp: number }, causaAcabou?: boolean, sonoPerturbado?: boolean) => boolean;
   addSkill: (name: string) => void;
   removeSkill: (name: string) => void;
   addItem: (item: Omit<InventoryItem, "id" | "equipped">) => void;
@@ -488,7 +493,15 @@ export const useCharacterStore = create<RosterState>()(
       setGold: (gold) => updateActive(get, set, (c) => ({ ...c, gold })),
       setBonusHp: (bonusHp) => updateActive(get, set, (c) => ({ ...c, bonusHp })),
       setBonusMp: (bonusMp) => updateActive(get, set, (c) => ({ ...c, bonusMp })),
-      setCurrentHp: (currentHp) => updateActive(get, set, (c) => ({ ...c, currentHp })),
+      setCurrentHp: (currentHp, feridaMortal = false) => updateActive(get, set, c => recuperarDeZero(c,currentHp,feridaMortal)),
+      setMesa: patch => updateActive(get,set,c=>atualizarMesa(c,patch)),
+      usarCarta: (chave, quantidade) => updateActive(get,set,c=>{
+        const limite=limitesDaFicha(c).find(e=>e.chave===chave)?.limite;
+        if (!limite) return c;
+        const mesa=mesaDa(c);
+        return atualizarMesa(c,{usos:{...mesa.usos,[chave]:Math.max(0,Math.min(limite.quantidade,Math.trunc(quantidade)))}});
+      }),
+      novoPeriodo: periodo => updateActive(get,set,c=>reiniciarUsos(c,periodo)),
       setCurrentMp: (currentMp) => updateActive(get, set, (c) => ({ ...c, currentMp })),
       setCurrentPt: (currentPt) => updateActive(get, set, (c) => ({ ...c, currentPt })),
       setCurrentPp: (currentPp) => updateActive(get, set, (c) => ({ ...c, currentPp })),
@@ -507,7 +520,7 @@ export const useCharacterStore = create<RosterState>()(
           return { ...c, overrides };
         }),
 
-      descansar: (tipo, ganho, maximos) => {
+      descansar: (tipo, ganho, maximos, causaAcabou = false, sonoPerturbado = false) => {
         const state = get();
         const atual = state.activeId ? state.characters[state.activeId] : undefined;
         if (!atual) return false;
@@ -519,11 +532,12 @@ export const useCharacterStore = create<RosterState>()(
           Math.min(teto, (corrente ?? teto) + ganhoDoRecurso);
 
         updateActive(get, set, (c) => ({
-          ...c,
-          currentHp: somar(c.currentHp, ganho.pv, maximos.pv),
-          currentMp: somar(c.currentMp, ganho.pm, maximos.pm),
+          ...reiniciarUsos(c,tipo as PeriodoDeUso),
+          currentHp: mesaDa(c).marcas>=3 ? c.currentHp : somar(c.currentHp, ganho.pv, maximos.pv),
+          currentMp: somar(c.currentMp, tipo === "longo" && mesaDa(c).trauma >= 3 && sonoPerturbado ? Math.floor(ganho.pm/2) : ganho.pm, maximos.pm),
           currentPt: somar(c.currentPt, ganho.pt, maximos.pt),
-          currentPp: somar(c.currentPp, ganho.pp, maximos.pp),
+          currentPp: somar(c.currentPp, tipo === "longo" && mesaDa(c).trauma >= 3 && sonoPerturbado ? Math.floor(ganho.pp/2) : ganho.pp, maximos.pp),
+          mesa: { ...mesaDa(reiniciarUsos(c,tipo)), exaustao: tipo === "longo" && causaAcabou ? Math.max(0,mesaDa(c).exaustao-1) : mesaDa(c).exaustao },
           // O Longo é o que vira o dia: zera o contador de Curtos.
           descansosCurtos: tipo === "longo" ? 0 : (c.descansosCurtos ?? 0) + 1,
         }));

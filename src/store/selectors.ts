@@ -549,8 +549,8 @@ export function getPpPool(state: StoreState): number {
 export function getDeslocamento(state: StoreState): number {
   const efeitos = getEfeitosDeCondicoes(state);
   const base = 9;
-  if (efeitos.deslocamento === "zero") return 0;
-  if (efeitos.deslocamento === "metade") return base / 2;
+  if (efeitos.deslocamento === "zero" || (state.mesa?.exaustao ?? 0) >= 5) return 0;
+  if (efeitos.deslocamento === "metade" || (state.mesa?.exaustao ?? 0) >= 2) return base / 2;
   return base;
 }
 
@@ -1282,6 +1282,8 @@ export function getEfeitosDeCondicoes(state: StoreState): EfeitosDeCondicoes {
     danoPorTurno: [],
     penalidadeQuebrantado: getPenalidadeQuebrantado(state),
   };
+  if ((state.mesa?.exaustao ?? 0) >= 1) efeitos.desvantagemEmTestes.push("Exaustão");
+  if ((state.mesa?.exaustao ?? 0) >= 3) efeitos.desvantagemEmAtaques.push("Exaustão");
 
   for (const { condicao, acumulos } of ativas) {
     const base = condicao.mecanica;

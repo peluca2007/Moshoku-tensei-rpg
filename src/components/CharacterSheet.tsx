@@ -45,6 +45,9 @@ import SkillsSection from "./SkillsSection";
 import GruposDeArmaSection from "./GruposDeArmaSection";
 import CondicoesSection from "./CondicoesSection";
 import DescansoSection from "./DescansoSection";
+import NaMesaSection from "./NaMesaSection";
+import UsosDaCarta from "./UsosDaCarta";
+import { mesaDa } from "@/lib/mesa";
 import SimuladorPessoal from "./SimuladorPessoal";
 import VezDaMesa from "./VezDaMesa";
 import { CastingBreakdown, IncantationBlock, RitualBadge } from "./AbilityDetail";
@@ -403,6 +406,7 @@ export default function CharacterSheet() {
   const guildRank = getGuildRank(character);
   const guildRankEstimated = isGuildRankEstimated(character);
   const [grimoireQuery, setGrimoireQuery] = useState("");
+  const [feridaMortal,setFeridaMortal] = useState<string|null>(null);
   /**
    * `semRede` é um erro separado de `error` de propósito (0.1.15).
    *
@@ -1164,6 +1168,7 @@ export default function CharacterSheet() {
           </div>
 
           <div className="space-y-2">
+            {currentHp===0&&<label className="flex min-h-10 items-center gap-2 text-sm"><input type="checkbox" checked={feridaMortal===character.id} onChange={e=>setFeridaMortal(e.target.checked?character.id:null)} />Cura por Ferida Mortal · não recebe Exaustão ao acordar</label>}
             <ResourceCard
               icon={<Heart className="h-5 w-5 text-white" />}
               label="PV"
@@ -1171,7 +1176,7 @@ export default function CharacterSheet() {
               current={currentHp}
               max={maxHp}
               maxOverridden={overrides.maxHp !== undefined}
-              onCurrentChange={(v) => useCharacterStore.getState().setCurrentHp(v)}
+              onCurrentChange={(v) => { useCharacterStore.getState().setCurrentHp(v,feridaMortal===character.id);setFeridaMortal(null); }}
               onMaxChange={(v) => useCharacterStore.getState().setOverride("maxHp", v)}
               onResetMax={() => useCharacterStore.getState().setOverride("maxHp", null)}
               extra={
@@ -1309,6 +1314,7 @@ export default function CharacterSheet() {
           */}
           <div className="print-hide space-y-4">
             <CondicoesSection />
+            <NaMesaSection key={character.id} />
 
             {/*
               Descanso e Downtime ficam ao lado das condições porque são o outro
@@ -1494,6 +1500,8 @@ export default function CharacterSheet() {
                       <p className="mt-0.5 text-xs text-gold-900/80 dark:text-gold-200/80">
                         {mastery.description}
                       </p>
+                      <UsosDaCarta chave={`${tree.id}:maestria:${rank}`} />
+                      {mesaDa(character).exaustao>=3 && /enquanto não Exausto/i.test(mastery.description) && <p className="mt-1 text-sm">Exausto: este benefício para de funcionar (Cap. 4, §9).</p>}
                     </div>
                   ))}
                 </div>
@@ -1556,6 +1564,8 @@ export default function CharacterSheet() {
                         {(def as TalentDef).description}
                       </p>
                     )}
+                    <UsosDaCarta chave={`${tree.id}:${def.id}`} />
+                    {mesaDa(character).exaustao>=3 && /enquanto não Exausto/i.test("effect" in def?def.effect:def.description) && <p className="mt-1 text-sm">Exausto: este benefício para de funcionar (Cap. 4, §9).</p>}
                   </div>
                 ))}
               </div>
