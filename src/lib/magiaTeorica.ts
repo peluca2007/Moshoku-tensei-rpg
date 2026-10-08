@@ -326,7 +326,10 @@ export function criarFormula(escolha: FormulaEscolha): FormulaResultado {
   if (fere) {
     resumo = cura
       ? `Lança vida a até ${alcance}: cura ${dadosSaida}d8 PV${emArea ? ` em cada aliado num raio de ${fmt(p.tamanho)} m` : ""}.`
-      : `Lança ${de.toLowerCase()} a até ${alcance}: ${dano} de dano ${essencia.tipo}${emArea ? ` num raio de ${fmt(p.tamanho)} m` : escolha.forma === "estrela" ? "" : " num alvo"}.`;
+      // "Num alvo" é ataque mágico (Cap. 2, §8: 1d20 + BC contra a CA). Sem a
+      // palavra, a carta não dizia como se rola, e o simulador a lia como
+      // teste de resistência com meio dano (2026-10-08).
+      : `${emArea || escolha.forma === "estrela" ? "" : "Ataque mágico: "}${emArea || escolha.forma === "estrela" ? "Lança" : "lança"} ${de.toLowerCase()} a até ${alcance}: ${dano} de dano ${essencia.tipo}${emArea ? ` num raio de ${fmt(p.tamanho)} m` : escolha.forma === "estrela" ? "" : " num alvo"}.`;
   } else if (tem("erguer") || tem("selar")) {
     const oque = tem("erguer") && tem("selar") ? "uma parede que segura corpo e magia" : tem("erguer") ? "uma parede" : "um selo contra magia";
     resumo = `Ergue ${oque}${pv === null ? "" : ` com ${pv} PV`}, ${area}${lancar ? `, a até ${alcance} de você` : ", ao seu alcance de toque"}.`;

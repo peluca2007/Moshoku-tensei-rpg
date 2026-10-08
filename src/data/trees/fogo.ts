@@ -35,7 +35,7 @@ export const FOGO_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d4",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Chama Viva",
         description:
@@ -144,7 +144,7 @@ export const FOGO_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d4",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Propagação",
         description:

@@ -58,7 +58,9 @@ export function prepararInvocados(grupo: CharacterData[], heroes: EstadoPersonag
       if (dono.pm < pacto.custo) throw new Error(`${dono.nome}: PM insuficiente para preparar ${pacto.nome}.`);
       dono.pm -= pacto.custo;
       const bc = getFinalAttribute(c, "espirito") + bonus;
-      const pv = Math.max(1, Math.floor((pacto.pvPorRank ?? (bonus >= 3 ? 15 : 10)) * bonus / (pacto.quantidade > 1 ? 4 : 1)));
+      // PV = 10 × (Bônus de Rank + 1), 15 × no Avançado (2026-10-08): com
+      // 10 × Bônus, o cão do 1º patamar tinha 10 PV e caía antes de morder.
+      const pv = Math.max(1, Math.floor((pacto.pvPorRank ?? (bonus >= 3 ? 15 : 10)) * (bonus + 1) / (pacto.quantidade > 1 ? 4 : 1)));
       for (let i = 0; i < pacto.quantidade; i++) {
         const nome = `${pacto.nome}${pacto.quantidade > 1 ? ` ${i + 1}` : ""} (${dono.nome})`;
         const danoBonus = id === "pacto-filhote" && pacto.custo === 6 ? bc : bonus >= 3 ? bonus : 0;

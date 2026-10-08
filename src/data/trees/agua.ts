@@ -35,7 +35,7 @@ export const AGUA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d4",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Afinidade Aquática",
         description:
@@ -153,7 +153,7 @@ export const AGUA_TREE: Tree = {
     },
     {
       rank: "Intermediário",
-      hpDiceFormula: "1d4+1",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Cântico Fluido",
         description:

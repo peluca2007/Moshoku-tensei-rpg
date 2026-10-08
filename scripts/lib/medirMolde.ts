@@ -17,10 +17,13 @@ export const REFERENCIA: Record<number, Medida> = {
   2: { quatro: 100, cinco: 73, chefe: 99 },
   3: { quatro: 97, cinco: 67, chefe: 90 },
   4: { quatro: 96, cinco: 71, chefe: 90 },
-  5: { quatro: 97, cinco: 88, chefe: 72 },
+  // 5º e 6º (2026-10-08): o motor deixou de ler o comprimento de uma linha
+  // como raio, e as 5 criaturas caíram pro Difícil que o livro promete — a
+  // primeira vez que o 5º e o 6º entram na faixa do Apêndice G.
+  5: { quatro: 95, cinco: 73, chefe: 74 },
   // 6º atualizado no mesmo dia: o golpe do molde passou a ser arredondado
   // (50/3 = 16,67 → 17), e as 5 criaturas foram de 78% a 69% — mais perto do Difícil.
-  6: { quatro: 98, cinco: 69, chefe: 53 },
+  6: { quatro: 99, cinco: 72, chefe: 68 },
 };
 
 export interface Medida { quatro: number; cinco: number; chefe: number }
