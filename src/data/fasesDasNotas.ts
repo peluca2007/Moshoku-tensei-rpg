@@ -277,7 +277,7 @@ export const FASES_DAS_NOTAS: FaseDasNotas[] = [
     id: "o-livro-abre-rapido",
     nome: "O livro abre rápido",
     primeira: "0.1.127",
-    ultima: "0.1.148",
+    ultima: "0.1.149",
     datas: "30 de setembro e 1º de outubro",
     resumo:
       "O livro no celular responde em 2,5 s, o modo Livro abre em 2 s, três incongruências do texto caem, e as notas de versão ganham fases e áreas.",

@@ -50,6 +50,16 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.149",
+    date: "2026-10-07",
+    title: "Os Marcadores da Mesa na Ficha",
+    sections: [{ area: "site", heading: "Na mesa, sem papel ao lado do celular", items: [
+      "A ficha acompanha usos limitados de cartas e Maestrias que têm limite reconhecido. Descanso Curto, Longo, Novo combate e Nova sessão recuperam os usos do período certo; limites ambíguos ficam para revisão.",
+      "Exaustão acompanha Deslocamento, PV Máximos e lembretes de Desvantagem. O bloco Na mesa registra Marcas da Morte, Estabilizado, Salvações, Trauma e Cicatrizes, usando as mesmas tabelas do livro.",
+      "A zero PV, a ficha mostra a conta do Fio da Vida e a Escala do Vigor. Cura remove as Marcas e acrescenta Exaustão; Ferida Mortal pode ser marcada como exceção. Descanso Longo só reduz Exaustão quando a causa acabou.",
+    ] }],
+  },
+  {
     version: "0.1.148",
     date: "2026-10-07",
     title: "Três Frases que Contavam Outra Regra",
