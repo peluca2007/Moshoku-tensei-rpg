@@ -6,13 +6,13 @@ import { RANKS, RANK_BONUS } from "./types";
 import { aplicarDano, novoAlvo, rolarDados, mediaDados } from "./combatSim";
 const ficha = () => { const s = useCharacterStore.getState(); return s.characters[s.activeId!]; };
 beforeEach(() => { useCharacterStore.setState({ characters: {}, order: [], activeId: null, history: {} }); useCharacterStore.getState().createCharacter("Exemplo"); });
-it("Roxy do Apêndice A: 157 PV, 40 PM, BC 10 de Água e 7 de Cura", () => {
+it("Roxy do Apêndice A: 75 PV, 40 PM, BC 10 de Água e 7 de Cura", () => {
     const s = useCharacterStore.getState();
     s.setRace("migurd", false);
     for (const [key, val] of Object.entries({ forca: 0, agilidade: 3, vigor: 2, intelecto: 5, espirito: 5 }))
         s.setAttribute(key as "forca", val);
     useCharacterStore.setState(state => ({ characters: { ...state.characters, [state.activeId!]: { ...ficha(), startingTreeId: "agua", unlockedRanks: [["agua", 4], ["terra", 3], ["vento", 3], ["cura", 2]].flatMap(([id, n]) => RANKS.slice(0, Number(n)).map(rank => ({ treeId: String(id), rank }))) } } }));
-    expect(getMaxHp(ficha())).toBe(157);
+    expect(getMaxHp(ficha())).toBe(75);
     expect(getMaxMp(ficha())).toBe(40);
     expect(getAttackBonus(ficha(), "agua", "intelecto")).toBe(10);
     expect(getAttackBonus(ficha(), "cura", "espirito")).toBe(7);

@@ -6,6 +6,53 @@ import { AnatomiaDoTurno, Cobertura, FioDaVida, OrdemDoDano, QuebrantadoEmpilha 
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_DO_FIO_DA_VIDA, ARTE_DO_TOUKI } from "@/data/midiaDeHabilidade";
 import { CONDICOES, ESTADOS_DE_REGRA } from "@/data/condicoes";
+import { getTreeById } from "@/data/trees";
+import { diceAverage } from "@/lib/dice";
+import { WEAPON_GROUPS } from "@/data/weaponGroups";
+
+/** "24/90 m": o alcance normal e o longo de um grupo de arma (Cap. 4, §3), lido do Cap. 1. */
+function alcanceDoGrupo(id: string): string {
+  const alcance = WEAPON_GROUPS.find((g) => g.id === id)?.alcance;
+  return alcance ? `${alcance.normal}/${alcance.longo} m` : "";
+}
+const ALCANCE_DO_ARCO = alcanceDoGrupo("arcos-e-bestas");
+const ALCANCE_DO_ARREMESSO = alcanceDoGrupo("arremesso");
+
+/**
+ * O exemplo do "um Dado de PV por patamar" (Cap. 4, §1), calculado dos dados
+ * das árvores, pra não defasar quando um Dado de PV mudar (2026-10-07).
+ */
+const EXEMPLO_DE_PV = (() => {
+  const vigor = 1;
+  const arvores = [
+    { id: "armas-pesadas", nome: "Lutador", patamares: 2 },
+    { id: "deus-do-norte", nome: "Norte", patamares: 1 },
+    { id: "fogo", nome: "Fogo", patamares: 1 },
+  ];
+  const patamares = (["1º", "2º"] as const).map((patamar, i) => {
+    const dados = arvores
+      .filter((a) => a.patamares > i)
+      .map((a) => {
+        const formula = getTreeById(a.id)?.ranks[i]?.hpDiceFormula ?? "0";
+        return { arvore: a.nome, formula, media: diceAverage(formula) };
+      })
+      .sort((x, y) => y.media - x.media);
+    return { patamar, dados, conta: dados[0]?.media ?? 0 };
+  });
+  const soma = patamares.reduce((total, p) => total + p.conta, 0);
+  const corpo = 14 + 1.67 * soma;
+  const fator = VIGOR_FACTOR_TABLE.find((v) => v.vigor === vigor)?.factor ?? 1;
+  const virgula = (n: number) => String(Math.round(n * 100) / 100).replace(".", ",");
+  return {
+    nome: "Kael",
+    vigor,
+    patamares,
+    soma,
+    corpo: virgula(corpo),
+    fator: virgula(fator),
+    pv: Math.floor(corpo * fator),
+  };
+})();
 
 export default function Chapter4() {
   return (
@@ -26,18 +73,18 @@ export default function Chapter4() {
           em qualquer árvore. As fórmulas abaixo são as que valem sempre, do 1º patamar ao Imperador; a ficha
           recalcula os dois números automaticamente a cada Rank novo.
         </P>
-        <Aside title="PV Máximos = (14 + 1,67 × soma dos seus Dados de PV) × Fator de Vigor">
+        <Aside title="PV Máximos = (14 + 1,67 × um Dado de PV por patamar) × Fator de Vigor">
           <P>
             Uma linha, dois passos, nenhuma exceção:
           </P>
           <List
             items={[
               <span key="c">
-                <b>1. O corpo treinado.</b> Some os Dados de PV de <b>todos</b> os patamares que você
-                desbloqueou, em todas as árvores (use a média da fórmula de cada patamar, arredondada pra
-                cima — 1d8+3 conta 8, 3d6 conta 11 —, ou role, se a mesa preferir),
-                <b> multiplique por 1,67</b> e some <b>14</b>. Esses 14 são o corpo com que todo
-                mundo nasce.
+                <b>1. O corpo treinado.</b> Em cada patamar que você alcançou (1º, 2º, 3º…), pegue{" "}
+                <b>um Dado de PV só</b>: o maior entre as árvores que chegaram naquele patamar. Some esses
+                dados (a média de cada um, arredondada pra cima — 1d8+3 conta 8, 3d6 conta 11 —, ou role,
+                se a mesa preferir), <b>multiplique por 1,67</b> e some <b>14</b>. Esses 14 são o corpo com
+                que todo mundo nasce.
               </span>,
               <span key="v">
                 <b>2. O Fator de Vigor.</b> Multiplique tudo aquilo pelo fator da tabela abaixo, e arredonde
@@ -46,13 +93,37 @@ export default function Chapter4() {
             ]}
           />
           <P>
-            É só isso. Não existe piso, e nenhum patamar novo muda a forma da conta — desbloquear um Rank só
-            acrescenta mais um Dado de PV ao passo 1. Os talentos de reserva (&ldquo;+N PV por
-            patamar&rdquo;) e os PV fixos de raça ou antecedente entram somados DEPOIS do Fator de Vigor, sem
-            multiplicar. Tabela de referência com Vigor 0 (acumulado até o
-            patamar): Escudeiro 27/44/64 PV (P→A); Lutador 29/44/62; Espada 27/42/59; Magia de Água
-            19/25/34; Terra 22/32/44.
+            É só isso. Não existe piso. Chegar a um patamar novo acrescenta um dado ao passo 1; abrir outra
+            árvore num patamar que você já tem só troca o dado daquele patamar, e só se o dela for maior. Os
+            talentos de reserva (&ldquo;+N PV por patamar&rdquo;) e os PV fixos de raça ou antecedente
+            entram somados DEPOIS do Fator de Vigor, sem multiplicar. Tabela de referência com Vigor 0
+            (acumulado até o patamar): Escudeiro 27/44/64 PV (P→A); Lutador 29/44/62; Espada 27/42/59;
+            Magia de Água 19/25/34; Terra 22/32/44.
           </P>
+          <P>
+            <b>Por que um dado só por patamar.</b> O corpo treina uma vez por degrau, na escola mais dura
+            que você frequentou naquele degrau. Quem passa por cinco dojos no mesmo mês volta com cinco
+            técnicas, não com cinco corpos. Se cada árvore somasse o próprio dado, cinco árvores do Corpo no
+            1º patamar dariam 100 PV com 15 PA, o dobro de um Lutador que gastou o mesmo PA pra chegar ao 2º.
+            Abrir árvore nova continua valendo a Maestria, as técnicas e o PT (Cap. 3); o que ela não dá é
+            um segundo corpo.
+          </P>
+          <P>
+            <b>Exemplo.</b> {EXEMPLO_DE_PV.nome} tem Lutador no 2º patamar, Deus do Norte e Magia de Fogo no
+            1º, e Vigor +{EXEMPLO_DE_PV.vigor}. A ficha faz a conta sozinha; à mão, é esta:
+          </P>
+          <BookTable
+            headers={["Patamar", "Árvores que chegaram nele", "Conta"]}
+            rows={[
+              ...EXEMPLO_DE_PV.patamares.map((p) => [
+                p.patamar,
+                p.dados.map((d) => `${d.arvore} ${d.formula} (${d.media})`).join(" · "),
+                `${p.conta}${p.dados.length > 1 ? ", o maior" : ""}`,
+              ]),
+              ["Corpo treinado", `14 + 1,67 × ${EXEMPLO_DE_PV.soma}`, EXEMPLO_DE_PV.corpo],
+              [`Vigor +${EXEMPLO_DE_PV.vigor}`, `× ${EXEMPLO_DE_PV.fator}, pra baixo`, `${EXEMPLO_DE_PV.pv} PV`],
+            ]}
+          />
         </Aside>
 
         <SubTitle id="cap4-vigor">A Escala do Vigor</SubTitle>
@@ -249,6 +320,8 @@ export default function Chapter4() {
         <List
           items={[
             <span key="alcance"><b>Alcance corpo a corpo:</b> 1,5 m — o espaço ao lado. Lança e alabarda alcançam 3 m. É desse alcance que o Ataque de Oportunidade (§4) fala.</span>,
+            <span key="distancia"><b>Alcance à distância:</b> toda arma que dispara ou se arremessa tem dois números, o alcance <b>normal</b> e o <b>longo</b> — Arcos e Bestas {ALCANCE_DO_ARCO}, Arremesso {ALCANCE_DO_ARREMESSO} (Cap. 1, §4). Até o normal, o ataque é comum; além dele e até o longo (a <b>distância longa</b>), Desvantagem; além do longo, não alcança. Quando uma carta diz &ldquo;alcance da arma&rdquo;, é o normal; &ldquo;alcance máximo&rdquo; é o longo.</span>,
+            <span key="colado"><b>Atirar colado:</b> disparar ou arremessar com uma criatura hostil a 1,5 m de você dá Desvantagem no ataque — ela está em cima da sua mira. Não provoca Ataque de Oportunidade: só sair do alcance provoca (§4).</span>,
             <span key="levantar"><b>Levantar-se:</b> quem está Caído gasta metade do Deslocamento de um Andar pra ficar de pé, e anda a outra metade com a mesma Ação.</span>,
             <span key="queda"><b>Queda:</b> 1d6 de dano de queda por 3 m de altura, até 20d6, e você fica Caído. É esse o &ldquo;dano de queda&rdquo; que as árvores citam.</span>,
             <span key="voo"><b>Voo:</b> voar é Andar pelo ar, pelo mesmo custo. Quem está no chão te alcança corpo a corpo se você estiver até 1,5 m acima do alcance normal dele. Se ficar Atordoado, Paralisado, Incapacitado ou a 0 PV no ar, você cai e sofre a queda acima.</span>,
@@ -579,7 +652,7 @@ export default function Chapter4() {
           rows={[
             [
               "Curto (1 a 2 horas)",
-              "Recupera 25% dos seus PM e PP máximos (arredondado para baixo) e TODOS os seus PT. Não recupera Pontos de Vida (0%)."
+              "Recupera 25% dos seus PM e PP máximos (arredondado para baixo) e TODOS os seus PT. Pontos de Vida, só com Cuidar dos Ferimentos (abaixo)."
             ],
             [
               "Longo (8 horas de sono seguro)",
@@ -605,6 +678,7 @@ export default function Chapter4() {
             items={[
               "Magia de Cura — rápida, cara em PM, do rank certo pro tipo de ferimento.",
               "Poções — caras em dinheiro, limitadas em estoque.",
+              "Cuidar dos Ferimentos — no Descanso Curto, com Medicina e um Kit de Primeiros Socorros (abaixo).",
               "Convalescença — uma semana inteira de cama, em lugar seguro, devolve todos os PV (Cap. 5, a atividade Recuperar-se).",
             ]}
           />
@@ -614,9 +688,18 @@ export default function Chapter4() {
             Maior Bônus de Rank — e o teto de dois Curtos por dia continua valendo.
           </P>
           <P>
-            Um grupo sem curandeiro não perde combates — perde a campanha: vence a primeira luta, sangra na
-            segunda, e na terceira decide voltar pra cidade porque o guerreiro está com um terço da vida e
-            não existe descanso que resolva.
+            <b>Cuidar dos Ferimentos.</b> Num Descanso Curto, quem tem a perícia Medicina e um Kit de
+            Primeiros Socorros trata o grupo: cada criatura tratada recupera PV iguais ao Vigor dela + 2 × o
+            maior Bônus de Rank dela (mínimo 1) — o que uma noite de sono devolve, sem esperar a noite. Cada
+            criatura recebe um tratamento por Descanso Curto, venha de quem vier, e quem trata pode tratar a
+            si mesmo. Não tem teste: o descanso é o tempo do curativo. Cada tratamento gasta um dos 10 usos do
+            kit.
+          </P>
+          <P>
+            Um grupo sem curandeiro sangra mais que um com Cura: a Cura levanta quem caiu, dobra os dados na
+            Ferida Fresca e fecha a ferida no meio da luta, e nada disso o kit faz. Mas ele não perde a
+            campanha: com alguém de Medicina no grupo, os dois Descansos Curtos do dia valem duas noites de
+            sono a mais pra cada um.
           </P>
         </Warning>
 

@@ -167,6 +167,13 @@ export interface ArquetipoCriatura {
    */
   sentido?: string;
   exemplo: string;
+  /**
+   * O prêmio de risco na recompensa (Apêndice G, "A recompensa") — 2026-10-07.
+   * Os números do patamar são os mesmos pra todo arquétipo; o que muda é o que
+   * vencê-lo cobra do grupo além dos números: o Ágil escolhe a luta e foge, o
+   * Conjurador e a Mente acertam o grupo em área e furam o esconderijo.
+   */
+  perigoNaRecompensa: number;
 }
 
 /**
@@ -186,6 +193,7 @@ export const ARQUETIPOS_CRIATURA: ArquetipoCriatura[] = [
     fraco: ["Intelecto", "Espírito"],
     deslocamento: 6,
     exemplo: "Ogro de Guerra, urso das cavernas, golem de pedra.",
+    perigoNaRecompensa: 1,
   },
   {
     id: "agil",
@@ -197,6 +205,7 @@ export const ARQUETIPOS_CRIATURA: ArquetipoCriatura[] = [
     deslocamento: 12,
     sentido: "Faro e audição: fura o Escondido a até 9 m.",
     exemplo: "Lobo de gelo, assassino, Wyvern.",
+    perigoNaRecompensa: 1.25,
   },
   {
     id: "fortaleza",
@@ -207,6 +216,7 @@ export const ARQUETIPOS_CRIATURA: ArquetipoCriatura[] = [
     fraco: ["Agilidade", "Intelecto"],
     deslocamento: 6,
     exemplo: "Tartaruga de casco, cavaleiro em placas, tronco animado.",
+    perigoNaRecompensa: 1,
   },
   {
     id: "conjurador",
@@ -218,6 +228,7 @@ export const ARQUETIPOS_CRIATURA: ArquetipoCriatura[] = [
     deslocamento: 9,
     sentido: "Vê mana: fura invisibilidade mágica e enxerga barreiras a até 18 m.",
     exemplo: "Necromante, xamã goblin, Superd Renegado.",
+    perigoNaRecompensa: 1.5,
   },
   {
     id: "mente",
@@ -229,6 +240,7 @@ export const ARQUETIPOS_CRIATURA: ArquetipoCriatura[] = [
     deslocamento: 9,
     sentido: "Sente intenção: fura o Escondido de quem pretende atacá-la, a até 18 m.",
     exemplo: "Íncubo, ilusionista, dragão antigo.",
+    perigoNaRecompensa: 1.5,
   },
 ];
 
@@ -261,6 +273,18 @@ export interface SubArquetipoCriatura {
   /** Duas ou três Ações típicas, pra montar um monstro sem inventar do zero. */
   acoesSugeridas: string[];
   exemplo: string;
+  /**
+   * Quanto o corpo dela vale na recompensa (Apêndice G, "A recompensa") — 2026-10-07.
+   * Morto-vivo carrega trapo; construto e demônio carregam gema; dragão é o
+   * corpo mais caro do mundo.
+   */
+  riqueza: number;
+  /**
+   * O espólio que sobra quando os itens da lista não cobrem o valor da
+   * criatura: o couro inteiro, o núcleo, o sangue. Vende pelo preço cheio,
+   * como toda tralha (Cap. 5, "Vender o que caiu").
+   */
+  partesValiosas: { nome: string; descricao: string };
 }
 
 /**
@@ -284,6 +308,8 @@ export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
     moeda: "nenhuma",
     acoesSugeridas: ["Mordida", "Investida (corre e derruba)", "Uivo que chama o bando"],
     exemplo: "Lobo de gelo, urso das cavernas, javali gigante.",
+    riqueza: 1,
+    partesValiosas: { nome: "Couro e ossos aproveitáveis", descricao: "O couro inteiro, os tendões e os ossos grandes. Curtidor e alquimista dividem o bicho entre si." },
   },
   {
     id: "monstruosidade",
@@ -292,6 +318,8 @@ export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
     moeda: "nenhuma",
     acoesSugeridas: ["Ácido ou cuspe em área", "Agarrar e engolir", "Regenerar no início do turno"],
     exemplo: "Sapo-lodo, mariposa ilusória, treant corrompido.",
+    riqueza: 1.25,
+    partesValiosas: { nome: "Glândulas e órgãos raros", descricao: "O que faz o monstro ser monstro: a bolsa de ácido, o olho que hipnotiza. Alquimista paga caro e não pergunta." },
   },
   {
     id: "humanoide",
@@ -300,6 +328,8 @@ export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
     moeda: "bolsa",
     acoesSugeridas: ["Ataque com arma de verdade", "Pedir rendição ou fugir a 1/4 dos PV", "Flanquear em dupla"],
     exemplo: "Bandido, guarda, cultista, mercenário.",
+    riqueza: 1,
+    partesValiosas: { nome: "Pertences de valor", descricao: "Anel, botas boas, um selo de família. Tem dono em algum lugar, e o lojista sabe disso." },
   },
   {
     id: "morto-vivo",
@@ -310,6 +340,8 @@ export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
     imunidades: ["psíquico"],
     acoesSugeridas: ["Garra que impede cura por 1 rodada", "Toque gélido", "Levantar-se uma vez com 1 PV"],
     exemplo: "Zumbi, esqueleto, lich, fantasma de aventureiro.",
+    riqueza: 0.75,
+    partesValiosas: { nome: "Relíquias de túmulo", descricao: "O que foi enterrado com ele: medalha, broche, fivela de prata. O templo compra pra devolver à família." },
   },
   {
     id: "construto",
@@ -319,6 +351,8 @@ export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
     imunidades: ["veneno", "psíquico"],
     acoesSugeridas: ["Golpe de peso que aplica Quebrantado", "Ignorar a primeira condição da cena", "Parar de funcionar a 0 PV, sem Fio da Vida"],
     exemplo: "Golem de pedra, armadura animada, autômato de Ranoa.",
+    riqueza: 1.5,
+    partesValiosas: { nome: "Núcleo e circuito de mana", descricao: "A peça que fazia o corpo andar. A Universidade de Ranoa e todo encantador querem uma." },
   },
   {
     id: "demonio",
@@ -328,8 +362,87 @@ export const SUBARQUETIPOS_CRIATURA: SubArquetipoCriatura[] = [
     resistencias: ["psíquico"],
     acoesSugeridas: ["Palavra que impõe Amedrontado", "Olho demoníaco (uma vez por combate)", "Trocar de lugar com um aliado"],
     exemplo: "Íncubo, imperatriz demônio menor, espírito do Continente Demônio.",
+    riqueza: 1.5,
+    partesValiosas: { nome: "Cristal de mana demoníaco", descricao: "A mana do Continente Demônio, solidificada onde o coração estaria. Vende bem e fora de vista." },
+  },
+  // Os três de 2026-10-07: o autor pediu mais variação no que a mesa monta e
+  // no que ela ganha. Cinco por nove dão 45 criaturas reconhecíveis.
+  {
+    id: "elemental",
+    nome: "Elemental",
+    espolios: ["tralha_frasco_elemento_vivo", "tralha_nucleo_elemental_apagado", "tralha_gema_magica_opaca"],
+    moeda: "nenhuma",
+    imunidades: ["o próprio elemento"],
+    acoesSugeridas: ["Explodir em área do próprio elemento", "Virar o terreno (fogo, lama, gelo)", "Absorver o próprio elemento e curar"],
+    exemplo: "Salamandra, serpente de fogo, espírito da tempestade.",
+    riqueza: 1.5,
+    partesValiosas: { nome: "Essência elemental", descricao: "O elemento que sobrou quando a criatura se desfez, preso num frasco que ainda esquenta ou gela. Encantador paga pelo dano elemental que ela vira." },
+  },
+  {
+    id: "dragonico",
+    nome: "Dragônico",
+    espolios: ["tralha_escama_wyvern", "tralha_dente_dragao_menor", "tralha_sangue_draconico"],
+    moeda: "pouca",
+    resistencias: ["o elemento do sopro"],
+    acoesSugeridas: ["Sopro em cone do próprio elemento", "Asa que derruba quem está perto", "Voar pra fora do alcance e voltar"],
+    exemplo: "Wyvern, hidra, dragão vermelho.",
+    riqueza: 2,
+    partesValiosas: { nome: "Escamas, garras e coração de dragão", descricao: "O corpo mais caro do mundo, peça por peça. Ferreiro, alquimista e nobre disputam cada uma." },
+  },
+  {
+    id: "planta",
+    nome: "Planta",
+    espolios: ["tralha_semente_que_nao_germina", "tralha_seiva_de_treant", "tralha_madeira_viva"],
+    moeda: "nenhuma",
+    resistencias: ["contundente", "perfurante"],
+    acoesSugeridas: ["Raízes que deixam Atolado", "Esporos que deixam Envenenado", "Regenerar no início do turno, menos se pegou fogo"],
+    exemplo: "Treant ancião, flor carnívora, musgo que anda.",
+    riqueza: 0.75,
+    partesValiosas: { nome: "Madeira e resina boas", descricao: "Tora de cerne e resina que não apodrece. Carpinteiro de navio e fabricante de arco pagam o preço cheio." },
   },
 ];
+
+/**
+ * A RECOMPENSA (Apêndice G, "A recompensa") — decisão do autor, 2026-10-07.
+ *
+ * Antes o livro tinha preço pra tudo e renda pra nada: o orçamento do
+ * /encontros começava em 0 e o Mestre chutava. Agora cada criatura derrotada
+ * vale uma conta de quatro números, e o encontro vale a soma:
+ *
+ *   PO = base do patamar × papel × arquétipo × sub-arquétipo
+ *
+ * A base dobra a cada patamar, como os preços da loja (a poção de cura vai de
+ * 15 PO no 1º a 400 no 6º; o encantamento, de 150 a 1.500). A imunidade conta um
+ * patamar acima, igual ao Orçamento de Encontro: o bicho que apaga a jogada de
+ * alguém custa mais pra vencer e vale mais.
+ */
+export const PO_DO_PATAMAR = [10, 20, 40, 80, 160, 320] as const;
+
+/** O papel pesa na recompensa o mesmo que pesa no Orçamento de Encontro. */
+export const PAPEL_NA_RECOMPENSA: Record<PapelCriatura, number> = { lacaio: 0.5, padrao: 1, chefe: 4 };
+
+/** Quanto do valor da criatura vem em moeda; o resto vem em espólio (e, de quem carrega bolsa, em equipamento). */
+export const FRACAO_EM_MOEDA: Record<SubArquetipoCriatura["moeda"], number> = { nenhuma: 0, pouca: 0.3, bolsa: 0.6 };
+
+export function poDoPatamar(patamar: number): number {
+  const p = Math.max(1, Math.round(patamar));
+  // Um imune no 6º patamar conta como 7º: a base continua dobrando.
+  return p <= PO_DO_PATAMAR.length ? PO_DO_PATAMAR[p - 1] : PO_DO_PATAMAR[PO_DO_PATAMAR.length - 1] * 2 ** (p - PO_DO_PATAMAR.length);
+}
+
+/** O valor de uma criatura derrotada, em PO, arredondado pro inteiro mais perto. */
+export function recompensaDaCriatura(c: {
+  patamar: number;
+  papel: PapelCriatura;
+  arquetipo?: string;
+  subArquetipo?: string;
+  temImunidade?: boolean;
+}): number {
+  const base = poDoPatamar(c.patamar + (c.temImunidade ? 1 : 0));
+  const arquetipo = getArquetipo(c.arquetipo)?.perigoNaRecompensa ?? 1;
+  const sub = getSubArquetipo(c.subArquetipo)?.riqueza ?? 1;
+  return Math.round(base * PAPEL_NA_RECOMPENSA[c.papel] * arquetipo * sub);
+}
 
 export function getSubArquetipo(id: string | undefined): SubArquetipoCriatura | undefined {
   return SUBARQUETIPOS_CRIATURA.find((s) => s.id === id);
