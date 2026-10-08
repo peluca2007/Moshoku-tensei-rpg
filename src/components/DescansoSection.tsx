@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { getPvNaMesa, mesaDa } from "@/lib/mesa";
 import { BedDouble, Coffee, Coins, Hourglass } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import {
-  getMaxHp,
   getMaxMp,
   getPpPool,
   getPtPool,
@@ -44,9 +44,13 @@ export default function DescansoSection() {
   const character = useActiveCharacter();
   const [previa, setPrevia] = useState<{ tipo: "curto" | "longo"; ganho: GanhoDeDescanso } | null>(null);
   const [downtime, setDowntime] = useState<{ nome: string; texto: string } | null>(null);
+  const [causaAcabou,setCausaAcabou] = useState(false);
+  const [sonoPerturbado,setSonoPerturbado] = useState(false);
+  const [companhia,setCompanhia] = useState(false);
+  const [vigiado,setVigiado] = useState(false);
 
   const maximos: ReservasMaximas = {
-    pv: getMaxHp(character),
+    pv: getPvNaMesa(character),
     pm: getMaxMp(character),
     pt: getPtPool(character),
     pp: getPpPool(character),
@@ -74,7 +78,7 @@ export default function DescansoSection() {
 
   function aplicar() {
     if (!previa) return;
-    useCharacterStore.getState().descansar(previa.tipo, previa.ganho, maximos);
+    useCharacterStore.getState().descansar(previa.tipo, previa.ganho, maximos, causaAcabou, sonoPerturbado);
     setPrevia(null);
   }
 
@@ -97,10 +101,16 @@ export default function DescansoSection() {
     }
 
     if (atividade.aplica === "pvCheio") {
+      if(mesaDa(character).marcas>=3) {
+        setDowntime({nome:atividade.nome,texto:"Se acumular 3 Marcas da Morte, você morre permanentemente."});
+        return;
+      }
       useCharacterStore.getState().setCurrentHp(maximos.pv);
+      const mesa=mesaDa(useCharacterStore.getState().characters[character.id]);
+      useCharacterStore.getState().setMesa({ exaustao: Math.max(0,mesa.exaustao-1), trauma:Math.max(0,mesa.trauma-(companhia?(vigiado?2:1):0)) });
       setDowntime({
         nome: atividade.nome,
-        texto: `PV cheios (${maximos.pv}). A Exaustão a mais que a regra remove é anotação de mesa — a ficha ainda não a acompanha.`,
+        texto: `PV cheios (${maximos.pv}). Exaustão: −1. Trauma: −${companhia?(vigiado?2:1):0}.`,
       });
       return;
     }
@@ -145,6 +155,10 @@ export default function DescansoSection() {
               <li key={linha}>{linha}</li>
             ))}
           </ul>
+          {previa.tipo==="longo"&&<div className="mt-2 space-y-2">
+            <label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={causaAcabou} onChange={e=>setCausaAcabou(e.target.checked)} />A causa da Exaustão não está mais ativa · remove 1 nível</label>
+            {mesaDa(character).trauma>=3&&<label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={sonoPerturbado} onChange={e=>setSonoPerturbado(e.target.checked)} />Trauma: rolei 5 ou menos no 1d20 · metade dos PM e PP recuperados</label>}
+          </div>}
           <div className="mt-1.5 flex gap-1.5">
             <button
               type="button"
@@ -164,6 +178,10 @@ export default function DescansoSection() {
         </div>
       )}
 
+      <div className="mt-3 space-y-1">
+        <label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={companhia} onChange={e=>setCompanhia(e.target.checked)} />Recuperar-se: acompanhado de alguém de confiança</label>
+        {companhia&&<label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={vigiado} onChange={e=>setVigiado(e.target.checked)} />Alguém gastou a semana em Vigiar as Costas</label>}
+      </div>
       <label className="mt-2 block">
         <span className="sr-only">Atividade de Downtime (um bloco de uma semana)</span>
         <select

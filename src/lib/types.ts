@@ -1013,4 +1013,15 @@ export interface CharacterData {
    * novo. Ausente = ficha de antes da 0.1.25, e vale zero.
    */
   descansosCurtos?: number;
+  /** Marcadores persistidos do Cap. 4; ausente nas fichas antigas = tudo zero. */
+  mesa?: {
+    exaustao: number;
+    marcas: number;
+    estabilizado: boolean;
+    responsavel: number;
+    salvacoes: number;
+    trauma: number;
+    cicatrizes: number[];
+    usos: Record<string, number>;
+  };
 }
