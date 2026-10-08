@@ -50,6 +50,19 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.152",
+    date: "2026-10-08",
+    title: "Três Turnos com as Árvores Difíceis",
+    sections: [
+      { area: "livro", heading: "Exemplos jogados no catálogo (Cap. 3)", items: [
+        "As cinco árvores que a mesa não entende de primeira ganharam um quadro \"Na mesa\" logo depois da Mecânica Central, com a ficha de quem joga e os números das cartas: o Vendaval (a distância andada vira alcance do golpe), o Punho do Fogo (primeiro acende, depois quebra), o Tático (a Ordem que cresce quando o grupo erra), Espíritos e Feras (cada ordem específica sai das suas três Ações) e a Magia Teórica (só uma parede ou selo de pé por vez).",
+      ] },
+      { area: "livro", heading: "As aberturas das árvores a pincel", items: [
+        "O nome japonês em pé no cabeçalho de cada árvore (火魔術, 剣神流…) e o kanji gigante de marca d'água nas páginas dela passaram a ser desenhos a pincel, iguais em todo aparelho; antes usavam a fonte do sistema. O selo quadrado do cabeçalho deu lugar ao carimbo da árvore, em tinta escura sobre a cor dela.",
+      ] },
+    ],
+  },
+  {
     version: "0.1.151",
     date: "2026-10-08",
     title: "O Carimbo da Árvore e o Papel da Ficha",

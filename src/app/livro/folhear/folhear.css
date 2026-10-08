@@ -144,31 +144,49 @@
   --cor-arvore: #ff6f4a;
   --jp: "火魔術";
   --selo: "火";
+  --jp-img: url("/livro/kanji/fogo.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/fogo-selo.svg");
 }
 .folhear [data-arvore="agua"] {
   --cor-arvore: #5a9bff;
   --jp: "水魔術";
   --selo: "水";
+  --jp-img: url("/livro/kanji/agua.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/agua-selo.svg");
 }
 .folhear [data-arvore="vento"] {
   --cor-arvore: #8be28f;
   --jp: "風魔術";
   --selo: "風";
+  --jp-img: url("/livro/kanji/vento.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/vento-selo.svg");
 }
 .folhear [data-arvore="terra"] {
   --cor-arvore: #c89a6a;
   --jp: "土魔術";
   --selo: "土";
+  --jp-img: url("/livro/kanji/terra.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/terra-selo.svg");
 }
 .folhear [data-arvore="cura"] {
   --cor-arvore: #d4e157;
   --jp: "治癒魔術";
   --selo: "癒";
+  --jp-img: url("/livro/kanji/cura.svg");
+  --jp-n: 4;
+  --selo-img: url("/livro/kanji/cura-selo.svg");
 }
 .folhear [data-arvore="desintoxicacao"] {
   --cor-arvore: #c07dff;
   --jp: "解毒魔術";
   --selo: "解";
+  --jp-img: url("/livro/kanji/desintoxicacao.svg");
+  --jp-n: 4;
+  --selo-img: url("/livro/kanji/desintoxicacao-selo.svg");
 }
 /* A Magia Teórica (2026-09-25) substituiu a Barreira: a cor é a da essência
    Mana, que o rework definiu como a da própria escola (magiaTeorica.ts). */
@@ -176,66 +194,105 @@
   --cor-arvore: #78d5d0;
   --jp: "理論魔術";
   --selo: "式";
+  --jp-img: url("/livro/kanji/teorica.svg");
+  --jp-n: 4;
+  --selo-img: url("/livro/kanji/teorica-selo.svg");
 }
 .folhear [data-arvore="invocacao"] {
   --cor-arvore: #ff7ec4;
   --jp: "召喚魔術";
   --selo: "召";
+  --jp-img: url("/livro/kanji/invocacao.svg");
+  --jp-n: 4;
+  --selo-img: url("/livro/kanji/invocacao-selo.svg");
 }
 .folhear [data-arvore="deus-da-espada"] {
   --cor-arvore: #ff4d6a;
   --jp: "剣神流";
   --selo: "剣";
+  --jp-img: url("/livro/kanji/deus-da-espada.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/deus-da-espada-selo.svg");
 }
 .folhear [data-arvore="deus-da-agua-corpo"] {
   --cor-arvore: #4fc4ff;
   --jp: "水神流";
   --selo: "流";
+  --jp-img: url("/livro/kanji/deus-da-agua-corpo.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/deus-da-agua-corpo-selo.svg");
 }
 .folhear [data-arvore="deus-do-norte"] {
   --cor-arvore: #a9bcd6;
   --jp: "北神流";
   --selo: "北";
+  --jp-img: url("/livro/kanji/deus-do-norte.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/deus-do-norte-selo.svg");
 }
 .folhear [data-arvore="armas-pesadas"] {
   --cor-arvore: #e0a86a;
   --jp: "闘士";
   --selo: "闘";
+  --jp-img: url("/livro/kanji/armas-pesadas.svg");
+  --jp-n: 2;
+  --selo-img: url("/livro/kanji/armas-pesadas-selo.svg");
 }
 .folhear [data-arvore="cavalaria-e-escudos"] {
   --cor-arvore: #7d8cff;
   --jp: "騎士道";
   --selo: "盾";
+  --jp-img: url("/livro/kanji/cavalaria-e-escudos.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/cavalaria-e-escudos-selo.svg");
 }
 .folhear [data-arvore="vendaval"] {
   --cor-arvore: #33d6b0;
   --jp: "疾風流";
   --selo: "嵐";
+  --jp-img: url("/livro/kanji/vendaval.svg");
+  --jp-n: 3;
+  --selo-img: url("/livro/kanji/vendaval-selo.svg");
 }
 .folhear [data-arvore="punho-de-fogo"] {
   --cor-arvore: #ff9a3d;
   --jp: "炎拳";
   --selo: "拳";
+  --jp-img: url("/livro/kanji/punho-de-fogo.svg");
+  --jp-n: 2;
+  --selo-img: url("/livro/kanji/punho-de-fogo-selo.svg");
 }
 .folhear [data-arvore="arquearia"] {
   --cor-arvore: #a8c46a;
   --jp: "弓術";
   --selo: "弓";
+  --jp-img: url("/livro/kanji/arquearia.svg");
+  --jp-n: 2;
+  --selo-img: url("/livro/kanji/arquearia-selo.svg");
 }
 .folhear [data-arvore="furtividade-e-armadilhas"] {
   --cor-arvore: #9d8df1;
   --jp: "隠密";
   --selo: "影";
+  --jp-img: url("/livro/kanji/furtividade-e-armadilhas.svg");
+  --jp-n: 2;
+  --selo-img: url("/livro/kanji/furtividade-e-armadilhas-selo.svg");
 }
 .folhear [data-arvore="bardo-e-interacao"] {
   --cor-arvore: #ffab91;
   --jp: "吟遊詩人";
   --selo: "詩";
+  --jp-img: url("/livro/kanji/bardo-e-interacao.svg");
+  --jp-n: 4;
+  --selo-img: url("/livro/kanji/bardo-e-interacao-selo.svg");
 }
 .folhear [data-arvore="navegacao-e-lideranca"] {
   --cor-arvore: #e3c88f;
   --jp: "統率";
   --selo: "導";
+  --jp-img: url("/livro/kanji/navegacao-e-lideranca.svg");
+  --jp-n: 2;
+  --selo-img: url("/livro/kanji/navegacao-e-lideranca-selo.svg");
 }
 
 .folhear [data-arvore] {
@@ -764,6 +821,18 @@ html.livro-imersivo .folhear[data-modo="livro"] {
 
 .folhear[data-papel="dia"] .folhear-marca-dagua {
   opacity: 0.05;
+}
+
+/* Nas páginas de uma árvore, a marca d'água é o selo dela a pincel (2026-10-08),
+   o mesmo desenho dos carimbos, em vez do kanji da fonte do aparelho. */
+.folhear-folha[data-arvore] .folhear-marca-dagua::before {
+  content: "";
+  display: block;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  -webkit-mask: var(--selo-img) center / contain no-repeat;
+  mask: var(--selo-img) center / contain no-repeat;
 }
 
 /* A marca de aba impressa na borda de fora, na altura da aba do capítulo. */
@@ -2576,30 +2645,55 @@ html.livro-imersivo .folhear[data-modo="livro"] {
  * ═════════════════════════════════════════════════════════════════════════ */
 .folhear-fluxo .livro-arvore-cabeca {
   position: relative;
-  min-height: 7em;
+  /* 8em, e não 7: a faixa da direita leva o nome em pé E o carimbo embaixo
+     dele (2026-10-08), e os dois precisam caber sem tocar no texto. */
+  min-height: 8em;
   margin-bottom: 1.2em;
   padding-right: 3.4em;
   padding-bottom: 1.3em;
 }
 
-/* O nome em japonês, na vertical, no canto direito. */
+/* O nome em japonês, na vertical, no canto direito: a pincel (2026-10-08),
+   desenhado por scripts/gerar-carimbos.mjs e usado como máscara, pintado com
+   a cor de texto do cabeçalho. Era texto na fonte do aparelho, e mudava de
+   cara entre iPhone, Android e Windows. */
 .folhear-fluxo .livro-arvore-cabeca::after {
-  content: var(--jp, "");
+  content: "";
   position: absolute;
-  top: 0.55em;
-  right: 0.55em;
-  color: var(--sobre-cor);
-  font-family: var(--font-livro-kanji);
-  font-size: 1.25em;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  line-height: 1;
-  writing-mode: vertical-rl;
+  top: 0.5em;
+  right: 0.65em;
+  width: 1.2em;
+  height: calc(var(--jp-n, 3) * 1.2em);
+  background: var(--sobre-cor);
+  -webkit-mask: var(--jp-img) top center / contain no-repeat;
+  mask: var(--jp-img) top center / contain no-repeat;
 }
 
-/* O selo: o kanji da árvore num quadrado carimbado na borda de baixo. */
+/* O selo: o carimbo da árvore (o mesmo do mural do Cap. 3) na borda de
+   baixo, torto como carimbo de verdade. É o componente CarimboQueCai, dentro
+   do cabeçalho (Chapter3.tsx); o quadrado de texto que ficava aqui saiu. */
+.folhear-fluxo .livro-arvore-cabeca > :first-child {
+  /* Dentro do cabeçalho, e não pendurado pra fora: o do Corpo é recortado na
+     diagonal (clip-path), e cortaria o carimbo. */
+  position: absolute;
+  right: 0.4em;
+  bottom: 0.45em;
+  width: 2.3em !important;
+  height: 2.3em !important;
+  z-index: 2;
+  filter: drop-shadow(0 2px 0 rgb(0 0 0 / 0.3));
+}
+
+/* O cabeçalho já é pintado da cor da árvore: o carimbo, da mesma cor, sumia.
+   Ali ele vai na tinta do texto do cabeçalho, escura sobre o papel colorido. */
+.folhear-fluxo .livro-arvore-cabeca > :first-child svg {
+  width: 100%;
+  height: 100%;
+  color: var(--sobre-cor) !important;
+}
+
 .folhear-fluxo .livro-arvore-cabeca::before {
-  content: var(--selo, "");
+  content: none;
   position: absolute;
   right: 2.6em;
   bottom: -0.95em;
