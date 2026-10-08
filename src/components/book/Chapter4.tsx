@@ -185,7 +185,8 @@ export default function Chapter4() {
             se perde, e você recomeça do zero.
           </P>
           <P>
-            <b>Teste de Concentração:</b> se sofrer dano enquanto conjura, faça um teste de Espírito contra{" "}
+            <b>Teste de Concentração:</b> se sofrer dano enquanto conjura, role 1d20 + Espírito + metade do
+            seu maior Bônus de Rank (arredondada pra cima) contra{" "}
             <b>CD 10 + o Bônus de Rank de quem te acertou</b> (CD 11 contra um Principiante, CD 16 contra um
             Imperador; use 12 se não houver um responsável claro). O Bônus de Rank de uma criatura é o
             patamar dela, de +1 a +6. Falhar significa perder o cântico, as Ações já gastas e{" "}
@@ -415,7 +416,7 @@ export default function Chapter4() {
         <SectionTitle id="cap4-5">6. Críticos e Touki</SectionTitle>
         <List
           items={[
-            <span key="20"><b>20 Natural (Crítico):</b> num ataque, acerta automaticamente, independente da CA do inimigo. Role os dados de dano duas vezes e some os bônus fixos uma vez só. O crítico <b>não fura Resistência a dano</b> (§6): quem quiser furar precisa de uma habilidade que diga isso, como O Ponto, do Suishin-ryū. Em teste de perícia ou de resistência, o 20 natural é sucesso automático.</span>,
+            <span key="20"><b>20 Natural (Crítico):</b> num ataque, acerta automaticamente, independente da CA do inimigo. Role os dados de dano duas vezes e some os bônus fixos uma vez só. O crítico <b>não fura Resistência a dano</b> (§6): quem quiser furar precisa de uma habilidade que diga isso, como O Ponto, a etapa opcional do Tiro Perfeito (Arquearia, Cap. 3). Em teste de perícia ou de resistência, o 20 natural é sucesso automático.</span>,
             <span key="1"><b>1 Natural (Falha Crítica):</b> num ataque, você erra, e o Mestre escolhe <b>um de três</b>: você larga a arma (cai a 1,5 m), fica <b>Caído</b>, ou perde a Reação até o seu próximo turno. É um menu curto de propósito — a mesa não para pra inventar, e nenhum dos três causa dano nem mata. Em teste de perícia ou de resistência, o 1 natural é falha com uma complicação narrativa. Quando uma regra dá mais peso ao 1, ela diz (o Fio da Vida, seção 7, diz).</span>,
             <span key="disputa"><b>Na Disputa</b> (§3), o 20 e o 1 naturais não têm efeito especial: vale o total.</span>,
           ]}

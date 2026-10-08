@@ -13,6 +13,15 @@ import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
 import TreeCrest from "../TreeCrest";
 import { PREPARACOES } from "@/data/preparacoes";
+import { DANO_POR_TURNO_CORPO } from "@/data/danoPorTurno";
+
+/**
+ * O número do Norte em "Quanto a Utilidade bate" sai da régua do Apêndice C.
+ * Escrito à mão, ele dizia 81 enquanto o Apêndice dizia 87 (2026-10-07).
+ */
+const DANO_DO_NORTE_NO_IMPERADOR = (
+  DANO_POR_TURNO_CORPO.find((l) => l.patamar === "6º")?.porArvore["deus-do-norte"] ?? ""
+).replace("~", "");
 
 /**
  * @param arvoresAbertas  o catálogo das árvores já sai aberto do servidor. O
@@ -748,9 +757,10 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         />
         <P>
           <b>Quanto a Utilidade bate.</b> No Imperador, o Dano Furtivo do Ladino soma <b>+6d6 por turno</b>{" "}
-          (uns 21); a Dissonância do Bardo cobra <b>6d4</b> (uns 15) de até seis hostis que o ouçam; e a
+          (uns 21); a Dissonância do Bardo cobra <b>6d6</b> (uns 21) de até seis hostis que o ouçam; e a
           Ordem de Tiro do Tático põe <b>6d6</b> no golpe de um aliado — até 12d6, se ninguém acertar o
-          alvo Apontado e você o apontar de novo. Um Deus do Norte Imperador bate cerca de 81 por turno.
+          alvo Apontado e você o apontar de novo. Um Deus do Norte Imperador bate cerca de{" "}
+          {DANO_DO_NORTE_NO_IMPERADOR} por turno (Apêndice C).
         </P>
         <P>
           Ou seja: <b>uma árvore de Utilidade causa, sozinha, algo entre um terço e metade do dano de um
