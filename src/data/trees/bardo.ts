@@ -214,7 +214,7 @@ export const BARDO_TREE: Tree = {
       },
       talents: [
         { id: "nome-imortal", name: "Nome Imortal", paCost: UTILITY_PA_COST.talent.Imperador, description: "Escolha uma pessoa: ela entra pra história como herói ou monstro, permanentemente." },
-        { id: "a-marcha", name: "A Marcha", paCost: UTILITY_PA_COST.talent.Imperador, description: "Uma canção sua vira hino de um movimento. Gastando 3 PP, declare que ele age agora a seu favor." },
+        { id: "a-marcha", name: "O Hino", paCost: UTILITY_PA_COST.talent.Imperador, description: "Uma canção sua vira o hino de um movimento. Gastando 3 PP, declare que ele age agora a seu favor." },
         { id: "publico-universal", name: "Público Universal", paCost: UTILITY_PA_COST.talent.Imperador, description: "Suas Preparações sociais alcançam qualquer continente, mesmo os que você nunca visitou." },
       ],
       abilities: [
