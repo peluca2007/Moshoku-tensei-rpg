@@ -29,6 +29,11 @@ export interface MonstroDoLivro {
   perigo?: string;
   /** Categoria para filtrar na UI */
   categoria: 'besta' | 'humanoide' | 'monstro' | 'morto-vivo' | 'construto' | 'demonio';
+  /**
+   * O sub-arquétipo do Apêndice G, quando não é o da categoria (dragão, planta,
+   * elemental). É ele que decide o espólio e a moeda da recompensa (2026-10-07).
+   */
+  subArquetipo?: string;
   /** Uma frase descrevendo a criatura para o Mestre */
   descricao: string;
 }
@@ -174,6 +179,7 @@ export const BESTIARIO: MonstroDoLivro[] = [
   // Patamar 3 (Avancado)
   {
     nome: 'Treant Ancião',
+    subArquetipo: 'planta',
     patamar: 3,
     papel: 'chefe',
     arquetipo: 'fortaleza',
@@ -201,6 +207,7 @@ export const BESTIARIO: MonstroDoLivro[] = [
   },
   {
     nome: 'Serpente de Fogo',
+    subArquetipo: 'elemental',
     patamar: 3,
     papel: 'padrao',
     arquetipo: 'conjurador',
@@ -228,6 +235,7 @@ export const BESTIARIO: MonstroDoLivro[] = [
   },
   {
     nome: 'Hidra Jovem',
+    subArquetipo: 'dragonico',
     patamar: 3,
     papel: 'chefe',
     arquetipo: 'bruto',
@@ -244,6 +252,7 @@ export const BESTIARIO: MonstroDoLivro[] = [
   // Patamar 4 (Santo)
   {
     nome: 'Wyrm Vermelho',
+    subArquetipo: 'dragonico',
     patamar: 4,
     papel: 'chefe',
     arquetipo: 'bruto',
@@ -333,6 +342,7 @@ export const BESTIARIO: MonstroDoLivro[] = [
   },
   {
     nome: 'Dragão Azul',
+    subArquetipo: 'dragonico',
     patamar: 5,
     papel: 'chefe',
     arquetipo: 'conjurador',
@@ -395,6 +405,7 @@ export const BESTIARIO: MonstroDoLivro[] = [
   // história, não encontros. Viraram criaturas que se enfrentam.
   {
     nome: 'Hidra de Manatita',
+    subArquetipo: 'dragonico',
     patamar: 6,
     papel: 'chefe',
     arquetipo: 'bruto',
@@ -408,6 +419,7 @@ export const BESTIARIO: MonstroDoLivro[] = [
   },
   {
     nome: 'Dragão Vermelho Ancião',
+    subArquetipo: 'dragonico',
     patamar: 6,
     papel: 'chefe',
     arquetipo: 'bruto',
@@ -435,6 +447,11 @@ export const BESTIARIO: MonstroDoLivro[] = [
   }
 ];
 
+/** O sub-arquétipo de um monstro do catálogo: o declarado, ou o da categoria dele. */
+export function subArquetipoDoMonstro(m: MonstroDoLivro): string {
+  return m.subArquetipo ?? (m.categoria === 'monstro' ? 'monstruosidade' : m.categoria);
+}
+
 /**
  * Cria uma CriaturaEncontro completa a partir de um MonstroDoLivro.
  * Gera um ID unico e preenche acoes sugeridas pelo Apendice G.
@@ -443,6 +460,7 @@ export function instanciarMonstro(m: MonstroDoLivro): CriaturaEncontro {
   const id = `pronto_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
   const criatura = criaturaDoMolde(m.patamar, m.papel, m.nome, id);
   criatura.arquetipo = m.arquetipo;
+  criatura.subArquetipo = subArquetipoDoMonstro(m);
   if (m.tamanho) criatura.tamanho = m.tamanho;
   const normalizar = (tipo: string) => ({ fogo: "ígneo", eletricidade: "elétrico", concussão: "contundente" }[tipo] ?? tipo);
   const conhecido = (tipo: string) => (TIPOS_DE_DANO_CONHECIDOS as readonly string[]).includes(tipo);

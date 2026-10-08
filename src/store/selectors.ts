@@ -305,27 +305,65 @@ function getTalentReserve(state: StoreState, field: keyof ReserveGrant): number 
   }, 0);
 }
 
+/** O dado de PV que conta num patamar, e os que ficaram de fora dele. */
+export interface DadoDePvDoPatamar {
+  rank: RankName;
+  /** A árvore cujo dado conta neste patamar (o maior; empate fica com a primeira aberta). */
+  treeId: string;
+  formula: string;
+  media: number;
+  /** As outras árvores que também chegaram neste patamar: o dado delas não soma. */
+  deFora: { treeId: string; formula: string; media: number }[];
+}
+
+/**
+ * UM DADO DE PV POR PATAMAR (Cap. 4, §1) — decisão do autor, 2026-10-07.
+ *
+ * Em cada patamar (1º ao 6º), conta só o maior Dado de PV entre as árvores que
+ * chegaram nele. Antes somavam todos: cinco árvores do Corpo no 1º patamar davam
+ * 100 PV com 15 PA, contra 52 PV de um Lutador no 2º com ~17 PA (medido no
+ * `RELATORIO-CODEX-LARGURA`). Abrir árvore nova continua dando Maestria,
+ * técnica e PT; o que deixou de dar é um segundo corpo.
+ *
+ * A ficha mostra esta lista no quadro "de onde vem o seu PV": é a mesma conta que
+ * o jogador faz à mão, patamar por patamar.
+ */
+export function getDadosDePvPorPatamar(state: StoreState): DadoDePvDoPatamar[] {
+  const porPatamar = new Map<RankName, { treeId: string; formula: string; media: number }[]>();
+  for (const unlocked of state.unlockedRanks) {
+    const formula = getTreeById(unlocked.treeId)?.ranks.find((r) => r.rank === unlocked.rank)?.hpDiceFormula;
+    if (!formula) continue;
+    const lista = porPatamar.get(unlocked.rank) ?? [];
+    lista.push({ treeId: unlocked.treeId, formula, media: diceAverage(formula) });
+    porPatamar.set(unlocked.rank, lista);
+  }
+  return RANKS.flatMap((rank) => {
+    const lista = porPatamar.get(rank);
+    if (!lista?.length) return [];
+    const maior = lista.reduce((melhor, d) => (d.media > melhor.media ? d : melhor));
+    return [{ rank, ...maior, deFora: lista.filter((d) => d !== maior) }];
+  });
+}
+
 /**
  * O "corpo treinado" da fórmula do Cap. 4, antes do Vigor entrar:
- * PV_BASE (14) + 1,67 × a soma das médias dos Dados de PV de todos os patamares
- * desbloqueados. Exportado porque a ficha mostra essa parcela separada do fator.
+ * PV_BASE (14) + 1,67 × a soma das médias dos Dados de PV, um por patamar
+ * (`getDadosDePvPorPatamar`). Exportado porque a ficha mostra essa parcela
+ * separada do fator.
  *
  * O que saiu em 2026-08-29 foi o CASO ESPECIAL que existia aqui: o dado do 1º
  * patamar da Árvore Inicial contava pelo valor máximo em vez da média, e isso
  * fazia os PV Máximos dependerem de `startingTreeId`.
  */
 export function getTrainedBody(state: StoreState): number {
-  const dados = state.unlockedRanks.reduce((total, unlocked) => {
-    const rankDef = getTreeById(unlocked.treeId)?.ranks.find((r) => r.rank === unlocked.rank);
-    return total + (rankDef ? diceAverage(rankDef.hpDiceFormula) : 0);
-  }, 0);
+  const dados = getDadosDePvPorPatamar(state).reduce((total, d) => total + d.media, 0);
   return PV_BASE + dados * 1.67;
 }
 
 /**
  * PV Máximos (Cap. 4, "Cálculos Vitais") — UMA fórmula, sem piso e sem caso especial:
  *
- *   PV Máximos = (14 + 1,67 × soma dos Dados de PV dos seus patamares) × Fator de Vigor
+ *   PV Máximos = (14 + 1,67 × um Dado de PV por patamar, o maior) × Fator de Vigor
  *
  * 2026-08-30: o multiplicador dos dados caiu de 2 pra 1,5 e logo pra 1,67 (a
  * pedido do usuário, "se tirar o 2x no começo do jogo o pessoal sofre eu acho,
@@ -705,9 +743,15 @@ export function getWeaponDamage(
   };
 }
 
-/** PV/PM/PT/PP atuais: `null` (ainda não tocado) mostra igual ao máximo calculado; senão, o valor salvo. */
+/**
+ * PV/PM/PT/PP atuais: `null` (ainda não tocado) mostra igual ao máximo calculado; senão, o valor salvo.
+ *
+ * O PV salvo nunca passa do máximo (0.1.149, um Dado de PV por patamar): uma ficha
+ * de várias árvores salva com 157 de 157 abre agora com 75 de 75, e não 157 de 75.
+ */
 export function getCurrentHp(state: StoreState): number {
-  return state.currentHp ?? getMaxHp(state);
+  const maximo = getMaxHp(state);
+  return Math.min(state.currentHp ?? maximo, maximo);
 }
 export function getCurrentMp(state: StoreState): number {
   return state.currentMp ?? getMaxMp(state);

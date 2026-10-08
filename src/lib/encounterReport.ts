@@ -9,7 +9,8 @@ export const SEMENTE_ENCONTRO = 20260903;
 
 export interface ConfiguracaoEncontro {
   cenario?: CenarioCombate;
-  recompensa?: { orcamento: number; semente: number };
+  /** `manual` ausente com orçamento 0: a conta do Apêndice G (2026-10-07); com orçamento acima de 0, o valor que o Mestre escreveu antes disso. */
+  recompensa?: { orcamento: number; semente: number; manual?: boolean };
   semente: number;
   armasPorPersonagem: Record<string, string | null>;
   /**

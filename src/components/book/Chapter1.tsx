@@ -469,7 +469,11 @@ export default function Chapter1() {
         <Aside title="Os Oito Grupos, e os Escudos">
           <BookTable
             headers={["Grupo", "O que o treino é", "Armas"]}
-            rows={WEAPON_GROUPS.map((g) => [g.name, g.description, g.examples.join(", ")])}
+            rows={WEAPON_GROUPS.map((g) => [
+              g.name,
+              g.description,
+              g.examples.join(", ") + (g.alcance ? `. Alcance ${g.alcance.normal} m, longo ${g.alcance.longo} m (Cap. 4, §3)` : ""),
+            ])}
           />
         </Aside>
         <SubTitle id="cap1-4-como-se-ganha">Como se ganha um grupo</SubTitle>
@@ -788,7 +792,7 @@ export default function Chapter1() {
         <Aside title="3. Como somam PV, PT e PP?">
           <List
             items={[
-              "PV: uma reserva só, calculada de uma vez. Os Dados de PV de TODAS as suas árvores entram no mesmo somatório do Cap. 4, §1 — abrir uma segunda árvore acrescenta dados novos à mesma conta, não uma segunda barra de vida.",
+              "PV: uma reserva só, e um Dado de PV por patamar (Cap. 4, §1): em cada patamar conta o maior dado entre as árvores que chegaram nele. Abrir uma segunda árvore no mesmo patamar não dá um segundo corpo nem uma segunda barra de vida; só troca o dado daquele patamar, se o dela for maior.",
               "PM somam apenas das escolas de magia.",
               "PT: reserva única, mesmo com vários estilos marciais. PT = Vigor + Espírito + 1 por patamar em qualquer árvore do Corpo, desde o 1º (+2 por patamar em Cavalaria e Escudos) — detalhes no Cap. 3, \"Pontos de Touki\".",
               "PP: reserva única, mesmo com várias árvores de Utilidade. PP = Intelecto + o maior atributo-chave entre suas árvores de Utilidade, +1 por patamar 3º ou superior em qualquer uma delas. No Tático, cujo atributo-chave já é Intelecto, o segundo termo vira o Bônus de Rank — ver Cap. 3, \"Pontos de Preparação\".",
@@ -827,7 +831,9 @@ export default function Chapter1() {
           <P>
             <b>Largura custa 10 PA</b> por cinco árvores (Custo de Abertura 0+1+2+3+4, pergunta 4 acima) e
             entrega cinco Maestrias de 1º patamar, versatilidade e nenhum teto — mas trava seu Bônus de Rank
-            em +1, o que significa errar mais, causar menos dano e ter CDs que qualquer coisa resiste.
+            em +1, o que significa errar mais, causar menos dano e ter CDs que qualquer coisa resiste. E o
+            corpo continua sendo de 1º patamar: o PV conta um dado por patamar, e cinco árvores no 1º dão um
+            dado só (Cap. 4, §1).
           </P>
           <P>
             Ou seja: largura é <b>mais barata</b>, profundidade é <b>mais forte</b>. O sistema cobra pelos

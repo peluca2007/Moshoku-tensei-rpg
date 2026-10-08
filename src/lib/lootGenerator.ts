@@ -1,5 +1,5 @@
 import { SHOP_ITEMS, type ShopItem } from "@/data/shopItems";
-import { getSubArquetipo } from "@/data/bestiary";
+import { FRACAO_EM_MOEDA, getSubArquetipo } from "@/data/bestiary";
 import { makeRng } from "./combatSim";
 
 /** Um item que caiu: sempre com preço, porque relíquia não é sorteada (ver abaixo). */
@@ -32,46 +32,109 @@ const SORTEAVEIS = SHOP_ITEMS.filter(
 const TRALHAS = SORTEAVEIS.filter((i) => i.category === "tralha");
 const EQUIPAMENTO = SORTEAVEIS.filter((i) => ["pocao", "aventura", "veneno"].includes(i.category));
 
-/** Quanto do orçamento vem em moeda, por quem foi derrotado. */
-const PESO_DA_MOEDA = { nenhuma: 0.1, pouca: 0.3, bolsa: 0.6 } as const;
-
 /**
- * O espólio dos sub-arquétipos derrotados, e quanto deles vem em moeda.
- *
- * Sem sub-arquétipo nenhum, cai no comportamento antigo: qualquer tralha do
- * catálogo e 40% em moeda. É o encontro montado antes de 2026-09-23, que
- * continua funcionando.
+ * Uma criatura derrotada, do jeito que a recompensa precisa dela: o valor da
+ * conta do Apêndice G (`recompensaDaCriatura`) e o sub-arquétipo, que decide
+ * de que o valor é feito.
  */
-function espolioDe(subArquetipos: string[]): { tralhas: ItemDeLoot[]; fracaoMoeda: number } {
-  const subs = subArquetipos.map(getSubArquetipo).filter((s) => s !== undefined);
-  if (!subs.length) return { tralhas: TRALHAS, fracaoMoeda: 0.4 };
+export interface CriaturaDerrotada {
+  valor: number;
+  subArquetipo?: string;
+}
 
-  const ids = new Set(subs.flatMap((s) => s.espolios));
-  const tralhas = TRALHAS.filter((t) => ids.has(t.id));
+/** Sem sub-arquétipo: a criatura montada antes de 2026-09-23 carrega pouca moeda e qualquer tralha. */
+const SEM_SUB = {
+  fracaoMoeda: FRACAO_EM_MOEDA.pouca,
+  temEquipamento: true,
+  partes: { nome: "Partes aproveitáveis", descricao: "O que dá pra vender do corpo e da bagagem dela, pelo preço cheio." },
+};
 
-  // A média, e não o maior: um grupo de bandidos com um lobo de estimação
-  // carrega menos bolsa por cabeça do que um bando só de bandidos.
-  const fracaoMoeda = subs.reduce((soma, s) => soma + PESO_DA_MOEDA[s.moeda], 0) / subs.length;
-
-  return { tralhas: tralhas.length ? tralhas : TRALHAS, fracaoMoeda };
+function sortearAte(lista: ItemDeLoot[], teto: number, rng: () => number, maximo: number): ItemDeLoot[] {
+  const escolhidos: ItemDeLoot[] = [];
+  let gasto = 0;
+  for (let i = 0; i < maximo; i++) {
+    const elegiveis = lista.filter((item) => item.price <= teto - gasto);
+    if (!elegiveis.length) break;
+    const item = elegiveis[Math.floor(rng() * elegiveis.length)];
+    escolhidos.push(item);
+    gasto += item.price;
+  }
+  return escolhidos;
 }
 
 /**
- * O espólio de um encontro, a partir do orçamento em PO que o Mestre declarou.
+ * A RECOMPENSA DE UM ENCONTRO (Apêndice G, "A recompensa") — 2026-10-07.
  *
- * Divide em três porque é assim que a mesa usa (Cap. 5, "Vender o que caiu"):
- * a moeda entra direto na ficha, a TRALHA é o que se vende pelo preço cheio, e
- * o equipamento é o que se usa ou se revende pela metade. Antes tudo vinha como
- * uma pilha só de poções — o resultado era que a economia de revenda não tinha
- * de onde tirar tralha nenhuma, e a parte mais característica dela nunca
- * acontecia na mesa.
+ * Cada criatura derrotada vale a conta dela, e o valor aparece INTEIRO,
+ * dividido pela moeda do sub-arquétipo:
  *
- * `subArquetipos` são os das criaturas derrotadas: é o que faz o espólio sair
- * do corpo em vez de um sorteio cego. Um bando de lobos deixa presa e chifre e
- * quase nada em moeda; uma quadrilha de bandidos deixa bolsa.
+ * - **Moeda:** bolsa 60%, pouca 30%, nenhuma 0%. O lobo não carrega bolsa, e
+ *   antes desta data o gerador transformava em moeda tudo o que a tralha não
+ *   cobria — o livro dizia que a besta não deixa moeda, e o site deixava.
+ * - **Equipamento** (poção, veneno, aventura; revende pela metade): só de quem
+ *   carrega bolsa, até 40% do que não veio em moeda.
+ * - **Espólio** (vende pelo preço cheio): até três itens da lista do
+ *   sub-arquétipo, e o que sobra vira as "partes valiosas" dele — o couro
+ *   inteiro, o núcleo, o sangue. É por isso que caçar vale mais que saquear.
  *
  * Determinístico pela semente: a mesma batalha sorteada de novo devolve o mesmo
  * espólio, senão o Mestre que recarrega a página ganha outro tesouro.
+ */
+export function gerarRecompensaDoEncontro(criaturas: CriaturaDerrotada[], seed: number): LootGerado {
+  if (!Number.isSafeInteger(seed)) throw new Error("Semente inválida.");
+  const rng = makeRng(seed);
+  const porSub = new Map<string, number>();
+  for (const c of criaturas) {
+    if (!Number.isFinite(c.valor) || c.valor <= 0) continue;
+    const chave = getSubArquetipo(c.subArquetipo) ? c.subArquetipo! : "";
+    porSub.set(chave, (porSub.get(chave) ?? 0) + Math.round(c.valor));
+  }
+
+  let moedas = 0;
+  const tralhas: ItemDeLoot[] = [];
+  const itens: ItemDeLoot[] = [];
+  let valorTotal = 0;
+  for (const [chave, valor] of porSub) {
+    valorTotal += valor;
+    const sub = getSubArquetipo(chave);
+    const fracaoMoeda = sub ? FRACAO_EM_MOEDA[sub.moeda] : SEM_SUB.fracaoMoeda;
+    const emMoeda = Math.round(valor * fracaoMoeda);
+    moedas += emMoeda;
+    let resto = valor - emMoeda;
+
+    if (sub ? sub.moeda === "bolsa" : SEM_SUB.temEquipamento) {
+      const equipamento = sortearAte(EQUIPAMENTO, Math.floor(resto * 0.4), rng, 3);
+      itens.push(...equipamento);
+      resto -= equipamento.reduce((s, i) => s + i.price, 0);
+    }
+
+    const lista = sub ? TRALHAS.filter((t) => sub.espolios.includes(t.id)) : TRALHAS;
+    const espolio = sortearAte(lista.length ? lista : TRALHAS, resto, rng, 3);
+    tralhas.push(...espolio);
+    resto -= espolio.reduce((s, i) => s + i.price, 0);
+
+    if (resto > 0) {
+      const partes = sub?.partesValiosas ?? SEM_SUB.partes;
+      tralhas.push({
+        id: `partes_${chave || "aproveitaveis"}`,
+        name: partes.nome,
+        category: "tralha",
+        type: "geral",
+        description: partes.descricao,
+        price: resto,
+        guildRankRequired: "F",
+        disponibilidade: "restrito",
+      });
+    }
+  }
+
+  return { moedas, tralhas, itens, valorTotal };
+}
+
+/**
+ * O espólio a partir de um orçamento que o Mestre escreveu à mão, no lugar da
+ * conta do livro. O valor se divide igual entre os sub-arquétipos em cena, e
+ * cada parte segue a regra de `gerarRecompensaDoEncontro`.
  */
 export function gerarLootDoEncontro(
   orcamento: number,
@@ -81,34 +144,12 @@ export function gerarLootDoEncontro(
   if (!Number.isSafeInteger(orcamento) || orcamento < 0 || orcamento > 1000000)
     throw new Error("Informe um orçamento de 0 a 1.000.000 PO.");
   if (!Number.isSafeInteger(seed)) throw new Error("Semente inválida.");
-
-  const rng = makeRng(seed);
-  const { tralhas: elegiveisTralha, fracaoMoeda } = espolioDe(subArquetipos);
-  const tralhas: ItemDeLoot[] = [];
-  const itens: ItemDeLoot[] = [];
-  let gasto = 0;
-
-  // O que não vai em moeda se divide entre espólio e equipamento. Uma bolsa que
-  // vem só em objeto obriga o grupo a achar um comprador antes de poder comer;
-  // uma que vem só em moeda apaga o saque do jogo.
-  const emObjeto = 1 - fracaoMoeda;
-  const tetoTralha = Math.floor(orcamento * emObjeto * 0.6);
-  const tetoItens = Math.floor(orcamento * emObjeto * 0.4);
-
-  for (const [lista, teto, destino] of [
-    [elegiveisTralha, tetoTralha, tralhas],
-    [EQUIPAMENTO, tetoItens, itens],
-  ] as const) {
-    let gastoAqui = 0;
-    for (let i = 0; i < 5; i++) {
-      const elegiveis = lista.filter((item) => item.price <= teto - gastoAqui);
-      if (!elegiveis.length) break;
-      const item = elegiveis[Math.floor(rng() * elegiveis.length)];
-      destino.push(item);
-      gastoAqui += item.price;
-    }
-    gasto += gastoAqui;
-  }
-
-  return { moedas: orcamento - gasto, tralhas, itens, valorTotal: orcamento };
+  const subs = subArquetipos.length ? subArquetipos : [""];
+  const parte = Math.floor(orcamento / subs.length);
+  const criaturas = subs.map((subArquetipo, i) => ({
+    subArquetipo: subArquetipo || undefined,
+    // O resto da divisão vai pro primeiro, pra soma bater com o orçamento.
+    valor: parte + (i === 0 ? orcamento - parte * subs.length : 0),
+  }));
+  return { ...gerarRecompensaDoEncontro(criaturas, seed), valorTotal: orcamento };
 }

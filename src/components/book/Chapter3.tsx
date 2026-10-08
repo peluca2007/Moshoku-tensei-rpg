@@ -465,7 +465,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
                 <b>Santo — Ponto Vital Lido:</b> a etapa d&rsquo;O Ponto passa a custar 0 Ações.
               </span>,
               <span key="5">
-                <b>Rei — Preparação Perfeita:</b> um Tiro Perfeito em que Corda, Dedos, Leitura e O Ponto
+                <b>Rei — Preparação Perfeita</b> (carta de 4 PA, não Maestria): um Tiro Perfeito em que Corda, Dedos, Leitura e O Ponto
                 passaram, e a Solta acertou, fura o Manto de Touki, sem gastar PT. É a segunda forma de
                 furar o Manto, e cobra em turnos o que a Flecha de Touki cobra em recurso.
               </span>,
