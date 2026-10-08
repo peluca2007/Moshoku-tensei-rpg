@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { getPvNaMesa, mesaDa } from "@/lib/mesa";
+import { ehKitDeSocorros, pvDoTratamento, temMedicina, usosDoKit } from "@/lib/ferimentos";
 import { BedDouble, Coffee, Coins, Hourglass } from "lucide-react";
 import { useActiveCharacter, useCharacterStore } from "@/store/useCharacterStore";
 import {
@@ -48,6 +49,9 @@ export default function DescansoSection() {
   const [sonoPerturbado,setSonoPerturbado] = useState(false);
   const [companhia,setCompanhia] = useState(false);
   const [vigiado,setVigiado] = useState(false);
+  const [tratado, setTratado] = useState(false);
+  const [kitId, setKitId] = useState("");
+  const kits = temMedicina(character) ? character.inventory.filter(ehKitDeSocorros) : [];
 
   const maximos: ReservasMaximas = {
     pv: getPvNaMesa(character),
@@ -66,6 +70,8 @@ export default function DescansoSection() {
   }, 0);
 
   function prepararCurto() {
+    setTratado(false);
+    setKitId("");
     setPrevia({ tipo: "curto", ganho: descansoCurto(maximos) });
     setDowntime(null);
   }
@@ -78,7 +84,9 @@ export default function DescansoSection() {
 
   function aplicar() {
     if (!previa) return;
-    useCharacterStore.getState().descansar(previa.tipo, previa.ganho, maximos, causaAcabou, sonoPerturbado);
+    const aplicou = useCharacterStore.getState().descansar(previa.tipo, previa.ganho, maximos, causaAcabou, sonoPerturbado,
+      previa.tipo === "curto" && tratado ? { kitId: kitId || undefined } : undefined);
+    if (!aplicou) return;
     setPrevia(null);
   }
 
@@ -151,10 +159,23 @@ export default function DescansoSection() {
             Descanso {previa.tipo === "curto" ? "Curto" : "Longo"} — confira antes
           </p>
           <ul className="mt-1 space-y-0.5 text-2xs leading-relaxed text-wine-900/80 dark:text-wine-100/80">
-            {previa.ganho.detalhe.map((linha) => (
+            {previa.ganho.detalhe.filter(linha => !(previa.tipo === "curto" && tratado && linha.startsWith("PV:"))).map((linha) => (
               <li key={linha}>{linha}</li>
             ))}
           </ul>
+          {previa.tipo === "curto" && <div className="mt-2 space-y-2">
+            <label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={tratado} disabled={mesaDa(character).marcas >= 3} onChange={e => setTratado(e.target.checked)} />Fui tratado · Cuidar dos Ferimentos</label>
+            {tratado && <>
+              <p>PV: +{pvDoTratamento(character)} (Vigor {getFinalAttribute(character, "vigor")} + 2 × Bônus de Rank {Math.max(1, maiorBonus)}, mínimo 1), até {maximos.pv} PV.</p>
+              <p>Um tratamento por criatura neste Descanso Curto.</p>
+              {kits.length > 0 && <label className="block">Quem tratou?
+                <select className="mt-1 min-h-10 w-full rounded-lg border border-parchment-300 bg-parchment-50 px-2 dark:border-parchment-700 dark:bg-parchment-950" value={kitId} onChange={e => setKitId(e.target.value)}>
+                  <option value="">Outra pessoa · usa o kit dela</option>
+                  {kits.map((kit, i) => <option key={kit.id} value={kit.id} disabled={usosDoKit(kit) >= 10}>Eu · kit {i + 1} · {10 - usosDoKit(kit)} usos disponíveis</option>)}
+                </select>
+              </label>}
+            </>}
+          </div>}
           {previa.tipo==="longo"&&<div className="mt-2 space-y-2">
             <label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={causaAcabou} onChange={e=>setCausaAcabou(e.target.checked)} />A causa da Exaustão não está mais ativa · remove 1 nível</label>
             {mesaDa(character).trauma>=3&&<label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={sonoPerturbado} onChange={e=>setSonoPerturbado(e.target.checked)} />Trauma: rolei 5 ou menos no 1d20 · metade dos PM e PP recuperados</label>}
@@ -179,6 +200,11 @@ export default function DescansoSection() {
       )}
 
       <div className="mt-3 space-y-1">
+        {kits.map((kit, i) => <label key={kit.id} className="mb-3 block">Kit de Primeiros Socorros {i + 1} · {10 - usosDoKit(kit)} usos disponíveis
+          <span className="mt-1 flex items-center gap-2">Tratamentos gastos
+            <input aria-label={`Tratamentos gastos do Kit de Primeiros Socorros ${i + 1}`} type="number" min={0} max={10} value={usosDoKit(kit)} className="min-h-10 w-20 rounded-lg border border-parchment-300 bg-parchment-50 px-2 dark:border-parchment-700 dark:bg-parchment-950" onChange={e => useCharacterStore.getState().updateItem(kit.id, { tratamentosUsados: Math.max(0, Math.min(10, Math.floor(Number(e.target.value) || 0))) })} />
+          </span>
+        </label>)}
         <label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={companhia} onChange={e=>setCompanhia(e.target.checked)} />Recuperar-se: acompanhado de alguém de confiança</label>
         {companhia&&<label className="flex min-h-10 items-center gap-2"><input type="checkbox" checked={vigiado} onChange={e=>setVigiado(e.target.checked)} />Alguém gastou a semana em Vigiar as Costas</label>}
       </div>

@@ -46,6 +46,7 @@ import GruposDeArmaSection from "./GruposDeArmaSection";
 import CondicoesSection from "./CondicoesSection";
 import DescansoSection from "./DescansoSection";
 import NaMesaSection from "./NaMesaSection";
+import OrigemDosPv from "./OrigemDosPv";
 import UsosDaCarta from "./UsosDaCarta";
 import { mesaDa } from "@/lib/mesa";
 import SimuladorPessoal from "./SimuladorPessoal";
@@ -1315,6 +1316,7 @@ export default function CharacterSheet() {
           <div className="print-hide space-y-4">
             <CondicoesSection />
             <NaMesaSection key={character.id} />
+            <OrigemDosPv />
 
             {/*
               Descanso e Downtime ficam ao lado das condições porque são o outro

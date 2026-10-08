@@ -57,6 +57,7 @@ export const PATCH_NOTES: PatchNote[] = [
       "A ficha acompanha usos limitados de cartas e Maestrias que têm limite reconhecido. Descanso Curto, Longo, Novo combate e Nova sessão recuperam os usos do período certo; limites ambíguos ficam para revisão.",
       "Exaustão acompanha Deslocamento, PV Máximos e lembretes de Desvantagem. O bloco Na mesa registra Marcas da Morte, Estabilizado, Salvações, Trauma e Cicatrizes, usando as mesmas tabelas do livro.",
       "A zero PV, a ficha mostra a conta do Fio da Vida e a Escala do Vigor. Cura remove as Marcas e acrescenta Exaustão; Ferida Mortal pode ser marcada como exceção. Descanso Longo só reduz Exaustão quando a causa acabou.",
+      "Cuidar dos Ferimentos entra no Descanso Curto: confira os PV antes de aplicar, registre quem tratou e acompanhe os dez tratamentos de cada kit. O quadro De onde vem o seu PV mostra o dado escolhido em cada patamar e a conta do máximo.",
     ] }],
   },
   {
