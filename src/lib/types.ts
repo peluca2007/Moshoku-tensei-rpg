@@ -846,6 +846,8 @@ export interface UnlockedRank {
 
 export interface InventoryItem {
   id: string;
+  /** Tratamentos já gastos neste kit (Cap. 4, §7); descansos não os recuperam. */
+  tratamentosUsados?: number;
   name: string;
   type: "arma" | "armadura" | "geral";
   description?: string;
@@ -1014,4 +1016,15 @@ export interface CharacterData {
    * novo. Ausente = ficha de antes da 0.1.25, e vale zero.
    */
   descansosCurtos?: number;
+  /** Marcadores persistidos do Cap. 4; ausente nas fichas antigas = tudo zero. */
+  mesa?: {
+    exaustao: number;
+    marcas: number;
+    estabilizado: boolean;
+    responsavel: number;
+    salvacoes: number;
+    trauma: number;
+    cicatrizes: number[];
+    usos: Record<string, number>;
+  };
 }

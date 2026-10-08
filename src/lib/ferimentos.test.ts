@@ -1,0 +1,53 @@
+import { beforeEach, expect, it } from "vitest";
+import { useCharacterStore } from "@/store/useCharacterStore";
+import { getMaxHp } from "@/store/selectors";
+import { pvDoTratamento, usosDoKit } from "./ferimentos";
+import { mesaDa } from "./mesa";
+const ficha = () => { const s = useCharacterStore.getState(); return s.characters[s.activeId!]; };
+const reservas = () => ({ pv: getMaxHp(ficha()), pm: 20, pt: 20, pp: 20 });
+const ganho = { pv: 0, pm: 0, pt: 0, pp: 0 };
+beforeEach(() => {
+  useCharacterStore.setState({ characters: {}, order: [], activeId: null, history: {} });
+  useCharacterStore.getState().createCharacter("Tratamento");
+  useCharacterStore.getState().setStartingTree("agua");
+  useCharacterStore.getState().addSkill("Medicina");
+  useCharacterStore.getState().addItem({ name: "Kit de Primeiros Socorros", type: "geral" });
+});
+it("cura no Curto, consome só o kit usado, conserva usos no Longo e desfaz junto", () => {
+  const s = useCharacterStore.getState();
+  s.setCurrentHp(5);
+  const kitId = ficha().inventory[0].id;
+  const cura = pvDoTratamento(ficha());
+  expect(s.descansar("curto", ganho, reservas(), false, false, { kitId })).toBe(true);
+  expect(ficha().currentHp).toBe(5 + cura);
+  expect(usosDoKit(ficha().inventory[0])).toBe(1);
+  s.undo();
+  expect(ficha().currentHp).toBe(5);
+  expect(usosDoKit(ficha().inventory[0])).toBe(0);
+  s.descansar("curto", ganho, reservas(), false, false, { kitId });
+  s.descansar("longo", ganho, reservas());
+  expect(usosDoKit(ficha().inventory[0])).toBe(1);
+});
+it("bloqueia kit vazio ou sem Medicina; tratamento de outra pessoa continua disponível", () => {
+  const s = useCharacterStore.getState();
+  const kitId = ficha().inventory[0].id;
+  s.updateItem(kitId, { tratamentosUsados: 10 });
+  expect(s.descansar("curto", ganho, reservas(), false, false, { kitId })).toBe(false);
+  s.updateItem(kitId, { tratamentosUsados: 0 });
+  s.removeSkill("Medicina");
+  expect(s.descansar("curto", ganho, reservas(), false, false, { kitId })).toBe(false);
+  s.setCurrentHp(getMaxHp(ficha()) - 1);
+  expect(s.descansar("curto", ganho, reservas(), false, false, {})).toBe(true);
+  expect(ficha().currentHp).toBe(getMaxHp(ficha()));
+  expect(usosDoKit(ficha().inventory[0])).toBe(0);
+});
+it("tratamento a zero limpa marcas e aplica Exaustão; o terceiro Curto não trata", () => {
+  const s = useCharacterStore.getState();
+  s.setCurrentHp(0); s.setMesa({ marcas: 2, estabilizado: true });
+  s.descansar("curto", ganho, reservas(), false, false, {});
+  expect(mesaDa(ficha())).toMatchObject({ marcas: 0, estabilizado: false, exaustao: 1 });
+  s.descansar("curto", ganho, reservas(), false, false, {});
+  const antes = ficha();
+  expect(s.descansar("curto", ganho, reservas(), false, false, {})).toBe(false);
+  expect(ficha()).toBe(antes);
+});
