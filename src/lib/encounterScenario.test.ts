@@ -208,11 +208,21 @@ describe("invocações e recompensas", () => {
     const c = invocador(); const dono = novoEstado(montarFicha(c)); const antes = dono.pm;
     expect(pactosDeCombate(c).map((p) => p.nome)).toEqual(["Cão de Caça"]);
     const [invocado] = prepararInvocados([c], [dono], { [c.id]: ["pacto-cao-de-caca"] });
-    expect(dono.pm).toBe(antes - 3); expect(invocado.pv).toBe(10); expect(invocado.ca).toBe(11);
+    expect(dono.pm).toBe(antes - 3); expect(invocado.pv).toBe(20); expect(invocado.ca).toBe(11); // PV 10 × (Bônus 1 + 1)
     expect(invocado.fioDaVida).toBe(false);
     const log = new CombateLogger();
     turnoPersonagem(invocado, [novoAlvo({ nome: "Alvo", pv: 1000, ca: 1 })], () => .5, [], log);
     expect(log.eventos).toHaveLength(1);
+  });
+  it("Comando: o invocador sem golpe próprio cede 2 Ações, e o invocado age três vezes", () => {
+    const c = invocador(); const dono = novoEstado(montarFicha(c));
+    const [invocado] = prepararInvocados([c], [dono], { [c.id]: ["pacto-cao-de-caca"] });
+    const alvo = novoAlvo({ nome: "Alvo", pv: 1000, ca: 1 });
+    turnoPersonagem(dono, [alvo], () => .5, [dono, invocado], new CombateLogger());
+    expect(invocado.acoesConcedidas).toBe(2);
+    const log = new CombateLogger();
+    turnoPersonagem(invocado, [alvo], () => .5, [dono, invocado], log);
+    expect(log.eventos).toHaveLength(3);
   });
   it("prepara automaticamente Pactos comprados quando o cenário não escolhe", () => {
     const c = invocador(); const dono = novoEstado(montarFicha(c));

@@ -224,7 +224,7 @@ function perfilDaFicha(c: CharacterData, ficha: FichaCombate, simuladas: Set<str
   const comprouInvocacao = (id: string) => c.purchasedAbilities.some((a) => a.treeId === "invocacao" && a.id === id);
   const bonusInvocacao = rankInvocacao ? RANK_BONUS[rankInvocacao] : 0;
   const opcoesDePacto = bonusInvocacao ? pactosDeCombate(c).map((pacto) => {
-    const pv = Math.max(1, Math.floor((pacto.pvPorRank ?? (bonusInvocacao >= 3 ? 15 : 10)) * bonusInvocacao / (pacto.quantidade > 1 ? 4 : 1)));
+    const pv = Math.max(1, Math.floor((pacto.pvPorRank ?? (bonusInvocacao >= 3 ? 15 : 10)) * (bonusInvocacao + 1) / (pacto.quantidade > 1 ? 4 : 1)));
     const danoBonus = pacto.id === "pacto-filhote" && pacto.custo === 6
       ? getFinalAttribute(c, "espirito") + bonusInvocacao : bonusInvocacao >= 3 ? bonusInvocacao : 0;
     const dano = danoBonus ? pacto.dano.replace(/(\s*\([^)]*\))?$/, (_, tipo: string | undefined) => `+${danoBonus}${tipo ?? ""}`) : pacto.dano;

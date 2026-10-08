@@ -37,7 +37,7 @@ export const CURA_TREE: Tree = {
   ranks: [
     {
       rank: "Principiante",
-      hpDiceFormula: "1d4+1",
+      hpDiceFormula: "1d6+1",
       mastery: {
         name: "Diagnóstico",
         description:

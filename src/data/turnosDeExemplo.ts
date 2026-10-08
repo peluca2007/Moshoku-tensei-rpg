@@ -106,8 +106,8 @@ export const TURNOS_DE_EXEMPLO: ExemploJogado[] = [
   {
     treeId: "invocacao",
     ficha:
-      "Lia: Espíritos e Feras no 1º patamar (Bônus +1), com o Pacto do Cão de Caça e o talento Ordem Partilhada. O cão tem PV 10 (10 × o Bônus de Rank dela), CA 11, e morde com 2d6 usando o BC de Lia.",
-    ensina: "O invocado age com 1 Ação dele; o que custa Ação de Lia é mandar fazer algo específico.",
+      "Lia: Espíritos e Feras no 1º patamar (Bônus +1), com o Pacto do Cão de Caça. O cão tem PV 20 (10 × o Bônus de Rank dela + 1), CA 11, e morde com 2d6 usando o BC de Lia.",
+    ensina: "O invocado age com 1 Ação dele; as Ações de Lia viram ordens específicas ou mordidas a mais (o Comando).",
     turnos: [
       {
         rotulo: "Antes da luta",
@@ -122,15 +122,15 @@ export const TURNOS_DE_EXEMPLO: ExemploJogado[] = [
       {
         rotulo: "Ainda no turno 1",
         texto:
-          "Ordem Partilhada: Lia cede mais 1 Ação dela e o cão age outra vez neste turno — morde o bandido Caído, com Vantagem. Sobra a Lia uma Ação; ela anda pra longe do corpo a corpo.",
+          "Comando: Lia cede mais 1 Ação dela e o cão age outra vez, na hora — morde o bandido Caído, com Vantagem. O Comando aceita até 2 Ações por turno; Lia guarda a terceira e anda pra longe do corpo a corpo.",
       },
       {
         rotulo: "Turno 2",
         texto:
-          "O cão leva 9 de dano e fica com 1 PV. Se cair, só volta depois de um Descanso Longo. Lia dá a ordem geral \"siga-me\" (grátis) e os dois recuam: um invocado vale mais vivo na próxima luta do que morto nesta.",
+          "O cão leva 19 de dano e fica com 1 PV. Se cair, só volta depois de um Descanso Longo. Lia dá a ordem geral \"siga-me\" (grátis) e os dois recuam: um invocado vale mais vivo na próxima luta do que morto nesta.",
       },
     ],
-    licao: "Conte as Ações: cada ordem específica e cada Ordem Partilhada sai das suas três. O invocado não é um segundo personagem; é um aliado que obedece.",
+    licao: "Conte as Ações: cada ordem específica e cada Ação do Comando sai das suas três. O invocado não é um segundo personagem; é um aliado que obedece — e é por ele que você luta.",
   },
   {
     treeId: "teorica",

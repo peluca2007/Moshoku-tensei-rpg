@@ -36,7 +36,7 @@ export default function EncounterScenario({ grupo, criaturas }: { grupo: Charact
       if (!pactos.length) return null;
       return <fieldset key={`pactos-${c.id}`} className="mb-4 rounded-lg border border-parchment-200 p-3 dark:border-parchment-800">
         <legend className="px-1 text-sm font-semibold">Invocações preparadas · {c.name}</legend>
-        <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">Pactos já em campo: o preparo desconta PM antes da iniciativa. Cada invocado age com 1 Ação por turno, pode receber dano e desaparece a 0 PV. O dano conta para seu invocador; os PV não inflam a sobrevivência do grupo.</p>
+        <p className="mb-2 text-xs text-parchment-600 dark:text-parchment-400">Pactos já em campo: o preparo desconta PM antes da iniciativa. Cada invocado age com 1 Ação por turno, mais as até 2 que o invocador ceder pelo Comando (a simulação cede quando o invocador não tem magia de dano), pode receber dano e desaparece a 0 PV. O dano conta para seu invocador; os PV não inflam a sobrevivência do grupo.</p>
         <div className="space-y-2">{pactos.map((p) => <label key={p.id} className="block text-sm">
           <input className="mr-2" type="checkbox" checked={!!cenario.invocadosPreparados?.[c.id]?.includes(p.id)} onChange={(e) => {
             const atuais = cenario.invocadosPreparados?.[c.id] ?? [];
