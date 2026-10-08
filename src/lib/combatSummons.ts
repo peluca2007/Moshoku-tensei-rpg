@@ -31,6 +31,8 @@ export function prepararInvocados(grupo: CharacterData[], heroes: EstadoPersonag
   const invocados: EstadoPersonagem[] = [];
   for (const c of grupo) {
     const dono = heroes.find((h) => h.ficha.id === c.id)!;
+    // Quem chega caído ou morto (reservas de um dia de aventura) não traça círculo.
+    if (!dono.vivo) continue;
     const rank = getHighestUnlockedRank(c, "invocacao");
     const bonus = rank ? RANK_BONUS[rank] : 0;
     const limite = rank ? PACTOS_ATIVOS[rank] : 0;

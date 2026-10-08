@@ -34,7 +34,18 @@ import {
   turnoPersonagem,
 } from "@/lib/combatSim";
 import { PapelCriatura, aplicarPapel, getMoldePorPatamar, percepcaoPassiva, rodadasDoChefe } from "@/data/bestiary";
-import { adjacentes, aplicarEstadoInicial, aproximar, alcanceEmMetros, distanciaEntre, type CenarioCombate } from "./combatScenario";
+import {
+  adjacentes,
+  aplicarEstadoInicial,
+  aplicarReservasIniciais,
+  aproximar,
+  alcanceEmMetros,
+  distanciaEntre,
+  estadoFinal,
+  type CenarioCombate,
+  type EstadoFinalDoPersonagem,
+  type ReservasIniciais,
+} from "./combatScenario";
 import { prepararInvocados } from "./combatSummons";
 import { caDepoisDeAparar, guardaDoCorpo, reagirComFluxo, sobMinhaGuarda } from "./combatReactions";
 import { CharacterData, type AttributeKey } from "@/lib/types";
@@ -1300,6 +1311,17 @@ export interface ResultadoEncontro {
     curaMedia: number;
     sobreviveu: number;
   }[];
+  /**
+   * O fim de cada batalha, personagem a personagem (opt-in: `registrarEstados`).
+   * É a entrada da luta seguinte de um dia de aventura: passe os estados de uma
+   * batalha como `reservasIniciais` do próximo encontro.
+   */
+  estadosPorBatalha?: {
+    semente: number;
+    resultado: ResultadoDaBatalha;
+    rodadas: number;
+    personagens: EstadoFinalDoPersonagem[];
+  }[];
 }
 
 export interface OpcoesEncontro {
@@ -1317,6 +1339,13 @@ export interface OpcoesEncontro {
    * paguem por até dez combates extras que não vão mostrar.
    */
   gerarLogs?: boolean;
+  /**
+   * Como cada personagem chega na luta, por id (2026-10-08). Ausente, chega
+   * descansado — o comportamento de sempre. Ver `ReservasIniciais`.
+   */
+  reservasIniciais?: Record<string, ReservasIniciais>;
+  /** Devolve `estadosPorBatalha`. Custa uma lista por batalha; só pra quem vai ler. */
+  registrarEstados?: boolean;
 }
 
 /**
@@ -1423,12 +1452,14 @@ function replayBatalha(
   maxRodadas: number,
   rodadasChefe: number,
   cenario?: CenarioCombate,
+  reservasIniciais?: Record<string, ReservasIniciais>,
 ): LogCombate {
   const { resumo, motivo } = destaque;
   const rng = makeRng(resumo.seed);
   const logger = new CombateLogger();
 
   const heroes: EstadoPersonagem[] = fichas.map(novoEstado);
+  heroes.forEach((h) => aplicarReservasIniciais(h, reservasIniciais?.[h.ficha.id]));
   heroes.push(...prepararInvocados(grupo, heroes, cenario?.invocadosPreparados));
   const inimigos: EstadoCriatura[] = [];
   for (const criatura of criaturas) {
@@ -1560,7 +1591,11 @@ export function simularEncontro(
     if (inicio.alcanceArma !== undefined && (!Number.isFinite(inicio.alcanceArma) || inicio.alcanceArma <= 0)) throw new Error("O alcance da arma deve ser positivo.");
     if (inicio.posicao !== undefined && !Number.isFinite(inicio.posicao)) throw new Error("Posição inválida.");
   }
+  for (const id of Object.keys(opcoes.reservasIniciais ?? {})) {
+    if (!grupo.some((c) => c.id === id)) throw new Error(`Reservas iniciais pra um personagem que não está no grupo (${id}).`);
+  }
   const fichas: FichaCombate[] = grupo.map((c) => montarFicha(c, "", opcoes.armasPorPersonagem?.[c.id]));
+  const estadosPorBatalha: NonNullable<ResultadoEncontro["estadosPorBatalha"]> = [];
   const rodadasChefe = rodadasDoChefe(grupo.length);
 
   let vitorias = 0;
@@ -1582,7 +1617,9 @@ export function simularEncontro(
     const sementeDaBatalha = sementeBase + b;
     const rng = makeRng(sementeDaBatalha);
     const heroes: EstadoPersonagem[] = fichas.map(novoEstado);
+    heroes.forEach((h) => aplicarReservasIniciais(h, opcoes.reservasIniciais?.[h.ficha.id]));
     heroes.push(...prepararInvocados(grupo, heroes, opcoes.cenario?.invocadosPreparados));
+    const cairam = new Set<string>();
     const inimigos: EstadoCriatura[] = [];
     for (const criatura of criaturas) {
       for (let i = 0; i < criatura.quantidade; i++) {
@@ -1639,6 +1676,7 @@ export function simularEncontro(
     let rodada = 0;
     let menorPvPctDaBatalha = 1;
     const registrarMenorPv = () => {
+      for (const h of heroes) if (!h.ficha.invocadoDe && (h.pv <= 0 || h.inconsciente || h.morto)) cairam.add(h.ficha.id);
       menorPvPctDaBatalha = Math.min(
         menorPvPctDaBatalha,
         ...heroes.filter((h) => !h.ficha.invocadoDe).map((h) => Math.max(0, h.pv) / Math.max(1, h.ficha.pvMax))
@@ -1716,6 +1754,19 @@ export function simularEncontro(
       pvRestantePct,
       menorPvPct: menorPvPctDaBatalha,
     });
+    if (opcoes.registrarEstados) {
+      estadosPorBatalha.push({
+        semente: sementeDaBatalha,
+        resultado,
+        rodadas: rodadasDaBatalha,
+        // Quem já chegou caído e continuou caído não "caiu" nesta luta.
+        personagens: personagens.map((h) => {
+          const chegou = opcoes.reservasIniciais?.[h.ficha.id];
+          const chegouCaido = !!chegou && (chegou.morto || (chegou.pv !== undefined && chegou.pv <= 0));
+          return estadoFinal(h.ficha.id, h, cairam.has(h.ficha.id) && !(chegouCaido && !h.vivo));
+        }),
+      });
+    }
     somaRodadas += rodadasDaBatalha;
     somaQuedas += quedasDaBatalha;
     somaPvRestante += pvRestanteDaBatalha;
@@ -1730,7 +1781,7 @@ export function simularEncontro(
   const logsExtremos =
     opcoes.gerarLogs === true
       ? selecionarExtremos(resumos).map((resumo) =>
-          replayBatalha(fichas, grupo, criaturas, resumo, escala, maxRodadas, rodadasChefe, opcoes.cenario)
+          replayBatalha(fichas, grupo, criaturas, resumo, escala, maxRodadas, rodadasChefe, opcoes.cenario, opcoes.reservasIniciais)
         )
       : [];
 
@@ -1750,5 +1801,6 @@ export function simularEncontro(
       curaMedia: (cura.get(f.id) ?? 0) / batalhas,
       sobreviveu: (viveu.get(f.id) ?? 0) / batalhas,
     })),
+    ...(opcoes.registrarEstados ? { estadosPorBatalha } : {}),
   };
 }
