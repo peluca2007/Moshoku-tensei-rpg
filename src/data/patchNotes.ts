@@ -50,6 +50,33 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.154",
+    date: "2026-10-08",
+    title: "A Régua Medida",
+    sections: [
+      { area: "regras", heading: "Espíritos e Feras: o invocador luta pelo invocado", items: [
+        "O Comando entra na Maestria do Principiante: ceda até 2 das suas Ações por turno a um invocado seu, e ele age na hora, uma vez por Ação cedida. Antes o invocador passava o turno sem ter o que fazer, e a escola entregava um quarto do que a régua prometia.",
+        "Invocados têm PV iguais a 10 × (seu Bônus de Rank + 1) — 15 × no Avançado, e o Filhote evoluído segue a mesma conta. O cão do 1º patamar vai de 10 pra 20 PV e passa a morder antes de cair.",
+        "A Ordem Partilhada, que era o próprio Comando, passa a dar Vantagem no primeiro ataque do invocado no turno em que você cede Ações.",
+      ] },
+      { area: "regras", heading: "O corpo do mago", items: [
+        "Fogo, Água, Vento e Cura sobem o Dado de PV do 1º e do 2º patamar pra 1d6+1, o mesmo da Terra e da Teórica. O mago de 1º passa de 28 pra 33 PV e termina de pé quase o dobro de lutas.",
+        "O Lançar da Magia Teórica num alvo diz, na carta, que é ataque mágico (1d20 + BC contra a CA), como o Cap. 2, §8 já mandava.",
+      ] },
+      { area: "livro", heading: "O Apêndice C é medido", items: [
+        "A régua de dano por turno deixou de ser escrita à mão: cada célula é medida pelo simulador do site, com o método impresso no apêndice, e traz dois números — a luta contra cinco criaturas do molde e a luta longa contra uma só. A Cura mostra PV curados por turno.",
+        "No livro folheado, o título de seção voltou a ser maior que o subtítulo em todos os capítulos (estava quase do mesmo tamanho).",
+      ] },
+      { area: "encontros", heading: "O simulador e os moldes", items: [
+        "O simulador passou a usar o truque da escola, que vem de graça com o Principiante, e a contar uma linha como estreita: \"linha de 27 m\" acertava as cinco criaturas da luta, e agora pega duas.",
+        "Com os heróis mais fortes, o PV dos moldes do Apêndice G foi medido de novo (64, 68, 121, 152, 210 e 332, do 1º ao 6º). Pela primeira vez os seis patamares entregam o que o apêndice promete: quatro criaturas Equilibrado, cinco Difícil.",
+      ] },
+      { area: "bastidores", heading: "Medições novas", items: [
+        "npm run gerar:regua gera a régua do Apêndice C, e npm run check:regua reprova quando uma carta, um molde ou o motor muda sem gerar de novo. npm run medir:dia-de-aventura encadeia quatro lutas num dia, com descansos, a partir do estado em que cada uma terminou.",
+      ] },
+    ],
+  },
+  {
     version: "0.1.153",
     date: "2026-10-08",
     title: "Os Três Pilares Ganham Porta",
