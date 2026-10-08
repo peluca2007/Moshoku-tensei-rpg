@@ -50,6 +50,18 @@ export interface PatchNote {
  */
 export const PATCH_NOTES: PatchNote[] = [
   {
+    version: "0.1.155",
+    date: "2026-10-08",
+    title: "O Descanso Fecha um Quarto",
+    sections: [
+      { area: "regras", heading: "Descanso Curto devolve PV (Cap. 4, §7)", items: [
+        "O Descanso Curto passa a devolver 25% dos PV máximos, como já devolvia de PM e PP; o Longo devolve esse mesmo quarto mais o Vigor + 2 × o Bônus de Rank de antes. Cuidar dos Ferimentos continua somando por cima.",
+        "Por quê: medido num dia de quatro lutas Equilibradas, o grupo vencia a segunda em metade dos dias e quase nunca a terceira, enquanto o Apêndice G prometia três a quatro. Com o quarto, no 1º e 2º patamar, a segunda luta depois de um Curto passa de 58–80% pra 75–92% de vitória.",
+        "O Apêndice G agora diz o que o simulador mede: dois encontros Equilibrados por dia com um Curto no meio, o terceiro já é aposta — e, do 3º patamar em diante, só se o mago guardar PM pro segundo.",
+      ] },
+    ],
+  },
+  {
     version: "0.1.154",
     date: "2026-10-08",
     title: "A Régua Medida",
