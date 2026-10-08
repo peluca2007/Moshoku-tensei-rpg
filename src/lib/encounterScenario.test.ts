@@ -272,7 +272,10 @@ describe("invocações e recompensas", () => {
     // que era o que o sorteio cego fazia antes de 2026-09-23.
     const doBicho = gerarLootDoEncontro(400, 3, ["besta"]);
     const espoliosDaBesta = ["tralha_presa_lobo_gigante", "tralha_chifre_besta_terrestre", "tralha_casco_besouro_tartaruga"];
-    expect(doBicho.tralhas.every((t) => espoliosDaBesta.includes(t.id))).toBe(true);
+    expect(doBicho.tralhas.every((t) => espoliosDaBesta.includes(t.id) || t.id === "partes_besta")).toBe(true);
+    // E a besta não carrega moeda nenhuma: o que a lista não cobre vira couro e osso (Apêndice G).
+    expect(doBicho.moedas).toBe(0);
+    expect(doBicho.itens).toHaveLength(0);
 
     const deMortoVivo = gerarLootDoEncontro(400, 3, ["morto-vivo"]);
     expect(deMortoVivo.tralhas.some((t) => t.id === "tralha_pano_amaldicoado")).toBe(true);
