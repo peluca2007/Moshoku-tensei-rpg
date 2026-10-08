@@ -6,6 +6,9 @@
  * preciso pra caber todas as magias/talentos comprados).
  */
 
+import { PALETAS_DA_FICHA_PDF, temaDaFichaPdf } from "./temaDaFichaPdf";
+import type { TemaId } from "./temas";
+
 export interface FichaAttributeRow {
   short: string;
   label: string;
@@ -80,6 +83,8 @@ export interface FichaSpellcastingRow {
 }
 
 export interface FichaPdfPayload {
+  /** Tema escolhido no site; ausente em clientes antigos. */
+  tema?: TemaId;
   name: string;
   /**
    * A foto de perfil da ficha, como data URL (2026-09-04).
@@ -138,17 +143,24 @@ function tstr(input: string): string {
   return `"${input.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 }
 
-const PREAMBLE = `
+function preamble(tema: unknown): string {
+  const cores = PALETAS_DA_FICHA_PDF[temaDaFichaPdf(tema)];
+  return `
 #set document(title: "Ficha de Personagem - Mushoku Tensei RPG")
-#set text(font: "Libertinus Serif", size: 10pt, lang: "pt")
-#set page(paper: "a4", margin: 1cm)
-
-#let cor-principal = rgb("4A0E2E")
-#let cor-fundo = rgb("FDF6E3")
+#let cor-papel = rgb("${cores.papel}")
+#let cor-texto = rgb("${cores.texto}")
+#let cor-principal = rgb("${cores.principal}")
+#let cor-fundo = rgb("${cores.caixa}")
+#let cor-faixa = rgb("${cores.faixa}")
+#let cor-titulo = rgb("${cores.titulo}")
+#let cor-linha = rgb("${cores.linha}")
+#let cor-secundaria = rgb("${cores.secundaria}")
+#set text(font: "Libertinus Serif", size: 10pt, lang: "pt", fill: cor-texto)
+#set page(paper: "a4", margin: 1cm, fill: cor-papel)
 
 #let section-title(title) = block(
-  width: 100%, fill: cor-principal, inset: 6pt, radius: 2pt,
-  text(weight: "bold", size: 11pt, fill: white)[#title]
+  width: 100%, fill: cor-faixa, inset: 6pt, radius: 2pt,
+  text(weight: "bold", size: 11pt, fill: cor-titulo)[#title]
 )
 
 // Cabeçalho GRUDADO no conteúdo dele.
@@ -167,7 +179,7 @@ const PREAMBLE = `
 ]
 
 #let field(label, value: "", width: 100%) = block(
-  stroke: (bottom: 0.5pt + black), width: width, inset: (bottom: 4pt, top: 4pt),
+  stroke: (bottom: 0.5pt + cor-texto), width: width, inset: (bottom: 4pt, top: 4pt),
   [#text(weight: "bold", size: 9pt)[#label] #text(size: 10pt, style: "italic")[#value]]
 )
 
@@ -191,7 +203,7 @@ const PREAMBLE = `
 // (Sem crase neste comentário de propósito: ele mora dentro de uma template
 //  literal do TypeScript, e uma crase aqui fecha a string e quebra o arquivo.)
 #let stat-box-filled(label, value, height: auto) = block(
-  stroke: 1.5pt + black, radius: 4pt, width: 100%, height: height, inset: 5pt, fill: rgb("F5F5F5"),
+  stroke: 1.5pt + cor-linha, radius: 4pt, width: 100%, height: height, inset: 5pt, fill: cor-fundo,
   align(top + center)[
     #text(size: 8pt, weight: "bold")[#label]
     #v(3pt)
@@ -210,16 +222,16 @@ const PREAMBLE = `
 
 #let blank-lines(count, spacing: 18pt) = grid(
   columns: 1fr, row-gutter: spacing,
-  ..range(count).map(i => line(length: 100%, stroke: 0.5pt + silver))
+  ..range(count).map(i => line(length: 100%, stroke: 0.5pt + cor-linha))
 )
 
 #let rank-field-filled(label, value) = block(
-  stroke: (bottom: 0.5pt + silver), width: 100%, inset: (bottom: 2pt, top: 2pt),
+  stroke: (bottom: 0.5pt + cor-linha), width: 100%, inset: (bottom: 2pt, top: 2pt),
   [#text(weight: "bold", size: 8pt)[#label] #text(size: 8pt)[#value]]
 )
 
 #let filled-line(value) = block(
-  stroke: (bottom: 0.5pt + silver), width: 100%, inset: (bottom: 3pt, top: 3pt),
+  stroke: (bottom: 0.5pt + cor-linha), width: 100%, inset: (bottom: 3pt, top: 3pt),
   text(size: 8.5pt)[#value]
 )
 
@@ -229,11 +241,11 @@ const PREAMBLE = `
 )
 
 #let ability-card(name, cost, time, range, effect) = block(
-  stroke: 1.5pt + black, radius: 6pt, width: 100%, height: auto, inset: 8pt, breakable: false,
+  stroke: 1.5pt + cor-texto, radius: 6pt, width: 100%, height: auto, inset: 8pt, breakable: false,
   [
     #text(weight: "bold", size: 10pt, fill: cor-principal)[#name] #h(1fr) #text(size: 7.5pt)[#cost]
     #v(3pt)
-    #line(length: 100%, stroke: 0.5pt + silver)
+    #line(length: 100%, stroke: 0.5pt + cor-linha)
     #v(4pt)
     #text(size: 7.5pt, style: "italic")[#time · #range]
     #v(5pt)
@@ -241,6 +253,7 @@ const PREAMBLE = `
   ]
 )
 `;
+}
 
 function attributesBlock(rows: FichaAttributeRow[]): string {
   // O losango entra na própria sigla ("VIG" -> "VIG ◆") pra não precisar mexer
@@ -337,7 +350,7 @@ function spellcastingBlock(rows: FichaSpellcastingRow[]): string {
 #secao("BÔNUS DE CONJURAÇÃO (BC) E CD")[
 #table(
   columns: (2fr, 1fr, 1fr),
-  stroke: 0.5pt + gray,
+  stroke: 0.5pt + cor-secundaria,
   align: (left, center, center),
   [*Escola*], [*BC*], [*CD*],
   ${dataRows}
@@ -361,8 +374,8 @@ function treesBlock(pillars: FichaTreePillar[]): string {
   if (abertos.length === 0) {
     return `
 #secao("ÁRVORES DE PROGRESSÃO")[
-#block(stroke: 1pt + gray, radius: 4pt, inset: 10pt, width: 100%)[
-  #text(size: 8pt, fill: gray)[Nenhuma árvore aberta ainda — abra a primeira em /arvores e ela aparece aqui.]
+#block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 10pt, width: 100%)[
+  #text(size: 8pt, fill: cor-secundaria)[Nenhuma árvore aberta ainda — abra a primeira em /arvores e ela aparece aqui.]
 ]
 ]`;
   }
@@ -381,7 +394,7 @@ function treesBlock(pillars: FichaTreePillar[]): string {
 
   return `
 #secao("ÁRVORES DE PROGRESSÃO")[
-#block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
+#block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 8pt, width: 100%)[
   #grid(
     columns: (${abertos.map(() => "1fr").join(", ")}), gutter: 15pt,
     ${columns}
@@ -394,14 +407,14 @@ function traitsBlock(traits: string[]): string {
   if (traits.length === 0) {
     return `
 #secao("PERÍCIAS & TRAÇOS (RAÇA E ANTECEDENTE)")[
-#block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
-  #text(size: 8pt, fill: gray)[Nenhuma raça/antecedente definido ainda.]
+#block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 8pt, width: 100%)[
+  #text(size: 8pt, fill: cor-secundaria)[Nenhuma raça/antecedente definido ainda.]
 ]]`;
   }
   const lines = traits.map((t) => `filled-line(${tstr(t)})`).join(",\n  ");
   return `
 #secao("PERÍCIAS & TRAÇOS (RAÇA E ANTECEDENTE)")[
-#block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
+#block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 8pt, width: 100%)[
   #grid(columns: 1fr, row-gutter: 5pt,
   ${lines}
   )
@@ -419,8 +432,8 @@ function loreBlock(paragraphs: string[]): string {
      */
     return `
 #secao("LORE E ANOTAÇÕES")[
-#block(stroke: 1pt + gray, radius: 4pt, inset: 12pt, width: 100%)[
-  #text(size: 8pt, fill: gray)[Nada escrito ainda — anote aqui, ou edite em /ficha.]
+#block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 12pt, width: 100%)[
+  #text(size: 8pt, fill: cor-secundaria)[Nada escrito ainda — anote aqui, ou edite em /ficha.]
   #v(8pt)
   #blank-lines(12, spacing: 17pt)
 ]]`;
@@ -430,7 +443,7 @@ function loreBlock(paragraphs: string[]): string {
   const paras = paragraphs.map((para) => `lore-paragraph(${tstr(para)})`).join(",\n  ");
   return `
 #secao("LORE E ANOTAÇÕES")[
-#block(stroke: 1pt + gray, radius: 4pt, inset: 10pt, width: 100%)[
+#block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 10pt, width: 100%)[
   #grid(columns: 1fr, row-gutter: 2pt,
   ${paras}
   )
@@ -505,7 +518,7 @@ function weaponsTable(weapons: FichaWeaponRow[]): string {
   // primeira página ou pulava inteira pra segunda, deixando um vão do tamanho
   // dela. 24pt continuam sendo linha de escrever à mão.
   rows: (auto, ..range(${dataRowCount}).map(i => 24pt)),
-  stroke: 0.5pt + gray,
+  stroke: 0.5pt + cor-secundaria,
   align: center + horizon,
   [*Arma / Manobra*], [*Dado Base*], [*Degraus (Rank)*], [*Acerto*], [*Dano Total (Dados + Bônus)*],
   ${rows.join(",\n  ")}
@@ -525,14 +538,14 @@ function inventoryBlock(items: FichaInventoryRow[]): string {
     const lines = list.map((i) => `filled-line(${tstr(i.text)})`);
     const padCount = Math.max(0, rowsPerCol - list.length);
     const padded = padCount > 0
-      ? [...lines, `..range(${padCount}).map(i => block(stroke: (bottom: 0.5pt + silver), width: 100%, inset: (bottom: 3pt, top: 3pt))[#v(10pt)])`]
+      ? [...lines, `..range(${padCount}).map(i => block(stroke: (bottom: 0.5pt + cor-linha), width: 100%, inset: (bottom: 3pt, top: 3pt))[#v(10pt)])`]
       : lines;
     return `grid(columns: 1fr, row-gutter: 6pt, ${padded.join(", ")})`;
   }
 
   return `
 #secao("EQUIPAMENTO E INVENTÁRIO")[
-#block(stroke: 1pt + gray, radius: 4pt, inset: 12pt, width: 100%)[
+#block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 12pt, width: 100%)[
   #grid(
     columns: (1fr, 1fr), gutter: 20pt,
     ${column(left)},
@@ -544,7 +557,7 @@ function inventoryBlock(items: FichaInventoryRow[]): string {
 function abilityCardsPages(cards: FichaAbilityCard[]): string {
   if (cards.length === 0) {
     return `
-#align(center)[#text(size: 10pt, fill: gray)[Nenhuma magia, técnica ou talento comprado ainda.]]`;
+#align(center)[#text(size: 10pt, fill: cor-secundaria)[Nenhuma magia, técnica ou talento comprado ainda.]]`;
   }
 
   const CARDS_PER_PAGE = 9;
@@ -569,7 +582,7 @@ function abilityCardsPages(cards: FichaAbilityCard[]): string {
  *   cabeçalho volta a ocupar a largura inteira.
  */
 export function buildFichaTypstSource(p: FichaPdfPayload, retratoArquivo?: string): string {
-  return `${PREAMBLE}
+  return `${preamble(p.tema)}
 
 // ==========================================
 // FICHA: IDENTIDADE, PROGRESSÃO, COMBATE E INVENTÁRIO
@@ -648,8 +661,8 @@ ${inventoryBlock(p.inventory)}
 #v(10pt)
 
 #secao("VÍNCULOS, PACTOS E PROTEGIDOS")[
-  #block(stroke: 1pt + gray, radius: 4pt, inset: 8pt, width: 100%)[
-    #text(size: 8pt, fill: gray)[Anote aqui: criaturas com Pacto (Invocação), aliados "Sob Minha Guarda" (Escudos), ou contatos/tropas (Bardo/Tático).]
+  #block(stroke: 1pt + cor-secundaria, radius: 4pt, inset: 8pt, width: 100%)[
+    #text(size: 8pt, fill: cor-secundaria)[Anote aqui: criaturas com Pacto (Invocação), aliados "Sob Minha Guarda" (Escudos), ou contatos/tropas (Bardo/Tático).]
     #v(6pt)
     #blank-lines(4, spacing: 16pt)
   ]
@@ -667,7 +680,7 @@ ${loreBlock(p.lore)}
 
 #align(center)[
   #text(size: 16pt, weight: "bold", fill: cor-principal)[GRIMÓRIO E ARSENAL DE TÉCNICAS] \\
-  #text(size: 9pt, style: "italic", fill: gray)[${tstr(p.name)} — magias, técnicas marciais, talentos e preparações]
+  #text(size: 9pt, style: "italic", fill: cor-secundaria)[${tstr(p.name)} — magias, técnicas marciais, talentos e preparações]
 ]
 #v(10pt)
 

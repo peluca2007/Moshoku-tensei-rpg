@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { consumirCompraParaAnimacao } from "@/lib/compraParaAnimacao";
 import { MOVIMENTO } from "./ui/temposDeMovimento";
@@ -369,6 +370,7 @@ function BonusInput({
 }
 
 export default function CharacterSheet() {
+  const { theme } = useTheme();
   const character = useActiveCharacter();
   /*
    * De quem é a vez, só pra ASSINAR o dano no registro de sessão.
@@ -477,6 +479,7 @@ export default function CharacterSheet() {
     setPdfState("loading");
     try {
       const payload = buildFichaPayload({
+        tema: theme,
         character,
         race,
         background,
