@@ -16,6 +16,8 @@ it("Roxy do Apêndice A: 75 PV, 40 PM, BC 10 de Água e 7 de Cura", () => {
     expect(getMaxMp(ficha())).toBe(40);
     expect(getAttackBonus(ficha(), "agua", "intelecto")).toBe(10);
     expect(getAttackBonus(ficha(), "cura", "espirito")).toBe(7);
+    s.setAttribute("vigor", -2);
+    expect(getMaxHp(ficha())).toBe(21);
 });
 it("Borg usa Improviso CD 8 + Força 3 + Rank 1 = 12", () => {
     const s = useCharacterStore.getState();

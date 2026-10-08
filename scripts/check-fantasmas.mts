@@ -3,6 +3,7 @@
  * Não entra no gate de publicação até as decisões do autor serem aplicadas. */
 import { fontesImpressas, normalizar } from "./lib/texto-impresso";
 import { TREES } from "@/data/trees";
+import { WEAPON_GROUPS } from "@/data/weaponGroups";
 // Definições explícitas, com origem revisável. Encontrar o termo numa carta
 // NÃO o define: apenas capítulos/glossário podem confirmar um desconhecido.
 const penalidades = [
@@ -12,9 +13,11 @@ const penalidades = [
     { termo: /armadura.*furtividade/, fonte: "Cap. 1, §4" },
     { termo: /exaust/, fonte: "Cap. 4, §9" },
     { termo: /preso|envenenad|amedrontad|quebrantad/, fonte: "Glossário de Condições" },
+    { termo: /distancia longa|atirar colado/, fonte: "Cap. 4, §3" },
 ];
 const fontes = fontesImpressas();
-const definicoes = normalizar(fontes.filter(f => /Chapter|condicoes/.test(f.arquivo)).map(f => f.texto).join("\n"));
+const definicoes = normalizar(fontes.filter(f => /Chapter|condicoes/.test(f.arquivo)).map(f => f.texto).join("\n"))
+    .replace(/<[^>]+>/g, "").replace(/&ldquo;|&rdquo;/g, '"');
 let falhas = 0, avisos = 0;
 const reportados = new Set<string>();
 function relatar(tipo: "FALHA" | "AVISO", arquivo: string, linha: number, motivo: string, frase: string) {
@@ -32,6 +35,13 @@ const medidas = ["alcance da arma", "alcance maximo", "alcance curto", "alcance 
 // Uma medida é definida apenas com uma explicação operacional, nunca porque
 // aparece no mesmo capítulo (ex.: a Cicatriz 11 usa, mas não define alcance).
 function definida(termo: string) {
+    const alcances = ["arcos-e-bestas", "arremesso"].every(id => {
+        const a = WEAPON_GROUPS.find(g => g.id === id)?.alcance;
+        return a && a.normal > 0 && a.longo > a.normal;
+    });
+    if (alcances && termo === "alcance da arma" && /alcance da arma[^\n]{0,50}e o normal/.test(definicoes)) return true;
+    if (alcances && termo === "alcance maximo" && /alcance maximo[^\n]{0,50}e o longo/.test(definicoes)) return true;
+    if (alcances && termo === "distancia longa" && /alem dele e ate o longo[^\n]{0,70}distancia longa[^\n]{0,30}desvantagem/.test(definicoes)) return true;
     const escaped = termo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     return new RegExp(`${escaped}[^.\n]{0,100}(?:significa|e definido|:|=)[^.\n]{0,160}(?:\\d+\\s*m|vantagem|desvantagem|enxerga|ataque|oculto)`).test(definicoes)
         || (termo === "invisivel" && /nome:\s*["']invisivel/.test(definicoes));
