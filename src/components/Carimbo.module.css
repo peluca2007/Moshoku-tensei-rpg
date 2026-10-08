@@ -1,0 +1,24 @@
+/* A tinta do carimbo: a cor de dia (mais escura) no papel claro e na
+   impressão; a de noite no papel escuro. O livro folheado tem o papel dele
+   (data-papel), que vence o tema do site. */
+.carimbo {
+  flex: none;
+  overflow: visible;
+  color: var(--cor-dia);
+}
+
+:global(.dark) .carimbo,
+:global(.folhear[data-papel="noite"]) .carimbo {
+  color: var(--cor-noite);
+}
+
+:global(.folhear[data-papel="dia"]) .carimbo {
+  color: var(--cor-dia);
+}
+
+@media print {
+  .carimbo,
+  :global(.dark) .carimbo {
+    color: var(--cor-dia);
+  }
+}
