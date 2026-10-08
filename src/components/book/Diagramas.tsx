@@ -2,6 +2,7 @@ import { WEAPON_DIE_LADDER } from "@/lib/weaponDie";
 import { RANK_BONUS, RANKS } from "@/lib/types";
 import DiagramaInterativo, { type Demonstracao, type EtapaDeTiro } from "./DiagramaInterativo";
 import Carimbo from "../Carimbo";
+import { manobraDeTouki } from "@/data/manobrasDeTouki";
 const ACOES_DO_TURNO = [1, 2, 3];
 
 /**
@@ -693,6 +694,215 @@ export function AnatomiaDoTurno() {
             no turno dos outros
           </span>
         </div>
+      </div>
+    </Quadro>
+  );
+}
+
+/**
+ * UM TURNO DE TOUKI — Cap. 3, pilar do Corpo, §2 (2026-10-08).
+ *
+ * A seção do Touki era só prosa e tabela, e a mesa erra sempre as mesmas três
+ * coisas: de onde vem a reserva, que o Manto não custa nada, e que o Descanso
+ * Curto devolve TUDO (o único recurso que volta inteiro). O desenho é uma
+ * reserva de bolinhas que se apagam, uma por PT, com o Manto de fora delas.
+ */
+export function UmTurnoDeTouki() {
+  // Um guerreiro Avançado: Vigor 2, Espírito 1 e três patamares no Corpo.
+  const VIGOR = 2;
+  const ESPIRITO = 1;
+  const PATAMARES = 3;
+  const reserva = VIGOR + ESPIRITO + PATAMARES;
+  const gastos = [
+    { quando: "no seu turno", m: manobraDeTouki("Touki Concentrado"), cor: "border-2 border-wine-500 bg-wine-500/15 text-wine-700 dark:text-wine-300" },
+    { quando: "no seu turno", m: manobraDeTouki("Golpe Estendido"), cor: "border-2 border-wine-700 bg-wine-700/15 text-wine-700 dark:text-wine-300" },
+    { quando: "no turno do inimigo", m: manobraDeTouki("Touki Endurecido"), cor: "border-2 border-gold-600 bg-gold-500/15 text-gold-700 dark:text-gold-300" },
+  ];
+  const dono: (number | null)[] = [];
+  gastos.forEach((g, i) => dono.push(...Array<number>(g.m.pt).fill(i)));
+  while (dono.length < reserva) dono.push(null);
+  const sobra = dono.filter((d) => d === null).length;
+
+  return (
+    <Quadro
+      titulo="Um turno de Touki"
+      nota={
+        <>
+          O PT é o único recurso que volta <b>inteiro</b> num Descanso Curto (PM e PP voltam a 25%). Guardar
+          Touki pro fim do dia é jogar fora: gaste nas lutas de antes do descanso. E o Manto não sai das
+          bolinhas, nem quando elas acabam.
+        </>
+      }
+    >
+      <p className="text-[11px] text-parchment-700 dark:text-parchment-300">
+        Reserva de um Avançado: Vigor {VIGOR} + Espírito {ESPIRITO} + {PATAMARES} patamares no Corpo ={" "}
+        <b className="text-parchment-900 dark:text-parchment-50">{reserva} PT</b>
+      </p>
+      <ol className="mt-2 flex flex-wrap gap-1.5" aria-label={`${reserva} PT, ${reserva - sobra} gastos`}>
+        {dono.map((d, i) => (
+          <li
+            key={i}
+            style={{ animationDelay: `${i * 160}ms` }}
+            className={`etapa-acende flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-black ${
+              d === null ? "bg-gold-400/80 text-parchment-900 ring-2 ring-gold-500/40" : gastos[d].cor
+            }`}
+          >
+            {d === null ? "" : d + 1}
+          </li>
+        ))}
+      </ol>
+      <ul className="mt-3 space-y-1">
+        {gastos.map((g, i) => (
+          <li key={g.m.nome} className="flex items-baseline gap-2 text-[11px] text-parchment-700 dark:text-parchment-300">
+            <span className={`flex h-4 w-4 flex-none items-center justify-center rounded-full text-[9px] font-black ${g.cor}`}>
+              {i + 1}
+            </span>
+            <span>
+              <b className="text-parchment-900 dark:text-parchment-50">{g.m.nome}</b> · {g.m.pt} PT · {g.m.acao}, {g.quando}
+            </span>
+          </li>
+        ))}
+        <li className="flex items-baseline gap-2 text-[11px] text-parchment-700 dark:text-parchment-300">
+          <span className="h-4 w-4 flex-none rounded-full bg-gold-400/80" />
+          <span>
+            Sobram <b className="text-parchment-900 dark:text-parchment-50">{sobra} PT</b> pra próxima rodada.
+          </span>
+        </li>
+      </ul>
+      <div className="@container mt-3">
+        <div className="grid gap-2 @md:grid-cols-2">
+          <div className="surge rounded-xl border-2 border-dashed border-gold-500/50 p-2.5">
+            <span className="block text-[10px] font-black uppercase tracking-wide text-gold-700 dark:text-gold-300">
+              Manto de Touki · 0 PT
+            </span>
+            <span className="mt-1 block text-[11px] leading-snug text-parchment-700 dark:text-parchment-300">
+              Vestido pelo Rank, desde o Avançado: +CA e Redução contra projéteis, mesmo com a reserva em 0.
+            </span>
+          </div>
+          <div className="surge rounded-xl border border-wine-400/40 bg-wine-50/40 p-2.5 dark:bg-wine-950/20">
+            <span className="block text-[10px] font-black uppercase tracking-wide text-wine-700 dark:text-wine-300">
+              ⟲ Descanso Curto
+            </span>
+            <span className="mt-1 block text-[11px] leading-snug text-parchment-700 dark:text-parchment-300">
+              As {reserva} bolinhas voltam todas. Dois Descansos Curtos entre dois Longos (Cap. 4, §7).
+            </span>
+          </div>
+        </div>
+      </div>
+    </Quadro>
+  );
+}
+
+/**
+ * PARA ONDE VAI UM PP — Cap. 3, pilar da Utilidade, §2 (2026-10-08).
+ *
+ * O PP tem duas saídas, e a segunda (o fato livre) é a que a mesa mais briga.
+ * As travas estão em três lugares do texto (as cinco condições, as quatro
+ * travas, o limite por sessão); aqui elas viram portas em fila, na ordem em
+ * que a mesa pergunta.
+ */
+export function ParaOndeVaiUmPP() {
+  const portas = [
+    { nome: "Domínio", diz: "o fato toca o que a sua árvore toca: coisas e lugares, pessoas e reputação, ou tempo e logística." },
+    { nome: "Escopo", diz: "e alcança até onde a sua Maestria mais alta naquela árvore alcança." },
+    { nome: "Pretérito", diz: "“já tinha acontecido”, fora de cena: nunca contradiz o que a mesa viu." },
+    { nome: "O preço", diz: "1 PP; 2 PP se resolve o obstáculo central da cena — e o Mestre diz isso antes, com você podendo desistir." },
+  ];
+  return (
+    <Quadro
+      titulo="Para onde vai um PP"
+      nota={
+        <>
+          Passou pelas quatro portas, o fato <b>vale</b>: o Mestre não pode negar. Ele pode anexar uma
+          complicação, <i>ao lado</i> do fato e nunca o desfazendo. Fatos livres por sessão = o seu Bônus de Rank
+          naquela árvore; as Preparações do menu não contam nesse limite.
+        </>
+      }
+    >
+      <div className="@container">
+        <div className="grid gap-2 @md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+          <div className="etapa-acende rounded-xl border border-gold-500/40 bg-gradient-to-b from-gold-50/80 to-gold-100/30 p-2.5 dark:border-gold-700/50 dark:from-gold-950/40 dark:to-gold-950/10">
+            <span className="block text-[10px] font-black uppercase tracking-wide text-gold-700 dark:text-gold-300">
+              Saída 1 · o menu
+            </span>
+            <span className="mt-1 block font-display text-sm font-bold text-parchment-900 dark:text-parchment-50">
+              Uma Preparação
+            </span>
+            <span className="mt-1 block text-[11px] leading-snug text-parchment-700 dark:text-parchment-300">
+              Custo e efeito escritos na tabela da árvore. Sem negociar e sem porta nenhuma: é a forma de todo dia.
+            </span>
+          </div>
+          <div className="rounded-xl border border-wine-400/40 p-2.5 dark:border-wine-700/50">
+            <span className="block text-[10px] font-black uppercase tracking-wide text-wine-700 dark:text-wine-300">
+              Saída 2 · o fato livre
+            </span>
+            <ol className="mt-1.5 space-y-1.5">
+              {portas.map((p, i) => (
+                <li
+                  key={p.nome}
+                  style={{ animationDelay: `${200 + i * 260}ms` }}
+                  className="etapa-acende flex gap-2 text-[11px] leading-snug text-parchment-700 dark:text-parchment-300"
+                >
+                  <span className="flex h-5 w-5 flex-none items-center justify-center rounded-md border border-wine-500/50 text-[9px] font-black text-wine-700 dark:text-wine-300">
+                    {i + 1}
+                  </span>
+                  <span>
+                    <b className="text-parchment-900 dark:text-parchment-50">{p.nome}:</b> {p.diz}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+    </Quadro>
+  );
+}
+
+/**
+ * AS TRÊS FAIXAS — Cap. 3, pilar da Utilidade, §4 (2026-10-08).
+ *
+ * Era uma tabela de cinco linhas; virou três raias com uma parede entre elas,
+ * porque a regra É a parede: nenhuma habilidade de uma raia entra na outra.
+ * O texto inteiro da tabela continua aqui (o diagrama a substitui, não repete).
+ */
+export function AsTresFaixas() {
+  const raias = [
+    { arvore: "furtividade-e-armadilhas", nome: "Ladino", atributo: "Agilidade", dominio: "Coisas e lugares.", fato: "“Essa fechadura eu já limei.”", faixa: "Dano Furtivo", pergunta: "Como eu entro?" },
+    { arvore: "bardo-e-interacao", nome: "Bardo", atributo: "Espírito", dominio: "Pessoas e reputação.", fato: "“O capitão da guarda me deve um favor.”", faixa: "Estado emocional", pergunta: "Quem eu convenço?" },
+    { arvore: "navegacao-e-lideranca", nome: "Tático", atributo: "Intelecto", dominio: "Tempo e logística.", fato: "“O suprimento deles acabou anteontem.”", faixa: "Economia de ação", pergunta: "Onde e quando isso acontece?" },
+  ];
+  return (
+    <Quadro
+      titulo="As Três Faixas"
+      nota="A parede vale só entre Ladino, Bardo e Tático: nenhum talento dá Dano Furtivo a um Bardo, nem deixa um Ladino conceder uma Ação. Árvores do Corpo e da Magia cruzam essas linhas livremente."
+    >
+      <div className="@container">
+        <ol className="grid @md:grid-cols-3">
+          {raias.map((r, i) => (
+            <li
+              key={r.nome}
+              style={{ animationDelay: `${i * 260}ms` }}
+              className={`etapa-acende flex flex-col gap-1 p-2.5 ${
+                i > 0 ? "border-t-4 border-double border-wine-500/60 @md:border-t-0 @md:border-l-4" : ""
+              }`}
+            >
+              <span className="flex items-center gap-1.5">
+                <Carimbo treeId={r.arvore} tamanho={26} className="-rotate-6" />
+                <span className="font-display text-sm font-bold text-parchment-900 dark:text-parchment-50">{r.nome}</span>
+                <span className="text-[10px] text-parchment-600 dark:text-parchment-400">· {r.atributo}</span>
+              </span>
+              <span className="font-display text-[13px] italic text-wine-700 dark:text-wine-300">{r.pergunta}</span>
+              <span className="text-[11px] leading-snug text-parchment-700 dark:text-parchment-300">
+                <b className="text-parchment-900 dark:text-parchment-50">Domínio:</b> {r.dominio}
+              </span>
+              <span className="text-[11px] italic leading-snug text-parchment-600 dark:text-parchment-400">{r.fato}</span>
+              <span className="mt-auto rounded-md bg-gold-500/20 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-gold-800 dark:text-gold-200">
+                Faixa: {r.faixa}
+              </span>
+            </li>
+          ))}
+        </ol>
       </div>
     </Quadro>
   );
