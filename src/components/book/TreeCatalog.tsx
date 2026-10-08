@@ -6,6 +6,7 @@ import ArteDaHabilidade from "./ArteDaHabilidade";
 import { midiaDaMaestria } from "@/data/midiaDeHabilidade";
 import { BookTable, SubTitle } from "./BookUI";
 import { nomeTematico, rotuloDoPatamar } from "@/lib/rotuloDoPatamar";
+import { exemploDaArvore } from "@/data/turnosDeExemplo";
 
 /** Tabela de progressão por Rank — PV, e (conforme a árvore) PT/Escada de Arma ou PP, direto de TreeRankDef (nunca diverge da ficha). */
 function ProgressionTable({ tree }: { tree: Tree }) {
@@ -135,6 +136,36 @@ function MechanicCard({ tree }: { tree: Tree }) {
   );
 }
 
+/**
+ * "Três turnos com…" (Cap. 3, D-2, 2026-10-08): o exemplo jogado das cinco
+ * árvores que a mesa não entende de primeira. Mora logo depois da Mecânica
+ * Central, porque é ela que ele mostra funcionando. Os textos vêm de
+ * `src/data/turnosDeExemplo.ts`.
+ */
+function ExemploJogadoCard({ tree }: { tree: Tree }) {
+  const ex = exemploDaArvore(tree.id);
+  if (!ex) return null;
+  return (
+    <div className="livro-exemplo-jogado print-avoid-break rounded-xl border border-gold-500/40 bg-parchment-50/70 p-4 dark:border-gold-600/30 dark:bg-parchment-950/40">
+      <p className="text-xs font-bold uppercase tracking-wider text-gold-700 dark:text-gold-400">
+        Na mesa — {ex.turnos.length} momentos com {tree.name}
+      </p>
+      <p className="mt-1 text-[0.9375rem] font-semibold leading-snug text-parchment-900 dark:text-parchment-50">{ex.ensina}</p>
+      <p className="mt-2 text-sm italic leading-relaxed text-parchment-700 dark:text-parchment-300">{ex.ficha}</p>
+      <ol className="mt-3 space-y-2 border-l-2 border-gold-500/40 pl-3">
+        {ex.turnos.map((turno) => (
+          <li key={turno.rotulo} className="text-sm leading-relaxed text-parchment-800 dark:text-parchment-200">
+            <b className="text-parchment-900 dark:text-parchment-50">{turno.rotulo}.</b> {turno.texto}
+          </li>
+        ))}
+      </ol>
+      <p className="mt-3 border-t border-gold-500/30 pt-2 text-sm font-semibold leading-relaxed text-wine-800 dark:text-wine-200">
+        {ex.licao}
+      </p>
+    </div>
+  );
+}
+
 /** Catálogo completo de uma árvore — progressão, todo Rank, toda Maestria, todo Talento/Técnica/Magia e o patamar Divino, direto da mesma fonte que alimenta a ficha (nunca diverge). */
 export default function TreeCatalog({ tree }: { tree: Tree }) {
   const nonEmptyRanks = tree.ranks.filter((r) => r.mastery || r.talents.length > 0 || r.abilities.length > 0);
@@ -156,6 +187,7 @@ export default function TreeCatalog({ tree }: { tree: Tree }) {
         </div>
       )}
       <MechanicCard tree={tree} />
+      <ExemploJogadoCard tree={tree} />
       <ProficiencyCard tree={tree} />
       <ProgressionTable tree={tree} />
       {nonEmptyRanks.map((rankDef, i) => {
