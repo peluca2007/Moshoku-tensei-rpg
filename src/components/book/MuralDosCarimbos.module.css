@@ -1,0 +1,134 @@
+/* O mural dos carimbos (Cap. 3). O caos do pilar entra como máscara pintada
+   (o mesmo SVG das bordas das páginas), então funciona no papel noite e no dia
+   sem segunda versão. */
+.moldura {
+  container-type: inline-size;
+  margin: 20px 0 24px;
+}
+
+.mural {
+  display: grid;
+  gap: 14px;
+}
+
+.pilar {
+  position: relative;
+  isolation: isolate;
+  padding: 26px 12px 18px;
+  border-radius: 16px;
+  border: 1px dashed rgb(150 110 50 / 0.3);
+}
+
+.pilar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgb(150 90 40 / 0.4);
+  /* O desenho do caos mora nas bordas da página (o miolo fica livre pro texto):
+     mostra a borda de cima da primeira variante, onde ficam os motivos. */
+  -webkit-mask: var(--caos) 0 0 / 300% auto no-repeat;
+  mask: var(--caos) 0 0 / 300% auto no-repeat;
+}
+
+:global(.dark) .pilar::before,
+:global(.folhear[data-papel="noite"]) .pilar::before {
+  background: rgb(230 190 120 / 0.3);
+}
+
+.rotulo {
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  padding: 1px 10px;
+  border-radius: 999px;
+  background: var(--color-parchment-50, #fbf6ea);
+  border: 1px solid rgb(150 110 50 / 0.35);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:global(.dark) .rotulo {
+  background: #1d1925;
+}
+
+.rotulo small {
+  margin-left: 4px;
+  font-weight: 500;
+  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.carimbos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+/* Um por cima do outro, como carimbos batidos às pressas. */
+.lugar {
+  position: relative;
+  margin-inline: -9px;
+  margin-bottom: -6px;
+}
+
+/* Uma em cada três fica por cima: é o que faz a pilha parecer pilha. */
+.lugar:nth-child(3n + 2) {
+  z-index: 1;
+}
+
+@container (min-width: 640px) {
+  .mural {
+    grid-template-columns: 1.15fr 1.15fr 0.7fr;
+    align-items: stretch;
+  }
+  .lugar {
+    margin-inline: -11px;
+  }
+}
+
+/* No livro folheado, o mural ocupa o lugar da antiga vitrine das árvores
+   (`.livro-vitrine-arvores`): mora na coluna, ao lado da caixa das Escolas
+   Formais, e a passada `esticarVitrines` (diagramacao.ts) estica até o pé dela.
+   Ali os carimbos ficam médios e sem desnível, e os pilares se espalham pela
+   altura que sobrou. */
+:global(.folhear[data-modo="livro"]) .moldura {
+  padding-top: 0.9em;
+  overflow: visible;
+}
+
+:global(.folhear[data-modo="livro"]) .moldura .mural {
+  flex: 1;
+  gap: 10px;
+  align-content: space-evenly;
+}
+
+:global(.folhear[data-modo="livro"]) .moldura .pilar {
+  padding: 14px 6px 6px;
+}
+
+:global(.folhear[data-modo="livro"]) .moldura .lugar {
+  margin: 0 -6px !important;
+}
+
+:global(.folhear[data-modo="livro"]) .moldura .lugar > *,
+:global(.folhear[data-modo="livro"]) .moldura .lugar svg {
+  width: 58px !important;
+  height: 58px !important;
+}
+
+/* Na leitura contínua (e no celular) não há página pra encher: o mural tem a
+   altura dele. A regra das vitrines do folhear nasce com altura fixa e
+   escondida, então aqui ela é desfeita. */
+:global(.folhear:not([data-modo="livro"])) .moldura {
+  height: auto !important;
+  overflow: visible !important;
+  visibility: visible !important;
+  container-type: inline-size !important;
+  display: block !important;
+}

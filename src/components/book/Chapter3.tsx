@@ -8,10 +8,11 @@ import TreeCatalog from "./TreeCatalog";
 import EntryCard from "./EntryCard";
 import RetratoDaArvore from "./RetratoDaArvore";
 import Prancha, { FimDaArvore } from "./Prancha";
-import VitrineDasArvores from "./VitrineDasArvores";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
-import TreeCrest from "../TreeCrest";
+import MuralDosCarimbos from "./MuralDosCarimbos";
+import CarimboQueCai from "./CarimboQueCai";
+import Carimbo from "../Carimbo";
 import { PREPARACOES } from "@/data/preparacoes";
 import { DANO_POR_TURNO_CORPO } from "@/data/danoPorTurno";
 
@@ -115,7 +116,10 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
               headers={["Árvore", "Mecânica", "O que ela faz", "O que ela não faz"]}
               rows={TREES.filter((t) => t.category === category && t.mechanic).map((t) => [
                 t.name,
-                t.mechanic!.tag,
+                <span key="tag">
+                  <Carimbo treeId={t.id} tamanho={20} className="mr-1 inline -rotate-6 align-[-4px]" />
+                  {t.mechanic!.tag}
+                </span>,
                 t.mechanic!.hook,
                 t.mechanic!.cost,
               ])}
@@ -164,8 +168,8 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           se escolhem — elas só se revelam pra quem já cumpriu os pré-requisitos das duas árvores de origem
           (ver a nota no catálogo de cada uma, mais abaixo). Nenhuma delas é uma
           classe: você compra Ranks em quantas quiser, na ordem que quiser, e seu personagem é simplesmente
-          a soma do que ele estudou. Cada nome na tabela abaixo leva ao catálogo
-          da árvore, mais adiante neste capítulo.
+          a soma do que ele estudou. Cada nome na tabela abaixo, e cada carimbo do mural depois dela, leva
+          ao catálogo da árvore, mais adiante neste capítulo.
         </P>
         <BookTable
           headers={["Pilar", "Sub-árvore", "Atributo-chave", "Recurso", "Identidade em uma linha"]}
@@ -191,7 +195,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
             Uma escada só pra decorar; a tabela abaixo mostra os títulos.
           </P>
         </Aside>
-        <VitrineDasArvores />
+        <MuralDosCarimbos />
         <BookTable
           // O "e" anda colado à palavra seguinte: "Furtividade / e Armadilhas" quebra em
           // duas linhas, não em três ("Furtividade / e / Armadilhas").
@@ -870,7 +874,7 @@ function CatalogoDaArvore({
   return (
     <details open={abertas} data-folhear-aberto={abertas ? "" : undefined} data-categoria={category} data-arvore={tree.id} className="livro-arvore surface rounded-xl border border-parchment-300 bg-parchment-100/60 dark:border-parchment-800 dark:bg-parchment-900/40" id={`arvore-${tree.id}`}>
       <summary className="livro-arvore-cabeca flex scroll-mt-24 cursor-pointer list-none items-center gap-3 rounded-xl p-3 hover:bg-parchment-200/50 dark:hover:bg-parchment-800/50">
-        <TreeCrest tree={tree} size={44} />
+        <CarimboQueCai treeId={tree.id} tamanho={52} giro={-7} />
         <span className="min-w-0">
           <span className="font-bold text-parchment-900 dark:text-parchment-50">{tree.name}</span>
           <span className="ml-2 text-xs text-parchment-600 dark:text-parchment-400">{tree.subgroup}</span>

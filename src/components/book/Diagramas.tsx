@@ -1,6 +1,7 @@
 import { WEAPON_DIE_LADDER } from "@/lib/weaponDie";
 import { RANK_BONUS, RANKS } from "@/lib/types";
 import DiagramaInterativo, { type Demonstracao, type EtapaDeTiro } from "./DiagramaInterativo";
+import Carimbo from "../Carimbo";
 const ACOES_DO_TURNO = [1, 2, 3];
 
 /**
@@ -231,9 +232,9 @@ export function EscadaDeDados() {
  */
 export function TrianguloDosEstilos() {
   const vertices = [
-    { nome: "Deus da Espada", curto: "Espada", lema: "Velocidade e agressão", x: 100, y: 26, rx: 100, ry: 12 },
-    { nome: "Deus do Norte", curto: "Norte", lema: "Sobreviver por qualquer meio", x: 172, y: 148, rx: 172, ry: 168 },
-    { nome: "Deus da Água", curto: "Água", lema: "Defesa e contragolpe", x: 28, y: 148, rx: 28, ry: 168 },
+    { arvore: "deus-da-espada", nome: "Deus da Espada", curto: "Espada", lema: "Velocidade e agressão", x: 100, y: 26, rx: 100, ry: 12 },
+    { arvore: "deus-do-norte", nome: "Deus do Norte", curto: "Norte", lema: "Sobreviver por qualquer meio", x: 172, y: 148, rx: 172, ry: 168 },
+    { arvore: "deus-da-agua-corpo", nome: "Deus da Água", curto: "Água", lema: "Defesa e contragolpe", x: 28, y: 148, rx: 28, ry: 168 },
   ];
   /* O lado `i` sai de `vertices[i]` e cai em `vertices[(i + 1) % 3]`. */
   const lados = ["M 108 46 L 166 132", "M 156 146 L 48 146", "M 36 132 L 92 46"];
@@ -302,11 +303,15 @@ export function TrianguloDosEstilos() {
               <circle
                 cx={v.x}
                 cy={v.y}
-                r="7.5"
+                r="15"
                 style={{ animationDelay: `${(((i + 2) % 3) + 1) * (CICLO / 3)}s`, animationDuration: `${CICLO}s` }}
-                className="triangulo-apanha fill-gold-400 stroke-gold-600/60"
-                strokeWidth="1.5"
+                className="triangulo-apanha fill-gold-400/40 stroke-gold-600/40"
+                strokeWidth="1"
               />
+              {/* O carimbo do estilo no vértice (2026-10-07): a mesma marca do catálogo da árvore. */}
+              <g transform={`translate(${v.x - 14} ${v.y - 14}) rotate(${(i - 1) * 8} 14 14)`}>
+                <Carimbo treeId={v.arvore} tamanho={28} />
+              </g>
               <text
                 x={v.rx}
                 y={v.ry}
