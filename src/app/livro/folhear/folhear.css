@@ -1056,6 +1056,15 @@ html.livro-imersivo .folhear[data-modo="livro"] {
   padding-left: 0;
 }
 
+/* O título de seção carrega `text-xl` do site, e a regra `.folhear-fluxo
+   .text-xl` (mais acima) o derrubava pra 1,2× o texto: seção, subseção e
+   etiqueta de caixa saíam do mesmo tamanho (16 / 15 / 14 px), e a hierarquia
+   sumia (2026-10-08). No Cap. 3 ele volta a gritar; nos outros capítulos a
+   mudança mexe na paginação inteira e espera o autor. */
+.folhear-fluxo .livro-cap3 .livro-secao-titulo {
+  font-size: 1.7em;
+}
+
 /* Subseção: mincho, com um quadradinho da cor do capítulo. */
 .folhear-fluxo h4 {
   margin-top: 1em;

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { TREES, CATEGORY_LABELS } from "@/data/trees";
 import { RANK_BONUS, RANKS } from "@/lib/types";
 import { Aside, BookTable, ChapterTitle, FimDoCapitulo, List, P, Quote, Section, SectionTitle, SubTitle, Warning } from "./BookUI";
-import { EscadaDeDados, EtapasDoTiroPerfeito, TrianguloDosEstilos } from "./Diagramas";
+import { AsTresFaixas, EscadaDeDados, EtapasDoTiroPerfeito, ParaOndeVaiUmPP, TrianguloDosEstilos, UmTurnoDeTouki } from "./Diagramas";
+import { MANOBRAS_DE_TOUKI } from "@/data/manobrasDeTouki";
 import TreeCatalog from "./TreeCatalog";
 import EntryCard from "./EntryCard";
 import RetratoDaArvore from "./RetratoDaArvore";
@@ -11,6 +12,7 @@ import Prancha, { FimDaArvore } from "./Prancha";
 import ArteDaHabilidade from "./ArteDaHabilidade";
 import { ARTE_EXPLOSAO_DE_AURA, ARTE_LAMINA_DE_TOUKI } from "@/data/midiaDeHabilidade";
 import MuralDosCarimbos from "./MuralDosCarimbos";
+import { AberturaDoPilar, Sistema } from "./Pilar";
 import CarimboQueCai from "./CarimboQueCai";
 import Carimbo from "../Carimbo";
 import { PREPARACOES } from "@/data/preparacoes";
@@ -37,12 +39,34 @@ const BOLA_DE_FOGO = (() => {
   return bola;
 })();
 
+/** Os índices das entradas dos pilares: o mesmo número que cada `Sistema` leva na margem. */
+const SISTEMAS_DA_MAGIA = [
+  { id: "cap2-2", n: "2", nome: "Encantamentos e a escada do cântico (Cap. 2, §2)" },
+  { id: "cap2-3", n: "3", nome: "Tempo de Conjuração (Cap. 2, §3)" },
+  { id: "cap2-4", n: "4", nome: "Combinações entre Árvores (Cap. 2, §4)" },
+  { id: "cap2-5", n: "5", nome: "Maestrias (Cap. 2, §5)" },
+  { id: "cap2-6", n: "6", nome: "Interromper uma Conjuração (Cap. 2, §6)" },
+];
+const SISTEMAS_DO_CORPO = [
+  { id: "cap3-dado-arma", nome: "O Dado de Arma e a Escalada de Maestria" },
+  { id: "cap3-touki", nome: "Touki (Aura de Batalha)" },
+  { id: "cap3-preparacao", nome: "A Preparação em Etapas — o Tiro Perfeito" },
+  { id: "cap3-triangulo", nome: "O Triângulo dos Estilos" },
+];
+const SISTEMAS_DA_UTILIDADE = [
+  { id: "cap3-pericias", nome: "Onde o Bônus de Rank soma" },
+  { id: "cap3-pp", nome: "Pontos de Preparação (PP)" },
+  { id: "cap3-preparacoes", nome: "O menu de Preparações" },
+  { id: "cap3-faixas", nome: "As Três Faixas" },
+  { id: "cap3-utilidade-combate", nome: "As Três Árvores em Combate" },
+];
+
 export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: boolean } = {}) {
   const rankLabelTrees = TREES.filter((t) => t.rankLabels);
 
   return (
     <>
-    <div className="space-y-8">
+    <div className="livro-cap3 space-y-8">
       <ChapterTitle
         id="cap3"
         numero="Capítulo 3"
@@ -229,7 +253,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         da mesma regra, e este livro não tem duas fontes de nada).
       */}
       <Section>
-        <SectionTitle id="cap3-magia">A Árvore da Magia — Sistemas Compartilhados</SectionTitle>
+        <AberturaDoPilar pilar="magia" id="cap3-magia" sistemas={SISTEMAS_DA_MAGIA} />
         <P>
           Os sistemas que valem para <b>todas</b> as escolas de magia não moram aqui: eles são o{" "}
           <b>Capítulo 2</b> inteiro. Cânticos e a escada de encantamento, tempo de conjuração por rank,
@@ -253,7 +277,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
       </Section>
 
       <Section>
-        <SectionTitle id="cap3-corpo">A Árvore do Corpo — Sistemas Compartilhados</SectionTitle>
+        <AberturaDoPilar pilar="corpo" id="cap3-corpo" sistemas={SISTEMAS_DO_CORPO} />
         <P>
           Antes de qualquer estilo específico, quatro sistemas governam todos os guerreiros: o Dado de Arma,
           o Touki, a Preparação em Etapas e o Triângulo dos Estilos.
@@ -263,276 +287,276 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           é chamado de Espadachim. Todos os outros, mesmo empunhando espada, são apenas Guerreiros.
         </Aside>
 
-        <SubTitle id="cap3-dado-arma">1. O Dado de Arma e a Escalada de Maestria</SubTitle>
-        <P>
-          O dano de um guerreiro vem da arma, não do corpo. Conforme você sobe de Rank num estilo, o Dado
-          Base sobe degraus nesta escada:
-        </P>
-        <EscadaDeDados />
-        <BookTable
-          headers={["Rank no Estilo", "Degraus Ganhos", "Espada Curta (d6) vira", "Espada Longa (d8) vira"]}
-          rows={[
-            ["Principiante", "+1", "d8", "d10"],
-            ["Intermediário", "+2", "d10", "d12"],
-            ["Avançado", "+3", "d12", "2d8"],
-            ["Santo", "+4", "2d8", "2d10"],
-            ["Rei", "+5", "2d10", "2d12"],
-            ["Imperador", "+6", "2d12", "3d10"],
-          ]}
-        />
-        <Warning title="Arma improvisada não sobe a escada">
+        <Sistema n={1} id="cap3-dado-arma" titulo="O Dado de Arma e a Escalada de Maestria">
           <P>
-            A cadeira, a garrafa e a pedra do chão travam em <b>d6</b> e não ganham degrau nenhum. Um
-            Imperador quebra a mesma cadeira que um Principiante quebra.
+            O dano de um guerreiro vem da arma, não do corpo. Conforme você sobe de Rank num estilo, o Dado
+            Base sobe degraus nesta escada:
           </P>
+          <EscadaDeDados />
+          <BookTable
+            headers={["Rank no Estilo", "Degraus Ganhos", "Espada Curta (d6) vira", "Espada Longa (d8) vira"]}
+            rows={[
+              ["Principiante", "+1", "d8", "d10"],
+              ["Intermediário", "+2", "d10", "d12"],
+              ["Avançado", "+3", "d12", "2d8"],
+              ["Santo", "+4", "2d8", "2d10"],
+              ["Rei", "+5", "2d10", "2d12"],
+              ["Imperador", "+6", "2d12", "3d10"],
+            ]}
+          />
+          <Warning title="Arma improvisada não sobe a escada">
+            <P>
+              A cadeira, a garrafa e a pedra do chão travam em <b>d6</b> e não ganham degrau nenhum. Um
+              Imperador quebra a mesma cadeira que um Principiante quebra.
+            </P>
+            <P>
+              O <b>Estilo Deus do Norte</b> é a única árvore que escapa disso — e é o que a frase dele
+              significa de verdade: <i>&ldquo;se dá pra empunhar, você é proficiente&rdquo;</i>. Na mão dele,
+              um banco de taverna escala como uma espada.
+            </P>
+          </Warning>
+          <Aside title="Acima do topo da escada">
+            <P>
+              O 5d12 é o último degrau. Se um talento, Maestria ou técnica te der um degrau além dele — Espada
+              Emprestada, Punho Duplo, Braço de Bigorna, as etapas do Tiro Perfeito — cada degrau excedente vira{" "}
+              <b>+2 de dano fixo</b> em vez de sumir. Nenhum PA gasto em degrau é jogado fora.
+            </P>
+          </Aside>
+          <Warning title="Esta tabela é a progressão padrão, não universal">
+            A maioria das árvores do Corpo sobe exatamente +1 degrau por Rank (total +6 no Imperador), mas não
+            é regra fixa — cada árvore define os próprios degraus por patamar no catálogo dela (Cap. 3,
+            &ldquo;Todas as Sub-árvores&rdquo;). O Deus da Espada sobe mais rápido (<b>nove</b> degraus no
+            total, de propósito — é a identidade da árvore: &ldquo;o maior dano do livro&rdquo;), e é o único
+            que chega lá. Logo atrás vem o <b>Punho do Fogo</b>, com <b>sete</b>: ele é a segunda árvore mais
+            rápida da escada, mas o resto do dano dele vem de Em Chamas e Quebrantado, não do dado. Cavalaria e
+            Escudos sobe mais devagar, porque o valor dela está em proteger o grupo, não em dano. Confira o
+            catálogo da árvore específica antes de calcular o dado final de alguém.
+          </Warning>
           <P>
-            O <b>Estilo Deus do Norte</b> é a única árvore que escapa disso — e é o que a frase dele
-            significa de verdade: <i>&ldquo;se dá pra empunhar, você é proficiente&rdquo;</i>. Na mão dele,
-            um banco de taverna escala como uma espada.
-          </P>
-        </Warning>
-        <Aside title="Acima do topo da escada">
-          <P>
-            O 5d12 é o último degrau. Se um talento, Maestria ou técnica te der um degrau além dele — Espada
-            Emprestada, Punho Duplo, Braço de Bigorna, as etapas do Tiro Perfeito — cada degrau excedente vira{" "}
-            <b>+2 de dano fixo</b> em vez de sumir. Nenhum PA gasto em degrau é jogado fora.
-          </P>
-        </Aside>
-        <Warning title="Esta tabela é a progressão padrão, não universal">
-          A maioria das árvores do Corpo sobe exatamente +1 degrau por Rank (total +6 no Imperador), mas não
-          é regra fixa — cada árvore define os próprios degraus por patamar no catálogo dela (Cap. 3,
-          &ldquo;Todas as Sub-árvores&rdquo;). O Deus da Espada sobe mais rápido (<b>nove</b> degraus no
-          total, de propósito — é a identidade da árvore: &ldquo;o maior dano do livro&rdquo;), e é o único
-          que chega lá. Logo atrás vem o <b>Punho do Fogo</b>, com <b>sete</b>: ele é a segunda árvore mais
-          rápida da escada, mas o resto do dano dele vem de Em Chamas e Quebrantado, não do dado. Cavalaria e
-          Escudos sobe mais devagar, porque o valor dela está em proteger o grupo, não em dano. Confira o
-          catálogo da árvore específica antes de calcular o dado final de alguém.
-        </Warning>
-        <P>
-          Fórmula de dano marcial: <b>Dado de Arma (escalado) + Atributo + Bônus do Rank</b>. Atributo de
-          acerto e dano: <b>Força; ou Agilidade com os grupos Lâminas Curtas, Arcos e Bestas, Arremesso e
-          Flexíveis</b>. Qual Rank conta depende do tipo de ataque, e a regra tem exatamente dois casos —
-          nunca um terceiro:
-        </P>
-        <List
-          items={[
-            <span key="comum">
-              <b>Ataque comum (golpe simples, sem nome, sem técnica):</b> use o <b>maior</b> Rank que você
-              tiver entre todas as suas árvores do Corpo. Um personagem com Norte Santo e Espada Principiante
-              rola os degraus do Norte Santo (o maior dos dois) em qualquer golpe comum, não importa com qual
-              arma. Degraus e Bônus vêm da árvore de maior Rank; em empate, você escolhe. Arma improvisada só
-              escala se essa árvore for o Deus do Norte.
-            </span>,
-            <span key="tecnica">
-              <b>Técnica nomeada (qualquer habilidade comprada de uma árvore específica):</b> use sempre o
-              Rank <b>daquela árvore que concedeu a técnica</b>, mesmo que seja menor que o seu maior Rank
-              geral. O mesmo personagem usando a Espada de Luz (técnica do Deus da Espada) rola só os degraus
-              do Rank Principiante — é por isso que ela sai fraca na mão dele, apesar do Norte Santo.
-            </span>,
-          ]}
-        />
-        <P>
-          A mesma lógica dos dois casos vale pra <b>qualquer</b> talento ou regra do livro que mencione
-          &ldquo;seu Bônus de Rank&rdquo; sem dizer de qual árvore: se a regra foi concedida por uma árvore
-          específica, é o Rank daquela árvore; se for uma regra genérica do sistema (não amarrada a nenhuma
-          árvore), use o maior Rank que você tiver em qualquer árvore.
-        </P>
-
-        <SubTitle id="cap3-touki">2. Touki (Aura de Batalha)</SubTitle>
-        <P>
-          O Touki é uma camada de mana que o guerreiro veste sobre o próprio corpo — endurece a pele como
-          aço, reforça o fio da lâmina e amplifica força, velocidade e reflexos. A reserva de PT existe desde
-          o 1º patamar de qualquer árvore do Corpo. No Avançado (3º patamar), todo guerreiro veste o Manto de
-          Touki e destrava as manobras de gasto; o Deus da Espada destrava Touki Concentrado e Lâmina de
-          Touki já no 2º.
-        </P>
-        <Aside title="Pontos de Touki (PT)">
-          <P>
-            <b>Todo guerreiro tem Touki desde o 1º patamar — só não percebe.</b> O novato paga técnicas por
-            instinto, sem saber de onde vem o fôlego a mais. É no Avançado (3º patamar) que ele percebe a
-            aura: destrava as manobras de gasto abaixo e passa a vestir o Manto de Touki. O Deus da Espada
-            adianta duas delas — Touki Concentrado e Lâmina de Touki já no 2º patamar; o Manto e as outras
-            manobras vêm no 3º.
-          </P>
-          <P>
-            <b>Reserva de PT:</b> Vigor + Espírito + 1 PT por patamar que você tenha em qualquer árvore do Corpo,
-            desde o 1º (patamares de árvores diferentes somam). Cavalaria e Escudos concede +2 por patamar em
-            vez de +1, por gastar PT mais rápido que qualquer outra árvore.
+            Fórmula de dano marcial: <b>Dado de Arma (escalado) + Atributo + Bônus do Rank</b>. Atributo de
+            acerto e dano: <b>Força; ou Agilidade com os grupos Lâminas Curtas, Arcos e Bestas, Arremesso e
+            Flexíveis</b>. Qual Rank conta depende do tipo de ataque, e a regra tem exatamente dois casos —
+            nunca um terceiro:
           </P>
           <List
             items={[
-              "PT são recuperados integralmente em um Descanso Curto — e são o único recurso que volta inteiro nele (PM e PP voltam a 25% do máximo). O Cap. 4, §7 limita a dois Descansos Curtos entre dois Longos.",
-              "PT não podem ser convertidos em PM, nem PM em PT.",
-              "Um personagem com Ranks em mais de um estilo marcial usa uma reserva única de PT.",
-            ]}
-          />
-        </Aside>
-        <P>
-          <b>O Manto de Touki (passivo, gratuito, independente de PT)</b> — a partir do Rank Avançado,
-          enquanto consciente e não Exausto: +CA igual à metade do Bônus de Rank (arred. pra cima); Redução
-          contra projéteis igual ao dobro do Bônus de Rank (e nunca sofre crítico deles). <b>Projétil é ataque
-          de arma à distância, mágico ou não</b> — flecha encantada é projétil; Bola de Fogo não é, magia
-          nunca é projétil. Ataques
-          desarmados e com objetos improvisados contam como mágicos. <b>O Manto não consome PT e continua
-          ativo mesmo com a reserva de PT em 0</b> — ele é vestido pelo Rank, não comprado com o recurso; só
-          PT paga as manobras de gasto da tabela abaixo, nunca a existência do Manto em si.
-        </P>
-        <BookTable
-          headers={["Custo", "Manobra", "Efeito"]}
-          rows={[
-            ["1 PT", "Touki Concentrado", "Sem Ação, uma vez por turno. Até o fim do seu turno, some seu Bônus de Rank ao dano de todos os seus ataques."],
-            ["1 PT", "Touki Endurecido", "1 Reação, ao ser atingido. Reduza o dano daquele golpe no dobro do seu Bônus de Rank."],
-            ["1 PT", "Lâmina de Touki", "Sem Ação. Por 1 minuto, sua arma corpo a corpo corta pedra e aço, conta como mágica e ignora Resistência a cortante/perfurante."],
-            ["2 PT", "Golpe Estendido", "1 Ação. Clarão da lâmina que atinge um alvo a até 9m. Dano de arma normal."],
-            ["2 PT", "Aguentar", "1 Reação. Ao sofrer dano que te levaria a 0 PV, fica com 1 PV em vez disso. Uma vez por combate."],
-            ["3 PT", "Explosão de Aura", "1 Ação. Criaturas a 3m fazem teste de Força (CD 8 + Força + Rank) ou são arremessadas 4,5m e ficam Caídas."],
-          ]}
-        />
-        {/* As duas técnicas da tabela acima que têm arte. Elas não são de árvore
-            nenhuma — qualquer um com PT usa as duas — então vêm direto. */}
-        <div className="grid gap-2 sm:grid-cols-2">
-          <ArteDaHabilidade midia={ARTE_LAMINA_DE_TOUKI} />
-          <ArteDaHabilidade midia={ARTE_EXPLOSAO_DE_AURA} />
-        </div>
-
-        <SubTitle id="cap3-preparacao">3. A Preparação em Etapas — o Tiro Perfeito</SubTitle>
-        {/*
-          O aviso vem ANTES da explicação, e não depois — 0.1.69.
-
-          Esta seção mora no Capítulo 3, que é o capítulo das regras que valem
-          pra todo mundo (Ações, Reações, Touki). Ler "o Tiro Perfeito, da
-          Arquearia" no meio de um parágrafo não desfaz a impressão que o LUGAR
-          já deu: a de que é mais uma manobra universal. O pré-requisito tem que
-          ser a primeira coisa na tela, não uma aposta na atenção do leitor.
-        */}
-        <Warning title="Exclusivo da Arquearia — ninguém mais atira assim">
-          <P>
-            O Tiro Perfeito <b>não</b> é uma manobra aberta a qualquer personagem. É a habilidade de
-            assinatura de <b>Arquearia</b>, no patamar Principiante, e usar exige as duas coisas ao mesmo
-            tempo: ter <b>comprado aquele nó da árvore</b> com PA, e estar com <b>arco ou besta</b> em mãos.
-          </P>
-          <P>
-            Não há versão improvisada, não se compra avulso, nenhuma outra árvore concede, e nem Deus da
-            Espada nem Deus do Norte têm equivalente. Quem não é arqueiro mira e atira normalmente — a
-            escada de etapas abaixo <b>inteira</b> está fechada pra ele.
-          </P>
-          <P>
-            A única exceção é a <b>provação do Deus do Arco</b> (Cap. 5): durante ela, qualquer um executa o
-            Tiro Perfeito inteiro, sem o nó da árvore, com o arco que o Deus empresta. É assim que alguém
-            sem Arquearia consegue abrir a Arquearia.
-          </P>
-        </Warning>
-        <P>
-          Toda técnica do livro compra potência com <b>recurso</b>: PT, PM, PP. O Tiro Perfeito, da
-          Arquearia, é a única que compra com <b>tempo</b> — e é por isso que ele é um sistema, e não uma
-          habilidade. Quatro Ações num turno de três: ele <b>sempre</b> atravessa turnos.
-        </P>
-        <P>
-          Cada etapa custa 1 Ação e pede um teste de <b>CD 12</b>, na ordem: <b>1d20 + o atributo da etapa</b>.
-          Quando a etapa nomeia uma perícia, o atributo é o dela, e ter a perícia dá Vantagem, como em
-          qualquer teste (Cap. 1, §4). A CD é fixa, e não a escada habitual de 8 + atributo + Rank,
-          porque não há ninguém do outro lado resistindo: a dificuldade é da técnica, não de um alvo.
-        </P>
-        <P>
-          Entre uma etapa e outra, a Preparação segue as regras da <b>Conjuração Contínua e Dividida</b>{" "}
-          (Cap. 4, §3): o alvo é declarado na Corda; você pode se mover com as Ações que sobram (atacar,
-          não), mas precisa gastar ao menos 1 Ação de etapa por turno, ou a Preparação se perde (a Perda de
-          Foco do arqueiro; uma Preparação já concluída e guardada pela Respiração Contada não precisa); e
-          usar a sua Reação a encerra.
-        </P>
-        <EtapasDoTiroPerfeito />
-        <BookTable
-          headers={["Etapa", "Teste", "O que ela concede"]}
-          rows={[
-            ["1. A Corda", "Força", "O Dado de Arma deste disparo sobe DOIS degraus na Escada de Dados. Você puxa até o fim."],
-            ["2. A Leitura", "Intuição — ou Intelecto/Espírito puro, o maior, se você não tem a perícia", "O alvo não soma Agilidade na CA — você atirou onde ele ia estar — e o Dado de Arma sobe MAIS UM degrau."],
-            ["3. Os Dedos", "Agilidade", "+1 Dado de Arma, e o disparo ignora Cobertura — exceto a Total, contra a qual não existe tiro."],
-            ["(opcional) O Ponto", "Medicina (humanoide) ou Sobrevivência (fera, monstro)", "+1 Ação. Crita em 19-20 e ignora Resistência a dano."],
-            ["4. A Solta", "o ataque normal, contra a CA do alvo", "O disparo. Também é uma jogada: nenhuma etapa garante o acerto."],
-          ]}
-        />
-        <Aside title="A escada da Preparação">
-          <List
-            items={[
-              <span key="1">
-                <b>Principiante</b> — o Tiro Perfeito, e <b>Respiração Contada</b>, que deixa guardar uma
-                Preparação pronta até o fim do turno seguinte antes de soltar.
+              <span key="comum">
+                <b>Ataque comum (golpe simples, sem nome, sem técnica):</b> use o <b>maior</b> Rank que você
+                tiver entre todas as suas árvores do Corpo. Um personagem com Norte Santo e Espada Principiante
+                rola os degraus do Norte Santo (o maior dos dois) em qualquer golpe comum, não importa com qual
+                arma. Degraus e Bônus vêm da árvore de maior Rank; em empate, você escolhe. Arma improvisada só
+                escala se essa árvore for o Deus do Norte.
               </span>,
-              <span key="2">
-                <b>Intermediário — Etapa Encurtada:</b> A Corda e A Leitura, as duas primeiras, passam a caber numa Ação só. O
-                tiro inteiro cai de 4 para 3 Ações, e passa a caber num turno.
-              </span>,
-              <span key="3">
-                <b>Avançado — Olho Que Já Viu:</b> a Leitura não pede mais teste. Ela passa sempre.
-              </span>,
-              <span key="4">
-                <b>Santo — Ponto Vital Lido:</b> a etapa d&rsquo;O Ponto passa a custar 0 Ações.
-              </span>,
-              <span key="5">
-                <b>Rei — Preparação Perfeita</b> (carta de 4 PA, não Maestria): um Tiro Perfeito em que Corda, Dedos, Leitura e O Ponto
-                passaram, e a Solta acertou, fura o Manto de Touki, sem gastar PT. É a segunda forma de
-                furar o Manto, e cobra em turnos o que a Flecha de Touki cobra em recurso.
+              <span key="tecnica">
+                <b>Técnica nomeada (qualquer habilidade comprada de uma árvore específica):</b> use sempre o
+                Rank <b>daquela árvore que concedeu a técnica</b>, mesmo que seja menor que o seu maior Rank
+                geral. O mesmo personagem usando a Espada de Luz (técnica do Deus da Espada) rola só os degraus
+                do Rank Principiante — é por isso que ela sai fraca na mão dele, apesar do Norte Santo.
               </span>,
             ]}
           />
-        </Aside>
-        <Aside title="Por que a Leitura vem antes dos Dedos">
           <P>
-            A ordem não é enfeite, é a própria técnica. Você <b>puxa</b> a corda, <b>lê</b> pra onde o alvo
-            vai, e só então <b>coloca os dedos</b> no lugar do tiro — mirando o vão que a leitura acabou de
-            revelar. Por isso a etapa que fura Cobertura é a última antes da Solta: ela é a correção final,
-            não o começo.
+            A mesma lógica dos dois casos vale pra <b>qualquer</b> talento ou regra do livro que mencione
+            &ldquo;seu Bônus de Rank&rdquo; sem dizer de qual árvore: se a regra foi concedida por uma árvore
+            específica, é o Rank daquela árvore; se for uma regra genérica do sistema (não amarrada a nenhuma
+            árvore), use o maior Rank que você tiver em qualquer árvore.
           </P>
-          <P>
-            Repare no que cada etapa compra, porque são três coisas diferentes e é isso que faz o sistema
-            valer o tempo: <b>A Corda compra potência bruta</b> (dois degraus), <b>A Leitura compra o acerto
-            contra quem se mexe</b> (a Agilidade sai da CA) <b>e mais um degrau</b>, e <b>Os Dedos compram o
-            ângulo</b> (a Cobertura some) <b>e mais um Dado</b>. Falhar numa não estraga as outras.
-          </P>
-        </Aside>
-        <Aside title="Falhar não interrompe">
-          <P>
-            Errar um teste não cancela a Preparação nem devolve as Ações: você apenas <b>não recebe o bônus
-            daquela etapa</b> e segue para a próxima. Sem esta regra, um 7 no d20 jogaria fora dois turnos de
-            jogo — e ninguém aposta dois turnos num tiro que uma rolagem ruim anula.
-          </P>
-          <P>
-            Sofrer dano no meio é outra coisa: aí é o mesmo <b>Teste de Concentração</b> de um cântico (Cap.
-            2, §6) — 1d20 + Espírito + metade do seu maior Bônus de Rank contra <b>CD 10 + o Bônus de Rank de
-            quem te acertou</b>. Falhou, a Preparação
-            inteira se perde, e as Ações já gastas nela não voltam.
-          </P>
-        </Aside>
+        </Sistema>
 
-        <SubTitle id="cap3-triangulo">4. O Triângulo dos Estilos</SubTitle>
-        <Prancha id="cap3-triangulo" />
-        <Quote attribution="Lema do Estilo Deus da Espada">A vitória é de quem se move primeiro.</Quote>
-        <P>
-          <b>Espada vence Norte, Norte vence Água, Água vence Espada.</b> Contra quem pratica o estilo que
-          o seu vence, você rola com Vantagem em todas as Disputas corpo a corpo — a menos que o Rank dele
-          no estilo dele seja dois ou mais acima do seu no seu: treino bruto supera a tabela de tipos.
-        </P>
-        <P>
-          Seu estilo é o do seu maior Rank entre os três (empate: escolha no início do combate); o Vendaval
-          conta como Deus da Espada.
-        </P>
-        <P>
-          <b>E cada aresta tem o efeito próprio dela</b>, porque as três doutrinas não se atacam pelo mesmo
-          lugar:
-        </P>
-        <BookTable
-          headers={["Aresta", "Além da Vantagem, você ganha"]}
-          rows={[
-            ["Espada vence Norte", "O Improviso do Norte não funciona contra a sua primeira Ação do turno: rápido demais pra improvisar em cima."],
-            ["Norte vence Água", "As Reações defensivas dele falham contra a sua primeira Ação de cada turno: o Norte ataca o que a postura não cobre."],
-            ["Água vence Espada", "O primeiro ataque dele contra você a cada turno tem Desvantagem: a Água não bloqueia a Espada, faz a Espada errar."],
-          ]}
-        />
-        <TrianguloDosEstilos />
+        <Sistema n={2} id="cap3-touki" titulo="Touki (Aura de Batalha)">
+          <P>
+            O Touki é uma camada de mana que o guerreiro veste sobre o próprio corpo — endurece a pele como
+            aço, reforça o fio da lâmina e amplifica força, velocidade e reflexos. A reserva de PT existe desde
+            o 1º patamar de qualquer árvore do Corpo. No Avançado (3º patamar), todo guerreiro veste o Manto de
+            Touki e destrava as manobras de gasto; o Deus da Espada destrava Touki Concentrado e Lâmina de
+            Touki já no 2º.
+          </P>
+          <Aside title="Pontos de Touki (PT)">
+            <P>
+              <b>Todo guerreiro tem Touki desde o 1º patamar — só não percebe.</b> O novato paga técnicas por
+              instinto, sem saber de onde vem o fôlego a mais. É no Avançado (3º patamar) que ele percebe a
+              aura: destrava as manobras de gasto abaixo e passa a vestir o Manto de Touki. O Deus da Espada
+              adianta duas delas — Touki Concentrado e Lâmina de Touki já no 2º patamar; o Manto e as outras
+              manobras vêm no 3º.
+            </P>
+            <P>
+              <b>Reserva de PT:</b> Vigor + Espírito + 1 PT por patamar que você tenha em qualquer árvore do Corpo,
+              desde o 1º (patamares de árvores diferentes somam). Cavalaria e Escudos concede +2 por patamar em
+              vez de +1, por gastar PT mais rápido que qualquer outra árvore.
+            </P>
+            <List
+              items={[
+                "PT são recuperados integralmente em um Descanso Curto — e são o único recurso que volta inteiro nele (PM e PP voltam a 25% do máximo). O Cap. 4, §7 limita a dois Descansos Curtos entre dois Longos.",
+                "PT não podem ser convertidos em PM, nem PM em PT.",
+                "Um personagem com Ranks em mais de um estilo marcial usa uma reserva única de PT.",
+              ]}
+            />
+          </Aside>
+          <P>
+            <b>O Manto de Touki (passivo, gratuito, independente de PT)</b> — a partir do Rank Avançado,
+            enquanto consciente e não Exausto: +CA igual à metade do Bônus de Rank (arred. pra cima); Redução
+            contra projéteis igual ao dobro do Bônus de Rank (e nunca sofre crítico deles). <b>Projétil é ataque
+            de arma à distância, mágico ou não</b> — flecha encantada é projétil; Bola de Fogo não é, magia
+            nunca é projétil. Ataques
+            desarmados e com objetos improvisados contam como mágicos. <b>O Manto não consome PT e continua
+            ativo mesmo com a reserva de PT em 0</b> — ele é vestido pelo Rank, não comprado com o recurso; só
+            PT paga as manobras de gasto da tabela abaixo, nunca a existência do Manto em si.
+          </P>
+          <BookTable
+            headers={["Custo", "Manobra", "Efeito"]}
+            rows={MANOBRAS_DE_TOUKI.map((m) => [`${m.pt} PT`, m.nome, m.efeito])}
+          />
+          <UmTurnoDeTouki />
+          {/* As duas técnicas da tabela acima que têm arte. Elas não são de árvore
+              nenhuma — qualquer um com PT usa as duas — então vêm direto. */}
+          <div className="grid gap-2 sm:grid-cols-2">
+            <ArteDaHabilidade midia={ARTE_LAMINA_DE_TOUKI} />
+            <ArteDaHabilidade midia={ARTE_EXPLOSAO_DE_AURA} />
+          </div>
+        </Sistema>
+
+        <Sistema n={3} id="cap3-preparacao" titulo="A Preparação em Etapas — o Tiro Perfeito">
+          {/*
+            O aviso vem ANTES da explicação, e não depois — 0.1.69.
+
+            Esta seção mora no Capítulo 3, que é o capítulo das regras que valem
+            pra todo mundo (Ações, Reações, Touki). Ler "o Tiro Perfeito, da
+            Arquearia" no meio de um parágrafo não desfaz a impressão que o LUGAR
+            já deu: a de que é mais uma manobra universal. O pré-requisito tem que
+            ser a primeira coisa na tela, não uma aposta na atenção do leitor.
+          */}
+          <Warning title="Exclusivo da Arquearia — ninguém mais atira assim">
+            <P>
+              O Tiro Perfeito <b>não</b> é uma manobra aberta a qualquer personagem. É a habilidade de
+              assinatura de <b>Arquearia</b>, no patamar Principiante, e usar exige as duas coisas ao mesmo
+              tempo: ter <b>comprado aquele nó da árvore</b> com PA, e estar com <b>arco ou besta</b> em mãos.
+            </P>
+            <P>
+              Não há versão improvisada, não se compra avulso, nenhuma outra árvore concede, e nem Deus da
+              Espada nem Deus do Norte têm equivalente. Quem não é arqueiro mira e atira normalmente — a
+              escada de etapas abaixo <b>inteira</b> está fechada pra ele.
+            </P>
+            <P>
+              A única exceção é a <b>provação do Deus do Arco</b> (Cap. 5): durante ela, qualquer um executa o
+              Tiro Perfeito inteiro, sem o nó da árvore, com o arco que o Deus empresta. É assim que alguém
+              sem Arquearia consegue abrir a Arquearia.
+            </P>
+          </Warning>
+          <P>
+            Toda técnica do livro compra potência com <b>recurso</b>: PT, PM, PP. O Tiro Perfeito, da
+            Arquearia, é a única que compra com <b>tempo</b> — e é por isso que ele é um sistema, e não uma
+            habilidade. Quatro Ações num turno de três: ele <b>sempre</b> atravessa turnos.
+          </P>
+          <P>
+            Cada etapa custa 1 Ação e pede um teste de <b>CD 12</b>, na ordem: <b>1d20 + o atributo da etapa</b>.
+            Quando a etapa nomeia uma perícia, o atributo é o dela, e ter a perícia dá Vantagem, como em
+            qualquer teste (Cap. 1, §4). A CD é fixa, e não a escada habitual de 8 + atributo + Rank,
+            porque não há ninguém do outro lado resistindo: a dificuldade é da técnica, não de um alvo.
+          </P>
+          <P>
+            Entre uma etapa e outra, a Preparação segue as regras da <b>Conjuração Contínua e Dividida</b>{" "}
+            (Cap. 4, §3): o alvo é declarado na Corda; você pode se mover com as Ações que sobram (atacar,
+            não), mas precisa gastar ao menos 1 Ação de etapa por turno, ou a Preparação se perde (a Perda de
+            Foco do arqueiro; uma Preparação já concluída e guardada pela Respiração Contada não precisa); e
+            usar a sua Reação a encerra.
+          </P>
+          <EtapasDoTiroPerfeito />
+          <BookTable
+            headers={["Etapa", "Teste", "O que ela concede"]}
+            rows={[
+              ["1. A Corda", "Força", "O Dado de Arma deste disparo sobe DOIS degraus na Escada de Dados. Você puxa até o fim."],
+              ["2. A Leitura", "Intuição — ou Intelecto/Espírito puro, o maior, se você não tem a perícia", "O alvo não soma Agilidade na CA — você atirou onde ele ia estar — e o Dado de Arma sobe MAIS UM degrau."],
+              ["3. Os Dedos", "Agilidade", "+1 Dado de Arma, e o disparo ignora Cobertura — exceto a Total, contra a qual não existe tiro."],
+              ["(opcional) O Ponto", "Medicina (humanoide) ou Sobrevivência (fera, monstro)", "+1 Ação. Crita em 19-20 e ignora Resistência a dano."],
+              ["4. A Solta", "o ataque normal, contra a CA do alvo", "O disparo. Também é uma jogada: nenhuma etapa garante o acerto."],
+            ]}
+          />
+          <Aside title="A escada da Preparação">
+            <List
+              items={[
+                <span key="1">
+                  <b>Principiante</b> — o Tiro Perfeito, e <b>Respiração Contada</b>, que deixa guardar uma
+                  Preparação pronta até o fim do turno seguinte antes de soltar.
+                </span>,
+                <span key="2">
+                  <b>Intermediário — Etapa Encurtada:</b> A Corda e A Leitura, as duas primeiras, passam a caber numa Ação só. O
+                  tiro inteiro cai de 4 para 3 Ações, e passa a caber num turno.
+                </span>,
+                <span key="3">
+                  <b>Avançado — Olho Que Já Viu:</b> a Leitura não pede mais teste. Ela passa sempre.
+                </span>,
+                <span key="4">
+                  <b>Santo — Ponto Vital Lido:</b> a etapa d&rsquo;O Ponto passa a custar 0 Ações.
+                </span>,
+                <span key="5">
+                  <b>Rei — Preparação Perfeita</b> (carta de 4 PA, não Maestria): um Tiro Perfeito em que Corda, Dedos, Leitura e O Ponto
+                  passaram, e a Solta acertou, fura o Manto de Touki, sem gastar PT. É a segunda forma de
+                  furar o Manto, e cobra em turnos o que a Flecha de Touki cobra em recurso.
+                </span>,
+              ]}
+            />
+          </Aside>
+          <Aside title="Por que a Leitura vem antes dos Dedos">
+            <P>
+              A ordem não é enfeite, é a própria técnica. Você <b>puxa</b> a corda, <b>lê</b> pra onde o alvo
+              vai, e só então <b>coloca os dedos</b> no lugar do tiro — mirando o vão que a leitura acabou de
+              revelar. Por isso a etapa que fura Cobertura é a última antes da Solta: ela é a correção final,
+              não o começo.
+            </P>
+            <P>
+              Repare no que cada etapa compra, porque são três coisas diferentes e é isso que faz o sistema
+              valer o tempo: <b>A Corda compra potência bruta</b> (dois degraus), <b>A Leitura compra o acerto
+              contra quem se mexe</b> (a Agilidade sai da CA) <b>e mais um degrau</b>, e <b>Os Dedos compram o
+              ângulo</b> (a Cobertura some) <b>e mais um Dado</b>. Falhar numa não estraga as outras.
+            </P>
+          </Aside>
+          <Aside title="Falhar não interrompe">
+            <P>
+              Errar um teste não cancela a Preparação nem devolve as Ações: você apenas <b>não recebe o bônus
+              daquela etapa</b> e segue para a próxima. Sem esta regra, um 7 no d20 jogaria fora dois turnos de
+              jogo — e ninguém aposta dois turnos num tiro que uma rolagem ruim anula.
+            </P>
+            <P>
+              Sofrer dano no meio é outra coisa: aí é o mesmo <b>Teste de Concentração</b> de um cântico (Cap.
+              2, §6) — 1d20 + Espírito + metade do seu maior Bônus de Rank contra <b>CD 10 + o Bônus de Rank de
+              quem te acertou</b>. Falhou, a Preparação
+              inteira se perde, e as Ações já gastas nela não voltam.
+            </P>
+          </Aside>
+        </Sistema>
+
+        <Sistema n={4} id="cap3-triangulo" titulo="O Triângulo dos Estilos">
+          <Prancha id="cap3-triangulo" />
+          {/* O ciclo desenhado vem antes das regras (2026-10-08): no fim da seção ele
+              não cabia no pé da página e deixava um terço dela em branco. */}
+          <TrianguloDosEstilos />
+          <Quote attribution="Lema do Estilo Deus da Espada">A vitória é de quem se move primeiro.</Quote>
+          <P>
+            <b>Espada vence Norte, Norte vence Água, Água vence Espada.</b> Contra quem pratica o estilo que
+            o seu vence, você rola com Vantagem em todas as Disputas corpo a corpo — a menos que o Rank dele
+            no estilo dele seja dois ou mais acima do seu no seu: treino bruto supera a tabela de tipos.
+          </P>
+          <P>
+            Seu estilo é o do seu maior Rank entre os três (empate: escolha no início do combate); o Vendaval
+            conta como Deus da Espada.
+          </P>
+          <P>
+            <b>E cada aresta tem o efeito próprio dela</b>, porque as três doutrinas não se atacam pelo mesmo
+            lugar:
+          </P>
+          <BookTable
+            headers={["Aresta", "Além da Vantagem, você ganha"]}
+            rows={[
+              ["Espada vence Norte", "O Improviso do Norte não funciona contra a sua primeira Ação do turno: rápido demais pra improvisar em cima."],
+              ["Norte vence Água", "As Reações defensivas dele falham contra a sua primeira Ação de cada turno: o Norte ataca o que a postura não cobre."],
+              ["Água vence Espada", "O primeiro ataque dele contra você a cada turno tem Desvantagem: a Água não bloqueia a Espada, faz a Espada errar."],
+            ]}
+          />
+        </Sistema>
       </Section>
 
       <Section>
-        <SectionTitle id="cap3-utilidade">A Árvore de Utilidade — Sistemas Compartilhados</SectionTitle>
+        <AberturaDoPilar pilar="utilidade" id="cap3-utilidade" sistemas={SISTEMAS_DA_UTILIDADE} />
         <P>
           O terceiro pilar não compete em dano — mesmo o Ladino, o que mais bate entre os três, fica bem atrás
           de um guerreiro do mesmo patamar (a conta está em &ldquo;As Três Árvores em Combate&rdquo;, mais
@@ -543,257 +567,255 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
           items={[
             <span key="1"><b>Sem Escada de Dados:</b> árvores de Utilidade não recebem degraus no Dado de Arma.</span>,
             <span key="2"><b>Sem Touki, nunca:</b> nenhum patamar de Utilidade concede Manto de Touki nem PT.</span>,
-            <span key="3">
-              <b>O Rank soma só nas Perícias que a sua árvore cobre</b> — nunca em todas as Perícias do jogo,
-              exatamente como o BC é somado só ao dano do elemento de um mago, não ao de qualquer magia:
-            </span>,
           ]}
         />
-        <BookTable
-          headers={["Árvore", "Perícias cobertas pelo Bônus de Rank"]}
-          rows={[
-            ["Ladino (Furtividade e Armadilhas)", "Furtividade, Ladinagem, Percepção, Acrobacia, Enganação (disfarce)."],
-            ["Bardo e Interação", "Atuação, Persuasão, Intuição, História."],
-            ["Tático (Navegação e Liderança)", "Sobrevivência, Natureza, Investigação, Percepção (rastreio)."],
-          ]}
-        />
-        <P>
-          Os parênteses limitam a perícia a uma parte dela. <b>Disfarce</b> é passar por outra pessoa ou
-          esconder quem você é; <b>rastreio</b> é seguir e ler rastros. Um teste de Enganação que não é
-          disfarce, ou de Percepção que não é rastreio, não recebe o Bônus de Rank daquela árvore.
-        </P>
-        <P>
-          Duas árvores de Utilidade cobrem <b>Percepção</b> (Ladino, num sentido; Tático, noutro). Se você
-          tiver Rank em ambas, use o <b>maior</b> Bônus de Rank entre as duas — nunca some dois Bônus de Rank
-          no mesmo teste.
-        </P>
-        <Warning title="Onde o Bônus de Rank soma NÃO é o mesmo que quais perícias você tem">
+        <Sistema n={1} id="cap3-pericias" titulo="Onde o Bônus de Rank soma">
           <P>
-            Esta é a confusão mais fácil de cometer no pilar inteiro, e ela custa caro na mesa. A tabela
-            acima diz onde o seu Bônus de Rank <b>soma</b>. Ela não diz que você <b>tem</b> essas perícias.
+            <b>O Rank soma só nas Perícias que a sua árvore cobre</b> — nunca em todas as Perícias do jogo,
+            exatamente como o BC é somado só ao dano do elemento de um mago, não ao de qualquer magia:
           </P>
-          <P>
-            Um Ladino cujo Bônus de Rank cobre cinco perícias não é treinado nas cinco — ele soma o bônus
-            naquelas que possui. Perícia se ganha de três formas, e só três: pela <b>Árvore Inicial</b> (Cap.
-            1, §4), por raça/antecedente, ou comprando com PA. É por isso que cada árvore de Utilidade ensina
-            duas perícias fixas <i>mais uma à sua escolha</i> quando é a sua Árvore Inicial: a escolha existe
-            justamente porque a lista que o Rank cobre é maior do que o que um personagem consegue aprender.
-          </P>
-          <P>
-            Na prática: se o seu Ladino nunca aprendeu Acrobacia, o Bônus de Rank dele não aparece em teste
-            nenhum de Acrobacia — não há teste treinado pra somar. Aprenda a perícia primeiro; o bônus vem
-            junto no mesmo instante.
-          </P>
-        </Warning>
-
-        <SubTitle id="cap3-pp">Pontos de Preparação (PP)</SubTitle>
-        <P>
-          Magos gastam PM pra fazer algo acontecer agora. Guerreiros gastam PT pra aguentar o que está
-          acontecendo agora. A Utilidade gasta um recurso que nenhum dos dois tem: PP serve pra declarar que
-          algo <i>já aconteceu antes</i>.
-        </P>
-        <Aside title="Pontos de Preparação">
-          <P>
-            <b>PP Máximos = Intelecto + o atributo-chave da sua árvore</b> (mínimo 1), +1 por patamar a
-            partir do terceiro. Ladino usa Agilidade, Bardo usa Espírito. Com mais de uma árvore de
-            Utilidade, a reserva é única: o segundo termo é o maior entre seus atributos-chave de Utilidade
-            (o do Tático entra como o Bônus de Rank dele, veja abaixo), e os +1 por patamar somam em todas as
-            árvores do pilar. Recupera-se tudo em Descanso Longo.
-          </P>
-          <P>
-            <b>Navegação e Liderança é a exceção</b>, porque o atributo-chave dela <i>é</i> Intelecto: nesse
-            caso ele não conta duas vezes — some, no lugar, o seu <b>Bônus de Rank</b> naquela árvore.
-          </P>
-        </Aside>
-        <P>
-          Há <b>duas formas de gastar PP</b>, e as duas declaram algo que já tinha acontecido:
-        </P>
-        <List
-          items={[
-            <span key="menu">
-              <b>Uma Preparação do menu</b> da sua árvore (logo abaixo): custo e efeito escritos, sem
-              negociar. É a forma de todo dia.
-            </span>,
-            <span key="fato">
-              <b>Um fato livre</b>, pra tudo que o menu não cobre. Gastando 1 PP, você declara em voz alta um
-              fato sobre o passado que passa a ser verdade no jogo. Cinco condições: (1) precisa caber no seu
-              Escopo; (2) precisa caber no seu Domínio; (3) é sempre pretérito; (4) custa 2 PP se resolver o
-              obstáculo central da cena; (5) o Mestre não pode negar, mas pode anexar uma complicação.
-            </span>,
-          ]}
-        />
-        <Warning title="As quatro travas do fato livre — leia antes da primeira vez que alguém gastar PP">
-          <P>
-            É a mecânica mais divertida do pilar, e é onde a mesa mais briga. Quatro frases resolvem as quatro
-            brigas:
-          </P>
-          <List
-            items={[
-              <span key="a">
-                <b>Um fato nunca contradiz o que já foi mostrado na mesa.</b> Se o grupo viu o guarda entrar,
-                ninguém declara que já o tinha subornado. PP reescreve o que estava <i>fora de cena</i>, não o
-                que aconteceu na frente de todo mundo — essa é a linha, e ela não se negocia.
-              </span>,
-              <span key="b">
-                <b>A complicação nunca desfaz nem anula o fato.</b> Ela cobra um preço <i>ao lado</i> dele: o
-                informante existe, mas está bêbado; a corda está lá, mas alguém vai notar que sumiu. Um Mestre
-                que responde com uma complicação do mesmo tamanho transformou &ldquo;não pode negar&rdquo; em
-                enfeite.
-              </span>,
-              <span key="c">
-                <b>O preço é dito antes.</b> Se o Mestre julga que o fato resolve o obstáculo central da cena,
-                ele diz &ldquo;esse custa 2 PP&rdquo; <i>antes</i> de o fato valer, e o jogador pode desistir
-                sem gastar nada. Ninguém paga o dobro por surpresa.
-              </span>,
-              <span key="d">
-                <b>Fatos livres por sessão = o seu Bônus de Rank</b> naquela árvore (as Preparações do menu não
-                contam: o PP já as limita). No Principiante é 1; no
-                Imperador, 6. Sem isto, um Bardo com 15 PP encadeia quinze reescritas do mundo na mesma cena, e
-                a mesa para de jogar a cena pra assistir a ficha dele. O limite é por sessão, não por cena:
-                guardar o fato pro momento certo é metade da graça.
-              </span>,
-            ]}
-          />
-        </Warning>
-        <Aside title="Domínio e Escopo">
-          <P>
-            <b>Domínio</b> é o que o fato pode tocar: coisas e lugares, pessoas e reputação, ou tempo e
-            logística (tabela das Faixas, logo abaixo). <b>Escopo</b> é até onde ele alcança: o da Maestria
-            mais alta da árvore cujo Domínio o fato usa. Escopos não se somam entre árvores — um Ladino
-            Imperador com Bardo Principiante declara fatos sobre pessoas com o Escopo do Bardo.
-          </P>
-        </Aside>
-
-        <SubTitle id="cap3-preparacoes">O menu de Preparações</SubTitle>
-        <P>
-          Toda Preparação obedece ao Domínio da árvore e ao Escopo da sua Maestria mais alta nela, e só se
-          declara antes de o fato ter sido mostrado na mesa — a primeira trava vale pra elas também. O
-          patamar ao lado do nome é quando ela entra no menu.
-        </P>
-        {[
-          // O Domínio mora no cabeçalho do Efeito, a coluna larga: no nome, a
-          // coluna estreita quebrava "Ladino — coisas e lugares" em três linhas.
-          ["furtividade-e-armadilhas", "Ladino", "coisas e lugares"],
-          ["bardo-e-interacao", "Bardo", "pessoas e reputação"],
-          ["navegacao-e-lideranca", "Tático", "tempo e logística"],
-        ].map(([id, titulo, dominio]) => (
           <BookTable
-            key={id}
-            headers={[titulo, "PP", `Efeito (Domínio: ${dominio})`]}
-            rows={PREPARACOES[id].map((p) => [
-              p.desde === "Principiante" ? p.nome : `${p.nome} (${p.desde})`,
-              String(p.pp),
-              p.efeito,
-            ])}
-          />
-        ))}
-        <Aside title="Exemplo jogado — a noite no armazém">
-          <P>
-            O grupo precisa entrar num armazém da guilda rival. A Ladina (Intermediária) gasta{" "}
-            <b>1 PP em Vigia Fora do Posto</b>: o guarda do portão foi beber. Gasta mais <b>1 PP em
-            Fechadura Limada</b> na porta dos fundos. Nenhuma discussão: está escrito.
-          </P>
-          <P>
-            Lá dentro, ela quer que o livro-caixa do rival esteja na mesa, e não no cofre. Isso não está no
-            menu: é um <b>fato livre</b>. Cabe no Domínio (coisas e lugares) e no Escopo (um edifício), e o
-            Mestre avisa antes: &ldquo;esse resolve a cena, custa 2 PP&rdquo;. Ela paga. O livro está lá — e
-            o Mestre anexa a complicação: o contador do rival dorme no canto da sala.
-          </P>
-        </Aside>
-
-        <SubTitle id="cap3-faixas">As Três Faixas</SubTitle>
-        <P>
-          As três árvores dividem o passado em três domínios que não se tocam, e cada uma tem uma faixa
-          exclusiva de combate.
-        </P>
-        <BookTable
-          headers={["", "Ladino", "Bardo", "Tático"]}
-          rows={[
-            ["Atributo-chave", "Agilidade", "Espírito", "Intelecto"],
-            ["Domínio da Preparação", "Coisas e lugares.", "Pessoas e reputação.", "Tempo e logística."],
-            ["Exemplo de fato", "“Essa fechadura eu já limei.”", "“O capitão da guarda me deve um favor.”", "“O suprimento deles acabou anteontem.”"],
-            ["Faixa exclusiva", "Dano Furtivo.", "Estado emocional.", "Economia de ação."],
-            ["A pergunta dele", "Como eu entro?", "Quem eu convenço?", "Onde e quando isso acontece?"],
-          ]}
-        />
-        <Aside title="A Regra da Faixa">
-          <P>
-            Nenhuma habilidade invade a faixa de outra árvore de Utilidade — nenhum talento dá Dano Furtivo
-            a um Bardo, nem deixa um Ladino conceder uma Ação. A Faixa vale só entre
-            Ladino, Bardo e Tático; árvores do Corpo e de Magia cruzam essas linhas livremente.
-          </P>
-          <P>
-            <b>Dano Furtivo, exatamente:</b> dano extra que o <i>próprio</i> personagem acrescenta ao
-            <i> próprio</i> ataque, condicionado a surpresa ou posição. Por isso duas coisas que também
-            causam dano ficam de fora dela: a{" "}
-            <b>Dissonância</b> do Bardo não é extra de um ataque (é dano automático em quem o ouve, sem
-            ataque nenhum, e quem não ouve não sofre), e a <b>Ordem de Tiro</b> do Tático não é dano do próprio personagem (ela
-            entra no golpe de um aliado, e sem esse aliado não existe). Cada um continua na sua faixa: o
-            Ladino cobra posição, o Bardo cobra que escutem, o Tático cobra um aliado que acerte.
-          </P>
-        </Aside>
-        <Aside title="Nota de Custo — Utilidade é mais barata">
-          <BookTable
-            headers={["Patamar", "Talento", "Técnica Assinatura ◆"]}
+            headers={["Árvore", "Perícias cobertas pelo Bônus de Rank"]}
             rows={[
-              ["1º e 2º", "1 PA", "2 PA"],
-              ["3º e 4º", "2 PA", "3 PA"],
-              ["5º e 6º", "3 PA", "4 PA"],
+              ["Ladino (Furtividade e Armadilhas)", "Furtividade, Ladinagem, Percepção, Acrobacia, Enganação (disfarce)."],
+              ["Bardo e Interação", "Atuação, Persuasão, Intuição, História."],
+              ["Tático (Navegação e Liderança)", "Sobrevivência, Natureza, Investigação, Percepção (rastreio)."],
             ]}
           />
-        </Aside>
-
-        <SubTitle id="cap3-utilidade-combate">As Três Árvores em Combate</SubTitle>
-        <P>
-          A pergunta que todo jogador de Utilidade faz na terceira sessão é &ldquo;e eu, faço o quê?&rdquo;.
-          Aqui está a resposta, lado a lado.
-        </P>
-        <BookTable
-          headers={["Turno", "Ladino", "Bardo", "Tático"]}
-          rows={[
-            ["Antes", "Já sabotou o ambiente.", "Já sabe o que cada um quer.", "Já escolheu o terreno."],
-            ["1º", "Primeiro Golpe — seu pico de dano do combate inteiro.", "Uma canção: Guerra pro grupo acertar, ou Dissonância pro inimigo sangrar. Trocar custa 1 Ação.", "Primeiro a Ver — o grupo age antes e na ordem que você quis."],
-            ["2º", "Ponto Cego — derruba a viga, tranca os reforços.", "Insulto que Fica — puxa o inimigo mais perigoso para longe do mago.", "Manobra — reposiciona três aliados sem gastar as Ações deles."],
-            ["3º", "Veneno, roubo do item-chave, Dano Furtivo.", "Coro — pavor, fúria ou devoção em 18 metros.", "Avante — Ação extra para o grupo inteiro."],
-            ["4º", "Passo Vazio e reposicionamento.", "Sustenta, inspira, mantém todos de pé.", "Foco de Fogo e leitura da ordem de Iniciativa."],
-            ["Nunca", "Trocar golpes na linha de frente.", "Ficar ao alcance de quem ele provocou.", "Achar que precisa causar dano."],
-          ]}
-        />
-        <P>
-          <b>Quanto a Utilidade bate.</b> No Imperador, o Dano Furtivo do Ladino soma <b>+6d6 por turno</b>{" "}
-          (uns 21); a Dissonância do Bardo cobra <b>6d6</b> (uns 21) de até seis hostis que o ouçam; e a
-          Ordem de Tiro do Tático põe <b>6d6</b> no golpe de um aliado — até 12d6, se ninguém acertar o
-          alvo Apontado e você o apontar de novo. Um Deus do Norte Imperador bate cerca de{" "}
-          {DANO_DO_NORTE_NO_IMPERADOR} por turno (Apêndice C).
-        </P>
-        <P>
-          Ou seja: <b>uma árvore de Utilidade causa, sozinha, algo entre um terço e metade do dano de um
-          guerreiro do mesmo patamar</b> — e o Ladino fica no topo dessa faixa, porque dano é a faixa
-          exclusiva dele. O que a Utilidade <b>não</b> faz é substituir a linha de frente: ela causa esse dano de longe, uma vez por
-          turno, e quase sempre depende de uma condição (estar Escondido, o alvo ter te ouvido, um aliado
-          acertar). E continua sendo a razão de o combate ter começado com o grupo em cima do telhado, os
-          reforços trancados do lado de fora, metade dos inimigos apavorados, e o chefe já sabendo que perdeu.
-        </P>
-        <P>
-          <b>O que só elas fazem.</b> No patamar alto, cada uma das três tem ao menos uma habilidade que um
-          mago Imperador não replica com magia nenhuma. Não Estive Aqui escapa de rastreamento, adivinhação e
-          visão do passado. A História Oficial decide o que o mundo acredita. A Guerra Já Acabou cancela um
-          confronto antes de ele existir. Zero Absoluto não te consegue um informante, não te dá reputação, e
-          não impede que o exército chegue.
-        </P>
-        <Aside title="Para o Mestre: como recompensar os três">
           <P>
-            Dano é fácil de medir — está na ficha, em números. O valor da Utilidade não está, e por isso é
-            fácil um Mestre esquecer de recompensá-lo. Três hábitos resolvem isso:
+            Os parênteses limitam a perícia a uma parte dela. <b>Disfarce</b> é passar por outra pessoa ou
+            esconder quem você é; <b>rastreio</b> é seguir e ler rastros. Um teste de Enganação que não é
+            disfarce, ou de Percepção que não é rastreio, não recebe o Bônus de Rank daquela árvore.
+          </P>
+          <P>
+            Duas árvores de Utilidade cobrem <b>Percepção</b> (Ladino, num sentido; Tático, noutro). Se você
+            tiver Rank em ambas, use o <b>maior</b> Bônus de Rank entre as duas — nunca some dois Bônus de Rank
+            no mesmo teste.
+          </P>
+          <Warning title="Onde o Bônus de Rank soma NÃO é o mesmo que quais perícias você tem">
+            <P>
+              Esta é a confusão mais fácil de cometer no pilar inteiro, e ela custa caro na mesa. A tabela
+              acima diz onde o seu Bônus de Rank <b>soma</b>. Ela não diz que você <b>tem</b> essas perícias.
+            </P>
+            <P>
+              Um Ladino cujo Bônus de Rank cobre cinco perícias não é treinado nas cinco — ele soma o bônus
+              naquelas que possui. Perícia se ganha de três formas, e só três: pela <b>Árvore Inicial</b> (Cap.
+              1, §4), por raça/antecedente, ou comprando com PA. É por isso que cada árvore de Utilidade ensina
+              duas perícias fixas <i>mais uma à sua escolha</i> quando é a sua Árvore Inicial: a escolha existe
+              justamente porque a lista que o Rank cobre é maior do que o que um personagem consegue aprender.
+            </P>
+            <P>
+              Na prática: se o seu Ladino nunca aprendeu Acrobacia, o Bônus de Rank dele não aparece em teste
+              nenhum de Acrobacia — não há teste treinado pra somar. Aprenda a perícia primeiro; o bônus vem
+              junto no mesmo instante.
+            </P>
+          </Warning>
+        </Sistema>
+
+        <Sistema n={2} id="cap3-pp" titulo="Pontos de Preparação (PP)">
+          <P>
+            Magos gastam PM pra fazer algo acontecer agora. Guerreiros gastam PT pra aguentar o que está
+            acontecendo agora. A Utilidade gasta um recurso que nenhum dos dois tem: PP serve pra declarar que
+            algo <i>já aconteceu antes</i>.
+          </P>
+          <Aside title="Pontos de Preparação">
+            <P>
+              <b>PP Máximos = Intelecto + o atributo-chave da sua árvore</b> (mínimo 1), +1 por patamar a
+              partir do terceiro. Ladino usa Agilidade, Bardo usa Espírito. Com mais de uma árvore de
+              Utilidade, a reserva é única: o segundo termo é o maior entre seus atributos-chave de Utilidade
+              (o do Tático entra como o Bônus de Rank dele, veja abaixo), e os +1 por patamar somam em todas as
+              árvores do pilar. Recupera-se tudo em Descanso Longo.
+            </P>
+            <P>
+              <b>Navegação e Liderança é a exceção</b>, porque o atributo-chave dela <i>é</i> Intelecto: nesse
+              caso ele não conta duas vezes — some, no lugar, o seu <b>Bônus de Rank</b> naquela árvore.
+            </P>
+          </Aside>
+          <P>
+            Há <b>duas formas de gastar PP</b>, e as duas declaram algo que já tinha acontecido:
           </P>
           <List
             items={[
-              "Narre a ausência do problema. Se o Ladino sabotou os reforços, diga em voz alta que eles não vieram — não deixe o efeito passar em silêncio.",
-              "Dê PA por Preparação bem usada, do mesmo jeito que se dá por dano bem causado. A régua é a mesma: fez a mesa avançar, mereceu.",
-              "Cobre a complicação que você mesmo anexou. Se o Mestre disse que o informante viu o Ladino, esse informante precisa aparecer de novo — e virar problema, mais cedo ou mais tarde.",
+              <span key="menu">
+                <b>Uma Preparação do menu</b> da sua árvore (logo abaixo): custo e efeito escritos, sem
+                negociar. É a forma de todo dia.
+              </span>,
+              <span key="fato">
+                <b>Um fato livre</b>, pra tudo que o menu não cobre. Gastando 1 PP, você declara em voz alta um
+                fato sobre o passado que passa a ser verdade no jogo. Cinco condições: (1) precisa caber no seu
+                Escopo; (2) precisa caber no seu Domínio; (3) é sempre pretérito; (4) custa 2 PP se resolver o
+                obstáculo central da cena; (5) o Mestre não pode negar, mas pode anexar uma complicação.
+              </span>,
             ]}
           />
-        </Aside>
+          <ParaOndeVaiUmPP />
+          <Warning title="As quatro travas do fato livre — leia antes da primeira vez que alguém gastar PP">
+            <P>
+              É a mecânica mais divertida do pilar, e é onde a mesa mais briga. Quatro frases resolvem as quatro
+              brigas:
+            </P>
+            <List
+              items={[
+                <span key="a">
+                  <b>Um fato nunca contradiz o que já foi mostrado na mesa.</b> Se o grupo viu o guarda entrar,
+                  ninguém declara que já o tinha subornado. PP reescreve o que estava <i>fora de cena</i>, não o
+                  que aconteceu na frente de todo mundo — essa é a linha, e ela não se negocia.
+                </span>,
+                <span key="b">
+                  <b>A complicação nunca desfaz nem anula o fato.</b> Ela cobra um preço <i>ao lado</i> dele: o
+                  informante existe, mas está bêbado; a corda está lá, mas alguém vai notar que sumiu. Um Mestre
+                  que responde com uma complicação do mesmo tamanho transformou &ldquo;não pode negar&rdquo; em
+                  enfeite.
+                </span>,
+                <span key="c">
+                  <b>O preço é dito antes.</b> Se o Mestre julga que o fato resolve o obstáculo central da cena,
+                  ele diz &ldquo;esse custa 2 PP&rdquo; <i>antes</i> de o fato valer, e o jogador pode desistir
+                  sem gastar nada. Ninguém paga o dobro por surpresa.
+                </span>,
+                <span key="d">
+                  <b>Fatos livres por sessão = o seu Bônus de Rank</b> naquela árvore (as Preparações do menu não
+                  contam: o PP já as limita). No Principiante é 1; no
+                  Imperador, 6. Sem isto, um Bardo com 15 PP encadeia quinze reescritas do mundo na mesma cena, e
+                  a mesa para de jogar a cena pra assistir a ficha dele. O limite é por sessão, não por cena:
+                  guardar o fato pro momento certo é metade da graça.
+                </span>,
+              ]}
+            />
+          </Warning>
+          <Aside title="Domínio e Escopo">
+            <P>
+              <b>Domínio</b> é o que o fato pode tocar: coisas e lugares, pessoas e reputação, ou tempo e
+              logística (tabela das Faixas, logo abaixo). <b>Escopo</b> é até onde ele alcança: o da Maestria
+              mais alta da árvore cujo Domínio o fato usa. Escopos não se somam entre árvores — um Ladino
+              Imperador com Bardo Principiante declara fatos sobre pessoas com o Escopo do Bardo.
+            </P>
+          </Aside>
+        </Sistema>
+
+        <Sistema n={3} id="cap3-preparacoes" titulo="O menu de Preparações">
+          <P>
+            Toda Preparação obedece ao Domínio da árvore e ao Escopo da sua Maestria mais alta nela, e só se
+            declara antes de o fato ter sido mostrado na mesa — a primeira trava vale pra elas também. O
+            patamar ao lado do nome é quando ela entra no menu.
+          </P>
+          {[
+            // O Domínio mora no cabeçalho do Efeito, a coluna larga: no nome, a
+            // coluna estreita quebrava "Ladino — coisas e lugares" em três linhas.
+            ["furtividade-e-armadilhas", "Ladino", "coisas e lugares"],
+            ["bardo-e-interacao", "Bardo", "pessoas e reputação"],
+            ["navegacao-e-lideranca", "Tático", "tempo e logística"],
+          ].map(([id, titulo, dominio]) => (
+            <BookTable
+              key={id}
+              headers={[titulo, "PP", `Efeito (Domínio: ${dominio})`]}
+              rows={PREPARACOES[id].map((p) => [
+                p.desde === "Principiante" ? p.nome : `${p.nome} (${p.desde})`,
+                String(p.pp),
+                p.efeito,
+              ])}
+            />
+          ))}
+          <Aside title="Exemplo jogado — a noite no armazém">
+            <P>
+              O grupo precisa entrar num armazém da guilda rival. A Ladina (Intermediária) gasta{" "}
+              <b>1 PP em Vigia Fora do Posto</b>: o guarda do portão foi beber. Gasta mais <b>1 PP em
+              Fechadura Limada</b> na porta dos fundos. Nenhuma discussão: está escrito.
+            </P>
+            <P>
+              Lá dentro, ela quer que o livro-caixa do rival esteja na mesa, e não no cofre. Isso não está no
+              menu: é um <b>fato livre</b>. Cabe no Domínio (coisas e lugares) e no Escopo (um edifício), e o
+              Mestre avisa antes: &ldquo;esse resolve a cena, custa 2 PP&rdquo;. Ela paga. O livro está lá — e
+              o Mestre anexa a complicação: o contador do rival dorme no canto da sala.
+            </P>
+          </Aside>
+        </Sistema>
+
+        <Sistema n={4} id="cap3-faixas" titulo="As Três Faixas">
+          <P>
+            As três árvores dividem o passado em três domínios que não se tocam, e cada uma tem uma faixa
+            exclusiva de combate.
+          </P>
+          <AsTresFaixas />
+          <Aside title="A Regra da Faixa">
+            <P>
+              Nenhuma habilidade invade a faixa de outra árvore de Utilidade — nenhum talento dá Dano Furtivo
+              a um Bardo, nem deixa um Ladino conceder uma Ação. A Faixa vale só entre
+              Ladino, Bardo e Tático; árvores do Corpo e de Magia cruzam essas linhas livremente.
+            </P>
+            <P>
+              <b>Dano Furtivo, exatamente:</b> dano extra que o <i>próprio</i> personagem acrescenta ao
+              <i> próprio</i> ataque, condicionado a surpresa ou posição. Por isso duas coisas que também
+              causam dano ficam de fora dela: a{" "}
+              <b>Dissonância</b> do Bardo não é extra de um ataque (é dano automático em quem o ouve, sem
+              ataque nenhum, e quem não ouve não sofre), e a <b>Ordem de Tiro</b> do Tático não é dano do próprio personagem (ela
+              entra no golpe de um aliado, e sem esse aliado não existe). Cada um continua na sua faixa: o
+              Ladino cobra posição, o Bardo cobra que escutem, o Tático cobra um aliado que acerte.
+            </P>
+          </Aside>
+          <Aside title="Nota de Custo — Utilidade é mais barata">
+            <BookTable
+              headers={["Patamar", "Talento", "Técnica Assinatura ◆"]}
+              rows={[
+                ["1º e 2º", "1 PA", "2 PA"],
+                ["3º e 4º", "2 PA", "3 PA"],
+                ["5º e 6º", "3 PA", "4 PA"],
+              ]}
+            />
+          </Aside>
+        </Sistema>
+
+        <Sistema n={5} id="cap3-utilidade-combate" titulo="As Três Árvores em Combate">
+          <P>
+            A pergunta que todo jogador de Utilidade faz na terceira sessão é &ldquo;e eu, faço o quê?&rdquo;.
+            Aqui está a resposta, lado a lado.
+          </P>
+          <BookTable
+            headers={["Turno", "Ladino", "Bardo", "Tático"]}
+            rows={[
+              ["Antes", "Já sabotou o ambiente.", "Já sabe o que cada um quer.", "Já escolheu o terreno."],
+              ["1º", "Primeiro Golpe — seu pico de dano do combate inteiro.", "Uma canção: Guerra pro grupo acertar, ou Dissonância pro inimigo sangrar. Trocar custa 1 Ação.", "Primeiro a Ver — o grupo age antes e na ordem que você quis."],
+              ["2º", "Ponto Cego — derruba a viga, tranca os reforços.", "Insulto que Fica — puxa o inimigo mais perigoso para longe do mago.", "Manobra — reposiciona três aliados sem gastar as Ações deles."],
+              ["3º", "Veneno, roubo do item-chave, Dano Furtivo.", "Coro — pavor, fúria ou devoção em 18 metros.", "Avante — Ação extra para o grupo inteiro."],
+              ["4º", "Passo Vazio e reposicionamento.", "Sustenta, inspira, mantém todos de pé.", "Foco de Fogo e leitura da ordem de Iniciativa."],
+              ["Nunca", "Trocar golpes na linha de frente.", "Ficar ao alcance de quem ele provocou.", "Achar que precisa causar dano."],
+            ]}
+          />
+          <P>
+            <b>Quanto a Utilidade bate.</b> No Imperador, o Dano Furtivo do Ladino soma <b>+6d6 por turno</b>{" "}
+            (uns 21); a Dissonância do Bardo cobra <b>6d6</b> (uns 21) de até seis hostis que o ouçam; e a
+            Ordem de Tiro do Tático põe <b>6d6</b> no golpe de um aliado — até 12d6, se ninguém acertar o
+            alvo Apontado e você o apontar de novo. Um Deus do Norte Imperador bate cerca de{" "}
+            {DANO_DO_NORTE_NO_IMPERADOR} por turno (Apêndice C).
+          </P>
+          <P>
+            Ou seja: <b>uma árvore de Utilidade causa, sozinha, algo entre um terço e metade do dano de um
+            guerreiro do mesmo patamar</b> — e o Ladino fica no topo dessa faixa, porque dano é a faixa
+            exclusiva dele. O que a Utilidade <b>não</b> faz é substituir a linha de frente: ela causa esse dano de longe, uma vez por
+            turno, e quase sempre depende de uma condição (estar Escondido, o alvo ter te ouvido, um aliado
+            acertar). E continua sendo a razão de o combate ter começado com o grupo em cima do telhado, os
+            reforços trancados do lado de fora, metade dos inimigos apavorados, e o chefe já sabendo que perdeu.
+          </P>
+          <P>
+            <b>O que só elas fazem.</b> No patamar alto, cada uma das três tem ao menos uma habilidade que um
+            mago Imperador não replica com magia nenhuma. Não Estive Aqui escapa de rastreamento, adivinhação e
+            visão do passado. A História Oficial decide o que o mundo acredita. A Guerra Já Acabou cancela um
+            confronto antes de ele existir. Zero Absoluto não te consegue um informante, não te dá reputação, e
+            não impede que o exército chegue.
+          </P>
+          <Aside title="Para o Mestre: como recompensar os três">
+            <P>
+              Dano é fácil de medir — está na ficha, em números. O valor da Utilidade não está, e por isso é
+              fácil um Mestre esquecer de recompensá-lo. Três hábitos resolvem isso:
+            </P>
+            <List
+              items={[
+                "Narre a ausência do problema. Se o Ladino sabotou os reforços, diga em voz alta que eles não vieram — não deixe o efeito passar em silêncio.",
+                "Dê PA por Preparação bem usada, do mesmo jeito que se dá por dano bem causado. A régua é a mesma: fez a mesa avançar, mereceu.",
+                "Cobre a complicação que você mesmo anexou. Se o Mestre disse que o informante viu o Ladino, esse informante precisa aparecer de novo — e virar problema, mais cedo ou mais tarde.",
+              ]}
+            />
+          </Aside>
+        </Sistema>
       </Section>
 
       <Section>
@@ -804,7 +826,7 @@ export default function Chapter3({ arvoresAbertas = false }: { arvoresAbertas?: 
         </P>
         {/* A Universidade de Magia fecha a introdução (2026-09-26): a coluna que
             sobrava vazia antes da primeira árvore, que sempre abre página nova. */}
-        <Prancha id="cap3-todas" />
+        <Prancha id="cap3-todas" abertura titulo="O Catálogo das 19 Árvores" />
         {!arvoresAbertas &&
           CATEGORIAS.map((category) => (
             <div key={category} className="space-y-3">

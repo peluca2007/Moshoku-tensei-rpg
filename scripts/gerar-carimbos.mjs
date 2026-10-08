@@ -170,3 +170,15 @@ for (const { id, jp, selo } of nomes) {
   bytes += vertical.length + solto.length;
 }
 console.log(`${nomes.length * 2} desenhos de kanji · ${(bytes / 1024).toFixed(1)} KB → public/livro/kanji/`);
+
+// ── Os três pilares (2026-10-08) ─────────────────────────────────────────────
+// A entrada de cada pilar no Cap. 3 ("Sistemas Compartilhados") leva o kanji
+// dele a pincel: 魔 (magia), 闘 (luta) e 道 (o caminho dos Ofícios). Os três já
+// estão na fonte dos nomes (火魔術, 闘士, 騎士道), então não pedem fonte nova.
+const PILARES_JP = { magia: "魔", corpo: "闘", utilidade: "道" };
+for (const [id, char] of Object.entries(PILARES_JP)) {
+  const s = glifoEm(char, 0, 0, upm).getBoundingBox();
+  const solto = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><path d="${relativo(glifoEm(char, 500 - (s.x1 + s.x2) / 2, 500 - (s.y1 + s.y2) / 2, upm).commands)}"/></svg>`;
+  writeFileSync(path.join(pastaKanji, `pilar-${id}.svg`), solto);
+}
+console.log("3 kanjis de pilar → public/livro/kanji/pilar-*.svg");

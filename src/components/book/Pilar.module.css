@@ -1,0 +1,154 @@
+/* A entrada de um pilar e os sistemas recuados (Cap. 3, 2026-10-08).
+   No livro (.folhear-fluxo) a cor é a do capítulo; no resto do site, o vinho. */
+.abertura {
+  --tom: var(--cor, #9b2c3c);
+  position: relative;
+  margin-top: 2.2em;
+  padding: 0.7em 0 0.4em;
+  border-top: 3px solid var(--tom);
+  break-inside: avoid;
+  container-type: inline-size;
+}
+
+/* O kanji do pilar a pincel, pintado por máscara: a mesma forma no papel dia,
+   no noite e na impressão. */
+.kanji {
+  position: absolute;
+  top: 0.35em;
+  right: 0;
+  width: 4.4em;
+  height: 4.4em;
+  background: var(--tom);
+  -webkit-mask: var(--kanji) center / contain no-repeat;
+  mask: var(--kanji) center / contain no-repeat;
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.rotulo {
+  margin: 0;
+  padding-right: 5.2em;
+  color: var(--tom);
+  font-size: 0.72em;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.titulo,
+:global(.folhear-fluxo) .titulo {
+  margin: 0.1em 0 0;
+  /* O kanji ocupa ~4,4em do texto; no tamanho do título isso é ~2,2em. */
+  padding-right: 2.2em;
+  font-size: 1.85rem;
+  line-height: 1;
+}
+
+:global(.folhear-fluxo) h3.titulo {
+  font-size: 2.05em;
+}
+
+/* "Sistemas Compartilhados" desce pra linha de baixo, menor, e fora do
+   traço de marca-texto do título (inline-block não herda o sublinhado). */
+.sub {
+  display: inline-block;
+  margin-top: 0.2em;
+  font-size: 0.48em;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+}
+
+.carimbos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 2px;
+  margin-top: 0.7em;
+  padding-right: 4.4em;
+}
+
+.indice,
+:global(.folhear-fluxo) .indice {
+  display: grid;
+  gap: 0.15em 1em;
+  margin: 0.8em 0 0;
+  padding: 0.55em 0 0;
+  border-top: 1px dashed color-mix(in srgb, var(--tom) 45%, transparent);
+  list-style: none;
+  font-size: 0.9em;
+}
+
+@container (min-width: 520px) {
+  .indice {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.indice a,
+:global(.folhear-fluxo) .indice a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.indice a:hover {
+  color: var(--tom);
+}
+
+.n {
+  min-width: 1.1em;
+  color: var(--tom);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.25em;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* ── O sistema: número na margem, conteúdo recuado atrás de uma régua ─── */
+.sistema {
+  --tom: var(--cor, #9b2c3c);
+  margin-top: 1.6em;
+}
+
+.sistemaTitulo,
+:global(.folhear-fluxo) .sistemaTitulo {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
+  margin-top: 0;
+}
+
+:global(.folhear-fluxo) .sistemaTitulo::before {
+  display: none;
+}
+
+.sistemaN {
+  flex: none;
+  color: var(--tom);
+  font-family: var(--font-livro-grito), system-ui, sans-serif;
+  font-size: 1.7em;
+  font-weight: 900;
+  line-height: 0.8;
+}
+
+/* A régua do recuo. Sem `display: flow-root` de propósito: um contexto de
+   formatação novo prenderia as tabelas que atravessam as duas colunas do
+   livro folheado (column-span: all só vale fora dele). */
+.corpo {
+  margin: 0.45em 0 0 0.35em;
+  padding-left: 0.95em;
+  border-left: 3px solid color-mix(in srgb, var(--tom) 70%, transparent);
+}
+
+.corpo > * + * {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .corpo {
+    margin-left: 0.15em;
+    padding-left: 0.7em;
+  }
+}
