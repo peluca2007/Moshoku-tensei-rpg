@@ -7,7 +7,7 @@ import { canUnlockRank, getRankUnlockPaCost } from "@/store/selectors";
 import { CATEGORY_LABELS, getTreeGroups, isTreeEmpty } from "@/data/trees";
 import { CharacterData, RankName, Tree } from "@/lib/types";
 import { RANK_ACCENT } from "@/lib/rankColors";
-import TreeCrest from "@/components/TreeCrest";
+import Carimbo from "@/components/Carimbo";
 import AbilityListItem from "./AbilityListItem";
 
 /**
@@ -103,7 +103,7 @@ export default function ListaDeArvores({
                 {CATEGORY_LABELS[grupo.category] ?? grupo.category}
               </h2>
             )}
-            <h3 className="mb-2 text-xs font-semibold text-parchment-500 dark:text-parchment-500">
+            <h3 className="mb-2 text-xs font-semibold text-parchment-600 dark:text-parchment-400">
               {grupo.subgroup}
             </h3>
 
@@ -126,7 +126,7 @@ export default function ListaDeArvores({
                       aria-expanded={aberta}
                       className="flex w-full items-center gap-3 p-3 text-left"
                     >
-                      <TreeCrest tree={tree} size={40} />
+                      <Carimbo treeId={tree.id} tamanho={40} />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-display text-base font-black text-parchment-900 dark:text-parchment-50">
                           {tree.name}
