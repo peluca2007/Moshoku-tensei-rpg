@@ -99,3 +99,8 @@ livro em txt.txt
 /REVISAO-DO-LIVRO.md
 /SISTEMA_DE_LOOT.md
 /TAREFA-*.md
+
+# instruções locais para agentes de IA (não vão pro GitHub)
+CLAUDE.md
+AGENTS.md
+.claude/
